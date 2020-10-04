@@ -46,11 +46,13 @@ const MusicList: React.FC<any> = () => {
   const classes = useStyles();
 
   const [musics, setMusics] = useState<IMusicInfo[]>([]);
+  const [musicsCache, setMusicsCache] = useState<IMusicInfo[]>([]);
 
   const [page, pageRef, setPage] = useRefState<number>(1);
-  const [limit, limitRef,] = useRefState<number>(12);
+  const [limit, limitRef] = useRefState<number>(12);
   const [, totalMusicsRef, setTotalMusics] = useRefState<number>(0);
   const [, lastQueryFinRef, setLastQueryFin] = useRefState<boolean>(true);
+  const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
 
   useEffect(() => {
     document.title = "Card List | Sekai Viewer";
@@ -64,25 +66,42 @@ const MusicList: React.FC<any> = () => {
   }, []);
 
   useEffect(() => {
-    fetchMusics().then((fcards) => {
-      setTotalMusics(fcards.length);
-      setMusics((cards) =>
-        [...cards, ...getPaginitedMusics(fcards, page, limit)].sort(
-          (a, b) => a.publishedAt - b.publishedAt
-        )
-      );
-      setLastQueryFin(true);
-    });
-  }, [fetchMusics, page, limit, setLastQueryFin, setTotalMusics]);
+    setMusics((cards) =>
+      [...cards, ...getPaginitedMusics(musicsCache, page, limit)]
+    );
+    setLastQueryFin(true);
+  }, [page, limit, setLastQueryFin, musicsCache])
 
-  const callback = (entries: IntersectionObserverEntry[], setHasMore: React.Dispatch<React.SetStateAction<boolean>>) => {
-    if (entries[0].isIntersecting && lastQueryFinRef.current && (!totalMusicsRef.current || totalMusicsRef.current > pageRef.current * limitRef.current)) {
+  useEffect(() => {
+    setIsReady(false)
+    fetchMusics().then((fmusics) => {
+      setTotalMusics(fmusics.length);
+      setMusicsCache(fmusics.sort(
+        (a, b) => a.seq - b.seq
+      ))
+    }).then(() => setIsReady(true));
+  }, [fetchMusics, setTotalMusics, setIsReady]);
+
+  const callback = (
+    entries: IntersectionObserverEntry[],
+    setHasMore: React.Dispatch<React.SetStateAction<boolean>>
+  ) => {
+    if (!isReadyRef.current) return;
+    if (
+      entries[0].isIntersecting &&
+      lastQueryFinRef.current &&
+      (!totalMusicsRef.current ||
+        totalMusicsRef.current > pageRef.current * limitRef.current)
+    ) {
       setPage((page) => page + 1);
       setLastQueryFin(false);
-    } else if (totalMusicsRef.current && totalMusicsRef.current <= pageRef.current * limitRef.current) {
-      setHasMore(false)
+    } else if (
+      totalMusicsRef.current &&
+      totalMusicsRef.current <= pageRef.current * limitRef.current
+    ) {
+      setHasMore(false);
     }
-  }
+  };
 
   const listCard: React.FC<{ data: IMusicInfo }> = ({ data }) => {
     return (
@@ -91,8 +110,8 @@ const MusicList: React.FC<any> = () => {
           title={data.title}
           titleTypographyProps={{
             classes: {
-              root: classes.subheader
-            }
+              root: classes.subheader,
+            },
           }}
         ></CardHeader>
         <CardMedia
@@ -116,8 +135,8 @@ const MusicList: React.FC<any> = () => {
         ></CardHeader>
         <Skeleton variant="rect" height={130}></Skeleton>
       </Card>
-    )
-  }
+    );
+  };
 
   return (
     <Fragment>

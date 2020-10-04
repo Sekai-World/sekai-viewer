@@ -1,17 +1,7 @@
-import {
-  Card,
-  CardHeader,
-  CardMedia,
-  makeStyles,
-} from "@material-ui/core";
+import { Card, CardHeader, CardMedia, makeStyles } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import Axios from "axios";
-import React, {
-  Fragment,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
@@ -105,11 +95,14 @@ function getPaginitedCards(cards: ICardInfo[], page: number, limit: number) {
 const CardList: React.FC<any> = (props) => {
   const classes = useStyles();
   const [cards, setCards] = useState<ICardInfo[]>([]);
+  const [cardsCache, setCardsCache] = useState<ICardInfo[]>([]);
   const [charas, setCharas] = useState<ICharaProfile[]>([]);
+  // const [charasCache, setCharasCache] = useState<ICharaProfile[]>([]);
   const [page, pageRef, setPage] = useRefState<number>(1);
-  const [limit, limitRef,] = useRefState<number>(12);
+  const [limit, limitRef] = useRefState<number>(12);
   const [, lastQueryFinRef, setLastQueryFin] = useRefState<boolean>(true);
   const [, totalCardsRef, setTotalCards] = useRefState<number>(0);
+  const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
 
   const fetchCards = useCallback(async () => {
     const { data: cards }: { data: ICardInfo[] } = await Axios.get(
@@ -125,31 +118,52 @@ const CardList: React.FC<any> = (props) => {
     return charas;
   }, []);
 
-  const callback = (entries: IntersectionObserverEntry[], setHasMore: React.Dispatch<React.SetStateAction<boolean>>) => {
-    if (entries[0].isIntersecting && lastQueryFinRef.current && (!totalCardsRef.current || totalCardsRef.current > pageRef.current * limitRef.current)) {
+  const callback = (
+    entries: IntersectionObserverEntry[],
+    setHasMore: React.Dispatch<React.SetStateAction<boolean>>
+  ) => {
+    if (!isReadyRef.current) return;
+    if (
+      entries[0].isIntersecting &&
+      lastQueryFinRef.current &&
+      (!totalCardsRef.current ||
+        totalCardsRef.current > pageRef.current * limitRef.current)
+    ) {
       setPage((page) => page + 1);
       setLastQueryFin(false);
-    } else if (totalCardsRef.current && totalCardsRef.current <= pageRef.current * limitRef.current) {
-      setHasMore(false)
+    } else if (
+      totalCardsRef.current &&
+      totalCardsRef.current <= pageRef.current * limitRef.current
+    ) {
+      setHasMore(false);
     }
-  }
+  };
 
   useEffect(() => {
     document.title = "Card List | Sekai Viewer";
   }, []);
 
   useEffect(() => {
-    fetchCards().then((fcards) => {
-      setTotalCards(fcards.length);
-      setCards((cards) =>
-        [...cards, ...getPaginitedCards(fcards, page, limit)].sort(
+    setIsReady(false);
+    Promise.all([
+      fetchCards().then((fcards) => {
+        setTotalCards(fcards.length);
+        setCardsCache(fcards.sort(
           (a, b) => a.id - b.id
-        )
+        ));
+      }),
+      fetchCharas().then((fcharas) => setCharas(fcharas))
+    ]).then(() => setIsReady(true));
+  }, [fetchCharas, fetchCards, setTotalCards, setIsReady]);
+
+  useEffect(() => {
+    if (cardsCache.length) {
+      setCards((cards) =>
+        [...cards, ...getPaginitedCards(cardsCache, page, limit)]
       );
       setLastQueryFin(true);
-    });
-    fetchCharas().then((fcharas) => setCharas(fcharas));
-  }, [fetchCards, fetchCharas, page, limit, setLastQueryFin, setTotalCards]);
+    }
+  }, [page, limit, setLastQueryFin, setTotalCards, cardsCache]);
 
   const listCard: React.FC<{ data: ICardInfo }> = ({ data }) => {
     return (
@@ -185,8 +199,8 @@ const CardList: React.FC<any> = (props) => {
         ></CardHeader>
         <Skeleton variant="rect" height={130}></Skeleton>
       </Card>
-    )
-  }
+    );
+  };
 
   return (
     <Fragment>
@@ -194,7 +208,7 @@ const CardList: React.FC<any> = (props) => {
         viewComponent: listCard,
         loadingComponent: listLoading,
         callback,
-        data: cards
+        data: cards,
       })}
     </Fragment>
   );
