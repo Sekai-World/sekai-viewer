@@ -107,9 +107,9 @@ const CardList: React.FC<any> = (props) => {
   const [cards, setCards] = useState<ICardInfo[]>([]);
   const [charas, setCharas] = useState<ICharaProfile[]>([]);
   const [page, pageRef, setPage] = useRefState<number>(1);
-  const [limit, limitRef, setLimit] = useRefState<number>(12);
-  const [lastQueryFin, lastQueryFinRef, setLastQueryFin] = useRefState<boolean>(true);
-  const [totalCards, totalCardsRef, setTotalCards] = useRefState<number>(0);
+  const [limit, limitRef,] = useRefState<number>(12);
+  const [, lastQueryFinRef, setLastQueryFin] = useRefState<boolean>(true);
+  const [, totalCardsRef, setTotalCards] = useRefState<number>(0);
 
   const fetchCards = useCallback(async () => {
     const { data: cards }: { data: ICardInfo[] } = await Axios.get(

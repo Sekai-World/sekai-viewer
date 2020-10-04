@@ -48,9 +48,9 @@ const MusicList: React.FC<any> = () => {
   const [musics, setMusics] = useState<IMusicInfo[]>([]);
 
   const [page, pageRef, setPage] = useRefState<number>(1);
-  const [limit, limitRef, setLimit] = useRefState<number>(12);
-  const [totalMusics, totalMusicsRef, setTotalMusics] = useRefState<number>(0);
-  const [lastQueryFin, lastQueryFinRef, setLastQueryFin] = useRefState<boolean>(true);
+  const [limit, limitRef,] = useRefState<number>(12);
+  const [, totalMusicsRef, setTotalMusics] = useRefState<number>(0);
+  const [, lastQueryFinRef, setLastQueryFin] = useRefState<boolean>(true);
 
   useEffect(() => {
     document.title = "Card List | Sekai Viewer";
