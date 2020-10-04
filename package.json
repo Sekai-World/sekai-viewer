@@ -2,6 +2,7 @@
   "name": "sekai-viewer",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://sekai-world.github.io/sekai-viewer/",
   "dependencies": {
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
