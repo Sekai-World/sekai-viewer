@@ -13,10 +13,8 @@ import {
 } from "@material-ui/core";
 import { Star as StarIcon } from "@material-ui/icons";
 import { TabContext, TabPanel } from "@material-ui/lab";
-import Axios from "axios";
 import React, {
   Fragment,
-  useCallback,
   useEffect,
   useState,
 } from "react";
@@ -28,7 +26,7 @@ import {
   GachaStatistic,
   GahcaRootObject,
 } from "../types";
-import { useCards, useRefState } from "../utils";
+import { useCards, useGachas, useRefState } from "../utils";
 import CardThumbs from "./subs/CardThumb";
 
 const gachaImageNameMap: {
@@ -106,6 +104,7 @@ const GachaDetailPage: React.FC<{}> = () => {
   const { gachaId } = useParams<{ gachaId: string }>();
 
   const [gacha, setGacha] = useState<GahcaRootObject>();
+  const [gachas,] = useGachas();
   const [visible, setVisible] = useState<boolean>(false);
   const [picTabVal, setPicTabVal] = useState<string>("4");
   const [activeIdx, setActiveIdx] = useState<number>(0);
@@ -122,14 +121,7 @@ const GachaDetailPage: React.FC<{}> = () => {
 
   const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
 
-  const fetchGachas = useCallback(async () => {
-    const { data: gachas }: { data: GahcaRootObject[] } = await Axios.get(
-      "https://raw.githubusercontent.com/Sekai-World/sekai-master-db-diff/master/gachas.json"
-    );
-    return gachas;
-  }, []);
-
-  const cards = useCards();
+  const [cards,] = useCards();
 
   function doGacha(times: number) {
     const rollTimes = times;
@@ -227,13 +219,11 @@ const GachaDetailPage: React.FC<{}> = () => {
   }
 
   useEffect(() => {
-    setIsReady(false);
-    fetchGachas()
-      .then((fgachas) => {
-        setGacha(fgachas.find((gacha) => gacha.id === Number(gachaId))!);
-      })
-      .then(() => setIsReady(true));
-  }, [fetchGachas, setIsReady, gachaId]);
+    setIsReady(Boolean(gachas.length));
+
+    if (Boolean(gachas.length))
+      setGacha(gachas.find(elem => elem.id === Number(gachaId)))
+  }, [setIsReady, gachaId, gachas]);
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
     console.log(newValue);

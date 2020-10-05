@@ -1,8 +1,8 @@
 import { Card, CardHeader, CardMedia, makeStyles } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
-import Axios from "axios";
-import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { useRefState } from "../utils";
+import React, { Fragment, useEffect, useState } from "react";
+import { IMusicInfo } from "../types";
+import { useMusics, useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
 const useStyles = makeStyles((theme) => ({
@@ -20,24 +20,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-interface IMusicInfo {
-  id: number;
-  seq: number;
-  releaseConditionId: number;
-  categories: string[];
-  title: string;
-  lyricist: string;
-  composer: string;
-  arranger: string;
-  dancerCount: number;
-  selfDancerPosition: number;
-  assetbundleName: string;
-  liveTalkBackgroundAssetbundleName: string;
-  publishedAt: number;
-  liveStageId: number;
-  fillerSec: number;
-}
-
 function getPaginitedMusics(musics: IMusicInfo[], page: number, limit: number) {
   return musics.slice(limit * (page - 1), limit * page);
 }
@@ -46,23 +28,17 @@ const MusicList: React.FC<any> = () => {
   const classes = useStyles();
 
   const [musics, setMusics] = useState<IMusicInfo[]>([]);
-  const [musicsCache, setMusicsCache] = useState<IMusicInfo[]>([]);
+  // const [musicsCache, setMusicsCache] = useState<IMusicInfo[]>([]);
+  const [musicsCache, musicsCacheRef] = useMusics();
 
   const [page, pageRef, setPage] = useRefState<number>(1);
   const [limit, limitRef] = useRefState<number>(12);
-  const [, totalMusicsRef, setTotalMusics] = useRefState<number>(0);
+  // const [, totalMusicsRef, setTotalMusics] = useRefState<number>(0);
   const [, lastQueryFinRef, setLastQueryFin] = useRefState<boolean>(true);
   const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
 
   useEffect(() => {
     document.title = "Card List | Sekai Viewer";
-  }, []);
-
-  const fetchMusics = useCallback(async () => {
-    const { data: musics }: { data: IMusicInfo[] } = await Axios.get(
-      "https://raw.githubusercontent.com/Sekai-World/sekai-master-db-diff/master/musics.json"
-    );
-    return musics;
   }, []);
 
   useEffect(() => {
@@ -73,14 +49,8 @@ const MusicList: React.FC<any> = () => {
   }, [page, limit, setLastQueryFin, musicsCache])
 
   useEffect(() => {
-    setIsReady(false)
-    fetchMusics().then((fmusics) => {
-      setTotalMusics(fmusics.length);
-      setMusicsCache(fmusics.sort(
-        (a, b) => a.seq - b.seq
-      ))
-    }).then(() => setIsReady(true));
-  }, [fetchMusics, setTotalMusics, setIsReady]);
+    setIsReady(Boolean(musicsCache.length))
+  }, [setIsReady, musicsCache]);
 
   const callback = (
     entries: IntersectionObserverEntry[],
@@ -90,14 +60,14 @@ const MusicList: React.FC<any> = () => {
     if (
       entries[0].isIntersecting &&
       lastQueryFinRef.current &&
-      (!totalMusicsRef.current ||
-        totalMusicsRef.current > pageRef.current * limitRef.current)
+      (!musicsCacheRef.current.length ||
+        musicsCacheRef.current.length > pageRef.current * limitRef.current)
     ) {
       setPage((page) => page + 1);
       setLastQueryFin(false);
     } else if (
-      totalMusicsRef.current &&
-      totalMusicsRef.current <= pageRef.current * limitRef.current
+      musicsCacheRef.current.length &&
+      musicsCacheRef.current.length <= pageRef.current * limitRef.current
     ) {
       setHasMore(false);
     }

@@ -1,9 +1,8 @@
 import { Card, CardHeader, CardMedia, makeStyles } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
-import Axios from "axios";
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { ICardInfo, ICharaProfile } from "../types";
-import { useRefState } from "../utils";
+import { useCards, useCharas, useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
 const useStyles = makeStyles((theme) => ({
@@ -36,28 +35,16 @@ function getPaginitedCards(cards: ICardInfo[], page: number, limit: number) {
 const CardList: React.FC<any> = (props) => {
   const classes = useStyles();
   const [cards, setCards] = useState<ICardInfo[]>([]);
-  const [cardsCache, setCardsCache] = useState<ICardInfo[]>([]);
-  const [charas, setCharas] = useState<ICharaProfile[]>([]);
+  // const [cardsCache, setCardsCache] = useState<ICardInfo[]>([]);
+  const [cardsCache, cardsCacheRef] = useCards();
+  // const [charas, setCharas] = useState<ICharaProfile[]>([]);
+  const [charas,] = useCharas();
   // const [charasCache, setCharasCache] = useState<ICharaProfile[]>([]);
   const [page, pageRef, setPage] = useRefState<number>(1);
   const [limit, limitRef] = useRefState<number>(12);
   const [, lastQueryFinRef, setLastQueryFin] = useRefState<boolean>(true);
-  const [, totalCardsRef, setTotalCards] = useRefState<number>(0);
+  // const [, totalCardsRef, setTotalCards] = useRefState<number>(0);
   const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
-
-  const fetchCards = useCallback(async () => {
-    const { data: cards }: { data: ICardInfo[] } = await Axios.get(
-      "https://raw.githubusercontent.com/Sekai-World/sekai-master-db-diff/master/cards.json"
-    );
-    return cards;
-  }, []);
-
-  const fetchCharas = useCallback(async () => {
-    const { data: charas }: { data: ICharaProfile[] } = await Axios.get(
-      "https://raw.githubusercontent.com/Sekai-World/sekai-master-db-diff/master/gameCharacters.json"
-    );
-    return charas;
-  }, []);
 
   const callback = (
     entries: IntersectionObserverEntry[],
@@ -67,14 +54,14 @@ const CardList: React.FC<any> = (props) => {
     if (
       entries[0].isIntersecting &&
       lastQueryFinRef.current &&
-      (!totalCardsRef.current ||
-        totalCardsRef.current > pageRef.current * limitRef.current)
+      (!cardsCacheRef.current.length ||
+        cardsCacheRef.current.length > pageRef.current * limitRef.current)
     ) {
       setPage((page) => page + 1);
       setLastQueryFin(false);
     } else if (
-      totalCardsRef.current &&
-      totalCardsRef.current <= pageRef.current * limitRef.current
+      cardsCacheRef.current.length &&
+      cardsCacheRef.current.length <= pageRef.current * limitRef.current
     ) {
       setHasMore(false);
     }
@@ -85,17 +72,9 @@ const CardList: React.FC<any> = (props) => {
   }, []);
 
   useEffect(() => {
-    setIsReady(false);
-    Promise.all([
-      fetchCards().then((fcards) => {
-        setTotalCards(fcards.length);
-        setCardsCache(fcards.sort(
-          (a, b) => a.id - b.id
-        ));
-      }),
-      fetchCharas().then((fcharas) => setCharas(fcharas))
-    ]).then(() => setIsReady(true));
-  }, [fetchCharas, fetchCards, setTotalCards, setIsReady]);
+    setIsReady(Boolean(cardsCache.length) && Boolean(charas.length));
+
+  }, [setIsReady, cardsCache, charas]);
 
   useEffect(() => {
     if (cardsCache.length) {
@@ -104,7 +83,7 @@ const CardList: React.FC<any> = (props) => {
       );
       setLastQueryFin(true);
     }
-  }, [page, limit, setLastQueryFin, setTotalCards, cardsCache]);
+  }, [page, limit, setLastQueryFin, cardsCache]);
 
   const listCard: React.FC<{ data: ICardInfo }> = ({ data }) => {
     return (

@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
 
 const CardThumbs: React.FC<{ cardIds: number[] }> = ({ cardIds }) => {
   const classes = useStyles();
-  const cards = useCards();
+  const [cards,] = useCards();
   return (
     <Fragment>
       {cardIds.map((cardId, id) => {

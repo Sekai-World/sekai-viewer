@@ -1,9 +1,8 @@
 import { Card, CardHeader, CardMedia, makeStyles } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
-import Axios from "axios";
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
-import { useRefState } from "../utils";
+import { useGachas, useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
 const useStyles = makeStyles((theme) => ({
@@ -81,23 +80,17 @@ const MusicList: React.FC<any> = () => {
   const { path } = useRouteMatch()
 
   const [gachas, setGachas] = useState<GahcaRootObject[]>([]);
-  const [gachasCache, setGachasCache] = useState<GahcaRootObject[]>([]);
+  // const [gachasCache, setGachasCache] = useState<GahcaRootObject[]>([]);
+  const [gachasCache, gachasCacheRef] = useGachas();
 
   const [page, pageRef, setPage] = useRefState<number>(1);
   const [limit, limitRef] = useRefState<number>(12);
-  const [, totalGachasRef, setTotalGachas] = useRefState<number>(0);
+  // const [, totalGachasRef, setTotalGachas] = useRefState<number>(0);
   const [, lastQueryFinRef, setLastQueryFin] = useRefState<boolean>(true);
   const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
 
   useEffect(() => {
     document.title = "Card List | Sekai Viewer";
-  }, []);
-
-  const fetchGachas = useCallback(async () => {
-    const { data: gachas }: { data: GahcaRootObject[] } = await Axios.get(
-      "https://raw.githubusercontent.com/Sekai-World/sekai-master-db-diff/master/gachas.json"
-    );
-    return gachas;
   }, []);
 
   useEffect(() => {
@@ -109,14 +102,8 @@ const MusicList: React.FC<any> = () => {
   }, [page, limit, setLastQueryFin, gachasCache]);
 
   useEffect(() => {
-    setIsReady(false);
-    fetchGachas()
-      .then((fgachas) => {
-        setTotalGachas(fgachas.length);
-        setGachasCache(fgachas.sort((a, b) => a.seq - b.seq));
-      })
-      .then(() => setIsReady(true));
-  }, [fetchGachas, setTotalGachas, setIsReady]);
+    setIsReady(Boolean(gachasCache.length));
+  }, [setIsReady, gachasCache]);
 
   const callback = (
     entries: IntersectionObserverEntry[],
@@ -126,14 +113,14 @@ const MusicList: React.FC<any> = () => {
     if (
       entries[0].isIntersecting &&
       lastQueryFinRef.current &&
-      (!totalGachasRef.current ||
-        totalGachasRef.current > pageRef.current * limitRef.current)
+      (!gachasCacheRef.current.length ||
+        gachasCacheRef.current.length > pageRef.current * limitRef.current)
     ) {
       setPage((page) => page + 1);
       setLastQueryFin(false);
     } else if (
-      totalGachasRef.current &&
-      totalGachasRef.current <= pageRef.current * limitRef.current
+      gachasCacheRef.current.length &&
+      gachasCacheRef.current.length <= pageRef.current * limitRef.current
     ) {
       setHasMore(false);
     }
