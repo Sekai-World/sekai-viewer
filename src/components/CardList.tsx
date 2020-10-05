@@ -2,6 +2,7 @@ import { Card, CardHeader, CardMedia, makeStyles } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import Axios from "axios";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
+import { ICardInfo, ICharaProfile } from "../types";
 import { useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
@@ -19,66 +20,6 @@ const useStyles = makeStyles((theme) => ({
     "max-width": "180px",
   },
 }));
-
-interface ICardInfo {
-  id: number;
-  seq: number;
-  characterId: number;
-  rarity: number;
-  specialTrainingPower1BonusFixed: number;
-  specialTrainingPower2BonusFixed: number;
-  specialTrainingPower3BonusFixed: number;
-  attr: string;
-  supportUnit: string;
-  skillId: string;
-  cardSkillName: string;
-  prefix: string;
-  assetbundleName: string;
-  gachaPhrase: string;
-  flavorText: string;
-  releaseAt: number;
-  cardParameters: {
-    id: number;
-    cardId: number;
-    cardLevel: number;
-    cardParameterType: string;
-    power: string;
-  }[];
-  specialTrainingCosts: {
-    cardId: number;
-    seq: number;
-    cost: {
-      resourceId: number;
-      resourceType: string;
-      resourceLevel: number;
-      quantity: number;
-    };
-  }[];
-  masterLessonAchieveResources: {
-    releaseConditionId: number;
-    cardId: number;
-    masterRank: number;
-    resources: {}[];
-  }[];
-}
-
-interface ICharaProfile {
-  id: number;
-  seq: number;
-  resourceId: number;
-  firstName: string;
-  givenName: string;
-  firstNameRuby: string;
-  givenNameRuby: string;
-  gender: string;
-  height: number;
-  live2dHeightAdjustment: number;
-  figure: string;
-  breastSize: string;
-  modelName: string;
-  unit: string;
-  supportUnitType: string;
-}
 
 function getCharaName(charas: ICharaProfile[], charaId: number) {
   const chara = charas.find((chara) => chara.id === charaId);
