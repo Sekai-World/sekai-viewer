@@ -21,6 +21,8 @@ import {
   AspectRatio as AspectRatioIcon,
   Album as AlbumIcon,
   MoveToInbox as MoveToInboxIcon,
+  ArrowBackIos as ArrowBackIosIcon,
+  Settings as SettingsIcon,
 } from "@material-ui/icons";
 import React, { forwardRef, useMemo, lazy, Suspense } from "react";
 import {
@@ -28,6 +30,7 @@ import {
   LinkProps,
   Route,
   Switch,
+  useHistory,
   useRouteMatch,
 } from "react-router-dom";
 
@@ -66,6 +69,9 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up("sm")]: {
       display: "none",
     },
+  },
+  title: {
+    flexGrow: 1,
   },
   drawerPaper: {
     width: drawerWidth,
@@ -158,6 +164,8 @@ function App() {
   const classes = useStyles();
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
+  const { goBack } = useHistory();
+
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -200,9 +208,15 @@ function App() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap>
+          <Typography variant="h6" noWrap classes={{ root: classes.title }}>
             Sekai Viewer
           </Typography>
+          <IconButton color="inherit" onClick={() => goBack()} disableRipple>
+            <ArrowBackIosIcon />
+          </IconButton>
+          <IconButton color="inherit" disabled>
+            <SettingsIcon />
+          </IconButton>
         </Toolbar>
       </AppBar>
       <nav className={classes.drawer}>
