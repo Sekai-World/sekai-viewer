@@ -59,15 +59,15 @@ const MusicList: React.FC<any> = () => {
   }, []);
 
   const fetchMusics = useCallback(async () => {
-    const { data: cards }: { data: IMusicInfo[] } = await Axios.get(
+    const { data: musics }: { data: IMusicInfo[] } = await Axios.get(
       "https://raw.githubusercontent.com/Sekai-World/sekai-master-db-diff/master/musics.json"
     );
-    return cards;
+    return musics;
   }, []);
 
   useEffect(() => {
-    setMusics((cards) =>
-      [...cards, ...getPaginitedMusics(musicsCache, page, limit)]
+    setMusics((musics) =>
+      [...musics, ...getPaginitedMusics(musicsCache, page, limit)]
     );
     setLastQueryFin(true);
   }, [page, limit, setLastQueryFin, musicsCache])

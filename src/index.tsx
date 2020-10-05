@@ -4,6 +4,7 @@ import ReactDOM from "react-dom";
 import App from "./components/App";
 import * as serviceWorker from "./serviceWorker";
 import { HashRouter as Router} from "react-router-dom";
+import './modernizr-custom'
 
 ReactDOM.render(
   <React.StrictMode>

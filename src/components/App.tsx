@@ -18,7 +18,9 @@ import {
 import {
   Menu as MenuIcon,
   Home as HomeIcon,
-  AspectRatio as AspectRatioIcon, Album as AlbumIcon
+  AspectRatio as AspectRatioIcon,
+  Album as AlbumIcon,
+  MoveToInbox as MoveToInboxIcon,
 } from "@material-ui/icons";
 import React, { forwardRef, useMemo, lazy, Suspense } from "react";
 import {
@@ -33,6 +35,8 @@ const drawerWidth = 240;
 const CardList = lazy(() => import("./CardList"));
 const HomeView = lazy(() => import("./Home"));
 const MusicList = lazy(() => import("./MusicList"));
+const GachaList = lazy(() => import("./GachaList"));
+const GachaDetail = lazy(() => import("./GachaDetail"));
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -97,9 +101,11 @@ function ListItemLink(
   );
 
   return (
-    <li style={{
-      width: "100%"
-    }}>
+    <li
+      style={{
+        width: "100%",
+      }}
+    >
       {/*
       // @ts-ignore */}
       <ListItem component={renderLink}>
@@ -141,6 +147,11 @@ function App() {
       text: "Music",
       icon: <AlbumIcon></AlbumIcon>,
       to: "/music",
+    },
+    {
+      text: "Gacha",
+      icon: <MoveToInboxIcon></MoveToInboxIcon>,
+      to: "/gacha",
     },
   ];
   const theme = useTheme();
@@ -236,6 +247,12 @@ function App() {
             </Route>
             <Route path="/music">
               <MusicList></MusicList>
+            </Route>
+            <Route path="/gacha" exact>
+              <GachaList></GachaList>
+            </Route>
+            <Route path="/gacha/:gachaId">
+              <GachaDetail></GachaDetail>
             </Route>
           </Suspense>
         </Switch>
