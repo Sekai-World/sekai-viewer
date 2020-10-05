@@ -22,6 +22,7 @@ import React, {
 } from "react";
 import { useParams } from "react-router-dom";
 import Viewer from "react-viewer";
+import { ImageDecorator } from "react-viewer/lib/ViewerProps";
 import {
   GachaDetail,
   GachaStatistic,
@@ -72,14 +73,17 @@ const useStyles = makeStyles((theme) => ({
 
 function getGachaImages(
   gacha: GahcaRootObject
-): { src: string; alt: string }[] {
-  const ret: { src: string; alt: string }[] = [];
+): ImageDecorator[] {
+  const ret: ImageDecorator[] = [];
   if (gachaImageNameMap[gacha.id].bg) {
     ret.push({
       src: `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${
         gacha.assetbundleName
       }/screen_rip/texture/${gachaImageNameMap[gacha.id].bg}.webp`,
       alt: "background",
+      downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${
+        gacha.assetbundleName
+      }/screen_rip/texture/${gachaImageNameMap[gacha.id].bg}.webp`,
     });
   }
   if (gachaImageNameMap[gacha.id].feature) {
@@ -87,7 +91,10 @@ function getGachaImages(
       src: `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${
         gacha.assetbundleName
       }/screen_rip/texture/${gachaImageNameMap[gacha.id].feature}.webp`,
-      alt: "background",
+      alt: "feature",
+      downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${
+        gacha.assetbundleName
+      }/screen_rip/texture/${gachaImageNameMap[gacha.id].feature}.webp`,
     });
   }
 
@@ -101,6 +108,7 @@ const GachaDetailPage: React.FC<{}> = () => {
   const [gacha, setGacha] = useState<GahcaRootObject>();
   const [visible, setVisible] = useState<boolean>(false);
   const [picTabVal, setPicTabVal] = useState<string>("4");
+  const [activeIdx, setActiveIdx] = useState<number>(0);
   const [statistic, setStatistic] = useState<GachaStatistic>({
     total: 0,
     rarity1: 0,
@@ -255,7 +263,7 @@ const GachaDetailPage: React.FC<{}> = () => {
             </Tabs>
           </Paper>
           <TabPanel value="0" classes={{ root: classes.tabpanel }}>
-            <Card onClick={() => setVisible(true)}>
+            <Card onClick={() => {setActiveIdx(0);setVisible(true);}}>
               <CardMedia
                 className={classes.media}
                 image={
@@ -271,7 +279,7 @@ const GachaDetailPage: React.FC<{}> = () => {
             </Card>
           </TabPanel>
           <TabPanel value="1" classes={{ root: classes.tabpanel }}>
-            <Card onClick={() => setVisible(true)}>
+            <Card onClick={() => {setActiveIdx(1);setVisible(true);}}>
               <CardMedia
                 className={classes.media}
                 image={
@@ -461,6 +469,11 @@ const GachaDetailPage: React.FC<{}> = () => {
           onClose={() => setVisible(false)}
           images={getGachaImages(gacha)}
           zIndex={2000}
+          activeIndex={activeIdx}
+          downloadable
+          downloadInNewWindow
+          onMaskClick={() => setVisible(false)}
+          zoomSpeed={0.25}
         />
       </Fragment>
     );
