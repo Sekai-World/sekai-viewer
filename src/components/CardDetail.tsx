@@ -1,8 +1,6 @@
 import {
   Box,
   Card,
-  CardContent,
-  // CardHeader,
   CardMedia,
   Divider,
   Grid,
