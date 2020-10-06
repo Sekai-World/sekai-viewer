@@ -14,6 +14,9 @@ import {
 import { TabContext, TabPanel } from "@material-ui/lab";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import Viewer from "react-viewer";
+import { ImageDecorator } from "react-viewer/lib/ViewerProps";
+
 import { ICardInfo, ISkillInfo } from "../types";
 import {
   useCardRarities,
@@ -23,7 +26,7 @@ import {
   useSkills,
 } from "../utils";
 import rarityNormal from "../assets/rarity_star_normal.png";
-import rarityAfterTraining from '../assets/rarity_star_afterTraining.png'
+import rarityAfterTraining from "../assets/rarity_star_afterTraining.png";
 import IconPerformance from "../assets/icon_performance.png";
 import IconTechnique from "../assets/icon_technique.png";
 import IconStamina from "../assets/icon_stamina.png";
@@ -36,11 +39,11 @@ import LogoSchoolRefusal from "../assets/common/logol/logo_school_refusal.png";
 import LogoStreet from "../assets/common/logol/logo_street.png";
 import LogoThemePark from "../assets/common/logol/logo_theme_park.png";
 
-import IconAttrCool from "../assets/icon_attribute_cool.png"
-import IconAttrCute from "../assets/icon_attribute_cute.png"
-import IconAttrHappy from "../assets/icon_attribute_happy.png"
-import IconAttrMyster from "../assets/icon_attribute_mysterious.png"
-import IconAttrPure from "../assets/icon_attribute_pure.png"
+import IconAttrCool from "../assets/icon_attribute_cool.png";
+import IconAttrCute from "../assets/icon_attribute_cute.png";
+import IconAttrHappy from "../assets/icon_attribute_happy.png";
+import IconAttrMyster from "../assets/icon_attribute_mysterious.png";
+import IconAttrPure from "../assets/icon_attribute_pure.png";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -72,13 +75,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const attrIconMap: {[key: string]: string} = {
+const attrIconMap: { [key: string]: string } = {
   cool: IconAttrCool,
   cute: IconAttrCute,
   happy: IconAttrHappy,
   mysteriois: IconAttrMyster,
-  pure: IconAttrPure
-}
+  pure: IconAttrPure,
+};
 
 interface IExtendCardInfo extends ICardInfo {
   maxTrainedLevel?: number;
@@ -119,6 +122,8 @@ const CardDetail: React.FC<{}> = () => {
 
   const { cardId } = useParams<{ cardId: string }>();
 
+  const [visible, setVisible] = useState<boolean>(false);
+  const [activeIdx, setActiveIdx] = useState<number>(0);
   const [card, setCard] = useState<IExtendCardInfo>();
   const [tabVal, setTabVal] = useState<string>("0");
   const [cardLevel, setCardLevel] = useState<number | number[]>(0);
@@ -126,43 +131,6 @@ const CardDetail: React.FC<{}> = () => {
   const [skillLevel, setSkillLevel] = useState<number | number[]>(0);
   // const [cardRank, setCardRank] = useState<number | number[]>(0);
   // const [maxCardRank, setMaxCardRank] = useState<number>(0);
-
-  useEffect(() => {
-    if (cards.length && rarities.length && skills.length) {
-      const _card = cards.find((elem) => elem.id === Number(cardId))!;
-      setCard(
-        Object.assign({}, _card, {
-          maxTrainedLevel: rarities.find((elem) => elem.rarity === _card.rarity)
-            ?.trainingMaxLevel,
-          maxNormalLevel: rarities.find((elem) => elem.rarity === _card.rarity)
-            ?.maxLevel!,
-        })
-      );
-      setCardLevel(
-        _card.rarity >= 3
-          ? rarities.find((elem) => elem.rarity === _card.rarity)
-              ?.trainingMaxLevel!
-          : rarities.find((elem) => elem.rarity === _card.rarity)?.maxLevel!
-      );
-      const _skill = skills.find((elem) => elem.id === _card.skillId)!;
-      setSkill(_skill);
-      setSkillLevel(
-        _skill.skillEffects[0].skillEffectDetails[
-          _skill.skillEffects[0].skillEffectDetails.length - 1
-        ].level
-      );
-    }
-  }, [setCard, cards, cardId, rarities, skills]);
-
-  // useEffect(() => {
-  //   if (card && charaRanks.length) {
-  //     const charaRank = charaRanks
-  //       .filter((elem) => elem.characterId === card?.characterId)
-  //       .sort((a, b) => a.characterRank - b.characterRank);
-  //     setCardRank(charaRank[charaRank.length - 1].characterRank);
-  //     setMaxCardRank(charaRank[charaRank.length - 1].characterRank);
-  //   }
-  // }, [charaRanks, card]);
 
   const getCharaName = useCallback(
     (charaId: number) => {
@@ -204,6 +172,78 @@ const CardDetail: React.FC<{}> = () => {
     [charas]
   );
 
+  const getCardImages: () => ImageDecorator[] = useCallback(
+    () =>
+      card
+        ? card?.rarity >= 3
+          ? [
+              {
+                src: `https://sekai-res.dnaroma.eu/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.webp`,
+                alt: "card normal",
+                downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.webp`,
+              },
+              {
+                src: `https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`,
+                alt: "card normal trim",
+                downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`,
+              },
+              {
+                src: `https://sekai-res.dnaroma.eu/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_after_training.webp`,
+                alt: "card after training",
+                downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_after_training.webp`,
+              },
+              {
+                src: `https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/after_training.webp`,
+                alt: "card after training trim",
+                downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/after_training.webp`,
+              },
+            ]
+          : [
+              {
+                src: `https://sekai-res.dnaroma.eu/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.webp`,
+                alt: "card normal",
+                downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.webp`,
+              },
+              {
+                src: `https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`,
+                alt: "card normal",
+                downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`,
+              },
+            ]
+        : [],
+    [card]
+  );
+
+  useEffect(() => {
+    if (cards.length && rarities.length && skills.length) {
+      const _card = cards.find((elem) => elem.id === Number(cardId))!;
+      setCard(
+        Object.assign({}, _card, {
+          maxTrainedLevel: rarities.find((elem) => elem.rarity === _card.rarity)
+            ?.trainingMaxLevel,
+          maxNormalLevel: rarities.find((elem) => elem.rarity === _card.rarity)
+            ?.maxLevel!,
+        })
+      );
+      setCardLevel(
+        _card.rarity >= 3
+          ? rarities.find((elem) => elem.rarity === _card.rarity)
+              ?.trainingMaxLevel!
+          : rarities.find((elem) => elem.rarity === _card.rarity)?.maxLevel!
+      );
+      const _skill = skills.find((elem) => elem.id === _card.skillId)!;
+      setSkill(_skill);
+      setSkillLevel(
+        _skill.skillEffects[0].skillEffectDetails[
+          _skill.skillEffects[0].skillEffectDetails.length - 1
+        ].level
+      );
+      document.title = `${_card.prefix} | ${getCharaName(
+        _card.characterId
+      )} | Card | Sekai Viewer`;
+    }
+  }, [setCard, cards, cardId, rarities, skills, getCharaName]);
+
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
     setTabVal(newValue);
   };
@@ -228,7 +268,7 @@ const CardDetail: React.FC<{}> = () => {
             ) : null}
           </Tabs>
           <TabPanel value="0" classes={{ root: classes.tabpanel }}>
-            <Card>
+            <Card onClick={() => {setActiveIdx(0);setVisible(true);}}>
               <CardMedia
                 classes={{ root: classes.media }}
                 image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.webp`}
@@ -236,7 +276,7 @@ const CardDetail: React.FC<{}> = () => {
             </Card>
           </TabPanel>
           <TabPanel value="1" classes={{ root: classes.tabpanel }}>
-            <Card>
+            <Card onClick={() => {setActiveIdx(1);setVisible(true);}}>
               <CardMedia
                 classes={{ root: classes.media }}
                 image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_after_training.webp`}
@@ -244,7 +284,7 @@ const CardDetail: React.FC<{}> = () => {
             </Card>
           </TabPanel>
           <TabPanel value="2" classes={{ root: classes.tabpanel }}>
-            <Card>
+            <Card onClick={() => {setActiveIdx(2);setVisible(true);}}>
               <CardMedia
                 classes={{ root: classes["media-contain"] }}
                 image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`}
@@ -252,7 +292,7 @@ const CardDetail: React.FC<{}> = () => {
             </Card>
           </TabPanel>
           <TabPanel value="3" classes={{ root: classes.tabpanel }}>
-            <Card>
+            <Card onClick={() => {setActiveIdx(3);setVisible(true);}}>
               <CardMedia
                 classes={{ root: classes["media-contain"] }}
                 image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/after_training.webp`}
@@ -328,7 +368,11 @@ const CardDetail: React.FC<{}> = () => {
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
             Attribute
           </Typography>
-          <img src={attrIconMap[card.attr]} alt={card.attr} className={classes["rarity-star-img"]}></img>
+          <img
+            src={attrIconMap[card.attr]}
+            alt={card.attr}
+            className={classes["rarity-star-img"]}
+          ></img>
         </Grid>
         <Divider style={{ margin: "1% 0" }} />
         <Grid
@@ -358,7 +402,11 @@ const CardDetail: React.FC<{}> = () => {
             {Array.from({ length: card.rarity }).map((_, id) => (
               <img
                 className={classes["rarity-star-img"]}
-                src={cardLevel > card.maxNormalLevel ? rarityAfterTraining : rarityNormal}
+                src={
+                  cardLevel > card.maxNormalLevel
+                    ? rarityAfterTraining
+                    : rarityNormal
+                }
                 alt={`star-${id}`}
                 key={`star-${id}`}
               ></img>
@@ -580,9 +628,23 @@ const CardDetail: React.FC<{}> = () => {
         </Box>
         <Divider style={{ margin: "1% 0" }} />
       </Grid>
+      <Viewer
+        visible={visible}
+        onClose={() => setVisible(false)}
+        images={getCardImages()}
+        zIndex={2000}
+        activeIndex={activeIdx}
+        downloadable
+        downloadInNewWindow
+        onMaskClick={() => setVisible(false)}
+        onChange={(_, idx) => setActiveIdx(idx)}
+        zoomSpeed={0.25}
+      />
     </Fragment>
   ) : (
-    <div></div>
+    <div>
+      Loading... If you saw this for a while, card {cardId} does not exist.
+    </div>
   );
 };
 
