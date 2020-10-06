@@ -1,6 +1,7 @@
 import { Card, CardHeader, CardMedia, makeStyles } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import React, { Fragment, useEffect, useState } from "react";
+import { useHistory, useRouteMatch } from "react-router-dom";
 import { ICardInfo, ICharaProfile } from "../types";
 import { useCards, useCharas, useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
@@ -11,12 +12,13 @@ const useStyles = makeStyles((theme) => ({
   },
   card: {
     margin: theme.spacing(0.5),
+    cursor: "pointer",
   },
   subheader: {
     "white-space": "nowrap",
     overflow: "hidden",
     "text-overflow": "ellipsis",
-    "max-width": "180px",
+    "max-width": "250px",
   },
 }));
 
@@ -34,11 +36,14 @@ function getPaginitedCards(cards: ICardInfo[], page: number, limit: number) {
 
 const CardList: React.FC<any> = (props) => {
   const classes = useStyles();
+  const { push } = useHistory();
+  const { path } = useRouteMatch();
+
   const [cards, setCards] = useState<ICardInfo[]>([]);
   // const [cardsCache, setCardsCache] = useState<ICardInfo[]>([]);
   const [cardsCache, cardsCacheRef] = useCards();
   // const [charas, setCharas] = useState<ICharaProfile[]>([]);
-  const [charas,] = useCharas();
+  const [charas] = useCharas();
   // const [charasCache, setCharasCache] = useState<ICharaProfile[]>([]);
   const [page, pageRef, setPage] = useRefState<number>(1);
   const [limit, limitRef] = useRefState<number>(12);
@@ -73,21 +78,21 @@ const CardList: React.FC<any> = (props) => {
 
   useEffect(() => {
     setIsReady(Boolean(cardsCache.length) && Boolean(charas.length));
-
   }, [setIsReady, cardsCache, charas]);
 
   useEffect(() => {
     if (cardsCache.length) {
-      setCards((cards) =>
-        [...cards, ...getPaginitedCards(cardsCache, page, limit)]
-      );
+      setCards((cards) => [
+        ...cards,
+        ...getPaginitedCards(cardsCache, page, limit),
+      ]);
       setLastQueryFin(true);
     }
   }, [page, limit, setLastQueryFin, cardsCache]);
 
-  const listCard: React.FC<{ data: ICardInfo }> = ({ data }) => {
+  const ListCard: React.FC<{ data: ICardInfo }> = ({ data }) => {
     return (
-      <Card className={classes.card}>
+      <Card className={classes.card} onClick={() => push(path + "/" + data.id)}>
         <CardHeader
           title={getCharaName(charas, data.characterId)}
           subheader={data.prefix}
@@ -100,14 +105,14 @@ const CardList: React.FC<any> = (props) => {
         ></CardHeader>
         <CardMedia
           className={classes.media}
-          image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member/${data.assetbundleName}_rip/card_normal.webp`}
+          image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_small/${data.assetbundleName}_rip/card_normal.webp`}
           title={data.prefix}
         ></CardMedia>
       </Card>
     );
   };
 
-  const listLoading: React.FC<any> = () => {
+  const ListLoading: React.FC<any> = () => {
     return (
       <Card className={classes.card}>
         <CardHeader
@@ -125,8 +130,8 @@ const CardList: React.FC<any> = (props) => {
   return (
     <Fragment>
       {InfiniteScroll<ICardInfo>({
-        viewComponent: listCard,
-        loadingComponent: listLoading,
+        viewComponent: ListCard,
+        loadingComponent: ListLoading,
         callback,
         data: cards,
       })}

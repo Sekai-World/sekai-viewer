@@ -1,6 +1,6 @@
 import Axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { GahcaRootObject, ICardInfo, ICharaProfile, IMusicInfo } from "../types";
+import { GahcaRootObject, ICardInfo, ICharaProfile, IMusicInfo, ISkillInfo, ICardRarity, ICharacterRank } from "../types";
 
 export function useRefState<S>(
   initialValue: S
@@ -37,6 +37,30 @@ export function useCards(): [ICardInfo[], React.MutableRefObject<ICardInfo[]>] {
   return [cards, cardsRef];
 }
 
+let cardRaritieList: ICardRarity[] = [];
+
+export function useCardRarities(): [ICardRarity[], React.MutableRefObject<ICardRarity[]>] {
+  const [cardRarities, cardRaritiesRef, setCardRarities] = useRefState<ICardRarity[]>([]);
+
+  const fetchCardRarities = useCallback(async () => {
+    const { data: cardRarities }: { data: ICardRarity[] } = await Axios.get(
+      "https://raw.githubusercontent.com/Sekai-World/sekai-master-db-diff/master/cardRarities.json"
+    );
+    return cardRarities;
+  }, []);
+
+  useEffect(() => {
+    if (cardRaritieList.length) setCardRarities(cardRaritieList);
+    else
+    fetchCardRarities().then((fcardRarities) => {
+      setCardRarities(fcardRarities);
+      cardRaritieList = fcardRarities;
+    });
+  }, [fetchCardRarities, setCardRarities]);
+
+  return [cardRarities, cardRaritiesRef];
+}
+
 let charaList: ICharaProfile[] = [];
 
 export function useCharas(): [
@@ -62,6 +86,33 @@ export function useCharas(): [
   }, [fetchCharas, setCharas]);
 
   return [charas, charasRef];
+}
+
+let charaRankList: ICharacterRank[] = [];
+
+export function useCharaRanks(): [
+  ICharacterRank[],
+  React.MutableRefObject<ICharacterRank[]>
+] {
+  const [charaRanks, charaRanksRef, setCharaRanks] = useRefState<ICharacterRank[]>([]);
+
+  const fetchCharaRanks = useCallback(async () => {
+    const { data: charaRanks }: { data: ICharacterRank[] } = await Axios.get(
+      "https://raw.githubusercontent.com/Sekai-World/sekai-master-db-diff/master/characterRanks.json"
+    );
+    return charaRanks;
+  }, []);
+
+  useEffect(() => {
+    if (charaRankList.length) setCharaRanks(charaRankList);
+    else
+    fetchCharaRanks().then((fcharaRanks) => {
+      setCharaRanks(fcharaRanks.sort((a, b) => a.id - b.id));
+      charaRankList = fcharaRanks
+    });
+  }, [fetchCharaRanks, setCharaRanks]);
+
+  return [charaRanks, charaRanksRef];
 }
 
 let musicList: IMusicInfo[] = [];
@@ -104,7 +155,7 @@ export function useGachas(): [GahcaRootObject[], React.MutableRefObject<GahcaRoo
   }, []);
 
   useEffect(() => {
-    if (musicList.length) setGachas(gachaList);
+    if (gachaList.length) setGachas(gachaList);
     else
       fetchGachas().then((fgachas) => {
         setGachas(fgachas.sort((a, b) => a.id - b.id));
@@ -113,4 +164,28 @@ export function useGachas(): [GahcaRootObject[], React.MutableRefObject<GahcaRoo
   }, [fetchGachas, setGachas]);
 
   return [gachas, gachasRef];
+}
+
+let skillList: ISkillInfo[] = [];
+
+export function useSkills(): [ISkillInfo[], React.MutableRefObject<ISkillInfo[]>] {
+  const [skills, skillsRef, setSkills] = useRefState<ISkillInfo[]>([]);
+
+  const fetchSkills = useCallback(async () => {
+    const { data: skills }: { data: ISkillInfo[] } = await Axios.get(
+      "https://raw.githubusercontent.com/Sekai-World/sekai-master-db-diff/master/skills.json"
+    );
+    return skills;
+  }, []);
+
+  useEffect(() => {
+    if (musicList.length) setSkills(skillList);
+    else
+      fetchSkills().then((fskills) => {
+        setSkills(fskills.sort((a, b) => a.id - b.id));
+        skillList = fskills;
+      });
+  }, [fetchSkills, setSkills]);
+
+  return [skills, skillsRef];
 }

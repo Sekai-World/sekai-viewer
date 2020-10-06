@@ -33,6 +33,7 @@ import {
   useHistory,
   useRouteMatch,
 } from "react-router-dom";
+import CardDetail from "./CardDetail";
 
 const drawerWidth = 240;
 const CardList = lazy(() => import("./CardList"));
@@ -254,19 +255,22 @@ function App() {
         <Switch>
           <Suspense fallback={<div>Loading...</div>}>
             <Route path="/" exact>
-              <HomeView></HomeView>
+              <HomeView />
             </Route>
-            <Route path="/card">
-              <CardList></CardList>
+            <Route path="/card" exact>
+              <CardList />
             </Route>
-            <Route path="/music">
-              <MusicList></MusicList>
+            <Route path="/card/:cardId">
+              <CardDetail />
+            </Route>
+            <Route path="/music" exact>
+              <MusicList />
             </Route>
             <Route path="/gacha" exact>
-              <GachaList></GachaList>
+              <GachaList />
             </Route>
             <Route path="/gacha/:gachaId">
-              <GachaDetail></GachaDetail>
+              <GachaDetail />
             </Route>
           </Suspense>
         </Switch>

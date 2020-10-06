@@ -57,7 +57,7 @@ export interface ICardInfo {
   specialTrainingPower3BonusFixed: number;
   attr: string;
   supportUnit: string;
-  skillId: string;
+  skillId: number;
   cardSkillName: string;
   prefix: string;
   assetbundleName: string;
@@ -69,7 +69,7 @@ export interface ICardInfo {
     cardId: number;
     cardLevel: number;
     cardParameterType: string;
-    power: string;
+    power: number;
   }[];
   specialTrainingCosts: {
     cardId: number;
@@ -131,4 +131,52 @@ export interface IMusicInfo {
   publishedAt: number;
   liveStageId: number;
   fillerSec: number;
+}
+
+export interface SkillEffectDetail {
+  id: number;
+  level: number;
+  activateEffectDuration: number;
+  activateEffectValueType: string;
+  activateEffectValue: number;
+}
+
+export interface SkillEffect {
+  id: number;
+  skillEffectType: string;
+  activateNotesJudgmentType: string;
+  skillEffectDetails: SkillEffectDetail[];
+}
+
+export interface ISkillInfo {
+  id: number;
+  shortDescription: string;
+  description: string;
+  descriptionSpriteName: string;
+  skillEffects: SkillEffect[];
+}
+
+export interface ICardRarity {
+  rarity: number;
+  maxLevel: number;
+  maxSkillLevel: number;
+  trainingMaxLevel?: number;
+}
+
+export interface CharacterRankAchieveResource {
+  releaseConditionId: number;
+  characterId: number;
+  characterRank: number;
+  resources: any[];
+}
+
+export interface ICharacterRank {
+  id: number;
+  characterId: number;
+  characterRank: number;
+  power1BonusRate: number;
+  power2BonusRate: number;
+  power3BonusRate: number;
+  rewardResourceBoxIds: number[];
+  characterRankAchieveResources: CharacterRankAchieveResource[];
 }

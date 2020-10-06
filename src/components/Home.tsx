@@ -1,12 +1,16 @@
 import { Link, makeStyles, Typography } from "@material-ui/core";
-import { OpenInNew } from "@material-ui/icons";
+import { GitHub, Translate, Twitter } from "@material-ui/icons";
 import { Alert, AlertTitle } from "@material-ui/lab";
+import { Discord } from 'mdi-material-ui'
 import React, { Fragment, useEffect, useState } from "react";
 
 const useStyles = makeStyles((theme) => ({
   alert: {
     margin: theme.spacing(2, 0),
   },
+  "contact-link": {
+    margin: theme.spacing(0, 0.5)
+  }
 }));
 
 interface IDetectResult {
@@ -70,13 +74,26 @@ function Home() {
       </Alert>
       <Alert className={classes.alert} severity="warning">
         <AlertTitle>Help needed! 需要你的协助！</AlertTitle>
-        Translations are not yet finished as well as many features!<br></br>
-        翻译及功能特性均未完成！<br></br>
-        Help on translations and suggestions on features are welcomed!<br></br>
-        欢迎帮忙改进翻译和提出意见！<br></br>
-        <Link href="https://blog.dnaroma.eu/help-sekai-viewer">
-          <OpenInNew fontSize="inherit"></OpenInNew>
-          Click for Details 点此了解更多
+        <Link href="https://www.transifex.com/dnaroma/sekai-viewer" target="_blank">
+          <Translate fontSize="inherit"></Translate>
+          Translations 翻译
+        </Link>
+        （English，简中，繁中，日本語，Deutsch, Español, others upon request）
+        <br></br>
+        <Link href="https://github.com/Sekai-World/sekai-viewer" target="_blank">
+          <GitHub fontSize="inherit"></GitHub>
+          Development 开发
+        </Link>
+        （Sekai-World/sekai-viewer）
+        <br></br>
+        Contant Me:
+        <Link href="https://www.twitter.com/miku_zura" target="_blank" className={classes["contact-link"]}>
+          <Twitter fontSize="inherit"></Twitter>
+          @miku_zura
+        </Link>
+        <Link href="#" className={classes["contact-link"]}>
+          <Discord fontSize="inherit"></Discord>
+          DNARoma#0646
         </Link>
       </Alert>
       <Alert
