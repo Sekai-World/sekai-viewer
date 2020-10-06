@@ -154,6 +154,7 @@ const CardDetail: React.FC<{}> = () => {
   const getCharaUnitImage = useCallback(
     (charaId: number) => {
       const chara = charas.find((chara) => chara.id === charaId);
+      console.log(charaId)
       switch (chara?.unit) {
         case "idol":
           return LogoIdol;
@@ -338,7 +339,7 @@ const CardDetail: React.FC<{}> = () => {
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
             Character
           </Typography>
-          <Typography>{getCharaName(card.id)}</Typography>
+          <Typography>{getCharaName(card.characterId)}</Typography>
         </Grid>
         <Divider style={{ margin: "1% 0" }} />
         <Grid
@@ -353,8 +354,8 @@ const CardDetail: React.FC<{}> = () => {
           </Typography>
           <img
             className={classes["unit-logo-img"]}
-            src={getCharaUnitImage(Number(cardId))}
-            alt={getCharaUnitName(Number(cardId))}
+            src={getCharaUnitImage(card.characterId)}
+            alt={getCharaUnitName(card.characterId)}
           ></img>
         </Grid>
         <Divider style={{ margin: "1% 0" }} />
