@@ -226,7 +226,6 @@ const GachaDetailPage: React.FC<{}> = () => {
   }, [setIsReady, gachaId, gachas]);
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
-    console.log(newValue);
     setPicTabVal(newValue);
   };
 
@@ -239,7 +238,7 @@ const GachaDetailPage: React.FC<{}> = () => {
               value={picTabVal}
               onChange={handleChange}
               variant="scrollable"
-              scrollButtons="auto"
+              scrollButtons="desktop"
             >
               <Tab label="Description" value="2"></Tab>
               <Tab label="Summary" value="3"></Tab>

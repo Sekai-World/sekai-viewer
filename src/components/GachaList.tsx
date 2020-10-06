@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
   },
   card: {
     margin: theme.spacing(0.5),
-    cursor: 'pointer'
+    cursor: "pointer",
   },
   subheader: {
     "white-space": "nowrap",
@@ -70,15 +70,59 @@ interface GahcaRootObject {
   gachaInformation: GachaInformation;
 }
 
-function getPaginitedGachas(gachas: GahcaRootObject[], page: number, limit: number) {
+function getPaginitedGachas(
+  gachas: GahcaRootObject[],
+  page: number,
+  limit: number
+) {
   return gachas.slice(limit * (page - 1), limit * page);
 }
 
-const MusicList: React.FC<any> = () => {
+const ListCard: React.FC<{ data: GahcaRootObject }> = ({ data }) => {
   const classes = useStyles();
   const history = useHistory();
-  const { path } = useRouteMatch()
+  const { path } = useRouteMatch();
 
+  return (
+    <Card
+      className={classes.card}
+      onClick={() => history.push(path + "/" + data.id)}
+    >
+      <CardHeader
+        title={data.name}
+        titleTypographyProps={{
+          classes: {
+            root: classes.subheader,
+          },
+        }}
+      ></CardHeader>
+      <CardMedia
+        className={classes.media}
+        image={`https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${data.assetbundleName}/logo_rip/logo.webp`}
+        title={data.name}
+      ></CardMedia>
+    </Card>
+  );
+};
+
+const ListLoading: React.FC<any> = () => {
+  const classes = useStyles();
+
+  return (
+    <Card className={classes.card}>
+      <CardHeader
+        title={<Skeleton variant="text" width="50%"></Skeleton>}
+        subheader={<Skeleton variant="text" width="80%"></Skeleton>}
+        subheaderTypographyProps={{
+          variant: "body2",
+        }}
+      ></CardHeader>
+      <Skeleton variant="rect" height={130}></Skeleton>
+    </Card>
+  );
+};
+
+const GachaList: React.FC<any> = () => {
   const [gachas, setGachas] = useState<GahcaRootObject[]>([]);
   // const [gachasCache, setGachasCache] = useState<GahcaRootObject[]>([]);
   const [gachasCache, gachasCacheRef] = useGachas();
@@ -126,46 +170,11 @@ const MusicList: React.FC<any> = () => {
     }
   };
 
-  const listCard: React.FC<{ data: GahcaRootObject }> = ({ data }) => {
-    return (
-      <Card className={classes.card} onClick={() => history.push(path + '/' + data.id)}>
-        <CardHeader
-          title={data.name}
-          titleTypographyProps={{
-            classes: {
-              root: classes.subheader,
-            },
-          }}
-        ></CardHeader>
-        <CardMedia
-          className={classes.media}
-          image={`https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${data.assetbundleName}/logo_rip/logo.webp`}
-          title={data.name}
-        ></CardMedia>
-      </Card>
-    );
-  };
-
-  const listLoading: React.FC<any> = () => {
-    return (
-      <Card className={classes.card}>
-        <CardHeader
-          title={<Skeleton variant="text" width="50%"></Skeleton>}
-          subheader={<Skeleton variant="text" width="80%"></Skeleton>}
-          subheaderTypographyProps={{
-            variant: "body2",
-          }}
-        ></CardHeader>
-        <Skeleton variant="rect" height={130}></Skeleton>
-      </Card>
-    );
-  };
-
   return (
     <Fragment>
       {InfiniteScroll<GahcaRootObject>({
-        viewComponent: listCard,
-        loadingComponent: listLoading,
+        viewComponent: ListCard,
+        loadingComponent: ListLoading,
         callback,
         data: gachas,
       })}
@@ -173,4 +182,4 @@ const MusicList: React.FC<any> = () => {
   );
 };
 
-export default MusicList;
+export default GachaList;
