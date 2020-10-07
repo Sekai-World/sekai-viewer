@@ -14,10 +14,13 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(0.5),
     cursor: 'pointer',
   },
-  subheader: {
+  header: {
     "white-space": "nowrap",
     overflow: "hidden",
     "text-overflow": "ellipsis",
+    [theme.breakpoints.down('md')]: {
+      "max-width": "200px",
+    },
     "max-width": "250px",
   },
 }));
@@ -77,16 +80,29 @@ const MusicList: React.FC<any> = () => {
     }
   };
 
+  const getSubHeader = (name:string) => {
+    switch (name) {
+      case 'mv': return '3D MV'
+      case 'original': return 'Original MV'
+      case 'sekai': return 'Sekai MV'
+      case 'image': return 'Static Image'
+      default:
+        return name;
+    }
+  }
+
   const ListCard: React.FC<{ data: IMusicInfo }> = ({ data }) => {
+    console.log(data.categories[0])
     return (
       <Card className={classes.card} onClick={() => push(path + '/' + data.id)}>
         <CardHeader
           title={data.title}
           titleTypographyProps={{
             classes: {
-              root: classes.subheader,
+              root: classes.header,
             },
           }}
+          subheader={getSubHeader(data.categories[0])}
         ></CardHeader>
         <CardMedia
           className={classes.media}
@@ -103,9 +119,6 @@ const MusicList: React.FC<any> = () => {
         <CardHeader
           title={<Skeleton variant="text" width="50%"></Skeleton>}
           subheader={<Skeleton variant="text" width="80%"></Skeleton>}
-          subheaderTypographyProps={{
-            variant: "body2",
-          }}
         ></CardHeader>
         <Skeleton variant="rect" height={130}></Skeleton>
       </Card>

@@ -10,16 +10,17 @@ import {
   RadioGroup,
   Tab,
   Tabs,
-  Tooltip,
+  // Tooltip,
 } from "@material-ui/core";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import AudioPlayer from "material-ui-audio-player";
 import { IMusicInfo, IMusicVocalInfo } from "../types";
-import { useCharas, useMusics, useMusicVocals, useOutCharas } from "../utils";
+import { useMusics, useMusicVocals } from "../utils";
 import { Alert, TabContext, TabPanel } from "@material-ui/lab";
 import MusicVideoPlayer from "./subs/MusicVideoPlayer";
+import { charaIcons } from "../utils/resources";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -35,7 +36,12 @@ const useStyles = makeStyles((theme) => ({
     // margin: theme.spacing(0, 1),
   },
   "media-contain": {
-    paddingTop: "56.25%",
+    [theme.breakpoints.up("md")]: {
+      paddingTop: "40%",
+    },
+    [theme.breakpoints.down("sm")]: {
+      paddingTop: "90%",
+    },
     backgroundSize: "contain",
     cursor: "pointer",
     margin: theme.spacing(1, 0),
@@ -53,8 +59,8 @@ const MsuicDetail: React.FC<{}> = () => {
 
   const [musics] = useMusics();
   const [musicVocals] = useMusicVocals();
-  const [gameCharas] = useCharas();
-  const [outCharas] = useOutCharas();
+  // const [gameCharas] = useCharas();
+  // const [outCharas] = useOutCharas();
 
   const { musicId } = useParams<{ musicId: string }>();
 
@@ -100,34 +106,45 @@ const MsuicDetail: React.FC<{}> = () => {
   //   }
   // }, [musicVocalTypes])
 
-  function getVocalCharaNames(index: number): React.ReactElement {
-    return gameCharas.length && outCharas.length ? (
+  const getVocalCharaIcons: (index: number) => JSX.Element = useCallback((index: number) => {
+    return (
       <Fragment>
-        {musicVocal[index].characters.map((chara) => {
-          switch (chara.characterType) {
-            case "game_character":
-              const gc = gameCharas.find((gc) => gc.id === chara.characterId)!;
-              return gc.firstName ? (
-                <p
-                  key={chara.characterId}
-                >{`${gc.firstName} ${gc.givenName}`}</p>
-              ) : (
-                <p key={chara.characterId}>{gc.givenName}</p>
-              );
-            case "outside_character":
-              return (
-                <p key={chara.characterId}>
-                  {outCharas.find((oc) => oc.id === chara.characterId)!.name}
-                </p>
-              );
-          }
-          return null;
-        })}
+        {musicVocal[index].characters.map((chara) => (
+          <img
+            key={chara.characterId}
+            height="42"
+            src={charaIcons[`CharaIcon${chara.characterId}`]}
+            alt={`charachter ${chara.characterId}`}
+          ></img>
+        ))}
       </Fragment>
-    ) : (
-      <Fragment></Fragment>
     );
-  }
+  }, [musicVocal])
+
+  const VocalTypeSelector: JSX.Element = useMemo(() => {
+    return (
+        <FormControl disabled={vocalDisabled} style={{marginLeft: "18.5px", marginTop: "1%"}}>
+          <FormLabel>Vocal Type</FormLabel>
+          <RadioGroup
+            row
+            aria-label="vocal type"
+            name="vocal-type"
+            defaultValue="0"
+            onChange={(e, v) => setSelectedVocalType(Number(v))}
+          >
+            {musicVocalTypes.map((elem, idx) => (
+              <FormControlLabel
+                key={`vocal-type-${idx}`}
+                value={String(idx)}
+                control={<Radio color="primary"></Radio>}
+                label={getVocalCharaIcons(idx)}
+                labelPlacement="end"
+              />
+            ))}
+          </RadioGroup>
+        </FormControl>
+    );
+  }, [getVocalCharaIcons, musicVocalTypes, vocalDisabled]);
 
   return music ? (
     <Fragment>
@@ -154,41 +171,28 @@ const MsuicDetail: React.FC<{}> = () => {
             variant="scrollable"
             scrollButtons="desktop"
           >
-            <Tab label="Pure Music" value="0"></Tab>
+            <Tab label="Short Version" value="0"></Tab>
+            <Tab label="Long Version" value="1"></Tab>
             {music.categories.includes("original") ||
             music.categories.includes("mv_2d") ? (
-              <Tab label="Music Video" value="1"></Tab>
+              <Tab label="Music Video" value="2"></Tab>
             ) : null}
           </Tabs>
+          {VocalTypeSelector}
           <TabPanel value="0">
             {musicVocalTypes.length && musicVocal.length ? (
               <Fragment>
-                <FormControl>
-                  <FormLabel>Vocal Type</FormLabel>
-                  <RadioGroup
-                    row
-                    aria-label="vocal type"
-                    name="vocal-type"
-                    defaultValue="0"
-                    onChange={(e, v) => setSelectedVocalType(Number(v))}
-                  >
-                    {musicVocalTypes.map((elem, idx) => (
-                      <Tooltip
-                        key={`vocal-tooltip-${idx}`}
-                        title={<div>{getVocalCharaNames(idx)}</div>}
-                        placement="top"
-                      >
-                        <FormControlLabel
-                          key={`vocal-type-${idx}`}
-                          value={String(idx)}
-                          control={<Radio color="primary"></Radio>}
-                          label={elem}
-                          labelPlacement="end"
-                        />
-                      </Tooltip>
-                    ))}
-                  </RadioGroup>
-                </FormControl>
+                <AudioPlayer
+                  variation="primary"
+                  download
+                  src={`https://sekai-res.dnaroma.eu/file/sekai-assets/music/short/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}_short.mp3`}
+                ></AudioPlayer>
+              </Fragment>
+            ) : null}
+          </TabPanel>
+          <TabPanel value="1">
+            {musicVocalTypes.length && musicVocal.length ? (
+              <Fragment>
                 <AudioPlayer
                   variation="primary"
                   download
@@ -197,35 +201,9 @@ const MsuicDetail: React.FC<{}> = () => {
               </Fragment>
             ) : null}
           </TabPanel>
-          <TabPanel value="1">
+          <TabPanel value="2">
             {musicVocalTypes.length && musicVocal.length ? (
               <Box>
-                <FormControl disabled={vocalDisabled}>
-                  <FormLabel>Vocal Type</FormLabel>
-                  <RadioGroup
-                    row
-                    aria-label="vocal type"
-                    name="vocal-type"
-                    defaultValue="0"
-                    onChange={(e, v) => setSelectedVocalType(Number(v))}
-                  >
-                    {musicVocalTypes.map((elem, idx) => (
-                      <Tooltip
-                        key={`vocal-tooltip-${idx}`}
-                        title={<div>{getVocalCharaNames(idx)}</div>}
-                        placement="top"
-                      >
-                        <FormControlLabel
-                          key={`vocal-type-${idx}`}
-                          value={String(idx)}
-                          control={<Radio color="primary"></Radio>}
-                          label={elem}
-                          labelPlacement="end"
-                        />
-                      </Tooltip>
-                    ))}
-                  </RadioGroup>
-                </FormControl>
                 <MusicVideoPlayer
                   audioPath={`https://sekai-res.dnaroma.eu/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`}
                   videoPath={`https://sekai-res.dnaroma.eu/file/sekai-assets/live/2dmode/${
