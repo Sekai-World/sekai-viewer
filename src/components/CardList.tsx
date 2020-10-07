@@ -18,6 +18,9 @@ const useStyles = makeStyles((theme) => ({
     "white-space": "nowrap",
     overflow: "hidden",
     "text-overflow": "ellipsis",
+    [theme.breakpoints.down('md')]: {
+      "max-width": "200px",
+    },
     "max-width": "250px",
   },
 }));
@@ -118,9 +121,6 @@ const CardList: React.FC<any> = (props) => {
         <CardHeader
           title={<Skeleton variant="text" width="50%"></Skeleton>}
           subheader={<Skeleton variant="text" width="80%"></Skeleton>}
-          subheaderTypographyProps={{
-            variant: "body2",
-          }}
         ></CardHeader>
         <Skeleton variant="rect" height={130}></Skeleton>
       </Card>

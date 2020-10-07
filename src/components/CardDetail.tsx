@@ -154,7 +154,6 @@ const CardDetail: React.FC<{}> = () => {
   const getCharaUnitImage = useCallback(
     (charaId: number) => {
       const chara = charas.find((chara) => chara.id === charaId);
-      console.log(charaId)
       switch (chara?.unit) {
         case "idol":
           return LogoIdol;
@@ -269,7 +268,12 @@ const CardDetail: React.FC<{}> = () => {
             ) : null}
           </Tabs>
           <TabPanel value="0" classes={{ root: classes.tabpanel }}>
-            <Card onClick={() => {setActiveIdx(0);setVisible(true);}}>
+            <Card
+              onClick={() => {
+                setActiveIdx(0);
+                setVisible(true);
+              }}
+            >
               <CardMedia
                 classes={{ root: classes.media }}
                 image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.webp`}
@@ -277,7 +281,12 @@ const CardDetail: React.FC<{}> = () => {
             </Card>
           </TabPanel>
           <TabPanel value="1" classes={{ root: classes.tabpanel }}>
-            <Card onClick={() => {setActiveIdx(1);setVisible(true);}}>
+            <Card
+              onClick={() => {
+                setActiveIdx(2);
+                setVisible(true);
+              }}
+            >
               <CardMedia
                 classes={{ root: classes.media }}
                 image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_after_training.webp`}
@@ -285,7 +294,12 @@ const CardDetail: React.FC<{}> = () => {
             </Card>
           </TabPanel>
           <TabPanel value="2" classes={{ root: classes.tabpanel }}>
-            <Card onClick={() => {setActiveIdx(2);setVisible(true);}}>
+            <Card
+              onClick={() => {
+                setActiveIdx(1);
+                setVisible(true);
+              }}
+            >
               <CardMedia
                 classes={{ root: classes["media-contain"] }}
                 image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`}
@@ -293,7 +307,12 @@ const CardDetail: React.FC<{}> = () => {
             </Card>
           </TabPanel>
           <TabPanel value="3" classes={{ root: classes.tabpanel }}>
-            <Card onClick={() => {setActiveIdx(3);setVisible(true);}}>
+            <Card
+              onClick={() => {
+                setActiveIdx(3);
+                setVisible(true);
+              }}
+            >
               <CardMedia
                 classes={{ root: classes["media-contain"] }}
                 image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/after_training.webp`}
@@ -428,7 +447,7 @@ const CardDetail: React.FC<{}> = () => {
             </Typography>
           </Grid>
           <Grid item xs={4}>
-            <Grid container direction="row">
+            <Grid container direction="row" justify="flex-end">
               <Grid item xs={12} md={6}>
                 <img
                   className={classes["card-thumb-img"]}
