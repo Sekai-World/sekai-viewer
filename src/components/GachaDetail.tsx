@@ -11,23 +11,16 @@ import {
   Tabs,
   Typography,
 } from "@material-ui/core";
-import { Star as StarIcon } from "@material-ui/icons";
+// import { Star as StarIcon } from "@material-ui/icons";
 import { TabContext, TabPanel } from "@material-ui/lab";
-import React, {
-  Fragment,
-  useEffect,
-  useState,
-} from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
-import {
-  GachaDetail,
-  GachaStatistic,
-  GahcaRootObject,
-} from "../types";
+import { GachaDetail, GachaStatistic, GahcaRootObject } from "../types";
 import { useCards, useGachas, useRefState } from "../utils";
 import CardThumbs from "./subs/CardThumb";
+import rarityNormal from "../assets/rarity_star_normal.png";
 
 const gachaImageNameMap: {
   [key: number]: {
@@ -69,9 +62,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function getGachaImages(
-  gacha: GahcaRootObject
-): ImageDecorator[] {
+function getGachaImages(gacha: GahcaRootObject): ImageDecorator[] {
   const ret: ImageDecorator[] = [];
   if (gachaImageNameMap[gacha.id].bg) {
     ret.push({
@@ -99,12 +90,20 @@ function getGachaImages(
   return ret;
 }
 
+const StarIcon: React.FC<{ num: number }> = ({ num }) => (
+  <Fragment>
+    {Array.from({ length: num }).map((_, idx) => (
+      <img key={idx} src={rarityNormal} alt="star" height="24px" />
+    ))}
+  </Fragment>
+);
+
 const GachaDetailPage: React.FC<{}> = () => {
   const classes = useStyles();
   const { gachaId } = useParams<{ gachaId: string }>();
 
   const [gacha, setGacha] = useState<GahcaRootObject>();
-  const [gachas,] = useGachas();
+  const [gachas] = useGachas();
   const [visible, setVisible] = useState<boolean>(false);
   const [picTabVal, setPicTabVal] = useState<string>("4");
   const [activeIdx, setActiveIdx] = useState<number>(0);
@@ -121,7 +120,7 @@ const GachaDetailPage: React.FC<{}> = () => {
 
   const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
 
-  const [cards,] = useCards();
+  const [cards] = useCards();
 
   function doGacha(times: number) {
     const rollTimes = times;
@@ -200,7 +199,7 @@ const GachaDetailPage: React.FC<{}> = () => {
           rollCards[3][Math.floor(Math.random() * rollCards[3]?.length)]
         );
       } else {
-        console.log(roll, rollResult)
+        console.log(roll, rollResult);
       }
     }
 
@@ -214,16 +213,22 @@ const GachaDetailPage: React.FC<{}> = () => {
       rarity2: 0,
       rarity3: 0,
       rarity4: 0,
-    })
-    setCurrentGachaResult([])
+    });
+    setCurrentGachaResult([]);
   }
 
   useEffect(() => {
     setIsReady(Boolean(gachas.length));
 
     if (Boolean(gachas.length))
-      setGacha(gachas.find(elem => elem.id === Number(gachaId)))
+      setGacha(gachas.find((elem) => elem.id === Number(gachaId)));
   }, [setIsReady, gachaId, gachas]);
+
+  useEffect(() => {
+    if (gacha) {
+      document.title = `${gacha?.name} | Gacha | Sekai Viewer`;
+    }
+  }, [gacha])
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
     setPicTabVal(newValue);
@@ -252,7 +257,12 @@ const GachaDetailPage: React.FC<{}> = () => {
             </Tabs>
           </Paper>
           <TabPanel value="0" classes={{ root: classes.tabpanel }}>
-            <Card onClick={() => {setActiveIdx(0);setVisible(true);}}>
+            <Card
+              onClick={() => {
+                setActiveIdx(0);
+                setVisible(true);
+              }}
+            >
               <CardMedia
                 className={classes.media}
                 image={
@@ -268,7 +278,12 @@ const GachaDetailPage: React.FC<{}> = () => {
             </Card>
           </TabPanel>
           <TabPanel value="1" classes={{ root: classes.tabpanel }}>
-            <Card onClick={() => {setActiveIdx(1);setVisible(true);}}>
+            <Card
+              onClick={() => {
+                setActiveIdx(1);
+                setVisible(true);
+              }}
+            >
               <CardMedia
                 className={classes.media}
                 image={
@@ -286,11 +301,13 @@ const GachaDetailPage: React.FC<{}> = () => {
           <TabPanel value="2" classes={{ root: classes.tabpanel }}>
             <Card>
               <CardContent>
-                {gacha.gachaInformation.description.split("\n").map((str, line) => (
-                  <Typography paragraph variant="body2" key={`desc-${line}`}>
-                    {str}
-                  </Typography>
-                ))}
+                {gacha.gachaInformation.description
+                  .split("\n")
+                  .map((str, line) => (
+                    <Typography paragraph variant="body2" key={`desc-${line}`}>
+                      {str}
+                    </Typography>
+                  ))}
               </CardContent>
             </Card>
           </TabPanel>
@@ -309,13 +326,13 @@ const GachaDetailPage: React.FC<{}> = () => {
             <Card>
               <CardContent>
                 <Typography paragraph>
-                  <StarIcon />
-                  2: {gacha.rarity2Rate} % <StarIcon />
-                  3: {gacha.rarity3Rate} % <StarIcon />
-                  4: {gacha.rarity4Rate} %
+                  <StarIcon num={2} />
+                  {gacha.rarity2Rate} % <StarIcon num={3} />
+                  {gacha.rarity3Rate} % <StarIcon num={4} />
+                  {gacha.rarity4Rate} %
                 </Typography>
                 <div>
-                <Button
+                  <Button
                     variant="contained"
                     className={classes.gachaBtn}
                     color="secondary"
@@ -357,20 +374,31 @@ const GachaDetailPage: React.FC<{}> = () => {
                   </Button>
                 </div>
                 <Typography paragraph>
-                  Total: {statistic.total}
-                  <StarIcon />
-                  2: {statistic.rarity2}{" "}
-                  {statistic.total ? ((statistic.rarity2 / statistic.total) * 100).toFixed(2) : 0} %
-                  <StarIcon />
-                  3: {statistic.rarity3}{" "}
-                  {statistic.total ? ((statistic.rarity3 / statistic.total) * 100).toFixed(2) : 0} %
-                  <StarIcon />
-                  4: {statistic.rarity4}{" "}
-                  {statistic.total ? ((statistic.rarity4 / statistic.total) * 100).toFixed(2) : 0} %
+                  <span style={{marginRight: '1%'}}>Total: {statistic.total}</span>
+                  <StarIcon num={2} />
+                  {statistic.rarity2}{" "}
+                  {statistic.total
+                    ? ((statistic.rarity2 / statistic.total) * 100).toFixed(2)
+                    : 0}{" "}
+                  %
+                  <StarIcon num={3} />
+                  {statistic.rarity3}{" "}
+                  {statistic.total
+                    ? ((statistic.rarity3 / statistic.total) * 100).toFixed(2)
+                    : 0}{" "}
+                  %
+                  <StarIcon num={4} />
+                  {statistic.rarity4}{" "}
+                  {statistic.total
+                    ? ((statistic.rarity4 / statistic.total) * 100).toFixed(2)
+                    : 0}{" "}
+                  %
                 </Typography>
               </CardContent>
               <CardContent>
-                <CardThumbs cardIds={currentGachaResult.map(elem => elem.cardId)} />
+                <CardThumbs
+                  cardIds={currentGachaResult.map((elem) => elem.cardId)}
+                />
               </CardContent>
             </Card>
           </TabPanel>
@@ -463,6 +491,7 @@ const GachaDetailPage: React.FC<{}> = () => {
           downloadInNewWindow
           onMaskClick={() => setVisible(false)}
           zoomSpeed={0.25}
+          onChange={(_, idx) => setActiveIdx(idx)}
         />
       </Fragment>
     );
