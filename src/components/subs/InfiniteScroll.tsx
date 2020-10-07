@@ -36,7 +36,7 @@ function InfiniteScroll<T>({
 
   const observer = useRef(
     new IntersectionObserver((entries) => callback(entries, setHasMore), {
-      threshold: 0.7,
+      threshold: 0.5,
     })
   );
   const listElementRef = useRef<HTMLDivElement>(null);
