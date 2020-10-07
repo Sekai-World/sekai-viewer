@@ -180,3 +180,29 @@ export interface ICharacterRank {
   rewardResourceBoxIds: number[];
   characterRankAchieveResources: CharacterRankAchieveResource[];
 }
+
+export interface Character {
+  id: number;
+  musicId: number;
+  musicVocalId: number;
+  characterType: string;
+  characterId: number;
+  seq: number;
+}
+
+export interface IMusicVocalInfo {
+  id: number;
+  musicId: number;
+  musicVocalType: string;
+  seq: number;
+  releaseConditionId: number;
+  caption: string;
+  characters: Character[];
+  assetbundleName: string;
+}
+
+export interface IOutCharaProfile {
+  id: number;
+  seq: number;
+  name: string;
+}

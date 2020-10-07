@@ -1,22 +1,24 @@
 import { Card, CardHeader, CardMedia, makeStyles } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import React, { Fragment, useEffect, useState } from "react";
+import { useHistory, useRouteMatch } from "react-router-dom";
 import { IMusicInfo } from "../types";
 import { useMusics, useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
 const useStyles = makeStyles((theme) => ({
   media: {
-    paddingTop: "56.25%",
+    paddingTop: "75%",
   },
   card: {
     margin: theme.spacing(0.5),
+    cursor: 'pointer',
   },
   subheader: {
     "white-space": "nowrap",
     overflow: "hidden",
     "text-overflow": "ellipsis",
-    "max-width": "260px",
+    "max-width": "250px",
   },
 }));
 
@@ -26,6 +28,8 @@ function getPaginitedMusics(musics: IMusicInfo[], page: number, limit: number) {
 
 const MusicList: React.FC<any> = () => {
   const classes = useStyles();
+  const { push } = useHistory();
+  const { path } = useRouteMatch();
 
   const [musics, setMusics] = useState<IMusicInfo[]>([]);
   // const [musicsCache, setMusicsCache] = useState<IMusicInfo[]>([]);
@@ -38,7 +42,7 @@ const MusicList: React.FC<any> = () => {
   const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
 
   useEffect(() => {
-    document.title = "Card List | Sekai Viewer";
+    document.title = "Music List | Sekai Viewer";
   }, []);
 
   useEffect(() => {
@@ -73,9 +77,9 @@ const MusicList: React.FC<any> = () => {
     }
   };
 
-  const listCard: React.FC<{ data: IMusicInfo }> = ({ data }) => {
+  const ListCard: React.FC<{ data: IMusicInfo }> = ({ data }) => {
     return (
-      <Card className={classes.card}>
+      <Card className={classes.card} onClick={() => push(path + '/' + data.id)}>
         <CardHeader
           title={data.title}
           titleTypographyProps={{
@@ -93,7 +97,7 @@ const MusicList: React.FC<any> = () => {
     );
   };
 
-  const listLoading: React.FC<any> = () => {
+  const ListLoading: React.FC<any> = () => {
     return (
       <Card className={classes.card}>
         <CardHeader
@@ -111,8 +115,8 @@ const MusicList: React.FC<any> = () => {
   return (
     <Fragment>
       {InfiniteScroll<IMusicInfo>({
-        viewComponent: listCard,
-        loadingComponent: listLoading,
+        viewComponent: ListCard,
+        loadingComponent: ListLoading,
         callback,
         data: musics,
       })}

@@ -24,6 +24,7 @@ import {
   ArrowBackIos as ArrowBackIosIcon,
   Settings as SettingsIcon,
 } from "@material-ui/icons";
+import { Account, AccountGroup, CalendarText } from "mdi-material-ui";
 import React, { forwardRef, useMemo, lazy, Suspense } from "react";
 import {
   Link,
@@ -33,7 +34,6 @@ import {
   useHistory,
   useRouteMatch,
 } from "react-router-dom";
-import CardDetail from "./CardDetail";
 
 const drawerWidth = 240;
 const CardList = lazy(() => import("./CardList"));
@@ -41,6 +41,8 @@ const HomeView = lazy(() => import("./Home"));
 const MusicList = lazy(() => import("./MusicList"));
 const GachaList = lazy(() => import("./GachaList"));
 const GachaDetail = lazy(() => import("./GachaDetail"));
+const CardDetail = lazy(() => import("./CardDetail"));
+const MusicDetail = lazy(() => import("./MusicDetail"));
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -87,6 +89,7 @@ interface IListItemLinkProps {
   icon: React.ReactElement;
   text: string;
   to: string;
+  disabled: boolean;
 }
 
 function ListItemLink(
@@ -144,21 +147,43 @@ function App() {
       text: "Home",
       icon: <HomeIcon></HomeIcon>,
       to: "/",
+      disabled: false,
     },
     {
       text: "Card",
       icon: <AspectRatioIcon></AspectRatioIcon>,
       to: "/card",
+      disabled: false,
     },
     {
       text: "Music",
       icon: <AlbumIcon></AlbumIcon>,
       to: "/music",
+      disabled: false,
     },
     {
       text: "Gacha",
       icon: <MoveToInboxIcon></MoveToInboxIcon>,
       to: "/gacha",
+      disabled: false,
+    },
+    {
+      text: "Event",
+      icon: <CalendarText></CalendarText>,
+      to: "/unit",
+      disabled: true,
+    },
+    {
+      text: "Unit",
+      icon: <AccountGroup></AccountGroup>,
+      to: "/unit",
+      disabled: true,
+    },
+    {
+      text: "Member",
+      icon: <Account></Account>,
+      to: "/unit",
+      disabled: true,
     },
   ];
   const theme = useTheme();
@@ -180,11 +205,12 @@ function App() {
       <List>
         {leftBtns.map((elem) => {
           return (
-            <ListItem button key={elem.text}>
+            <ListItem disabled={elem.disabled} button key={elem.text}>
               <ListItemLink
                 to={elem.to}
                 text={elem.text}
                 icon={elem.icon}
+                disabled={elem.disabled}
               ></ListItemLink>
             </ListItem>
           );
@@ -260,11 +286,14 @@ function App() {
             <Route path="/card" exact>
               <CardList />
             </Route>
-            <Route path="/card/:cardId">
+            <Route path="/card/:cardId(\d+)">
               <CardDetail />
             </Route>
             <Route path="/music" exact>
               <MusicList />
+            </Route>
+            <Route path="/music/:musicId(\d+)">
+              <MusicDetail />
             </Route>
             <Route path="/gacha" exact>
               <GachaList />

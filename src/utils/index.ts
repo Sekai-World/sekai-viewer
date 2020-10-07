@@ -1,6 +1,6 @@
 import Axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { GahcaRootObject, ICardInfo, ICharaProfile, IMusicInfo, ISkillInfo, ICardRarity, ICharacterRank } from "../types";
+import { GahcaRootObject, ICardInfo, ICharaProfile, IMusicInfo, ISkillInfo, ICardRarity, ICharacterRank, IMusicVocalInfo, IOutCharaProfile } from "../types";
 
 export function useRefState<S>(
   initialValue: S
@@ -88,6 +88,33 @@ export function useCharas(): [
   return [charas, charasRef];
 }
 
+let outCharaList: IOutCharaProfile[] = [];
+
+export function useOutCharas(): [
+  IOutCharaProfile[],
+  React.MutableRefObject<IOutCharaProfile[]>
+] {
+  const [outCharas, outCharasRef, setOutCharas] = useRefState<IOutCharaProfile[]>([]);
+
+  const fetchCharas = useCallback(async () => {
+    const { data: outCharas }: { data: IOutCharaProfile[] } = await Axios.get(
+      "https://raw.githubusercontent.com/Sekai-World/sekai-master-db-diff/master/outsideCharacters.json"
+    );
+    return outCharas;
+  }, []);
+
+  useEffect(() => {
+    if (outCharaList.length) setOutCharas(outCharaList);
+    else
+    fetchCharas().then((foutCharas) => {
+      setOutCharas(foutCharas.sort((a, b) => a.id - b.id));
+      outCharaList = foutCharas
+    });
+  }, [fetchCharas, setOutCharas]);
+
+  return [outCharas, outCharasRef];
+}
+
 let charaRankList: ICharacterRank[] = [];
 
 export function useCharaRanks(): [
@@ -142,6 +169,33 @@ export function useMusics(): [
   return [musics, musicsRef];
 }
 
+
+let musicVocalList: IMusicVocalInfo[] = [];
+
+export function useMusicVocals(): [
+  IMusicVocalInfo[],
+  React.MutableRefObject<IMusicVocalInfo[]>
+] {
+  const [musicVocals, musicVocalsRef, setMusicVocals] = useRefState<IMusicVocalInfo[]>([]);
+
+  const fetchMusicVocals = useCallback(async () => {
+    const { data: musicVocals }: { data: IMusicVocalInfo[] } = await Axios.get(
+      "https://raw.githubusercontent.com/Sekai-World/sekai-master-db-diff/master/musicVocals.json"
+    );
+    return musicVocals;
+  }, []);
+
+  useEffect(() => {
+    if (musicVocalList.length) setMusicVocals(musicVocalList);
+    else
+      fetchMusicVocals().then((fmusicVocals) => {
+        setMusicVocals(fmusicVocals.sort((a, b) => a.musicId - b.musicId));
+        musicVocalList = fmusicVocals;
+      });
+  }, [fetchMusicVocals, setMusicVocals]);
+
+  return [musicVocals, musicVocalsRef];
+}
 let gachaList: GahcaRootObject[] = [];
 
 export function useGachas(): [GahcaRootObject[], React.MutableRefObject<GahcaRootObject[]>] {
@@ -179,7 +233,7 @@ export function useSkills(): [ISkillInfo[], React.MutableRefObject<ISkillInfo[]>
   }, []);
 
   useEffect(() => {
-    if (musicList.length) setSkills(skillList);
+    if (skillList.length) setSkills(skillList);
     else
       fetchSkills().then((fskills) => {
         setSkills(fskills.sort((a, b) => a.id - b.id));
