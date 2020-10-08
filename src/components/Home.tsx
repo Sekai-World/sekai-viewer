@@ -6,7 +6,10 @@ import {
   Paper,
   Tab,
   Tabs,
+  Theme,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@material-ui/core";
 import {
   ColDef,
@@ -70,7 +73,7 @@ function getWebpDetectDesc(result: number) {
 const useIframeStyle = makeStyles((theme) => ({
   iframe: {
     [theme.breakpoints.down("sm")]: {
-      width: "320px",
+      width: "300px",
       height: "480px",
     },
     [theme.breakpoints.up("md")]: {
@@ -89,6 +92,7 @@ function InfoInternalDialog(props: {
   const classes = useIframeStyle();
   return (
     <Dialog open={props.open} onClose={props.onClose}>
+      <Typography>{props.title}</Typography>
       <iframe
         className={classes.iframe}
         title={props.title}
@@ -107,6 +111,7 @@ function InfoInternal(props: { onClick: () => void }) {
 }
 
 function Home() {
+  const theme = useTheme();
   const classes = useStyles();
 
   const [informations] = useUserInformations();
@@ -133,9 +138,11 @@ function Home() {
     });
   }, []);
 
+  const isUpMd = useMediaQuery(theme.breakpoints.up('md'))
+
   const columns: ColDef[] = [
     { field: "id", headerName: "ID", width: 60 },
-    { field: "title", headerName: "Title", width: 400 },
+    { field: "title", headerName: "Title", width: isUpMd ? 400 : 100 },
     {
       field: "action",
       headerName: "Action",
