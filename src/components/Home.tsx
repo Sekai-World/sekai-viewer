@@ -6,7 +6,7 @@ import {
   Paper,
   Tab,
   Tabs,
-  Theme,
+  // Theme,
   Typography,
   useMediaQuery,
   useTheme,
@@ -26,7 +26,7 @@ import { Alert, AlertTitle } from "@material-ui/lab";
 import { Discord } from "mdi-material-ui";
 import React, { Fragment, useEffect, useState } from "react";
 import { IUserInformationInfo } from "../types";
-import { useUserInformations } from "../utils";
+import { useCachedData } from "../utils";
 
 const useStyles = makeStyles((theme) => ({
   alert: {
@@ -114,7 +114,7 @@ function Home() {
   const theme = useTheme();
   const classes = useStyles();
 
-  const [informations] = useUserInformations();
+  const [informations] = useCachedData<IUserInformationInfo>('userInformations');
 
   const [gameNewsTag, setGameNewsTag] = useState<string>("information");
   const [open, setOpen] = useState<boolean>(false);

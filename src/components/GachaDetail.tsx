@@ -17,9 +17,9 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
-import { GachaDetail, GachaStatistic, GahcaRootObject } from "../types";
-import { useCards, useGachas, useRefState } from "../utils";
-import CardThumbs from "./subs/CardThumb";
+import { GachaDetail, GachaStatistic, ICardInfo, IGachaInfo } from "../types";
+import { useCachedData, useRefState } from "../utils";
+import { CardThumbs } from "./subs/CardThumb";
 import rarityNormal from "../assets/rarity_star_normal.png";
 
 const gachaImageNameMap: {
@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function getGachaImages(gacha: GahcaRootObject): ImageDecorator[] {
+function getGachaImages(gacha: IGachaInfo): ImageDecorator[] {
   const ret: ImageDecorator[] = [];
   if (gachaImageNameMap[gacha.id].bg) {
     ret.push({
@@ -102,8 +102,8 @@ const GachaDetailPage: React.FC<{}> = () => {
   const classes = useStyles();
   const { gachaId } = useParams<{ gachaId: string }>();
 
-  const [gacha, setGacha] = useState<GahcaRootObject>();
-  const [gachas] = useGachas();
+  const [gacha, setGacha] = useState<IGachaInfo>();
+  const [gachas] = useCachedData<IGachaInfo>('gachas');
   const [visible, setVisible] = useState<boolean>(false);
   const [picTabVal, setPicTabVal] = useState<string>("4");
   const [activeIdx, setActiveIdx] = useState<number>(0);
@@ -120,7 +120,7 @@ const GachaDetailPage: React.FC<{}> = () => {
 
   const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
 
-  const [cards] = useCards();
+  const [cards] = useCachedData<ICardInfo>('cards');
 
   function doGacha(times: number) {
     const rollTimes = times;
@@ -228,7 +228,7 @@ const GachaDetailPage: React.FC<{}> = () => {
     if (gacha) {
       document.title = `${gacha?.name} | Gacha | Sekai Viewer`;
     }
-  }, [gacha])
+  }, [gacha]);
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
     setPicTabVal(newValue);
@@ -374,7 +374,9 @@ const GachaDetailPage: React.FC<{}> = () => {
                   </Button>
                 </div>
                 <Typography paragraph>
-                  <span style={{marginRight: '1%'}}>Total: {statistic.total}</span>
+                  <span style={{ marginRight: "1%" }}>
+                    Total: {statistic.total}
+                  </span>
                   <StarIcon num={2} />
                   {statistic.rarity2}{" "}
                   {statistic.total

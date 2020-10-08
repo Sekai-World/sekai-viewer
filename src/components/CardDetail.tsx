@@ -17,13 +17,9 @@ import { useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
 
-import { ICardInfo, ISkillInfo } from "../types";
+import { ICardInfo, ICardRarity, ICharacterRank, ICharaProfile, ISkillInfo } from "../types";
 import {
-  useCardRarities,
-  useCards,
-  useCharaRanks,
-  useCharas,
-  useSkills,
+  useCachedData
 } from "../utils";
 import rarityNormal from "../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../assets/rarity_star_afterTraining.png";
@@ -44,6 +40,7 @@ import IconAttrCute from "../assets/icon_attribute_cute.png";
 import IconAttrHappy from "../assets/icon_attribute_happy.png";
 import IconAttrMyster from "../assets/icon_attribute_mysterious.png";
 import IconAttrPure from "../assets/icon_attribute_pure.png";
+import { CardThumb } from "./subs/CardThumb";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -79,7 +76,7 @@ const attrIconMap: { [key: string]: string } = {
   cool: IconAttrCool,
   cute: IconAttrCute,
   happy: IconAttrHappy,
-  mysteriois: IconAttrMyster,
+  mysterious: IconAttrMyster,
   pure: IconAttrPure,
 };
 
@@ -114,11 +111,11 @@ function getSkillDesc(skill: ISkillInfo, skillLevel: number | number[]) {
 const CardDetail: React.FC<{}> = () => {
   const classes = useStyles();
 
-  const [charas] = useCharas();
-  const [cards] = useCards();
-  const [rarities] = useCardRarities();
-  const [charaRanks] = useCharaRanks();
-  const [skills] = useSkills();
+  const [charas] = useCachedData<ICharaProfile>('gameCharacters');
+  const [cards] = useCachedData<ICardInfo>('cards');
+  const [rarities] = useCachedData<ICardRarity>('cardRarities');
+  const [charaRanks] = useCachedData<ICharacterRank>('characterRanks');
+  const [skills] = useCachedData<ISkillInfo>('skills');
 
   const { cardId } = useParams<{ cardId: string }>();
 
@@ -447,21 +444,13 @@ const CardDetail: React.FC<{}> = () => {
             </Typography>
           </Grid>
           <Grid item xs={4}>
-            <Grid container direction="row" justify="flex-end">
+            <Grid container direction="row" justify="flex-end" spacing={2}>
               <Grid item xs={12} md={6}>
-                <img
-                  className={classes["card-thumb-img"]}
-                  src={`https://sekai-res.dnaroma.eu/file/sekai-assets/thumbnail/chara_rip/${card.assetbundleName}_normal.webp`}
-                  alt="normal thumb"
-                ></img>
+                <CardThumb card={card} />
               </Grid>
               {card.rarity >= 3 ? (
                 <Grid item xs={12} md={6}>
-                  <img
-                    className={classes["card-thumb-img"]}
-                    src={`https://sekai-res.dnaroma.eu/file/sekai-assets/thumbnail/chara_rip/${card.assetbundleName}_after_training.webp`}
-                    alt="after training thumb"
-                  ></img>
+                  <CardThumb card={card} trained />
                 </Grid>
               ) : null}
             </Grid>

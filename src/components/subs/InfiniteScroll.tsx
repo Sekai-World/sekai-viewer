@@ -1,16 +1,28 @@
-import { Box, makeStyles, useMediaQuery, useTheme } from "@material-ui/core";
+import {
+  // Box,
+  Grid,
+  // makeStyles,
+  useMediaQuery,
+  useTheme,
+} from "@material-ui/core";
 import React, { Fragment, useEffect, useRef, useState } from "react";
 
-const useStyles = makeStyles((theme) => ({
-  boxflex: {
-    [theme.breakpoints.down("sm")]: {
-      flexBasis: "100%",
-    },
-    [theme.breakpoints.up("md")]: {
-      flexBasis: "33%",
-    },
-  },
-}));
+type GridSize =
+  | boolean
+  | "auto"
+  | 1
+  | 2
+  | 3
+  | 4
+  | 5
+  | 6
+  | 7
+  | 8
+  | 9
+  | 10
+  | 11
+  | 12
+  | undefined;
 
 interface IISProps<T> {
   loadingComponent: React.FC<any>;
@@ -20,6 +32,10 @@ interface IISProps<T> {
     setHasMore: React.Dispatch<React.SetStateAction<boolean>>
   ) => void;
   data: T[];
+  gridSize?: {
+    xs: GridSize;
+    md: GridSize;
+  };
 }
 
 function InfiniteScroll<T>({
@@ -27,9 +43,9 @@ function InfiniteScroll<T>({
   viewComponent,
   callback,
   data,
+  gridSize,
 }: React.PropsWithChildren<IISProps<T>>): React.ReactElement<IISProps<T>> {
   const theme = useTheme();
-  const classes = useStyles();
   const matchSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [hasMore, setHasMore] = useState<boolean>(true);
@@ -55,37 +71,51 @@ function InfiniteScroll<T>({
 
   return (
     <Fragment>
-      <Box display="flex" flexDirection="row" flexWrap="wrap">
+      <Grid container direction="row" spacing={1}>
         {data.length
           ? data.map((elem, id) => (
-              <Box className={classes.boxflex} key={id}>
+              <Grid
+                item
+                xs={gridSize ? gridSize.xs : 12}
+                md={gridSize ? gridSize.md : 4}
+                key={id}
+              >
                 {viewComponent({ data: elem })}
-              </Box>
+              </Grid>
             ))
           : Array.from({ length: matchSmallScreen ? 1 : 3 }, (_, i) => i).map(
               (_, id) => (
-                <div className={classes.boxflex} key={10000 + id}>
+                <Grid
+                  item
+                  xs={gridSize ? gridSize.xs : 12}
+                  md={gridSize ? gridSize.md : 4}
+                  key={`loading-${id}`}
+                >
                   {loadingComponent({})}
-                </div>
+                </Grid>
               )
             )}
-      </Box>
-      <div
-        style={{
-          display: hasMore ? "flex" : "none",
-          flexDirection: "row",
-          flexWrap: "wrap",
-        }}
+      </Grid>
+      <Grid
+        container
+        direction="row"
         ref={listElementRef}
+        style={{ display: hasMore ? "flex" : "none" }}
+        spacing={1}
       >
         {Array.from({ length: matchSmallScreen ? 1 : 3 }, (_, i) => i).map(
           (_, id) => (
-            <div className={classes.boxflex} key={100000 + id}>
+            <Grid
+              item
+              xs={gridSize ? gridSize.xs : 12}
+              md={gridSize ? gridSize.md : 4}
+              key={`empty-${id}`}
+            >
               {loadingComponent({})}
-            </div>
+            </Grid>
           )
         )}
-      </div>
+      </Grid>
     </Fragment>
   );
 }

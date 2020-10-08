@@ -28,7 +28,7 @@ export interface GachaInformation {
   description: string;
 }
 
-export interface GahcaRootObject {
+export interface IGachaInfo {
   id: number;
   gachaType: string;
   name: string;
@@ -218,4 +218,43 @@ export interface IUserInformationInfo {
   path: string;
   startAt: number;
   endAt: number;
+}
+
+export interface IMusicDifficultyInfo {
+  id: number;
+  musicId: number;
+  musicDifficulty: string;
+  playLevel: number;
+  releaseConditionId: number;
+  noteCount: number;
+}
+
+export interface IMusicTagInfo {
+  id: number;
+  musicId: number;
+  musicTag: string;
+  seq: number;
+}
+
+export interface IReleaseCondition {
+  id: number;
+  sentence: string;
+  releaseConditionType: string;
+  releaseConditionTypeLevel: number;
+}
+
+export interface IMusicDanceMembers {
+  id: number;
+  musicId: number;
+  defaultMusicType: string;
+  characterId1: number;
+  unit1: string;
+  characterId2?: number;
+  unit2: string;
+  characterId3?: number;
+  unit3: string;
+  characterId4?: number;
+  unit4: string;
+  characterId5?: number;
+  unit5: string;
 }

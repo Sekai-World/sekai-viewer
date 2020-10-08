@@ -2,7 +2,7 @@ import { Card, CardHeader, CardMedia, makeStyles } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import React, { Fragment, useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
-import { useGachas, useRefState } from "../utils";
+import { useCachedData, useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
 const useStyles = makeStyles((theme) => ({
@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: "56.25%",
   },
   card: {
-    margin: theme.spacing(0.5),
+    // margin: theme.spacing(0.5),
     cursor: "pointer",
   },
   subheader: {
@@ -51,7 +51,7 @@ interface GachaInformation {
   description: string;
 }
 
-interface GahcaRootObject {
+interface IGachaInfo {
   id: number;
   gachaType: string;
   name: string;
@@ -71,7 +71,7 @@ interface GahcaRootObject {
 }
 
 function getPaginitedGachas(
-  gachas: GahcaRootObject[],
+  gachas: IGachaInfo[],
   page: number,
   limit: number
 ) {
@@ -83,9 +83,9 @@ const GachaList: React.FC<any> = () => {
   const history = useHistory();
   const { path } = useRouteMatch();
 
-  const [gachas, setGachas] = useState<GahcaRootObject[]>([]);
-  // const [gachasCache, setGachasCache] = useState<GahcaRootObject[]>([]);
-  const [gachasCache, gachasCacheRef] = useGachas();
+  const [gachas, setGachas] = useState<IGachaInfo[]>([]);
+  // const [gachasCache, setGachasCache] = useState<IGachaInfo[]>([]);
+  const [gachasCache, gachasCacheRef] = useCachedData<IGachaInfo>('gachas');
 
   const [page, pageRef, setPage] = useRefState<number>(1);
   const [limit, limitRef] = useRefState<number>(12);
@@ -130,7 +130,7 @@ const GachaList: React.FC<any> = () => {
     }
   };
 
-  const ListCard: React.FC<{ data: GahcaRootObject }> = ({ data }) => {
+  const ListCard: React.FC<{ data: IGachaInfo }> = ({ data }) => {
     return (
       <Card
         className={classes.card}
@@ -170,7 +170,7 @@ const GachaList: React.FC<any> = () => {
 
   return (
     <Fragment>
-      {InfiniteScroll<GahcaRootObject>({
+      {InfiniteScroll<IGachaInfo>({
         viewComponent: ListCard,
         loadingComponent: ListLoading,
         callback,

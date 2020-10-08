@@ -1,23 +1,39 @@
 import {
   Box,
   CardMedia,
+  Divider,
   FormControl,
   FormControlLabel,
   FormLabel,
+  Grid,
   makeStyles,
   Paper,
   Radio,
   RadioGroup,
   Tab,
   Tabs,
-  // Tooltip,
+  Typography,
 } from "@material-ui/core";
-import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import AudioPlayer from "material-ui-audio-player";
-import { IMusicInfo, IMusicVocalInfo } from "../types";
-import { useMusics, useMusicVocals, useOutCharas } from "../utils";
+import {
+  IMusicDanceMembers,
+  IMusicDifficultyInfo,
+  IMusicInfo,
+  IMusicTagInfo,
+  IMusicVocalInfo,
+  IOutCharaProfile,
+  IReleaseCondition,
+} from "../types";
+import { musicCategoryToName, musicTagToName, useCachedData } from "../utils";
 import { Alert, TabContext, TabPanel } from "@material-ui/lab";
 import MusicVideoPlayer from "./subs/MusicVideoPlayer";
 import { charaIcons } from "../utils/resources";
@@ -57,10 +73,18 @@ const useStyles = makeStyles((theme) => ({
 const MsuicDetail: React.FC<{}> = () => {
   const classes = useStyles();
 
-  const [musics] = useMusics();
-  const [musicVocals] = useMusicVocals();
-  // const [gameCharas] = useCharas();
-  const [outCharas] = useOutCharas();
+  const [musics] = useCachedData<IMusicInfo>("musics");
+  const [musicVocals] = useCachedData<IMusicVocalInfo>("musicVocals");
+  const [musicDiffis] = useCachedData<IMusicDifficultyInfo>(
+    "musicDifficulties"
+  );
+  const [musicTags] = useCachedData<IMusicTagInfo>("musicTags");
+  // const [gameCharas] = useCachedData<ICharaProfile>('gameCharacters');
+  const [outCharas] = useCachedData<IOutCharaProfile>("outsideCharacters");
+  const [releaseConds] = useCachedData<IReleaseCondition>("releaseConditions");
+  const [danceMemebers] = useCachedData<IMusicDanceMembers>(
+    "musicDanceMembers"
+  );
 
   const { musicId } = useParams<{ musicId: string }>();
 
@@ -69,9 +93,14 @@ const MsuicDetail: React.FC<{}> = () => {
   const [music, setMusic] = useState<IMusicInfo>();
   const [musicVocal, setMusicVocal] = useState<IMusicVocalInfo[]>([]);
   const [musicVocalTypes, setMusicVocalTypes] = useState<string[]>([]);
+  const [musicDanceMember, setMusicDanceMember] = useState<
+    IMusicDanceMembers
+  >();
   const [selectedVocalType, setSelectedVocalType] = useState<number>(0);
   const [vocalTabVal, setVocalTabVal] = useState<string>("0");
   const [vocalDisabled, setVocalDisabled] = useState<boolean>(false);
+  const [vocalInfoTabVal, setVocalInfoTabVal] = useState<string>("0");
+  const [diffiInfoTabVal, setDiffiInfoTabVal] = useState<string>("4");
 
   useEffect(() => {
     if (musics.length) {
@@ -99,6 +128,14 @@ const MsuicDetail: React.FC<{}> = () => {
     }
   }, [music]);
 
+  useEffect(() => {
+    if (danceMemebers.length) {
+      setMusicDanceMember(
+        danceMemebers.find((elem) => elem.musicId === Number(musicId))
+      );
+    }
+  }, [danceMemebers, musicId]);
+
   // useEffect(() => {
   //   if (musicVocalTypes.length) {
   //     console.log(musicVocalTypes)
@@ -106,47 +143,80 @@ const MsuicDetail: React.FC<{}> = () => {
   //   }
   // }, [musicVocalTypes])
 
-  const getVocalCharaIcons: (index: number) => JSX.Element = useCallback((index: number) => {
-    return (
-      <Fragment>
-        {musicVocal[index].characters.map((chara) => chara.characterType === 'game_character' ? (
-          <img
-            key={chara.characterId}
-            height="42"
-            src={charaIcons[`CharaIcon${chara.characterId}`]}
-            alt={`charachter ${chara.characterId}`}
-          ></img>
-        ) : <span>{outCharas.length ? outCharas.find(elem => elem.id === chara.characterId)!.name : `Outside Character ${chara.characterId}`}</span>)}
-      </Fragment>
-    );
-  }, [musicVocal, outCharas])
+  const getVocalCharaIcons: (index: number) => JSX.Element = useCallback(
+    (index: number) => {
+      return (
+        <Fragment>
+          {musicVocal[index].characters.map((chara) =>
+            chara.characterType === "game_character" ? (
+              <img
+                key={chara.characterId}
+                height="42"
+                src={charaIcons[`CharaIcon${chara.characterId}`]}
+                alt={`charachter ${chara.characterId}`}
+              ></img>
+            ) : (
+              <span>
+                {outCharas.length
+                  ? outCharas.find((elem) => elem.id === chara.characterId)!
+                      .name
+                  : `Outside Character ${chara.characterId}`}
+              </span>
+            )
+          )}
+        </Fragment>
+      );
+    },
+    [musicVocal, outCharas]
+  );
+
+  const getCharaIcon: (characterId: number) => JSX.Element = useCallback(
+    (characterId) => {
+      return (
+        <img
+          key={characterId}
+          height="42"
+          src={charaIcons[`CharaIcon${characterId}`]}
+          alt={`charachter ${characterId}`}
+        ></img>
+      );
+    },
+    []
+  );
 
   const VocalTypeSelector: JSX.Element = useMemo(() => {
     return (
-        <FormControl disabled={vocalDisabled} style={{marginLeft: "18.5px", marginTop: "1%"}}>
-          <FormLabel>Vocal Type</FormLabel>
-          <RadioGroup
-            row
-            aria-label="vocal type"
-            name="vocal-type"
-            defaultValue="0"
-            onChange={(e, v) => setSelectedVocalType(Number(v))}
-          >
-            {musicVocalTypes.map((elem, idx) => (
-              <FormControlLabel
-                key={`vocal-type-${idx}`}
-                value={String(idx)}
-                control={<Radio color="primary"></Radio>}
-                label={getVocalCharaIcons(idx)}
-                labelPlacement="end"
-              />
-            ))}
-          </RadioGroup>
-        </FormControl>
+      <FormControl
+        disabled={vocalDisabled}
+        style={{ marginLeft: "18.5px", marginTop: "1%" }}
+      >
+        <FormLabel>Vocal Type</FormLabel>
+        <RadioGroup
+          row
+          aria-label="vocal type"
+          name="vocal-type"
+          defaultValue="0"
+          onChange={(e, v) => setSelectedVocalType(Number(v))}
+        >
+          {musicVocalTypes.map((elem, idx) => (
+            <FormControlLabel
+              key={`vocal-type-${idx}`}
+              value={String(idx)}
+              control={<Radio color="primary"></Radio>}
+              label={getVocalCharaIcons(idx)}
+              labelPlacement="end"
+            />
+          ))}
+        </RadioGroup>
+      </FormControl>
     );
   }, [getVocalCharaIcons, musicVocalTypes, vocalDisabled]);
 
-  return music ? (
+  return music &&
+    musicVocals.length &&
+    musicDiffis.length &&
+    releaseConds.length &&
+    musicDanceMember ? (
     <Fragment>
       <Alert severity="warning">
         The first <b>nine seconds</b> of every music have no sound. That's NOT a
@@ -224,6 +294,298 @@ const MsuicDetail: React.FC<{}> = () => {
           </TabPanel>
         </Paper>
       </TabContext>
+
+      <Grid className={classes["grid-out"]} container direction="column">
+        <Grid
+          container
+          direction="row"
+          wrap="nowrap"
+          justify="space-between"
+          alignItems="center"
+        >
+          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+            ID
+          </Typography>
+          <Typography>{music.id}</Typography>
+        </Grid>
+        <Divider style={{ margin: "1% 0" }} />
+        <Grid
+          container
+          direction="row"
+          wrap="nowrap"
+          justify="space-between"
+          alignItems="center"
+        >
+          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+            Title
+          </Typography>
+          <Typography>{music.title}</Typography>
+        </Grid>
+        <Divider style={{ margin: "1% 0" }} />
+        <Grid
+          container
+          direction="row"
+          wrap="nowrap"
+          justify="space-between"
+          alignItems="center"
+        >
+          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+            Tags
+          </Typography>
+          <Grid item>
+            {musicTags
+              .filter((elem) => elem.musicId === music.id)
+              .map((elem) => (
+                <Typography align="right" key={`music-tag-${elem.musicTag}`}>
+                  {musicTagToName[elem.musicTag] || elem.musicTag}
+                </Typography>
+              ))}
+          </Grid>
+        </Grid>
+        <Divider style={{ margin: "1% 0" }} />
+        <Grid
+          container
+          direction="row"
+          wrap="nowrap"
+          justify="space-between"
+          alignItems="center"
+        >
+          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+            Categories
+          </Typography>
+          {music.categories.map((elem) => (
+            <Typography key={`music-cat-${elem}`}>
+              {musicCategoryToName[elem] || elem}
+            </Typography>
+          ))}
+        </Grid>
+        <Divider style={{ margin: "1% 0" }} />
+        <Grid
+          container
+          direction="row"
+          wrap="nowrap"
+          justify="space-between"
+          alignItems="center"
+        >
+          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+            Arranger
+          </Typography>
+          <Typography>{music.arranger}</Typography>
+        </Grid>
+        <Divider style={{ margin: "1% 0" }} />
+        <Grid
+          container
+          direction="row"
+          wrap="nowrap"
+          justify="space-between"
+          alignItems="center"
+        >
+          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+            Composer
+          </Typography>
+          <Typography>{music.composer}</Typography>
+        </Grid>
+        <Divider style={{ margin: "1% 0" }} />
+        <Grid
+          container
+          direction="row"
+          wrap="nowrap"
+          justify="space-between"
+          alignItems="center"
+        >
+          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+            Lyricist
+          </Typography>
+          <Typography>{music.lyricist}</Typography>
+        </Grid>
+        <Divider style={{ margin: "1% 0" }} />
+        <Grid
+          container
+          direction="row"
+          wrap="nowrap"
+          justify="space-between"
+          alignItems="center"
+        >
+          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+            Dance Memebrs
+          </Typography>
+          <Grid item>
+            {Array.from({ length: music.dancerCount }).map((_, idx) =>
+              getCharaIcon(
+                musicDanceMember[
+                  `characterId${idx + 1}` as
+                    | "characterId1"
+                    | "characterId2"
+                    | "characterId3"
+                    | "characterId4"
+                    | "characterId5"
+                ]!
+              )
+            )}
+          </Grid>
+        </Grid>
+        <Divider style={{ margin: "1% 0" }} />
+        <Grid
+          container
+          direction="row"
+          wrap="nowrap"
+          justify="space-between"
+          alignItems="center"
+        >
+          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+            Release Date
+          </Typography>
+          <Typography>
+            {new Date(music.publishedAt).toLocaleString()}
+          </Typography>
+        </Grid>
+        <Divider style={{ margin: "1% 0" }} />
+        <Box>
+          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+            Vocal Info
+          </Typography>
+          <TabContext value={vocalInfoTabVal}>
+            <Tabs
+              value={vocalInfoTabVal}
+              onChange={(e, v) => {
+                setVocalInfoTabVal(v);
+              }}
+              variant="scrollable"
+              scrollButtons="desktop"
+            >
+              {musicVocal.map((elem, idx) => (
+                <Tab
+                  key={`vocal-info-tab-${idx}`}
+                  label={elem.caption}
+                  value={String(idx)}
+                ></Tab>
+              ))}
+            </Tabs>
+            {musicVocal.map((elem, idx) => (
+              <TabPanel value={String(idx)} key={`vocal-info-tab-panel-${idx}`}>
+                <Grid container direction="column">
+                  <Grid item container direction="row" justify="space-between" alignItems="center">
+                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                      Characters
+                    </Typography>
+                    <Grid item>{getVocalCharaIcons(idx)}</Grid>
+                  </Grid>
+                  <Divider style={{ margin: "1% 0" }} />
+                  <Grid item container direction="row" justify="space-between">
+                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                      Release Condition
+                    </Typography>
+                    <Typography>
+                      {
+                        releaseConds.find(
+                          (cond) => cond.id === elem.releaseConditionId
+                        )?.sentence
+                      }
+                    </Typography>
+                  </Grid>
+                  <Divider style={{ margin: "1% 0" }} />
+                  <Grid item container direction="row" justify="space-between">
+                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                      Vocal Type
+                    </Typography>
+                    <Typography>{elem.musicVocalType}</Typography>
+                  </Grid>
+                  <Divider style={{ margin: "1% 0" }} />
+                </Grid>
+              </TabPanel>
+            ))}
+          </TabContext>
+        </Box>
+        <Divider style={{ margin: "1% 0" }} />
+        <Box>
+          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+            Difficulty Info
+          </Typography>
+          <TabContext value={diffiInfoTabVal}>
+            <Tabs
+              value={diffiInfoTabVal}
+              onChange={(e, v) => {
+                setDiffiInfoTabVal(v);
+              }}
+              variant="scrollable"
+              scrollButtons="desktop"
+            >
+              {musicDiffis
+                .filter((elem) => elem.musicId === Number(musicId))
+                .map((elem, idx) => (
+                  <Tab
+                    key={`diffi-info-tab-${idx}`}
+                    label={elem.musicDifficulty}
+                    value={String(idx)}
+                  ></Tab>
+                ))}
+            </Tabs>
+            {musicDiffis
+              .filter((elem) => elem.musicId === Number(musicId))
+              .map((elem, idx) => (
+                <TabPanel
+                  value={String(idx)}
+                  key={`diffi-info-tab-panel-${idx}`}
+                >
+                  <Grid container direction="column">
+                    <Grid
+                      item
+                      container
+                      direction="row"
+                      justify="space-between"
+                    >
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        Level
+                      </Typography>
+                      <Grid item>{elem.playLevel}</Grid>
+                    </Grid>
+                    <Divider style={{ margin: "1% 0" }} />
+                    <Grid
+                      item
+                      container
+                      direction="row"
+                      justify="space-between"
+                    >
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        Note Count
+                      </Typography>
+                      <Grid item>{elem.noteCount}</Grid>
+                    </Grid>
+                    <Divider style={{ margin: "1% 0" }} />
+                    <Grid
+                      item
+                      container
+                      direction="row"
+                      justify="space-between"
+                    >
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        Release Condition
+                      </Typography>
+                      <Typography>
+                        {
+                          releaseConds.find(
+                            (cond) => cond.id === elem.releaseConditionId
+                          )?.sentence
+                        }
+                      </Typography>
+                    </Grid>
+                    <Divider style={{ margin: "1% 0" }} />
+                  </Grid>
+                </TabPanel>
+              ))}
+          </TabContext>
+          <Divider style={{ margin: "1% 0" }} />
+        </Box>
+      </Grid>
 
       <Viewer
         visible={visible}
