@@ -1,18 +1,10 @@
 import {
   Dialog,
-  Grid,
   IconButton,
   Link,
   makeStyles,
   Paper,
   Tab,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TableSortLabel,
   Tabs,
   Typography,
 } from "@material-ui/core";
@@ -20,18 +12,16 @@ import {
   ColDef,
   DataGrid,
   ValueFormatterParams,
-  ValueGetterParams,
 } from "@material-ui/data-grid";
 import {
   GitHub,
   OpenInNew,
   Translate,
   Twitter,
-  // Visibility,
 } from "@material-ui/icons";
 import { Alert, AlertTitle } from "@material-ui/lab";
 import { Discord } from "mdi-material-ui";
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { IUserInformationInfo } from "../types";
 import { useUserInformations } from "../utils";
 
@@ -250,66 +240,6 @@ function Home() {
           </Typography>
         )}
       </Alert>
-      {/* <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell sortDirection={orderBy === "id" ? order : false}>
-                <TableSortLabel
-                  active={orderBy === "id"}
-                  direction={orderBy === "id" ? order : "asc"}
-                  onClick={sortHandler("id")}
-                >
-                  ID
-                </TableSortLabel>
-              </TableCell>
-              <TableCell>Title</TableCell>
-              <TableCell>Link</TableCell>
-              <TableCell sortDirection={orderBy === "startAt" ? order : false}>
-                <TableSortLabel
-                  active={orderBy === "startAt"}
-                  direction={orderBy === "startAt" ? order : "asc"}
-                  onClick={sortHandler("startAt")}
-                >
-                  Show from
-                </TableSortLabel>
-              </TableCell>
-              <TableCell>Hide from</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {stableSort(informations, getComparator(order, orderBy))
-              .filter((info) => info.informationTag === gameNewsTag)
-              .map((info) => (
-                <TableRow key={`info-${info.id}`}>
-                  <TableCell>{info.id}</TableCell>
-                  <TableCell>{info.title}</TableCell>
-                  <TableCell>
-                    {info.browseType === "internal" ? (
-                      <InfoInternal
-                        info={info}
-                        onClick={() => {
-                          setInfo(info);
-                          setOpen(true);
-                        }}
-                      />
-                    ) : (
-                      <Link target="_blank" href={info.path}>
-                        <OpenInNew></OpenInNew>
-                      </Link>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {new Date(info.startAt).toLocaleString()}
-                  </TableCell>
-                  <TableCell>
-                    {info.endAt ? new Date(info.endAt).toLocaleString() : "N/A"}
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
-      </TableContainer> */}
       <Paper>
         <Typography variant="h6" align="center">
           Game News
