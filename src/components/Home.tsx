@@ -142,7 +142,7 @@ function Home() {
 
   const columns: ColDef[] = [
     { field: "id", headerName: "ID", width: 60 },
-    { field: "title", headerName: "Title", width: isUpMd ? 400 : 100 },
+    { field: "title", headerName: "Title", width: isUpMd ? 400 : 100, sortable: false },
     {
       field: "action",
       headerName: "Action",
@@ -163,14 +163,14 @@ function Home() {
             </IconButton>
           </Link>
         )
-      }
+      }, sortable: false
     },
     {
       field: "startAt",
       headerName: "Show From",
       width: 180,
       valueFormatter: (params: ValueFormatterParams) =>
-        new Date(params.getValue("startAt") as number).toLocaleString(),
+        new Date(params.getValue("startAt") as number).toLocaleString()
     },
     {
       field: "endAt",
@@ -183,7 +183,7 @@ function Home() {
 
   return (
     <Fragment>
-      <Typography variant="h4">Welcome to Sekai Viewer Open Beta!</Typography>
+      {/* <Typography variant="h4">Welcome to Sekai Viewer Open Beta!</Typography> */}
       <Alert className={classes.alert} severity="info">
         Sekai Viewer is now in Open Beta!
       </Alert>
