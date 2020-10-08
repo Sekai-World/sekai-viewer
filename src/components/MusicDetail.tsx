@@ -17,7 +17,7 @@ import { useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import AudioPlayer from "material-ui-audio-player";
 import { IMusicInfo, IMusicVocalInfo } from "../types";
-import { useMusics, useMusicVocals } from "../utils";
+import { useMusics, useMusicVocals, useOutCharas } from "../utils";
 import { Alert, TabContext, TabPanel } from "@material-ui/lab";
 import MusicVideoPlayer from "./subs/MusicVideoPlayer";
 import { charaIcons } from "../utils/resources";
@@ -60,7 +60,7 @@ const MsuicDetail: React.FC<{}> = () => {
   const [musics] = useMusics();
   const [musicVocals] = useMusicVocals();
   // const [gameCharas] = useCharas();
-  // const [outCharas] = useOutCharas();
+  const [outCharas] = useOutCharas();
 
   const { musicId } = useParams<{ musicId: string }>();
 
@@ -109,17 +109,17 @@ const MsuicDetail: React.FC<{}> = () => {
   const getVocalCharaIcons: (index: number) => JSX.Element = useCallback((index: number) => {
     return (
       <Fragment>
-        {musicVocal[index].characters.map((chara) => (
+        {musicVocal[index].characters.map((chara) => chara.characterType === 'game_character' ? (
           <img
             key={chara.characterId}
             height="42"
             src={charaIcons[`CharaIcon${chara.characterId}`]}
             alt={`charachter ${chara.characterId}`}
           ></img>
-        ))}
+        ) : <span>{outCharas.length ? outCharas.find(elem => elem.id === chara.characterId)!.name : `Outside Character ${chara.characterId}`}</span>)}
       </Fragment>
     );
-  }, [musicVocal])
+  }, [musicVocal, outCharas])
 
   const VocalTypeSelector: JSX.Element = useMemo(() => {
     return (
