@@ -206,3 +206,16 @@ export interface IOutCharaProfile {
   seq: number;
   name: string;
 }
+
+export interface IUserInformationInfo {
+  id: number;
+  seq: number;
+  informationType: string;
+  informationTag: string;
+  browseType: string;
+  platform: string;
+  title: string;
+  path: string;
+  startAt: number;
+  endAt: number;
+}

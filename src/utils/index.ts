@@ -1,6 +1,6 @@
 import Axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { GahcaRootObject, ICardInfo, ICharaProfile, IMusicInfo, ISkillInfo, ICardRarity, ICharacterRank, IMusicVocalInfo, IOutCharaProfile } from "../types";
+import { GahcaRootObject, ICardInfo, ICharaProfile, IMusicInfo, ISkillInfo, ICardRarity, ICharacterRank, IMusicVocalInfo, IOutCharaProfile, IUserInformationInfo } from "../types";
 
 export function useRefState<S>(
   initialValue: S
@@ -242,4 +242,28 @@ export function useSkills(): [ISkillInfo[], React.MutableRefObject<ISkillInfo[]>
   }, [fetchSkills, setSkills]);
 
   return [skills, skillsRef];
+}
+
+let userInformationList: IUserInformationInfo[] = [];
+
+export function useUserInformations(): [IUserInformationInfo[], React.MutableRefObject<IUserInformationInfo[]>] {
+  const [userInformations, userInformationsRef, setUserInformations] = useRefState<IUserInformationInfo[]>([]);
+
+  const fetchUserInformations = useCallback(async () => {
+    const { data: userInformations }: { data: IUserInformationInfo[] } = await Axios.get(
+      "https://raw.githubusercontent.com/Sekai-World/sekai-master-db-diff/master/userInformations.json"
+    );
+    return userInformations;
+  }, []);
+
+  useEffect(() => {
+    if (userInformationList.length) setUserInformations(userInformationList);
+    else
+      fetchUserInformations().then((fuserInformations) => {
+        setUserInformations(fuserInformations.sort((a, b) => a.id - b.id));
+        userInformationList = fuserInformations;
+      });
+  }, [fetchUserInformations, setUserInformations]);
+
+  return [userInformations, userInformationsRef];
 }
