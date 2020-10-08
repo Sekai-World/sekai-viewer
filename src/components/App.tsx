@@ -236,7 +236,7 @@ function App() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap classes={{ root: classes.title }}>
-            Sekai Viewer
+            Sekai Viewer <Typography component="span" variant="body2">Open Beta</Typography>
           </Typography>
           <IconButton color="inherit" onClick={() => goBack()} disableRipple>
             <ArrowBackIosIcon />
