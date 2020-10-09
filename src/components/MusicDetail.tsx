@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
     padding: 0,
   },
   "grid-out": {
-    padding: theme.spacing("1%", "2%"),
+    padding: theme.spacing("1%", "0"),
   },
 }));
 
@@ -216,7 +216,7 @@ const MsuicDetail: React.FC<{}> = () => {
     musicVocals.length &&
     musicDiffis.length &&
     releaseConds.length &&
-    musicDanceMember ? (
+    danceMemebers.length ? (
     <Fragment>
       <Alert severity="warning">
         The first <b>nine seconds</b> of every music have no sound. That's NOT a
@@ -407,21 +407,23 @@ const MsuicDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Dance Memebrs
+            {musicDanceMember ? "Dance Members" : "Dancer Count"}
           </Typography>
           <Grid item>
-            {Array.from({ length: music.dancerCount }).map((_, idx) =>
-              getCharaIcon(
-                musicDanceMember[
-                  `characterId${idx + 1}` as
-                    | "characterId1"
-                    | "characterId2"
-                    | "characterId3"
-                    | "characterId4"
-                    | "characterId5"
-                ]!
-              )
-            )}
+            {musicDanceMember
+              ? Array.from({ length: music.dancerCount }).map((_, idx) =>
+                  getCharaIcon(
+                    musicDanceMember[
+                      `characterId${idx + 1}` as
+                        | "characterId1"
+                        | "characterId2"
+                        | "characterId3"
+                        | "characterId4"
+                        | "characterId5"
+                    ]!
+                  )
+                )
+              : music.dancerCount}
           </Grid>
         </Grid>
         <Divider style={{ margin: "1% 0" }} />
@@ -440,11 +442,13 @@ const MsuicDetail: React.FC<{}> = () => {
           </Typography>
         </Grid>
         <Divider style={{ margin: "1% 0" }} />
-        <Box>
-          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Vocal Info
-          </Typography>
-          <TabContext value={vocalInfoTabVal}>
+      </Grid>
+      <Box>
+        <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+          Vocals
+        </Typography>
+        <TabContext value={vocalInfoTabVal}>
+          <Paper>
             <Tabs
               value={vocalInfoTabVal}
               onChange={(e, v) => {
@@ -464,7 +468,13 @@ const MsuicDetail: React.FC<{}> = () => {
             {musicVocal.map((elem, idx) => (
               <TabPanel value={String(idx)} key={`vocal-info-tab-panel-${idx}`}>
                 <Grid container direction="column">
-                  <Grid item container direction="row" justify="space-between" alignItems="center">
+                  <Grid
+                    item
+                    container
+                    direction="row"
+                    justify="space-between"
+                    alignItems="center"
+                  >
                     <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                       Characters
                     </Typography>
@@ -494,14 +504,16 @@ const MsuicDetail: React.FC<{}> = () => {
                 </Grid>
               </TabPanel>
             ))}
-          </TabContext>
-        </Box>
-        <Divider style={{ margin: "1% 0" }} />
-        <Box>
-          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Difficulty Info
-          </Typography>
-          <TabContext value={diffiInfoTabVal}>
+          </Paper>
+        </TabContext>
+      </Box>
+      <Divider style={{ margin: "1% 0" }} />
+      <Box>
+        <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+          Difficulties
+        </Typography>
+        <TabContext value={diffiInfoTabVal}>
+          <Paper>
             <Tabs
               value={diffiInfoTabVal}
               onChange={(e, v) => {
@@ -578,14 +590,14 @@ const MsuicDetail: React.FC<{}> = () => {
                         }
                       </Typography>
                     </Grid>
-                    <Divider style={{ margin: "1% 0" }} />
+                    {/* <Divider style={{ margin: "1% 0" }} /> */}
                   </Grid>
                 </TabPanel>
               ))}
-          </TabContext>
-          <Divider style={{ margin: "1% 0" }} />
-        </Box>
-      </Grid>
+          </Paper>
+        </TabContext>
+        <Divider style={{ margin: "1% 0" }} />
+      </Box>
 
       <Viewer
         visible={visible}
