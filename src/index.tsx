@@ -1,15 +1,36 @@
-import React from "react";
+import React, { Suspense } from "react";
 import ReactDOM from "react-dom";
-// import './index.css';
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import fetchBackend from "i18next-fetch-backend";
+import detector from "i18next-browser-languagedetector";
+
 import App from "./components/App";
 import * as serviceWorker from "./serviceWorker";
-import { HashRouter as Router} from "react-router-dom";
-import './modernizr-custom'
+import { HashRouter as Router } from "react-router-dom";
+import "./modernizr-custom";
+
+i18n
+  .use(initReactI18next)
+  .use(fetchBackend)
+  .use(detector)
+  .init({
+    supportedLngs: ["en", "zh-CN", "zh-TW", "jp", "ko", "es", "de"],
+    ns: ["common", "home"],
+    fallbackLng: "en",
+    fallbackNS: "common",
+    backend: {
+      loadPath: process.env.PUBLIC_URL + "/locales/{{lng}}/{{ns}}.json",
+    },
+    returnEmptyString: false,
+  });
 
 ReactDOM.render(
   <React.StrictMode>
     <Router>
-      <App />
+      <Suspense fallback="loading">
+        <App />
+      </Suspense>
     </Router>
   </React.StrictMode>,
   document.getElementById("root")

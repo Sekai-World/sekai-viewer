@@ -1,0 +1,19 @@
+{
+  "game-news": {
+    "action": "Action",
+    "show-from": "Show From",
+    "title-column": "Title",
+    "show-until": "Show Until",
+    "title": "Game News"
+  },
+  "alert0": "Sekai Viewer is now in Open Beta!",
+  "alert1": {
+    "title": "Help needed!",
+    "translation": "Translations",
+    "development": "Development",
+    "contact": "Contact Me"
+  },
+  "detect": {
+    "success": "Congratulations! Your browser seems modern, you are able to load images faster and save bandwidth."
+  }
+}

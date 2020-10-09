@@ -42,3 +42,18 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+## Internationalization (i18n)
+
+Use `i18next-parser` to extract `i18next` json file from code automatically with configuration file `i18next-parser.config.js`.
+
+Install it globally and run:
+
+```sh
+npm install --save-dev i18next-parser
+i18next 'src/components/**/*.tsx' -c .\i18next-parser.config.js
+```
+
+Generated json files are located in `public/locales/{lang}/{namespace}.json`.
+
+Learn more about [i18next](https://www.i18next.com/) and [react-i18next](https://react.i18next.com/).

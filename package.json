@@ -20,6 +20,8 @@
     "@types/react-router-dom": "^5.1.5",
     "axios": "^0.20.0",
     "i18next": "^19.8.2",
+    "i18next-browser-languagedetector": "^6.0.1",
+    "i18next-fetch-backend": "^3.0.0",
     "material-ui-audio-player": "^1.3.6",
     "mdi-material-ui": "^6.19.0",
     "react": "^16.13.1",

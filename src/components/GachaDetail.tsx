@@ -40,7 +40,8 @@ const gachaImageNameMap: {
     bg: "bg_gacha_virtualsinger_2020",
   },
   4: {
-    bg: "bg_gacha4"
+    bg: "bg_gacha4",
+    feature: "img_gacha4"
   }
 };
 

@@ -1,0 +1,19 @@
+{
+  "game-news": {
+    "action": "動作",
+    "show-from": "開始日期",
+    "title-column": "標題",
+    "show-until": "結束日期",
+    "title": "遊戲通知"
+  },
+  "alert0": "Sekai Viewer 現在公開測試中！",
+  "alert1": {
+    "title": "需要妳的幫助！",
+    "translation": "翻譯",
+    "development": "開發",
+    "contact": "聯系我"
+  },
+  "detect": {
+    "success": "恭喜！妳的瀏覽器看起來很現代，您可以更快地加載圖像並節省帶寬。"
+  }
+}

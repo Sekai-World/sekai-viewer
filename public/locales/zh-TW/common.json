@@ -1,0 +1,27 @@
+{
+  "home": "主頁",
+  "card": "卡牌",
+  "music": "音樂",
+  "gacha": "招募",
+  "event": "活動",
+  "unit": "組合",
+  "member": "成員",
+  "toolbar": {
+    "title": "功能列表"
+  },
+  "settings": {
+    "title": "設置"
+  },
+  "language": "語言",
+  "darkmode": "顯示主題",
+  "detect": {
+    "checking": "檢查中",
+    "unsupported": "不支持",
+    "supported": "支持"
+  },
+  "support": "支持",
+  "information": "信息",
+  "campaign": "紀念活動",
+  "bug": "問題",
+  "update": "更新"
+}

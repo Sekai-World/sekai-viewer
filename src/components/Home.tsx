@@ -11,20 +11,13 @@ import {
   useMediaQuery,
   useTheme,
 } from "@material-ui/core";
-import {
-  ColDef,
-  DataGrid,
-  ValueFormatterParams,
-} from "@material-ui/data-grid";
-import {
-  GitHub,
-  OpenInNew,
-  Translate,
-  Twitter,
-} from "@material-ui/icons";
+import { ColDef, DataGrid, ValueFormatterParams } from "@material-ui/data-grid";
+import { GitHub, OpenInNew, Translate, Twitter } from "@material-ui/icons";
 import { Alert, AlertTitle } from "@material-ui/lab";
+import { TFunction } from "i18next";
 import { Discord } from "mdi-material-ui";
 import React, { Fragment, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { IUserInformationInfo } from "../types";
 import { useCachedData } from "../utils";
 
@@ -57,14 +50,14 @@ function getWebpDetectServerity(detected: IDetectResult) {
   }
 }
 
-function getWebpDetectDesc(result: number) {
+function getWebpDetectDesc(t: TFunction, result: number) {
   switch (result) {
     case -1:
-      return "Checking...";
+      return t('common:detect.checking');
     case 0:
-      return "Unsupported";
+      return t('common:detect.unsupported');
     case 1:
-      return "Supported";
+      return t('common:detect.supported');
     default:
       return "";
   }
@@ -113,8 +106,11 @@ function InfoInternal(props: { onClick: () => void }) {
 function Home() {
   const theme = useTheme();
   const classes = useStyles();
+  const { t } = useTranslation();
 
-  const [informations] = useCachedData<IUserInformationInfo>('userInformations');
+  const [informations] = useCachedData<IUserInformationInfo>(
+    "userInformations"
+  );
 
   const [gameNewsTag, setGameNewsTag] = useState<string>("information");
   const [open, setOpen] = useState<boolean>(false);
@@ -138,14 +134,12 @@ function Home() {
     });
   }, []);
 
-  const isUpMd = useMediaQuery(theme.breakpoints.up('md'))
+  const isUpMd = useMediaQuery(theme.breakpoints.up("md"));
 
   const columns: ColDef[] = [
-    { field: "id", headerName: "ID", width: 60 },
-    { field: "title", headerName: "Title", width: isUpMd ? 400 : 100, sortable: false },
     {
       field: "action",
-      headerName: "Action",
+      headerName: t('home:game-news.action'),
       width: 80,
       renderCell: (params: ValueFormatterParams) => {
         const info = params.data as IUserInformationInfo;
@@ -162,19 +156,27 @@ function Home() {
               <OpenInNew></OpenInNew>
             </IconButton>
           </Link>
-        )
-      }, sortable: false
+        );
+      },
+      sortable: false,
     },
+    // { field: "id", headerName: "ID", width: 60 },
     {
       field: "startAt",
-      headerName: "Show From",
+      headerName: t('home:game-news.show-from'),
       width: 180,
       valueFormatter: (params: ValueFormatterParams) =>
-        new Date(params.getValue("startAt") as number).toLocaleString()
+        new Date(params.getValue("startAt") as number).toLocaleString(),
+    },
+    {
+      field: "title",
+      headerName: t('home:game-news.title-column'),
+      width: isUpMd ? 400 : 150,
+      sortable: false,
     },
     {
       field: "endAt",
-      headerName: "Show Until",
+      headerName: t('home:game-news.show-until'),
       width: 180,
       valueFormatter: (params: ValueFormatterParams) =>
         new Date(params.getValue("startAt") as number).toLocaleString(),
@@ -185,29 +187,30 @@ function Home() {
     <Fragment>
       {/* <Typography variant="h4">Welcome to Sekai Viewer Open Beta!</Typography> */}
       <Alert className={classes.alert} severity="info">
-        Sekai Viewer is now in Open Beta!
+        {t("home:alert0")}
       </Alert>
       <Alert className={classes.alert} severity="warning">
-        <AlertTitle>Help needed! 需要你的协助！</AlertTitle>
+        <AlertTitle>{t("home:alert1.title")}</AlertTitle>
         <Link
           href="https://www.transifex.com/dnaroma/sekai-viewer"
           target="_blank"
         >
           <Translate fontSize="inherit"></Translate>
-          Translations 翻译
+          {t("home:alert1.translation")}
         </Link>
-        （English，简中，繁中，日本語，Deutsch, Español, others upon request）
+        （English，简中，繁中，日本語，한국어，Deutsch, Español, others upon
+        request）
         <br></br>
         <Link
           href="https://github.com/Sekai-World/sekai-viewer"
           target="_blank"
         >
           <GitHub fontSize="inherit"></GitHub>
-          Development 开发
+          {t('home:alert1.development')}
         </Link>
         （Sekai-World/sekai-viewer）
         <br></br>
-        Contant Me:
+        {t('home:alert1.contact')}:
         <Link
           href="https://www.twitter.com/miku_zura"
           target="_blank"
@@ -225,16 +228,15 @@ function Home() {
         className={classes.alert}
         severity={getWebpDetectServerity(detected)}
       >
-        <AlertTitle>WebP Support</AlertTitle>
+        <AlertTitle>WebP {t('common:support')}</AlertTitle>
         <ul>
-          <li>WebP: {getWebpDetectDesc(detected.webp)}</li>
-          <li>WebP Lossless: {getWebpDetectDesc(detected.webpLossless)}</li>
-          <li>WebP Alpha: {getWebpDetectDesc(detected.webpAlpha)}</li>
+          <li>WebP: {getWebpDetectDesc(t, detected.webp)}</li>
+          <li>WebP Lossless: {getWebpDetectDesc(t, detected.webpLossless)}</li>
+          <li>WebP Alpha: {getWebpDetectDesc(t, detected.webpAlpha)}</li>
         </ul>
         {getWebpDetectServerity(detected) === "success" ? (
           <Typography>
-            Congratulations! Your browser seems modern, you are able to load
-            images faster and save bandwidth.
+            {t('home:detect.success')}
           </Typography>
         ) : (
           <Typography>
@@ -249,7 +251,7 @@ function Home() {
       </Alert>
       <Paper>
         <Typography variant="h6" align="center">
-          Game News
+          {t('home:game-news.title')}
         </Typography>
         <Tabs
           value={gameNewsTag}
@@ -257,13 +259,13 @@ function Home() {
           variant="scrollable"
           scrollButtons="desktop"
         >
-          <Tab label="information" value="information"></Tab>
-          <Tab label="event" value="event"></Tab>
-          <Tab label="gacha" value="gacha"></Tab>
-          <Tab label="music" value="music"></Tab>
-          <Tab label="campaign" value="campaign"></Tab>
-          <Tab label="bug" value="bug"></Tab>
-          <Tab label="update" value="update"></Tab>
+          <Tab label={t('common:information')} value="information"></Tab>
+          <Tab label={t('common:event')} value="event"></Tab>
+          <Tab label={t('common:gacha')} value="gacha"></Tab>
+          <Tab label={t('common:music')} value="music"></Tab>
+          <Tab label={t('common:campaign')} value="campaign"></Tab>
+          <Tab label={t('common:bug')} value="bug"></Tab>
+          <Tab label={t('common:update')} value="update"></Tab>
         </Tabs>
         <div style={{ height: 650 }}>
           <DataGrid

@@ -193,7 +193,7 @@ const CardList: React.FC<any> = (props) => {
             </Grid>
             <Grid item xs={6} md={7}>
               <Typography variant="body1">{data.prefix}</Typography>
-              <Typography variant="body2">
+              <Typography variant="body2" color="textSecondary">
                 {getCharaName(charas, data.characterId)}
               </Typography>
             </Grid>
@@ -232,7 +232,7 @@ const CardList: React.FC<any> = (props) => {
               >
                 {data.prefix}
               </Typography>
-              <Typography variant="body2" align="center">
+              <Typography variant="body2" align="center" color="textSecondary">
                 {getCharaName(charas, data.characterId)}
               </Typography>
             </Grid>

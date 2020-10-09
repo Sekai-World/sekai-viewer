@@ -1,0 +1,27 @@
+{
+  "home": "Home",
+  "card": "Card",
+  "music": "Music",
+  "gacha": "Gacha",
+  "event": "Event",
+  "unit": "Unit",
+  "member": "Member",
+  "toolbar": {
+    "title": "Function List"
+  },
+  "settings": {
+    "title": "Settings"
+  },
+  "language": "Language",
+  "darkmode": "Brightness Mode",
+  "detect": {
+    "checking": "Checking...",
+    "unsupported": "Unsupported",
+    "supported": "Supported"
+  },
+  "support": "Support",
+  "information": "Information",
+  "campaign": "Campaign",
+  "bug": "Bug",
+  "update": "Update"
+}

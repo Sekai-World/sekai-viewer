@@ -1,0 +1,19 @@
+{
+  "game-news": {
+    "action": "动作",
+    "show-from": "开始日期",
+    "title-column": "标题",
+    "show-until": "结束日期",
+    "title": "游戏通知"
+  },
+  "alert0": "Sekai Viewer 现在公开测试中！",
+  "alert1": {
+    "title": "需要你的帮助！",
+    "translation": "翻译",
+    "development": "开发",
+    "contact": "联系我"
+  },
+  "detect": {
+    "success": "恭喜！你的浏览器看起来很现代，您可以更快地加载图像并节省带宽。"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "home": "",
+  "card": "",
+  "music": "",
+  "gacha": "",
+  "event": "",
+  "unit": "",
+  "member": "",
+  "toolbar": {
+    "title": ""
+  },
+  "settings": {
+    "title": ""
+  },
+  "language": "",
+  "darkmode": "",
+  "detect": {
+    "checking": "",
+    "unsupported": "",
+    "supported": ""
+  },
+  "support": "",
+  "information": "",
+  "campaign": "",
+  "bug": "",
+  "update": ""
+}

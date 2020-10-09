@@ -1,0 +1,19 @@
+{
+  "game-news": {
+    "action": "",
+    "show-from": "",
+    "title-column": "",
+    "show-until": "",
+    "title": ""
+  },
+  "alert0": "",
+  "alert1": {
+    "title": "",
+    "translation": "",
+    "development": "",
+    "contact": ""
+  },
+  "detect": {
+    "success": ""
+  }
+}
