@@ -183,11 +183,11 @@ const CardList: React.FC<any> = (props) => {
               justify="center"
             >
               <Grid item xs={12} md={6}>
-                <CardThumb card={data} />
+                <CardThumb id={data.id} />
               </Grid>
               {data.rarity >= 3 ? (
                 <Grid item xs={12} md={6}>
-                  <CardThumb card={data} trained />
+                  <CardThumb id={data.id} trained />
                 </Grid>
               ) : null}
             </Grid>
@@ -216,11 +216,11 @@ const CardList: React.FC<any> = (props) => {
           >
             <Grid item container direction="row" spacing={1} justify="center">
               <Grid item xs={4}>
-                <CardThumb card={data} />
+                <CardThumb id={data.id} />
               </Grid>
               {data.rarity >= 3 ? (
                 <Grid item xs={4}>
-                  <CardThumb card={data} trained />
+                  <CardThumb id={data.id} trained />
                 </Grid>
               ) : null}
             </Grid>

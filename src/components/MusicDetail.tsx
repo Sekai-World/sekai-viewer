@@ -619,7 +619,7 @@ const MsuicDetail: React.FC<{}> = () => {
       />
     </Fragment>
   ) : (
-    <div>Music {musicId} not found.</div>
+    <div>Loading... If you saw this for a while, music {musicId} does not exist.</div>
   );
 };
 

@@ -5,6 +5,7 @@ import {
   CardContent,
   CardMedia,
   Divider,
+  Grid,
   makeStyles,
   Paper,
   Tab,
@@ -19,7 +20,7 @@ import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
 import { GachaDetail, GachaStatistic, ICardInfo, IGachaInfo } from "../types";
 import { useCachedData, useRefState } from "../utils";
-import { CardThumbs } from "./subs/CardThumb";
+import { CardThumb, CardThumbs } from "./subs/CardThumb";
 import rarityNormal from "../assets/rarity_star_normal.png";
 
 const gachaImageNameMap: {
@@ -38,6 +39,9 @@ const gachaImageNameMap: {
   3: {
     bg: "bg_gacha_virtualsinger_2020",
   },
+  4: {
+    bg: "bg_gacha4"
+  }
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -481,6 +485,34 @@ const GachaDetailPage: React.FC<{}> = () => {
             <Typography>{new Date(gacha.endAt).toLocaleString()}</Typography>
           </Box>
           <Divider />
+          <Box
+            display="flex"
+            flexDirection="row"
+            flexWrap="no-wrap"
+            justifyContent="space-between"
+            alignItems="center"
+            paddingY="1%"
+          >
+            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+              Type
+            </Typography>
+            <Typography>{gacha.gachaType}</Typography>
+          </Box>
+          <Divider />
+          <Grid container
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+            style={{padding: '1% 0'}}
+          >
+            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+              Pickup Members
+            </Typography>
+            <Grid item container direction="row" xs={6} spacing={1}>
+              { gacha.gachaPickups.map(elem => <Grid key={`pickup-${elem.id}`} item xs={12} md={4}><CardThumb id={elem.cardId} /></Grid>) }
+            </Grid>
+          </Grid>
+          <Divider />
         </Box>
         {/* </Container> */}
         <Viewer
@@ -498,7 +530,7 @@ const GachaDetailPage: React.FC<{}> = () => {
       </Fragment>
     );
   } else {
-    return <div>Loading...</div>;
+    return <div>Loading... If you saw this for a while, gacha {gachaId} does not exist.</div>;
   }
 };
 

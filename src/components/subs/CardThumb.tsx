@@ -1,5 +1,5 @@
 import { Box, Grid, makeStyles } from "@material-ui/core";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ICardInfo } from "../../types";
 import { useCachedData } from "../../utils";
 
@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
     width: "15%",
     height: "15%",
     left: "50%",
-  }
+  },
 }));
 
 const cardFrameRarity: { [key: string]: string } = {
@@ -67,15 +67,26 @@ const attrIconMap: { [key: string]: string } = {
   pure: IconAttrPure,
 };
 
-export const CardThumb: React.FC<{ card: ICardInfo, trained?: boolean }> = ({ card, trained }) => {
+export const CardThumb: React.FC<{ id: number; trained?: boolean }> = ({
+  id,
+  trained,
+}) => {
   const classes = useStyles();
-  trained = trained || false
+  const [cards] = useCachedData<ICardInfo>("cards");
+  trained = trained || false;
   const rarityIcon = trained ? rarityAfterTraining : rarityNormal;
+  const [card, setCard] = useState<ICardInfo>();
 
-  return (
+  useEffect(() => {
+    if (cards.length) setCard(cards.find((elem) => elem.id === id));
+  }, [cards, id]);
+
+  return card ? (
     <Box position="relative">
       <img
-        src={`https://sekai-res.dnaroma.eu/file/sekai-assets/thumbnail/chara_rip/${card.assetbundleName}_${trained ? 'after_training' : 'normal'}.webp`}
+        src={`https://sekai-res.dnaroma.eu/file/sekai-assets/thumbnail/chara_rip/${
+          card.assetbundleName
+        }_${trained ? "after_training" : "normal"}.webp`}
         alt={card.prefix}
         className={classes.img}
         style={{ paddingTop: "2%", paddingLeft: "2%" }}
@@ -92,21 +103,28 @@ export const CardThumb: React.FC<{ card: ICardInfo, trained?: boolean }> = ({ ca
         alt="card attr"
         style={{ position: "absolute", zIndex: 999, top: "0px", left: "0px" }}
       />
-      { Array.from({ length: card.rarity }).map((v, idx) => (
+      {Array.from({ length: card.rarity }).map((v, idx) => (
         <img
           key={`card-rarity-${idx}`}
-          className={classes[`rarity-${idx}` as 'rarity-0'|'rarity-1'|'rarity-2'|'rarity-3']}
+          className={
+            classes[
+              `rarity-${idx}` as
+                | "rarity-0"
+                | "rarity-1"
+                | "rarity-2"
+                | "rarity-3"
+            ]
+          }
           src={rarityIcon}
           alt={`card rarity ${idx}`}
           style={{ position: "absolute", zIndex: 999, bottom: "7%" }}
         />
       ))}
     </Box>
-  );
+  ) : null;
 };
 
 export const CardThumbs: React.FC<{ cardIds: number[] }> = ({ cardIds }) => {
-  const [cards] = useCachedData<ICardInfo>('cards');
   return (
     <Grid
       container
@@ -115,17 +133,11 @@ export const CardThumbs: React.FC<{ cardIds: number[] }> = ({ cardIds }) => {
       justify="center"
       alignItems="center"
     >
-      {cardIds.map((cardId, id) => {
-        const card = cards.find((card) => card.id === cardId);
-        if (card) {
-          return (
-            <Grid key={id} item xs={4} md={2}>
-              <CardThumb card={card} />
-            </Grid>
-          );
-        }
-        return <Grid key={id} item xs={4} md={2}></Grid>;
-      })}
+      {cardIds.map((cardId, id) => (
+        <Grid key={id} item xs={4} md={2}>
+          <CardThumb id={cardId} />
+        </Grid>
+      ))}
     </Grid>
   );
 };

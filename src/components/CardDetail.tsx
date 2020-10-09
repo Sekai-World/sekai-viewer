@@ -446,11 +446,11 @@ const CardDetail: React.FC<{}> = () => {
           <Grid item xs={4}>
             <Grid container direction="row" justify="flex-end" spacing={2}>
               <Grid item xs={12} md={6}>
-                <CardThumb card={card} />
+                <CardThumb id={Number(cardId)} />
               </Grid>
               {card.rarity >= 3 ? (
                 <Grid item xs={12} md={6}>
-                  <CardThumb card={card} trained />
+                  <CardThumb id={Number(cardId)} trained />
                 </Grid>
               ) : null}
             </Grid>
