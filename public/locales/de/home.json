@@ -1,19 +1,19 @@
 {
   "game-news": {
-    "action": "",
-    "show-from": "",
-    "title-column": "",
-    "show-until": "",
-    "title": ""
+    "action": "Aktion",
+    "show-from": "Erscheinung seit",
+    "title-column": "Überschrift",
+    "show-until": "Erscheinung bis",
+    "title": "Neuigkeiten"
   },
-  "alert0": "",
+  "alert0": "Sekai Viewer ist jetzt in Open Beta!",
   "alert1": {
-    "title": "",
-    "translation": "",
-    "development": "",
-    "contact": ""
+    "title": "Hilfskraft benötigt!",
+    "translation": "Übersetztungen",
+    "development": "Entwicklung",
+    "contact": "Kontakt"
   },
   "detect": {
-    "success": ""
+    "success": "Dein Browser sieht modern aus. Du hast Glück, die Bilder schneller zu laden und dabei Bandbreite zu sparen."
   }
 }

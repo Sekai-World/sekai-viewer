@@ -1,27 +1,27 @@
 {
-  "home": "",
-  "card": "",
-  "music": "",
-  "gacha": "",
-  "event": "",
-  "unit": "",
-  "member": "",
+  "home": "Home",
+  "card": "Karten",
+  "music": "Lieder",
+  "gacha": "Gacha",
+  "event": "Event",
+  "unit": "Gruppen",
+  "member": "Mitglider",
   "toolbar": {
-    "title": ""
+    "title": "Funktionen"
   },
   "settings": {
-    "title": ""
+    "title": "Einstellungen"
   },
-  "language": "",
-  "darkmode": "",
+  "language": "Sprache",
+  "darkmode": "Helligkeit",
   "detect": {
-    "checking": "",
-    "unsupported": "",
-    "supported": ""
+    "checking": "Wird geprüft...",
+    "unsupported": "Nicht unterstützt",
+    "supported": "Unterstützt"
   },
-  "support": "",
-  "information": "",
-  "campaign": "",
-  "bug": "",
-  "update": ""
+  "support": "Unterstützung",
+  "information": "Information",
+  "campaign": "Kampagne",
+  "bug": "Fehler",
+  "update": "Update"
 }
