@@ -394,7 +394,7 @@ function App() {
                   label="繁"
                 ></FormControlLabel>
                 <FormControlLabel
-                  value="jp"
+                  value="ja"
                   control={<Radio />}
                   label="日"
                 ></FormControlLabel>

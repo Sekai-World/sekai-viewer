@@ -1,0 +1,19 @@
+{
+  "alert[0]": "The first <b>nine seconds</b> of every music have no sound. That's NOT a bug.",
+  "tag": "Tag",
+  "tag_plural": "Tags",
+  "category": "Category",
+  "category_plural": "Categories",
+  "arranger": "Arranger",
+  "composer": "Composer",
+  "lyricist": "Lyricist",
+  "danceMember": "Dance Member",
+  "danceMember_plural": "Dance Members",
+  "dancerCount": "Dancer Count",
+  "vocal": "Vocal",
+  "vocal_plural": "Vocals",
+  "vocalType": "Vocal Type",
+  "difficulty": "Difficulty",
+  "difficulty_plural": "Difficulties",
+  "noteCount": "Note Count"
+}

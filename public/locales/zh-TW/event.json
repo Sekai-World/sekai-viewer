@@ -3,5 +3,17 @@
     "title[0]": "",
     "title[1]": "",
     "title[2]": ""
+  },
+  "boostAttribute": "加成屬性",
+  "boostCharacters": "加成角色",
+  "maxBoost": "加成（兩者皆滿足）",
+  "aggregateAt": "點數合計時間",
+  "rankingAnnounceAt": "排名宣布時間",
+  "distributionStartAt": "獎勵發放開始",
+  "distributionEndAt": "獎勵發放結束",
+  "realtime": "",
+  "nextfetch": "",
+  "type": {
+    "marathon": "累積點數"
   }
 }

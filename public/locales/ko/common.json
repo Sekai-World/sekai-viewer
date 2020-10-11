@@ -14,6 +14,17 @@
   },
   "language": "",
   "darkmode": "",
+  "id": "",
+  "title": "",
+  "character": "",
+  "attribute": "",
+  "startAt": "",
+  "rarity": "",
+  "thumb": "",
+  "skill": "",
+  "type": "",
+  "endAt": "",
+  "icon": "",
   "detect": {
     "checking": "",
     "unsupported": "",
@@ -23,5 +34,7 @@
   "information": "",
   "campaign": "",
   "bug": "",
-  "update": ""
+  "update": "",
+  "releaseCondition": "",
+  "level": ""
 }

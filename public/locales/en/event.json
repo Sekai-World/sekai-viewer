@@ -4,6 +4,15 @@
     "title[1]": "Background",
     "title[2]": "Character"
   },
+  "boostAttribute": "Boost Attribute",
+  "boostCharacters": "Boost Charaters",
+  "maxBoost": "Max Boost (Both Matched)",
+  "aggregateAt": "Aggregate Timepoint",
+  "rankingAnnounceAt": "Ranking Announcement At",
+  "distributionStartAt": "Rewards Distribution From",
+  "distributionEndAt": "Rewards Distribution Until",
+  "realtime": "Real time ranking at",
+  "nextfetch": "Next fetch",
   "type": {
     "marathon": "Marathon"
   }

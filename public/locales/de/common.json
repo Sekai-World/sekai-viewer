@@ -14,6 +14,17 @@
   },
   "language": "Sprache",
   "darkmode": "Helligkeit",
+  "id": "",
+  "title": "",
+  "character": "",
+  "attribute": "",
+  "startAt": "",
+  "rarity": "",
+  "thumb": "",
+  "skill": "",
+  "type": "",
+  "endAt": "",
+  "icon": "",
   "detect": {
     "checking": "Wird geprüft...",
     "unsupported": "Nicht unterstützt",
@@ -23,5 +34,8 @@
   "information": "Information",
   "campaign": "Kampagne",
   "bug": "Fehler",
-  "update": "Update"
+  "update": "Update",
+  "character_plural": "",
+  "releaseCondition": "",
+  "level": ""
 }

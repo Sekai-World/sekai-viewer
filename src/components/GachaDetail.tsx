@@ -22,6 +22,7 @@ import { GachaDetail, GachaStatistic, ICardInfo, IGachaInfo } from "../types";
 import { useCachedData, useRefState } from "../utils";
 import { CardThumb, CardThumbs } from "./subs/CardThumb";
 import rarityNormal from "../assets/rarity_star_normal.png";
+import { useTranslation } from "react-i18next";
 
 const gachaImageNameMap: {
   [key: number]: {
@@ -106,6 +107,7 @@ const StarIcon: React.FC<{ num: number }> = ({ num }) => (
 const GachaDetailPage: React.FC<{}> = () => {
   const classes = useStyles();
   const { gachaId } = useParams<{ gachaId: string }>();
+  const { t } = useTranslation();
 
   const [gacha, setGacha] = useState<IGachaInfo>();
   const [gachas] = useCachedData<IGachaInfo>('gachas');
@@ -250,13 +252,13 @@ const GachaDetailPage: React.FC<{}> = () => {
               variant="scrollable"
               scrollButtons="desktop"
             >
-              <Tab label="Description" value="2"></Tab>
-              <Tab label="Summary" value="3"></Tab>
-              <Tab label="Simulator" value="4"></Tab>
-              <Tab label="Background" value="0"></Tab>
+              <Tab label={t('gacha:tab.title[0]')} value="2"></Tab>
+              <Tab label={t('gacha:tab.title[1]')} value="3"></Tab>
+              <Tab label={t('gacha:tab.title[2]')} value="4"></Tab>
+              <Tab label={t('gacha:tab.title[3]')} value="0"></Tab>
               {gacha ? (
                 gachaImageNameMap[gacha.id].feature ? (
-                  <Tab label="Feature image" value="1"></Tab>
+                  <Tab label={t('gacha:tab.title[4]')} value="1"></Tab>
                 ) : null
               ) : null}
             </Tabs>
@@ -421,7 +423,7 @@ const GachaDetailPage: React.FC<{}> = () => {
             paddingY="1%"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              ID
+              {t('common:id')}
             </Typography>
             <Typography>{gacha.id}</Typography>
           </Box>
@@ -435,7 +437,7 @@ const GachaDetailPage: React.FC<{}> = () => {
             paddingY="1%"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              Title
+              {t('common:title')}
             </Typography>
             <Typography>{gacha.name}</Typography>
           </Box>
@@ -449,7 +451,7 @@ const GachaDetailPage: React.FC<{}> = () => {
             paddingY="1%"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              Icon
+              {t('common:icon')}
             </Typography>
             <img
               style={{ maxWidth: "50%" }}
@@ -467,7 +469,7 @@ const GachaDetailPage: React.FC<{}> = () => {
             paddingY="1%"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              Start At
+            {t('common:startAt')}
             </Typography>
             <Typography>{new Date(gacha.startAt).toLocaleString()}</Typography>
           </Box>
@@ -481,7 +483,7 @@ const GachaDetailPage: React.FC<{}> = () => {
             paddingY="1%"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              End At
+            {t('common:endAt')}
             </Typography>
             <Typography>{new Date(gacha.endAt).toLocaleString()}</Typography>
           </Box>
@@ -495,7 +497,7 @@ const GachaDetailPage: React.FC<{}> = () => {
             paddingY="1%"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              Type
+            {t('common:type')}
             </Typography>
             <Typography>{gacha.gachaType}</Typography>
           </Box>
@@ -507,7 +509,7 @@ const GachaDetailPage: React.FC<{}> = () => {
             style={{padding: '1% 0'}}
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              Pickup Members
+              {t('gacha:pickupMember', { count: gacha.gachaPickups.length })}
             </Typography>
             <Grid item container direction="row" xs={6} spacing={1}>
               { gacha.gachaPickups.map(elem => <Grid key={`pickup-${elem.id}`} item xs={12} md={4}><CardThumb id={elem.cardId} /></Grid>) }

@@ -1,0 +1,11 @@
+{
+  "tab": {
+    "title[0]": "Description",
+    "title[1]": "Summary",
+    "title[2]": "Simulator",
+    "title[3]": "Background",
+    "title[4]": "Feature Image"
+  },
+  "pickupMember": "Pickup Member",
+  "pickupMember_plural": "Pickup Members"
+}

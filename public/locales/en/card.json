@@ -1,0 +1,9 @@
+{
+  "tab": {
+    "title[0]": "Normal image",
+    "title[1]": "Normal trim image",
+    "title[2]": "After training image",
+    "title[3]": "After training trim image"
+  },
+  "power": "Power"
+}

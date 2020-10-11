@@ -36,6 +36,7 @@ import { musicCategoryToName, musicTagToName, useCachedData } from "../utils";
 import { Alert, TabContext, TabPanel } from "@material-ui/lab";
 import MusicVideoPlayer from "./subs/MusicVideoPlayer";
 import { charaIcons } from "../utils/resources";
+import { useTranslation } from "react-i18next";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -71,6 +72,7 @@ const useStyles = makeStyles((theme) => ({
 
 const MsuicDetail: React.FC<{}> = () => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   const [musics] = useCachedData<IMusicInfo>("musics");
   const [musicVocals] = useCachedData<IMusicVocalInfo>("musicVocals");
@@ -218,8 +220,7 @@ const MsuicDetail: React.FC<{}> = () => {
     danceMemebers.length ? (
     <Fragment>
       <Alert severity="warning">
-        The first <b>nine seconds</b> of every music have no sound. That's NOT a
-        bug.
+        {t("music:alert[0]", { escapeValue: false })}
       </Alert>
       <CardMedia
         onClick={() => {
@@ -253,7 +254,7 @@ const MsuicDetail: React.FC<{}> = () => {
               <Fragment>
                 <audio
                   controls
-                  style={{width: "100%"}}
+                  style={{ width: "100%" }}
                   src={`https://sekai-res.dnaroma.eu/file/sekai-assets/music/short/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}_short.mp3`}
                 ></audio>
               </Fragment>
@@ -264,7 +265,7 @@ const MsuicDetail: React.FC<{}> = () => {
               <Fragment>
                 <audio
                   controls
-                  style={{width: "100%"}}
+                  style={{ width: "100%" }}
                   src={`https://sekai-res.dnaroma.eu/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`}
                 ></audio>
               </Fragment>
@@ -303,7 +304,7 @@ const MsuicDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            ID
+            {t("common:id")}
           </Typography>
           <Typography>{music.id}</Typography>
         </Grid>
@@ -316,7 +317,7 @@ const MsuicDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Title
+            {t("common:title")}
           </Typography>
           <Typography>{music.title}</Typography>
         </Grid>
@@ -329,7 +330,10 @@ const MsuicDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Tags
+            {t("music:tag", {
+              count: musicTags.filter((elem) => elem.musicId === music.id)
+                .length,
+            })}
           </Typography>
           <Grid item>
             {musicTags
@@ -350,7 +354,7 @@ const MsuicDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Categories
+            {t("music:category", { count: music.categories.length })}
           </Typography>
           {music.categories.map((elem) => (
             <Typography key={`music-cat-${elem}`}>
@@ -367,7 +371,7 @@ const MsuicDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Arranger
+            {t("music:arranger")}
           </Typography>
           <Typography>{music.arranger}</Typography>
         </Grid>
@@ -380,7 +384,7 @@ const MsuicDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Composer
+            {t("music:composer")}
           </Typography>
           <Typography>{music.composer}</Typography>
         </Grid>
@@ -393,7 +397,7 @@ const MsuicDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Lyricist
+            {t("music:lyricist")}
           </Typography>
           <Typography>{music.lyricist}</Typography>
         </Grid>
@@ -406,7 +410,7 @@ const MsuicDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            {musicDanceMember ? "Dance Members" : "Dancer Count"}
+            {musicDanceMember ? t("music:danceMember", { count: music.dancerCount }) : t("music:dancerCount")}
           </Typography>
           <Grid item>
             {musicDanceMember
@@ -434,7 +438,7 @@ const MsuicDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Release Date
+            {t("common:startAt")}
           </Typography>
           <Typography>
             {new Date(music.publishedAt).toLocaleString()}
@@ -444,7 +448,7 @@ const MsuicDetail: React.FC<{}> = () => {
       </Grid>
       <Box>
         <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-          Vocals
+          {t("music:vocal", { count: musicVocal.length })}
         </Typography>
         <TabContext value={vocalInfoTabVal}>
           <Paper>
@@ -475,14 +479,14 @@ const MsuicDetail: React.FC<{}> = () => {
                     alignItems="center"
                   >
                     <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                      Characters
+                      {t("common:character", { count: elem.characters.length })}
                     </Typography>
                     <Grid item>{getVocalCharaIcons(idx)}</Grid>
                   </Grid>
                   <Divider style={{ margin: "1% 0" }} />
                   <Grid item container direction="row" justify="space-between">
                     <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                      Release Condition
+                      {t("common:releaseCondition")}
                     </Typography>
                     <Typography>
                       {
@@ -495,7 +499,7 @@ const MsuicDetail: React.FC<{}> = () => {
                   <Divider style={{ margin: "1% 0" }} />
                   <Grid item container direction="row" justify="space-between">
                     <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                      Vocal Type
+                      {t("music:vocalType")}
                     </Typography>
                     <Typography>{elem.musicVocalType}</Typography>
                   </Grid>
@@ -509,7 +513,11 @@ const MsuicDetail: React.FC<{}> = () => {
       <Divider style={{ margin: "1% 0" }} />
       <Box>
         <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-          Difficulties
+          {t("music:difficulty", {
+            count: musicDiffis.filter(
+              (elem) => elem.musicId === Number(musicId)
+            ).length,
+          })}
         </Typography>
         <TabContext value={diffiInfoTabVal}>
           <Paper>
@@ -549,7 +557,7 @@ const MsuicDetail: React.FC<{}> = () => {
                         variant="subtitle1"
                         style={{ fontWeight: 600 }}
                       >
-                        Level
+                        {t("common:level")}
                       </Typography>
                       <Grid item>{elem.playLevel}</Grid>
                     </Grid>
@@ -564,7 +572,7 @@ const MsuicDetail: React.FC<{}> = () => {
                         variant="subtitle1"
                         style={{ fontWeight: 600 }}
                       >
-                        Note Count
+                        {t("music:noteCount")}
                       </Typography>
                       <Grid item>{elem.noteCount}</Grid>
                     </Grid>
@@ -579,7 +587,7 @@ const MsuicDetail: React.FC<{}> = () => {
                         variant="subtitle1"
                         style={{ fontWeight: 600 }}
                       >
-                        Release Condition
+                        {t("common:releaseCondition")}
                       </Typography>
                       <Typography>
                         {

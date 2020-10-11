@@ -17,10 +17,14 @@ import { useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
 
-import { ICardInfo, ICardRarity, ICharacterRank, ICharaProfile, ISkillInfo } from "../types";
 import {
-  useCachedData
-} from "../utils";
+  ICardInfo,
+  ICardRarity,
+  ICharacterRank,
+  ICharaProfile,
+  ISkillInfo,
+} from "../types";
+import { useCachedData } from "../utils";
 import rarityNormal from "../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../assets/rarity_star_afterTraining.png";
 import IconPerformance from "../assets/icon_performance.png";
@@ -37,6 +41,7 @@ import LogoThemePark from "../assets/common/logol/logo_theme_park.png";
 
 import { CardThumb } from "./subs/CardThumb";
 import { attrIconMap } from "../utils/resources";
+import { useTranslation } from "react-i18next";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -98,12 +103,13 @@ function getSkillDesc(skill: ISkillInfo, skillLevel: number | number[]) {
 
 const CardDetail: React.FC<{}> = () => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
-  const [charas] = useCachedData<ICharaProfile>('gameCharacters');
-  const [cards] = useCachedData<ICardInfo>('cards');
-  const [rarities] = useCachedData<ICardRarity>('cardRarities');
-  const [charaRanks] = useCachedData<ICharacterRank>('characterRanks');
-  const [skills] = useCachedData<ISkillInfo>('skills');
+  const [charas] = useCachedData<ICharaProfile>("gameCharacters");
+  const [cards] = useCachedData<ICardInfo>("cards");
+  const [rarities] = useCachedData<ICardRarity>("cardRarities");
+  const [charaRanks] = useCachedData<ICharacterRank>("characterRanks");
+  const [skills] = useCachedData<ISkillInfo>("skills");
 
   const { cardId } = useParams<{ cardId: string }>();
 
@@ -243,13 +249,13 @@ const CardDetail: React.FC<{}> = () => {
             variant="scrollable"
             scrollButtons="desktop"
           >
-            <Tab label="Normal Image" value="0"></Tab>
-            <Tab label="Normal Trim Image" value="2"></Tab>
+            <Tab label={t("card:tab.title[0]")} value="0"></Tab>
+            <Tab label={t("card:tab.title[1]")} value="2"></Tab>
             {card.rarity >= 3 ? (
-              <Tab label="After Training Image" value="1"></Tab>
+              <Tab label={t("card:tab.title[2]")} value="1"></Tab>
             ) : null}
             {card.rarity >= 3 ? (
-              <Tab label="After Training Trim Image" value="3"></Tab>
+              <Tab label={t("card:tab.title[3]")} value="3"></Tab>
             ) : null}
           </Tabs>
           <TabPanel value="0" classes={{ root: classes.tabpanel }}>
@@ -315,7 +321,7 @@ const CardDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            ID
+            {t('common:id')}
           </Typography>
           <Typography>{card.id}</Typography>
         </Grid>
@@ -328,7 +334,7 @@ const CardDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Title
+          {t('common:title')}
           </Typography>
           <Typography>{card.prefix}</Typography>
         </Grid>
@@ -341,7 +347,7 @@ const CardDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Character
+          {t('common:character')}
           </Typography>
           <Typography>{getCharaName(card.characterId)}</Typography>
         </Grid>
@@ -354,7 +360,7 @@ const CardDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Unit
+          {t('common:unit')}
           </Typography>
           <img
             className={classes["unit-logo-img"]}
@@ -371,7 +377,7 @@ const CardDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Attribute
+          {t('common:attribute')}
           </Typography>
           <img
             src={attrIconMap[card.attr]}
@@ -388,7 +394,7 @@ const CardDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Available From
+          {t('common:startAt')}
           </Typography>
           <Typography>{new Date(card.releaseAt).toLocaleString()}</Typography>
         </Grid>
@@ -401,7 +407,7 @@ const CardDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Rarity
+          {t('common:rarity')}
           </Typography>
           <Typography>
             {Array.from({ length: card.rarity }).map((_, id) => (
@@ -428,7 +434,7 @@ const CardDetail: React.FC<{}> = () => {
         >
           <Grid item xs={8}>
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              Thumb
+            {t('common:thumb')}
             </Typography>
           </Grid>
           <Grid item xs={4}>
@@ -453,7 +459,7 @@ const CardDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Skill
+          {t('common:skill')}
           </Typography>
           <Typography>{card.cardSkillName}</Typography>
         </Grid>
@@ -476,7 +482,7 @@ const CardDetail: React.FC<{}> = () => {
         </Box>
         <Divider style={{ margin: "1% 0" }} />
         <Box>
-          <Typography style={{ fontWeight: 600 }}>Card Power</Typography>
+          <Typography style={{ fontWeight: 600 }}>{t('card:power')}</Typography>
           <Slider
             value={cardLevel}
             onChange={(e, value) => setCardLevel(value)}

@@ -1,0 +1,14 @@
+{
+  "alert[0]": "每首歌曲的<b>前九秒</b>是无声的。这不是Bug！",
+  "tag": "标签",
+  "category": "类别",
+  "arranger": "编曲",
+  "composer": "作曲",
+  "lyricist": "作词",
+  "danceMember": "舞蹈成员",
+  "dancerCount": "舞蹈人员数量",
+  "vocal": "演唱者",
+  "vocalType": "演唱者类型",
+  "difficulty": "难度",
+  "noteCount": "音符数量"
+}

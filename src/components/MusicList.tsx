@@ -151,7 +151,7 @@ const MusicList: React.FC<any> = () => {
               },
             }}
             subheader={
-              musicCategoryToName[data.categories[0]] || data.categories[0]
+              data.categories.map(cat => musicCategoryToName[cat] || cat).join(', ')
             }
           ></CardHeader>
           <CardMedia
@@ -186,8 +186,7 @@ const MusicList: React.FC<any> = () => {
               <Grid item>
                 <Typography variant="body1">{data.title}</Typography>
                 <Typography color="textSecondary">
-                  {musicCategoryToName[data.categories[0]] ||
-                    data.categories[0]}
+                  {data.categories.map(cat => musicCategoryToName[cat] || cat).join(', ')}
                 </Typography>
               </Grid>
               <Grid item container direction="row" style={{ marginTop: "5%" }}>

@@ -1,7 +1,19 @@
 {
   "tab": {
-    "title[0]": "",
-    "title[1]": "",
-    "title[2]": ""
+    "title[0]": "横幅和徽标",
+    "title[1]": "背景",
+    "title[2]": "角色"
+  },
+  "boostAttribute": "加成属性",
+  "boostCharacters": "加成角色",
+  "maxBoost": "加成（两者皆满足）",
+  "aggregateAt": "点数合计时间",
+  "rankingAnnounceAt": "排名宣布时间",
+  "distributionStartAt": "奖励发放开始",
+  "distributionEndAt": "奖励发放结束",
+  "realtime": "",
+  "nextfetch": "",
+  "type": {
+    "marathon": "累积点数"
   }
 }

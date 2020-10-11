@@ -14,6 +14,17 @@
   },
   "language": "Language",
   "darkmode": "Brightness Mode",
+  "id": "ID",
+  "title": "Title",
+  "character": "Character",
+  "attribute": "Attribute",
+  "startAt": "Available From",
+  "rarity": "Rarity",
+  "thumb": "Thumb",
+  "skill": "Skill",
+  "type": "Type",
+  "endAt": "Available Until",
+  "icon": "Icon",
   "detect": {
     "checking": "Checking...",
     "unsupported": "Unsupported",
@@ -23,5 +34,8 @@
   "information": "Information",
   "campaign": "Campaign",
   "bug": "Bug",
-  "update": "Update"
+  "update": "Update",
+  "character_plural": "Characters",
+  "releaseCondition": "Release Condition",
+  "level": "Level"
 }

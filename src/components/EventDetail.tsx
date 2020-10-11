@@ -9,6 +9,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { TabContext, TabPanel } from "@material-ui/lab";
+import { CronJob } from "cron";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -36,7 +37,7 @@ const useStyle = makeStyles((theme) => ({
 }));
 
 const EventDetail: React.FC<{}> = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { eventId } = useParams<{ eventId: string }>();
   const classes = useStyle();
 
@@ -53,6 +54,7 @@ const EventDetail: React.FC<{}> = () => {
   const [eventDeckBonus, setEventDeckBonus] = useState<IEventDeckBonus[]>([]);
   const [imgTabVal, setImgTabVal] = useState<string>("0");
   // const [intervalId, setIntervalId] = useState<number>();
+  const [nextRefreshTime, setNextRefreshTime] = useState<moment.Moment>();
 
   useEffect(() => {
     if (events.length && eventDeckBonuses.length) {
@@ -64,7 +66,22 @@ const EventDetail: React.FC<{}> = () => {
   }, [events, eventId, eventDeckBonuses]);
 
   useEffect(() => {
-    refreshData().then(() => window.setInterval(refreshData, 5 * 60 * 1000));
+    const cron = new CronJob("20 */5 * * * *", () => {
+      refreshData();
+      setNextRefreshTime(cron.nextDate());
+    });
+    cron.start();
+    refreshData();
+    setNextRefreshTime(cron.nextDate());
+
+    const interval = window.setInterval(() => {
+      setNextRefreshTime((nextDate) => nextDate);
+    }, 60);
+
+    return () => {
+      cron.stop();
+      window.clearInterval(interval);
+    };
   }, [refreshData]);
 
   function getRankingDegreeImg(reward: EventRankingRewardRange) {
@@ -229,7 +246,7 @@ const EventDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            ID
+            {t("common:id")}
           </Typography>
           <Typography>{event.id}</Typography>
         </Grid>
@@ -243,7 +260,7 @@ const EventDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Name
+            {t("common:title")}
           </Typography>
           <Typography>{event.name}</Typography>
         </Grid>
@@ -257,7 +274,7 @@ const EventDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Type
+            {t("common:type")}
           </Typography>
           <Typography>{t(`event:type.${event.eventType}`)}</Typography>
         </Grid>
@@ -272,7 +289,7 @@ const EventDetail: React.FC<{}> = () => {
         >
           <Grid item>
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              Boost Attribute
+              {t("event:boostAttribute")}
             </Typography>
           </Grid>
           <Grid
@@ -308,7 +325,7 @@ const EventDetail: React.FC<{}> = () => {
         >
           <Grid item>
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              Boost Charaters
+              {t("event:boostCharacters")}
             </Typography>
           </Grid>
           <Grid
@@ -357,7 +374,21 @@ const EventDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Available From
+            {t("event:maxBoost")}
+          </Typography>
+          <Typography>+50%</Typography>
+        </Grid>
+        <Divider style={{ margin: "1% 0" }} />
+        <Grid
+          item
+          container
+          direction="row"
+          wrap="nowrap"
+          justify="space-between"
+          alignItems="center"
+        >
+          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+            {t("common:startAt")}
           </Typography>
           <Typography>{new Date(event.startAt).toLocaleString()}</Typography>
         </Grid>
@@ -371,7 +402,7 @@ const EventDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Available Until
+            {t("common:endAt")}
           </Typography>
           <Typography>{new Date(event.closedAt).toLocaleString()}</Typography>
         </Grid>
@@ -385,7 +416,7 @@ const EventDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Aggregate Timepoint
+            {t("event:aggregateAt")}
           </Typography>
           <Typography>
             {new Date(event.aggregateAt).toLocaleString()}
@@ -401,7 +432,7 @@ const EventDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Ranking Announcement At
+            {t("event:rankingAnnounceAt")}
           </Typography>
           <Typography>
             {new Date(event.rankingAnnounceAt).toLocaleString()}
@@ -417,7 +448,7 @@ const EventDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Rewards Distribution From
+            {t("event:distributionStartAt")}
           </Typography>
           <Typography>
             {new Date(event.distributionStartAt).toLocaleString()}
@@ -433,7 +464,7 @@ const EventDetail: React.FC<{}> = () => {
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Rewards Distribution Until
+            {t("event:distributionEndAt")}
           </Typography>
           <Typography>
             {new Date(event.distributionEndAt).toLocaleString()}
@@ -444,7 +475,11 @@ const EventDetail: React.FC<{}> = () => {
       {rtRanking.time ? (
         <Paper style={{ padding: "1%" }}>
           <Typography variant="h6">
-            Realtime Data at {new Date(rtRanking.time).toLocaleString()}
+            {t("event:realtime")} {new Date(rtRanking.time).toLocaleString(i18n.language)}
+          </Typography>
+          <Typography variant="body2" color="textSecondary">
+            {t("event:nextfetch")}:{" "}
+            {nextRefreshTime ? nextRefreshTime.fromNow() : null}
           </Typography>
           <Divider style={{ margin: "1% 0" }} />
           <Grid container direction="column">
@@ -452,46 +487,74 @@ const EventDetail: React.FC<{}> = () => {
               ? event.eventRankingRewardRanges.map((elem) =>
                   elem.fromRank >= 100001 ? null : (
                     <Fragment>
-                    <Grid item container justify="space-between" alignItems="center">
-                      <Grid item xs={6} md={3}>
-                        <Box position="relative">
-                          <img
-                            style={{
-                              position: "absolute",
-                              top: 0,
-                              left: elem.fromRank >= 10001 ? "2%" : 0,
-                              maxWidth: elem.fromRank >= 10001 ? "96%" : "100%",
-                            }}
-                            src={getRankingDegreeFrameImg(elem)}
-                            alt={getRankingDegreeFrameName(elem)}
-                          ></img>
-                          <img
-                            style={{ maxWidth: "100%" }}
-                            src={getRankingDegreeImg(elem)}
-                            alt={getRankingDegreeName(elem)}
-                          ></img>
-                          <img
-                            style={{
-                              position: "absolute",
-                              right: "10.5%",
-                              maxHeight: "80%",
-                              top: "6%",
-                            }}
-                            src={getRankingDegreeRankImg(elem)}
-                            alt={getRankingDegreeRankName(elem)}
-                          ></img>
-                        </Box>
-                      </Grid>
-                      <Grid item xs={6} container alignItems="center">
-                        <Grid item xs={12} md={6}>
-                          <Typography>{(elem.toRank <= 10 ? rtRanking.first10.find(rt => rt.rank === elem.toRank)! : rtRanking[`rank${elem.toRank}` as 'rank20'][0]).name}</Typography>
+                      <Grid
+                        item
+                        container
+                        justify="space-between"
+                        alignItems="center"
+                      >
+                        <Grid item xs={6} md={3}>
+                          <Box position="relative">
+                            <img
+                              style={{
+                                position: "absolute",
+                                top: 0,
+                                left: elem.fromRank >= 10001 ? "2%" : 0,
+                                maxWidth:
+                                  elem.fromRank >= 10001 ? "96%" : "100%",
+                              }}
+                              src={getRankingDegreeFrameImg(elem)}
+                              alt={getRankingDegreeFrameName(elem)}
+                            ></img>
+                            <img
+                              style={{ maxWidth: "100%" }}
+                              src={getRankingDegreeImg(elem)}
+                              alt={getRankingDegreeName(elem)}
+                            ></img>
+                            <img
+                              style={{
+                                position: "absolute",
+                                right: "10.5%",
+                                maxHeight: "80%",
+                                top: "6%",
+                              }}
+                              src={getRankingDegreeRankImg(elem)}
+                              alt={getRankingDegreeRankName(elem)}
+                            ></img>
+                          </Box>
                         </Grid>
-                        <Grid item xs={12} md={6}>
-                          <Typography variant="h6">{(elem.toRank <= 10 ? rtRanking.first10.find(rt => rt.rank === elem.toRank)! : rtRanking[`rank${elem.toRank}` as 'rank20'][0]).score}</Typography>
+                        <Grid item xs={6} container alignItems="center">
+                          <Grid item xs={12} md={6}>
+                            <Typography align="right">
+                              {
+                                (elem.toRank <= 10
+                                  ? rtRanking.first10.find(
+                                      (rt) => rt.rank === elem.toRank
+                                    )!
+                                  : rtRanking[
+                                      `rank${elem.toRank}` as "rank20"
+                                    ][0]
+                                ).name
+                              }
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={12} md={6}>
+                            <Typography variant="h6" align="right">
+                              {
+                                (elem.toRank <= 10
+                                  ? rtRanking.first10.find(
+                                      (rt) => rt.rank === elem.toRank
+                                    )!
+                                  : rtRanking[
+                                      `rank${elem.toRank}` as "rank20"
+                                    ][0]
+                                ).score
+                              }
+                            </Typography>
+                          </Grid>
                         </Grid>
                       </Grid>
-                    </Grid>
-                    <Divider style={{ margin: "1% 0" }} />
+                      <Divider style={{ margin: "1% 0" }} />
                     </Fragment>
                   )
                 )

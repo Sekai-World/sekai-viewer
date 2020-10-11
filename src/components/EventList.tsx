@@ -6,6 +6,7 @@ import {
 } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import React, { Fragment, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { IEventInfo } from "../types";
 import { useCachedData, useRefState } from "../utils";
@@ -43,6 +44,7 @@ const EventList: React.FC<{}> = () => {
   const classes = useStyles();
   const { push } = useHistory();
   const { path } = useRouteMatch();
+  const { t } = useTranslation();
 
   const [events, setEvents] = useState<IEventInfo[]>([]);
   const [eventsCache, eventsCacheRef] = useCachedData<IEventInfo>("events");
@@ -107,7 +109,7 @@ const EventList: React.FC<{}> = () => {
                 root: classes.header,
               },
             }}
-            subheader={data.eventType}
+            subheader={t(`event:type.${data.eventType}`)}
           ></CardHeader>
           <CardMedia
             className={classes.media}

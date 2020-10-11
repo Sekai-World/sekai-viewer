@@ -14,6 +14,17 @@
   },
   "language": "語言",
   "darkmode": "顯示主題",
+  "id": "編號",
+  "title": "標題",
+  "character": "角色",
+  "attribute": "屬性",
+  "startAt": "開放於",
+  "rarity": "稀有度",
+  "thumb": "縮圖",
+  "skill": "技能",
+  "type": "",
+  "endAt": "",
+  "icon": "",
   "detect": {
     "checking": "檢查中",
     "unsupported": "不支持",
@@ -23,5 +34,7 @@
   "information": "信息",
   "campaign": "紀念活動",
   "bug": "問題",
-  "update": "更新"
+  "update": "更新",
+  "releaseCondition": "解放條件",
+  "level": "等級"
 }
