@@ -27,7 +27,6 @@ import {
   Toolbar,
   Typography,
   useMediaQuery,
-  useTheme,
 } from "@material-ui/core";
 import {
   Menu as MenuIcon,
@@ -58,9 +57,11 @@ const CardList = lazy(() => import("./CardList"));
 const HomeView = lazy(() => import("./Home"));
 const MusicList = lazy(() => import("./MusicList"));
 const GachaList = lazy(() => import("./GachaList"));
+const EventList = lazy(() => import("./EventList"));
 const GachaDetail = lazy(() => import("./GachaDetail"));
 const CardDetail = lazy(() => import("./CardDetail"));
 const MusicDetail = lazy(() => import("./MusicDetail"));
+const EventDetail = lazy(() => import("./EventDetail"));
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -190,8 +191,8 @@ function App() {
     {
       text: t("common:event"),
       icon: <CalendarText></CalendarText>,
-      to: "/unit",
-      disabled: true,
+      to: "/event",
+      disabled: false,
     },
     {
       text: t("common:unit"),
@@ -202,7 +203,7 @@ function App() {
     {
       text: t("common:member"),
       icon: <Account></Account>,
-      to: "/unit",
+      to: "/member",
       disabled: true,
     },
   ];
@@ -214,16 +215,27 @@ function App() {
 
   const { goBack } = useHistory();
 
-  const preferDarkMode = useMediaQuery("(prefers-color-scheme: dark)")
-  const [displayMode, setDisplayMode] = React.useState<"dark" | "light" | "auto">(
-    (localStorage.getItem('display-mode') as 'dark' | 'light' | 'auto' | undefined) || "auto"
+  const preferDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+  const [displayMode, setDisplayMode] = React.useState<
+    "dark" | "light" | "auto"
+  >(
+    (localStorage.getItem("display-mode") as
+      | "dark"
+      | "light"
+      | "auto"
+      | undefined) || "auto"
   );
 
   const theme = React.useMemo(
     () =>
       createMuiTheme({
         palette: {
-          type: displayMode === "auto" ? (preferDarkMode ? "dark" : "light") : displayMode,
+          type:
+            displayMode === "auto"
+              ? preferDarkMode
+                ? "dark"
+                : "light"
+              : displayMode,
         },
       }),
     [displayMode, preferDarkMode]
@@ -343,6 +355,12 @@ function App() {
               <Route path="/gacha/:gachaId">
                 <GachaDetail />
               </Route>
+              <Route path="/event" exact>
+                <EventList />
+              </Route>
+              <Route path="/event/:eventId">
+                <EventDetail />
+              </Route>
             </Suspense>
           </Switch>
         </Container>
@@ -405,7 +423,7 @@ function App() {
                 value={displayMode}
                 onChange={(e, v) => {
                   setDisplayMode(v as "dark" | "light" | "auto");
-                  localStorage.setItem('display-mode', v);
+                  localStorage.setItem("display-mode", v);
                 }}
               >
                 <FormControlLabel

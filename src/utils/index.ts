@@ -12,7 +12,15 @@ import {
   IOutCharaProfile,
   IUserInformationInfo,
   IMusicDifficultyInfo,
-  IMusicTagInfo, IReleaseCondition, IMusicDanceMembers
+  IMusicTagInfo,
+  IReleaseCondition,
+  IMusicDanceMembers,
+  IEventInfo,
+  IEventDeckBonus,
+  IGameCharaUnit,
+  IEventRealtimeRank,
+  IResourceBoxInfo,
+  IHonorInfo,
 } from "../types";
 
 export function useRefState<S>(
@@ -44,6 +52,11 @@ export function useCachedData<
     | IMusicTagInfo
     | IReleaseCondition
     | IMusicDanceMembers
+    | IEventInfo
+    | IEventDeckBonus
+    | IGameCharaUnit
+    | IResourceBoxInfo
+    | IHonorInfo
 >(name: string): [T[], React.MutableRefObject<T[]>] {
   const [cached, cachedRef, setCached] = useRefState<T[]>([]);
 
@@ -67,12 +80,60 @@ export function useCachedData<
   return [cached, cachedRef];
 }
 
+export function useRealtimeEventData(
+  eventId: number
+): [
+  () => Promise<IEventRealtimeRank>,
+  IEventRealtimeRank,
+  React.MutableRefObject<IEventRealtimeRank>
+] {
+  const [
+    eventRealtimeData,
+    eventRealtimeDataRef,
+    setEventRealtimeData,
+  ] = useRefState<IEventRealtimeRank>({
+    time: 0,
+    first10: [],
+    rank20: [],
+    rank30: [],
+    rank40: [],
+    rank50: [],
+    rank100: [],
+    rank200: [],
+    rank300: [],
+    rank400: [],
+    rank500: [],
+    rank1000: [],
+    rank2000: [],
+    rank3000: [],
+    rank4000: [],
+    rank5000: [],
+    rank10000: [],
+    rank20000: [],
+    rank30000: [],
+    rank40000: [],
+    rank50000: [],
+    rank100000: [],
+  });
+
+  const refrershData = useCallback(async () => {
+    const { data }: { data: IEventRealtimeRank } = await Axios.get(
+      `https://raw.githubusercontent.com/Sekai-World/sekai-event-track/main/event${eventId}.json`
+    );
+
+    setEventRealtimeData(data);
+    return data;
+  }, [eventId, setEventRealtimeData]);
+
+  return [refrershData, eventRealtimeData, eventRealtimeDataRef];
+}
+
 export const musicCategoryToName: { [key: string]: string } = {
   mv: "3D MV",
   original: "Original MV",
   sekai: "Sekai MV",
   image: "Static Image",
-  mv_2d: "2D MV"
+  mv_2d: "2D MV",
 };
 
 export const musicTagToName: { [key: string]: string } = {
@@ -82,5 +143,5 @@ export const musicTagToName: { [key: string]: string } = {
   idol: "Idol",
   school_refusal: "School Refusal",
   theme_park: "Theme Park",
-  street: "Street"
-}
+  street: "Street",
+};

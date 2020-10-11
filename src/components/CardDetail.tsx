@@ -35,12 +35,8 @@ import LogoSchoolRefusal from "../assets/common/logol/logo_school_refusal.png";
 import LogoStreet from "../assets/common/logol/logo_street.png";
 import LogoThemePark from "../assets/common/logol/logo_theme_park.png";
 
-import IconAttrCool from "../assets/icon_attribute_cool.png";
-import IconAttrCute from "../assets/icon_attribute_cute.png";
-import IconAttrHappy from "../assets/icon_attribute_happy.png";
-import IconAttrMyster from "../assets/icon_attribute_mysterious.png";
-import IconAttrPure from "../assets/icon_attribute_pure.png";
 import { CardThumb } from "./subs/CardThumb";
+import { attrIconMap } from "../utils/resources";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -71,14 +67,6 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing("1%", "0"),
   },
 }));
-
-const attrIconMap: { [key: string]: string } = {
-  cool: IconAttrCool,
-  cute: IconAttrCute,
-  happy: IconAttrHappy,
-  mysterious: IconAttrMyster,
-  pure: IconAttrPure,
-};
 
 interface IExtendCardInfo extends ICardInfo {
   maxTrainedLevel?: number;

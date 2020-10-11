@@ -16,7 +16,7 @@ i18n
   .use(detector)
   .init({
     supportedLngs: ["en", "zh-CN", "zh-TW", "jp", "ko", "es", "de"],
-    ns: ["common", "home"],
+    ns: ["common", "home", "card", "music", "gacha", "event", "unit", "member"],
     fallbackLng: "en",
     fallbackNS: "common",
     backend: {

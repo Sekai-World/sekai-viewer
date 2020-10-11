@@ -252,22 +252,22 @@ const MsuicDetail: React.FC<{}> = () => {
           <TabPanel value="0">
             {musicVocalTypes.length && musicVocal.length ? (
               <Fragment>
-                <AudioPlayer
-                  variation="primary"
-                  download
+                <audio
+                  controls
+                  style={{width: "100%"}}
                   src={`https://sekai-res.dnaroma.eu/file/sekai-assets/music/short/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}_short.mp3`}
-                ></AudioPlayer>
+                ></audio>
               </Fragment>
             ) : null}
           </TabPanel>
           <TabPanel value="1">
             {musicVocalTypes.length && musicVocal.length ? (
               <Fragment>
-                <AudioPlayer
-                  variation="primary"
-                  download
+                <audio
+                  controls
+                  style={{width: "100%"}}
                   src={`https://sekai-res.dnaroma.eu/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`}
-                ></AudioPlayer>
+                ></audio>
               </Fragment>
             ) : null}
           </TabPanel>
@@ -619,7 +619,9 @@ const MsuicDetail: React.FC<{}> = () => {
       />
     </Fragment>
   ) : (
-    <div>Loading... If you saw this for a while, music {musicId} does not exist.</div>
+    <div>
+      Loading... If you saw this for a while, music {musicId} does not exist.
+    </div>
   );
 };
 
