@@ -236,6 +236,15 @@ function App() {
                 ? "dark"
                 : "light"
               : displayMode,
+          primary: {
+            main: displayMode === "auto"
+            ? preferDarkMode
+              ? "#4791db"
+              : "#1976d2"
+            : displayMode === "dark"
+            ? "#4791db"
+            : "#1976d2",
+          }
         },
       }),
     [displayMode, preferDarkMode]
