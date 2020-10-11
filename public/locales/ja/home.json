@@ -1,18 +1,18 @@
 {
   "game-news": {
-    "action": "",
-    "show-from": "",
-    "title-column": "",
-    "show-until": "",
-    "title": ""
+    "action": "アクション",
+    "show-from": "Show From",
+    "title-column": "タイトル",
+    "show-until": "Show Until",
+    "title": "ゲームニュース"
   },
-  "alert0": "",
+  "alert0": "Sekai Viewer is now in Open Beta!",
   "alert_settings": "",
   "alert1": {
-    "title": "",
-    "translation": "",
-    "development": "",
-    "contact": ""
+    "title": "Help needed!",
+    "translation": "翻訳",
+    "development": "開発",
+    "contact": "連絡先"
   },
   "detect": {
     "success": ""
