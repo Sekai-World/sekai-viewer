@@ -12,12 +12,18 @@ import {
   useTheme,
 } from "@material-ui/core";
 import { ColDef, DataGrid, ValueFormatterParams } from "@material-ui/data-grid";
-import { GitHub, OpenInNew, Translate, Twitter } from "@material-ui/icons";
+import {
+  GitHub,
+  OpenInNew,
+  Settings,
+  Translate,
+  Twitter,
+} from "@material-ui/icons";
 import { Alert, AlertTitle } from "@material-ui/lab";
 import { TFunction } from "i18next";
 import { Discord } from "mdi-material-ui";
 import React, { Fragment, useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { IUserInformationInfo } from "../types";
 import { useCachedData } from "../utils";
 
@@ -53,11 +59,11 @@ function getWebpDetectServerity(detected: IDetectResult) {
 function getWebpDetectDesc(t: TFunction, result: number) {
   switch (result) {
     case -1:
-      return t('common:detect.checking');
+      return t("common:detect.checking");
     case 0:
-      return t('common:detect.unsupported');
+      return t("common:detect.unsupported");
     case 1:
-      return t('common:detect.supported');
+      return t("common:detect.supported");
     default:
       return "";
   }
@@ -117,8 +123,8 @@ function Home() {
   const [info, setInfo] = useState<IUserInformationInfo>();
 
   useEffect(() => {
-    document.title = "Home | Sekai Viewer";
-  }, []);
+    document.title = t("common:home") + " | Sekai Viewer";
+  }, [t]);
 
   const [detected, setDetected] = useState<IDetectResult>({
     webp: -1,
@@ -139,7 +145,7 @@ function Home() {
   const columns: ColDef[] = [
     {
       field: "action",
-      headerName: t('home:game-news.action'),
+      headerName: t("home:game-news.action"),
       width: 80,
       renderCell: (params: ValueFormatterParams) => {
         const info = params.data as IUserInformationInfo;
@@ -163,20 +169,20 @@ function Home() {
     // { field: "id", headerName: "ID", width: 60 },
     {
       field: "startAt",
-      headerName: t('home:game-news.show-from'),
+      headerName: t("home:game-news.show-from"),
       width: 180,
       valueFormatter: (params: ValueFormatterParams) =>
         new Date(params.getValue("startAt") as number).toLocaleString(),
     },
     {
       field: "title",
-      headerName: t('home:game-news.title-column'),
+      headerName: t("home:game-news.title-column"),
       width: isUpMd ? 400 : 150,
       sortable: false,
     },
     {
       field: "endAt",
-      headerName: t('home:game-news.show-until'),
+      headerName: t("home:game-news.show-until"),
       width: 180,
       valueFormatter: (params: ValueFormatterParams) =>
         new Date(params.getValue("startAt") as number).toLocaleString(),
@@ -188,6 +194,12 @@ function Home() {
       {/* <Typography variant="h4">Welcome to Sekai Viewer Open Beta!</Typography> */}
       <Alert className={classes.alert} severity="info">
         {t("home:alert0")}
+      </Alert>
+      <Alert className={classes.alert} severity="info">
+        <Trans
+          i18nKey="home:alert_settings"
+          components={{ s: <Settings fontSize="inherit" /> }}
+        />
       </Alert>
       <Alert className={classes.alert} severity="warning">
         <AlertTitle>{t("home:alert1.title")}</AlertTitle>
@@ -206,11 +218,11 @@ function Home() {
           target="_blank"
         >
           <GitHub fontSize="inherit"></GitHub>
-          {t('home:alert1.development')}
+          {t("home:alert1.development")}
         </Link>
         （Sekai-World/sekai-viewer）
         <br></br>
-        {t('home:alert1.contact')}:
+        {t("home:alert1.contact")}:
         <Link
           href="https://www.twitter.com/miku_zura"
           target="_blank"
@@ -228,16 +240,14 @@ function Home() {
         className={classes.alert}
         severity={getWebpDetectServerity(detected)}
       >
-        <AlertTitle>WebP {t('common:support')}</AlertTitle>
+        <AlertTitle>WebP {t("common:support")}</AlertTitle>
         <ul>
           <li>WebP: {getWebpDetectDesc(t, detected.webp)}</li>
           <li>WebP Lossless: {getWebpDetectDesc(t, detected.webpLossless)}</li>
           <li>WebP Alpha: {getWebpDetectDesc(t, detected.webpAlpha)}</li>
         </ul>
         {getWebpDetectServerity(detected) === "success" ? (
-          <Typography>
-            {t('home:detect.success')}
-          </Typography>
+          <Typography>{t("home:detect.success")}</Typography>
         ) : (
           <Typography>
             Unfortunately you will not able to load images normally. Please
@@ -251,7 +261,7 @@ function Home() {
       </Alert>
       <Paper>
         <Typography variant="h6" align="center">
-          {t('home:game-news.title')}
+          {t("home:game-news.title")}
         </Typography>
         <Tabs
           value={gameNewsTag}
@@ -259,13 +269,13 @@ function Home() {
           variant="scrollable"
           scrollButtons="desktop"
         >
-          <Tab label={t('common:information')} value="information"></Tab>
-          <Tab label={t('common:event')} value="event"></Tab>
-          <Tab label={t('common:gacha')} value="gacha"></Tab>
-          <Tab label={t('common:music')} value="music"></Tab>
-          <Tab label={t('common:campaign')} value="campaign"></Tab>
-          <Tab label={t('common:bug')} value="bug"></Tab>
-          <Tab label={t('common:update')} value="update"></Tab>
+          <Tab label={t("common:information")} value="information"></Tab>
+          <Tab label={t("common:event")} value="event"></Tab>
+          <Tab label={t("common:gacha")} value="gacha"></Tab>
+          <Tab label={t("common:music")} value="music"></Tab>
+          <Tab label={t("common:campaign")} value="campaign"></Tab>
+          <Tab label={t("common:bug")} value="bug"></Tab>
+          <Tab label={t("common:update")} value="update"></Tab>
         </Tabs>
         <div style={{ height: 650 }}>
           <DataGrid

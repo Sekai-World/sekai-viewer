@@ -7,6 +7,7 @@
     "title": "遊戲通知"
   },
   "alert0": "Sekai Viewer 現在公開測試中！",
+  "alert_settings": "使用右上角的 <s /> 切換語言和亮度模式。",
   "alert1": {
     "title": "需要妳的幫助！",
     "translation": "翻譯",
