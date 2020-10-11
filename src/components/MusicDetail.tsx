@@ -36,7 +36,7 @@ import { musicCategoryToName, musicTagToName, useCachedData } from "../utils";
 import { Alert, TabContext, TabPanel } from "@material-ui/lab";
 import MusicVideoPlayer from "./subs/MusicVideoPlayer";
 import { charaIcons } from "../utils/resources";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -220,7 +220,7 @@ const MsuicDetail: React.FC<{}> = () => {
     danceMemebers.length ? (
     <Fragment>
       <Alert severity="warning">
-        {t("music:alert[0]", { escapeValue: false })}
+        <Trans i18nKey="music:alert[0]" components={{b: <b/>}} />
       </Alert>
       <CardMedia
         onClick={() => {
