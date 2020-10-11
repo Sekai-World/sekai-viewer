@@ -23,7 +23,6 @@ import React, {
 } from "react";
 import { useParams } from "react-router-dom";
 import Viewer from "react-viewer";
-import AudioPlayer from "material-ui-audio-player";
 import {
   IMusicDanceMembers,
   IMusicDifficultyInfo,
