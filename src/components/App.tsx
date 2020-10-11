@@ -39,6 +39,7 @@ import {
   Brightness4,
   Brightness7,
   BrightnessAuto,
+  ControlCamera,
 } from "@material-ui/icons";
 import { Account, AccountGroup, CalendarText } from "mdi-material-ui";
 import React, { forwardRef, useMemo, lazy, Suspense } from "react";
@@ -204,6 +205,12 @@ function App() {
       text: t("common:member"),
       icon: <Account></Account>,
       to: "/member",
+      disabled: true,
+    },
+    {
+      text: 'Live2D',
+      icon: <ControlCamera></ControlCamera>,
+      to: "/live2d",
       disabled: true,
     },
   ];
