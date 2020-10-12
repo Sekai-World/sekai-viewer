@@ -1,4 +1,5 @@
 {
+  "already-ended": "",
   "tab": {
     "title[0]": "",
     "title[1]": "",
@@ -7,6 +8,7 @@
   "boostAttribute": "",
   "boostCharacters": "",
   "maxBoost": "",
+  "alreadyPast": "",
   "aggregateAt": "",
   "rankingAnnounceAt": "",
   "distributionStartAt": "",

@@ -1,18 +1,20 @@
 {
+  "already-ended": "活動已結束",
   "tab": {
-    "title[0]": "",
-    "title[1]": "",
-    "title[2]": ""
+    "title[0]": "橫幅和徽標",
+    "title[1]": "背景",
+    "title[2]": "角色"
   },
   "boostAttribute": "加成屬性",
   "boostCharacters": "加成角色",
   "maxBoost": "加成（兩者皆滿足）",
+  "alreadyPast": "活動已經過",
   "aggregateAt": "點數合計時間",
   "rankingAnnounceAt": "排名宣布時間",
   "distributionStartAt": "獎勵發放開始",
   "distributionEndAt": "獎勵發放結束",
-  "realtime": "",
-  "nextfetch": "",
+  "realtime": "實時數據",
+  "nextfetch": "下次獲取",
   "type": {
     "marathon": "累積點數"
   }
