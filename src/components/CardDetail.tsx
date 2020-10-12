@@ -10,7 +10,9 @@ import {
   Tab,
   Tabs,
   Typography,
+  Container,
 } from "@material-ui/core";
+import stylesDetail from "../styles/Detail";
 import { TabContext, TabPanel } from "@material-ui/lab";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -44,6 +46,7 @@ import { attrIconMap } from "../utils/resources";
 import { useTranslation } from "react-i18next";
 
 const useStyles = makeStyles((theme) => ({
+  ...stylesDetail(theme),
   "rarity-star-img": {
     maxWidth: "32px",
     margin: theme.spacing(0, 0.25),
@@ -116,6 +119,7 @@ const CardDetail: React.FC<{}> = () => {
   const [visible, setVisible] = useState<boolean>(false);
   const [activeIdx, setActiveIdx] = useState<number>(0);
   const [card, setCard] = useState<IExtendCardInfo>();
+  const [cardTitle, setCardTitle] = useState<string>("");
   const [tabVal, setTabVal] = useState<string>("0");
   const [cardLevel, setCardLevel] = useState<number | number[]>(0);
   const [skill, setSkill] = useState<ISkillInfo>();
@@ -216,6 +220,7 @@ const CardDetail: React.FC<{}> = () => {
             ?.maxLevel!,
         })
       );
+      setCardTitle(`${_card.prefix} - ${getCharaName(_card.characterId)}`);
       setCardLevel(
         _card.rarity >= 3
           ? rarities.find((elem) => elem.rarity === _card.rarity)
@@ -241,396 +246,407 @@ const CardDetail: React.FC<{}> = () => {
 
   return card && charaRanks.length ? (
     <Fragment>
-      <TabContext value={tabVal}>
-        <Paper>
-          <Tabs
-            value={tabVal}
-            onChange={handleChange}
-            variant="scrollable"
-            scrollButtons="desktop"
+      <Typography variant="h6" className={classes.header}>
+        {cardTitle}
+      </Typography>
+      <Container className={classes.content}>
+        <TabContext value={tabVal}>
+          <Paper>
+            <Tabs
+              value={tabVal}
+              onChange={handleChange}
+              variant="scrollable"
+              scrollButtons="desktop"
+            >
+              <Tab label={t("card:tab.title[0]")} value="0"></Tab>
+              <Tab label={t("card:tab.title[1]")} value="2"></Tab>
+              {card.rarity >= 3 ? (
+                <Tab label={t("card:tab.title[2]")} value="1"></Tab>
+              ) : null}
+              {card.rarity >= 3 ? (
+                <Tab label={t("card:tab.title[3]")} value="3"></Tab>
+              ) : null}
+            </Tabs>
+            <TabPanel value="0" classes={{ root: classes.tabpanel }}>
+              <Card
+                onClick={() => {
+                  setActiveIdx(0);
+                  setVisible(true);
+                }}
+              >
+                <CardMedia
+                  classes={{ root: classes.media }}
+                  image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.webp`}
+                ></CardMedia>
+              </Card>
+            </TabPanel>
+            <TabPanel value="1" classes={{ root: classes.tabpanel }}>
+              <Card
+                onClick={() => {
+                  setActiveIdx(2);
+                  setVisible(true);
+                }}
+              >
+                <CardMedia
+                  classes={{ root: classes.media }}
+                  image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_after_training.webp`}
+                ></CardMedia>
+              </Card>
+            </TabPanel>
+            <TabPanel value="2" classes={{ root: classes.tabpanel }}>
+              <Card
+                onClick={() => {
+                  setActiveIdx(1);
+                  setVisible(true);
+                }}
+              >
+                <CardMedia
+                  classes={{ root: classes["media-contain"] }}
+                  image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`}
+                ></CardMedia>
+              </Card>
+            </TabPanel>
+            <TabPanel value="3" classes={{ root: classes.tabpanel }}>
+              <Card
+                onClick={() => {
+                  setActiveIdx(3);
+                  setVisible(true);
+                }}
+              >
+                <CardMedia
+                  classes={{ root: classes["media-contain"] }}
+                  image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/after_training.webp`}
+                ></CardMedia>
+              </Card>
+            </TabPanel>
+          </Paper>
+        </TabContext>
+        <Grid className={classes["grid-out"]} container direction="column">
+          <Grid
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
           >
-            <Tab label={t("card:tab.title[0]")} value="0"></Tab>
-            <Tab label={t("card:tab.title[1]")} value="2"></Tab>
-            {card.rarity >= 3 ? (
-              <Tab label={t("card:tab.title[2]")} value="1"></Tab>
-            ) : null}
-            {card.rarity >= 3 ? (
-              <Tab label={t("card:tab.title[3]")} value="3"></Tab>
-            ) : null}
-          </Tabs>
-          <TabPanel value="0" classes={{ root: classes.tabpanel }}>
-            <Card
-              onClick={() => {
-                setActiveIdx(0);
-                setVisible(true);
-              }}
-            >
-              <CardMedia
-                classes={{ root: classes.media }}
-                image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.webp`}
-              ></CardMedia>
-            </Card>
-          </TabPanel>
-          <TabPanel value="1" classes={{ root: classes.tabpanel }}>
-            <Card
-              onClick={() => {
-                setActiveIdx(2);
-                setVisible(true);
-              }}
-            >
-              <CardMedia
-                classes={{ root: classes.media }}
-                image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_after_training.webp`}
-              ></CardMedia>
-            </Card>
-          </TabPanel>
-          <TabPanel value="2" classes={{ root: classes.tabpanel }}>
-            <Card
-              onClick={() => {
-                setActiveIdx(1);
-                setVisible(true);
-              }}
-            >
-              <CardMedia
-                classes={{ root: classes["media-contain"] }}
-                image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`}
-              ></CardMedia>
-            </Card>
-          </TabPanel>
-          <TabPanel value="3" classes={{ root: classes.tabpanel }}>
-            <Card
-              onClick={() => {
-                setActiveIdx(3);
-                setVisible(true);
-              }}
-            >
-              <CardMedia
-                classes={{ root: classes["media-contain"] }}
-                image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/after_training.webp`}
-              ></CardMedia>
-            </Card>
-          </TabPanel>
-        </Paper>
-      </TabContext>
-      <Grid className={classes["grid-out"]} container direction="column">
-        <Grid
-          container
-          direction="row"
-          wrap="nowrap"
-          justify="space-between"
-          alignItems="center"
-        >
-          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            {t('common:id')}
-          </Typography>
-          <Typography>{card.id}</Typography>
-        </Grid>
-        <Divider style={{ margin: "1% 0" }} />
-        <Grid
-          container
-          direction="row"
-          wrap="nowrap"
-          justify="space-between"
-          alignItems="center"
-        >
-          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-          {t('common:title')}
-          </Typography>
-          <Typography>{card.prefix}</Typography>
-        </Grid>
-        <Divider style={{ margin: "1% 0" }} />
-        <Grid
-          container
-          direction="row"
-          wrap="nowrap"
-          justify="space-between"
-          alignItems="center"
-        >
-          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-          {t('common:character')}
-          </Typography>
-          <Typography>{getCharaName(card.characterId)}</Typography>
-        </Grid>
-        <Divider style={{ margin: "1% 0" }} />
-        <Grid
-          container
-          direction="row"
-          wrap="nowrap"
-          justify="space-between"
-          alignItems="center"
-        >
-          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-          {t('common:unit')}
-          </Typography>
-          <img
-            className={classes["unit-logo-img"]}
-            src={getCharaUnitImage(card.characterId)}
-            alt={getCharaUnitName(card.characterId)}
-          ></img>
-        </Grid>
-        <Divider style={{ margin: "1% 0" }} />
-        <Grid
-          container
-          direction="row"
-          wrap="nowrap"
-          justify="space-between"
-          alignItems="center"
-        >
-          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-          {t('common:attribute')}
-          </Typography>
-          <img
-            src={attrIconMap[card.attr]}
-            alt={card.attr}
-            className={classes["rarity-star-img"]}
-          ></img>
-        </Grid>
-        <Divider style={{ margin: "1% 0" }} />
-        <Grid
-          container
-          direction="row"
-          wrap="nowrap"
-          justify="space-between"
-          alignItems="center"
-        >
-          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-          {t('common:startAt')}
-          </Typography>
-          <Typography>{new Date(card.releaseAt).toLocaleString()}</Typography>
-        </Grid>
-        <Divider style={{ margin: "1% 0" }} />
-        <Grid
-          container
-          direction="row"
-          wrap="nowrap"
-          justify="space-between"
-          alignItems="center"
-        >
-          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-          {t('common:rarity')}
-          </Typography>
-          <Typography>
-            {Array.from({ length: card.rarity }).map((_, id) => (
-              <img
-                className={classes["rarity-star-img"]}
-                src={
-                  cardLevel > card.maxNormalLevel
-                    ? rarityAfterTraining
-                    : rarityNormal
-                }
-                alt={`star-${id}`}
-                key={`star-${id}`}
-              ></img>
-            ))}
-          </Typography>
-        </Grid>
-        <Divider style={{ margin: "1% 0" }} />
-        <Grid
-          container
-          direction="row"
-          wrap="nowrap"
-          justify="space-between"
-          alignItems="center"
-        >
-          <Grid item xs={8}>
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            {t('common:thumb')}
+              {t('common:id')}
+            </Typography>
+            <Typography>{card.id}</Typography>
+          </Grid>
+          <Divider style={{ margin: "1% 0" }} />
+          <Grid
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+            {t('common:title')}
+            </Typography>
+            <Typography>{card.prefix}</Typography>
+          </Grid>
+          <Divider style={{ margin: "1% 0" }} />
+          <Grid
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+            {t('common:character')}
+            </Typography>
+            <Typography>{getCharaName(card.characterId)}</Typography>
+          </Grid>
+          <Divider style={{ margin: "1% 0" }} />
+          <Grid
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+            {t('common:unit')}
+            </Typography>
+            <img
+              className={classes["unit-logo-img"]}
+              src={getCharaUnitImage(card.characterId)}
+              alt={getCharaUnitName(card.characterId)}
+            ></img>
+          </Grid>
+          <Divider style={{ margin: "1% 0" }} />
+          <Grid
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+            {t('common:attribute')}
+            </Typography>
+            <img
+              src={attrIconMap[card.attr]}
+              alt={card.attr}
+              className={classes["rarity-star-img"]}
+            ></img>
+          </Grid>
+          <Divider style={{ margin: "1% 0" }} />
+          <Grid
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+            {t('common:startAt')}
+            </Typography>
+            <Typography>{new Date(card.releaseAt).toLocaleString()}</Typography>
+          </Grid>
+          <Divider style={{ margin: "1% 0" }} />
+          <Grid
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+            {t('common:rarity')}
+            </Typography>
+            <Typography>
+              {Array.from({ length: card.rarity }).map((_, id) => (
+                <img
+                  className={classes["rarity-star-img"]}
+                  src={
+                    cardLevel > card.maxNormalLevel
+                      ? rarityAfterTraining
+                      : rarityNormal
+                  }
+                  alt={`star-${id}`}
+                  key={`star-${id}`}
+                ></img>
+              ))}
             </Typography>
           </Grid>
-          <Grid item xs={4}>
-            <Grid container direction="row" justify="flex-end" spacing={2}>
-              <Grid item xs={12} md={6}>
-                <CardThumb id={Number(cardId)} />
-              </Grid>
-              {card.rarity >= 3 ? (
+          <Divider style={{ margin: "1% 0" }} />
+          <Grid
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Grid item xs={8}>
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+              {t('common:thumb')}
+              </Typography>
+            </Grid>
+            <Grid item xs={4}>
+              <Grid container direction="row" justify="flex-end" spacing={2}>
                 <Grid item xs={12} md={6}>
-                  <CardThumb id={Number(cardId)} trained />
+                  <CardThumb id={Number(cardId)} />
                 </Grid>
-              ) : null}
+                {card.rarity >= 3 ? (
+                  <Grid item xs={12} md={6}>
+                    <CardThumb id={Number(cardId)} trained />
+                  </Grid>
+                ) : null}
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
-        <Divider style={{ margin: "1% 0" }} />
-        <Grid
-          container
-          direction="row"
-          wrap="nowrap"
-          justify="space-between"
-          alignItems="center"
-        >
-          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-          {t('common:skill')}
-          </Typography>
-          <Typography>{card.cardSkillName}</Typography>
-        </Grid>
-        <Box>
-          {/* <Typography>Skill level</Typography> */}
-          <Slider
-            value={skillLevel}
-            onChange={(e, value) => setSkillLevel(value)}
-            valueLabelDisplay="auto"
-            step={1}
-            min={1}
-            max={
-              skill!.skillEffects[0].skillEffectDetails[
-                skill!.skillEffects[0].skillEffectDetails.length - 1
-              ].level
-            }
-          />
-          {/* <Typography>{skill?.shortDescription}</Typography> */}
-          <Typography>{getSkillDesc(skill!, skillLevel)}</Typography>
-        </Box>
-        <Divider style={{ margin: "1% 0" }} />
-        <Box>
-          <Typography style={{ fontWeight: 600 }}>{t('card:power')}</Typography>
-          <Slider
-            value={cardLevel}
-            onChange={(e, value) => setCardLevel(value)}
-            valueLabelDisplay="auto"
-            step={1}
-            min={1}
-            max={card.rarity >= 3 ? card.maxTrainedLevel : card.maxNormalLevel}
-            marks={
-              card.rarity >= 3
-                ? [
-                    {
-                      value: card.maxNormalLevel,
-                      label: "Normal",
-                    },
-                    {
-                      value: card.maxTrainedLevel!,
-                      label: "Trained",
-                    },
-                  ]
-                : [
-                    {
-                      value: card.maxNormalLevel,
-                      label: "Normal",
-                    },
-                  ]
-            }
-          />
-          <Grid container>
-            <Grid item xs={12}>
-              <Grid container spacing={1}>
-                <Grid item md={3} xs={6}>
-                  <Grid
-                    container
-                    alignItems="center"
-                    direction="row"
-                    wrap="nowrap"
-                  >
-                    <Grid item xs={3}>
-                      <img
-                        src={IconPerformance}
-                        alt="performance"
-                        style={{ marginRight: "7%" }}
-                      />
-                    </Grid>
-                    <Grid item xs={4}>
-                      <Typography>
-                        {card.cardParameters.find(
-                          (elem) =>
-                            elem.cardParameterType === "param1" &&
-                            elem.cardLevel === cardLevel
-                        )?.power! +
-                          (cardLevel > card.maxNormalLevel
-                            ? card.specialTrainingPower1BonusFixed
-                            : 0)}
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                </Grid>
-                <Grid item md={3} xs={6}>
-                  <Grid
-                    container
-                    alignItems="center"
-                    direction="row"
-                    wrap="nowrap"
-                  >
-                    <Grid item xs={3}>
-                      <img
-                        src={IconTechnique}
-                        alt="technique"
-                        style={{ marginRight: "7%" }}
-                      />
-                    </Grid>
-                    <Grid item xs={4}>
-                      <Typography>
-                        {card.cardParameters.find(
-                          (elem) =>
-                            elem.cardParameterType === "param2" &&
-                            elem.cardLevel === cardLevel
-                        )?.power! +
-                          (cardLevel > card.maxNormalLevel
-                            ? card.specialTrainingPower2BonusFixed
-                            : 0)}
-                      </Typography>
+      </Container>
+      <Typography variant="h6" className={classes.header}>
+        {t("card:stats")}
+      </Typography>
+      <Container className={classes.content}>
+        <Grid className={classes["grid-out"]} container direction="column">
+          <Grid
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+            {t('common:skill')}
+            </Typography>
+            <Typography>{card.cardSkillName}</Typography>
+          </Grid>
+          <Box>
+            {/* <Typography>Skill level</Typography> */}
+            <Slider
+              value={skillLevel}
+              onChange={(e, value) => setSkillLevel(value)}
+              valueLabelDisplay="auto"
+              step={1}
+              min={1}
+              max={
+                skill!.skillEffects[0].skillEffectDetails[
+                  skill!.skillEffects[0].skillEffectDetails.length - 1
+                ].level
+              }
+            />
+            {/* <Typography>{skill?.shortDescription}</Typography> */}
+            <Typography>{getSkillDesc(skill!, skillLevel)}</Typography>
+          </Box>
+          <Divider style={{ margin: "1% 0" }} />
+          <Box>
+            <Typography style={{ fontWeight: 600 }}>{t('card:power')}</Typography>
+            <Slider
+              value={cardLevel}
+              onChange={(e, value) => setCardLevel(value)}
+              valueLabelDisplay="auto"
+              step={1}
+              min={1}
+              max={card.rarity >= 3 ? card.maxTrainedLevel : card.maxNormalLevel}
+              marks={
+                card.rarity >= 3
+                  ? [
+                      {
+                        value: card.maxNormalLevel,
+                        label: "Normal",
+                      },
+                      {
+                        value: card.maxTrainedLevel!,
+                        label: "Trained",
+                      },
+                    ]
+                  : [
+                      {
+                        value: card.maxNormalLevel,
+                        label: "Normal",
+                      },
+                    ]
+              }
+            />
+            <Grid container>
+              <Grid item xs={12}>
+                <Grid container spacing={1}>
+                  <Grid item md={3} xs={6}>
+                    <Grid
+                      container
+                      alignItems="center"
+                      direction="row"
+                      wrap="nowrap"
+                    >
+                      <Grid item xs={3}>
+                        <img
+                          src={IconPerformance}
+                          alt="performance"
+                          style={{ marginRight: "7%" }}
+                        />
+                      </Grid>
+                      <Grid item xs={4}>
+                        <Typography>
+                          {card.cardParameters.find(
+                            (elem) =>
+                              elem.cardParameterType === "param1" &&
+                              elem.cardLevel === cardLevel
+                          )?.power! +
+                            (cardLevel > card.maxNormalLevel
+                              ? card.specialTrainingPower1BonusFixed
+                              : 0)}
+                        </Typography>
+                      </Grid>
                     </Grid>
                   </Grid>
-                </Grid>
-                <Grid item md={3} xs={6}>
-                  <Grid
-                    container
-                    alignItems="center"
-                    direction="row"
-                    wrap="nowrap"
-                  >
-                    <Grid item xs={3}>
-                      <img
-                        src={IconStamina}
-                        alt="stamina"
-                        style={{ marginRight: "7%" }}
-                      />
-                    </Grid>
-                    <Grid item xs={4}>
-                      <Typography>
-                        {card.cardParameters.find(
-                          (elem) =>
-                            elem.cardParameterType === "param3" &&
-                            elem.cardLevel === cardLevel
-                        )?.power! +
-                          (cardLevel > card.maxNormalLevel
-                            ? card.specialTrainingPower3BonusFixed
-                            : 0)}
-                      </Typography>
+                  <Grid item md={3} xs={6}>
+                    <Grid
+                      container
+                      alignItems="center"
+                      direction="row"
+                      wrap="nowrap"
+                    >
+                      <Grid item xs={3}>
+                        <img
+                          src={IconTechnique}
+                          alt="technique"
+                          style={{ marginRight: "7%" }}
+                        />
+                      </Grid>
+                      <Grid item xs={4}>
+                        <Typography>
+                          {card.cardParameters.find(
+                            (elem) =>
+                              elem.cardParameterType === "param2" &&
+                              elem.cardLevel === cardLevel
+                          )?.power! +
+                            (cardLevel > card.maxNormalLevel
+                              ? card.specialTrainingPower2BonusFixed
+                              : 0)}
+                        </Typography>
+                      </Grid>
                     </Grid>
                   </Grid>
-                </Grid>
-                <Grid item md={3} xs={6}>
-                  <Grid
-                    container
-                    alignItems="center"
-                    direction="row"
-                    wrap="nowrap"
-                  >
-                    <Grid item xs={3}>
-                      <img
-                        src={IconTotalStrength}
-                        alt="total strength"
-                        style={{ marginRight: "7%", height: "34px" }}
-                      />
+                  <Grid item md={3} xs={6}>
+                    <Grid
+                      container
+                      alignItems="center"
+                      direction="row"
+                      wrap="nowrap"
+                    >
+                      <Grid item xs={3}>
+                        <img
+                          src={IconStamina}
+                          alt="stamina"
+                          style={{ marginRight: "7%" }}
+                        />
+                      </Grid>
+                      <Grid item xs={4}>
+                        <Typography>
+                          {card.cardParameters.find(
+                            (elem) =>
+                              elem.cardParameterType === "param3" &&
+                              elem.cardLevel === cardLevel
+                          )?.power! +
+                            (cardLevel > card.maxNormalLevel
+                              ? card.specialTrainingPower3BonusFixed
+                              : 0)}
+                        </Typography>
+                      </Grid>
                     </Grid>
-                    <Grid item xs={4}>
-                      <Typography>
-                        {card.cardParameters
-                          .filter((elem) => elem.cardLevel === cardLevel)
-                          .reduce((sum, elem) => sum + elem.power, 0) +
-                          (cardLevel > card.maxNormalLevel
-                            ? card.specialTrainingPower1BonusFixed +
-                              card.specialTrainingPower2BonusFixed +
-                              card.specialTrainingPower3BonusFixed
-                            : 0)}
-                      </Typography>
+                  </Grid>
+                  <Grid item md={3} xs={6}>
+                    <Grid
+                      container
+                      alignItems="center"
+                      direction="row"
+                      wrap="nowrap"
+                    >
+                      <Grid item xs={3}>
+                        <img
+                          src={IconTotalStrength}
+                          alt="total strength"
+                          style={{ marginRight: "7%", height: "34px" }}
+                        />
+                      </Grid>
+                      <Grid item xs={4}>
+                        <Typography>
+                          {card.cardParameters
+                            .filter((elem) => elem.cardLevel === cardLevel)
+                            .reduce((sum, elem) => sum + elem.power, 0) +
+                            (cardLevel > card.maxNormalLevel
+                              ? card.specialTrainingPower1BonusFixed +
+                                card.specialTrainingPower2BonusFixed +
+                                card.specialTrainingPower3BonusFixed
+                              : 0)}
+                        </Typography>
+                      </Grid>
                     </Grid>
                   </Grid>
                 </Grid>
               </Grid>
             </Grid>
-          </Grid>
-        </Box>
-        <Divider style={{ margin: "1% 0" }} />
-      </Grid>
+          </Box>
+          <Divider style={{ margin: "1% 0" }} />
+        </Grid>
+      </Container>
       <Viewer
         visible={visible}
         onClose={() => setVisible(false)}
