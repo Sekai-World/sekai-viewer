@@ -12,7 +12,7 @@ import {
   Typography,
   Container,
 } from "@material-ui/core";
-import stylesDetail from "../styles/Detail";
+import { useDetailStyles } from "../styles/Detail";
 import { TabContext, TabPanel } from "@material-ui/lab";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -46,7 +46,6 @@ import { attrIconMap } from "../utils/resources";
 import { useTranslation } from "react-i18next";
 
 const useStyles = makeStyles((theme) => ({
-  ...stylesDetail(theme),
   "rarity-star-img": {
     maxWidth: "32px",
     margin: theme.spacing(0, 0.25),
@@ -106,6 +105,7 @@ function getSkillDesc(skill: ISkillInfo, skillLevel: number | number[]) {
 
 const CardDetail: React.FC<{}> = () => {
   const classes = useStyles();
+  const detailClasses = useDetailStyles();
   const { t } = useTranslation();
 
   const [charas] = useCachedData<ICharaProfile>("gameCharacters");
@@ -246,10 +246,10 @@ const CardDetail: React.FC<{}> = () => {
 
   return card && charaRanks.length ? (
     <Fragment>
-      <Typography variant="h6" className={classes.header}>
+      <Typography variant="h6" className={detailClasses.header}>
         {cardTitle}
       </Typography>
-      <Container className={classes.content}>
+      <Container className={detailClasses.content}>
         <TabContext value={tabVal}>
           <Paper>
             <Tabs
@@ -461,10 +461,10 @@ const CardDetail: React.FC<{}> = () => {
           </Grid>
         </Grid>
       </Container>
-      <Typography variant="h6" className={classes.header}>
+      <Typography variant="h6" className={detailClasses.header}>
         {t("card:stats")}
       </Typography>
-      <Container className={classes.content}>
+      <Container className={detailClasses.content}>
         <Grid className={classes["grid-out"]} container direction="column">
           <Grid
             container
