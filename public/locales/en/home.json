@@ -12,7 +12,8 @@
     "title": "Help needed!",
     "translation": "Translations",
     "development": "Development",
-    "contact": "Contact Me"
+    "contact": "Contact Me",
+    "join-discord": "Join Discord Server"
   },
   "detect": {
     "success": "Congratulations! Your browser seems modern, you are able to load images faster and save bandwidth."

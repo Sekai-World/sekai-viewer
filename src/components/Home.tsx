@@ -235,6 +235,12 @@ function Home() {
           <Discord fontSize="inherit"></Discord>
           DNARoma#0646
         </Link>
+        <br></br>
+        {t("home:alert1.join-discord")}
+        <Link href="https://discord.gg/xcDBRMd" target="_blank" className={classes["contact-link"]}>
+          <Discord fontSize="inherit"></Discord>
+          Sekai Viewer
+        </Link>
       </Alert>
       <Alert
         className={classes.alert}

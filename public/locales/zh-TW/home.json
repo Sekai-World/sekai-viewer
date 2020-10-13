@@ -12,7 +12,8 @@
     "title": "需要妳的幫助！",
     "translation": "翻譯",
     "development": "開發",
-    "contact": "聯系我"
+    "contact": "聯系我",
+    "join-discord": "加入Discord伺服器"
   },
   "detect": {
     "success": "恭喜！妳的瀏覽器看起來很現代，您可以更快地加載圖像並節省帶寬。"
