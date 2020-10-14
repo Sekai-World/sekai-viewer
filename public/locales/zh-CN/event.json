@@ -13,6 +13,7 @@
   "rankingAnnounceAt": "排名宣布时间",
   "distributionStartAt": "奖励发放开始",
   "distributionEndAt": "奖励发放结束",
+  "ranking": "",
   "realtime": "实时数据",
   "nextfetch": "下次获取",
   "type": {

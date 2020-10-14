@@ -1,9 +1,19 @@
-import { Card, CardHeader, CardMedia, makeStyles } from "@material-ui/core";
+import {
+  Card,
+  CardHeader,
+  CardMedia,
+  makeStyles,
+  Typography,
+  Container,
+} from "@material-ui/core";
+import { useLayoutStyles } from "../styles/layout";
 import { Skeleton } from "@material-ui/lab";
 import React, { Fragment, useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { useCachedData, useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
+
+import { useTranslation } from "react-i18next";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -80,8 +90,10 @@ function getPaginitedGachas(
 
 const GachaList: React.FC<any> = () => {
   const classes = useStyles();
+  const layoutClasses = useLayoutStyles();
   const history = useHistory();
   const { path } = useRouteMatch();
+  const { t } = useTranslation();
 
   const [gachas, setGachas] = useState<IGachaInfo[]>([]);
   // const [gachasCache, setGachasCache] = useState<IGachaInfo[]>([]);
@@ -152,7 +164,7 @@ const GachaList: React.FC<any> = () => {
       </Card>
     );
   };
-  
+
   const ListLoading: React.FC<any> = () => {
     return (
       <Card className={classes.card}>
@@ -170,12 +182,17 @@ const GachaList: React.FC<any> = () => {
 
   return (
     <Fragment>
-      {InfiniteScroll<IGachaInfo>({
-        viewComponent: ListCard,
-        loadingComponent: ListLoading,
-        callback,
-        data: gachas,
-      })}
+      <Typography variant="h6" className={layoutClasses.header}>
+        {t("common:gacha")}
+      </Typography>
+      <Container className={layoutClasses.content} maxWidth="md">
+        {InfiniteScroll<IGachaInfo>({
+          viewComponent: ListCard,
+          loadingComponent: ListLoading,
+          callback,
+          data: gachas,
+        })}
+      </Container>
     </Fragment>
   );
 };

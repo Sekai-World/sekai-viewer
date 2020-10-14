@@ -9,7 +9,9 @@ import {
   makeStyles,
   Paper,
   Typography,
+  Container,
 } from "@material-ui/core";
+import { useLayoutStyles } from "../styles/layout";
 import { ViewAgenda, Sort } from "@material-ui/icons";
 import { Skeleton } from "@material-ui/lab";
 import { Filter, ViewGrid } from "mdi-material-ui";
@@ -18,6 +20,8 @@ import { useHistory, useRouteMatch } from "react-router-dom";
 import { IMusicDifficultyInfo, IMusicInfo } from "../types";
 import { musicCategoryToName, useCachedData, useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
+
+import { useTranslation } from "react-i18next";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -78,8 +82,10 @@ function getPaginitedMusics(musics: IMusicInfo[], page: number, limit: number) {
 
 const MusicList: React.FC<any> = () => {
   const classes = useStyles();
+  const layoutClasses = useLayoutStyles();
   const { push } = useHistory();
   const { path } = useRouteMatch();
+  const { t } = useTranslation();
 
   const [musics, setMusics] = useState<IMusicInfo[]>([]);
   // const [musicsCache, setMusicsCache] = useState<IMusicInfo[]>([]);
@@ -234,50 +240,55 @@ const MusicList: React.FC<any> = () => {
 
   return (
     <Fragment>
-      <Grid container justify="space-between">
-        <ButtonGroup color="primary" style={{ marginBottom: "1%" }}>
-          <Button
-            variant={viewGridType === "grid" ? "outlined" : "contained"}
-            onClick={() => {
-              setViewGridType("grid");
-              localStorage.setItem("music-list-grid-view-type", "grid");
-            }}
-          >
-            <ViewGrid></ViewGrid>
-          </Button>
-          <Button
-            variant={viewGridType === "agenda" ? "outlined" : "contained"}
-            onClick={() => {
-              setViewGridType("agenda");
-              localStorage.setItem("music-list-grid-view-type", "agenda");
-            }}
-          >
-            <ViewAgenda></ViewAgenda>
-          </Button>
-          {/* <Button
-            variant={viewGridType === "comfy" ? "outlined" : "contained"}
-            onClick={() => setViewGridType("comfy")}
-          >
-            <ViewComfy></ViewComfy>
-          </Button> */}
-        </ButtonGroup>
-        <ButtonGroup color="primary" style={{ marginBottom: "1%" }} disabled>
-          <Button variant="contained" size="medium">
-            <Filter />
-            <Sort />
-          </Button>
-        </ButtonGroup>
-      </Grid>
-      {InfiniteScroll<IMusicInfo>({
-        viewComponent: ListCard[viewGridType],
-        loadingComponent: ListLoading,
-        callback,
-        data: musics,
-        gridSize: {
-          xs: 12,
-          md: viewGridType === "grid" ? 4 : viewGridType === "agenda" ? 12 : 12,
-        },
-      })}
+      <Typography variant="h6" className={layoutClasses.header}>
+        {t("common:music")}
+      </Typography>
+      <Container className={layoutClasses.content} maxWidth="md">
+        <Grid container justify="space-between">
+          <ButtonGroup color="primary" style={{ marginBottom: "1%" }}>
+            <Button
+              variant={viewGridType === "grid" ? "outlined" : "contained"}
+              onClick={() => {
+                setViewGridType("grid");
+                localStorage.setItem("music-list-grid-view-type", "grid");
+              }}
+            >
+              <ViewGrid></ViewGrid>
+            </Button>
+            <Button
+              variant={viewGridType === "agenda" ? "outlined" : "contained"}
+              onClick={() => {
+                setViewGridType("agenda");
+                localStorage.setItem("music-list-grid-view-type", "agenda");
+              }}
+            >
+              <ViewAgenda></ViewAgenda>
+            </Button>
+            {/* <Button
+              variant={viewGridType === "comfy" ? "outlined" : "contained"}
+              onClick={() => setViewGridType("comfy")}
+            >
+              <ViewComfy></ViewComfy>
+            </Button> */}
+          </ButtonGroup>
+          <ButtonGroup color="primary" style={{ marginBottom: "1%" }} disabled>
+            <Button variant="contained" size="medium">
+              <Filter />
+              <Sort />
+            </Button>
+          </ButtonGroup>
+        </Grid>
+        {InfiniteScroll<IMusicInfo>({
+          viewComponent: ListCard[viewGridType],
+          loadingComponent: ListLoading,
+          callback,
+          data: musics,
+          gridSize: {
+            xs: 12,
+            md: viewGridType === "grid" ? 4 : viewGridType === "agenda" ? 12 : 12,
+          },
+        })}
+      </Container>
     </Fragment>
   );
 };
