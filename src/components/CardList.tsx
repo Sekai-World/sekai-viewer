@@ -8,7 +8,9 @@ import {
   makeStyles,
   Paper,
   Typography,
+  Container,
 } from "@material-ui/core";
+import { useLayoutStyles } from "../styles/layout";
 import { Sort, ViewAgenda, ViewComfy } from "@material-ui/icons";
 import { Skeleton } from "@material-ui/lab";
 import { Filter, ViewGrid } from "mdi-material-ui";
@@ -18,6 +20,8 @@ import { ICardInfo, ICharaProfile } from "../types";
 import { useCachedData, useRefState } from "../utils";
 import { CardThumb } from "./subs/CardThumb";
 import InfiniteScroll from "./subs/InfiniteScroll";
+
+import { useTranslation } from "react-i18next";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -77,8 +81,10 @@ function getPaginitedCards(cards: ICardInfo[], page: number, limit: number) {
 
 const CardList: React.FC<any> = (props) => {
   const classes = useStyles();
+  const layoutClasses = useLayoutStyles();
   const { push } = useHistory();
   const { path } = useRouteMatch();
+  const { t } = useTranslation();
 
   const [cards, setCards] = useState<ICardInfo[]>([]);
   const [cardsCache, cardsCacheRef] = useCachedData<ICardInfo>("cards");
@@ -256,53 +262,58 @@ const CardList: React.FC<any> = (props) => {
 
   return (
     <Fragment>
-      <Grid container justify="space-between">
-        <ButtonGroup color="primary" style={{ marginBottom: "1%" }}>
-          <Button
-            variant={viewGridType === "grid" ? "outlined" : "contained"}
-            onClick={() => {
-              setViewGridType("grid");
-              localStorage.setItem("card-list-grid-view-type", "grid");
-            }}
-          >
-            <ViewGrid></ViewGrid>
-          </Button>
-          <Button
-            variant={viewGridType === "agenda" ? "outlined" : "contained"}
-            onClick={() => {
-              setViewGridType("agenda");
-              localStorage.setItem("card-list-grid-view-type", "agenda");
-            }}
-          >
-            <ViewAgenda></ViewAgenda>
-          </Button>
-          <Button
-            variant={viewGridType === "comfy" ? "outlined" : "contained"}
-            onClick={() => {
-              setViewGridType("comfy");
-              localStorage.setItem("card-list-grid-view-type", "comfy");
-            }}
-          >
-            <ViewComfy></ViewComfy>
-          </Button>
-        </ButtonGroup>
-        <ButtonGroup color="primary" style={{ marginBottom: "1%" }} disabled>
-          <Button variant="contained" size="medium">
-            <Filter />
-            <Sort />
-          </Button>
-        </ButtonGroup>
-      </Grid>
-      {InfiniteScroll<ICardInfo>({
-        viewComponent: ListCard[viewGridType],
-        loadingComponent: ListLoading,
-        callback,
-        data: cards,
-        gridSize: {
-          xs: 12,
-          md: viewGridType === "grid" ? 4 : viewGridType === "agenda" ? 12 : 3,
-        },
-      })}
+      <Typography variant="h6" className={layoutClasses.header}>
+        {t("common:card")}
+      </Typography>
+      <Container className={layoutClasses.content} maxWidth="md">
+        <Grid container justify="space-between">
+          <ButtonGroup color="primary" style={{ marginBottom: "1%" }}>
+            <Button
+              variant={viewGridType === "grid" ? "outlined" : "contained"}
+              onClick={() => {
+                setViewGridType("grid");
+                localStorage.setItem("card-list-grid-view-type", "grid");
+              }}
+            >
+              <ViewGrid></ViewGrid>
+            </Button>
+            <Button
+              variant={viewGridType === "agenda" ? "outlined" : "contained"}
+              onClick={() => {
+                setViewGridType("agenda");
+                localStorage.setItem("card-list-grid-view-type", "agenda");
+              }}
+            >
+              <ViewAgenda></ViewAgenda>
+            </Button>
+            <Button
+              variant={viewGridType === "comfy" ? "outlined" : "contained"}
+              onClick={() => {
+                setViewGridType("comfy");
+                localStorage.setItem("card-list-grid-view-type", "comfy");
+              }}
+            >
+              <ViewComfy></ViewComfy>
+            </Button>
+          </ButtonGroup>
+          <ButtonGroup color="primary" style={{ marginBottom: "1%" }} disabled>
+            <Button variant="contained" size="medium">
+              <Filter />
+              <Sort />
+            </Button>
+          </ButtonGroup>
+        </Grid>
+        {InfiniteScroll<ICardInfo>({
+          viewComponent: ListCard[viewGridType],
+          loadingComponent: ListLoading,
+          callback,
+          data: cards,
+          gridSize: {
+            xs: 12,
+            md: viewGridType === "grid" ? 4 : viewGridType === "agenda" ? 12 : 3,
+          },
+        })}
+      </Container>
     </Fragment>
   );
 };
