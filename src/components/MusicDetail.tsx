@@ -15,7 +15,7 @@ import {
   Typography,
   Container,
 } from "@material-ui/core";
-import { useDetailStyles } from "../styles/Detail";
+import { useLayoutStyles } from "../styles/layout";
 import React, {
   Fragment,
   useCallback,
@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
 
 const MsuicDetail: React.FC<{}> = () => {
   const classes = useStyles();
-  const detailClasses = useDetailStyles();
+  const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
 
   const [musics] = useCachedData<IMusicInfo>("musics");
@@ -222,10 +222,10 @@ const MsuicDetail: React.FC<{}> = () => {
     releaseConds.length &&
     danceMemebers.length ? (
     <Fragment>
-      <Typography variant="h6" className={detailClasses.header}>
+      <Typography variant="h6" className={layoutClasses.header}>
         {music.title}
       </Typography>
-      <Container className={detailClasses.content} maxWidth="sm">
+      <Container className={layoutClasses.content} maxWidth="sm">
         <Alert severity="warning">
           <Trans i18nKey="music:alert[0]" components={{b: <b/>}} />
         </Alert>

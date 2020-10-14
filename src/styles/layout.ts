@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core";
 
-const useDetailStyles = makeStyles((theme) => ({
+const useLayoutStyles = makeStyles((theme) => ({
   header: {
     fontWeight: "bold",
   },
@@ -12,4 +12,4 @@ const useDetailStyles = makeStyles((theme) => ({
   },
 }));
 
-export { useDetailStyles };
+export { useLayoutStyles };

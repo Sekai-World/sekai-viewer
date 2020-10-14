@@ -13,7 +13,7 @@ import {
   Typography,
   Container,
 } from "@material-ui/core";
-import { useDetailStyles } from "../styles/Detail";
+import { useLayoutStyles } from "../styles/layout";
 // import { Star as StarIcon } from "@material-ui/icons";
 import { TabContext, TabPanel } from "@material-ui/lab";
 import React, { Fragment, useEffect, useState } from "react";
@@ -108,7 +108,7 @@ const StarIcon: React.FC<{ num: number }> = ({ num }) => (
 
 const GachaDetailPage: React.FC<{}> = () => {
   const classes = useStyles();
-  const detailClasses = useDetailStyles();
+  const layoutClasses = useLayoutStyles();
   const { gachaId } = useParams<{ gachaId: string }>();
   const { t } = useTranslation();
 
@@ -247,10 +247,10 @@ const GachaDetailPage: React.FC<{}> = () => {
   if (isReadyRef && gacha) {
     return (
       <Fragment>
-        <Typography variant="h6" className={detailClasses.header}>
+        <Typography variant="h6" className={layoutClasses.header}>
           {gacha.name}
         </Typography>
-        <Container className={detailClasses.content} maxWidth="sm">
+        <Container className={layoutClasses.content} maxWidth="sm">
           <TabContext value={picTabVal}>
             <Paper>
               <Tabs

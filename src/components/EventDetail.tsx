@@ -9,7 +9,7 @@ import {
   Typography,
   Container,
 } from "@material-ui/core";
-import { useDetailStyles } from "../styles/Detail";
+import { useLayoutStyles } from "../styles/layout";
 import { TabContext, TabPanel } from "@material-ui/lab";
 import { CronJob } from "cron";
 import React, { Fragment, useEffect, useState } from "react";
@@ -42,7 +42,7 @@ const EventDetail: React.FC<{}> = () => {
   const { t, i18n } = useTranslation();
   const { eventId } = useParams<{ eventId: string }>();
   const classes = useStyle();
-  const detailClasses = useDetailStyles();
+  const layoutClasses = useLayoutStyles();
 
   const [events] = useCachedData<IEventInfo>("events");
   const [eventDeckBonuses] = useCachedData<IEventDeckBonus>("eventDeckBonuses");
@@ -185,10 +185,10 @@ const EventDetail: React.FC<{}> = () => {
 
   return event && eventDeckBonus.length && gameCharacterUnits.length ? (
     <Fragment>
-      <Typography variant="h6" className={detailClasses.header}>
+      <Typography variant="h6" className={layoutClasses.header}>
         {event.name}
       </Typography>
-      <Container className={detailClasses.content} maxWidth="sm">
+      <Container className={layoutClasses.content} maxWidth="sm">
         <TabContext value={imgTabVal}>
           <Paper>
             <Tabs
@@ -482,10 +482,10 @@ const EventDetail: React.FC<{}> = () => {
       </Container>
       {rtRanking.time ? (
         <Fragment>
-          <Typography variant="h6" className={detailClasses.header}>
+          <Typography variant="h6" className={layoutClasses.header}>
             {t("event:ranking")}
           </Typography>
-          <Container className={detailClasses.content} maxWidth="sm">
+          <Container className={layoutClasses.content} maxWidth="sm">
             <Paper style={{ padding: "1%" }}>
               <Typography variant="h6">
                 {t("event:realtime")} {new Date(rtRanking.time).toLocaleString(i18n.language)}
