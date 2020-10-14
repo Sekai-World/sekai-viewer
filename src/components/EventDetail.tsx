@@ -2,6 +2,7 @@ import {
   Box,
   Divider,
   Grid,
+  LinearProgress,
   makeStyles,
   Paper,
   Tab,
@@ -12,6 +13,7 @@ import {
 import { useLayoutStyles } from "../styles/layout";
 import { TabContext, TabPanel } from "@material-ui/lab";
 import { CronJob } from "cron";
+import moment from "moment";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -58,6 +60,8 @@ const EventDetail: React.FC<{}> = () => {
   const [imgTabVal, setImgTabVal] = useState<string>("0");
   // const [intervalId, setIntervalId] = useState<number>();
   const [nextRefreshTime, setNextRefreshTime] = useState<moment.Moment>();
+  const [pastTime, setPastTime] = useState<string>("");
+  const [pastTimePercent, setPastTimePercent] = useState<number>(0);
 
   useEffect(() => {
     if (events.length && eventDeckBonuses.length) {
@@ -86,6 +90,63 @@ const EventDetail: React.FC<{}> = () => {
       window.clearInterval(interval);
     };
   }, [refreshData]);
+
+  useEffect(() => {
+    if (event && Date.now() < event.aggregateAt) {
+      setPastTime(
+        new Date(Date.now() - event.startAt)
+          .toISOString()
+          .substring(8, 16)
+          .replace("T", " day(s) ")
+          .replace(":", "h ")
+          .concat(
+            `m (${(
+              ((Date.now() - event.startAt) /
+                (event.aggregateAt - event.startAt)) *
+              100
+            ).toFixed(1)}%)`
+          )
+      );
+
+      setPastTimePercent(
+        ((Date.now() - event.startAt) / (event.aggregateAt - event.startAt)) *
+          100
+      );
+
+      const interval = window.setInterval(() => {
+        if (Date.now() > event.aggregateAt) {
+          window.clearInterval(interval);
+          setPastTime(t("event:already-ended"));
+          return;
+        }
+        setPastTime(
+          new Date(Date.now() - event.startAt)
+            .toISOString()
+            .substring(8, 16)
+            .replace("T", " day(s) ")
+            .replace(":", "h ")
+            .concat(
+              `m (${(
+                ((Date.now() - event.startAt) /
+                  (event.aggregateAt - event.startAt)) *
+                100
+              ).toFixed(1)}%)`
+            )
+        );
+        setPastTimePercent(
+          ((Date.now() - event.startAt) / (event.aggregateAt - event.startAt)) *
+            100
+        );
+      }, 60000);
+
+      return () => {
+        window.clearInterval(interval);
+      };
+    } else {
+      setPastTime(t("event:already-ended"));
+      setPastTimePercent(100);
+    }
+  }, [event, t]);
 
   function getRankingDegreeImg(reward: EventRankingRewardRange) {
     const honor = honors.find(
@@ -244,6 +305,21 @@ const EventDetail: React.FC<{}> = () => {
           )}.mp3`}
         ></audio>
         <Grid className={classes["grid-out"]} container direction="column">
+          <Grid
+            item
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+              {t("event:alreadyPast")}
+            </Typography>
+            <Typography>{pastTime}</Typography>
+          </Grid>
+          <LinearProgress variant="determinate" value={pastTimePercent} />
+          <Divider style={{ margin: "1% 0" }} />
           <Grid
             item
             container
@@ -488,7 +564,8 @@ const EventDetail: React.FC<{}> = () => {
           <Container className={layoutClasses.content} maxWidth="sm">
             <Paper style={{ padding: "1%" }}>
               <Typography variant="h6">
-                {t("event:realtime")} {new Date(rtRanking.time).toLocaleString(i18n.language)}
+                {t("event:realtime")}{" "}
+                {new Date(rtRanking.time).toLocaleString(i18n.language)}
               </Typography>
               <Typography variant="body2" color="textSecondary">
                 {t("event:nextfetch")}:{" "}
@@ -499,7 +576,7 @@ const EventDetail: React.FC<{}> = () => {
                 {resourceBoxes.length && honors.length
                   ? event.eventRankingRewardRanges.map((elem) =>
                       elem.fromRank >= 100001 ? null : (
-                        <Fragment>
+                        <Fragment key={elem.toRank}>
                           <Grid
                             item
                             container

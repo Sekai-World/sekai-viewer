@@ -1,4 +1,5 @@
 {
+  "already-ended": "活动已结束",
   "tab": {
     "title[0]": "横幅和徽标",
     "title[1]": "背景",
@@ -7,13 +8,14 @@
   "boostAttribute": "加成属性",
   "boostCharacters": "加成角色",
   "maxBoost": "加成（两者皆满足）",
+  "alreadyPast": "活动已经过",
   "aggregateAt": "点数合计时间",
   "rankingAnnounceAt": "排名宣布时间",
   "distributionStartAt": "奖励发放开始",
   "distributionEndAt": "奖励发放结束",
   "ranking": "",
-  "realtime": "",
-  "nextfetch": "",
+  "realtime": "实时数据",
+  "nextfetch": "下次获取",
   "type": {
     "marathon": "累积点数"
   }

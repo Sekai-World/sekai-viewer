@@ -44,8 +44,8 @@ const gachaImageNameMap: {
   },
   4: {
     bg: "bg_gacha4",
-    feature: "img_gacha4"
-  }
+    feature: "img_gacha4",
+  },
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -113,7 +113,7 @@ const GachaDetailPage: React.FC<{}> = () => {
   const { t } = useTranslation();
 
   const [gacha, setGacha] = useState<IGachaInfo>();
-  const [gachas] = useCachedData<IGachaInfo>('gachas');
+  const [gachas] = useCachedData<IGachaInfo>("gachas");
   const [visible, setVisible] = useState<boolean>(false);
   const [picTabVal, setPicTabVal] = useState<string>("4");
   const [activeIdx, setActiveIdx] = useState<number>(0);
@@ -130,7 +130,7 @@ const GachaDetailPage: React.FC<{}> = () => {
 
   const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
 
-  const [cards] = useCachedData<ICardInfo>('cards');
+  const [cards] = useCachedData<ICardInfo>("cards");
 
   function doGacha(times: number) {
     const rollTimes = times;
@@ -143,6 +143,7 @@ const GachaDetailPage: React.FC<{}> = () => {
         gacha?.rarity3Rate! +
         gacha?.rarity4Rate!,
     ];
+    const must3RollResult = [100 - gacha?.rarity4Rate!, 100];
     const rollCards = [
       gacha?.gachaDetails.filter(
         (elem) => cards.find((card) => card.id === elem.cardId)?.rarity === 1
@@ -158,7 +159,43 @@ const GachaDetailPage: React.FC<{}> = () => {
       )!,
     ];
     const tmpGachaResult: GachaDetail[] = [];
+    let noStar3Count = 0;
     for (let i = 0; i < rollTimes; i++) {
+      if (i % 10 === 9 && noStar3Count === 9) {
+        // only roll 3* or 4*
+        const roll = Math.random() * 99 + 1;
+        if (roll < must3RollResult[0]) {
+          // get 3* card
+          setStatistic((s) =>
+            Object.assign({}, s, {
+              total: s.total + 1,
+              rarity3: s.rarity3 + 1,
+            })
+          );
+          // roll a 3* card
+          tmpGachaResult.push(
+            rollCards[2][Math.floor(Math.random() * rollCards[2]?.length)]
+          );
+        } else if (roll < must3RollResult[1]) {
+          // get 4* card
+          setStatistic((s) =>
+            Object.assign({}, s, {
+              total: s.total + 1,
+              rarity4: s.rarity4 + 1,
+            })
+          );
+          // roll a 4* card
+          tmpGachaResult.push(
+            rollCards[3][Math.floor(Math.random() * rollCards[3]?.length)]
+          );
+        } else {
+          console.log(roll, must3RollResult);
+        }
+        noStar3Count = 0;
+        continue;
+      } else if (i % 10 === 0) {
+        noStar3Count = 0;
+      }
       const roll = Math.random() * 99 + 1;
       if (roll <= rollResult[0]!) {
         // get 1* card
@@ -172,6 +209,7 @@ const GachaDetailPage: React.FC<{}> = () => {
         tmpGachaResult.push(
           rollCards[0][Math.floor(Math.random() * rollCards[0]?.length)]
         );
+        noStar3Count++;
       } else if (roll <= rollResult[1]!) {
         // get 2* card
         setStatistic((s) =>
@@ -184,6 +222,7 @@ const GachaDetailPage: React.FC<{}> = () => {
         tmpGachaResult.push(
           rollCards[1][Math.floor(Math.random() * rollCards[1]?.length)]
         );
+        noStar3Count++;
       } else if (roll <= rollResult[2]!) {
         // get 3* card
         setStatistic((s) =>
@@ -259,13 +298,13 @@ const GachaDetailPage: React.FC<{}> = () => {
                 variant="scrollable"
                 scrollButtons="desktop"
               >
-                <Tab label={t('gacha:tab.title[0]')} value="2"></Tab>
-                <Tab label={t('gacha:tab.title[1]')} value="3"></Tab>
-                <Tab label={t('gacha:tab.title[2]')} value="4"></Tab>
-                <Tab label={t('gacha:tab.title[3]')} value="0"></Tab>
+                <Tab label={t("gacha:tab.title[0]")} value="2"></Tab>
+                <Tab label={t("gacha:tab.title[1]")} value="3"></Tab>
+                <Tab label={t("gacha:tab.title[2]")} value="4"></Tab>
+                <Tab label={t("gacha:tab.title[3]")} value="0"></Tab>
                 {gacha ? (
                   gachaImageNameMap[gacha.id].feature ? (
-                    <Tab label={t('gacha:tab.title[4]')} value="1"></Tab>
+                    <Tab label={t("gacha:tab.title[4]")} value="1"></Tab>
                   ) : null
                 ) : null}
               </Tabs>
@@ -318,7 +357,11 @@ const GachaDetailPage: React.FC<{}> = () => {
                   {gacha.gachaInformation.description
                     .split("\n")
                     .map((str, line) => (
-                      <Typography paragraph variant="body2" key={`desc-${line}`}>
+                      <Typography
+                        paragraph
+                        variant="body2"
+                        key={`desc-${line}`}
+                      >
                         {str}
                       </Typography>
                     ))}
@@ -328,11 +371,17 @@ const GachaDetailPage: React.FC<{}> = () => {
             <TabPanel value="3" classes={{ root: classes.tabpanel }}>
               <Card>
                 <CardContent>
-                  {gacha.gachaInformation.summary.split("\n").map((str, line) => (
-                    <Typography paragraph variant="body2" key={`summary-${line}`}>
-                      {str}
-                    </Typography>
-                  ))}
+                  {gacha.gachaInformation.summary
+                    .split("\n")
+                    .map((str, line) => (
+                      <Typography
+                        paragraph
+                        variant="body2"
+                        key={`summary-${line}`}
+                      >
+                        {str}
+                      </Typography>
+                    ))}
                 </CardContent>
               </Card>
             </TabPanel>
@@ -430,7 +479,7 @@ const GachaDetailPage: React.FC<{}> = () => {
               paddingY="1%"
             >
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                {t('common:id')}
+                {t("common:id")}
               </Typography>
               <Typography>{gacha.id}</Typography>
             </Box>
@@ -444,7 +493,7 @@ const GachaDetailPage: React.FC<{}> = () => {
               paddingY="1%"
             >
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                {t('common:title')}
+                {t("common:title")}
               </Typography>
               <Typography>{gacha.name}</Typography>
             </Box>
@@ -458,7 +507,7 @@ const GachaDetailPage: React.FC<{}> = () => {
               paddingY="1%"
             >
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                {t('common:icon')}
+                {t("common:icon")}
               </Typography>
               <img
                 style={{ maxWidth: "50%" }}
@@ -476,9 +525,11 @@ const GachaDetailPage: React.FC<{}> = () => {
               paddingY="1%"
             >
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t('common:startAt')}
+                {t("common:startAt")}
               </Typography>
-              <Typography>{new Date(gacha.startAt).toLocaleString()}</Typography>
+              <Typography>
+                {new Date(gacha.startAt).toLocaleString()}
+              </Typography>
             </Box>
             <Divider />
             <Box
@@ -490,7 +541,7 @@ const GachaDetailPage: React.FC<{}> = () => {
               paddingY="1%"
             >
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t('common:endAt')}
+                {t("common:endAt")}
               </Typography>
               <Typography>{new Date(gacha.endAt).toLocaleString()}</Typography>
             </Box>
@@ -504,22 +555,27 @@ const GachaDetailPage: React.FC<{}> = () => {
               paddingY="1%"
             >
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t('common:type')}
+                {t("common:type")}
               </Typography>
               <Typography>{gacha.gachaType}</Typography>
             </Box>
             <Divider />
-            <Grid container
+            <Grid
+              container
               wrap="nowrap"
               justify="space-between"
               alignItems="center"
-              style={{padding: '1% 0'}}
+              style={{ padding: "1% 0" }}
             >
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                {t('gacha:pickupMember', { count: gacha.gachaPickups.length })}
+                {t("gacha:pickupMember", { count: gacha.gachaPickups.length })}
               </Typography>
               <Grid item container direction="row" xs={6} spacing={1}>
-                { gacha.gachaPickups.map(elem => <Grid key={`pickup-${elem.id}`} item xs={12} md={4}><CardThumb id={elem.cardId} /></Grid>) }
+                {gacha.gachaPickups.map((elem) => (
+                  <Grid key={`pickup-${elem.id}`} item xs={12} md={4}>
+                    <CardThumb id={elem.cardId} />
+                  </Grid>
+                ))}
               </Grid>
             </Grid>
             <Divider />
@@ -541,7 +597,11 @@ const GachaDetailPage: React.FC<{}> = () => {
       </Fragment>
     );
   } else {
-    return <div>Loading... If you saw this for a while, gacha {gachaId} does not exist.</div>;
+    return (
+      <div>
+        Loading... If you saw this for a while, gacha {gachaId} does not exist.
+      </div>
+    );
   }
 };
 

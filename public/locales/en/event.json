@@ -1,4 +1,5 @@
 {
+  "already-ended": "Event is already ended",
   "tab": {
     "title[0]": "Banner & logo",
     "title[1]": "Background",
@@ -7,6 +8,7 @@
   "boostAttribute": "Boost Attribute",
   "boostCharacters": "Boost Charaters",
   "maxBoost": "Max Boost (Both Matched)",
+  "alreadyPast": "Already Past",
   "aggregateAt": "Aggregate Timepoint",
   "rankingAnnounceAt": "Ranking Announcement At",
   "distributionStartAt": "Rewards Distribution From",

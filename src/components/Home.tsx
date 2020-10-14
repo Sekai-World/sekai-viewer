@@ -242,6 +242,15 @@ function Home() {
             <Discord fontSize="inherit"></Discord>
             DNARoma#0646
           </Link>
+          {t("home:alert1.join-discord")}
+          <Link
+            href="https://discord.gg/xcDBRMd"
+            target="_blank"
+            className={classes["contact-link"]}
+          >
+            <Discord fontSize="inherit"></Discord>
+            Sekai Viewer
+          </Link>
         </Alert>
         <Alert
           className={classes.alert}
@@ -250,7 +259,9 @@ function Home() {
           <AlertTitle>WebP {t("common:support")}</AlertTitle>
           <ul>
             <li>WebP: {getWebpDetectDesc(t, detected.webp)}</li>
-            <li>WebP Lossless: {getWebpDetectDesc(t, detected.webpLossless)}</li>
+            <li>
+              WebP Lossless: {getWebpDetectDesc(t, detected.webpLossless)}
+            </li>
             <li>WebP Alpha: {getWebpDetectDesc(t, detected.webpAlpha)}</li>
           </ul>
           {getWebpDetectServerity(detected) === "success" ? (
@@ -267,34 +278,34 @@ function Home() {
           )}
         </Alert>
         <Paper>
-        <Typography variant="h6" align="center">
-          {t("home:game-news.title")}
-        </Typography>
-        <Tabs
-          value={gameNewsTag}
-          onChange={(e, v) => setGameNewsTag(v)}
-          variant="scrollable"
-          scrollButtons="desktop"
-        >
-          <Tab label={t("common:information")} value="information"></Tab>
-          <Tab label={t("common:event")} value="event"></Tab>
-          <Tab label={t("common:gacha")} value="gacha"></Tab>
-          <Tab label={t("common:music")} value="music"></Tab>
-          <Tab label={t("common:campaign")} value="campaign"></Tab>
-          <Tab label={t("common:bug")} value="bug"></Tab>
-          <Tab label={t("common:update")} value="update"></Tab>
-        </Tabs>
-        <div style={{ height: 650 }}>
-          <DataGrid
-            pagination
-            autoPageSize
-            rows={informations.filter(
-              (info) => info.informationTag === gameNewsTag
-            )}
-            columns={columns}
-          ></DataGrid>
-        </div>
-      </Paper>
+          <Typography variant="h6" align="center">
+            {t("home:game-news.title")}
+          </Typography>
+          <Tabs
+            value={gameNewsTag}
+            onChange={(e, v) => setGameNewsTag(v)}
+            variant="scrollable"
+            scrollButtons="desktop"
+          >
+            <Tab label={t("common:information")} value="information"></Tab>
+            <Tab label={t("common:event")} value="event"></Tab>
+            <Tab label={t("common:gacha")} value="gacha"></Tab>
+            <Tab label={t("common:music")} value="music"></Tab>
+            <Tab label={t("common:campaign")} value="campaign"></Tab>
+            <Tab label={t("common:bug")} value="bug"></Tab>
+            <Tab label={t("common:update")} value="update"></Tab>
+          </Tabs>
+          <div style={{ height: 650 }}>
+            <DataGrid
+              pagination
+              autoPageSize
+              rows={informations.filter(
+                (info) => info.informationTag === gameNewsTag
+              )}
+              columns={columns}
+            ></DataGrid>
+          </div>
+        </Paper>
       </Container>
       {info ? (
         <InfoInternalDialog
