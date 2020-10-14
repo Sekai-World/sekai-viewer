@@ -378,12 +378,19 @@ const EventDetail: React.FC<{}> = () => {
             <Grid
               item
               container
-              xs={4}
+              xs={6}
               spacing={1}
               alignItems="center"
               justify="space-between"
             >
-              <Grid item xs={6} md={9} container spacing={1} justify="flex-end">
+              <Grid
+                item
+                xs={6}
+                sm={10}
+                container
+                spacing={1}
+                justify="flex-end"
+              >
                 <Grid item>
                   <img
                     style={{ maxHeight: "36px" }}
@@ -392,7 +399,7 @@ const EventDetail: React.FC<{}> = () => {
                   ></img>
                 </Grid>
               </Grid>
-              <Grid item xs={4} md={2}>
+              <Grid item xs={4} sm={2}>
                 <Typography>+{eventDeckBonus[6].bonusRate}%</Typography>
               </Grid>
             </Grid>
@@ -406,7 +413,7 @@ const EventDetail: React.FC<{}> = () => {
             justify="space-between"
             alignItems="center"
           >
-            <Grid item>
+            <Grid item xs={4}>
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                 {t("event:boostCharacters")}
               </Typography>
@@ -415,11 +422,12 @@ const EventDetail: React.FC<{}> = () => {
               item
               container
               spacing={1}
-              xs={4}
+              xs={5}
+              sm={6}
               alignItems="center"
               justify="space-between"
             >
-              <Grid item container spacing={1} xs={6} md={10}>
+              <Grid item container spacing={1} xs={6} sm={10}>
                 {eventDeckBonus.slice(0, 5).map((elem, idx) => (
                   <Grid key={`chara-${idx}`} item>
                     <img
@@ -442,7 +450,7 @@ const EventDetail: React.FC<{}> = () => {
                   </Grid>
                 ))}
               </Grid>
-              <Grid item xs={4} md={2}>
+              <Grid item xs={5} sm={2}>
                 <Typography>+{eventDeckBonus[6].bonusRate}%</Typography>
               </Grid>
             </Grid>
