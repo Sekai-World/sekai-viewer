@@ -249,7 +249,7 @@ const CardDetail: React.FC<{}> = () => {
       <Typography variant="h6" className={detailClasses.header}>
         {cardTitle}
       </Typography>
-      <Container className={detailClasses.content}>
+      <Container className={detailClasses.content} maxWidth="sm">
         <TabContext value={tabVal}>
           <Paper>
             <Tabs
@@ -464,7 +464,7 @@ const CardDetail: React.FC<{}> = () => {
       <Typography variant="h6" className={detailClasses.header}>
         {t("card:stats")}
       </Typography>
-      <Container className={detailClasses.content}>
+      <Container className={detailClasses.content} maxWidth="sm">
         <Grid className={classes["grid-out"]} container direction="column">
           <Grid
             container

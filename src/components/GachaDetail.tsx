@@ -250,7 +250,7 @@ const GachaDetailPage: React.FC<{}> = () => {
         <Typography variant="h6" className={detailClasses.header}>
           {gacha.name}
         </Typography>
-        <Container className={detailClasses.content}>
+        <Container className={detailClasses.content} maxWidth="sm">
           <TabContext value={picTabVal}>
             <Paper>
               <Tabs

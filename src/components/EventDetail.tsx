@@ -188,7 +188,7 @@ const EventDetail: React.FC<{}> = () => {
       <Typography variant="h6" className={detailClasses.header}>
         {event.name}
       </Typography>
-      <Container className={detailClasses.content}>
+      <Container className={detailClasses.content} maxWidth="sm">
         <TabContext value={imgTabVal}>
           <Paper>
             <Tabs
@@ -485,7 +485,7 @@ const EventDetail: React.FC<{}> = () => {
           <Typography variant="h6" className={detailClasses.header}>
             {t("event:ranking")}
           </Typography>
-          <Container className={detailClasses.content}>
+          <Container className={detailClasses.content} maxWidth="sm">
             <Paper style={{ padding: "1%" }}>
               <Typography variant="h6">
                 {t("event:realtime")} {new Date(rtRanking.time).toLocaleString(i18n.language)}

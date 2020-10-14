@@ -225,7 +225,7 @@ const MsuicDetail: React.FC<{}> = () => {
       <Typography variant="h6" className={detailClasses.header}>
         {music.title}
       </Typography>
-      <Container className={detailClasses.content}>
+      <Container className={detailClasses.content} maxWidth="sm">
         <Alert severity="warning">
           <Trans i18nKey="music:alert[0]" components={{b: <b/>}} />
         </Alert>

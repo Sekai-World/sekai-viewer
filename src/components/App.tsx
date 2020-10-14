@@ -346,7 +346,7 @@ function App() {
             </Drawer>
           </Hidden>
         </nav>
-        <Container className={classes.content} maxWidth="md">
+        <Container className={classes.content}>
           <div className={classes.toolbar}></div>
           <Switch>
             <Suspense fallback={<div>Loading...</div>}>
