@@ -13,8 +13,8 @@
   "rankingAnnounceAt": "Ranking Announcement At",
   "distributionStartAt": "Rewards Distribution From",
   "distributionEndAt": "Rewards Distribution Until",
-  "ranking": "",
-  "realtime": "Real time ranking at",
+  "ranking": "Ranking",
+  "realtime": "Real time at",
   "nextfetch": "Next fetch",
   "type": {
     "marathon": "Marathon"

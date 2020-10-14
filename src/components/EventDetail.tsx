@@ -562,7 +562,7 @@ const EventDetail: React.FC<{}> = () => {
             {t("event:ranking")}
           </Typography>
           <Container className={layoutClasses.content} maxWidth="sm">
-            <Paper style={{ padding: "1%" }}>
+            <Paper style={{ padding: "2%" }}>
               <Typography variant="h6">
                 {t("event:realtime")}{" "}
                 {new Date(rtRanking.time).toLocaleString(i18n.language)}
@@ -583,7 +583,7 @@ const EventDetail: React.FC<{}> = () => {
                             justify="space-between"
                             alignItems="center"
                           >
-                            <Grid item xs={6} md={3}>
+                            <Grid item xs={6} md={4}>
                               <Box position="relative">
                                 <img
                                   style={{

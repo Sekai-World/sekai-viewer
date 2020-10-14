@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
   agenda: {
     padding: "4% 4%",
     [theme.breakpoints.down("sm")]: {
-      maxWidth: "300px",
+      maxWidth: "100%",
     },
     // [theme.breakpoints.only("md")]: {
     //   maxWidth: "600px",
@@ -60,8 +60,8 @@ const useStyles = makeStyles((theme) => ({
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
-    [theme.breakpoints.down("md")]: {
-      maxWidth: "150px",
+    [theme.breakpoints.down("sm")]: {
+      maxWidth: "100%",
     },
     maxWidth: "210px",
   },
