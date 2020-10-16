@@ -203,6 +203,11 @@ function Home() {
           {t("home:alert0")}
         </Alert>
         <Alert className={classes.alert} severity="info">
+          <AlertTitle>{t("home:alert_translate.title")}</AlertTitle>
+          <ul>
+            <li>日: Passion, Cee</li>
+            <li>Pt-BR: mid</li>
+          </ul>
           <Trans
             i18nKey="home:alert_settings"
             components={{ s: <Settings fontSize="inherit" /> }}
