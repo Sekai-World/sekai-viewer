@@ -5,10 +5,10 @@
     "title[1]": "Background",
     "title[2]": "Character"
   },
+  "alreadyPast": "Already Past",
   "boostAttribute": "Boost Attribute",
   "boostCharacters": "Boost Charaters",
   "maxBoost": "Max Boost (Both Matched)",
-  "alreadyPast": "Already Past",
   "aggregateAt": "Aggregate Timepoint",
   "rankingAnnounceAt": "Ranking Announcement At",
   "distributionStartAt": "Rewards Distribution From",

@@ -1,0 +1,22 @@
+{
+  "already-ended": "O Evento já foi encerrado",
+  "tab": {
+    "title[0]": "Banner & Logo",
+    "title[1]": "Background",
+    "title[2]": "Personagem"
+  },
+  "alreadyPast": "Tempo passado",
+  "boostAttribute": "Atributo bônus",
+  "boostCharacters": "Personagens de impulso",
+  "maxBoost": "Impulso Máximo (Todos os Personagens)",
+  "aggregateAt": "Ponto de tempo agregado",
+  "rankingAnnounceAt": "Anunciamento do Rank em",
+  "distributionStartAt": "Distribuição de Recompensas a partir de",
+  "distributionEndAt": "Destribuição de Recompensas até",
+  "ranking": "",
+  "realtime": "Ranking em Tempo Real",
+  "nextfetch": "próxima busca",
+  "type": {
+    "marathon": "Maratona"
+  }
+}

@@ -5,10 +5,10 @@
     "title[1]": "背景",
     "title[2]": "角色"
   },
+  "alreadyPast": "活动已经过",
   "boostAttribute": "加成属性",
   "boostCharacters": "加成角色",
   "maxBoost": "加成（两者皆满足）",
-  "alreadyPast": "活动已经过",
   "aggregateAt": "点数合计时间",
   "rankingAnnounceAt": "排名宣布时间",
   "distributionStartAt": "奖励发放开始",

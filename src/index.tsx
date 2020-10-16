@@ -15,9 +15,12 @@ i18n
   .use(fetchBackend)
   .use(detector)
   .init({
-    supportedLngs: ["en", "zh-CN", "zh-TW", "ja", "ko", "es", "de"],
+    supportedLngs: ["en", "zh-CN", "zh-TW", "ja", "ko", "es", "de", "pt-BR"],
     ns: ["common", "home", "card", "music", "gacha", "event", "unit", "member"],
-    fallbackLng: "en",
+    fallbackLng: {
+      default: ["en"],
+      pt: ["pt-BR", "en"],
+    },
     fallbackNS: "common",
     backend: {
       loadPath: process.env.PUBLIC_URL + "/locales/{{lng}}/{{ns}}.json",

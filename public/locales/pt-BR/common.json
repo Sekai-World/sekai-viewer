@@ -1,0 +1,41 @@
+{
+  "home": "Início",
+  "card": "Card",
+  "music": "Música",
+  "gacha": "Gacha",
+  "event": "Evento",
+  "unit": "Unidade (Unit)",
+  "member": "Membros",
+  "toolbar": {
+    "title": "Lista de Funções"
+  },
+  "settings": {
+    "title": "Opções"
+  },
+  "language": "Idioma",
+  "darkmode": "Brilho",
+  "id": "ID",
+  "title": "Título",
+  "character": "Personagem",
+  "attribute": "Atributo",
+  "startAt": "Disponível a partir de",
+  "rarity": "Raridade",
+  "thumb": "Ícone",
+  "skill": "Habilidade",
+  "type": "Tipo",
+  "endAt": "Disponível até",
+  "icon": "Ícone",
+  "detect": {
+    "checking": "Checando...",
+    "unsupported": "Sem Suporte",
+    "supported": "Suportado"
+  },
+  "support": "Suporte",
+  "information": "Informação",
+  "campaign": "Campanha",
+  "bug": "Bug",
+  "update": "Atualização",
+  "character_plural": "Personagens",
+  "releaseCondition": "Condição de lançamento",
+  "level": "Nível"
+}

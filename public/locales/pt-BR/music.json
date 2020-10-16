@@ -1,0 +1,19 @@
+{
+  "alert[0]": "Os primeiros <b>nove segundos </b> de todas as músicas não tem som. Isso NÃO é um bug.",
+  "tag": "Tag",
+  "tag_plural": "Tags",
+  "category": "Categoria",
+  "category_plural": "Categorias",
+  "arranger": "arranjador",
+  "composer": "Compositor",
+  "lyricist": "Letras por",
+  "danceMember": "Membro de Dança",
+  "danceMember_plural": "Membros de Dança",
+  "dancerCount": "Dançarinos",
+  "vocal": "Vocal",
+  "vocal_plural": "Vocais",
+  "vocalType": "Tipo de Vocal",
+  "difficulty": "Dificuldade",
+  "difficulty_plural": "Dificuldades",
+  "noteCount": "Contador de Notas"
+}

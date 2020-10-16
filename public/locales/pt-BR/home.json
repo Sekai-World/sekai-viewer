@@ -1,0 +1,24 @@
+{
+  "game-news": {
+    "action": "Ação",
+    "show-from": "Datas dos Shows",
+    "title-column": "Título",
+    "show-until": "Duração do show",
+    "title": "Notícias do jogo"
+  },
+  "alert0": "Sekai Viewer agora está em Open Beta!",
+  "alert_translate": {
+    "title": ""
+  },
+  "alert_settings": "Use <s /> no canto superior direito para mudar o idioma, mudar o brilho e mais.",
+  "alert1": {
+    "title": "Ajuda necessária!",
+    "translation": "Traduções",
+    "development": "Desenvolvimento",
+    "contact": "Me contate",
+    "join-discord": "Entre no nosso servidor do Discord"
+  },
+  "detect": {
+    "success": "Parabéns! Seu navegador parece moderno, você vai conseguir carregar as imagens mais rápido e economizar dados."
+  }
+}
