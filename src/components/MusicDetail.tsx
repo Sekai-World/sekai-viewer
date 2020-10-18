@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
   },
   "media-contain": {
     [theme.breakpoints.up("md")]: {
-      paddingTop: "40%",
+      paddingTop: "60%",
     },
     [theme.breakpoints.down("sm")]: {
       paddingTop: "90%",
@@ -227,7 +227,7 @@ const MsuicDetail: React.FC<{}> = () => {
       </Typography>
       <Container className={layoutClasses.content} maxWidth="sm">
         <Alert severity="warning">
-          <Trans i18nKey="music:alert[0]" components={{b: <b/>}} />
+          <Trans i18nKey="music:alert[0]" components={{ b: <b /> }} />
         </Alert>
         <CardMedia
           onClick={() => {
@@ -417,7 +417,9 @@ const MsuicDetail: React.FC<{}> = () => {
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {musicDanceMember ? t("music:danceMember", { count: music.dancerCount }) : t("music:dancerCount")}
+              {musicDanceMember
+                ? t("music:danceMember", { count: music.dancerCount })
+                : t("music:dancerCount")}
             </Typography>
             <Grid item>
               {musicDanceMember
@@ -476,7 +478,10 @@ const MsuicDetail: React.FC<{}> = () => {
                 ))}
               </Tabs>
               {musicVocal.map((elem, idx) => (
-                <TabPanel value={String(idx)} key={`vocal-info-tab-panel-${idx}`}>
+                <TabPanel
+                  value={String(idx)}
+                  key={`vocal-info-tab-panel-${idx}`}
+                >
                   <Grid container direction="column">
                     <Grid
                       item
@@ -485,14 +490,27 @@ const MsuicDetail: React.FC<{}> = () => {
                       justify="space-between"
                       alignItems="center"
                     >
-                      <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                        {t("common:character", { count: elem.characters.length })}
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {t("common:character", {
+                          count: elem.characters.length,
+                        })}
                       </Typography>
                       <Grid item>{getVocalCharaIcons(idx)}</Grid>
                     </Grid>
                     <Divider style={{ margin: "1% 0" }} />
-                    <Grid item container direction="row" justify="space-between">
-                      <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    <Grid
+                      item
+                      container
+                      direction="row"
+                      justify="space-between"
+                    >
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
                         {t("common:releaseCondition")}
                       </Typography>
                       <Typography>
@@ -504,8 +522,16 @@ const MsuicDetail: React.FC<{}> = () => {
                       </Typography>
                     </Grid>
                     <Divider style={{ margin: "1% 0" }} />
-                    <Grid item container direction="row" justify="space-between">
-                      <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    <Grid
+                      item
+                      container
+                      direction="row"
+                      justify="space-between"
+                    >
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
                         {t("music:vocalType")}
                       </Typography>
                       <Typography>{elem.musicVocalType}</Typography>

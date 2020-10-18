@@ -9,7 +9,7 @@ import {
 import { useLayoutStyles } from "../styles/layout";
 import { Skeleton } from "@material-ui/lab";
 import React, { Fragment, useEffect, useState } from "react";
-import { useHistory, useRouteMatch } from "react-router-dom";
+import { Link, useHistory, useRouteMatch } from "react-router-dom";
 import { IEventInfo } from "../types";
 import { useCachedData, useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
@@ -101,26 +101,28 @@ const EventList: React.FC<{}> = () => {
   const ListCard: { [key: string]: React.FC<{ data: IEventInfo }> } = {
     grid: ({ data }) => {
       return (
-        <Card
-          className={classes.card}
-          onClick={() => push(path + "/" + data.id)}
-        >
-          <CardHeader
-            title={data.name}
-            titleTypographyProps={{
-              variant: "subtitle1",
-              classes: {
-                root: classes.header,
-              },
-            }}
-            subheader={t(`event:type.${data.eventType}`)}
-          ></CardHeader>
-          <CardMedia
-            className={classes.media}
-            image={`https://sekai-res.dnaroma.eu/file/sekai-assets/event/${data.assetbundleName}/logo_rip/logo.webp`}
-            title={data.name}
-          ></CardMedia>
-        </Card>
+        <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
+          <Card
+            className={classes.card}
+            onClick={() => push(path + "/" + data.id)}
+          >
+            <CardHeader
+              title={data.name}
+              titleTypographyProps={{
+                variant: "subtitle1",
+                classes: {
+                  root: classes.header,
+                },
+              }}
+              subheader={t(`event:type.${data.eventType}`)}
+            ></CardHeader>
+            <CardMedia
+              className={classes.media}
+              image={`https://sekai-res.dnaroma.eu/file/sekai-assets/event/${data.assetbundleName}/logo_rip/logo.webp`}
+              title={data.name}
+            ></CardMedia>
+          </Card>
+        </Link>
       );
     },
   };
@@ -150,7 +152,8 @@ const EventList: React.FC<{}> = () => {
           data: events,
           gridSize: {
             xs: 12,
-            md: viewGridType === "grid" ? 4 : viewGridType === "agenda" ? 12 : 12,
+            md:
+              viewGridType === "grid" ? 4 : viewGridType === "agenda" ? 12 : 12,
           },
         })}
       </Container>

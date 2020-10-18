@@ -9,7 +9,7 @@ import {
 import { useLayoutStyles } from "../styles/layout";
 import { Skeleton } from "@material-ui/lab";
 import React, { Fragment, useEffect, useState } from "react";
-import { useHistory, useRouteMatch } from "react-router-dom";
+import { Link, useHistory, useRouteMatch } from "react-router-dom";
 import { useCachedData, useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
@@ -80,11 +80,7 @@ interface IGachaInfo {
   gachaInformation: GachaInformation;
 }
 
-function getPaginitedGachas(
-  gachas: IGachaInfo[],
-  page: number,
-  limit: number
-) {
+function getPaginitedGachas(gachas: IGachaInfo[], page: number, limit: number) {
   return gachas.slice(limit * (page - 1), limit * page);
 }
 
@@ -97,7 +93,7 @@ const GachaList: React.FC<any> = () => {
 
   const [gachas, setGachas] = useState<IGachaInfo[]>([]);
   // const [gachasCache, setGachasCache] = useState<IGachaInfo[]>([]);
-  const [gachasCache, gachasCacheRef] = useCachedData<IGachaInfo>('gachas');
+  const [gachasCache, gachasCacheRef] = useCachedData<IGachaInfo>("gachas");
 
   const [page, pageRef, setPage] = useRefState<number>(1);
   const [limit, limitRef] = useRefState<number>(12);
@@ -144,24 +140,26 @@ const GachaList: React.FC<any> = () => {
 
   const ListCard: React.FC<{ data: IGachaInfo }> = ({ data }) => {
     return (
-      <Card
-        className={classes.card}
-        onClick={() => history.push(path + "/" + data.id)}
-      >
-        <CardHeader
-          title={data.name}
-          titleTypographyProps={{
-            classes: {
-              root: classes.subheader,
-            },
-          }}
-        ></CardHeader>
-        <CardMedia
-          className={classes.media}
-          image={`https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${data.assetbundleName}/logo_rip/logo.webp`}
-          title={data.name}
-        ></CardMedia>
-      </Card>
+      <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
+        <Card
+          className={classes.card}
+          onClick={() => history.push(path + "/" + data.id)}
+        >
+          <CardHeader
+            title={data.name}
+            titleTypographyProps={{
+              classes: {
+                root: classes.subheader,
+              },
+            }}
+          ></CardHeader>
+          <CardMedia
+            className={classes.media}
+            image={`https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${data.assetbundleName}/logo_rip/logo.webp`}
+            title={data.name}
+          ></CardMedia>
+        </Card>
+      </Link>
     );
   };
 

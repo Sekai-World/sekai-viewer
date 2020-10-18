@@ -73,23 +73,36 @@ const EventDetail: React.FC<{}> = () => {
   }, [events, eventId, eventDeckBonuses]);
 
   useEffect(() => {
-    const cron = new CronJob("20 */5 * * * *", () => {
+    const currentTime = Date.now();
+    if (
+      !(
+        !event ||
+        currentTime < event.startAt ||
+        currentTime > event.rankingAnnounceAt + 6 * 60 * 1000 ||
+        (currentTime > event.aggregateAt &&
+          currentTime < event.rankingAnnounceAt)
+      )
+    ) {
+      const cron = new CronJob("20 */5 * * * *", () => {
+        refreshData();
+        setNextRefreshTime(cron.nextDate());
+      });
+      cron.start();
       refreshData();
       setNextRefreshTime(cron.nextDate());
-    });
-    cron.start();
-    refreshData();
-    setNextRefreshTime(cron.nextDate());
 
-    const interval = window.setInterval(() => {
-      setNextRefreshTime((nextDate) => nextDate);
-    }, 60);
+      const interval = window.setInterval(() => {
+        setNextRefreshTime((nextDate) => nextDate);
+      }, 60);
 
-    return () => {
-      cron.stop();
-      window.clearInterval(interval);
-    };
-  }, [refreshData]);
+      return () => {
+        cron.stop();
+        window.clearInterval(interval);
+      };
+    } else {
+      refreshData();
+    }
+  }, [refreshData, event]);
 
   useEffect(() => {
     if (event && Date.now() < event.aggregateAt) {
@@ -575,10 +588,11 @@ const EventDetail: React.FC<{}> = () => {
                 {t("event:realtime")}{" "}
                 {new Date(rtRanking.time).toLocaleString(i18n.language)}
               </Typography>
-              <Typography variant="body2" color="textSecondary">
-                {t("event:nextfetch")}:{" "}
-                {nextRefreshTime ? nextRefreshTime.fromNow() : null}
-              </Typography>
+              {nextRefreshTime ? (
+                <Typography variant="body2" color="textSecondary">
+                  {t("event:nextfetch")}: {nextRefreshTime.fromNow()}
+                </Typography>
+              ) : null}
               <Divider style={{ margin: "1% 0" }} />
               <Grid container direction="column">
                 {resourceBoxes.length && honors.length

@@ -14,9 +14,14 @@ import {
 import { useLayoutStyles } from "../styles/layout";
 import { ViewAgenda, Sort } from "@material-ui/icons";
 import { Skeleton } from "@material-ui/lab";
-import { Filter, ViewGrid } from "mdi-material-ui";
+import {
+  Filter,
+  ViewAgendaOutline,
+  ViewGrid,
+  ViewGridOutline,
+} from "mdi-material-ui";
 import React, { Fragment, useEffect, useState } from "react";
-import { useHistory, useRouteMatch } from "react-router-dom";
+import { Link, useHistory, useRouteMatch } from "react-router-dom";
 import { IMusicDifficultyInfo, IMusicInfo } from "../types";
 import { musicCategoryToName, useCachedData, useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
@@ -144,84 +149,95 @@ const MusicList: React.FC<any> = () => {
   const ListCard: { [key: string]: React.FC<{ data: IMusicInfo }> } = {
     grid: ({ data }) => {
       return (
-        <Card
-          className={classes.card}
-          onClick={() => push(path + "/" + data.id)}
-        >
-          <CardHeader
-            title={data.title}
-            titleTypographyProps={{
-              variant: "subtitle1",
-              classes: {
-                root: classes.header,
-              },
-            }}
-            subheader={
-              data.categories.map(cat => musicCategoryToName[cat] || cat).join(', ')
-            }
-          ></CardHeader>
-          <CardMedia
-            className={classes.media}
-            image={`https://sekai-res.dnaroma.eu/file/sekai-assets/music/jacket/${data.assetbundleName}_rip/${data.assetbundleName}.webp`}
-            title={data.title}
-          ></CardMedia>
-        </Card>
+        <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
+          <Card
+            className={classes.card}
+            onClick={() => push(path + "/" + data.id)}
+          >
+            <CardHeader
+              title={data.title}
+              titleTypographyProps={{
+                variant: "subtitle1",
+                classes: {
+                  root: classes.header,
+                },
+              }}
+              subheader={data.categories
+                .map((cat) => musicCategoryToName[cat] || cat)
+                .join(", ")}
+            ></CardHeader>
+            <CardMedia
+              className={classes.media}
+              image={`https://sekai-res.dnaroma.eu/file/sekai-assets/music/jacket/${data.assetbundleName}_rip/${data.assetbundleName}.webp`}
+              title={data.title}
+            ></CardMedia>
+          </Card>
+        </Link>
       );
     },
     agenda: ({ data }) => {
       return (
-        <Paper
-          className={classes.agenda}
-          onClick={() => push(path + "/" + data.id)}
-        >
-          <Grid
-            container
-            alignItems="center"
-            spacing={2}
-            justify="space-between"
+        <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
+          <Paper
+            className={classes.agenda}
+            onClick={() => push(path + "/" + data.id)}
           >
-            <Grid item xs={5} md={4}>
-              <CardMedia
-                className={classes.agendaMedia}
-                image={`https://sekai-res.dnaroma.eu/file/sekai-assets/music/jacket/${data.assetbundleName}_rip/${data.assetbundleName}.webp`}
-                title={data.title}
-              ></CardMedia>
-              {/* <img src={`https://sekai-res.dnaroma.eu/file/sekai-assets/music/jacket/${data.assetbundleName}_rip/${data.assetbundleName}.webp`} alt={data.title}></img> */}
-            </Grid>
-            <Grid item xs={6} md={7} container direction="column">
-              <Grid item>
-                <Typography variant="body1">{data.title}</Typography>
-                <Typography color="textSecondary">
-                  {data.categories.map(cat => musicCategoryToName[cat] || cat).join(', ')}
-                </Typography>
+            <Grid
+              container
+              alignItems="center"
+              spacing={2}
+              justify="space-between"
+            >
+              <Grid item xs={5} md={4}>
+                <CardMedia
+                  className={classes.agendaMedia}
+                  image={`https://sekai-res.dnaroma.eu/file/sekai-assets/music/jacket/${data.assetbundleName}_rip/${data.assetbundleName}.webp`}
+                  title={data.title}
+                ></CardMedia>
+                {/* <img src={`https://sekai-res.dnaroma.eu/file/sekai-assets/music/jacket/${data.assetbundleName}_rip/${data.assetbundleName}.webp`} alt={data.title}></img> */}
               </Grid>
-              <Grid item container direction="row" style={{ marginTop: "5%" }}>
-                {musicDiffis
-                  .filter((elem) => elem.musicId === data.id)
-                  .map((elem) => (
-                    <Grid item xs={4} md={2} key={`diff-${elem.id}`}>
-                      <Chip
-                        color="primary"
-                        size="small"
-                        classes={{
-                          colorPrimary:
-                            classes[
-                              `diffi-${elem.musicDifficulty}` as
-                                | "diffi-easy"
-                                | "diffi-normal"
-                                | "diffi-hard"
-                                | "diffi-expert"
-                                | "diffi-master"
-                            ],
-                        }}
-                        label={elem.playLevel}
-                      ></Chip>
-                    </Grid>
-                  ))}
+              <Grid item xs={6} md={7} container direction="column">
+                <Grid item>
+                  <Typography variant="body1">{data.title}</Typography>
+                  <Typography color="textSecondary">
+                    {data.categories
+                      .map((cat) => musicCategoryToName[cat] || cat)
+                      .join(", ")}
+                  </Typography>
+                </Grid>
+                <Grid
+                  item
+                  container
+                  direction="row"
+                  style={{ marginTop: "5%" }}
+                >
+                  {musicDiffis
+                    .filter((elem) => elem.musicId === data.id)
+                    .map((elem) => (
+                      <Grid item xs={4} md={2} key={`diff-${elem.id}`}>
+                        <Chip
+                          color="primary"
+                          size="small"
+                          classes={{
+                            colorPrimary:
+                              classes[
+                                `diffi-${elem.musicDifficulty}` as
+                                  | "diffi-easy"
+                                  | "diffi-normal"
+                                  | "diffi-hard"
+                                  | "diffi-expert"
+                                  | "diffi-master"
+                              ],
+                          }}
+                          label={elem.playLevel}
+                        ></Chip>
+                      </Grid>
+                    ))}
+                </Grid>
               </Grid>
             </Grid>
-          </Grid>
-        </Paper>
+          </Paper>
+        </Link>
       );
     },
   };
@@ -245,24 +261,34 @@ const MusicList: React.FC<any> = () => {
       </Typography>
       <Container className={layoutClasses.content} maxWidth="md">
         <Grid container justify="space-between">
-          <ButtonGroup color="primary" style={{ marginBottom: "1%" }}>
+          <ButtonGroup style={{ marginBottom: "1%" }}>
             <Button
-              variant={viewGridType === "grid" ? "outlined" : "contained"}
+              // variant={viewGridType === "grid" ? "outlined" : "contained"}
               onClick={() => {
                 setViewGridType("grid");
                 localStorage.setItem("music-list-grid-view-type", "grid");
               }}
+              color={viewGridType === "grid" ? "primary" : "default"}
             >
-              <ViewGrid></ViewGrid>
+              {viewGridType === "grid" ? (
+                <ViewGrid></ViewGrid>
+              ) : (
+                <ViewGridOutline></ViewGridOutline>
+              )}
             </Button>
             <Button
-              variant={viewGridType === "agenda" ? "outlined" : "contained"}
+              // variant={viewGridType === "agenda" ? "outlined" : "contained"}
               onClick={() => {
                 setViewGridType("agenda");
                 localStorage.setItem("music-list-grid-view-type", "agenda");
               }}
+              color={viewGridType === "agenda" ? "primary" : "default"}
             >
-              <ViewAgenda></ViewAgenda>
+              {viewGridType === "agenda" ? (
+                <ViewAgenda></ViewAgenda>
+              ) : (
+                <ViewAgendaOutline></ViewAgendaOutline>
+              )}
             </Button>
             {/* <Button
               variant={viewGridType === "comfy" ? "outlined" : "contained"}
@@ -285,7 +311,8 @@ const MusicList: React.FC<any> = () => {
           data: musics,
           gridSize: {
             xs: 12,
-            md: viewGridType === "grid" ? 4 : viewGridType === "agenda" ? 12 : 12,
+            md:
+              viewGridType === "grid" ? 4 : viewGridType === "agenda" ? 12 : 12,
           },
         })}
       </Container>
