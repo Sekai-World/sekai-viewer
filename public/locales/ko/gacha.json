@@ -1,10 +1,11 @@
 {
   "tab": {
-    "title[0]": "",
-    "title[1]": "",
-    "title[2]": "",
-    "title[3]": "",
-    "title[4]": ""
+    "title[0]": "소개",
+    "title[1]": "요약",
+    "title[2]": "시뮬레이터",
+    "title[3]": "배경",
+    "title[4]": "특성 이미지"
   },
-  "pickupMember": ""
+  "pickupMember": "픽업 멤버",
+  "pickupMember_plural": "픽업 멤버들"
 }

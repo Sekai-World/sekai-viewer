@@ -15,7 +15,17 @@ i18n
   .use(fetchBackend)
   .use(detector)
   .init({
-    supportedLngs: ["en", "zh-CN", "zh-TW", "ja", "ko", "es", "de", "pt-BR"],
+    supportedLngs: [
+      "en",
+      "zh-CN",
+      "zh-TW",
+      "ja",
+      "ko",
+      "es",
+      "de",
+      "pt-BR",
+      "ru",
+    ],
     ns: ["common", "home", "card", "music", "gacha", "event", "unit", "member"],
     fallbackLng: {
       default: ["en"],

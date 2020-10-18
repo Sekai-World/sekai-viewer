@@ -1,0 +1,19 @@
+{
+  "alert[0]": "Каждая песня не имеет звука первые <b>девять секунд </b>. Это НЕ баг.",
+  "tag": "Тег",
+  "tag_plural": "Теги",
+  "category": "Категория",
+  "category_plural": "Категории",
+  "arranger": "Аранжировщик",
+  "composer": "Композитор",
+  "lyricist": "Автор текста",
+  "danceMember": "Участник танца",
+  "danceMember_plural": "Участники танца",
+  "dancerCount": "Всего танцоров",
+  "vocal": "Вокалист",
+  "vocal_plural": "Вокалисты",
+  "vocalType": "Тип вокала",
+  "difficulty": "Сложность",
+  "difficulty_plural": "Сложности",
+  "noteCount": "Всего нот"
+}

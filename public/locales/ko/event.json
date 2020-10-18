@@ -1,19 +1,21 @@
 {
-  "already-ended": "",
+  "already-ended": "이벤트가 종료 되었습니다",
   "tab": {
-    "title[0]": "",
-    "title[1]": "",
-    "title[2]": ""
+    "title[0]": "배너&로고",
+    "title[1]": "배경",
+    "title[2]": "캐릭터"
   },
-  "alreadyPast": "",
-  "boostAttribute": "",
-  "boostCharacters": "",
-  "maxBoost": "",
-  "aggregateAt": "",
-  "rankingAnnounceAt": "",
-  "distributionStartAt": "",
-  "distributionEndAt": "",
-  "ranking": "",
-  "realtime": "",
-  "nextfetch": ""
+  "boostAttribute": "부스트 속성",
+  "boostCharacters": "부스트 캐릭터",
+  "maxBoost": "맥스부스트 (양방일치)",
+  "alreadyPast": "이미 지난",
+  "aggregateAt": "집계 개시 시간",
+  "rankingAnnounceAt": "랭킹 발표 시간",
+  "distributionStartAt": "보상 배포 개시",
+  "distributionEndAt": "보상 배포 마감",
+  "realtime": "실제 시간 랭킹",
+  "nextfetch": "다음 취득",
+  "type": {
+    "marathon": "마라톤"
+  }
 }

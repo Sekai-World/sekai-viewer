@@ -435,6 +435,11 @@ function App() {
                   control={<Radio />}
                   label="Pt-BR"
                 ></FormControlLabel>
+                <FormControlLabel
+                  value="ru"
+                  control={<Radio />}
+                  label="русский"
+                ></FormControlLabel>
               </RadioGroup>
             </FormControl>
             <FormControl component="fieldset">

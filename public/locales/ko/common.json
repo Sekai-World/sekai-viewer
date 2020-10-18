@@ -1,40 +1,41 @@
 {
-  "home": "",
-  "card": "",
-  "music": "",
-  "gacha": "",
-  "event": "",
-  "unit": "",
-  "member": "",
+  "home": "홈",
+  "card": "카드",
+  "music": "음악",
+  "gacha": "가차",
+  "event": "이벤트",
+  "unit": "유닛",
+  "member": "멤버",
   "toolbar": {
-    "title": ""
+    "title": "역할 리스트"
   },
   "settings": {
-    "title": ""
+    "title": "설정"
   },
-  "language": "",
-  "darkmode": "",
-  "id": "",
-  "title": "",
-  "character": "",
-  "attribute": "",
-  "startAt": "",
-  "rarity": "",
-  "thumb": "",
-  "skill": "",
-  "type": "",
-  "endAt": "",
-  "icon": "",
+  "language": "언어",
+  "darkmode": "밝기 모드",
+  "id": "아이디",
+  "title": "타이틀",
+  "character": "캐릭터",
+  "attribute": "타입",
+  "startAt": "개방 개시 시간",
+  "rarity": "레어리티",
+  "thumb": "썸네일",
+  "skill": "스킬",
+  "type": "타입",
+  "endAt": "개방 종료 시간",
+  "icon": "아이콘",
   "detect": {
-    "checking": "",
-    "unsupported": "",
-    "supported": ""
+    "checking": "체크중...",
+    "unsupported": "미지원",
+    "supported": "지원"
   },
-  "support": "",
-  "information": "",
-  "campaign": "",
-  "bug": "",
-  "update": "",
-  "releaseCondition": "",
-  "level": ""
+  "support": "지원",
+  "information": "인포메이션",
+  "campaign": "캠페인",
+  "bug": "버그",
+  "update": "업데이트",
+  "character_plural": "캐릭터",
+  "releaseCondition": "릴리즈 상태",
+  "level": "레벨"
 }

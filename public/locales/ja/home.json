@@ -1,24 +1,24 @@
 {
   "game-news": {
     "action": "アクション",
-    "show-from": "Show From",
+    "show-from": "公開開始",
     "title-column": "タイトル",
-    "show-until": "Show Until",
+    "show-until": "公開終了",
     "title": "ゲームニュース"
   },
-  "alert0": "Sekai Viewer is now in Open Beta!",
+  "alert0": "Sekai Viewerは現在オープンベータです!",
   "alert_translate": {
-    "title": ""
+    "title": "翻訳者の皆様,ありがとうございます!"
   },
-  "alert_settings": "",
+  "alert_settings": "右上の<s />を使用することで,言語や画面の明るさの変更などができます.",
   "alert1": {
-    "title": "Help needed!",
+    "title": "協力者が必要です!",
     "translation": "翻訳",
     "development": "開発",
     "contact": "連絡先",
-    "join-discord": ""
+    "join-discord": "Discordに参加"
   },
   "detect": {
-    "success": ""
+    "success": "おめでとうございます!あなたのブラウザはモダンです.高速な画像の読み込みと帯域幅の節約が可能です."
   }
 }

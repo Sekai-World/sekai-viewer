@@ -1,11 +1,11 @@
 {
   "tab": {
-    "title[0]": "",
-    "title[1]": "",
-    "title[2]": "",
-    "title[3]": "",
-    "title[4]": ""
+    "title[0]": "詳細",
+    "title[1]": "まとめ",
+    "title[2]": "シミュレーター",
+    "title[3]": "バックグラウンド",
+    "title[4]": "アイキャッチ画像"
   },
-  "pickupMember": "",
-  "pickupMember_plural": ""
+  "pickupMember": "ピックアップメンバー",
+  "pickupMember_plural": "ピックアップメンバー"
 }

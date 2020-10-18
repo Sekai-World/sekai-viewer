@@ -1,19 +1,21 @@
 {
-  "already-ended": "",
+  "already-ended": "イベントは既に終了しました",
   "tab": {
-    "title[0]": "",
-    "title[1]": "",
-    "title[2]": ""
+    "title[0]": "バナー＆ロゴ",
+    "title[1]": "背景",
+    "title[2]": "キャラクター"
   },
-  "alreadyPast": "",
-  "boostAttribute": "",
-  "boostCharacters": "",
-  "maxBoost": "",
-  "aggregateAt": "",
-  "rankingAnnounceAt": "",
-  "distributionStartAt": "",
-  "distributionEndAt": "",
-  "ranking": "",
-  "realtime": "",
-  "nextfetch": ""
+  "boostAttribute": "ボーナスタイプ",
+  "boostCharacters": "ボーナスキャラクター",
+  "maxBoost": "ボーナス（両方一致）",
+  "alreadyPast": "経過時間",
+  "aggregateAt": "集計開始時間",
+  "rankingAnnounceAt": "ランキング公開時間",
+  "distributionStartAt": "報酬配布時間",
+  "distributionEndAt": "報酬受け取り期限",
+  "realtime": "リアルタイムランキング",
+  "nextfetch": "次の取得",
+  "type": {
+    "marathon": "マラソン"
+  }
 }
