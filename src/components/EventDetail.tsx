@@ -75,17 +75,17 @@ const EventDetail: React.FC<{}> = () => {
   useEffect(() => {
     const currentTime = Date.now();
     if (
-      !(
-        !event ||
-        currentTime < event.startAt ||
-        currentTime > event.rankingAnnounceAt + 6 * 60 * 1000 ||
-        (currentTime > event.aggregateAt &&
-          currentTime < event.rankingAnnounceAt)
-      )
+      event &&
+      currentTime >= event.startAt &&
+      currentTime <= event.rankingAnnounceAt + 5 * 60 * 1000
     ) {
       const cron = new CronJob("20 */5 * * * *", () => {
-        refreshData();
-        setNextRefreshTime(cron.nextDate());
+        const currentTime = Date.now();
+        if (currentTime > event.rankingAnnounceAt + 5 * 60 * 1000) cron.stop();
+        else {
+          refreshData();
+          setNextRefreshTime(cron.nextDate());
+        }
       });
       cron.start();
       refreshData();
