@@ -176,6 +176,7 @@ const MsuicDetail: React.FC<{}> = () => {
 
   const getCharaIcon: (characterId: number) => JSX.Element = useCallback(
     (characterId) => {
+      if (!characterId) return <span></span>;
       return (
         <img
           key={characterId}
