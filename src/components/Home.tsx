@@ -36,6 +36,9 @@ const useStyles = makeStyles((theme) => ({
   "contact-link": {
     margin: theme.spacing(0, 0.5),
   },
+  "game-news-title": {
+    paddingTop: theme.spacing(2)
+  },
 }));
 
 interface IDetectResult {
@@ -285,7 +288,7 @@ function Home() {
           )}
         </Alert>
         <Paper>
-          <Typography variant="h6" align="center">
+          <Typography variant="h6" align="center" className={classes["game-news-title"]}>
             {t("home:game-news.title")}
           </Typography>
           <Tabs
