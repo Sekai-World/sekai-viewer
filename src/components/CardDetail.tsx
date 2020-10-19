@@ -77,7 +77,7 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer",
   },
   tabpanel: {
-    padding: 0,
+    padding: theme.spacing("1%", 0),
   },
   "grid-out": {
     padding: theme.spacing("1%", "0"),
