@@ -1,7 +1,7 @@
 {
   "sort": {
-    "caption": "",
-    "ascending": "",
-    "descending": ""
+    "caption": "排序",
+    "ascending": "升序",
+    "descending": "降序"
   }
 }
