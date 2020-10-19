@@ -5,10 +5,10 @@
     "title[2]": "Imagem após o Treinamento",
     "title[3]": "imagem transparente após o Treinamento"
   },
-  "stats": "",
+  "stats": "Status",
   "power": "Status(Poder)",
-  "sideStory1Unlocked": "",
-  "sideStory2Unlocked": "",
-  "sideStory": "",
-  "sideStory_plural": ""
+  "sideStory1Unlocked": "Side-Story 1 Liberada",
+  "sideStory2Unlocked": "Side-Story 2 Liberada",
+  "sideStory": "Side-Story",
+  "sideStory_plural": "Histórias Secundárias (Side-Stories)"
 }

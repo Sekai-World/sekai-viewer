@@ -5,9 +5,10 @@
     "title[2]": "특훈 후 이미지",
     "title[3]": "특훈 후 스탠딩 이미지"
   },
-  "stats": "",
+  "stats": "능력치",
   "power": "총합력",
-  "sideStory1Unlocked": "",
-  "sideStory2Unlocked": "",
-  "sideStory": ""
+  "sideStory1Unlocked": "사이드 스토리 1편 해금됨",
+  "sideStory2Unlocked": "사이드 스토리 2편 해금됨",
+  "sideStory": "사이드 스토리",
+  "sideStory_plural": "사이드 스토리들"
 }

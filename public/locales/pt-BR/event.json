@@ -13,8 +13,8 @@
   "rankingAnnounceAt": "Anunciamento do Rank em",
   "distributionStartAt": "Distribuição de Recompensas a partir de",
   "distributionEndAt": "Destribuição de Recompensas até",
-  "ranking": "",
-  "realtime": "Ranking em Tempo Real",
+  "ranking": "Ranking",
+  "realtime": "Tempo real em",
   "nextfetch": "próxima busca",
   "type": {
     "marathon": "Maratona"

@@ -6,5 +6,6 @@
     "title[3]": "背景",
     "title[4]": "特征圖"
   },
-  "pickupMember": "本期角色"
+  "pickupMember": "本期角色",
+  "pickupMember_plural": "本期角色"
 }

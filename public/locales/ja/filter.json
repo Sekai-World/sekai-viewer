@@ -1,7 +1,7 @@
 {
   "sort": {
-    "caption": "",
-    "ascending": "",
-    "descending": ""
+    "caption": "ソート",
+    "ascending": "昇順",
+    "descending": "降順"
   }
 }

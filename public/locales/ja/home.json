@@ -1,9 +1,9 @@
 {
   "game-news": {
     "action": "アクション",
-    "show-from": "公開開始",
+    "show-from": "公開開始時間",
     "title-column": "タイトル",
-    "show-until": "公開終了",
+    "show-until": "公開終了時間",
     "title": "ゲームニュース"
   },
   "alert0": "Sekai Viewerは現在オープンベータです!",

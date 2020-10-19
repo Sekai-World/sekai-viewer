@@ -13,8 +13,8 @@
   "rankingAnnounceAt": "排名宣布時間",
   "distributionStartAt": "獎勵發放開始",
   "distributionEndAt": "獎勵發放結束",
-  "ranking": "",
-  "realtime": "實時數據",
+  "ranking": "排名",
+  "realtime": "更新時間",
   "nextfetch": "下次獲取",
   "type": {
     "marathon": "累積點數"

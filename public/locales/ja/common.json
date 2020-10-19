@@ -18,15 +18,14 @@
   "title": "タイトル",
   "character": "キャラクター",
   "attribute": "タイプ",
-  "startAt": "解放開始時間",
+  "startAt": "解放時間",
   "rarity": "レアリティ",
   "thumb": "サムネイル",
-  "skill": "スキール",
+  "skill": "スキル",
   "releaseCondition": "解放条件",
-  "releaseCosts": "",
-  "rewards": "",
+  "releaseCosts": "必要アイテム",
   "type": "タイプ",
-  "endAt": "解放終了時間",
+  "endAt": "終了時間",
   "icon": "アイコン",
   "detect": {
     "checking": "確認しています...",
@@ -38,6 +37,6 @@
   "campaign": "キャンペーン",
   "bug": "バグ",
   "update": "アップデート",
-  "level": "レベル",
-  "character_plural": "キャラクター"
+  "character_plural": "キャラクター",
+  "level": "レベル"
 }

@@ -1,7 +1,7 @@
 {
   "sort": {
-    "caption": "",
-    "ascending": "",
-    "descending": ""
+    "caption": "Ordenar",
+    "ascending": "Crescente",
+    "descending": "Decrescente"
   }
 }

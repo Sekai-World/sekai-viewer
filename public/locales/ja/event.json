@@ -8,13 +8,13 @@
   "alreadyPast": "経過時間",
   "boostAttribute": "ボーナスタイプ",
   "boostCharacters": "ボーナスキャラクター",
-  "maxBoost": "ボーナス（両方一致）",
+  "maxBoost": "ボーナス(両方一致）",
   "aggregateAt": "集計開始時間",
   "rankingAnnounceAt": "ランキング公開時間",
   "distributionStartAt": "報酬配布時間",
   "distributionEndAt": "報酬受け取り期限",
-  "ranking": "",
-  "realtime": "リアルタイムランキング",
+  "ranking": "ランキング",
+  "realtime": "更新時間",
   "nextfetch": "次の取得",
   "type": {
     "marathon": "マラソン"
