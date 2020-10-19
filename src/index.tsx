@@ -26,7 +26,17 @@ i18n
       "pt-BR",
       "ru",
     ],
-    ns: ["common", "home", "card", "music", "gacha", "event", "unit", "member"],
+    ns: [
+      "common",
+      "home",
+      "card",
+      "music",
+      "gacha",
+      "event",
+      "unit",
+      "member",
+      "filter",
+    ],
     fallbackLng: {
       default: ["en"],
       pt: ["pt-BR", "en"],

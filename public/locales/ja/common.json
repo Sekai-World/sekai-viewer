@@ -22,6 +22,9 @@
   "rarity": "レアリティ",
   "thumb": "サムネイル",
   "skill": "スキール",
+  "releaseCondition": "解放条件",
+  "releaseCosts": "",
+  "rewards": "",
   "type": "タイプ",
   "endAt": "解放終了時間",
   "icon": "アイコン",
@@ -35,7 +38,6 @@
   "campaign": "キャンペーン",
   "bug": "バグ",
   "update": "アップデート",
-  "character_plural": "キャラクター",
-  "releaseCondition": "解放条件",
-  "level": "レベル"
+  "level": "レベル",
+  "character_plural": "キャラクター"
 }

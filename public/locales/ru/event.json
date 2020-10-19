@@ -5,14 +5,15 @@
     "title[1]": "Задний фон",
     "title[2]": "Персонаж"
   },
+  "alreadyPast": "Уже прошло",
   "boostAttribute": "Бонус-атрибут",
   "boostCharacters": "Бонус-персонажи",
   "maxBoost": "Макс. бонус (Оба бонуса)",
-  "alreadyPast": "Уже прошло",
   "aggregateAt": "Подсчёт очков",
   "rankingAnnounceAt": "Присваивание ранга в",
   "distributionStartAt": "Получение наград с",
   "distributionEndAt": "Получение наград до",
+  "ranking": "",
   "realtime": "В реальном времени",
   "nextfetch": "Следующие обновление",
   "type": {

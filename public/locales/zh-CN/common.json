@@ -18,12 +18,15 @@
   "title": "标题",
   "character": "角色",
   "attribute": "属性",
-  "startAt": "开放于",
+  "startAt": "开放时间",
   "rarity": "稀有度",
   "thumb": "缩图",
   "skill": "技能",
+  "releaseCondition": "解放条件",
+  "releaseCosts": "",
+  "rewards": "",
   "type": "类型",
-  "endAt": "结束于",
+  "endAt": "结束时间",
   "icon": "图标",
   "detect": {
     "checking": "检查中",
@@ -35,6 +38,5 @@
   "campaign": "纪念活动",
   "bug": "问题",
   "update": "更新",
-  "releaseCondition": "解放条件",
   "level": "等级"
 }

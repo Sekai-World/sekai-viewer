@@ -21,6 +21,7 @@ import {
   IEventRealtimeRank,
   IResourceBoxInfo,
   IHonorInfo,
+  ICardEpisode,
 } from "../types";
 
 export function useRefState<S>(
@@ -57,6 +58,7 @@ export function useCachedData<
     | IGameCharaUnit
     | IResourceBoxInfo
     | IHonorInfo
+    | ICardEpisode
 >(name: string): [T[], React.MutableRefObject<T[]>] {
   const [cached, cachedRef, setCached] = useRefState<T[]>([]);
 

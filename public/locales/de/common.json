@@ -22,6 +22,9 @@
   "rarity": "",
   "thumb": "",
   "skill": "",
+  "releaseCondition": "",
+  "releaseCosts": "",
+  "rewards": "",
   "type": "",
   "endAt": "",
   "icon": "",
@@ -36,6 +39,5 @@
   "bug": "Fehler",
   "update": "Update",
   "character_plural": "",
-  "releaseCondition": "",
   "level": ""
 }

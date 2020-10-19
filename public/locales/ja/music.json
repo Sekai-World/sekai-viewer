@@ -1,19 +1,19 @@
 {
   "alert[0]": "全ての曲の最初の<b>9秒</b>は無音です.これはバグではありません.",
   "tag": "タグ",
-  "tag_plural": "タグ",
   "category": "カテゴリー",
-  "category_plural": "カテゴリ",
   "arranger": "編曲",
   "composer": "作曲",
   "lyricist": "作詞",
   "danceMember": "ダンサー",
-  "danceMember_plural": "ダンサー",
   "dancerCount": "ダンサーの人数",
   "vocal": "ボーカル",
-  "vocal_plural": "ボーカル",
   "vocalType": "ボーカルタイプ",
   "difficulty": "難易度",
-  "difficulty_plural": "難易度",
-  "noteCount": "ノーツ数"
+  "noteCount": "ノーツ数",
+  "tag_plural": "タグ",
+  "category_plural": "カテゴリ",
+  "danceMember_plural": "ダンサー",
+  "vocal_plural": "ボーカル",
+  "difficulty_plural": "難易度"
 }

@@ -22,6 +22,9 @@
   "rarity": "Raridade",
   "thumb": "Ícone",
   "skill": "Habilidade",
+  "releaseCondition": "Condição de lançamento",
+  "releaseCosts": "",
+  "rewards": "",
   "type": "Tipo",
   "endAt": "Disponível até",
   "icon": "Ícone",
@@ -36,6 +39,5 @@
   "bug": "Bug",
   "update": "Atualização",
   "character_plural": "Personagens",
-  "releaseCondition": "Condição de lançamento",
   "level": "Nível"
 }

@@ -5,5 +5,9 @@
     "title[2]": "特訓後画像",
     "title[3]": "特訓後画像(背景なし)"
   },
-  "power": "総合力"
+  "stats": "",
+  "power": "総合力",
+  "sideStory1Unlocked": "",
+  "sideStory2Unlocked": "",
+  "sideStory": ""
 }

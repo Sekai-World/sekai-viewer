@@ -10,12 +10,17 @@ import {
   Paper,
   Typography,
   Container,
+  Collapse,
+  FormControl,
+  MenuItem,
+  Select,
 } from "@material-ui/core";
 import { useLayoutStyles } from "../styles/layout";
-import { ViewAgenda, Sort } from "@material-ui/icons";
+import { ViewAgenda, Sort, SortOutlined } from "@material-ui/icons";
 import { Skeleton } from "@material-ui/lab";
 import {
   Filter,
+  FilterOutline,
   ViewAgendaOutline,
   ViewGrid,
   ViewGridOutline,
@@ -27,6 +32,7 @@ import { musicCategoryToName, useCachedData, useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
+import { useFilterStyles } from "../styles/filter";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -88,42 +94,69 @@ function getPaginitedMusics(musics: IMusicInfo[], page: number, limit: number) {
 const MusicList: React.FC<any> = () => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
+  const filterClasses = useFilterStyles();
   const { push } = useHistory();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
 
-  const [musics, setMusics] = useState<IMusicInfo[]>([]);
-  // const [musicsCache, setMusicsCache] = useState<IMusicInfo[]>([]);
-  // const [musicsCache, musicsCacheRef] = useMusics();
   const [musicsCache, musicsCacheRef] = useCachedData<IMusicInfo>("musics");
   const [musicDiffis] = useCachedData<IMusicDifficultyInfo>(
     "musicDifficulties"
   );
 
+  const [musics, setMusics] = useState<IMusicInfo[]>([]);
+  const [sortedCache, setSortedCache] = useState<IMusicInfo[]>([]);
   const [viewGridType, setViewGridType] = useState<string>(
     localStorage.getItem("music-list-grid-view-type") || "grid"
   );
-  const [page, pageRef, setPage] = useRefState<number>(1);
+  const [page, pageRef, setPage] = useRefState<number>(0);
   const [limit, limitRef] = useRefState<number>(12);
   // const [, totalMusicsRef, setTotalMusics] = useRefState<number>(0);
   const [, lastQueryFinRef, setLastQueryFin] = useRefState<boolean>(true);
   const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
+  const [filterOpened, setFilterOpened] = useState<boolean>(false);
+  const [sortType, setSortType] = useState<string>(
+    localStorage.getItem("music-list-filter-sort-type") || "asc"
+  );
+  const [sortBy, setSortBy] = useState<string>(
+    localStorage.getItem("music-list-filter-sort-by") || "id"
+  );
 
   useEffect(() => {
     document.title = "Music List | Sekai Viewer";
   }, []);
 
   useEffect(() => {
-    setMusics((musics) => [
-      ...musics,
-      ...getPaginitedMusics(musicsCache, page, limit),
-    ]);
-    setLastQueryFin(true);
-  }, [page, limit, setLastQueryFin, musicsCache]);
-
-  useEffect(() => {
     setIsReady(Boolean(musicsCache.length));
   }, [setIsReady, musicsCache]);
+
+  useEffect(() => {
+    if (musicsCache.length) {
+      // temporarily sort cards cache
+      switch (sortBy) {
+        case "id":
+        case "publishedAt":
+          setSortedCache(
+            [...musicsCache].sort((a, b) =>
+              sortType === "asc" ? a[sortBy] - b[sortBy] : b[sortBy] - a[sortBy]
+            )
+          );
+          break;
+      }
+      setMusics([]);
+      setPage(0);
+    }
+  }, [musicsCache, sortBy, sortType, setPage]);
+
+  useEffect(() => {
+    if (sortedCache.length) {
+      setMusics((musics) => [
+        ...musics,
+        ...getPaginitedMusics(sortedCache, page, limit),
+      ]);
+      setLastQueryFin(true);
+    }
+  }, [page, limit, setLastQueryFin, sortedCache]);
 
   const callback = (
     entries: IntersectionObserverEntry[],
@@ -297,13 +330,68 @@ const MusicList: React.FC<any> = () => {
               <ViewComfy></ViewComfy>
             </Button> */}
           </ButtonGroup>
-          <ButtonGroup color="primary" style={{ marginBottom: "1%" }} disabled>
-            <Button variant="contained" size="medium">
-              <Filter />
-              <Sort />
+          <ButtonGroup color="primary" style={{ marginBottom: "1%" }}>
+            <Button size="medium" onClick={() => setFilterOpened((v) => !v)}>
+              {filterOpened ? <Filter /> : <FilterOutline />}
+              {filterOpened ? <Sort /> : <SortOutlined />}
             </Button>
           </ButtonGroup>
         </Grid>
+        <Collapse in={filterOpened}>
+          <Grid container className={filterClasses.filterArea}>
+            <Grid
+              item
+              container
+              xs={12}
+              alignItems="center"
+              justify="space-between"
+            >
+              <Grid item xs={12} md={2}>
+                <Typography classes={{ root: filterClasses.filterCaption }}>
+                  {t("filter:sort.caption")}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} md={9}>
+                <FormControl variant="outlined">
+                  <Select
+                    value={sortType}
+                    onChange={(e) => {
+                      setSortType(e.target.value as string);
+                      localStorage.setItem(
+                        "music-list-filter-sort-type",
+                        e.target.value as string
+                      );
+                    }}
+                  >
+                    <MenuItem value="asc">
+                      {t("filter:sort.ascending")}
+                    </MenuItem>
+                    <MenuItem value="desc">
+                      {t("filter:sort.descending")}
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+                <FormControl variant="outlined">
+                  <Select
+                    value={sortBy}
+                    onChange={(e) => {
+                      setSortBy(e.target.value as string);
+                      localStorage.setItem(
+                        "music-list-filter-sort-by",
+                        e.target.value as string
+                      );
+                    }}
+                  >
+                    <MenuItem value="id">{t("common:id")}</MenuItem>
+                    <MenuItem value="publishedAt">
+                      {t("common:startAt")}
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Collapse>
         {InfiniteScroll<IMusicInfo>({
           viewComponent: ListCard[viewGridType],
           loadingComponent: ListLoading,

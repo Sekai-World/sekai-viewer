@@ -22,6 +22,9 @@
   "rarity": "Редкость",
   "thumb": "Иконка",
   "skill": "Навык",
+  "releaseCondition": "Способ получения",
+  "releaseCosts": "",
+  "rewards": "",
   "type": "Тип",
   "endAt": "Доступно до",
   "icon": "Баннер",
@@ -35,7 +38,9 @@
   "campaign": "Компания",
   "bug": "Баги",
   "update": "Обновления",
-  "character_plural": "Персонажи",
-  "releaseCondition": "Способ получения",
-  "level": "Уровень"
+  "character_0": "",
+  "character_1": "",
+  "character_2": "",
+  "level": "Уровень",
+  "character_plural": "Персонажи"
 }

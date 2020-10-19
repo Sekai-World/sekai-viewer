@@ -9,12 +9,17 @@ import {
   Paper,
   Typography,
   Container,
+  Collapse,
+  FormControl,
+  Select,
+  MenuItem,
 } from "@material-ui/core";
 import { useLayoutStyles } from "../styles/layout";
-import { Sort, ViewAgenda, ViewComfy } from "@material-ui/icons";
+import { Sort, SortOutlined, ViewAgenda, ViewComfy } from "@material-ui/icons";
 import { Skeleton } from "@material-ui/lab";
 import {
   Filter,
+  FilterOutline,
   ViewAgendaOutline,
   ViewComfyOutline,
   ViewGrid,
@@ -22,12 +27,13 @@ import {
 } from "mdi-material-ui";
 import React, { Fragment, useEffect, useState } from "react";
 import { Link, useHistory, useRouteMatch } from "react-router-dom";
-import { ICardInfo, ICharaProfile } from "../types";
+import { ICardEpisode, ICardInfo, ICardRarity, ICharaProfile } from "../types";
 import { useCachedData, useRefState } from "../utils";
 import { CardThumb } from "./subs/CardThumb";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
+import { useFilterStyles } from "../styles/filter";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -85,23 +91,68 @@ function getPaginitedCards(cards: ICardInfo[], page: number, limit: number) {
   return cards.slice(limit * (page - 1), limit * page);
 }
 
+function getMaxParam(
+  card: ICardInfo,
+  rarities: ICardRarity[],
+  episodes: ICardEpisode[]
+) {
+  const rarity = rarities.find((rarity) => rarity.rarity === card.rarity)!;
+
+  const maxLevel = rarity.trainingMaxLevel || rarity.maxLevel;
+
+  let maxParam =
+    card.cardParameters
+      .filter((cp) => cp.cardLevel === maxLevel)
+      .reduce((sum, cp) => {
+        sum += cp.power;
+        return sum;
+      }, 0) +
+    episodes
+      .filter((episode) => episode.cardId === card.id)
+      .reduce((sum, episode) => {
+        sum += episode.power1BonusFixed;
+        sum += episode.power2BonusFixed;
+        sum += episode.power3BonusFixed;
+        return sum;
+      }, 0);
+  if (card.rarity >= 3)
+    maxParam +=
+      card.specialTrainingPower1BonusFixed +
+      card.specialTrainingPower2BonusFixed +
+      card.specialTrainingPower3BonusFixed;
+
+  return maxParam;
+}
+
 const CardList: React.FC<any> = (props) => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
+  const filterClasses = useFilterStyles();
   const { push } = useHistory();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
 
-  const [cards, setCards] = useState<ICardInfo[]>([]);
   const [cardsCache, cardsCacheRef] = useCachedData<ICardInfo>("cards");
   const [charas] = useCachedData<ICharaProfile>("gameCharacters");
+  const [rarities] = useCachedData<ICardRarity>("cardRarities");
+  const [episodes] = useCachedData<ICardEpisode>("cardEpisodes");
+
+  const [cards, setCards] = useState<ICardInfo[]>([]);
+  const [sortedCache, setSortedCache] = useState<ICardInfo[]>([]);
   const [viewGridType, setViewGridType] = useState<string>(
     localStorage.getItem("card-list-grid-view-type") || "grid"
   );
-  const [page, pageRef, setPage] = useRefState<number>(1);
+  const [page, pageRef, setPage] = useRefState<number>(0);
   const [limit, limitRef] = useRefState<number>(12);
   const [, lastQueryFinRef, setLastQueryFin] = useRefState<boolean>(true);
   const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
+  const [filterOpened, setFilterOpened] = useState<boolean>(false);
+  const [sortType, setSortType] = useState<string>(
+    localStorage.getItem("card-list-filter-sort-type") || "asc"
+  );
+  const [sortBy, setSortBy] = useState<string>(
+    localStorage.getItem("card-list-filter-sort-by") || "id"
+  );
 
   const callback = (
     entries: IntersectionObserverEntry[],
@@ -133,14 +184,44 @@ const CardList: React.FC<any> = (props) => {
   }, [setIsReady, cardsCache, charas]);
 
   useEffect(() => {
-    if (cardsCache.length) {
+    if (cardsCache.length && rarities.length && episodes.length) {
+      // temporarily sort cards cache
+      switch (sortBy) {
+        case "id":
+        case "rarity":
+        case "releaseAt":
+          setSortedCache(
+            [...cardsCache].sort((a, b) =>
+              sortType === "asc" ? a[sortBy] - b[sortBy] : b[sortBy] - a[sortBy]
+            )
+          );
+          break;
+        case "power":
+          setSortedCache(
+            [...cardsCache].sort((a, b) =>
+              sortType === "asc"
+                ? getMaxParam(a, rarities, episodes) -
+                  getMaxParam(b, rarities, episodes)
+                : getMaxParam(b, rarities, episodes) -
+                  getMaxParam(a, rarities, episodes)
+            )
+          );
+          break;
+      }
+      setCards([]);
+      setPage(0);
+    }
+  }, [cardsCache, sortBy, sortType, setPage, rarities, episodes]);
+
+  useEffect(() => {
+    if (sortedCache.length) {
       setCards((cards) => [
         ...cards,
-        ...getPaginitedCards(cardsCache, page, limit),
+        ...getPaginitedCards(sortedCache, page, limit),
       ]);
       setLastQueryFin(true);
     }
-  }, [page, limit, setLastQueryFin, cardsCache]);
+  }, [page, limit, setLastQueryFin, sortedCache]);
 
   const ListCard: { [key: string]: React.FC<{ data: ICardInfo }> } = {
     grid: ({ data }) => {
@@ -327,13 +408,70 @@ const CardList: React.FC<any> = (props) => {
               )}
             </Button>
           </ButtonGroup>
-          <ButtonGroup color="primary" style={{ marginBottom: "1%" }} disabled>
-            <Button variant="contained" size="medium">
-              <Filter />
-              <Sort />
-            </Button>
+          <ButtonGroup color="primary" style={{ marginBottom: "1%" }}>
+            <ButtonGroup color="primary" style={{ marginBottom: "1%" }}>
+              <Button size="medium" onClick={() => setFilterOpened((v) => !v)}>
+                {filterOpened ? <Filter /> : <FilterOutline />}
+                {filterOpened ? <Sort /> : <SortOutlined />}
+              </Button>
+            </ButtonGroup>
           </ButtonGroup>
         </Grid>
+        <Collapse in={filterOpened}>
+          <Grid container className={filterClasses.filterArea}>
+            <Grid
+              item
+              container
+              xs={12}
+              alignItems="center"
+              justify="space-between"
+            >
+              <Grid item xs={12} md={2}>
+                <Typography classes={{ root: filterClasses.filterCaption }}>
+                  {t("filter:sort.caption")}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} md={9}>
+                <FormControl variant="outlined">
+                  <Select
+                    value={sortType}
+                    onChange={(e) => {
+                      setSortType(e.target.value as string);
+                      localStorage.setItem(
+                        "card-list-filter-sort-type",
+                        e.target.value as string
+                      );
+                    }}
+                  >
+                    <MenuItem value="asc">
+                      {t("filter:sort.ascending")}
+                    </MenuItem>
+                    <MenuItem value="desc">
+                      {t("filter:sort.descending")}
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+                <FormControl variant="outlined">
+                  <Select
+                    value={sortBy}
+                    onChange={(e) => {
+                      setSortBy(e.target.value as string);
+                      localStorage.setItem(
+                        "card-list-filter-sort-by",
+                        e.target.value as string
+                      );
+                    }}
+                  >
+                    <MenuItem value="id">{t("common:id")}</MenuItem>
+                    <MenuItem value="rarity">{t("common:rarity")}</MenuItem>
+                    <MenuItem value="releaseAt">{t("common:startAt")}</MenuItem>
+                    <MenuItem value="power">{t("card:power")}</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Collapse>
         {InfiniteScroll<ICardInfo>({
           viewComponent: ListCard[viewGridType],
           loadingComponent: ListLoading,

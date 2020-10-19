@@ -5,14 +5,15 @@
     "title[1]": "背景",
     "title[2]": "キャラクター"
   },
+  "alreadyPast": "経過時間",
   "boostAttribute": "ボーナスタイプ",
   "boostCharacters": "ボーナスキャラクター",
   "maxBoost": "ボーナス（両方一致）",
-  "alreadyPast": "経過時間",
   "aggregateAt": "集計開始時間",
   "rankingAnnounceAt": "ランキング公開時間",
   "distributionStartAt": "報酬配布時間",
   "distributionEndAt": "報酬受け取り期限",
+  "ranking": "",
   "realtime": "リアルタイムランキング",
   "nextfetch": "次の取得",
   "type": {

@@ -6,5 +6,9 @@
     "title[3]": "After training trim image"
   },
   "stats": "Stats",
-  "power": "Power"
+  "power": "Power",
+  "sideStory1Unlocked": "Side Story 1 Unlocked",
+  "sideStory2Unlocked": "Side Story 2 Unlocked",
+  "sideStory": "Side Story",
+  "sideStory_plural": "Side Stories"
 }

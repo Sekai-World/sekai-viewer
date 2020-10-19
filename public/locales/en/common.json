@@ -22,6 +22,9 @@
   "rarity": "Rarity",
   "thumb": "Thumb",
   "skill": "Skill",
+  "releaseCondition": "Release Condition",
+  "releaseCosts": "Release Costs",
+  "rewards": "",
   "type": "Type",
   "endAt": "Available Until",
   "icon": "Icon",
@@ -36,6 +39,5 @@
   "bug": "Bug",
   "update": "Update",
   "character_plural": "Characters",
-  "releaseCondition": "Release Condition",
   "level": "Level"
 }

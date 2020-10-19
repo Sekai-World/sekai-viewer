@@ -83,18 +83,23 @@ function InfiniteScroll<T>({
                 {viewComponent({ data: elem })}
               </Grid>
             ))
-          : Array.from({ length: matchSmallScreen ? 1 : 3 }, (_, i) => i).map(
-              (_, id) => (
-                <Grid
-                  item
-                  xs={gridSize ? gridSize.xs : 12}
-                  md={gridSize ? gridSize.md : 4}
-                  key={`loading-${id}`}
-                >
-                  {loadingComponent({})}
-                </Grid>
-              )
-            )}
+          : Array.from(
+              {
+                length: matchSmallScreen
+                  ? 1
+                  : 12 / (gridSize ? Number(gridSize.md) : 4),
+              },
+              (_, i) => i
+            ).map((_, id) => (
+              <Grid
+                item
+                xs={gridSize ? gridSize.xs : 12}
+                md={gridSize ? gridSize.md : 4}
+                key={`loading-${id}`}
+              >
+                {loadingComponent({})}
+              </Grid>
+            ))}
       </Grid>
       <Grid
         container
@@ -103,18 +108,23 @@ function InfiniteScroll<T>({
         style={{ display: hasMore ? "flex" : "none" }}
         spacing={1}
       >
-        {Array.from({ length: matchSmallScreen ? 1 : 3 }, (_, i) => i).map(
-          (_, id) => (
-            <Grid
-              item
-              xs={gridSize ? gridSize.xs : 12}
-              md={gridSize ? gridSize.md : 4}
-              key={`empty-${id}`}
-            >
-              {loadingComponent({})}
-            </Grid>
-          )
-        )}
+        {Array.from(
+          {
+            length: matchSmallScreen
+              ? 1
+              : 12 / (gridSize ? Number(gridSize.md) : 4),
+          },
+          (_, i) => i
+        ).map((_, id) => (
+          <Grid
+            item
+            xs={gridSize ? gridSize.xs : 12}
+            md={gridSize ? gridSize.md : 4}
+            key={`empty-${id}`}
+          >
+            {loadingComponent({})}
+          </Grid>
+        ))}
       </Grid>
     </Fragment>
   );

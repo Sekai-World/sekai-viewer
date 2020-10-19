@@ -22,6 +22,9 @@
   "rarity": "레어도",
   "thumb": "섬네일",
   "skill": "스킬",
+  "releaseCondition": "해금 조건",
+  "releaseCosts": "",
+  "rewards": "",
   "type": "타입",
   "endAt": "개방 종료 시간",
   "icon": "아이콘",
@@ -35,7 +38,6 @@
   "campaign": "캠페인",
   "bug": "버그",
   "update": "업데이트",
-  "releaseCondition": "해금 조건",
   "level": "레벨",
   "character_plural": "캐릭터"
 }
