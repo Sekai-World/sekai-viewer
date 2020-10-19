@@ -79,7 +79,7 @@ const EventDetail: React.FC<{}> = () => {
       currentTime >= event.startAt &&
       currentTime <= event.rankingAnnounceAt + 5 * 60 * 1000
     ) {
-      const cron = new CronJob("20 */5 * * * *", () => {
+      const cron = new CronJob("5 * * * * *", () => {
         const currentTime = Date.now();
         if (currentTime > event.rankingAnnounceAt + 5 * 60 * 1000) cron.stop();
         else {
