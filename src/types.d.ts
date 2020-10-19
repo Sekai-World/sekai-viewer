@@ -47,6 +47,13 @@ export interface IGachaInfo {
   gachaInformation: GachaInformation;
 }
 
+export interface Cost {
+  resourceId: number;
+  resourceType: string;
+  resourceLevel?: number;
+  quantity: number;
+}
+
 export interface ICardInfo {
   id: number;
   seq: number;
@@ -74,12 +81,7 @@ export interface ICardInfo {
   specialTrainingCosts: {
     cardId: number;
     seq: number;
-    cost: {
-      resourceId: number;
-      resourceType: string;
-      resourceLevel: number;
-      quantity: number;
-    };
+    cost: Cost;
   }[];
   masterLessonAchieveResources: {
     releaseConditionId: number;
@@ -399,4 +401,20 @@ export interface IHonorInfo {
   name: string;
   assetbundleName: string;
   levels: HonorLevel[];
+}
+
+export interface ICardEpisode {
+  id: number;
+  seq: number;
+  cardId: number;
+  title: string;
+  scenarioId: string;
+  assetbundleName: string;
+  releaseConditionId: number;
+  power1BonusFixed: number;
+  power2BonusFixed: number;
+  power3BonusFixed: number;
+  rewardResourceBoxIds: number[];
+  costs: Cost[];
+  cardEpisodePartType: string;
 }

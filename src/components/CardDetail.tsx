@@ -11,6 +11,9 @@ import {
   Tabs,
   Typography,
   Container,
+  FormGroup,
+  FormControlLabel,
+  Switch,
 } from "@material-ui/core";
 import { useLayoutStyles } from "../styles/layout";
 import { TabContext, TabPanel } from "@material-ui/lab";
@@ -20,11 +23,15 @@ import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
 
 import {
+  ICardEpisode,
   ICardInfo,
   ICardRarity,
   ICharacterRank,
   ICharaProfile,
+  IReleaseCondition,
+  IResourceBoxInfo,
   ISkillInfo,
+  ResourceBoxDetail,
 } from "../types";
 import { useCachedData } from "../utils";
 import rarityNormal from "../assets/rarity_star_normal.png";
@@ -44,6 +51,8 @@ import LogoThemePark from "../assets/common/logol/logo_theme_park.png";
 import { CardThumb } from "./subs/CardThumb";
 import { attrIconMap } from "../utils/resources";
 import { useTranslation } from "react-i18next";
+import MaterialIcon from "./subs/MaterialIcon";
+import CommonMaterialIcon from "./subs/CommonMaterialIcon";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -111,8 +120,11 @@ const CardDetail: React.FC<{}> = () => {
   const [charas] = useCachedData<ICharaProfile>("gameCharacters");
   const [cards] = useCachedData<ICardInfo>("cards");
   const [rarities] = useCachedData<ICardRarity>("cardRarities");
+  const [episodes] = useCachedData<ICardEpisode>("cardEpisodes");
   const [charaRanks] = useCachedData<ICharacterRank>("characterRanks");
   const [skills] = useCachedData<ISkillInfo>("skills");
+  const [releaseConds] = useCachedData<IReleaseCondition>("releaseConditions");
+  const [resourceBoxes] = useCachedData<IResourceBoxInfo>("resourceBoxes");
 
   const { cardId } = useParams<{ cardId: string }>();
 
@@ -121,9 +133,13 @@ const CardDetail: React.FC<{}> = () => {
   const [card, setCard] = useState<IExtendCardInfo>();
   const [cardTitle, setCardTitle] = useState<string>("");
   const [tabVal, setTabVal] = useState<string>("0");
+  const [episodeTabVal, setEpisodeTabVal] = useState<string>("1");
   const [cardLevel, setCardLevel] = useState<number | number[]>(0);
   const [skill, setSkill] = useState<ISkillInfo>();
   const [skillLevel, setSkillLevel] = useState<number | number[]>(0);
+  const [cardEpisode, setCardEpisode] = useState<ICardEpisode[]>([]);
+  const [sideStory1Unlocked, setSideStory1Unlocked] = useState<boolean>(true);
+  const [sideStory2Unlocked, setSideStory2Unlocked] = useState<boolean>(true);
   // const [cardRank, setCardRank] = useState<number | number[]>(0);
   // const [maxCardRank, setMaxCardRank] = useState<number>(0);
 
@@ -210,7 +226,7 @@ const CardDetail: React.FC<{}> = () => {
   );
 
   useEffect(() => {
-    if (cards.length && rarities.length && skills.length) {
+    if (cards.length && rarities.length && skills.length && episodes.length) {
       const _card = cards.find((elem) => elem.id === Number(cardId))!;
       setCard(
         Object.assign({}, _card, {
@@ -234,17 +250,21 @@ const CardDetail: React.FC<{}> = () => {
           _skill.skillEffects[0].skillEffectDetails.length - 1
         ].level
       );
+      setCardEpisode(episodes.filter((epi) => epi.cardId === Number(cardId)));
       document.title = `${_card.prefix} | ${getCharaName(
         _card.characterId
       )} | Card | Sekai Viewer`;
     }
-  }, [setCard, cards, cardId, rarities, skills, getCharaName]);
+  }, [setCard, cards, cardId, rarities, skills, getCharaName, episodes]);
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
     setTabVal(newValue);
   };
 
-  return card && charaRanks.length ? (
+  return card &&
+    charaRanks.length &&
+    releaseConds.length &&
+    resourceBoxes.length ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
         {cardTitle}
@@ -330,7 +350,7 @@ const CardDetail: React.FC<{}> = () => {
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t('common:id')}
+              {t("common:id")}
             </Typography>
             <Typography>{card.id}</Typography>
           </Grid>
@@ -343,7 +363,7 @@ const CardDetail: React.FC<{}> = () => {
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            {t('common:title')}
+              {t("common:title")}
             </Typography>
             <Typography>{card.prefix}</Typography>
           </Grid>
@@ -356,7 +376,7 @@ const CardDetail: React.FC<{}> = () => {
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            {t('common:character')}
+              {t("common:character")}
             </Typography>
             <Typography>{getCharaName(card.characterId)}</Typography>
           </Grid>
@@ -369,7 +389,7 @@ const CardDetail: React.FC<{}> = () => {
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            {t('common:unit')}
+              {t("common:unit")}
             </Typography>
             <img
               className={classes["unit-logo-img"]}
@@ -386,7 +406,7 @@ const CardDetail: React.FC<{}> = () => {
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            {t('common:attribute')}
+              {t("common:attribute")}
             </Typography>
             <img
               src={attrIconMap[card.attr]}
@@ -403,7 +423,7 @@ const CardDetail: React.FC<{}> = () => {
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            {t('common:startAt')}
+              {t("common:startAt")}
             </Typography>
             <Typography>{new Date(card.releaseAt).toLocaleString()}</Typography>
           </Grid>
@@ -416,7 +436,7 @@ const CardDetail: React.FC<{}> = () => {
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            {t('common:rarity')}
+              {t("common:rarity")}
             </Typography>
             <Typography>
               {Array.from({ length: card.rarity }).map((_, id) => (
@@ -443,7 +463,7 @@ const CardDetail: React.FC<{}> = () => {
           >
             <Grid item xs={8}>
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t('common:thumb')}
+                {t("common:thumb")}
               </Typography>
             </Grid>
             <Grid item xs={4}>
@@ -474,7 +494,7 @@ const CardDetail: React.FC<{}> = () => {
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            {t('common:skill')}
+              {t("common:skill")}
             </Typography>
             <Typography>{card.cardSkillName}</Typography>
           </Grid>
@@ -497,14 +517,38 @@ const CardDetail: React.FC<{}> = () => {
           </Box>
           <Divider style={{ margin: "1% 0" }} />
           <Box>
-            <Typography style={{ fontWeight: 600 }}>{t('card:power')}</Typography>
+            <Typography style={{ fontWeight: 600 }}>
+              {t("card:power")}
+            </Typography>
+            <FormGroup row>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={sideStory1Unlocked}
+                    onChange={() => setSideStory1Unlocked((v) => !v)}
+                  />
+                }
+                label={t("card:sideStory1Unlocked")}
+              ></FormControlLabel>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={sideStory2Unlocked}
+                    onChange={() => setSideStory2Unlocked((v) => !v)}
+                  />
+                }
+                label={t("card:sideStory2Unlocked")}
+              ></FormControlLabel>
+            </FormGroup>
             <Slider
               value={cardLevel}
               onChange={(e, value) => setCardLevel(value)}
               valueLabelDisplay="auto"
               step={1}
               min={1}
-              max={card.rarity >= 3 ? card.maxTrainedLevel : card.maxNormalLevel}
+              max={
+                card.rarity >= 3 ? card.maxTrainedLevel : card.maxNormalLevel
+              }
               marks={
                 card.rarity >= 3
                   ? [
@@ -551,6 +595,12 @@ const CardDetail: React.FC<{}> = () => {
                           )?.power! +
                             (cardLevel > card.maxNormalLevel
                               ? card.specialTrainingPower1BonusFixed
+                              : 0) +
+                            (sideStory1Unlocked
+                              ? cardEpisode[0].power1BonusFixed
+                              : 0) +
+                            (sideStory2Unlocked
+                              ? cardEpisode[1].power1BonusFixed
                               : 0)}
                         </Typography>
                       </Grid>
@@ -579,6 +629,12 @@ const CardDetail: React.FC<{}> = () => {
                           )?.power! +
                             (cardLevel > card.maxNormalLevel
                               ? card.specialTrainingPower2BonusFixed
+                              : 0) +
+                            (sideStory1Unlocked
+                              ? cardEpisode[0].power2BonusFixed
+                              : 0) +
+                            (sideStory2Unlocked
+                              ? cardEpisode[1].power2BonusFixed
                               : 0)}
                         </Typography>
                       </Grid>
@@ -607,6 +663,12 @@ const CardDetail: React.FC<{}> = () => {
                           )?.power! +
                             (cardLevel > card.maxNormalLevel
                               ? card.specialTrainingPower3BonusFixed
+                              : 0) +
+                            (sideStory1Unlocked
+                              ? cardEpisode[0].power3BonusFixed
+                              : 0) +
+                            (sideStory2Unlocked
+                              ? cardEpisode[1].power3BonusFixed
                               : 0)}
                         </Typography>
                       </Grid>
@@ -635,6 +697,16 @@ const CardDetail: React.FC<{}> = () => {
                               ? card.specialTrainingPower1BonusFixed +
                                 card.specialTrainingPower2BonusFixed +
                                 card.specialTrainingPower3BonusFixed
+                              : 0) +
+                            (sideStory1Unlocked
+                              ? cardEpisode[0].power1BonusFixed +
+                                cardEpisode[0].power2BonusFixed +
+                                cardEpisode[0].power3BonusFixed
+                              : 0) +
+                            (sideStory2Unlocked
+                              ? cardEpisode[1].power1BonusFixed +
+                                cardEpisode[1].power2BonusFixed +
+                                cardEpisode[1].power3BonusFixed
                               : 0)}
                         </Typography>
                       </Grid>
@@ -646,6 +718,220 @@ const CardDetail: React.FC<{}> = () => {
           </Box>
           <Divider style={{ margin: "1% 0" }} />
         </Grid>
+      </Container>
+      <Typography variant="h6" className={layoutClasses.header}>
+        {t("card:sideStory", { count: cardEpisode.length })}
+      </Typography>
+      <Container className={layoutClasses.content} maxWidth="sm">
+        <TabContext value={episodeTabVal}>
+          <Tabs
+            value={episodeTabVal}
+            onChange={(e, v) => setEpisodeTabVal(v)}
+            variant="scrollable"
+            scrollButtons="desktop"
+          >
+            <Tab label={cardEpisode[0].title} value="1"></Tab>
+            <Tab label={cardEpisode[1].title} value="2"></Tab>
+          </Tabs>
+          <TabPanel value="1" classes={{ root: classes.tabpanel }}>
+            <Grid container direction="column">
+              {/* <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                  {t("common:title")}
+                </Typography>
+                <Typography>{cardEpisode[0].title}</Typography>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} /> */}
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Grid item xs={2}>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("common:releaseCondition")}
+                  </Typography>
+                </Grid>
+                <Grid item xs={8} container justify="flex-end">
+                  <Typography>
+                    {
+                      releaseConds.find(
+                        (rc) => rc.id === cardEpisode[0].releaseConditionId
+                      )?.sentence
+                    }
+                  </Typography>
+                </Grid>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Grid item xs={2}>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("common:releaseCosts")}
+                  </Typography>
+                </Grid>
+                <Grid item container spacing={1} xs={10} justify="flex-end">
+                  {cardEpisode[0].costs.map((c) => (
+                    <Grid item>
+                      <MaterialIcon
+                        materialId={c.resourceId}
+                        quantity={c.quantity}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Grid item xs={2}>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("common:rewards")}
+                  </Typography>
+                </Grid>
+                <Grid item container spacing={1} xs={10} justify="flex-end">
+                  {resourceBoxes
+                    .filter(
+                      (rb) =>
+                        rb.resourceBoxPurpose === "episode_reward" &&
+                        cardEpisode[0].rewardResourceBoxIds.includes(rb.id)
+                    )
+                    .reduce(
+                      (sum, rb) => [...sum, ...rb.details],
+                      [] as ResourceBoxDetail[]
+                    )
+                    .map((rbd) => (
+                      <Grid item>
+                        <CommonMaterialIcon
+                          materialName={rbd.resourceType}
+                          materialId={rbd.resourceId}
+                          quantity={rbd.resourceQuantity}
+                        />
+                      </Grid>
+                    ))}
+                </Grid>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
+            </Grid>
+          </TabPanel>
+          <TabPanel value="2" classes={{ root: classes.tabpanel }}>
+            <Grid container direction="column">
+              {/* <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                  {t("common:title")}
+                </Typography>
+                <Typography>{cardEpisode[1].title}</Typography>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} /> */}
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Grid item xs={2}>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("common:releaseCondition")}
+                  </Typography>
+                </Grid>
+                <Grid item xs={8} container justify="flex-end">
+                  <Typography>
+                    {
+                      releaseConds.find(
+                        (rc) => rc.id === cardEpisode[1].releaseConditionId
+                      )?.sentence
+                    }
+                  </Typography>
+                </Grid>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Grid item xs={2}>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("common:releaseCosts")}
+                  </Typography>
+                </Grid>
+                <Grid item container spacing={1} xs={10} justify="flex-end">
+                  {cardEpisode[1].costs.map((c) => (
+                    <Grid item>
+                      <MaterialIcon
+                        materialId={c.resourceId}
+                        quantity={c.quantity}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Grid item xs={2}>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("common:rewards")}
+                  </Typography>
+                </Grid>
+                <Grid item container spacing={1} xs={10} justify="flex-end">
+                  {resourceBoxes
+                    .filter(
+                      (rb) =>
+                        rb.resourceBoxPurpose === "episode_reward" &&
+                        cardEpisode[1].rewardResourceBoxIds.includes(rb.id)
+                    )
+                    .reduce(
+                      (sum, rb) => [...sum, ...rb.details],
+                      [] as ResourceBoxDetail[]
+                    )
+                    .map((rbd) => (
+                      <Grid item>
+                        <CommonMaterialIcon
+                          materialName={rbd.resourceType}
+                          materialId={rbd.resourceId}
+                          quantity={rbd.resourceQuantity}
+                        />
+                      </Grid>
+                    ))}
+                </Grid>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
+            </Grid>
+          </TabPanel>
+        </TabContext>
       </Container>
       <Viewer
         visible={visible}
