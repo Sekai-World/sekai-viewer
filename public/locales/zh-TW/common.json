@@ -14,12 +14,6 @@
   },
   "language": "語言",
   "darkmode": "顯示主題",
-  "contentTranslationMode": {
-    "title": "",
-    "original": "",
-    "translated": "",
-    "both": ""
-  },
   "id": "編號",
   "title": "標題",
   "character": "角色",
@@ -30,7 +24,7 @@
   "skill": "技能",
   "releaseCondition": "解放條件",
   "releaseCosts": "解放素材",
-  "rewards": "",
+  "rewards": "獎勵",
   "type": "類型",
   "endAt": "結束於",
   "icon": "圖示",
@@ -44,6 +38,6 @@
   "campaign": "紀念活動",
   "bug": "問題",
   "update": "更新",
-  "level": "等級",
-  "character_plural": "角色"
+  "character_plural": "角色",
+  "level": "等級"
 }
