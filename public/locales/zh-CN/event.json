@@ -6,6 +6,8 @@
     "title[2]": "角色"
   },
   "alreadyPast": "活动已经过",
+  "remainingTime": "剩余时间",
+  "progress": "进度",
   "boostAttribute": "加成属性",
   "boostCharacters": "加成角色",
   "maxBoost": "加成（两者皆满足）",

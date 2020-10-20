@@ -24,7 +24,7 @@
   "skill": "技能",
   "releaseCondition": "解放条件",
   "releaseCosts": "解放素材",
-  "rewards": "",
+  "rewards": "奖励",
   "type": "类型",
   "endAt": "结束时间",
   "icon": "图标",
@@ -38,5 +38,6 @@
   "campaign": "纪念活动",
   "bug": "问题",
   "update": "更新",
+  "character_plural": "角色",
   "level": "等级"
 }

@@ -6,6 +6,8 @@
     "title[2]": "Personagem"
   },
   "alreadyPast": "Tempo passado",
+  "remainingTime": "Remaining Time",
+  "progress": "Progress",
   "boostAttribute": "Atributo bônus",
   "boostCharacters": "Personagens de impulso",
   "maxBoost": "Impulso Máximo (Todos os Personagens)",
