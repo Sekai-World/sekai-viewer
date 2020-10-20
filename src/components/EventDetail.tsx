@@ -133,7 +133,7 @@ const EventDetail: React.FC<{}> = () => {
           return;
         }
         setRemainingTime(
-          new Date(Date.now() - event.startAt)
+          new Date(event.aggregateAt - Date.now())
             .toISOString()
             .substring(8, 16)
             .replace("T", " day(s) ")
