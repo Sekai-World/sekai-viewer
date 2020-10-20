@@ -7,5 +7,8 @@
     "title[4]": "Feature Image"
   },
   "pickupMember": "Pickup Member",
-  "pickupMember_plural": "Pickup Members"
+  "pickupMember_plural": "Pickup Members",
+  "gachaType": {
+    "ceil": "Ceiling"
+  }
 }

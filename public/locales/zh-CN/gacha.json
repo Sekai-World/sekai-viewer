@@ -6,5 +6,8 @@
     "title[3]": "背景",
     "title[4]": "特征图"
   },
-  "pickupMember": "本期角色"
+  "pickupMember": "本期角色",
+  "gachaType": {
+    "ceil": "天井"
+  }
 }

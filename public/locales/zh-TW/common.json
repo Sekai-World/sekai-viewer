@@ -24,6 +24,7 @@
   "skill": "技能",
   "releaseCondition": "解放條件",
   "releaseCosts": "解放素材",
+  "rewards": "",
   "type": "類型",
   "endAt": "結束於",
   "icon": "圖示",
@@ -37,6 +38,6 @@
   "campaign": "紀念活動",
   "bug": "問題",
   "update": "更新",
-  "character_plural": "角色",
-  "level": "等級"
+  "level": "等級",
+  "character_plural": "角色"
 }

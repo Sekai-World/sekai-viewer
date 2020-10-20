@@ -42,14 +42,6 @@ const gachaImageNameMap: {
   3: {
     bg: "bg_gacha_virtualsinger_2020",
   },
-  4: {
-    bg: "bg_gacha4",
-    feature: "img_gacha4",
-  },
-  5: {
-    bg: "bg_gacha5",
-    feature: "img_gacha5",
-  },
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -76,26 +68,39 @@ const useStyles = makeStyles((theme) => ({
 
 function getGachaImages(gacha: IGachaInfo): ImageDecorator[] {
   const ret: ImageDecorator[] = [];
-  if (gachaImageNameMap[gacha.id].bg) {
+  if (gachaImageNameMap[gacha.id]) {
+    if (gachaImageNameMap[gacha.id].bg) {
+      ret.push({
+        src: `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${
+          gacha.assetbundleName
+        }/screen_rip/texture/${gachaImageNameMap[gacha.id].bg}.webp`,
+        alt: "background",
+        downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${
+          gacha.assetbundleName
+        }/screen_rip/texture/${gachaImageNameMap[gacha.id].bg}.webp`,
+      });
+    }
+    if (gachaImageNameMap[gacha.id].feature) {
+      ret.push({
+        src: `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${
+          gacha.assetbundleName
+        }/screen_rip/texture/${gachaImageNameMap[gacha.id].feature}.webp`,
+        alt: "feature",
+        downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${
+          gacha.assetbundleName
+        }/screen_rip/texture/${gachaImageNameMap[gacha.id].feature}.webp`,
+      });
+    }
+  } else {
     ret.push({
-      src: `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${
-        gacha.assetbundleName
-      }/screen_rip/texture/${gachaImageNameMap[gacha.id].bg}.webp`,
+      src: `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${gacha.assetbundleName}/screen_rip/texture/bg_gacha${gacha.id}.webp`,
       alt: "background",
-      downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${
-        gacha.assetbundleName
-      }/screen_rip/texture/${gachaImageNameMap[gacha.id].bg}.webp`,
+      downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${gacha.assetbundleName}/screen_rip/texture/bg_gacha${gacha.id}.webp`,
     });
-  }
-  if (gachaImageNameMap[gacha.id].feature) {
     ret.push({
-      src: `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${
-        gacha.assetbundleName
-      }/screen_rip/texture/${gachaImageNameMap[gacha.id].feature}.webp`,
+      src: `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${gacha.assetbundleName}/screen_rip/texture/img_gacha${gacha.id}.webp`,
       alt: "feature",
-      downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${
-        gacha.assetbundleName
-      }/screen_rip/texture/${gachaImageNameMap[gacha.id].feature}.webp`,
+      downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${gacha.assetbundleName}/screen_rip/texture/img_gacha${gacha.id}.webp`,
     });
   }
 
@@ -306,10 +311,12 @@ const GachaDetailPage: React.FC<{}> = () => {
                 <Tab label={t("gacha:tab.title[1]")} value="3"></Tab>
                 <Tab label={t("gacha:tab.title[2]")} value="4"></Tab>
                 <Tab label={t("gacha:tab.title[3]")} value="0"></Tab>
-                {gacha ? (
+                {gachaImageNameMap[gacha.id] ? (
                   gachaImageNameMap[gacha.id].feature ? (
                     <Tab label={t("gacha:tab.title[4]")} value="1"></Tab>
                   ) : null
+                ) : gacha.id >= 4 ? (
+                  <Tab label={t("gacha:tab.title[4]")} value="1"></Tab>
                 ) : null}
               </Tabs>
             </Paper>
@@ -327,7 +334,9 @@ const GachaDetailPage: React.FC<{}> = () => {
                       ? `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${
                           gacha.assetbundleName
                         }/screen_rip/texture/${
-                          gachaImageNameMap[gacha.id].bg
+                          gachaImageNameMap[gacha.id]
+                            ? gachaImageNameMap[gacha.id].bg
+                            : `bg_gacha${gachaId}`
                         }.webp`
                       : ""
                   }
@@ -348,7 +357,9 @@ const GachaDetailPage: React.FC<{}> = () => {
                       ? `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${
                           gacha.assetbundleName
                         }/screen_rip/texture/${
-                          gachaImageNameMap[gacha.id].feature
+                          gachaImageNameMap[gacha.id]
+                            ? gachaImageNameMap[gacha.id].feature
+                            : `img_gacha${gachaId}`
                         }.webp`
                       : ""
                   }
@@ -561,7 +572,9 @@ const GachaDetailPage: React.FC<{}> = () => {
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                 {t("common:type")}
               </Typography>
-              <Typography>{gacha.gachaType}</Typography>
+              <Typography>
+                {t(`gacha:gachaType.${gacha.gachaType as "ceil"}`)}
+              </Typography>
             </Box>
             <Divider />
             <Grid
@@ -574,9 +587,16 @@ const GachaDetailPage: React.FC<{}> = () => {
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                 {t("gacha:pickupMember", { count: gacha.gachaPickups.length })}
               </Typography>
-              <Grid item container direction="row" xs={6} spacing={1}>
+              <Grid
+                item
+                container
+                direction="row"
+                xs={6}
+                spacing={1}
+                justify="flex-end"
+              >
                 {gacha.gachaPickups.map((elem) => (
-                  <Grid key={`pickup-${elem.id}`} item xs={12} md={4}>
+                  <Grid key={`pickup-${elem.id}`} item xs={8} md={4}>
                     <CardThumb id={elem.cardId} />
                   </Grid>
                 ))}

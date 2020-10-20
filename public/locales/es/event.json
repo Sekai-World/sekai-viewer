@@ -5,7 +5,8 @@
     "title[1]": "",
     "title[2]": ""
   },
-  "alreadyPast": "",
+  "remainingTime": "",
+  "progress": "",
   "boostAttribute": "",
   "boostCharacters": "",
   "maxBoost": "",
@@ -15,5 +16,6 @@
   "distributionEndAt": "",
   "ranking": "",
   "realtime": "",
-  "nextfetch": ""
+  "nextfetch": "",
+  "alreadyPast": ""
 }

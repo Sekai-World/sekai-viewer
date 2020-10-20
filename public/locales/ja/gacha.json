@@ -7,5 +7,8 @@
     "title[4]": "アイキャッチ画像"
   },
   "pickupMember": "ピックアップメンバー",
-  "pickupMember_plural": "ピックアップメンバー"
+  "pickupMember_plural": "ピックアップメンバー",
+  "gachaType": {
+    "ceil": "天井"
+  }
 }

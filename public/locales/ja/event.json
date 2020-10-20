@@ -5,7 +5,8 @@
     "title[1]": "背景",
     "title[2]": "キャラクター"
   },
-  "alreadyPast": "経過時間",
+  "remainingTime": "",
+  "progress": "",
   "boostAttribute": "ボーナスタイプ",
   "boostCharacters": "ボーナスキャラクター",
   "maxBoost": "ボーナス(両方一致）",
@@ -16,6 +17,7 @@
   "ranking": "ランキング",
   "realtime": "更新時間",
   "nextfetch": "次の取得",
+  "alreadyPast": "経過時間",
   "type": {
     "marathon": "マラソン"
   }
