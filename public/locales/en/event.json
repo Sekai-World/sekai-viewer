@@ -6,6 +6,8 @@
     "title[2]": "Character"
   },
   "alreadyPast": "Already Past",
+  "remainingTime": "Remaining Time",
+  "progress": "Progress",
   "boostAttribute": "Boost Attribute",
   "boostCharacters": "Boost Charaters",
   "maxBoost": "Max Boost (Both Matched)",

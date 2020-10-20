@@ -6,6 +6,8 @@
     "title[2]": "캐릭터"
   },
   "alreadyPast": "경과일",
+  "remainingTime": "남은 시간",
+  "progress": "진행률",
   "boostAttribute": "부스트 속성",
   "boostCharacters": "부스트 캐릭터",
   "maxBoost": "최대 부스트 (두 조건 모두 충족)",
