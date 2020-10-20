@@ -60,7 +60,7 @@ const EventDetail: React.FC<{}> = () => {
   const [imgTabVal, setImgTabVal] = useState<string>("0");
   // const [intervalId, setIntervalId] = useState<number>();
   const [nextRefreshTime, setNextRefreshTime] = useState<moment.Moment>();
-  const [pastTime, setPastTime] = useState<string>("");
+  const [remainingTime, setRemainingTime] = useState<string>("");
   const [pastTimePercent, setPastTimePercent] = useState<number>(0);
 
   useEffect(() => {
@@ -106,8 +106,8 @@ const EventDetail: React.FC<{}> = () => {
 
   useEffect(() => {
     if (event && Date.now() < event.aggregateAt) {
-      setPastTime(
-        new Date(Date.now() - event.startAt)
+      setRemainingTime(
+        new Date(event.aggregateAt - Date.now())
           .toISOString()
           .substring(8, 16)
           .replace("T", " day(s) ")
@@ -129,10 +129,10 @@ const EventDetail: React.FC<{}> = () => {
       const interval = window.setInterval(() => {
         if (Date.now() > event.aggregateAt) {
           window.clearInterval(interval);
-          setPastTime(t("event:already-ended"));
+          setRemainingTime(t("event:already-ended"));
           return;
         }
-        setPastTime(
+        setRemainingTime(
           new Date(Date.now() - event.startAt)
             .toISOString()
             .substring(8, 16)
@@ -156,7 +156,7 @@ const EventDetail: React.FC<{}> = () => {
         window.clearInterval(interval);
       };
     } else {
-      setPastTime(t("event:already-ended"));
+      setRemainingTime(t("event:already-ended"));
       setPastTimePercent(100);
     }
   }, [event, t]);
@@ -327,9 +327,9 @@ const EventDetail: React.FC<{}> = () => {
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t("event:alreadyPast")}
+              {t("event:remainingTime")} ({t("event:progress")})
             </Typography>
-            <Typography>{pastTime}</Typography>
+            <Typography>{remainingTime}</Typography>
           </Grid>
           <LinearProgress variant="determinate" value={pastTimePercent} />
           <Divider style={{ margin: "1% 0" }} />
