@@ -645,7 +645,7 @@ const EventDetail: React.FC<{}> = () => {
                                         )!
                                       : rtRanking[
                                           `rank${elem.toRank}` as "rank20"
-                                        ][0]
+                                        ][0] || { name: "" }
                                     ).name
                                   }
                                 </Typography>
@@ -659,7 +659,7 @@ const EventDetail: React.FC<{}> = () => {
                                         )!
                                       : rtRanking[
                                           `rank${elem.toRank}` as "rank20"
-                                        ][0]
+                                        ][0] || { score: "N/A" }
                                     ).score
                                   }
                                 </Typography>

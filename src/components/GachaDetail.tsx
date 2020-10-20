@@ -46,6 +46,10 @@ const gachaImageNameMap: {
     bg: "bg_gacha4",
     feature: "img_gacha4",
   },
+  5: {
+    bg: "bg_gacha5",
+    feature: "img_gacha5",
+  },
 };
 
 const useStyles = makeStyles((theme) => ({
