@@ -120,7 +120,7 @@ export function useRealtimeEventData(
 
   const refrershData = useCallback(async () => {
     const { data }: { data: IEventRealtimeRank } = await Axios.get(
-      `https://raw.githubusercontent.com/Sekai-World/sekai-event-track/main/event${eventId}.json?t=${Date.now()}`
+      `https://bitbucket.org/sekai-world/sekai-event-track/raw/main/event${eventId}.json?t=${Date.now()}`
     );
 
     setEventRealtimeData(data);
