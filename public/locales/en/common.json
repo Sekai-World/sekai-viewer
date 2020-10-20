@@ -14,6 +14,12 @@
   },
   "language": "Language",
   "darkmode": "Brightness Mode",
+  "contentTranslationMode": {
+    "title": "Game Content Display Mode",
+    "original": "Original",
+    "translated": "Translated (if available)",
+    "both": "Show Both"
+  },
   "id": "ID",
   "title": "Title",
   "character": "Character",

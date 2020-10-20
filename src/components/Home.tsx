@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(0, 0.5),
   },
   "game-news-title": {
-    paddingTop: theme.spacing(2)
+    paddingTop: theme.spacing(2),
   },
 }));
 
@@ -179,6 +179,7 @@ function Home() {
       width: 180,
       valueFormatter: (params: ValueFormatterParams) =>
         new Date(params.getValue("startAt") as number).toLocaleString(),
+      sortDirection: "desc",
     },
     {
       field: "title",
@@ -288,7 +289,11 @@ function Home() {
           )}
         </Alert>
         <Paper>
-          <Typography variant="h6" align="center" className={classes["game-news-title"]}>
+          <Typography
+            variant="h6"
+            align="center"
+            className={classes["game-news-title"]}
+          >
             {t("home:game-news.title")}
           </Typography>
           <Tabs

@@ -27,7 +27,13 @@ import {
 } from "mdi-material-ui";
 import React, { Fragment, useEffect, useState } from "react";
 import { Link, useHistory, useRouteMatch } from "react-router-dom";
-import { ICardEpisode, ICardInfo, ICardRarity, ICharaProfile } from "../types";
+import {
+  ContentTransModeType,
+  ICardEpisode,
+  ICardInfo,
+  ICardRarity,
+  ICharaProfile,
+} from "../types";
 import { useCachedData, useRefState } from "../utils";
 import { CardThumb } from "./subs/CardThumb";
 import InfiniteScroll from "./subs/InfiniteScroll";
@@ -124,7 +130,9 @@ function getMaxParam(
   return maxParam;
 }
 
-const CardList: React.FC<any> = (props) => {
+const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = (
+  props
+) => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const filterClasses = useFilterStyles();

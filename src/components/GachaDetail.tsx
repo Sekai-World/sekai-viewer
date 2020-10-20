@@ -20,11 +20,18 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
-import { GachaDetail, GachaStatistic, ICardInfo, IGachaInfo } from "../types";
+import {
+  ContentTransModeType,
+  GachaDetail,
+  GachaStatistic,
+  ICardInfo,
+  IGachaInfo,
+} from "../types";
 import { useCachedData, useRefState } from "../utils";
 import { CardThumb, CardThumbs } from "./subs/CardThumb";
 import rarityNormal from "../assets/rarity_star_normal.png";
 import { useTranslation } from "react-i18next";
+import { getAssetI18n } from "../utils/i18n";
 
 const gachaImageNameMap: {
   [key: number]: {
@@ -115,11 +122,14 @@ const StarIcon: React.FC<{ num: number }> = ({ num }) => (
   </Fragment>
 );
 
-const GachaDetailPage: React.FC<{}> = () => {
+const GachaDetailPage: React.FC<{
+  contentTransMode: ContentTransModeType;
+}> = ({ contentTransMode }) => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const { gachaId } = useParams<{ gachaId: string }>();
   const { t } = useTranslation();
+  const assetI18n = getAssetI18n();
 
   const [gacha, setGacha] = useState<IGachaInfo>();
   const [gachas] = useCachedData<IGachaInfo>("gachas");
@@ -284,9 +294,15 @@ const GachaDetailPage: React.FC<{}> = () => {
 
   useEffect(() => {
     if (gacha) {
-      document.title = `${gacha?.name} | Gacha | Sekai Viewer`;
+      document.title = `${
+        contentTransMode === "original"
+          ? gacha.name
+          : contentTransMode === "translated"
+          ? assetI18n.t(`gacha_name:${gachaId}`)
+          : gacha.name
+      } | Gacha | Sekai Viewer`;
     }
-  }, [gacha]);
+  }, [gacha, assetI18n, contentTransMode, gachaId]);
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
     setPicTabVal(newValue);
@@ -296,7 +312,11 @@ const GachaDetailPage: React.FC<{}> = () => {
     return (
       <Fragment>
         <Typography variant="h6" className={layoutClasses.header}>
-          {gacha.name}
+          {contentTransMode === "original"
+            ? gacha.name
+            : contentTransMode === "translated"
+            ? assetI18n.t(`gacha_name:${gachaId}`)
+            : gacha.name}
         </Typography>
         <Container className={layoutClasses.content} maxWidth="sm">
           <TabContext value={picTabVal}>
@@ -510,7 +530,13 @@ const GachaDetailPage: React.FC<{}> = () => {
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                 {t("common:title")}
               </Typography>
-              <Typography>{gacha.name}</Typography>
+              <Typography>
+                {contentTransMode === "original"
+                  ? gacha.name
+                  : contentTransMode === "translated"
+                  ? assetI18n.t(`gacha_name:${gachaId}`)
+                  : gacha.name}
+              </Typography>
             </Box>
             <Divider />
             <Box

@@ -14,10 +14,13 @@ import { useCachedData, useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
+import { ContentTransModeType } from "../types";
+import { getAssetI18n } from "../utils/i18n";
 
 const useStyles = makeStyles((theme) => ({
   media: {
     paddingTop: "56.25%",
+    backgroundSize: "contain",
   },
   card: {
     // margin: theme.spacing(0.5),
@@ -84,12 +87,15 @@ function getPaginitedGachas(gachas: IGachaInfo[], page: number, limit: number) {
   return gachas.slice(limit * (page - 1), limit * page);
 }
 
-const GachaList: React.FC<any> = () => {
+const GachaList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
+  contentTransMode,
+}) => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const history = useHistory();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
+  const assetI18n = getAssetI18n();
 
   const [gachas, setGachas] = useState<IGachaInfo[]>([]);
   // const [gachasCache, setGachasCache] = useState<IGachaInfo[]>([]);
@@ -146,8 +152,15 @@ const GachaList: React.FC<any> = () => {
           onClick={() => history.push(path + "/" + data.id)}
         >
           <CardHeader
-            title={data.name}
+            title={
+              contentTransMode === "original"
+                ? data.name
+                : contentTransMode === "translated"
+                ? assetI18n.t(`gacha_name:${data.id}`)
+                : data.name
+            }
             titleTypographyProps={{
+              variant: "subtitle1",
               classes: {
                 root: classes.subheader,
               },

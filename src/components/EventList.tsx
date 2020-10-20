@@ -10,7 +10,7 @@ import { useLayoutStyles } from "../styles/layout";
 import { Skeleton } from "@material-ui/lab";
 import React, { Fragment, useEffect, useState } from "react";
 import { Link, useHistory, useRouteMatch } from "react-router-dom";
-import { IEventInfo } from "../types";
+import { ContentTransModeType, IEventInfo } from "../types";
 import { useCachedData, useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
@@ -43,7 +43,7 @@ function getPaginitedEvents(events: IEventInfo[], page: number, limit: number) {
   return events.slice(limit * (page - 1), limit * page);
 }
 
-const EventList: React.FC<{}> = () => {
+const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = () => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const { push } = useHistory();

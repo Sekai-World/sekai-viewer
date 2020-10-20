@@ -14,6 +14,12 @@
   },
   "language": "언어",
   "darkmode": "밝기 모드",
+  "contentTranslationMode": {
+    "title": "",
+    "original": "",
+    "translated": "",
+    "both": ""
+  },
   "id": "번호",
   "title": "제목",
   "character": "캐릭터",

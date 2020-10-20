@@ -1,52 +1,13 @@
 import React, { Suspense } from "react";
 import ReactDOM from "react-dom";
-import i18n from "i18next";
-import { initReactI18next } from "react-i18next";
-import fetchBackend from "i18next-fetch-backend";
-import detector from "i18next-browser-languagedetector";
 
 import App from "./components/App";
 import * as serviceWorker from "./serviceWorker";
 import { HashRouter as Router } from "react-router-dom";
 import "./modernizr-custom";
+import { initGlobalI18n } from "./utils/i18n";
 
-i18n
-  .use(initReactI18next)
-  .use(fetchBackend)
-  .use(detector)
-  .init({
-    supportedLngs: [
-      "en",
-      "zh-CN",
-      "zh-TW",
-      "ja",
-      "ko",
-      "es",
-      "de",
-      "pt-BR",
-      "ru",
-    ],
-    ns: [
-      "common",
-      "home",
-      "card",
-      "music",
-      "gacha",
-      "event",
-      "unit",
-      "member",
-      "filter",
-    ],
-    fallbackLng: {
-      default: ["en"],
-      pt: ["pt-BR", "en"],
-    },
-    fallbackNS: "common",
-    backend: {
-      loadPath: process.env.PUBLIC_URL + "/locales/{{lng}}/{{ns}}.json",
-    },
-    returnEmptyString: false,
-  });
+initGlobalI18n();
 
 ReactDOM.render(
   <React.StrictMode>

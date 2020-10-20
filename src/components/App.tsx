@@ -52,6 +52,8 @@ import {
   useHistory,
   useRouteMatch,
 } from "react-router-dom";
+import { ContentTransModeType } from "../types";
+import { getAssetI18n } from "../utils/i18n";
 
 const drawerWidth = 240;
 const CardList = lazy(() => import("./CardList"));
@@ -167,6 +169,8 @@ function ListItemLink(
 
 function App() {
   const { t, i18n } = useTranslation();
+  const assetI18n = getAssetI18n();
+
   const leftBtns: IListItemLinkProps[] = [
     {
       text: t("common:home"),
@@ -229,11 +233,15 @@ function App() {
   const [displayMode, setDisplayMode] = React.useState<
     "dark" | "light" | "auto"
   >(
-    (localStorage.getItem("display-mode") as
-      | "dark"
-      | "light"
-      | "auto"
-      | undefined) || "auto"
+    (localStorage.getItem("display-mode") as "dark" | "light" | "auto") ||
+      "auto"
+  );
+  const [contentTransMode, setContentTransMode] = React.useState<
+    ContentTransModeType
+  >(
+    (localStorage.getItem(
+      "content-translation-mode"
+    ) as ContentTransModeType) || "translated"
   );
 
   const theme = React.useMemo(
@@ -358,28 +366,28 @@ function App() {
                 <HomeView />
               </Route>
               <Route path="/card" exact>
-                <CardList />
+                <CardList contentTransMode={contentTransMode} />
               </Route>
               <Route path="/card/:cardId(\d+)">
-                <CardDetail />
+                <CardDetail contentTransMode={contentTransMode} />
               </Route>
               <Route path="/music" exact>
-                <MusicList />
+                <MusicList contentTransMode={contentTransMode} />
               </Route>
               <Route path="/music/:musicId(\d+)">
-                <MusicDetail />
+                <MusicDetail contentTransMode={contentTransMode} />
               </Route>
               <Route path="/gacha" exact>
-                <GachaList />
+                <GachaList contentTransMode={contentTransMode} />
               </Route>
               <Route path="/gacha/:gachaId">
-                <GachaDetail />
+                <GachaDetail contentTransMode={contentTransMode} />
               </Route>
               <Route path="/event" exact>
-                <EventList />
+                <EventList contentTransMode={contentTransMode} />
               </Route>
               <Route path="/event/:eventId">
-                <EventDetail />
+                <EventDetail contentTransMode={contentTransMode} />
               </Route>
             </Suspense>
           </Switch>
@@ -387,7 +395,7 @@ function App() {
         <Dialog open={isSettingsOpen} onClose={() => setIsSettingsOpen(false)}>
           <DialogTitle>{t("common:settings.title")}</DialogTitle>
           <DialogContent>
-            <FormControl component="fieldset">
+            <FormControl component="fieldset" style={{ margin: "1% 0" }}>
               <FormLabel component="legend">{t("common:language")}</FormLabel>
               <RadioGroup
                 row
@@ -396,6 +404,7 @@ function App() {
                 onChange={(e, v) => {
                   setLang(v);
                   i18n.changeLanguage(v);
+                  assetI18n.changeLanguage(v);
                 }}
               >
                 <FormControlLabel
@@ -445,7 +454,7 @@ function App() {
                 ></FormControlLabel>
               </RadioGroup>
             </FormControl>
-            <FormControl component="fieldset">
+            <FormControl component="fieldset" style={{ margin: "1% 0" }}>
               <FormLabel component="legend">{t("common:darkmode")}</FormLabel>
               <RadioGroup
                 row
@@ -470,6 +479,37 @@ function App() {
                   value="auto"
                   control={<Radio />}
                   label={<BrightnessAuto />}
+                ></FormControlLabel>
+              </RadioGroup>
+            </FormControl>
+            <FormControl component="fieldset" style={{ margin: "1% 0" }}>
+              <FormLabel component="legend">
+                {t("common:contentTranslationMode.title")}
+              </FormLabel>
+              <RadioGroup
+                row
+                aria-label="show translated"
+                value={contentTransMode}
+                onChange={(e, v) => {
+                  setContentTransMode(v as "original" | "translated" | "both");
+                  localStorage.setItem("content-translation-mode", v);
+                }}
+              >
+                <FormControlLabel
+                  value="original"
+                  control={<Radio />}
+                  label={t("common:contentTranslationMode.original")}
+                ></FormControlLabel>
+                <FormControlLabel
+                  value="translated"
+                  control={<Radio />}
+                  label={t("common:contentTranslationMode.translated")}
+                ></FormControlLabel>
+                <FormControlLabel
+                  value="both"
+                  control={<Radio />}
+                  label={t("common:contentTranslationMode.both")}
+                  disabled
                 ></FormControlLabel>
               </RadioGroup>
             </FormControl>

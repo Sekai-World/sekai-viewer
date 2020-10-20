@@ -14,6 +14,12 @@
   },
   "language": "言語",
   "darkmode": "画面の明るさ",
+  "contentTranslationMode": {
+    "title": "",
+    "original": "",
+    "translated": "",
+    "both": ""
+  },
   "id": "ID",
   "title": "タイトル",
   "character": "キャラクター",

@@ -418,3 +418,5 @@ export interface ICardEpisode {
   costs: Cost[];
   cardEpisodePartType: string;
 }
+
+export type ContentTransModeType = "original" | "translated" | "both";

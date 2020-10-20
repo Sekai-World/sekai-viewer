@@ -27,12 +27,17 @@ import {
 } from "mdi-material-ui";
 import React, { Fragment, useEffect, useState } from "react";
 import { Link, useHistory, useRouteMatch } from "react-router-dom";
-import { IMusicDifficultyInfo, IMusicInfo } from "../types";
+import {
+  ContentTransModeType,
+  IMusicDifficultyInfo,
+  IMusicInfo,
+} from "../types";
 import { musicCategoryToName, useCachedData, useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
 import { useFilterStyles } from "../styles/filter";
+import { getAssetI18n } from "../utils/i18n";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -91,13 +96,16 @@ function getPaginitedMusics(musics: IMusicInfo[], page: number, limit: number) {
   return musics.slice(limit * (page - 1), limit * page);
 }
 
-const MusicList: React.FC<any> = () => {
+const MusicList: React.FC<{
+  contentTransMode: ContentTransModeType;
+}> = ({ contentTransMode }) => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const filterClasses = useFilterStyles();
   const { push } = useHistory();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
+  const assetI18n = getAssetI18n();
 
   const [musicsCache, musicsCacheRef] = useCachedData<IMusicInfo>("musics");
   const [musicDiffis] = useCachedData<IMusicDifficultyInfo>(
@@ -188,7 +196,13 @@ const MusicList: React.FC<any> = () => {
             onClick={() => push(path + "/" + data.id)}
           >
             <CardHeader
-              title={data.title}
+              title={
+                contentTransMode === "original"
+                  ? data.title
+                  : contentTransMode === "translated"
+                  ? assetI18n.t(`music_titles:${data.id}`)
+                  : data.title
+              }
               titleTypographyProps={{
                 variant: "subtitle1",
                 classes: {
@@ -202,7 +216,13 @@ const MusicList: React.FC<any> = () => {
             <CardMedia
               className={classes.media}
               image={`https://sekai-res.dnaroma.eu/file/sekai-assets/music/jacket/${data.assetbundleName}_rip/${data.assetbundleName}.webp`}
-              title={data.title}
+              title={
+                contentTransMode === "original"
+                  ? data.title
+                  : contentTransMode === "translated"
+                  ? assetI18n.t(`music_titles:${data.id}`)
+                  : data.title
+              }
             ></CardMedia>
           </Card>
         </Link>
@@ -225,13 +245,24 @@ const MusicList: React.FC<any> = () => {
                 <CardMedia
                   className={classes.agendaMedia}
                   image={`https://sekai-res.dnaroma.eu/file/sekai-assets/music/jacket/${data.assetbundleName}_rip/${data.assetbundleName}.webp`}
-                  title={data.title}
+                  title={
+                    contentTransMode === "original"
+                      ? data.title
+                      : contentTransMode === "translated"
+                      ? assetI18n.t(`music_titles:${data.id}`)
+                      : data.title
+                  }
                 ></CardMedia>
-                {/* <img src={`https://sekai-res.dnaroma.eu/file/sekai-assets/music/jacket/${data.assetbundleName}_rip/${data.assetbundleName}.webp`} alt={data.title}></img> */}
               </Grid>
               <Grid item xs={6} md={7} container direction="column">
                 <Grid item>
-                  <Typography variant="body1">{data.title}</Typography>
+                  <Typography variant="body1">
+                    {contentTransMode === "original"
+                      ? data.title
+                      : contentTransMode === "translated"
+                      ? assetI18n.t(`music_titles:${data.id}`)
+                      : data.title}
+                  </Typography>
                   <Typography color="textSecondary">
                     {data.categories
                       .map((cat) => musicCategoryToName[cat] || cat)

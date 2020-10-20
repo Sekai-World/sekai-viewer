@@ -14,6 +14,12 @@
   },
   "language": "語言",
   "darkmode": "顯示主題",
+  "contentTranslationMode": {
+    "title": "",
+    "original": "",
+    "translated": "",
+    "both": ""
+  },
   "id": "編號",
   "title": "標題",
   "character": "角色",

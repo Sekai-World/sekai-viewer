@@ -26,6 +26,7 @@ import React, {
 import { useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import {
+  ContentTransModeType,
   IMusicDanceMembers,
   IMusicDifficultyInfo,
   IMusicInfo,
@@ -39,6 +40,7 @@ import { Alert, TabContext, TabPanel } from "@material-ui/lab";
 import MusicVideoPlayer from "./subs/MusicVideoPlayer";
 import { charaIcons } from "../utils/resources";
 import { Trans, useTranslation } from "react-i18next";
+import { getAssetI18n } from "../utils/i18n";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -72,10 +74,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const MsuicDetail: React.FC<{}> = () => {
+const MsuicDetail: React.FC<{
+  contentTransMode: ContentTransModeType;
+}> = ({ contentTransMode }) => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
+  const assetI18n = getAssetI18n();
 
   const [musics] = useCachedData<IMusicInfo>("musics");
   const [musicVocals] = useCachedData<IMusicVocalInfo>("musicVocals");
@@ -224,7 +229,11 @@ const MsuicDetail: React.FC<{}> = () => {
     danceMemebers.length ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
-        {music.title}
+        {contentTransMode === "original"
+          ? music.title
+          : contentTransMode === "translated"
+          ? assetI18n.t(`music_titles:${musicId}`)
+          : music.title}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="sm">
         <Alert severity="warning">
@@ -327,7 +336,13 @@ const MsuicDetail: React.FC<{}> = () => {
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
               {t("common:title")}
             </Typography>
-            <Typography>{music.title}</Typography>
+            <Typography>
+              {contentTransMode === "original"
+                ? music.title
+                : contentTransMode === "translated"
+                ? assetI18n.t(`music_titles:${musicId}`)
+                : music.title}
+            </Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
           <Grid

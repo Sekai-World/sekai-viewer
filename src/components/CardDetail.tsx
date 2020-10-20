@@ -23,6 +23,7 @@ import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
 
 import {
+  ContentTransModeType,
   ICardEpisode,
   ICardInfo,
   ICardRarity,
@@ -112,7 +113,7 @@ function getSkillDesc(skill: ISkillInfo, skillLevel: number | number[]) {
   return skillInfo;
 }
 
-const CardDetail: React.FC<{}> = () => {
+const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = () => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();

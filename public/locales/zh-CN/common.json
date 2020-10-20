@@ -14,6 +14,12 @@
   },
   "language": "语言",
   "darkmode": "显示主题",
+  "contentTranslationMode": {
+    "title": "游戏内容显示模式",
+    "original": "原始文字",
+    "translated": "翻译版本（若可用）",
+    "both": "两者皆显示"
+  },
   "id": "编号",
   "title": "标题",
   "character": "角色",

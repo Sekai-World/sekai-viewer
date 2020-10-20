@@ -14,6 +14,12 @@
   },
   "language": "Idioma",
   "darkmode": "Brilho",
+  "contentTranslationMode": {
+    "title": "",
+    "original": "",
+    "translated": "",
+    "both": ""
+  },
   "id": "ID",
   "title": "Título",
   "character": "Personagem",

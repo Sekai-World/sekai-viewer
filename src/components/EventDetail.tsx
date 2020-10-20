@@ -18,6 +18,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import {
+  ContentTransModeType,
   EventRankingRewardRange,
   IEventDeckBonus,
   IEventInfo,
@@ -40,7 +41,9 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-const EventDetail: React.FC<{}> = () => {
+const EventDetail: React.FC<{
+  contentTransMode: ContentTransModeType;
+}> = () => {
   const { t, i18n } = useTranslation();
   const { eventId } = useParams<{ eventId: string }>();
   const classes = useStyle();
