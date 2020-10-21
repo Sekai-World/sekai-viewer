@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(0.5),
   },
   tabpanel: {
-    padding: 0,
+    padding: theme.spacing("1%", 0, 0, 0),
   },
   subheader: {
     "white-space": "nowrap",
@@ -339,169 +339,175 @@ const GachaDetailPage: React.FC<{
                   <Tab label={t("gacha:tab.title[4]")} value="1"></Tab>
                 ) : null}
               </Tabs>
+              <TabPanel value="0" classes={{ root: classes.tabpanel }}>
+                <Card
+                  onClick={() => {
+                    setActiveIdx(0);
+                    setVisible(true);
+                  }}
+                >
+                  <CardMedia
+                    className={classes.media}
+                    image={
+                      gacha
+                        ? `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${
+                            gacha.assetbundleName
+                          }/screen_rip/texture/${
+                            gachaImageNameMap[gacha.id]
+                              ? gachaImageNameMap[gacha.id].bg
+                              : `bg_gacha${gachaId}`
+                          }.webp`
+                        : ""
+                    }
+                  ></CardMedia>
+                </Card>
+              </TabPanel>
+              <TabPanel value="1" classes={{ root: classes.tabpanel }}>
+                <Card
+                  onClick={() => {
+                    setActiveIdx(1);
+                    setVisible(true);
+                  }}
+                >
+                  <CardMedia
+                    className={classes.media}
+                    image={
+                      gacha
+                        ? `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${
+                            gacha.assetbundleName
+                          }/screen_rip/texture/${
+                            gachaImageNameMap[gacha.id]
+                              ? gachaImageNameMap[gacha.id].feature
+                              : `img_gacha${gachaId}`
+                          }.webp`
+                        : ""
+                    }
+                  ></CardMedia>
+                </Card>
+              </TabPanel>
+              <TabPanel value="2" classes={{ root: classes.tabpanel }}>
+                <Card>
+                  <CardContent>
+                    {gacha.gachaInformation.description
+                      .split("\n")
+                      .map((str, line) => (
+                        <Typography
+                          paragraph
+                          variant="body2"
+                          key={`desc-${line}`}
+                        >
+                          {str}
+                        </Typography>
+                      ))}
+                  </CardContent>
+                </Card>
+              </TabPanel>
+              <TabPanel value="3" classes={{ root: classes.tabpanel }}>
+                <Card>
+                  <CardContent>
+                    {gacha.gachaInformation.summary
+                      .split("\n")
+                      .map((str, line) => (
+                        <Typography
+                          paragraph
+                          variant="body2"
+                          key={`summary-${line}`}
+                        >
+                          {str}
+                        </Typography>
+                      ))}
+                  </CardContent>
+                </Card>
+              </TabPanel>
+              <TabPanel value="4" classes={{ root: classes.tabpanel }}>
+                <Card>
+                  <CardContent>
+                    <Typography paragraph>
+                      <StarIcon num={2} />
+                      {gacha.rarity2Rate} % <StarIcon num={3} />
+                      {gacha.rarity3Rate} % <StarIcon num={4} />
+                      {gacha.rarity4Rate} %
+                    </Typography>
+                    <div>
+                      <Button
+                        variant="contained"
+                        className={classes.gachaBtn}
+                        color="secondary"
+                        onClick={() => doGacha(1)}
+                      >
+                        Gacha!
+                      </Button>
+                      <Button
+                        variant="contained"
+                        className={classes.gachaBtn}
+                        color="primary"
+                        onClick={() => doGacha(10)}
+                      >
+                        Gacha * 10
+                      </Button>
+                      <Button
+                        variant="contained"
+                        className={classes.gachaBtn}
+                        color="primary"
+                        onClick={() => doGacha(100)}
+                      >
+                        Gacha * 100
+                      </Button>
+                      <Button
+                        variant="contained"
+                        className={classes.gachaBtn}
+                        color="primary"
+                        onClick={() => doGacha(1000)}
+                      >
+                        Gacha * 1000
+                      </Button>
+                      <Button
+                        variant="contained"
+                        className={classes.gachaBtn}
+                        color="primary"
+                        onClick={() => resetGacha()}
+                      >
+                        Reset
+                      </Button>
+                    </div>
+                    <Typography paragraph>
+                      <span style={{ marginRight: "1%" }}>
+                        Total: {statistic.total}
+                      </span>
+                      <StarIcon num={2} />
+                      {statistic.rarity2}{" "}
+                      {statistic.total
+                        ? ((statistic.rarity2 / statistic.total) * 100).toFixed(
+                            2
+                          )
+                        : 0}{" "}
+                      %
+                      <StarIcon num={3} />
+                      {statistic.rarity3}{" "}
+                      {statistic.total
+                        ? ((statistic.rarity3 / statistic.total) * 100).toFixed(
+                            2
+                          )
+                        : 0}{" "}
+                      %
+                      <StarIcon num={4} />
+                      {statistic.rarity4}{" "}
+                      {statistic.total
+                        ? ((statistic.rarity4 / statistic.total) * 100).toFixed(
+                            2
+                          )
+                        : 0}{" "}
+                      %
+                    </Typography>
+                  </CardContent>
+                  <CardContent>
+                    <CardThumbs
+                      cardIds={currentGachaResult.map((elem) => elem.cardId)}
+                    />
+                  </CardContent>
+                </Card>
+              </TabPanel>
             </Paper>
-            <TabPanel value="0" classes={{ root: classes.tabpanel }}>
-              <Card
-                onClick={() => {
-                  setActiveIdx(0);
-                  setVisible(true);
-                }}
-              >
-                <CardMedia
-                  className={classes.media}
-                  image={
-                    gacha
-                      ? `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${
-                          gacha.assetbundleName
-                        }/screen_rip/texture/${
-                          gachaImageNameMap[gacha.id]
-                            ? gachaImageNameMap[gacha.id].bg
-                            : `bg_gacha${gachaId}`
-                        }.webp`
-                      : ""
-                  }
-                ></CardMedia>
-              </Card>
-            </TabPanel>
-            <TabPanel value="1" classes={{ root: classes.tabpanel }}>
-              <Card
-                onClick={() => {
-                  setActiveIdx(1);
-                  setVisible(true);
-                }}
-              >
-                <CardMedia
-                  className={classes.media}
-                  image={
-                    gacha
-                      ? `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${
-                          gacha.assetbundleName
-                        }/screen_rip/texture/${
-                          gachaImageNameMap[gacha.id]
-                            ? gachaImageNameMap[gacha.id].feature
-                            : `img_gacha${gachaId}`
-                        }.webp`
-                      : ""
-                  }
-                ></CardMedia>
-              </Card>
-            </TabPanel>
-            <TabPanel value="2" classes={{ root: classes.tabpanel }}>
-              <Card>
-                <CardContent>
-                  {gacha.gachaInformation.description
-                    .split("\n")
-                    .map((str, line) => (
-                      <Typography
-                        paragraph
-                        variant="body2"
-                        key={`desc-${line}`}
-                      >
-                        {str}
-                      </Typography>
-                    ))}
-                </CardContent>
-              </Card>
-            </TabPanel>
-            <TabPanel value="3" classes={{ root: classes.tabpanel }}>
-              <Card>
-                <CardContent>
-                  {gacha.gachaInformation.summary
-                    .split("\n")
-                    .map((str, line) => (
-                      <Typography
-                        paragraph
-                        variant="body2"
-                        key={`summary-${line}`}
-                      >
-                        {str}
-                      </Typography>
-                    ))}
-                </CardContent>
-              </Card>
-            </TabPanel>
-            <TabPanel value="4" classes={{ root: classes.tabpanel }}>
-              <Card>
-                <CardContent>
-                  <Typography paragraph>
-                    <StarIcon num={2} />
-                    {gacha.rarity2Rate} % <StarIcon num={3} />
-                    {gacha.rarity3Rate} % <StarIcon num={4} />
-                    {gacha.rarity4Rate} %
-                  </Typography>
-                  <div>
-                    <Button
-                      variant="contained"
-                      className={classes.gachaBtn}
-                      color="secondary"
-                      onClick={() => doGacha(1)}
-                    >
-                      Gacha!
-                    </Button>
-                    <Button
-                      variant="contained"
-                      className={classes.gachaBtn}
-                      color="primary"
-                      onClick={() => doGacha(10)}
-                    >
-                      Gacha * 10
-                    </Button>
-                    <Button
-                      variant="contained"
-                      className={classes.gachaBtn}
-                      color="primary"
-                      onClick={() => doGacha(100)}
-                    >
-                      Gacha * 100
-                    </Button>
-                    <Button
-                      variant="contained"
-                      className={classes.gachaBtn}
-                      color="primary"
-                      onClick={() => doGacha(1000)}
-                    >
-                      Gacha * 1000
-                    </Button>
-                    <Button
-                      variant="contained"
-                      className={classes.gachaBtn}
-                      color="primary"
-                      onClick={() => resetGacha()}
-                    >
-                      Reset
-                    </Button>
-                  </div>
-                  <Typography paragraph>
-                    <span style={{ marginRight: "1%" }}>
-                      Total: {statistic.total}
-                    </span>
-                    <StarIcon num={2} />
-                    {statistic.rarity2}{" "}
-                    {statistic.total
-                      ? ((statistic.rarity2 / statistic.total) * 100).toFixed(2)
-                      : 0}{" "}
-                    %
-                    <StarIcon num={3} />
-                    {statistic.rarity3}{" "}
-                    {statistic.total
-                      ? ((statistic.rarity3 / statistic.total) * 100).toFixed(2)
-                      : 0}{" "}
-                    %
-                    <StarIcon num={4} />
-                    {statistic.rarity4}{" "}
-                    {statistic.total
-                      ? ((statistic.rarity4 / statistic.total) * 100).toFixed(2)
-                      : 0}{" "}
-                    %
-                  </Typography>
-                </CardContent>
-                <CardContent>
-                  <CardThumbs
-                    cardIds={currentGachaResult.map((elem) => elem.cardId)}
-                  />
-                </CardContent>
-              </Card>
-            </TabPanel>
           </TabContext>
           {/* <Container style={{marginTop: '2%'}} maxWidth="sm"> */}
           <Box paddingX="2%" display="flex" flexDirection="column">
