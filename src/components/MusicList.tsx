@@ -94,7 +94,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function getPaginitedMusics(musics: IMusicInfo[], page: number, limit: number) {
+function getPaginatedMusics(musics: IMusicInfo[], page: number, limit: number) {
   return musics.slice(limit * (page - 1), limit * page);
 }
 
@@ -162,7 +162,7 @@ const MusicList: React.FC<{
     if (sortedCache.length) {
       setMusics((musics) => [
         ...musics,
-        ...getPaginitedMusics(sortedCache, page, limit),
+        ...getPaginatedMusics(sortedCache, page, limit),
       ]);
       setLastQueryFin(true);
     }

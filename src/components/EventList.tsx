@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function getPaginitedEvents(events: IEventInfo[], page: number, limit: number) {
+function getPaginatedEvents(events: IEventInfo[], page: number, limit: number) {
   return events.slice(limit * (page - 1), limit * page);
 }
 
@@ -68,7 +68,7 @@ const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = () => {
   useEffect(() => {
     setEvents((events) => [
       ...events,
-      ...getPaginitedEvents(eventsCache, page, limit),
+      ...getPaginatedEvents(eventsCache, page, limit),
     ]);
     setLastQueryFin(true);
   }, [page, limit, setLastQueryFin, eventsCache]);

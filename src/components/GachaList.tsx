@@ -83,7 +83,7 @@ interface IGachaInfo {
   gachaInformation: GachaInformation;
 }
 
-function getPaginitedGachas(gachas: IGachaInfo[], page: number, limit: number) {
+function getPaginatedGachas(gachas: IGachaInfo[], page: number, limit: number) {
   return gachas.slice(limit * (page - 1), limit * page);
 }
 
@@ -114,7 +114,7 @@ const GachaList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   useEffect(() => {
     setGachas((gachas) => [
       ...gachas,
-      ...getPaginitedGachas(gachasCache, page, limit),
+      ...getPaginatedGachas(gachasCache, page, limit),
     ]);
     setLastQueryFin(true);
   }, [page, limit, setLastQueryFin, gachasCache]);

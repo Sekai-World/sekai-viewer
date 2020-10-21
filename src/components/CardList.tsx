@@ -96,7 +96,7 @@ function getCharaName(charas: ICharaProfile[], charaId: number) {
   return chara?.givenName;
 }
 
-function getPaginitedCards(cards: ICardInfo[], page: number, limit: number) {
+function getPaginatedCards(cards: ICardInfo[], page: number, limit: number) {
   return cards.slice(limit * (page - 1), limit * page);
 }
 
@@ -228,7 +228,7 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = (
     if (sortedCache.length) {
       setCards((cards) => [
         ...cards,
-        ...getPaginitedCards(sortedCache, page, limit),
+        ...getPaginatedCards(sortedCache, page, limit),
       ]);
       setLastQueryFin(true);
     }
