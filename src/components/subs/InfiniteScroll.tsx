@@ -25,8 +25,7 @@ type GridSize =
   | undefined;
 
 interface IISProps<T> {
-  loadingComponent: React.FC<any>;
-  viewComponent: React.FC<{ data: T }>;
+  viewComponent: React.FC<{ data?: T }>;
   callback: (
     entries: IntersectionObserverEntry[],
     setHasMore: React.Dispatch<React.SetStateAction<boolean>>
@@ -39,7 +38,6 @@ interface IISProps<T> {
 }
 
 function InfiniteScroll<T>({
-  loadingComponent,
   viewComponent,
   callback,
   data,
@@ -94,7 +92,7 @@ function InfiniteScroll<T>({
         container
         direction="row"
         ref={listElementRef}
-        style={{ display: hasMore ? "flex" : "none" }}
+        style={{ display: hasMore ? "flex" : "none", paddingTop: "4px" }}
         spacing={1}
       >
         {Array.from(
@@ -109,7 +107,7 @@ function InfiniteScroll<T>({
             md={gridSize ? gridSize.md : 4}
             key={`empty-${id}`}
           >
-            {loadingComponent({})}
+            {viewComponent({})}
           </Grid>
         ))}
       </Grid>

@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   ButtonGroup,
   Card,
@@ -35,7 +36,7 @@ import {
   ICharaProfile,
 } from "../types";
 import { useCachedData, useRefState } from "../utils";
-import { CardThumb } from "./subs/CardThumb";
+import { CardThumb, CardThumbSkeleton } from "./subs/CardThumb";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
@@ -233,8 +234,24 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = (
     }
   }, [page, limit, setLastQueryFin, sortedCache]);
 
-  const ListCard: { [key: string]: React.FC<{ data: ICardInfo }> } = {
+  const ListCard: { [key: string]: React.FC<{ data?: ICardInfo }> } = {
     grid: ({ data }) => {
+      if (!data) {
+        // loading
+        return (
+          <Card className={classes.card}>
+            <Skeleton variant="rect" className={classes.media}></Skeleton>
+            <CardContent>
+              <Typography variant="subtitle1" className={classes.subheader}>
+                <Skeleton variant="text" width="90%"></Skeleton>
+              </Typography>
+              <Typography variant="body2" className={classes.subheader}>
+                <Skeleton variant="text" width="30%"></Skeleton>
+              </Typography>
+            </CardContent>
+          </Card>
+        );
+      }
       return (
         <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
           <Card className={classes.card}>
@@ -254,6 +271,46 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = (
       );
     },
     agenda: ({ data }) => {
+      if (!data) {
+        // loading
+        return (
+          <Box className={classes.agendaWrapper}>
+            <Paper className={classes.agenda}>
+              <Grid
+                container
+                alignItems="center"
+                spacing={2}
+                justify="space-between"
+              >
+                <Grid
+                  item
+                  xs={5}
+                  md={4}
+                  container
+                  direction="row"
+                  spacing={1}
+                  justify="center"
+                >
+                  <Grid item xs={12} md={6}>
+                    <CardThumbSkeleton></CardThumbSkeleton>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <CardThumbSkeleton></CardThumbSkeleton>
+                  </Grid>
+                </Grid>
+                <Grid item xs={6} md={7}>
+                  <Typography variant="body1">
+                    <Skeleton variant="text" width="70%"></Skeleton>
+                  </Typography>
+                  <Typography variant="body2">
+                    <Skeleton variant="text" width="30%"></Skeleton>
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Paper>
+          </Box>
+        );
+      }
       return (
         <Link
           to={path + "/" + data.id}
@@ -297,6 +354,37 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = (
       );
     },
     comfy: ({ data }) => {
+      if (!data) {
+        // loading
+        return (
+          <Paper className={classes.comfy}>
+            <Grid
+              container
+              direction="column"
+              alignItems="center"
+              spacing={2}
+              justify="space-between"
+            >
+              <Grid item container direction="row" spacing={1} justify="center">
+                <Grid item xs={4}>
+                  <CardThumbSkeleton></CardThumbSkeleton>
+                </Grid>
+                <Grid item xs={4}>
+                  <CardThumbSkeleton></CardThumbSkeleton>
+                </Grid>
+              </Grid>
+              <Grid item style={{ width: "100%" }}>
+                <Typography classes={{ root: classes.comfyPrefix }} variant="body1">
+                  <Skeleton variant="text" width="70%" style={{ margin: "0 auto" }}></Skeleton>
+                </Typography>
+                <Typography variant="body2">
+                  <Skeleton variant="text" width="40%" style={{ margin: "0 auto" }}></Skeleton>
+                </Typography>
+              </Grid>
+            </Grid>
+          </Paper>
+        );
+      }
       return (
         <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
           <Paper className={classes.comfy}>
@@ -338,22 +426,6 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = (
         </Link>
       );
     },
-  };
-
-  const ListLoading: React.FC<any> = () => {
-    return (
-      <Card className={classes.card}>
-        <Skeleton variant="rect" className={classes.media}></Skeleton>
-        <CardContent>
-          <Typography variant="subtitle1" className={classes.subheader}>
-            <Skeleton variant="text" width="50%"></Skeleton>
-          </Typography>
-          <Typography variant="body2" className={classes.subheader}>
-            <Skeleton variant="text" width="80%"></Skeleton>
-          </Typography>
-        </CardContent>
-      </Card>
-    );
   };
 
   return (
@@ -473,7 +545,6 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = (
         </Collapse>
         {InfiniteScroll<ICardInfo>({
           viewComponent: ListCard[viewGridType],
-          loadingComponent: ListLoading,
           callback,
           data: cards,
           gridSize: {

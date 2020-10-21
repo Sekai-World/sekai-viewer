@@ -97,8 +97,24 @@ const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = () => {
     }
   };
 
-  const ListCard: { [key: string]: React.FC<{ data: IEventInfo }> } = {
+  const ListCard: { [key: string]: React.FC<{ data?: IEventInfo }> } = {
     grid: ({ data }) => {
+      if (!data) {
+        // loading
+        return (
+          <Card className={classes.card}>
+            <Skeleton variant="rect" className={classes.media}></Skeleton>
+            <CardContent>
+              <Typography variant="subtitle1" className={classes.header}>
+                <Skeleton variant="text" width="90%"></Skeleton>
+              </Typography>
+              <Typography variant="body2">
+                <Skeleton variant="text" width="40%"></Skeleton>
+              </Typography>
+            </CardContent>
+          </Card>
+        );
+      }
       return (
         <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
           <Card className={classes.card}>
@@ -121,22 +137,6 @@ const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = () => {
     },
   };
 
-  const ListLoading: React.FC<any> = () => {
-    return (
-      <Card className={classes.card}>
-        <Skeleton variant="rect" className={classes.media}></Skeleton>
-        <CardContent>
-          <Typography variant="subtitle1" className={classes.header}>
-            <Skeleton variant="text" width="50%"></Skeleton>
-          </Typography>
-          <Typography variant="body2">
-            <Skeleton variant="text" width="80%"></Skeleton>
-          </Typography>
-        </CardContent>
-      </Card>
-    );
-  };
-
   return (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
@@ -145,7 +145,6 @@ const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = () => {
       <Container className={layoutClasses.content} maxWidth="md">
         {InfiniteScroll<IEventInfo>({
           viewComponent: ListCard[viewGridType],
-          loadingComponent: ListLoading,
           callback,
           data: events,
           gridSize: {

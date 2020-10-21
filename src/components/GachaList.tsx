@@ -144,7 +144,20 @@ const GachaList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
     }
   };
 
-  const ListCard: React.FC<{ data: IGachaInfo }> = ({ data }) => {
+  const ListCard: React.FC<{ data?: IGachaInfo }> = ({ data }) => {
+    if (!data) {
+      // loading
+      return (
+        <Card className={classes.card}>
+          <Skeleton variant="rect" className={classes.media}></Skeleton>
+          <CardContent>
+            <Typography variant="subtitle1" className={classes.subheader}>
+              <Skeleton variant="text" width="90%"></Skeleton>
+            </Typography>
+          </CardContent>
+        </Card>
+      );
+    }
     return (
       <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
         <Card className={classes.card}>
@@ -167,19 +180,6 @@ const GachaList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
     );
   };
 
-  const ListLoading: React.FC<any> = () => {
-    return (
-      <Card className={classes.card}>
-        <Skeleton variant="rect" className={classes.media}></Skeleton>
-        <CardContent>
-          <Typography variant="subtitle1" className={classes.subheader}>
-            <Skeleton variant="text" width="80%"></Skeleton>
-          </Typography>
-        </CardContent>
-      </Card>
-    );
-  };
-
   return (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
@@ -188,7 +188,6 @@ const GachaList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
       <Container className={layoutClasses.content} maxWidth="md">
         {InfiniteScroll<IGachaInfo>({
           viewComponent: ListCard,
-          loadingComponent: ListLoading,
           callback,
           data: gachas,
         })}
