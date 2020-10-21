@@ -1,8 +1,9 @@
 import {
+  Box,
   Button,
   ButtonGroup,
   Card,
-  CardHeader,
+  CardContent,
   CardMedia,
   Chip,
   Grid,
@@ -26,7 +27,7 @@ import {
   ViewGridOutline,
 } from "mdi-material-ui";
 import React, { Fragment, useEffect, useState } from "react";
-import { Link, useHistory, useRouteMatch } from "react-router-dom";
+import { Link, useRouteMatch } from "react-router-dom";
 import {
   ContentTransModeType,
   IMusicDifficultyInfo,
@@ -56,8 +57,8 @@ const useStyles = makeStyles((theme) => ({
     },
     "max-width": "250px",
   },
-  agenda: {
-    padding: "2% 0",
+  agendaWrapper: {
+    display: "block",
     [theme.breakpoints.down("sm")]: {
       maxWidth: "300px",
     },
@@ -68,9 +69,19 @@ const useStyles = makeStyles((theme) => ({
     margin: "auto",
     cursor: "pointer",
   },
+  agenda: {
+    padding: "2% 0",
+  },
   agendaMedia: {
     paddingTop: "75%",
     backgroundSize: "contain",
+  },
+  agendaMediaSkeleton: {
+    position: "absolute",
+    top: "0",
+    left: "12.5%",
+    width: "75%",
+    height: "100%",
   },
   "diffi-easy": {
     backgroundColor: "#66DD11",
@@ -92,7 +103,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function getPaginitedMusics(musics: IMusicInfo[], page: number, limit: number) {
+function getPaginatedMusics(musics: IMusicInfo[], page: number, limit: number) {
   return musics.slice(limit * (page - 1), limit * page);
 }
 
@@ -102,7 +113,6 @@ const MusicList: React.FC<{
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const filterClasses = useFilterStyles();
-  const { push } = useHistory();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
   const assetI18n = getAssetI18n();
@@ -160,7 +170,7 @@ const MusicList: React.FC<{
     if (sortedCache.length) {
       setMusics((musics) => [
         ...musics,
-        ...getPaginitedMusics(sortedCache, page, limit),
+        ...getPaginatedMusics(sortedCache, page, limit),
       ]);
       setLastQueryFin(true);
     }
@@ -187,32 +197,27 @@ const MusicList: React.FC<{
     }
   };
 
-  const ListCard: { [key: string]: React.FC<{ data: IMusicInfo }> } = {
+  const ListCard: { [key: string]: React.FC<{ data?: IMusicInfo }> } = {
     grid: ({ data }) => {
+      if (!data) {
+        // loading
+        return (
+          <Card className={classes.card}>
+            <Skeleton variant="rect" className={classes.media}></Skeleton>
+            <CardContent>
+              <Typography variant="subtitle1" className={classes.header}>
+                <Skeleton variant="text" width="90%"></Skeleton>
+              </Typography>
+              <Typography variant="body2">
+                <Skeleton variant="text" width="40%"></Skeleton>
+              </Typography>
+            </CardContent>
+          </Card>
+        );
+      }
       return (
         <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
-          <Card
-            className={classes.card}
-            onClick={() => push(path + "/" + data.id)}
-          >
-            <CardHeader
-              title={
-                contentTransMode === "original"
-                  ? data.title
-                  : contentTransMode === "translated"
-                  ? assetI18n.t(`music_titles:${data.id}`)
-                  : data.title
-              }
-              titleTypographyProps={{
-                variant: "subtitle1",
-                classes: {
-                  root: classes.header,
-                },
-              }}
-              subheader={data.categories
-                .map((cat) => musicCategoryToName[cat] || cat)
-                .join(", ")}
-            ></CardHeader>
+          <Card className={classes.card}>
             <CardMedia
               className={classes.media}
               image={`https://sekai-res.dnaroma.eu/file/sekai-assets/music/jacket/${data.assetbundleName}_rip/${data.assetbundleName}.webp`}
@@ -224,17 +229,81 @@ const MusicList: React.FC<{
                   : data.title
               }
             ></CardMedia>
+            <CardContent style={{ paddingBottom: "16px" }}>
+              <Typography variant="subtitle1" className={classes.header}>
+                {contentTransMode === "original"
+                  ? data.title
+                  : contentTransMode === "translated"
+                  ? assetI18n.t(`music_titles:${data.id}`)
+                  : data.title}
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                {data.categories
+                  .map((cat) => musicCategoryToName[cat] || cat)
+                  .join(", ")}
+              </Typography>
+            </CardContent>
           </Card>
         </Link>
       );
     },
     agenda: ({ data }) => {
+      if (!data) {
+        // loading
+        return (
+          <Box className={classes.agendaWrapper}>
+            <Paper className={classes.agenda}>
+              <Grid
+                container
+                alignItems="center"
+                spacing={2}
+                justify="space-between"
+              >
+                <Grid item xs={5} md={4}>
+                  <Box
+                    className={classes.agendaMedia}
+                    style={{ position: "relative" }}
+                  >
+                    <Skeleton
+                      variant="rect"
+                      className={classes.agendaMediaSkeleton}
+                    ></Skeleton>
+                  </Box>
+                </Grid>
+                <Grid item xs={6} md={7} container direction="column">
+                  <Grid item>
+                    <Typography variant="body1">
+                      <Skeleton variant="text" width="60%"></Skeleton>
+                    </Typography>
+                    <Typography color="textSecondary">
+                      <Skeleton variant="text" width="30%"></Skeleton>
+                    </Typography>
+                  </Grid>
+                  <Grid
+                    item
+                    container
+                    direction="row"
+                    style={{ marginTop: "5%" }}
+                  >
+                    <Skeleton
+                      variant="rect"
+                      width="75%"
+                      height="24px"
+                    ></Skeleton>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Paper>
+          </Box>
+        );
+      }
       return (
-        <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
-          <Paper
-            className={classes.agenda}
-            onClick={() => push(path + "/" + data.id)}
-          >
+        <Link
+          to={path + "/" + data.id}
+          className={classes.agendaWrapper}
+          style={{ textDecoration: "none" }}
+        >
+          <Paper className={classes.agenda}>
             <Grid
               container
               alignItems="center"
@@ -304,18 +373,6 @@ const MusicList: React.FC<{
         </Link>
       );
     },
-  };
-
-  const ListLoading: React.FC<any> = () => {
-    return (
-      <Card className={classes.card}>
-        <CardHeader
-          title={<Skeleton variant="text" width="50%"></Skeleton>}
-          subheader={<Skeleton variant="text" width="80%"></Skeleton>}
-        ></CardHeader>
-        <Skeleton variant="rect" height={130}></Skeleton>
-      </Card>
-    );
   };
 
   return (
@@ -425,7 +482,6 @@ const MusicList: React.FC<{
         </Collapse>
         {InfiniteScroll<IMusicInfo>({
           viewComponent: ListCard[viewGridType],
-          loadingComponent: ListLoading,
           callback,
           data: musics,
           gridSize: {

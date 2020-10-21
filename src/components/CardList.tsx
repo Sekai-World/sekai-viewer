@@ -1,8 +1,9 @@
 import {
+  Box,
   Button,
   ButtonGroup,
   Card,
-  CardHeader,
+  CardContent,
   CardMedia,
   Grid,
   makeStyles,
@@ -26,7 +27,7 @@ import {
   ViewGridOutline,
 } from "mdi-material-ui";
 import React, { Fragment, useEffect, useState } from "react";
-import { Link, useHistory, useRouteMatch } from "react-router-dom";
+import { Link, useRouteMatch } from "react-router-dom";
 import {
   ContentTransModeType,
   ICardEpisode,
@@ -35,7 +36,7 @@ import {
   ICharaProfile,
 } from "../types";
 import { useCachedData, useRefState } from "../utils";
-import { CardThumb } from "./subs/CardThumb";
+import { CardThumb, CardThumbSkeleton } from "./subs/CardThumb";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
@@ -53,13 +54,13 @@ const useStyles = makeStyles((theme) => ({
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
-    [theme.breakpoints.down("md")]: {
-      maxWidth: "200px",
-    },
+    // [theme.breakpoints.down("md")]: {
+    //   maxWidth: "200px",
+    // },
     maxWidth: "250px",
   },
-  agenda: {
-    padding: "4% 4%",
+  agendaWrapper: {
+    display: "block",
     [theme.breakpoints.down("sm")]: {
       maxWidth: "100%",
     },
@@ -70,8 +71,11 @@ const useStyles = makeStyles((theme) => ({
     margin: "auto",
     cursor: "pointer",
   },
-  comfy: {
+  agenda: {
     padding: "4% 4%",
+  },
+  comfy: {
+    padding: "6% 4%",
     cursor: "pointer",
   },
   comfyPrefix: {
@@ -93,7 +97,7 @@ function getCharaName(charas: ICharaProfile[], charaId: number) {
   return chara?.givenName;
 }
 
-function getPaginitedCards(cards: ICardInfo[], page: number, limit: number) {
+function getPaginatedCards(cards: ICardInfo[], page: number, limit: number) {
   return cards.slice(limit * (page - 1), limit * page);
 }
 
@@ -136,7 +140,6 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = (
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const filterClasses = useFilterStyles();
-  const { push } = useHistory();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
 
@@ -225,52 +228,102 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = (
     if (sortedCache.length) {
       setCards((cards) => [
         ...cards,
-        ...getPaginitedCards(sortedCache, page, limit),
+        ...getPaginatedCards(sortedCache, page, limit),
       ]);
       setLastQueryFin(true);
     }
   }, [page, limit, setLastQueryFin, sortedCache]);
 
-  const ListCard: { [key: string]: React.FC<{ data: ICardInfo }> } = {
+  const ListCard: { [key: string]: React.FC<{ data?: ICardInfo }> } = {
     grid: ({ data }) => {
+      if (!data) {
+        // loading
+        return (
+          <Card className={classes.card}>
+            <Skeleton variant="rect" className={classes.media}></Skeleton>
+            <CardContent>
+              <Typography variant="subtitle1" className={classes.subheader}>
+                <Skeleton variant="text" width="90%"></Skeleton>
+              </Typography>
+              <Typography variant="body2" className={classes.subheader}>
+                <Skeleton variant="text" width="30%"></Skeleton>
+              </Typography>
+            </CardContent>
+          </Card>
+        );
+      }
       return (
         <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
-          <Card
-            className={classes.card}
-            // onClick={() => push(path + "/" + data.id)}
-          >
-            <CardHeader
-              title={data.prefix}
-              titleTypographyProps={{
-                variant: "subtitle1",
-                classes: {
-                  root: classes.subheader,
-                },
-              }}
-              subheader={getCharaName(charas, data.characterId)}
-              subheaderTypographyProps={{
-                variant: "body2",
-                classes: {
-                  root: classes.subheader,
-                },
-              }}
-            ></CardHeader>
+          <Card className={classes.card}>
             <CardMedia
               className={classes.media}
               image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_small/${data.assetbundleName}_rip/card_normal.webp`}
               title={data.prefix}
             ></CardMedia>
+            <CardContent style={{ paddingBottom: "16px" }}>
+              <Typography variant="subtitle1" className={classes.subheader}>
+                {data.prefix}
+              </Typography>
+              <Typography
+                variant="body2"
+                className={classes.subheader}
+                color="textSecondary"
+              >
+                {getCharaName(charas, data.characterId)}
+              </Typography>
+            </CardContent>
           </Card>
         </Link>
       );
     },
     agenda: ({ data }) => {
+      if (!data) {
+        // loading
+        return (
+          <Box className={classes.agendaWrapper}>
+            <Paper className={classes.agenda}>
+              <Grid
+                container
+                alignItems="center"
+                spacing={2}
+                justify="space-between"
+              >
+                <Grid
+                  item
+                  xs={5}
+                  md={4}
+                  container
+                  direction="row"
+                  spacing={1}
+                  justify="center"
+                >
+                  <Grid item xs={12} md={6}>
+                    <CardThumbSkeleton></CardThumbSkeleton>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <CardThumbSkeleton></CardThumbSkeleton>
+                  </Grid>
+                </Grid>
+                <Grid item xs={6} md={7}>
+                  <Typography variant="body1">
+                    <Skeleton variant="text" width="70%"></Skeleton>
+                  </Typography>
+                  <Typography variant="body2">
+                    <Skeleton variant="text" width="30%"></Skeleton>
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Paper>
+          </Box>
+        );
+      }
       return (
-        <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
-          <Paper
-            className={classes.agenda}
-            onClick={() => push(path + "/" + data.id)}
-          >
+        <Link
+          to={path + "/" + data.id}
+          className={classes.agendaWrapper}
+          style={{ textDecoration: "none" }}
+        >
+          <Paper className={classes.agenda}>
             <Grid
               container
               alignItems="center"
@@ -307,12 +360,51 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = (
       );
     },
     comfy: ({ data }) => {
+      if (!data) {
+        // loading
+        return (
+          <Paper className={classes.comfy}>
+            <Grid
+              container
+              direction="column"
+              alignItems="center"
+              spacing={2}
+              justify="space-between"
+            >
+              <Grid item container direction="row" spacing={1} justify="center">
+                <Grid item xs={4}>
+                  <CardThumbSkeleton></CardThumbSkeleton>
+                </Grid>
+                <Grid item xs={4}>
+                  <CardThumbSkeleton></CardThumbSkeleton>
+                </Grid>
+              </Grid>
+              <Grid item style={{ width: "100%" }}>
+                <Typography
+                  classes={{ root: classes.comfyPrefix }}
+                  variant="body1"
+                >
+                  <Skeleton
+                    variant="text"
+                    width="70%"
+                    style={{ margin: "0 auto" }}
+                  ></Skeleton>
+                </Typography>
+                <Typography variant="body2">
+                  <Skeleton
+                    variant="text"
+                    width="40%"
+                    style={{ margin: "0 auto" }}
+                  ></Skeleton>
+                </Typography>
+              </Grid>
+            </Grid>
+          </Paper>
+        );
+      }
       return (
         <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
-          <Paper
-            className={classes.comfy}
-            onClick={() => push(path + "/" + data.id)}
-          >
+          <Paper className={classes.comfy}>
             <Grid
               container
               direction="column"
@@ -351,18 +443,6 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = (
         </Link>
       );
     },
-  };
-
-  const ListLoading: React.FC<any> = () => {
-    return (
-      <Card className={classes.card}>
-        <CardHeader
-          title={<Skeleton variant="text" width="50%"></Skeleton>}
-          subheader={<Skeleton variant="text" width="80%"></Skeleton>}
-        ></CardHeader>
-        <Skeleton variant="rect" height={130}></Skeleton>
-      </Card>
-    );
   };
 
   return (
@@ -482,7 +562,6 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = (
         </Collapse>
         {InfiniteScroll<ICardInfo>({
           viewComponent: ListCard[viewGridType],
-          loadingComponent: ListLoading,
           callback,
           data: cards,
           gridSize: {

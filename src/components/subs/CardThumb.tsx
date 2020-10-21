@@ -1,4 +1,5 @@
 import { Box, Grid, makeStyles } from "@material-ui/core";
+import { Skeleton } from "@material-ui/lab";
 import React, { useEffect, useState } from "react";
 import { ICardInfo } from "../../types";
 import { useCachedData } from "../../utils";
@@ -50,6 +51,10 @@ const useStyles = makeStyles((theme) => ({
     height: "15%",
     left: "50%",
   },
+  skeleton: {
+    width: "100%",
+    paddingTop: "100%",
+  },
 }));
 
 const cardFrameRarity: { [key: string]: string } = {
@@ -81,6 +86,8 @@ export const CardThumb: React.FC<{ id: number; trained?: boolean }> = ({
     if (cards.length) setCard(cards.find((elem) => elem.id === id));
   }, [cards, id]);
 
+  const skeleton = CardThumbSkeleton({});
+
   return card ? (
     <Box position="relative">
       <img
@@ -89,6 +96,8 @@ export const CardThumb: React.FC<{ id: number; trained?: boolean }> = ({
         }_${trained ? "after_training" : "normal"}.webp`}
         alt={card.prefix}
         className={classes.img}
+        width="128px"
+        height="128px"
         style={{ paddingTop: "2%", paddingLeft: "2%" }}
       />
       <img
@@ -121,7 +130,15 @@ export const CardThumb: React.FC<{ id: number; trained?: boolean }> = ({
         />
       ))}
     </Box>
-  ) : null;
+  ) : skeleton;
+};
+
+export const CardThumbSkeleton: React.FC<{}> = () => {
+  const classes = useStyles();
+
+  return (
+    <Skeleton variant="rect" className={classes.skeleton}></Skeleton>
+  );
 };
 
 export const CardThumbs: React.FC<{ cardIds: number[] }> = ({ cardIds }) => {
@@ -136,6 +153,24 @@ export const CardThumbs: React.FC<{ cardIds: number[] }> = ({ cardIds }) => {
       {cardIds.map((cardId, id) => (
         <Grid key={id} item xs={4} md={2}>
           <CardThumb id={cardId} />
+        </Grid>
+      ))}
+    </Grid>
+  );
+};
+
+export const CardThumbsSkeleton: React.FC<{ length: number }> = ({ length = 1 }) => {
+  return (
+    <Grid
+      container
+      direction="row"
+      spacing={2}
+      justify="center"
+      alignItems="center"
+    >
+      {Array.from({ length }).map((_, id) => (
+        <Grid key={id} item xs={4} md={2}>
+          <CardThumbSkeleton></CardThumbSkeleton>
         </Grid>
       ))}
     </Grid>

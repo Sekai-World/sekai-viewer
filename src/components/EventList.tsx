@@ -1,6 +1,6 @@
 import {
   Card,
-  CardHeader,
+  CardContent,
   CardMedia,
   makeStyles,
   Typography,
@@ -9,7 +9,7 @@ import {
 import { useLayoutStyles } from "../styles/layout";
 import { Skeleton } from "@material-ui/lab";
 import React, { Fragment, useEffect, useState } from "react";
-import { Link, useHistory, useRouteMatch } from "react-router-dom";
+import { Link, useRouteMatch } from "react-router-dom";
 import { ContentTransModeType, IEventInfo } from "../types";
 import { useCachedData, useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
@@ -39,14 +39,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function getPaginitedEvents(events: IEventInfo[], page: number, limit: number) {
+function getPaginatedEvents(events: IEventInfo[], page: number, limit: number) {
   return events.slice(limit * (page - 1), limit * page);
 }
 
 const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = () => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
-  const { push } = useHistory();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
 
@@ -68,7 +67,7 @@ const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = () => {
   useEffect(() => {
     setEvents((events) => [
       ...events,
-      ...getPaginitedEvents(eventsCache, page, limit),
+      ...getPaginatedEvents(eventsCache, page, limit),
     ]);
     setLastQueryFin(true);
   }, [page, limit, setLastQueryFin, eventsCache]);
@@ -98,45 +97,44 @@ const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = () => {
     }
   };
 
-  const ListCard: { [key: string]: React.FC<{ data: IEventInfo }> } = {
+  const ListCard: { [key: string]: React.FC<{ data?: IEventInfo }> } = {
     grid: ({ data }) => {
+      if (!data) {
+        // loading
+        return (
+          <Card className={classes.card}>
+            <Skeleton variant="rect" className={classes.media}></Skeleton>
+            <CardContent>
+              <Typography variant="subtitle1" className={classes.header}>
+                <Skeleton variant="text" width="90%"></Skeleton>
+              </Typography>
+              <Typography variant="body2">
+                <Skeleton variant="text" width="40%"></Skeleton>
+              </Typography>
+            </CardContent>
+          </Card>
+        );
+      }
       return (
         <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
-          <Card
-            className={classes.card}
-            onClick={() => push(path + "/" + data.id)}
-          >
-            <CardHeader
-              title={data.name}
-              titleTypographyProps={{
-                variant: "subtitle1",
-                classes: {
-                  root: classes.header,
-                },
-              }}
-              subheader={t(`event:type.${data.eventType}`)}
-            ></CardHeader>
+          <Card className={classes.card}>
             <CardMedia
               className={classes.media}
               image={`https://sekai-res.dnaroma.eu/file/sekai-assets/event/${data.assetbundleName}/logo_rip/logo.webp`}
               title={data.name}
             ></CardMedia>
+            <CardContent style={{ paddingBottom: "16px" }}>
+              <Typography variant="subtitle1" className={classes.header}>
+                {data.name}
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                {t(`event:type.${data.eventType}`)}
+              </Typography>
+            </CardContent>
           </Card>
         </Link>
       );
     },
-  };
-
-  const ListLoading: React.FC<any> = () => {
-    return (
-      <Card className={classes.card}>
-        <CardHeader
-          title={<Skeleton variant="text" width="50%"></Skeleton>}
-          subheader={<Skeleton variant="text" width="80%"></Skeleton>}
-        ></CardHeader>
-        <Skeleton variant="rect" height={130}></Skeleton>
-      </Card>
-    );
   };
 
   return (
@@ -147,7 +145,6 @@ const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = () => {
       <Container className={layoutClasses.content} maxWidth="md">
         {InfiniteScroll<IEventInfo>({
           viewComponent: ListCard[viewGridType],
-          loadingComponent: ListLoading,
           callback,
           data: events,
           gridSize: {
