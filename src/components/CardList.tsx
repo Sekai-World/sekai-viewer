@@ -27,7 +27,7 @@ import {
   ViewGridOutline,
 } from "mdi-material-ui";
 import React, { Fragment, useEffect, useState } from "react";
-import { Link, useHistory, useRouteMatch } from "react-router-dom";
+import { Link, useRouteMatch } from "react-router-dom";
 import {
   ContentTransModeType,
   ICardEpisode,

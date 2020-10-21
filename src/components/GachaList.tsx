@@ -9,7 +9,7 @@ import {
 import { useLayoutStyles } from "../styles/layout";
 import { Skeleton } from "@material-ui/lab";
 import React, { Fragment, useEffect, useState } from "react";
-import { Link, useHistory, useRouteMatch } from "react-router-dom";
+import { Link, useRouteMatch } from "react-router-dom";
 import { useCachedData, useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
@@ -92,7 +92,6 @@ const GachaList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
 }) => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
-  const history = useHistory();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
   const assetI18n = getAssetI18n();
