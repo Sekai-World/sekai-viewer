@@ -2,7 +2,7 @@ import {
   Button,
   ButtonGroup,
   Card,
-  CardHeader,
+  CardContent,
   CardMedia,
   Grid,
   makeStyles,
@@ -239,27 +239,17 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = (
             className={classes.card}
             // onClick={() => push(path + "/" + data.id)}
           >
-            <CardHeader
-              title={data.prefix}
-              titleTypographyProps={{
-                variant: "subtitle1",
-                classes: {
-                  root: classes.subheader,
-                },
-              }}
-              subheader={getCharaName(charas, data.characterId)}
-              subheaderTypographyProps={{
-                variant: "body2",
-                classes: {
-                  root: classes.subheader,
-                },
-              }}
-            ></CardHeader>
             <CardMedia
               className={classes.media}
               image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_small/${data.assetbundleName}_rip/card_normal.webp`}
               title={data.prefix}
             ></CardMedia>
+            <CardContent>
+              <Typography variant="subtitle1" className={classes.subheader}>{data.prefix}</Typography>
+              <Typography variant="body2" className={classes.subheader} color="textSecondary">
+                {getCharaName(charas, data.characterId)}
+              </Typography>
+            </CardContent>
           </Card>
         </Link>
       );
@@ -356,11 +346,15 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = (
   const ListLoading: React.FC<any> = () => {
     return (
       <Card className={classes.card}>
-        <CardHeader
-          title={<Skeleton variant="text" width="50%"></Skeleton>}
-          subheader={<Skeleton variant="text" width="80%"></Skeleton>}
-        ></CardHeader>
-        <Skeleton variant="rect" height={130}></Skeleton>
+        <Skeleton variant="rect" className={classes.media}></Skeleton>
+        <CardContent>
+          <Typography variant="subtitle1" className={classes.subheader}>
+            <Skeleton variant="text" width="50%"></Skeleton>
+          </Typography>
+          <Typography variant="body2" className={classes.subheader}>
+            <Skeleton variant="text" width="80%"></Skeleton>
+          </Typography>
+        </CardContent>
       </Card>
     );
   };
