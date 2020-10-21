@@ -86,6 +86,8 @@ export const CardThumb: React.FC<{ id: number; trained?: boolean }> = ({
     if (cards.length) setCard(cards.find((elem) => elem.id === id));
   }, [cards, id]);
 
+  const skeleton = CardThumbSkeleton({});
+
   return card ? (
     <Box position="relative">
       <img
@@ -94,6 +96,8 @@ export const CardThumb: React.FC<{ id: number; trained?: boolean }> = ({
         }_${trained ? "after_training" : "normal"}.webp`}
         alt={card.prefix}
         className={classes.img}
+        width="128px"
+        height="128px"
         style={{ paddingTop: "2%", paddingLeft: "2%" }}
       />
       <img
@@ -126,7 +130,7 @@ export const CardThumb: React.FC<{ id: number; trained?: boolean }> = ({
         />
       ))}
     </Box>
-  ) : null;
+  ) : skeleton;
 };
 
 export const CardThumbSkeleton: React.FC<{}> = () => {
