@@ -229,19 +229,19 @@ const MusicList: React.FC<{
                   : data.title
               }
             ></CardMedia>
-            <CardContent>
-              <Typography variant="subtitle1" className={classes.header}>{
-                contentTransMode === "original"
+            <CardContent style={{ paddingBottom: "16px" }}>
+              <Typography variant="subtitle1" className={classes.header}>
+                {contentTransMode === "original"
                   ? data.title
                   : contentTransMode === "translated"
                   ? assetI18n.t(`music_titles:${data.id}`)
-                  : data.title
-              }</Typography>
-              <Typography variant="body2" color="textSecondary">{
-                data.categories
+                  : data.title}
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                {data.categories
                   .map((cat) => musicCategoryToName[cat] || cat)
-                  .join(", ")
-              }</Typography>
+                  .join(", ")}
+              </Typography>
             </CardContent>
           </Card>
         </Link>
@@ -260,8 +260,14 @@ const MusicList: React.FC<{
                 justify="space-between"
               >
                 <Grid item xs={5} md={4}>
-                  <Box className={classes.agendaMedia} style={{ position: "relative" }}>
-                    <Skeleton variant="rect" className={classes.agendaMediaSkeleton}></Skeleton>
+                  <Box
+                    className={classes.agendaMedia}
+                    style={{ position: "relative" }}
+                  >
+                    <Skeleton
+                      variant="rect"
+                      className={classes.agendaMediaSkeleton}
+                    ></Skeleton>
                   </Box>
                 </Grid>
                 <Grid item xs={6} md={7} container direction="column">
@@ -279,7 +285,11 @@ const MusicList: React.FC<{
                     direction="row"
                     style={{ marginTop: "5%" }}
                   >
-                    <Skeleton variant="rect" width="75%" height="24px"></Skeleton>
+                    <Skeleton
+                      variant="rect"
+                      width="75%"
+                      height="24px"
+                    ></Skeleton>
                   </Grid>
                 </Grid>
               </Grid>

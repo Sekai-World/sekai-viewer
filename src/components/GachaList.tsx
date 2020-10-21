@@ -165,14 +165,14 @@ const GachaList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
             image={`https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${data.assetbundleName}/logo_rip/logo.webp`}
             title={data.name}
           ></CardMedia>
-          <CardContent>
-            <Typography variant="subtitle1" className={classes.subheader}>{
-              contentTransMode === "original"
+          <CardContent style={{ paddingBottom: "16px" }}>
+            <Typography variant="subtitle1" className={classes.subheader}>
+              {contentTransMode === "original"
                 ? data.name
                 : contentTransMode === "translated"
                 ? assetI18n.t(`gacha_name:${data.id}`)
-                : data.name
-            }</Typography>
+                : data.name}
+            </Typography>
           </CardContent>
         </Card>
       </Link>

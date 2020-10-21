@@ -54,9 +54,9 @@ const useStyles = makeStyles((theme) => ({
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
-    [theme.breakpoints.down("md")]: {
-      maxWidth: "200px",
-    },
+    // [theme.breakpoints.down("md")]: {
+    //   maxWidth: "200px",
+    // },
     maxWidth: "250px",
   },
   agendaWrapper: {
@@ -75,7 +75,7 @@ const useStyles = makeStyles((theme) => ({
     padding: "4% 4%",
   },
   comfy: {
-    padding: "4% 4%",
+    padding: "6% 4%",
     cursor: "pointer",
   },
   comfyPrefix: {
@@ -260,9 +260,15 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = (
               image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_small/${data.assetbundleName}_rip/card_normal.webp`}
               title={data.prefix}
             ></CardMedia>
-            <CardContent>
-              <Typography variant="subtitle1" className={classes.subheader}>{data.prefix}</Typography>
-              <Typography variant="body2" className={classes.subheader} color="textSecondary">
+            <CardContent style={{ paddingBottom: "16px" }}>
+              <Typography variant="subtitle1" className={classes.subheader}>
+                {data.prefix}
+              </Typography>
+              <Typography
+                variant="body2"
+                className={classes.subheader}
+                color="textSecondary"
+              >
                 {getCharaName(charas, data.characterId)}
               </Typography>
             </CardContent>
@@ -374,11 +380,22 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = (
                 </Grid>
               </Grid>
               <Grid item style={{ width: "100%" }}>
-                <Typography classes={{ root: classes.comfyPrefix }} variant="body1">
-                  <Skeleton variant="text" width="70%" style={{ margin: "0 auto" }}></Skeleton>
+                <Typography
+                  classes={{ root: classes.comfyPrefix }}
+                  variant="body1"
+                >
+                  <Skeleton
+                    variant="text"
+                    width="70%"
+                    style={{ margin: "0 auto" }}
+                  ></Skeleton>
                 </Typography>
                 <Typography variant="body2">
-                  <Skeleton variant="text" width="40%" style={{ margin: "0 auto" }}></Skeleton>
+                  <Skeleton
+                    variant="text"
+                    width="40%"
+                    style={{ margin: "0 auto" }}
+                  ></Skeleton>
                 </Typography>
               </Grid>
             </Grid>

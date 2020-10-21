@@ -123,7 +123,7 @@ const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = () => {
               image={`https://sekai-res.dnaroma.eu/file/sekai-assets/event/${data.assetbundleName}/logo_rip/logo.webp`}
               title={data.name}
             ></CardMedia>
-            <CardContent>
+            <CardContent style={{ paddingBottom: "16px" }}>
               <Typography variant="subtitle1" className={classes.header}>
                 {data.name}
               </Typography>
