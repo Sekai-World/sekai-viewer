@@ -23,6 +23,7 @@
   "id": "ID",
   "title": "タイトル",
   "character": "キャラクター",
+  "support_unit": "",
   "attribute": "タイプ",
   "startAt": "解放時間",
   "rarity": "レアリティ",
@@ -44,6 +45,6 @@
   "campaign": "キャンペーン",
   "bug": "バグ",
   "update": "アップデート",
-  "character_plural": "キャラクター",
-  "level": "レベル"
+  "level": "レベル",
+  "character_plural": "キャラクター"
 }

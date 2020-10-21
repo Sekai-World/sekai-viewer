@@ -23,6 +23,7 @@
   "id": "ID",
   "title": "Название",
   "character": "Персонаж",
+  "support_unit": "",
   "attribute": "Атрибут ",
   "startAt": "Доступно с",
   "rarity": "Редкость",

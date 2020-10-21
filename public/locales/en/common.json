@@ -23,6 +23,7 @@
   "id": "ID",
   "title": "Title",
   "character": "Character",
+  "support_unit": "Support Unit",
   "attribute": "Attribute",
   "startAt": "Available From",
   "rarity": "Rarity",

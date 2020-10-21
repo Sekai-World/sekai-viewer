@@ -14,9 +14,16 @@
   },
   "language": "語言",
   "darkmode": "顯示主題",
+  "contentTranslationMode": {
+    "title": "",
+    "original": "",
+    "translated": "",
+    "both": ""
+  },
   "id": "編號",
   "title": "標題",
   "character": "角色",
+  "support_unit": "",
   "attribute": "屬性",
   "startAt": "開放於",
   "rarity": "稀有度",
@@ -38,6 +45,6 @@
   "campaign": "紀念活動",
   "bug": "問題",
   "update": "更新",
-  "character_plural": "角色",
-  "level": "等級"
+  "level": "等級",
+  "character_plural": "角色"
 }

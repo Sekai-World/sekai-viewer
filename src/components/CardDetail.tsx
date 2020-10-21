@@ -91,29 +91,6 @@ interface IExtendCardInfo extends ICardInfo {
   maxNormalLevel: number;
 }
 
-function getSkillDesc(skill: ISkillInfo, skillLevel: number | number[]) {
-  let skillInfo = skill.description;
-
-  for (let elem of skill.skillEffects) {
-    skillInfo = skillInfo.replace(
-      new RegExp(`{{${elem.id};d}}`),
-      String(
-        elem.skillEffectDetails.find((d) => d.level === skillLevel)!
-          .activateEffectDuration
-      )
-    );
-    skillInfo = skillInfo.replace(
-      new RegExp(`{{${elem.id};v}}`),
-      String(
-        elem.skillEffectDetails.find((d) => d.level === skillLevel)!
-          .activateEffectValue
-      )
-    );
-  }
-
-  return skillInfo;
-}
-
 const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   contentTransMode,
 }) => {
@@ -152,11 +129,55 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
     (charaId: number) => {
       const chara = charas.find((chara) => chara.id === charaId);
       if (chara?.firstName) {
-        return `${chara.firstName} ${chara.givenName}`;
+        switch (contentTransMode) {
+          case "original":
+            return `${chara.firstName} ${chara.givenName}`;
+          case "translated":
+            return ["zh-CN", "zh-TW", "ko", "ja"].includes(assetI18n.language)
+              ? `${assetI18n.t(
+                  `character_name:${charaId}.firstName`
+                )} ${assetI18n.t(`character_name:${charaId}.givenName`)}`
+              : `${assetI18n.t(
+                  `character_name:${charaId}.givenName`
+                )} ${assetI18n.t(`character_name:${charaId}.firstName`)}`;
+        }
       }
       return chara?.givenName;
     },
-    [charas]
+    [charas, contentTransMode, assetI18n]
+  );
+
+  const getSkillDesc = useCallback(
+    (skill: ISkillInfo, skillLevel: number | number[]) => {
+      let skillInfo =
+        contentTransMode === "original"
+          ? skill.description
+          : contentTransMode === "translated"
+          ? assetI18n.t(`skill_desc:${skill.id}`, {
+              interpolation: { prefix: "[", suffix: "]" },
+            })
+          : skill.description;
+
+      for (let elem of skill.skillEffects) {
+        skillInfo = skillInfo.replace(
+          new RegExp(`{{${elem.id};d}}`),
+          String(
+            elem.skillEffectDetails.find((d) => d.level === skillLevel)!
+              .activateEffectDuration
+          )
+        );
+        skillInfo = skillInfo.replace(
+          new RegExp(`{{${elem.id};v}}`),
+          String(
+            elem.skillEffectDetails.find((d) => d.level === skillLevel)!
+              .activateEffectValue
+          )
+        );
+      }
+
+      return skillInfo;
+    },
+    [assetI18n, contentTransMode]
   );
 
   const getCharaUnitName = useCallback(
@@ -167,25 +188,30 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
     [charas]
   );
 
+  const getUnitImage = useCallback((unitName?: string) => {
+    switch (unitName) {
+      case "idol":
+        return LogoIdol;
+      case "light_sound":
+        return LogoLightSound;
+      case "piapro":
+        return LogoPiapro;
+      case "school_refusal":
+        return LogoSchoolRefusal;
+      case "street":
+        return LogoStreet;
+      case "theme_park":
+        return LogoThemePark;
+    }
+    return "";
+  }, []);
+
   const getCharaUnitImage = useCallback(
     (charaId: number) => {
       const chara = charas.find((chara) => chara.id === charaId);
-      switch (chara?.unit) {
-        case "idol":
-          return LogoIdol;
-        case "light_sound":
-          return LogoLightSound;
-        case "piapro":
-          return LogoPiapro;
-        case "school_refusal":
-          return LogoSchoolRefusal;
-        case "street":
-          return LogoStreet;
-        case "theme_park":
-          return LogoThemePark;
-      }
+      return getUnitImage(chara?.unit);
     },
-    [charas]
+    [charas, getUnitImage]
   );
 
   const getCardImages: () => ImageDecorator[] = useCallback(
@@ -277,6 +303,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
     getCharaName,
     episodes,
     assetI18n,
+    assetI18n.language,
     contentTransMode,
   ]);
 
@@ -427,6 +454,27 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
             ></img>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
+          {card.supportUnit !== "none" ? (
+            <Fragment>
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                  {t("common:support_unit")}
+                </Typography>
+                <img
+                  className={classes["unit-logo-img"]}
+                  src={getUnitImage(card.supportUnit)}
+                  alt={card.supportUnit}
+                ></img>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
+            </Fragment>
+          ) : null}
           <Grid
             container
             direction="row"
@@ -508,6 +556,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
               </Grid>
             </Grid>
           </Grid>
+          <Divider style={{ margin: "1% 0" }} />
         </Grid>
       </Container>
       <Typography variant="h6" className={layoutClasses.header}>
@@ -525,7 +574,13 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
               {t("common:skill")}
             </Typography>
-            <Typography>{card.cardSkillName}</Typography>
+            <Typography>
+              {contentTransMode === "original"
+                ? card.cardSkillName
+                : contentTransMode === "translated"
+                ? assetI18n.t(`card_skill_name:${cardId}`)
+                : card.cardSkillName}
+            </Typography>
           </Grid>
           <Box>
             {/* <Typography>Skill level</Typography> */}
@@ -813,8 +868,8 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                   </Typography>
                 </Grid>
                 <Grid item container spacing={1} xs={10} justify="flex-end">
-                  {cardEpisode[0].costs.map((c) => (
-                    <Grid item>
+                  {cardEpisode[0].costs.map((c, idx) => (
+                    <Grid key={`episode-cost-${idx}`} item>
                       <MaterialIcon
                         materialId={c.resourceId}
                         quantity={c.quantity}
@@ -847,8 +902,8 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                       (sum, rb) => [...sum, ...rb.details],
                       [] as ResourceBoxDetail[]
                     )
-                    .map((rbd) => (
-                      <Grid item>
+                    .map((rbd, idx) => (
+                      <Grid key={`episode-reward-${idx}`} item>
                         <CommonMaterialIcon
                           materialName={rbd.resourceType}
                           materialId={rbd.resourceId}
@@ -912,8 +967,8 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                   </Typography>
                 </Grid>
                 <Grid item container spacing={1} xs={10} justify="flex-end">
-                  {cardEpisode[1].costs.map((c) => (
-                    <Grid item>
+                  {cardEpisode[1].costs.map((c, idx) => (
+                    <Grid key={`episode-cost-${idx}`} item>
                       <MaterialIcon
                         materialId={c.resourceId}
                         quantity={c.quantity}
@@ -946,8 +1001,8 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                       (sum, rb) => [...sum, ...rb.details],
                       [] as ResourceBoxDetail[]
                     )
-                    .map((rbd) => (
-                      <Grid item>
+                    .map((rbd, idx) => (
+                      <Grid key={`episode-reward-${idx}`} item>
                         <CommonMaterialIcon
                           materialName={rbd.resourceType}
                           materialId={rbd.resourceId}

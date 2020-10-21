@@ -23,6 +23,7 @@
   "id": "번호",
   "title": "제목",
   "character": "캐릭터",
+  "support_unit": "",
   "attribute": "속성",
   "startAt": "개방 개시 시간",
   "rarity": "레어도",
@@ -44,6 +45,6 @@
   "campaign": "캠페인",
   "bug": "버그",
   "update": "업데이트",
-  "character_plural": "캐릭터",
-  "level": "레벨"
+  "level": "레벨",
+  "character_plural": "캐릭터"
 }

@@ -23,6 +23,7 @@
   "id": "编号",
   "title": "标题",
   "character": "角色",
+  "support_unit": "",
   "attribute": "属性",
   "startAt": "开放时间",
   "rarity": "稀有度",

@@ -26,7 +26,7 @@ import {
   ViewGrid,
   ViewGridOutline,
 } from "mdi-material-ui";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { Link, useRouteMatch } from "react-router-dom";
 import {
   ContentTransModeType,
@@ -89,14 +89,6 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: "210px",
   },
 }));
-
-function getCharaName(charas: ICharaProfile[], charaId: number) {
-  const chara = charas.find((chara) => chara.id === charaId);
-  if (chara?.firstName) {
-    return `${chara.firstName} ${chara.givenName}`;
-  }
-  return chara?.givenName;
-}
 
 function getPaginatedCards(cards: ICardInfo[], page: number, limit: number) {
   return cards.slice(limit * (page - 1), limit * page);
@@ -236,6 +228,28 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
     }
   }, [page, limit, setLastQueryFin, sortedCache]);
 
+  const getCharaName = useCallback(
+    (charaId: number) => {
+      const chara = charas.find((chara) => chara.id === charaId);
+      if (chara?.firstName) {
+        switch (contentTransMode) {
+          case "original":
+            return `${chara.firstName} ${chara.givenName}`;
+          case "translated":
+            return ["zh-CN", "zh-TW", "ko", "ja"].includes(assetI18n.language)
+              ? `${assetI18n.t(
+                  `character_name:${charaId}.firstName`
+                )} ${assetI18n.t(`character_name:${charaId}.givenName`)}`
+              : `${assetI18n.t(
+                  `character_name:${charaId}.givenName`
+                )} ${assetI18n.t(`character_name:${charaId}.firstName`)}`;
+        }
+      }
+      return chara?.givenName;
+    },
+    [charas, contentTransMode, assetI18n]
+  );
+
   const ListCard: { [key: string]: React.FC<{ data?: ICardInfo }> } = {
     grid: ({ data }) => {
       if (!data) {
@@ -281,7 +295,7 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                 className={classes.subheader}
                 color="textSecondary"
               >
-                {getCharaName(charas, data.characterId)}
+                {getCharaName(data.characterId)}
               </Typography>
             </CardContent>
           </Card>
@@ -369,7 +383,7 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                     : data.prefix}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
-                  {getCharaName(charas, data.characterId)}
+                  {getCharaName(data.characterId)}
                 </Typography>
               </Grid>
             </Grid>
@@ -457,7 +471,7 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                   align="center"
                   color="textSecondary"
                 >
-                  {getCharaName(charas, data.characterId)}
+                  {getCharaName(data.characterId)}
                 </Typography>
               </Grid>
             </Grid>

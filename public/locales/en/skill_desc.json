@@ -1,0 +1,13 @@
+{
+  "1": "Score increased by {{1;v}}% for {{1;d}} seconds",
+  "2": "Score increased by {{2;v}}% for {{2;d}} seconds",
+  "3": "Score increased by {{3;v}}% for {{3;d}} seconds",
+  "4": "Score increased by {{4;v}}% for {{4;d}} seconds",
+  "5": "GREAT becomes PERFECT for {{8;d}} seconds and score increases by {{5;v}}% for {{5;d}} seconds",
+  "6": "GOOD or higher becomes PERFECT for {{9;d}} seconds and score increases by {{6;v}}% for {{6;d}} seconds",
+  "7": "BAD or higher becomes PERFECT for {{10;d}} seconds and score increases by {{7;v}}% for {{7;d}} seconds",
+  "8": "Life is restored by {{14;v}} and score is increased by {{11;v}}% for {{11;d}} seconds",
+  "9": "Life is restored by {{15;v}} and score is increased by {{12;v}}% for {{12;d}} seconds",
+  "10": "Life is restored by {{16;v}} and score is increased by {{13;v}}% for {{13;d}} seconds",
+  "11": "Score increases by {{17;v}}% for {{17;d}} seconds only for PERFECT hit"
+}
