@@ -41,6 +41,7 @@ import InfiniteScroll from "./subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
 import { useFilterStyles } from "../styles/filter";
+import { getAssetI18n } from "../utils/i18n";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -134,14 +135,15 @@ function getMaxParam(
   return maxParam;
 }
 
-const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = (
-  props
-) => {
+const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
+  contentTransMode,
+}) => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const filterClasses = useFilterStyles();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
+  const assetI18n = getAssetI18n();
 
   const [cardsCache, cardsCacheRef] = useCachedData<ICardInfo>("cards");
   const [charas] = useCachedData<ICharaProfile>("gameCharacters");
@@ -258,11 +260,21 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = (
             <CardMedia
               className={classes.media}
               image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_small/${data.assetbundleName}_rip/card_normal.webp`}
-              title={data.prefix}
+              title={
+                contentTransMode === "original"
+                  ? data.prefix
+                  : contentTransMode === "translated"
+                  ? assetI18n.t(`card_prefix:${data.id}`)
+                  : data.prefix
+              }
             ></CardMedia>
             <CardContent style={{ paddingBottom: "16px" }}>
               <Typography variant="subtitle1" className={classes.subheader}>
-                {data.prefix}
+                {contentTransMode === "original"
+                  ? data.prefix
+                  : contentTransMode === "translated"
+                  ? assetI18n.t(`card_prefix:${data.id}`)
+                  : data.prefix}
               </Typography>
               <Typography
                 variant="body2"
@@ -349,7 +361,13 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = (
                 ) : null}
               </Grid>
               <Grid item xs={6} md={7}>
-                <Typography variant="body1">{data.prefix}</Typography>
+                <Typography variant="body1">
+                  {contentTransMode === "original"
+                    ? data.prefix
+                    : contentTransMode === "translated"
+                    ? assetI18n.t(`card_prefix:${data.id}`)
+                    : data.prefix}
+                </Typography>
                 <Typography variant="body2" color="textSecondary">
                   {getCharaName(charas, data.characterId)}
                 </Typography>
@@ -428,7 +446,11 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = (
                   variant="body1"
                   align="center"
                 >
-                  {data.prefix}
+                  {contentTransMode === "original"
+                    ? data.prefix
+                    : contentTransMode === "translated"
+                    ? assetI18n.t(`card_prefix:${data.id}`)
+                    : data.prefix}
                 </Typography>
                 <Typography
                   variant="body2"

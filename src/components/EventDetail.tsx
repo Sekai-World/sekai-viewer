@@ -28,13 +28,14 @@ import {
 } from "../types";
 import { useCachedData, useRealtimeEventData } from "../utils";
 import { attrIconMap, charaIcons, degreeFrameMap } from "../utils/resources";
+import { getAssetI18n } from "../utils/i18n";
 
 const useStyle = makeStyles((theme) => ({
   bannerImg: {
     maxWidth: "100%",
   },
   tabpanel: {
-    padding: 0,
+    padding: theme.spacing("1%", 0, 0, 0),
   },
   "grid-out": {
     padding: theme.spacing("1%", "0"),
@@ -43,11 +44,12 @@ const useStyle = makeStyles((theme) => ({
 
 const EventDetail: React.FC<{
   contentTransMode: ContentTransModeType;
-}> = () => {
+}> = ({ contentTransMode }) => {
   const { t, i18n } = useTranslation();
   const { eventId } = useParams<{ eventId: string }>();
   const classes = useStyle();
   const layoutClasses = useLayoutStyles();
+  const assetI18n = getAssetI18n();
 
   const [events] = useCachedData<IEventInfo>("events");
   const [eventDeckBonuses] = useCachedData<IEventDeckBonus>("eventDeckBonuses");
@@ -263,7 +265,11 @@ const EventDetail: React.FC<{
   return event && eventDeckBonus.length && gameCharacterUnits.length ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
-        {event.name}
+        {contentTransMode === "original"
+          ? event.name
+          : contentTransMode === "translated"
+          ? assetI18n.t(`event_name:${eventId}`)
+          : event.name}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="sm">
         <TabContext value={imgTabVal}>
@@ -361,7 +367,13 @@ const EventDetail: React.FC<{
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
               {t("common:title")}
             </Typography>
-            <Typography>{event.name}</Typography>
+            <Typography>
+              {contentTransMode === "original"
+                ? event.name
+                : contentTransMode === "translated"
+                ? assetI18n.t(`event_name:${eventId}`)
+                : event.name}
+            </Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
           <Grid

@@ -15,6 +15,7 @@ import { useCachedData, useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
+import { getAssetI18n } from "../utils/i18n";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -43,11 +44,14 @@ function getPaginatedEvents(events: IEventInfo[], page: number, limit: number) {
   return events.slice(limit * (page - 1), limit * page);
 }
 
-const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = () => {
+const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
+  contentTransMode,
+}) => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
+  const assetI18n = getAssetI18n();
 
   const [events, setEvents] = useState<IEventInfo[]>([]);
   const [eventsCache, eventsCacheRef] = useCachedData<IEventInfo>("events");
@@ -121,11 +125,21 @@ const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = () => {
             <CardMedia
               className={classes.media}
               image={`https://sekai-res.dnaroma.eu/file/sekai-assets/event/${data.assetbundleName}/logo_rip/logo.webp`}
-              title={data.name}
+              title={
+                contentTransMode === "original"
+                  ? data.name
+                  : contentTransMode === "translated"
+                  ? assetI18n.t(`event_name:${data.id}`)
+                  : data.name
+              }
             ></CardMedia>
             <CardContent style={{ paddingBottom: "16px" }}>
               <Typography variant="subtitle1" className={classes.header}>
-                {data.name}
+                {contentTransMode === "original"
+                  ? data.name
+                  : contentTransMode === "translated"
+                  ? assetI18n.t(`event_name:${data.id}`)
+                  : data.name}
               </Typography>
               <Typography variant="body2" color="textSecondary">
                 {t(`event:type.${data.eventType}`)}

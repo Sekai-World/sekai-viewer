@@ -54,6 +54,7 @@ import { attrIconMap } from "../utils/resources";
 import { useTranslation } from "react-i18next";
 import MaterialIcon from "./subs/MaterialIcon";
 import CommonMaterialIcon from "./subs/CommonMaterialIcon";
+import { getAssetI18n } from "../utils/i18n";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -78,7 +79,7 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer",
   },
   tabpanel: {
-    padding: theme.spacing("1%", 0),
+    padding: theme.spacing("1%", 0, 0, 0),
   },
   "grid-out": {
     padding: theme.spacing("1%", "0"),
@@ -113,10 +114,13 @@ function getSkillDesc(skill: ISkillInfo, skillLevel: number | number[]) {
   return skillInfo;
 }
 
-const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = () => {
+const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
+  contentTransMode,
+}) => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
+  const assetI18n = getAssetI18n();
 
   const [charas] = useCachedData<ICharaProfile>("gameCharacters");
   const [cards] = useCachedData<ICardInfo>("cards");
@@ -237,7 +241,15 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = () => {
             ?.maxLevel!,
         })
       );
-      setCardTitle(`${_card.prefix} - ${getCharaName(_card.characterId)}`);
+      setCardTitle(
+        `${
+          contentTransMode === "original"
+            ? _card.prefix
+            : contentTransMode === "translated"
+            ? assetI18n.t(`card_prefix:${_card.id}`)
+            : _card.prefix
+        } - ${getCharaName(_card.characterId)}`
+      );
       setCardLevel(
         _card.rarity >= 3
           ? rarities.find((elem) => elem.rarity === _card.rarity)
@@ -256,7 +268,17 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = () => {
         _card.characterId
       )} | Card | Sekai Viewer`;
     }
-  }, [setCard, cards, cardId, rarities, skills, getCharaName, episodes]);
+  }, [
+    setCard,
+    cards,
+    cardId,
+    rarities,
+    skills,
+    getCharaName,
+    episodes,
+    assetI18n,
+    contentTransMode,
+  ]);
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
     setTabVal(newValue);
@@ -366,7 +388,13 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = () => {
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
               {t("common:title")}
             </Typography>
-            <Typography>{card.prefix}</Typography>
+            <Typography>
+              {contentTransMode === "original"
+                ? card.prefix
+                : contentTransMode === "translated"
+                ? assetI18n.t(`card_prefix:${card.id}`)
+                : card.prefix}
+            </Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
           <Grid
