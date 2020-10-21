@@ -14,6 +14,12 @@
   },
   "language": "言語",
   "darkmode": "画面の明るさ",
+  "contentTranslationMode": {
+    "title": "ゲームコンテンツ表示モード",
+    "original": "オリジナル",
+    "translated": "可能なら翻訳",
+    "both": "両方表示"
+  },
   "id": "ID",
   "title": "タイトル",
   "character": "キャラクター",

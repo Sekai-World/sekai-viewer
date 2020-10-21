@@ -14,6 +14,12 @@
   },
   "language": "언어",
   "darkmode": "밝기 모드",
+  "contentTranslationMode": {
+    "title": "게임 내용 표시 방식",
+    "original": "원문",
+    "translated": "번역 (가능 시)",
+    "both": "모두 표시"
+  },
   "id": "번호",
   "title": "제목",
   "character": "캐릭터",
