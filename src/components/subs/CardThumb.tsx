@@ -1,4 +1,5 @@
 import { Box, Grid, makeStyles } from "@material-ui/core";
+import { Skeleton } from "@material-ui/lab";
 import React, { useEffect, useState } from "react";
 import { ICardInfo } from "../../types";
 import { useCachedData } from "../../utils";
@@ -49,6 +50,10 @@ const useStyles = makeStyles((theme) => ({
     width: "15%",
     height: "15%",
     left: "50%",
+  },
+  skeleton: {
+    width: "100%",
+    paddingTop: "100%",
   },
 }));
 
@@ -124,6 +129,14 @@ export const CardThumb: React.FC<{ id: number; trained?: boolean }> = ({
   ) : null;
 };
 
+export const CardThumbSkeleton: React.FC<{}> = () => {
+  const classes = useStyles();
+
+  return (
+    <Skeleton variant="rect" className={classes.skeleton}></Skeleton>
+  );
+};
+
 export const CardThumbs: React.FC<{ cardIds: number[] }> = ({ cardIds }) => {
   return (
     <Grid
@@ -136,6 +149,24 @@ export const CardThumbs: React.FC<{ cardIds: number[] }> = ({ cardIds }) => {
       {cardIds.map((cardId, id) => (
         <Grid key={id} item xs={4} md={2}>
           <CardThumb id={cardId} />
+        </Grid>
+      ))}
+    </Grid>
+  );
+};
+
+export const CardThumbsSkeleton: React.FC<{ length: number }> = ({ length = 1 }) => {
+  return (
+    <Grid
+      container
+      direction="row"
+      spacing={2}
+      justify="center"
+      alignItems="center"
+    >
+      {Array.from({ length }).map((_, id) => (
+        <Grid key={id} item xs={4} md={2}>
+          <CardThumbSkeleton></CardThumbSkeleton>
         </Grid>
       ))}
     </Grid>
