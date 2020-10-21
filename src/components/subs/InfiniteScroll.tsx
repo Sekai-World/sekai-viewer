@@ -69,6 +69,11 @@ function InfiniteScroll<T>({
     };
   });
 
+  const itemsPerRow =
+    matchSmallScreen
+      ? 1
+      : 12 / (gridSize ? Number(gridSize.md) : 4);
+
   return (
     <Fragment>
       <Grid container direction="row" spacing={1}>
@@ -82,24 +87,8 @@ function InfiniteScroll<T>({
               >
                 {viewComponent({ data: elem })}
               </Grid>
-            ))
-          : Array.from(
-              {
-                length: matchSmallScreen
-                  ? 1
-                  : 12 / (gridSize ? Number(gridSize.md) : 4),
-              },
-              (_, i) => i
-            ).map((_, id) => (
-              <Grid
-                item
-                xs={gridSize ? gridSize.xs : 12}
-                md={gridSize ? gridSize.md : 4}
-                key={`loading-${id}`}
-              >
-                {loadingComponent({})}
-              </Grid>
-            ))}
+          ))
+          : null}
       </Grid>
       <Grid
         container
@@ -110,9 +99,7 @@ function InfiniteScroll<T>({
       >
         {Array.from(
           {
-            length: matchSmallScreen
-              ? 1
-              : 12 / (gridSize ? Number(gridSize.md) : 4),
+            length: data.length ? itemsPerRow : itemsPerRow * 2
           },
           (_, i) => i
         ).map((_, id) => (
