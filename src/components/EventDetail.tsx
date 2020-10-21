@@ -14,9 +14,11 @@ import { useLayoutStyles } from "../styles/layout";
 import { TabContext, TabPanel } from "@material-ui/lab";
 import { CronJob } from "cron";
 import moment from "moment";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
+import Viewer from "react-viewer";
+import { ImageDecorator } from "react-viewer/lib/ViewerProps";
 import {
   ContentTransModeType,
   EventRankingRewardRange,
@@ -33,6 +35,10 @@ import { getAssetI18n } from "../utils/i18n";
 const useStyle = makeStyles((theme) => ({
   bannerImg: {
     maxWidth: "100%",
+  },
+  eventImg: {
+    maxWidth: "100%",
+    cursor: "pointer",
   },
   tabpanel: {
     padding: theme.spacing("1%", 0, 0, 0),
@@ -67,6 +73,8 @@ const EventDetail: React.FC<{
   const [nextRefreshTime, setNextRefreshTime] = useState<moment.Moment>();
   const [remainingTime, setRemainingTime] = useState<string>("");
   const [pastTimePercent, setPastTimePercent] = useState<number>(0);
+  const [visible, setVisible] = useState<boolean>(false);
+  const [activeIdx, setActiveIdx] = useState<number>(0);
 
   useEffect(() => {
     if (events.length && eventDeckBonuses.length) {
@@ -262,6 +270,25 @@ const EventDetail: React.FC<{
     return honor.levels[0].description;
   }
 
+  const getEventImages: () => ImageDecorator[] = useCallback(
+    () =>
+      event
+        ? [
+            {
+              src: `https://sekai-res.dnaroma.eu/file/sekai-assets/event/${event.assetbundleName}/screen_rip/bg.webp`,
+              alt: "event background",
+              downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/event/${event.assetbundleName}/screen_rip/bg.webp`,
+            },
+            {
+              src: `https://sekai-res.dnaroma.eu/file/sekai-assets/event/${event.assetbundleName}/screen_rip/character.webp`,
+              alt: "event character",
+              downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/event/${event.assetbundleName}/screen_rip/character.webp`,
+            },
+          ]
+        : [],
+    [event]
+  );
+
   return event && eventDeckBonus.length && gameCharacterUnits.length ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
@@ -304,16 +331,24 @@ const EventDetail: React.FC<{
             </TabPanel>
             <TabPanel value="1" classes={{ root: classes.tabpanel }}>
               <img
-                className={classes.bannerImg}
+                onClick={() => {
+                  setActiveIdx(0);
+                  setVisible(true);
+                }}
+                className={classes.eventImg}
                 src={`https://sekai-res.dnaroma.eu/file/sekai-assets/event/${event.assetbundleName}/screen_rip/bg.webp`}
-                alt="logo"
+                alt="background"
               ></img>
             </TabPanel>
             <TabPanel value="2" classes={{ root: classes.tabpanel }}>
               <img
-                className={classes.bannerImg}
+                onClick={() => {
+                  setActiveIdx(1);
+                  setVisible(true);
+                }}
+                className={classes.eventImg}
                 src={`https://sekai-res.dnaroma.eu/file/sekai-assets/event/${event.assetbundleName}/screen_rip/character.webp`}
-                alt="logo"
+                alt="character"
               ></img>
             </TabPanel>
           </Paper>
@@ -689,6 +724,18 @@ const EventDetail: React.FC<{
               </Grid>
             </Paper>
           </Container>
+          <Viewer
+            visible={visible}
+            onClose={() => setVisible(false)}
+            images={getEventImages()}
+            zIndex={2000}
+            activeIndex={activeIdx}
+            downloadable
+            downloadInNewWindow
+            onMaskClick={() => setVisible(false)}
+            zoomSpeed={0.25}
+            onChange={(_, idx) => setActiveIdx(idx)}
+          />
         </Fragment>
       ) : null}
     </Fragment>
