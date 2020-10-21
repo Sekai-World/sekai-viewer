@@ -58,8 +58,8 @@ const useStyles = makeStyles((theme) => ({
     },
     maxWidth: "250px",
   },
-  agenda: {
-    padding: "4% 4%",
+  agendaWrapper: {
+    display: "block",
     [theme.breakpoints.down("sm")]: {
       maxWidth: "100%",
     },
@@ -69,6 +69,9 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: "80%",
     margin: "auto",
     cursor: "pointer",
+  },
+  agenda: {
+    padding: "4% 4%",
   },
   comfy: {
     padding: "4% 4%",
@@ -256,7 +259,11 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = (
     },
     agenda: ({ data }) => {
       return (
-        <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
+        <Link
+          to={path + "/" + data.id}
+          className={classes.agendaWrapper}
+          style={{ textDecoration: "none" }}
+        >
           <Paper
             className={classes.agenda}
             onClick={() => push(path + "/" + data.id)}

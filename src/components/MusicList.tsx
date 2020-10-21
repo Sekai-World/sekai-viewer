@@ -56,8 +56,7 @@ const useStyles = makeStyles((theme) => ({
     },
     "max-width": "250px",
   },
-  agenda: {
-    padding: "2% 0",
+  agendaWrapper: {
     [theme.breakpoints.down("sm")]: {
       maxWidth: "300px",
     },
@@ -67,6 +66,9 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: "70%",
     margin: "auto",
     cursor: "pointer",
+  },
+  agenda: {
+    padding: "2% 0",
   },
   agendaMedia: {
     paddingTop: "75%",
@@ -226,7 +228,11 @@ const MusicList: React.FC<{
     },
     agenda: ({ data }) => {
       return (
-        <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
+        <Link
+          to={path + "/" + data.id}
+          className={classes.agendaWrapper}
+          style={{ textDecoration: "none" }}
+        >
           <Paper
             className={classes.agenda}
             onClick={() => push(path + "/" + data.id)}
