@@ -46,7 +46,6 @@ function getPaginatedEvents(events: IEventInfo[], page: number, limit: number) {
 const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = () => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
-  const { push } = useHistory();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
 
@@ -102,10 +101,7 @@ const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = () => {
     grid: ({ data }) => {
       return (
         <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
-          <Card
-            className={classes.card}
-            onClick={() => push(path + "/" + data.id)}
-          >
+          <Card className={classes.card}>
             <CardMedia
               className={classes.media}
               image={`https://sekai-res.dnaroma.eu/file/sekai-assets/event/${data.assetbundleName}/logo_rip/logo.webp`}

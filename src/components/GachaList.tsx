@@ -147,10 +147,7 @@ const GachaList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   const ListCard: React.FC<{ data: IGachaInfo }> = ({ data }) => {
     return (
       <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
-        <Card
-          className={classes.card}
-          onClick={() => history.push(path + "/" + data.id)}
-        >
+        <Card className={classes.card}>
           <CardMedia
             className={classes.media}
             image={`https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${data.assetbundleName}/logo_rip/logo.webp`}

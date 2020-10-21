@@ -104,7 +104,6 @@ const MusicList: React.FC<{
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const filterClasses = useFilterStyles();
-  const { push } = useHistory();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
   const assetI18n = getAssetI18n();
@@ -193,10 +192,7 @@ const MusicList: React.FC<{
     grid: ({ data }) => {
       return (
         <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
-          <Card
-            className={classes.card}
-            onClick={() => push(path + "/" + data.id)}
-          >
+          <Card className={classes.card}>
             <CardMedia
               className={classes.media}
               image={`https://sekai-res.dnaroma.eu/file/sekai-assets/music/jacket/${data.assetbundleName}_rip/${data.assetbundleName}.webp`}
@@ -233,10 +229,7 @@ const MusicList: React.FC<{
           className={classes.agendaWrapper}
           style={{ textDecoration: "none" }}
         >
-          <Paper
-            className={classes.agenda}
-            onClick={() => push(path + "/" + data.id)}
-          >
+          <Paper className={classes.agenda}>
             <Grid
               container
               alignItems="center"

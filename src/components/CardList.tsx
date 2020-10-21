@@ -139,7 +139,6 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = (
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const filterClasses = useFilterStyles();
-  const { push } = useHistory();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
 
@@ -238,10 +237,7 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = (
     grid: ({ data }) => {
       return (
         <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
-          <Card
-            className={classes.card}
-            // onClick={() => push(path + "/" + data.id)}
-          >
+          <Card className={classes.card}>
             <CardMedia
               className={classes.media}
               image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_small/${data.assetbundleName}_rip/card_normal.webp`}
@@ -264,10 +260,7 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = (
           className={classes.agendaWrapper}
           style={{ textDecoration: "none" }}
         >
-          <Paper
-            className={classes.agenda}
-            onClick={() => push(path + "/" + data.id)}
-          >
+          <Paper className={classes.agenda}>
             <Grid
               container
               alignItems="center"
@@ -306,10 +299,7 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = (
     comfy: ({ data }) => {
       return (
         <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
-          <Paper
-            className={classes.comfy}
-            onClick={() => push(path + "/" + data.id)}
-          >
+          <Paper className={classes.comfy}>
             <Grid
               container
               direction="column"
