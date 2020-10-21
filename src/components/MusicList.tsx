@@ -2,7 +2,7 @@ import {
   Button,
   ButtonGroup,
   Card,
-  CardHeader,
+  CardContent,
   CardMedia,
   Chip,
   Grid,
@@ -195,24 +195,6 @@ const MusicList: React.FC<{
             className={classes.card}
             onClick={() => push(path + "/" + data.id)}
           >
-            <CardHeader
-              title={
-                contentTransMode === "original"
-                  ? data.title
-                  : contentTransMode === "translated"
-                  ? assetI18n.t(`music_titles:${data.id}`)
-                  : data.title
-              }
-              titleTypographyProps={{
-                variant: "subtitle1",
-                classes: {
-                  root: classes.header,
-                },
-              }}
-              subheader={data.categories
-                .map((cat) => musicCategoryToName[cat] || cat)
-                .join(", ")}
-            ></CardHeader>
             <CardMedia
               className={classes.media}
               image={`https://sekai-res.dnaroma.eu/file/sekai-assets/music/jacket/${data.assetbundleName}_rip/${data.assetbundleName}.webp`}
@@ -224,6 +206,20 @@ const MusicList: React.FC<{
                   : data.title
               }
             ></CardMedia>
+            <CardContent>
+              <Typography variant="subtitle1" className={classes.header}>{
+                contentTransMode === "original"
+                  ? data.title
+                  : contentTransMode === "translated"
+                  ? assetI18n.t(`music_titles:${data.id}`)
+                  : data.title
+              }</Typography>
+              <Typography variant="body2" color="textSecondary">{
+                data.categories
+                  .map((cat) => musicCategoryToName[cat] || cat)
+                  .join(", ")
+              }</Typography>
+            </CardContent>
           </Card>
         </Link>
       );
@@ -309,11 +305,15 @@ const MusicList: React.FC<{
   const ListLoading: React.FC<any> = () => {
     return (
       <Card className={classes.card}>
-        <CardHeader
-          title={<Skeleton variant="text" width="50%"></Skeleton>}
-          subheader={<Skeleton variant="text" width="80%"></Skeleton>}
-        ></CardHeader>
-        <Skeleton variant="rect" height={130}></Skeleton>
+        <Skeleton variant="rect" className={classes.media}></Skeleton>
+        <CardContent>
+          <Typography variant="subtitle1" className={classes.header}>
+            <Skeleton variant="text" width="50%"></Skeleton>
+          </Typography>
+          <Typography variant="body2">
+            <Skeleton variant="text" width="80%"></Skeleton>
+          </Typography>
+        </CardContent>
       </Card>
     );
   };

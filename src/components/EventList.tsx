@@ -1,6 +1,6 @@
 import {
   Card,
-  CardHeader,
+  CardContent,
   CardMedia,
   makeStyles,
   Typography,
@@ -106,21 +106,19 @@ const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = () => {
             className={classes.card}
             onClick={() => push(path + "/" + data.id)}
           >
-            <CardHeader
-              title={data.name}
-              titleTypographyProps={{
-                variant: "subtitle1",
-                classes: {
-                  root: classes.header,
-                },
-              }}
-              subheader={t(`event:type.${data.eventType}`)}
-            ></CardHeader>
             <CardMedia
               className={classes.media}
               image={`https://sekai-res.dnaroma.eu/file/sekai-assets/event/${data.assetbundleName}/logo_rip/logo.webp`}
               title={data.name}
             ></CardMedia>
+            <CardContent>
+              <Typography variant="subtitle1" className={classes.header}>
+                {data.name}
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                {t(`event:type.${data.eventType}`)}
+              </Typography>
+            </CardContent>
           </Card>
         </Link>
       );
@@ -130,11 +128,15 @@ const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = () => {
   const ListLoading: React.FC<any> = () => {
     return (
       <Card className={classes.card}>
-        <CardHeader
-          title={<Skeleton variant="text" width="50%"></Skeleton>}
-          subheader={<Skeleton variant="text" width="80%"></Skeleton>}
-        ></CardHeader>
-        <Skeleton variant="rect" height={130}></Skeleton>
+        <Skeleton variant="rect" className={classes.media}></Skeleton>
+        <CardContent>
+          <Typography variant="subtitle1" className={classes.header}>
+            <Skeleton variant="text" width="50%"></Skeleton>
+          </Typography>
+          <Typography variant="body2">
+            <Skeleton variant="text" width="80%"></Skeleton>
+          </Typography>
+        </CardContent>
       </Card>
     );
   };
