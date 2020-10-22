@@ -510,7 +510,7 @@ const EventDetail: React.FC<{
                           }`
                         ]
                       }
-                      alt={`charater ${
+                      alt={`character ${
                         gameCharacterUnits.find(
                           (gcu) => gcu.id === elem.gameCharacterUnitId
                         )!.gameCharacterId
