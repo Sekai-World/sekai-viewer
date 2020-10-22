@@ -130,7 +130,7 @@ function ListItemLink(
 
   const renderLink = useMemo(
     () =>
-      forwardRef<HTMLAnchorElement, LinkProps>((itemProps, ref) => (
+      forwardRef<HTMLAnchorElement, Omit<LinkProps, 'to'>>((itemProps, ref) => (
         <Link to={to} ref={ref} {...itemProps} />
       )),
     [to]
