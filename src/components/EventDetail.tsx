@@ -120,7 +120,11 @@ const EventDetail: React.FC<{
   useEffect(() => {
     if (event && Date.now() < event.aggregateAt) {
       setRemainingTime(
-        new Date(event.aggregateAt - Date.now())
+        new Date(
+          event.aggregateAt -
+            Date.now() +
+            new Date().getTimezoneOffset() * 60 * 1000
+        )
           .toISOString()
           .substring(8, 16)
           .replace("T", " day(s) ")
@@ -146,7 +150,9 @@ const EventDetail: React.FC<{
           return;
         }
         setRemainingTime(
-          new Date(event.aggregateAt - Date.now())
+          new Date(
+            event.aggregateAt - Date.now() - new Date().getTimezoneOffset()
+          )
             .toISOString()
             .substring(8, 16)
             .replace("T", " day(s) ")
