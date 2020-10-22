@@ -18,7 +18,8 @@ Pull requests are the best way to propose changes to the codebase. We actively w
 3. ~~Ensure the test suite passes. (Not yet)~~
 4. Make sure your code lints.
 5. Format you code with `prettier`.
-5. Issue that pull request!
+6. Commit message with [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) style
+7. Issue that pull request!
 
 ## Any contributions you make will be under the GNU GENERAL PUBLIC LICENSE
 In short, when you submit code changes, your submissions are understood to be under the same [GNU GENERAL PUBLIC LICENSE](https://choosealicense.com/licenses/gpl-3.0/) that covers the project. Feel free to contact the maintainers if that's a concern.

@@ -1,3 +1,13 @@
+# Sekai Viewer
+
+![GitHub Repo stars](https://img.shields.io/github/stars/Sekai-World/sekai-viewer?style=social)
+![GitHub forks](https://img.shields.io/github/forks/Sekai-World/sekai-viewer?style=social)
+[![Actions Status](https://github.com/Sekai-World/sekai-viewer/workflows/DeployToGHPages/badge.svg)](https://github.com/Sekai-World/sekai-viewer/actions)
+![GitHub deployments](https://img.shields.io/github/deployments/Sekai-World/sekai-viewer/github-pages?label=github-pages&style=flat-square)
+![David](https://img.shields.io/david/Sekai-World/sekai-viewer?style=flat-square)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg?style=flat-square)](https://conventionalcommits.org)
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
@@ -37,23 +47,17 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
+
+### `npm run exti18n`
+
+Use `i18next-parser` to extract `i18next` json file from code automatically with configuration file `i18next-parser.config.js`.
+
+Generated json files are located in `public/locales/{lang}/{namespace}.json`.
+
+Learn more about [i18next](https://www.i18next.com/) and [react-i18next](https://react.i18next.com/).
+
 ## Learn More
 
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
-
-## Internationalization (i18n)
-
-Use `i18next-parser` to extract `i18next` json file from code automatically with configuration file `i18next-parser.config.js`.
-
-Install it globally and run:
-
-```sh
-npm install --save-dev i18next-parser
-i18next 'src/components/**/*.tsx' -c .\i18next-parser.config.js
-```
-
-Generated json files are located in `public/locales/{lang}/{namespace}.json`.
-
-Learn more about [i18next](https://www.i18next.com/) and [react-i18next](https://react.i18next.com/).
