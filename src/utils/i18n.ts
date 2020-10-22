@@ -75,10 +75,7 @@ export function getAssetI18n() {
         ],
         fallbackLng: {
           default: ["ja"],
-          ru: ["en", "ja"],
-          es: ["en", "ja"],
-          de: ["en", "ja"],
-          pt: ["pt-BR", "en", "ja"],
+          pt: ["pt-BR", "ja"],
         },
         backend: {
           loadPath: process.env.PUBLIC_URL + "/locales/{{lng}}/{{ns}}.json",
