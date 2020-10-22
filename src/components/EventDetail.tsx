@@ -151,7 +151,7 @@ const EventDetail: React.FC<{
         }
         setRemainingTime(
           new Date(
-            event.aggregateAt - Date.now() - new Date().getTimezoneOffset()
+            event.aggregateAt - Date.now() + new Date().getTimezoneOffset()
           )
             .toISOString()
             .substring(8, 16)
