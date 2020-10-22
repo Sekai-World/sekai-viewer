@@ -35,7 +35,7 @@ jobs:
 
       -
         name: Install packages
-        run: npm install
+        run: npm ci
       -
         name: Build pages
         run: npm run build
