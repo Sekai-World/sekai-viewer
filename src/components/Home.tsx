@@ -207,6 +207,41 @@ function Home() {
           {t("home:alert0")}
         </Alert>
         <Alert className={classes.alert} severity="info">
+          <AlertTitle>{t("home:alert_contributor.title")}</AlertTitle>
+          <ul>
+            <li>
+              <Link
+                href="https://github.com/NonSpicyBurrito"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <GitHub fontSize="inherit"></GitHub>
+                Burrito
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="https://github.com/iSwanGit"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <GitHub fontSize="inherit"></GitHub>
+                iSwanGit (EleMas*)
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="https://github.com/Build774"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <GitHub fontSize="inherit"></GitHub>
+                Build774
+              </Link>
+            </li>
+          </ul>
+        </Alert>
+        <Alert className={classes.alert} severity="info">
           <AlertTitle>{t("home:alert_translate.title")}</AlertTitle>
           <ul>
             <li>简：Stargazing Koishi</li>
@@ -255,6 +290,7 @@ function Home() {
             <Discord fontSize="inherit"></Discord>
             DNARoma#0646
           </Link>
+          <br></br>
           {t("home:alert1.join-discord")}
           <Link
             href="https://discord.gg/xcDBRMd"

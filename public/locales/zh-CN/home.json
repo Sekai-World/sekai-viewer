@@ -7,6 +7,9 @@
     "title": "游戏通知"
   },
   "alert0": "Sekai Viewer 现在公开测试中！",
+  "alert_contributor": {
+    "title": "感谢为开发贡献力量的你们！"
+  },
   "alert_translate": {
     "title": "感谢翻译者们！"
   },

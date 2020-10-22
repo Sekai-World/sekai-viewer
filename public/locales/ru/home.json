@@ -7,6 +7,9 @@
     "title": "Новости игры"
   },
   "alert0": "Sekai Viewer теперь в открытом бета-тестировании!",
+  "alert_contributor": {
+    "title": ""
+  },
   "alert_translate": {
     "title": "Спасибо переводчикам!"
   },

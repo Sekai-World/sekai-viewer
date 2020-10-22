@@ -7,6 +7,9 @@
     "title": "Notícias do jogo"
   },
   "alert0": "Sekai Viewer agora está em Open Beta!",
+  "alert_contributor": {
+    "title": ""
+  },
   "alert_translate": {
     "title": "Obrigado aos tradutores!"
   },
