@@ -118,7 +118,7 @@ export function useRealtimeEventData(
     rank100000: [],
   });
 
-  const refrershData = useCallback(async () => {
+  const refreshData = useCallback(async () => {
     const { data }: { data: IEventRealtimeRank } = await Axios.get(
       `https://bitbucket.org/sekai-world/sekai-event-track/raw/main/event${eventId}.json?t=${Date.now()}`
     );
@@ -127,7 +127,7 @@ export function useRealtimeEventData(
     return data;
   }, [eventId, setEventRealtimeData]);
 
-  return [refrershData, eventRealtimeData, eventRealtimeDataRef];
+  return [refreshData, eventRealtimeData, eventRealtimeDataRef];
 }
 
 export const musicCategoryToName: { [key: string]: string } = {

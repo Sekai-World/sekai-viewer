@@ -47,7 +47,7 @@ interface IDetectResult {
   webpAlpha: number;
 }
 
-function getWebpDetectServerity(detected: IDetectResult) {
+function getWebpDetectSeverity(detected: IDetectResult) {
   const sum = detected.webp + detected.webpLossless + detected.webpAlpha;
   switch (sum) {
     case -3:
@@ -267,7 +267,7 @@ function Home() {
         </Alert>
         <Alert
           className={classes.alert}
-          severity={getWebpDetectServerity(detected)}
+          severity={getWebpDetectSeverity(detected)}
         >
           <AlertTitle>WebP {t("common:support")}</AlertTitle>
           <ul>
@@ -277,7 +277,7 @@ function Home() {
             </li>
             <li>WebP Alpha: {getWebpDetectDesc(t, detected.webpAlpha)}</li>
           </ul>
-          {getWebpDetectServerity(detected) === "success" ? (
+          {getWebpDetectSeverity(detected) === "success" ? (
             <Typography>{t("home:detect.success")}</Typography>
           ) : (
             <Typography>

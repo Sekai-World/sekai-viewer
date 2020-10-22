@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const MsuicDetail: React.FC<{
+const MusicDetail: React.FC<{
   contentTransMode: ContentTransModeType;
 }> = ({ contentTransMode }) => {
   const classes = useStyles();
@@ -91,7 +91,7 @@ const MsuicDetail: React.FC<{
   // const [gameCharas] = useCachedData<ICharaProfile>('gameCharacters');
   const [outCharas] = useCachedData<IOutCharaProfile>("outsideCharacters");
   const [releaseConds] = useCachedData<IReleaseCondition>("releaseConditions");
-  const [danceMemebers] = useCachedData<IMusicDanceMembers>(
+  const [danceMembers] = useCachedData<IMusicDanceMembers>(
     "musicDanceMembers"
   );
 
@@ -138,12 +138,12 @@ const MsuicDetail: React.FC<{
   }, [music]);
 
   useEffect(() => {
-    if (danceMemebers.length) {
+    if (danceMembers.length) {
       setMusicDanceMember(
-        danceMemebers.find((elem) => elem.musicId === Number(musicId))
+        danceMembers.find((elem) => elem.musicId === Number(musicId))
       );
     }
-  }, [danceMemebers, musicId]);
+  }, [danceMembers, musicId]);
 
   // useEffect(() => {
   //   if (musicVocalTypes.length) {
@@ -162,7 +162,7 @@ const MsuicDetail: React.FC<{
                 key={chara.characterId}
                 height="42"
                 src={charaIcons[`CharaIcon${chara.characterId}`]}
-                alt={`charachter ${chara.characterId}`}
+                alt={`character ${chara.characterId}`}
               ></img>
             ) : (
               <span>
@@ -226,7 +226,7 @@ const MsuicDetail: React.FC<{
     musicVocals.length &&
     musicDiffis.length &&
     releaseConds.length &&
-    danceMemebers.length ? (
+    danceMembers.length ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
         {contentTransMode === "original"
@@ -682,4 +682,4 @@ const MsuicDetail: React.FC<{
   );
 };
 
-export default MsuicDetail;
+export default MusicDetail;
