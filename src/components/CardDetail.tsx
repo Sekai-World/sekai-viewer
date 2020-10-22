@@ -128,18 +128,18 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   const getCharaName = useCallback(
     (charaId: number) => {
       const chara = charas.find((chara) => chara.id === charaId);
-      if (chara?.firstName) {
+      if (chara?.familyName) {
         switch (contentTransMode) {
           case "original":
-            return `${chara.firstName} ${chara.givenName}`;
+            return `${chara.familyName} ${chara.givenName}`;
           case "translated":
             return ["zh-CN", "zh-TW", "ko", "ja"].includes(assetI18n.language)
               ? `${assetI18n.t(
-                  `character_name:${charaId}.firstName`
+                  `character_name:${charaId}.familyName`
                 )} ${assetI18n.t(`character_name:${charaId}.givenName`)}`
               : `${assetI18n.t(
                   `character_name:${charaId}.givenName`
-                )} ${assetI18n.t(`character_name:${charaId}.firstName`)}`;
+                )} ${assetI18n.t(`character_name:${charaId}.familyName`)}`;
         }
       }
       return chara?.givenName;

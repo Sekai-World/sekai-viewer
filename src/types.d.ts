@@ -95,9 +95,9 @@ export interface ICharaProfile {
   id: number;
   seq: number;
   resourceId: number;
-  firstName: string;
+  familyName: string;
   givenName: string;
-  firstNameRuby: string;
+  familyNameRuby: string;
   givenNameRuby: string;
   gender: string;
   height: number;
