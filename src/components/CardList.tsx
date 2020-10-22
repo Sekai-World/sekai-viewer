@@ -55,10 +55,6 @@ const useStyles = makeStyles((theme) => ({
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
-    // [theme.breakpoints.down("md")]: {
-    //   maxWidth: "200px",
-    // },
-    maxWidth: "250px",
   },
   agendaWrapper: {
     display: "block",
@@ -83,10 +79,7 @@ const useStyles = makeStyles((theme) => ({
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
-    [theme.breakpoints.down("sm")]: {
-      maxWidth: "100%",
-    },
-    maxWidth: "210px",
+    maxWidth: "100%",
   },
 }));
 
@@ -454,7 +447,7 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                   </Grid>
                 ) : null}
               </Grid>
-              <Grid item>
+              <Grid item style={{ width: "100%" }}>
                 <Typography
                   classes={{ root: classes.comfyPrefix }}
                   variant="body1"
