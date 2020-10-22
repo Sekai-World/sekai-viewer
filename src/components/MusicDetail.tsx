@@ -195,12 +195,12 @@ const MusicDetail: React.FC<{
   );
 
   useEffect(() => {
-    if (musicVocal && musicVocal[selectedVocalType]) {
+    if (musicVocal && musicVocal[selectedVocalType] && music) {
       const url = `https://sekai-res.dnaroma.eu/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`;
       Axios.head(url).then(
         (res) => {
           const bytes = Number(res.headers["content-length"]);
-          const seconds = ((bytes / 320) * 8) / 1000;
+          const seconds = ((bytes / 320) * 8) / 1000 - music.fillerSec;
           setActualPlaybackTime(
             `${seconds.toFixed(1)}s (${Math.floor(seconds / 60)}m${(
               seconds % 60
@@ -212,7 +212,7 @@ const MusicDetail: React.FC<{
         }
       );
     }
-  }, [musicVocal, selectedVocalType]);
+  }, [musicVocal, selectedVocalType, music]);
 
   const VocalTypeSelector: JSX.Element = useMemo(() => {
     return (
@@ -416,7 +416,7 @@ const MusicDetail: React.FC<{
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
               {t("music:actual-playback-time")}
             </Typography>
-            {actualPlaybackTime}
+            <Typography>{actualPlaybackTime}</Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
           <Grid
