@@ -52,10 +52,6 @@ const useStyles = makeStyles((theme) => ({
     "white-space": "nowrap",
     overflow: "hidden",
     "text-overflow": "ellipsis",
-    [theme.breakpoints.down("md")]: {
-      "max-width": "200px",
-    },
-    "max-width": "250px",
   },
   agendaWrapper: {
     display: "block",
