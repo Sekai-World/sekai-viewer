@@ -2,6 +2,7 @@
   "alert[0]": "每首歌曲的<b>前九秒</b>是無聲的。這不是Bug！",
   "tag": "標簽",
   "category": "類別",
+  "actual-playback-time": "實際播放時長",
   "arranger": "編曲",
   "composer": "作曲",
   "lyricist": "作詞",

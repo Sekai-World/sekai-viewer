@@ -41,6 +41,7 @@ import MusicVideoPlayer from "./subs/MusicVideoPlayer";
 import { charaIcons } from "../utils/resources";
 import { Trans, useTranslation } from "react-i18next";
 import { getAssetI18n } from "../utils/i18n";
+import Axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -91,9 +92,7 @@ const MusicDetail: React.FC<{
   // const [gameCharas] = useCachedData<ICharaProfile>('gameCharacters');
   const [outCharas] = useCachedData<IOutCharaProfile>("outsideCharacters");
   const [releaseConds] = useCachedData<IReleaseCondition>("releaseConditions");
-  const [danceMembers] = useCachedData<IMusicDanceMembers>(
-    "musicDanceMembers"
-  );
+  const [danceMembers] = useCachedData<IMusicDanceMembers>("musicDanceMembers");
 
   const { musicId } = useParams<{ musicId: string }>();
 
@@ -110,6 +109,7 @@ const MusicDetail: React.FC<{
   const [vocalDisabled, setVocalDisabled] = useState<boolean>(false);
   const [vocalInfoTabVal, setVocalInfoTabVal] = useState<string>("0");
   const [diffiInfoTabVal, setDiffiInfoTabVal] = useState<string>("4");
+  const [actualPlaybackTime, setActualPlaybackTime] = useState<string>("");
 
   useEffect(() => {
     if (musics.length) {
@@ -193,6 +193,26 @@ const MusicDetail: React.FC<{
     },
     []
   );
+
+  useEffect(() => {
+    if (musicVocal && musicVocal[selectedVocalType]) {
+      const url = `https://sekai-res.dnaroma.eu/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`;
+      Axios.head(url).then(
+        (res) => {
+          const bytes = Number(res.headers["content-length"]);
+          const seconds = ((bytes / 320) * 8) / 1000;
+          setActualPlaybackTime(
+            `${seconds.toFixed(1)}s (${Math.floor(seconds / 60)}m${(
+              seconds % 60
+            ).toFixed(1)}s)`
+          );
+        },
+        (reason) => {
+          console.log(reason);
+        }
+      );
+    }
+  }, [musicVocal, selectedVocalType]);
 
   const VocalTypeSelector: JSX.Element = useMemo(() => {
     return (
@@ -384,6 +404,19 @@ const MusicDetail: React.FC<{
                 {musicCategoryToName[elem] || elem}
               </Typography>
             ))}
+          </Grid>
+          <Divider style={{ margin: "1% 0" }} />
+          <Grid
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+              {t("music:actual-playback-time")}
+            </Typography>
+            {actualPlaybackTime}
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
           <Grid

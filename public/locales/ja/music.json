@@ -2,6 +2,7 @@
   "alert[0]": "全ての曲の最初の<b>9秒</b>は無音です.これはバグではありません.",
   "tag": "タグ",
   "category": "カテゴリー",
+  "actual-playback-time": "",
   "arranger": "編曲",
   "composer": "作曲",
   "lyricist": "作詞",
