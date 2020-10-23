@@ -1,5 +1,6 @@
 {
   "alert[0]": "",
+  "skipBeginningSilence": "",
   "tag": "",
   "tag_plural": "",
   "category": "",
