@@ -14,6 +14,8 @@ import {
   FormControl,
   Select,
   MenuItem,
+  Chip,
+  Avatar,
 } from "@material-ui/core";
 import { useLayoutStyles } from "../styles/layout";
 import { Sort, SortOutlined, ViewAgenda, ViewComfy } from "@material-ui/icons";
@@ -26,7 +28,13 @@ import {
   ViewGrid,
   ViewGridOutline,
 } from "mdi-material-ui";
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
 import { Link, useRouteMatch } from "react-router-dom";
 import {
   ContentTransModeType,
@@ -42,6 +50,8 @@ import InfiniteScroll from "./subs/InfiniteScroll";
 import { useTranslation } from "react-i18next";
 import { useFilterStyles } from "../styles/filter";
 import { getAssetI18n } from "../utils/i18n";
+import { characterSelectReducer } from "../stores/reducers";
+import { charaIcons } from "../utils/resources";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -130,13 +140,15 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   const { t } = useTranslation();
   const assetI18n = getAssetI18n();
 
-  const [cardsCache, cardsCacheRef] = useCachedData<ICardInfo>("cards");
+  const [cardsCache] = useCachedData<ICardInfo>("cards");
   const [charas] = useCachedData<ICharaProfile>("gameCharacters");
   const [rarities] = useCachedData<ICardRarity>("cardRarities");
   const [episodes] = useCachedData<ICardEpisode>("cardEpisodes");
 
   const [cards, setCards] = useState<ICardInfo[]>([]);
-  const [sortedCache, setSortedCache] = useState<ICardInfo[]>([]);
+  const [sortedCache, sortedCacheRef, setSortedCache] = useRefState<
+    ICardInfo[]
+  >([]);
   const [viewGridType, setViewGridType] = useState<string>(
     localStorage.getItem("card-list-grid-view-type") || "grid"
   );
@@ -151,6 +163,10 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   const [sortBy, setSortBy] = useState<string>(
     localStorage.getItem("card-list-filter-sort-by") || "id"
   );
+  const [characterSelected, dispatchCharacterSelected] = useReducer(
+    characterSelectReducer,
+    []
+  );
 
   const callback = (
     entries: IntersectionObserverEntry[],
@@ -160,14 +176,14 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
     if (
       entries[0].isIntersecting &&
       lastQueryFinRef.current &&
-      (!cardsCacheRef.current.length ||
-        cardsCacheRef.current.length > pageRef.current * limitRef.current)
+      (!sortedCacheRef.current.length ||
+        sortedCacheRef.current.length > pageRef.current * limitRef.current)
     ) {
       setPage((page) => page + 1);
       setLastQueryFin(false);
     } else if (
-      cardsCacheRef.current.length &&
-      cardsCacheRef.current.length <= pageRef.current * limitRef.current
+      sortedCacheRef.current.length &&
+      sortedCacheRef.current.length <= pageRef.current * limitRef.current
     ) {
       setHasMore(false);
     }
@@ -183,33 +199,46 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
 
   useEffect(() => {
     if (cardsCache.length && rarities.length && episodes.length) {
+      let result = cardsCache;
+      // do filter
+      if (characterSelected.length) {
+        result = result.filter((c) =>
+          characterSelected.includes(c.characterId)
+        );
+      }
       // temporarily sort cards cache
       switch (sortBy) {
         case "id":
         case "rarity":
         case "releaseAt":
-          setSortedCache(
-            [...cardsCache].sort((a, b) =>
-              sortType === "asc" ? a[sortBy] - b[sortBy] : b[sortBy] - a[sortBy]
-            )
+          result = [...result].sort((a, b) =>
+            sortType === "asc" ? a[sortBy] - b[sortBy] : b[sortBy] - a[sortBy]
           );
           break;
         case "power":
-          setSortedCache(
-            [...cardsCache].sort((a, b) =>
-              sortType === "asc"
-                ? getMaxParam(a, rarities, episodes) -
-                  getMaxParam(b, rarities, episodes)
-                : getMaxParam(b, rarities, episodes) -
-                  getMaxParam(a, rarities, episodes)
-            )
+          result = [...result].sort((a, b) =>
+            sortType === "asc"
+              ? getMaxParam(a, rarities, episodes) -
+                getMaxParam(b, rarities, episodes)
+              : getMaxParam(b, rarities, episodes) -
+                getMaxParam(a, rarities, episodes)
           );
           break;
       }
+      setSortedCache(result);
       setCards([]);
       setPage(0);
     }
-  }, [cardsCache, sortBy, sortType, setPage, rarities, episodes]);
+  }, [
+    cardsCache,
+    sortBy,
+    sortType,
+    setPage,
+    rarities,
+    episodes,
+    setSortedCache,
+    characterSelected,
+  ]);
 
   useEffect(() => {
     if (sortedCache.length) {
@@ -535,7 +564,56 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
           </ButtonGroup>
         </Grid>
         <Collapse in={filterOpened}>
-          <Grid container className={filterClasses.filterArea}>
+          <Grid container className={filterClasses.filterArea} spacing={1}>
+            <Grid
+              item
+              container
+              xs={12}
+              alignItems="center"
+              justify="space-between"
+            >
+              <Grid item xs={12} md={2}>
+                <Typography classes={{ root: filterClasses.filterCaption }}>
+                  {t("filter:character.caption")}
+                </Typography>
+              </Grid>
+              <Grid item container xs={12} md={9} spacing={1}>
+                {Array.from({ length: 26 }).map((_, idx) => (
+                  <Grid item>
+                    <Chip
+                      clickable
+                      color={
+                        characterSelected.includes(idx + 1)
+                          ? "primary"
+                          : "default"
+                      }
+                      avatar={
+                        <Avatar
+                          alt={getCharaName(idx + 1)}
+                          src={
+                            charaIcons[`CharaIcon${idx + 1}` as "CharaIcon1"]
+                          }
+                        />
+                      }
+                      label={getCharaName(idx + 1)}
+                      onClick={() => {
+                        if (characterSelected.includes(idx + 1)) {
+                          dispatchCharacterSelected({
+                            type: "remove",
+                            payload: idx + 1,
+                          });
+                        } else {
+                          dispatchCharacterSelected({
+                            type: "add",
+                            payload: idx + 1,
+                          });
+                        }
+                      }}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            </Grid>
             <Grid
               item
               container
@@ -548,43 +626,49 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                   {t("filter:sort.caption")}
                 </Typography>
               </Grid>
-              <Grid item xs={12} md={9}>
-                <FormControl variant="outlined">
-                  <Select
-                    value={sortType}
-                    onChange={(e) => {
-                      setSortType(e.target.value as string);
-                      localStorage.setItem(
-                        "card-list-filter-sort-type",
-                        e.target.value as string
-                      );
-                    }}
-                  >
-                    <MenuItem value="asc">
-                      {t("filter:sort.ascending")}
-                    </MenuItem>
-                    <MenuItem value="desc">
-                      {t("filter:sort.descending")}
-                    </MenuItem>
-                  </Select>
-                </FormControl>
-                <FormControl variant="outlined">
-                  <Select
-                    value={sortBy}
-                    onChange={(e) => {
-                      setSortBy(e.target.value as string);
-                      localStorage.setItem(
-                        "card-list-filter-sort-by",
-                        e.target.value as string
-                      );
-                    }}
-                  >
-                    <MenuItem value="id">{t("common:id")}</MenuItem>
-                    <MenuItem value="rarity">{t("common:rarity")}</MenuItem>
-                    <MenuItem value="releaseAt">{t("common:startAt")}</MenuItem>
-                    <MenuItem value="power">{t("card:power")}</MenuItem>
-                  </Select>
-                </FormControl>
+              <Grid item container xs={12} md={9} spacing={1}>
+                <Grid item>
+                  <FormControl>
+                    <Select
+                      value={sortType}
+                      onChange={(e) => {
+                        setSortType(e.target.value as string);
+                        localStorage.setItem(
+                          "card-list-filter-sort-type",
+                          e.target.value as string
+                        );
+                      }}
+                    >
+                      <MenuItem value="asc">
+                        {t("filter:sort.ascending")}
+                      </MenuItem>
+                      <MenuItem value="desc">
+                        {t("filter:sort.descending")}
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item>
+                  <FormControl>
+                    <Select
+                      value={sortBy}
+                      onChange={(e) => {
+                        setSortBy(e.target.value as string);
+                        localStorage.setItem(
+                          "card-list-filter-sort-by",
+                          e.target.value as string
+                        );
+                      }}
+                    >
+                      <MenuItem value="id">{t("common:id")}</MenuItem>
+                      <MenuItem value="rarity">{t("common:rarity")}</MenuItem>
+                      <MenuItem value="releaseAt">
+                        {t("common:startAt")}
+                      </MenuItem>
+                      <MenuItem value="power">{t("card:power")}</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
