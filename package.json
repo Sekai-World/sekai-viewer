@@ -22,11 +22,14 @@
     "@types/react-router-dom": "^5.1.6",
     "axios": "^0.20.0",
     "cron": "^1.8.2",
+    "eslint-config-prettier": "^6.14.0",
+    "eslint-plugin-prettier": "^3.1.4",
     "humanize-duration": "^3.24.0",
     "i18next": "^19.8.2",
     "i18next-browser-languagedetector": "^6.0.1",
     "i18next-fetch-backend": "^3.0.0",
     "mdi-material-ui": "^6.20.0",
+    "prettier": "^2.1.2",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-i18next": "^11.7.3",
@@ -44,9 +47,6 @@
     "eject": "react-scripts eject",
     "exti18n": "i18next -c ./i18next-parser.config.js -s",
     "commit": "cz"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
   },
   "browserslist": {
     "production": [
