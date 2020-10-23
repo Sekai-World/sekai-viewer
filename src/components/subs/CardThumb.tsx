@@ -1,4 +1,4 @@
-import { Box, Grid, makeStyles } from "@material-ui/core";
+import { Grid, makeStyles } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import React, { useEffect, useState } from "react";
 import { ICardInfo } from "../../types";
@@ -19,37 +19,10 @@ import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
 
 const useStyles = makeStyles((theme) => ({
-  img: {
+  svg: {
+    display: "block",
     width: "100%",
     height: "100%",
-  },
-  frame: {
-    width: "100%",
-    height: "97%",
-  },
-  attr: {
-    width: "25%",
-    height: "25%",
-  },
-  "rarity-0": {
-    width: "15%",
-    height: "15%",
-    left: "5%",
-  },
-  "rarity-1": {
-    width: "15%",
-    height: "15%",
-    left: "20%",
-  },
-  "rarity-2": {
-    width: "15%",
-    height: "15%",
-    left: "35%",
-  },
-  "rarity-3": {
-    width: "15%",
-    height: "15%",
-    left: "50%",
   },
   skeleton: {
     width: "100%",
@@ -76,62 +49,59 @@ export const CardThumb: React.FC<{ id: number; trained?: boolean }> = ({
   id,
   trained,
 }) => {
+  trained = trained || false;
+
+  const skeleton = CardThumbSkeleton({});
+
   const classes = useStyles();
   const [cards] = useCachedData<ICardInfo>("cards");
-  trained = trained || false;
-  const rarityIcon = trained ? rarityAfterTraining : rarityNormal;
   const [card, setCard] = useState<ICardInfo>();
 
   useEffect(() => {
     if (cards.length) setCard(cards.find((elem) => elem.id === id));
   }, [cards, id]);
 
-  const skeleton = CardThumbSkeleton({});
+  const rarityIcon = trained ? rarityAfterTraining : rarityNormal;
 
   return card ? (
-    <Box position="relative">
-      <img
-        src={`${
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 156 156"
+      className={classes.svg}
+    >
+      <image
+        href={`${
           process.env.REACT_APP_ASSET_DOMAIN
         }/file/sekai-assets/thumbnail/chara_rip/${card.assetbundleName}_${
           trained ? "after_training" : "normal"
         }.webp`}
-        alt={card.prefix}
-        className={classes.img}
-        width="128px"
-        height="128px"
-        style={{ paddingTop: "2%", paddingLeft: "2%" }}
+        x="8"
+        y="8"
+        height="140"
+        width="140"
       />
-      <img
-        className={classes.frame}
-        src={cardFrameRarity[String(card.rarity)]}
-        alt="card frame"
-        style={{ position: "absolute", zIndex: 999, top: "0px", left: "0px" }}
+      {/* frame */}
+      <image
+        href={cardFrameRarity[String(card.rarity)]}
+        x="0"
+        y="0"
+        height="156"
+        width="156"
       />
-      <img
-        className={classes.attr}
-        src={attrIconMap[card.attr]}
-        alt="card attr"
-        style={{ position: "absolute", zIndex: 999, top: "0px", left: "0px" }}
-      />
-      {Array.from({ length: card.rarity }).map((v, idx) => (
-        <img
-          key={`card-rarity-${idx}`}
-          className={
-            classes[
-              `rarity-${idx}` as
-                | "rarity-0"
-                | "rarity-1"
-                | "rarity-2"
-                | "rarity-3"
-            ]
-          }
-          src={rarityIcon}
-          alt={`card rarity ${idx}`}
-          style={{ position: "absolute", zIndex: 999, bottom: "7%" }}
+      {/* attr */}
+      <image href={attrIconMap[card.attr]} x="0" y="0" width="35" height="35" />
+      {/* rarity */}
+      {Array.from({ length: card.rarity }).map((_, i) => (
+        <image
+          key={`card-rarity-${i}`}
+          href={rarityIcon}
+          x={i * 22 + 8}
+          y="124"
+          width="22"
+          height="22"
         />
       ))}
-    </Box>
+    </svg>
   ) : (
     skeleton
   );
