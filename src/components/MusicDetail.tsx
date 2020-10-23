@@ -14,6 +14,7 @@ import {
   Tabs,
   Typography,
   Container,
+  Switch,
 } from "@material-ui/core";
 import { useLayoutStyles } from "../styles/layout";
 import { Alert, TabContext, TabPanel } from "@material-ui/lab";
@@ -41,6 +42,7 @@ import { charaIcons } from "../utils/resources";
 import { Trans, useTranslation } from "react-i18next";
 import { getAssetI18n } from "../utils/i18n";
 import { useDurationI18n } from "../utils/i18nDuration";
+import { useTrimMP3 } from "../utils/trimMP3";
 import MusicVideoPlayer from "./subs/MusicVideoPlayer";
 
 const useStyles = makeStyles((theme) => ({
@@ -83,6 +85,7 @@ const MusicDetail: React.FC<{
   const { t } = useTranslation();
   const assetI18n = getAssetI18n();
   const [, humanizeDurationShort] = useDurationI18n();
+  const [trimmedMP3URL, setTrimOptions] = useTrimMP3();
 
   const [musics] = useCachedData<IMusicInfo>("musics");
   const [musicVocals] = useCachedData<IMusicVocalInfo>("musicVocals");
@@ -111,6 +114,7 @@ const MusicDetail: React.FC<{
   const [vocalInfoTabVal, setVocalInfoTabVal] = useState<string>("0");
   const [diffiInfoTabVal, setDiffiInfoTabVal] = useState<string>("4");
   const [actualPlaybackTime, setActualPlaybackTime] = useState<string>("");
+  const [trimSilence, setTrimSilence] = useState<boolean>(false);
 
   useEffect(() => {
     if (musics.length) {
@@ -145,6 +149,17 @@ const MusicDetail: React.FC<{
       );
     }
   }, [danceMembers, musicId]);
+
+  useEffect(() => {
+    if (musicVocal && musicVocal[selectedVocalType] && music) {
+      const url = `https://sekai-res.dnaroma.eu/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`;
+      setTrimOptions({
+        sourceURL: url,
+        trimDuration: music.fillerSec,
+        inclusive: false,
+      });
+    }
+  }, [music, musicVocal, selectedVocalType, setTrimOptions]);
 
   // useEffect(() => {
   //   if (musicVocalTypes.length) {
@@ -188,7 +203,7 @@ const MusicDetail: React.FC<{
           key={characterId}
           height="42"
           src={charaIcons[`CharaIcon${characterId}`]}
-          alt={`charachter ${characterId}`}
+          alt={`character ${characterId}`}
         ></img>
       );
     },
@@ -318,8 +333,22 @@ const MusicDetail: React.FC<{
                   <audio
                     controls
                     style={{ width: "100%" }}
-                    src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`}
+                    src={
+                      trimSilence && trimmedMP3URL
+                        ? trimmedMP3URL
+                        : `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`
+                    }
                   ></audio>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        disabled={!trimmedMP3URL}
+                        checked={trimSilence}
+                        onChange={() => setTrimSilence((v) => !v)}
+                      />
+                    }
+                    label={t("music:skipBeginningSilence")}
+                  ></FormControlLabel>
                 </Fragment>
               ) : null}
             </TabPanel>
