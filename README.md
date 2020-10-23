@@ -4,7 +4,7 @@
 ![GitHub forks](https://img.shields.io/github/forks/Sekai-World/sekai-viewer?style=social)
 [![Actions Status](https://github.com/Sekai-World/sekai-viewer/workflows/DeployToGHPages/badge.svg)](https://github.com/Sekai-World/sekai-viewer/actions)
 ![GitHub deployments](https://img.shields.io/github/deployments/Sekai-World/sekai-viewer/github-pages?label=github-pages&style=flat-square)
-![David](https://img.shields.io/david/Sekai-World/sekai-viewer?style=flat-square)
+[![dependencies Status](https://david-dm.org/Sekai-World/sekai-viewer/status.svg?style=flat-square)](https://david-dm.org/Sekai-World/sekai-viewer)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg?style=flat-square)](https://conventionalcommits.org)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
@@ -48,7 +48,6 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
-
 ### `npm run exti18n`
 
 Use `i18next-parser` to extract `i18next` json file from code automatically with configuration file `i18next-parser.config.js`.
@@ -56,6 +55,10 @@ Use `i18next-parser` to extract `i18next` json file from code automatically with
 Generated json files are located in `public/locales/{lang}/{namespace}.json`.
 
 Learn more about [i18next](https://www.i18next.com/) and [react-i18next](https://react.i18next.com/).
+
+### `num run commit`
+
+Run `commitizen` for format a Conventional Commit message easily.
 
 ## Learn More
 
