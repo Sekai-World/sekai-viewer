@@ -185,7 +185,7 @@ const MusicDetail: React.FC<{
   useEffect(() => {
     if (musicVocal && musicVocal[selectedVocalType] && music) {
       setLongMusicPlaybackURL(
-        trimSilence && trimmedMP3URL
+        trimSilence
           ? trimmedMP3URL
           : `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`
       );
@@ -370,15 +370,41 @@ const MusicDetail: React.FC<{
             <TabPanel value="1">
               {musicVocalTypes.length && musicVocal.length ? (
                 <Fragment>
-                  <audio
-                    controls
-                    style={{ width: "100%" }}
-                    src={longMusicPlaybackURL}
-                  ></audio>
+                  <Box
+                    style={{
+                      position: "relative",
+                      lineHeight: "0",
+                    }}
+                  >
+                    <audio
+                      controls
+                      style={{
+                        width: "100%",
+                        opacity: longMusicPlaybackURL ? undefined : "0.8",
+                      }}
+                      src={longMusicPlaybackURL}
+                    ></audio>
+                    {longMusicPlaybackURL ? null : (
+                      <Box
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        style={{
+                          position: "absolute",
+                          left: "0",
+                          top: "0",
+                          width: "100%",
+                          height: "100%",
+                          cursor: "wait",
+                        }}
+                      >
+                        <CircularProgress size={32} />
+                      </Box>
+                    )}
+                  </Box>
                   <FormControlLabel
                     control={
                       <Switch
-                        disabled={!trimmedMP3URL}
                         checked={trimSilence}
                         onChange={() => setTrimSilence((v) => !v)}
                       />
