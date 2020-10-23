@@ -16,6 +16,7 @@ import {
   Container,
 } from "@material-ui/core";
 import { useLayoutStyles } from "../styles/layout";
+import { Alert, TabContext, TabPanel } from "@material-ui/lab";
 import React, {
   Fragment,
   useCallback,
@@ -36,12 +37,11 @@ import {
   IReleaseCondition,
 } from "../types";
 import { musicCategoryToName, musicTagToName, useCachedData } from "../utils";
-import { Alert, TabContext, TabPanel } from "@material-ui/lab";
-import MusicVideoPlayer from "./subs/MusicVideoPlayer";
 import { charaIcons } from "../utils/resources";
 import { Trans, useTranslation } from "react-i18next";
 import { getAssetI18n } from "../utils/i18n";
-import Axios from "axios";
+import { useDurationI18n } from "../utils/i18nDuration";
+import MusicVideoPlayer from "./subs/MusicVideoPlayer";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -82,6 +82,7 @@ const MusicDetail: React.FC<{
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const assetI18n = getAssetI18n();
+  const [, humanizeDurationShort] = useDurationI18n();
 
   const [musics] = useCachedData<IMusicInfo>("musics");
   const [musicVocals] = useCachedData<IMusicVocalInfo>("musicVocals");
@@ -202,12 +203,18 @@ const MusicDetail: React.FC<{
           return;
         }
 
-        const seconds = audio.duration - music.fillerSec;
-        setActualPlaybackTime(
-          `${seconds.toFixed(1)}s (${Math.floor(seconds / 60)}m${(
-            seconds % 60
-          ).toFixed(1)}s)`
-        );
+        const durationMsec = (audio.duration - music.fillerSec) * 1000;
+        setActualPlaybackTime(`${humanizeDurationShort(durationMsec, {
+          units: ["s"],
+          delimiter: " ",
+          spacer: "",
+          maxDecimalPoints: 1,
+        })} (${humanizeDurationShort(durationMsec, {
+          units: ["m", "s"],
+          delimiter: " ",
+          spacer: "",
+          maxDecimalPoints: 1,
+        })})`);
 
         audio = undefined;
       };
@@ -218,7 +225,7 @@ const MusicDetail: React.FC<{
         audio = undefined;
       };
     }
-  }, [musicVocal, selectedVocalType, music]);
+  }, [musicVocal, selectedVocalType, music, humanizeDurationShort]);
 
   const VocalTypeSelector: JSX.Element = useMemo(() => {
     return (
