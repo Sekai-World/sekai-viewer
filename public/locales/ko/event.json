@@ -1,5 +1,5 @@
 {
-  "already-ended": "현재 이벤트는 종료되었습니다",
+  "alreadyEnded": "현재 이벤트는 종료되었습니다",
   "tab": {
     "title[0]": "배너 & 로고",
     "title[1]": "배경",
@@ -14,7 +14,7 @@
   "rankingAnnounceAt": "순위 발표",
   "distributionStartAt": "보상 지급 개시",
   "distributionEndAt": "보상 지급 종료",
-  "ranking": "",
+  "ranking": "랭킹",
   "realtime": "실시간 순위 - 기준시각",
   "nextfetch": "다음 갱신",
   "alreadyPast": "경과일",

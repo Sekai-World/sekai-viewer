@@ -133,7 +133,7 @@ const EventDetail: React.FC<{
           window.clearInterval(interval);
           interval = undefined;
         }
-        setRemainingTime(t("event:already-ended"));
+        setRemainingTime(t("event:alreadyEnded"));
         setPastTimePercent(100);
         return false;
       }

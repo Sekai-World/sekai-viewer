@@ -3,7 +3,7 @@
   "skipBeginningSilence": "跳過開頭的無聲段",
   "tag": "標簽",
   "category": "類別",
-  "actual-playback-time": "實際播放時長",
+  "actualPlaybackTime": "實際播放時長",
   "arranger": "編曲",
   "composer": "作曲",
   "lyricist": "作詞",

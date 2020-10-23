@@ -1,12 +1,12 @@
 {
-  "already-ended": "イベントは既に終了しました",
+  "alreadyEnded": "イベントは既に終了しました",
   "tab": {
     "title[0]": "バナー＆ロゴ",
     "title[1]": "背景",
     "title[2]": "キャラクター"
   },
-  "remainingTime": "",
-  "progress": "",
+  "remainingTime": "残り時間",
+  "progress": "進捗",
   "boostAttribute": "ボーナスタイプ",
   "boostCharacters": "ボーナスキャラクター",
   "maxBoost": "ボーナス(両方一致）",

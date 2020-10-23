@@ -532,7 +532,7 @@ const MusicDetail: React.FC<{
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t("music:actual-playback-time")}
+              {t("music:actualPlaybackTime")}
             </Typography>
             <Typography>{actualPlaybackTime}</Typography>
           </Grid>
