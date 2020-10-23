@@ -40,7 +40,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "exti18n": "i18next -c ./i18next-parser.config.js -s"
+    "exti18n": "i18next -c ./i18next-parser.config.js -s",
+    "commit": "cz"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -59,6 +60,12 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.2",
+    "cz-conventional-changelog": "^3.3.0",
     "i18next-parser": "^3.3.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
