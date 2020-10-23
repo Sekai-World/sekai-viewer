@@ -4,6 +4,13 @@ import { useTranslation } from "react-i18next";
 
 const fallbackLang = "en";
 
+// map from our (i18next's) language code to humanize-duration's language code
+const languageMap = new Map<string, string>([
+  //
+  ["zh-CN", "zh_CN"],
+  ["zh-TW", "zh_TW"],
+]);
+
 const humanizer = createHumanizer({
   languages: {
     // TODO: add langs here
@@ -25,24 +32,26 @@ const humanizer = createHumanizer({
 export function useDurationI18n() {
   const { i18n } = useTranslation();
 
+  const language = languageMap.get(i18n.language) || i18n.language;
+
   const humanize = useCallback(
     (duration: number, options?: HumanizerOptions) =>
       humanizer(duration, {
-        language: i18n.language,
+        language,
         fallbacks: [fallbackLang],
         ...options,
       }),
-    [i18n.language]
+    [language]
   );
 
   const humanizeShort = useCallback(
     (duration: number, options?: HumanizerOptions) =>
       humanizer(duration, {
-        language: `short_${i18n.language}`,
-        fallbacks: [i18n.language, `short_${fallbackLang}`, fallbackLang],
+        language: `short_${language}`,
+        fallbacks: [language, `short_${fallbackLang}`, fallbackLang],
         ...options,
       }),
-    [i18n.language]
+    [language]
   );
 
   return [humanize, humanizeShort] as const;
