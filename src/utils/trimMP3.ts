@@ -82,7 +82,7 @@ export function useTrimMP3() {
         );
 
         if (!trimmed) {
-          // will be catched
+          // will be caught
           throw new Error("trimMP3() failed");
         }
 
