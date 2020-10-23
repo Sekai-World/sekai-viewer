@@ -156,7 +156,12 @@ const MusicDetail: React.FC<{
   }, [danceMembers, musicId]);
 
   useEffect(() => {
-    if (musicVocal && musicVocal[selectedVocalType] && music) {
+    if (
+      vocalTabVal === "1" &&
+      musicVocal &&
+      musicVocal[selectedVocalType] &&
+      music
+    ) {
       const url = `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`;
       setTrimOptions({
         sourceURL: url,
@@ -168,7 +173,14 @@ const MusicDetail: React.FC<{
       setTrimOptions(undefined);
       setTrimLoading(false);
     }
-  }, [music, musicVocal, selectedVocalType, setTrimOptions, setTrimLoading]);
+  }, [
+    music,
+    musicVocal,
+    selectedVocalType,
+    vocalTabVal,
+    setTrimOptions,
+    setTrimLoading,
+  ]);
 
   useEffect(() => {
     if (musicVocal && musicVocal[selectedVocalType] && music) {
