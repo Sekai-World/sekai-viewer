@@ -118,7 +118,28 @@ const EventDetail: React.FC<{
   }, [refreshData, event]);
 
   useEffect(() => {
-    if (event && Date.now() < event.aggregateAt) {
+    if (!event) {
+      return;
+    }
+
+    let interval: number | undefined;
+
+    const update = () => {
+      if (Date.now() > event.aggregateAt) {
+        // event already ended
+        if (interval != null) {
+          window.clearInterval(interval);
+          interval = undefined;
+        }
+        setRemainingTime(t("event:already-ended"));
+        setPastTimePercent(100);
+        return false;
+      }
+
+      const progressPercent = ((Date.now() - event.startAt) /
+        (event.aggregateAt - event.startAt)) *
+        100;
+
       setRemainingTime(
         new Date(
           event.aggregateAt -
@@ -130,54 +151,27 @@ const EventDetail: React.FC<{
           .replace("T", " day(s) ")
           .replace(":", "h ")
           .concat(
-            `m (${(
-              ((Date.now() - event.startAt) /
-                (event.aggregateAt - event.startAt)) *
-              100
-            ).toFixed(1)}%)`
+            `m (${progressPercent.toFixed(1)}%)`
           )
       );
 
-      setPastTimePercent(
-        ((Date.now() - event.startAt) / (event.aggregateAt - event.startAt)) *
-          100
-      );
+      setPastTimePercent(progressPercent);
+      return true;
+    };
 
-      const interval = window.setInterval(() => {
-        if (Date.now() > event.aggregateAt) {
-          window.clearInterval(interval);
-          setRemainingTime(t("event:already-ended"));
-          return;
-        }
-        setRemainingTime(
-          new Date(
-            event.aggregateAt - Date.now() + new Date().getTimezoneOffset()
-          )
-            .toISOString()
-            .substring(8, 16)
-            .replace("T", " day(s) ")
-            .replace(":", "h ")
-            .concat(
-              `m (${(
-                ((Date.now() - event.startAt) /
-                  (event.aggregateAt - event.startAt)) *
-                100
-              ).toFixed(1)}%)`
-            )
-        );
-        setPastTimePercent(
-          ((Date.now() - event.startAt) / (event.aggregateAt - event.startAt)) *
-            100
-        );
-      }, 60000);
-
-      return () => {
-        window.clearInterval(interval);
-      };
-    } else {
-      setRemainingTime(t("event:already-ended"));
-      setPastTimePercent(100);
+    if (!update()) {
+      // event already ended
+      return;
     }
+
+    interval = window.setInterval(update, 60000);
+
+    return () => {
+      if (interval != null) {
+        window.clearInterval(interval);
+        interval = undefined;
+      }
+    };
   }, [event, t]);
 
   function getRankingDegreeImg(reward: EventRankingRewardRange) {
