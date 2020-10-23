@@ -24,6 +24,7 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
+import { characterSelectReducer } from "../stores/reducers";
 import { useFilterStyles } from "../styles/filter";
 import { useLayoutStyles } from "../styles/layout";
 import { ContentTransModeType, ICharaProfile, IStampInfo } from "../types";
@@ -48,25 +49,6 @@ const useStyles = makeStyles((theme) => ({
     "max-width": "260px",
   },
 }));
-
-function characterSelectReducer(
-  state: number[],
-  action: { type: "add" | "remove" | "reset"; payload: number }
-) {
-  switch (action.type) {
-    case "add":
-      return [...state, action.payload];
-    case "remove":
-      return [
-        ...state.slice(0, state.indexOf(action.payload)),
-        ...state.slice(state.indexOf(action.payload) + 1),
-      ];
-    case "reset":
-      return [];
-    default:
-      throw new Error();
-  }
-}
 
 const StampList: React.FC<{
   contentTransMode: ContentTransModeType;
