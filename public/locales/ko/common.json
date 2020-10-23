@@ -6,9 +6,13 @@
   "event": "이벤트",
   "unit": "유닛",
   "member": "멤버",
+  "musicMeta": "",
+  "scoreCalculator": "",
   "toolbar": {
     "title": "메뉴"
   },
+  "information": "정보",
+  "tools": "",
   "settings": {
     "title": "설정"
   },
@@ -41,7 +45,6 @@
     "supported": "지원"
   },
   "support": "지원",
-  "information": "정보",
   "campaign": "캠페인",
   "bug": "버그",
   "update": "업데이트",

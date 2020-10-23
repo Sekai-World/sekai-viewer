@@ -6,9 +6,13 @@
   "event": "",
   "unit": "",
   "member": "",
+  "musicMeta": "",
+  "scoreCalculator": "",
   "toolbar": {
     "title": ""
   },
+  "information": "",
+  "tools": "",
   "settings": {
     "title": ""
   },
@@ -41,7 +45,6 @@
     "supported": ""
   },
   "support": "",
-  "information": "",
   "campaign": "",
   "bug": "",
   "update": "",

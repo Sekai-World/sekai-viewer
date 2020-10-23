@@ -6,9 +6,13 @@
   "event": "Ивенты",
   "unit": "Юниты",
   "member": "Участники",
+  "musicMeta": "",
+  "scoreCalculator": "",
   "toolbar": {
     "title": "Функции"
   },
+  "information": "Информация",
+  "tools": "",
   "settings": {
     "title": "Настройки"
   },
@@ -41,7 +45,6 @@
     "supported": "Поддерживается"
   },
   "support": "Поддержка",
-  "information": "Информация",
   "campaign": "Компания",
   "bug": "Баги",
   "update": "Обновления",

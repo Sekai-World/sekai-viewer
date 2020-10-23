@@ -6,9 +6,13 @@
   "event": "活动",
   "unit": "组合",
   "member": "成员",
+  "musicMeta": "歌曲Meta",
+  "scoreCalculator": "分数计算器",
   "toolbar": {
     "title": "功能列表"
   },
+  "information": "信息",
+  "tools": "工具",
   "settings": {
     "title": "设置"
   },
@@ -41,7 +45,6 @@
     "supported": "支持"
   },
   "support": "支持",
-  "information": "信息",
   "campaign": "纪念活动",
   "bug": "问题",
   "update": "更新",

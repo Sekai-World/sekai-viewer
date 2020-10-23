@@ -6,9 +6,13 @@
   "event": "Event",
   "unit": "Gruppen",
   "member": "Mitglider",
+  "musicMeta": "",
+  "scoreCalculator": "",
   "toolbar": {
     "title": "Funktionen"
   },
+  "information": "Information",
+  "tools": "",
   "settings": {
     "title": "Einstellungen"
   },
@@ -41,7 +45,6 @@
     "supported": "Unterstützt"
   },
   "support": "Unterstützung",
-  "information": "Information",
   "campaign": "Kampagne",
   "bug": "Fehler",
   "update": "Update",

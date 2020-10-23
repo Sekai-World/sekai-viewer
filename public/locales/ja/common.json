@@ -6,9 +6,13 @@
   "event": "イベント",
   "unit": "ユニット",
   "member": "メンバー",
+  "musicMeta": "",
+  "scoreCalculator": "",
   "toolbar": {
     "title": "機能一覧"
   },
+  "information": "情報",
+  "tools": "",
   "settings": {
     "title": "設定"
   },
@@ -41,7 +45,6 @@
     "supported": "サポートされています"
   },
   "support": "サポート",
-  "information": "情報",
   "campaign": "キャンペーン",
   "bug": "バグ",
   "update": "アップデート",

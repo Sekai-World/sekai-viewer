@@ -19,6 +19,7 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  ListSubheader,
   makeStyles,
   Radio,
   RadioGroup,
@@ -40,8 +41,14 @@ import {
   Brightness7,
   BrightnessAuto,
   ControlCamera,
+  QueueMusic,
 } from "@material-ui/icons";
-import { Account, AccountGroup, CalendarText } from "mdi-material-ui";
+import {
+  Account,
+  AccountGroup,
+  Calculator,
+  CalendarText,
+} from "mdi-material-ui";
 import React, { forwardRef, useMemo, lazy, Suspense } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -115,11 +122,11 @@ interface IListItemLinkProps {
   text: string;
   to: string;
   disabled: boolean;
-  theme?: Theme;
+  children?: IListItemLinkProps[];
 }
 
 function ListItemLink(
-  props: IListItemLinkProps
+  props: IListItemLinkProps & { theme: Theme }
 ): React.ReactElement<IListItemLinkProps> {
   const { icon, text, to, theme } = props;
   const match = useRouteMatch({
@@ -171,55 +178,71 @@ function App() {
   const { t, i18n } = useTranslation();
   const assetI18n = getAssetI18n();
 
-  const leftBtns: IListItemLinkProps[] = [
-    {
-      text: t("common:home"),
-      icon: <HomeIcon></HomeIcon>,
-      to: "/",
-      disabled: false,
-    },
-    {
-      text: t("common:card"),
-      icon: <AspectRatioIcon></AspectRatioIcon>,
-      to: "/card",
-      disabled: false,
-    },
-    {
-      text: t("common:music"),
-      icon: <AlbumIcon></AlbumIcon>,
-      to: "/music",
-      disabled: false,
-    },
-    {
-      text: t("common:gacha"),
-      icon: <MoveToInboxIcon></MoveToInboxIcon>,
-      to: "/gacha",
-      disabled: false,
-    },
-    {
-      text: t("common:event"),
-      icon: <CalendarText></CalendarText>,
-      to: "/event",
-      disabled: false,
-    },
-    {
-      text: t("common:unit"),
-      icon: <AccountGroup></AccountGroup>,
-      to: "/unit",
-      disabled: true,
-    },
-    {
-      text: t("common:member"),
-      icon: <Account></Account>,
-      to: "/member",
-      disabled: true,
-    },
-    {
-      text: "Live2D",
-      icon: <ControlCamera></ControlCamera>,
-      to: "/live2d",
-      disabled: true,
-    },
+  const leftBtns: IListItemLinkProps[][] = [
+    [
+      {
+        text: t("common:home"),
+        icon: <HomeIcon></HomeIcon>,
+        to: "/",
+        disabled: false,
+      },
+      {
+        text: t("common:card"),
+        icon: <AspectRatioIcon></AspectRatioIcon>,
+        to: "/card",
+        disabled: false,
+      },
+      {
+        text: t("common:music"),
+        icon: <AlbumIcon></AlbumIcon>,
+        to: "/music",
+        disabled: false,
+      },
+      {
+        text: t("common:gacha"),
+        icon: <MoveToInboxIcon></MoveToInboxIcon>,
+        to: "/gacha",
+        disabled: false,
+      },
+      {
+        text: t("common:event"),
+        icon: <CalendarText></CalendarText>,
+        to: "/event",
+        disabled: false,
+      },
+      {
+        text: t("common:unit"),
+        icon: <AccountGroup></AccountGroup>,
+        to: "/unit",
+        disabled: true,
+      },
+      {
+        text: t("common:member"),
+        icon: <Account></Account>,
+        to: "/member",
+        disabled: true,
+      },
+      {
+        text: "Live2D",
+        icon: <ControlCamera></ControlCamera>,
+        to: "/live2d",
+        disabled: true,
+      },
+    ],
+    [
+      {
+        text: t("common:musicMeta"),
+        icon: <QueueMusic />,
+        to: "/music_meta",
+        disabled: true,
+      },
+      {
+        text: t("common:scoreCalculator"),
+        icon: <Calculator />,
+        to: "/score_calc",
+        disabled: true,
+      },
+    ],
   ];
   // const theme = useTheme();
   const classes = useStyles();
@@ -280,7 +303,22 @@ function App() {
       </div>
       <Divider></Divider>
       <List>
-        {leftBtns.map((elem) => {
+        <ListSubheader>{t("common:information")}</ListSubheader>
+        {leftBtns[0].map((elem) => {
+          return (
+            <ListItem disabled={elem.disabled} button key={elem.to}>
+              <ListItemLink
+                to={elem.to}
+                text={elem.text}
+                icon={elem.icon}
+                disabled={elem.disabled}
+                theme={theme}
+              ></ListItemLink>
+            </ListItem>
+          );
+        })}
+        <ListSubheader>{t("common:tools")}</ListSubheader>
+        {leftBtns[1].map((elem) => {
           return (
             <ListItem disabled={elem.disabled} button key={elem.to}>
               <ListItemLink

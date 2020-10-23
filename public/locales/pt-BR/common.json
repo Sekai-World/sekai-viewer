@@ -6,9 +6,13 @@
   "event": "Evento",
   "unit": "Unidade (Unit)",
   "member": "Membros",
+  "musicMeta": "",
+  "scoreCalculator": "",
   "toolbar": {
     "title": "Lista de Funções"
   },
+  "information": "Informação",
+  "tools": "",
   "settings": {
     "title": "Opções"
   },
@@ -41,7 +45,6 @@
     "supported": "Suportado"
   },
   "support": "Suporte",
-  "information": "Informação",
   "campaign": "Campanha",
   "bug": "Bug",
   "update": "Atualização",
