@@ -53,8 +53,8 @@ interface TrimOptions {
 }
 
 export function useTrimMP3() {
-  const [options, setOptions] = useState<TrimOptions>();
-  const [trimmedMP3URL, setTrimmedMP3URL] = useState<string>("");
+  const [options, setOptions] = useState<TrimOptions | undefined>();
+  const [trimmedMP3URL, setTrimmedMP3URL] = useState<string | undefined>();
 
   useEffect(() => {
     if (!options) {
