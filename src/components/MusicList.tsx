@@ -113,13 +113,15 @@ const MusicList: React.FC<{
   const { t } = useTranslation();
   const assetI18n = getAssetI18n();
 
-  const [musicsCache, musicsCacheRef] = useCachedData<IMusicInfo>("musics");
+  const [musicsCache] = useCachedData<IMusicInfo>("musics");
   const [musicDiffis] = useCachedData<IMusicDifficultyInfo>(
     "musicDifficulties"
   );
 
   const [musics, setMusics] = useState<IMusicInfo[]>([]);
-  const [sortedCache, setSortedCache] = useState<IMusicInfo[]>([]);
+  const [sortedCache, sortedCacheRef, setSortedCache] = useRefState<
+    IMusicInfo[]
+  >([]);
   const [viewGridType, setViewGridType] = useState<string>(
     localStorage.getItem("music-list-grid-view-type") || "grid"
   );
@@ -160,7 +162,7 @@ const MusicList: React.FC<{
       setMusics([]);
       setPage(0);
     }
-  }, [musicsCache, sortBy, sortType, setPage]);
+  }, [musicsCache, sortBy, sortType, setPage, setSortedCache]);
 
   useEffect(() => {
     if (sortedCache.length) {
@@ -180,14 +182,14 @@ const MusicList: React.FC<{
     if (
       entries[0].isIntersecting &&
       lastQueryFinRef.current &&
-      (!musicsCacheRef.current.length ||
-        musicsCacheRef.current.length > pageRef.current * limitRef.current)
+      (!sortedCacheRef.current.length ||
+        sortedCacheRef.current.length > pageRef.current * limitRef.current)
     ) {
       setPage((page) => page + 1);
       setLastQueryFin(false);
     } else if (
-      musicsCacheRef.current.length &&
-      musicsCacheRef.current.length <= pageRef.current * limitRef.current
+      sortedCacheRef.current.length &&
+      sortedCacheRef.current.length <= pageRef.current * limitRef.current
     ) {
       setHasMore(false);
     }
@@ -435,43 +437,47 @@ const MusicList: React.FC<{
                   {t("filter:sort.caption")}
                 </Typography>
               </Grid>
-              <Grid item xs={12} md={9}>
-                <FormControl variant="outlined">
-                  <Select
-                    value={sortType}
-                    onChange={(e) => {
-                      setSortType(e.target.value as string);
-                      localStorage.setItem(
-                        "music-list-filter-sort-type",
-                        e.target.value as string
-                      );
-                    }}
-                  >
-                    <MenuItem value="asc">
-                      {t("filter:sort.ascending")}
-                    </MenuItem>
-                    <MenuItem value="desc">
-                      {t("filter:sort.descending")}
-                    </MenuItem>
-                  </Select>
-                </FormControl>
-                <FormControl variant="outlined">
-                  <Select
-                    value={sortBy}
-                    onChange={(e) => {
-                      setSortBy(e.target.value as string);
-                      localStorage.setItem(
-                        "music-list-filter-sort-by",
-                        e.target.value as string
-                      );
-                    }}
-                  >
-                    <MenuItem value="id">{t("common:id")}</MenuItem>
-                    <MenuItem value="publishedAt">
-                      {t("common:startAt")}
-                    </MenuItem>
-                  </Select>
-                </FormControl>
+              <Grid item container xs={12} md={9} spacing={1}>
+                <Grid item>
+                  <FormControl>
+                    <Select
+                      value={sortType}
+                      onChange={(e) => {
+                        setSortType(e.target.value as string);
+                        localStorage.setItem(
+                          "music-list-filter-sort-type",
+                          e.target.value as string
+                        );
+                      }}
+                    >
+                      <MenuItem value="asc">
+                        {t("filter:sort.ascending")}
+                      </MenuItem>
+                      <MenuItem value="desc">
+                        {t("filter:sort.descending")}
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item>
+                  <FormControl>
+                    <Select
+                      value={sortBy}
+                      onChange={(e) => {
+                        setSortBy(e.target.value as string);
+                        localStorage.setItem(
+                          "music-list-filter-sort-by",
+                          e.target.value as string
+                        );
+                      }}
+                    >
+                      <MenuItem value="id">{t("common:id")}</MenuItem>
+                      <MenuItem value="publishedAt">
+                        {t("common:startAt")}
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
