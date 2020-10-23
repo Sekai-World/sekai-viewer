@@ -4,4 +4,5 @@ module.exports = {
   verbose: true,
   locales: ["en", "zh-CN", "zh-TW", "ja", "ko", "es", "de", "pt-BR", "ru"],
   keepRemoved: true,
+  lineEnding: "lf",
 };
