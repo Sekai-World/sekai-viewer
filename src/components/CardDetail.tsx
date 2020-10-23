@@ -220,36 +220,36 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
         ? card?.rarity >= 3
           ? [
               {
-                src: `https://sekai-res.dnaroma.eu/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.webp`,
+                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.webp`,
                 alt: "card normal",
-                downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.webp`,
+                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.webp`,
               },
               {
-                src: `https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`,
+                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`,
                 alt: "card normal trim",
-                downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`,
+                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`,
               },
               {
-                src: `https://sekai-res.dnaroma.eu/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_after_training.webp`,
+                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_after_training.webp`,
                 alt: "card after training",
-                downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_after_training.webp`,
+                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_after_training.webp`,
               },
               {
-                src: `https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/after_training.webp`,
+                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/after_training.webp`,
                 alt: "card after training trim",
-                downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/after_training.webp`,
+                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/after_training.webp`,
               },
             ]
           : [
               {
-                src: `https://sekai-res.dnaroma.eu/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.webp`,
+                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.webp`,
                 alt: "card normal",
-                downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.webp`,
+                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.webp`,
               },
               {
-                src: `https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`,
+                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`,
                 alt: "card normal",
-                downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`,
+                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`,
               },
             ]
         : [],
@@ -346,7 +346,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
               >
                 <CardMedia
                   classes={{ root: classes.media }}
-                  image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.webp`}
+                  image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.webp`}
                 ></CardMedia>
               </Card>
             </TabPanel>
@@ -359,7 +359,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
               >
                 <CardMedia
                   classes={{ root: classes.media }}
-                  image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_after_training.webp`}
+                  image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_after_training.webp`}
                 ></CardMedia>
               </Card>
             </TabPanel>
@@ -372,7 +372,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
               >
                 <CardMedia
                   classes={{ root: classes["media-contain"] }}
-                  image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`}
+                  image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`}
                 ></CardMedia>
               </Card>
             </TabPanel>
@@ -385,7 +385,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
               >
                 <CardMedia
                   classes={{ root: classes["media-contain"] }}
-                  image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/after_training.webp`}
+                  image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/after_training.webp`}
                 ></CardMedia>
               </Card>
             </TabPanel>

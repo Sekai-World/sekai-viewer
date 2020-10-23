@@ -124,7 +124,7 @@ const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
           <Card className={classes.card}>
             <CardMedia
               className={classes.media}
-              image={`https://sekai-res.dnaroma.eu/file/sekai-assets/event/${data.assetbundleName}/logo_rip/logo.webp`}
+              image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/event/${data.assetbundleName}/logo_rip/logo.webp`}
               title={
                 contentTransMode === "original"
                   ? data.name

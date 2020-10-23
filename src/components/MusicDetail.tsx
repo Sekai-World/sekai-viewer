@@ -221,7 +221,7 @@ const MusicDetail: React.FC<{
         audio = undefined;
       };
       audio.preload = "metadata";
-      audio.src = `https://sekai-res.dnaroma.eu/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`;
+      audio.src = `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`;
 
       return () => {
         audio = undefined;
@@ -280,7 +280,7 @@ const MusicDetail: React.FC<{
             setVisible(true);
           }}
           classes={{ root: classes["media-contain"] }}
-          image={`https://sekai-res.dnaroma.eu/file/sekai-assets/music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}.webp`}
+          image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}.webp`}
         ></CardMedia>
         <TabContext value={vocalTabVal}>
           <Paper>
@@ -307,7 +307,7 @@ const MusicDetail: React.FC<{
                   <audio
                     controls
                     style={{ width: "100%" }}
-                    src={`https://sekai-res.dnaroma.eu/file/sekai-assets/music/short/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}_short.mp3`}
+                    src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/short/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}_short.mp3`}
                   ></audio>
                 </Fragment>
               ) : null}
@@ -318,7 +318,7 @@ const MusicDetail: React.FC<{
                   <audio
                     controls
                     style={{ width: "100%" }}
-                    src={`https://sekai-res.dnaroma.eu/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`}
+                    src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`}
                   ></audio>
                 </Fragment>
               ) : null}
@@ -327,8 +327,10 @@ const MusicDetail: React.FC<{
               {musicVocalTypes.length && musicVocal.length ? (
                 <Box>
                   <MusicVideoPlayer
-                    audioPath={`https://sekai-res.dnaroma.eu/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`}
-                    videoPath={`https://sekai-res.dnaroma.eu/file/sekai-assets/live/2dmode/${
+                    audioPath={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`}
+                    videoPath={`${
+                      process.env.REACT_APP_ASSET_DOMAIN
+                    }/file/sekai-assets/live/2dmode/${
                       music.categories.includes("original")
                         ? "original_mv"
                         : music.categories.includes("mv_2d")
@@ -709,9 +711,9 @@ const MusicDetail: React.FC<{
         onClose={() => setVisible(false)}
         images={[
           {
-            src: `https://sekai-res.dnaroma.eu/file/sekai-assets/music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}.webp`,
+            src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}.webp`,
             alt: "music jacket",
-            downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}.webp`,
+            downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}.webp`,
           },
         ]}
         zIndex={2000}

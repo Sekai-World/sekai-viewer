@@ -64,6 +64,7 @@
   "devDependencies": {
     "cross-env": "^7.0.2",
     "cz-conventional-changelog": "^3.3.0",
+    "http-proxy-middleware": "^1.0.6",
     "i18next-parser": "^3.3.0"
   },
   "config": {

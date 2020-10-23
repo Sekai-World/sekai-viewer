@@ -162,7 +162,7 @@ const GachaList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
         <Card className={classes.card}>
           <CardMedia
             className={classes.media}
-            image={`https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${data.assetbundleName}/logo_rip/logo.webp`}
+            image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/gacha/${data.assetbundleName}/logo_rip/logo.webp`}
             title={data.name}
           ></CardMedia>
           <CardContent style={{ paddingBottom: "16px" }}>

@@ -78,36 +78,40 @@ function getGachaImages(gacha: IGachaInfo): ImageDecorator[] {
   if (gachaImageNameMap[gacha.id]) {
     if (gachaImageNameMap[gacha.id].bg) {
       ret.push({
-        src: `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${
+        src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/gacha/${
           gacha.assetbundleName
         }/screen_rip/texture/${gachaImageNameMap[gacha.id].bg}.webp`,
         alt: "background",
-        downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${
-          gacha.assetbundleName
-        }/screen_rip/texture/${gachaImageNameMap[gacha.id].bg}.webp`,
+        downloadUrl: `${
+          process.env.REACT_APP_ASSET_DOMAIN
+        }/file/sekai-assets/gacha/${gacha.assetbundleName}/screen_rip/texture/${
+          gachaImageNameMap[gacha.id].bg
+        }.webp`,
       });
     }
     if (gachaImageNameMap[gacha.id].feature) {
       ret.push({
-        src: `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${
+        src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/gacha/${
           gacha.assetbundleName
         }/screen_rip/texture/${gachaImageNameMap[gacha.id].feature}.webp`,
         alt: "feature",
-        downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${
-          gacha.assetbundleName
-        }/screen_rip/texture/${gachaImageNameMap[gacha.id].feature}.webp`,
+        downloadUrl: `${
+          process.env.REACT_APP_ASSET_DOMAIN
+        }/file/sekai-assets/gacha/${gacha.assetbundleName}/screen_rip/texture/${
+          gachaImageNameMap[gacha.id].feature
+        }.webp`,
       });
     }
   } else {
     ret.push({
-      src: `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${gacha.assetbundleName}/screen_rip/texture/bg_gacha${gacha.id}.webp`,
+      src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/gacha/${gacha.assetbundleName}/screen_rip/texture/bg_gacha${gacha.id}.webp`,
       alt: "background",
-      downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${gacha.assetbundleName}/screen_rip/texture/bg_gacha${gacha.id}.webp`,
+      downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/gacha/${gacha.assetbundleName}/screen_rip/texture/bg_gacha${gacha.id}.webp`,
     });
     ret.push({
-      src: `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${gacha.assetbundleName}/screen_rip/texture/img_gacha${gacha.id}.webp`,
+      src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/gacha/${gacha.assetbundleName}/screen_rip/texture/img_gacha${gacha.id}.webp`,
       alt: "feature",
-      downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${gacha.assetbundleName}/screen_rip/texture/img_gacha${gacha.id}.webp`,
+      downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/gacha/${gacha.assetbundleName}/screen_rip/texture/img_gacha${gacha.id}.webp`,
     });
   }
 
@@ -350,7 +354,9 @@ const GachaDetailPage: React.FC<{
                     className={classes.media}
                     image={
                       gacha
-                        ? `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${
+                        ? `${
+                            process.env.REACT_APP_ASSET_DOMAIN
+                          }/file/sekai-assets/gacha/${
                             gacha.assetbundleName
                           }/screen_rip/texture/${
                             gachaImageNameMap[gacha.id]
@@ -373,7 +379,9 @@ const GachaDetailPage: React.FC<{
                     className={classes.media}
                     image={
                       gacha
-                        ? `https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${
+                        ? `${
+                            process.env.REACT_APP_ASSET_DOMAIN
+                          }/file/sekai-assets/gacha/${
                             gacha.assetbundleName
                           }/screen_rip/texture/${
                             gachaImageNameMap[gacha.id]
@@ -558,7 +566,7 @@ const GachaDetailPage: React.FC<{
               </Typography>
               <img
                 style={{ maxWidth: "50%" }}
-                src={`https://sekai-res.dnaroma.eu/file/sekai-assets/gacha/${gacha.assetbundleName}/logo_rip/logo.webp`}
+                src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/gacha/${gacha.assetbundleName}/logo_rip/logo.webp`}
                 alt="logo icon"
               ></img>
             </Box>
