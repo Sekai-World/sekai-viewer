@@ -138,14 +138,16 @@ const EventDetail: React.FC<{
         return false;
       }
 
-      const progressPercent = ((Date.now() - event.startAt) /
-        (event.aggregateAt - event.startAt)) *
+      const progressPercent =
+        ((Date.now() - event.startAt) / (event.aggregateAt - event.startAt)) *
         100;
 
-      setRemainingTime(`${humanizeDuration(event.aggregateAt - Date.now(), {
-        units: ['d', 'h', 'm'],
-        round: true,
-      })} (${progressPercent.toFixed(1)}%)`);
+      setRemainingTime(
+        `${humanizeDuration(event.aggregateAt - Date.now(), {
+          units: ["d", "h", "m"],
+          round: true,
+        })} (${progressPercent.toFixed(1)}%)`
+      );
 
       setPastTimePercent(progressPercent);
       return true;

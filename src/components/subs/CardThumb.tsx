@@ -130,15 +130,15 @@ export const CardThumb: React.FC<{ id: number; trained?: boolean }> = ({
         />
       ))}
     </Box>
-  ) : skeleton;
+  ) : (
+    skeleton
+  );
 };
 
 export const CardThumbSkeleton: React.FC<{}> = () => {
   const classes = useStyles();
 
-  return (
-    <Skeleton variant="rect" className={classes.skeleton}></Skeleton>
-  );
+  return <Skeleton variant="rect" className={classes.skeleton}></Skeleton>;
 };
 
 export const CardThumbs: React.FC<{ cardIds: number[] }> = ({ cardIds }) => {
@@ -159,7 +159,9 @@ export const CardThumbs: React.FC<{ cardIds: number[] }> = ({ cardIds }) => {
   );
 };
 
-export const CardThumbsSkeleton: React.FC<{ length: number }> = ({ length = 1 }) => {
+export const CardThumbsSkeleton: React.FC<{ length: number }> = ({
+  length = 1,
+}) => {
   return (
     <Grid
       container

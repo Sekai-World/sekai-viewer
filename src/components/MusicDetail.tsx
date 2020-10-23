@@ -204,17 +204,19 @@ const MusicDetail: React.FC<{
         }
 
         const durationMsec = (audio.duration - music.fillerSec) * 1000;
-        setActualPlaybackTime(`${humanizeDurationShort(durationMsec, {
-          units: ["s"],
-          delimiter: " ",
-          spacer: "",
-          maxDecimalPoints: 1,
-        })} (${humanizeDurationShort(durationMsec, {
-          units: ["m", "s"],
-          delimiter: " ",
-          spacer: "",
-          maxDecimalPoints: 1,
-        })})`);
+        setActualPlaybackTime(
+          `${humanizeDurationShort(durationMsec, {
+            units: ["s"],
+            delimiter: " ",
+            spacer: "",
+            maxDecimalPoints: 1,
+          })} (${humanizeDurationShort(durationMsec, {
+            units: ["m", "s"],
+            delimiter: " ",
+            spacer: "",
+            maxDecimalPoints: 1,
+          })})`
+        );
 
         audio = undefined;
       };
