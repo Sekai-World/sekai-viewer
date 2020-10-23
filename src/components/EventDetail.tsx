@@ -31,6 +31,7 @@ import {
 import { useCachedData, useRealtimeEventData } from "../utils";
 import { attrIconMap, charaIcons, degreeFrameMap } from "../utils/resources";
 import { getAssetI18n } from "../utils/i18n";
+import { useDurationI18n } from "../utils/i18nDuration";
 
 const useStyle = makeStyles((theme) => ({
   bannerImg: {
@@ -56,6 +57,7 @@ const EventDetail: React.FC<{
   const classes = useStyle();
   const layoutClasses = useLayoutStyles();
   const assetI18n = getAssetI18n();
+  const [humanizeDuration] = useDurationI18n();
 
   const [events] = useCachedData<IEventInfo>("events");
   const [eventDeckBonuses] = useCachedData<IEventDeckBonus>("eventDeckBonuses");
@@ -140,20 +142,10 @@ const EventDetail: React.FC<{
         (event.aggregateAt - event.startAt)) *
         100;
 
-      setRemainingTime(
-        new Date(
-          event.aggregateAt -
-            Date.now() +
-            new Date().getTimezoneOffset() * 60 * 1000
-        )
-          .toISOString()
-          .substring(8, 16)
-          .replace("T", " day(s) ")
-          .replace(":", "h ")
-          .concat(
-            `m (${progressPercent.toFixed(1)}%)`
-          )
-      );
+      setRemainingTime(`${humanizeDuration(event.aggregateAt - Date.now(), {
+        units: ['d', 'h', 'm'],
+        round: true,
+      })} (${progressPercent.toFixed(1)}%)`);
 
       setPastTimePercent(progressPercent);
       return true;
@@ -172,7 +164,7 @@ const EventDetail: React.FC<{
         interval = undefined;
       }
     };
-  }, [event, t]);
+  }, [event, t, humanizeDuration]);
 
   function getRankingDegreeImg(reward: EventRankingRewardRange) {
     const honor = honors.find(
