@@ -152,7 +152,7 @@ const MusicDetail: React.FC<{
 
   useEffect(() => {
     if (musicVocal && musicVocal[selectedVocalType] && music) {
-      const url = `https://sekai-res.dnaroma.eu/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`;
+      const url = `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`;
       setTrimOptions({
         sourceURL: url,
         trimDuration: music.fillerSec,
