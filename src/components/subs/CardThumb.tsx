@@ -91,9 +91,11 @@ export const CardThumb: React.FC<{ id: number; trained?: boolean }> = ({
   return card ? (
     <Box position="relative">
       <img
-        src={`https://sekai-res.dnaroma.eu/file/sekai-assets/thumbnail/chara_rip/${
-          card.assetbundleName
-        }_${trained ? "after_training" : "normal"}.webp`}
+        src={`${
+          process.env.REACT_APP_ASSET_DOMAIN
+        }/file/sekai-assets/thumbnail/chara_rip/${card.assetbundleName}_${
+          trained ? "after_training" : "normal"
+        }.webp`}
         alt={card.prefix}
         className={classes.img}
         width="128px"
@@ -130,15 +132,15 @@ export const CardThumb: React.FC<{ id: number; trained?: boolean }> = ({
         />
       ))}
     </Box>
-  ) : skeleton;
+  ) : (
+    skeleton
+  );
 };
 
 export const CardThumbSkeleton: React.FC<{}> = () => {
   const classes = useStyles();
 
-  return (
-    <Skeleton variant="rect" className={classes.skeleton}></Skeleton>
-  );
+  return <Skeleton variant="rect" className={classes.skeleton}></Skeleton>;
 };
 
 export const CardThumbs: React.FC<{ cardIds: number[] }> = ({ cardIds }) => {
@@ -159,7 +161,9 @@ export const CardThumbs: React.FC<{ cardIds: number[] }> = ({ cardIds }) => {
   );
 };
 
-export const CardThumbsSkeleton: React.FC<{ length: number }> = ({ length = 1 }) => {
+export const CardThumbsSkeleton: React.FC<{ length: number }> = ({
+  length = 1,
+}) => {
   return (
     <Grid
       container

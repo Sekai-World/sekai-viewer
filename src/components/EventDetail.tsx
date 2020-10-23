@@ -138,14 +138,16 @@ const EventDetail: React.FC<{
         return false;
       }
 
-      const progressPercent = ((Date.now() - event.startAt) /
-        (event.aggregateAt - event.startAt)) *
+      const progressPercent =
+        ((Date.now() - event.startAt) / (event.aggregateAt - event.startAt)) *
         100;
 
-      setRemainingTime(`${humanizeDuration(event.aggregateAt - Date.now(), {
-        units: ['d', 'h', 'm'],
-        round: true,
-      })} (${progressPercent.toFixed(1)}%)`);
+      setRemainingTime(
+        `${humanizeDuration(event.aggregateAt - Date.now(), {
+          units: ["d", "h", "m"],
+          round: true,
+        })} (${progressPercent.toFixed(1)}%)`
+      );
 
       setPastTimePercent(progressPercent);
       return true;
@@ -179,7 +181,7 @@ const EventDetail: React.FC<{
           .details.find((detail) => detail.resourceType === "honor")!.resourceId
     )!;
 
-    return `https://sekai-res.dnaroma.eu/file/sekai-assets/honor/${honor.assetbundleName}_rip/degree_main.webp`;
+    return `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/honor/${honor.assetbundleName}_rip/degree_main.webp`;
   }
 
   function getRankingDegreeName(reward: EventRankingRewardRange) {
@@ -243,7 +245,7 @@ const EventDetail: React.FC<{
           .details.find((detail) => detail.resourceType === "honor")!.resourceId
     )!;
 
-    return `https://sekai-res.dnaroma.eu/file/sekai-assets/honor/${honor.assetbundleName}_rip/rank_main.webp`;
+    return `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/honor/${honor.assetbundleName}_rip/rank_main.webp`;
   }
 
   function getRankingDegreeRankName(reward: EventRankingRewardRange) {
@@ -267,14 +269,14 @@ const EventDetail: React.FC<{
       event
         ? [
             {
-              src: `https://sekai-res.dnaroma.eu/file/sekai-assets/event/${event.assetbundleName}/screen_rip/bg.webp`,
+              src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/event/${event.assetbundleName}/screen_rip/bg.webp`,
               alt: "event background",
-              downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/event/${event.assetbundleName}/screen_rip/bg.webp`,
+              downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/event/${event.assetbundleName}/screen_rip/bg.webp`,
             },
             {
-              src: `https://sekai-res.dnaroma.eu/file/sekai-assets/event/${event.assetbundleName}/screen_rip/character.webp`,
+              src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/event/${event.assetbundleName}/screen_rip/character.webp`,
               alt: "event character",
-              downloadUrl: `https://sekai-res.dnaroma.eu/file/sekai-assets/event/${event.assetbundleName}/screen_rip/character.webp`,
+              downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/event/${event.assetbundleName}/screen_rip/character.webp`,
             },
           ]
         : [],
@@ -308,14 +310,14 @@ const EventDetail: React.FC<{
                 <Grid item xs={12} md={6}>
                   <img
                     className={classes.bannerImg}
-                    src={`https://sekai-res.dnaroma.eu/file/sekai-assets/event/${event.assetbundleName}/logo_rip/logo.webp`}
+                    src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/event/${event.assetbundleName}/logo_rip/logo.webp`}
                     alt="logo"
                   ></img>
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <img
                     className={classes.bannerImg}
-                    src={`https://sekai-res.dnaroma.eu/file/sekai-assets/home/banner/${event.assetbundleName}_rip/${event.assetbundleName}.webp`}
+                    src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/home/banner/${event.assetbundleName}_rip/${event.assetbundleName}.webp`}
                     alt="logo"
                   ></img>
                 </Grid>
@@ -328,7 +330,7 @@ const EventDetail: React.FC<{
                   setVisible(true);
                 }}
                 className={classes.eventImg}
-                src={`https://sekai-res.dnaroma.eu/file/sekai-assets/event/${event.assetbundleName}/screen_rip/bg.webp`}
+                src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/event/${event.assetbundleName}/screen_rip/bg.webp`}
                 alt="background"
               ></img>
             </TabPanel>
@@ -339,7 +341,7 @@ const EventDetail: React.FC<{
                   setVisible(true);
                 }}
                 className={classes.eventImg}
-                src={`https://sekai-res.dnaroma.eu/file/sekai-assets/event/${event.assetbundleName}/screen_rip/character.webp`}
+                src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/event/${event.assetbundleName}/screen_rip/character.webp`}
                 alt="character"
               ></img>
             </TabPanel>
@@ -348,7 +350,9 @@ const EventDetail: React.FC<{
         <audio
           style={{ width: "100%", margin: "1% 0" }}
           controls
-          src={`https://sekai-res.dnaroma.eu/file/sekai-assets/${event.bgmAssetbundleName.replace(
+          src={`${
+            process.env.REACT_APP_ASSET_DOMAIN
+          }/file/sekai-assets/${event.bgmAssetbundleName.replace(
             "bgm",
             "bgm_rip"
           )}.mp3`}

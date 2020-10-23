@@ -1,3 +1,3 @@
 /// <reference types="react-scripts" />
 
-import '@types/modernizr'
+import "@types/modernizr";

@@ -266,7 +266,7 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
           <Card className={classes.card}>
             <CardMedia
               className={classes.media}
-              image={`https://sekai-res.dnaroma.eu/file/sekai-assets/character/member_small/${data.assetbundleName}_rip/card_normal.webp`}
+              image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_small/${data.assetbundleName}_rip/card_normal.webp`}
               title={
                 contentTransMode === "original"
                   ? data.prefix

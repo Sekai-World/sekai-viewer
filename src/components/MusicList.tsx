@@ -216,7 +216,7 @@ const MusicList: React.FC<{
           <Card className={classes.card}>
             <CardMedia
               className={classes.media}
-              image={`https://sekai-res.dnaroma.eu/file/sekai-assets/music/jacket/${data.assetbundleName}_rip/${data.assetbundleName}.webp`}
+              image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/jacket/${data.assetbundleName}_rip/${data.assetbundleName}.webp`}
               title={
                 contentTransMode === "original"
                   ? data.title
@@ -309,7 +309,7 @@ const MusicList: React.FC<{
               <Grid item xs={5} md={4}>
                 <CardMedia
                   className={classes.agendaMedia}
-                  image={`https://sekai-res.dnaroma.eu/file/sekai-assets/music/jacket/${data.assetbundleName}_rip/${data.assetbundleName}.webp`}
+                  image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/jacket/${data.assetbundleName}_rip/${data.assetbundleName}.webp`}
                   title={
                     contentTransMode === "original"
                       ? data.title

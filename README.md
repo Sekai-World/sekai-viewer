@@ -56,7 +56,12 @@ Generated json files are located in `public/locales/{lang}/{namespace}.json`.
 
 Learn more about [i18next](https://www.i18next.com/) and [react-i18next](https://react.i18next.com/).
 
-### `num run commit`
+### `npm run lint`
+
+Lint and format codes by `eslint`.
+Run this before commit.
+
+### `npm run commit`
 
 Run `commitizen` for format a Conventional Commit message easily.
 
