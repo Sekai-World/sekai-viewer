@@ -196,21 +196,27 @@ const MusicDetail: React.FC<{
 
   useEffect(() => {
     if (musicVocal && musicVocal[selectedVocalType] && music) {
-      const url = `https://sekai-res.dnaroma.eu/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`;
-      Axios.head(url).then(
-        (res) => {
-          const bytes = Number(res.headers["content-length"]);
-          const seconds = ((bytes / 320) * 8) / 1000 - music.fillerSec;
-          setActualPlaybackTime(
-            `${seconds.toFixed(1)}s (${Math.floor(seconds / 60)}m${(
-              seconds % 60
-            ).toFixed(1)}s)`
-          );
-        },
-        (reason) => {
-          console.log(reason);
+      let audio: HTMLAudioElement | undefined = new Audio();
+      audio.onloadedmetadata = () => {
+        if (!audio) {
+          return;
         }
-      );
+
+        const seconds = audio.duration - music.fillerSec;
+        setActualPlaybackTime(
+          `${seconds.toFixed(1)}s (${Math.floor(seconds / 60)}m${(
+            seconds % 60
+          ).toFixed(1)}s)`
+        );
+
+        audio = undefined;
+      };
+      audio.preload = "metadata";
+      audio.src = `https://sekai-res.dnaroma.eu/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`;
+
+      return () => {
+        audio = undefined;
+      };
     }
   }, [musicVocal, selectedVocalType, music]);
 
