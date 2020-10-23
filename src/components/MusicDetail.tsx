@@ -1,6 +1,7 @@
 import {
   Box,
   CardMedia,
+  CircularProgress,
   Divider,
   FormControl,
   FormControlLabel,
@@ -115,6 +116,10 @@ const MusicDetail: React.FC<{
   const [diffiInfoTabVal, setDiffiInfoTabVal] = useState<string>("4");
   const [actualPlaybackTime, setActualPlaybackTime] = useState<string>("");
   const [trimSilence, setTrimSilence] = useState<boolean>(false);
+  const [trimLoading, setTrimLoading] = useState<boolean>(true);
+  const [longMusicPlaybackURL, setLongMusicPlaybackURL] = useState<
+    string | undefined
+  >();
 
   useEffect(() => {
     if (musics.length) {
@@ -151,15 +156,50 @@ const MusicDetail: React.FC<{
   }, [danceMembers, musicId]);
 
   useEffect(() => {
-    if (musicVocal && musicVocal[selectedVocalType] && music) {
+    if (
+      vocalTabVal === "1" &&
+      musicVocal &&
+      musicVocal[selectedVocalType] &&
+      music
+    ) {
       const url = `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`;
       setTrimOptions({
         sourceURL: url,
         trimDuration: music.fillerSec,
         inclusive: false,
       });
+      setTrimLoading(true);
+    } else {
+      setTrimOptions(undefined);
+      setTrimLoading(false);
     }
-  }, [music, musicVocal, selectedVocalType, setTrimOptions]);
+  }, [
+    music,
+    musicVocal,
+    selectedVocalType,
+    vocalTabVal,
+    setTrimOptions,
+    setTrimLoading,
+  ]);
+
+  useEffect(() => {
+    if (musicVocal && musicVocal[selectedVocalType] && music) {
+      setLongMusicPlaybackURL(
+        trimSilence
+          ? trimmedMP3URL
+          : `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`
+      );
+    } else {
+      setLongMusicPlaybackURL(undefined);
+    }
+  }, [
+    music,
+    musicVocal,
+    selectedVocalType,
+    trimSilence,
+    trimmedMP3URL,
+    setLongMusicPlaybackURL,
+  ]);
 
   // useEffect(() => {
   //   if (musicVocalTypes.length) {
@@ -330,24 +370,56 @@ const MusicDetail: React.FC<{
             <TabPanel value="1">
               {musicVocalTypes.length && musicVocal.length ? (
                 <Fragment>
-                  <audio
-                    controls
-                    style={{ width: "100%" }}
-                    src={
-                      trimSilence && trimmedMP3URL
-                        ? trimmedMP3URL
-                        : `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`
-                    }
-                  ></audio>
+                  <Box
+                    style={{
+                      position: "relative",
+                      lineHeight: "0",
+                    }}
+                  >
+                    <audio
+                      controls
+                      style={{
+                        width: "100%",
+                        opacity: longMusicPlaybackURL ? undefined : "0.8",
+                      }}
+                      src={longMusicPlaybackURL}
+                    ></audio>
+                    {longMusicPlaybackURL ? null : (
+                      <Box
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        style={{
+                          position: "absolute",
+                          left: "0",
+                          top: "0",
+                          width: "100%",
+                          height: "100%",
+                          cursor: "wait",
+                        }}
+                      >
+                        <CircularProgress size={32} />
+                      </Box>
+                    )}
+                  </Box>
                   <FormControlLabel
                     control={
                       <Switch
-                        disabled={!trimmedMP3URL}
                         checked={trimSilence}
                         onChange={() => setTrimSilence((v) => !v)}
                       />
                     }
-                    label={t("music:skipBeginningSilence")}
+                    label={
+                      <Box display="flex" flexWrap="nowrap" alignItems="center">
+                        {t("music:skipBeginningSilence")}
+                        {trimLoading && !trimmedMP3URL ? (
+                          <CircularProgress
+                            size="1em"
+                            style={{ marginLeft: "0.5em" }}
+                          />
+                        ) : null}
+                      </Box>
+                    }
                   ></FormControlLabel>
                 </Fragment>
               ) : null}

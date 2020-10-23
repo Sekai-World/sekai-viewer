@@ -1,5 +1,5 @@
 import Axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { parseMP3 } from "./mp3";
 
 /**
@@ -56,24 +56,39 @@ export function useTrimMP3() {
   const [options, setOptions] = useState<TrimOptions | undefined>();
   const [trimmedMP3URL, setTrimmedMP3URL] = useState<string | undefined>();
 
+  // revoke old blob URLs
+  {
+    const prevTrimmedMP3URL = useRef<string | undefined>();
+    useEffect(() => {
+      const oldURL = prevTrimmedMP3URL.current;
+      //console.log("trim revoke", oldURL, trimmedMP3URL);
+      if (oldURL && oldURL !== trimmedMP3URL) {
+        URL.revokeObjectURL(oldURL);
+      }
+      prevTrimmedMP3URL.current = trimmedMP3URL;
+    }, [trimmedMP3URL]);
+  }
+
   useEffect(() => {
+    //console.log("trim start", options);
+
+    setTrimmedMP3URL(undefined);
+
     if (!options) {
       return;
     }
 
     let blobURL: string | undefined;
 
-    //console.log("trim", options);
-
     Axios.get(options.sourceURL, {
       responseType: "arraybuffer",
     })
       .then((response) => {
+        //console.log("trim response", options, response);
+
         if (!options) {
           return;
         }
-
-        //console.log("trim res", options);
 
         const trimmed = trimMP3(
           response.data as ArrayBuffer,
@@ -99,6 +114,7 @@ export function useTrimMP3() {
       });
 
     return () => {
+      //console.log("trim revoke", blobURL);
       if (blobURL) {
         URL.revokeObjectURL(blobURL);
       }
