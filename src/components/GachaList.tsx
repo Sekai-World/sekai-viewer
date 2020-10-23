@@ -14,7 +14,7 @@ import { useCachedData, useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
-import { ContentTransModeType } from "../types";
+import { ContentTransModeType, IGachaInfo } from "../types";
 import { getAssetI18n } from "../utils/i18n";
 
 const useStyles = makeStyles((theme) => ({
@@ -33,55 +33,6 @@ const useStyles = makeStyles((theme) => ({
     "max-width": "260px",
   },
 }));
-
-interface GachaDetail {
-  id: number;
-  gachaId: number;
-  cardId: number;
-  weight: number;
-}
-
-interface GachaBehavior {
-  id: number;
-  gachaId: number;
-  gachaBehaviorType: string;
-  costResourceType: string;
-  costResourceQuantity: number;
-  spinCount: number;
-  spinLimit: number;
-}
-
-interface GachaPickup {
-  id: number;
-  gachaId: number;
-  cardId: number;
-  gachaPickupType: string;
-}
-
-interface GachaInformation {
-  gachaId: number;
-  summary: string;
-  description: string;
-}
-
-interface IGachaInfo {
-  id: number;
-  gachaType: string;
-  name: string;
-  seq: number;
-  assetbundleName: string;
-  rarity1Rate: number;
-  rarity2Rate: number;
-  rarity3Rate: number;
-  rarity4Rate: number;
-  startAt: number;
-  endAt: number;
-  gachaDetails: GachaDetail[];
-  gachaBehaviors: GachaBehavior[];
-  gachaPickups: GachaPickup[];
-  gachaPickupCostumes: any[];
-  gachaInformation: GachaInformation;
-}
 
 function getPaginatedGachas(gachas: IGachaInfo[], page: number, limit: number) {
   return gachas.slice(limit * (page - 1), limit * page);
