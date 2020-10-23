@@ -31,6 +31,7 @@ import {
 import { useCachedData, useRealtimeEventData } from "../utils";
 import { attrIconMap, charaIcons, degreeFrameMap } from "../utils/resources";
 import { getAssetI18n } from "../utils/i18n";
+import { useDurationI18n } from "../utils/i18nDuration";
 
 const useStyle = makeStyles((theme) => ({
   bannerImg: {
@@ -56,6 +57,7 @@ const EventDetail: React.FC<{
   const classes = useStyle();
   const layoutClasses = useLayoutStyles();
   const assetI18n = getAssetI18n();
+  const [humanizeDuration] = useDurationI18n();
 
   const [events] = useCachedData<IEventInfo>("events");
   const [eventDeckBonuses] = useCachedData<IEventDeckBonus>("eventDeckBonuses");
@@ -118,67 +120,51 @@ const EventDetail: React.FC<{
   }, [refreshData, event]);
 
   useEffect(() => {
-    if (event && Date.now() < event.aggregateAt) {
-      setRemainingTime(
-        new Date(
-          event.aggregateAt -
-            Date.now() +
-            new Date().getTimezoneOffset() * 60 * 1000
-        )
-          .toISOString()
-          .substring(8, 16)
-          .replace("T", " day(s) ")
-          .replace(":", "h ")
-          .concat(
-            `m (${(
-              ((Date.now() - event.startAt) /
-                (event.aggregateAt - event.startAt)) *
-              100
-            ).toFixed(1)}%)`
-          )
-      );
-
-      setPastTimePercent(
-        ((Date.now() - event.startAt) / (event.aggregateAt - event.startAt)) *
-          100
-      );
-
-      const interval = window.setInterval(() => {
-        if (Date.now() > event.aggregateAt) {
-          window.clearInterval(interval);
-          setRemainingTime(t("event:already-ended"));
-          return;
-        }
-        setRemainingTime(
-          new Date(
-            event.aggregateAt - Date.now() + new Date().getTimezoneOffset()
-          )
-            .toISOString()
-            .substring(8, 16)
-            .replace("T", " day(s) ")
-            .replace(":", "h ")
-            .concat(
-              `m (${(
-                ((Date.now() - event.startAt) /
-                  (event.aggregateAt - event.startAt)) *
-                100
-              ).toFixed(1)}%)`
-            )
-        );
-        setPastTimePercent(
-          ((Date.now() - event.startAt) / (event.aggregateAt - event.startAt)) *
-            100
-        );
-      }, 60000);
-
-      return () => {
-        window.clearInterval(interval);
-      };
-    } else {
-      setRemainingTime(t("event:already-ended"));
-      setPastTimePercent(100);
+    if (!event) {
+      return;
     }
-  }, [event, t]);
+
+    let interval: number | undefined;
+
+    const update = () => {
+      if (Date.now() > event.aggregateAt) {
+        // event already ended
+        if (interval != null) {
+          window.clearInterval(interval);
+          interval = undefined;
+        }
+        setRemainingTime(t("event:already-ended"));
+        setPastTimePercent(100);
+        return false;
+      }
+
+      const progressPercent = ((Date.now() - event.startAt) /
+        (event.aggregateAt - event.startAt)) *
+        100;
+
+      setRemainingTime(`${humanizeDuration(event.aggregateAt - Date.now(), {
+        units: ['d', 'h', 'm'],
+        round: true,
+      })} (${progressPercent.toFixed(1)}%)`);
+
+      setPastTimePercent(progressPercent);
+      return true;
+    };
+
+    if (!update()) {
+      // event already ended
+      return;
+    }
+
+    interval = window.setInterval(update, 60000);
+
+    return () => {
+      if (interval != null) {
+        window.clearInterval(interval);
+        interval = undefined;
+      }
+    };
+  }, [event, t, humanizeDuration]);
 
   function getRankingDegreeImg(reward: EventRankingRewardRange) {
     const honor = honors.find(
