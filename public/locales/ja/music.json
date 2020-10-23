@@ -1,5 +1,6 @@
 {
   "alert[0]": "全ての曲の最初の<b>9秒</b>は無音です.これはバグではありません.",
+  "skipBeginningSilence": "冒頭の無音部分を飛ばす",
   "tag": "タグ",
   "category": "カテゴリー",
   "actual-playback-time": "",

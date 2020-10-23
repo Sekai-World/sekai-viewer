@@ -1,5 +1,6 @@
 {
   "alert[0]": "Os primeiros <b>nove segundos </b> de todas as músicas não tem som. Isso NÃO é um bug.",
+  "skipBeginningSilence": "",
   "tag": "Tag",
   "tag_plural": "Tags",
   "category": "Categoria",
