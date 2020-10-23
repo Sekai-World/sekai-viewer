@@ -188,7 +188,7 @@ const MusicDetail: React.FC<{
           key={characterId}
           height="42"
           src={charaIcons[`CharaIcon${characterId}`]}
-          alt={`charachter ${characterId}`}
+          alt={`character ${characterId}`}
         ></img>
       );
     },
