@@ -48,6 +48,7 @@ import {
   AccountGroup,
   Calculator,
   CalendarText,
+  StickerEmoji,
 } from "mdi-material-ui";
 import React, { forwardRef, useMemo, lazy, Suspense } from "react";
 import { useTranslation } from "react-i18next";
@@ -61,6 +62,7 @@ import {
 } from "react-router-dom";
 import { ContentTransModeType } from "../types";
 import { getAssetI18n } from "../utils/i18n";
+import StampList from "./StampList";
 
 const drawerWidth = 240;
 const CardList = lazy(() => import("./CardList"));
@@ -208,6 +210,12 @@ function App() {
         text: t("common:event"),
         icon: <CalendarText></CalendarText>,
         to: "/event",
+        disabled: false,
+      },
+      {
+        text: t("common:stamp"),
+        icon: <StickerEmoji />,
+        to: "/stamp",
         disabled: false,
       },
       {
@@ -426,6 +434,9 @@ function App() {
               </Route>
               <Route path="/event/:eventId">
                 <EventDetail contentTransMode={contentTransMode} />
+              </Route>
+              <Route path="/stamp">
+                <StampList contentTransMode={contentTransMode} />
               </Route>
             </Suspense>
           </Switch>

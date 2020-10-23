@@ -56,6 +56,10 @@ function InfiniteScroll<T>({
   const listElementRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    setHasMore(true);
+  }, [data]);
+
+  useEffect(() => {
     const currentObserver = observer.current;
     const currentElement = listElementRef.current;
     if (currentElement) currentObserver.observe(currentElement);

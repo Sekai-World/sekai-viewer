@@ -420,3 +420,13 @@ export interface ICardEpisode {
 }
 
 export type ContentTransModeType = "original" | "translated" | "both";
+
+export interface IStampInfo {
+  id: number;
+  stampType: string;
+  seq: number;
+  name: string;
+  assetbundleName: string;
+  balloonAssetbundleName: string;
+  characterId1: number;
+}

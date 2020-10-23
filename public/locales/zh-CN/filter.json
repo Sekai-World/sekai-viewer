@@ -3,5 +3,8 @@
     "caption": "排序",
     "ascending": "升序",
     "descending": "降序"
+  },
+  "character": {
+    "caption": "角色"
   }
 }
