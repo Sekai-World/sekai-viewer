@@ -1,4 +1,7 @@
-import { HumanizerOptions, humanizer as createHumanizer } from "humanize-duration";
+import {
+  HumanizerOptions,
+  humanizer as createHumanizer,
+} from "humanize-duration";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 

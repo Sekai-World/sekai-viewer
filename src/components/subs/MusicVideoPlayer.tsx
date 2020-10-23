@@ -13,10 +13,12 @@ const MusicVideoPlayer: React.FC<{
 
   useEffect(() => {
     if (audioRef.current) {
-      audioRef.current.addEventListener('canplay', () => setIsPlayable(true))
-      audioRef.current.addEventListener('loadstart', () => setIsPlayable(false))
+      audioRef.current.addEventListener("canplay", () => setIsPlayable(true));
+      audioRef.current.addEventListener("loadstart", () =>
+        setIsPlayable(false)
+      );
     }
-  }, [])
+  }, []);
 
   function handleOnPlay(e: React.SyntheticEvent<HTMLVideoElement, Event>) {
     audioRef.current!.currentTime = e.currentTarget.currentTime;
@@ -51,7 +53,7 @@ const MusicVideoPlayer: React.FC<{
         onPause={handleOnPause}
         onEnded={handleOnEnded}
         onSeeked={handleOnSeeked}
-        style={{width: '100%'}}
+        style={{ width: "100%" }}
       ></video>
       <audio src={props.audioPath} ref={audioRef}></audio>
     </Fragment>

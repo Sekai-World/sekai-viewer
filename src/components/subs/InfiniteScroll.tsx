@@ -67,10 +67,9 @@ function InfiniteScroll<T>({
     };
   });
 
-  const itemsPerRow =
-    matchSmallScreen
-      ? 1
-      : 12 / (gridSize ? Number(gridSize.md) : 4);
+  const itemsPerRow = matchSmallScreen
+    ? 1
+    : 12 / (gridSize ? Number(gridSize.md) : 4);
 
   return (
     <Fragment>
@@ -85,7 +84,7 @@ function InfiniteScroll<T>({
               >
                 {viewComponent({ data: elem })}
               </Grid>
-          ))
+            ))
           : null}
       </Grid>
       <Grid
@@ -97,7 +96,7 @@ function InfiniteScroll<T>({
       >
         {Array.from(
           {
-            length: data.length ? itemsPerRow : itemsPerRow * 2
+            length: data.length ? itemsPerRow : itemsPerRow * 2,
           },
           (_, i) => i
         ).map((_, id) => (
