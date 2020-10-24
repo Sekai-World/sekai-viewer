@@ -4,7 +4,7 @@ on:
     branches:
       - main
 jobs:
-  build:
+  prepare_env:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -37,6 +37,10 @@ jobs:
         name: Install packages
         run: npm ci
 
+  build:
+    runs-on: ubuntu-latest
+    needs: prepare_env
+    steps:
       -
         name: Build pages
         run: |
@@ -44,6 +48,10 @@ jobs:
           remote_branch="pr-$pr_number"
           PUBLIC_URL="/$remote_branch" npm run build
 
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
       -
         name: Deploy
         run: |
@@ -61,10 +69,12 @@ jobs:
           GIT_USER_NAME: github-actions[bot]
           GIT_USER_EMAIL: <41898282+github-actions[bot]@users.noreply.github.com>
           PR_GITHUB_ACTOR: ${{ github.repository_owner }}
-          PR_GITHUB_REPOSITORY: ${{ format('{0}/{1}', github.repository_owner, secrets.PR_REPO_NAME) }}
+          PR_GITHUB_REPOSITORY: '${{ github.repository_owner }}/${{ secrets.PR_REPO_NAME) }}'
           SECRET_PR_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: actions/github-script@v3
+      -
+        name: Comment
+        uses: actions/github-script@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
