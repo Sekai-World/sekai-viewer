@@ -261,6 +261,11 @@ const StampList: React.FC<{
           viewComponent: ListCard,
           callback,
           data: stamps,
+          gridSize: {
+            xs: 4,
+            sm: 3,
+            lg: 2,
+          },
         })}
       </Container>
     </Fragment>
