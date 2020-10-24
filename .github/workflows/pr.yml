@@ -85,7 +85,7 @@ jobs:
         name: Comment
         uses: actions/github-script@v3
         with:
-          github-token: ${{ secrets.PR_GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const json = require(process.env.GITHUB_EVENT_PATH);
             const prNumber = json.pull_request.number;

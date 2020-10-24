@@ -1,0 +1,26 @@
+name: "PR: Remove Preview after closed"
+on:
+  pull_request_target:
+    types: [closed]
+    branches:
+      - main
+jobs:
+  remove:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Reomove preivew branch
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{ secrets.PR_GITHUB_TOKEN }}
+          script: |
+            const json = require(process.env.GITHUB_EVENT_PATH);
+            const prNumber = json.pull_request.number;
+            const branch = `pr-${prNumber}`;
+            github.git.deleteRef({
+              owner: context.repo.owner,
+              repo: process.env.PR_GITHUB_REPOSITORY.split('/')[1],
+              ref: `refs/heads/${branch}`,
+            });
+        env:
+          PR_GITHUB_REPOSITORY: ${{ secrets.PR_REPO_NAME }}
