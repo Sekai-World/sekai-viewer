@@ -3,7 +3,7 @@
 ![GitHub Repo stars](https://img.shields.io/github/stars/Sekai-World/sekai-viewer?style=social)
 ![GitHub forks](https://img.shields.io/github/forks/Sekai-World/sekai-viewer?style=social)
 [![Actions Status](https://github.com/Sekai-World/sekai-viewer/workflows/DeployToGHPages/badge.svg)](https://github.com/Sekai-World/sekai-viewer/actions)
-![GitHub deployments](https://img.shields.io/github/deployments/Sekai-World/sekai-viewer/github-pages?label=github-pages&style=flat-square)
+[![GitHub deployments](https://img.shields.io/github/deployments/Sekai-World/sekai-viewer/github-pages?label=github-pages&style=flat-square)](https://github.com/Sekai-World/sekai-viewer/deployments/activity_log?environment=github-pages)
 [![dependencies Status](https://david-dm.org/Sekai-World/sekai-viewer/status.svg?style=flat-square)](https://david-dm.org/Sekai-World/sekai-viewer)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg?style=flat-square)](https://conventionalcommits.org)
