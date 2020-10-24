@@ -129,7 +129,7 @@ const StampList: React.FC<{
   };
 
   useEffect(() => {
-    document.title = "Stamp List | Sekai Viewer";
+    document.title = "Sticker List | Sekai Viewer";
   }, []);
 
   const getCharaName = useCallback(
@@ -193,7 +193,7 @@ const StampList: React.FC<{
   return (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:gacha")}
+        {t("common:stamp")}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="md">
         <Grid container justify="flex-end">
