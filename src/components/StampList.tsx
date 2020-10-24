@@ -3,7 +3,6 @@ import {
   Button,
   ButtonGroup,
   Card,
-  CardContent,
   CardMedia,
   Chip,
   Collapse,
@@ -130,7 +129,7 @@ const StampList: React.FC<{
   };
 
   useEffect(() => {
-    document.title = "Stamp List | Sekai Viewer";
+    document.title = "Sticker List | Sekai Viewer";
   }, []);
 
   const getCharaName = useCallback(
@@ -161,11 +160,11 @@ const StampList: React.FC<{
       return (
         <Card className={classes.card}>
           <Skeleton variant="rect" className={classes.media}></Skeleton>
-          <CardContent>
+          {/* <CardContent>
             <Typography variant="subtitle1" className={classes.subheader}>
               <Skeleton variant="text" width="90%"></Skeleton>
             </Typography>
-          </CardContent>
+          </CardContent> */}
         </Card>
       );
     }
@@ -194,7 +193,7 @@ const StampList: React.FC<{
   return (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:gacha")}
+        {t("common:stamp")}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="md">
         <Grid container justify="flex-end">
@@ -221,7 +220,7 @@ const StampList: React.FC<{
               </Grid>
               <Grid item container xs={12} md={9} spacing={1}>
                 {Array.from({ length: 26 }).map((_, idx) => (
-                  <Grid item>
+                  <Grid key={"chara-filter-" + idx} item>
                     <Chip
                       clickable
                       color={
@@ -262,6 +261,11 @@ const StampList: React.FC<{
           viewComponent: ListCard,
           callback,
           data: stamps,
+          gridSize: {
+            xs: 4,
+            sm: 3,
+            lg: 2,
+          },
         })}
       </Container>
     </Fragment>
