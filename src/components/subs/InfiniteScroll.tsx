@@ -49,9 +49,10 @@ interface IISProps<T> {
 }
 
 const defaultXSGridSize: GridSize = 12;
+const defaultMDGridSize: GridSize = 4;
 const defaultGridSize: GridSizeOptions = {
   xs: defaultXSGridSize,
-  md: 4,
+  md: defaultMDGridSize,
 };
 
 function useBreakpoint(): keyof GridSizeOptions {
@@ -70,26 +71,7 @@ function InfiniteScroll<T>({
   data,
   gridSize,
 }: React.PropsWithChildren<IISProps<T>>): React.ReactElement<IISProps<T>> {
-  gridSize = {
-    ...(gridSize || defaultGridSize),
-  };
-  if (!gridSize.xs) {
-    gridSize.xs = defaultXSGridSize;
-  }
-  if (!gridSize.sm) {
-    gridSize.sm = gridSize.xs;
-  }
-  if (!gridSize.md) {
-    gridSize.md = gridSize.sm;
-  }
-  if (!gridSize.lg) {
-    gridSize.lg = gridSize.md;
-  }
-  if (!gridSize.xl) {
-    gridSize.xl = gridSize.lg;
-  }
-
-  //
+  gridSize = Object.assign({}, defaultGridSize, gridSize);
 
   const breakpoint = useBreakpoint();
 
