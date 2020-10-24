@@ -16,9 +16,11 @@ import {
   Typography,
   Container,
   Switch,
+  useTheme,
 } from "@material-ui/core";
 import { useLayoutStyles } from "../styles/layout";
 import { Alert, TabContext, TabPanel } from "@material-ui/lab";
+import { Close, Done } from "@material-ui/icons";
 import React, {
   Fragment,
   useCallback,
@@ -81,12 +83,13 @@ const useStyles = makeStyles((theme) => ({
 const MusicDetail: React.FC<{
   contentTransMode: ContentTransModeType;
 }> = ({ contentTransMode }) => {
+  const theme = useTheme();
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const assetI18n = getAssetI18n();
   const [, humanizeDurationShort] = useDurationI18n();
-  const [trimmedMP3URL, setTrimOptions] = useTrimMP3();
+  const [trimmedMP3URL, trimFailed, setTrimOptions] = useTrimMP3();
 
   const [musics] = useCachedData<IMusicInfo>("musics");
   const [musicVocals] = useCachedData<IMusicVocalInfo>("musicVocals");
@@ -395,10 +398,10 @@ const MusicDetail: React.FC<{
                           top: "0",
                           width: "100%",
                           height: "100%",
-                          cursor: "wait",
+                          cursor: trimFailed ? "not-allowed" : "wait",
                         }}
                       >
-                        <CircularProgress size={32} />
+                        {trimFailed ? null : <CircularProgress size={32} />}
                       </Box>
                     )}
                   </Box>
@@ -411,11 +414,20 @@ const MusicDetail: React.FC<{
                     }
                     label={
                       <Box display="flex" flexWrap="nowrap" alignItems="center">
-                        {t("music:skipBeginningSilence")}
-                        {trimLoading && !trimmedMP3URL ? (
+                        <Typography style={{ paddingRight: "0.2em" }}>
+                          {t("music:skipBeginningSilence")}
+                        </Typography>
+                        {trimFailed ? (
+                          // failed
+                          <Close style={{ color: theme.palette.error.main }} />
+                        ) : trimmedMP3URL ? (
+                          // success
+                          <Done style={{ color: theme.palette.success.main }} />
+                        ) : trimLoading ? (
+                          // loading
                           <CircularProgress
                             size="1em"
-                            style={{ marginLeft: "0.5em" }}
+                            style={{ marginLeft: "0.2em" }}
                           />
                         ) : null}
                       </Box>
