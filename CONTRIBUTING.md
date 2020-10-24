@@ -45,6 +45,7 @@ It's very simple:
 - use camelCase
 - format with `prettier`
 - use meaningful variable name
+- comment on the "strange"-looking but intentional codes
 
 ## License
 By contributing, you agree that your contributions will be licensed under its GNU GENERAL PUBLIC LICENSE.
