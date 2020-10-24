@@ -79,13 +79,13 @@ jobs:
           GIT_USER_EMAIL: <41898282+github-actions[bot]@users.noreply.github.com>
           PR_GITHUB_ACTOR: ${{ github.repository_owner }}
           PR_GITHUB_REPOSITORY: ${{ secrets.PR_REPO_NAME }}
-          SECRET_PR_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SECRET_PR_GITHUB_TOKEN: ${{ secrets.PR_GITHUB_TOKEN }}
 
       -
         name: Comment
         uses: actions/github-script@v3
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.PR_GITHUB_TOKEN }}
           script: |
             const json = require(process.env.GITHUB_EVENT_PATH);
             const prNumber = json.pull_request.number;
