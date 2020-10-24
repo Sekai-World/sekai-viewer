@@ -579,7 +579,7 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
               </Grid>
               <Grid item container xs={12} md={9} spacing={1}>
                 {Array.from({ length: 26 }).map((_, idx) => (
-                  <Grid item>
+                  <Grid key={"chara-filter-" + idx} item>
                     <Chip
                       clickable
                       color={
