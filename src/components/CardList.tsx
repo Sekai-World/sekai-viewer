@@ -679,6 +679,7 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
           data: cards,
           gridSize: {
             xs: 12,
+            sm: 6,
             md:
               viewGridType === "grid" ? 4 : viewGridType === "agenda" ? 12 : 3,
           },

@@ -48,12 +48,10 @@ const GachaList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   const assetI18n = getAssetI18n();
 
   const [gachas, setGachas] = useState<IGachaInfo[]>([]);
-  // const [gachasCache, setGachasCache] = useState<IGachaInfo[]>([]);
   const [gachasCache, gachasCacheRef] = useCachedData<IGachaInfo>("gachas");
 
   const [page, pageRef, setPage] = useRefState<number>(1);
   const [limit, limitRef] = useRefState<number>(12);
-  // const [, totalGachasRef, setTotalGachas] = useRefState<number>(0);
   const [, lastQueryFinRef, setLastQueryFin] = useRefState<boolean>(true);
   const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
 
@@ -140,6 +138,9 @@ const GachaList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
           viewComponent: ListCard,
           callback,
           data: gachas,
+          gridSize: {
+            sm: 6,
+          },
         })}
       </Container>
     </Fragment>

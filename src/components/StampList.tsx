@@ -264,6 +264,7 @@ const StampList: React.FC<{
           gridSize: {
             xs: 4,
             sm: 3,
+            md: 3,
             lg: 2,
           },
         })}

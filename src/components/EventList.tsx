@@ -165,6 +165,7 @@ const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
             xs: 12,
             md:
               viewGridType === "grid" ? 4 : viewGridType === "agenda" ? 12 : 12,
+            sm: 6,
           },
         })}
       </Container>
