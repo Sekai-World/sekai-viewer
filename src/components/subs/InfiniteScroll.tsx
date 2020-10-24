@@ -10,6 +10,34 @@ import React, { Fragment, useEffect, useRef, useState } from "react";
 // only divisor of 12
 type GridSize = 1 | 2 | 3 | 4 | 6 | 12 | undefined;
 
+interface GridSizeOptions {
+  /**
+   * grid size for `xs` and wider (if not overridden) \
+   * omit this property or set `undefined` to use default (12)
+   */
+  xs?: GridSize;
+  /**
+   * grid size for `sm` and wider (if not overridden) \
+   * omit this property or set `undefined` to inherit from `xs` \
+   */
+  sm?: GridSize;
+  /**
+   * grid size for `md` and wider (if not overridden) \
+   * omit this property or set `undefined` to inherit from `sm` \
+   */
+  md?: GridSize;
+  /**
+   * grid size for `lg` and wider (if not overridden) \
+   * omit this property or set `undefined` to inherit from `md` \
+   */
+  lg?: GridSize;
+  /**
+   * grid size for `xl` and wider \
+   * omit this property or set `undefined` to inherit from `lg` \
+   */
+  xl?: GridSize;
+}
+
 interface IISProps<T> {
   viewComponent: React.FC<{ data?: T }>;
   callback: (
@@ -17,10 +45,23 @@ interface IISProps<T> {
     setHasMore: React.Dispatch<React.SetStateAction<boolean>>
   ) => void;
   data: T[];
-  gridSize?: {
-    xs?: GridSize;
-    md?: GridSize;
-  };
+  gridSize?: GridSizeOptions;
+}
+
+const defaultXSGridSize: GridSize = 12;
+const defaultGridSize: GridSizeOptions = {
+  xs: defaultXSGridSize,
+  md: 4,
+};
+
+function useBreakpoint(): keyof GridSizeOptions {
+  const theme = useTheme();
+  const isXS = useMediaQuery(theme.breakpoints.down("xs")) && "xs";
+  const isSM = useMediaQuery(theme.breakpoints.only("sm")) && "sm";
+  const isMD = useMediaQuery(theme.breakpoints.only("md")) && "md";
+  const isLG = useMediaQuery(theme.breakpoints.only("lg")) && "lg";
+  const isXL = useMediaQuery(theme.breakpoints.up("xl")) && "xl";
+  return isXS || isSM || isMD || isLG || isXL || "xl";
 }
 
 function InfiniteScroll<T>({
@@ -29,11 +70,28 @@ function InfiniteScroll<T>({
   data,
   gridSize,
 }: React.PropsWithChildren<IISProps<T>>): React.ReactElement<IISProps<T>> {
-  const gridSizeXS = gridSize?.xs || 12;
-  const gridSizeMD = gridSize?.md || 4;
+  gridSize = {
+    ...(gridSize || defaultGridSize),
+  };
+  if (!gridSize.xs) {
+    gridSize.xs = defaultXSGridSize;
+  }
+  if (!gridSize.sm) {
+    gridSize.sm = gridSize.xs;
+  }
+  if (!gridSize.md) {
+    gridSize.md = gridSize.sm;
+  }
+  if (!gridSize.lg) {
+    gridSize.lg = gridSize.md;
+  }
+  if (!gridSize.xl) {
+    gridSize.xl = gridSize.lg;
+  }
 
-  const theme = useTheme();
-  const isMD = useMediaQuery(theme.breakpoints.up("md"));
+  //
+
+  const breakpoint = useBreakpoint();
 
   const [hasMore, setHasMore] = useState<boolean>(true);
 
@@ -60,7 +118,7 @@ function InfiniteScroll<T>({
     };
   });
 
-  const viewGridSize = isMD ? gridSizeMD : gridSizeXS;
+  const viewGridSize = gridSize[breakpoint]!;
   const itemsPerRow = 12 / viewGridSize;
   const numPlaceholders = data.length ? itemsPerRow : itemsPerRow * 2;
 
@@ -69,7 +127,15 @@ function InfiniteScroll<T>({
       <Grid container direction="row" spacing={1}>
         {data.length
           ? data.map((data, i) => (
-              <Grid item xs={gridSizeXS} md={gridSizeMD} key={i}>
+              <Grid
+                key={i}
+                item
+                xs={gridSize!.xs}
+                sm={gridSize!.sm}
+                md={gridSize!.md}
+                lg={gridSize!.lg}
+                xl={gridSize!.xl}
+              >
                 {viewComponent({ data })}
               </Grid>
             ))
@@ -85,7 +151,15 @@ function InfiniteScroll<T>({
         {Array.from({
           length: numPlaceholders,
         }).map((_, i) => (
-          <Grid item xs={gridSizeXS} md={gridSizeMD} key={`empty-${i}`}>
+          <Grid
+            key={`empty-${i}`}
+            item
+            xs={gridSize!.xs}
+            sm={gridSize!.sm}
+            md={gridSize!.md}
+            lg={gridSize!.lg}
+            xl={gridSize!.xl}
+          >
             {viewComponent({})}
           </Grid>
         ))}
