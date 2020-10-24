@@ -58,6 +58,7 @@ export function useTrimMP3() {
     TrimOptions | undefined
   >(undefined);
   const [trimmedMP3URL, setTrimmedMP3URL] = useState<string | undefined>();
+  const [trimFailed, setTrimFailed] = useState<boolean | undefined>();
 
   // revoke old blob URLs
   {
@@ -76,6 +77,7 @@ export function useTrimMP3() {
     //console.log("trim start", options, optionsRef);
 
     setTrimmedMP3URL(undefined);
+    setTrimFailed(undefined);
 
     if (!options) {
       return;
@@ -112,9 +114,11 @@ export function useTrimMP3() {
         );
 
         setTrimmedMP3URL(blobURL);
+        setTrimFailed(false);
       })
       .catch((error) => {
         console.error("trim failed", error);
+        setTrimFailed(true);
       });
 
     return () => {
@@ -123,7 +127,7 @@ export function useTrimMP3() {
         URL.revokeObjectURL(blobURL);
       }
     };
-  }, [options, optionsRef]);
+  }, [options, optionsRef, setTrimmedMP3URL, setTrimFailed]);
 
-  return [trimmedMP3URL, setOptions] as const;
+  return [trimmedMP3URL, trimFailed, setOptions] as const;
 }
