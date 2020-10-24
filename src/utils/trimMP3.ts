@@ -1,5 +1,6 @@
 import Axios from "axios";
 import { useEffect, useRef, useState } from "react";
+import { useRefState } from ".";
 import { parseMP3 } from "./mp3";
 
 /**
@@ -53,8 +54,11 @@ interface TrimOptions {
 }
 
 export function useTrimMP3() {
-  const [options, setOptions] = useState<TrimOptions | undefined>();
+  const [options, optionsRef, setOptions] = useRefState<
+    TrimOptions | undefined
+  >(undefined);
   const [trimmedMP3URL, setTrimmedMP3URL] = useState<string | undefined>();
+  const [trimFailed, setTrimFailed] = useState<boolean | undefined>();
 
   // revoke old blob URLs
   {
@@ -70,9 +74,10 @@ export function useTrimMP3() {
   }
 
   useEffect(() => {
-    //console.log("trim start", options);
+    //console.log("trim start", options, optionsRef);
 
     setTrimmedMP3URL(undefined);
+    setTrimFailed(undefined);
 
     if (!options) {
       return;
@@ -84,9 +89,10 @@ export function useTrimMP3() {
       responseType: "arraybuffer",
     })
       .then((response) => {
-        //console.log("trim response", options, response);
+        //console.log("trim response", options, optionsRef, response);
 
-        if (!options) {
+        // do nothing if `options` is outdated
+        if (optionsRef.current !== options) {
           return;
         }
 
@@ -108,9 +114,11 @@ export function useTrimMP3() {
         );
 
         setTrimmedMP3URL(blobURL);
+        setTrimFailed(false);
       })
       .catch((error) => {
         console.error("trim failed", error);
+        setTrimFailed(true);
       });
 
     return () => {
@@ -119,7 +127,7 @@ export function useTrimMP3() {
         URL.revokeObjectURL(blobURL);
       }
     };
-  }, [options]);
+  }, [options, optionsRef, setTrimmedMP3URL, setTrimFailed]);
 
-  return [trimmedMP3URL, setOptions] as const;
+  return [trimmedMP3URL, trimFailed, setOptions] as const;
 }
