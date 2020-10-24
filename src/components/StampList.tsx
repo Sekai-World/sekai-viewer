@@ -3,7 +3,6 @@ import {
   Button,
   ButtonGroup,
   Card,
-  CardContent,
   CardMedia,
   Chip,
   Collapse,
@@ -161,11 +160,11 @@ const StampList: React.FC<{
       return (
         <Card className={classes.card}>
           <Skeleton variant="rect" className={classes.media}></Skeleton>
-          <CardContent>
+          {/* <CardContent>
             <Typography variant="subtitle1" className={classes.subheader}>
               <Skeleton variant="text" width="90%"></Skeleton>
             </Typography>
-          </CardContent>
+          </CardContent> */}
         </Card>
       );
     }
