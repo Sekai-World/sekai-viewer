@@ -69,7 +69,7 @@ jobs:
           GIT_USER_NAME: github-actions[bot]
           GIT_USER_EMAIL: <41898282+github-actions[bot]@users.noreply.github.com>
           PR_GITHUB_ACTOR: ${{ github.repository_owner }}
-          PR_GITHUB_REPOSITORY: '${{ github.repository_owner }}/${{ secrets.PR_REPO_NAME) }}'
+          PR_GITHUB_REPOSITORY: '${{ github.repository_owner }}/${{ secrets.PR_REPO_NAME }}'
           SECRET_PR_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       -
