@@ -1,4 +1,4 @@
-name: TestBuildOnPR
+name: "PR: Build & Preivew"
 on:
   pull_request:
     branches:
@@ -36,6 +36,47 @@ jobs:
       -
         name: Install packages
         run: npm ci
+
       -
         name: Build pages
-        run: npm run build
+        run: |
+          pr_number=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          remote_branch="pr-$pr_number"
+          PUBLIC_URL="/$remote_branch" npm run build
+
+      -
+        name: Deploy
+        run: |
+          pr_number=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          remote_branch="pr-$pr_number"
+          remote_uri="https://$PR_GITHUB_ACTOR:$SECRET_PR_GITHUB_TOKEN@github.com/$PR_GITHUB_REPOSITORY.git"
+          cd build
+          git init
+          git config --local user.name "$GIT_USER_NAME"
+          git config --local user.email "$GIT_USER_EMAIL"
+          git add -A
+          git commit -m "PR $GITHUB_REPOSITORY#$pr_number"
+          git push -f "$remote_uri" "HEAD:$remote_branch"
+        env:
+          GIT_USER_NAME: github-actions[bot]
+          GIT_USER_EMAIL: <41898282+github-actions[bot]@users.noreply.github.com>
+          PR_GITHUB_ACTOR: ${{ github.repository_owner }}
+          PR_GITHUB_REPOSITORY: ${{ format('{0}/{1}', github.repository_owner, secrets.PR_REPO_NAME) }}
+          SECRET_PR_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/github-script@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const json = require(process.env.GITHUB_EVENT_PATH);
+            const prNumber = json.pull_request.number;
+            const branch = `pr-${prNumber}`;
+            const url = `${process.env.PR_DEPLOY_ORIGIN}/${branch}/`;
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `Your PR build is now available at [${url}](${url})!`,
+            });
+        env:
+          PR_DEPLOY_ORIGIN: ${{ secrets.PR_DEPLOY_ORIGIN }}
