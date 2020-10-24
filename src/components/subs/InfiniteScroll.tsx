@@ -7,22 +7,8 @@ import {
 } from "@material-ui/core";
 import React, { Fragment, useEffect, useRef, useState } from "react";
 
-type GridSize =
-  | boolean
-  | "auto"
-  | 1
-  | 2
-  | 3
-  | 4
-  | 5
-  | 6
-  | 7
-  | 8
-  | 9
-  | 10
-  | 11
-  | 12
-  | undefined;
+// only divisor of 12
+type GridSize = 1 | 2 | 3 | 4 | 6 | 12 | undefined;
 
 interface IISProps<T> {
   viewComponent: React.FC<{ data?: T }>;
@@ -32,8 +18,8 @@ interface IISProps<T> {
   ) => void;
   data: T[];
   gridSize?: {
-    xs: GridSize;
-    md: GridSize;
+    xs?: GridSize;
+    md?: GridSize;
   };
 }
 
@@ -43,8 +29,11 @@ function InfiniteScroll<T>({
   data,
   gridSize,
 }: React.PropsWithChildren<IISProps<T>>): React.ReactElement<IISProps<T>> {
+  const gridSizeXS = gridSize?.xs || 12;
+  const gridSizeMD = gridSize?.md || 4;
+
   const theme = useTheme();
-  const matchSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMD = useMediaQuery(theme.breakpoints.up("md"));
 
   const [hasMore, setHasMore] = useState<boolean>(true);
 
@@ -71,22 +60,17 @@ function InfiniteScroll<T>({
     };
   });
 
-  const itemsPerRow = matchSmallScreen
-    ? 1
-    : 12 / (gridSize ? Number(gridSize.md) : 4);
+  const viewGridSize = isMD ? gridSizeMD : gridSizeXS;
+  const itemsPerRow = 12 / viewGridSize;
+  const numPlaceholders = data.length ? itemsPerRow : itemsPerRow * 2;
 
   return (
     <Fragment>
       <Grid container direction="row" spacing={1}>
         {data.length
-          ? data.map((elem, id) => (
-              <Grid
-                item
-                xs={gridSize ? gridSize.xs : 12}
-                md={gridSize ? gridSize.md : 4}
-                key={id}
-              >
-                {viewComponent({ data: elem })}
+          ? data.map((data, i) => (
+              <Grid item xs={gridSizeXS} md={gridSizeMD} key={i}>
+                {viewComponent({ data })}
               </Grid>
             ))
           : null}
@@ -98,18 +82,10 @@ function InfiniteScroll<T>({
         style={{ display: hasMore ? "flex" : "none", paddingTop: "4px" }}
         spacing={1}
       >
-        {Array.from(
-          {
-            length: data.length ? itemsPerRow : itemsPerRow * 2,
-          },
-          (_, i) => i
-        ).map((_, id) => (
-          <Grid
-            item
-            xs={gridSize ? gridSize.xs : 12}
-            md={gridSize ? gridSize.md : 4}
-            key={`empty-${id}`}
-          >
+        {Array.from({
+          length: numPlaceholders,
+        }).map((_, i) => (
+          <Grid item xs={gridSizeXS} md={gridSizeMD} key={`empty-${i}`}>
             {viewComponent({})}
           </Grid>
         ))}
