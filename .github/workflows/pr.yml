@@ -60,6 +60,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: pages
+          path: build/
       -
         name: Deploy
         run: |
