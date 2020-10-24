@@ -38,6 +38,10 @@ interface GridSizeOptions {
   xl?: GridSize;
 }
 
+type CompleteGridSizeOptions = {
+  [T in keyof Required<GridSizeOptions>]: Exclude<GridSize, undefined>;
+};
+
 interface IISProps<T> {
   viewComponent: React.FC<{ data?: T }>;
   callback: (
@@ -64,32 +68,33 @@ function useBreakpoint(): keyof GridSizeOptions {
   return isXS || isSM || isMD || isLG || isXL || "xl";
 }
 
+function transformToCompleteGridSizeOptions(
+  _gridSize?: GridSizeOptions | undefined
+): CompleteGridSizeOptions {
+  // use default if gridSize is not provided
+  // not using defaults per properties because `{ md: 4 }` would not be desired
+  const gridSize = {
+    ...(_gridSize || defaultGridSize),
+  };
+
+  // inherit the value of the smaller breakpoint if not specified
+  (["xs", "sm", "md", "lg", "xl"] as const).forEach((v, i, a) => {
+    if (!gridSize[v]) {
+      gridSize[v] = i > 0 ? gridSize[a[i - 1]] : defaultXSGridSize;
+    }
+  });
+
+  return gridSize as CompleteGridSizeOptions;
+}
+
 function InfiniteScroll<T>({
   viewComponent,
   callback,
   data,
-  gridSize,
+  gridSize: _gridSize,
 }: React.PropsWithChildren<IISProps<T>>): React.ReactElement<IISProps<T>> {
-  gridSize = {
-    ...(gridSize || defaultGridSize),
-  };
-  if (!gridSize.xs) {
-    gridSize.xs = defaultXSGridSize;
-  }
-  if (!gridSize.sm) {
-    gridSize.sm = gridSize.xs;
-  }
-  if (!gridSize.md) {
-    gridSize.md = gridSize.sm;
-  }
-  if (!gridSize.lg) {
-    gridSize.lg = gridSize.md;
-  }
-  if (!gridSize.xl) {
-    gridSize.xl = gridSize.lg;
-  }
-
-  //
+  // this is necessary because of `viewGridSize`
+  const gridSize = transformToCompleteGridSizeOptions(_gridSize);
 
   const breakpoint = useBreakpoint();
 
@@ -118,7 +123,7 @@ function InfiniteScroll<T>({
     };
   });
 
-  const viewGridSize = gridSize[breakpoint]!;
+  const viewGridSize = gridSize[breakpoint];
   const itemsPerRow = 12 / viewGridSize;
   const numPlaceholders = data.length ? itemsPerRow : itemsPerRow * 2;
 
@@ -130,11 +135,11 @@ function InfiniteScroll<T>({
               <Grid
                 key={i}
                 item
-                xs={gridSize!.xs}
-                sm={gridSize!.sm}
-                md={gridSize!.md}
-                lg={gridSize!.lg}
-                xl={gridSize!.xl}
+                xs={gridSize.xs}
+                sm={gridSize.sm}
+                md={gridSize.md}
+                lg={gridSize.lg}
+                xl={gridSize.xl}
               >
                 {viewComponent({ data })}
               </Grid>
@@ -154,11 +159,11 @@ function InfiniteScroll<T>({
           <Grid
             key={`empty-${i}`}
             item
-            xs={gridSize!.xs}
-            sm={gridSize!.sm}
-            md={gridSize!.md}
-            lg={gridSize!.lg}
-            xl={gridSize!.xl}
+            xs={gridSize.xs}
+            sm={gridSize.sm}
+            md={gridSize.md}
+            lg={gridSize.lg}
+            xl={gridSize.xl}
           >
             {viewComponent({})}
           </Grid>
