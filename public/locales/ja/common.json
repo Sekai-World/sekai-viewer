@@ -33,7 +33,9 @@
   "startAt": "解放時間",
   "rarity": "レアリティ",
   "thumb": "サムネイル",
-  "skill": "スキル",
+  "skillLevel": "",
+  "skillName": "",
+  "skillEffect": "",
   "releaseCondition": "解放条件",
   "releaseCosts": "必要アイテム",
   "rewards": "報酬",
@@ -50,5 +52,6 @@
   "bug": "バグ",
   "update": "アップデート",
   "level": "レベル",
+  "skill": "スキル",
   "character_plural": "キャラクター"
 }

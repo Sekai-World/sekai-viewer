@@ -16,6 +16,7 @@ import {
   Switch,
 } from "@material-ui/core";
 import { useLayoutStyles } from "../styles/layout";
+import { useInteractiveStyles } from "../styles/interactive";
 import { TabContext, TabPanel } from "@material-ui/lab";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -96,6 +97,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
 }) => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
+  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const assetI18n = getAssetI18n();
 
@@ -563,6 +565,37 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
         {t("card:skill")}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="sm">
+        <Paper className={interactiveClasses.area}>
+          <Grid container direction="column" spacing={2}>
+            <Grid
+              item
+              container
+              xs={12}
+              alignItems="center"
+              justify="space-evenly"
+            >
+              <Grid item xs={12} md={2}>
+                <Typography classes={{ root: interactiveClasses.caption }}>
+                  {t("common:skillLevel")}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} md={9}>
+                <Slider
+                  value={skillLevel}
+                  onChange={(e, value) => setSkillLevel(value)}
+                  valueLabelDisplay="auto"
+                  step={1}
+                  min={1}
+                  max={
+                    skill!.skillEffects[0].skillEffectDetails[
+                      skill!.skillEffects[0].skillEffectDetails.length - 1
+                    ].level
+                  }
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+        </Paper>
         <Grid className={classes["grid-out"]} container direction="column">
           <Grid
             container
@@ -572,7 +605,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t("common:skill")}
+              {t("common:skillName")}
             </Typography>
             <Typography>
               {contentTransMode === "original"
@@ -582,23 +615,19 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                 : card.cardSkillName}
             </Typography>
           </Grid>
-          <Box>
-            {/* <Typography>Skill level</Typography> */}
-            <Slider
-              value={skillLevel}
-              onChange={(e, value) => setSkillLevel(value)}
-              valueLabelDisplay="auto"
-              step={1}
-              min={1}
-              max={
-                skill!.skillEffects[0].skillEffectDetails[
-                  skill!.skillEffects[0].skillEffectDetails.length - 1
-                ].level
-              }
-            />
-            {/* <Typography>{skill?.shortDescription}</Typography> */}
+          <Divider style={{ margin: "1% 0" }} />
+          <Grid
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+              {t("common:skillEffect")}
+            </Typography>
             <Typography>{getSkillDesc(skill!, skillLevel)}</Typography>
-          </Box>
+          </Grid>
           <Divider style={{ margin: "1% 0" }} />
         </Grid>
       </Container>

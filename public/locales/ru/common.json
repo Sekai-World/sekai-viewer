@@ -33,7 +33,9 @@
   "startAt": "Доступно с",
   "rarity": "Редкость",
   "thumb": "Иконка",
-  "skill": "Навык",
+  "skillLevel": "",
+  "skillName": "",
+  "skillEffect": "",
   "releaseCondition": "Способ получения",
   "releaseCosts": "",
   "rewards": "",
@@ -53,5 +55,6 @@
   "character_1": "",
   "character_2": "",
   "level": "Уровень",
+  "skill": "Навык",
   "character_plural": "Персонажи"
 }

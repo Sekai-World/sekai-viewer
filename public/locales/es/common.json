@@ -33,7 +33,9 @@
   "startAt": "",
   "rarity": "",
   "thumb": "",
-  "skill": "",
+  "skillLevel": "",
+  "skillName": "",
+  "skillEffect": "",
   "releaseCondition": "",
   "releaseCosts": "",
   "rewards": "",
@@ -50,5 +52,6 @@
   "bug": "",
   "update": "",
   "character_plural": "",
-  "level": ""
+  "level": "",
+  "skill": ""
 }

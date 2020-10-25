@@ -33,7 +33,9 @@
   "startAt": "Disponível a partir de",
   "rarity": "Raridade",
   "thumb": "Ícone",
-  "skill": "Habilidade",
+  "skillLevel": "",
+  "skillName": "",
+  "skillEffect": "",
   "releaseCondition": "Condição de liberação",
   "releaseCosts": "Custos de liberação",
   "rewards": "Recompensas",
@@ -50,5 +52,6 @@
   "bug": "Bug",
   "update": "Atualização",
   "character_plural": "Personagens",
-  "level": "Nível"
+  "level": "Nível",
+  "skill": "Habilidade"
 }

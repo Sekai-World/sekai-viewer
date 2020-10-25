@@ -33,7 +33,9 @@
   "startAt": "开放时间",
   "rarity": "稀有度",
   "thumb": "缩图",
-  "skill": "技能",
+  "skillLevel": "",
+  "skillName": "",
+  "skillEffect": "",
   "releaseCondition": "解放条件",
   "releaseCosts": "解放素材",
   "rewards": "奖励",
@@ -50,5 +52,6 @@
   "bug": "问题",
   "update": "更新",
   "level": "等级",
+  "skill": "技能",
   "character_plural": "角色"
 }
