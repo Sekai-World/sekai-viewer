@@ -326,14 +326,12 @@ function Home() {
             </Typography>
           )}
         </Alert>
+      </Container>
+      <Typography variant="h6" className={layoutClasses.header}>
+        {t("home:game-news.title")}
+      </Typography>
+      <Container className={layoutClasses.content} maxWidth="md">
         <Paper>
-          <Typography
-            variant="h6"
-            align="center"
-            className={classes["game-news-title"]}
-          >
-            {t("home:game-news.title")}
-          </Typography>
           <Tabs
             value={gameNewsTag}
             onChange={(e, v) => setGameNewsTag(v)}
@@ -348,17 +346,17 @@ function Home() {
             <Tab label={t("common:bug")} value="bug"></Tab>
             <Tab label={t("common:update")} value="update"></Tab>
           </Tabs>
-          <div style={{ height: 650 }}>
-            <DataGrid
-              pagination
-              autoPageSize
-              rows={informations.filter(
-                (info) => info.informationTag === gameNewsTag
-              )}
-              columns={columns}
-            ></DataGrid>
-          </div>
         </Paper>
+        <div style={{ height: 650 }}>
+          <DataGrid
+            pagination
+            autoPageSize
+            rows={informations.filter(
+              (info) => info.informationTag === gameNewsTag
+            )}
+            columns={columns}
+          ></DataGrid>
+        </div>
       </Container>
       {info ? (
         <InfoInternalDialog
