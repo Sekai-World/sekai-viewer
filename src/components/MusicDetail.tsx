@@ -43,7 +43,7 @@ import {
 import { musicCategoryToName, musicTagToName, useCachedData } from "../utils";
 import { charaIcons } from "../utils/resources";
 import { Trans, useTranslation } from "react-i18next";
-import { getAssetI18n } from "../utils/i18n";
+import { useAssetI18n } from "../utils/i18n";
 import { useDurationI18n } from "../utils/i18nDuration";
 import { useTrimMP3 } from "../utils/trimMP3";
 import MusicVideoPlayer from "./subs/MusicVideoPlayer";
@@ -87,7 +87,7 @@ const MusicDetail: React.FC<{
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
-  const assetI18n = getAssetI18n();
+  const { assetT } = useAssetI18n();
   const [, humanizeDurationShort] = useDurationI18n();
   const [trimmedMP3URL, trimFailed, setTrimOptions] = useTrimMP3();
 
@@ -325,7 +325,7 @@ const MusicDetail: React.FC<{
         {contentTransMode === "original"
           ? music.title
           : contentTransMode === "translated"
-          ? assetI18n.t(`music_titles:${musicId}`)
+          ? assetT(`music_titles:${musicId}`, music.title)
           : music.title}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="sm">
@@ -490,7 +490,7 @@ const MusicDetail: React.FC<{
               {contentTransMode === "original"
                 ? music.title
                 : contentTransMode === "translated"
-                ? assetI18n.t(`music_titles:${musicId}`)
+                ? assetT(`music_titles:${musicId}`, music.title)
                 : music.title}
             </Typography>
           </Grid>

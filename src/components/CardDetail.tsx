@@ -34,7 +34,7 @@ import {
   ISkillInfo,
   ResourceBoxDetail,
 } from "../types";
-import { useCachedData } from "../utils";
+import { useCachedData, useCharaName } from "../utils";
 import rarityNormal from "../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../assets/rarity_star_afterTraining.png";
 import IconPerformance from "../assets/icon_performance.png";
@@ -54,7 +54,7 @@ import { attrIconMap } from "../utils/resources";
 import { useTranslation } from "react-i18next";
 import MaterialIcon from "./subs/MaterialIcon";
 import CommonMaterialIcon from "./subs/CommonMaterialIcon";
-import { getAssetI18n } from "../utils/i18n";
+import { useAssetI18n } from "../utils/i18n";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -97,7 +97,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
-  const assetI18n = getAssetI18n();
+  const { assetT, assetI18n } = useAssetI18n();
 
   const [charas] = useCachedData<ICharaProfile>("gameCharacters");
   const [cards] = useCachedData<ICardInfo>("cards");
@@ -125,27 +125,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   // const [cardRank, setCardRank] = useState<number | number[]>(0);
   // const [maxCardRank, setMaxCardRank] = useState<number>(0);
 
-  const getCharaName = useCallback(
-    (charaId: number) => {
-      const chara = charas.find((chara) => chara.id === charaId);
-      if (chara?.firstName) {
-        switch (contentTransMode) {
-          case "original":
-            return `${chara.firstName} ${chara.givenName}`;
-          case "translated":
-            return ["zh-CN", "zh-TW", "ko", "ja"].includes(assetI18n.language)
-              ? `${assetI18n.t(
-                  `character_name:${charaId}.firstName`
-                )} ${assetI18n.t(`character_name:${charaId}.givenName`)}`
-              : `${assetI18n.t(
-                  `character_name:${charaId}.givenName`
-                )} ${assetI18n.t(`character_name:${charaId}.firstName`)}`;
-        }
-      }
-      return chara?.givenName;
-    },
-    [charas, contentTransMode, assetI18n]
-  );
+  const getCharaName = useCharaName(contentTransMode);
 
   const getSkillDesc = useCallback(
     (skill: ISkillInfo, skillLevel: number | number[]) => {
@@ -153,7 +133,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
         contentTransMode === "original"
           ? skill.description
           : contentTransMode === "translated"
-          ? assetI18n.t(`skill_desc:${skill.id}`, {
+          ? assetT(`skill_desc:${skill.id}`, skill.description, {
               interpolation: { prefix: "[", suffix: "]" },
             })
           : skill.description;
@@ -177,7 +157,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
 
       return skillInfo;
     },
-    [assetI18n, contentTransMode]
+    [contentTransMode, assetT]
   );
 
   const getCharaUnitName = useCallback(
@@ -272,7 +252,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
           contentTransMode === "original"
             ? _card.prefix
             : contentTransMode === "translated"
-            ? assetI18n.t(`card_prefix:${_card.id}`)
+            ? assetT(`card_prefix:${_card.id}`, _card.prefix)
             : _card.prefix
         } - ${getCharaName(_card.characterId)}`
       );
@@ -305,6 +285,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
     assetI18n,
     assetI18n.language,
     contentTransMode,
+    assetT,
   ]);
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
@@ -419,7 +400,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
               {contentTransMode === "original"
                 ? card.prefix
                 : contentTransMode === "translated"
-                ? assetI18n.t(`card_prefix:${card.id}`)
+                ? assetT(`card_prefix:${card.id}`, card.prefix)
                 : card.prefix}
             </Typography>
           </Grid>
@@ -578,7 +559,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
               {contentTransMode === "original"
                 ? card.cardSkillName
                 : contentTransMode === "translated"
-                ? assetI18n.t(`card_skill_name:${cardId}`)
+                ? assetT(`card_skill_name:${cardId}`, card.cardSkillName)
                 : card.cardSkillName}
             </Typography>
           </Grid>

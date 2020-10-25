@@ -15,7 +15,7 @@ import { useCachedData, useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
-import { getAssetI18n } from "../utils/i18n";
+import { useAssetI18n } from "../utils/i18n";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -51,7 +51,7 @@ const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   const layoutClasses = useLayoutStyles();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
-  const assetI18n = getAssetI18n();
+  const { assetT } = useAssetI18n();
 
   const [events, setEvents] = useState<IEventInfo[]>([]);
   const [eventsCache, eventsCacheRef] = useCachedData<IEventInfo>("events");
@@ -129,7 +129,7 @@ const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                 contentTransMode === "original"
                   ? data.name
                   : contentTransMode === "translated"
-                  ? assetI18n.t(`event_name:${data.id}`)
+                  ? assetT(`event_name:${data.id}`, data.name)
                   : data.name
               }
             ></CardMedia>
@@ -138,7 +138,7 @@ const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                 {contentTransMode === "original"
                   ? data.name
                   : contentTransMode === "translated"
-                  ? assetI18n.t(`event_name:${data.id}`)
+                  ? assetT(`event_name:${data.id}`, data.name)
                   : data.name}
               </Typography>
               <Typography variant="body2" color="textSecondary">

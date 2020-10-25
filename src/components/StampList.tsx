@@ -26,9 +26,8 @@ import { useTranslation } from "react-i18next";
 import { characterSelectReducer } from "../stores/reducers";
 import { useFilterStyles } from "../styles/filter";
 import { useLayoutStyles } from "../styles/layout";
-import { ContentTransModeType, ICharaProfile, IStampInfo } from "../types";
-import { useCachedData, useRefState } from "../utils";
-import { getAssetI18n } from "../utils/i18n";
+import { ContentTransModeType, IStampInfo } from "../types";
+import { useCachedData, useCharaName, useRefState } from "../utils";
 import { charaIcons } from "../utils/resources";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
@@ -56,10 +55,8 @@ const StampList: React.FC<{
   const layoutClasses = useLayoutStyles();
   const filterClasses = useFilterStyles();
   const { t } = useTranslation();
-  const assetI18n = getAssetI18n();
 
   const [stampsCache] = useCachedData<IStampInfo>("stamps");
-  const [charas] = useCachedData<ICharaProfile>("gameCharacters");
 
   const [stamps, setStamps] = useState<IStampInfo[]>([]);
   const [filteredCache, filteredCacheRef, setFilteredCache] = useRefState<
@@ -132,27 +129,7 @@ const StampList: React.FC<{
     document.title = "Sticker List | Sekai Viewer";
   }, []);
 
-  const getCharaName = useCallback(
-    (charaId: number) => {
-      const chara = charas.find((chara) => chara.id === charaId);
-      if (chara?.firstName) {
-        switch (contentTransMode) {
-          case "original":
-            return `${chara.firstName} ${chara.givenName}`;
-          case "translated":
-            return ["zh-CN", "zh-TW", "ko", "ja"].includes(assetI18n.language)
-              ? `${assetI18n.t(
-                  `character_name:${charaId}.firstName`
-                )} ${assetI18n.t(`character_name:${charaId}.givenName`)}`
-              : `${assetI18n.t(
-                  `character_name:${charaId}.givenName`
-                )} ${assetI18n.t(`character_name:${charaId}.firstName`)}`;
-        }
-      }
-      return chara?.givenName;
-    },
-    [charas, contentTransMode, assetI18n]
-  );
+  const getCharaName = useCharaName(contentTransMode);
 
   const ListCard: React.FC<{ data?: IStampInfo }> = ({ data }) => {
     if (!data) {
