@@ -560,7 +560,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
         </Grid>
       </Container>
       <Typography variant="h6" className={layoutClasses.header}>
-        {t("card:stats")}
+        {t("card:skill")}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="sm">
         <Grid className={classes["grid-out"]} container direction="column">
@@ -600,6 +600,13 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
             <Typography>{getSkillDesc(skill!, skillLevel)}</Typography>
           </Box>
           <Divider style={{ margin: "1% 0" }} />
+        </Grid>
+      </Container>
+      <Typography variant="h6" className={layoutClasses.header}>
+        {t("card:stats")}
+      </Typography>
+      <Container className={layoutClasses.content} maxWidth="sm">
+        <Grid className={classes["grid-out"]} container direction="column">
           <Box>
             <Typography style={{ fontWeight: 600 }}>
               {t("card:power")}
