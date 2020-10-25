@@ -37,7 +37,7 @@ import { musicCategoryToName, useCachedData, useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
-import { useFilterStyles } from "../styles/filter";
+import { useInteractiveStyles } from "../styles/interactive";
 import { getAssetI18n } from "../utils/i18n";
 
 const useStyles = makeStyles((theme) => ({
@@ -108,7 +108,7 @@ const MusicList: React.FC<{
 }> = ({ contentTransMode }) => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
-  const filterClasses = useFilterStyles();
+  const interactiveClasses = useInteractiveStyles();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
   const assetI18n = getAssetI18n();
@@ -424,7 +424,7 @@ const MusicList: React.FC<{
           </ButtonGroup>
         </Grid>
         <Collapse in={filterOpened}>
-          <Grid container className={filterClasses.filterArea}>
+          <Grid container className={interactiveClasses.area}>
             <Grid
               item
               container
@@ -433,7 +433,7 @@ const MusicList: React.FC<{
               justify="space-between"
             >
               <Grid item xs={12} md={2}>
-                <Typography classes={{ root: filterClasses.filterCaption }}>
+                <Typography classes={{ root: interactiveClasses.caption }}>
                   {t("filter:sort.caption")}
                 </Typography>
               </Grid>

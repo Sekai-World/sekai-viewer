@@ -48,7 +48,7 @@ import { CardThumb, CardThumbSkeleton } from "./subs/CardThumb";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
-import { useFilterStyles } from "../styles/filter";
+import { useInteractiveStyles } from "../styles/interactive";
 import { getAssetI18n } from "../utils/i18n";
 import { characterSelectReducer } from "../stores/reducers";
 import { charaIcons } from "../utils/resources";
@@ -135,7 +135,7 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
 }) => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
-  const filterClasses = useFilterStyles();
+  const interactiveClasses = useInteractiveStyles();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
   const assetI18n = getAssetI18n();
@@ -564,7 +564,7 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
           </ButtonGroup>
         </Grid>
         <Collapse in={filterOpened}>
-          <Grid container className={filterClasses.filterArea} spacing={1}>
+          <Grid container className={interactiveClasses.area} spacing={1}>
             <Grid
               item
               container
@@ -573,7 +573,7 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
               justify="space-between"
             >
               <Grid item xs={12} md={2}>
-                <Typography classes={{ root: filterClasses.filterCaption }}>
+                <Typography classes={{ root: interactiveClasses.caption }}>
                   {t("filter:character.caption")}
                 </Typography>
               </Grid>
@@ -622,7 +622,7 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
               justify="space-between"
             >
               <Grid item xs={12} md={2}>
-                <Typography classes={{ root: filterClasses.filterCaption }}>
+                <Typography classes={{ root: interactiveClasses.caption }}>
                   {t("filter:sort.caption")}
                 </Typography>
               </Grid>

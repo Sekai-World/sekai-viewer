@@ -24,7 +24,7 @@ import React, {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { characterSelectReducer } from "../stores/reducers";
-import { useFilterStyles } from "../styles/filter";
+import { useInteractiveStyles } from "../styles/interactive";
 import { useLayoutStyles } from "../styles/layout";
 import { ContentTransModeType, ICharaProfile, IStampInfo } from "../types";
 import { useCachedData, useRefState } from "../utils";
@@ -54,7 +54,7 @@ const StampList: React.FC<{
 }> = ({ contentTransMode }) => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
-  const filterClasses = useFilterStyles();
+  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const assetI18n = getAssetI18n();
 
@@ -205,7 +205,7 @@ const StampList: React.FC<{
           </ButtonGroup>
         </Grid>
         <Collapse in={filterOpened}>
-          <Grid container className={filterClasses.filterArea}>
+          <Grid container className={interactiveClasses.area}>
             <Grid
               item
               container
@@ -214,7 +214,7 @@ const StampList: React.FC<{
               justify="space-between"
             >
               <Grid item xs={12} md={2}>
-                <Typography classes={{ root: filterClasses.filterCaption }}>
+                <Typography classes={{ root: interactiveClasses.caption }}>
                   {t("filter:character.caption")}
                 </Typography>
               </Grid>

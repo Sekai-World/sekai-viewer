@@ -1,14 +1,14 @@
 import { makeStyles } from "@material-ui/core";
 
-const useFilterStyles = makeStyles((theme) => ({
-  filterArea: {
+const useInteractiveStyles = makeStyles((theme) => ({
+  area: {
     margin: theme.spacing(1, 0),
   },
-  filterCaption: {
+  caption: {
     [theme.breakpoints.up("md")]: {
       textAlign: "right",
     },
   },
 }));
 
-export { useFilterStyles };
+export { useInteractiveStyles };
