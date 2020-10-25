@@ -540,7 +540,9 @@ const EventDetail: React.FC<{
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
               {t("common:startAt")}
             </Typography>
-            <Typography>{new Date(event.startAt).toLocaleString()}</Typography>
+            <Typography align="right">
+              {new Date(event.startAt).toLocaleString()}
+            </Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
           <Grid
@@ -554,7 +556,9 @@ const EventDetail: React.FC<{
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
               {t("common:endAt")}
             </Typography>
-            <Typography>{new Date(event.closedAt).toLocaleString()}</Typography>
+            <Typography align="right">
+              {new Date(event.closedAt).toLocaleString()}
+            </Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
           <Grid
@@ -568,7 +572,7 @@ const EventDetail: React.FC<{
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
               {t("event:aggregateAt")}
             </Typography>
-            <Typography>
+            <Typography align="right">
               {new Date(event.aggregateAt).toLocaleString()}
             </Typography>
           </Grid>
@@ -584,7 +588,7 @@ const EventDetail: React.FC<{
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
               {t("event:rankingAnnounceAt")}
             </Typography>
-            <Typography>
+            <Typography align="right">
               {new Date(event.rankingAnnounceAt).toLocaleString()}
             </Typography>
           </Grid>
@@ -600,7 +604,7 @@ const EventDetail: React.FC<{
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
               {t("event:distributionStartAt")}
             </Typography>
-            <Typography>
+            <Typography align="right">
               {new Date(event.distributionStartAt).toLocaleString()}
             </Typography>
           </Grid>
@@ -616,7 +620,7 @@ const EventDetail: React.FC<{
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
               {t("event:distributionEndAt")}
             </Typography>
-            <Typography>
+            <Typography align="right">
               {new Date(event.distributionEndAt).toLocaleString()}
             </Typography>
           </Grid>
