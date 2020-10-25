@@ -15,7 +15,7 @@ import InfiniteScroll from "./subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
 import { ContentTransModeType, IGachaInfo } from "../types";
-import { getAssetI18n } from "../utils/i18n";
+import { useAssetI18n } from "../utils/i18n";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -45,7 +45,7 @@ const GachaList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   const layoutClasses = useLayoutStyles();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
-  const assetI18n = getAssetI18n();
+  const { assetT } = useAssetI18n();
 
   const [gachas, setGachas] = useState<IGachaInfo[]>([]);
   const [gachasCache, gachasCacheRef] = useCachedData<IGachaInfo>("gachas");
@@ -119,7 +119,7 @@ const GachaList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
               {contentTransMode === "original"
                 ? data.name
                 : contentTransMode === "translated"
-                ? assetI18n.t(`gacha_name:${data.id}`)
+                ? assetT(`gacha_name:${data.id}`, data.name)
                 : data.name}
             </Typography>
           </CardContent>
@@ -140,6 +140,7 @@ const GachaList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
           data: gachas,
           gridSize: {
             sm: 6,
+            lg: 4,
           },
         })}
       </Container>

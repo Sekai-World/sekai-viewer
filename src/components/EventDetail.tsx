@@ -30,7 +30,7 @@ import {
 } from "../types";
 import { useCachedData, useRealtimeEventData } from "../utils";
 import { attrIconMap, charaIcons, degreeFrameMap } from "../utils/resources";
-import { getAssetI18n } from "../utils/i18n";
+import { useAssetI18n } from "../utils/i18n";
 import { useDurationI18n } from "../utils/i18nDuration";
 
 const useStyle = makeStyles((theme) => ({
@@ -56,7 +56,7 @@ const EventDetail: React.FC<{
   const { eventId } = useParams<{ eventId: string }>();
   const classes = useStyle();
   const layoutClasses = useLayoutStyles();
-  const assetI18n = getAssetI18n();
+  const { assetT } = useAssetI18n();
   const [humanizeDuration] = useDurationI18n();
 
   const [events] = useCachedData<IEventInfo>("events");
@@ -289,7 +289,7 @@ const EventDetail: React.FC<{
         {contentTransMode === "original"
           ? event.name
           : contentTransMode === "translated"
-          ? assetI18n.t(`event_name:${eventId}`)
+          ? assetT(`event_name:${eventId}`, event.name)
           : event.name}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="sm">
@@ -402,7 +402,7 @@ const EventDetail: React.FC<{
               {contentTransMode === "original"
                 ? event.name
                 : contentTransMode === "translated"
-                ? assetI18n.t(`event_name:${eventId}`)
+                ? assetT(`event_name:${eventId}`, event.name)
                 : event.name}
             </Typography>
           </Grid>

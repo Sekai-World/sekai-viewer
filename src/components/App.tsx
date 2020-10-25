@@ -61,7 +61,7 @@ import {
   useRouteMatch,
 } from "react-router-dom";
 import { ContentTransModeType } from "../types";
-import { getAssetI18n } from "../utils/i18n";
+import { useAssetI18n } from "../utils/i18n";
 import StampList from "./StampList";
 
 const drawerWidth = 240;
@@ -178,7 +178,7 @@ function ListItemLink(
 
 function App() {
   const { t, i18n } = useTranslation();
-  const assetI18n = getAssetI18n();
+  const { assetI18n } = useAssetI18n();
 
   const leftBtns: IListItemLinkProps[][] = [
     [
