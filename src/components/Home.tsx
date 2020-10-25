@@ -13,6 +13,7 @@ import {
   useTheme,
 } from "@material-ui/core";
 import { useLayoutStyles } from "../styles/layout";
+import { useInteractiveStyles } from "../styles/interactive";
 import { ColDef, DataGrid, ValueFormatterParams } from "@material-ui/data-grid";
 import {
   GitHub,
@@ -118,6 +119,7 @@ function Home() {
   const theme = useTheme();
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
+  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
 
   const [informations] = useCachedData<IUserInformationInfo>(
@@ -331,7 +333,7 @@ function Home() {
         {t("home:game-news.title")}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="md">
-        <Paper>
+        <Paper className={interactiveClasses.area}>
           <Tabs
             value={gameNewsTag}
             onChange={(e, v) => setGameNewsTag(v)}
