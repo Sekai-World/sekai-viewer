@@ -5,10 +5,17 @@
     "title[2]": "After training image",
     "title[3]": "After training trim image"
   },
+  "skillLevel": "Skill Level",
+  "skillName": "Skill Name",
+  "skillEffect": "Skill Effect",
   "stats": "Stats",
-  "power": "Power",
+  "cardLevel": "Card Level",
+  "normal": "Normal",
+  "trained": "Trained",
+  "sideStory": "Side Story",
   "sideStory1Unlocked": "Side Story 1 Unlocked",
   "sideStory2Unlocked": "Side Story 2 Unlocked",
-  "sideStory": "Side Story",
-  "sideStory_plural": "Side Stories"
+  "sideStory_plural": "Side Stories",
+  "power": "Power",
+  "skill": "Skill"
 }

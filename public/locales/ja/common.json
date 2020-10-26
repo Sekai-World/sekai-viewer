@@ -34,6 +34,10 @@
   "rarity": "レアリティ",
   "thumb": "サムネイル",
   "skill": "スキル",
+  "performance": "",
+  "technique": "",
+  "stamina": "",
+  "power": "",
   "releaseCondition": "解放条件",
   "releaseCosts": "必要アイテム",
   "rewards": "報酬",
@@ -49,6 +53,6 @@
   "campaign": "キャンペーン",
   "bug": "バグ",
   "update": "アップデート",
-  "character_plural": "キャラクター",
-  "level": "レベル"
+  "level": "レベル",
+  "character_plural": "キャラクター"
 }

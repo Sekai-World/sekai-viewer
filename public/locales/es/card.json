@@ -5,10 +5,17 @@
     "title[2]": "",
     "title[3]": ""
   },
+  "skillLevel": "",
+  "skillName": "",
+  "skillEffect": "",
   "stats": "",
-  "power": "",
+  "cardLevel": "",
+  "normal": "",
+  "trained": "",
+  "sideStory": "",
   "sideStory1Unlocked": "",
   "sideStory2Unlocked": "",
-  "sideStory": "",
-  "sideStory_plural": ""
+  "sideStory_plural": "",
+  "power": "",
+  "skill": ""
 }

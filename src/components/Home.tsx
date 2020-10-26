@@ -13,6 +13,7 @@ import {
   useTheme,
 } from "@material-ui/core";
 import { useLayoutStyles } from "../styles/layout";
+import { useInteractiveStyles } from "../styles/interactive";
 import { ColDef, DataGrid, ValueFormatterParams } from "@material-ui/data-grid";
 import {
   GitHub,
@@ -118,6 +119,7 @@ function Home() {
   const theme = useTheme();
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
+  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
 
   const [informations] = useCachedData<IUserInformationInfo>(
@@ -326,14 +328,12 @@ function Home() {
             </Typography>
           )}
         </Alert>
-        <Paper>
-          <Typography
-            variant="h6"
-            align="center"
-            className={classes["game-news-title"]}
-          >
-            {t("home:game-news.title")}
-          </Typography>
+      </Container>
+      <Typography variant="h6" className={layoutClasses.header}>
+        {t("home:game-news.title")}
+      </Typography>
+      <Container className={layoutClasses.content} maxWidth="md">
+        <Paper className={interactiveClasses.container}>
           <Tabs
             value={gameNewsTag}
             onChange={(e, v) => setGameNewsTag(v)}
@@ -348,17 +348,17 @@ function Home() {
             <Tab label={t("common:bug")} value="bug"></Tab>
             <Tab label={t("common:update")} value="update"></Tab>
           </Tabs>
-          <div style={{ height: 650 }}>
-            <DataGrid
-              pagination
-              autoPageSize
-              rows={informations.filter(
-                (info) => info.informationTag === gameNewsTag
-              )}
-              columns={columns}
-            ></DataGrid>
-          </div>
         </Paper>
+        <div style={{ height: 650 }}>
+          <DataGrid
+            pagination
+            autoPageSize
+            rows={informations.filter(
+              (info) => info.informationTag === gameNewsTag
+            )}
+            columns={columns}
+          ></DataGrid>
+        </div>
       </Container>
       {info ? (
         <InfoInternalDialog

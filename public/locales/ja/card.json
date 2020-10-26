@@ -5,10 +5,17 @@
     "title[2]": "特訓後画像",
     "title[3]": "特訓後画像(背景なし)"
   },
+  "skillLevel": "",
+  "skillName": "",
+  "skillEffect": "",
   "stats": "ステータス",
-  "power": "総合力",
+  "cardLevel": "",
+  "normal": "",
+  "trained": "",
+  "sideStory": "サイドストーリー",
   "sideStory1Unlocked": "サイドストーリー(前編)解放済み",
   "sideStory2Unlocked": "サイドストーリー(後編)解放済み",
-  "sideStory": "サイドストーリー",
+  "power": "総合力",
+  "skill": "",
   "sideStory_plural": "サイドストーリー"
 }
