@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       -
-        name: Reomove preivew branch
+        name: Reomove preview branch
         uses: actions/github-script@v3
         with:
           github-token: ${{ secrets.PR_GITHUB_TOKEN }}

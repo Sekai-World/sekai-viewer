@@ -1,4 +1,4 @@
-name: "PR: Build & Preivew"
+name: "PR: Build & Preview"
 on:
   pull_request_target:
     branches:
@@ -13,6 +13,9 @@ jobs:
       -
         name: Checkout
         uses: actions/checkout@v2
+        with:
+          ref: ${{github.event.pull_request.head.ref}}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
       -
         name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2.1.2
