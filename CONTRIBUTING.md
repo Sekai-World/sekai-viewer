@@ -47,6 +47,13 @@ It's very simple:
 - use meaningful variable name
 - comment on the "strange"-looking but intentional codes
 
+## Handling `i18next` Namespace Right
+`i18next` allow developer to set namespace for different strings in different domain, therefore use a right namespace for the key is important.
+
+Normally you can use namespace `common` if your string will show up everywhere in the project. Otherwise use a proper namespace for where the string should stay, for example the strings in CardDetail page is supposed to stay in namespace `card` with exception of `power` which can be displayed in other places.
+
+If you added or created a namespace, please add it `initGlobalI18n` in `src/utils/i18n.ts` and the config file `i18next-parser-config.js`.
+
 ## License
 By contributing, you agree that your contributions will be licensed under its GNU GENERAL PUBLIC LICENSE.
 
