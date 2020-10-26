@@ -6,6 +6,8 @@
     "title[3]": "배경",
     "title[4]": "특성 이미지"
   },
+  "normalRate": "",
+  "guaranteedRate": "",
   "pickupMember": "픽업 멤버",
   "pickupMember_plural": "픽업 멤버들"
 }

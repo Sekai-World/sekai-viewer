@@ -430,83 +430,104 @@ const GachaDetailPage: React.FC<{
               <TabPanel value="4" classes={{ root: classes.tabpanel }}>
                 <Card>
                   <CardContent>
-                    <Typography paragraph>
-                      <StarIcon num={2} />
-                      {gacha.rarity2Rate} % <StarIcon num={3} />
-                      {gacha.rarity3Rate} % <StarIcon num={4} />
-                      {gacha.rarity4Rate} %
-                    </Typography>
-                    <div>
-                      <Button
-                        variant="contained"
-                        className={classes.gachaBtn}
-                        color="secondary"
-                        onClick={() => doGacha(1)}
-                      >
-                        Gacha!
-                      </Button>
-                      <Button
-                        variant="contained"
-                        className={classes.gachaBtn}
-                        color="primary"
-                        onClick={() => doGacha(10)}
-                      >
-                        Gacha * 10
-                      </Button>
-                      <Button
-                        variant="contained"
-                        className={classes.gachaBtn}
-                        color="primary"
-                        onClick={() => doGacha(100)}
-                      >
-                        Gacha * 100
-                      </Button>
-                      <Button
-                        variant="contained"
-                        className={classes.gachaBtn}
-                        color="primary"
-                        onClick={() => doGacha(1000)}
-                      >
-                        Gacha * 1000
-                      </Button>
-                      <Button
-                        variant="contained"
-                        className={classes.gachaBtn}
-                        color="primary"
-                        onClick={() => resetGacha()}
-                      >
-                        Reset
-                      </Button>
-                    </div>
-                    <Typography paragraph>
-                      <span style={{ marginRight: "1%" }}>
-                        Total: {statistic.total}
-                      </span>
-                      <StarIcon num={2} />
-                      {statistic.rarity2}{" "}
-                      {statistic.total
-                        ? ((statistic.rarity2 / statistic.total) * 100).toFixed(
-                            2
-                          )
-                        : 0}{" "}
-                      %
-                      <StarIcon num={3} />
-                      {statistic.rarity3}{" "}
-                      {statistic.total
-                        ? ((statistic.rarity3 / statistic.total) * 100).toFixed(
-                            2
-                          )
-                        : 0}{" "}
-                      %
-                      <StarIcon num={4} />
-                      {statistic.rarity4}{" "}
-                      {statistic.total
-                        ? ((statistic.rarity4 / statistic.total) * 100).toFixed(
-                            2
-                          )
-                        : 0}{" "}
-                      %
-                    </Typography>
+                    <Grid container spacing={1}>
+                      <Grid item>
+                        <Button
+                          variant="contained"
+                          className={classes.gachaBtn}
+                          color="secondary"
+                          onClick={() => doGacha(1)}
+                        >
+                          Gacha!
+                        </Button>
+                      </Grid>
+                      <Grid item>
+                        <Button
+                          variant="contained"
+                          className={classes.gachaBtn}
+                          color="primary"
+                          onClick={() => doGacha(10)}
+                        >
+                          Gacha * 10
+                        </Button>
+                      </Grid>
+                      {/* <Grid item xs={4}>
+                        <Button
+                          variant="contained"
+                          className={classes.gachaBtn}
+                          color="primary"
+                          onClick={() => doGacha(100)}
+                        >
+                          Gacha * 100
+                        </Button>
+                      </Grid>
+                      <Grid item xs={4}>
+                        <Button
+                          variant="contained"
+                          className={classes.gachaBtn}
+                          color="primary"
+                          onClick={() => doGacha(1000)}
+                        >
+                          Gacha * 1000
+                        </Button>
+                      </Grid> */}
+                      <Grid item>
+                        <Button
+                          variant="contained"
+                          className={classes.gachaBtn}
+                          color="primary"
+                          onClick={() => resetGacha()}
+                        >
+                          Reset
+                        </Button>
+                      </Grid>
+                    </Grid>
+                    <Grid container spacing={1}>
+                      <Grid item>
+                        <Typography>Total: {statistic.total}</Typography>
+                      </Grid>
+                      <Grid item container spacing={1}>
+                        <Grid item>
+                          <Typography>
+                            <StarIcon num={2} />
+                            {statistic.rarity2}{" "}
+                            {statistic.total
+                              ? (
+                                  (statistic.rarity2 / statistic.total) *
+                                  100
+                                ).toFixed(2)
+                              : 0}{" "}
+                            %
+                          </Typography>
+                        </Grid>
+                        <Grid item>
+                          <Typography>
+                            <StarIcon num={3} />
+                            {statistic.rarity3}{" "}
+                            {statistic.total
+                              ? (
+                                  (statistic.rarity3 / statistic.total) *
+                                  100
+                                ).toFixed(2)
+                              : 0}{" "}
+                            %
+                          </Typography>
+                        </Grid>
+                        <Grid item>
+                          <Typography>
+                            <StarIcon num={4} />
+                            {statistic.rarity4}{" "}
+                            {statistic.total
+                              ? (
+                                  (statistic.rarity4 / statistic.total) *
+                                  100
+                                ).toFixed(2)
+                              : 0}{" "}
+                            %
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                    </Grid>
                   </CardContent>
                   <CardContent>
                     <CardThumbs
@@ -518,28 +539,26 @@ const GachaDetailPage: React.FC<{
             </Paper>
           </TabContext>
           {/* <Container style={{marginTop: '2%'}} maxWidth="sm"> */}
-          <Box paddingX="2%" display="flex" flexDirection="column">
-            <Box
-              display="flex"
-              flexDirection="row"
-              flexWrap="no-wrap"
-              justifyContent="space-between"
+          <Grid container direction="column">
+            <Grid
+              item
+              container
+              direction="row"
+              justify="space-between"
               alignItems="center"
-              paddingY="1%"
             >
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                 {t("common:id")}
               </Typography>
               <Typography>{gacha.id}</Typography>
-            </Box>
-            <Divider />
-            <Box
-              display="flex"
-              flexDirection="row"
-              flexWrap="no-wrap"
-              justifyContent="space-between"
+            </Grid>
+            <Divider style={{ margin: "1% 0" }} />
+            <Grid
+              item
+              container
+              direction="row"
+              justify="space-between"
               alignItems="center"
-              paddingY="1%"
             >
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                 {t("common:title")}
@@ -551,15 +570,14 @@ const GachaDetailPage: React.FC<{
                   ? assetT(`gacha_name:${gachaId}`, gacha.name)
                   : gacha.name}
               </Typography>
-            </Box>
-            <Divider />
-            <Box
-              display="flex"
-              flexDirection="row"
-              flexWrap="no-wrap"
-              justifyContent="space-between"
+            </Grid>
+            <Divider style={{ margin: "1% 0" }} />
+            <Grid
+              item
+              container
+              direction="row"
+              justify="space-between"
               alignItems="center"
-              paddingY="1%"
             >
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                 {t("common:icon")}
@@ -569,15 +587,14 @@ const GachaDetailPage: React.FC<{
                 src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/gacha/${gacha.assetbundleName}/logo_rip/logo.webp`}
                 alt="logo icon"
               ></img>
-            </Box>
-            <Divider />
-            <Box
-              display="flex"
-              flexDirection="row"
-              flexWrap="no-wrap"
-              justifyContent="space-between"
+            </Grid>
+            <Divider style={{ margin: "1% 0" }} />
+            <Grid
+              item
+              container
+              direction="row"
+              justify="space-between"
               alignItems="center"
-              paddingY="1%"
             >
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                 {t("common:startAt")}
@@ -585,29 +602,27 @@ const GachaDetailPage: React.FC<{
               <Typography>
                 {new Date(gacha.startAt).toLocaleString()}
               </Typography>
-            </Box>
-            <Divider />
-            <Box
-              display="flex"
-              flexDirection="row"
-              flexWrap="no-wrap"
-              justifyContent="space-between"
+            </Grid>
+            <Divider style={{ margin: "1% 0" }} />
+            <Grid
+              item
+              container
+              direction="row"
+              justify="space-between"
               alignItems="center"
-              paddingY="1%"
             >
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                 {t("common:endAt")}
               </Typography>
               <Typography>{new Date(gacha.endAt).toLocaleString()}</Typography>
-            </Box>
-            <Divider />
-            <Box
-              display="flex"
-              flexDirection="row"
-              flexWrap="no-wrap"
-              justifyContent="space-between"
+            </Grid>
+            <Divider style={{ margin: "1% 0" }} />
+            <Grid
+              item
+              container
+              direction="row"
+              justify="space-between"
               alignItems="center"
-              paddingY="1%"
             >
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                 {t("common:type")}
@@ -615,14 +630,107 @@ const GachaDetailPage: React.FC<{
               <Typography>
                 {t(`gacha:gachaType.${gacha.gachaType as "ceil"}`)}
               </Typography>
-            </Box>
-            <Divider />
+            </Grid>
+            <Divider style={{ margin: "1% 0" }} />
+            <Grid
+              item
+              container
+              direction="row"
+              justify="space-between"
+              alignItems="center"
+            >
+              <Grid item xs={2} md={4}>
+                <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                  {t("gacha:normalRate")}
+                </Typography>
+              </Grid>
+              <Grid
+                item
+                xs={9}
+                md={4}
+                container
+                direction="column"
+                alignItems="flex-end"
+              >
+                <Grid item container alignItems="center">
+                  <Grid item xs={7} style={{ textAlign: "right" }}>
+                    <StarIcon num={2} />
+                  </Grid>
+                  <Grid item xs={5} style={{ textAlign: "right" }}>
+                    {gacha.rarity2Rate} %
+                  </Grid>
+                </Grid>
+                <Grid item container alignItems="center">
+                  <Grid item xs={7} style={{ textAlign: "right" }}>
+                    <StarIcon num={3} />
+                  </Grid>
+                  <Grid item xs={5} style={{ textAlign: "right" }}>
+                    {gacha.rarity3Rate} %
+                  </Grid>
+                </Grid>
+                <Grid item container alignItems="center">
+                  <Grid item xs={7} style={{ textAlign: "right" }}>
+                    <StarIcon num={4} />
+                  </Grid>
+                  <Grid item xs={5} style={{ textAlign: "right" }}>
+                    {gacha.rarity4Rate} %
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+            <Divider style={{ margin: "1% 0" }} />
+            <Grid
+              item
+              container
+              direction="row"
+              justify="space-between"
+              alignItems="center"
+            >
+              <Grid item xs={2} md={4}>
+                <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                  {t("gacha:guaranteedRate")}
+                </Typography>
+              </Grid>
+              <Grid
+                item
+                xs={9}
+                md={4}
+                container
+                direction="column"
+                alignItems="flex-end"
+              >
+                <Grid item container alignItems="center">
+                  <Grid item xs={7} style={{ textAlign: "right" }}>
+                    <StarIcon num={2} />
+                  </Grid>
+                  <Grid item xs={5} style={{ textAlign: "right" }}>
+                    0 %
+                  </Grid>
+                </Grid>
+                <Grid item container alignItems="center">
+                  <Grid item xs={7} style={{ textAlign: "right" }}>
+                    <StarIcon num={3} />
+                  </Grid>
+                  <Grid item xs={5} style={{ textAlign: "right" }}>
+                    {100 - gacha.rarity4Rate} %
+                  </Grid>
+                </Grid>
+                <Grid item container alignItems="center">
+                  <Grid item xs={7} style={{ textAlign: "right" }}>
+                    <StarIcon num={4} />
+                  </Grid>
+                  <Grid item xs={5} style={{ textAlign: "right" }}>
+                    {gacha.rarity4Rate} %
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+            <Divider style={{ margin: "1% 0" }} />
             <Grid
               container
               wrap="nowrap"
               justify="space-between"
               alignItems="center"
-              style={{ padding: "1% 0" }}
             >
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                 {t("gacha:pickupMember", { count: gacha.gachaPickups.length })}
@@ -642,8 +750,8 @@ const GachaDetailPage: React.FC<{
                 ))}
               </Grid>
             </Grid>
-            <Divider />
-          </Box>
+            <Divider style={{ margin: "1% 0" }} />
+          </Grid>
           {/* </Container> */}
         </Container>
         <Viewer

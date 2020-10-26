@@ -6,6 +6,8 @@
     "title[3]": "背景",
     "title[4]": "特征圖"
   },
+  "normalRate": "普通招募概率",
+  "guaranteedRate": "保底招募概率",
   "pickupMember": "本期角色",
   "pickupMember_plural": "本期角色"
 }

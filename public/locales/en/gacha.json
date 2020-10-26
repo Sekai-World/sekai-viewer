@@ -6,6 +6,8 @@
     "title[3]": "Background",
     "title[4]": "Feature Image"
   },
+  "normalRate": "Normal Roll Rate",
+  "guaranteedRate": "Guaranteed Roll Rate",
   "pickupMember": "Pickup Member",
   "pickupMember_plural": "Pickup Members",
   "gachaType": {
