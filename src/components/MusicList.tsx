@@ -424,63 +424,65 @@ const MusicList: React.FC<{
           </ButtonGroup>
         </Grid>
         <Collapse in={filterOpened}>
-          <Grid container className={interactiveClasses.area}>
-            <Grid
-              item
-              container
-              xs={12}
-              alignItems="center"
-              justify="space-between"
-            >
-              <Grid item xs={12} md={2}>
-                <Typography classes={{ root: interactiveClasses.caption }}>
-                  {t("filter:sort.caption")}
-                </Typography>
-              </Grid>
-              <Grid item container xs={12} md={9} spacing={1}>
-                <Grid item>
-                  <FormControl>
-                    <Select
-                      value={sortType}
-                      onChange={(e) => {
-                        setSortType(e.target.value as string);
-                        localStorage.setItem(
-                          "music-list-filter-sort-type",
-                          e.target.value as string
-                        );
-                      }}
-                    >
-                      <MenuItem value="asc">
-                        {t("filter:sort.ascending")}
-                      </MenuItem>
-                      <MenuItem value="desc">
-                        {t("filter:sort.descending")}
-                      </MenuItem>
-                    </Select>
-                  </FormControl>
+          <Paper className={interactiveClasses.container}>
+            <Grid container direction="column" spacing={1}>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justify="space-between"
+              >
+                <Grid item xs={12} md={2}>
+                  <Typography classes={{ root: interactiveClasses.caption }}>
+                    {t("filter:sort.caption")}
+                  </Typography>
                 </Grid>
-                <Grid item>
-                  <FormControl>
-                    <Select
-                      value={sortBy}
-                      onChange={(e) => {
-                        setSortBy(e.target.value as string);
-                        localStorage.setItem(
-                          "music-list-filter-sort-by",
-                          e.target.value as string
-                        );
-                      }}
-                    >
-                      <MenuItem value="id">{t("common:id")}</MenuItem>
-                      <MenuItem value="publishedAt">
-                        {t("common:startAt")}
-                      </MenuItem>
-                    </Select>
-                  </FormControl>
+                <Grid item container xs={12} md={9} spacing={1}>
+                  <Grid item>
+                    <FormControl>
+                      <Select
+                        value={sortType}
+                        onChange={(e) => {
+                          setSortType(e.target.value as string);
+                          localStorage.setItem(
+                            "music-list-filter-sort-type",
+                            e.target.value as string
+                          );
+                        }}
+                      >
+                        <MenuItem value="asc">
+                          {t("filter:sort.ascending")}
+                        </MenuItem>
+                        <MenuItem value="desc">
+                          {t("filter:sort.descending")}
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item>
+                    <FormControl>
+                      <Select
+                        value={sortBy}
+                        onChange={(e) => {
+                          setSortBy(e.target.value as string);
+                          localStorage.setItem(
+                            "music-list-filter-sort-by",
+                            e.target.value as string
+                          );
+                        }}
+                      >
+                        <MenuItem value="id">{t("common:id")}</MenuItem>
+                        <MenuItem value="publishedAt">
+                          {t("common:startAt")}
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
-          </Grid>
+          </Paper>
         </Collapse>
         {InfiniteScroll<IMusicInfo>({
           viewComponent: ListCard[viewGridType],

@@ -333,7 +333,7 @@ function Home() {
         {t("home:game-news.title")}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="md">
-        <Paper className={interactiveClasses.area}>
+        <Paper className={interactiveClasses.container}>
           <Tabs
             value={gameNewsTag}
             onChange={(e, v) => setGameNewsTag(v)}

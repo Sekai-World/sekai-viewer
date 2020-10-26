@@ -565,14 +565,14 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
         {t("card:skill")}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="sm">
-        <Paper className={interactiveClasses.area}>
-          <Grid container direction="column" spacing={2}>
+        <Paper className={interactiveClasses.container}>
+          <Grid container direction="column" spacing={1}>
             <Grid
               item
               container
               xs={12}
               alignItems="center"
-              justify="space-evenly"
+              justify="space-between"
             >
               <Grid item xs={12} md={2}>
                 <Typography classes={{ root: interactiveClasses.caption }}>

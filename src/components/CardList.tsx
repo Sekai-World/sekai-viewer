@@ -564,114 +564,116 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
           </ButtonGroup>
         </Grid>
         <Collapse in={filterOpened}>
-          <Grid container className={interactiveClasses.area} spacing={1}>
-            <Grid
-              item
-              container
-              xs={12}
-              alignItems="center"
-              justify="space-between"
-            >
-              <Grid item xs={12} md={2}>
-                <Typography classes={{ root: interactiveClasses.caption }}>
-                  {t("filter:character.caption")}
-                </Typography>
-              </Grid>
-              <Grid item container xs={12} md={9} spacing={1}>
-                {Array.from({ length: 26 }).map((_, idx) => (
-                  <Grid key={"chara-filter-" + idx} item>
-                    <Chip
-                      clickable
-                      color={
-                        characterSelected.includes(idx + 1)
-                          ? "primary"
-                          : "default"
-                      }
-                      avatar={
-                        <Avatar
-                          alt={getCharaName(idx + 1)}
-                          src={
-                            charaIcons[`CharaIcon${idx + 1}` as "CharaIcon1"]
-                          }
-                        />
-                      }
-                      label={getCharaName(idx + 1)}
-                      onClick={() => {
-                        if (characterSelected.includes(idx + 1)) {
-                          dispatchCharacterSelected({
-                            type: "remove",
-                            payload: idx + 1,
-                          });
-                        } else {
-                          dispatchCharacterSelected({
-                            type: "add",
-                            payload: idx + 1,
-                          });
+          <Paper className={interactiveClasses.container}>
+            <Grid container direction="column" spacing={1}>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justify="space-between"
+              >
+                <Grid item xs={12} md={2}>
+                  <Typography classes={{ root: interactiveClasses.caption }}>
+                    {t("filter:character.caption")}
+                  </Typography>
+                </Grid>
+                <Grid item container xs={12} md={9} spacing={1}>
+                  {Array.from({ length: 26 }).map((_, idx) => (
+                    <Grid key={"chara-filter-" + idx} item>
+                      <Chip
+                        clickable
+                        color={
+                          characterSelected.includes(idx + 1)
+                            ? "primary"
+                            : "default"
                         }
-                      }}
-                    />
+                        avatar={
+                          <Avatar
+                            alt={getCharaName(idx + 1)}
+                            src={
+                              charaIcons[`CharaIcon${idx + 1}` as "CharaIcon1"]
+                            }
+                          />
+                        }
+                        label={getCharaName(idx + 1)}
+                        onClick={() => {
+                          if (characterSelected.includes(idx + 1)) {
+                            dispatchCharacterSelected({
+                              type: "remove",
+                              payload: idx + 1,
+                            });
+                          } else {
+                            dispatchCharacterSelected({
+                              type: "add",
+                              payload: idx + 1,
+                            });
+                          }
+                        }}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justify="space-between"
+              >
+                <Grid item xs={12} md={2}>
+                  <Typography classes={{ root: interactiveClasses.caption }}>
+                    {t("filter:sort.caption")}
+                  </Typography>
+                </Grid>
+                <Grid item container xs={12} md={9} spacing={1}>
+                  <Grid item>
+                    <FormControl>
+                      <Select
+                        value={sortType}
+                        onChange={(e) => {
+                          setSortType(e.target.value as string);
+                          localStorage.setItem(
+                            "card-list-filter-sort-type",
+                            e.target.value as string
+                          );
+                        }}
+                      >
+                        <MenuItem value="asc">
+                          {t("filter:sort.ascending")}
+                        </MenuItem>
+                        <MenuItem value="desc">
+                          {t("filter:sort.descending")}
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
                   </Grid>
-                ))}
-              </Grid>
-            </Grid>
-            <Grid
-              item
-              container
-              xs={12}
-              alignItems="center"
-              justify="space-between"
-            >
-              <Grid item xs={12} md={2}>
-                <Typography classes={{ root: interactiveClasses.caption }}>
-                  {t("filter:sort.caption")}
-                </Typography>
-              </Grid>
-              <Grid item container xs={12} md={9} spacing={1}>
-                <Grid item>
-                  <FormControl>
-                    <Select
-                      value={sortType}
-                      onChange={(e) => {
-                        setSortType(e.target.value as string);
-                        localStorage.setItem(
-                          "card-list-filter-sort-type",
-                          e.target.value as string
-                        );
-                      }}
-                    >
-                      <MenuItem value="asc">
-                        {t("filter:sort.ascending")}
-                      </MenuItem>
-                      <MenuItem value="desc">
-                        {t("filter:sort.descending")}
-                      </MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item>
-                  <FormControl>
-                    <Select
-                      value={sortBy}
-                      onChange={(e) => {
-                        setSortBy(e.target.value as string);
-                        localStorage.setItem(
-                          "card-list-filter-sort-by",
-                          e.target.value as string
-                        );
-                      }}
-                    >
-                      <MenuItem value="id">{t("common:id")}</MenuItem>
-                      <MenuItem value="rarity">{t("common:rarity")}</MenuItem>
-                      <MenuItem value="releaseAt">
-                        {t("common:startAt")}
-                      </MenuItem>
-                      <MenuItem value="power">{t("card:power")}</MenuItem>
-                    </Select>
-                  </FormControl>
+                  <Grid item>
+                    <FormControl>
+                      <Select
+                        value={sortBy}
+                        onChange={(e) => {
+                          setSortBy(e.target.value as string);
+                          localStorage.setItem(
+                            "card-list-filter-sort-by",
+                            e.target.value as string
+                          );
+                        }}
+                      >
+                        <MenuItem value="id">{t("common:id")}</MenuItem>
+                        <MenuItem value="rarity">{t("common:rarity")}</MenuItem>
+                        <MenuItem value="releaseAt">
+                          {t("common:startAt")}
+                        </MenuItem>
+                        <MenuItem value="power">{t("card:power")}</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
-          </Grid>
+          </Paper>
         </Collapse>
         {InfiniteScroll<ICardInfo>({
           viewComponent: ListCard[viewGridType],

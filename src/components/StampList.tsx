@@ -11,6 +11,7 @@ import {
   Link,
   makeStyles,
   Typography,
+  Paper,
 } from "@material-ui/core";
 import { Sort, SortOutlined } from "@material-ui/icons";
 import { Skeleton } from "@material-ui/lab";
@@ -205,57 +206,59 @@ const StampList: React.FC<{
           </ButtonGroup>
         </Grid>
         <Collapse in={filterOpened}>
-          <Grid container className={interactiveClasses.area}>
-            <Grid
-              item
-              container
-              xs={12}
-              alignItems="center"
-              justify="space-between"
-            >
-              <Grid item xs={12} md={2}>
-                <Typography classes={{ root: interactiveClasses.caption }}>
-                  {t("filter:character.caption")}
-                </Typography>
-              </Grid>
-              <Grid item container xs={12} md={9} spacing={1}>
-                {Array.from({ length: 26 }).map((_, idx) => (
-                  <Grid key={"chara-filter-" + idx} item>
-                    <Chip
-                      clickable
-                      color={
-                        characterSelected.includes(idx + 1)
-                          ? "primary"
-                          : "default"
-                      }
-                      avatar={
-                        <Avatar
-                          alt={getCharaName(idx + 1)}
-                          src={
-                            charaIcons[`CharaIcon${idx + 1}` as "CharaIcon1"]
-                          }
-                        />
-                      }
-                      label={getCharaName(idx + 1)}
-                      onClick={() => {
-                        if (characterSelected.includes(idx + 1)) {
-                          dispatchCharacterSelected({
-                            type: "remove",
-                            payload: idx + 1,
-                          });
-                        } else {
-                          dispatchCharacterSelected({
-                            type: "add",
-                            payload: idx + 1,
-                          });
+          <Paper className={interactiveClasses.container}>
+            <Grid container direction="column" spacing={1}>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justify="space-between"
+              >
+                <Grid item xs={12} md={2}>
+                  <Typography classes={{ root: interactiveClasses.caption }}>
+                    {t("filter:character.caption")}
+                  </Typography>
+                </Grid>
+                <Grid item container xs={12} md={9} spacing={1}>
+                  {Array.from({ length: 26 }).map((_, idx) => (
+                    <Grid key={"chara-filter-" + idx} item>
+                      <Chip
+                        clickable
+                        color={
+                          characterSelected.includes(idx + 1)
+                            ? "primary"
+                            : "default"
                         }
-                      }}
-                    />
-                  </Grid>
-                ))}
+                        avatar={
+                          <Avatar
+                            alt={getCharaName(idx + 1)}
+                            src={
+                              charaIcons[`CharaIcon${idx + 1}` as "CharaIcon1"]
+                            }
+                          />
+                        }
+                        label={getCharaName(idx + 1)}
+                        onClick={() => {
+                          if (characterSelected.includes(idx + 1)) {
+                            dispatchCharacterSelected({
+                              type: "remove",
+                              payload: idx + 1,
+                            });
+                          } else {
+                            dispatchCharacterSelected({
+                              type: "add",
+                              payload: idx + 1,
+                            });
+                          }
+                        }}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
               </Grid>
             </Grid>
-          </Grid>
+          </Paper>
         </Collapse>
         {InfiniteScroll<IStampInfo>({
           viewComponent: ListCard,
