@@ -280,12 +280,12 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
     cardId,
     rarities,
     skills,
-    //getCharaName,
+    getCharaName,
     episodes,
     assetI18n,
     assetI18n.language,
     contentTransMode,
-    //assetT,
+    assetT,
   ]);
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {

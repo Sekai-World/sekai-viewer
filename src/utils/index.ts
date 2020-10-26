@@ -153,30 +153,33 @@ export const musicTagToName: { [key: string]: string } = {
 export function useCharaName(contentTransMode: ContentTransModeType) {
   const [charas] = useCachedData<ICharaProfile>("gameCharacters");
   const { assetT, assetI18n } = useAssetI18n();
-  return (charaId: number): string | undefined => {
-    const chara = charas.find((chara) => chara.id === charaId);
-    if (chara?.firstName) {
-      switch (contentTransMode) {
-        case "original":
-          return `${chara.firstName} ${chara.givenName}`;
-        case "translated":
-          return ["zh-CN", "zh-TW", "ko", "ja"].includes(assetI18n.language)
-            ? `${assetT(
-                `character_name:${charaId}.firstName`,
-                chara.firstName
-              )} ${assetT(
-                `character_name:${charaId}.givenName`,
-                chara.givenName
-              )}`
-            : `${assetT(
-                `character_name:${charaId}.givenName`,
-                chara.givenName
-              )} ${assetT(
-                `character_name:${charaId}.firstName`,
-                chara.firstName
-              )}`;
+  return useCallback(
+    (charaId: number): string | undefined => {
+      const chara = charas.find((chara) => chara.id === charaId);
+      if (chara?.firstName) {
+        switch (contentTransMode) {
+          case "original":
+            return `${chara.firstName} ${chara.givenName}`;
+          case "translated":
+            return ["zh-CN", "zh-TW", "ko", "ja"].includes(assetI18n.language)
+              ? `${assetT(
+                  `character_name:${charaId}.firstName`,
+                  chara.firstName
+                )} ${assetT(
+                  `character_name:${charaId}.givenName`,
+                  chara.givenName
+                )}`
+              : `${assetT(
+                  `character_name:${charaId}.givenName`,
+                  chara.givenName
+                )} ${assetT(
+                  `character_name:${charaId}.firstName`,
+                  chara.firstName
+                )}`;
+        }
       }
-    }
-    return chara?.givenName;
-  };
+      return chara?.givenName;
+    },
+    [assetI18n.language, assetT, charas, contentTransMode]
+  );
 }
