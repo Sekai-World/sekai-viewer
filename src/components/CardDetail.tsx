@@ -844,15 +844,17 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
       </Typography>
       <Container className={layoutClasses.content} maxWidth="sm">
         <TabContext value={episodeTabVal}>
-          <Tabs
-            value={episodeTabVal}
-            onChange={(e, v) => setEpisodeTabVal(v)}
-            variant="scrollable"
-            scrollButtons="desktop"
-          >
-            <Tab label={cardEpisode[0].title} value="1"></Tab>
-            <Tab label={cardEpisode[1].title} value="2"></Tab>
-          </Tabs>
+          <Paper className={interactiveClasses.container}>
+            <Tabs
+              value={episodeTabVal}
+              onChange={(e, v) => setEpisodeTabVal(v)}
+              variant="scrollable"
+              scrollButtons="desktop"
+            >
+              <Tab label={cardEpisode[0].title} value="1"></Tab>
+              <Tab label={cardEpisode[1].title} value="2"></Tab>
+            </Tabs>
+          </Paper>
           <TabPanel value="1" classes={{ root: classes.tabpanel }}>
             <Grid container direction="column">
               {/* <Grid
