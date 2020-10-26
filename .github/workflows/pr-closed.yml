@@ -20,7 +20,7 @@ jobs:
             github.git.deleteRef({
               owner: context.repo.owner,
               repo: process.env.PR_GITHUB_REPOSITORY.split('/')[1],
-              ref: `refs/heads/${branch}`,
+              ref: `heads/${branch}`,
             });
         env:
           PR_GITHUB_REPOSITORY: ${{ secrets.PR_REPO_NAME }}
