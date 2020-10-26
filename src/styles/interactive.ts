@@ -11,7 +11,9 @@ const useInteractiveStyles = makeStyles((theme) => ({
     },
   },
   sliderContainer: {
-    paddingRight: theme.spacing(5),
+    [theme.breakpoints.up("md")]: {
+      paddingRight: theme.spacing(5),
+    },
   },
 }));
 
