@@ -248,7 +248,7 @@ function Home() {
           <ul>
             <li>简：Stargazing Koishi</li>
             <li>繁：Natsuzawa, ch ko</li>
-            <li>日：Passion, Cee, k0tayan, Natsuzawa, Build774</li>
+            <li>日：Passion, Cee, k0tayan, Natsuzawa, Build774, tofutofuo</li>
             <li>한：hodubidu3095, omitooshi, EleMas39, PJSEKAI</li>
             <li>Pt-BR: mid</li>
             <li>русский: Spyrohat</li>
