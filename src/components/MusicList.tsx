@@ -38,7 +38,7 @@ import InfiniteScroll from "./subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
 import { useInteractiveStyles } from "../styles/interactive";
-import { getAssetI18n } from "../utils/i18n";
+import { useAssetI18n } from "../utils/i18n";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -111,7 +111,7 @@ const MusicList: React.FC<{
   const interactiveClasses = useInteractiveStyles();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
-  const assetI18n = getAssetI18n();
+  const { assetT } = useAssetI18n();
 
   const [musicsCache] = useCachedData<IMusicInfo>("musics");
   const [musicDiffis] = useCachedData<IMusicDifficultyInfo>(
@@ -223,7 +223,7 @@ const MusicList: React.FC<{
                 contentTransMode === "original"
                   ? data.title
                   : contentTransMode === "translated"
-                  ? assetI18n.t(`music_titles:${data.id}`)
+                  ? assetT(`music_titles:${data.id}`, data.title)
                   : data.title
               }
             ></CardMedia>
@@ -232,7 +232,7 @@ const MusicList: React.FC<{
                 {contentTransMode === "original"
                   ? data.title
                   : contentTransMode === "translated"
-                  ? assetI18n.t(`music_titles:${data.id}`)
+                  ? assetT(`music_titles:${data.id}`, data.title)
                   : data.title}
               </Typography>
               <Typography variant="body2" color="textSecondary">
@@ -316,7 +316,7 @@ const MusicList: React.FC<{
                     contentTransMode === "original"
                       ? data.title
                       : contentTransMode === "translated"
-                      ? assetI18n.t(`music_titles:${data.id}`)
+                      ? assetT(`music_titles:${data.id}`, data.title)
                       : data.title
                   }
                 ></CardMedia>
@@ -327,7 +327,7 @@ const MusicList: React.FC<{
                     {contentTransMode === "original"
                       ? data.title
                       : contentTransMode === "translated"
-                      ? assetI18n.t(`music_titles:${data.id}`)
+                      ? assetT(`music_titles:${data.id}`, data.title)
                       : data.title}
                   </Typography>
                   <Typography color="textSecondary">

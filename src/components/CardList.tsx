@@ -28,13 +28,7 @@ import {
   ViewGrid,
   ViewGridOutline,
 } from "mdi-material-ui";
-import React, {
-  Fragment,
-  useCallback,
-  useEffect,
-  useReducer,
-  useState,
-} from "react";
+import React, { Fragment, useEffect, useReducer, useState } from "react";
 import { Link, useRouteMatch } from "react-router-dom";
 import {
   ContentTransModeType,
@@ -43,13 +37,13 @@ import {
   ICardRarity,
   ICharaProfile,
 } from "../types";
-import { useCachedData, useRefState } from "../utils";
+import { useCachedData, useCharaName, useRefState } from "../utils";
 import { CardThumb, CardThumbSkeleton } from "./subs/CardThumb";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
 import { useInteractiveStyles } from "../styles/interactive";
-import { getAssetI18n } from "../utils/i18n";
+import { useAssetI18n } from "../utils/i18n";
 import { characterSelectReducer } from "../stores/reducers";
 import { charaIcons } from "../utils/resources";
 
@@ -138,7 +132,7 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   const interactiveClasses = useInteractiveStyles();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
-  const assetI18n = getAssetI18n();
+  const { assetT } = useAssetI18n();
 
   const [cardsCache] = useCachedData<ICardInfo>("cards");
   const [charas] = useCachedData<ICharaProfile>("gameCharacters");
@@ -250,27 +244,7 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
     }
   }, [page, limit, setLastQueryFin, sortedCache]);
 
-  const getCharaName = useCallback(
-    (charaId: number) => {
-      const chara = charas.find((chara) => chara.id === charaId);
-      if (chara?.firstName) {
-        switch (contentTransMode) {
-          case "original":
-            return `${chara.firstName} ${chara.givenName}`;
-          case "translated":
-            return ["zh-CN", "zh-TW", "ko", "ja"].includes(assetI18n.language)
-              ? `${assetI18n.t(
-                  `character_name:${charaId}.firstName`
-                )} ${assetI18n.t(`character_name:${charaId}.givenName`)}`
-              : `${assetI18n.t(
-                  `character_name:${charaId}.givenName`
-                )} ${assetI18n.t(`character_name:${charaId}.firstName`)}`;
-        }
-      }
-      return chara?.givenName;
-    },
-    [charas, contentTransMode, assetI18n]
-  );
+  const getCharaName = useCharaName(contentTransMode);
 
   const ListCard: { [key: string]: React.FC<{ data?: ICardInfo }> } = {
     grid: ({ data }) => {
@@ -300,7 +274,7 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                 contentTransMode === "original"
                   ? data.prefix
                   : contentTransMode === "translated"
-                  ? assetI18n.t(`card_prefix:${data.id}`)
+                  ? assetT(`card_prefix:${data.id}`, data.prefix)
                   : data.prefix
               }
             ></CardMedia>
@@ -309,7 +283,7 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                 {contentTransMode === "original"
                   ? data.prefix
                   : contentTransMode === "translated"
-                  ? assetI18n.t(`card_prefix:${data.id}`)
+                  ? assetT(`card_prefix:${data.id}`, data.prefix)
                   : data.prefix}
               </Typography>
               <Typography
@@ -401,7 +375,7 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                   {contentTransMode === "original"
                     ? data.prefix
                     : contentTransMode === "translated"
-                    ? assetI18n.t(`card_prefix:${data.id}`)
+                    ? assetT(`card_prefix:${data.id}`, data.prefix)
                     : data.prefix}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
@@ -485,7 +459,7 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                   {contentTransMode === "original"
                     ? data.prefix
                     : contentTransMode === "translated"
-                    ? assetI18n.t(`card_prefix:${data.id}`)
+                    ? assetT(`card_prefix:${data.id}`, data.prefix)
                     : data.prefix}
                 </Typography>
                 <Typography

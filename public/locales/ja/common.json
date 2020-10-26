@@ -4,16 +4,16 @@
   "music": "音楽",
   "gacha": "ガチャ",
   "event": "イベント",
-  "stamp": "",
+  "stamp": "スタンプ",
   "unit": "ユニット",
   "member": "メンバー",
-  "musicMeta": "",
-  "scoreCalculator": "",
+  "musicMeta": "楽曲情報",
+  "scoreCalculator": "スコア計算",
   "toolbar": {
     "title": "機能一覧"
   },
   "information": "情報",
-  "tools": "",
+  "tools": "ツール",
   "settings": {
     "title": "設定"
   },
@@ -28,7 +28,7 @@
   "id": "ID",
   "title": "タイトル",
   "character": "キャラクター",
-  "support_unit": "",
+  "support_unit": "サポートユニット",
   "attribute": "タイプ",
   "startAt": "解放時間",
   "rarity": "レアリティ",

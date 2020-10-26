@@ -31,7 +31,7 @@ import { useCachedData, useRefState } from "../utils";
 import { CardThumb, CardThumbs } from "./subs/CardThumb";
 import rarityNormal from "../assets/rarity_star_normal.png";
 import { useTranslation } from "react-i18next";
-import { getAssetI18n } from "../utils/i18n";
+import { useAssetI18n } from "../utils/i18n";
 
 const gachaImageNameMap: {
   [key: number]: {
@@ -133,7 +133,7 @@ const GachaDetailPage: React.FC<{
   const layoutClasses = useLayoutStyles();
   const { gachaId } = useParams<{ gachaId: string }>();
   const { t } = useTranslation();
-  const assetI18n = getAssetI18n();
+  const { assetT, assetI18n } = useAssetI18n();
 
   const [gacha, setGacha] = useState<IGachaInfo>();
   const [gachas] = useCachedData<IGachaInfo>("gachas");
@@ -302,11 +302,11 @@ const GachaDetailPage: React.FC<{
         contentTransMode === "original"
           ? gacha.name
           : contentTransMode === "translated"
-          ? assetI18n.t(`gacha_name:${gachaId}`)
+          ? assetT(`gacha_name:${gachaId}`, gacha.name)
           : gacha.name
       } | Gacha | Sekai Viewer`;
     }
-  }, [gacha, assetI18n, contentTransMode, gachaId]);
+  }, [gacha, assetI18n, contentTransMode, gachaId, assetT]);
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
     setPicTabVal(newValue);
@@ -319,7 +319,7 @@ const GachaDetailPage: React.FC<{
           {contentTransMode === "original"
             ? gacha.name
             : contentTransMode === "translated"
-            ? assetI18n.t(`gacha_name:${gachaId}`)
+            ? assetT(`gacha_name:${gachaId}`, gacha.name)
             : gacha.name}
         </Typography>
         <Container className={layoutClasses.content} maxWidth="sm">
@@ -548,7 +548,7 @@ const GachaDetailPage: React.FC<{
                 {contentTransMode === "original"
                   ? gacha.name
                   : contentTransMode === "translated"
-                  ? assetI18n.t(`gacha_name:${gachaId}`)
+                  ? assetT(`gacha_name:${gachaId}`, gacha.name)
                   : gacha.name}
               </Typography>
             </Box>

@@ -1,7 +1,8 @@
-import i18n from "i18next";
+import i18n, { TOptions } from "i18next";
 import { initReactI18next } from "react-i18next";
 import fetchBackend from "i18next-fetch-backend";
 import detector from "i18next-browser-languagedetector";
+import { useCallback } from "react";
 
 export function initGlobalI18n() {
   return i18n
@@ -44,45 +45,48 @@ export function initGlobalI18n() {
     });
 }
 
-let assetI18n: typeof i18n | undefined;
+let assetI18n: typeof i18n = i18n.createInstance();
+assetI18n
+  .use(fetchBackend)
+  .use(detector)
+  .init({
+    supportedLngs: [
+      "en",
+      "zh-CN",
+      "zh-TW",
+      "ja",
+      "ko",
+      "es",
+      "de",
+      "pt-BR",
+      "ru",
+    ],
+    ns: [
+      "music_titles",
+      "card_prefix",
+      "card_skill_name",
+      "event_name",
+      "gacha_name",
+      "character_name",
+      "skill_desc",
+    ],
+    fallbackLng: {
+      default: ["ja"],
+      pt: ["pt-BR", "ja"],
+    },
+    backend: {
+      loadPath: process.env.PUBLIC_URL + "/locales/{{lng}}/{{ns}}.json",
+    },
+    returnEmptyString: false,
+  });
 
-export function getAssetI18n() {
-  if (!assetI18n) {
-    assetI18n = i18n.createInstance();
-    assetI18n
-      .use(fetchBackend)
-      .use(detector)
-      .init({
-        supportedLngs: [
-          "en",
-          "zh-CN",
-          "zh-TW",
-          "ja",
-          "ko",
-          "es",
-          "de",
-          "pt-BR",
-          "ru",
-        ],
-        ns: [
-          "music_titles",
-          "card_prefix",
-          "card_skill_name",
-          "event_name",
-          "gacha_name",
-          "character_name",
-          "skill_desc",
-        ],
-        fallbackLng: {
-          default: ["ja"],
-          pt: ["pt-BR", "ja"],
-        },
-        backend: {
-          loadPath: process.env.PUBLIC_URL + "/locales/{{lng}}/{{ns}}.json",
-        },
-        returnEmptyString: false,
-      });
-  }
-
-  return assetI18n;
+export function useAssetI18n() {
+  const assetT = useCallback(
+    (key: string, original: string, options?: string | TOptions): string => {
+      const translated = assetI18n.t(key, options);
+      return !Number.isNaN(Number(translated)) ? original : translated;
+    },
+    []
+  );
+  return { assetT, assetI18n };
 }
