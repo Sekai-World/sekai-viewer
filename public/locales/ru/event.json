@@ -1,11 +1,10 @@
 {
-  "already-ended": "Ивент закончился",
+  "alreadyEnded": "",
   "tab": {
     "title[0]": "Логотип и баннер",
     "title[1]": "Задний фон",
     "title[2]": "Персонаж"
   },
-  "alreadyPast": "Уже прошло",
   "remainingTime": "Оставшееся время",
   "progress": "Прогресс",
   "boostAttribute": "Бонус-атрибут",
@@ -18,6 +17,8 @@
   "ranking": "Рейтинг",
   "realtime": "В реальном времени",
   "nextfetch": "Следующие обновление",
+  "already-ended": "Ивент закончился",
+  "alreadyPast": "Уже прошло",
   "type": {
     "marathon": "Марафон"
   }
