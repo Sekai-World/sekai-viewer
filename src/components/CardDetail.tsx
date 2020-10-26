@@ -1,5 +1,4 @@
 import {
-  Box,
   Card,
   CardMedia,
   Divider,
@@ -11,9 +10,7 @@ import {
   Tabs,
   Typography,
   Container,
-  FormGroup,
-  FormControlLabel,
-  Switch,
+  Chip,
 } from "@material-ui/core";
 import { useLayoutStyles } from "../styles/layout";
 import { useInteractiveStyles } from "../styles/interactive";
@@ -38,10 +35,6 @@ import {
 import { useCachedData } from "../utils";
 import rarityNormal from "../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../assets/rarity_star_afterTraining.png";
-import IconPerformance from "../assets/icon_performance.png";
-import IconTechnique from "../assets/icon_technique.png";
-import IconStamina from "../assets/icon_stamina.png";
-import IconTotalStrength from "../assets/icon_totalStrength.png";
 
 import LogoLightSound from "../assets/common/logol/logo_light_sound.png";
 import LogoIdol from "../assets/common/logol/logo_idol.png";
@@ -635,207 +628,191 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
         {t("card:stats")}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="sm">
-        <Grid className={classes["grid-out"]} container direction="column">
-          <Box>
-            <Typography style={{ fontWeight: 600 }}>
-              {t("card:power")}
-            </Typography>
-            <FormGroup row>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={sideStory1Unlocked}
-                    onChange={() => setSideStory1Unlocked((v) => !v)}
+        <Paper className={interactiveClasses.container}>
+          <Grid container direction="column" spacing={1}>
+            <Grid
+              item
+              container
+              xs={12}
+              alignItems="center"
+              justify="space-between"
+            >
+              <Grid item xs={12} md={2}>
+                <Typography classes={{ root: interactiveClasses.caption }}>
+                  {t("common:cardLevel")}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} md={9}>
+                <Slider
+                  value={cardLevel}
+                  onChange={(e, value) => setCardLevel(value)}
+                  valueLabelDisplay="auto"
+                  step={1}
+                  min={1}
+                  max={
+                    card.rarity >= 3
+                      ? card.maxTrainedLevel
+                      : card.maxNormalLevel
+                  }
+                  marks={
+                    card.rarity >= 3
+                      ? [
+                          {
+                            value: card.maxNormalLevel,
+                            label: "Normal",
+                          },
+                          {
+                            value: card.maxTrainedLevel!,
+                            label: "Trained",
+                          },
+                        ]
+                      : [
+                          {
+                            value: card.maxNormalLevel,
+                            label: "Normal",
+                          },
+                        ]
+                  }
+                />
+              </Grid>
+            </Grid>
+            <Grid
+              item
+              container
+              xs={12}
+              alignItems="center"
+              justify="space-between"
+            >
+              <Grid item xs={12} md={2}>
+                <Typography classes={{ root: interactiveClasses.caption }}>
+                  {t("common:cardSideStories")}
+                </Typography>
+              </Grid>
+              <Grid item container xs={12} md={9} spacing={1}>
+                <Grid item>
+                  <Chip
+                    clickable
+                    color={sideStory1Unlocked ? "primary" : "default"}
+                    label={t("common:cardSideStory1")}
+                    onClick={() => setSideStory1Unlocked((v) => !v)}
                   />
-                }
-                label={t("card:sideStory1Unlocked")}
-              ></FormControlLabel>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={sideStory2Unlocked}
-                    onChange={() => setSideStory2Unlocked((v) => !v)}
+                </Grid>
+                <Grid item>
+                  <Chip
+                    clickable
+                    color={sideStory2Unlocked ? "primary" : "default"}
+                    label={t("common:cardSideStory2")}
+                    onClick={() => setSideStory2Unlocked((v) => !v)}
                   />
-                }
-                label={t("card:sideStory2Unlocked")}
-              ></FormControlLabel>
-            </FormGroup>
-            <Slider
-              value={cardLevel}
-              onChange={(e, value) => setCardLevel(value)}
-              valueLabelDisplay="auto"
-              step={1}
-              min={1}
-              max={
-                card.rarity >= 3 ? card.maxTrainedLevel : card.maxNormalLevel
-              }
-              marks={
-                card.rarity >= 3
-                  ? [
-                      {
-                        value: card.maxNormalLevel,
-                        label: "Normal",
-                      },
-                      {
-                        value: card.maxTrainedLevel!,
-                        label: "Trained",
-                      },
-                    ]
-                  : [
-                      {
-                        value: card.maxNormalLevel,
-                        label: "Normal",
-                      },
-                    ]
-              }
-            />
-            <Grid container>
-              <Grid item xs={12}>
-                <Grid container spacing={1}>
-                  <Grid item md={3} xs={6}>
-                    <Grid
-                      container
-                      alignItems="center"
-                      direction="row"
-                      wrap="nowrap"
-                    >
-                      <Grid item xs={3}>
-                        <img
-                          src={IconPerformance}
-                          alt="performance"
-                          style={{ marginRight: "7%" }}
-                        />
-                      </Grid>
-                      <Grid item xs={4}>
-                        <Typography>
-                          {card.cardParameters.find(
-                            (elem) =>
-                              elem.cardParameterType === "param1" &&
-                              elem.cardLevel === cardLevel
-                          )?.power! +
-                            (cardLevel > card.maxNormalLevel
-                              ? card.specialTrainingPower1BonusFixed
-                              : 0) +
-                            (sideStory1Unlocked
-                              ? cardEpisode[0].power1BonusFixed
-                              : 0) +
-                            (sideStory2Unlocked
-                              ? cardEpisode[1].power1BonusFixed
-                              : 0)}
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item md={3} xs={6}>
-                    <Grid
-                      container
-                      alignItems="center"
-                      direction="row"
-                      wrap="nowrap"
-                    >
-                      <Grid item xs={3}>
-                        <img
-                          src={IconTechnique}
-                          alt="technique"
-                          style={{ marginRight: "7%" }}
-                        />
-                      </Grid>
-                      <Grid item xs={4}>
-                        <Typography>
-                          {card.cardParameters.find(
-                            (elem) =>
-                              elem.cardParameterType === "param2" &&
-                              elem.cardLevel === cardLevel
-                          )?.power! +
-                            (cardLevel > card.maxNormalLevel
-                              ? card.specialTrainingPower2BonusFixed
-                              : 0) +
-                            (sideStory1Unlocked
-                              ? cardEpisode[0].power2BonusFixed
-                              : 0) +
-                            (sideStory2Unlocked
-                              ? cardEpisode[1].power2BonusFixed
-                              : 0)}
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item md={3} xs={6}>
-                    <Grid
-                      container
-                      alignItems="center"
-                      direction="row"
-                      wrap="nowrap"
-                    >
-                      <Grid item xs={3}>
-                        <img
-                          src={IconStamina}
-                          alt="stamina"
-                          style={{ marginRight: "7%" }}
-                        />
-                      </Grid>
-                      <Grid item xs={4}>
-                        <Typography>
-                          {card.cardParameters.find(
-                            (elem) =>
-                              elem.cardParameterType === "param3" &&
-                              elem.cardLevel === cardLevel
-                          )?.power! +
-                            (cardLevel > card.maxNormalLevel
-                              ? card.specialTrainingPower3BonusFixed
-                              : 0) +
-                            (sideStory1Unlocked
-                              ? cardEpisode[0].power3BonusFixed
-                              : 0) +
-                            (sideStory2Unlocked
-                              ? cardEpisode[1].power3BonusFixed
-                              : 0)}
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item md={3} xs={6}>
-                    <Grid
-                      container
-                      alignItems="center"
-                      direction="row"
-                      wrap="nowrap"
-                    >
-                      <Grid item xs={3}>
-                        <img
-                          src={IconTotalStrength}
-                          alt="total strength"
-                          style={{ marginRight: "7%", height: "34px" }}
-                        />
-                      </Grid>
-                      <Grid item xs={4}>
-                        <Typography>
-                          {card.cardParameters
-                            .filter((elem) => elem.cardLevel === cardLevel)
-                            .reduce((sum, elem) => sum + elem.power, 0) +
-                            (cardLevel > card.maxNormalLevel
-                              ? card.specialTrainingPower1BonusFixed +
-                                card.specialTrainingPower2BonusFixed +
-                                card.specialTrainingPower3BonusFixed
-                              : 0) +
-                            (sideStory1Unlocked
-                              ? cardEpisode[0].power1BonusFixed +
-                                cardEpisode[0].power2BonusFixed +
-                                cardEpisode[0].power3BonusFixed
-                              : 0) +
-                            (sideStory2Unlocked
-                              ? cardEpisode[1].power1BonusFixed +
-                                cardEpisode[1].power2BonusFixed +
-                                cardEpisode[1].power3BonusFixed
-                              : 0)}
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
-          </Box>
+          </Grid>
+        </Paper>
+        <Grid className={classes["grid-out"]} container direction="column">
+          <Grid
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+              {t("common:performance")}
+            </Typography>
+            <Typography>
+              {card.cardParameters.find(
+                (elem) =>
+                  elem.cardParameterType === "param1" &&
+                  elem.cardLevel === cardLevel
+              )?.power! +
+                (cardLevel > card.maxNormalLevel
+                  ? card.specialTrainingPower1BonusFixed
+                  : 0) +
+                (sideStory1Unlocked ? cardEpisode[0].power1BonusFixed : 0) +
+                (sideStory2Unlocked ? cardEpisode[1].power1BonusFixed : 0)}
+            </Typography>
+          </Grid>
+          <Divider style={{ margin: "1% 0" }} />
+          <Grid
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+              {t("common:technique")}
+            </Typography>
+            <Typography>
+              {card.cardParameters.find(
+                (elem) =>
+                  elem.cardParameterType === "param2" &&
+                  elem.cardLevel === cardLevel
+              )?.power! +
+                (cardLevel > card.maxNormalLevel
+                  ? card.specialTrainingPower2BonusFixed
+                  : 0) +
+                (sideStory1Unlocked ? cardEpisode[0].power2BonusFixed : 0) +
+                (sideStory2Unlocked ? cardEpisode[1].power2BonusFixed : 0)}
+            </Typography>
+          </Grid>
+          <Divider style={{ margin: "1% 0" }} />
+          <Grid
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+              {t("common:stamina")}
+            </Typography>
+            <Typography>
+              {card.cardParameters.find(
+                (elem) =>
+                  elem.cardParameterType === "param3" &&
+                  elem.cardLevel === cardLevel
+              )?.power! +
+                (cardLevel > card.maxNormalLevel
+                  ? card.specialTrainingPower3BonusFixed
+                  : 0) +
+                (sideStory1Unlocked ? cardEpisode[0].power3BonusFixed : 0) +
+                (sideStory2Unlocked ? cardEpisode[1].power3BonusFixed : 0)}
+            </Typography>
+          </Grid>
+          <Divider style={{ margin: "1% 0" }} />
+          <Grid
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+              {t("common:power")}
+            </Typography>
+            <Typography>
+              {card.cardParameters
+                .filter((elem) => elem.cardLevel === cardLevel)
+                .reduce((sum, elem) => sum + elem.power, 0) +
+                (cardLevel > card.maxNormalLevel
+                  ? card.specialTrainingPower1BonusFixed +
+                    card.specialTrainingPower2BonusFixed +
+                    card.specialTrainingPower3BonusFixed
+                  : 0) +
+                (sideStory1Unlocked
+                  ? cardEpisode[0].power1BonusFixed +
+                    cardEpisode[0].power2BonusFixed +
+                    cardEpisode[0].power3BonusFixed
+                  : 0) +
+                (sideStory2Unlocked
+                  ? cardEpisode[1].power1BonusFixed +
+                    cardEpisode[1].power2BonusFixed +
+                    cardEpisode[1].power3BonusFixed
+                  : 0)}
+            </Typography>
+          </Grid>
           <Divider style={{ margin: "1% 0" }} />
         </Grid>
       </Container>
