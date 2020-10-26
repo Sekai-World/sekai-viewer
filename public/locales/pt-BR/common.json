@@ -33,13 +33,7 @@
   "startAt": "Disponível a partir de",
   "rarity": "Raridade",
   "thumb": "Ícone",
-  "skillLevel": "",
-  "skillName": "",
-  "skillEffect": "",
-  "cardLevel": "",
-  "cardSideStories": "",
-  "cardSideStory1": "",
-  "cardSideStory2": "",
+  "skill": "Habilidade",
   "performance": "",
   "technique": "",
   "stamina": "",
@@ -60,6 +54,5 @@
   "bug": "Bug",
   "update": "Atualização",
   "character_plural": "Personagens",
-  "level": "Nível",
-  "skill": "Habilidade"
+  "level": "Nível"
 }

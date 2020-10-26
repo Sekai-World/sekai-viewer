@@ -537,7 +537,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
         </Grid>
       </Container>
       <Typography variant="h6" className={layoutClasses.header}>
-        {t("card:skill")}
+        {t("common:skill")}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="sm">
         <Paper className={interactiveClasses.container}>
@@ -551,7 +551,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
             >
               <Grid item xs={12} md={2}>
                 <Typography classes={{ root: interactiveClasses.caption }}>
-                  {t("common:skillLevel")}
+                  {t("card:skillLevel")}
                 </Typography>
               </Grid>
               <Grid item xs={12} md={9}>
@@ -582,7 +582,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t("common:skillName")}
+              {t("card:skillName")}
             </Typography>
             <Typography>
               {contentTransMode === "original"
@@ -600,10 +600,16 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
             justify="space-between"
             alignItems="center"
           >
-            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t("common:skillEffect")}
-            </Typography>
-            <Typography>{getSkillDesc(skill!, skillLevel)}</Typography>
+            <Grid item xs={2}>
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                {t("card:skillEffect")}
+              </Typography>
+            </Grid>
+            <Grid item xs={9}>
+              <Typography align="right">
+                {getSkillDesc(skill!, skillLevel)}
+              </Typography>
+            </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
         </Grid>
@@ -623,7 +629,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
             >
               <Grid item xs={12} md={2}>
                 <Typography classes={{ root: interactiveClasses.caption }}>
-                  {t("common:cardLevel")}
+                  {t("card:cardLevel")}
                 </Typography>
               </Grid>
               <Grid item xs={12} md={9}>
@@ -644,17 +650,17 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                         ? [
                             {
                               value: card.maxNormalLevel,
-                              label: "Normal",
+                              label: t("card:normal"),
                             },
                             {
                               value: card.maxTrainedLevel!,
-                              label: "Trained",
+                              label: t("card:trained"),
                             },
                           ]
                         : [
                             {
                               value: card.maxNormalLevel,
-                              label: "Normal",
+                              label: t("card:normal"),
                             },
                           ]
                     }
@@ -671,7 +677,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
             >
               <Grid item xs={12} md={2}>
                 <Typography classes={{ root: interactiveClasses.caption }}>
-                  {t("common:cardSideStories")}
+                  {t("card:sideStory")}
                 </Typography>
               </Grid>
               <Grid item container xs={12} md={9} spacing={1}>
@@ -679,7 +685,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                   <Chip
                     clickable
                     color={sideStory1Unlocked ? "primary" : "default"}
-                    label={t("common:cardSideStory1")}
+                    label={t("card:sideStory1Unlocked")}
                     onClick={() => setSideStory1Unlocked((v) => !v)}
                   />
                 </Grid>
@@ -687,7 +693,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                   <Chip
                     clickable
                     color={sideStory2Unlocked ? "primary" : "default"}
-                    label={t("common:cardSideStory2")}
+                    label={t("card:sideStory2Unlocked")}
                     onClick={() => setSideStory2Unlocked((v) => !v)}
                   />
                 </Grid>

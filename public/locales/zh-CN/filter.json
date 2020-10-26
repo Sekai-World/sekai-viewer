@@ -1,10 +1,10 @@
 {
+  "character": {
+    "caption": "角色"
+  },
   "sort": {
     "caption": "排序",
     "ascending": "升序",
     "descending": "降序"
-  },
-  "character": {
-    "caption": "角色"
   }
 }

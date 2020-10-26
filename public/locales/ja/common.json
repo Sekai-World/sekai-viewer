@@ -33,13 +33,7 @@
   "startAt": "解放時間",
   "rarity": "レアリティ",
   "thumb": "サムネイル",
-  "skillLevel": "",
-  "skillName": "",
-  "skillEffect": "",
-  "cardLevel": "",
-  "cardSideStories": "",
-  "cardSideStory1": "",
-  "cardSideStory2": "",
+  "skill": "スキル",
   "performance": "",
   "technique": "",
   "stamina": "",
@@ -60,6 +54,5 @@
   "bug": "バグ",
   "update": "アップデート",
   "level": "レベル",
-  "skill": "スキル",
   "character_plural": "キャラクター"
 }

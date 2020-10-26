@@ -33,13 +33,7 @@
   "startAt": "",
   "rarity": "",
   "thumb": "",
-  "skillLevel": "",
-  "skillName": "",
-  "skillEffect": "",
-  "cardLevel": "",
-  "cardSideStories": "",
-  "cardSideStory1": "",
-  "cardSideStory2": "",
+  "skill": "",
   "performance": "",
   "technique": "",
   "stamina": "",
@@ -60,6 +54,5 @@
   "bug": "Fehler",
   "update": "Update",
   "character_plural": "",
-  "level": "",
-  "skill": ""
+  "level": ""
 }

@@ -33,13 +33,7 @@
   "startAt": "Available From",
   "rarity": "Rarity",
   "thumb": "Thumb",
-  "skillLevel": "Skill Level",
-  "skillName": "Skill Name",
-  "skillEffect": "Skill Effect",
-  "cardLevel": "Card Level",
-  "cardSideStories": "Side Stories",
-  "cardSideStory1": "Side Story 1",
-  "cardSideStory2": "Side Story 2",
+  "skill": "Skill",
   "performance": "Performance",
   "technique": "Technique",
   "stamina": "Stamina",
@@ -60,6 +54,5 @@
   "bug": "Bug",
   "update": "Update",
   "character_plural": "Characters",
-  "level": "Level",
-  "skill": "Skill"
+  "level": "Level"
 }
