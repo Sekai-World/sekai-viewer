@@ -10,6 +10,9 @@ const useInteractiveStyles = makeStyles((theme) => ({
       textAlign: "right",
     },
   },
+  sliderContainer: {
+    paddingRight: theme.spacing(5),
+  },
 }));
 
 export { useInteractiveStyles };

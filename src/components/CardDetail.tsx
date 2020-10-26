@@ -1,4 +1,5 @@
 import {
+  Box,
   Card,
   CardMedia,
   Divider,
@@ -573,18 +574,20 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                 </Typography>
               </Grid>
               <Grid item xs={12} md={9}>
-                <Slider
-                  value={skillLevel}
-                  onChange={(e, value) => setSkillLevel(value)}
-                  valueLabelDisplay="auto"
-                  step={1}
-                  min={1}
-                  max={
-                    skill!.skillEffects[0].skillEffectDetails[
-                      skill!.skillEffects[0].skillEffectDetails.length - 1
-                    ].level
-                  }
-                />
+                <Box className={interactiveClasses.sliderContainer}>
+                  <Slider
+                    value={skillLevel}
+                    onChange={(e, value) => setSkillLevel(value)}
+                    valueLabelDisplay="auto"
+                    step={1}
+                    min={1}
+                    max={
+                      skill!.skillEffects[0].skillEffectDetails[
+                        skill!.skillEffects[0].skillEffectDetails.length - 1
+                      ].level
+                    }
+                  />
+                </Box>
               </Grid>
             </Grid>
           </Grid>
@@ -643,37 +646,39 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                 </Typography>
               </Grid>
               <Grid item xs={12} md={9}>
-                <Slider
-                  value={cardLevel}
-                  onChange={(e, value) => setCardLevel(value)}
-                  valueLabelDisplay="auto"
-                  step={1}
-                  min={1}
-                  max={
-                    card.rarity >= 3
-                      ? card.maxTrainedLevel
-                      : card.maxNormalLevel
-                  }
-                  marks={
-                    card.rarity >= 3
-                      ? [
-                          {
-                            value: card.maxNormalLevel,
-                            label: "Normal",
-                          },
-                          {
-                            value: card.maxTrainedLevel!,
-                            label: "Trained",
-                          },
-                        ]
-                      : [
-                          {
-                            value: card.maxNormalLevel,
-                            label: "Normal",
-                          },
-                        ]
-                  }
-                />
+                <Box className={interactiveClasses.sliderContainer}>
+                  <Slider
+                    value={cardLevel}
+                    onChange={(e, value) => setCardLevel(value)}
+                    valueLabelDisplay="auto"
+                    step={1}
+                    min={1}
+                    max={
+                      card.rarity >= 3
+                        ? card.maxTrainedLevel
+                        : card.maxNormalLevel
+                    }
+                    marks={
+                      card.rarity >= 3
+                        ? [
+                            {
+                              value: card.maxNormalLevel,
+                              label: "Normal",
+                            },
+                            {
+                              value: card.maxTrainedLevel!,
+                              label: "Trained",
+                            },
+                          ]
+                        : [
+                            {
+                              value: card.maxNormalLevel,
+                              label: "Normal",
+                            },
+                          ]
+                    }
+                  />
+                </Box>
               </Grid>
             </Grid>
             <Grid
