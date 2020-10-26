@@ -28,15 +28,15 @@
   "id": "编号",
   "title": "标题",
   "character": "角色",
-  "support_unit": "",
+  "support_unit": "辅助组合",
   "attribute": "属性",
   "startAt": "开放时间",
   "rarity": "稀有度",
   "thumb": "缩图",
   "skill": "技能",
-  "performance": "",
-  "technique": "",
-  "stamina": "",
+  "performance": "表现力",
+  "technique": "技术力",
+  "stamina": "活力",
   "power": "综合力",
   "releaseCondition": "解放条件",
   "releaseCosts": "解放素材",
@@ -53,6 +53,6 @@
   "campaign": "纪念活动",
   "bug": "问题",
   "update": "更新",
-  "level": "等级",
-  "character_plural": "角色"
+  "character_plural": "角色",
+  "level": "等级"
 }

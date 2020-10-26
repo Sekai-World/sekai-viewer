@@ -1,12 +1,13 @@
 {
-  "alreadyEnded": "Ивент закончился",
+  "already-ended": "Ивент закончился",
   "tab": {
-    "title[0]": "Баннер и логотип",
+    "title[0]": "Логотип и баннер",
     "title[1]": "Задний фон",
     "title[2]": "Персонаж"
   },
-  "remainingTime": "",
-  "progress": "",
+  "alreadyPast": "Уже прошло",
+  "remainingTime": "Оставшееся время",
+  "progress": "Прогресс",
   "boostAttribute": "Бонус-атрибут",
   "boostCharacters": "Бонус-персонажи",
   "maxBoost": "Макс. бонус (Оба бонуса)",
@@ -14,10 +15,9 @@
   "rankingAnnounceAt": "Присваивание ранга в",
   "distributionStartAt": "Получение наград с",
   "distributionEndAt": "Получение наград до",
-  "ranking": "",
+  "ranking": "Рейтинг",
   "realtime": "В реальном времени",
   "nextfetch": "Следующие обновление",
-  "alreadyPast": "Уже прошло",
   "type": {
     "marathon": "Марафон"
   }
