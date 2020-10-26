@@ -2,6 +2,7 @@ import i18n, { TOptions } from "i18next";
 import { initReactI18next } from "react-i18next";
 import fetchBackend from "i18next-fetch-backend";
 import detector from "i18next-browser-languagedetector";
+import { useCallback } from "react";
 
 export function initGlobalI18n() {
   return i18n
@@ -80,13 +81,12 @@ assetI18n
   });
 
 export function useAssetI18n() {
-  const assetT = (
-    key: string,
-    original: string,
-    options?: string | TOptions
-  ): string => {
-    const translated = assetI18n.t(key, options);
-    return !Number.isNaN(Number(translated)) ? original : translated;
-  };
+  const assetT = useCallback(
+    (key: string, original: string, options?: string | TOptions): string => {
+      const translated = assetI18n.t(key, options);
+      return !Number.isNaN(Number(translated)) ? original : translated;
+    },
+    []
+  );
   return { assetT, assetI18n };
 }
