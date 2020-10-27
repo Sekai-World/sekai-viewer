@@ -11,6 +11,7 @@
   "pickupMember": "Pickup Member",
   "pickupMember_plural": "Pickup Members",
   "gachaType": {
-    "ceil": "Ceiling"
+    "ceil": "Ceiling",
+    "normal": "Normal"
   }
 }

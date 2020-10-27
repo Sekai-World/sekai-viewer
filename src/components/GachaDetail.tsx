@@ -184,7 +184,7 @@ const GachaDetailPage: React.FC<{
     for (let i = 0; i < rollTimes; i++) {
       if (i % 10 === 9 && noStar3Count === 9) {
         // only roll 3* or 4*
-        const roll = Math.random() * 99 + 1;
+        const roll = Math.random() * 100;
         if (roll < must3RollResult[0]) {
           // get 3* card
           setStatistic((s) =>
@@ -217,7 +217,7 @@ const GachaDetailPage: React.FC<{
       } else if (i % 10 === 0) {
         noStar3Count = 0;
       }
-      const roll = Math.random() * 99 + 1;
+      const roll = Math.random() * 100;
       if (roll <= rollResult[0]!) {
         // get 1* card
         setStatistic((s) =>
@@ -482,7 +482,9 @@ const GachaDetailPage: React.FC<{
                     </Grid>
                     <Grid container spacing={1} justify="center">
                       <Grid item>
-                        <Typography>Total: {statistic.total}</Typography>
+                        <Typography>
+                          Total: {statistic.total} Cost: {statistic.total * 300}
+                        </Typography>
                       </Grid>
                       <Grid item container spacing={1} justify="center">
                         <Grid item>
@@ -677,53 +679,57 @@ const GachaDetailPage: React.FC<{
               </Grid>
             </Grid>
             <Divider style={{ margin: "1% 0" }} />
-            <Grid
-              item
-              container
-              direction="row"
-              justify="space-between"
-              alignItems="center"
-            >
-              <Grid item xs={2} md={4}>
-                <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                  {t("gacha:guaranteedRate")}
-                </Typography>
-              </Grid>
-              <Grid
-                item
-                xs={9}
-                md={4}
-                container
-                direction="column"
-                alignItems="flex-end"
-              >
-                <Grid item container alignItems="center">
-                  <Grid item xs={7} style={{ textAlign: "right" }}>
-                    <StarIcon num={2} />
+            {gacha.gachaType === "normal" ? null : (
+              <Fragment>
+                <Grid
+                  item
+                  container
+                  direction="row"
+                  justify="space-between"
+                  alignItems="center"
+                >
+                  <Grid item xs={2} md={4}>
+                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                      {t("gacha:guaranteedRate")}
+                    </Typography>
                   </Grid>
-                  <Grid item xs={5} style={{ textAlign: "right" }}>
-                    0 %
+                  <Grid
+                    item
+                    xs={9}
+                    md={4}
+                    container
+                    direction="column"
+                    alignItems="flex-end"
+                  >
+                    <Grid item container alignItems="center">
+                      <Grid item xs={7} style={{ textAlign: "right" }}>
+                        <StarIcon num={2} />
+                      </Grid>
+                      <Grid item xs={5} style={{ textAlign: "right" }}>
+                        0 %
+                      </Grid>
+                    </Grid>
+                    <Grid item container alignItems="center">
+                      <Grid item xs={7} style={{ textAlign: "right" }}>
+                        <StarIcon num={3} />
+                      </Grid>
+                      <Grid item xs={5} style={{ textAlign: "right" }}>
+                        {100 - gacha.rarity4Rate} %
+                      </Grid>
+                    </Grid>
+                    <Grid item container alignItems="center">
+                      <Grid item xs={7} style={{ textAlign: "right" }}>
+                        <StarIcon num={4} />
+                      </Grid>
+                      <Grid item xs={5} style={{ textAlign: "right" }}>
+                        {gacha.rarity4Rate} %
+                      </Grid>
+                    </Grid>
                   </Grid>
                 </Grid>
-                <Grid item container alignItems="center">
-                  <Grid item xs={7} style={{ textAlign: "right" }}>
-                    <StarIcon num={3} />
-                  </Grid>
-                  <Grid item xs={5} style={{ textAlign: "right" }}>
-                    {100 - gacha.rarity4Rate} %
-                  </Grid>
-                </Grid>
-                <Grid item container alignItems="center">
-                  <Grid item xs={7} style={{ textAlign: "right" }}>
-                    <StarIcon num={4} />
-                  </Grid>
-                  <Grid item xs={5} style={{ textAlign: "right" }}>
-                    {gacha.rarity4Rate} %
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Grid>
-            <Divider style={{ margin: "1% 0" }} />
+                <Divider style={{ margin: "1% 0" }} />
+              </Fragment>
+            )}
             <Grid
               container
               wrap="nowrap"
