@@ -428,7 +428,7 @@ const GachaDetailPage: React.FC<{
               <TabPanel value="4" classes={{ root: classes.tabpanel }}>
                 <Card>
                   <CardContent>
-                    <Grid container spacing={1}>
+                    <Grid container spacing={1} justify="center">
                       <Grid item>
                         <Button
                           variant="contained"
@@ -480,11 +480,11 @@ const GachaDetailPage: React.FC<{
                         </Button>
                       </Grid>
                     </Grid>
-                    <Grid container spacing={1}>
+                    <Grid container spacing={1} justify="center">
                       <Grid item>
                         <Typography>Total: {statistic.total}</Typography>
                       </Grid>
-                      <Grid item container spacing={1}>
+                      <Grid item container spacing={1} justify="center">
                         <Grid item>
                           <Typography>
                             <StarIcon num={2} />
