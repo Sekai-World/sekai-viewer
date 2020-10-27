@@ -123,7 +123,7 @@ export const CardThumbs: React.FC<{ cardIds: number[] }> = ({ cardIds }) => {
       alignItems="center"
     >
       {cardIds.map((cardId, id) => (
-        <Grid key={id} item xs={4} md={2}>
+        <Grid key={id} item xs={4} sm={2}>
           <CardThumb id={cardId} />
         </Grid>
       ))}
