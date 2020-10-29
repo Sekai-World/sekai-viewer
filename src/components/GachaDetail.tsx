@@ -632,54 +632,62 @@ const GachaDetailPage: React.FC<{
               </Typography>
             </Grid>
             <Divider style={{ margin: "1% 0" }} />
-            <Grid
-              item
-              container
-              direction="row"
-              justify="space-between"
-              alignItems="center"
-            >
-              <Grid item xs={2} md={4}>
-                <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                  {t("gacha:normalRate")}
-                </Typography>
-              </Grid>
-              <Grid
-                item
-                xs={9}
-                md={4}
-                container
-                direction="column"
-                alignItems="flex-end"
-              >
-                <Grid item container alignItems="center">
-                  <Grid item xs={7} style={{ textAlign: "right" }}>
-                    <StarIcon num={2} />
+            {gacha.gachaBehaviors.find(
+              (gb) => gb.gachaBehaviorType === "normal"
+            ) ? (
+              <Fragment>
+                <Grid
+                  item
+                  container
+                  direction="row"
+                  justify="space-between"
+                  alignItems="center"
+                >
+                  <Grid item xs={2} md={4}>
+                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                      {t("gacha:normalRate")}
+                    </Typography>
                   </Grid>
-                  <Grid item xs={5} style={{ textAlign: "right" }}>
-                    {gacha.rarity2Rate} %
+                  <Grid
+                    item
+                    xs={9}
+                    md={4}
+                    container
+                    direction="column"
+                    alignItems="flex-end"
+                  >
+                    <Grid item container alignItems="center">
+                      <Grid item xs={7} style={{ textAlign: "right" }}>
+                        <StarIcon num={2} />
+                      </Grid>
+                      <Grid item xs={5} style={{ textAlign: "right" }}>
+                        {gacha.rarity2Rate} %
+                      </Grid>
+                    </Grid>
+                    <Grid item container alignItems="center">
+                      <Grid item xs={7} style={{ textAlign: "right" }}>
+                        <StarIcon num={3} />
+                      </Grid>
+                      <Grid item xs={5} style={{ textAlign: "right" }}>
+                        {gacha.rarity3Rate} %
+                      </Grid>
+                    </Grid>
+                    <Grid item container alignItems="center">
+                      <Grid item xs={7} style={{ textAlign: "right" }}>
+                        <StarIcon num={4} />
+                      </Grid>
+                      <Grid item xs={5} style={{ textAlign: "right" }}>
+                        {gacha.rarity4Rate} %
+                      </Grid>
+                    </Grid>
                   </Grid>
                 </Grid>
-                <Grid item container alignItems="center">
-                  <Grid item xs={7} style={{ textAlign: "right" }}>
-                    <StarIcon num={3} />
-                  </Grid>
-                  <Grid item xs={5} style={{ textAlign: "right" }}>
-                    {gacha.rarity3Rate} %
-                  </Grid>
-                </Grid>
-                <Grid item container alignItems="center">
-                  <Grid item xs={7} style={{ textAlign: "right" }}>
-                    <StarIcon num={4} />
-                  </Grid>
-                  <Grid item xs={5} style={{ textAlign: "right" }}>
-                    {gacha.rarity4Rate} %
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Grid>
-            <Divider style={{ margin: "1% 0" }} />
-            {gacha.gachaType === "normal" ? null : (
+                <Divider style={{ margin: "1% 0" }} />
+              </Fragment>
+            ) : null}
+            {gacha.gachaBehaviors.find(
+              (gb) => gb.gachaBehaviorType === "over_rarity_3_once"
+            ) ? (
               <Fragment>
                 <Grid
                   item
@@ -729,7 +737,7 @@ const GachaDetailPage: React.FC<{
                 </Grid>
                 <Divider style={{ margin: "1% 0" }} />
               </Fragment>
-            )}
+            ) : null}
             <Grid
               container
               wrap="nowrap"
