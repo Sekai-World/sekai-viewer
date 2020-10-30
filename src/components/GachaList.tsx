@@ -72,7 +72,7 @@ const GachaList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   }, [setIsReady, gachasCache]);
 
   const callback = (
-    entries: IntersectionObserverEntry[],
+    entries: readonly IntersectionObserverEntry[],
     setHasMore: React.Dispatch<React.SetStateAction<boolean>>
   ) => {
     if (!isReadyRef.current) return;
