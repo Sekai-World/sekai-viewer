@@ -1,11 +1,11 @@
 {
   "alert[0]": "Os primeiros <b>nove segundos </b> de todas as músicas não tem som. Isso NÃO é um bug.",
-  "skipBeginningSilence": "",
+  "skipBeginningSilence": "Pular os 9 segundos de silêncio",
   "tag": "Tag",
   "tag_plural": "Tags",
   "category": "Categoria",
   "category_plural": "Categorias",
-  "actualPlaybackTime": "",
+  "actualPlaybackTime": "Actual Playback Time",
   "arranger": "arranjador",
   "composer": "Compositor",
   "lyricist": "Letras por",

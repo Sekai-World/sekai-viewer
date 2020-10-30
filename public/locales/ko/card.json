@@ -5,17 +5,17 @@
     "title[2]": "특훈 후 이미지",
     "title[3]": "특훈 후 스탠딩 이미지"
   },
-  "skillLevel": "",
-  "skillName": "",
-  "skillEffect": "",
+  "skillLevel": "스킬 레벨",
+  "skillName": "스킬 이름",
+  "skillEffect": "스킬 효과",
   "stats": "능력치",
-  "cardLevel": "",
-  "normal": "",
-  "trained": "",
+  "cardLevel": "카드 레벨",
+  "normal": "특훈 전",
+  "trained": "특훈 후",
   "sideStory": "사이드 스토리",
   "sideStory1Unlocked": "사이드 스토리 1편 해금됨",
   "sideStory2Unlocked": "사이드 스토리 2편 해금됨",
+  "sideStory_plural": "사이드 스토리들",
   "power": "총합력",
-  "skill": "",
-  "sideStory_plural": "사이드 스토리들"
+  "skill": "스킬"
 }
