@@ -139,8 +139,10 @@ const GachaList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
           callback,
           data: gachas,
           gridSize: {
+            xs: 12,
             sm: 6,
-            lg: 4,
+            md: 4,
+            lg: 3,
           },
         })}
       </Container>
