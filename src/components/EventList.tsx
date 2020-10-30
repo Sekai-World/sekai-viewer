@@ -17,6 +17,8 @@ import InfiniteScroll from "./subs/InfiniteScroll";
 import { useTranslation } from "react-i18next";
 import { useAssetI18n } from "../utils/i18n";
 
+type ViewGridType = "grid" | "agenda" | "comfy";
+
 const useStyles = makeStyles((theme) => ({
   media: {
     paddingTop: "56.25%",
@@ -56,8 +58,9 @@ const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   const [events, setEvents] = useState<IEventInfo[]>([]);
   const [eventsCache, eventsCacheRef] = useCachedData<IEventInfo>("events");
 
-  const [viewGridType] = useState<string>(
-    localStorage.getItem("event-list-grid-view-type") || "grid"
+  const [viewGridType] = useState<ViewGridType>(
+    (localStorage.getItem("event-list-grid-view-type") ||
+      "grid") as ViewGridType
   );
   const [page, pageRef, setPage] = useRefState<number>(1);
   const [limit, limitRef] = useRefState<number>(12);
@@ -161,12 +164,19 @@ const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
           viewComponent: ListCard[viewGridType],
           callback,
           data: events,
-          gridSize: {
-            xs: 12,
-            md:
-              viewGridType === "grid" ? 4 : viewGridType === "agenda" ? 12 : 12,
-            sm: 6,
-          },
+          gridSize: ({
+            grid: {
+              xs: 12,
+              sm: 6,
+              md: 4,
+            },
+            agenda: {
+              xs: 12,
+            },
+            comfy: {
+              xs: 12,
+            },
+          } as const)[viewGridType],
         })}
       </Container>
     </Fragment>

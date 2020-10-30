@@ -40,6 +40,8 @@ import { useTranslation } from "react-i18next";
 import { useInteractiveStyles } from "../styles/interactive";
 import { useAssetI18n } from "../utils/i18n";
 
+type ViewGridType = "grid" | "agenda" | "comfy";
+
 const useStyles = makeStyles((theme) => ({
   media: {
     paddingTop: "75%",
@@ -122,8 +124,9 @@ const MusicList: React.FC<{
   const [sortedCache, sortedCacheRef, setSortedCache] = useRefState<
     IMusicInfo[]
   >([]);
-  const [viewGridType, setViewGridType] = useState<string>(
-    localStorage.getItem("music-list-grid-view-type") || "grid"
+  const [viewGridType, setViewGridType] = useState<ViewGridType>(
+    (localStorage.getItem("music-list-grid-view-type") ||
+      "grid") as ViewGridType
   );
   const [page, pageRef, setPage] = useRefState<number>(0);
   const [limit, limitRef] = useRefState<number>(12);
@@ -488,12 +491,19 @@ const MusicList: React.FC<{
           viewComponent: ListCard[viewGridType],
           callback,
           data: musics,
-          gridSize: {
-            xs: 12,
-            sm: 6,
-            md:
-              viewGridType === "grid" ? 4 : viewGridType === "agenda" ? 12 : 12,
-          },
+          gridSize: ({
+            grid: {
+              xs: 12,
+              sm: 6,
+              md: 4,
+            },
+            agenda: {
+              xs: 12,
+            },
+            comfy: {
+              xs: 12,
+            },
+          } as const)[viewGridType],
         })}
       </Container>
     </Fragment>

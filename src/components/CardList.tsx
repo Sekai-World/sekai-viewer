@@ -47,6 +47,8 @@ import { useAssetI18n } from "../utils/i18n";
 import { characterSelectReducer } from "../stores/reducers";
 import { charaIcons } from "../utils/resources";
 
+type ViewGridType = "grid" | "agenda" | "comfy";
+
 const useStyles = makeStyles((theme) => ({
   media: {
     paddingTop: "56.25%",
@@ -143,8 +145,8 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   const [sortedCache, sortedCacheRef, setSortedCache] = useRefState<
     ICardInfo[]
   >([]);
-  const [viewGridType, setViewGridType] = useState<string>(
-    localStorage.getItem("card-list-grid-view-type") || "grid"
+  const [viewGridType, setViewGridType] = useState<ViewGridType>(
+    (localStorage.getItem("card-list-grid-view-type") || "grid") as ViewGridType
   );
   const [page, pageRef, setPage] = useRefState<number>(0);
   const [limit, limitRef] = useRefState<number>(12);
@@ -653,12 +655,21 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
           viewComponent: ListCard[viewGridType],
           callback,
           data: cards,
-          gridSize: {
-            xs: 12,
-            sm: 6,
-            md:
-              viewGridType === "grid" ? 4 : viewGridType === "agenda" ? 12 : 3,
-          },
+          gridSize: ({
+            grid: {
+              xs: 12,
+              sm: 6,
+              md: 4,
+            },
+            agenda: {
+              xs: 12,
+            },
+            comfy: {
+              xs: 12,
+              sm: 6,
+              md: 3,
+            },
+          } as const)[viewGridType],
         })}
       </Container>
     </Fragment>
