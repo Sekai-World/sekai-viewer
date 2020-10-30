@@ -52,7 +52,9 @@ interface IISProps<T> {
   readonly gridSize?: Readonly<GridSizeOptions>;
 }
 
+// NOTE: `breakpoints` must be sorted ascending by size
 const breakpoints = ["xs", "sm", "md", "lg", "xl"] as const;
+
 const defaultXSGridSize: GridSize = 12;
 const defaultGridSize: Readonly<GridSizeOptions> = {
   xs: defaultXSGridSize,
@@ -64,7 +66,7 @@ function useBreakpoint(): keyof GridSizeOptions {
 
   // NOTE: The number of calls to `useMediaQuery` must always be constant.
   // https://en.reactjs.org/docs/hooks-rules.html#only-call-hooks-at-the-top-level
-  const downBreakpoint = breakpoints.map(
+  const downBreakpoints = breakpoints.map(
     (breakpoint) =>
       // NOTE: `down` includes itself
       // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -73,7 +75,7 @@ function useBreakpoint(): keyof GridSizeOptions {
 
   // NOTE: `down('xl')` always returns `true` so `|| breakpoints[breakpoints.length - 1]`
   //       is not actually needed, but it's written for clarity and typing.
-  return downBreakpoint.find(Boolean) || breakpoints[breakpoints.length - 1];
+  return downBreakpoints.find(Boolean) || breakpoints[breakpoints.length - 1];
 }
 
 function transformToCompleteGridSizeOptions(
