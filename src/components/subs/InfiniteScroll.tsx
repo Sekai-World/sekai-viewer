@@ -43,17 +43,17 @@ type CompleteGridSizeOptions = {
 };
 
 interface IISProps<T> {
-  viewComponent: React.FC<{ data?: T }>;
-  callback: (
-    entries: IntersectionObserverEntry[],
+  readonly viewComponent: React.FC<{ data?: T }>;
+  readonly callback: (
+    entries: readonly IntersectionObserverEntry[],
     setHasMore: React.Dispatch<React.SetStateAction<boolean>>
   ) => void;
-  data: T[];
-  gridSize?: GridSizeOptions;
+  readonly data: readonly T[];
+  readonly gridSize?: Readonly<GridSizeOptions>;
 }
 
 const defaultXSGridSize: GridSize = 12;
-const defaultGridSize: GridSizeOptions = {
+const defaultGridSize: Readonly<GridSizeOptions> = {
   xs: defaultXSGridSize,
   md: 4,
 };
@@ -69,7 +69,7 @@ function useBreakpoint(): keyof GridSizeOptions {
 }
 
 function transformToCompleteGridSizeOptions(
-  _gridSize?: GridSizeOptions | undefined
+  _gridSize?: Readonly<GridSizeOptions> | undefined
 ): CompleteGridSizeOptions {
   // use default if gridSize is not provided
   // not using defaults per properties because `{ md: 4 }` would not be desired
