@@ -52,6 +52,7 @@ interface IISProps<T> {
   readonly gridSize?: Readonly<GridSizeOptions>;
 }
 
+const breakpoints = ["xs", "sm", "md", "lg", "xl"] as const;
 const defaultXSGridSize: GridSize = 12;
 const defaultGridSize: Readonly<GridSizeOptions> = {
   xs: defaultXSGridSize,
@@ -60,12 +61,19 @@ const defaultGridSize: Readonly<GridSizeOptions> = {
 
 function useBreakpoint(): keyof GridSizeOptions {
   const theme = useTheme();
-  const isXS = useMediaQuery(theme.breakpoints.down("xs")) && "xs";
-  const isSM = useMediaQuery(theme.breakpoints.only("sm")) && "sm";
-  const isMD = useMediaQuery(theme.breakpoints.only("md")) && "md";
-  const isLG = useMediaQuery(theme.breakpoints.only("lg")) && "lg";
-  const isXL = useMediaQuery(theme.breakpoints.up("xl")) && "xl";
-  return isXS || isSM || isMD || isLG || isXL || "xl";
+
+  // NOTE: The number of calls to `useMediaQuery` must always be constant.
+  // https://en.reactjs.org/docs/hooks-rules.html#only-call-hooks-at-the-top-level
+  const downBreakpoint = breakpoints.map(
+    (breakpoint) =>
+      // NOTE: `down` includes itself
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      useMediaQuery(theme.breakpoints.down(breakpoint)) && breakpoint
+  );
+
+  // NOTE: `down('xl')` always returns `true` so `|| breakpoints[breakpoints.length - 1]`
+  //       is not actually needed, but it's written for clarity and typing.
+  return downBreakpoint.find(Boolean) || breakpoints[breakpoints.length - 1];
 }
 
 function transformToCompleteGridSizeOptions(
@@ -78,7 +86,7 @@ function transformToCompleteGridSizeOptions(
   };
 
   // inherit the value of the smaller breakpoint if not specified
-  (["xs", "sm", "md", "lg", "xl"] as const).forEach((v, i, a) => {
+  breakpoints.forEach((v, i, a) => {
     if (!gridSize[v]) {
       gridSize[v] = i > 0 ? gridSize[a[i - 1]] : defaultXSGridSize;
     }
