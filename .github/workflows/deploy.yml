@@ -1,10 +1,10 @@
-name: DeployToGHPages
+name: "main: Build & Deploy"
 on:
   push:
     branches:
       - main
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -36,11 +36,31 @@ jobs:
       -
         name: Install packages
         run: npm ci
+
       -
         name: Build pages
         run: npm run build
+
       -
-        name: Deploy to gh-pages
+        name: Store build result
+        uses: actions/upload-artifact@v2
+        with:
+          name: pages
+          path: build/
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      -
+        name: Fetch build result
+        uses: actions/download-artifact@v2
+        with:
+          name: pages
+          path: build/
+
+      -
+        name: Deploy
         uses: crazy-max/ghaction-github-pages@v2.1.3
         with:
           target_branch: gh-pages
