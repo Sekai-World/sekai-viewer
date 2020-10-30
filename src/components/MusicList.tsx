@@ -378,7 +378,7 @@ const MusicList: React.FC<{
       <Typography variant="h6" className={layoutClasses.header}>
         {t("common:music")}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      <Container className={layoutClasses.content}>
         <Grid container justify="space-between">
           <ButtonGroup style={{ marginBottom: "1%" }}>
             <Button

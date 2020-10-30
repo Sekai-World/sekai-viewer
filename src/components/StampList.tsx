@@ -173,7 +173,7 @@ const StampList: React.FC<{
       <Typography variant="h6" className={layoutClasses.header}>
         {t("common:stamp")}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      <Container className={layoutClasses.content}>
         <Grid container justify="flex-end">
           <ButtonGroup color="primary" style={{ marginBottom: "1%" }}>
             <Button size="medium" onClick={() => setFilterOpened((v) => !v)}>

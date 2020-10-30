@@ -203,7 +203,7 @@ function Home() {
       <Typography variant="h6" className={layoutClasses.header}>
         {t("common:home")}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      <Container className={layoutClasses.content}>
         {/* <Typography variant="h4">Welcome to Sekai Viewer Open Beta!</Typography> */}
         <Alert className={classes.alert} severity="info">
           {t("home:alert0")}
@@ -332,7 +332,7 @@ function Home() {
       <Typography variant="h6" className={layoutClasses.header}>
         {t("home:game-news.title")}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      <Container className={layoutClasses.content}>
         <Paper className={interactiveClasses.container}>
           <Tabs
             value={gameNewsTag}
