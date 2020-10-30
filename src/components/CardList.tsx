@@ -660,6 +660,7 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
               xs: 12,
               sm: 6,
               md: 4,
+              lg: 3,
             },
             agenda: {
               xs: 12,
