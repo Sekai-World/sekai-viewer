@@ -46,6 +46,7 @@ import { useInteractiveStyles } from "../styles/interactive";
 import { useAssetI18n } from "../utils/i18n";
 import { characterSelectReducer } from "../stores/reducers";
 import { charaIcons } from "../utils/resources";
+import { CardSmallImage } from "./subs/CardImage";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -270,8 +271,8 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
         <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
           <Card className={classes.card}>
             <CardMedia
-              className={classes.media}
-              image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_small/${data.assetbundleName}_rip/card_normal.webp`}
+              // className={classes.media}
+              // image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_small/${data.assetbundleName}_rip/card_normal.webp`}
               title={
                 contentTransMode === "original"
                   ? data.prefix
@@ -279,7 +280,9 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                   ? assetT(`card_prefix:${data.id}`, data.prefix)
                   : data.prefix
               }
-            ></CardMedia>
+            >
+              <CardSmallImage id={data.id}></CardSmallImage>
+            </CardMedia>
             <CardContent style={{ paddingBottom: "16px" }}>
               <Typography variant="subtitle1" className={classes.subheader}>
                 {contentTransMode === "original"

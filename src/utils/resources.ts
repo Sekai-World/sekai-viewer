@@ -41,6 +41,16 @@ import FrameDegreeM2 from "../assets/frame/frame_degree_m_2.png";
 import FrameDegreeM3 from "../assets/frame/frame_degree_m_3.png";
 import FrameDegreeM4 from "../assets/frame/frame_degree_m_4.png";
 
+import cardThumbFrameS1 from "../assets/frame/cardFrame_S_1.png";
+import cardThumbFrameS2 from "../assets/frame/cardFrame_S_2.png";
+import cardThumbFrameS3 from "../assets/frame/cardFrame_S_3.png";
+import cardThumbFrameS4 from "../assets/frame/cardFrame_S_4.png";
+
+import cardImageFrameS1 from "../assets/frame/cardFrame_L_1.png";
+import cardImageFrameS2 from "../assets/frame/cardFrame_L_2.png";
+import cardImageFrameS3 from "../assets/frame/cardFrame_L_3.png";
+import cardImageFrameS4 from "../assets/frame/cardFrame_L_4.png";
+
 export const charaIcons: { [key: string]: string } = {
   CharaIcon1,
   CharaIcon2,
@@ -90,4 +100,18 @@ export const degreeFrameMap: {
   middle: FrameDegreeM2,
   high: FrameDegreeM3,
   highest: FrameDegreeM4,
+};
+
+export const cardThumbFrameMap: { [key: string]: string } = {
+  1: cardThumbFrameS1,
+  2: cardThumbFrameS2,
+  3: cardThumbFrameS3,
+  4: cardThumbFrameS4,
+};
+
+export const cardImageFrameMap: { [key: string]: string } = {
+  1: cardImageFrameS1,
+  2: cardImageFrameS2,
+  3: cardImageFrameS3,
+  4: cardImageFrameS4,
 };
