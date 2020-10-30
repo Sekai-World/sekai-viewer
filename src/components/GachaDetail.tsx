@@ -47,6 +47,13 @@ const gachaImageNameMap: {
   3: {
     bg: "bg_gacha_virtualsinger_2020",
   },
+  7: {
+    bg: "bg_gacha6",
+    feature: "img_gacha6",
+  },
+  8: {
+    bg: "bg_gacha8",
+  },
 };
 
 const useStyles = makeStyles((theme) => ({
