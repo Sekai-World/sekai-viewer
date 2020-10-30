@@ -1,5 +1,6 @@
 {
   "alreadyEnded": "Event is already ended",
+  "notStarted": "Not started",
   "tab": {
     "title[0]": "Banner & logo",
     "title[1]": "Background",

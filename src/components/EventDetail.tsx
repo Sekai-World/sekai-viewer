@@ -114,7 +114,7 @@ const EventDetail: React.FC<{
         cron.stop();
         window.clearInterval(interval);
       };
-    } else {
+    } else if (event && currentTime >= event.rankingAnnounceAt) {
       refreshData();
     }
   }, [refreshData, event]);
@@ -135,6 +135,14 @@ const EventDetail: React.FC<{
         }
         setRemainingTime(t("event:alreadyEnded"));
         setPastTimePercent(100);
+        return false;
+      } else if (Date.now() < event.startAt) {
+        if (interval != null) {
+          window.clearInterval(interval);
+          interval = undefined;
+        }
+        setRemainingTime(t("event:notStarted"));
+        setPastTimePercent(0);
         return false;
       }
 

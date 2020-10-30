@@ -1,12 +1,13 @@
 {
   "alreadyEnded": "活動已結束",
+  "notStarted": "尚未開始",
   "tab": {
     "title[0]": "橫幅和徽標",
     "title[1]": "背景",
     "title[2]": "角色"
   },
-  "remainingTime": "",
-  "progress": "",
+  "remainingTime": "活動剩餘時間",
+  "progress": "進度",
   "boostAttribute": "加成屬性",
   "boostCharacters": "加成角色",
   "maxBoost": "加成（兩者皆滿足）",

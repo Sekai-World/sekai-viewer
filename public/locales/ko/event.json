@@ -1,5 +1,6 @@
 {
   "alreadyEnded": "현재 이벤트는 종료되었습니다",
+  "notStarted": "",
   "tab": {
     "title[0]": "배너 & 로고",
     "title[1]": "배경",
