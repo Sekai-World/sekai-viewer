@@ -79,6 +79,18 @@ const EventDetail: React.FC<{
   const [activeIdx, setActiveIdx] = useState<number>(0);
 
   useEffect(() => {
+    if (event) {
+      const eventName =
+        contentTransMode === "translated"
+          ? assetT(`event_name:${eventId}`, event.name)
+          : event.name;
+      document.title = t("title:eventDetail", {
+        name: eventName,
+      });
+    }
+  }, [event, eventId, contentTransMode, assetT, t]);
+
+  useEffect(() => {
     if (events.length && eventDeckBonuses.length) {
       setEvent(events.find((elem) => elem.id === Number(eventId)));
       setEventDeckBonus(
