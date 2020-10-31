@@ -1,7 +1,7 @@
 {
   "home": "主页",
   "card": "卡牌",
-  "music": "音乐",
+  "music": "乐曲",
   "gacha": "招募",
   "event": "活动",
   "stamp": "贴纸",
@@ -53,6 +53,6 @@
   "campaign": "纪念活动",
   "bug": "问题",
   "update": "更新",
-  "level": "等级",
-  "character_plural": "角色"
+  "character_plural": "角色",
+  "level": "等级"
 }

@@ -246,10 +246,10 @@ function Home() {
         <Alert className={classes.alert} severity="info">
           <AlertTitle>{t("home:alert_translate.title")}</AlertTitle>
           <ul>
-            <li>简：Stargazing Koishi</li>
-            <li>繁：Natsuzawa, ch ko</li>
-            <li>日：Passion, Cee, k0tayan, Natsuzawa, Build774, tofutofuo</li>
-            <li>한：hodubidu3095, omitooshi, EleMas39, PJSEKAI</li>
+            <li>简：Stargazing Koishi, Nightwheel</li>
+            <li>繁：Natsuzawa, ch ko, tofutofuo</li>
+            <li>日：Passion, Cee, k0tayan, Natsuzawa, Build774</li>
+            <li>한：hodubidu3095, omitooshi, EleMas39, PJSEKAI, 아점</li>
             <li>Pt-BR: mid</li>
             <li>русский: Spyrohat</li>
           </ul>
