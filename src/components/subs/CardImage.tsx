@@ -151,6 +151,7 @@ export const CardSmallImage: React.FC<{ id: number }> = ({ id }) => {
             style={{ pointerEvents: "all" }}
           >
             <image
+              width="1024"
               height="576"
               href={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_small/${card.assetbundleName}_rip/card_after_training.webp`}
             ></image>
@@ -166,6 +167,7 @@ export const CardSmallImage: React.FC<{ id: number }> = ({ id }) => {
             style={{ pointerEvents: "all" }}
           >
             <image
+              width="1024"
               height="576"
               href={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_small/${card.assetbundleName}_rip/card_normal.webp`}
             ></image>
