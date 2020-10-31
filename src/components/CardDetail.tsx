@@ -94,6 +94,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const { assetT, assetI18n } = useAssetI18n();
+  const getCharaName = useCharaName(contentTransMode);
 
   const [charas] = useCachedData<ICharaProfile>("gameCharacters");
   const [cards] = useCachedData<ICardInfo>("cards");
@@ -120,8 +121,6 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   const [sideStory2Unlocked, setSideStory2Unlocked] = useState<boolean>(true);
   // const [cardRank, setCardRank] = useState<number | number[]>(0);
   // const [maxCardRank, setMaxCardRank] = useState<number>(0);
-
-  const getCharaName = useCharaName(contentTransMode);
 
   const getSkillDesc = useCallback(
     (skill: ISkillInfo, skillLevel: number | number[]) => {
@@ -233,6 +232,20 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   );
 
   useEffect(() => {
+    const _card = cards.find((elem) => elem.id === Number(cardId))!;
+    if (_card) {
+      const cardPrefix =
+        contentTransMode === "translated"
+          ? assetT(`card_prefix:${_card.id}`, _card.prefix)
+          : _card.prefix;
+      document.title = t("title:cardDetail", {
+        prefix: cardPrefix,
+        character: getCharaName(_card.characterId),
+      });
+    }
+  }, [cards, cardId, contentTransMode, getCharaName, assetT, t]);
+
+  useEffect(() => {
     if (cards.length && rarities.length && skills.length && episodes.length) {
       const _card = cards.find((elem) => elem.id === Number(cardId))!;
       setCard(
@@ -266,10 +279,6 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
         ].level
       );
       setCardEpisode(episodes.filter((epi) => epi.cardId === Number(cardId)));
-      document.title = t("title:cardDetail", {
-        prefix: _card.prefix,
-        character: getCharaName(_card.characterId),
-      });
     }
   }, [
     setCard,
