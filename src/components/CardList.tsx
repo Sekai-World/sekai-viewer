@@ -136,6 +136,7 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   const { path } = useRouteMatch();
   const { t } = useTranslation();
   const { assetT } = useAssetI18n();
+  const getCharaName = useCharaName(contentTransMode);
 
   const [cardsCache] = useCachedData<ICardInfo>("cards");
   const [charas] = useCachedData<ICharaProfile>("gameCharacters");
@@ -246,8 +247,6 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
       setLastQueryFin(true);
     }
   }, [page, limit, setLastQueryFin, sortedCache]);
-
-  const getCharaName = useCharaName(contentTransMode);
 
   const ListCard: { [key: string]: React.FC<{ data?: ICardInfo }> } = {
     grid: ({ data }) => {

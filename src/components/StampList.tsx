@@ -56,6 +56,7 @@ const StampList: React.FC<{
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
+  const getCharaName = useCharaName(contentTransMode);
 
   const [stampsCache] = useCachedData<IStampInfo>("stamps");
 
@@ -80,30 +81,6 @@ const StampList: React.FC<{
     },
     [filteredCache]
   );
-
-  useEffect(() => {
-    if (stampsCache.length) {
-      if (characterSelected.length) {
-        const filtered = stampsCache.filter((s) =>
-          characterSelected.includes(s.characterId1)
-        );
-        setFilteredCache(filtered);
-      } else {
-        setFilteredCache(stampsCache);
-      }
-      setStamps([]);
-      setPage(0);
-    }
-  }, [characterSelected, stampsCache, setStamps, setPage, setFilteredCache]);
-
-  useEffect(() => {
-    setStamps((stamps) => [...stamps, ...getPaginatedStamps(page, limit)]);
-    setLastQueryFin(true);
-  }, [page, limit, setLastQueryFin, stampsCache, getPaginatedStamps]);
-
-  useEffect(() => {
-    setIsReady(Boolean(stampsCache.length));
-  }, [setIsReady, stampsCache]);
 
   const callback = (
     entries: readonly IntersectionObserverEntry[],
@@ -130,7 +107,29 @@ const StampList: React.FC<{
     document.title = t("title:stampList");
   }, [t]);
 
-  const getCharaName = useCharaName(contentTransMode);
+  useEffect(() => {
+    if (stampsCache.length) {
+      if (characterSelected.length) {
+        const filtered = stampsCache.filter((s) =>
+          characterSelected.includes(s.characterId1)
+        );
+        setFilteredCache(filtered);
+      } else {
+        setFilteredCache(stampsCache);
+      }
+      setStamps([]);
+      setPage(0);
+    }
+  }, [characterSelected, stampsCache, setStamps, setPage, setFilteredCache]);
+
+  useEffect(() => {
+    setStamps((stamps) => [...stamps, ...getPaginatedStamps(page, limit)]);
+    setLastQueryFin(true);
+  }, [page, limit, setLastQueryFin, stampsCache, getPaginatedStamps]);
+
+  useEffect(() => {
+    setIsReady(Boolean(stampsCache.length));
+  }, [setIsReady, stampsCache]);
 
   const ListCard: React.FC<{ data?: IStampInfo }> = ({ data }) => {
     if (!data) {
