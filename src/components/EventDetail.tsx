@@ -80,12 +80,12 @@ const EventDetail: React.FC<{
 
   useEffect(() => {
     if (event) {
-      const eventName =
+      const name =
         contentTransMode === "translated"
           ? assetT(`event_name:${eventId}`, event.name)
           : event.name;
       document.title = t("title:eventDetail", {
-        name: eventName,
+        name,
       });
     }
   }, [event, eventId, contentTransMode, assetT, t]);
