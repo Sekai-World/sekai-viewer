@@ -142,8 +142,8 @@ const MusicList: React.FC<{
   );
 
   useEffect(() => {
-    document.title = "Music List | Sekai Viewer";
-  }, []);
+    document.title = t("title:musicList");
+  }, [t]);
 
   useEffect(() => {
     setIsReady(Boolean(musicsCache.length));

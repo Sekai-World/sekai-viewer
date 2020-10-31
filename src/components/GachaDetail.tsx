@@ -303,15 +303,15 @@ const GachaDetailPage: React.FC<{
 
   useEffect(() => {
     if (gacha) {
-      document.title = `${
-        contentTransMode === "original"
-          ? gacha.name
-          : contentTransMode === "translated"
+      const gachaName =
+        contentTransMode === "translated"
           ? assetT(`gacha_name:${gachaId}`, gacha.name)
-          : gacha.name
-      } | Gacha | Sekai Viewer`;
+          : gacha.name;
+      document.title = t("title:gachaDetail", {
+        name: gachaName,
+      });
     }
-  }, [gacha, assetI18n, contentTransMode, gachaId, assetT]);
+  }, [gacha, assetI18n, contentTransMode, gachaId, assetT, t]);
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
     setPicTabVal(newValue);

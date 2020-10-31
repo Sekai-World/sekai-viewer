@@ -266,9 +266,10 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
         ].level
       );
       setCardEpisode(episodes.filter((epi) => epi.cardId === Number(cardId)));
-      document.title = `${_card.prefix} | ${getCharaName(
-        _card.characterId
-      )} | Card | Sekai Viewer`;
+      document.title = t("title:cardDetail", {
+        prefix: _card.prefix,
+        character: getCharaName(_card.characterId),
+      });
     }
   }, [
     setCard,
@@ -282,6 +283,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
     assetI18n.language,
     contentTransMode,
     assetT,
+    t,
   ]);
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
