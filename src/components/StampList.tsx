@@ -127,8 +127,8 @@ const StampList: React.FC<{
   };
 
   useEffect(() => {
-    document.title = "Sticker List | Sekai Viewer";
-  }, []);
+    document.title = t("title:stampList");
+  }, [t]);
 
   const getCharaName = useCharaName(contentTransMode);
 

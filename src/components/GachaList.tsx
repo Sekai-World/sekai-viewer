@@ -56,8 +56,8 @@ const GachaList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
 
   useEffect(() => {
-    document.title = "Gacha List | Sekai Viewer";
-  }, []);
+    document.title = t("title:gachaList");
+  }, [t]);
 
   useEffect(() => {
     setGachas((gachas) => [

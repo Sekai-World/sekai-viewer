@@ -184,8 +184,8 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   };
 
   useEffect(() => {
-    document.title = "Card List | Sekai Viewer";
-  }, []);
+    document.title = t("title:cardList");
+  }, [t]);
 
   useEffect(() => {
     setIsReady(Boolean(cardsCache.length) && Boolean(charas.length));

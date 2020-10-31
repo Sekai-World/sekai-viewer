@@ -131,7 +131,7 @@ function Home() {
   const [info, setInfo] = useState<IUserInformationInfo>();
 
   useEffect(() => {
-    document.title = t("common:home") + " | Sekai Viewer";
+    document.title = t("title:home");
   }, [t]);
 
   const [detected, setDetected] = useState<IDetectResult>({

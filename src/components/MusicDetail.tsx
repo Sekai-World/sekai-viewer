@@ -146,9 +146,11 @@ const MusicDetail: React.FC<{
 
   useEffect(() => {
     if (music) {
-      document.title = `${music.title} | Music | Sekai Viewer`;
+      document.title = t("title:musicDetail", {
+        title: music.title,
+      });
     }
-  }, [music]);
+  }, [music, t]);
 
   useEffect(() => {
     if (danceMembers.length) {

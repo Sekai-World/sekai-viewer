@@ -65,8 +65,8 @@ const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
 
   useEffect(() => {
-    document.title = "Event List | Sekai Viewer";
-  }, []);
+    document.title = t("title:eventList");
+  }, [t]);
 
   useEffect(() => {
     setEvents((events) => [
