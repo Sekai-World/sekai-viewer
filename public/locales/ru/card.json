@@ -15,7 +15,10 @@
   "sideStory": "Побочная история",
   "sideStory1Unlocked": "Побочная история 1 открыта",
   "sideStory2Unlocked": "Побочная история 2 открыта",
-  "sideStory_plural": "Побочные истории",
+  "sideStory_0": "",
+  "sideStory_1": "",
+  "sideStory_2": "",
   "power": "Сила",
+  "sideStory_plural": "Побочные истории",
   "skill": "Навык"
 }
