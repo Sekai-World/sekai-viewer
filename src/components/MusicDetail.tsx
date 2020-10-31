@@ -125,6 +125,18 @@ const MusicDetail: React.FC<{
   >();
 
   useEffect(() => {
+    if (music) {
+      const title =
+        contentTransMode === "translated"
+          ? assetT(`music_titles:${musicId}`, music.title)
+          : music.title;
+      document.title = t("title:musicDetail", {
+        title,
+      });
+    }
+  }, [music, musicId, contentTransMode, assetT, t]);
+
+  useEffect(() => {
     if (musics.length) {
       setMusic(musics.find((elem) => elem.id === Number(musicId)));
     }
@@ -143,14 +155,6 @@ const MusicDetail: React.FC<{
       setMusicVocalTypes(musicVocal.map((elem) => elem.musicVocalType));
     }
   }, [musicVocal]);
-
-  useEffect(() => {
-    if (music) {
-      document.title = t("title:musicDetail", {
-        title: music.title,
-      });
-    }
-  }, [music, t]);
 
   useEffect(() => {
     if (danceMembers.length) {
