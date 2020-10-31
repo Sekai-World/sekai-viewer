@@ -303,12 +303,12 @@ const GachaDetailPage: React.FC<{
 
   useEffect(() => {
     if (gacha) {
-      const gachaName =
+      const name =
         contentTransMode === "translated"
           ? assetT(`gacha_name:${gachaId}`, gacha.name)
           : gacha.name;
       document.title = t("title:gachaDetail", {
-        name: gachaName,
+        name,
       });
     }
   }, [gacha, assetI18n, contentTransMode, gachaId, assetT, t]);

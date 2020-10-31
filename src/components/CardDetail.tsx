@@ -234,12 +234,12 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   useEffect(() => {
     const _card = cards.find((elem) => elem.id === Number(cardId))!;
     if (_card) {
-      const cardPrefix =
+      const prefix =
         contentTransMode === "translated"
           ? assetT(`card_prefix:${_card.id}`, _card.prefix)
           : _card.prefix;
       document.title = t("title:cardDetail", {
-        prefix: cardPrefix,
+        prefix,
         character: getCharaName(_card.characterId),
       });
     }
