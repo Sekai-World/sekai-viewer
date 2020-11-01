@@ -1,5 +1,6 @@
 import {
   Card,
+  CardContent,
   CardMedia,
   Container,
   Link,
@@ -24,10 +25,10 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer",
   },
   subheader: {
-    "white-space": "nowrap",
+    whiteSpace: "nowrap",
     overflow: "hidden",
-    "text-overflow": "ellipsis",
-    "max-width": "260px",
+    textOverflow: "ellipsis",
+    textAlign: "center",
   },
 }));
 
@@ -108,11 +109,15 @@ const ComicList: React.FC<{
       return (
         <Card className={classes.card}>
           <Skeleton variant="rect" className={classes.media}></Skeleton>
-          {/* <CardContent>
+          <CardContent>
             <Typography variant="subtitle1" className={classes.subheader}>
-              <Skeleton variant="text" width="90%"></Skeleton>
+              <Skeleton
+                variant="text"
+                width="90%"
+                style={{ margin: "auto" }}
+              ></Skeleton>
             </Typography>
-          </CardContent> */}
+          </CardContent>
         </Card>
       );
     }
@@ -125,11 +130,11 @@ const ComicList: React.FC<{
             image={imageURL}
             title={data.title}
           ></CardMedia>
-          {/* <CardContent style={{ paddingBottom: "16px" }}>
+          <CardContent style={{ paddingBottom: "16px" }}>
             <Typography variant="subtitle1" className={classes.subheader}>
               {data.title}
             </Typography>
-          </CardContent> */}
+          </CardContent>
         </Card>
       </Link>
     );
