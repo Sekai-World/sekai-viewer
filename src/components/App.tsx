@@ -42,6 +42,7 @@ import {
   BrightnessAuto,
   ControlCamera,
   QueueMusic,
+  CropOriginal,
 } from "@material-ui/icons";
 import {
   Account,
@@ -62,6 +63,7 @@ import {
 } from "react-router-dom";
 import { ContentTransModeType } from "../types";
 import { useAssetI18n } from "../utils/i18n";
+import ComicList from "./ComicList";
 import StampList from "./StampList";
 
 const drawerWidth = 240;
@@ -216,6 +218,12 @@ function App() {
         text: t("common:stamp"),
         icon: <StickerEmoji />,
         to: "/stamp",
+        disabled: false,
+      },
+      {
+        text: t("common:comic"),
+        icon: <CropOriginal />,
+        to: "/comic",
         disabled: false,
       },
       {
@@ -437,6 +445,9 @@ function App() {
               </Route>
               <Route path="/stamp">
                 <StampList contentTransMode={contentTransMode} />
+              </Route>
+              <Route path="/comic">
+                <ComicList contentTransMode={contentTransMode} />
               </Route>
             </Suspense>
           </Switch>

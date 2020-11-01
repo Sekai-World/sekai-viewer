@@ -430,3 +430,21 @@ export interface IStampInfo {
   balloonAssetbundleName: string;
   characterId1: number;
 }
+
+export interface ITipInfoComic {
+  id: number;
+  title: string;
+  fromUserRank: number;
+  toUserRank: number;
+  assetbundleName: string;
+}
+
+export interface ITipInfoText {
+  id: number;
+  title: string;
+  fromUserRank: number;
+  toUserRank: number;
+  description: string;
+}
+
+export type ITipInfo = ITipInfoText | ITipInfoComic;

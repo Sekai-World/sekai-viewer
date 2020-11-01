@@ -23,6 +23,7 @@ import {
   IHonorInfo,
   ICardEpisode,
   ContentTransModeType,
+  ITipInfo,
 } from "../types";
 import { useAssetI18n } from "./i18n";
 
@@ -61,6 +62,7 @@ export function useCachedData<
     | IResourceBoxInfo
     | IHonorInfo
     | ICardEpisode
+    | ITipInfo
 >(name: string): [T[], React.MutableRefObject<T[]>] {
   const [cached, cachedRef, setCached] = useRefState<T[]>([]);
 
