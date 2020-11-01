@@ -3,13 +3,14 @@ import {
   CardContent,
   CardMedia,
   Container,
-  Link,
   makeStyles,
   Typography,
 } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import Viewer from "react-viewer";
+import { ImageDecorator } from "react-viewer/lib/ViewerProps";
 import { useLayoutStyles } from "../styles/layout";
 import { ContentTransModeType, ITipInfo, ITipInfoComic } from "../types";
 import { useCachedData, useRefState } from "../utils";
@@ -50,11 +51,23 @@ const ComicList: React.FC<{
   const [limit, limitRef] = useRefState<number>(12);
   const [, lastQueryFinRef, setLastQueryFin] = useRefState<boolean>(true);
   const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
+  const [visible, setVisible] = useState<boolean>(false);
+  const [activeIdx, setActiveIdx] = useState<number>(0);
 
   const getPaginatedTips = useCallback(
     (page: number, limit: number) => {
       return filteredCache.slice(limit * (page - 1), limit * page);
     },
+    [filteredCache]
+  );
+
+  const getComicImages: () => ImageDecorator[] = useCallback(
+    () =>
+      filteredCache.map((comic) => ({
+        src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/comic/one_frame_rip/${comic.assetbundleName}.webp`,
+        alt: comic.title,
+        downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/comic/one_frame_rip/${comic.assetbundleName}.webp`,
+      })),
     [filteredCache]
   );
 
@@ -103,7 +116,10 @@ const ComicList: React.FC<{
     setIsReady(Boolean(tipsCache.length));
   }, [setIsReady, tipsCache]);
 
-  const ListCard: React.FC<{ data?: ITipInfoComic }> = ({ data }) => {
+  const ListCard: React.FC<{ data?: ITipInfoComic; id?: number }> = ({
+    data,
+    id,
+  }) => {
     if (!data) {
       // loading
       return (
@@ -123,20 +139,22 @@ const ComicList: React.FC<{
     }
     const imageURL = `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/comic/one_frame_rip/${data.assetbundleName}.webp`;
     return (
-      <Link href={imageURL} target="_blank" style={{ textDecoration: "none" }}>
-        <Card className={classes.card}>
-          <CardMedia
-            className={classes.media}
-            image={imageURL}
-            title={data.title}
-          ></CardMedia>
-          <CardContent style={{ paddingBottom: "16px" }}>
-            <Typography variant="subtitle1" className={classes.subheader}>
-              {data.title}
-            </Typography>
-          </CardContent>
-        </Card>
-      </Link>
+      <Card className={classes.card}>
+        <CardMedia
+          onClick={() => {
+            setActiveIdx(id!);
+            setVisible(true);
+          }}
+          className={classes.media}
+          image={imageURL}
+          title={data.title}
+        ></CardMedia>
+        <CardContent style={{ paddingBottom: "16px" }}>
+          <Typography variant="subtitle1" className={classes.subheader}>
+            {data.title}
+          </Typography>
+        </CardContent>
+      </Card>
     );
   };
 
@@ -152,11 +170,23 @@ const ComicList: React.FC<{
           data: comics,
           gridSize: {
             xs: 12,
-            md: 6,
-            lg: 4,
+            md: 4,
+            lg: 3,
           },
         })}
       </Container>
+      <Viewer
+        visible={visible}
+        onClose={() => setVisible(false)}
+        images={getComicImages()}
+        zIndex={2000}
+        activeIndex={activeIdx}
+        downloadable
+        downloadInNewWindow
+        onMaskClick={() => setVisible(false)}
+        onChange={(_, idx) => setActiveIdx(idx)}
+        zoomSpeed={0.25}
+      />
     </Fragment>
   );
 };
