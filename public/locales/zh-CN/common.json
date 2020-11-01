@@ -5,6 +5,7 @@
   "gacha": "招募",
   "event": "活动",
   "stamp": "贴纸",
+  "comic": "",
   "unit": "组合",
   "member": "成员",
   "musicMeta": "歌曲Meta",
@@ -53,6 +54,6 @@
   "campaign": "纪念活动",
   "bug": "问题",
   "update": "更新",
-  "character_plural": "角色",
-  "level": "等级"
+  "level": "等级",
+  "character_plural": "角色"
 }
