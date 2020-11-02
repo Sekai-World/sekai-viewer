@@ -43,7 +43,7 @@ type CompleteGridSizeOptions = {
 };
 
 interface IISProps<T> {
-  readonly viewComponent: React.FC<{ data?: T; id?: number }>;
+  readonly viewComponent: React.FC<{ data?: T; index?: number }>;
   readonly callback: (
     entries: readonly IntersectionObserverEntry[],
     setHasMore: React.Dispatch<React.SetStateAction<boolean>>
@@ -151,7 +151,7 @@ function InfiniteScroll<T>({
                 lg={gridSize.lg}
                 xl={gridSize.xl}
               >
-                {viewComponent({ data, id: i })}
+                {viewComponent({ data, index: i })}
               </Grid>
             ))
           : null}
