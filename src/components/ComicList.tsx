@@ -116,9 +116,9 @@ const ComicList: React.FC<{
     setIsReady(Boolean(tipsCache.length));
   }, [setIsReady, tipsCache]);
 
-  const ListCard: React.FC<{ data?: ITipInfoComic; id?: number }> = ({
+  const ListCard: React.FC<{ data?: ITipInfoComic; index?: number }> = ({
     data,
-    id,
+    index,
   }) => {
     if (!data) {
       // loading
@@ -142,7 +142,7 @@ const ComicList: React.FC<{
       <Card className={classes.card}>
         <CardMedia
           onClick={() => {
-            setActiveIdx(id!);
+            setActiveIdx(index!);
             setVisible(true);
           }}
           className={classes.media}
