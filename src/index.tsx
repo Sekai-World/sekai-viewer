@@ -6,6 +6,7 @@ import * as serviceWorker from "./serviceWorker";
 import { HashRouter as Router } from "react-router-dom";
 import "./modernizr-custom";
 import { initGlobalI18n } from "./utils/i18n";
+import "./index.css";
 
 initGlobalI18n();
 
