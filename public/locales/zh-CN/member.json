@@ -1,0 +1,30 @@
+{
+  "tab": {
+    "title[0]": "角色图",
+    "title[1]": "名牌（横向）",
+    "title[2]": "名牌（纵向）"
+  },
+  "name": "姓名",
+  "hiragana": "平假名读法",
+  "gender": {
+    "caption": "性别",
+    "female": "女",
+    "male": "男",
+    "secret": "保密"
+  },
+  "colorCode": "特征色",
+  "skinColorCode": "皮肤色",
+  "skinShadowColorCode1": "皮肤阴影色1",
+  "skinShadowColorCode2": "皮肤阴影色2",
+  "height": "身高",
+  "birthday": "生日",
+  "characterVoice": "声优",
+  "school": "学校",
+  "schoolYear": "学年",
+  "hobby": "兴趣",
+  "specialSkill": "特技",
+  "favoriteFood": "喜爱的食物",
+  "hatedFood": "讨厌的食物",
+  "weak": "弱点",
+  "introduction": "自我介绍"
+}

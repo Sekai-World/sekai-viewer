@@ -33,6 +33,7 @@ export function initGlobalI18n() {
         "filter",
         "music",
         "title",
+        "member",
       ],
       fallbackLng: {
         default: ["en"],

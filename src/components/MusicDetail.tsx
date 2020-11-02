@@ -97,7 +97,7 @@ const MusicDetail: React.FC<{
     "musicDifficulties"
   );
   const [musicTags] = useCachedData<IMusicTagInfo>("musicTags");
-  // const [gameCharas] = useCachedData<ICharaProfile>('gameCharacters');
+  // const [gameCharas] = useCachedData<IGameChara>('gameCharacters');
   const [outCharas] = useCachedData<IOutCharaProfile>("outsideCharacters");
   const [releaseConds] = useCachedData<IReleaseCondition>("releaseConditions");
   const [danceMembers] = useCachedData<IMusicDanceMembers>("musicDanceMembers");

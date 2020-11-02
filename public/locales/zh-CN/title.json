@@ -7,6 +7,8 @@
   "gachaDetail": "{{name}} | 招募 | Sekai Viewer",
   "gachaList": "招募列表 | Sekai Viewer",
   "home": "首页 | Sekai Viewer",
+  "memberDetail": "{{name}} | 成员 | Sekai Viewer",
+  "memberList": "成员列表 | Sekai Viewer",
   "musicDetail": "{{title}} | 乐曲 | Sekai Viewer",
   "musicList": "乐曲列表 | Sekai Viewer",
   "stampList": "贴纸列表 | Sekai Viewer"

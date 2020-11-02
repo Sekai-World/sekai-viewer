@@ -1,0 +1,27 @@
+{
+  "tab": {
+    "title[0]": "",
+    "title[1]": "",
+    "title[2]": ""
+  },
+  "name": "",
+  "hiragana": "",
+  "gender": {
+    "caption": ""
+  },
+  "colorCode": "",
+  "skinColorCode": "",
+  "skinShadowColorCode1": "",
+  "skinShadowColorCode2": "",
+  "height": "",
+  "birthday": "",
+  "characterVoice": "",
+  "school": "",
+  "schoolYear": "",
+  "hobby": "",
+  "specialSkill": "",
+  "favoriteFood": "",
+  "hatedFood": "",
+  "weak": "",
+  "introduction": ""
+}

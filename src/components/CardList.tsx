@@ -35,7 +35,7 @@ import {
   ICardEpisode,
   ICardInfo,
   ICardRarity,
-  ICharaProfile,
+  IGameChara,
 } from "../types";
 import { useCachedData, useCharaName, useRefState } from "../utils";
 import { CardThumb, CardThumbSkeleton } from "./subs/CardThumb";
@@ -139,7 +139,7 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   const getCharaName = useCharaName(contentTransMode);
 
   const [cardsCache] = useCachedData<ICardInfo>("cards");
-  const [charas] = useCachedData<ICharaProfile>("gameCharacters");
+  const [charas] = useCachedData<IGameChara>("gameCharacters");
   const [rarities] = useCachedData<ICardRarity>("cardRarities");
   const [episodes] = useCachedData<ICardEpisode>("cardEpisodes");
 

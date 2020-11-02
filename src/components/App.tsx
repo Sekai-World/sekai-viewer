@@ -63,8 +63,6 @@ import {
 } from "react-router-dom";
 import { ContentTransModeType } from "../types";
 import { useAssetI18n } from "../utils/i18n";
-import ComicList from "./ComicList";
-import StampList from "./StampList";
 
 const drawerWidth = 240;
 const CardList = lazy(() => import("./CardList"));
@@ -76,6 +74,10 @@ const GachaDetail = lazy(() => import("./GachaDetail"));
 const CardDetail = lazy(() => import("./CardDetail"));
 const MusicDetail = lazy(() => import("./MusicDetail"));
 const EventDetail = lazy(() => import("./EventDetail"));
+const ComicList = lazy(() => import("./ComicList"));
+const MemberDetail = lazy(() => import("./MemberDetail"));
+const MemberList = lazy(() => import("./MemberList"));
+const StampList = lazy(() => import("./StampList"));
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -236,7 +238,7 @@ function App() {
         text: t("common:member"),
         icon: <Account></Account>,
         to: "/member",
-        disabled: true,
+        disabled: false,
       },
       {
         text: "Live2D",
@@ -448,6 +450,12 @@ function App() {
               </Route>
               <Route path="/comic">
                 <ComicList contentTransMode={contentTransMode} />
+              </Route>
+              <Route path="/member" exact>
+                <MemberList contentTransMode={contentTransMode} />
+              </Route>
+              <Route path="/member/:charaId">
+                <MemberDetail contentTransMode={contentTransMode} />
               </Route>
             </Suspense>
           </Switch>

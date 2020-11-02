@@ -1,0 +1,30 @@
+{
+  "tab": {
+    "title[0]": "Character",
+    "title[1]": "Name Label (horizontal)",
+    "title[2]": "Name Label (vertical)"
+  },
+  "name": "Name",
+  "hiragana": "Hiragana",
+  "gender": {
+    "caption": "Gender",
+    "female": "Female",
+    "male": "Male",
+    "secret": "Secret"
+  },
+  "colorCode": "Represent Color",
+  "skinColorCode": "Skin Color",
+  "skinShadowColorCode1": "Skin Shadow Color 1",
+  "skinShadowColorCode2": "Skin Shadow Color 2",
+  "height": "Height",
+  "birthday": "Birthday",
+  "characterVoice": "Voice Actor",
+  "school": "School",
+  "schoolYear": "School Year",
+  "hobby": "Hobby",
+  "specialSkill": "Special Skill",
+  "favoriteFood": "Favorite Food",
+  "hatedFood": "Hated Food",
+  "weak": "Weakness",
+  "introduction": "Introduction"
+}

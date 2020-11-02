@@ -54,6 +54,7 @@
   "campaign": "Campaign",
   "bug": "Bug",
   "update": "Update",
+  "profile": "Profile",
   "character_plural": "Characters",
   "level": "Level"
 }

@@ -91,7 +91,7 @@ export interface ICardInfo {
   }[];
 }
 
-export interface ICharaProfile {
+export interface IGameChara {
   id: number;
   seq: number;
   resourceId: number;
@@ -448,3 +448,29 @@ export interface ITipInfoText {
 }
 
 export type ITipInfo = ITipInfoText | ITipInfoComic;
+
+export interface ICharaUnitInfo {
+  id: number;
+  gameCharacterId: number;
+  unit: string;
+  colorCode: string;
+  skinColorCode: string;
+  skinShadowColorCode1: string;
+  skinShadowColorCode2: string;
+}
+
+export interface ICharaProfile {
+  characterId: number;
+  characterVoice: string;
+  birthday: string;
+  height: string;
+  school: string;
+  schoolYear: string;
+  hobby: string;
+  specialSkill: string;
+  favoriteFood: string;
+  hatedFood: string;
+  weak: string;
+  introduction: string;
+  scenarioId: string;
+}
