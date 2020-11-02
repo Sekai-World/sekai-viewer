@@ -1,13 +1,14 @@
 {
   "tab": {
-    "title[0]": "",
-    "title[1]": "",
-    "title[2]": "",
-    "title[3]": "",
-    "title[4]": ""
+    "title[0]": "Descripción",
+    "title[1]": "Resumen",
+    "title[2]": "Simulador",
+    "title[3]": "Fondo",
+    "title[4]": "Foto principal"
   },
-  "normalRate": "",
-  "guaranteedRate": "",
-  "pickupMember": "",
-  "pickupMember_plural": ""
+  "pickupMember": "Pickup Member",
+  "pickupMember_plural": "Pickup Members",
+  "gachaType": {
+    "ceil": "Ceiling"
+  }
 }

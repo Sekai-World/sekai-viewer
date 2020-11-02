@@ -5,7 +5,7 @@
   "gacha": "Гача",
   "event": "Ивенты",
   "stamp": "Штампы",
-  "comic": "",
+  "comic": "Ёнкомы",
   "unit": "Юнит",
   "member": "Участники",
   "musicMeta": "Мета песен",
@@ -54,9 +54,6 @@
   "campaign": "Компания",
   "bug": "Баги",
   "update": "Обновления",
-  "character_0": "",
-  "character_1": "",
-  "character_2": "",
-  "level": "Уровень",
-  "character_plural": "Персонажи"
+  "character_plural": "Персонажи",
+  "level": "Уровень"
 }

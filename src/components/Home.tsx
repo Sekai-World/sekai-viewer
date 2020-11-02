@@ -252,6 +252,7 @@ function Home() {
             <li>한：hodubidu3095, omitooshi, EleMas39, PJSEKAI, 아점</li>
             <li>Pt-BR: mid</li>
             <li>русский: Spyrohat</li>
+            <li>Es: ruiemu</li>
           </ul>
           <Trans
             i18nKey="home:alert_settings"

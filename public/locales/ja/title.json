@@ -1,7 +1,7 @@
 {
   "cardDetail": "{{prefix}} | {{character}} | カード | Sekai Viewer",
   "cardList": "カード一覧 | Sekai Viewer",
-  "comicList": "コミック一覧 | Sekai Viewer",
+  "comicList": "Comic List | Sekai Viewer",
   "eventDetail": "{{name}} | イベント | Sekai Viewer",
   "eventList": "イベント一覧 | Sekai Viewer",
   "gachaDetail": "{{name}} | ガチャ | Sekai Viewer",

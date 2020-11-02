@@ -1,13 +1,13 @@
 {
-  "cardDetail": "",
-  "cardList": "",
-  "comicList": "",
-  "eventDetail": "",
-  "eventList": "",
-  "gachaDetail": "",
-  "gachaList": "",
-  "home": "",
-  "musicDetail": "",
-  "musicList": "",
-  "stampList": ""
+  "cardDetail": "{{prefix}} | {{character}} | Карты | Sekai Viewer",
+  "cardList": "Карты | Sekai Viewer",
+  "comicList": "Ёнкомы | Sekai Viewer",
+  "eventDetail": "{{name}} | Ивенты | Sekai Viewer",
+  "eventList": "Ивенты | Sekai Viewer",
+  "gachaDetail": "{{name}} | Гача | Sekai Viewer",
+  "gachaList": "Гача | Sekai Viewer",
+  "home": "Главная | Sekai Viewer",
+  "musicDetail": "{{title}} | Песни | Sekai Viewer",
+  "musicList": "Песни | Sekai Viewer",
+  "stampList": "Штампы | Sekai Viewer"
 }

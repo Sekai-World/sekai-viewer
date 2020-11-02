@@ -1,21 +1,21 @@
 {
   "tab": {
-    "title[0]": "",
-    "title[1]": "",
-    "title[2]": "",
-    "title[3]": ""
+    "title[0]": "Imagen normal",
+    "title[1]": "Imagen normal recortada",
+    "title[2]": "Imagen después de entrenar",
+    "title[3]": "Imagen después de entrenar recortada"
   },
-  "skillLevel": "",
-  "skillName": "",
-  "skillEffect": "",
-  "stats": "",
-  "cardLevel": "",
-  "normal": "",
-  "trained": "",
-  "sideStory": "",
-  "sideStory1Unlocked": "",
-  "sideStory2Unlocked": "",
-  "sideStory_plural": "",
-  "power": "",
-  "skill": ""
+  "skillLevel": "Nivel de habilidad",
+  "skillName": "Nombre de la habilidad",
+  "skillEffect": "Efecto de la habilidad",
+  "stats": "Estadisticas",
+  "cardLevel": "Nivel de carta",
+  "normal": "Normal",
+  "trained": "Entrenada",
+  "sideStory": "Side Story",
+  "sideStory1Unlocked": "Side Story 1 Unlocked",
+  "sideStory2Unlocked": "Side Story 2 Unlocked",
+  "sideStory_plural": "Side Stories",
+  "power": "Poder",
+  "skill": "Habilidad"
 }

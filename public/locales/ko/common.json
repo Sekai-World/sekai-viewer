@@ -5,7 +5,7 @@
   "gacha": "가챠",
   "event": "이벤트",
   "stamp": "스탬프",
-  "comic": "",
+  "comic": "만화",
   "unit": "유닛",
   "member": "멤버",
   "musicMeta": "악곡 정보",
@@ -54,6 +54,6 @@
   "campaign": "캠페인",
   "bug": "버그",
   "update": "업데이트",
-  "level": "레벨",
-  "character_plural": "캐릭터"
+  "character_plural": "캐릭터",
+  "level": "레벨"
 }

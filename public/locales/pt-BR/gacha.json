@@ -6,8 +6,9 @@
     "title[3]": "Background",
     "title[4]": "Imagem Destacada"
   },
-  "normalRate": "",
-  "guaranteedRate": "",
   "pickupMember": "Membro Destacado",
-  "pickupMember_plural": "Membros Destacados"
+  "pickupMember_plural": "Membros Destacados",
+  "gachaType": {
+    "ceil": "Ceiling"
+  }
 }
