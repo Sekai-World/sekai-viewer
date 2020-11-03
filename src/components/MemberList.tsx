@@ -1,9 +1,10 @@
 import { Grid, makeStyles, Typography } from "@material-ui/core";
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
 import { useLayoutStyles } from "../styles/layout";
-import { ContentTransModeType } from "../types";
+import { ContentTransModeType, IGameChara, IUnitProfile } from "../types";
+import { useCachedData } from "../utils";
 import { UnitLogoMap } from "../utils/resources";
 
 const useStyle = makeStyles((theme) => ({
@@ -27,9 +28,30 @@ const MemberList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   const { t } = useTranslation();
   const { path } = useRouteMatch();
 
+  const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
+  const [gameCharas] = useCachedData<IGameChara>("gameCharacters");
+
+  const [charaUnitMap, setCharaUnitMap] = useState<{
+    [key: string]: IGameChara[];
+  }>({});
+
   useEffect(() => {
     document.title = t("title:memberList");
   }, [t]);
+
+  useEffect(() => {
+    if (unitProfiles.length && gameCharas.length) {
+      const units = unitProfiles
+        .sort((a, b) => a.seq - b.seq)
+        .map((up) => up.unit);
+      setCharaUnitMap(
+        units.reduce<{ [key: string]: IGameChara[] }>((sum, unit) => {
+          sum[unit] = gameCharas.filter((gc) => gc.unit === unit);
+          return sum;
+        }, {})
+      );
+    }
+  }, [unitProfiles, gameCharas]);
 
   return (
     <Fragment>
@@ -37,126 +59,41 @@ const MemberList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
         {t("common:member")}
       </Typography>
       <Grid container spacing={1} direction="column">
-        <Grid item container justify="center">
-          <img
-            className={classes.unitIcon}
-            src={UnitLogoMap["piapro"]}
-            alt="piapro"
-          ></img>
-        </Grid>
-        <Grid item container justify="center" spacing={2}>
-          {[21, 22, 23, 24, 25, 26].map((i) => (
-            <Grid item xs={4} md={2} key={`chara-${i}`}>
-              <Link to={path + "/" + i} style={{ textDecoration: "none" }}>
+        {Object.keys(charaUnitMap).map((unit) => (
+          <Fragment key={`unit-${unit}`}>
+            <Grid item container justify="center" style={{ margin: "0.3em 0" }}>
+              <Link to={"/unit/" + unit}>
                 <img
-                  className={classes.memberSelectImg}
-                  src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/character_select_rip/chr_tl_${i}.webp`}
-                  alt={String(i)}
+                  className={classes.unitIcon}
+                  src={UnitLogoMap[unit]}
+                  alt="piapro"
                 ></img>
               </Link>
             </Grid>
-          ))}
-        </Grid>
-        <Grid item container justify="center">
-          <img
-            className={classes.unitIcon}
-            src={UnitLogoMap["light_sound"]}
-            alt="light_sound"
-          ></img>
-        </Grid>
-        <Grid item container justify="center" spacing={2}>
-          {[1, 2, 3, 4].map((i) => (
-            <Grid item xs={4} md={2} key={`chara-${i}`}>
-              <Link to={path + "/" + i} style={{ textDecoration: "none" }}>
-                <img
-                  className={classes.memberSelectImg}
-                  src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/character_select_rip/chr_tl_${i}.webp`}
-                  alt={String(i)}
-                ></img>
-              </Link>
+            <Grid
+              item
+              container
+              justify="center"
+              spacing={2}
+              style={{ marginBottom: "1em" }}
+            >
+              {charaUnitMap[unit].map((chara) => (
+                <Grid item xs={3} md={2} key={`chara-${chara.id}`}>
+                  <Link
+                    to={path + "/" + chara.id}
+                    style={{ textDecoration: "none" }}
+                  >
+                    <img
+                      className={classes.memberSelectImg}
+                      src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/character_select_rip/chr_tl_${chara.id}.webp`}
+                      alt={String(chara.id)}
+                    ></img>
+                  </Link>
+                </Grid>
+              ))}
             </Grid>
-          ))}
-        </Grid>
-        <Grid item container justify="center">
-          <img
-            className={classes.unitIcon}
-            src={UnitLogoMap["idol"]}
-            alt="idol"
-          ></img>
-        </Grid>
-        <Grid item container justify="center" spacing={2}>
-          {[5, 6, 7, 8].map((i) => (
-            <Grid item xs={4} md={2} key={`chara-${i}`}>
-              <Link to={path + "/" + i} style={{ textDecoration: "none" }}>
-                <img
-                  className={classes.memberSelectImg}
-                  src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/character_select_rip/chr_tl_${i}.webp`}
-                  alt={String(i)}
-                ></img>
-              </Link>
-            </Grid>
-          ))}
-        </Grid>
-        <Grid item container justify="center">
-          <img
-            className={classes.unitIcon}
-            src={UnitLogoMap["street"]}
-            alt="street"
-          ></img>
-        </Grid>
-        <Grid item container justify="center" spacing={2}>
-          {[9, 10, 11, 12].map((i) => (
-            <Grid item xs={4} md={2} key={`chara-${i}`}>
-              <Link to={path + "/" + i} style={{ textDecoration: "none" }}>
-                <img
-                  className={classes.memberSelectImg}
-                  src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/character_select_rip/chr_tl_${i}.webp`}
-                  alt={String(i)}
-                ></img>
-              </Link>
-            </Grid>
-          ))}
-        </Grid>
-        <Grid item container justify="center">
-          <img
-            className={classes.unitIcon}
-            src={UnitLogoMap["theme_park"]}
-            alt="theme_park"
-          ></img>
-        </Grid>
-        <Grid item container justify="center" spacing={2}>
-          {[13, 14, 15, 16].map((i) => (
-            <Grid item xs={4} md={2} key={`chara-${i}`}>
-              <Link to={path + "/" + i} style={{ textDecoration: "none" }}>
-                <img
-                  className={classes.memberSelectImg}
-                  src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/character_select_rip/chr_tl_${i}.webp`}
-                  alt={String(i)}
-                ></img>
-              </Link>
-            </Grid>
-          ))}
-        </Grid>
-        <Grid item container justify="center">
-          <img
-            className={classes.unitIcon}
-            src={UnitLogoMap["school_refusal"]}
-            alt="school_refusal"
-          ></img>
-        </Grid>
-        <Grid item container justify="center" spacing={2}>
-          {[17, 18, 19, 20].map((i) => (
-            <Grid item xs={4} md={2} key={`chara-${i}`}>
-              <Link to={path + "/" + i} style={{ textDecoration: "none" }}>
-                <img
-                  className={classes.memberSelectImg}
-                  src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/character_select_rip/chr_tl_${i}.webp`}
-                  alt={String(i)}
-                ></img>
-              </Link>
-            </Grid>
-          ))}
-        </Grid>
+          </Fragment>
+        ))}
       </Grid>
     </Fragment>
   );

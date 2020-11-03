@@ -1,3 +1,4 @@
+import { IUnitProfile } from "./../types.d";
 import Axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -65,6 +66,7 @@ export function useCachedData<
     | ICardEpisode
     | ITipInfo
     | ICharaProfile
+    | IUnitProfile
 >(name: string): [T[], React.MutableRefObject<T[]>] {
   const [cached, cachedRef, setCached] = useRefState<T[]>([]);
 

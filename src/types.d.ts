@@ -474,3 +474,11 @@ export interface ICharaProfile {
   introduction: string;
   scenarioId: string;
 }
+
+export interface IUnitProfile {
+  unit: string;
+  unitName: string;
+  seq: number;
+  profileSentence: string;
+  colorCode: string;
+}

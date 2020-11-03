@@ -51,12 +51,12 @@ import cardImageFrameS2 from "../assets/frame/cardFrame_L_2.png";
 import cardImageFrameS3 from "../assets/frame/cardFrame_L_3.png";
 import cardImageFrameS4 from "../assets/frame/cardFrame_L_4.png";
 
-import LogoLightSound from "../assets/common/logol/logo_light_sound.png";
-import LogoIdol from "../assets/common/logol/logo_idol.png";
-import LogoPiapro from "../assets/common/logol/logo_piapro.png";
-import LogoSchoolRefusal from "../assets/common/logol/logo_school_refusal.png";
-import LogoStreet from "../assets/common/logol/logo_street.png";
-import LogoThemePark from "../assets/common/logol/logo_theme_park.png";
+import LogoLightSound from "../assets/common/logol_outline/logo_light_sound.png";
+import LogoIdol from "../assets/common/logol_outline/logo_idol.png";
+import LogoPiapro from "../assets/common/logol_outline/logo_piapro.png";
+import LogoSchoolRefusal from "../assets/common/logol_outline/logo_school_refusal.png";
+import LogoStreet from "../assets/common/logol_outline/logo_street.png";
+import LogoThemePark from "../assets/common/logol_outline/logo_theme_park.png";
 
 export const charaIcons: { [key: string]: string } = {
   CharaIcon1,
