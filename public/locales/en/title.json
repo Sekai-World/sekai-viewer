@@ -7,8 +7,8 @@
   "gachaDetail": "{{name}} | Gacha | Sekai Viewer",
   "gachaList": "Gacha List | Sekai Viewer",
   "home": "Home | Sekai Viewer",
-  "memberDetail": "{{name}} | Member | Sekai Viewer",
-  "memberList": "Member List | Sekai Viewer",
+  "memberDetail": "{{name}} | Character | Sekai Viewer",
+  "memberList": "Character List | Sekai Viewer",
   "musicDetail": "{{title}} | Music | Sekai Viewer",
   "musicList": "Music List | Sekai Viewer",
   "stampList": "Sticker List | Sekai Viewer"
