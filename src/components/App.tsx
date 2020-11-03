@@ -228,9 +228,9 @@ function App() {
         disabled: false,
       },
       {
-        text: t("common:member"),
+        text: t("common:character"),
         icon: <AccountGroup></AccountGroup>,
-        to: "/member",
+        to: "/chara",
         disabled: false,
       },
       {
@@ -444,10 +444,10 @@ function App() {
               <Route path="/comic">
                 <ComicList contentTransMode={contentTransMode} />
               </Route>
-              <Route path="/member" exact>
+              <Route path="/chara" exact>
                 <MemberList contentTransMode={contentTransMode} />
               </Route>
-              <Route path="/member/:charaId">
+              <Route path="/chara/:charaId">
                 <MemberDetail contentTransMode={contentTransMode} />
               </Route>
             </Suspense>
