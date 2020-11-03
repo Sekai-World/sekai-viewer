@@ -45,7 +45,6 @@ import {
   CropOriginal,
 } from "@material-ui/icons";
 import {
-  Account,
   AccountGroup,
   Calculator,
   CalendarText,
@@ -229,14 +228,8 @@ function App() {
         disabled: false,
       },
       {
-        text: t("common:unit"),
-        icon: <AccountGroup></AccountGroup>,
-        to: "/unit",
-        disabled: true,
-      },
-      {
         text: t("common:member"),
-        icon: <Account></Account>,
+        icon: <AccountGroup></AccountGroup>,
         to: "/member",
         disabled: false,
       },
