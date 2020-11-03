@@ -62,6 +62,7 @@ import {
 } from "react-router-dom";
 import { ContentTransModeType } from "../types";
 import { useAssetI18n } from "../utils/i18n";
+import UnitDetail from "./UnitDetail";
 
 const drawerWidth = 240;
 const CardList = lazy(() => import("./CardList"));
@@ -449,6 +450,9 @@ function App() {
               </Route>
               <Route path="/chara/:charaId">
                 <MemberDetail contentTransMode={contentTransMode} />
+              </Route>
+              <Route path="/unit/:unitId">
+                <UnitDetail contentTransMode={contentTransMode} />
               </Route>
             </Suspense>
           </Switch>

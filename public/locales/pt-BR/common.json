@@ -6,8 +6,7 @@
   "event": "Evento",
   "stamp": "",
   "comic": "",
-  "unit": "Unidade (Unit)",
-  "member": "Membros",
+  "character": "Personagem",
   "musicMeta": "",
   "scoreCalculator": "",
   "toolbar": {
@@ -28,7 +27,7 @@
   },
   "id": "ID",
   "title": "Título",
-  "character": "Personagem",
+  "unit": "Unidade (Unit)",
   "support_unit": "",
   "attribute": "Atributo",
   "startAt": "Disponível a partir de",
@@ -56,5 +55,6 @@
   "update": "Atualização",
   "profile": "",
   "character_plural": "Personagens",
-  "level": "Nível"
+  "level": "Nível",
+  "member": "Membros"
 }

@@ -6,8 +6,7 @@
   "event": "",
   "stamp": "",
   "comic": "",
-  "unit": "",
-  "member": "",
+  "character": "",
   "musicMeta": "",
   "scoreCalculator": "",
   "toolbar": {
@@ -28,7 +27,7 @@
   },
   "id": "",
   "title": "",
-  "character": "",
+  "unit": "",
   "support_unit": "",
   "attribute": "",
   "startAt": "",
@@ -56,5 +55,6 @@
   "update": "",
   "profile": "",
   "character_plural": "",
-  "level": ""
+  "level": "",
+  "member": ""
 }

@@ -34,6 +34,7 @@ export function initGlobalI18n() {
         "music",
         "title",
         "member",
+        "unit",
       ],
       fallbackLng: {
         default: ["en"],

@@ -6,8 +6,7 @@
   "event": "イベント",
   "stamp": "スタンプ",
   "comic": "コミック",
-  "unit": "ユニット",
-  "member": "メンバー",
+  "character": "キャラクター",
   "musicMeta": "楽曲情報",
   "scoreCalculator": "スコア計算",
   "toolbar": {
@@ -28,7 +27,7 @@
   },
   "id": "ID",
   "title": "タイトル",
-  "character": "キャラクター",
+  "unit": "ユニット",
   "support_unit": "サポートユニット",
   "attribute": "タイプ",
   "startAt": "解放時間",
@@ -56,5 +55,6 @@
   "update": "アップデート",
   "profile": "",
   "level": "レベル",
+  "member": "メンバー",
   "character_plural": "キャラクター"
 }
