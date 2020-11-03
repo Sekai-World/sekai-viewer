@@ -22,6 +22,7 @@ import {
   ICharaUnitInfo,
   ICharaProfile,
   ICardInfo,
+  IUnitProfile,
 } from "../types";
 import { useCachedData, useCharaName } from "../utils";
 import { UnitLogoMap } from "../utils/resources";
@@ -66,12 +67,13 @@ const MemberDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   const [charas] = useCachedData<IGameChara>("gameCharacters");
   const [charaUnits] = useCachedData<ICharaUnitInfo>("gameCharacterUnits");
   const [charaProfiles] = useCachedData<ICharaProfile>("characterProfiles");
+  const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
 
   const [chara, setChara] = useState<IGameChara>();
   const [charaUnit, setCharaUnit] = useState<ICharaUnitInfo>();
-  const [charaSupportUnits, setCharaSupportUnits] = useState<ICharaUnitInfo[]>(
-    []
-  );
+  const [charaSupportUnits, setCharaSupportUnits] = useState<
+    (ICharaUnitInfo & IUnitProfile)[]
+  >([]);
   const [charaProfile, setCharaProfile] = useState<ICharaProfile>();
   const [charaCards, setCharaCards] = useState<ICardInfo[]>([]);
   const [tabVal, setTabVal] = useState<string>("0");
@@ -101,6 +103,13 @@ const MemberDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
               (cu) => cu.gameCharacterId === chara.id && cu.unit !== "piapro"
             )
             .filter((cu) => charaCards.some((cc) => cc.supportUnit === cu.unit))
+            .map((cu) =>
+              Object.assign(
+                {},
+                cu,
+                unitProfiles.find((up) => up.unit === cu.unit)
+              )
+            )
         );
       }
       setCharaProfile(charaProfiles.find((cp) => cp.characterId === chara?.id));
@@ -257,7 +266,7 @@ const MemberDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
             "skinShadowColorCode1",
             "skinShadowColorCode2",
           ].map((key) => (
-            <Fragment>
+            <Fragment key={key}>
               <Grid
                 container
                 direction="row"
@@ -301,7 +310,7 @@ const MemberDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
           {Object.keys(charaProfile)
             .filter((key) => !["characterId", "scenarioId"].includes(key))
             .map((key) => (
-              <Fragment>
+              <Fragment key={key}>
                 <Grid
                   container
                   direction="row"
@@ -341,9 +350,18 @@ const MemberDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                     justify="space-between"
                     alignItems="center"
                   >
-                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                      {t("common:unit")}
-                    </Typography>
+                    <Link
+                      to={"/unit/" + csu.unit}
+                      style={{ textDecoration: "none" }}
+                    >
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                        color="textPrimary"
+                      >
+                        {csu.unitName}
+                      </Typography>
+                    </Link>
                     <Link to={"/unit/" + csu.unit}>
                       <img
                         className={classes["unit-logo-img"]}
