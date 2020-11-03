@@ -85,7 +85,8 @@ const MemberDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
       charas.length &&
       charaUnits.length &&
       charaProfiles.length &&
-      cards.length
+      cards.length &&
+      unitProfiles.length
     ) {
       const chara = charas.find((c) => c.id === Number(charaId));
       const charaCards = cards.filter((card) => card.characterId === chara?.id);
@@ -115,7 +116,15 @@ const MemberDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
       setCharaProfile(charaProfiles.find((cp) => cp.characterId === chara?.id));
       setCharaCards(charaCards);
     }
-  }, [charas, setChara, charaId, charaUnits, charaProfiles, cards]);
+  }, [
+    charas,
+    setChara,
+    charaId,
+    charaUnits,
+    charaProfiles,
+    cards,
+    unitProfiles,
+  ]);
 
   useEffect(() => {
     document.title = t("title:memberDetail", {
