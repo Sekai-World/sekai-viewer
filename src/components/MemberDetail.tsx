@@ -93,13 +93,14 @@ const MemberDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
           (cu) => cu.gameCharacterId === chara?.id && cu.unit === chara?.unit
         )
       );
+      // list support units if the character is a member of VIRTUAL SINGER
       if (chara?.unit === "piapro") {
         setCharaSupportUnits(
           charaUnits
             .filter(
               (cu) => cu.gameCharacterId === chara.id && cu.unit !== "piapro"
             )
-            .filter((cu) => charaCards.find((cc) => cc.supportUnit === cu.unit))
+            .filter((cu) => charaCards.some((cc) => cc.supportUnit === cu.unit))
         );
       }
       setCharaProfile(charaProfiles.find((cp) => cp.characterId === chara?.id));
@@ -618,7 +619,7 @@ const MemberDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
           <Container className={layoutClasses.content} maxWidth="sm">
             <Grid className={classes["grid-out"]} container direction="column">
               {charaSupportUnits.map((csu) => (
-                <Fragment>
+                <Fragment key={"support-unit-" + csu.id}>
                   <Grid
                     container
                     direction="row"
@@ -653,7 +654,7 @@ const MemberDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
           spacing={2}
         >
           {charaCards.map((cc) => (
-            <Grid item xs={4} md={2} lg={1}>
+            <Grid item xs={4} md={2} lg={1} key={"card-" + cc.id}>
               <Link to={"/card/" + cc.id} style={{ textDecoration: "none" }}>
                 <CardThumb id={cc.id}></CardThumb>
               </Link>
@@ -682,7 +683,7 @@ const MemberDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
     </Fragment>
   ) : (
     <div>
-      Loading... If you saw this for a while, memebr {charaId} does not exist.
+      Loading... If you saw this for a while, member {charaId} does not exist.
     </div>
   );
 };
