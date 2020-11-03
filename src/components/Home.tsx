@@ -210,7 +210,7 @@ function Home() {
         </Alert>
         <Alert className={classes.alert} severity="info">
           <AlertTitle>{t("home:alert_contributor.title")}</AlertTitle>
-          <ul>
+          <ul style={{ marginBlockEnd: 0 }}>
             <li>
               <Link
                 href="https://github.com/NonSpicyBurrito"
