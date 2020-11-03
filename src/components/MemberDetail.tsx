@@ -27,6 +27,7 @@ import {
 import { useCachedData, useCharaName } from "../utils";
 import { UnitLogoMap } from "../utils/resources";
 import { CardThumb } from "./subs/CardThumb";
+import ColorPreview from "./subs/ColorPreview";
 // import { useAssetI18n } from "../utils/i18n";
 
 const useStyle = makeStyles((theme) => ({
@@ -294,14 +295,7 @@ const MemberDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                       <Typography>{charaUnit[key as "colorCode"]}</Typography>
                     </Grid>
                     <Grid item>
-                      <div
-                        style={{
-                          height: "26px",
-                          width: "26px",
-                          border: "solid 2px white",
-                          backgroundColor: charaUnit[key as "colorCode"],
-                        }}
-                      ></div>
+                      <ColorPreview colorCode={charaUnit[key as "colorCode"]} />
                     </Grid>
                   </Grid>
                 </Grid>

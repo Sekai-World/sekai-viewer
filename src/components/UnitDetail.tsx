@@ -12,6 +12,7 @@ import { useLayoutStyles } from "../styles/layout";
 import { ContentTransModeType, IGameChara, IUnitProfile } from "../types";
 import { useCachedData, useCharaName } from "../utils";
 import { charaIcons, UnitLogoMap } from "../utils/resources";
+import ColorPreview from "./subs/ColorPreview";
 
 const useStyle = makeStyles((theme) => ({
   tabpanel: {
@@ -122,14 +123,7 @@ const UnitDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                   <Typography>{unit.colorCode}</Typography>
                 </Grid>
                 <Grid item>
-                  <div
-                    style={{
-                      height: "26px",
-                      width: "26px",
-                      border: "solid 2px white",
-                      backgroundColor: unit.colorCode,
-                    }}
-                  ></div>
+                  <ColorPreview colorCode={unit.colorCode} />
                 </Grid>
               </Grid>
             </Grid>
