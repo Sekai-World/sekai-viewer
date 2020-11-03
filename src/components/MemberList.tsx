@@ -56,7 +56,7 @@ const MemberList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   return (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:member")}
+        {t("common:character")}
       </Typography>
       <Grid container spacing={1} direction="column">
         {Object.keys(charaUnitMap).map((unit) => (
