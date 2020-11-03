@@ -17,7 +17,7 @@ import { useLayoutStyles } from "../styles/layout";
 import { useInteractiveStyles } from "../styles/interactive";
 import { TabContext, TabPanel } from "@material-ui/lab";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
 
@@ -410,11 +410,13 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
               {t("common:unit")}
             </Typography>
-            <img
-              className={classes["unit-logo-img"]}
-              src={getCharaUnitImage(card.characterId)}
-              alt={getCharaUnitName(card.characterId)}
-            ></img>
+            <Link to={"/unit/" + getCharaUnitName(card.characterId)}>
+              <img
+                className={classes["unit-logo-img"]}
+                src={getCharaUnitImage(card.characterId)}
+                alt={getCharaUnitName(card.characterId)}
+              ></img>
+            </Link>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
           {card.supportUnit !== "none" ? (

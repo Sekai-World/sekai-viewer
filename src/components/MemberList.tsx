@@ -66,7 +66,7 @@ const MemberList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                 <img
                   className={classes.unitIcon}
                   src={UnitLogoMap[unit]}
-                  alt="piapro"
+                  alt={unit}
                 ></img>
               </Link>
             </Grid>

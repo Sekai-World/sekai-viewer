@@ -242,137 +242,55 @@ const MemberDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
               {t("common:unit")}
             </Typography>
-            <img
-              className={classes["unit-logo-img"]}
-              src={UnitLogoMap[chara.unit]}
-              alt={chara.unit}
-            ></img>
+            <Link to={"/unit/" + chara.unit}>
+              <img
+                className={classes["unit-logo-img"]}
+                src={UnitLogoMap[chara.unit]}
+                alt={chara.unit}
+              ></img>
+            </Link>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
-          <Grid
-            container
-            direction="row"
-            wrap="nowrap"
-            justify="space-between"
-            alignItems="center"
-          >
-            <Grid item>
-              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                {t("member:colorCode")}
-              </Typography>
-            </Grid>
-            <Grid item>
-              <Grid container spacing={1}>
+          {[
+            "colorCode",
+            "skinColorCode",
+            "skinShadowColorCode1",
+            "skinShadowColorCode2",
+          ].map((key) => (
+            <Fragment>
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justify="space-between"
+                alignItems="center"
+              >
                 <Grid item>
-                  <Typography>{charaUnit?.colorCode}</Typography>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("member:" + key)}
+                  </Typography>
                 </Grid>
                 <Grid item>
-                  <div
-                    style={{
-                      height: "26px",
-                      width: "26px",
-                      border: "solid 2px white",
-                      backgroundColor: charaUnit?.colorCode,
-                    }}
-                  ></div>
+                  <Grid container spacing={1}>
+                    <Grid item>
+                      <Typography>{charaUnit[key as "colorCode"]}</Typography>
+                    </Grid>
+                    <Grid item>
+                      <div
+                        style={{
+                          height: "26px",
+                          width: "26px",
+                          border: "solid 2px white",
+                          backgroundColor: charaUnit[key as "colorCode"],
+                        }}
+                      ></div>
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Grid>
-            </Grid>
-          </Grid>
-          <Divider style={{ margin: "1% 0" }} />
-          <Grid
-            container
-            direction="row"
-            wrap="nowrap"
-            justify="space-between"
-            alignItems="center"
-          >
-            <Grid item>
-              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                {t("member:skinColorCode")}
-              </Typography>
-            </Grid>
-            <Grid item>
-              <Grid container spacing={1}>
-                <Grid item>
-                  <Typography>{charaUnit?.skinColorCode}</Typography>
-                </Grid>
-                <Grid item>
-                  <div
-                    style={{
-                      height: "26px",
-                      width: "26px",
-                      border: "solid 2px white",
-                      backgroundColor: charaUnit?.skinColorCode,
-                    }}
-                  ></div>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Divider style={{ margin: "1% 0" }} />
-          <Grid
-            container
-            direction="row"
-            wrap="nowrap"
-            justify="space-between"
-            alignItems="center"
-          >
-            <Grid item>
-              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                {t("member:skinShadowColorCode1")}
-              </Typography>
-            </Grid>
-            <Grid item>
-              <Grid container spacing={1}>
-                <Grid item>
-                  <Typography>{charaUnit?.skinShadowColorCode1}</Typography>
-                </Grid>
-                <Grid item>
-                  <div
-                    style={{
-                      height: "26px",
-                      width: "26px",
-                      border: "solid 2px white",
-                      backgroundColor: charaUnit?.skinShadowColorCode1,
-                    }}
-                  ></div>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Divider style={{ margin: "1% 0" }} />
-          <Grid
-            container
-            direction="row"
-            wrap="nowrap"
-            justify="space-between"
-            alignItems="center"
-          >
-            <Grid item>
-              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                {t("member:skinShadowColorCode2")}
-              </Typography>
-            </Grid>
-            <Grid item>
-              <Grid container spacing={1}>
-                <Grid item>
-                  <Typography>{charaUnit?.skinShadowColorCode2}</Typography>
-                </Grid>
-                <Grid item>
-                  <div
-                    style={{
-                      height: "26px",
-                      width: "26px",
-                      border: "solid 2px white",
-                      backgroundColor: charaUnit?.skinShadowColorCode2,
-                    }}
-                  ></div>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Divider style={{ margin: "1% 0" }} />
+              <Divider style={{ margin: "1% 0" }} />
+            </Fragment>
+          ))}
         </Grid>
       </Container>
       <Typography variant="h6" className={layoutClasses.header}>
@@ -380,235 +298,31 @@ const MemberDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
       </Typography>
       <Container className={layoutClasses.content} maxWidth="sm">
         <Grid className={classes["grid-out"]} container direction="column">
-          <Grid
-            container
-            direction="row"
-            wrap="nowrap"
-            justify="space-between"
-            alignItems="center"
-          >
-            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t("member:height")}
-            </Typography>
-            <Typography>{charaProfile.height}</Typography>
-          </Grid>
-          <Divider style={{ margin: "1% 0" }} />
-          <Grid
-            container
-            direction="row"
-            wrap="nowrap"
-            justify="space-between"
-            alignItems="center"
-          >
-            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t("member:birthday")}
-            </Typography>
-            <Typography>{charaProfile.birthday}</Typography>
-          </Grid>
-          <Divider style={{ margin: "1% 0" }} />
-          {charaProfile.characterVoice ? (
-            <Fragment>
-              <Grid
-                container
-                direction="row"
-                wrap="nowrap"
-                justify="space-between"
-                alignItems="center"
-              >
-                <Grid item xs={2}>
-                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                    {t("member:characterVoice")}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6} md={8}>
-                  <Grid container justify="flex-end">
-                    <Typography>{charaProfile.characterVoice}</Typography>
+          {Object.keys(charaProfile)
+            .filter((key) => !["characterId", "scenarioId"].includes(key))
+            .map((key) => (
+              <Fragment>
+                <Grid
+                  container
+                  direction="row"
+                  wrap="nowrap"
+                  justify="space-between"
+                  alignItems="center"
+                >
+                  <Grid item xs={2}>
+                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                      {t("member:" + key)}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={6} md={8}>
+                    <Grid container justify="flex-end">
+                      <Typography>{charaProfile[key as "height"]}</Typography>
+                    </Grid>
                   </Grid>
                 </Grid>
-              </Grid>
-              <Divider style={{ margin: "1% 0" }} />
-            </Fragment>
-          ) : null}
-          {charaProfile.school ? (
-            <Fragment>
-              <Grid
-                container
-                direction="row"
-                wrap="nowrap"
-                justify="space-between"
-                alignItems="center"
-              >
-                <Grid item xs={2}>
-                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                    {t("member:school")}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6} md={8}>
-                  <Grid container justify="flex-end">
-                    <Typography>{charaProfile.school}</Typography>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Divider style={{ margin: "1% 0" }} />
-            </Fragment>
-          ) : null}
-          {charaProfile.schoolYear ? (
-            <Fragment>
-              <Grid
-                container
-                direction="row"
-                wrap="nowrap"
-                justify="space-between"
-                alignItems="center"
-              >
-                <Grid item xs={2}>
-                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                    {t("member:schoolYear")}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6} md={8}>
-                  <Grid container justify="flex-end">
-                    <Typography>{charaProfile.schoolYear}</Typography>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Divider style={{ margin: "1% 0" }} />
-            </Fragment>
-          ) : null}
-          {charaProfile.hobby ? (
-            <Fragment>
-              <Grid
-                container
-                direction="row"
-                wrap="nowrap"
-                justify="space-between"
-                alignItems="center"
-              >
-                <Grid item xs={2}>
-                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                    {t("member:hobby")}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6} md={8}>
-                  <Grid container justify="flex-end">
-                    <Typography>{charaProfile.hobby}</Typography>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Divider style={{ margin: "1% 0" }} />
-            </Fragment>
-          ) : null}
-          {charaProfile.specialSkill ? (
-            <Fragment>
-              <Grid
-                container
-                direction="row"
-                wrap="nowrap"
-                justify="space-between"
-                alignItems="center"
-              >
-                <Grid item xs={2}>
-                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                    {t("member:specialSkill")}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6} md={8}>
-                  <Grid container justify="flex-end">
-                    <Typography>{charaProfile.specialSkill}</Typography>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Divider style={{ margin: "1% 0" }} />
-            </Fragment>
-          ) : null}
-          {charaProfile.favoriteFood ? (
-            <Fragment>
-              <Grid
-                container
-                direction="row"
-                wrap="nowrap"
-                justify="space-between"
-                alignItems="center"
-              >
-                <Grid item xs={2}>
-                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                    {t("member:favoriteFood")}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6} md={8}>
-                  <Grid container justify="flex-end">
-                    <Typography>{charaProfile.favoriteFood}</Typography>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Divider style={{ margin: "1% 0" }} />
-            </Fragment>
-          ) : null}
-          {charaProfile.hatedFood ? (
-            <Fragment>
-              <Grid
-                container
-                direction="row"
-                wrap="nowrap"
-                justify="space-between"
-                alignItems="center"
-              >
-                <Grid item xs={2}>
-                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                    {t("member:hatedFood")}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6} md={8}>
-                  <Grid container justify="flex-end">
-                    <Typography>{charaProfile.hatedFood}</Typography>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Divider style={{ margin: "1% 0" }} />
-            </Fragment>
-          ) : null}
-          {charaProfile.weak ? (
-            <Fragment>
-              <Grid
-                container
-                direction="row"
-                wrap="nowrap"
-                justify="space-between"
-                alignItems="center"
-              >
-                <Grid item xs={2}>
-                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                    {t("member:weak")}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6} md={8}>
-                  <Grid container justify="flex-end">
-                    <Typography>{charaProfile.weak}</Typography>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Divider style={{ margin: "1% 0" }} />
-            </Fragment>
-          ) : null}
-          <Grid
-            container
-            direction="row"
-            wrap="nowrap"
-            justify="space-between"
-            alignItems="center"
-          >
-            <Grid item xs={2}>
-              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                {t("member:introduction")}
-              </Typography>
-            </Grid>
-            <Grid item xs={6} md={8}>
-              <Grid container justify="flex-end">
-                <Typography>{charaProfile.introduction}</Typography>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Divider style={{ margin: "1% 0" }} />
+                <Divider style={{ margin: "1% 0" }} />
+              </Fragment>
+            ))}
         </Grid>
       </Container>
       {charaSupportUnits.length ? (
@@ -630,11 +344,13 @@ const MemberDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                     <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                       {t("common:unit")}
                     </Typography>
-                    <img
-                      className={classes["unit-logo-img"]}
-                      src={UnitLogoMap[csu.unit]}
-                      alt={csu.unit}
-                    ></img>
+                    <Link to={"/unit/" + csu.unit}>
+                      <img
+                        className={classes["unit-logo-img"]}
+                        src={UnitLogoMap[csu.unit]}
+                        alt={csu.unit}
+                      ></img>
+                    </Link>
                   </Grid>
                   <Divider style={{ margin: "1% 0" }} />
                 </Fragment>
