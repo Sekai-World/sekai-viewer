@@ -1,22 +1,25 @@
 {
-  "alreadyEnded": "",
-  "notStarted": "",
+  "alreadyEnded": "El evento ya ha terminado",
+  "notStarted": "No ha empezado",
   "tab": {
-    "title[0]": "",
-    "title[1]": "",
-    "title[2]": ""
+    "title[0]": "Banner y logo",
+    "title[1]": "Fondo",
+    "title[2]": "Personaje"
   },
-  "remainingTime": "",
-  "progress": "",
-  "boostAttribute": "",
-  "boostCharacters": "",
-  "maxBoost": "",
-  "aggregateAt": "",
-  "rankingAnnounceAt": "",
-  "distributionStartAt": "",
-  "distributionEndAt": "",
-  "ranking": "",
-  "realtime": "",
-  "nextfetch": "",
-  "alreadyPast": ""
+  "remainingTime": "Tiempo restante",
+  "progress": "Progreso",
+  "boostAttribute": "Atributo de aumento",
+  "boostCharacters": "Personajes de aumento",
+  "maxBoost": "Máximo aumento (Ambos usados) ",
+  "aggregateAt": "Aggregate Timepoint",
+  "rankingAnnounceAt": "Anuncio de ranking en ",
+  "distributionStartAt": "Distribución de recompensas desde",
+  "distributionEndAt": "Distribución de recompensas hasta",
+  "ranking": "Ranking",
+  "realtime": "En tiempo real el",
+  "nextfetch": "Next fetch",
+  "alreadyPast": "Already Past",
+  "type": {
+    "marathon": "Marathon"
+  }
 }
