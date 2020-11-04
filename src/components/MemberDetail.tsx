@@ -50,7 +50,11 @@ const useStyle = makeStyles((theme) => ({
     padding: theme.spacing("1%", "0"),
   },
   "unit-logo-img": {
-    maxWidth: "128px",
+    maxHeight: "64px",
+  },
+  "unit-logo-large": {
+    maxHeight: "64px",
+    maxWidth: "100%",
   },
 }));
 
@@ -342,38 +346,45 @@ const MemberDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
           <Typography variant="h6" className={layoutClasses.header}>
             {t("common:support_unit")}
           </Typography>
-          <Container className={layoutClasses.content} maxWidth="sm">
-            <Grid className={classes["grid-out"]} container direction="column">
+          <Container className={layoutClasses.content}>
+            <Grid
+              className={classes["grid-out"]}
+              container
+              direction="row"
+              justify="center"
+              spacing={2}
+            >
               {charaSupportUnits.map((csu) => (
                 <Fragment key={"support-unit-" + csu.id}>
-                  <Grid
-                    container
-                    direction="row"
-                    wrap="nowrap"
-                    justify="space-between"
-                    alignItems="center"
-                  >
+                  <Grid item xs={6} md={4}>
                     <Link
                       to={"/unit/" + csu.unit}
                       style={{ textDecoration: "none" }}
                     >
-                      <Typography
-                        variant="subtitle1"
-                        style={{ fontWeight: 600 }}
-                        color="textPrimary"
-                      >
-                        {csu.unitName}
-                      </Typography>
-                    </Link>
-                    <Link to={"/unit/" + csu.unit}>
-                      <img
-                        className={classes["unit-logo-img"]}
-                        src={UnitLogoMap[csu.unit]}
-                        alt={csu.unit}
-                      ></img>
+                      <Paper>
+                        <Grid
+                          container
+                          direction="column"
+                          wrap="nowrap"
+                          alignItems="center"
+                        >
+                          <img
+                            className={classes["unit-logo-large"]}
+                            src={UnitLogoMap[csu.unit]}
+                            alt={csu.unit}
+                          ></img>
+                          <Typography
+                            variant="subtitle1"
+                            style={{ fontWeight: 600 }}
+                            color="textPrimary"
+                            align="center"
+                          >
+                            {csu.unitName}
+                          </Typography>
+                        </Grid>
+                      </Paper>
                     </Link>
                   </Grid>
-                  <Divider style={{ margin: "1% 0" }} />
                 </Fragment>
               ))}
             </Grid>
