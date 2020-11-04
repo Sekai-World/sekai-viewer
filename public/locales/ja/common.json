@@ -5,9 +5,8 @@
   "gacha": "ガチャ",
   "event": "イベント",
   "stamp": "スタンプ",
-  "comic": "Comic",
-  "unit": "ユニット",
-  "member": "メンバー",
+  "comic": "コミック",
+  "character": "キャラクター",
   "musicMeta": "楽曲情報",
   "scoreCalculator": "スコア計算",
   "toolbar": {
@@ -28,7 +27,7 @@
   },
   "id": "ID",
   "title": "タイトル",
-  "character": "キャラクター",
+  "unit": "ユニット",
   "support_unit": "サポートユニット",
   "attribute": "タイプ",
   "startAt": "解放時間",
@@ -54,6 +53,8 @@
   "campaign": "キャンペーン",
   "bug": "バグ",
   "update": "アップデート",
-  "character_plural": "キャラクター",
-  "level": "レベル"
+  "profile": "",
+  "level": "レベル",
+  "member": "メンバー",
+  "character_plural": "キャラクター"
 }

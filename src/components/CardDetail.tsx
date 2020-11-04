@@ -17,7 +17,7 @@ import { useLayoutStyles } from "../styles/layout";
 import { useInteractiveStyles } from "../styles/interactive";
 import { TabContext, TabPanel } from "@material-ui/lab";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
 
@@ -27,7 +27,7 @@ import {
   ICardInfo,
   ICardRarity,
   ICharacterRank,
-  ICharaProfile,
+  IGameChara,
   IReleaseCondition,
   IResourceBoxInfo,
   ISkillInfo,
@@ -37,15 +37,8 @@ import { useCachedData, useCharaName } from "../utils";
 import rarityNormal from "../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../assets/rarity_star_afterTraining.png";
 
-import LogoLightSound from "../assets/common/logol/logo_light_sound.png";
-import LogoIdol from "../assets/common/logol/logo_idol.png";
-import LogoPiapro from "../assets/common/logol/logo_piapro.png";
-import LogoSchoolRefusal from "../assets/common/logol/logo_school_refusal.png";
-import LogoStreet from "../assets/common/logol/logo_street.png";
-import LogoThemePark from "../assets/common/logol/logo_theme_park.png";
-
 import { CardThumb } from "./subs/CardThumb";
-import { attrIconMap } from "../utils/resources";
+import { attrIconMap, UnitLogoMap } from "../utils/resources";
 import { useTranslation } from "react-i18next";
 import MaterialIcon from "./subs/MaterialIcon";
 import CommonMaterialIcon from "./subs/CommonMaterialIcon";
@@ -96,7 +89,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   const { assetT, assetI18n } = useAssetI18n();
   const getCharaName = useCharaName(contentTransMode);
 
-  const [charas] = useCachedData<ICharaProfile>("gameCharacters");
+  const [charas] = useCachedData<IGameChara>("gameCharacters");
   const [cards] = useCachedData<ICardInfo>("cards");
   const [rarities] = useCachedData<ICardRarity>("cardRarities");
   const [episodes] = useCachedData<ICardEpisode>("cardEpisodes");
@@ -163,30 +156,12 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
     [charas]
   );
 
-  const getUnitImage = useCallback((unitName?: string) => {
-    switch (unitName) {
-      case "idol":
-        return LogoIdol;
-      case "light_sound":
-        return LogoLightSound;
-      case "piapro":
-        return LogoPiapro;
-      case "school_refusal":
-        return LogoSchoolRefusal;
-      case "street":
-        return LogoStreet;
-      case "theme_park":
-        return LogoThemePark;
-    }
-    return "";
-  }, []);
-
   const getCharaUnitImage = useCallback(
     (charaId: number) => {
       const chara = charas.find((chara) => chara.id === charaId);
-      return getUnitImage(chara?.unit);
+      return chara ? UnitLogoMap[chara!.unit] : undefined;
     },
-    [charas, getUnitImage]
+    [charas]
   );
 
   const getCardImages: () => ImageDecorator[] = useCallback(
@@ -435,11 +410,13 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
               {t("common:unit")}
             </Typography>
-            <img
-              className={classes["unit-logo-img"]}
-              src={getCharaUnitImage(card.characterId)}
-              alt={getCharaUnitName(card.characterId)}
-            ></img>
+            <Link to={"/unit/" + getCharaUnitName(card.characterId)}>
+              <img
+                className={classes["unit-logo-img"]}
+                src={getCharaUnitImage(card.characterId)}
+                alt={getCharaUnitName(card.characterId)}
+              ></img>
+            </Link>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
           {card.supportUnit !== "none" ? (
@@ -456,7 +433,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                 </Typography>
                 <img
                   className={classes["unit-logo-img"]}
-                  src={getUnitImage(card.supportUnit)}
+                  src={UnitLogoMap[card.supportUnit]}
                   alt={card.supportUnit}
                 ></img>
               </Grid>

@@ -6,8 +6,8 @@
   "event": "活動",
   "stamp": "贴纸",
   "comic": "漫畫",
-  "unit": "組合",
   "member": "成員",
+  "character": "角色",
   "musicMeta": "歌曲Meta",
   "scoreCalculator": "分數計算器",
   "toolbar": {
@@ -28,7 +28,7 @@
   },
   "id": "編號",
   "title": "標題",
-  "character": "角色",
+  "unit": "組合",
   "support_unit": "輔助角色",
   "attribute": "屬性",
   "startAt": "開放於",
@@ -55,5 +55,6 @@
   "bug": "問題",
   "update": "更新",
   "character_plural": "角色",
-  "level": "等級"
+  "level": "等級",
+  "profile": "角色資料"
 }

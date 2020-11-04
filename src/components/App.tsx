@@ -47,7 +47,6 @@ import {
   ExpandLess,
 } from "@material-ui/icons";
 import {
-  Account,
   AccountGroup,
   Calculator,
   CalendarText,
@@ -65,8 +64,7 @@ import {
 } from "react-router-dom";
 import { ContentTransModeType } from "../types";
 import { useAssetI18n } from "../utils/i18n";
-import ComicList from "./ComicList";
-import StampList from "./StampList";
+import UnitDetail from "./UnitDetail";
 
 const drawerWidth = 240;
 const CardList = lazy(() => import("./CardList"));
@@ -78,6 +76,10 @@ const GachaDetail = lazy(() => import("./GachaDetail"));
 const CardDetail = lazy(() => import("./CardDetail"));
 const MusicDetail = lazy(() => import("./MusicDetail"));
 const EventDetail = lazy(() => import("./EventDetail"));
+const ComicList = lazy(() => import("./ComicList"));
+const MemberDetail = lazy(() => import("./MemberDetail"));
+const MemberList = lazy(() => import("./MemberList"));
+const StampList = lazy(() => import("./StampList"));
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -229,16 +231,10 @@ function App() {
         disabled: false,
       },
       {
-        text: t("common:unit"),
+        text: t("common:character"),
         icon: <AccountGroup></AccountGroup>,
-        to: "/unit",
-        disabled: true,
-      },
-      {
-        text: t("common:member"),
-        icon: <Account></Account>,
-        to: "/member",
-        disabled: true,
+        to: "/chara",
+        disabled: false,
       },
       {
         text: "Live2D",
@@ -474,6 +470,15 @@ function App() {
               </Route>
               <Route path="/comic">
                 <ComicList contentTransMode={contentTransMode} />
+              </Route>
+              <Route path="/chara" exact>
+                <MemberList contentTransMode={contentTransMode} />
+              </Route>
+              <Route path="/chara/:charaId">
+                <MemberDetail contentTransMode={contentTransMode} />
+              </Route>
+              <Route path="/unit/:unitId">
+                <UnitDetail contentTransMode={contentTransMode} />
               </Route>
             </Suspense>
           </Switch>

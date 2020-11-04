@@ -6,8 +6,8 @@
   "event": "Ивенты",
   "stamp": "Штампы",
   "comic": "Ёнкомы",
-  "unit": "Юнит",
   "member": "Участники",
+  "character": "Персонаж",
   "musicMeta": "Мета песен",
   "scoreCalculator": "Калькулятор счёта",
   "toolbar": {
@@ -28,7 +28,7 @@
   },
   "id": "ID",
   "title": "Название",
-  "character": "Персонаж",
+  "unit": "Юнит",
   "support_unit": "Юнит поддержки",
   "attribute": "Атрибут ",
   "startAt": "Доступно с",

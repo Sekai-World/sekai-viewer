@@ -51,6 +51,13 @@ import cardImageFrameS2 from "../assets/frame/cardFrame_L_2.png";
 import cardImageFrameS3 from "../assets/frame/cardFrame_L_3.png";
 import cardImageFrameS4 from "../assets/frame/cardFrame_L_4.png";
 
+import LogoLightSound from "../assets/common/logol_outline/logo_light_sound.png";
+import LogoIdol from "../assets/common/logol_outline/logo_idol.png";
+import LogoPiapro from "../assets/common/logol_outline/logo_piapro.png";
+import LogoSchoolRefusal from "../assets/common/logol_outline/logo_school_refusal.png";
+import LogoStreet from "../assets/common/logol_outline/logo_street.png";
+import LogoThemePark from "../assets/common/logol_outline/logo_theme_park.png";
+
 export const charaIcons: { [key: string]: string } = {
   CharaIcon1,
   CharaIcon2,
@@ -114,4 +121,13 @@ export const cardImageFrameMap: { [key: string]: string } = {
   2: cardImageFrameS2,
   3: cardImageFrameS3,
   4: cardImageFrameS4,
+};
+
+export const UnitLogoMap: { [key: string]: string } = {
+  idol: LogoIdol,
+  light_sound: LogoLightSound,
+  piapro: LogoPiapro,
+  school_refusal: LogoSchoolRefusal,
+  street: LogoStreet,
+  theme_park: LogoThemePark,
 };

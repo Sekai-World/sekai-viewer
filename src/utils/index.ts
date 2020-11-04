@@ -1,9 +1,10 @@
+import { IUnitProfile } from "./../types.d";
 import Axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   IGachaInfo,
   ICardInfo,
-  ICharaProfile,
+  IGameChara,
   IMusicInfo,
   ISkillInfo,
   ICardRarity,
@@ -24,6 +25,7 @@ import {
   ICardEpisode,
   ContentTransModeType,
   ITipInfo,
+  ICharaProfile,
 } from "../types";
 import { useAssetI18n } from "./i18n";
 
@@ -44,7 +46,7 @@ export function useCachedData<
   T extends
     | IGachaInfo
     | ICardInfo
-    | ICharaProfile
+    | IGameChara
     | IMusicInfo
     | ISkillInfo
     | ICardRarity
@@ -63,6 +65,8 @@ export function useCachedData<
     | IHonorInfo
     | ICardEpisode
     | ITipInfo
+    | ICharaProfile
+    | IUnitProfile
 >(name: string): [T[], React.MutableRefObject<T[]>] {
   const [cached, cachedRef, setCached] = useRefState<T[]>([]);
 
@@ -153,7 +157,7 @@ export const musicTagToName: { [key: string]: string } = {
 };
 
 export function useCharaName(contentTransMode: ContentTransModeType) {
-  const [charas] = useCachedData<ICharaProfile>("gameCharacters");
+  const [charas] = useCachedData<IGameChara>("gameCharacters");
   const { assetT, assetI18n } = useAssetI18n();
   return useCallback(
     (charaId: number): string | undefined => {

@@ -15,7 +15,7 @@ import {
 import { useLayoutStyles } from "../styles/layout";
 import { TabContext, TabPanel } from "@material-ui/lab";
 import React, { Fragment, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
 import {
@@ -764,7 +764,12 @@ const GachaDetailPage: React.FC<{
               >
                 {gacha.gachaPickups.map((elem) => (
                   <Grid key={`pickup-${elem.id}`} item xs={8} md={4}>
-                    <CardThumb id={elem.cardId} />
+                    <Link
+                      to={"/card/" + elem.cardId}
+                      style={{ textDecoration: "none" }}
+                    >
+                      <CardThumb id={elem.cardId} />
+                    </Link>
                   </Grid>
                 ))}
               </Grid>
