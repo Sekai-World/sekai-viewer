@@ -1,10 +1,10 @@
 {
+  "character": {
+    "caption": "Personagem"
+  },
   "sort": {
     "caption": "Ordenar",
     "ascending": "Crescente",
     "descending": "Decrescente"
-  },
-  "character": {
-    "caption": "Personagem"
   }
 }

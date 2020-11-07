@@ -6,7 +6,7 @@
   "event": "Evento",
   "stamp": "Sticker",
   "comic": "Quadrinhos",
-  "member": "Membros",
+  "character": "Personagem",
   "musicMeta": "Meta de música",
   "scoreCalculator": "Calculador de Pontuação",
   "toolbar": {
@@ -27,9 +27,8 @@
   },
   "id": "ID",
   "title": "Título",
-  "character": "Personagem",
-  "support_unit": "Unidade de Suporte",
   "unit": "Unidade (Unit)",
+  "support_unit": "Unidade de Suporte",
   "attribute": "Atributo",
   "startAt": "Disponível a partir de",
   "rarity": "Raridade",
@@ -56,5 +55,6 @@
   "update": "Atualização",
   "profile": "",
   "character_plural": "Personagens",
-  "level": "Nível"
+  "level": "Nível",
+  "member": "Membros"
 }

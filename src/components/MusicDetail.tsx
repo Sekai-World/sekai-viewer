@@ -540,7 +540,7 @@ const MusicDetail: React.FC<{}> = () => {
             </Typography>
             {music.categories.map((elem) => (
               <Typography key={`music-cat-${elem}`}>
-                {t(`music:category.${elem}`)}
+                {t(`music:categoryType.${elem}`)}
               </Typography>
             ))}
           </Grid>

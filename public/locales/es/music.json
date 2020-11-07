@@ -1,5 +1,11 @@
 {
+  "vocal": "Voz",
   "alert[0]": "Los primeros <b>nueve segundos</b> de cada música no tienen sonido. NO es un error. ",
+  "vocalTab": {
+    "title[0]": "",
+    "title[1]": "",
+    "title[2]": ""
+  },
   "skipBeginningSilence": "Saltar el inicio silencioso",
   "tag": "Etiqueta",
   "tag_plural": "Etiquetas",
@@ -12,7 +18,6 @@
   "danceMember": "Miembro del baile",
   "danceMember_plural": "Miembros del baile",
   "dancerCount": "Dancer Count",
-  "vocal": "Voz",
   "vocal_plural": "Voces",
   "vocalType": "Tipo de voz",
   "difficulty": "Dificultad",

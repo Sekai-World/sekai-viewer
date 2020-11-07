@@ -1,5 +1,11 @@
 {
+  "vocal": "",
   "alert[0]": "",
+  "vocalTab": {
+    "title[0]": "",
+    "title[1]": "",
+    "title[2]": ""
+  },
   "skipBeginningSilence": "",
   "tag": "",
   "tag_plural": "",
@@ -12,7 +18,6 @@
   "danceMember": "",
   "danceMember_plural": "",
   "dancerCount": "",
-  "vocal": "",
   "vocal_plural": "",
   "vocalType": "",
   "difficulty": "",
