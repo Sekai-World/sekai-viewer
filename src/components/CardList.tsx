@@ -28,15 +28,15 @@ import {
   ViewGrid,
   ViewGridOutline,
 } from "mdi-material-ui";
-import React, { Fragment, useEffect, useReducer, useState } from "react";
+import React, {
+  Fragment,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
 import { Link, useRouteMatch } from "react-router-dom";
-import {
-  ContentTransModeType,
-  ICardEpisode,
-  ICardInfo,
-  ICardRarity,
-  IGameChara,
-} from "../types";
+import { ICardEpisode, ICardInfo, ICardRarity, IGameChara } from "../types";
 import { useCachedData, useCharaName, useRefState } from "../utils";
 import { CardThumb, CardThumbSkeleton } from "./subs/CardThumb";
 import InfiniteScroll from "./subs/InfiniteScroll";
@@ -47,6 +47,8 @@ import { useAssetI18n } from "../utils/i18n";
 import { characterSelectReducer } from "../stores/reducers";
 import { charaIcons } from "../utils/resources";
 import { CardSmallImage } from "./subs/CardImage";
+import { SettingContext } from "../context";
+import { ContentTrans } from "./subs/ContentTrans";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -127,15 +129,14 @@ function getMaxParam(
   return maxParam;
 }
 
-const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
-  contentTransMode,
-}) => {
+const CardList: React.FC<{}> = () => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
   const { assetT } = useAssetI18n();
+  const { contentTransMode } = useContext(SettingContext)!;
   const getCharaName = useCharaName(contentTransMode);
 
   const [cardsCache] = useCachedData<ICardInfo>("cards");
@@ -283,20 +284,32 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
               <CardSmallImage id={data.id}></CardSmallImage>
             </CardMedia>
             <CardContent style={{ paddingBottom: "16px" }}>
-              <Typography variant="subtitle1" className={classes.subheader}>
-                {contentTransMode === "original"
-                  ? data.prefix
-                  : contentTransMode === "translated"
-                  ? assetT(`card_prefix:${data.id}`, data.prefix)
-                  : data.prefix}
-              </Typography>
-              <Typography
-                variant="body2"
-                className={classes.subheader}
-                color="textSecondary"
-              >
-                {getCharaName(data.characterId)}
-              </Typography>
+              <Grid container direction="column" spacing={1}>
+                <Grid item>
+                  <ContentTrans
+                    mode={contentTransMode}
+                    contentKey={`card_prefix:${data.id}`}
+                    original={data.prefix}
+                    originalProps={{
+                      variant: "subtitle1",
+                      className: classes.subheader,
+                    }}
+                    translatedProps={{
+                      variant: "subtitle1",
+                      className: classes.subheader,
+                    }}
+                  />
+                </Grid>
+                <Grid item>
+                  <Typography
+                    variant="body2"
+                    className={classes.subheader}
+                    color="textSecondary"
+                  >
+                    {getCharaName(data.characterId)}
+                  </Typography>
+                </Grid>
+              </Grid>
             </CardContent>
           </Card>
         </Link>
@@ -375,16 +388,22 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                 ) : null}
               </Grid>
               <Grid item xs={6} md={7}>
-                <Typography variant="body1">
-                  {contentTransMode === "original"
-                    ? data.prefix
-                    : contentTransMode === "translated"
-                    ? assetT(`card_prefix:${data.id}`, data.prefix)
-                    : data.prefix}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {getCharaName(data.characterId)}
-                </Typography>
+                <Grid container direction="column" spacing={1}>
+                  <Grid item>
+                    <ContentTrans
+                      mode={contentTransMode}
+                      contentKey={`card_prefix:${data.id}`}
+                      original={data.prefix}
+                      originalProps={{ variant: "body1" }}
+                      translatedProps={{ variant: "body1" }}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Typography variant="body2" color="textSecondary">
+                      {getCharaName(data.characterId)}
+                    </Typography>
+                  </Grid>
+                </Grid>
               </Grid>
             </Grid>
           </Paper>
@@ -455,24 +474,34 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                 ) : null}
               </Grid>
               <Grid item style={{ width: "100%" }}>
-                <Typography
-                  classes={{ root: classes.comfyPrefix }}
-                  variant="body1"
-                  align="center"
-                >
-                  {contentTransMode === "original"
-                    ? data.prefix
-                    : contentTransMode === "translated"
-                    ? assetT(`card_prefix:${data.id}`, data.prefix)
-                    : data.prefix}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  align="center"
-                  color="textSecondary"
-                >
-                  {getCharaName(data.characterId)}
-                </Typography>
+                <Grid container direction="column" spacing={1}>
+                  <Grid item>
+                    <ContentTrans
+                      mode={contentTransMode}
+                      contentKey={`card_prefix:${data.id}`}
+                      original={data.prefix}
+                      originalProps={{
+                        variant: "body1",
+                        className: classes.comfyPrefix,
+                        align: "center",
+                      }}
+                      translatedProps={{
+                        variant: "body1",
+                        className: classes.comfyPrefix,
+                        align: "center",
+                      }}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Typography
+                      variant="body2"
+                      align="center"
+                      color="textSecondary"
+                    >
+                      {getCharaName(data.characterId)}
+                    </Typography>
+                  </Grid>
+                </Grid>
               </Grid>
             </Grid>
           </Paper>

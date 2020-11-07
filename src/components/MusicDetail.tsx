@@ -24,6 +24,7 @@ import { Close, Done } from "@material-ui/icons";
 import React, {
   Fragment,
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useState,
@@ -31,7 +32,6 @@ import React, {
 import { useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import {
-  ContentTransModeType,
   IMusicDanceMembers,
   IMusicDifficultyInfo,
   IMusicInfo,
@@ -40,13 +40,15 @@ import {
   IOutCharaProfile,
   IReleaseCondition,
 } from "../types";
-import { musicCategoryToName, musicTagToName, useCachedData } from "../utils";
+import { musicTagToName, useCachedData } from "../utils";
 import { charaIcons } from "../utils/resources";
 import { Trans, useTranslation } from "react-i18next";
 import { useAssetI18n } from "../utils/i18n";
 import { useDurationI18n } from "../utils/i18nDuration";
 import { useTrimMP3 } from "../utils/trimMP3";
 import MusicVideoPlayer from "./subs/MusicVideoPlayer";
+import { SettingContext } from "../context";
+import { ContentTrans } from "./subs/ContentTrans";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -80,14 +82,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const MusicDetail: React.FC<{
-  contentTransMode: ContentTransModeType;
-}> = ({ contentTransMode }) => {
+const MusicDetail: React.FC<{}> = () => {
   const theme = useTheme();
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
-  const { assetT } = useAssetI18n();
+  const { getTranslated } = useAssetI18n();
+  const { contentTransMode } = useContext(SettingContext)!;
   const [, humanizeDurationShort] = useDurationI18n();
   const [trimmedMP3URL, trimFailed, setTrimOptions] = useTrimMP3();
 
@@ -126,15 +127,15 @@ const MusicDetail: React.FC<{
 
   useEffect(() => {
     if (music) {
-      const title =
-        contentTransMode === "translated"
-          ? assetT(`music_titles:${musicId}`, music.title)
-          : music.title;
       document.title = t("title:musicDetail", {
-        title,
+        title: getTranslated(
+          contentTransMode,
+          `music_titles:${musicId}`,
+          music.title
+        ),
       });
     }
-  }, [music, musicId, contentTransMode, assetT, t]);
+  }, [music, musicId, contentTransMode, getTranslated, t]);
 
   useEffect(() => {
     if (musics.length) {
@@ -299,7 +300,7 @@ const MusicDetail: React.FC<{
         disabled={vocalDisabled}
         style={{ marginLeft: "18.5px", marginTop: "1%" }}
       >
-        <FormLabel>Vocal Type</FormLabel>
+        <FormLabel>{t("music:vocal")}</FormLabel>
         <RadioGroup
           row
           aria-label="vocal type"
@@ -319,7 +320,7 @@ const MusicDetail: React.FC<{
         </RadioGroup>
       </FormControl>
     );
-  }, [getVocalCharaIcons, musicVocalTypes, vocalDisabled]);
+  }, [getVocalCharaIcons, musicVocalTypes, vocalDisabled, t]);
 
   return music &&
     musicVocals.length &&
@@ -328,11 +329,11 @@ const MusicDetail: React.FC<{
     danceMembers.length ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
-        {contentTransMode === "original"
-          ? music.title
-          : contentTransMode === "translated"
-          ? assetT(`music_titles:${musicId}`, music.title)
-          : music.title}
+        {getTranslated(
+          contentTransMode,
+          `music_titles:${musicId}`,
+          music.title
+        )}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="sm">
         <Alert severity="warning">
@@ -357,115 +358,113 @@ const MusicDetail: React.FC<{
               variant="scrollable"
               scrollButtons="desktop"
             >
-              <Tab label="Short Version" value="0"></Tab>
-              <Tab label="Long Version" value="1"></Tab>
+              <Tab label={t("music:vocalTab.title[0]")} value="0"></Tab>
+              <Tab label={t("music:vocalTab.title[1]")} value="1"></Tab>
               {music.categories.includes("original") ||
               music.categories.includes("mv_2d") ? (
-                <Tab label="Music Video" value="2"></Tab>
+                <Tab label={t("music:vocalTab.title[2]")} value="2"></Tab>
               ) : null}
             </Tabs>
-            {VocalTypeSelector}
-            <TabPanel value="0">
-              {musicVocalTypes.length && musicVocal.length ? (
-                <Fragment>
+          </Paper>
+          {VocalTypeSelector}
+          <TabPanel value="0">
+            {musicVocalTypes.length && musicVocal.length ? (
+              <audio
+                controls
+                style={{ width: "100%" }}
+                src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/short/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}_short.mp3`}
+              ></audio>
+            ) : null}
+          </TabPanel>
+          <TabPanel value="1">
+            {musicVocalTypes.length && musicVocal.length ? (
+              <Fragment>
+                <Box
+                  style={{
+                    position: "relative",
+                    lineHeight: "0",
+                  }}
+                >
                   <audio
                     controls
-                    style={{ width: "100%" }}
-                    src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/short/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}_short.mp3`}
-                  ></audio>
-                </Fragment>
-              ) : null}
-            </TabPanel>
-            <TabPanel value="1">
-              {musicVocalTypes.length && musicVocal.length ? (
-                <Fragment>
-                  <Box
                     style={{
-                      position: "relative",
-                      lineHeight: "0",
+                      width: "100%",
+                      opacity: longMusicPlaybackURL ? undefined : "0.8",
                     }}
-                  >
-                    <audio
-                      controls
+                    src={longMusicPlaybackURL}
+                  ></audio>
+                  {longMusicPlaybackURL ? null : (
+                    <Box
+                      display="flex"
+                      justifyContent="center"
+                      alignItems="center"
                       style={{
+                        position: "absolute",
+                        left: "0",
+                        top: "0",
                         width: "100%",
-                        opacity: longMusicPlaybackURL ? undefined : "0.8",
+                        height: "100%",
+                        cursor: trimFailed ? "not-allowed" : "wait",
                       }}
-                      src={longMusicPlaybackURL}
-                    ></audio>
-                    {longMusicPlaybackURL ? null : (
-                      <Box
-                        display="flex"
-                        justifyContent="center"
-                        alignItems="center"
-                        style={{
-                          position: "absolute",
-                          left: "0",
-                          top: "0",
-                          width: "100%",
-                          height: "100%",
-                          cursor: trimFailed ? "not-allowed" : "wait",
-                        }}
-                      >
-                        {trimFailed ? null : <CircularProgress size={32} />}
-                      </Box>
-                    )}
-                  </Box>
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={trimSilence}
-                        onChange={() => setTrimSilence((v) => !v)}
-                      />
-                    }
-                    label={
-                      <Box display="flex" flexWrap="nowrap" alignItems="center">
-                        <Typography style={{ paddingRight: "0.2em" }}>
-                          {t("music:skipBeginningSilence")}
-                        </Typography>
-                        {trimFailed ? (
-                          // failed
-                          <Close style={{ color: theme.palette.error.main }} />
-                        ) : trimmedMP3URL ? (
-                          // success
-                          <Done style={{ color: theme.palette.success.main }} />
-                        ) : trimLoading ? (
-                          // loading
-                          <CircularProgress
-                            size="1em"
-                            style={{ marginLeft: "0.2em" }}
-                          />
-                        ) : null}
-                      </Box>
-                    }
-                  ></FormControlLabel>
-                </Fragment>
-              ) : null}
-            </TabPanel>
-            <TabPanel value="2">
-              {musicVocalTypes.length && musicVocal.length ? (
-                <Box>
-                  <MusicVideoPlayer
-                    audioPath={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`}
-                    videoPath={`${
-                      process.env.REACT_APP_ASSET_DOMAIN
-                    }/file/sekai-assets/live/2dmode/${
-                      music.categories.includes("original")
-                        ? "original_mv"
-                        : music.categories.includes("mv_2d")
-                        ? "sekai_mv"
-                        : ""
-                    }/${String(music.id).padStart(4, "0")}_rip/${String(
-                      music.id
-                    ).padStart(4, "0")}.mp4`}
-                    onPlay={() => setVocalDisabled(true)}
-                    onPause={() => setVocalDisabled(false)}
-                    onEnded={() => setVocalDisabled(false)}
-                  />
+                    >
+                      {trimFailed ? null : <CircularProgress size={32} />}
+                    </Box>
+                  )}
                 </Box>
-              ) : null}
-            </TabPanel>
-          </Paper>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={trimSilence}
+                      onChange={() => setTrimSilence((v) => !v)}
+                    />
+                  }
+                  label={
+                    <Box display="flex" flexWrap="nowrap" alignItems="center">
+                      <Typography style={{ paddingRight: "0.2em" }}>
+                        {t("music:skipBeginningSilence")}
+                      </Typography>
+                      {trimFailed ? (
+                        // failed
+                        <Close style={{ color: theme.palette.error.main }} />
+                      ) : trimmedMP3URL ? (
+                        // success
+                        <Done style={{ color: theme.palette.success.main }} />
+                      ) : trimLoading ? (
+                        // loading
+                        <CircularProgress
+                          size="1em"
+                          style={{ marginLeft: "0.2em" }}
+                        />
+                      ) : null}
+                    </Box>
+                  }
+                ></FormControlLabel>
+              </Fragment>
+            ) : null}
+          </TabPanel>
+          <TabPanel value="2">
+            {musicVocalTypes.length && musicVocal.length ? (
+              <Fragment>
+                <MusicVideoPlayer
+                  audioPath={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`}
+                  videoPath={`${
+                    process.env.REACT_APP_ASSET_DOMAIN
+                  }/file/sekai-assets/live/2dmode/${
+                    music.categories.includes("original")
+                      ? "original_mv"
+                      : music.categories.includes("mv_2d")
+                      ? "sekai_mv"
+                      : ""
+                  }/${String(music.id).padStart(4, "0")}_rip/${String(
+                    music.id
+                  ).padStart(4, "0")}.mp4`}
+                  onPlay={() => setVocalDisabled(true)}
+                  onPause={() => setVocalDisabled(false)}
+                  onEnded={() => setVocalDisabled(false)}
+                />
+              </Fragment>
+            ) : null}
+          </TabPanel>
         </TabContext>
 
         <Grid className={classes["grid-out"]} container direction="column">
@@ -489,16 +488,20 @@ const MusicDetail: React.FC<{
             justify="space-between"
             alignItems="center"
           >
-            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t("common:title")}
-            </Typography>
-            <Typography>
-              {contentTransMode === "original"
-                ? music.title
-                : contentTransMode === "translated"
-                ? assetT(`music_titles:${musicId}`, music.title)
-                : music.title}
-            </Typography>
+            <Grid item>
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                {t("common:title")}
+              </Typography>
+            </Grid>
+            <Grid item>
+              <ContentTrans
+                mode={contentTransMode}
+                contentKey={`music_titles:${musicId}`}
+                original={music.title}
+                originalProps={{ align: "right" }}
+                translatedProps={{ align: "right" }}
+              />
+            </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
           <Grid
@@ -537,7 +540,7 @@ const MusicDetail: React.FC<{
             </Typography>
             {music.categories.map((elem) => (
               <Typography key={`music-cat-${elem}`}>
-                {musicCategoryToName[elem] || elem}
+                {t(`music:category.${elem}`)}
               </Typography>
             ))}
           </Grid>
@@ -662,70 +665,48 @@ const MusicDetail: React.FC<{
                   ></Tab>
                 ))}
               </Tabs>
-              {musicVocal.map((elem, idx) => (
-                <TabPanel
-                  value={String(idx)}
-                  key={`vocal-info-tab-panel-${idx}`}
-                >
-                  <Grid container direction="column">
-                    <Grid
-                      item
-                      container
-                      direction="row"
-                      justify="space-between"
-                      alignItems="center"
-                    >
-                      <Typography
-                        variant="subtitle1"
-                        style={{ fontWeight: 600 }}
-                      >
-                        {t("common:character", {
-                          count: elem.characters.length,
-                        })}
-                      </Typography>
-                      <Grid item>{getVocalCharaIcons(idx)}</Grid>
-                    </Grid>
-                    <Divider style={{ margin: "1% 0" }} />
-                    <Grid
-                      item
-                      container
-                      direction="row"
-                      justify="space-between"
-                    >
-                      <Typography
-                        variant="subtitle1"
-                        style={{ fontWeight: 600 }}
-                      >
-                        {t("common:releaseCondition")}
-                      </Typography>
-                      <Typography>
-                        {
-                          releaseConds.find(
-                            (cond) => cond.id === elem.releaseConditionId
-                          )?.sentence
-                        }
-                      </Typography>
-                    </Grid>
-                    <Divider style={{ margin: "1% 0" }} />
-                    <Grid
-                      item
-                      container
-                      direction="row"
-                      justify="space-between"
-                    >
-                      <Typography
-                        variant="subtitle1"
-                        style={{ fontWeight: 600 }}
-                      >
-                        {t("music:vocalType")}
-                      </Typography>
-                      <Typography>{elem.musicVocalType}</Typography>
-                    </Grid>
-                    <Divider style={{ margin: "1% 0" }} />
-                  </Grid>
-                </TabPanel>
-              ))}
             </Paper>
+            {musicVocal.map((elem, idx) => (
+              <TabPanel value={String(idx)} key={`vocal-info-tab-panel-${idx}`}>
+                <Grid container direction="column">
+                  <Grid
+                    item
+                    container
+                    direction="row"
+                    justify="space-between"
+                    alignItems="center"
+                  >
+                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                      {t("common:character", {
+                        count: elem.characters.length,
+                      })}
+                    </Typography>
+                    <Grid item>{getVocalCharaIcons(idx)}</Grid>
+                  </Grid>
+                  <Divider style={{ margin: "1% 0" }} />
+                  <Grid item container direction="row" justify="space-between">
+                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                      {t("common:releaseCondition")}
+                    </Typography>
+                    <Typography>
+                      {
+                        releaseConds.find(
+                          (cond) => cond.id === elem.releaseConditionId
+                        )?.sentence
+                      }
+                    </Typography>
+                  </Grid>
+                  <Divider style={{ margin: "1% 0" }} />
+                  <Grid item container direction="row" justify="space-between">
+                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                      {t("music:vocalType")}
+                    </Typography>
+                    <Typography>{elem.musicVocalType}</Typography>
+                  </Grid>
+                  <Divider style={{ margin: "1% 0" }} />
+                </Grid>
+              </TabPanel>
+            ))}
           </TabContext>
         </Box>
         <Divider style={{ margin: "1% 0" }} />
@@ -757,69 +738,69 @@ const MusicDetail: React.FC<{
                     ></Tab>
                   ))}
               </Tabs>
-              {musicDiffis
-                .filter((elem) => elem.musicId === Number(musicId))
-                .map((elem, idx) => (
-                  <TabPanel
-                    value={String(idx)}
-                    key={`diffi-info-tab-panel-${idx}`}
-                  >
-                    <Grid container direction="column">
-                      <Grid
-                        item
-                        container
-                        direction="row"
-                        justify="space-between"
-                      >
-                        <Typography
-                          variant="subtitle1"
-                          style={{ fontWeight: 600 }}
-                        >
-                          {t("common:level")}
-                        </Typography>
-                        <Grid item>{elem.playLevel}</Grid>
-                      </Grid>
-                      <Divider style={{ margin: "1% 0" }} />
-                      <Grid
-                        item
-                        container
-                        direction="row"
-                        justify="space-between"
-                      >
-                        <Typography
-                          variant="subtitle1"
-                          style={{ fontWeight: 600 }}
-                        >
-                          {t("music:noteCount")}
-                        </Typography>
-                        <Grid item>{elem.noteCount}</Grid>
-                      </Grid>
-                      <Divider style={{ margin: "1% 0" }} />
-                      <Grid
-                        item
-                        container
-                        direction="row"
-                        justify="space-between"
-                      >
-                        <Typography
-                          variant="subtitle1"
-                          style={{ fontWeight: 600 }}
-                        >
-                          {t("common:releaseCondition")}
-                        </Typography>
-                        <Typography>
-                          {
-                            releaseConds.find(
-                              (cond) => cond.id === elem.releaseConditionId
-                            )?.sentence
-                          }
-                        </Typography>
-                      </Grid>
-                      {/* <Divider style={{ margin: "1% 0" }} /> */}
-                    </Grid>
-                  </TabPanel>
-                ))}
             </Paper>
+            {musicDiffis
+              .filter((elem) => elem.musicId === Number(musicId))
+              .map((elem, idx) => (
+                <TabPanel
+                  value={String(idx)}
+                  key={`diffi-info-tab-panel-${idx}`}
+                >
+                  <Grid container direction="column">
+                    <Grid
+                      item
+                      container
+                      direction="row"
+                      justify="space-between"
+                    >
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {t("common:level")}
+                      </Typography>
+                      <Grid item>{elem.playLevel}</Grid>
+                    </Grid>
+                    <Divider style={{ margin: "1% 0" }} />
+                    <Grid
+                      item
+                      container
+                      direction="row"
+                      justify="space-between"
+                    >
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {t("music:noteCount")}
+                      </Typography>
+                      <Grid item>{elem.noteCount}</Grid>
+                    </Grid>
+                    <Divider style={{ margin: "1% 0" }} />
+                    <Grid
+                      item
+                      container
+                      direction="row"
+                      justify="space-between"
+                    >
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {t("common:releaseCondition")}
+                      </Typography>
+                      <Typography>
+                        {
+                          releaseConds.find(
+                            (cond) => cond.id === elem.releaseConditionId
+                          )?.sentence
+                        }
+                      </Typography>
+                    </Grid>
+                    {/* <Divider style={{ margin: "1% 0" }} /> */}
+                  </Grid>
+                </TabPanel>
+              ))}
           </TabContext>
           <Divider style={{ margin: "1% 0" }} />
         </Box>

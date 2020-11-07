@@ -73,11 +73,13 @@ export const CharaNameTrans: React.FC<{
       case "translated":
         return ["zh-CN", "zh-TW", "ko", "ja"].includes(assetI18n.language) ? (
           <Typography {...translatedProps}>
-            {assetT(
-              `character_name:${characterId}.firstName`,
-              chara.firstName,
-              assetTOptions
-            )}{" "}
+            {chara.firstName
+              ? assetT(
+                  `character_name:${characterId}.firstName`,
+                  chara.firstName,
+                  assetTOptions
+                )
+              : ""}{" "}
             {assetT(
               `character_name:${characterId}.givenName`,
               chara.givenName,
@@ -91,11 +93,13 @@ export const CharaNameTrans: React.FC<{
               chara.givenName,
               assetTOptions
             )}{" "}
-            {assetT(
-              `character_name:${characterId}.firstName`,
-              chara.firstName,
-              assetTOptions
-            )}
+            {chara.firstName
+              ? assetT(
+                  `character_name:${characterId}.firstName`,
+                  chara.firstName,
+                  assetTOptions
+                )
+              : ""}
           </Typography>
         );
       case "both":
@@ -106,11 +110,13 @@ export const CharaNameTrans: React.FC<{
             </Typography>
             {["zh-CN", "zh-TW", "ko", "ja"].includes(assetI18n.language) ? (
               <Typography color="textSecondary" {...translatedProps}>
-                {assetT(
-                  `character_name:${characterId}.firstName`,
-                  chara.firstName,
-                  assetTOptions
-                )}{" "}
+                {chara.firstName
+                  ? assetT(
+                      `character_name:${characterId}.firstName`,
+                      chara.firstName,
+                      assetTOptions
+                    )
+                  : ""}{" "}
                 {assetT(
                   `character_name:${characterId}.givenName`,
                   chara.givenName,
@@ -124,11 +130,13 @@ export const CharaNameTrans: React.FC<{
                   chara.givenName,
                   assetTOptions
                 )}{" "}
-                {assetT(
-                  `character_name:${characterId}.firstName`,
-                  chara.firstName,
-                  assetTOptions
-                )}
+                {chara.firstName
+                  ? assetT(
+                      `character_name:${characterId}.firstName`,
+                      chara.firstName,
+                      assetTOptions
+                    )
+                  : ""}
               </Typography>
             )}
           </Grid>
