@@ -1,5 +1,11 @@
 {
+  "vocal": "Vocal",
   "alert[0]": "Os primeiros <b>nove segundos </b> de todas as músicas não tem som. Isso NÃO é um bug.",
+  "vocalTab": {
+    "title[0]": "",
+    "title[1]": "",
+    "title[2]": ""
+  },
   "skipBeginningSilence": "Pular os 9 segundos de silêncio",
   "tag": "Tag",
   "tag_plural": "Tags",
@@ -12,7 +18,6 @@
   "danceMember": "Membro de Dança",
   "danceMember_plural": "Membros de Dança",
   "dancerCount": "Dançarinos",
-  "vocal": "Vocal",
   "vocal_plural": "Vocais",
   "vocalType": "Tipo de Vocal",
   "difficulty": "Dificuldade",

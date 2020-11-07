@@ -6,7 +6,6 @@
   "event": "活动",
   "stamp": "贴纸",
   "comic": "漫画",
-  "member": "成员",
   "character": "角色",
   "musicMeta": "歌曲Meta",
   "scoreCalculator": "分数计算器",
@@ -54,7 +53,8 @@
   "campaign": "纪念活动",
   "bug": "问题",
   "update": "更新",
-  "character_plural": "角色",
+  "profile": "角色资料",
   "level": "等级",
-  "profile": "角色资料"
+  "member": "成员",
+  "character_plural": "角色"
 }

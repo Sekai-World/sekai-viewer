@@ -6,7 +6,6 @@
   "event": "Ивенты",
   "stamp": "Штампы",
   "comic": "Ёнкомы",
-  "member": "Участники",
   "character": "Персонаж",
   "musicMeta": "Мета песен",
   "scoreCalculator": "Калькулятор счёта",
@@ -54,6 +53,11 @@
   "campaign": "Компания",
   "bug": "Баги",
   "update": "Обновления",
-  "character_plural": "Персонажи",
-  "level": "Уровень"
+  "profile": "",
+  "character_0": "",
+  "character_1": "",
+  "character_2": "",
+  "level": "Уровень",
+  "member": "Участники",
+  "character_plural": "Персонажи"
 }

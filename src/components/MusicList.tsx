@@ -245,7 +245,7 @@ const MusicList: React.FC<{}> = () => {
                 <Grid item>
                   <Typography variant="body2" color="textSecondary">
                     {data.categories
-                      .map((cat) => t(`music:category.${cat}`))
+                      .map((cat) => t(`music:categoryType.${cat}`))
                       .join(", ")}
                   </Typography>
                 </Grid>
@@ -349,7 +349,7 @@ const MusicList: React.FC<{}> = () => {
                   <Grid item>
                     <Typography variant="body2" color="textSecondary">
                       {data.categories
-                        .map((cat) => t(`music:category.${cat}`))
+                        .map((cat) => t(`music:categoryType.${cat}`))
                         .join(", ")}
                     </Typography>
                   </Grid>

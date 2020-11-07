@@ -1,5 +1,11 @@
 {
+  "vocal": "보컬",
   "alert[0]": "모든 음악의 처음 <b>9초</b> 동안은 아무 소리도 나지 않습니다. 버그가 아니예요!",
+  "vocalTab": {
+    "title[0]": "",
+    "title[1]": "",
+    "title[2]": ""
+  },
   "skipBeginningSilence": "",
   "tag": "태그",
   "category": "카테고리",
@@ -9,7 +15,6 @@
   "lyricist": "작사",
   "danceMember": "댄스 멤버",
   "dancerCount": "댄스 멤버 수",
-  "vocal": "보컬",
   "vocalType": "보컬 타입",
   "difficulty": "난이도",
   "noteCount": "노트 수",

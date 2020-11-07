@@ -1,5 +1,11 @@
 {
+  "vocal": "ボーカル",
   "alert[0]": "全ての曲の最初の<b>9秒</b>は無音です.これはバグではありません.",
+  "vocalTab": {
+    "title[0]": "",
+    "title[1]": "",
+    "title[2]": ""
+  },
   "skipBeginningSilence": "冒頭の無音部分を飛ばす",
   "tag": "タグ",
   "category": "カテゴリー",
@@ -9,7 +15,6 @@
   "lyricist": "作詞",
   "danceMember": "ダンサー",
   "dancerCount": "ダンサーの人数",
-  "vocal": "ボーカル",
   "vocalType": "ボーカルタイプ",
   "difficulty": "難易度",
   "noteCount": "ノーツ数",
