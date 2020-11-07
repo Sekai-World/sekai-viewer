@@ -7,6 +7,7 @@ import { HashRouter as Router } from "react-router-dom";
 import "./modernizr-custom";
 import { initGlobalI18n } from "./utils/i18n";
 import "./index.css";
+import { SettingProvider } from "./context";
 
 initGlobalI18n();
 
@@ -14,7 +15,9 @@ ReactDOM.render(
   <React.StrictMode>
     <Router>
       <Suspense fallback="loading">
-        <App />
+        <SettingProvider>
+          <App />
+        </SettingProvider>
       </Suspense>
     </Router>
   </React.StrictMode>,

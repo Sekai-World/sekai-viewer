@@ -1,3 +1,6 @@
+export type ContentTransModeType = "original" | "translated" | "both";
+export type DisplayModeType = "dark" | "light" | "auto";
+
 export interface GachaDetail {
   id: number;
   gachaId: number;
@@ -418,8 +421,6 @@ export interface ICardEpisode {
   costs: Cost[];
   cardEpisodePartType: string;
 }
-
-export type ContentTransModeType = "original" | "translated" | "both";
 
 export interface IStampInfo {
   id: number;
