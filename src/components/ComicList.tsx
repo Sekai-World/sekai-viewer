@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
 import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
 import { useLayoutStyles } from "../styles/layout";
-import { ContentTransModeType, ITipInfo, ITipInfoComic } from "../types";
+import { ITipInfo, ITipInfoComic } from "../types";
 import { useCachedData, useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
@@ -33,9 +33,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ComicList: React.FC<{
-  contentTransMode: ContentTransModeType;
-}> = ({ contentTransMode }) => {
+const ComicList: React.FC<{}> = () => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
@@ -139,12 +137,14 @@ const ComicList: React.FC<{
     }
     const imageURL = `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/comic/one_frame_rip/${data.assetbundleName}.webp`;
     return (
-      <Card className={classes.card}>
+      <Card
+        className={classes.card}
+        onClick={() => {
+          setActiveIdx(index!);
+          setVisible(true);
+        }}
+      >
         <CardMedia
-          onClick={() => {
-            setActiveIdx(index!);
-            setVisible(true);
-          }}
           className={classes.media}
           image={imageURL}
           title={data.title}

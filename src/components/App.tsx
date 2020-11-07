@@ -52,7 +52,7 @@ import {
   CalendarText,
   StickerEmoji,
 } from "mdi-material-ui";
-import React, { forwardRef, useMemo, lazy, Suspense } from "react";
+import React, { forwardRef, useMemo, lazy, Suspense, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Link,
@@ -62,8 +62,8 @@ import {
   useHistory,
   useRouteMatch,
 } from "react-router-dom";
-import { ContentTransModeType } from "../types";
-import { useAssetI18n } from "../utils/i18n";
+import { SettingContext } from "../context";
+import { ContentTransModeType, DisplayModeType } from "../types";
 import UnitDetail from "./UnitDetail";
 
 const drawerWidth = 240;
@@ -141,7 +141,6 @@ function ListItemLink(
     path: to,
     exact: to === "/",
   });
-  // const theme = useTheme();
 
   const renderLink = useMemo(
     () =>
@@ -183,8 +182,7 @@ function ListItemLink(
 }
 
 function App() {
-  const { t, i18n } = useTranslation();
-  const { assetI18n } = useAssetI18n();
+  const { t } = useTranslation();
 
   const leftBtns: IListItemLinkProps[][] = [
     [
@@ -258,32 +256,26 @@ function App() {
       },
     ],
   ];
-  // const theme = useTheme();
+
   const classes = useStyles();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
-  const [lang, setLang] = React.useState(i18n.language);
   const [sidebarExpansionStates, setSidebarExpansionStates] = React.useState([
     true,
     true,
   ]);
+  const {
+    lang,
+    displayMode,
+    contentTransMode,
+    updateLang,
+    updateDisplayMode,
+    updateContentTransMode,
+  } = useContext(SettingContext)!;
 
   const { goBack } = useHistory();
 
   const preferDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
-  const [displayMode, setDisplayMode] = React.useState<
-    "dark" | "light" | "auto"
-  >(
-    (localStorage.getItem("display-mode") as "dark" | "light" | "auto") ||
-      "auto"
-  );
-  const [contentTransMode, setContentTransMode] = React.useState<
-    ContentTransModeType
-  >(
-    (localStorage.getItem(
-      "content-translation-mode"
-    ) as ContentTransModeType) || "translated"
-  );
 
   const theme = React.useMemo(
     () =>
@@ -442,43 +434,43 @@ function App() {
                 <HomeView />
               </Route>
               <Route path="/card" exact>
-                <CardList contentTransMode={contentTransMode} />
+                <CardList />
               </Route>
               <Route path="/card/:cardId(\d+)">
-                <CardDetail contentTransMode={contentTransMode} />
+                <CardDetail />
               </Route>
               <Route path="/music" exact>
-                <MusicList contentTransMode={contentTransMode} />
+                <MusicList />
               </Route>
               <Route path="/music/:musicId(\d+)">
-                <MusicDetail contentTransMode={contentTransMode} />
+                <MusicDetail />
               </Route>
               <Route path="/gacha" exact>
-                <GachaList contentTransMode={contentTransMode} />
+                <GachaList />
               </Route>
               <Route path="/gacha/:gachaId">
-                <GachaDetail contentTransMode={contentTransMode} />
+                <GachaDetail />
               </Route>
               <Route path="/event" exact>
-                <EventList contentTransMode={contentTransMode} />
+                <EventList />
               </Route>
               <Route path="/event/:eventId">
-                <EventDetail contentTransMode={contentTransMode} />
+                <EventDetail />
               </Route>
               <Route path="/stamp">
-                <StampList contentTransMode={contentTransMode} />
+                <StampList />
               </Route>
               <Route path="/comic">
-                <ComicList contentTransMode={contentTransMode} />
+                <ComicList />
               </Route>
               <Route path="/chara" exact>
-                <MemberList contentTransMode={contentTransMode} />
+                <MemberList />
               </Route>
               <Route path="/chara/:charaId">
-                <MemberDetail contentTransMode={contentTransMode} />
+                <MemberDetail />
               </Route>
               <Route path="/unit/:unitId">
-                <UnitDetail contentTransMode={contentTransMode} />
+                <UnitDetail />
               </Route>
             </Suspense>
           </Switch>
@@ -492,11 +484,7 @@ function App() {
                 row
                 aria-label="language"
                 value={lang}
-                onChange={(e, v) => {
-                  setLang(v);
-                  i18n.changeLanguage(v);
-                  assetI18n.changeLanguage(v);
-                }}
+                onChange={(e, v) => updateLang(v)}
               >
                 <FormControlLabel
                   value="en"
@@ -551,10 +539,7 @@ function App() {
                 row
                 aria-label="dark mode"
                 value={displayMode}
-                onChange={(e, v) => {
-                  setDisplayMode(v as "dark" | "light" | "auto");
-                  localStorage.setItem("display-mode", v);
-                }}
+                onChange={(e, v) => updateDisplayMode(v as DisplayModeType)}
               >
                 <FormControlLabel
                   value="dark"
@@ -581,10 +566,9 @@ function App() {
                 row
                 aria-label="show translated"
                 value={contentTransMode}
-                onChange={(e, v) => {
-                  setContentTransMode(v as "original" | "translated" | "both");
-                  localStorage.setItem("content-translation-mode", v);
-                }}
+                onChange={(e, v) =>
+                  updateContentTransMode(v as ContentTransModeType)
+                }
               >
                 <FormControlLabel
                   value="original"
@@ -600,7 +584,6 @@ function App() {
                   value="both"
                   control={<Radio />}
                   label={t("common:contentTranslationMode.both")}
-                  disabled
                 ></FormControlLabel>
               </RadioGroup>
             </FormControl>

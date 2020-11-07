@@ -19,15 +19,17 @@ import { FilterOutline, Filter } from "mdi-material-ui";
 import React, {
   Fragment,
   useCallback,
+  useContext,
   useEffect,
   useReducer,
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
+import { SettingContext } from "../context";
 import { characterSelectReducer } from "../stores/reducers";
 import { useInteractiveStyles } from "../styles/interactive";
 import { useLayoutStyles } from "../styles/layout";
-import { ContentTransModeType, IStampInfo } from "../types";
+import { IStampInfo } from "../types";
 import { useCachedData, useCharaName, useRefState } from "../utils";
 import { charaIcons } from "../utils/resources";
 import InfiniteScroll from "./subs/InfiniteScroll";
@@ -49,13 +51,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const StampList: React.FC<{
-  contentTransMode: ContentTransModeType;
-}> = ({ contentTransMode }) => {
+const StampList: React.FC<{}> = () => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
+  const { contentTransMode } = useContext(SettingContext)!;
   const getCharaName = useCharaName(contentTransMode);
 
   const [stampsCache] = useCachedData<IStampInfo>("stamps");

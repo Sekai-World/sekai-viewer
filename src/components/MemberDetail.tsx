@@ -11,13 +11,12 @@ import {
   Typography,
 } from "@material-ui/core";
 import { TabContext, TabPanel } from "@material-ui/lab";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import { useLayoutStyles } from "../styles/layout";
 import {
-  ContentTransModeType,
   IGameChara,
   ICharaUnitInfo,
   ICharaProfile,
@@ -28,7 +27,8 @@ import { useCachedData, useCharaName } from "../utils";
 import { UnitLogoMap } from "../utils/resources";
 import { CardThumb } from "./subs/CardThumb";
 import ColorPreview from "./subs/ColorPreview";
-// import { useAssetI18n } from "../utils/i18n";
+import { SettingContext } from "../context";
+import { CharaNameTrans, ContentTrans } from "./subs/ContentTrans";
 
 const useStyle = makeStyles((theme) => ({
   tabpanel: {
@@ -58,14 +58,12 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-const MemberDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
-  contentTransMode,
-}) => {
+const MemberDetail: React.FC<{}> = () => {
   const { charaId } = useParams<{ charaId: string }>();
   const classes = useStyle();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
-  // const { assetT } = useAssetI18n();
+  const { contentTransMode } = useContext(SettingContext)!;
   const getCharaName = useCharaName(contentTransMode);
 
   const [cards] = useCachedData<ICardInfo>("cards");
@@ -173,12 +171,7 @@ const MemberDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
               </Card>
             </TabPanel>
             <TabPanel value="1" classes={{ root: classes.tabpanel }}>
-              <Card
-              // onClick={() => {
-              //   setActiveIdx(0);
-              //   setVisible(true);
-              // }}
-              >
+              <Card>
                 <CardMedia
                   classes={{ root: classes.nameLabel }}
                   image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/label_rip/chr_h_lb_${charaId}.webp`}
@@ -186,12 +179,7 @@ const MemberDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
               </Card>
             </TabPanel>
             <TabPanel value="2" classes={{ root: classes.tabpanel }}>
-              <Card
-              // onClick={() => {
-              //   setActiveIdx(0);
-              //   setVisible(true);
-              // }}
-              >
+              <Card>
                 <CardMedia
                   classes={{ root: classes.nameVerticalLabel }}
                   image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/label_vertical_rip/chr_v_lb_${charaId}.webp`}
@@ -221,10 +209,19 @@ const MemberDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
             justify="space-between"
             alignItems="center"
           >
-            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t("member:name")}
-            </Typography>
-            <Typography>{getCharaName(chara.id)}</Typography>
+            <Grid item>
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                {t("member:name")}
+              </Typography>
+            </Grid>
+            <Grid item>
+              <CharaNameTrans
+                mode={contentTransMode}
+                characterId={Number(charaId)}
+                originalProps={{ align: "right" }}
+                translatedProps={{ align: "right" }}
+              />
+            </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
           <Grid
@@ -332,7 +329,15 @@ const MemberDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                   </Grid>
                   <Grid item xs={6} md={8}>
                     <Grid container justify="flex-end">
-                      <Typography>{charaProfile[key as "height"]}</Typography>
+                      <Grid item>
+                        <ContentTrans
+                          mode={contentTransMode}
+                          contentKey={`character_profile:${charaId}.${key}`}
+                          original={charaProfile[key as "height"]}
+                          originalProps={{ align: "right" }}
+                          translatedProps={{ align: "right" }}
+                        />
+                      </Grid>
                     </Grid>
                   </Grid>
                 </Grid>

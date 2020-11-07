@@ -14,13 +14,18 @@ import { useLayoutStyles } from "../styles/layout";
 import { TabContext, TabPanel } from "@material-ui/lab";
 import { CronJob } from "cron";
 import moment from "moment";
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
 import {
-  ContentTransModeType,
   EventRankingRewardRange,
   IEventDeckBonus,
   IEventInfo,
@@ -32,6 +37,8 @@ import { useCachedData, useRealtimeEventData } from "../utils";
 import { attrIconMap, charaIcons, degreeFrameMap } from "../utils/resources";
 import { useAssetI18n } from "../utils/i18n";
 import { useDurationI18n } from "../utils/i18nDuration";
+import { SettingContext } from "../context";
+import { ContentTrans } from "./subs/ContentTrans";
 
 const useStyle = makeStyles((theme) => ({
   bannerImg: {
@@ -49,14 +56,13 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-const EventDetail: React.FC<{
-  contentTransMode: ContentTransModeType;
-}> = ({ contentTransMode }) => {
+const EventDetail: React.FC<{}> = () => {
   const { t, i18n } = useTranslation();
   const { eventId } = useParams<{ eventId: string }>();
   const classes = useStyle();
   const layoutClasses = useLayoutStyles();
-  const { assetT } = useAssetI18n();
+  const { getTranslated } = useAssetI18n();
+  const { contentTransMode } = useContext(SettingContext)!;
   const [humanizeDuration] = useDurationI18n();
 
   const [events] = useCachedData<IEventInfo>("events");
@@ -80,15 +86,16 @@ const EventDetail: React.FC<{
 
   useEffect(() => {
     if (event) {
-      const name =
-        contentTransMode === "translated"
-          ? assetT(`event_name:${eventId}`, event.name)
-          : event.name;
+      const name = getTranslated(
+        contentTransMode,
+        `event_name:${eventId}`,
+        event.name
+      );
       document.title = t("title:eventDetail", {
         name,
       });
     }
-  }, [event, eventId, contentTransMode, assetT, t]);
+  }, [event, eventId, contentTransMode, getTranslated, t]);
 
   useEffect(() => {
     if (events.length && eventDeckBonuses.length) {
@@ -306,11 +313,7 @@ const EventDetail: React.FC<{
   return event && eventDeckBonus.length && gameCharacterUnits.length ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
-        {contentTransMode === "original"
-          ? event.name
-          : contentTransMode === "translated"
-          ? assetT(`event_name:${eventId}`, event.name)
-          : event.name}
+        {getTranslated(contentTransMode, `event_name:${eventId}`, event.name)}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="sm">
         <TabContext value={imgTabVal}>
@@ -415,16 +418,22 @@ const EventDetail: React.FC<{
             justify="space-between"
             alignItems="center"
           >
-            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t("common:title")}
-            </Typography>
-            <Typography>
-              {contentTransMode === "original"
-                ? event.name
-                : contentTransMode === "translated"
-                ? assetT(`event_name:${eventId}`, event.name)
-                : event.name}
-            </Typography>
+            <Grid item>
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                {t("common:title")}
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Grid container direction="column" spacing={1}>
+                <ContentTrans
+                  mode={contentTransMode}
+                  contentKey={`event_name:${eventId}`}
+                  original={event.name}
+                  originalProps={{ align: "right" }}
+                  translatedProps={{ align: "right" }}
+                />
+              </Grid>
+            </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
           <Grid

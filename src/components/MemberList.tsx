@@ -3,7 +3,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
 import { useLayoutStyles } from "../styles/layout";
-import { ContentTransModeType, IGameChara, IUnitProfile } from "../types";
+import { IGameChara, IUnitProfile } from "../types";
 import { useCachedData } from "../utils";
 import { UnitLogoMap } from "../utils/resources";
 
@@ -20,9 +20,7 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-const MemberList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
-  contentTransMode,
-}) => {
+const MemberList: React.FC<{}> = () => {
   const classes = useStyle();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();

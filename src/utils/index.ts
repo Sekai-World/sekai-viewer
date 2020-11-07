@@ -182,6 +182,25 @@ export function useCharaName(contentTransMode: ContentTransModeType) {
                   `character_name:${charaId}.firstName`,
                   chara.firstName
                 )}`;
+          case "both":
+            return (
+              `${chara.firstName} ${chara.givenName} | ` +
+              (["zh-CN", "zh-TW", "ko", "ja"].includes(assetI18n.language)
+                ? `${assetT(
+                    `character_name:${charaId}.firstName`,
+                    chara.firstName
+                  )} ${assetT(
+                    `character_name:${charaId}.givenName`,
+                    chara.givenName
+                  )}`
+                : `${assetT(
+                    `character_name:${charaId}.givenName`,
+                    chara.givenName
+                  )} ${assetT(
+                    `character_name:${charaId}.firstName`,
+                    chara.firstName
+                  )}`)
+            );
         }
       }
       return chara?.givenName;

@@ -6,21 +6,17 @@ import {
   Paper,
   Typography,
 } from "@material-ui/core";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
+import { SettingContext } from "../context";
 import { useLayoutStyles } from "../styles/layout";
-import {
-  ContentTransModeType,
-  IGameChara,
-  IMusicInfo,
-  IMusicTagInfo,
-  IUnitProfile,
-} from "../types";
+import { IGameChara, IMusicInfo, IMusicTagInfo, IUnitProfile } from "../types";
 import { useCachedData, useCharaName } from "../utils";
 import { useAssetI18n } from "../utils/i18n";
 import { charaIcons, UnitLogoMap } from "../utils/resources";
 import ColorPreview from "./subs/ColorPreview";
+import { CharaNameTrans, ContentTrans } from "./subs/ContentTrans";
 
 const useStyle = makeStyles((theme) => ({
   tabpanel: {
@@ -51,14 +47,13 @@ const unitIdTagMap: { [key: string]: string } = {
   piapro: "vocaloid",
 };
 
-const UnitDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
-  contentTransMode,
-}) => {
+const UnitDetail: React.FC<{}> = () => {
   const { unitId } = useParams<{ unitId: string }>();
   const classes = useStyle();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
-  const { assetT } = useAssetI18n();
+  const { getTranslated } = useAssetI18n();
+  const { contentTransMode } = useContext(SettingContext)!;
   const getCharaName = useCharaName(contentTransMode);
 
   const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
@@ -99,7 +94,11 @@ const UnitDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   return unit ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
-        {unit.unitName}
+        {getTranslated(
+          contentTransMode,
+          `unit_profile:${unit.unit}.name`,
+          unit.unitName
+        )}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="sm">
         <div style={{ textAlign: "center" }}>
@@ -137,7 +136,11 @@ const UnitDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
             </Grid>
             <Grid item xs={6} md={8}>
               <Grid container justify="flex-end">
-                <Typography>{unit.profileSentence}</Typography>
+                <ContentTrans
+                  mode={contentTransMode}
+                  contentKey={`unit_profile:${unit.unit}.profileSentence`}
+                  original={unit.profileSentence}
+                />
               </Grid>
             </Grid>
           </Grid>
@@ -198,13 +201,18 @@ const UnitDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                         </Grid>
                       </Grid>
                       <Grid item>
-                        <Typography
-                          variant="subtitle1"
-                          style={{ fontWeight: 600 }}
-                          color="textPrimary"
-                        >
-                          {getCharaName(uc.id)}
-                        </Typography>
+                        <CharaNameTrans
+                          mode={contentTransMode}
+                          characterId={uc.id}
+                          originalProps={{
+                            variant: "subtitle1",
+                            style: { fontWeight: 600 },
+                          }}
+                          translatedProps={{
+                            variant: "subtitle2",
+                            align: "center",
+                          }}
+                        />
                       </Grid>
                     </Grid>
                   </Paper>
@@ -247,18 +255,20 @@ const UnitDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                         </Grid>
                       </Grid>
                       <Grid item>
-                        <Typography
-                          variant="subtitle1"
-                          style={{ fontWeight: 600 }}
-                          color="textPrimary"
-                          align="center"
-                        >
-                          {contentTransMode === "original"
-                            ? um.title
-                            : contentTransMode === "translated"
-                            ? assetT(`music_titles:${um.id}`, um.title)
-                            : um.title}
-                        </Typography>
+                        <ContentTrans
+                          mode={contentTransMode}
+                          contentKey={`music_titles:${um.id}`}
+                          original={um.title}
+                          originalProps={{
+                            variant: "subtitle1",
+                            style: { fontWeight: 600 },
+                            align: "center",
+                          }}
+                          translatedProps={{
+                            variant: "subtitle2",
+                            align: "center",
+                          }}
+                        />
                       </Grid>
                     </Grid>
                   </Paper>
