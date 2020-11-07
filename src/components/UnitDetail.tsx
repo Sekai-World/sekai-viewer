@@ -207,6 +207,7 @@ const UnitDetail: React.FC<{}> = () => {
                           originalProps={{
                             variant: "subtitle1",
                             style: { fontWeight: 600 },
+                            align: "center",
                           }}
                           translatedProps={{
                             variant: "subtitle2",
