@@ -178,7 +178,7 @@ function Home() {
     {
       field: "startAt",
       headerName: t("home:game-news.show-from"),
-      width: 180,
+      width: 200,
       valueFormatter: (params: ValueFormatterParams) =>
         new Date(params.getValue("startAt") as number).toLocaleString(),
       sortDirection: "desc",
@@ -186,13 +186,13 @@ function Home() {
     {
       field: "title",
       headerName: t("home:game-news.title-column"),
-      width: isUpMd ? 400 : 150,
+      width: isUpMd ? 600 : 150,
       sortable: false,
     },
     {
       field: "endAt",
       headerName: t("home:game-news.show-until"),
-      width: 180,
+      width: 200,
       valueFormatter: (params: ValueFormatterParams) =>
         new Date(params.getValue("startAt") as number).toLocaleString(),
     },
