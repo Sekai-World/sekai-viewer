@@ -347,7 +347,7 @@ function Home() {
             <Tab label={t("common:music")} value="music"></Tab>
             <Tab label={t("common:campaign")} value="campaign"></Tab>
             <Tab label={t("common:bug")} value="bug"></Tab>
-            <Tab label={t("common:update")} value="update"></Tab>
+            <Tab label={t("home:update")} value="update"></Tab>
           </Tabs>
         </Paper>
         <div style={{ height: 650 }}>
