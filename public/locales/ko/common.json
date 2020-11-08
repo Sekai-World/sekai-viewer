@@ -52,9 +52,9 @@
   "support": "지원",
   "campaign": "캠페인",
   "bug": "버그",
-  "update": "업데이트",
-  "profile": "",
+  "update": "관련 사이트",
+  "profile": "프로필",
+  "character_plural": "캐릭터",
   "level": "레벨",
-  "member": "멤버",
-  "character_plural": "캐릭터"
+  "member": "캐릭터"
 }

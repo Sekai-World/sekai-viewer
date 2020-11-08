@@ -53,8 +53,8 @@
   "campaign": "キャンペーン",
   "bug": "バグ",
   "update": "アップデート",
-  "profile": "",
+  "profile": "プロフィール",
+  "character_plural": "キャラクター",
   "level": "レベル",
-  "member": "メンバー",
-  "character_plural": "キャラクター"
+  "member": "キャラクター"
 }
