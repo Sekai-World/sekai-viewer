@@ -44,7 +44,7 @@ import rarityNormal from "../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../assets/rarity_star_afterTraining.png";
 
 import { CardThumb } from "./subs/CardThumb";
-import { attrIconMap, UnitLogoMap } from "../utils/resources";
+import { attrIconMap, UnitLogoMiniMap } from "../utils/resources";
 import { useTranslation } from "react-i18next";
 import MaterialIcon from "./subs/MaterialIcon";
 import CommonMaterialIcon from "./subs/CommonMaterialIcon";
@@ -188,7 +188,7 @@ const CardDetail: React.FC<{}> = () => {
   const getCharaUnitImage = useCallback(
     (charaId: number) => {
       const chara = charas.find((chara) => chara.id === charaId);
-      return chara ? UnitLogoMap[chara!.unit] : undefined;
+      return chara ? UnitLogoMiniMap[chara!.unit] : undefined;
     },
     [charas]
   );
@@ -478,7 +478,7 @@ const CardDetail: React.FC<{}> = () => {
                 <Grid item>
                   <Link to={"/unit/" + getCharaUnitName(card.characterId)}>
                     <img
-                      className={classes["unit-logo-img"]}
+                      className={classes["rarity-star-img"]}
                       src={getCharaUnitImage(card.characterId)}
                       alt={getCharaUnitName(card.characterId)}
                     ></img>
@@ -525,8 +525,8 @@ const CardDetail: React.FC<{}> = () => {
                     <Grid item>
                       <Link to={"/unit/" + card.supportUnit}>
                         <img
-                          className={classes["unit-logo-img"]}
-                          src={UnitLogoMap[card.supportUnit]}
+                          className={classes["rarity-star-img"]}
+                          src={UnitLogoMiniMap[card.supportUnit]}
                           alt={card.supportUnit}
                         ></img>
                       </Link>

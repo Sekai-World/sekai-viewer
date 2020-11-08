@@ -58,6 +58,13 @@ import LogoSchoolRefusal from "../assets/common/logol_outline/logo_school_refusa
 import LogoStreet from "../assets/common/logol_outline/logo_street.png";
 import LogoThemePark from "../assets/common/logol_outline/logo_theme_park.png";
 
+import LogoMiniLightSound from "../assets/common/logo_mini/unit_ts_1_penlight.png";
+import LogoMiniIdol from "../assets/common/logo_mini/unit_ts_2_penlight.png";
+import LogoMiniStreet from "../assets/common/logo_mini/unit_ts_3_penlight.png";
+import LogoMiniThemePark from "../assets/common/logo_mini/unit_ts_4_penlight.png";
+import LogoMiniSchoolRefusal from "../assets/common/logo_mini/unit_ts_5_penlight.png";
+import LogoMiniPiapro from "../assets/common/logo_mini/unit_ts_6_penlight.png";
+
 export const charaIcons: { [key: string]: string } = {
   CharaIcon1,
   CharaIcon2,
@@ -130,4 +137,13 @@ export const UnitLogoMap: { [key: string]: string } = {
   school_refusal: LogoSchoolRefusal,
   street: LogoStreet,
   theme_park: LogoThemePark,
+};
+
+export const UnitLogoMiniMap: { [key: string]: string } = {
+  idol: LogoMiniIdol,
+  light_sound: LogoMiniLightSound,
+  piapro: LogoMiniPiapro,
+  school_refusal: LogoMiniSchoolRefusal,
+  street: LogoMiniStreet,
+  theme_park: LogoMiniThemePark,
 };
