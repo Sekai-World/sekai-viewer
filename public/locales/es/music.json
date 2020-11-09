@@ -2,9 +2,9 @@
   "vocal": "Voz",
   "alert[0]": "Los primeros <b>nueve segundos</b> de cada música no tienen sonido. NO es un error. ",
   "vocalTab": {
-    "title[0]": "Short version",
-    "title[1]": "Long version",
-    "title[2]": "Music video"
+    "title[0]": "Versión corta",
+    "title[1]": "Versión larga",
+    "title[2]": "Vídeo musical"
   },
   "skipBeginningSilence": "Saltar el inicio silencioso",
   "tag": "Etiqueta",
@@ -14,8 +14,8 @@
   "categoryType": {
     "mv": "3D MV",
     "mv_2d": "2D MV",
-    "original": "Original MV",
-    "image": "Static Image"
+    "original": "MV Original",
+    "image": "Imagen estática"
   },
   "actualPlaybackTime": "Tiempo real de reproducción",
   "arranger": "Arreglista",

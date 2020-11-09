@@ -23,5 +23,6 @@
   },
   "detect": {
     "success": "¡Felicidades! Tu navegador parece moderno, puedes cargar imágenes más rápido y ahorrar banda ancha."
-  }
+  },
+  "update": "Related Links"
 }
