@@ -1,5 +1,6 @@
 import React, { Suspense } from "react";
 import ReactDOM from "react-dom";
+import TagManager from "react-gtm-module";
 
 import App from "./components/App";
 import * as serviceWorker from "./serviceWorker";
@@ -10,6 +11,9 @@ import "./index.css";
 import { SettingProvider } from "./context";
 
 initGlobalI18n();
+TagManager.initialize({
+  gtmId: "GTM-NFC6SW2",
+});
 
 ReactDOM.render(
   <React.StrictMode>
