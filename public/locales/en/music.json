@@ -1,5 +1,5 @@
 {
-  "alert[0]": "The first <b>nine seconds</b> of every music have no sound. That's NOT a bug.",
+  "alert[0]": "The first <b>nine seconds</b> of every song have no sound. This is NOT a bug.",
   "skipBeginningSilence": "Skip beginning silence",
   "tag": "Tag",
   "tag_plural": "Tags",

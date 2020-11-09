@@ -8,8 +8,8 @@
   },
   "normalRate": "Normal Roll Rate",
   "guaranteedRate": "Guaranteed Roll Rate",
-  "pickupMember": "Pickup Member",
-  "pickupMember_plural": "Pickup Members",
+  "pickupMember": "Pick-up Member",
+  "pickupMember_plural": "Pick-up Members",
   "gachaType": {
     "ceil": "Ceiling",
     "normal": "Normal"
