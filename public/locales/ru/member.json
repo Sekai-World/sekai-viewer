@@ -1,0 +1,30 @@
+{
+  "tab": {
+    "title[0]": "Character",
+    "title[1]": "Name Label (horizontal)",
+    "title[2]": "Name Label (vertical)"
+  },
+  "name": "Name",
+  "hiragana": "Furigana",
+  "gender": {
+    "caption": "Gender",
+    "female": "Female",
+    "male": "Male",
+    "secret": "Secret"
+  },
+  "colorCode": "Image Color",
+  "skinColorCode": "Skin Color",
+  "skinShadowColorCode1": "Skin Shadow Color 1",
+  "skinShadowColorCode2": "Skin Shadow Color 2",
+  "height": "Height",
+  "birthday": "Birthday",
+  "characterVoice": "Voice Actor",
+  "school": "School",
+  "schoolYear": "Class",
+  "hobby": "Hobby",
+  "specialSkill": "Specialty",
+  "favoriteFood": "Favorite Food",
+  "hatedFood": "Disliked Food",
+  "weak": "Weakness",
+  "introduction": "Introduction"
+}

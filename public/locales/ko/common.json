@@ -5,8 +5,8 @@
   "gacha": "가챠",
   "event": "이벤트",
   "stamp": "스탬프",
-  "unit": "유닛",
-  "member": "멤버",
+  "comic": "만화",
+  "character": "캐릭터",
   "musicMeta": "악곡 정보",
   "scoreCalculator": "점수 계산기",
   "toolbar": {
@@ -27,7 +27,7 @@
   },
   "id": "번호",
   "title": "제목",
-  "character": "캐릭터",
+  "unit": "유닛",
   "support_unit": "서포트 유닛",
   "attribute": "속성",
   "startAt": "개방 개시 시간",
@@ -53,6 +53,8 @@
   "campaign": "캠페인",
   "bug": "버그",
   "update": "업데이트",
+  "profile": "프로필",
   "character_plural": "캐릭터",
-  "level": "레벨"
+  "level": "레벨",
+  "member": "캐릭터"
 }

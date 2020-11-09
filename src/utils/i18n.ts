@@ -1,3 +1,4 @@
+import { ContentTransModeType } from "./../types.d";
 import i18n, { TOptions } from "i18next";
 import { initReactI18next } from "react-i18next";
 import fetchBackend from "i18next-fetch-backend";
@@ -32,6 +33,9 @@ export function initGlobalI18n() {
         "member",
         "filter",
         "music",
+        "title",
+        "member",
+        "unit",
       ],
       fallbackLng: {
         default: ["en"],
@@ -69,6 +73,8 @@ assetI18n
       "gacha_name",
       "character_name",
       "skill_desc",
+      "character_profile",
+      "unit_profile",
     ],
     fallbackLng: {
       default: ["ja"],
@@ -88,5 +94,23 @@ export function useAssetI18n() {
     },
     []
   );
-  return { assetT, assetI18n };
+  const getTranslated = useCallback(
+    (
+      mode: ContentTransModeType,
+      key: string,
+      original: string,
+      options?: string | TOptions
+    ) => {
+      switch (mode) {
+        case "original":
+          return original;
+        case "translated":
+          return assetT(key, original, options);
+        case "both":
+          return `${original} | ${assetT(key, original, options)}`;
+      }
+    },
+    [assetT]
+  );
+  return { assetT, assetI18n, getTranslated };
 }

@@ -14,22 +14,24 @@ import {
 } from "@material-ui/core";
 import { useLayoutStyles } from "../styles/layout";
 import { TabContext, TabPanel } from "@material-ui/lab";
-import React, { Fragment, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, {
+  Fragment,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { Link, useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
-import {
-  ContentTransModeType,
-  GachaDetail,
-  GachaStatistic,
-  ICardInfo,
-  IGachaInfo,
-} from "../types";
+import { GachaDetail, GachaStatistic, ICardInfo, IGachaInfo } from "../types";
 import { useCachedData, useRefState } from "../utils";
 import { CardThumb, CardThumbs } from "./subs/CardThumb";
 import rarityNormal from "../assets/rarity_star_normal.png";
 import { useTranslation } from "react-i18next";
 import { useAssetI18n } from "../utils/i18n";
+import { SettingContext } from "../context";
+import { ContentTrans } from "./subs/ContentTrans";
 
 const gachaImageNameMap: {
   [key: number]: {
@@ -131,14 +133,13 @@ const StarIcon: React.FC<{ num: number }> = ({ num }) => (
   </Fragment>
 );
 
-const GachaDetailPage: React.FC<{
-  contentTransMode: ContentTransModeType;
-}> = ({ contentTransMode }) => {
+const GachaDetailPage: React.FC<{}> = () => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const { gachaId } = useParams<{ gachaId: string }>();
   const { t } = useTranslation();
-  const { assetT, assetI18n } = useAssetI18n();
+  const { getTranslated } = useAssetI18n();
+  const { contentTransMode } = useContext(SettingContext)!;
 
   const [gacha, setGacha] = useState<IGachaInfo>();
   const [gachas] = useCachedData<IGachaInfo>("gachas");
@@ -160,39 +161,99 @@ const GachaDetailPage: React.FC<{
 
   const [cards] = useCachedData<ICardInfo>("cards");
 
-  function doGacha(times: number) {
-    const rollTimes = times;
-    const rollResult = [
-      gacha?.rarity1Rate,
-      gacha?.rarity1Rate! + gacha?.rarity2Rate!,
-      gacha?.rarity1Rate! + gacha?.rarity2Rate! + gacha?.rarity3Rate!,
-      gacha?.rarity1Rate! +
-        gacha?.rarity2Rate! +
-        gacha?.rarity3Rate! +
-        gacha?.rarity4Rate!,
-    ];
-    const must3RollResult = [100 - gacha?.rarity4Rate!, 100];
-    const rollCards = [
-      gacha?.gachaDetails.filter(
-        (elem) => cards.find((card) => card.id === elem.cardId)?.rarity === 1
-      )!,
-      gacha?.gachaDetails.filter(
-        (elem) => cards.find((card) => card.id === elem.cardId)?.rarity === 2
-      )!,
-      gacha?.gachaDetails.filter(
-        (elem) => cards.find((card) => card.id === elem.cardId)?.rarity === 3
-      )!,
-      gacha?.gachaDetails.filter(
-        (elem) => cards.find((card) => card.id === elem.cardId)?.rarity === 4
-      )!,
-    ];
-    const tmpGachaResult: GachaDetail[] = [];
-    let noStar3Count = 0;
-    for (let i = 0; i < rollTimes; i++) {
-      if (i % 10 === 9 && noStar3Count === 9) {
-        // only roll 3* or 4*
+  const doGacha = useCallback(
+    (times: number) => {
+      const rollTimes = times;
+      const rollResult = [
+        gacha?.rarity1Rate,
+        gacha?.rarity1Rate! + gacha?.rarity2Rate!,
+        gacha?.rarity1Rate! + gacha?.rarity2Rate! + gacha?.rarity3Rate!,
+        gacha?.rarity1Rate! +
+          gacha?.rarity2Rate! +
+          gacha?.rarity3Rate! +
+          gacha?.rarity4Rate!,
+      ];
+      const must3RollResult = [100 - gacha?.rarity4Rate!, 100];
+      const rollCards = [
+        gacha?.gachaDetails.filter(
+          (elem) => cards.find((card) => card.id === elem.cardId)?.rarity === 1
+        )!,
+        gacha?.gachaDetails.filter(
+          (elem) => cards.find((card) => card.id === elem.cardId)?.rarity === 2
+        )!,
+        gacha?.gachaDetails.filter(
+          (elem) => cards.find((card) => card.id === elem.cardId)?.rarity === 3
+        )!,
+        gacha?.gachaDetails.filter(
+          (elem) => cards.find((card) => card.id === elem.cardId)?.rarity === 4
+        )!,
+      ];
+      const tmpGachaResult: GachaDetail[] = [];
+      let noStar3Count = 0;
+      for (let i = 0; i < rollTimes; i++) {
+        if (i % 10 === 9 && noStar3Count === 9) {
+          // only roll 3* or 4*
+          const roll = Math.random() * 100;
+          if (roll < must3RollResult[0]) {
+            // get 3* card
+            setStatistic((s) =>
+              Object.assign({}, s, {
+                total: s.total + 1,
+                rarity3: s.rarity3 + 1,
+              })
+            );
+            // roll a 3* card
+            tmpGachaResult.push(
+              rollCards[2][Math.floor(Math.random() * rollCards[2]?.length)]
+            );
+          } else if (roll < must3RollResult[1]) {
+            // get 4* card
+            setStatistic((s) =>
+              Object.assign({}, s, {
+                total: s.total + 1,
+                rarity4: s.rarity4 + 1,
+              })
+            );
+            // roll a 4* card
+            tmpGachaResult.push(
+              rollCards[3][Math.floor(Math.random() * rollCards[3]?.length)]
+            );
+          } else {
+            console.log(roll, must3RollResult);
+          }
+          noStar3Count = 0;
+          continue;
+        } else if (i % 10 === 0) {
+          noStar3Count = 0;
+        }
         const roll = Math.random() * 100;
-        if (roll < must3RollResult[0]) {
+        if (roll <= rollResult[0]!) {
+          // get 1* card
+          setStatistic((s) =>
+            Object.assign({}, s, {
+              total: s.total + 1,
+              rarity1: s.rarity1 + 1,
+            })
+          );
+          // roll a 1* card
+          tmpGachaResult.push(
+            rollCards[0][Math.floor(Math.random() * rollCards[0]?.length)]
+          );
+          noStar3Count++;
+        } else if (roll <= rollResult[1]!) {
+          // get 2* card
+          setStatistic((s) =>
+            Object.assign({}, s, {
+              total: s.total + 1,
+              rarity2: s.rarity2 + 1,
+            })
+          );
+          // roll a 2* card
+          tmpGachaResult.push(
+            rollCards[1][Math.floor(Math.random() * rollCards[1]?.length)]
+          );
+          noStar3Count++;
+        } else if (roll <= rollResult[2]!) {
           // get 3* card
           setStatistic((s) =>
             Object.assign({}, s, {
@@ -204,7 +265,7 @@ const GachaDetailPage: React.FC<{
           tmpGachaResult.push(
             rollCards[2][Math.floor(Math.random() * rollCards[2]?.length)]
           );
-        } else if (roll < must3RollResult[1]) {
+        } else if (roll <= rollResult[3]!) {
           // get 4* card
           setStatistic((s) =>
             Object.assign({}, s, {
@@ -217,73 +278,16 @@ const GachaDetailPage: React.FC<{
             rollCards[3][Math.floor(Math.random() * rollCards[3]?.length)]
           );
         } else {
-          console.log(roll, must3RollResult);
+          console.log(roll, rollResult);
         }
-        noStar3Count = 0;
-        continue;
-      } else if (i % 10 === 0) {
-        noStar3Count = 0;
       }
-      const roll = Math.random() * 100;
-      if (roll <= rollResult[0]!) {
-        // get 1* card
-        setStatistic((s) =>
-          Object.assign({}, s, {
-            total: s.total + 1,
-            rarity1: s.rarity1 + 1,
-          })
-        );
-        // roll a 1* card
-        tmpGachaResult.push(
-          rollCards[0][Math.floor(Math.random() * rollCards[0]?.length)]
-        );
-        noStar3Count++;
-      } else if (roll <= rollResult[1]!) {
-        // get 2* card
-        setStatistic((s) =>
-          Object.assign({}, s, {
-            total: s.total + 1,
-            rarity2: s.rarity2 + 1,
-          })
-        );
-        // roll a 2* card
-        tmpGachaResult.push(
-          rollCards[1][Math.floor(Math.random() * rollCards[1]?.length)]
-        );
-        noStar3Count++;
-      } else if (roll <= rollResult[2]!) {
-        // get 3* card
-        setStatistic((s) =>
-          Object.assign({}, s, {
-            total: s.total + 1,
-            rarity3: s.rarity3 + 1,
-          })
-        );
-        // roll a 3* card
-        tmpGachaResult.push(
-          rollCards[2][Math.floor(Math.random() * rollCards[2]?.length)]
-        );
-      } else if (roll <= rollResult[3]!) {
-        // get 4* card
-        setStatistic((s) =>
-          Object.assign({}, s, {
-            total: s.total + 1,
-            rarity4: s.rarity4 + 1,
-          })
-        );
-        // roll a 4* card
-        tmpGachaResult.push(
-          rollCards[3][Math.floor(Math.random() * rollCards[3]?.length)]
-        );
-      } else {
-        console.log(roll, rollResult);
-      }
-    }
 
-    setCurrentGachaResult(tmpGachaResult.slice(-10));
-  }
+      setCurrentGachaResult(tmpGachaResult.slice(-10));
+    },
+    [cards, gacha]
+  );
 
-  function resetGacha() {
+  const resetGacha = useCallback(() => {
     setStatistic({
       total: 0,
       rarity1: 0,
@@ -292,7 +296,7 @@ const GachaDetailPage: React.FC<{
       rarity4: 0,
     });
     setCurrentGachaResult([]);
-  }
+  }, [setStatistic, setCurrentGachaResult]);
 
   useEffect(() => {
     setIsReady(Boolean(gachas.length));
@@ -303,15 +307,16 @@ const GachaDetailPage: React.FC<{
 
   useEffect(() => {
     if (gacha) {
-      document.title = `${
-        contentTransMode === "original"
-          ? gacha.name
-          : contentTransMode === "translated"
-          ? assetT(`gacha_name:${gachaId}`, gacha.name)
-          : gacha.name
-      } | Gacha | Sekai Viewer`;
+      const name = getTranslated(
+        contentTransMode,
+        `gacha_name:${gachaId}`,
+        gacha.name
+      );
+      document.title = t("title:gachaDetail", {
+        name,
+      });
     }
-  }, [gacha, assetI18n, contentTransMode, gachaId, assetT]);
+  }, [gacha, contentTransMode, gachaId, getTranslated, t]);
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
     setPicTabVal(newValue);
@@ -321,11 +326,7 @@ const GachaDetailPage: React.FC<{
     return (
       <Fragment>
         <Typography variant="h6" className={layoutClasses.header}>
-          {contentTransMode === "original"
-            ? gacha.name
-            : contentTransMode === "translated"
-            ? assetT(`gacha_name:${gachaId}`, gacha.name)
-            : gacha.name}
+          {getTranslated(contentTransMode, `gacha_name:${gachaId}`, gacha.name)}
         </Typography>
         <Container className={layoutClasses.content} maxWidth="sm">
           <TabContext value={picTabVal}>
@@ -571,11 +572,13 @@ const GachaDetailPage: React.FC<{
                 {t("common:title")}
               </Typography>
               <Typography>
-                {contentTransMode === "original"
-                  ? gacha.name
-                  : contentTransMode === "translated"
-                  ? assetT(`gacha_name:${gachaId}`, gacha.name)
-                  : gacha.name}
+                <ContentTrans
+                  mode={contentTransMode}
+                  contentKey={`gacha_name:${gachaId}`}
+                  original={gacha.name}
+                  originalProps={{ align: "right" }}
+                  translatedProps={{ align: "right" }}
+                />
               </Typography>
             </Grid>
             <Divider style={{ margin: "1% 0" }} />
@@ -764,7 +767,12 @@ const GachaDetailPage: React.FC<{
               >
                 {gacha.gachaPickups.map((elem) => (
                   <Grid key={`pickup-${elem.id}`} item xs={8} md={4}>
-                    <CardThumb id={elem.cardId} />
+                    <Link
+                      to={"/card/" + elem.cardId}
+                      style={{ textDecoration: "none" }}
+                    >
+                      <CardThumb id={elem.cardId} />
+                    </Link>
                   </Grid>
                 ))}
               </Grid>

@@ -1,12 +1,12 @@
 {
   "home": "ホーム",
   "card": "カード",
-  "music": "音楽",
+  "music": "楽曲",
   "gacha": "ガチャ",
   "event": "イベント",
   "stamp": "スタンプ",
-  "unit": "ユニット",
-  "member": "メンバー",
+  "comic": "コミック",
+  "character": "キャラクター",
   "musicMeta": "楽曲情報",
   "scoreCalculator": "スコア計算",
   "toolbar": {
@@ -27,7 +27,7 @@
   },
   "id": "ID",
   "title": "タイトル",
-  "character": "キャラクター",
+  "unit": "ユニット",
   "support_unit": "サポートユニット",
   "attribute": "タイプ",
   "startAt": "解放時間",
@@ -53,6 +53,8 @@
   "campaign": "キャンペーン",
   "bug": "バグ",
   "update": "アップデート",
+  "profile": "プロフィール",
   "character_plural": "キャラクター",
-  "level": "レベル"
+  "level": "レベル",
+  "member": "キャラクター"
 }

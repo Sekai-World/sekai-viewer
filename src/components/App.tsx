@@ -1,6 +1,7 @@
 import {
   AppBar,
   Button,
+  Collapse,
   Container,
   createMuiTheme,
   CssBaseline,
@@ -19,7 +20,6 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  ListSubheader,
   makeStyles,
   Radio,
   RadioGroup,
@@ -42,15 +42,17 @@ import {
   BrightnessAuto,
   ControlCamera,
   QueueMusic,
+  CropOriginal,
+  ExpandMore,
+  ExpandLess,
 } from "@material-ui/icons";
 import {
-  Account,
   AccountGroup,
   Calculator,
   CalendarText,
   StickerEmoji,
 } from "mdi-material-ui";
-import React, { forwardRef, useMemo, lazy, Suspense } from "react";
+import React, { forwardRef, useMemo, lazy, Suspense, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Link,
@@ -60,9 +62,9 @@ import {
   useHistory,
   useRouteMatch,
 } from "react-router-dom";
-import { ContentTransModeType } from "../types";
-import { useAssetI18n } from "../utils/i18n";
-import StampList from "./StampList";
+import { SettingContext } from "../context";
+import { ContentTransModeType, DisplayModeType } from "../types";
+import UnitDetail from "./UnitDetail";
 
 const drawerWidth = 240;
 const CardList = lazy(() => import("./CardList"));
@@ -74,6 +76,10 @@ const GachaDetail = lazy(() => import("./GachaDetail"));
 const CardDetail = lazy(() => import("./CardDetail"));
 const MusicDetail = lazy(() => import("./MusicDetail"));
 const EventDetail = lazy(() => import("./EventDetail"));
+const ComicList = lazy(() => import("./ComicList"));
+const MemberDetail = lazy(() => import("./MemberDetail"));
+const MemberList = lazy(() => import("./MemberList"));
+const StampList = lazy(() => import("./StampList"));
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -135,7 +141,6 @@ function ListItemLink(
     path: to,
     exact: to === "/",
   });
-  // const theme = useTheme();
 
   const renderLink = useMemo(
     () =>
@@ -177,8 +182,7 @@ function ListItemLink(
 }
 
 function App() {
-  const { t, i18n } = useTranslation();
-  const { assetI18n } = useAssetI18n();
+  const { t } = useTranslation();
 
   const leftBtns: IListItemLinkProps[][] = [
     [
@@ -219,16 +223,16 @@ function App() {
         disabled: false,
       },
       {
-        text: t("common:unit"),
-        icon: <AccountGroup></AccountGroup>,
-        to: "/unit",
-        disabled: true,
+        text: t("common:comic"),
+        icon: <CropOriginal />,
+        to: "/comic",
+        disabled: false,
       },
       {
-        text: t("common:member"),
-        icon: <Account></Account>,
-        to: "/member",
-        disabled: true,
+        text: t("common:character"),
+        icon: <AccountGroup></AccountGroup>,
+        to: "/chara",
+        disabled: false,
       },
       {
         text: "Live2D",
@@ -252,28 +256,26 @@ function App() {
       },
     ],
   ];
-  // const theme = useTheme();
+
   const classes = useStyles();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
-  const [lang, setLang] = React.useState(i18n.language);
+  const [sidebarExpansionStates, setSidebarExpansionStates] = React.useState([
+    true,
+    true,
+  ]);
+  const {
+    lang,
+    displayMode,
+    contentTransMode,
+    updateLang,
+    updateDisplayMode,
+    updateContentTransMode,
+  } = useContext(SettingContext)!;
 
   const { goBack } = useHistory();
 
   const preferDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
-  const [displayMode, setDisplayMode] = React.useState<
-    "dark" | "light" | "auto"
-  >(
-    (localStorage.getItem("display-mode") as "dark" | "light" | "auto") ||
-      "auto"
-  );
-  const [contentTransMode, setContentTransMode] = React.useState<
-    ContentTransModeType
-  >(
-    (localStorage.getItem(
-      "content-translation-mode"
-    ) as ContentTransModeType) || "translated"
-  );
 
   const theme = React.useMemo(
     () =>
@@ -311,34 +313,54 @@ function App() {
       </div>
       <Divider></Divider>
       <List>
-        <ListSubheader>{t("common:information")}</ListSubheader>
-        {leftBtns[0].map((elem) => {
-          return (
-            <ListItem disabled={elem.disabled} button key={elem.to}>
-              <ListItemLink
-                to={elem.to}
-                text={elem.text}
-                icon={elem.icon}
-                disabled={elem.disabled}
-                theme={theme}
-              ></ListItemLink>
-            </ListItem>
-          );
-        })}
-        <ListSubheader>{t("common:tools")}</ListSubheader>
-        {leftBtns[1].map((elem) => {
-          return (
-            <ListItem disabled={elem.disabled} button key={elem.to}>
-              <ListItemLink
-                to={elem.to}
-                text={elem.text}
-                icon={elem.icon}
-                disabled={elem.disabled}
-                theme={theme}
-              ></ListItemLink>
-            </ListItem>
-          );
-        })}
+        <ListItem
+          button
+          onClick={() =>
+            setSidebarExpansionStates((s) => [!s[0], ...s.slice(1)])
+          }
+        >
+          <Typography color="textSecondary">
+            {t("common:information")}
+          </Typography>
+          {sidebarExpansionStates[0] ? <ExpandLess /> : <ExpandMore />}
+        </ListItem>
+        <Collapse in={sidebarExpansionStates[0]} timeout="auto" unmountOnExit>
+          {leftBtns[0].map((elem) => {
+            return (
+              <ListItem disabled={elem.disabled} button key={elem.to}>
+                <ListItemLink
+                  to={elem.to}
+                  text={elem.text}
+                  icon={elem.icon}
+                  disabled={elem.disabled}
+                  theme={theme}
+                ></ListItemLink>
+              </ListItem>
+            );
+          })}
+        </Collapse>
+        <ListItem
+          button
+          onClick={() => setSidebarExpansionStates((s) => [s[0], !s[1]])}
+        >
+          <Typography color="textSecondary">{t("common:tools")}</Typography>
+          {sidebarExpansionStates[1] ? <ExpandLess /> : <ExpandMore />}
+        </ListItem>
+        <Collapse in={sidebarExpansionStates[1]} timeout="auto" unmountOnExit>
+          {leftBtns[1].map((elem) => {
+            return (
+              <ListItem disabled={elem.disabled} button key={elem.to}>
+                <ListItemLink
+                  to={elem.to}
+                  text={elem.text}
+                  icon={elem.icon}
+                  disabled={elem.disabled}
+                  theme={theme}
+                ></ListItemLink>
+              </ListItem>
+            );
+          })}
+        </Collapse>
       </List>
     </div>
   );
@@ -412,31 +434,43 @@ function App() {
                 <HomeView />
               </Route>
               <Route path="/card" exact>
-                <CardList contentTransMode={contentTransMode} />
+                <CardList />
               </Route>
               <Route path="/card/:cardId(\d+)">
-                <CardDetail contentTransMode={contentTransMode} />
+                <CardDetail />
               </Route>
               <Route path="/music" exact>
-                <MusicList contentTransMode={contentTransMode} />
+                <MusicList />
               </Route>
               <Route path="/music/:musicId(\d+)">
-                <MusicDetail contentTransMode={contentTransMode} />
+                <MusicDetail />
               </Route>
               <Route path="/gacha" exact>
-                <GachaList contentTransMode={contentTransMode} />
+                <GachaList />
               </Route>
               <Route path="/gacha/:gachaId">
-                <GachaDetail contentTransMode={contentTransMode} />
+                <GachaDetail />
               </Route>
               <Route path="/event" exact>
-                <EventList contentTransMode={contentTransMode} />
+                <EventList />
               </Route>
               <Route path="/event/:eventId">
-                <EventDetail contentTransMode={contentTransMode} />
+                <EventDetail />
               </Route>
               <Route path="/stamp">
-                <StampList contentTransMode={contentTransMode} />
+                <StampList />
+              </Route>
+              <Route path="/comic">
+                <ComicList />
+              </Route>
+              <Route path="/chara" exact>
+                <MemberList />
+              </Route>
+              <Route path="/chara/:charaId">
+                <MemberDetail />
+              </Route>
+              <Route path="/unit/:unitId">
+                <UnitDetail />
               </Route>
             </Suspense>
           </Switch>
@@ -450,11 +484,7 @@ function App() {
                 row
                 aria-label="language"
                 value={lang}
-                onChange={(e, v) => {
-                  setLang(v);
-                  i18n.changeLanguage(v);
-                  assetI18n.changeLanguage(v);
-                }}
+                onChange={(e, v) => updateLang(v)}
               >
                 <FormControlLabel
                   value="en"
@@ -509,10 +539,7 @@ function App() {
                 row
                 aria-label="dark mode"
                 value={displayMode}
-                onChange={(e, v) => {
-                  setDisplayMode(v as "dark" | "light" | "auto");
-                  localStorage.setItem("display-mode", v);
-                }}
+                onChange={(e, v) => updateDisplayMode(v as DisplayModeType)}
               >
                 <FormControlLabel
                   value="dark"
@@ -539,10 +566,9 @@ function App() {
                 row
                 aria-label="show translated"
                 value={contentTransMode}
-                onChange={(e, v) => {
-                  setContentTransMode(v as "original" | "translated" | "both");
-                  localStorage.setItem("content-translation-mode", v);
-                }}
+                onChange={(e, v) =>
+                  updateContentTransMode(v as ContentTransModeType)
+                }
               >
                 <FormControlLabel
                   value="original"
@@ -558,7 +584,6 @@ function App() {
                   value="both"
                   control={<Radio />}
                   label={t("common:contentTranslationMode.both")}
-                  disabled
                 ></FormControlLabel>
               </RadioGroup>
             </FormControl>

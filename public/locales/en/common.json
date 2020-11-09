@@ -5,8 +5,8 @@
   "gacha": "Gacha",
   "event": "Event",
   "stamp": "Sticker",
-  "unit": "Unit",
-  "member": "Member",
+  "comic": "Comic",
+  "character": "Character",
   "musicMeta": "Music Meta",
   "scoreCalculator": "Score Calculator",
   "toolbar": {
@@ -27,7 +27,7 @@
   },
   "id": "ID",
   "title": "Title",
-  "character": "Character",
+  "unit": "Unit",
   "support_unit": "Support Unit",
   "attribute": "Attribute",
   "startAt": "Available From",
@@ -53,6 +53,8 @@
   "campaign": "Campaign",
   "bug": "Bug",
   "update": "Update",
+  "profile": "Profile",
   "character_plural": "Characters",
-  "level": "Level"
+  "level": "Level",
+  "member": "Character"
 }

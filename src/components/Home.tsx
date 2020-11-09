@@ -131,7 +131,7 @@ function Home() {
   const [info, setInfo] = useState<IUserInformationInfo>();
 
   useEffect(() => {
-    document.title = t("common:home") + " | Sekai Viewer";
+    document.title = t("title:home");
   }, [t]);
 
   const [detected, setDetected] = useState<IDetectResult>({
@@ -178,7 +178,7 @@ function Home() {
     {
       field: "startAt",
       headerName: t("home:game-news.show-from"),
-      width: 180,
+      width: 200,
       valueFormatter: (params: ValueFormatterParams) =>
         new Date(params.getValue("startAt") as number).toLocaleString(),
       sortDirection: "desc",
@@ -186,13 +186,13 @@ function Home() {
     {
       field: "title",
       headerName: t("home:game-news.title-column"),
-      width: isUpMd ? 400 : 150,
+      width: isUpMd ? 600 : 150,
       sortable: false,
     },
     {
       field: "endAt",
       headerName: t("home:game-news.show-until"),
-      width: 180,
+      width: 200,
       valueFormatter: (params: ValueFormatterParams) =>
         new Date(params.getValue("startAt") as number).toLocaleString(),
     },
@@ -203,14 +203,14 @@ function Home() {
       <Typography variant="h6" className={layoutClasses.header}>
         {t("common:home")}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      <Container className={layoutClasses.content}>
         {/* <Typography variant="h4">Welcome to Sekai Viewer Open Beta!</Typography> */}
         <Alert className={classes.alert} severity="info">
           {t("home:alert0")}
         </Alert>
         <Alert className={classes.alert} severity="info">
           <AlertTitle>{t("home:alert_contributor.title")}</AlertTitle>
-          <ul>
+          <ul style={{ marginBlockEnd: 0 }}>
             <li>
               <Link
                 href="https://github.com/NonSpicyBurrito"
@@ -246,12 +246,13 @@ function Home() {
         <Alert className={classes.alert} severity="info">
           <AlertTitle>{t("home:alert_translate.title")}</AlertTitle>
           <ul>
-            <li>简：Stargazing Koishi</li>
-            <li>繁：Natsuzawa, ch ko</li>
-            <li>日：Passion, Cee, k0tayan, Natsuzawa, Build774, tofutofuo</li>
-            <li>한：hodubidu3095, omitooshi, EleMas39, PJSEKAI</li>
+            <li>简：Stargazing Koishi, Nightwheel</li>
+            <li>繁：Natsuzawa, ch ko, tofutofuo</li>
+            <li>日：Passion, Cee, k0tayan, Natsuzawa, Build774</li>
+            <li>한：hodubidu3095, omitooshi, EleMas39, PJSEKAI, 아점</li>
             <li>Pt-BR: mid</li>
             <li>русский: Spyrohat</li>
+            <li>Es: ruiemu, maravillas</li>
           </ul>
           <Trans
             i18nKey="home:alert_settings"
@@ -332,7 +333,7 @@ function Home() {
       <Typography variant="h6" className={layoutClasses.header}>
         {t("home:game-news.title")}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      <Container className={layoutClasses.content}>
         <Paper className={interactiveClasses.container}>
           <Tabs
             value={gameNewsTag}
@@ -346,7 +347,7 @@ function Home() {
             <Tab label={t("common:music")} value="music"></Tab>
             <Tab label={t("common:campaign")} value="campaign"></Tab>
             <Tab label={t("common:bug")} value="bug"></Tab>
-            <Tab label={t("common:update")} value="update"></Tab>
+            <Tab label={t("home:update")} value="update"></Tab>
           </Tabs>
         </Paper>
         <div style={{ height: 650 }}>

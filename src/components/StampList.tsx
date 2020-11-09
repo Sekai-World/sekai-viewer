@@ -19,15 +19,17 @@ import { FilterOutline, Filter } from "mdi-material-ui";
 import React, {
   Fragment,
   useCallback,
+  useContext,
   useEffect,
   useReducer,
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
+import { SettingContext } from "../context";
 import { characterSelectReducer } from "../stores/reducers";
 import { useInteractiveStyles } from "../styles/interactive";
 import { useLayoutStyles } from "../styles/layout";
-import { ContentTransModeType, IStampInfo } from "../types";
+import { IStampInfo } from "../types";
 import { useCachedData, useCharaName, useRefState } from "../utils";
 import { charaIcons } from "../utils/resources";
 import InfiniteScroll from "./subs/InfiniteScroll";
@@ -49,13 +51,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const StampList: React.FC<{
-  contentTransMode: ContentTransModeType;
-}> = ({ contentTransMode }) => {
+const StampList: React.FC<{}> = () => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
+  const { contentTransMode } = useContext(SettingContext)!;
+  const getCharaName = useCharaName(contentTransMode);
 
   const [stampsCache] = useCachedData<IStampInfo>("stamps");
 
@@ -81,6 +83,31 @@ const StampList: React.FC<{
     [filteredCache]
   );
 
+  const callback = (
+    entries: readonly IntersectionObserverEntry[],
+    setHasMore: React.Dispatch<React.SetStateAction<boolean>>
+  ) => {
+    if (!isReadyRef.current) return;
+    if (
+      entries[0].isIntersecting &&
+      lastQueryFinRef.current &&
+      (!filteredCacheRef.current.length ||
+        filteredCacheRef.current.length > pageRef.current * limitRef.current)
+    ) {
+      setPage((page) => page + 1);
+      setLastQueryFin(false);
+    } else if (
+      filteredCacheRef.current.length &&
+      filteredCacheRef.current.length <= pageRef.current * limitRef.current
+    ) {
+      setHasMore(false);
+    }
+  };
+
+  useEffect(() => {
+    document.title = t("title:stampList");
+  }, [t]);
+
   useEffect(() => {
     if (stampsCache.length) {
       if (characterSelected.length) {
@@ -104,33 +131,6 @@ const StampList: React.FC<{
   useEffect(() => {
     setIsReady(Boolean(stampsCache.length));
   }, [setIsReady, stampsCache]);
-
-  const callback = (
-    entries: IntersectionObserverEntry[],
-    setHasMore: React.Dispatch<React.SetStateAction<boolean>>
-  ) => {
-    if (!isReadyRef.current) return;
-    if (
-      entries[0].isIntersecting &&
-      lastQueryFinRef.current &&
-      (!filteredCacheRef.current.length ||
-        filteredCacheRef.current.length > pageRef.current * limitRef.current)
-    ) {
-      setPage((page) => page + 1);
-      setLastQueryFin(false);
-    } else if (
-      filteredCacheRef.current.length &&
-      filteredCacheRef.current.length <= pageRef.current * limitRef.current
-    ) {
-      setHasMore(false);
-    }
-  };
-
-  useEffect(() => {
-    document.title = "Sticker List | Sekai Viewer";
-  }, []);
-
-  const getCharaName = useCharaName(contentTransMode);
 
   const ListCard: React.FC<{ data?: IStampInfo }> = ({ data }) => {
     if (!data) {
@@ -173,7 +173,7 @@ const StampList: React.FC<{
       <Typography variant="h6" className={layoutClasses.header}>
         {t("common:stamp")}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      <Container className={layoutClasses.content}>
         <Grid container justify="flex-end">
           <ButtonGroup color="primary" style={{ marginBottom: "1%" }}>
             <Button size="medium" onClick={() => setFilterOpened((v) => !v)}>

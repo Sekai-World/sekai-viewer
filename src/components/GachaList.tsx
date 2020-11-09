@@ -8,14 +8,15 @@ import {
 } from "@material-ui/core";
 import { useLayoutStyles } from "../styles/layout";
 import { Skeleton } from "@material-ui/lab";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import { Link, useRouteMatch } from "react-router-dom";
 import { useCachedData, useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
-import { ContentTransModeType, IGachaInfo } from "../types";
-import { useAssetI18n } from "../utils/i18n";
+import { IGachaInfo } from "../types";
+import { SettingContext } from "../context";
+import { ContentTrans } from "./subs/ContentTrans";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -38,14 +39,12 @@ function getPaginatedGachas(gachas: IGachaInfo[], page: number, limit: number) {
   return gachas.slice(limit * (page - 1), limit * page);
 }
 
-const GachaList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
-  contentTransMode,
-}) => {
+const GachaList: React.FC<{}> = () => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
-  const { assetT } = useAssetI18n();
+  const { contentTransMode } = useContext(SettingContext)!;
 
   const [gachas, setGachas] = useState<IGachaInfo[]>([]);
   const [gachasCache, gachasCacheRef] = useCachedData<IGachaInfo>("gachas");
@@ -56,8 +55,8 @@ const GachaList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
 
   useEffect(() => {
-    document.title = "Gacha List | Sekai Viewer";
-  }, []);
+    document.title = t("title:gachaList");
+  }, [t]);
 
   useEffect(() => {
     setGachas((gachas) => [
@@ -72,7 +71,7 @@ const GachaList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   }, [setIsReady, gachasCache]);
 
   const callback = (
-    entries: IntersectionObserverEntry[],
+    entries: readonly IntersectionObserverEntry[],
     setHasMore: React.Dispatch<React.SetStateAction<boolean>>
   ) => {
     if (!isReadyRef.current) return;
@@ -115,13 +114,19 @@ const GachaList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
             title={data.name}
           ></CardMedia>
           <CardContent style={{ paddingBottom: "16px" }}>
-            <Typography variant="subtitle1" className={classes.subheader}>
-              {contentTransMode === "original"
-                ? data.name
-                : contentTransMode === "translated"
-                ? assetT(`gacha_name:${data.id}`, data.name)
-                : data.name}
-            </Typography>
+            <ContentTrans
+              mode={contentTransMode}
+              contentKey={`gacha_name:${data.id}`}
+              original={data.name}
+              originalProps={{
+                variant: "subtitle1",
+                className: classes.subheader,
+              }}
+              translatedProps={{
+                variant: "subtitle1",
+                className: classes.subheader,
+              }}
+            />
           </CardContent>
         </Card>
       </Link>
@@ -133,14 +138,16 @@ const GachaList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
       <Typography variant="h6" className={layoutClasses.header}>
         {t("common:gacha")}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      <Container className={layoutClasses.content}>
         {InfiniteScroll<IGachaInfo>({
           viewComponent: ListCard,
           callback,
           data: gachas,
           gridSize: {
+            xs: 12,
             sm: 6,
-            lg: 4,
+            md: 4,
+            lg: 3,
           },
         })}
       </Container>

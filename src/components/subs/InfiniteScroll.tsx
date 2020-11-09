@@ -43,33 +43,43 @@ type CompleteGridSizeOptions = {
 };
 
 interface IISProps<T> {
-  viewComponent: React.FC<{ data?: T }>;
-  callback: (
-    entries: IntersectionObserverEntry[],
+  readonly viewComponent: React.FC<{ data?: T; index?: number }>;
+  readonly callback: (
+    entries: readonly IntersectionObserverEntry[],
     setHasMore: React.Dispatch<React.SetStateAction<boolean>>
   ) => void;
-  data: T[];
-  gridSize?: GridSizeOptions;
+  readonly data: readonly T[];
+  readonly gridSize?: Readonly<GridSizeOptions>;
 }
 
+// NOTE: `breakpoints` must be sorted ascending by size
+const breakpoints = ["xs", "sm", "md", "lg", "xl"] as const;
+
 const defaultXSGridSize: GridSize = 12;
-const defaultGridSize: GridSizeOptions = {
+const defaultGridSize: Readonly<GridSizeOptions> = {
   xs: defaultXSGridSize,
   md: 4,
 };
 
 function useBreakpoint(): keyof GridSizeOptions {
   const theme = useTheme();
-  const isXS = useMediaQuery(theme.breakpoints.down("xs")) && "xs";
-  const isSM = useMediaQuery(theme.breakpoints.only("sm")) && "sm";
-  const isMD = useMediaQuery(theme.breakpoints.only("md")) && "md";
-  const isLG = useMediaQuery(theme.breakpoints.only("lg")) && "lg";
-  const isXL = useMediaQuery(theme.breakpoints.up("xl")) && "xl";
-  return isXS || isSM || isMD || isLG || isXL || "xl";
+
+  // NOTE: The number of calls to `useMediaQuery` must always be constant.
+  // https://en.reactjs.org/docs/hooks-rules.html#only-call-hooks-at-the-top-level
+  const downBreakpoints = breakpoints.map(
+    (breakpoint) =>
+      // NOTE: `down` includes itself
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      useMediaQuery(theme.breakpoints.down(breakpoint)) && breakpoint
+  );
+
+  // NOTE: `down('xl')` always returns `true` so `|| breakpoints[breakpoints.length - 1]`
+  //       is not actually needed, but it's written for clarity and typing.
+  return downBreakpoints.find(Boolean) || breakpoints[breakpoints.length - 1];
 }
 
 function transformToCompleteGridSizeOptions(
-  _gridSize?: GridSizeOptions | undefined
+  _gridSize?: Readonly<GridSizeOptions> | undefined
 ): CompleteGridSizeOptions {
   // use default if gridSize is not provided
   // not using defaults per properties because `{ md: 4 }` would not be desired
@@ -78,7 +88,7 @@ function transformToCompleteGridSizeOptions(
   };
 
   // inherit the value of the smaller breakpoint if not specified
-  (["xs", "sm", "md", "lg", "xl"] as const).forEach((v, i, a) => {
+  breakpoints.forEach((v, i, a) => {
     if (!gridSize[v]) {
       gridSize[v] = i > 0 ? gridSize[a[i - 1]] : defaultXSGridSize;
     }
@@ -141,7 +151,7 @@ function InfiniteScroll<T>({
                 lg={gridSize.lg}
                 xl={gridSize.xl}
               >
-                {viewComponent({ data })}
+                {viewComponent({ data, index: i })}
               </Grid>
             ))
           : null}

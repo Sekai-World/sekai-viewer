@@ -28,15 +28,15 @@ import {
   ViewGrid,
   ViewGridOutline,
 } from "mdi-material-ui";
-import React, { Fragment, useEffect, useReducer, useState } from "react";
+import React, {
+  Fragment,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
 import { Link, useRouteMatch } from "react-router-dom";
-import {
-  ContentTransModeType,
-  ICardEpisode,
-  ICardInfo,
-  ICardRarity,
-  ICharaProfile,
-} from "../types";
+import { ICardEpisode, ICardInfo, ICardRarity, IGameChara } from "../types";
 import { useCachedData, useCharaName, useRefState } from "../utils";
 import { CardThumb, CardThumbSkeleton } from "./subs/CardThumb";
 import InfiniteScroll from "./subs/InfiniteScroll";
@@ -46,6 +46,11 @@ import { useInteractiveStyles } from "../styles/interactive";
 import { useAssetI18n } from "../utils/i18n";
 import { characterSelectReducer } from "../stores/reducers";
 import { charaIcons } from "../utils/resources";
+import { CardSmallImage } from "./subs/CardImage";
+import { SettingContext } from "../context";
+import { ContentTrans } from "./subs/ContentTrans";
+
+type ViewGridType = "grid" | "agenda" | "comfy";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -124,18 +129,18 @@ function getMaxParam(
   return maxParam;
 }
 
-const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
-  contentTransMode,
-}) => {
+const CardList: React.FC<{}> = () => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
   const { assetT } = useAssetI18n();
+  const { contentTransMode } = useContext(SettingContext)!;
+  const getCharaName = useCharaName(contentTransMode);
 
   const [cardsCache] = useCachedData<ICardInfo>("cards");
-  const [charas] = useCachedData<ICharaProfile>("gameCharacters");
+  const [charas] = useCachedData<IGameChara>("gameCharacters");
   const [rarities] = useCachedData<ICardRarity>("cardRarities");
   const [episodes] = useCachedData<ICardEpisode>("cardEpisodes");
 
@@ -143,8 +148,8 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   const [sortedCache, sortedCacheRef, setSortedCache] = useRefState<
     ICardInfo[]
   >([]);
-  const [viewGridType, setViewGridType] = useState<string>(
-    localStorage.getItem("card-list-grid-view-type") || "grid"
+  const [viewGridType, setViewGridType] = useState<ViewGridType>(
+    (localStorage.getItem("card-list-grid-view-type") || "grid") as ViewGridType
   );
   const [page, pageRef, setPage] = useRefState<number>(0);
   const [limit, limitRef] = useRefState<number>(12);
@@ -163,7 +168,7 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   );
 
   const callback = (
-    entries: IntersectionObserverEntry[],
+    entries: readonly IntersectionObserverEntry[],
     setHasMore: React.Dispatch<React.SetStateAction<boolean>>
   ) => {
     if (!isReadyRef.current) return;
@@ -184,8 +189,8 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   };
 
   useEffect(() => {
-    document.title = "Card List | Sekai Viewer";
-  }, []);
+    document.title = t("title:cardList");
+  }, [t]);
 
   useEffect(() => {
     setIsReady(Boolean(cardsCache.length) && Boolean(charas.length));
@@ -244,8 +249,6 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
     }
   }, [page, limit, setLastQueryFin, sortedCache]);
 
-  const getCharaName = useCharaName(contentTransMode);
-
   const ListCard: { [key: string]: React.FC<{ data?: ICardInfo }> } = {
     grid: ({ data }) => {
       if (!data) {
@@ -268,8 +271,8 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
         <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
           <Card className={classes.card}>
             <CardMedia
-              className={classes.media}
-              image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_small/${data.assetbundleName}_rip/card_normal.webp`}
+              // className={classes.media}
+              // image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_small/${data.assetbundleName}_rip/card_normal.webp`}
               title={
                 contentTransMode === "original"
                   ? data.prefix
@@ -277,22 +280,36 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                   ? assetT(`card_prefix:${data.id}`, data.prefix)
                   : data.prefix
               }
-            ></CardMedia>
+            >
+              <CardSmallImage id={data.id}></CardSmallImage>
+            </CardMedia>
             <CardContent style={{ paddingBottom: "16px" }}>
-              <Typography variant="subtitle1" className={classes.subheader}>
-                {contentTransMode === "original"
-                  ? data.prefix
-                  : contentTransMode === "translated"
-                  ? assetT(`card_prefix:${data.id}`, data.prefix)
-                  : data.prefix}
-              </Typography>
-              <Typography
-                variant="body2"
-                className={classes.subheader}
-                color="textSecondary"
-              >
-                {getCharaName(data.characterId)}
-              </Typography>
+              <Grid container direction="column" spacing={1}>
+                <Grid item>
+                  <ContentTrans
+                    mode={contentTransMode}
+                    contentKey={`card_prefix:${data.id}`}
+                    original={data.prefix}
+                    originalProps={{
+                      variant: "subtitle1",
+                      className: classes.subheader,
+                    }}
+                    translatedProps={{
+                      variant: "subtitle1",
+                      className: classes.subheader,
+                    }}
+                  />
+                </Grid>
+                <Grid item>
+                  <Typography
+                    variant="body2"
+                    className={classes.subheader}
+                    color="textSecondary"
+                  >
+                    {getCharaName(data.characterId)}
+                  </Typography>
+                </Grid>
+              </Grid>
             </CardContent>
           </Card>
         </Link>
@@ -371,16 +388,22 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                 ) : null}
               </Grid>
               <Grid item xs={6} md={7}>
-                <Typography variant="body1">
-                  {contentTransMode === "original"
-                    ? data.prefix
-                    : contentTransMode === "translated"
-                    ? assetT(`card_prefix:${data.id}`, data.prefix)
-                    : data.prefix}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {getCharaName(data.characterId)}
-                </Typography>
+                <Grid container direction="column" spacing={1}>
+                  <Grid item>
+                    <ContentTrans
+                      mode={contentTransMode}
+                      contentKey={`card_prefix:${data.id}`}
+                      original={data.prefix}
+                      originalProps={{ variant: "body1" }}
+                      translatedProps={{ variant: "body1" }}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Typography variant="body2" color="textSecondary">
+                      {getCharaName(data.characterId)}
+                    </Typography>
+                  </Grid>
+                </Grid>
               </Grid>
             </Grid>
           </Paper>
@@ -451,24 +474,34 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                 ) : null}
               </Grid>
               <Grid item style={{ width: "100%" }}>
-                <Typography
-                  classes={{ root: classes.comfyPrefix }}
-                  variant="body1"
-                  align="center"
-                >
-                  {contentTransMode === "original"
-                    ? data.prefix
-                    : contentTransMode === "translated"
-                    ? assetT(`card_prefix:${data.id}`, data.prefix)
-                    : data.prefix}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  align="center"
-                  color="textSecondary"
-                >
-                  {getCharaName(data.characterId)}
-                </Typography>
+                <Grid container direction="column" spacing={1}>
+                  <Grid item>
+                    <ContentTrans
+                      mode={contentTransMode}
+                      contentKey={`card_prefix:${data.id}`}
+                      original={data.prefix}
+                      originalProps={{
+                        variant: "body1",
+                        className: classes.comfyPrefix,
+                        align: "center",
+                      }}
+                      translatedProps={{
+                        variant: "body1",
+                        className: classes.comfyPrefix,
+                        align: "center",
+                      }}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Typography
+                      variant="body2"
+                      align="center"
+                      color="textSecondary"
+                    >
+                      {getCharaName(data.characterId)}
+                    </Typography>
+                  </Grid>
+                </Grid>
               </Grid>
             </Grid>
           </Paper>
@@ -482,7 +515,7 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
       <Typography variant="h6" className={layoutClasses.header}>
         {t("common:card")}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      <Container className={layoutClasses.content}>
         <Grid container justify="space-between">
           <ButtonGroup style={{ marginBottom: "1%" }}>
             <Button
@@ -653,12 +686,22 @@ const CardList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
           viewComponent: ListCard[viewGridType],
           callback,
           data: cards,
-          gridSize: {
-            xs: 12,
-            sm: 6,
-            md:
-              viewGridType === "grid" ? 4 : viewGridType === "agenda" ? 12 : 3,
-          },
+          gridSize: ({
+            grid: {
+              xs: 12,
+              sm: 6,
+              md: 4,
+              lg: 3,
+            },
+            agenda: {
+              xs: 12,
+            },
+            comfy: {
+              xs: 12,
+              sm: 6,
+              md: 3,
+            },
+          } as const)[viewGridType],
         })}
       </Container>
     </Fragment>

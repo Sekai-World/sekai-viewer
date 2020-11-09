@@ -1,9 +1,10 @@
+import { IUnitProfile } from "./../types.d";
 import Axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   IGachaInfo,
   ICardInfo,
-  ICharaProfile,
+  IGameChara,
   IMusicInfo,
   ISkillInfo,
   ICardRarity,
@@ -23,6 +24,8 @@ import {
   IHonorInfo,
   ICardEpisode,
   ContentTransModeType,
+  ITipInfo,
+  ICharaProfile,
 } from "../types";
 import { useAssetI18n } from "./i18n";
 
@@ -43,7 +46,7 @@ export function useCachedData<
   T extends
     | IGachaInfo
     | ICardInfo
-    | ICharaProfile
+    | IGameChara
     | IMusicInfo
     | ISkillInfo
     | ICardRarity
@@ -61,6 +64,9 @@ export function useCachedData<
     | IResourceBoxInfo
     | IHonorInfo
     | ICardEpisode
+    | ITipInfo
+    | ICharaProfile
+    | IUnitProfile
 >(name: string): [T[], React.MutableRefObject<T[]>] {
   const [cached, cachedRef, setCached] = useRefState<T[]>([]);
 
@@ -151,7 +157,7 @@ export const musicTagToName: { [key: string]: string } = {
 };
 
 export function useCharaName(contentTransMode: ContentTransModeType) {
-  const [charas] = useCachedData<ICharaProfile>("gameCharacters");
+  const [charas] = useCachedData<IGameChara>("gameCharacters");
   const { assetT, assetI18n } = useAssetI18n();
   return useCallback(
     (charaId: number): string | undefined => {
@@ -176,6 +182,25 @@ export function useCharaName(contentTransMode: ContentTransModeType) {
                   `character_name:${charaId}.firstName`,
                   chara.firstName
                 )}`;
+          case "both":
+            return (
+              `${chara.firstName} ${chara.givenName} | ` +
+              (["zh-CN", "zh-TW", "ko", "ja"].includes(assetI18n.language)
+                ? `${assetT(
+                    `character_name:${charaId}.firstName`,
+                    chara.firstName
+                  )} ${assetT(
+                    `character_name:${charaId}.givenName`,
+                    chara.givenName
+                  )}`
+                : `${assetT(
+                    `character_name:${charaId}.givenName`,
+                    chara.givenName
+                  )} ${assetT(
+                    `character_name:${charaId}.firstName`,
+                    chara.firstName
+                  )}`)
+            );
         }
       }
       return chara?.givenName;

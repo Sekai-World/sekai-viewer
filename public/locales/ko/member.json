@@ -1,0 +1,30 @@
+{
+  "tab": {
+    "title[0]": "캐릭터",
+    "title[1]": "이름표(가로)",
+    "title[2]": "이름표(세로)"
+  },
+  "name": "이름",
+  "hiragana": "후리가나",
+  "gender": {
+    "caption": "성별",
+    "female": "여성",
+    "male": "남성",
+    "secret": "비밀"
+  },
+  "colorCode": "이미지 컬러",
+  "skinColorCode": "피부색",
+  "skinShadowColorCode1": "피부 그림자색 1",
+  "skinShadowColorCode2": "피부 그림자색 2",
+  "height": "키",
+  "birthday": "생일",
+  "characterVoice": "성우",
+  "school": "학교",
+  "schoolYear": "반",
+  "hobby": "취미",
+  "specialSkill": "특기",
+  "favoriteFood": "좋아하는 음식",
+  "hatedFood": "싫어하는 음식",
+  "weak": "약점",
+  "introduction": "자기소개"
+}

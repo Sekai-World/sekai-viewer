@@ -1,0 +1,30 @@
+{
+  "tab": {
+    "title[0]": "キャラクター",
+    "title[1]": "名前ラベル（横）",
+    "title[2]": "名前ラベル（縦）"
+  },
+  "name": "名前",
+  "hiragana": "振り仮名",
+  "gender": {
+    "caption": "性別",
+    "female": "女性",
+    "male": "男性",
+    "secret": "？"
+  },
+  "colorCode": "イメージカラー",
+  "skinColorCode": "肌の色",
+  "skinShadowColorCode1": "肌の影色1",
+  "skinShadowColorCode2": "肌の影色2",
+  "height": "身長",
+  "birthday": "誕生日",
+  "characterVoice": "CV.",
+  "school": "学校",
+  "schoolYear": "学年",
+  "hobby": "趣味",
+  "specialSkill": "特技",
+  "favoriteFood": "好きな食べ物",
+  "hatedFood": "嫌いな食べ物",
+  "weak": "苦手なもの・こと",
+  "introduction": "紹介文"
+}

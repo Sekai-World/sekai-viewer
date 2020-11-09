@@ -5,17 +5,22 @@ import {
   makeStyles,
   Typography,
   Container,
+  Grid,
 } from "@material-ui/core";
 import { useLayoutStyles } from "../styles/layout";
 import { Skeleton } from "@material-ui/lab";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import { Link, useRouteMatch } from "react-router-dom";
-import { ContentTransModeType, IEventInfo } from "../types";
+import { IEventInfo } from "../types";
 import { useCachedData, useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
 import { useAssetI18n } from "../utils/i18n";
+import { SettingContext } from "../context";
+import { ContentTrans } from "./subs/ContentTrans";
+
+type ViewGridType = "grid" | "agenda" | "comfy";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -44,20 +49,20 @@ function getPaginatedEvents(events: IEventInfo[], page: number, limit: number) {
   return events.slice(limit * (page - 1), limit * page);
 }
 
-const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
-  contentTransMode,
-}) => {
+const EventList: React.FC<{}> = () => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
-  const { assetT } = useAssetI18n();
+  const { getTranslated } = useAssetI18n();
+  const { contentTransMode } = useContext(SettingContext)!;
 
   const [events, setEvents] = useState<IEventInfo[]>([]);
   const [eventsCache, eventsCacheRef] = useCachedData<IEventInfo>("events");
 
-  const [viewGridType] = useState<string>(
-    localStorage.getItem("event-list-grid-view-type") || "grid"
+  const [viewGridType] = useState<ViewGridType>(
+    (localStorage.getItem("event-list-grid-view-type") ||
+      "grid") as ViewGridType
   );
   const [page, pageRef, setPage] = useRefState<number>(1);
   const [limit, limitRef] = useRefState<number>(12);
@@ -65,8 +70,8 @@ const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
 
   useEffect(() => {
-    document.title = "Event List | Sekai Viewer";
-  }, []);
+    document.title = t("title:eventList");
+  }, [t]);
 
   useEffect(() => {
     setEvents((events) => [
@@ -81,7 +86,7 @@ const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   }, [setIsReady, eventsCache]);
 
   const callback = (
-    entries: IntersectionObserverEntry[],
+    entries: readonly IntersectionObserverEntry[],
     setHasMore: React.Dispatch<React.SetStateAction<boolean>>
   ) => {
     if (!isReadyRef.current) return;
@@ -125,25 +130,31 @@ const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
             <CardMedia
               className={classes.media}
               image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/event/${data.assetbundleName}/logo_rip/logo.webp`}
-              title={
-                contentTransMode === "original"
-                  ? data.name
-                  : contentTransMode === "translated"
-                  ? assetT(`event_name:${data.id}`, data.name)
-                  : data.name
-              }
+              title={getTranslated(
+                contentTransMode,
+                `event_name:${data.id}`,
+                data.name
+              )}
             ></CardMedia>
             <CardContent style={{ paddingBottom: "16px" }}>
-              <Typography variant="subtitle1" className={classes.header}>
-                {contentTransMode === "original"
-                  ? data.name
-                  : contentTransMode === "translated"
-                  ? assetT(`event_name:${data.id}`, data.name)
-                  : data.name}
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                {t(`event:type.${data.eventType}`)}
-              </Typography>
+              <Grid container direction="column" spacing={1}>
+                <Grid item>
+                  <ContentTrans
+                    mode={contentTransMode}
+                    contentKey={`event_name:${data.id}`}
+                    original={data.name}
+                    originalProps={{
+                      variant: "subtitle1",
+                      className: classes.header,
+                    }}
+                  />
+                </Grid>
+                <Grid item>
+                  <Typography variant="body2" color="textSecondary">
+                    {t(`event:type.${data.eventType}`)}
+                  </Typography>
+                </Grid>
+              </Grid>
             </CardContent>
           </Card>
         </Link>
@@ -156,17 +167,25 @@ const EventList: React.FC<{ contentTransMode: ContentTransModeType }> = ({
       <Typography variant="h6" className={layoutClasses.header}>
         {t("common:event")}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      <Container className={layoutClasses.content}>
         {InfiniteScroll<IEventInfo>({
           viewComponent: ListCard[viewGridType],
           callback,
           data: events,
-          gridSize: {
-            xs: 12,
-            md:
-              viewGridType === "grid" ? 4 : viewGridType === "agenda" ? 12 : 12,
-            sm: 6,
-          },
+          gridSize: ({
+            grid: {
+              xs: 12,
+              sm: 6,
+              md: 4,
+              lg: 3,
+            },
+            agenda: {
+              xs: 12,
+            },
+            comfy: {
+              xs: 12,
+            },
+          } as const)[viewGridType],
         })}
       </Container>
     </Fragment>

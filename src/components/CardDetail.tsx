@@ -16,40 +16,41 @@ import {
 import { useLayoutStyles } from "../styles/layout";
 import { useInteractiveStyles } from "../styles/interactive";
 import { TabContext, TabPanel } from "@material-ui/lab";
-import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, {
+  Fragment,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { Link, useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
 
 import {
-  ContentTransModeType,
   ICardEpisode,
   ICardInfo,
   ICardRarity,
   ICharacterRank,
-  ICharaProfile,
+  IGameChara,
   IReleaseCondition,
   IResourceBoxInfo,
   ISkillInfo,
+  IUnitProfile,
   ResourceBoxDetail,
 } from "../types";
 import { useCachedData, useCharaName } from "../utils";
 import rarityNormal from "../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../assets/rarity_star_afterTraining.png";
 
-import LogoLightSound from "../assets/common/logol/logo_light_sound.png";
-import LogoIdol from "../assets/common/logol/logo_idol.png";
-import LogoPiapro from "../assets/common/logol/logo_piapro.png";
-import LogoSchoolRefusal from "../assets/common/logol/logo_school_refusal.png";
-import LogoStreet from "../assets/common/logol/logo_street.png";
-import LogoThemePark from "../assets/common/logol/logo_theme_park.png";
-
 import { CardThumb } from "./subs/CardThumb";
-import { attrIconMap } from "../utils/resources";
+import { attrIconMap, UnitLogoMiniMap } from "../utils/resources";
 import { useTranslation } from "react-i18next";
 import MaterialIcon from "./subs/MaterialIcon";
 import CommonMaterialIcon from "./subs/CommonMaterialIcon";
 import { useAssetI18n } from "../utils/i18n";
+import { SettingContext } from "../context";
+import { CharaNameTrans, ContentTrans } from "./subs/ContentTrans";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -86,16 +87,16 @@ interface IExtendCardInfo extends ICardInfo {
   maxNormalLevel: number;
 }
 
-const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
-  contentTransMode,
-}) => {
+const CardDetail: React.FC<{}> = () => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
-  const { assetT, assetI18n } = useAssetI18n();
+  const { assetT, getTranslated } = useAssetI18n();
+  const { contentTransMode } = useContext(SettingContext)!;
+  const getCharaName = useCharaName(contentTransMode);
 
-  const [charas] = useCachedData<ICharaProfile>("gameCharacters");
+  const [charas] = useCachedData<IGameChara>("gameCharacters");
   const [cards] = useCachedData<ICardInfo>("cards");
   const [rarities] = useCachedData<ICardRarity>("cardRarities");
   const [episodes] = useCachedData<ICardEpisode>("cardEpisodes");
@@ -103,6 +104,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   const [skills] = useCachedData<ISkillInfo>("skills");
   const [releaseConds] = useCachedData<IReleaseCondition>("releaseConditions");
   const [resourceBoxes] = useCachedData<IResourceBoxInfo>("resourceBoxes");
+  const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
 
   const { cardId } = useParams<{ cardId: string }>();
 
@@ -121,37 +123,56 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   // const [cardRank, setCardRank] = useState<number | number[]>(0);
   // const [maxCardRank, setMaxCardRank] = useState<number>(0);
 
-  const getCharaName = useCharaName(contentTransMode);
-
   const getSkillDesc = useCallback(
     (skill: ISkillInfo, skillLevel: number | number[]) => {
-      let skillInfo =
-        contentTransMode === "original"
-          ? skill.description
-          : contentTransMode === "translated"
-          ? assetT(`skill_desc:${skill.id}`, skill.description, {
-              interpolation: { prefix: "[", suffix: "]" },
-            })
-          : skill.description;
+      let originalSkillInfo = skill.description;
+      let translatedSkillInfo = assetT(
+        `skill_desc:${skill.id}`,
+        skill.description,
+        {
+          interpolation: { prefix: "[", suffix: "]" },
+        }
+      );
 
       for (let elem of skill.skillEffects) {
-        skillInfo = skillInfo.replace(
+        const skillEffectDetail = elem.skillEffectDetails.find(
+          (d) => d.level === skillLevel
+        )!;
+        originalSkillInfo = originalSkillInfo.replace(
           new RegExp(`{{${elem.id};d}}`),
-          String(
-            elem.skillEffectDetails.find((d) => d.level === skillLevel)!
-              .activateEffectDuration
-          )
+          String(skillEffectDetail.activateEffectDuration)
         );
-        skillInfo = skillInfo.replace(
+        originalSkillInfo = originalSkillInfo.replace(
           new RegExp(`{{${elem.id};v}}`),
-          String(
-            elem.skillEffectDetails.find((d) => d.level === skillLevel)!
-              .activateEffectValue
-          )
+          String(skillEffectDetail.activateEffectValue)
+        );
+        translatedSkillInfo = translatedSkillInfo.replace(
+          new RegExp(`{{${elem.id};d}}`),
+          String(skillEffectDetail.activateEffectDuration)
+        );
+        translatedSkillInfo = translatedSkillInfo.replace(
+          new RegExp(`{{${elem.id};v}}`),
+          String(skillEffectDetail.activateEffectValue)
         );
       }
 
-      return skillInfo;
+      switch (contentTransMode) {
+        case "original":
+          return <Typography>{originalSkillInfo}</Typography>;
+        case "translated":
+          return <Typography>{translatedSkillInfo}</Typography>;
+        case "both":
+          return (
+            <Grid container direction="column">
+              <Typography color="textPrimary" align="right">
+                {originalSkillInfo}
+              </Typography>
+              <Typography color="textSecondary" align="right">
+                {translatedSkillInfo}
+              </Typography>
+            </Grid>
+          );
+      }
     },
     [contentTransMode, assetT]
   );
@@ -164,30 +185,12 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
     [charas]
   );
 
-  const getUnitImage = useCallback((unitName?: string) => {
-    switch (unitName) {
-      case "idol":
-        return LogoIdol;
-      case "light_sound":
-        return LogoLightSound;
-      case "piapro":
-        return LogoPiapro;
-      case "school_refusal":
-        return LogoSchoolRefusal;
-      case "street":
-        return LogoStreet;
-      case "theme_park":
-        return LogoThemePark;
-    }
-    return "";
-  }, []);
-
   const getCharaUnitImage = useCallback(
     (charaId: number) => {
       const chara = charas.find((chara) => chara.id === charaId);
-      return getUnitImage(chara?.unit);
+      return chara ? UnitLogoMiniMap[chara!.unit] : undefined;
     },
-    [charas, getUnitImage]
+    [charas]
   );
 
   const getCardImages: () => ImageDecorator[] = useCallback(
@@ -233,6 +236,21 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   );
 
   useEffect(() => {
+    const _card = cards.find((elem) => elem.id === Number(cardId))!;
+    if (_card) {
+      const prefix = getTranslated(
+        contentTransMode,
+        `card_prefix:${_card.id}`,
+        _card.prefix
+      );
+      document.title = t("title:cardDetail", {
+        prefix,
+        character: getCharaName(_card.characterId),
+      });
+    }
+  }, [cards, cardId, contentTransMode, getCharaName, assetT, getTranslated, t]);
+
+  useEffect(() => {
     if (cards.length && rarities.length && skills.length && episodes.length) {
       const _card = cards.find((elem) => elem.id === Number(cardId))!;
       setCard(
@@ -244,13 +262,11 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
         })
       );
       setCardTitle(
-        `${
-          contentTransMode === "original"
-            ? _card.prefix
-            : contentTransMode === "translated"
-            ? assetT(`card_prefix:${_card.id}`, _card.prefix)
-            : _card.prefix
-        } - ${getCharaName(_card.characterId)}`
+        `${getTranslated(
+          contentTransMode,
+          `card_prefix:${_card.id}`,
+          _card.prefix
+        )} - ${getCharaName(_card.characterId)}`
       );
       setCardLevel(
         _card.rarity >= 3
@@ -266,9 +282,6 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
         ].level
       );
       setCardEpisode(episodes.filter((epi) => epi.cardId === Number(cardId)));
-      document.title = `${_card.prefix} | ${getCharaName(
-        _card.characterId
-      )} | Card | Sekai Viewer`;
     }
   }, [
     setCard,
@@ -278,10 +291,10 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
     skills,
     getCharaName,
     episodes,
-    assetI18n,
-    assetI18n.language,
     contentTransMode,
     assetT,
+    getTranslated,
+    t,
   ]);
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
@@ -291,7 +304,8 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
   return card &&
     charaRanks.length &&
     releaseConds.length &&
-    resourceBoxes.length ? (
+    resourceBoxes.length &&
+    unitProfiles.length ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
         {cardTitle}
@@ -389,16 +403,20 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
             justify="space-between"
             alignItems="center"
           >
-            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t("common:title")}
-            </Typography>
-            <Typography>
-              {contentTransMode === "original"
-                ? card.prefix
-                : contentTransMode === "translated"
-                ? assetT(`card_prefix:${card.id}`, card.prefix)
-                : card.prefix}
-            </Typography>
+            <Grid item>
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                {t("common:title")}
+              </Typography>
+            </Grid>
+            <Grid item>
+              <ContentTrans
+                mode={contentTransMode}
+                contentKey={`card_prefix:${card.id}`}
+                original={card.prefix}
+                originalProps={{ align: "right" }}
+                translatedProps={{ align: "right" }}
+              />
+            </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
           <Grid
@@ -408,10 +426,19 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
             justify="space-between"
             alignItems="center"
           >
-            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t("common:character")}
-            </Typography>
-            <Typography>{getCharaName(card.characterId)}</Typography>
+            <Grid item>
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                {t("common:character")}
+              </Typography>
+            </Grid>
+            <Grid item>
+              <CharaNameTrans
+                mode={contentTransMode}
+                characterId={card.characterId}
+                originalProps={{ align: "right" }}
+                translatedProps={{ align: "right" }}
+              />
+            </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
           <Grid
@@ -421,14 +448,44 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
             justify="space-between"
             alignItems="center"
           >
-            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t("common:unit")}
-            </Typography>
-            <img
-              className={classes["unit-logo-img"]}
-              src={getCharaUnitImage(card.characterId)}
-              alt={getCharaUnitName(card.characterId)}
-            ></img>
+            <Grid item xs={2}>
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                {t("common:unit")}
+              </Typography>
+            </Grid>
+            <Grid item xs={9}>
+              <Grid
+                container
+                spacing={1}
+                alignItems="center"
+                justify="flex-end"
+              >
+                <Grid item>
+                  <ContentTrans
+                    mode={contentTransMode}
+                    contentKey={`unit_profile:${getCharaUnitName(
+                      card.characterId
+                    )}.name`}
+                    original={
+                      unitProfiles.find(
+                        (up) => up.unit === getCharaUnitName(card.characterId)
+                      )!.unitName
+                    }
+                    originalProps={{ align: "right" }}
+                    translatedProps={{ align: "right" }}
+                  />
+                </Grid>
+                <Grid item>
+                  <Link to={"/unit/" + getCharaUnitName(card.characterId)}>
+                    <img
+                      className={classes["rarity-star-img"]}
+                      src={getCharaUnitImage(card.characterId)}
+                      alt={getCharaUnitName(card.characterId)}
+                    ></img>
+                  </Link>
+                </Grid>
+              </Grid>
+            </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
           {card.supportUnit !== "none" ? (
@@ -440,14 +497,42 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
                 justify="space-between"
                 alignItems="center"
               >
-                <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                  {t("common:support_unit")}
-                </Typography>
-                <img
-                  className={classes["unit-logo-img"]}
-                  src={getUnitImage(card.supportUnit)}
-                  alt={card.supportUnit}
-                ></img>
+                <Grid item xs={3}>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("common:support_unit")}
+                  </Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  <Grid
+                    container
+                    spacing={1}
+                    alignItems="center"
+                    justify="flex-end"
+                  >
+                    <Grid item>
+                      <ContentTrans
+                        mode={contentTransMode}
+                        contentKey={`unit_profile:${card.supportUnit}.name`}
+                        original={
+                          unitProfiles.find(
+                            (up) => up.unit === card.supportUnit
+                          )!.unitName
+                        }
+                        originalProps={{ align: "right" }}
+                        translatedProps={{ align: "right" }}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Link to={"/unit/" + card.supportUnit}>
+                        <img
+                          className={classes["rarity-star-img"]}
+                          src={UnitLogoMiniMap[card.supportUnit]}
+                          alt={card.supportUnit}
+                        ></img>
+                      </Link>
+                    </Grid>
+                  </Grid>
+                </Grid>
               </Grid>
               <Divider style={{ margin: "1% 0" }} />
             </Fragment>
@@ -459,14 +544,38 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
             justify="space-between"
             alignItems="center"
           >
-            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t("common:attribute")}
-            </Typography>
-            <img
-              src={attrIconMap[card.attr]}
-              alt={card.attr}
-              className={classes["rarity-star-img"]}
-            ></img>
+            <Grid item>
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                {t("common:attribute")}
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Grid container spacing={1} alignItems="center">
+                <Grid item>
+                  <Typography style={{ textTransform: "capitalize" }}>
+                    {card.attr}
+                  </Typography>
+                  {/* <ContentTrans
+                        mode={contentTransMode}
+                        contentKey={`unit_profile:${card.supportUnit}.name`}
+                        original={
+                          unitProfiles.find(
+                            (up) => up.unit === card.supportUnit
+                          )!.unitName
+                        }
+                        originalProps={{ align: "right" }}
+                        translatedProps={{ align: "right" }}
+                      /> */}
+                </Grid>
+                <Grid item>
+                  <img
+                    src={attrIconMap[card.attr]}
+                    alt={card.attr}
+                    className={classes["rarity-star-img"]}
+                  ></img>
+                </Grid>
+              </Grid>
+            </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
           <Grid
@@ -581,16 +690,20 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
             justify="space-between"
             alignItems="center"
           >
-            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t("card:skillName")}
-            </Typography>
-            <Typography>
-              {contentTransMode === "original"
-                ? card.cardSkillName
-                : contentTransMode === "translated"
-                ? assetT(`card_skill_name:${cardId}`, card.cardSkillName)
-                : card.cardSkillName}
-            </Typography>
+            <Grid item>
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                {t("card:skillName")}
+              </Typography>
+            </Grid>
+            <Grid item>
+              <ContentTrans
+                mode={contentTransMode}
+                contentKey={`card_skill_name:${cardId}`}
+                original={card.cardSkillName}
+                originalProps={{ align: "right" }}
+                translatedProps={{ align: "right" }}
+              />
+            </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
           <Grid
@@ -606,9 +719,7 @@ const CardDetail: React.FC<{ contentTransMode: ContentTransModeType }> = ({
               </Typography>
             </Grid>
             <Grid item xs={9}>
-              <Typography align="right">
-                {getSkillDesc(skill!, skillLevel)}
-              </Typography>
+              {getSkillDesc(skill!, skillLevel)}
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />

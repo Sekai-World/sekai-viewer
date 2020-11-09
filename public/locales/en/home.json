@@ -23,5 +23,6 @@
   },
   "detect": {
     "success": "Congratulations! Your browser seems modern, you are able to load images faster and save bandwidth."
-  }
+  },
+  "update": "Related Links"
 }

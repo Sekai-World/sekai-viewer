@@ -1,3 +1,6 @@
+export type ContentTransModeType = "original" | "translated" | "both";
+export type DisplayModeType = "dark" | "light" | "auto";
+
 export interface GachaDetail {
   id: number;
   gachaId: number;
@@ -91,7 +94,7 @@ export interface ICardInfo {
   }[];
 }
 
-export interface ICharaProfile {
+export interface IGameChara {
   id: number;
   seq: number;
   resourceId: number;
@@ -419,8 +422,6 @@ export interface ICardEpisode {
   cardEpisodePartType: string;
 }
 
-export type ContentTransModeType = "original" | "translated" | "both";
-
 export interface IStampInfo {
   id: number;
   stampType: string;
@@ -429,4 +430,56 @@ export interface IStampInfo {
   assetbundleName: string;
   balloonAssetbundleName: string;
   characterId1: number;
+}
+
+export interface ITipInfoComic {
+  id: number;
+  title: string;
+  fromUserRank: number;
+  toUserRank: number;
+  assetbundleName: string;
+}
+
+export interface ITipInfoText {
+  id: number;
+  title: string;
+  fromUserRank: number;
+  toUserRank: number;
+  description: string;
+}
+
+export type ITipInfo = ITipInfoText | ITipInfoComic;
+
+export interface ICharaUnitInfo {
+  id: number;
+  gameCharacterId: number;
+  unit: string;
+  colorCode: string;
+  skinColorCode: string;
+  skinShadowColorCode1: string;
+  skinShadowColorCode2: string;
+}
+
+export interface ICharaProfile {
+  characterId: number;
+  characterVoice: string;
+  birthday: string;
+  height: string;
+  school: string;
+  schoolYear: string;
+  hobby: string;
+  specialSkill: string;
+  favoriteFood: string;
+  hatedFood: string;
+  weak: string;
+  introduction: string;
+  scenarioId: string;
+}
+
+export interface IUnitProfile {
+  unit: string;
+  unitName: string;
+  seq: number;
+  profileSentence: string;
+  colorCode: string;
 }

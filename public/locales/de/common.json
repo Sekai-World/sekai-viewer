@@ -5,8 +5,8 @@
   "gacha": "Gacha",
   "event": "Event",
   "stamp": "",
-  "unit": "Gruppen",
-  "member": "Mitglider",
+  "comic": "",
+  "character": "",
   "musicMeta": "",
   "scoreCalculator": "",
   "toolbar": {
@@ -27,7 +27,7 @@
   },
   "id": "",
   "title": "",
-  "character": "",
+  "unit": "Gruppen",
   "support_unit": "",
   "attribute": "",
   "startAt": "",
@@ -53,6 +53,8 @@
   "campaign": "Kampagne",
   "bug": "Fehler",
   "update": "Update",
+  "profile": "",
   "character_plural": "",
-  "level": ""
+  "level": "",
+  "member": "Mitglider"
 }

@@ -1,21 +1,32 @@
 {
+  "vocal": "보컬",
   "alert[0]": "모든 음악의 처음 <b>9초</b> 동안은 아무 소리도 나지 않습니다. 버그가 아니예요!",
-  "skipBeginningSilence": "",
+  "vocalTab": {
+    "title[0]": "숏버전",
+    "title[1]": "롱버전",
+    "title[2]": "뮤직 비디오"
+  },
+  "skipBeginningSilence": "시작 무음 구간 스킵하기",
   "tag": "태그",
+  "tag_plural": "태그",
   "category": "카테고리",
-  "actualPlaybackTime": "",
+  "category_plural": "카테고리",
+  "categoryType": {
+    "mv": "3D MV",
+    "mv_2d": "2D MV",
+    "original": "오리지널 MV",
+    "image": "정적 이미지"
+  },
+  "actualPlaybackTime": "실제 재생 시간",
   "arranger": "편곡",
   "composer": "작곡",
   "lyricist": "작사",
   "danceMember": "댄스 멤버",
+  "danceMember_plural": "댄스 멤버들",
   "dancerCount": "댄스 멤버 수",
-  "vocal": "보컬",
+  "vocal_plural": "보컬",
   "vocalType": "보컬 타입",
   "difficulty": "난이도",
-  "noteCount": "노트 수",
-  "tag_plural": "태그",
-  "category_plural": "카테고리",
-  "danceMember_plural": "댄스 멤버들",
-  "vocal_plural": "보컬",
-  "difficulty_plural": "난이도"
+  "difficulty_plural": "난이도",
+  "noteCount": "노트 수"
 }

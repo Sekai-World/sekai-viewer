@@ -4,10 +4,11 @@
     "title[1]": "摘要",
     "title[2]": "模擬",
     "title[3]": "背景",
-    "title[4]": "特征圖"
+    "title[4]": "特徵圖"
   },
-  "normalRate": "普通招募概率",
-  "guaranteedRate": "保底招募概率",
   "pickupMember": "本期角色",
-  "pickupMember_plural": "本期角色"
+  "pickupMember_plural": "本期角色",
+  "gachaType": {
+    "ceil": "保底"
+  }
 }

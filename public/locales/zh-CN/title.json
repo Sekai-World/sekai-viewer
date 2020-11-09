@@ -1,0 +1,16 @@
+{
+  "cardDetail": "{{- prefix}} | {{- character}} | 卡牌 | Sekai Viewer",
+  "cardList": "卡牌列表 | Sekai Viewer",
+  "comicList": "",
+  "eventDetail": "{{- name}} | 活动 | Sekai Viewer",
+  "eventList": "活动列表 | Sekai Viewer",
+  "gachaDetail": "{{- name}} | 招募 | Sekai Viewer",
+  "gachaList": "招募列表 | Sekai Viewer",
+  "home": "首页 | Sekai Viewer",
+  "memberDetail": "{{- name}} | 角色 | Sekai Viewer",
+  "memberList": "角色列表 | Sekai Viewer",
+  "musicDetail": "{{- title}} | 乐曲 | Sekai Viewer",
+  "musicList": "乐曲列表 | Sekai Viewer",
+  "stampList": "贴纸列表 | Sekai Viewer",
+  "unitDetail": ""
+}

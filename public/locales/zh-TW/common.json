@@ -1,12 +1,12 @@
 {
   "home": "主頁",
   "card": "卡牌",
-  "music": "音樂",
+  "music": "樂曲",
   "gacha": "招募",
   "event": "活動",
   "stamp": "贴纸",
-  "unit": "組合",
-  "member": "成員",
+  "comic": "漫畫",
+  "character": "角色",
   "musicMeta": "歌曲Meta",
   "scoreCalculator": "分數計算器",
   "toolbar": {
@@ -27,7 +27,7 @@
   },
   "id": "編號",
   "title": "標題",
-  "character": "角色",
+  "unit": "組合",
   "support_unit": "輔助角色",
   "attribute": "屬性",
   "startAt": "開放於",
@@ -53,6 +53,8 @@
   "campaign": "紀念活動",
   "bug": "問題",
   "update": "更新",
+  "profile": "角色資料",
   "level": "等級",
+  "member": "成員",
   "character_plural": "角色"
 }

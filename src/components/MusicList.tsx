@@ -26,19 +26,19 @@ import {
   ViewGrid,
   ViewGridOutline,
 } from "mdi-material-ui";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import { Link, useRouteMatch } from "react-router-dom";
-import {
-  ContentTransModeType,
-  IMusicDifficultyInfo,
-  IMusicInfo,
-} from "../types";
-import { musicCategoryToName, useCachedData, useRefState } from "../utils";
+import { IMusicDifficultyInfo, IMusicInfo } from "../types";
+import { useCachedData, useRefState } from "../utils";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
 import { useInteractiveStyles } from "../styles/interactive";
 import { useAssetI18n } from "../utils/i18n";
+import { SettingContext } from "../context";
+import { ContentTrans } from "./subs/ContentTrans";
+
+type ViewGridType = "grid" | "agenda" | "comfy";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -103,15 +103,14 @@ function getPaginatedMusics(musics: IMusicInfo[], page: number, limit: number) {
   return musics.slice(limit * (page - 1), limit * page);
 }
 
-const MusicList: React.FC<{
-  contentTransMode: ContentTransModeType;
-}> = ({ contentTransMode }) => {
+const MusicList: React.FC<{}> = () => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
-  const { assetT } = useAssetI18n();
+  const { getTranslated } = useAssetI18n();
+  const { contentTransMode } = useContext(SettingContext)!;
 
   const [musicsCache] = useCachedData<IMusicInfo>("musics");
   const [musicDiffis] = useCachedData<IMusicDifficultyInfo>(
@@ -122,8 +121,9 @@ const MusicList: React.FC<{
   const [sortedCache, sortedCacheRef, setSortedCache] = useRefState<
     IMusicInfo[]
   >([]);
-  const [viewGridType, setViewGridType] = useState<string>(
-    localStorage.getItem("music-list-grid-view-type") || "grid"
+  const [viewGridType, setViewGridType] = useState<ViewGridType>(
+    (localStorage.getItem("music-list-grid-view-type") ||
+      "grid") as ViewGridType
   );
   const [page, pageRef, setPage] = useRefState<number>(0);
   const [limit, limitRef] = useRefState<number>(12);
@@ -139,8 +139,8 @@ const MusicList: React.FC<{
   );
 
   useEffect(() => {
-    document.title = "Music List | Sekai Viewer";
-  }, []);
+    document.title = t("title:musicList");
+  }, [t]);
 
   useEffect(() => {
     setIsReady(Boolean(musicsCache.length));
@@ -175,7 +175,7 @@ const MusicList: React.FC<{
   }, [page, limit, setLastQueryFin, sortedCache]);
 
   const callback = (
-    entries: IntersectionObserverEntry[],
+    entries: readonly IntersectionObserverEntry[],
     setHasMore: React.Dispatch<React.SetStateAction<boolean>>
   ) => {
     if (!isReadyRef.current) return;
@@ -219,27 +219,37 @@ const MusicList: React.FC<{
             <CardMedia
               className={classes.media}
               image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/jacket/${data.assetbundleName}_rip/${data.assetbundleName}.webp`}
-              title={
-                contentTransMode === "original"
-                  ? data.title
-                  : contentTransMode === "translated"
-                  ? assetT(`music_titles:${data.id}`, data.title)
-                  : data.title
-              }
+              title={getTranslated(
+                contentTransMode,
+                `music_titles:${data.id}`,
+                data.title
+              )}
             ></CardMedia>
             <CardContent style={{ paddingBottom: "16px" }}>
-              <Typography variant="subtitle1" className={classes.header}>
-                {contentTransMode === "original"
-                  ? data.title
-                  : contentTransMode === "translated"
-                  ? assetT(`music_titles:${data.id}`, data.title)
-                  : data.title}
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                {data.categories
-                  .map((cat) => musicCategoryToName[cat] || cat)
-                  .join(", ")}
-              </Typography>
+              <Grid container direction="column" spacing={1}>
+                <Grid item>
+                  <ContentTrans
+                    mode={contentTransMode}
+                    contentKey={`music_titles:${data.id}`}
+                    original={data.title}
+                    originalProps={{
+                      variant: "subtitle1",
+                      className: classes.header,
+                    }}
+                    translatedProps={{
+                      variant: "subtitle1",
+                      className: classes.header,
+                    }}
+                  />
+                </Grid>
+                <Grid item>
+                  <Typography variant="body2" color="textSecondary">
+                    {data.categories
+                      .map((cat) => t(`music:categoryType.${cat}`))
+                      .join(", ")}
+                  </Typography>
+                </Grid>
+              </Grid>
             </CardContent>
           </Card>
         </Link>
@@ -312,58 +322,66 @@ const MusicList: React.FC<{
                 <CardMedia
                   className={classes.agendaMedia}
                   image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/jacket/${data.assetbundleName}_rip/${data.assetbundleName}.webp`}
-                  title={
-                    contentTransMode === "original"
-                      ? data.title
-                      : contentTransMode === "translated"
-                      ? assetT(`music_titles:${data.id}`, data.title)
-                      : data.title
-                  }
+                  title={getTranslated(
+                    contentTransMode,
+                    `music_titles:${data.id}`,
+                    data.title
+                  )}
                 ></CardMedia>
               </Grid>
-              <Grid item xs={6} md={7} container direction="column">
-                <Grid item>
-                  <Typography variant="body1">
-                    {contentTransMode === "original"
-                      ? data.title
-                      : contentTransMode === "translated"
-                      ? assetT(`music_titles:${data.id}`, data.title)
-                      : data.title}
-                  </Typography>
-                  <Typography color="textSecondary">
-                    {data.categories
-                      .map((cat) => musicCategoryToName[cat] || cat)
-                      .join(", ")}
-                  </Typography>
-                </Grid>
-                <Grid
-                  item
-                  container
-                  direction="row"
-                  style={{ marginTop: "5%" }}
-                >
-                  {musicDiffis
-                    .filter((elem) => elem.musicId === data.id)
-                    .map((elem) => (
-                      <Grid item xs={4} md={2} key={`diff-${elem.id}`}>
-                        <Chip
-                          color="primary"
-                          size="small"
-                          classes={{
-                            colorPrimary:
-                              classes[
-                                `diffi-${elem.musicDifficulty}` as
-                                  | "diffi-easy"
-                                  | "diffi-normal"
-                                  | "diffi-hard"
-                                  | "diffi-expert"
-                                  | "diffi-master"
-                              ],
-                          }}
-                          label={elem.playLevel}
-                        ></Chip>
-                      </Grid>
-                    ))}
+              <Grid item xs={6} md={7}>
+                <Grid container direction="column" spacing={1}>
+                  <Grid item>
+                    <ContentTrans
+                      mode={contentTransMode}
+                      contentKey={`music_titles:${data.id}`}
+                      original={data.title}
+                      originalProps={{
+                        variant: "subtitle1",
+                        className: classes.header,
+                      }}
+                      translatedProps={{
+                        variant: "subtitle1",
+                        className: classes.header,
+                      }}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Typography variant="body2" color="textSecondary">
+                      {data.categories
+                        .map((cat) => t(`music:categoryType.${cat}`))
+                        .join(", ")}
+                    </Typography>
+                  </Grid>
+                  <Grid
+                    item
+                    container
+                    direction="row"
+                    style={{ marginTop: "5%" }}
+                  >
+                    {musicDiffis
+                      .filter((elem) => elem.musicId === data.id)
+                      .map((elem) => (
+                        <Grid item xs={4} md={2} key={`diff-${elem.id}`}>
+                          <Chip
+                            color="primary"
+                            size="small"
+                            classes={{
+                              colorPrimary:
+                                classes[
+                                  `diffi-${elem.musicDifficulty}` as
+                                    | "diffi-easy"
+                                    | "diffi-normal"
+                                    | "diffi-hard"
+                                    | "diffi-expert"
+                                    | "diffi-master"
+                                ],
+                            }}
+                            label={elem.playLevel}
+                          ></Chip>
+                        </Grid>
+                      ))}
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
@@ -378,7 +396,7 @@ const MusicList: React.FC<{
       <Typography variant="h6" className={layoutClasses.header}>
         {t("common:music")}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      <Container className={layoutClasses.content}>
         <Grid container justify="space-between">
           <ButtonGroup style={{ marginBottom: "1%" }}>
             <Button
@@ -488,12 +506,20 @@ const MusicList: React.FC<{
           viewComponent: ListCard[viewGridType],
           callback,
           data: musics,
-          gridSize: {
-            xs: 12,
-            sm: 6,
-            md:
-              viewGridType === "grid" ? 4 : viewGridType === "agenda" ? 12 : 12,
-          },
+          gridSize: ({
+            grid: {
+              xs: 12,
+              sm: 6,
+              md: 4,
+              lg: 3,
+            },
+            agenda: {
+              xs: 12,
+            },
+            comfy: {
+              xs: 12,
+            },
+          } as const)[viewGridType],
         })}
       </Container>
     </Fragment>

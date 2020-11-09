@@ -5,8 +5,8 @@
   "gacha": "Гача",
   "event": "Ивенты",
   "stamp": "Штампы",
-  "unit": "Юнит",
-  "member": "Участники",
+  "comic": "Ёнкомы",
+  "character": "Персонаж",
   "musicMeta": "Мета песен",
   "scoreCalculator": "Калькулятор счёта",
   "toolbar": {
@@ -27,7 +27,7 @@
   },
   "id": "ID",
   "title": "Название",
-  "character": "Персонаж",
+  "unit": "Юнит",
   "support_unit": "Юнит поддержки",
   "attribute": "Атрибут ",
   "startAt": "Доступно с",
@@ -53,6 +53,11 @@
   "campaign": "Компания",
   "bug": "Баги",
   "update": "Обновления",
-  "character_plural": "Персонажи",
-  "level": "Уровень"
+  "profile": "",
+  "character_0": "",
+  "character_1": "",
+  "character_2": "",
+  "level": "Уровень",
+  "member": "Участники",
+  "character_plural": "Персонажи"
 }

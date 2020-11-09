@@ -1,10 +1,22 @@
 {
   "alert[0]": "The first <b>nine seconds</b> of every song have no sound. This is NOT a bug.",
+  "vocal": "Vocal",
+  "vocalTab": {
+    "title[0]": "Short version",
+    "title[1]": "Long version",
+    "title[2]": "Music video"
+  },
   "skipBeginningSilence": "Skip beginning silence",
   "tag": "Tag",
   "tag_plural": "Tags",
   "category": "Category",
   "category_plural": "Categories",
+  "categoryType": {
+    "mv": "3D MV",
+    "mv_2d": "2D MV",
+    "original": "Original MV",
+    "image": "Static Image"
+  },
   "actualPlaybackTime": "Actual Playback Time",
   "arranger": "Arranger",
   "composer": "Composer",
@@ -12,7 +24,6 @@
   "danceMember": "Dance Member",
   "danceMember_plural": "Dance Members",
   "dancerCount": "Dancer Count",
-  "vocal": "Vocal",
   "vocal_plural": "Vocals",
   "vocalType": "Vocal Type",
   "difficulty": "Difficulty",

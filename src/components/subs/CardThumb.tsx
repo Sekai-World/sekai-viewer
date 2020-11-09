@@ -1,59 +1,21 @@
-import { Grid, makeStyles } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import React, { useEffect, useState } from "react";
 import { ICardInfo } from "../../types";
 import { useCachedData } from "../../utils";
 
-import cardFrameS1 from "../../assets/frame/cardFrame_S_1.png";
-import cardFrameS2 from "../../assets/frame/cardFrame_S_2.png";
-import cardFrameS3 from "../../assets/frame/cardFrame_S_3.png";
-import cardFrameS4 from "../../assets/frame/cardFrame_S_4.png";
-
-import IconAttrCool from "../../assets/icon_attribute_cool.png";
-import IconAttrCute from "../../assets/icon_attribute_cute.png";
-import IconAttrHappy from "../../assets/icon_attribute_happy.png";
-import IconAttrMyster from "../../assets/icon_attribute_mysterious.png";
-import IconAttrPure from "../../assets/icon_attribute_pure.png";
-
 import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
-
-const useStyles = makeStyles((theme) => ({
-  svg: {
-    display: "block",
-    width: "100%",
-    height: "100%",
-  },
-  skeleton: {
-    width: "100%",
-    paddingTop: "100%",
-  },
-}));
-
-const cardFrameRarity: { [key: string]: string } = {
-  1: cardFrameS1,
-  2: cardFrameS2,
-  3: cardFrameS3,
-  4: cardFrameS4,
-};
-
-const attrIconMap: { [key: string]: string } = {
-  cool: IconAttrCool,
-  cute: IconAttrCute,
-  happy: IconAttrHappy,
-  mysterious: IconAttrMyster,
-  pure: IconAttrPure,
-};
+import { useSvgStyles } from "../../styles/svg";
+import { attrIconMap, cardThumbFrameMap } from "../../utils/resources";
 
 export const CardThumb: React.FC<{ id: number; trained?: boolean }> = ({
   id,
-  trained,
+  trained = false,
 }) => {
-  trained = trained || false;
-
   const skeleton = CardThumbSkeleton({});
 
-  const classes = useStyles();
+  const classes = useSvgStyles();
   const [cards] = useCachedData<ICardInfo>("cards");
   const [card, setCard] = useState<ICardInfo>();
 
@@ -82,7 +44,7 @@ export const CardThumb: React.FC<{ id: number; trained?: boolean }> = ({
       />
       {/* frame */}
       <image
-        href={cardFrameRarity[String(card.rarity)]}
+        href={cardThumbFrameMap[String(card.rarity)]}
         x="0"
         y="0"
         height="156"
@@ -108,7 +70,7 @@ export const CardThumb: React.FC<{ id: number; trained?: boolean }> = ({
 };
 
 export const CardThumbSkeleton: React.FC<{}> = () => {
-  const classes = useStyles();
+  const classes = useSvgStyles();
 
   return <Skeleton variant="rect" className={classes.skeleton}></Skeleton>;
 };
