@@ -253,6 +253,8 @@ function Home() {
             <li>Pt-BR: mid</li>
             <li>русский: Spyrohat</li>
             <li>Es: ruiemu, maravillas</li>
+            <li>It: SeaPu</li>
+            <li>Pl: sousie</li>
           </ul>
           <Trans
             i18nKey="home:alert_settings"

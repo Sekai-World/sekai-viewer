@@ -1,0 +1,25 @@
+{
+  "alreadyEnded": "Wydarzenie zostało zakończone",
+  "notStarted": "Nie zaczęte",
+  "tab": {
+    "title[0]": "Baner i logo",
+    "title[1]": "Tło",
+    "title[2]": "Osoba"
+  },
+  "remainingTime": "Pozostały Czas",
+  "progress": "Progres",
+  "boostAttribute": "Wzmacniający Atrybut",
+  "boostCharacters": "Wzmacniające Postacie",
+  "maxBoost": "Maksymalny Wzrost (Oba Dopasowane)",
+  "aggregateAt": "Zagregowany Punkt Czasowy",
+  "rankingAnnounceAt": "Ogłoszenie Rankingu W",
+  "distributionStartAt": "Dystrybucja Nagród Od",
+  "distributionEndAt": "Dystrybucja Nagród Do",
+  "ranking": "Ranking",
+  "realtime": "W czasie rzeczywistym o",
+  "nextfetch": "Następny aport",
+  "alreadyPast": "Już Przeszły",
+  "type": {
+    "marathon": "Maraton"
+  }
+}

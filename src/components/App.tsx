@@ -522,14 +522,19 @@ function App() {
                   label="It"
                 ></FormControlLabel>
                 <FormControlLabel
-                  value="de"
+                  value="pl"
                   control={<Radio />}
-                  label="De"
+                  label="pl"
                 ></FormControlLabel>
                 <FormControlLabel
                   value="pt-BR"
                   control={<Radio />}
                   label="Pt-BR"
+                ></FormControlLabel>
+                <FormControlLabel
+                  value="de"
+                  control={<Radio />}
+                  label="De"
                 ></FormControlLabel>
                 <FormControlLabel
                   value="ru"

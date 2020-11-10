@@ -22,6 +22,7 @@ export function initGlobalI18n() {
         "pt-BR",
         "ru",
         "it",
+        "pl",
       ],
       ns: [
         "common",

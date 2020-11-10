@@ -1,0 +1,32 @@
+{
+  "alert[0]": "Pierwsze <b>dziewięć sekund</b> każdej piosenki nie ma dźwieku. To NIE jest błąd.",
+  "vocal": "Wokal",
+  "vocalTab": {
+    "title[0]": "Krótka wersja",
+    "title[1]": "Długa Wersja",
+    "title[2]": "Teledysk"
+  },
+  "skipBeginningSilence": "Pomiń ciszę na początku",
+  "tag": "Etykieta",
+  "tag_plural": "Etykiety",
+  "category": "Kategoria",
+  "category_plural": "Kategorie",
+  "categoryType": {
+    "mv": "3D MV",
+    "mv_2d": "2D MV",
+    "original": "Oryginalny MV",
+    "image": "Statyczny Obraz"
+  },
+  "actualPlaybackTime": "Rzeczywisty czas odtwarzania",
+  "arranger": "Aranżer",
+  "composer": "Kompozytor",
+  "lyricist": "Autor Tekstu",
+  "danceMember": "Tańczący Członek",
+  "danceMember_plural": "Tańczący Członkowie",
+  "dancerCount": "Liczba Tancerzy",
+  "vocal_plural": "Wokale",
+  "vocalType": "Typ Wokalu",
+  "difficulty": "Trudność",
+  "difficulty_plural": "Trudności",
+  "noteCount": "Liczba Nut"
+}
