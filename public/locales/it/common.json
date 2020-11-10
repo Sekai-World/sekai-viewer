@@ -1,0 +1,60 @@
+{
+  "home": "Casa",
+  "card": "Carte",
+  "music": "Canzoni",
+  "gacha": "Gacha",
+  "event": "Eventi",
+  "stamp": "Adesivi",
+  "comic": "Fumetti",
+  "character": "Personaggi",
+  "musicMeta": "Meta delle canzoni",
+  "scoreCalculator": "Calcolatore di punteggio",
+  "toolbar": {
+    "title": "Lista delle funzioni"
+  },
+  "information": "Informazioni",
+  "tools": "Strumenti",
+  "settings": {
+    "title": "Impostazioni"
+  },
+  "language": "Lingua",
+  "darkmode": "Modalità di luminosità ",
+  "contentTranslationMode": {
+    "title": "Modalità di visione del contenuto del gioco",
+    "original": "Originale",
+    "translated": "Tradotto (se disponibile)",
+    "both": "Mostra entrambi"
+  },
+  "id": "ID",
+  "title": "Titolo",
+  "unit": "Gruppo",
+  "support_unit": "Gruppo di supporto",
+  "attribute": "Attributo",
+  "startAt": "Disponibile da",
+  "rarity": "Rarità",
+  "thumb": "Icona",
+  "skill": "Abilità",
+  "performance": "Prestazione",
+  "technique": "Tecnica",
+  "stamina": "Resistenza",
+  "power": "Potenza",
+  "releaseCondition": "Condizione di rilascio",
+  "releaseCosts": "Costi di rilascio",
+  "rewards": "Premi",
+  "type": "Tipo",
+  "endAt": "Disponibile fino a",
+  "icon": "Icona",
+  "detect": {
+    "checking": "Controllando...",
+    "unsupported": "Non supportato",
+    "supported": "Supportato"
+  },
+  "support": "Supporto",
+  "campaign": "Campagna",
+  "bug": "Errore",
+  "update": "Aggiornamento",
+  "profile": "Profilo",
+  "character_plural": "Personaggi",
+  "level": "Livello",
+  "member": "Personaggio"
+}

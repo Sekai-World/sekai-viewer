@@ -1,0 +1,21 @@
+{
+  "tab": {
+    "title[0]": "Immagine normale",
+    "title[1]": "Normal trim image",
+    "title[2]": "Immagine dopo essere stata allenata",
+    "title[3]": "After training trim image"
+  },
+  "skillLevel": "Livello dell'abilità",
+  "skillName": "Nome dell'abilità",
+  "skillEffect": "Effetto dell'abilità",
+  "stats": "Statistiche",
+  "cardLevel": "Livello della carta",
+  "normal": "Normale",
+  "trained": "Allenata",
+  "sideStory": "Storia speciale",
+  "sideStory1Unlocked": "Storia speciale 1 sbloccata",
+  "sideStory2Unlocked": "Storia speciale 2 sbloccata",
+  "sideStory_plural": "Storie speciali",
+  "power": "Potenza",
+  "skill": "Abilità"
+}
