@@ -1,6 +1,6 @@
 {
+  "alert[0]": "The first <b>nine seconds</b> of every song have no sound. This is NOT a bug.",
   "vocal": "Vocal",
-  "alert[0]": "The first <b>nine seconds</b> of every music have no sound. That's NOT a bug.",
   "vocalTab": {
     "title[0]": "Short version",
     "title[1]": "Long version",
