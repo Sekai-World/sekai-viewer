@@ -1,6 +1,6 @@
 {
-  "vocal": "Вокалист",
   "alert[0]": "Каждая песня не имеет звука первые <b>девять секунд. </b>Это НЕ баг.",
+  "vocal": "Вокалист",
   "vocalTab": {
     "title[0]": "Short version",
     "title[1]": "Long version",
