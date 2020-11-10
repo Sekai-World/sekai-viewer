@@ -3,10 +3,10 @@
   "user_rank": "Reach player rank {{level}}.",
   "unit_rank_undefined": "Purchase 1 song from the shop. (Temporary)",
   "none_5": "音楽ショップで交換する",
-  "none_6": "入手手段無し",
-  "none_7": "衣装ショップで交換する",
-  "shop": "アナザーボーカルショップで交換する",
-  "none_10": "プレゼントを受け取る",
+  "none_6": "Unobtainable.",
+  "none_7": "Purchase a costume from the shop.",
+  "shop": "Purchase a song's another vocal version from the shop.",
+  "none_10": "Received from a present.",
   "none_999": "プレゼントで配布。 無い人はユーザ削除。",
   "unit_rank_5": "Get Leo/need's unit rank to {{rank}}.",
   "unit_rank_3": "Get MORE MORE JUMP!'s unit rank to {{rank}}.",
@@ -43,9 +43,9 @@
   "master_rank_level": "Get [{{cardPrefix}}] {{cardCharaName}}'s master rank to {{level}}.",
   "character_rank": "｢{{charaName}}｣のキャラクターランク{{num}}でユニット編成数UP",
   "inherit_complete": "引き継ぎ完了する",
-  "event_point": "Reach {{point}} event points.",
+  "event_point": "Obtain {{point}} event points.",
   "event_story_1000016": "Read the ending of Imprisoned Marionette.",
   "virtual_live_participation": "Attend a virtual live.",
-  "character_live_usage_leader": "「{{charaName}}」をリーダーにして{{times}}回ライブをしよう",
-  "challenge_live_character_force_release": "Do a challenge live."
+  "character_live_usage_leader": "Play {{times}} lives with {{charaName}} as the leader.",
+  "challenge_live_character_force_release": "Play a challenge live."
 }

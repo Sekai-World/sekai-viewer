@@ -1,0 +1,10 @@
+{
+  "sort": {
+    "caption": "Ordina",
+    "ascending": "Ascendente",
+    "descending": "Discendente"
+  },
+  "character": {
+    "caption": "Personaggio"
+  }
+}

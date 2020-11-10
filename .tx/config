@@ -63,61 +63,61 @@ type = KEYVALUEJSON
 
 [project-sekai-i18n.card_prefix]
 file_filter = public/locales/<lang>/card_prefix.json
-source_file = public/locales/en/card_prefix.json
+source_file = public/locales/ja/card_prefix.json
 source_lang = ja
 type = KEYVALUEJSON
 
 [project-sekai-i18n.card_skill_name]
 file_filter = public/locales/<lang>/card_skill_name.json
-source_file = public/locales/en/card_skill_name.json
+source_file = public/locales/ja/card_skill_name.json
 source_lang = ja
 type = KEYVALUEJSON
 
 [project-sekai-i18n.character_name]
 file_filter = public/locales/<lang>/character_name.json
-source_file = public/locales/en/character_name.json
+source_file = public/locales/ja/character_name.json
 source_lang = ja
 type = KEYVALUEJSON
 
 [project-sekai-i18n.character_profile]
 file_filter = public/locales/<lang>/character_profile.json
-source_file = public/locales/en/character_profile.json
+source_file = public/locales/ja/character_profile.json
 source_lang = ja
 type = KEYVALUEJSON
 
 [project-sekai-i18n.event_name]
 file_filter = public/locales/<lang>/event_name.json
-source_file = public/locales/en/event_name.json
+source_file = public/locales/ja/event_name.json
 source_lang = ja
 type = KEYVALUEJSON
 
 [project-sekai-i18n.gacha_name]
 file_filter = public/locales/<lang>/gacha_name.json
-source_file = public/locales/en/gacha_name.json
+source_file = public/locales/ja/gacha_name.json
 source_lang = ja
 type = KEYVALUEJSON
 
 [project-sekai-i18n.music_titles]
 file_filter = public/locales/<lang>/music_titles.json
-source_file = public/locales/en/music_titles.json
+source_file = public/locales/ja/music_titles.json
 source_lang = ja
 type = KEYVALUEJSON
 
 [project-sekai-i18n.release_cond]
 file_filter = public/locales/<lang>/release_cond.json
-source_file = public/locales/en/release_cond.json
+source_file = public/locales/ja/release_cond.json
 source_lang = ja
 type = KEYVALUEJSON
 
 [project-sekai-i18n.skill_desc]
 file_filter = public/locales/<lang>/skill_desc.json
-source_file = public/locales/en/skill_desc.json
+source_file = public/locales/ja/skill_desc.json
 source_lang = ja
 type = KEYVALUEJSON
 
 [project-sekai-i18n.unit_profile]
 file_filter = public/locales/<lang>/unit_profile.json
-source_file = public/locales/en/unit_profile.json
+source_file = public/locales/ja/unit_profile.json
 source_lang = ja
 type = KEYVALUEJSON
 
