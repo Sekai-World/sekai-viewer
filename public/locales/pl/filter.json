@@ -1,0 +1,10 @@
+{
+  "character": {
+    "caption": "Osoba"
+  },
+  "sort": {
+    "caption": "Sortuj",
+    "ascending": "Rosnąco",
+    "descending": "Malejąco"
+  }
+}
