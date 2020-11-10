@@ -1,0 +1,13 @@
+{
+  "1": "{{1;v}}% zwiększenie wyniku na {{1;d}} sekund.",
+  "2": "{{2;v}}% zwiększenie wyniku na {{2;d}} sekund.",
+  "3": "{{3;v}}% zwiększenie wyniku na {{3;d}} sekund.",
+  "4": "{{4;v}}% zwiększenie wyniku na {{4;d}} sekund.",
+  "5": "Wszystkie GREAT zamienią się na PERFECT na {{8;d}} sekund; {{5;v}}% zwiększenie wyniku na {{5;d}} sekund.",
+  "6": "Wszystkie GOOD i wyższe zamienią się na PERFECT na {{9;d}} sekund; {{6;v}}% zwiększenie wyniku na {{6;d}} sekund.",
+  "7": "Wszystkie BAD i wyższe zamienią się na PERFECT na {{10;d}} sekund; {{7;v}}% zwiększenie wyniku na {{7;d}} sekund.",
+  "8": "Odnów {{14;v}} życia; {{11;v}}% zwiększenie wyniku na {{11;d}} sekund.",
+  "9": "Odnów {{15;v}} życia; {{12;v}}% zwiększenie wyniku na {{12;d}} sekund.",
+  "10": "Odnów {{16;v}} życia; {{13;v}}% zwiększenie wyniku na {{13;d}} sekund.",
+  "11": "{{1;v}}% zwiększenie wyniku na {{17;d}} sekund tylko dla PERFECT."
+}
