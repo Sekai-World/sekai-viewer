@@ -1,0 +1,21 @@
+{
+  "tab": {
+    "title[0]": "Normalne zdjęcie",
+    "title[1]": "Zdjęcie z normalnym przycięcięm",
+    "title[2]": "Zdjęcie po treningu",
+    "title[3]": "Przycięte zdjęcie po treningu"
+  },
+  "skillLevel": "Poziom Umiejętności",
+  "skillName": "Nazwa Umiejętności",
+  "skillEffect": "Efekt Umiejętności",
+  "stats": "Statystyki",
+  "cardLevel": "Poziom Karty",
+  "normal": "Normalny",
+  "trained": "Przeszkolony",
+  "sideStory": "Poboczna Historia",
+  "sideStory1Unlocked": "Poboczna Historia 1 Odblokowana",
+  "sideStory2Unlocked": "Poboczna Historia 2 Odblokowana",
+  "sideStory_plural": "Poboczne Historie",
+  "power": "Moc",
+  "skill": "Umiejętność"
+}
