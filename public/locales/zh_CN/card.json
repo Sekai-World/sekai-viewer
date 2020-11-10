@@ -1,0 +1,21 @@
+{
+  "tab": {
+    "title[0]": "特训前卡图",
+    "title[1]": "特训前角色图",
+    "title[2]": "特训后卡图",
+    "title[3]": "特训后角色图"
+  },
+  "skillLevel": "技能等级",
+  "skillName": "技能名称",
+  "skillEffect": "技能效果",
+  "stats": "能力值",
+  "cardLevel": "卡牌等级",
+  "normal": "通常",
+  "trained": "特训后",
+  "sideStory": "角色剧情",
+  "sideStory1Unlocked": "角色剧情 1 (已解放)",
+  "sideStory2Unlocked": "角色剧情 2 (已解放)",
+  "sideStory_plural": "角色剧情",
+  "power": "综合力",
+  "skill": "技能"
+}
