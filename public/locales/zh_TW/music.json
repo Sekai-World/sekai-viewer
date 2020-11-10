@@ -1,0 +1,32 @@
+{
+  "alert[0]": "每首歌曲的<b>前九秒</b>是無聲的。這不是Bug！",
+  "vocal": "演唱者",
+  "vocalTab": {
+    "title[0]": "Short version",
+    "title[1]": "Long version",
+    "title[2]": "Music video"
+  },
+  "skipBeginningSilence": "跳過開頭的無聲段",
+  "tag": "標籤",
+  "tag_plural": "標籤",
+  "category": "類別",
+  "category_plural": "類別",
+  "categoryType": {
+    "mv": "3D MV",
+    "mv_2d": "2D MV",
+    "original": "Original MV",
+    "image": "Static Image"
+  },
+  "actualPlaybackTime": "實際播放時長",
+  "arranger": "編曲",
+  "composer": "作曲",
+  "lyricist": "作詞",
+  "danceMember": "舞蹈成員",
+  "danceMember_plural": "舞蹈成員",
+  "dancerCount": "舞蹈人員數量",
+  "vocal_plural": "演唱者",
+  "vocalType": "演唱者類型",
+  "difficulty": "難度",
+  "difficulty_plural": "難度",
+  "noteCount": "音符數量"
+}
