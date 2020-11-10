@@ -1,0 +1,17 @@
+{
+  "tab": {
+    "title[0]": "Opis",
+    "title[1]": "Podsumowanie",
+    "title[2]": "Symulator",
+    "title[3]": "Tło",
+    "title[4]": "Wyróżnij Zdjęcie"
+  },
+  "normalRate": "Normalna Szansa Rzutu",
+  "guaranteedRate": "Gwarantowana Szansa Rzutu",
+  "pickupMember": "Odbierający Członek",
+  "pickupMember_plural": "Odbierający Członkowie",
+  "gachaType": {
+    "ceil": "Sufit",
+    "normal": "Normalny"
+  }
+}
