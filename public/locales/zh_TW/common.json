@@ -1,0 +1,60 @@
+{
+  "home": "主頁",
+  "card": "卡牌",
+  "music": "樂曲",
+  "gacha": "招募",
+  "event": "活動",
+  "stamp": "贴纸",
+  "comic": "漫畫",
+  "character": "角色",
+  "musicMeta": "歌曲Meta",
+  "scoreCalculator": "分數計算器",
+  "toolbar": {
+    "title": "功能列表"
+  },
+  "information": "消息",
+  "tools": "工具",
+  "settings": {
+    "title": "設置"
+  },
+  "language": "語言",
+  "darkmode": "顯示主題",
+  "contentTranslationMode": {
+    "title": "遊戲內容顯示模式",
+    "original": "原始",
+    "translated": "翻譯 (如果已翻譯)",
+    "both": "皆顯示"
+  },
+  "id": "編號",
+  "title": "標題",
+  "unit": "組合",
+  "support_unit": "輔助角色",
+  "attribute": "屬性",
+  "startAt": "開放於",
+  "rarity": "稀有度",
+  "thumb": "縮圖",
+  "skill": "技能",
+  "performance": "Performance",
+  "technique": "Technique",
+  "stamina": "Stamina",
+  "power": "Power",
+  "releaseCondition": "解放條件",
+  "releaseCosts": "解放素材",
+  "rewards": "獎勵",
+  "type": "類型",
+  "endAt": "結束於",
+  "icon": "圖示",
+  "detect": {
+    "checking": "檢查中",
+    "unsupported": "不支援",
+    "supported": "支援"
+  },
+  "support": "支援",
+  "campaign": "紀念活動",
+  "bug": "問題",
+  "update": "更新",
+  "profile": "角色資料",
+  "character_plural": "角色",
+  "level": "等級",
+  "member": "成員"
+}
