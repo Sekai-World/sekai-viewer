@@ -1,0 +1,16 @@
+{
+  "cardDetail": "{{- prefix}} | {{- character}} | Karta | Sekai Viewer",
+  "cardList": "Lista Kart | Sekai Viewer",
+  "comicList": "Lista Komiksów | Sekai Viewer",
+  "eventDetail": "{{- name}} | Wydarzenie | Sekai Viewer",
+  "eventList": "Lista Wydarzeń | Sekai Viewer",
+  "gachaDetail": "{{- name}} | Gacha | Sekai Viewer",
+  "gachaList": "Lista Gacha | Sekai Viewer",
+  "home": "Dom | Sekai Viewer",
+  "memberDetail": "{{- name}} | Osoba | Sekai Viewer",
+  "memberList": "Lista Osób | Sekai Viewer",
+  "musicDetail": "{{- title}} | Muzyka | Sekai Viewer",
+  "musicList": "Lista Piosenek | Sekai Viewer",
+  "stampList": "Lista Naklejek | Sekai Viewer",
+  "unitDetail": "{{- name} | Jednostka | Sekai Viewer"
+}
