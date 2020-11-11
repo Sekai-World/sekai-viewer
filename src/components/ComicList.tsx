@@ -21,6 +21,7 @@ import { SettingContext } from "../context";
 import { useLayoutStyles } from "../styles/layout";
 import { ITipInfo, ITipInfoComic } from "../types";
 import { useCachedData, useRefState } from "../utils";
+import { useAssetI18n } from "../utils/i18n";
 import { ContentTrans } from "./subs/ContentTrans";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
@@ -46,6 +47,7 @@ const ComicList: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const { contentTransMode } = useContext(SettingContext)!;
+  const { getTranslated } = useAssetI18n();
 
   const [tipsCache] = useCachedData<ITipInfo>("tips");
 
@@ -72,10 +74,14 @@ const ComicList: React.FC<{}> = () => {
     () =>
       filteredCache.map((comic) => ({
         src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/comic/one_frame_rip/${comic.assetbundleName}.webp`,
-        alt: comic.title,
+        alt: getTranslated(
+          contentTransMode,
+          `comic_title:${comic.id}`,
+          comic.title
+        ),
         downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/comic/one_frame_rip/${comic.assetbundleName}.webp`,
       })),
-    [filteredCache]
+    [filteredCache, contentTransMode, getTranslated]
   );
 
   const callback = (
