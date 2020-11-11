@@ -38,6 +38,7 @@ export function initGlobalI18n() {
         "title",
         "member",
         "unit",
+        "about",
       ],
       fallbackLng: {
         default: ["en"],

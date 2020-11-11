@@ -1,27 +1,19 @@
 import { Container, Link, makeStyles, Typography } from "@material-ui/core";
-import { GitHub, Settings } from "@material-ui/icons";
+import { GitHub } from "@material-ui/icons";
 import { Alert, AlertTitle } from "@material-ui/lab";
 import React, { Fragment, useEffect } from "react";
-import { Trans, useTranslation } from "react-i18next";
-import { useInteractiveStyles } from "../styles/interactive";
+import { useTranslation } from "react-i18next";
 import { useLayoutStyles } from "../styles/layout";
 
 const useStyles = makeStyles((theme) => ({
   alert: {
     margin: theme.spacing(2, 0),
   },
-  "contact-link": {
-    margin: theme.spacing(0, 0.5),
-  },
-  "game-news-title": {
-    paddingTop: theme.spacing(2),
-  },
 }));
 
 const About: React.FC<{}> = () => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
-  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -34,6 +26,30 @@ const About: React.FC<{}> = () => {
         {t("common:about")}
       </Typography>
       <Container>
+        <Alert className={classes.alert} severity="info">
+          <AlertTitle>{t("about:about_me.title")}</AlertTitle>
+          <ul style={{ marginBlockEnd: 0 }}>
+            <li>
+              <Link
+                href="https://blog.dnaroma.eu/"
+                target="_blanl"
+                rel="noopener"
+              >
+                Blog
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="https://www.github.com/dnaroma"
+                target="_blanl"
+                rel="noopener"
+              >
+                <GitHub fontSize="inherit"></GitHub>
+                GitHub
+              </Link>
+            </li>
+          </ul>
+        </Alert>
         <Alert className={classes.alert} severity="info">
           <AlertTitle>{t("home:alert_contributor.title")}</AlertTitle>
           <ul style={{ marginBlockEnd: 0 }}>
