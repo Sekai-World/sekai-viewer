@@ -532,6 +532,11 @@ function App() {
                   label="Pt-BR"
                 ></FormControlLabel>
                 <FormControlLabel
+                  value="fr"
+                  control={<Radio />}
+                  label="Fr"
+                ></FormControlLabel>
+                <FormControlLabel
                   value="de"
                   control={<Radio />}
                   label="De"
