@@ -78,6 +78,7 @@ assetI18n
       "skill_desc",
       "character_profile",
       "unit_profile",
+      "stamp_name",
     ],
     fallbackLng: {
       default: ["ja"],

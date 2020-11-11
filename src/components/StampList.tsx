@@ -12,8 +12,17 @@ import {
   makeStyles,
   Typography,
   Paper,
+  CardContent,
 } from "@material-ui/core";
-import { Sort, SortOutlined } from "@material-ui/icons";
+import {
+  GetApp,
+  GetAppOutlined,
+  Publish,
+  PublishOutlined,
+  Sort,
+  SortOutlined,
+  Update,
+} from "@material-ui/icons";
 import { Skeleton } from "@material-ui/lab";
 import { FilterOutline, Filter } from "mdi-material-ui";
 import React, {
@@ -32,6 +41,7 @@ import { useLayoutStyles } from "../styles/layout";
 import { IStampInfo } from "../types";
 import { useCachedData, useCharaName, useRefState } from "../utils";
 import { charaIcons } from "../utils/resources";
+import { ContentTrans } from "./subs/ContentTrans";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
 const useStyles = makeStyles((theme) => ({
@@ -44,10 +54,10 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer",
   },
   subheader: {
-    "white-space": "nowrap",
-    overflow: "hidden",
-    "text-overflow": "ellipsis",
-    "max-width": "260px",
+    // "white-space": "nowrap",
+    // overflow: "hidden",
+    // "text-overflow": "ellipsis",
+    // "max-width": "260px",
   },
 }));
 
@@ -66,6 +76,7 @@ const StampList: React.FC<{}> = () => {
     IStampInfo[]
   >([]);
   const [filterOpened, setFilterOpened] = useState<boolean>(false);
+  const [updateSort, setUpdateSort] = useState<"asc" | "desc">("asc");
   const [characterSelected, dispatchCharacterSelected] = useReducer(
     characterSelectReducer,
     []
@@ -110,18 +121,31 @@ const StampList: React.FC<{}> = () => {
 
   useEffect(() => {
     if (stampsCache.length) {
+      let cache = stampsCache;
       if (characterSelected.length) {
-        const filtered = stampsCache.filter((s) =>
+        cache = stampsCache.filter((s) =>
           characterSelected.includes(s.characterId1)
         );
-        setFilteredCache(filtered);
       } else {
-        setFilteredCache(stampsCache);
+        cache = stampsCache;
       }
+      if (updateSort === "desc") {
+        cache = cache.sort((a, b) => b.id - a.id);
+      } else if (updateSort === "asc") {
+        cache = cache.sort((a, b) => a.id - b.id);
+      }
+      setFilteredCache(cache);
       setStamps([]);
       setPage(0);
     }
-  }, [characterSelected, stampsCache, setStamps, setPage, setFilteredCache]);
+  }, [
+    characterSelected,
+    stampsCache,
+    setStamps,
+    setPage,
+    setFilteredCache,
+    updateSort,
+  ]);
 
   useEffect(() => {
     setStamps((stamps) => [...stamps, ...getPaginatedStamps(page, limit)]);
@@ -138,11 +162,11 @@ const StampList: React.FC<{}> = () => {
       return (
         <Card className={classes.card}>
           <Skeleton variant="rect" className={classes.media}></Skeleton>
-          {/* <CardContent>
+          <CardContent>
             <Typography variant="subtitle1" className={classes.subheader}>
               <Skeleton variant="text" width="90%"></Skeleton>
             </Typography>
-          </CardContent> */}
+          </CardContent>
         </Card>
       );
     }
@@ -158,11 +182,22 @@ const StampList: React.FC<{}> = () => {
             image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/stamp/${data.assetbundleName}_rip/${data.assetbundleName}/${data.assetbundleName}.webp`}
             title={data.name}
           ></CardMedia>
-          {/* <CardContent style={{ paddingBottom: "16px" }}>
+          <CardContent style={{ paddingBottom: "16px" }}>
             <Typography variant="subtitle1" className={classes.subheader}>
-              {data.name}
+              {/* {data.name.replace(/\[.*\]/, "").replace(/^.*：/, "")} */}
+              <ContentTrans
+                mode={contentTransMode}
+                contentKey={`stamp_name:${data.id}`}
+                original={data.name.replace(/\[.*\]/, "").replace(/^.*：/, "")}
+                originalProps={{
+                  variant: "subtitle1",
+                }}
+                translatedProps={{
+                  variant: "subtitle1",
+                }}
+              />
             </Typography>
-          </CardContent> */}
+          </CardContent>
         </Card>
       </Link>
     );
@@ -174,7 +209,17 @@ const StampList: React.FC<{}> = () => {
         {t("common:stamp")}
       </Typography>
       <Container className={layoutClasses.content}>
-        <Grid container justify="flex-end">
+        <Grid container justify="space-between">
+          <ButtonGroup color="primary" style={{ marginBottom: "1%" }}>
+            <Button size="medium" onClick={() => setUpdateSort("asc")}>
+              <Update />
+              {updateSort === "asc" ? <Publish /> : <PublishOutlined />}
+            </Button>
+            <Button size="medium" onClick={() => setUpdateSort("desc")}>
+              <Update />
+              {updateSort === "desc" ? <GetApp /> : <GetAppOutlined />}
+            </Button>
+          </ButtonGroup>
           <ButtonGroup color="primary" style={{ marginBottom: "1%" }}>
             <Button size="medium" onClick={() => setFilterOpened((v) => !v)}>
               {filterOpened ? <Filter /> : <FilterOutline />}
