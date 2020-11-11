@@ -45,6 +45,7 @@ import {
   CropOriginal,
   ExpandMore,
   ExpandLess,
+  Info,
 } from "@material-ui/icons";
 import {
   AccountGroup,
@@ -64,7 +65,6 @@ import {
 } from "react-router-dom";
 import { SettingContext } from "../context";
 import { ContentTransModeType, DisplayModeType } from "../types";
-import UnitDetail from "./UnitDetail";
 
 const drawerWidth = 240;
 const CardList = lazy(() => import("./CardList"));
@@ -80,6 +80,8 @@ const ComicList = lazy(() => import("./ComicList"));
 const MemberDetail = lazy(() => import("./MemberDetail"));
 const MemberList = lazy(() => import("./MemberList"));
 const StampList = lazy(() => import("./StampList"));
+const UnitDetail = lazy(() => import("./UnitDetail"));
+const About = lazy(() => import("./About"));
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -255,12 +257,21 @@ function App() {
         disabled: true,
       },
     ],
+    [
+      {
+        text: t("common:about"),
+        icon: <Info />,
+        to: "/about",
+        disabled: false,
+      },
+    ],
   ];
 
   const classes = useStyles();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
   const [sidebarExpansionStates, setSidebarExpansionStates] = React.useState([
+    true,
     true,
     true,
   ]);
@@ -341,13 +352,39 @@ function App() {
         </Collapse>
         <ListItem
           button
-          onClick={() => setSidebarExpansionStates((s) => [s[0], !s[1]])}
+          onClick={() =>
+            setSidebarExpansionStates((s) => [s[0], !s[1], ...s.slice(2)])
+          }
         >
           <Typography color="textSecondary">{t("common:tools")}</Typography>
           {sidebarExpansionStates[1] ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
         <Collapse in={sidebarExpansionStates[1]} timeout="auto" unmountOnExit>
           {leftBtns[1].map((elem) => {
+            return (
+              <ListItem disabled={elem.disabled} button key={elem.to}>
+                <ListItemLink
+                  to={elem.to}
+                  text={elem.text}
+                  icon={elem.icon}
+                  disabled={elem.disabled}
+                  theme={theme}
+                ></ListItemLink>
+              </ListItem>
+            );
+          })}
+        </Collapse>
+        <ListItem
+          button
+          onClick={() =>
+            setSidebarExpansionStates((s) => [s[0], s[1], !s[2], ...s.slice(3)])
+          }
+        >
+          <Typography color="textSecondary">{t("common:about")}</Typography>
+          {sidebarExpansionStates[1] ? <ExpandLess /> : <ExpandMore />}
+        </ListItem>
+        <Collapse in={sidebarExpansionStates[2]} timeout="auto" unmountOnExit>
+          {leftBtns[2].map((elem) => {
             return (
               <ListItem disabled={elem.disabled} button key={elem.to}>
                 <ListItemLink
@@ -471,6 +508,9 @@ function App() {
               </Route>
               <Route path="/unit/:unitId">
                 <UnitDetail />
+              </Route>
+              <Route path="/about" exact>
+                <About />
               </Route>
             </Suspense>
           </Switch>

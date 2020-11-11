@@ -11,6 +11,7 @@ import {
   Container,
   useMediaQuery,
   useTheme,
+  Grid,
 } from "@material-ui/core";
 import { useLayoutStyles } from "../styles/layout";
 import { useInteractiveStyles } from "../styles/interactive";
@@ -205,57 +206,19 @@ function Home() {
       </Typography>
       <Container className={layoutClasses.content}>
         {/* <Typography variant="h4">Welcome to Sekai Viewer Open Beta!</Typography> */}
+        <Grid container justify="center">
+          <Grid item xs={12} md={8} lg={6}>
+            <img
+              src={`${process.env.PUBLIC_URL}/images/banner.png`}
+              alt="banner"
+              style={{ width: "100%" }}
+            />
+          </Grid>
+        </Grid>
         <Alert className={classes.alert} severity="info">
           {t("home:alert0")}
         </Alert>
         <Alert className={classes.alert} severity="info">
-          <AlertTitle>{t("home:alert_contributor.title")}</AlertTitle>
-          <ul style={{ marginBlockEnd: 0 }}>
-            <li>
-              <Link
-                href="https://github.com/NonSpicyBurrito"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <GitHub fontSize="inherit"></GitHub>
-                Burrito
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="https://github.com/iSwanGit"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <GitHub fontSize="inherit"></GitHub>
-                iSwanGit (EleMas*)
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="https://github.com/Build774"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <GitHub fontSize="inherit"></GitHub>
-                Build774
-              </Link>
-            </li>
-          </ul>
-        </Alert>
-        <Alert className={classes.alert} severity="info">
-          <AlertTitle>{t("home:alert_translate.title")}</AlertTitle>
-          <ul>
-            <li>简：Stargazing Koishi, Nightwheel</li>
-            <li>繁：Natsuzawa, ch ko, tofutofuo</li>
-            <li>日：Passion, Cee, k0tayan, Natsuzawa, Build774</li>
-            <li>한：hodubidu3095, omitooshi, EleMas39, PJSEKAI, 아점</li>
-            <li>Pt-BR: mid</li>
-            <li>русский: Spyrohat</li>
-            <li>Es: ruiemu, maravillas</li>
-            <li>It: SeaPu</li>
-            <li>Pl: sousie</li>
-          </ul>
           <Trans
             i18nKey="home:alert_settings"
             components={{ s: <Settings fontSize="inherit" /> }}
@@ -306,31 +269,20 @@ function Home() {
             Sekai Viewer
           </Link>
         </Alert>
-        <Alert
-          className={classes.alert}
-          severity={getWebpDetectSeverity(detected)}
-        >
-          <AlertTitle>WebP {t("common:support")}</AlertTitle>
-          <ul>
-            <li>WebP: {getWebpDetectDesc(t, detected.webp)}</li>
-            <li>
-              WebP Lossless: {getWebpDetectDesc(t, detected.webpLossless)}
-            </li>
-            <li>WebP Alpha: {getWebpDetectDesc(t, detected.webpAlpha)}</li>
-          </ul>
-          {getWebpDetectSeverity(detected) === "success" ? (
-            <Typography>{t("home:detect.success")}</Typography>
-          ) : (
-            <Typography>
-              Unfortunately you will not able to load images normally. Please
-              consider update your browser version or use a modern browser. More
-              info:
-              <Link href="https://caniuse.com/webp">
-                Can I Use - WebP image format
-              </Link>
-            </Typography>
-          )}
-        </Alert>
+        {getWebpDetectSeverity(detected) !== "success" ? (
+          <Alert
+            className={classes.alert}
+            severity={getWebpDetectSeverity(detected)}
+          >
+            <AlertTitle>WebP {t("common:support")}</AlertTitle>
+            <Trans
+              i18nKey="home:detect.failed"
+              components={{
+                l: <Link href="https://caniuse.com/webp"></Link>,
+              }}
+            />
+          </Alert>
+        ) : null}
       </Container>
       <Typography variant="h6" className={layoutClasses.header}>
         {t("home:game-news.title")}
