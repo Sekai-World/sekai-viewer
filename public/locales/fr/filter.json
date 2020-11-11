@@ -1,0 +1,10 @@
+{
+  "character": {
+    "caption": "Personnage"
+  },
+  "sort": {
+    "caption": "Trier",
+    "ascending": "Croissant",
+    "descending": "Décroissant"
+  }
+}
