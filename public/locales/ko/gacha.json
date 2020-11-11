@@ -6,8 +6,12 @@
     "title[3]": "배경",
     "title[4]": "특성 이미지"
   },
-  "normalRate": "",
-  "guaranteedRate": "",
+  "normalRate": "일반 확률",
+  "guaranteedRate": "3성 이상 확정 확률",
   "pickupMember": "픽업 멤버",
-  "pickupMember_plural": "픽업 멤버들"
+  "pickupMember_plural": "픽업 멤버들",
+  "gachaType": {
+    "ceil": "천장",
+    "normal": "일반"
+  }
 }
