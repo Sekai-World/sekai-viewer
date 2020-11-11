@@ -1,10 +1,10 @@
 {
-  "vocal": "ボーカル",
   "alert[0]": "全ての曲の最初の<b>9秒</b>は無音です.これはバグではありません.",
+  "vocal": "ボーカル",
   "vocalTab": {
-    "title[0]": "Short version",
-    "title[1]": "Long version",
-    "title[2]": "Music video"
+    "title[0]": "ショート版",
+    "title[1]": "ロング版",
+    "title[2]": "MV"
   },
   "skipBeginningSilence": "冒頭の無音部分を飛ばす",
   "tag": "タグ",
@@ -14,8 +14,8 @@
   "categoryType": {
     "mv": "3D MV",
     "mv_2d": "2D MV",
-    "original": "Original MV",
-    "image": "Static Image"
+    "original": "オリジナルMV",
+    "image": "静止画"
   },
   "actualPlaybackTime": "実際の再生時間",
   "arranger": "編曲",
