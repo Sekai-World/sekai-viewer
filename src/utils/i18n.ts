@@ -79,6 +79,7 @@ assetI18n
       "character_profile",
       "unit_profile",
       "stamp_name",
+      "comic_title",
     ],
     fallbackLng: {
       default: ["ja"],

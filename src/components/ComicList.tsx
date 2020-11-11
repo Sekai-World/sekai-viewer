@@ -7,13 +7,21 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
+import { SettingContext } from "../context";
 import { useLayoutStyles } from "../styles/layout";
 import { ITipInfo, ITipInfoComic } from "../types";
 import { useCachedData, useRefState } from "../utils";
+import { ContentTrans } from "./subs/ContentTrans";
 import InfiniteScroll from "./subs/InfiniteScroll";
 
 const useStyles = makeStyles((theme) => ({
@@ -37,6 +45,7 @@ const ComicList: React.FC<{}> = () => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
+  const { contentTransMode } = useContext(SettingContext)!;
 
   const [tipsCache] = useCachedData<ITipInfo>("tips");
 
@@ -150,9 +159,17 @@ const ComicList: React.FC<{}> = () => {
           title={data.title}
         ></CardMedia>
         <CardContent style={{ paddingBottom: "16px" }}>
-          <Typography variant="subtitle1" className={classes.subheader}>
-            {data.title}
-          </Typography>
+          <ContentTrans
+            mode={contentTransMode}
+            contentKey={`comic_title:${data.id}`}
+            original={data.title}
+            originalProps={{
+              variant: "subtitle1",
+            }}
+            translatedProps={{
+              variant: "subtitle1",
+            }}
+          />
         </CardContent>
       </Card>
     );

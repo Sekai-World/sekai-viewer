@@ -183,20 +183,17 @@ const StampList: React.FC<{}> = () => {
             title={data.name}
           ></CardMedia>
           <CardContent style={{ paddingBottom: "16px" }}>
-            <Typography variant="subtitle1" className={classes.subheader}>
-              {/* {data.name.replace(/\[.*\]/, "").replace(/^.*：/, "")} */}
-              <ContentTrans
-                mode={contentTransMode}
-                contentKey={`stamp_name:${data.id}`}
-                original={data.name.replace(/\[.*\]/, "").replace(/^.*：/, "")}
-                originalProps={{
-                  variant: "subtitle1",
-                }}
-                translatedProps={{
-                  variant: "subtitle1",
-                }}
-              />
-            </Typography>
+            <ContentTrans
+              mode={contentTransMode}
+              contentKey={`stamp_name:${data.id}`}
+              original={data.name.replace(/\[.*\]/, "").replace(/^.*：/, "")}
+              originalProps={{
+                variant: "subtitle1",
+              }}
+              translatedProps={{
+                variant: "subtitle1",
+              }}
+            />
           </CardContent>
         </Card>
       </Link>
