@@ -24,7 +24,6 @@ import {
   Twitter,
 } from "@material-ui/icons";
 import { Alert, AlertTitle } from "@material-ui/lab";
-import { TFunction } from "i18next";
 import { Discord, Patreon } from "mdi-material-ui";
 import React, { Fragment, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
