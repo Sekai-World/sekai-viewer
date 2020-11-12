@@ -771,7 +771,7 @@ const GachaDetailPage: React.FC<{}> = () => {
                       to={"/card/" + elem.cardId}
                       style={{ textDecoration: "none" }}
                     >
-                      <CardThumb id={elem.cardId} />
+                      <CardThumb cardId={elem.cardId} />
                     </Link>
                   </Grid>
                 ))}
