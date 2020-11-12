@@ -1,0 +1,41 @@
+{
+  "getResult": "Get Result",
+  "buildTeam": {
+    "label": "Build Team",
+    "desc": "Build your team for Song Recommender",
+    "addCard": "Add Card",
+    "saveTeam": "Save Team",
+    "loadTeam": "Load Team",
+    "clearTeam": "Clear Team",
+    "duplicatedCardError": "Can't add same card to one team.",
+    "cardMaxError": "There are already enough cards.",
+    "loadTeamError": "Check your input.",
+    "teamTextCopied": "Team text copied to clipboard."
+  },
+  "songSelect": {
+    "label": "Song Select",
+    "desc": "Select one or more songs for analyzing. Leave it blank to analyze all songs."
+  },
+  "modeSelect": {
+    "label": "Mode Select",
+    "desc": "Select recommender work mode."
+  },
+  "result": {
+    "label": "Result",
+    "desc": "Just one step and you're finished."
+  },
+  "addCardDialog": {
+    "title": "Add Card",
+    "selectChara": "Character",
+    "selectRarity": "Rarity"
+  },
+  "saveTeamDialog": {
+    "title": "Save Team",
+    "desc": "Save team code and load it later."
+  },
+  "teamCode": "Team Code",
+  "loadTeamDialog": {
+    "title": "Load Team",
+    "desc": "Paste saved team code and load it."
+  }
+}

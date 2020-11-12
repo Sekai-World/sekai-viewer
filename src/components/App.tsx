@@ -84,6 +84,7 @@ const StampList = lazy(() => import("./StampList"));
 const UnitDetail = lazy(() => import("./UnitDetail"));
 const About = lazy(() => import("./About"));
 const Support = lazy(() => import("./Support"));
+const MusicRecommend = lazy(() => import("./MusicRecommend"));
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -253,10 +254,10 @@ function App() {
         disabled: true,
       },
       {
-        text: t("common:scoreCalculator"),
+        text: t("common:musicRecommend"),
         icon: <Calculator />,
-        to: "/score_calc",
-        disabled: true,
+        to: "/music_recommend",
+        disabled: false,
       },
     ],
     [
@@ -522,6 +523,9 @@ function App() {
               </Route>
               <Route path="/support" exact>
                 <Support />
+              </Route>
+              <Route path="/music_recommend" exact>
+                <MusicRecommend />
               </Route>
             </Suspense>
           </Switch>
