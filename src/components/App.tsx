@@ -46,6 +46,7 @@ import {
   ExpandMore,
   ExpandLess,
   Info,
+  MonetizationOn,
 } from "@material-ui/icons";
 import {
   AccountGroup,
@@ -82,6 +83,7 @@ const MemberList = lazy(() => import("./MemberList"));
 const StampList = lazy(() => import("./StampList"));
 const UnitDetail = lazy(() => import("./UnitDetail"));
 const About = lazy(() => import("./About"));
+const Support = lazy(() => import("./Support"));
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -258,6 +260,12 @@ function App() {
       },
     ],
     [
+      {
+        text: t("common:support"),
+        icon: <MonetizationOn />,
+        to: "/support",
+        disabled: false,
+      },
       {
         text: t("common:about"),
         icon: <Info />,
@@ -511,6 +519,9 @@ function App() {
               </Route>
               <Route path="/about" exact>
                 <About />
+              </Route>
+              <Route path="/support" exact>
+                <Support />
               </Route>
             </Suspense>
           </Switch>

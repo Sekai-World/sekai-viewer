@@ -10,6 +10,7 @@
   "character": "Character",
   "musicMeta": "Music Meta",
   "scoreCalculator": "Score Calculator",
+  "support": "Support",
   "toolbar": {
     "title": "Function List"
   },
@@ -50,7 +51,6 @@
     "unsupported": "Unsupported",
     "supported": "Supported"
   },
-  "support": "Support",
   "campaign": "Campaign",
   "bug": "Bug",
   "profile": "Profile",

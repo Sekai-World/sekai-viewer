@@ -25,9 +25,10 @@ import {
 } from "@material-ui/icons";
 import { Alert, AlertTitle } from "@material-ui/lab";
 import { TFunction } from "i18next";
-import { Discord } from "mdi-material-ui";
+import { Discord, Patreon } from "mdi-material-ui";
 import React, { Fragment, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
+import { Link as RouteLink } from "react-router-dom";
 import { IUserInformationInfo } from "../types";
 import { useCachedData } from "../utils";
 
@@ -63,18 +64,18 @@ function getWebpDetectSeverity(detected: IDetectResult) {
   }
 }
 
-function getWebpDetectDesc(t: TFunction, result: number) {
-  switch (result) {
-    case -1:
-      return t("common:detect.checking");
-    case 0:
-      return t("common:detect.unsupported");
-    case 1:
-      return t("common:detect.supported");
-    default:
-      return "";
-  }
-}
+// function getWebpDetectDesc(t: TFunction, result: number) {
+//   switch (result) {
+//     case -1:
+//       return t("common:detect.checking");
+//     case 0:
+//       return t("common:detect.unsupported");
+//     case 1:
+//       return t("common:detect.supported");
+//     default:
+//       return "";
+//   }
+// }
 
 const useIframeStyle = makeStyles((theme) => ({
   iframe: {
@@ -244,6 +245,18 @@ function Home() {
             {t("home:alert1.development")}
           </Link>
           （Sekai-World/sekai-viewer）
+          <br></br>
+          <Link
+            href="https://www.patreon.com/bePatron?u=6503151"
+            target="_blank"
+          >
+            <Patreon fontSize="inherit"></Patreon>
+            Patreon
+          </Link>
+          <br></br>
+          <RouteLink to="/about" style={{ textDecoration: "none" }}>
+            <OpenInNew fontSize="inherit" /> {t("home:alert1.see_contrib_list")}
+          </RouteLink>
           <br></br>
           {t("home:alert1.contact")}:
           <Link
