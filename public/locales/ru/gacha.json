@@ -6,14 +6,12 @@
     "title[3]": "Задний фон",
     "title[4]": "Главное изображение"
   },
-  "normalRate": "",
-  "guaranteedRate": "",
-  "pickupMember_0": "",
-  "pickupMember_1": "",
-  "pickupMember_2": "",
+  "normalRate": "Обычный шанс",
+  "guaranteedRate": "Гарантированный шанс",
   "pickupMember": "Доступный участник",
   "pickupMember_plural": "Доступные участники",
   "gachaType": {
-    "ceil": "Перманент"
+    "ceil": "Перманент",
+    "normal": "Перманент"
   }
 }
