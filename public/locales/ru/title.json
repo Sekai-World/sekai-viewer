@@ -7,10 +7,10 @@
   "gachaDetail": "{{name}} | Гача | Sekai Viewer",
   "gachaList": "Гача | Sekai Viewer",
   "home": "Главная | Sekai Viewer",
-  "memberDetail": "",
-  "memberList": "",
+  "memberDetail": "{{- name}} | Персонаж | Sekai Viewer",
+  "memberList": "Список персонажей | Sekai Viewer",
   "musicDetail": "{{title}} | Песни | Sekai Viewer",
   "musicList": "Песни | Sekai Viewer",
   "stampList": "Штампы | Sekai Viewer",
-  "unitDetail": ""
+  "unitDetail": "{{- name}} | Юнит | Sekai Viewer"
 }
