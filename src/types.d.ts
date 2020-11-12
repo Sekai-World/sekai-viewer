@@ -483,3 +483,9 @@ export interface IUnitProfile {
   profileSentence: string;
   colorCode: string;
 }
+
+export interface ITeamCardState {
+  cardId: number;
+  level: number;
+  skillLevel: number;
+}

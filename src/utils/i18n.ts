@@ -41,6 +41,7 @@ export function initGlobalI18n() {
         "unit",
         "about",
         "support",
+        "music_recommend",
       ],
       fallbackLng: {
         default: ["en"],
