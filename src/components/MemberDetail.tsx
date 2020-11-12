@@ -409,7 +409,7 @@ const MemberDetail: React.FC<{}> = () => {
           {charaCards.map((cc) => (
             <Grid item xs={4} md={2} lg={1} key={"card-" + cc.id}>
               <Link to={"/card/" + cc.id} style={{ textDecoration: "none" }}>
-                <CardThumb id={cc.id}></CardThumb>
+                <CardThumb cardId={cc.id}></CardThumb>
               </Link>
             </Grid>
           ))}

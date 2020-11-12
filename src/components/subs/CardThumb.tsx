@@ -9,10 +9,9 @@ import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
 import { useSvgStyles } from "../../styles/svg";
 import { attrIconMap, cardThumbFrameMap } from "../../utils/resources";
 
-export const CardThumb: React.FC<{ id: number; trained?: boolean }> = ({
-  id,
-  trained = false,
-}) => {
+export const CardThumb: React.FC<
+  { cardId: number; trained?: boolean } & React.HTMLProps<HTMLDivElement>
+> = ({ cardId, trained = false, onClick, style }) => {
   const skeleton = CardThumbSkeleton({});
 
   const classes = useSvgStyles();
@@ -20,50 +19,54 @@ export const CardThumb: React.FC<{ id: number; trained?: boolean }> = ({
   const [card, setCard] = useState<ICardInfo>();
 
   useEffect(() => {
-    if (cards.length) setCard(cards.find((elem) => elem.id === id));
-  }, [cards, id]);
+    if (cards.length) setCard(cards.find((elem) => elem.id === cardId));
+  }, [cards, cardId]);
 
   const rarityIcon = trained ? rarityAfterTraining : rarityNormal;
 
   return card ? (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 156 156"
-      className={classes.svg}
-    >
-      <image
-        href={`${
-          process.env.REACT_APP_ASSET_DOMAIN
-        }/file/sekai-assets/thumbnail/chara_rip/${card.assetbundleName}_${
-          trained ? "after_training" : "normal"
-        }.webp`}
-        x="8"
-        y="8"
-        height="140"
-        width="140"
-      />
-      {/* frame */}
-      <image
-        href={cardThumbFrameMap[String(card.rarity)]}
-        x="0"
-        y="0"
-        height="156"
-        width="156"
-      />
-      {/* attr */}
-      <image href={attrIconMap[card.attr]} x="0" y="0" width="35" height="35" />
-      {/* rarity */}
-      {Array.from({ length: card.rarity }).map((_, i) => (
+    <div className={classes.svg} onClick={onClick} style={style}>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 156 156">
         <image
-          key={`card-rarity-${i}`}
-          href={rarityIcon}
-          x={i * 22 + 8}
-          y="124"
-          width="22"
-          height="22"
+          href={`${
+            process.env.REACT_APP_ASSET_DOMAIN
+          }/file/sekai-assets/thumbnail/chara_rip/${card.assetbundleName}_${
+            trained ? "after_training" : "normal"
+          }.webp`}
+          x="8"
+          y="8"
+          height="140"
+          width="140"
         />
-      ))}
-    </svg>
+        {/* frame */}
+        <image
+          href={cardThumbFrameMap[String(card.rarity)]}
+          x="0"
+          y="0"
+          height="156"
+          width="156"
+        />
+        {/* attr */}
+        <image
+          href={attrIconMap[card.attr]}
+          x="0"
+          y="0"
+          width="35"
+          height="35"
+        />
+        {/* rarity */}
+        {Array.from({ length: card.rarity }).map((_, i) => (
+          <image
+            key={`card-rarity-${i}`}
+            href={rarityIcon}
+            x={i * 22 + 8}
+            y="124"
+            width="22"
+            height="22"
+          />
+        ))}
+      </svg>
+    </div>
   ) : (
     skeleton
   );
@@ -86,7 +89,7 @@ export const CardThumbs: React.FC<{ cardIds: number[] }> = ({ cardIds }) => {
     >
       {cardIds.map((cardId, id) => (
         <Grid key={id} item xs={4} sm={2}>
-          <CardThumb id={cardId} />
+          <CardThumb cardId={cardId} />
         </Grid>
       ))}
     </Grid>
