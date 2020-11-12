@@ -97,6 +97,7 @@ const About: React.FC<{}> = () => {
             <li>Es: ruiemu, maravillas</li>
             <li>It: SeaPu</li>
             <li>Pl: sousie</li>
+            <li>Fr: Yasito</li>
           </ul>
         </Alert>
       </Container>
