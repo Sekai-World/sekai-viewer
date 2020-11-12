@@ -1,4 +1,5 @@
 {
+  "about": "O",
   "home": "Dom",
   "card": "Karta",
   "music": "Muzyka",
@@ -9,6 +10,7 @@
   "character": "Osoba",
   "musicMeta": "Piosenka Meta",
   "scoreCalculator": "Kalkulator Wyniku",
+  "support": "Wsparcie",
   "toolbar": {
     "title": "Lista Funkcji"
   },
@@ -49,12 +51,11 @@
     "unsupported": "Nieobsługiwane",
     "supported": "Obsługiwane"
   },
-  "support": "Wsparcie",
   "campaign": "Kampania",
   "bug": "Błąd",
-  "update": "Aktualizacja",
   "profile": "Profil",
   "character_plural": "Osoby",
   "level": "Poziom",
+  "update": "Aktualizacja",
   "member": "Osoba"
 }

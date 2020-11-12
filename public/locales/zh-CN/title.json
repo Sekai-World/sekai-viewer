@@ -1,4 +1,5 @@
 {
+  "about": "关于 | Sekai Viewer",
   "cardDetail": "{{- prefix}} | {{- character}} | 卡牌 | Sekai Viewer",
   "cardList": "卡牌列表 | Sekai Viewer",
   "comicList": "漫画列表 | Sekai Viewer",
