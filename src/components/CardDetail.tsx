@@ -44,7 +44,7 @@ import rarityNormal from "../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../assets/rarity_star_afterTraining.png";
 
 import { CardThumb } from "./subs/CardThumb";
-import { attrIconMap, UnitLogoMiniMap } from "../utils/resources";
+import { attrIconMap, UnitLogoMiniMap, charaIcons } from "../utils/resources";
 import { useTranslation } from "react-i18next";
 import MaterialIcon from "./subs/MaterialIcon";
 import CommonMaterialIcon from "./subs/CommonMaterialIcon";
@@ -199,36 +199,36 @@ const CardDetail: React.FC<{}> = () => {
         ? card?.rarity >= 3
           ? [
               {
-                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.webp`,
+                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.png`,
                 alt: "card normal",
-                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.webp`,
+                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.png`,
               },
               {
-                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`,
+                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.png`,
                 alt: "card normal trim",
-                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`,
+                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.png`,
               },
               {
-                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_after_training.webp`,
+                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_after_training.png`,
                 alt: "card after training",
-                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_after_training.webp`,
+                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_after_training.png`,
               },
               {
-                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/after_training.webp`,
+                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/after_training.png`,
                 alt: "card after training trim",
-                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/after_training.webp`,
+                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/after_training.png`,
               },
             ]
           : [
               {
-                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.webp`,
+                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.png`,
                 alt: "card normal",
-                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.webp`,
+                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.png`,
               },
               {
-                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`,
+                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.png`,
                 alt: "card normal",
-                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`,
+                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.png`,
               },
             ]
         : [],
@@ -432,12 +432,33 @@ const CardDetail: React.FC<{}> = () => {
               </Typography>
             </Grid>
             <Grid item>
-              <CharaNameTrans
-                mode={contentTransMode}
-                characterId={card.characterId}
-                originalProps={{ align: "right" }}
-                translatedProps={{ align: "right" }}
-              />
+              <Link
+                to={"/chara/" + card.characterId}
+                style={{ textDecoration: "none" }}
+              >
+                <Grid
+                  container
+                  spacing={1}
+                  alignItems="center"
+                  justify="flex-end"
+                >
+                  <Grid item>
+                    <CharaNameTrans
+                      mode={contentTransMode}
+                      characterId={card.characterId}
+                      originalProps={{ align: "right", color: "textPrimary" }}
+                      translatedProps={{ align: "right" }}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <img
+                      className={classes["rarity-star-img"]}
+                      src={charaIcons[`CharaIcon${card.characterId}`]}
+                      alt={getCharaName(card.characterId)}
+                    ></img>
+                  </Grid>
+                </Grid>
+              </Link>
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
@@ -454,37 +475,40 @@ const CardDetail: React.FC<{}> = () => {
               </Typography>
             </Grid>
             <Grid item xs={9}>
-              <Grid
-                container
-                spacing={1}
-                alignItems="center"
-                justify="flex-end"
+              <Link
+                to={"/unit/" + getCharaUnitName(card.characterId)}
+                style={{ textDecoration: "none" }}
               >
-                <Grid item>
-                  <ContentTrans
-                    mode={contentTransMode}
-                    contentKey={`unit_profile:${getCharaUnitName(
-                      card.characterId
-                    )}.name`}
-                    original={
-                      unitProfiles.find(
-                        (up) => up.unit === getCharaUnitName(card.characterId)
-                      )!.unitName
-                    }
-                    originalProps={{ align: "right" }}
-                    translatedProps={{ align: "right" }}
-                  />
-                </Grid>
-                <Grid item>
-                  <Link to={"/unit/" + getCharaUnitName(card.characterId)}>
+                <Grid
+                  container
+                  spacing={1}
+                  alignItems="center"
+                  justify="flex-end"
+                >
+                  <Grid item>
+                    <ContentTrans
+                      mode={contentTransMode}
+                      contentKey={`unit_profile:${getCharaUnitName(
+                        card.characterId
+                      )}.name`}
+                      original={
+                        unitProfiles.find(
+                          (up) => up.unit === getCharaUnitName(card.characterId)
+                        )!.unitName
+                      }
+                      originalProps={{ align: "right", color: "textPrimary" }}
+                      translatedProps={{ align: "right" }}
+                    />
+                  </Grid>
+                  <Grid item>
                     <img
                       className={classes["rarity-star-img"]}
                       src={getCharaUnitImage(card.characterId)}
                       alt={getCharaUnitName(card.characterId)}
                     ></img>
-                  </Link>
+                  </Grid>
                 </Grid>
-              </Grid>
+              </Link>
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
@@ -503,35 +527,41 @@ const CardDetail: React.FC<{}> = () => {
                   </Typography>
                 </Grid>
                 <Grid item xs={8}>
-                  <Grid
-                    container
-                    spacing={1}
-                    alignItems="center"
-                    justify="flex-end"
+                  <Link
+                    to={"/unit/" + card.supportUnit}
+                    style={{ textDecoration: "none" }}
                   >
-                    <Grid item>
-                      <ContentTrans
-                        mode={contentTransMode}
-                        contentKey={`unit_profile:${card.supportUnit}.name`}
-                        original={
-                          unitProfiles.find(
-                            (up) => up.unit === card.supportUnit
-                          )!.unitName
-                        }
-                        originalProps={{ align: "right" }}
-                        translatedProps={{ align: "right" }}
-                      />
-                    </Grid>
-                    <Grid item>
-                      <Link to={"/unit/" + card.supportUnit}>
+                    <Grid
+                      container
+                      spacing={1}
+                      alignItems="center"
+                      justify="flex-end"
+                    >
+                      <Grid item>
+                        <ContentTrans
+                          mode={contentTransMode}
+                          contentKey={`unit_profile:${card.supportUnit}.name`}
+                          original={
+                            unitProfiles.find(
+                              (up) => up.unit === card.supportUnit
+                            )!.unitName
+                          }
+                          originalProps={{
+                            align: "right",
+                            color: "textPrimary",
+                          }}
+                          translatedProps={{ align: "right" }}
+                        />
+                      </Grid>
+                      <Grid item>
                         <img
                           className={classes["rarity-star-img"]}
                           src={UnitLogoMiniMap[card.supportUnit]}
                           alt={card.supportUnit}
                         ></img>
-                      </Link>
+                      </Grid>
                     </Grid>
-                  </Grid>
+                  </Link>
                 </Grid>
               </Grid>
               <Divider style={{ margin: "1% 0" }} />
