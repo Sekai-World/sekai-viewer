@@ -1,4 +1,5 @@
 {
+  "about": "About",
   "home": "홈",
   "card": "카드",
   "music": "음악",
@@ -9,6 +10,7 @@
   "character": "캐릭터",
   "musicMeta": "악곡 정보",
   "scoreCalculator": "점수 계산기",
+  "support": "지원",
   "toolbar": {
     "title": "메뉴"
   },
@@ -49,12 +51,11 @@
     "unsupported": "미지원",
     "supported": "지원"
   },
-  "support": "지원",
   "campaign": "캠페인",
   "bug": "버그",
-  "update": "업데이트",
   "profile": "프로필",
   "character_plural": "캐릭터",
   "level": "레벨",
+  "update": "업데이트",
   "member": "캐릭터"
 }
