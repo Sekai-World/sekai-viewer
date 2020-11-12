@@ -53,11 +53,8 @@
   "campaign": "Компания",
   "bug": "Баги",
   "update": "Обновления",
-  "profile": "",
-  "character_0": "",
-  "character_1": "",
-  "character_2": "",
+  "profile": "Профиль",
+  "character_plural": "Персонажи",
   "level": "Уровень",
-  "member": "Участники",
-  "character_plural": "Персонажи"
+  "member": "Участники"
 }
