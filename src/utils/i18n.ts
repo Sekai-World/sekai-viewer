@@ -23,6 +23,7 @@ export function initGlobalI18n() {
         "ru",
         "it",
         "pl",
+        "fr",
       ],
       ns: [
         "common",
@@ -69,6 +70,8 @@ assetI18n
       "pt-BR",
       "ru",
       "it",
+      "pl",
+      "fr",
     ],
     ns: [
       "music_titles",
