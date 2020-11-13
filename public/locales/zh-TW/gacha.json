@@ -6,9 +6,12 @@
     "title[3]": "背景",
     "title[4]": "特徵圖"
   },
+  "normalRate": "正常招募機率",
+  "guaranteedRate": "實際招募機率",
   "pickupMember": "本期角色",
   "pickupMember_plural": "本期角色",
   "gachaType": {
-    "ceil": "保底"
+    "ceil": "保底",
+    "normal": "正常"
   }
 }
