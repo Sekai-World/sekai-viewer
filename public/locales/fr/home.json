@@ -1,4 +1,10 @@
 {
+  "alert_contributor": {
+    "title": "Merci à nos contributeurs de développement !"
+  },
+  "alert_translate": {
+    "title": "Merci à nos traducteurs !"
+  },
   "game-news": {
     "action": "Action",
     "show-from": "Afficher depuis",
@@ -7,21 +13,17 @@
     "title": "Nouvelles du jeu"
   },
   "alert0": "Sekai Viewer est désormais en bêta !",
-  "alert_contributor": {
-    "title": "Merci à nos contributeurs de développement !"
-  },
-  "alert_translate": {
-    "title": "Merci à nos traducteurs !"
-  },
   "alert_settings": "Utilisez <s /> en haut à droite pour changer de langue, la luminosité, et plus.",
   "alert1": {
     "title": "Aidez-nous !",
     "translation": "Traductions",
     "development": "Développement",
+    "see_contrib_list": "Voir la liste des contributeurs",
     "contact": "Pour me contacter",
     "join-discord": "Rejoignez le serveur Discord"
   },
   "detect": {
+    "failed": "Malheureusement, vous ne pouvez pas charger la plupart des images. Mettez à jour votre navigateur ou votre version d'iOS/macOS. La compatibilité sera bientôt disponible. <br> Plus d'informations : <l>Puis-je utiliser le format d'image WebP</l>",
     "success": "Félicitations ! Votre navigateur semble moderne, vous pouvez charger les images plus rapidement et économiser de la bande passante."
   },
   "update": "Liens connexes"

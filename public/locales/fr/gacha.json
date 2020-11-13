@@ -1,0 +1,17 @@
+{
+  "tab": {
+    "title[0]": "Description",
+    "title[1]": "Résumé",
+    "title[2]": "Simulateur",
+    "title[3]": "Fond",
+    "title[4]": "Image phare"
+  },
+  "normalRate": "Taux de tirage normal",
+  "guaranteedRate": "Taux de tirage garanti",
+  "pickupMember": "Membre d'honneur",
+  "pickupMember_plural": "Membres d'honneur",
+  "gachaType": {
+    "ceil": "Échange",
+    "normal": "Normal"
+  }
+}

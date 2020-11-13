@@ -1,0 +1,16 @@
+{
+  "general": {
+    "desc": "如果你喜歡Sekai Viwer，你可以通過以下方式支持我們："
+  },
+  "patreon": {
+    "desc": "支持Sekai Viewer的最直接的方法。<br> 獲取特殊功能及資訊通過Patreons："
+  },
+  "translation": {
+    "title": "翻譯",
+    "desc": "將Sekai Viewer翻譯至其他語言，或者幫助我們改善翻譯質素。"
+  },
+  "development": {
+    "title": "建設",
+    "desc": "回報問題、提出請求、又或者成為我們經營團隊的一員。"
+  }
+}
