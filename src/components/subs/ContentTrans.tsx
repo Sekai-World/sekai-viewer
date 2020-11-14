@@ -1,7 +1,11 @@
 import { Grid, Typography, TypographyProps } from "@material-ui/core";
 import { StringMap, TOptions } from "i18next";
 import React, { useEffect, useState } from "react";
-import { ContentTransModeType, IGameChara } from "../../types";
+import {
+  ContentTransModeType,
+  IGameChara,
+  IReleaseCondition,
+} from "../../types";
 import { useCachedData } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
 
@@ -144,5 +148,59 @@ export const CharaNameTrans: React.FC<{
     }
   } else {
     return <Typography></Typography>;
+  }
+};
+
+export const ReleaseCondTrans: React.FC<{
+  mode: ContentTransModeType;
+  releaseCondId: number;
+  originalProps?: TypographyProps;
+  translatedProps?: TypographyProps;
+  assetTOptions?: string | TOptions<StringMap>;
+}> = ({
+  mode,
+  releaseCondId,
+  originalProps,
+  translatedProps,
+  assetTOptions,
+}) => {
+  const [releaseConds] = useCachedData<IReleaseCondition>("releaseConditions");
+
+  const [releaseCond, setReleaseCond] = useState<IReleaseCondition>();
+
+  useEffect(() => {
+    if (releaseConds.length) {
+      setReleaseCond(releaseConds.find((rc) => rc.id === releaseCondId));
+    }
+  }, [releaseCondId, releaseConds]);
+
+  if (releaseCond) {
+    let i18nKey = "";
+    switch (releaseCond.releaseConditionType) {
+      case "none":
+        i18nKey = `release_cond:none_${releaseCond.id}`;
+        break;
+      case "card_level":
+        i18nKey = `release_cond:card_level`;
+        assetTOptions = Object.assign({}, assetTOptions, {
+          level: releaseCond.releaseConditionTypeLevel,
+        });
+        break;
+      case "music_difficulty_better_play":
+        i18nKey = `release_cond:music_difficulty_better_play`;
+        break;
+    }
+    return (
+      <ContentTrans
+        mode={mode}
+        contentKey={i18nKey}
+        original={releaseCond.sentence}
+        originalProps={originalProps}
+        translatedProps={translatedProps}
+        assetTOptions={assetTOptions}
+      />
+    );
+  } else {
+    return <div></div>;
   }
 };

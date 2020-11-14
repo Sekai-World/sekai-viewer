@@ -45,6 +45,7 @@
   "inherit_complete": "引き継ぎ完了する",
   "event_point": "イベントPが{{point}}に到達する",
   "event_story_1000016": "「囚われのマリオネット」 のエンディングを読む",
+  "event_story": "「{{eventName}}」 のエンディングを読む",
   "virtual_live_participation": "バーチャルライブ参加",
   "character_live_usage_leader": "「{{charaName}}」をリーダーにして{{times}}回ライブをしよう",
   "challenge_live_character_force_release": "チャレンジライブ強制開放"

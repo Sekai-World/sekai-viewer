@@ -26,7 +26,6 @@ import React, {
   useCallback,
   useContext,
   useEffect,
-  useMemo,
   useState,
 } from "react";
 import { useParams } from "react-router-dom";
@@ -38,7 +37,6 @@ import {
   IMusicTagInfo,
   IMusicVocalInfo,
   IOutCharaProfile,
-  IReleaseCondition,
 } from "../types";
 import { musicTagToName, useCachedData } from "../utils";
 import { charaIcons } from "../utils/resources";
@@ -48,7 +46,7 @@ import { useDurationI18n } from "../utils/i18nDuration";
 import { useTrimMP3 } from "../utils/trimMP3";
 import MusicVideoPlayer from "./subs/MusicVideoPlayer";
 import { SettingContext } from "../context";
-import { ContentTrans } from "./subs/ContentTrans";
+import { ContentTrans, ReleaseCondTrans } from "./subs/ContentTrans";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -68,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
       paddingTop: "60%",
     },
     [theme.breakpoints.down("sm")]: {
-      paddingTop: "90%",
+      paddingTop: "100%",
     },
     backgroundSize: "contain",
     cursor: "pointer",
@@ -100,7 +98,7 @@ const MusicDetail: React.FC<{}> = () => {
   const [musicTags] = useCachedData<IMusicTagInfo>("musicTags");
   // const [gameCharas] = useCachedData<IGameChara>('gameCharacters');
   const [outCharas] = useCachedData<IOutCharaProfile>("outsideCharacters");
-  const [releaseConds] = useCachedData<IReleaseCondition>("releaseConditions");
+  // const [releaseConds] = useCachedData<IReleaseCondition>("releaseConditions");
   const [danceMembers] = useCachedData<IMusicDanceMembers>("musicDanceMembers");
 
   const { musicId } = useParams<{ musicId: string }>();
@@ -294,11 +292,11 @@ const MusicDetail: React.FC<{}> = () => {
     }
   }, [musicVocal, selectedVocalType, music, humanizeDurationShort]);
 
-  const VocalTypeSelector: JSX.Element = useMemo(() => {
+  const VocalTypeSelector: React.FC<{}> = useCallback(() => {
     return (
       <FormControl
         disabled={vocalDisabled}
-        style={{ marginLeft: "18.5px", marginTop: "1%" }}
+        style={{ marginLeft: "18.5px", marginTop: "1em" }}
       >
         <FormLabel>{t("music:vocal")}</FormLabel>
         <RadioGroup
@@ -325,7 +323,7 @@ const MusicDetail: React.FC<{}> = () => {
   return music &&
     musicVocals.length &&
     musicDiffis.length &&
-    releaseConds.length &&
+    // releaseConds.length &&
     danceMembers.length ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
@@ -366,8 +364,11 @@ const MusicDetail: React.FC<{}> = () => {
               ) : null}
             </Tabs>
           </Paper>
-          {VocalTypeSelector}
-          <TabPanel value="0">
+          <VocalTypeSelector />
+          <TabPanel
+            value="0"
+            style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 8 }}
+          >
             {musicVocalTypes.length && musicVocal.length ? (
               <audio
                 controls
@@ -376,7 +377,10 @@ const MusicDetail: React.FC<{}> = () => {
               ></audio>
             ) : null}
           </TabPanel>
-          <TabPanel value="1">
+          <TabPanel
+            value="1"
+            style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 8 }}
+          >
             {musicVocalTypes.length && musicVocal.length ? (
               <Fragment>
                 <Box
@@ -643,10 +647,10 @@ const MusicDetail: React.FC<{}> = () => {
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
         </Grid>
+        <Typography variant="h6" className={layoutClasses.header}>
+          {t("music:vocal", { count: musicVocal.length })}
+        </Typography>
         <Box>
-          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            {t("music:vocal", { count: musicVocal.length })}
-          </Typography>
           <TabContext value={vocalInfoTabVal}>
             <Paper>
               <Tabs
@@ -667,7 +671,11 @@ const MusicDetail: React.FC<{}> = () => {
               </Tabs>
             </Paper>
             {musicVocal.map((elem, idx) => (
-              <TabPanel value={String(idx)} key={`vocal-info-tab-panel-${idx}`}>
+              <TabPanel
+                value={String(idx)}
+                key={`vocal-info-tab-panel-${idx}`}
+                style={{ paddingLeft: 0, paddingRight: 0 }}
+              >
                 <Grid container direction="column">
                   <Grid
                     item
@@ -684,17 +692,30 @@ const MusicDetail: React.FC<{}> = () => {
                     <Grid item>{getVocalCharaIcons(idx)}</Grid>
                   </Grid>
                   <Divider style={{ margin: "1% 0" }} />
-                  <Grid item container direction="row" justify="space-between">
-                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                      {t("common:releaseCondition")}
-                    </Typography>
-                    <Typography>
-                      {
-                        releaseConds.find(
-                          (cond) => cond.id === elem.releaseConditionId
-                        )?.sentence
-                      }
-                    </Typography>
+                  <Grid item>
+                    <Grid
+                      container
+                      direction="row"
+                      justify="space-between"
+                      alignItems="center"
+                    >
+                      <Grid item>
+                        <Typography
+                          variant="subtitle1"
+                          style={{ fontWeight: 600 }}
+                        >
+                          {t("common:releaseCondition")}
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <ReleaseCondTrans
+                          mode={contentTransMode}
+                          releaseCondId={elem.releaseConditionId}
+                          originalProps={{ align: "right" }}
+                          translatedProps={{ align: "right" }}
+                        />
+                      </Grid>
+                    </Grid>
                   </Grid>
                   <Divider style={{ margin: "1% 0" }} />
                   <Grid item container direction="row" justify="space-between">
@@ -709,101 +730,89 @@ const MusicDetail: React.FC<{}> = () => {
             ))}
           </TabContext>
         </Box>
-        <Divider style={{ margin: "1% 0" }} />
-        <Box>
-          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            {t("music:difficulty", {
-              count: musicDiffis.filter(
-                (elem) => elem.musicId === Number(musicId)
-              ).length,
-            })}
-          </Typography>
-          <TabContext value={diffiInfoTabVal}>
-            <Paper>
-              <Tabs
-                value={diffiInfoTabVal}
-                onChange={(e, v) => {
-                  setDiffiInfoTabVal(v);
-                }}
-                variant="scrollable"
-                scrollButtons="desktop"
+        {/* <Divider style={{ margin: "1% 0" }} /> */}
+        <Typography variant="h6" className={layoutClasses.header}>
+          {t("music:difficulty", {
+            count: musicDiffis.filter(
+              (elem) => elem.musicId === Number(musicId)
+            ).length,
+          })}
+        </Typography>
+        <TabContext value={diffiInfoTabVal}>
+          <Paper>
+            <Tabs
+              value={diffiInfoTabVal}
+              onChange={(e, v) => {
+                setDiffiInfoTabVal(v);
+              }}
+              variant="scrollable"
+              scrollButtons="desktop"
+            >
+              {musicDiffis
+                .filter((elem) => elem.musicId === Number(musicId))
+                .map((elem, idx) => (
+                  <Tab
+                    key={`diffi-info-tab-${idx}`}
+                    label={elem.musicDifficulty}
+                    value={String(idx)}
+                  ></Tab>
+                ))}
+            </Tabs>
+          </Paper>
+          {musicDiffis
+            .filter((elem) => elem.musicId === Number(musicId))
+            .map((elem, idx) => (
+              <TabPanel
+                value={String(idx)}
+                key={`diffi-info-tab-panel-${idx}`}
+                style={{ paddingLeft: 0, paddingRight: 0 }}
               >
-                {musicDiffis
-                  .filter((elem) => elem.musicId === Number(musicId))
-                  .map((elem, idx) => (
-                    <Tab
-                      key={`diffi-info-tab-${idx}`}
-                      label={elem.musicDifficulty}
-                      value={String(idx)}
-                    ></Tab>
-                  ))}
-              </Tabs>
-            </Paper>
-            {musicDiffis
-              .filter((elem) => elem.musicId === Number(musicId))
-              .map((elem, idx) => (
-                <TabPanel
-                  value={String(idx)}
-                  key={`diffi-info-tab-panel-${idx}`}
-                >
-                  <Grid container direction="column">
-                    <Grid
-                      item
-                      container
-                      direction="row"
-                      justify="space-between"
-                    >
-                      <Typography
-                        variant="subtitle1"
-                        style={{ fontWeight: 600 }}
-                      >
-                        {t("common:level")}
-                      </Typography>
-                      <Grid item>{elem.playLevel}</Grid>
-                    </Grid>
-                    <Divider style={{ margin: "1% 0" }} />
-                    <Grid
-                      item
-                      container
-                      direction="row"
-                      justify="space-between"
-                    >
-                      <Typography
-                        variant="subtitle1"
-                        style={{ fontWeight: 600 }}
-                      >
-                        {t("music:noteCount")}
-                      </Typography>
-                      <Grid item>{elem.noteCount}</Grid>
-                    </Grid>
-                    <Divider style={{ margin: "1% 0" }} />
-                    <Grid
-                      item
-                      container
-                      direction="row"
-                      justify="space-between"
-                    >
-                      <Typography
-                        variant="subtitle1"
-                        style={{ fontWeight: 600 }}
-                      >
-                        {t("common:releaseCondition")}
-                      </Typography>
-                      <Typography>
-                        {
-                          releaseConds.find(
-                            (cond) => cond.id === elem.releaseConditionId
-                          )?.sentence
-                        }
-                      </Typography>
-                    </Grid>
-                    {/* <Divider style={{ margin: "1% 0" }} /> */}
+                <Grid container direction="column">
+                  <Grid item container direction="row" justify="space-between">
+                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                      {t("common:level")}
+                    </Typography>
+                    <Grid item>{elem.playLevel}</Grid>
                   </Grid>
-                </TabPanel>
-              ))}
-          </TabContext>
-          <Divider style={{ margin: "1% 0" }} />
-        </Box>
+                  <Divider style={{ margin: "1% 0" }} />
+                  <Grid item container direction="row" justify="space-between">
+                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                      {t("music:noteCount")}
+                    </Typography>
+                    <Grid item>{elem.noteCount}</Grid>
+                  </Grid>
+                  <Divider style={{ margin: "1% 0" }} />
+                  <Grid item>
+                    <Grid
+                      container
+                      direction="row"
+                      justify="space-between"
+                      alignItems="center"
+                    >
+                      <Grid item>
+                        <Typography
+                          variant="subtitle1"
+                          style={{ fontWeight: 600 }}
+                        >
+                          {t("common:releaseCondition")}
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <ReleaseCondTrans
+                          mode={contentTransMode}
+                          releaseCondId={elem.releaseConditionId}
+                          originalProps={{ align: "right" }}
+                          translatedProps={{ align: "right" }}
+                        />
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  <Divider style={{ margin: "1% 0" }} />
+                </Grid>
+              </TabPanel>
+            ))}
+        </TabContext>
+        {/* <Divider style={{ margin: "1% 0" }} /> */}
       </Container>
 
       <Viewer

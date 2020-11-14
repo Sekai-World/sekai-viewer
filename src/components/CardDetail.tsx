@@ -33,7 +33,6 @@ import {
   ICardRarity,
   ICharacterRank,
   IGameChara,
-  IReleaseCondition,
   IResourceBoxInfo,
   ISkillInfo,
   IUnitProfile,
@@ -50,7 +49,11 @@ import MaterialIcon from "./subs/MaterialIcon";
 import CommonMaterialIcon from "./subs/CommonMaterialIcon";
 import { useAssetI18n } from "../utils/i18n";
 import { SettingContext } from "../context";
-import { CharaNameTrans, ContentTrans } from "./subs/ContentTrans";
+import {
+  CharaNameTrans,
+  ContentTrans,
+  ReleaseCondTrans,
+} from "./subs/ContentTrans";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -102,7 +105,7 @@ const CardDetail: React.FC<{}> = () => {
   const [episodes] = useCachedData<ICardEpisode>("cardEpisodes");
   const [charaRanks] = useCachedData<ICharacterRank>("characterRanks");
   const [skills] = useCachedData<ISkillInfo>("skills");
-  const [releaseConds] = useCachedData<IReleaseCondition>("releaseConditions");
+  // const [releaseConds] = useCachedData<IReleaseCondition>("releaseConditions");
   const [resourceBoxes] = useCachedData<IResourceBoxInfo>("resourceBoxes");
   const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
 
@@ -303,7 +306,7 @@ const CardDetail: React.FC<{}> = () => {
 
   return card &&
     charaRanks.length &&
-    releaseConds.length &&
+    // releaseConds.length &&
     resourceBoxes.length &&
     unitProfiles.length ? (
     <Fragment>
@@ -993,13 +996,12 @@ const CardDetail: React.FC<{}> = () => {
                   </Typography>
                 </Grid>
                 <Grid item xs={8} container justify="flex-end">
-                  <Typography>
-                    {
-                      releaseConds.find(
-                        (rc) => rc.id === cardEpisode[0].releaseConditionId
-                      )?.sentence
-                    }
-                  </Typography>
+                  <ReleaseCondTrans
+                    mode={contentTransMode}
+                    releaseCondId={cardEpisode[0].releaseConditionId}
+                    originalProps={{ align: "right" }}
+                    translatedProps={{ align: "right" }}
+                  />
                 </Grid>
               </Grid>
               <Divider style={{ margin: "1% 0" }} />
@@ -1092,13 +1094,12 @@ const CardDetail: React.FC<{}> = () => {
                   </Typography>
                 </Grid>
                 <Grid item xs={8} container justify="flex-end">
-                  <Typography>
-                    {
-                      releaseConds.find(
-                        (rc) => rc.id === cardEpisode[1].releaseConditionId
-                      )?.sentence
-                    }
-                  </Typography>
+                  <ReleaseCondTrans
+                    mode={contentTransMode}
+                    releaseCondId={cardEpisode[1].releaseConditionId}
+                    originalProps={{ align: "right" }}
+                    translatedProps={{ align: "right" }}
+                  />
                 </Grid>
               </Grid>
               <Divider style={{ margin: "1% 0" }} />
