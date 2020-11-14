@@ -1,0 +1,61 @@
+{
+  "about": "À propos",
+  "home": "Accueil",
+  "card": "Carte",
+  "music": "Musique",
+  "gacha": "Gacha",
+  "event": "Événement",
+  "stamp": "Timbre",
+  "comic": "Bande dessinée",
+  "character": "Personnage",
+  "musicMeta": "Musique Meta",
+  "scoreCalculator": "Calculateur de score",
+  "support": "Support",
+  "toolbar": {
+    "title": "Liste des fonctions"
+  },
+  "information": "Information",
+  "tools": "Outils",
+  "settings": {
+    "title": "Paramètres"
+  },
+  "language": "Langues",
+  "darkmode": "Luminosité",
+  "contentTranslationMode": {
+    "title": "Mode d'affichage du contenu du jeu",
+    "original": "Original",
+    "translated": "Traduit (si disponible)",
+    "both": "Afficher les deux"
+  },
+  "id": "ID",
+  "title": "Titre",
+  "unit": "Groupe",
+  "support_unit": "Groupe de soutien",
+  "attribute": "Attribut",
+  "startAt": "Disponible depuis",
+  "rarity": "Rareté",
+  "thumb": "Miniature",
+  "skill": "Compétence",
+  "performance": "Performance",
+  "technique": "Technique",
+  "stamina": "Endurance",
+  "power": "Pouvoir",
+  "releaseCondition": "Condition pour l'obtenir",
+  "releaseCosts": "Coût pour l'obtenir",
+  "rewards": "Récompenses",
+  "type": "Type",
+  "endAt": "Disponible jusqu'au",
+  "icon": "Icône",
+  "detect": {
+    "checking": "Vérification...",
+    "unsupported": "Non pris en charge",
+    "supported": "Pris en charge"
+  },
+  "campaign": "Campagne",
+  "bug": "Bug",
+  "profile": "Profil",
+  "character_plural": "Personnages",
+  "level": "Niveau",
+  "update": "Mise à jour",
+  "member": "Personnage"
+}
