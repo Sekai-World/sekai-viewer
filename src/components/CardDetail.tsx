@@ -158,9 +158,9 @@ const CardDetail: React.FC<{}> = () => {
 
       switch (contentTransMode) {
         case "original":
-          return <Typography>{originalSkillInfo}</Typography>;
+          return <Typography align="right">{originalSkillInfo}</Typography>;
         case "translated":
-          return <Typography>{translatedSkillInfo}</Typography>;
+          return <Typography align="right">{translatedSkillInfo}</Typography>;
         case "both":
           return (
             <Grid container direction="column">
