@@ -4,7 +4,7 @@
   "3": "{{3;v}}% d'augmentation de score pendant {{3;d}} secondes",
   "4": "{{4;v}}% d'augmentation de score pendant {{4;d}} secondes",
   "5": "Tous les GREAT deviendront des PERFECT pendant {{8;d}} secondes et {{5;v}}% d'augmentation de score pendant {{5;d}} secondes",
-  "6": "Tous les GOODs et au-dessus deviendront des PERFECTs pendant {{9;d}} secondes et {{6;v}}% d'augmentation de score pendant {{6;d}} secondes",
+  "6": "Tous les GOOD et au-dessus deviendront des PERFECT pendant {{9;d}} secondes et {{6;v}}% d'augmentation de score pendant {{6;d}} secondes",
   "7": "Tous les BADs et au-dessus deviendront des PERFECTs pendant {{10;d}} secondes et {{7;v}}% d'augmentation de score pendant {{7;d}} secondes",
   "8": "Récupère {{14;v}} points de vie et {{11;v}}% d'augmentation de score pendant {{11;d}} secondes",
   "9": "Récupère {{15;v}} points de vie et {{12;v}}% d'augmentation de score pendant {{12;d}} secondes",
