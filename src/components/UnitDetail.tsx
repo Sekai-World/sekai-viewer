@@ -191,7 +191,11 @@ const UnitDetail: React.FC<{}> = () => {
                   <Paper>
                     <Grid container direction="column" alignItems="center">
                       <Grid item>
-                        <Grid container justify="flex-end">
+                        <Grid
+                          container
+                          justify="flex-end"
+                          alignItems="flex-start"
+                        >
                           <img
                             key={uc.id}
                             height="84"
@@ -246,7 +250,11 @@ const UnitDetail: React.FC<{}> = () => {
                       spacing={1}
                     >
                       <Grid item>
-                        <Grid container justify="flex-end">
+                        <Grid
+                          container
+                          justify="flex-end"
+                          alignItems="flex-start"
+                        >
                           <img
                             key={um.id}
                             src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/jacket/${um.assetbundleName}_rip/${um.assetbundleName}.webp`}
