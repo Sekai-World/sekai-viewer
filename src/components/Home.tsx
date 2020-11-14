@@ -254,7 +254,10 @@ function Home() {
           </Link>
           <br></br>
           <RouteLink to="/about" style={{ textDecoration: "none" }}>
-            <OpenInNew fontSize="inherit" /> {t("home:alert1.see_contrib_list")}
+            <Link>
+              <OpenInNew fontSize="inherit" />{" "}
+              {t("home:alert1.see_contrib_list")}
+            </Link>
           </RouteLink>
           <br></br>
           {t("home:alert1.contact")}:
