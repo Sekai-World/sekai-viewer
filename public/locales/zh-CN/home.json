@@ -1,4 +1,10 @@
 {
+  "alert_contributor": {
+    "title": "感谢为开发贡献力量的你们！"
+  },
+  "alert_translate": {
+    "title": "感谢翻译者们！"
+  },
   "game-news": {
     "action": "动作",
     "show-from": "开始日期",
@@ -7,21 +13,18 @@
     "title": "游戏通知"
   },
   "alert0": "Sekai Viewer 现在公开测试中！",
-  "alert_contributor": {
-    "title": "感谢为开发贡献力量的你们！"
-  },
-  "alert_translate": {
-    "title": "感谢翻译者们！"
-  },
   "alert_settings": "使用右上角的 <s /> 切换语言和亮度模式。",
   "alert1": {
     "title": "需要你的帮助！",
     "translation": "翻译",
     "development": "开发",
+    "see_contrib_list": "查看项目的贡献者",
     "contact": "联系我",
     "join-discord": "加入Discord服务器"
   },
   "detect": {
+    "failed": "十分抱歉,您的浏览器在加载大量图片时出现问题,请升级您的浏览器或系统版本。我们正在加强兼容性。<br>更多信息:<l>您的浏览器是否可用 - WebP图像格式</l>",
     "success": "恭喜！你的浏览器看起来很现代，您可以更快地加载图像并节省带宽。"
-  }
+  },
+  "update": "相关链接"
 }
