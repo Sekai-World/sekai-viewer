@@ -1,4 +1,5 @@
 {
+  "about": "关于",
   "home": "主页",
   "card": "卡牌",
   "music": "乐曲",
@@ -9,6 +10,7 @@
   "character": "角色",
   "musicMeta": "歌曲Meta",
   "scoreCalculator": "分数计算器",
+  "support": "支持",
   "toolbar": {
     "title": "功能列表"
   },
@@ -49,12 +51,11 @@
     "unsupported": "不支持",
     "supported": "支持"
   },
-  "support": "支持",
   "campaign": "纪念活动",
   "bug": "问题",
-  "update": "更新",
   "profile": "角色资料",
+  "character_plural": "角色",
   "level": "等级",
-  "member": "成员",
-  "character_plural": "角色"
+  "update": "更新",
+  "member": "成员"
 }
