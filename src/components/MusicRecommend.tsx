@@ -1,17 +1,23 @@
 import {
   Button,
-  Container,
+  Chip,
+  // Container,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
   FormControl,
+  FormControlLabel,
+  FormLabel,
   Grid,
+  Input,
   InputLabel,
   makeStyles,
   MenuItem,
   Paper,
+  Radio,
+  RadioGroup,
   Select,
   Snackbar,
   Step,
@@ -33,11 +39,12 @@ import React, {
 import { useTranslation } from "react-i18next";
 import { SettingContext } from "../context";
 import { useLayoutStyles } from "../styles/layout";
-import { ICardInfo, IGameChara, ITeamCardState } from "../types";
+import { ICardInfo, IGameChara, IMusicInfo, ITeamCardState } from "../types";
 import { useCachedData, useCharaName } from "../utils";
 import { CardThumb } from "./subs/CardThumb";
 import rarityNormal from "../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../assets/rarity_star_afterTraining.png";
+import { useAssetI18n } from "../utils/i18n";
 
 const useStyle = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -50,11 +57,13 @@ const MusicRecommend: React.FC<{}> = () => {
   const classes = useStyle();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
+  const { getTranslated } = useAssetI18n();
   const { contentTransMode } = useContext(SettingContext)!;
   const getCharaName = useCharaName(contentTransMode);
 
   const [cards] = useCachedData<ICardInfo>("cards");
   const [charas] = useCachedData<IGameChara>("gameCharacters");
+  const [musics] = useCachedData<IMusicInfo>("musics");
 
   const maxStep = 4;
 
@@ -80,6 +89,8 @@ const MusicRecommend: React.FC<{}> = () => {
     false
   );
   const [loadTeamText, setLoadTeamText] = useState<string>("");
+  const [selectedSongIds, setSelectedSongIds] = useState<number[]>([]);
+  const [selectedMode, setSelectedMode] = useState<string>("event_pt_per_hour");
 
   const saveTeamTextareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -262,7 +273,7 @@ const MusicRecommend: React.FC<{}> = () => {
               </Grid>
               <Grid container direction="row" spacing={1}>
                 {teamCards.map((cardId, index) => (
-                  <Grid key={`team-card-${cardId}`} item xs={12} md={6}>
+                  <Grid key={`team-card-${cardId}`} item xs={12} md={6} lg={4}>
                     <Paper style={{ padding: "0.5em" }}>
                       <Grid
                         container
@@ -270,12 +281,12 @@ const MusicRecommend: React.FC<{}> = () => {
                         alignItems="center"
                         spacing={2}
                       >
-                        <Grid item xs={5} md={3} lg={2}>
+                        <Grid item xs={5} md={3}>
                           <CardThumb cardId={cardId} />
                         </Grid>
-                        <Grid item xs={7} md={9} lg={10}>
+                        <Grid item xs={7} md={9}>
                           <Grid container spacing={1}>
-                            <Grid item>
+                            <Grid item xs={12} md={4}>
                               <TextField
                                 label={t("card:cardLevel")}
                                 type="number"
@@ -291,7 +302,7 @@ const MusicRecommend: React.FC<{}> = () => {
                                 }
                               />
                             </Grid>
-                            <Grid item>
+                            <Grid item xs={12} md={4}>
                               <TextField
                                 label={t("card:skillLevel")}
                                 type="number"
@@ -309,7 +320,7 @@ const MusicRecommend: React.FC<{}> = () => {
                                 }
                               />
                             </Grid>
-                            <Grid item>
+                            <Grid item xs={12} md={4}>
                               <Button
                                 variant="outlined"
                                 color="secondary"
@@ -334,6 +345,50 @@ const MusicRecommend: React.FC<{}> = () => {
           <StepLabel>{t("music_recommend:songSelect.label")}</StepLabel>
           <StepContent>
             <Typography>{t("music_recommend:songSelect.desc")}</Typography>
+            <div>
+              <FormControl style={{ minWidth: 200 }}>
+                <InputLabel id="song-select-label">Selected Songs</InputLabel>
+                <Select
+                  labelId="song-select-label"
+                  multiple
+                  value={selectedSongIds}
+                  onChange={(e, v) =>
+                    setSelectedSongIds(e.target.value as number[])
+                  }
+                  input={<Input />}
+                  renderValue={(selected) => (
+                    <Grid container spacing={1}>
+                      {(selected as number[]).map((v) => {
+                        const m = musics.find((music) => music.id === v);
+                        return (
+                          <Grid item>
+                            <Chip
+                              key={v}
+                              label={getTranslated(
+                                contentTransMode,
+                                `music_titles:${v}`,
+                                m!.title
+                              )}
+                            />
+                          </Grid>
+                        );
+                      })}
+                    </Grid>
+                  )}
+                >
+                  {musics.map((music) => (
+                    <MenuItem key={`music-${music.id}`} value={music.id}>
+                      {getTranslated(
+                        contentTransMode,
+                        `music_titles:${music.id}`,
+                        music!.title
+                      )}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+            <br />
             <StepButtons />
           </StepContent>
         </Step>
@@ -341,6 +396,37 @@ const MusicRecommend: React.FC<{}> = () => {
           <StepLabel>{t("music_recommend:modeSelect.label")}</StepLabel>
           <StepContent>
             <Typography>{t("music_recommend:modeSelect.desc")}</Typography>
+            <div>
+              <FormControl component="fieldset">
+                <FormLabel component="legend">Select Mode</FormLabel>
+                <RadioGroup
+                  value={selectedMode}
+                  onChange={(e) => setSelectedMode(e.target.value)}
+                >
+                  <FormControlLabel
+                    value="solo"
+                    control={<Radio />}
+                    label="Solo"
+                  />
+                  <FormControlLabel
+                    value="multi"
+                    control={<Radio />}
+                    label="Multiplayer"
+                  />
+                  <FormControlLabel
+                    value="event_pt"
+                    control={<Radio />}
+                    label="Event Point (per play count)"
+                  />
+                  <FormControlLabel
+                    value="event_pt_per_hour"
+                    control={<Radio />}
+                    label="Event Point (per hour)"
+                  />
+                </RadioGroup>
+              </FormControl>
+            </div>
+            <br />
             <StepButtons />
           </StepContent>
         </Step>
