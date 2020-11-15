@@ -6,11 +6,12 @@
     "title[3]": "Background",
     "title[4]": "Imagem Destacada"
   },
-  "normalRate": "",
-  "guaranteedRate": "",
+  "normalRate": "Taxa de Roll Normal",
+  "guaranteedRate": "Taxa de Roll Garantida",
   "pickupMember": "Membro Destacado",
   "pickupMember_plural": "Membros Destacados",
   "gachaType": {
-    "ceil": "Ceiling"
+    "ceil": "Ceiling",
+    "normal": "Normal"
   }
 }

@@ -1,27 +1,30 @@
 {
   "tab": {
-    "title[0]": "",
-    "title[1]": "",
-    "title[2]": ""
+    "title[0]": "Personagem",
+    "title[1]": "Eitqueta de Nome (horizontal)",
+    "title[2]": "Etiqueta de Nome (vertical)"
   },
-  "name": "",
-  "hiragana": "",
+  "name": "Nome",
+  "hiragana": "Furigana",
   "gender": {
-    "caption": ""
+    "caption": "Gênero",
+    "female": "Feminino",
+    "male": "Masculino",
+    "secret": "Segredo"
   },
-  "colorCode": "",
-  "skinColorCode": "",
-  "skinShadowColorCode1": "",
-  "skinShadowColorCode2": "",
-  "height": "",
-  "birthday": "",
-  "characterVoice": "",
-  "school": "",
-  "schoolYear": "",
-  "hobby": "",
-  "specialSkill": "",
-  "favoriteFood": "",
-  "hatedFood": "",
-  "weak": "",
-  "introduction": ""
+  "colorCode": "Cor da Imagem",
+  "skinColorCode": "Cor da Pele",
+  "skinShadowColorCode1": "Cor da sombra da pele 1",
+  "skinShadowColorCode2": "Cor da sombra da pele 2",
+  "height": "Altura",
+  "birthday": "Aniversário",
+  "characterVoice": "Dublador",
+  "school": "Escola",
+  "schoolYear": "Classe",
+  "hobby": "Passatempo",
+  "specialSkill": "Especialidade",
+  "favoriteFood": "Comida Favorita",
+  "hatedFood": "Comida que não gosta",
+  "weak": "Fraqueza",
+  "introduction": "Introdução"
 }

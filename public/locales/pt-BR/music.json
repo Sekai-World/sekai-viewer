@@ -2,9 +2,9 @@
   "vocal": "Vocal",
   "alert[0]": "Os primeiros <b>nove segundos </b> de todas as músicas não tem som. Isso NÃO é um bug.",
   "vocalTab": {
-    "title[0]": "",
-    "title[1]": "",
-    "title[2]": ""
+    "title[0]": "Versão Curta",
+    "title[1]": "Versão Longa",
+    "title[2]": "MusicVideo"
   },
   "skipBeginningSilence": "Pular os 9 segundos de silêncio",
   "tag": "Tag",
@@ -22,5 +22,11 @@
   "vocalType": "Tipo de Vocal",
   "difficulty": "Dificuldade",
   "difficulty_plural": "Dificuldades",
-  "noteCount": "Contador de Notas"
+  "noteCount": "Contador de Notas",
+  "categoryType": {
+    "mv": "3DMusicVideo",
+    "mv_2d": "2DMusicVideo",
+    "original": "Original MusicVideo",
+    "image": "Imagem Estática"
+  }
 }
