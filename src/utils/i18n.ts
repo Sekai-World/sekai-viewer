@@ -86,6 +86,8 @@ assetI18n
       "stamp_name",
       "comic_title",
       "release_cond",
+      "card_episode_title",
+      "music_vocal",
     ],
     fallbackLng: {
       default: ["ja"],

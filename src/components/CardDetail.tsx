@@ -964,8 +964,26 @@ const CardDetail: React.FC<{}> = () => {
               variant="scrollable"
               scrollButtons="desktop"
             >
-              <Tab label={cardEpisode[0].title} value="1"></Tab>
-              <Tab label={cardEpisode[1].title} value="2"></Tab>
+              <Tab
+                label={
+                  <ContentTrans
+                    mode={contentTransMode}
+                    contentKey={`card_episode_title:${cardEpisode[0].title}`}
+                    original={cardEpisode[0].title}
+                  />
+                }
+                value="1"
+              ></Tab>
+              <Tab
+                label={
+                  <ContentTrans
+                    mode={contentTransMode}
+                    contentKey={`card_episode_title:${cardEpisode[1].title}`}
+                    original={cardEpisode[1].title}
+                  />
+                }
+                value="2"
+              ></Tab>
             </Tabs>
           </Paper>
           <TabPanel value="1" classes={{ root: classes.tabpanel }}>

@@ -664,7 +664,13 @@ const MusicDetail: React.FC<{}> = () => {
                 {musicVocal.map((elem, idx) => (
                   <Tab
                     key={`vocal-info-tab-${idx}`}
-                    label={elem.caption}
+                    label={
+                      <ContentTrans
+                        mode={contentTransMode}
+                        contentKey={`music_vocal:${elem.musicVocalType}`}
+                        original={elem.caption}
+                      />
+                    }
                     value={String(idx)}
                   ></Tab>
                 ))}
@@ -718,13 +724,26 @@ const MusicDetail: React.FC<{}> = () => {
                     </Grid>
                   </Grid>
                   <Divider style={{ margin: "1% 0" }} />
-                  <Grid item container direction="row" justify="space-between">
-                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                      {t("music:vocalType")}
-                    </Typography>
-                    <Typography>{elem.musicVocalType}</Typography>
+                  {/* <Grid item>
+                    <Grid container direction="row" justify="space-between">
+                      <Grid item>
+                        <Typography
+                          variant="subtitle1"
+                          style={{ fontWeight: 600 }}
+                        >
+                          {t("music:vocalType")}
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <ContentTrans
+                          mode={contentTransMode}
+                          contentKey={`music_vocal:${elem.musicVocalType}`}
+                          original={elem.caption}
+                        />
+                      </Grid>
+                    </Grid>
                   </Grid>
-                  <Divider style={{ margin: "1% 0" }} />
+                  <Divider style={{ margin: "1% 0" }} /> */}
                 </Grid>
               </TabPanel>
             ))}
