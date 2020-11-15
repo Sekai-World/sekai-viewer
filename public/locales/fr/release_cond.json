@@ -45,6 +45,7 @@
   "inherit_complete": "Le transfert est terminé",
   "event_point": "Obtenir {{point}} points d'événement",
   "event_story_1000016": "Lire la fin de « Marionnette emprisonnée »",
+  "event_story": "Lire la fin de « {{eventName}} »",
   "virtual_live_participation": "Assister à un Virtual Live",
   "character_live_usage_leader": "Jouer {{times}} parties avec {{charaName}} comme leader",
   "challenge_live_character_force_release": "Jouer un Challenge Live"
