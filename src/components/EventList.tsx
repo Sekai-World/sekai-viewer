@@ -32,13 +32,13 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer",
   },
   header: {
-    "white-space": "nowrap",
-    overflow: "hidden",
-    "text-overflow": "ellipsis",
-    [theme.breakpoints.down("md")]: {
-      "max-width": "200px",
-    },
-    "max-width": "250px",
+    // "white-space": "nowrap",
+    // overflow: "hidden",
+    // "text-overflow": "ellipsis",
+    // [theme.breakpoints.down("md")]: {
+    //   "max-width": "200px",
+    // },
+    // "max-width": "250px",
   },
   "grid-out": {
     padding: theme.spacing("1%", "2%"),

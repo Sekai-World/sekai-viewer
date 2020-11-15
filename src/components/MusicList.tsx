@@ -49,9 +49,9 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer",
   },
   header: {
-    "white-space": "nowrap",
-    overflow: "hidden",
-    "text-overflow": "ellipsis",
+    // "white-space": "nowrap",
+    // overflow: "hidden",
+    // "text-overflow": "ellipsis",
   },
   agendaWrapper: {
     display: "block",

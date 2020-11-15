@@ -61,9 +61,9 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer",
   },
   subheader: {
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
+    // whiteSpace: "nowrap",
+    // overflow: "hidden",
+    // textOverflow: "ellipsis",
   },
   agendaWrapper: {
     display: "block",
