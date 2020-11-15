@@ -1,6 +1,6 @@
 {
-  "alert[0]": "Les premières <b>neuf secondes</b> de chaque chanson n'ont pas de son. Il ne s'agit PAS d'un bug.",
   "vocal": "Voix",
+  "alert[0]": "Les premières <b>neuf secondes</b> de chaque chanson n'ont pas de son. Il ne s'agit PAS d'un bug.",
   "vocalTab": {
     "title[0]": "Version courte",
     "title[1]": "Version longue",
@@ -11,12 +11,6 @@
   "tag_plural": "Balises",
   "category": "Catégorie",
   "category_plural": "Catégories",
-  "categoryType": {
-    "mv": "MV 3D",
-    "mv_2d": "MV 2D",
-    "original": "MV original",
-    "image": "Image statique"
-  },
   "actualPlaybackTime": "Durée de lecture",
   "arranger": "Arrangement",
   "composer": "Composition",
@@ -28,5 +22,11 @@
   "vocalType": "Type de voix",
   "difficulty": "Difficulté",
   "difficulty_plural": "Difficultés",
-  "noteCount": "Nombre de notes"
+  "noteCount": "Nombre de notes",
+  "categoryType": {
+    "mv": "MV 3D",
+    "mv_2d": "MV 2D",
+    "original": "MV original",
+    "image": "Image statique"
+  }
 }

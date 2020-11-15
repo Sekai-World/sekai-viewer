@@ -13,7 +13,7 @@
     "secret": "Secret/"
   },
   "colorCode": "Couleur d'image",
-  "skinColorCode": "Couleur de la peau",
+  "skinColorCode": "Couleur de peau",
   "skinShadowColorCode1": "Couleur de l'ombre de peau 1",
   "skinShadowColorCode2": "Couleur de l'ombre de peau 2",
   "height": "Taille",
@@ -25,6 +25,6 @@
   "specialSkill": "Spécialité",
   "favoriteFood": "Nourriture préférée",
   "hatedFood": "Nourriture détestée",
-  "weak": "Faiblesse",
+  "weak": "Déteste",
   "introduction": "Introduction"
 }
