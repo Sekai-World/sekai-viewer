@@ -1,0 +1,16 @@
+{
+  "general": {
+    "desc": "Se você adora o Sekai Viewer, pode me apoiar de uma das seguintes maneiras:"
+  },
+  "patreon": {
+    "desc": "A maneira mais direta de oferecer suporte ao Sekai Viewer.<br> Acesse nossas recompensas especiais e postagens para patreons por:"
+  },
+  "translation": {
+    "title": "Tradução",
+    "desc": "Traduza o Sekai Viewer para o seu idioma e ajude a melhorar a qualidade da tradução revisando-o."
+  },
+  "development": {
+    "title": "Desenvolvimento",
+    "desc": "Relate um problema, abra uma solicitação ou torne-se parte de nossa organização."
+  }
+}
