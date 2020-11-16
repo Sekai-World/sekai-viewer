@@ -1,6 +1,7 @@
 {
   "vocal": "Vocal",
   "alert[0]": "The first <b>nine seconds</b> of every song have no sound. This is NOT a bug.",
+  "preview": "Preview",
   "vocalTab": {
     "title[0]": "Short version",
     "title[1]": "Long version",
