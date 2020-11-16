@@ -38,7 +38,7 @@ import {
   IMusicVocalInfo,
   IOutCharaProfile,
 } from "../types";
-import { musicTagToName, useCachedData } from "../utils";
+import { musicTagToName, useCachedData, useCharaName } from "../utils";
 import { charaIcons } from "../utils/resources";
 import { Trans, useTranslation } from "react-i18next";
 import { useAssetI18n } from "../utils/i18n";
@@ -90,6 +90,7 @@ const MusicDetail: React.FC<{}> = () => {
   const { contentTransMode } = useContext(SettingContext)!;
   const [, humanizeDurationShort] = useDurationI18n();
   const [trimmedMP3URL, trimFailed, setTrimOptions] = useTrimMP3();
+  const getCharaName = useCharaName(contentTransMode);
 
   const [musics] = useCachedData<IMusicInfo>("musics");
   const [musicVocals] = useCachedData<IMusicVocalInfo>("musicVocals");
@@ -368,7 +369,7 @@ const MusicDetail: React.FC<{}> = () => {
             >
               <Grid item xs={12} md={2}>
                 <Typography classes={{ root: interactiveClasses.caption }}>
-                  {t("music:preview")}
+                  {t("common:type")}
                 </Typography>
               </Grid>
               <Grid item container xs={12} md={9} spacing={1}>
@@ -699,7 +700,27 @@ const MusicDetail: React.FC<{}> = () => {
       <Container className={layoutClasses.content} maxWidth="sm">
         <Paper className={interactiveClasses.container}>
           <Grid container direction="column" spacing={1}>
-            <VocalTypeSelector />
+            <Grid item xs={12} alignItems="center" justify="space-between">
+              <FormControl disabled={vocalDisabled}>
+                <RadioGroup
+                  row
+                  aria-label="vocal type"
+                  name="vocal-type"
+                  value={selectedVocalType}
+                  onChange={(e, v) => setSelectedVocalType(Number(v))}
+                >
+                  {musicVocalTypes.map((elem, idx) => (
+                    <FormControlLabel
+                      key={`vocal-type-${idx}`}
+                      value={idx}
+                      control={<Radio color="primary"></Radio>}
+                      label={getVocalCharaIcons(idx)}
+                      labelPlacement="end"
+                    />
+                  ))}
+                </RadioGroup>
+              </FormControl>
+            </Grid>
           </Grid>
         </Paper>
         {musicVocal.length && musicVocal[selectedVocalType] ? (
@@ -716,7 +737,18 @@ const MusicDetail: React.FC<{}> = () => {
                   count: musicVocal[selectedVocalType].characters.length,
                 })}
               </Typography>
-              <Grid item>{getVocalCharaIcons(selectedVocalType)}</Grid>
+              {/* <Grid item>{getVocalCharaIcons(selectedVocalType)}</Grid> */}
+              <Grid item>
+                <Grid container direction="column">
+                  {musicVocal[selectedVocalType].characters.map((chara) => (
+                    <Grid item>
+                      <Typography align="right">
+                        {getCharaName(chara.characterId)}
+                      </Typography>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Grid>
             </Grid>
             <Divider style={{ margin: "1% 0" }} />
             <Grid item>
