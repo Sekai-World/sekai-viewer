@@ -764,7 +764,7 @@ const MusicDetail: React.FC<{}> = () => {
       </Typography>
       <Container className={layoutClasses.content} maxWidth="sm">
         <TabContext value={diffiInfoTabVal}>
-          <Paper>
+          <Paper className={interactiveClasses.container}>
             <Tabs
               value={diffiInfoTabVal}
               onChange={(e, v) => {
