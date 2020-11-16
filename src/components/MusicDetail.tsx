@@ -229,7 +229,7 @@ const MusicDetail: React.FC<{}> = () => {
                 alt={`character ${chara.characterId}`}
               ></img>
             ) : (
-              <span>
+              <span key={chara.characterId}>
                 {outCharas.length
                   ? outCharas.find((elem) => elem.id === chara.characterId)!
                       .name
