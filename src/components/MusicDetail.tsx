@@ -115,7 +115,6 @@ const MusicDetail: React.FC<{}> = () => {
   const [selectedVocalType, setSelectedVocalType] = useState<number>(0);
   const [vocalPreviewVal, setVocalPreviewVal] = useState<string>("0");
   const [vocalDisabled, setVocalDisabled] = useState<boolean>(false);
-  const [vocalInfoTabVal, setVocalInfoTabVal] = useState<string>("0");
   const [diffiInfoTabVal, setDiffiInfoTabVal] = useState<string>("4");
   const [actualPlaybackTime, setActualPlaybackTime] = useState<string>("");
   const [trimSilence, setTrimSilence] = useState<boolean>(false);
@@ -698,105 +697,64 @@ const MusicDetail: React.FC<{}> = () => {
         {t("music:vocal", { count: musicVocal.length })}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="sm">
-        <Box>
-          <TabContext value={vocalInfoTabVal}>
-            <Paper>
-              <Tabs
-                value={vocalInfoTabVal}
-                onChange={(e, v) => {
-                  setVocalInfoTabVal(v);
-                }}
-                variant="scrollable"
-                scrollButtons="desktop"
+        <Paper className={interactiveClasses.container}>
+          <Grid container direction="column" spacing={1}>
+            <VocalTypeSelector />
+          </Grid>
+        </Paper>
+        {musicVocal.length && musicVocal[selectedVocalType] ? (
+          <Grid className={classes["grid-out"]} container direction="column">
+            <Grid
+              item
+              container
+              direction="row"
+              justify="space-between"
+              alignItems="center"
+            >
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                {t("common:character", {
+                  count: musicVocal[selectedVocalType].characters.length,
+                })}
+              </Typography>
+              <Grid item>{getVocalCharaIcons(selectedVocalType)}</Grid>
+            </Grid>
+            <Divider style={{ margin: "1% 0" }} />
+            <Grid item>
+              <Grid
+                container
+                direction="row"
+                justify="space-between"
+                alignItems="center"
               >
-                {musicVocal.map((elem, idx) => (
-                  <Tab
-                    key={`vocal-info-tab-${idx}`}
-                    label={
-                      <ContentTrans
-                        mode={contentTransMode}
-                        contentKey={`music_vocal:${elem.musicVocalType}`}
-                        original={elem.caption}
-                      />
-                    }
-                    value={String(idx)}
-                  ></Tab>
-                ))}
-              </Tabs>
-            </Paper>
-            {musicVocal.map((elem, idx) => (
-              <TabPanel
-                value={String(idx)}
-                key={`vocal-info-tab-panel-${idx}`}
-                style={{ paddingLeft: 0, paddingRight: 0 }}
-              >
-                <Grid container direction="column">
-                  <Grid
-                    item
-                    container
-                    direction="row"
-                    justify="space-between"
-                    alignItems="center"
-                  >
-                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                      {t("common:character", {
-                        count: elem.characters.length,
-                      })}
-                    </Typography>
-                    <Grid item>{getVocalCharaIcons(idx)}</Grid>
-                  </Grid>
-                  <Divider style={{ margin: "1% 0" }} />
-                  <Grid item>
-                    <Grid
-                      container
-                      direction="row"
-                      justify="space-between"
-                      alignItems="center"
-                    >
-                      <Grid item>
-                        <Typography
-                          variant="subtitle1"
-                          style={{ fontWeight: 600 }}
-                        >
-                          {t("common:releaseCondition")}
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <ReleaseCondTrans
-                          mode={contentTransMode}
-                          releaseCondId={elem.releaseConditionId}
-                          originalProps={{ align: "right" }}
-                          translatedProps={{ align: "right" }}
-                        />
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Divider style={{ margin: "1% 0" }} />
-                  {/* <Grid item>
-                    <Grid container direction="row" justify="space-between">
-                      <Grid item>
-                        <Typography
-                          variant="subtitle1"
-                          style={{ fontWeight: 600 }}
-                        >
-                          {t("music:vocalType")}
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <ContentTrans
-                          mode={contentTransMode}
-                          contentKey={`music_vocal:${elem.musicVocalType}`}
-                          original={elem.caption}
-                        />
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Divider style={{ margin: "1% 0" }} /> */}
+                <Grid item>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("common:releaseCondition")}
+                  </Typography>
                 </Grid>
-              </TabPanel>
-            ))}
-          </TabContext>
-        </Box>
+                <Grid item>
+                  <ReleaseCondTrans
+                    mode={contentTransMode}
+                    releaseCondId={
+                      musicVocal[selectedVocalType].releaseConditionId
+                    }
+                    originalProps={{ align: "right" }}
+                    translatedProps={{ align: "right" }}
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+            <Divider style={{ margin: "1% 0" }} />
+            <Grid item container direction="row" justify="space-between">
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                {t("music:vocalType")}
+              </Typography>
+              <Typography>
+                {musicVocal[selectedVocalType].musicVocalType}
+              </Typography>
+            </Grid>
+            <Divider style={{ margin: "1% 0" }} />
+          </Grid>
+        ) : null}
       </Container>
       <Typography variant="h6" className={layoutClasses.header}>
         {t("music:difficulty", {
