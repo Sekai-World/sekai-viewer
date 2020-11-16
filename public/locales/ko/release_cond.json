@@ -45,6 +45,7 @@
   "inherit_complete": "인계를 완료한다",
   "event_point": "이벤트 포인트를 {{point}} 까지 도달한다",
   "event_story_1000016": "｢사로잡힌 마리오네트｣ 의 엔딩을 읽기",
+  "event_story": "「{{eventName}}」 의 엔딩을 읽는다",
   "virtual_live_participation": "버추얼 라이브 참가",
   "character_live_usage_leader": "｢{{charaName}}｣ 을 리더로 해서 {{times}} 회 라이브를 하기",
   "challenge_live_character_force_release": "챌린지 라이브 강제 개방"
