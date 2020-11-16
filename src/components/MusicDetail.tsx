@@ -219,25 +219,29 @@ const MusicDetail: React.FC<{}> = () => {
   const getVocalCharaIcons: (index: number) => JSX.Element = useCallback(
     (index: number) => {
       return (
-        <Fragment>
+        <Grid container spacing={1} alignItems="center">
           {musicVocal[index].characters.map((chara) =>
             chara.characterType === "game_character" ? (
-              <img
-                key={chara.characterId}
-                height="42"
-                src={charaIcons[`CharaIcon${chara.characterId}`]}
-                alt={`character ${chara.characterId}`}
-              ></img>
+              <Grid item>
+                <img
+                  key={chara.characterId}
+                  height="42"
+                  src={charaIcons[`CharaIcon${chara.characterId}`]}
+                  alt={`character ${chara.characterId}`}
+                ></img>
+              </Grid>
             ) : (
-              <span>
-                {outCharas.length
-                  ? outCharas.find((elem) => elem.id === chara.characterId)!
-                      .name
-                  : `Outside Character ${chara.characterId}`}
-              </span>
+              <Grid item>
+                <span>
+                  {outCharas.length
+                    ? outCharas.find((elem) => elem.id === chara.characterId)!
+                        .name
+                    : `Outside Character ${chara.characterId}`}
+                </span>
+              </Grid>
             )
           )}
-        </Fragment>
+        </Grid>
       );
     },
     [musicVocal, outCharas]
@@ -247,12 +251,14 @@ const MusicDetail: React.FC<{}> = () => {
     (characterId) => {
       if (!characterId) return <span></span>;
       return (
-        <img
-          key={characterId}
-          height="42"
-          src={charaIcons[`CharaIcon${characterId}`]}
-          alt={`character ${characterId}`}
-        ></img>
+        <Grid item>
+          <img
+            key={characterId}
+            height="42"
+            src={charaIcons[`CharaIcon${characterId}`]}
+            alt={`character ${characterId}`}
+          ></img>
+        </Grid>
       );
     },
     []
@@ -614,20 +620,22 @@ const MusicDetail: React.FC<{}> = () => {
                 : t("music:dancerCount")}
             </Typography>
             <Grid item>
-              {musicDanceMember
-                ? Array.from({ length: music.dancerCount }).map((_, idx) =>
-                    getCharaIcon(
-                      musicDanceMember[
-                        `characterId${idx + 1}` as
-                          | "characterId1"
-                          | "characterId2"
-                          | "characterId3"
-                          | "characterId4"
-                          | "characterId5"
-                      ]!
+              <Grid container spacing={1}>
+                {musicDanceMember
+                  ? Array.from({ length: music.dancerCount }).map((_, idx) =>
+                      getCharaIcon(
+                        musicDanceMember[
+                          `characterId${idx + 1}` as
+                            | "characterId1"
+                            | "characterId2"
+                            | "characterId3"
+                            | "characterId4"
+                            | "characterId5"
+                        ]!
+                      )
                     )
-                  )
-                : music.dancerCount}
+                  : music.dancerCount}
+              </Grid>
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
