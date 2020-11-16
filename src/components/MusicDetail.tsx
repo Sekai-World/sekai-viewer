@@ -693,9 +693,11 @@ const MusicDetail: React.FC<{}> = () => {
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
         </Grid>
-        <Typography variant="h6" className={layoutClasses.header}>
-          {t("music:vocal", { count: musicVocal.length })}
-        </Typography>
+      </Container>
+      <Typography variant="h6" className={layoutClasses.header}>
+        {t("music:vocal", { count: musicVocal.length })}
+      </Typography>
+      <Container className={layoutClasses.content} maxWidth="sm">
         <Box>
           <TabContext value={vocalInfoTabVal}>
             <Paper>
@@ -795,14 +797,14 @@ const MusicDetail: React.FC<{}> = () => {
             ))}
           </TabContext>
         </Box>
-        {/* <Divider style={{ margin: "1% 0" }} /> */}
-        <Typography variant="h6" className={layoutClasses.header}>
-          {t("music:difficulty", {
-            count: musicDiffis.filter(
-              (elem) => elem.musicId === Number(musicId)
-            ).length,
-          })}
-        </Typography>
+      </Container>
+      <Typography variant="h6" className={layoutClasses.header}>
+        {t("music:difficulty", {
+          count: musicDiffis.filter((elem) => elem.musicId === Number(musicId))
+            .length,
+        })}
+      </Typography>
+      <Container className={layoutClasses.content} maxWidth="sm">
         <TabContext value={diffiInfoTabVal}>
           <Paper>
             <Tabs
