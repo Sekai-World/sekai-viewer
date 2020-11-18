@@ -1,4 +1,10 @@
 {
+  "alert_contributor": {
+    "title": "感謝為開發貢獻力量的你們！"
+  },
+  "alert_translate": {
+    "title": "感謝翻譯者們！"
+  },
   "game-news": {
     "action": "動作",
     "show-from": "開始日期",
@@ -7,21 +13,18 @@
     "title": "遊戲通知"
   },
   "alert0": "Sekai Viewer 現在公開測試中！",
-  "alert_contributor": {
-    "title": "感謝為開發貢獻力量的你們！"
-  },
-  "alert_translate": {
-    "title": "感謝翻譯者們！"
-  },
   "alert_settings": "使用右上角的 <s /> 切換語言和亮度模式。",
   "alert1": {
     "title": "需要你的幫助！",
     "translation": "翻譯",
     "development": "開發",
+    "see_contrib_list": "詳見貢獻者列表",
     "contact": "聯絡我",
     "join-discord": "加入Discord伺服器"
   },
   "detect": {
+    "failed": "非常不幸的，你無法讀取大多數的圖片。請更新你的瀏覽器或iOS/macOS 的版本。補償方案即將上線。更多資訊:<l>",
     "success": "恭喜！你的瀏覽器看起來很現代，您可以更快地加載圖像並節省頻寬流量。"
-  }
+  },
+  "update": "實用網站"
 }

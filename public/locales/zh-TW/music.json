@@ -11,12 +11,6 @@
   "tag_plural": "標籤",
   "category": "類別",
   "category_plural": "類別",
-  "categoryType": {
-    "mv": "3D MV",
-    "mv_2d": "2D MV",
-    "original": "Original MV",
-    "image": "Static Image"
-  },
   "actualPlaybackTime": "實際播放時長",
   "arranger": "編曲",
   "composer": "作曲",
@@ -28,5 +22,11 @@
   "vocalType": "演唱者類型",
   "difficulty": "難度",
   "difficulty_plural": "難度",
-  "noteCount": "音符數量"
+  "noteCount": "音符數量",
+  "categoryType": {
+    "mv": "3D MV",
+    "mv_2d": "2D MV",
+    "original": "原創 MV",
+    "image": "固定畫面"
+  }
 }
