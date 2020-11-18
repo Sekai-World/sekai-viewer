@@ -723,12 +723,12 @@ const CardDetail: React.FC<{}> = () => {
             justify="space-between"
             alignItems="center"
           >
-            <Grid item>
+            <Grid item xs={2}>
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                 {t("card:skillName")}
               </Typography>
             </Grid>
-            <Grid item>
+            <Grid item xs={9}>
               <ContentTrans
                 mode={contentTransMode}
                 contentKey={`card_skill_name:${cardId}`}

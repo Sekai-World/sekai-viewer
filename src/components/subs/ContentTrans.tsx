@@ -186,8 +186,8 @@ export const ReleaseCondTrans: React.FC<{
           level: releaseCond.releaseConditionTypeLevel,
         });
         break;
-      case "music_difficulty_better_play":
-        i18nKey = `release_cond:music_difficulty_better_play`;
+      default:
+        i18nKey = `release_cond:${releaseCond.releaseConditionType}`;
         break;
     }
     return (

@@ -1,4 +1,5 @@
 {
+  "about": "Información",
   "home": "Inicio",
   "card": "Carta",
   "music": "Música",
@@ -9,6 +10,7 @@
   "character": "Personaje",
   "musicMeta": "Música meta",
   "scoreCalculator": "Calculadora de puntaje",
+  "support": "Support",
   "toolbar": {
     "title": "Function List"
   },
@@ -49,12 +51,11 @@
     "unsupported": "Unsupported",
     "supported": "Supported"
   },
-  "support": "Support",
   "campaign": "Campaign",
   "bug": "Bug",
-  "update": "Update",
   "profile": "Profile",
   "character_plural": "Personajes",
   "level": "Nivel",
+  "update": "Update",
   "member": "Character"
 }
