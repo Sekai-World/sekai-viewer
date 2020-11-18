@@ -1,6 +1,7 @@
 {
   "vocal": "Voix",
   "alert[0]": "Les premières <b>neuf secondes</b> de chaque chanson n'ont pas de son. Il ne s'agit PAS d'un bug.",
+  "preview": "Aperçu",
   "vocalTab": {
     "title[0]": "Version courte",
     "title[1]": "Version longue",
