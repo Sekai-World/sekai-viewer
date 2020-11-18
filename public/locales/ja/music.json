@@ -1,6 +1,7 @@
 {
-  "alert[0]": "全ての曲の最初の<b>9秒</b>は無音です.これはバグではありません.",
   "vocal": "ボーカル",
+  "alert[0]": "全ての曲の最初の<b>9秒</b>は無音です.これはバグではありません.",
+  "preview": "プレビュー",
   "vocalTab": {
     "title[0]": "ショート版",
     "title[1]": "ロング版",
@@ -11,12 +12,6 @@
   "tag_plural": "タグ",
   "category": "カテゴリー",
   "category_plural": "カテゴリー",
-  "categoryType": {
-    "mv": "3DMV",
-    "mv_2d": "2DMV",
-    "original": "原曲MV",
-    "image": "静止画"
-  },
   "actualPlaybackTime": "実際の再生時間",
   "arranger": "編曲",
   "composer": "作曲",
@@ -28,5 +23,11 @@
   "vocalType": "ボーカルタイプ",
   "difficulty": "難易度",
   "difficulty_plural": "難易度",
-  "noteCount": "ノーツ数"
+  "noteCount": "ノーツ数",
+  "categoryType": {
+    "mv": "3DMV",
+    "mv_2d": "2DMV",
+    "original": "原曲MV",
+    "image": "静止画"
+  }
 }
