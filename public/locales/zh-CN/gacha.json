@@ -9,7 +9,9 @@
   "normalRate": "普通招募概率",
   "guaranteedRate": "保底招募概率",
   "pickupMember": "本期角色",
+  "pickupMember_plural": "本期角色",
   "gachaType": {
-    "ceil": "天井"
+    "ceil": "天井",
+    "normal": "一般"
   }
 }
