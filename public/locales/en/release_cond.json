@@ -45,7 +45,7 @@
   "inherit_complete": "引き継ぎ完了する",
   "event_point": "Obtain {{point}} event points.",
   "event_story_1000016": "Read the ending of Imprisoned Marionette.",
-  "event_story": "Read the ending of {{eventName}}",
+  "event_story": "Read the ending of {{eventName}}.",
   "virtual_live_participation": "Attend a virtual live.",
   "character_live_usage_leader": "Play {{times}} lives with {{charaName}} as the leader.",
   "challenge_live_character_force_release": "Play a challenge live."
