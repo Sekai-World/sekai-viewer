@@ -1,6 +1,7 @@
 {
-  "alert[0]": "Pierwsze <b>dziewięć sekund</b> każdej piosenki nie ma dźwieku. To NIE jest błąd.",
   "vocal": "Wokal",
+  "alert[0]": "Pierwsze <b>dziewięć sekund</b> każdej piosenki nie ma dźwieku. To NIE jest błąd.",
+  "preview": "Podgląd",
   "vocalTab": {
     "title[0]": "Krótka wersja",
     "title[1]": "Długa Wersja",
@@ -11,12 +12,6 @@
   "tag_plural": "Etykiety",
   "category": "Kategoria",
   "category_plural": "Kategorie",
-  "categoryType": {
-    "mv": "3D MV",
-    "mv_2d": "2D MV",
-    "original": "Oryginalny MV",
-    "image": "Statyczny Obraz"
-  },
   "actualPlaybackTime": "Rzeczywisty czas odtwarzania",
   "arranger": "Aranżer",
   "composer": "Kompozytor",
@@ -28,5 +23,11 @@
   "vocalType": "Typ Wokalu",
   "difficulty": "Trudność",
   "difficulty_plural": "Trudności",
-  "noteCount": "Liczba Nut"
+  "noteCount": "Liczba Nut",
+  "categoryType": {
+    "mv": "3D MV",
+    "mv_2d": "2D MV",
+    "original": "Oryginalny MV",
+    "image": "Statyczny Obraz"
+  }
 }
