@@ -45,6 +45,7 @@
   "inherit_complete": "資料繼承完成",
   "event_point": "活動P達到{{point}}",
   "event_story_1000016": "閱讀「被囚鎖的扯線木偶」 的結局劇情",
+  "event_story": "閱讀「{{eventName}}」 的結局劇情",
   "virtual_live_participation": "參與虛擬演唱會",
   "character_live_usage_leader": "以「{{charaName}}」為隊長進行{{times}}次演出",
   "challenge_live_character_force_release": "挑戰演奏強制開放"

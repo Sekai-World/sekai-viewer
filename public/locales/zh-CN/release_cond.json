@@ -45,6 +45,7 @@
   "inherit_complete": "引继完成",
   "event_point": "活动点数达到{{point}}",
   "event_story_1000016": "阅读「被囚禁的提线木偶」的结局",
+  "event_story": "阅读「{{eventName}}」的结局故事",
   "virtual_live_participation": "参加虚拟LIVE",
   "character_live_usage_leader": "将「{{charaName}}」作为领队完成{{times}}次演出",
   "challenge_live_character_force_release": "挑战演出强制解放"
