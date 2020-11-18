@@ -45,6 +45,7 @@
   "inherit_complete": "引き継ぎ完了する",
   "event_point": "Zdobądź {{point}} punktów wydarzenia.",
   "event_story_1000016": "Przeczytaj zakończenie Uwięzione Marionetki.",
+  "event_story": "Przeczytaj koniec {{eventName}}.",
   "virtual_live_participation": "Weź udział w wirtualnym wydarzeniu.",
   "character_live_usage_leader": "Zagraj {{times}} występów z {{charaName}} jako lider.",
   "challenge_live_character_force_release": "Zagraj challenge live."
