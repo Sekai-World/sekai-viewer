@@ -1,6 +1,7 @@
 {
   "vocal": "演唱者",
   "alert[0]": "每首歌曲的<b>前九秒</b>是無聲的。這不是Bug！",
+  "preview": "預覽",
   "vocalTab": {
     "title[0]": "Short version",
     "title[1]": "Long version",
