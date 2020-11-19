@@ -6,10 +6,12 @@ import {
   CardMedia,
   Container,
   Grid,
+  Link,
   makeStyles,
   Typography,
 } from "@material-ui/core";
-import { Skeleton } from "@material-ui/lab";
+import { Twitter } from "@material-ui/icons";
+import { Alert, Skeleton } from "@material-ui/lab";
 import React, {
   Fragment,
   useCallback,
@@ -229,6 +231,20 @@ const ComicList: React.FC<{}> = () => {
             </Button>
           </ButtonGroup>
         </Grid>
+        {resourceLang === "fr" ? (
+          <Alert severity="info">
+            <Typography>
+              Credit: Yasito (
+              <Link
+                href="https://twitter.com/pjsekai_fra"
+                style={{ textDecorationLine: "none" }}
+              >
+                <Twitter fontSize="inherit" /> @pjsekai_fra
+              </Link>
+              )
+            </Typography>
+          </Alert>
+        ) : null}
         {InfiniteScroll<ITipInfoComic>({
           viewComponent: ListCard,
           callback,
