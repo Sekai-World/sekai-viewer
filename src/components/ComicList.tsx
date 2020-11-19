@@ -1,8 +1,11 @@
 import {
+  Button,
+  ButtonGroup,
   Card,
   CardContent,
   CardMedia,
   Container,
+  Grid,
   makeStyles,
   Typography,
 } from "@material-ui/core";
@@ -12,6 +15,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
@@ -62,6 +66,7 @@ const ComicList: React.FC<{}> = () => {
   const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
   const [activeIdx, setActiveIdx] = useState<number>(0);
+  const [resourceLang, setResourceLang] = useState<"ja" | "fr">("ja");
 
   const getPaginatedTips = useCallback(
     (page: number, limit: number) => {
@@ -70,18 +75,29 @@ const ComicList: React.FC<{}> = () => {
     [filteredCache]
   );
 
-  const getComicImages: () => ImageDecorator[] = useCallback(
+  const comicImages: ImageDecorator[] = useMemo(
     () =>
-      filteredCache.map((comic) => ({
-        src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/comic/one_frame_rip/${comic.assetbundleName}.webp`,
-        alt: getTranslated(
-          contentTransMode,
-          `comic_title:${comic.id}`,
-          comic.title
-        ),
-        downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/comic/one_frame_rip/${comic.assetbundleName}.webp`,
-      })),
-    [filteredCache, contentTransMode, getTranslated]
+      filteredCache.map((comic) => {
+        let url;
+        switch (resourceLang) {
+          case "ja":
+            url = `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/comic/one_frame_rip/${comic.assetbundleName}.webp`;
+            break;
+          case "fr":
+            url = `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/comic_fr/${comic.assetbundleName}.png`;
+            break;
+        }
+        return {
+          src: url,
+          alt: getTranslated(
+            contentTransMode,
+            `comic_title:${comic.id}`,
+            comic.title
+          ),
+          downloadUrl: url,
+        };
+      }),
+    [filteredCache, contentTransMode, getTranslated, resourceLang]
   );
 
   const callback = (
@@ -150,7 +166,15 @@ const ComicList: React.FC<{}> = () => {
         </Card>
       );
     }
-    const imageURL = `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/comic/one_frame_rip/${data.assetbundleName}.webp`;
+    let imageURL;
+    switch (resourceLang) {
+      case "ja":
+        imageURL = `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/comic/one_frame_rip/${data.assetbundleName}.webp`;
+        break;
+      case "fr":
+        imageURL = `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/comic_fr/${data.assetbundleName}.png`;
+        break;
+    }
     return (
       <Card
         className={classes.card}
@@ -187,6 +211,24 @@ const ComicList: React.FC<{}> = () => {
         {t("common:comic")}
       </Typography>
       <Container className={layoutClasses.content}>
+        <Grid container justify="space-between">
+          <ButtonGroup style={{ marginBottom: "1%" }}>
+            <Button
+              size="medium"
+              color={resourceLang === "ja" ? "secondary" : "primary"}
+              onClick={() => setResourceLang("ja")}
+            >
+              <Typography>JA</Typography>
+            </Button>
+            <Button
+              size="medium"
+              color={resourceLang === "fr" ? "secondary" : "primary"}
+              onClick={() => setResourceLang("fr")}
+            >
+              <Typography>FR</Typography>
+            </Button>
+          </ButtonGroup>
+        </Grid>
         {InfiniteScroll<ITipInfoComic>({
           viewComponent: ListCard,
           callback,
@@ -201,7 +243,7 @@ const ComicList: React.FC<{}> = () => {
       <Viewer
         visible={visible}
         onClose={() => setVisible(false)}
-        images={getComicImages()}
+        images={comicImages}
         zIndex={2000}
         activeIndex={activeIdx}
         downloadable
