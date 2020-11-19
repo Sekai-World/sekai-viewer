@@ -1,4 +1,5 @@
 {
+  "about": "About",
   "home": "ホーム",
   "card": "カード",
   "music": "楽曲",
@@ -9,6 +10,7 @@
   "character": "キャラクター",
   "musicMeta": "楽曲情報",
   "scoreCalculator": "スコア計算",
+  "support": "サポート",
   "toolbar": {
     "title": "機能一覧"
   },
@@ -49,12 +51,11 @@
     "unsupported": "サポートされていません",
     "supported": "サポートされています"
   },
-  "support": "サポート",
   "campaign": "キャンペーン",
   "bug": "不具合",
-  "update": "アップデート",
   "profile": "プロフィール",
   "character_plural": "キャラクター",
   "level": "レベル",
+  "update": "アップデート",
   "member": "キャラクター"
 }

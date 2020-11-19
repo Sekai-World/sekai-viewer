@@ -1,6 +1,7 @@
 {
   "vocal": "演唱者",
   "alert[0]": "每首歌曲的<b>前九秒</b>是无声的。这不是Bug！",
+  "preview": "预览",
   "vocalTab": {
     "title[0]": "预览",
     "title[1]": "全曲",
@@ -11,12 +12,6 @@
   "tag_plural": "标签",
   "category": "类别",
   "category_plural": "类别",
-  "categoryType": {
-    "mv": "3DMV",
-    "mv_2d": "2DMV",
-    "original": "原曲MV",
-    "image": "静态封面"
-  },
   "actualPlaybackTime": "实际播放时长",
   "arranger": "编曲",
   "composer": "作曲",
@@ -28,5 +23,11 @@
   "vocalType": "演唱者类型",
   "difficulty": "难度",
   "difficulty_plural": "难度",
-  "noteCount": "音符数量"
+  "noteCount": "音符数量",
+  "categoryType": {
+    "mv": "3DMV",
+    "mv_2d": "2DMV",
+    "original": "原曲MV",
+    "image": "静态封面"
+  }
 }

@@ -1,4 +1,10 @@
 {
+  "alert_contributor": {
+    "title": "開発協力者の皆様、ありがとうございます！"
+  },
+  "alert_translate": {
+    "title": "翻訳者の皆様、ありがとうございます！"
+  },
   "game-news": {
     "action": "アクション",
     "show-from": "公開開始時間",
@@ -7,21 +13,17 @@
     "title": "ゲームニュース"
   },
   "alert0": "Sekai Viewerは現在オープンベータです！",
-  "alert_contributor": {
-    "title": "コントリビューターの皆様、ありがとうございます！"
-  },
-  "alert_translate": {
-    "title": "翻訳者の皆様、ありがとうございます！"
-  },
   "alert_settings": "右上の<s />から言語や画面の明るさなどを変更できます。",
   "alert1": {
     "title": "協力者が必要です！",
     "translation": "翻訳",
     "development": "開発",
+    "see_contrib_list": "コントリビューター一覧を見る",
     "contact": "連絡先",
     "join-discord": "Discordに参加"
   },
   "detect": {
+    "failed": "残念ながらほとんどの画像を読み込めません。ブラウザ、もしくはiOS/MacOSのバージョンをアップグレードしてください。互換性のあるソリューションはまもなく公開されます。<br>詳細はこちら: <l> Can I Use - WebP 画像フォーマット </l>",
     "success": "おめでとうございます！　お使いのブラウザはモダンです。高速な画像の読み込みと帯域幅の節約が可能です。"
   },
   "update": "関連サイト"
