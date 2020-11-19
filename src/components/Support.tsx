@@ -1,4 +1,4 @@
-import { Container, Link, Typography } from "@material-ui/core";
+import { Avatar, Container, Grid, Link, Typography } from "@material-ui/core";
 import { GitHub, OpenInNew } from "@material-ui/icons";
 import { Patreon } from "mdi-material-ui";
 import React, { Fragment } from "react";
@@ -26,11 +26,47 @@ const Support: React.FC<{}> = () => {
         <Typography>
           <Trans i18nKey="support:patreon.desc" />
         </Typography>
-        <Link href="https://www.patreon.com/bePatron?u=6503151" target="_blank">
+        <Link href="https://www.patreon.com/SekaiViewer" target="_blank">
           <Typography>
             Become a Patron! <OpenInNew fontSize="inherit" />
           </Typography>
         </Link>
+        <br />
+        <Container>
+          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+            Tier Happy
+          </Typography>
+          <Grid container spacing={1}>
+            <Grid item xs={12} md={4} lg={3}>
+              <Grid container alignItems="center" spacing={1}>
+                <Grid item>
+                  <Avatar
+                    src="https://c8.patreon.com/2/200/45497536"
+                    alt="zaurus"
+                  ></Avatar>
+                </Grid>
+                <Grid item>
+                  <Typography>zaurus</Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+            Tier Lucky
+          </Typography>
+          <Grid container spacing={1}>
+            <Grid item xs={12} md={4} lg={3}>
+              <Grid container alignItems="center" spacing={1}>
+                <Grid item>
+                  <Avatar>NA</Avatar>
+                </Grid>
+                <Grid item>
+                  <Typography>N/A</Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Container>
         <br />
         <Typography variant="subtitle1" className={layoutClasses.header}>
           {t("support:translation.title")}
