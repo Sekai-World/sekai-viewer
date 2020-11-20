@@ -1,4 +1,9 @@
 {
+  "result": {
+    "musicName": "Music Name",
+    "label": "Result",
+    "desc": "Just one step and you're finished."
+  },
   "getResult": "Get Result",
   "buildTeam": {
     "label": "Build Team",
@@ -7,25 +12,17 @@
     "saveTeam": "Save Team",
     "loadTeam": "Load Team",
     "clearTeam": "Clear Team",
+    "teamPower": "Team Power",
     "duplicatedCardError": "Can't add same card to one team.",
     "cardMaxError": "There are already enough cards.",
     "loadTeamError": "Check your input.",
-    "teamTextCopied": "Team text copied to clipboard.",
-    "teamPower": "Team Power"
-  },
-  "songSelect": {
-    "label": "Song Select",
-    "desc": "Select one or more songs for analyzing. Leave it blank to analyze all songs."
+    "teamTextCopied": "Team text copied to clipboard."
   },
   "modeSelect": {
     "label": "Mode Select",
     "desc": "Select recommender work mode."
   },
-  "result": {
-    "label": "Result",
-    "desc": "Just one step and you're finished.",
-    "musicName": "Music Name"
-  },
+  "assumption": "Assumption: all perfect, event bonus 0%, use 0 energy drink, multiplayers all have same team power.",
   "addCardDialog": {
     "title": "Add Card",
     "selectChara": "Character",
@@ -39,5 +36,9 @@
   "loadTeamDialog": {
     "title": "Load Team",
     "desc": "Paste saved team code and load it."
+  },
+  "songSelect": {
+    "label": "Song Select",
+    "desc": "Select one or more songs for analyzing. Leave it blank to analyze all songs."
   }
 }
