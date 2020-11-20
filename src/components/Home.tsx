@@ -211,7 +211,9 @@ function Home() {
             <img
               src={`${process.env.PUBLIC_URL}/images/banner.png`}
               alt="banner"
-              style={{ width: "100%" }}
+              style={{ width: "100%", height: "auto" }}
+              width="1500"
+              height="500"
             />
           </Grid>
         </Grid>
