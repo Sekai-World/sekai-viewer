@@ -1,6 +1,6 @@
 import {
   Button,
-  Chip,
+  // Chip,
   // Container,
   Dialog,
   DialogActions,
@@ -11,7 +11,7 @@ import {
   FormControlLabel,
   FormLabel,
   Grid,
-  Input,
+  // Input,
   InputLabel,
   makeStyles,
   MenuItem,
@@ -115,7 +115,7 @@ const MusicRecommend: React.FC<{}> = () => {
     false
   );
   const [loadTeamText, setLoadTeamText] = useState<string>("");
-  const [selectedSongIds, setSelectedSongIds] = useState<number[]>([]);
+  // const [selectedSongIds, setSelectedSongIds] = useState<number[]>([]);
   const [selectedMode, setSelectedMode] = useState<string>("event_pt_per_hour");
   const [recommendResult, setRecommandResult] = useState<
     IMusicRecommendResult[]
