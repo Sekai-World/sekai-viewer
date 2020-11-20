@@ -510,4 +510,5 @@ export interface IMusicRecommendResult {
   level: number;
   combo: number;
   result: number;
+  link: string;
 }

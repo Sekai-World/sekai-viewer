@@ -11,6 +11,7 @@ import {
   FormControlLabel,
   FormLabel,
   Grid,
+  IconButton,
   // Input,
   InputLabel,
   makeStyles,
@@ -52,7 +53,9 @@ import { CardThumb } from "./subs/CardThumb";
 import rarityNormal from "../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../assets/rarity_star_afterTraining.png";
 import { useAssetI18n } from "../utils/i18n";
-import { ColDef, DataGrid } from "@material-ui/data-grid";
+import { ColDef, DataGrid, ValueFormatterParams } from "@material-ui/data-grid";
+import { Link } from "react-router-dom";
+import { OpenInNew } from "@material-ui/icons";
 
 const useStyle = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -158,6 +161,22 @@ const MusicRecommend: React.FC<{}> = () => {
       headerName: t("music_recommend:result.label"),
       width: 100,
       sortDirection: "desc",
+    },
+    {
+      field: "action",
+      headerName: t("home:game-news.action"),
+      width: 80,
+      renderCell: (params: ValueFormatterParams) => {
+        const info = params.data as IMusicRecommendResult;
+        return (
+          <Link to={info.link} target="_blank">
+            <IconButton color="primary">
+              <OpenInNew></OpenInNew>
+            </IconButton>
+          </Link>
+        );
+      },
+      sortable: false,
     },
   ];
 
@@ -274,6 +293,7 @@ const MusicRecommend: React.FC<{}> = () => {
         combo: meta.combo,
         duration: meta.music_time,
         result: result,
+        link: `/music/${music.id}`,
       } as IMusicRecommendResult;
     });
     //console.log(result.length);
@@ -506,6 +526,10 @@ const MusicRecommend: React.FC<{}> = () => {
                                 InputLabelProps={{
                                   shrink: true,
                                 }}
+                                inputProps={{
+                                  min: "1",
+                                  max: "4",
+                                }}
                                 value={teamCardsStates[index].skillLevel}
                                 onChange={(e) =>
                                   setTeamCardsStates((tcs) => {
@@ -515,6 +539,7 @@ const MusicRecommend: React.FC<{}> = () => {
                                     return [...tcs];
                                   })
                                 }
+                                style={{ width: "100%" }}
                               />
                             </Grid>
                             <Grid item xs={12} md={4}>
@@ -645,6 +670,13 @@ const MusicRecommend: React.FC<{}> = () => {
         <Step>
           <StepLabel>{t("music_recommend:result.label")}</StepLabel>
           <StepContent>
+            <Alert severity="info">{t("music_recommend:assumption")}</Alert>
+            <Button
+              disabled={activeStep === 0}
+              onClick={() => setActiveStep((s) => s - 1)}
+            >
+              {t("common:back")}
+            </Button>
             <div style={{ height: 650 }}>
               <DataGrid
                 pagination
@@ -653,12 +685,6 @@ const MusicRecommend: React.FC<{}> = () => {
                 columns={columns}
               />
             </div>
-            <Button
-              disabled={activeStep === 0}
-              onClick={() => setActiveStep((s) => s - 1)}
-            >
-              {t("common:back")}
-            </Button>
           </StepContent>
         </Step>
       </Stepper>
