@@ -1,4 +1,4 @@
-import { IUnitProfile } from "./../types.d";
+import { IMusicMeta, IUnitProfile } from "./../types.d";
 import Axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -207,4 +207,32 @@ export function useCharaName(contentTransMode: ContentTransModeType) {
     },
     [assetI18n.language, assetT, charas, contentTransMode]
   );
+}
+
+export function useMuisicMeta(): [
+  IMusicMeta[],
+  React.MutableRefObject<IMusicMeta[]>
+] {
+  const [cached, cachedRef, setCached] = useRefState<IMusicMeta[]>([]);
+
+  const fetchCached = useCallback(async () => {
+    const { data }: { data: IMusicMeta[] } = await Axios.get(
+      "https://js-1258131272.cos.ap-beijing.myqcloud.com/metas.json"
+    );
+    //console.log(data.length);
+    return data;
+  }, []);
+
+  useEffect(() => {
+    let name = "metas";
+    if (masterDataCache[name] && masterDataCache[name].length)
+      setCached(masterDataCache[name]);
+    else
+      fetchCached().then((data) => {
+        setCached(data);
+        masterDataCache[name] = data;
+      });
+  }, [fetchCached, setCached]);
+
+  return [cached, cachedRef];
 }

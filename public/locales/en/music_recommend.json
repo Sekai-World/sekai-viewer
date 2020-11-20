@@ -10,7 +10,8 @@
     "duplicatedCardError": "Can't add same card to one team.",
     "cardMaxError": "There are already enough cards.",
     "loadTeamError": "Check your input.",
-    "teamTextCopied": "Team text copied to clipboard."
+    "teamTextCopied": "Team text copied to clipboard.",
+    "teamPower": "Team Power"
   },
   "songSelect": {
     "label": "Song Select",
@@ -22,7 +23,8 @@
   },
   "result": {
     "label": "Result",
-    "desc": "Just one step and you're finished."
+    "desc": "Just one step and you're finished.",
+    "musicName": "Music Name"
   },
   "addCardDialog": {
     "title": "Add Card",
