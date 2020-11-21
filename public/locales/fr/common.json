@@ -9,7 +9,7 @@
   "comic": "Bande dessinée",
   "character": "Personnage",
   "musicMeta": "Musique Meta",
-  "scoreCalculator": "Calculateur de score",
+  "musicRecommend": "Guide de chansons (Bêta)",
   "support": "Support",
   "toolbar": {
     "title": "Liste des fonctions"
@@ -56,6 +56,15 @@
   "profile": "Profil",
   "character_plural": "Personnages",
   "level": "Niveau",
+  "back": "Retour",
+  "next": "Suivant",
+  "betaIndicator": "Cette fonction est en bêta. Les rapports de bogues sont les bienvenus.",
+  "delete": "Supprimer",
+  "all": "Tout",
+  "search": "Chercher",
+  "copyToClipboard": "Copier dans le presse-papiers",
+  "load": "Charger",
+  "scoreCalculator": "Calculateur de score",
   "update": "Mise à jour",
   "member": "Personnage"
 }
