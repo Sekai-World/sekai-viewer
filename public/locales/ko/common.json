@@ -9,7 +9,7 @@
   "comic": "만화",
   "character": "캐릭터",
   "musicMeta": "악곡 정보",
-  "scoreCalculator": "점수 계산기",
+  "musicRecommend": "악곡 추천 (베타)",
   "support": "지원",
   "toolbar": {
     "title": "메뉴"
@@ -56,6 +56,15 @@
   "profile": "프로필",
   "character_plural": "캐릭터",
   "level": "레벨",
+  "back": "뒤로 가기",
+  "next": "다음",
+  "betaIndicator": "이 기능은 베타입니다. 버그를 발견한다면 알려주세요.",
+  "delete": "삭제",
+  "all": "모든 캐릭터",
+  "search": "검색",
+  "copyToClipboard": "클립보드에 복사",
+  "load": "불러오기",
+  "scoreCalculator": "점수 계산기",
   "update": "업데이트",
   "member": "캐릭터"
 }
