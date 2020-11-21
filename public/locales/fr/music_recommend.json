@@ -38,7 +38,7 @@
     "desc": "Collez le code de l'équipe et chargez-le."
   },
   "songSelect": {
-    "label": "Sélection de la chanson",
+    "label": "Choix de la chanson",
     "desc": "Choisissez une ou plusieurs chansons à analyser. Laissez le champ vide pour analyser toutes les chansons."
   }
 }
