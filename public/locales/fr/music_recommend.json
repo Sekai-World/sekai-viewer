@@ -39,6 +39,6 @@
   },
   "songSelect": {
     "label": "Choix de la chanson",
-    "desc": "Choisissez une ou plusieurs chansons à analyser. Laissez le champ vide pour analyser toutes les chansons."
+    "desc": "Sélectionnez une ou plusieurs chansons à analyser. Laissez le champ vide pour analyser toutes les chansons."
   }
 }
