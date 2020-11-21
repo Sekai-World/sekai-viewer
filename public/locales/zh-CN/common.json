@@ -9,7 +9,7 @@
   "comic": "漫画",
   "character": "角色",
   "musicMeta": "歌曲Meta",
-  "scoreCalculator": "分数计算器",
+  "musicRecommend": "歌曲推荐器（测试）",
   "support": "支持",
   "toolbar": {
     "title": "功能列表"
@@ -56,6 +56,15 @@
   "profile": "角色资料",
   "character_plural": "角色",
   "level": "等级",
+  "back": "后退",
+  "next": "下一个",
+  "betaIndicator": "这个功能在测试中。欢迎反馈问题。",
+  "delete": "删除",
+  "all": "全部",
+  "search": "搜索",
+  "copyToClipboard": "拷贝到剪贴板",
+  "load": "加载",
+  "scoreCalculator": "分数计算器",
   "update": "更新",
   "member": "成员"
 }

@@ -1,0 +1,44 @@
+{
+  "result": {
+    "musicName": "楽曲名",
+    "label": "結果",
+    "desc": "たった一つの操作で完了です。"
+  },
+  "getResult": "結果",
+  "buildTeam": {
+    "label": "チーム編成",
+    "desc": "Song Recommender に使用するチームを編成できます。",
+    "addCard": "カードを追加",
+    "saveTeam": "編成を保存",
+    "loadTeam": "編成を読み込む",
+    "clearTeam": "リセット",
+    "teamPower": "総合力",
+    "duplicatedCardError": "同じカードは追加できません。",
+    "cardMaxError": "これ以上追加できません。",
+    "loadTeamError": "値が間違っています。",
+    "teamTextCopied": "編成をクリップボードにコピーしました。"
+  },
+  "modeSelect": {
+    "label": "モード選択",
+    "desc": "Recommender のモードを選択してください。"
+  },
+  "assumption": "仮定：All Perfect、イベントボーナス 0%、スタミナ　0、マルチプレイヤーの総合力は同じ。",
+  "addCardDialog": {
+    "title": "カードを追加",
+    "selectChara": "キャラクター",
+    "selectRarity": "レア度"
+  },
+  "saveTeamDialog": {
+    "title": "編成を保存",
+    "desc": "編成のコードを保存して、後で使用できます。"
+  },
+  "teamCode": "編成コード",
+  "loadTeamDialog": {
+    "title": "編成読み込み",
+    "desc": "保存したコードを入力してください。"
+  },
+  "songSelect": {
+    "label": "楽曲選択",
+    "desc": "解析する曲を選択してください。空欄にすると全ての曲が選択されます。"
+  }
+}

@@ -9,7 +9,7 @@
   "comic": "Komiks",
   "character": "Osoba",
   "musicMeta": "Piosenka Meta",
-  "scoreCalculator": "Kalkulator Wyniku",
+  "musicRecommend": "Rekomendator Piosenek (Beta)",
   "support": "Wsparcie",
   "toolbar": {
     "title": "Lista Funkcji"
@@ -56,6 +56,15 @@
   "profile": "Profil",
   "character_plural": "Osoby",
   "level": "Poziom",
+  "back": "Wstecz",
+  "next": "Dalej",
+  "betaIndicator": "Ta funkcja jest w becie. Zgłaszanie błędów jest mile widziane.",
+  "delete": "Usuń",
+  "all": "Wszystko",
+  "search": "Szukaj",
+  "copyToClipboard": "Skopiuj do Schowka",
+  "load": "Załaduj",
+  "scoreCalculator": "Kalkulator Wyniku",
   "update": "Aktualizacja",
   "member": "Osoba"
 }

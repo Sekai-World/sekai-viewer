@@ -1,0 +1,44 @@
+{
+  "result": {
+    "musicName": "Nom de la musique",
+    "label": "Résultat",
+    "desc": "Encore une étape et vous avez fini."
+  },
+  "getResult": "Obtenir les résultats",
+  "buildTeam": {
+    "label": "Construire l'équipe",
+    "desc": "Construisez votre équipe pour le guide de chansons.",
+    "addCard": "Ajouter une carte",
+    "saveTeam": "Enregistrer l'équipe",
+    "loadTeam": "Charger l'équipe",
+    "clearTeam": "Effacer l'équipe",
+    "teamPower": "Puissance de l'équipe",
+    "duplicatedCardError": "Impossible d'ajouter la même carte à une équipe.",
+    "cardMaxError": "Il y a déjà assez de cartes.",
+    "loadTeamError": "Vérifiez vos entrées.",
+    "teamTextCopied": "Texte de l'équipe copié dans le presse-papiers."
+  },
+  "modeSelect": {
+    "label": "Choix de mode",
+    "desc": "Sélectionnez le mode que vous allez utiliser."
+  },
+  "assumption": "Hypothèse : tout est parfait, 0% de bonus d'événement, utilisation de 0 boisson énergétique, les multijoueurs ont tous la même puissance d'équipe.",
+  "addCardDialog": {
+    "title": "Ajouter une carte",
+    "selectChara": "Personnage",
+    "selectRarity": "Rareté"
+  },
+  "saveTeamDialog": {
+    "title": "Enregistrer l'équipe",
+    "desc": "Enregistrer le code de l'équipe et le charger plus tard."
+  },
+  "teamCode": "Code de l'équipe",
+  "loadTeamDialog": {
+    "title": "Charger l'équipe",
+    "desc": "Collez le code de l'équipe et chargez-le."
+  },
+  "songSelect": {
+    "label": "Choix de la chanson",
+    "desc": "Sélectionnez une ou plusieurs chansons à analyser. Laissez le champ vide pour analyser toutes les chansons."
+  }
+}

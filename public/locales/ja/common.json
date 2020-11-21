@@ -9,7 +9,7 @@
   "comic": "コミック",
   "character": "キャラクター",
   "musicMeta": "楽曲情報",
-  "scoreCalculator": "スコア計算",
+  "musicRecommend": "キャラ別リザルト計算機(ベータ版)",
   "support": "サポート",
   "toolbar": {
     "title": "機能一覧"
@@ -56,6 +56,15 @@
   "profile": "プロフィール",
   "character_plural": "キャラクター",
   "level": "レベル",
+  "back": "戻る",
+  "next": "次へ",
+  "betaIndicator": "この機能はベータ版です。バグがあれば報告お願いします",
+  "delete": "削除",
+  "all": "全てのキャラ",
+  "search": "検索",
+  "copyToClipboard": "クリップボードにコピー",
+  "load": "ロード",
+  "scoreCalculator": "スコア計算",
   "update": "アップデート",
   "member": "キャラクター"
 }
