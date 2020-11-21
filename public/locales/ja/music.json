@@ -1,7 +1,6 @@
 {
   "vocal": "ボーカル",
   "alert[0]": "全ての曲の最初の<b>9秒</b>は無音です.これはバグではありません.",
-  "preview": "プレビュー",
   "vocalTab": {
     "title[0]": "ショート版",
     "title[1]": "ロング版",
@@ -24,6 +23,7 @@
   "difficulty": "難易度",
   "difficulty_plural": "難易度",
   "noteCount": "ノーツ数",
+  "preview": "プレビュー",
   "categoryType": {
     "mv": "3DMV",
     "mv_2d": "2DMV",
