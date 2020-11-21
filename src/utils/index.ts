@@ -217,7 +217,7 @@ export function useMuisicMeta(): [
 
   const fetchCached = useCallback(async () => {
     const { data }: { data: IMusicMeta[] } = await Axios.get(
-      "https://js-1258131272.cos.ap-beijing.myqcloud.com/metas.json"
+      process.env.PUBLIC_URL + "/metas.json"
     );
     //console.log(data.length);
     return data;
