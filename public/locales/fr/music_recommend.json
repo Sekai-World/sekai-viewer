@@ -20,7 +20,7 @@
   },
   "modeSelect": {
     "label": "Choix de mode",
-    "desc": "Sélectionnez le mode que vous allez utiliser."
+    "desc": "Sélectionnez le mode que vous allez jouer."
   },
   "assumption": "Hypothèse : tout est parfait, 0% de bonus d'événement, utilisation de 0 boisson énergétique, les multijoueurs ont tous la même puissance d'équipe.",
   "addCardDialog": {
