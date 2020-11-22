@@ -12,6 +12,7 @@
   "memberList": "キャラクター一覧 | Sekai Viewer",
   "musicDetail": "{{- title}} | 楽曲 | Sekai Viewer",
   "musicList": "楽曲一覧 | Sekai Viewer",
+  "musicRecommend": "キャラ別リザルト計算機(ベータ版) | Sekai Viewer",
   "stampList": "スタンプ一覧 | Sekai Viewer",
   "unitDetail": "{{- name}} | ユニット | Sekai Viewer"
 }
