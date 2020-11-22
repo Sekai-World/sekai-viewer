@@ -7,7 +7,7 @@
   "getResult": "結果",
   "buildTeam": {
     "label": "チーム編成",
-    "desc": "Song Recommender に使用するチームを編成できます。",
+    "desc": "リザルト計算機に使用するチームを編成できます。",
     "addCard": "カードを追加",
     "saveTeam": "編成を保存",
     "loadTeam": "編成を読み込む",
