@@ -7,7 +7,7 @@
   "getResult": "結果",
   "buildTeam": {
     "label": "チーム編成",
-    "desc": "Song Recommender に使用するチームを編成できます。",
+    "desc": "リザルト計算機に使用するチームを編成できます。",
     "addCard": "カードを追加",
     "saveTeam": "編成を保存",
     "loadTeam": "編成を読み込む",
@@ -22,7 +22,7 @@
     "label": "モード選択",
     "desc": "Recommender のモードを選択してください。"
   },
-  "assumption": "仮定：All Perfect、イベントボーナス 0%、スタミナ　0、マルチプレイヤーの総合力は同じ。",
+  "assumption": "仮定：All Perfect、イベントボーナス 0%、電池消費 0、マルチプレイヤー全員の総合力が同じ。",
   "addCardDialog": {
     "title": "カードを追加",
     "selectChara": "キャラクター",

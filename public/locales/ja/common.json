@@ -9,7 +9,7 @@
   "comic": "コミック",
   "character": "キャラクター",
   "musicMeta": "楽曲情報",
-  "musicRecommend": "キャラ別リザルト計算機(ベータ版)",
+  "musicRecommend": "リザルト計算機(ベータ版)",
   "support": "サポート",
   "toolbar": {
     "title": "機能一覧"
@@ -58,7 +58,7 @@
   "level": "レベル",
   "back": "戻る",
   "next": "次へ",
-  "betaIndicator": "この機能はベータ版です。バグがあれば報告お願いします",
+  "betaIndicator": "この機能はベータ版です。バグがあれば報告をお願いします。",
   "delete": "削除",
   "all": "全てのキャラ",
   "search": "検索",
