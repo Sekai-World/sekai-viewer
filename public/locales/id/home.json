@@ -1,0 +1,30 @@
+{
+  "alert_contributor": {
+    "title": "Terima kasih kepada kontributor pengembangan kami!"
+  },
+  "alert_translate": {
+    "title": "Terima kasih kepada para penerjemah!"
+  },
+  "game-news": {
+    "action": "Tindakan",
+    "show-from": "Lihat dari",
+    "title-column": "Judul",
+    "show-until": "Lihat Hingga",
+    "title": "Berita Permainan"
+  },
+  "alert0": "Sekai Viewer sekarang dalam Open Beta!",
+  "alert_settings": "Gunakan <s /> di pojok kanan atas untuk mengubah bahasa, beralih mode kecerahan, dan lainnya.",
+  "alert1": {
+    "title": "Dibutuhkan bantuan!",
+    "translation": "Terjemahan",
+    "development": "Pengembang",
+    "see_contrib_list": "Lihat daftar kontributor",
+    "contact": "Hubungi Saya",
+    "join-discord": "Gabung Server Discord"
+  },
+  "detect": {
+    "failed": "Sayangnya, Anda tidak dapat memuat sebagian besar gambar. Tingkatkan versi browser atau iOS/macOS Anda. Solusi kompatibilitas akan segera tersedia. <br> Info selengkapnya: <l>Dapatkah Saya Menggunakan - format gambar WebP</l>",
+    "success": "Selamat! Browser Anda tampak modern, Anda dapat memuat gambar lebih cepat dan menghemat bandwidth."
+  },
+  "update": "Tautan Terkait"
+}
