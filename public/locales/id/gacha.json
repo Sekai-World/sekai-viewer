@@ -11,7 +11,7 @@
   "pickupMember": "Anggota Pick-up",
   "pickupMember_plural": "Anggota Pick-up",
   "gachaType": {
-    "ceil": "Normal",
+    "ceil": "Permanen",
     "normal": "Normal"
   }
 }
