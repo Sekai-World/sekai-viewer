@@ -1,0 +1,10 @@
+{
+  "character": {
+    "caption": "Karakter"
+  },
+  "sort": {
+    "caption": "Urutkan",
+    "ascending": "Naik",
+    "descending": "Turun"
+  }
+}

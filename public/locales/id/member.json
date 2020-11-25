@@ -1,0 +1,30 @@
+{
+  "tab": {
+    "title[0]": "Karakter",
+    "title[1]": "Label Nama (mendatar)",
+    "title[2]": "Label Nama (menurun)"
+  },
+  "name": "Nama",
+  "hiragana": "Furigana",
+  "gender": {
+    "caption": "Jenis Kelamin",
+    "female": "Perempuan",
+    "male": "Laki-laki",
+    "secret": "Rahasia"
+  },
+  "colorCode": "Warna Gambar",
+  "skinColorCode": "Warna Skin",
+  "skinShadowColorCode1": "Warna Bayangan Skin 1",
+  "skinShadowColorCode2": "Warna Bayangan Skin 2",
+  "height": "Tinggi",
+  "birthday": "Ulang tahun",
+  "characterVoice": "Suara Aktor",
+  "school": "Sekolah",
+  "schoolYear": "Kelas",
+  "hobby": "Hobi",
+  "specialSkill": "Kelebihan",
+  "favoriteFood": "Makanan Favorit",
+  "hatedFood": "Makanan yang Tidak Disukai",
+  "weak": "Kelemahan",
+  "introduction": "Perkenalan"
+}

@@ -1,0 +1,21 @@
+{
+  "tab": {
+    "title[0]": "Gambar normal",
+    "title[1]": "Gambar potongan normal",
+    "title[2]": "Setelah gambar training",
+    "title[3]": "Setelah gambar potongan training"
+  },
+  "skillLevel": "Level Skill",
+  "skillName": "Nama Skill",
+  "skillEffect": "Efek Skill",
+  "stats": "Statistik",
+  "cardLevel": "Level Kartu",
+  "normal": "Normal",
+  "trained": "Trained",
+  "sideStory": "Cerita Spesial",
+  "sideStory1Unlocked": "Cerita Spesial 1 Terbuka",
+  "sideStory2Unlocked": "Cerita Spesial 2 Terbuka",
+  "sideStory_plural": "Cerita Spesial",
+  "power": "Kekuatan",
+  "skill": "Skill"
+}

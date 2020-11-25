@@ -1,0 +1,25 @@
+{
+  "alreadyEnded": "Event telah berakhir",
+  "notStarted": "Belum dimulai",
+  "tab": {
+    "title[0]": "Banner & logo",
+    "title[1]": "Latar Belakang",
+    "title[2]": "Karakter"
+  },
+  "remainingTime": "Waktu yang tersisa",
+  "progress": "Proses",
+  "boostAttribute": "Atribut Boost",
+  "boostCharacters": "Karakter Boost",
+  "maxBoost": "Boost Max (Keduanya digunakan)",
+  "aggregateAt": "Titik waktu Teragregasi",
+  "rankingAnnounceAt": "Pengumuman Peringkat Pada",
+  "distributionStartAt": "Pembagian Hadiah Dari",
+  "distributionEndAt": "Pembagian Hadiah Hingga",
+  "ranking": "Peringkat",
+  "realtime": "Waktu real pada",
+  "nextfetch": "Laporan berikutnya",
+  "alreadyPast": "Sudah lewat",
+  "type": {
+    "marathon": "Maraton"
+  }
+}
