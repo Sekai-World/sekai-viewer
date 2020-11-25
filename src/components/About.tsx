@@ -52,6 +52,7 @@ const About: React.FC<{}> = () => {
         </Alert>
         <Alert className={classes.alert} severity="info">
           <AlertTitle>{t("home:alert_contributor.title")}</AlertTitle>
+          <Typography>{t("about:missing_hint")}</Typography>
           <ul style={{ marginBlockEnd: 0 }}>
             <li>
               <Link
@@ -83,14 +84,30 @@ const About: React.FC<{}> = () => {
                 Build774
               </Link>
             </li>
+            <li>
+              <Link
+                href="https://github.com/xfl03"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <GitHub fontSize="inherit"></GitHub>
+                Xfl03
+              </Link>
+            </li>
           </ul>
         </Alert>
         <Alert className={classes.alert} severity="info">
           <AlertTitle>{t("home:alert_translate.title")}</AlertTitle>
+          <Typography>{t("about:missing_hint")}</Typography>
           <ul>
-            <li>简：Stargazing Koishi, Nightwheel</li>
-            <li>繁：Natsuzawa, ch ko, tofutofuo</li>
-            <li>日：Passion, Cee, k0tayan, Natsuzawa, Build774</li>
+            <li>
+              简：Stargazing Koishi, Nightwheel, MoeDev, hodubidu3095, sgkoishi
+            </li>
+            <li>繁：Natsuzawa, ch ko, tofutofuo, Fryer, ayjchen</li>
+            <li>
+              日：Passion, Cee, k0tayan, Natsuzawa, Build774, あいうえお菓子,
+              ikareo, Karuta
+            </li>
             <li>한：hodubidu3095, omitooshi, EleMas39, PJSEKAI, 아점</li>
             <li>Pt-BR: mid</li>
             <li>русский: Spyrohat</li>
