@@ -1,0 +1,17 @@
+{
+  "tab": {
+    "title[0]": "Deskripsi",
+    "title[1]": "Ringkasan",
+    "title[2]": "Simulator",
+    "title[3]": "Latar Belakang",
+    "title[4]": "Gambar Fitur"
+  },
+  "normalRate": "Tingkat Roll Normal",
+  "guaranteedRate": "Tingkat Roll Terjamin",
+  "pickupMember": "Anggota Rate-up",
+  "pickupMember_plural": "Anggota Rate-up",
+  "gachaType": {
+    "ceil": "Normal",
+    "normal": "Normal"
+  }
+}
