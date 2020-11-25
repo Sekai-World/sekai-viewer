@@ -23,7 +23,7 @@
     "join-discord": "Gabung Server Discord"
   },
   "detect": {
-    "failed": "Sayangnya, Anda tidak dapat memuat sebagian besar gambar. Tingkatkan versi browser atau iOS/macOS Anda. Solusi kompatibilitas akan segera tersedia. <br> Info selengkapnya: <l>Dapatkah Saya Menggunakan - format gambar WebP</l>",
+    "failed": "Sayangnya, Anda tidak dapat memuat sebagian besar gambar. Tingkatkan versi browser atau iOS/macOS Anda. Solusi kompatibilitas akan segera tersedia.<br> Info selengkapnya: <l>Dapatkah Saya Menggunakan - format gambar WebP</l>",
     "success": "Selamat! Browser Anda tampak modern, Anda dapat memuat gambar lebih cepat dan menghemat bandwidth."
   },
   "update": "Tautan Terkait"
