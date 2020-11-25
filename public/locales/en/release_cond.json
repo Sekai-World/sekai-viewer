@@ -42,7 +42,7 @@
   "master_rank": "Obtain [{{cardPrefix}}] {{cardCharaName}}.",
   "master_rank_level": "Get [{{cardPrefix}}] {{cardCharaName}}'s master rank to {{level}}.",
   "character_rank": "｢{{charaName}}｣のキャラクターランク{{num}}でユニット編成数UP",
-  "inherit_complete": "引き継ぎ完了する",
+  "inherit_complete": "Complete the transfer.",
   "event_point": "Obtain {{point}} event points.",
   "event_story_1000016": "Read the ending of Imprisoned Marionette.",
   "event_story": "Read the ending of {{eventName}}.",
