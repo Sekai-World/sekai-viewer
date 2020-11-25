@@ -8,7 +8,7 @@
   },
   "normalRate": "Tingkat Roll Normal",
   "guaranteedRate": "Tingkat Roll Terjamin",
-  "pickupMember": "Anggota Rate-up",
+  "pickupMember": "Anggota Pickup",
   "pickupMember_plural": "Anggota Rate-up",
   "gachaType": {
     "ceil": "Normal",
