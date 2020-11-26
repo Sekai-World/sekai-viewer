@@ -55,7 +55,7 @@ function getWebpDetectSeverity(detected: IDetectResult) {
     case -3:
       return "info";
     case 0:
-      return "error";
+      return "warning";
     case 3:
       return "success";
     default:
@@ -293,7 +293,7 @@ function Home() {
           >
             <AlertTitle>WebP {t("common:support")}</AlertTitle>
             <Trans
-              i18nKey="home:detect.failed"
+              i18nKey="home:detect.warning"
               components={{
                 l: <Link href="https://caniuse.com/webp"></Link>,
               }}

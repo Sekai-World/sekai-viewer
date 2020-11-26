@@ -23,6 +23,7 @@
     "join-discord": "Join Discord Server"
   },
   "detect": {
+    "warning": "Running in compatibility mode, you may have performance issue. Consider upgrading your browser or your iOS/macOS version. <br> More info: <l>Can I Use - WebP image format</l>",
     "failed": "Unfortunately you are not able to load most images. Upgrade your browser or your iOS/macOS version. Compatibility solution will be live soon.<br> More info: <l>Can I Use - WebP image format</l>",
     "success": "Congratulations! Your browser seems modern, you are able to load images faster and save bandwidth."
   },
