@@ -43,13 +43,16 @@ type CompleteGridSizeOptions = {
 };
 
 interface IISProps<T> {
-  readonly viewComponent: React.FC<{ data?: T; index?: number }>;
+  readonly ViewComponent: React.FC<
+    { data?: T; index?: number } & { [key: string]: any }
+  >;
   readonly callback: (
     entries: readonly IntersectionObserverEntry[],
     setHasMore: React.Dispatch<React.SetStateAction<boolean>>
   ) => void;
   readonly data: readonly T[];
   readonly gridSize?: Readonly<GridSizeOptions>;
+  readonly viewProps?: { [key: string]: any };
 }
 
 // NOTE: `breakpoints` must be sorted ascending by size
@@ -98,11 +101,14 @@ function transformToCompleteGridSizeOptions(
 }
 
 function InfiniteScroll<T>({
-  viewComponent,
+  ViewComponent,
   callback,
   data,
   gridSize: _gridSize,
-}: React.PropsWithChildren<IISProps<T>>): React.ReactElement<IISProps<T>> {
+  viewProps,
+}: React.PropsWithChildren<IISProps<T & { id: number }>>): React.ReactElement<
+  IISProps<T>
+> {
   // this is necessary because of `viewGridSize`
   const gridSize = transformToCompleteGridSizeOptions(_gridSize);
 
@@ -143,7 +149,7 @@ function InfiniteScroll<T>({
         {data.length
           ? data.map((data, i) => (
               <Grid
-                key={i}
+                key={data.id}
                 item
                 xs={gridSize.xs}
                 sm={gridSize.sm}
@@ -151,7 +157,7 @@ function InfiniteScroll<T>({
                 lg={gridSize.lg}
                 xl={gridSize.xl}
               >
-                {viewComponent({ data, index: i })}
+                <ViewComponent data={data} index={i} {...viewProps} />
               </Grid>
             ))
           : null}
@@ -175,7 +181,7 @@ function InfiniteScroll<T>({
             lg={gridSize.lg}
             xl={gridSize.xl}
           >
-            {viewComponent({})}
+            <ViewComponent />
           </Grid>
         ))}
       </Grid>

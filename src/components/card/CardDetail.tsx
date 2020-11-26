@@ -13,8 +13,8 @@ import {
   Container,
   Chip,
 } from "@material-ui/core";
-import { useLayoutStyles } from "../styles/layout";
-import { useInteractiveStyles } from "../styles/interactive";
+import { useLayoutStyles } from "../../styles/layout";
+import { useInteractiveStyles } from "../../styles/interactive";
 import { TabContext, TabPanel } from "@material-ui/lab";
 import React, {
   Fragment,
@@ -37,23 +37,27 @@ import {
   ISkillInfo,
   IUnitProfile,
   ResourceBoxDetail,
-} from "../types";
-import { useCachedData, useCharaName } from "../utils";
-import rarityNormal from "../assets/rarity_star_normal.png";
-import rarityAfterTraining from "../assets/rarity_star_afterTraining.png";
+} from "../../types";
+import { getRemoteAssetURL, useCachedData, useCharaName } from "../../utils";
+import rarityNormal from "../../assets/rarity_star_normal.png";
+import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
 
-import { CardThumb } from "./subs/CardThumb";
-import { attrIconMap, UnitLogoMiniMap, charaIcons } from "../utils/resources";
+import { CardThumb } from "../subs/CardThumb";
+import {
+  attrIconMap,
+  UnitLogoMiniMap,
+  charaIcons,
+} from "../../utils/resources";
 import { useTranslation } from "react-i18next";
-import MaterialIcon from "./subs/MaterialIcon";
-import CommonMaterialIcon from "./subs/CommonMaterialIcon";
-import { useAssetI18n } from "../utils/i18n";
-import { SettingContext } from "../context";
+import MaterialIcon from "../subs/MaterialIcon";
+import CommonMaterialIcon from "../subs/CommonMaterialIcon";
+import { useAssetI18n } from "../../utils/i18n";
+import { SettingContext } from "../../context";
 import {
   CharaNameTrans,
   ContentTrans,
   ReleaseCondTrans,
-} from "./subs/ContentTrans";
+} from "../subs/ContentTrans";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -196,48 +200,6 @@ const CardDetail: React.FC<{}> = () => {
     [charas]
   );
 
-  const getCardImages: () => ImageDecorator[] = useCallback(
-    () =>
-      card
-        ? card?.rarity >= 3
-          ? [
-              {
-                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.png`,
-                alt: "card normal",
-                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.png`,
-              },
-              {
-                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.png`,
-                alt: "card normal trim",
-                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.png`,
-              },
-              {
-                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_after_training.png`,
-                alt: "card after training",
-                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_after_training.png`,
-              },
-              {
-                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/after_training.png`,
-                alt: "card after training trim",
-                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/after_training.png`,
-              },
-            ]
-          : [
-              {
-                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.png`,
-                alt: "card normal",
-                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.png`,
-              },
-              {
-                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.png`,
-                alt: "card normal",
-                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.png`,
-              },
-            ]
-        : [],
-    [card]
-  );
-
   useEffect(() => {
     const _card = cards.find((elem) => elem.id === Number(cardId))!;
     if (_card) {
@@ -300,6 +262,76 @@ const CardDetail: React.FC<{}> = () => {
     t,
   ]);
 
+  const [normalImg, setNormalImg] = useState<string>("");
+  const [trainedImg, setTrainedImg] = useState<string>("");
+  const [normalTrimImg, setNormalTrimImg] = useState<string>("");
+  const [trainedTrimImg, setTrainedTrimImg] = useState<string>("");
+
+  useEffect(() => {
+    if (card) {
+      getRemoteAssetURL(
+        `character/member/${card.assetbundleName}_rip/card_normal.webp`,
+        setNormalImg
+      );
+      getRemoteAssetURL(
+        `character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`,
+        setNormalTrimImg
+      );
+      if (card.rarity >= 3) {
+        getRemoteAssetURL(
+          `character/member/${card.assetbundleName}_rip/card_after_training.webp`,
+          setTrainedImg
+        );
+        getRemoteAssetURL(
+          `character/member_cutout_trm/${card.assetbundleName}_rip/after_training.webp`,
+          setTrainedTrimImg
+        );
+      }
+    }
+  }, [card]);
+
+  const getCardImages: () => ImageDecorator[] = useCallback(
+    () =>
+      card
+        ? card?.rarity >= 3
+          ? [
+              {
+                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.png`,
+                alt: "card normal",
+                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.png`,
+              },
+              {
+                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.png`,
+                alt: "card normal trim",
+                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.png`,
+              },
+              {
+                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_after_training.png`,
+                alt: "card after training",
+                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_after_training.png`,
+              },
+              {
+                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/after_training.png`,
+                alt: "card after training trim",
+                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/after_training.png`,
+              },
+            ]
+          : [
+              {
+                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.png`,
+                alt: "card normal",
+                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.png`,
+              },
+              {
+                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.png`,
+                alt: "card normal",
+                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.png`,
+              },
+            ]
+        : [],
+    [card]
+  );
+
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
     setTabVal(newValue);
   };
@@ -340,7 +372,7 @@ const CardDetail: React.FC<{}> = () => {
               >
                 <CardMedia
                   classes={{ root: classes.media }}
-                  image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.webp`}
+                  image={normalImg}
                 ></CardMedia>
               </Card>
             </TabPanel>
@@ -353,7 +385,7 @@ const CardDetail: React.FC<{}> = () => {
               >
                 <CardMedia
                   classes={{ root: classes.media }}
-                  image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_after_training.webp`}
+                  image={trainedImg}
                 ></CardMedia>
               </Card>
             </TabPanel>
@@ -366,7 +398,7 @@ const CardDetail: React.FC<{}> = () => {
               >
                 <CardMedia
                   classes={{ root: classes["media-contain"] }}
-                  image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`}
+                  image={normalTrimImg}
                 ></CardMedia>
               </Card>
             </TabPanel>
@@ -379,7 +411,7 @@ const CardDetail: React.FC<{}> = () => {
               >
                 <CardMedia
                   classes={{ root: classes["media-contain"] }}
-                  image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/after_training.webp`}
+                  image={trainedTrimImg}
                 ></CardMedia>
               </Card>
             </TabPanel>
@@ -429,12 +461,12 @@ const CardDetail: React.FC<{}> = () => {
             justify="space-between"
             alignItems="center"
           >
-            <Grid item>
+            <Grid item xs={3}>
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                 {t("common:character")}
               </Typography>
             </Grid>
-            <Grid item>
+            <Grid item xs={8}>
               <Link
                 to={"/chara/" + card.characterId}
                 style={{ textDecoration: "none" }}
@@ -472,12 +504,12 @@ const CardDetail: React.FC<{}> = () => {
             justify="space-between"
             alignItems="center"
           >
-            <Grid item xs={2}>
+            <Grid item xs={3}>
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                 {t("common:unit")}
               </Typography>
             </Grid>
-            <Grid item xs={9}>
+            <Grid item xs={8}>
               <Link
                 to={"/unit/" + getCharaUnitName(card.characterId)}
                 style={{ textDecoration: "none" }}
@@ -577,13 +609,18 @@ const CardDetail: React.FC<{}> = () => {
             justify="space-between"
             alignItems="center"
           >
-            <Grid item>
+            <Grid item xs={3}>
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                 {t("common:attribute")}
               </Typography>
             </Grid>
-            <Grid item>
-              <Grid container spacing={1} alignItems="center">
+            <Grid item xs={8}>
+              <Grid
+                container
+                spacing={1}
+                alignItems="center"
+                justify="flex-end"
+              >
                 <Grid item>
                   <Typography style={{ textTransform: "capitalize" }}>
                     {card.attr}

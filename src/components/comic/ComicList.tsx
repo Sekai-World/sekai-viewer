@@ -1,55 +1,39 @@
 import {
   Button,
   ButtonGroup,
-  Card,
-  CardContent,
-  CardMedia,
   Container,
   Grid,
   Link,
-  makeStyles,
   Typography,
 } from "@material-ui/core";
 import { Twitter } from "@material-ui/icons";
-import { Alert, Skeleton } from "@material-ui/lab";
+import { Alert } from "@material-ui/lab";
 import React, {
   Fragment,
   useCallback,
   useContext,
   useEffect,
-  useMemo,
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
 import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
-import { SettingContext } from "../context";
-import { useLayoutStyles } from "../styles/layout";
-import { ITipInfo, ITipInfoComic } from "../types";
-import { useCachedData, useRefState } from "../utils";
-import { useAssetI18n } from "../utils/i18n";
-import { ContentTrans } from "./subs/ContentTrans";
-import InfiniteScroll from "./subs/InfiniteScroll";
+import { SettingContext } from "../../context";
+import { useLayoutStyles } from "../../styles/layout";
+import { ITipInfo, ITipInfoComic } from "../../types";
+import { getRemoteAssetURL, useCachedData, useRefState } from "../../utils";
+import { useAssetI18n } from "../../utils/i18n";
+import InfiniteScroll from "../subs/InfiniteScroll";
+import GridView from "./GridView";
 
-const useStyles = makeStyles((theme) => ({
-  media: {
-    paddingTop: "75%",
-    backgroundSize: "contain",
-  },
-  card: {
-    // margin: theme.spacing(0.5),
-    cursor: "pointer",
-  },
-  subheader: {
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    textAlign: "center",
-  },
-}));
+const ListCard: React.FC<{
+  data?: ITipInfoComic;
+  index?: number;
+  lang?: string;
+  handleCardClick?: (index: number) => void;
+}> = GridView;
 
 const ComicList: React.FC<{}> = () => {
-  const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const { contentTransMode } = useContext(SettingContext)!;
@@ -69,6 +53,7 @@ const ComicList: React.FC<{}> = () => {
   const [visible, setVisible] = useState<boolean>(false);
   const [activeIdx, setActiveIdx] = useState<number>(0);
   const [resourceLang, setResourceLang] = useState<"ja" | "fr">("ja");
+  const [comicImages, setComicImages] = useState<ImageDecorator[]>([]);
 
   const getPaginatedTips = useCallback(
     (page: number, limit: number) => {
@@ -77,30 +62,34 @@ const ComicList: React.FC<{}> = () => {
     [filteredCache]
   );
 
-  const comicImages: ImageDecorator[] = useMemo(
-    () =>
-      filteredCache.map((comic) => {
+  useEffect(() => {
+    const f = async () => {
+      const images: ImageDecorator[] = [];
+      for (let comic of filteredCache) {
         let url;
         switch (resourceLang) {
           case "ja":
-            url = `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/comic/one_frame_rip/${comic.assetbundleName}.webp`;
+            url = `comic/one_frame_rip/${comic.assetbundleName}.webp`;
             break;
           case "fr":
-            url = `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/comic_fr/${comic.assetbundleName}.png`;
+            url = `comic_fr/${comic.assetbundleName}.png`;
             break;
         }
-        return {
-          src: url,
+        images.push({
+          src: await getRemoteAssetURL(url),
           alt: getTranslated(
             contentTransMode,
             `comic_title:${comic.id}`,
             comic.title
           ),
-          downloadUrl: url,
-        };
-      }),
-    [filteredCache, contentTransMode, getTranslated, resourceLang]
-  );
+          downloadUrl: await getRemoteAssetURL(url),
+        });
+      }
+      setComicImages(images);
+    };
+
+    f();
+  }, [filteredCache, contentTransMode, getTranslated, resourceLang]);
 
   const callback = (
     entries: readonly IntersectionObserverEntry[],
@@ -147,66 +136,6 @@ const ComicList: React.FC<{}> = () => {
     setIsReady(Boolean(tipsCache.length));
   }, [setIsReady, tipsCache]);
 
-  const ListCard: React.FC<{ data?: ITipInfoComic; index?: number }> = ({
-    data,
-    index,
-  }) => {
-    if (!data) {
-      // loading
-      return (
-        <Card className={classes.card}>
-          <Skeleton variant="rect" className={classes.media}></Skeleton>
-          <CardContent>
-            <Typography variant="subtitle1" className={classes.subheader}>
-              <Skeleton
-                variant="text"
-                width="90%"
-                style={{ margin: "auto" }}
-              ></Skeleton>
-            </Typography>
-          </CardContent>
-        </Card>
-      );
-    }
-    let imageURL;
-    switch (resourceLang) {
-      case "ja":
-        imageURL = `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/comic/one_frame_rip/${data.assetbundleName}.webp`;
-        break;
-      case "fr":
-        imageURL = `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/comic_fr/${data.assetbundleName}.png`;
-        break;
-    }
-    return (
-      <Card
-        className={classes.card}
-        onClick={() => {
-          setActiveIdx(index!);
-          setVisible(true);
-        }}
-      >
-        <CardMedia
-          className={classes.media}
-          image={imageURL}
-          title={data.title}
-        ></CardMedia>
-        <CardContent style={{ paddingBottom: "16px" }}>
-          <ContentTrans
-            mode={contentTransMode}
-            contentKey={`comic_title:${data.id}`}
-            original={data.title}
-            originalProps={{
-              variant: "subtitle1",
-            }}
-            translatedProps={{
-              variant: "subtitle1",
-            }}
-          />
-        </CardContent>
-      </Card>
-    );
-  };
-
   return (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
@@ -245,16 +174,23 @@ const ComicList: React.FC<{}> = () => {
             </Typography>
           </Alert>
         ) : null}
-        {InfiniteScroll<ITipInfoComic>({
-          viewComponent: ListCard,
-          callback,
-          data: comics,
-          gridSize: {
+        <InfiniteScroll<ITipInfoComic>
+          ViewComponent={ListCard}
+          callback={callback}
+          data={comics}
+          gridSize={{
             xs: 12,
             md: 4,
             lg: 3,
-          },
-        })}
+          }}
+          viewProps={{
+            lang: resourceLang,
+            handleCardClick: (index: number) => {
+              setActiveIdx(index);
+              setVisible(true);
+            },
+          }}
+        />
       </Container>
       <Viewer
         visible={visible}

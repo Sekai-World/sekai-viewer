@@ -1,5 +1,4 @@
 import {
-  Box,
   Divider,
   Grid,
   LinearProgress,
@@ -10,7 +9,7 @@ import {
   Typography,
   Container,
 } from "@material-ui/core";
-import { useLayoutStyles } from "../styles/layout";
+import { useLayoutStyles } from "../../styles/layout";
 import { TabContext, TabPanel } from "@material-ui/lab";
 import { CronJob } from "cron";
 import moment from "moment";
@@ -25,20 +24,18 @@ import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
+import { IEventDeckBonus, IEventInfo, IGameCharaUnit } from "../../types";
 import {
-  EventRankingRewardRange,
-  IEventDeckBonus,
-  IEventInfo,
-  IGameCharaUnit,
-  IHonorInfo,
-  IResourceBoxInfo,
-} from "../types";
-import { useCachedData, useRealtimeEventData } from "../utils";
-import { attrIconMap, charaIcons, degreeFrameMap } from "../utils/resources";
-import { useAssetI18n } from "../utils/i18n";
-import { useDurationI18n } from "../utils/i18nDuration";
-import { SettingContext } from "../context";
-import { ContentTrans } from "./subs/ContentTrans";
+  getRemoteAssetURL,
+  useCachedData,
+  useRealtimeEventData,
+} from "../../utils";
+import { attrIconMap, charaIcons } from "../../utils/resources";
+import { useAssetI18n } from "../../utils/i18n";
+import { useDurationI18n } from "../../utils/i18nDuration";
+import { SettingContext } from "../../context";
+import { ContentTrans } from "../subs/ContentTrans";
+import DegreeImage from "../subs/DegreeImage";
 
 const useStyle = makeStyles((theme) => ({
   bannerImg: {
@@ -70,8 +67,6 @@ const EventDetail: React.FC<{}> = () => {
   const [gameCharacterUnits] = useCachedData<IGameCharaUnit>(
     "gameCharacterUnits"
   );
-  const [resourceBoxes] = useCachedData<IResourceBoxInfo>("resourceBoxes");
-  const [honors] = useCachedData<IHonorInfo>("honors");
   const [refreshData, rtRanking] = useRealtimeEventData(Number(eventId));
 
   const [event, setEvent] = useState<IEventInfo>();
@@ -195,119 +190,49 @@ const EventDetail: React.FC<{}> = () => {
     };
   }, [event, t, humanizeDuration]);
 
-  function getRankingDegreeImg(reward: EventRankingRewardRange) {
-    const honor = honors.find(
-      (honor) =>
-        honor.id ===
-        resourceBoxes
-          .find(
-            (resBox) =>
-              resBox.resourceBoxPurpose === "event_ranking_reward" &&
-              resBox.id === reward.eventRankingRewards[0].resourceBoxId
-          )!
-          .details.find((detail) => detail.resourceType === "honor")!.resourceId
-    )!;
+  const [eventLogo, setEventLogo] = useState<string>("");
+  const [eventBanner, setEventBanner] = useState<string>("");
+  const [eventBackground, setEventBackground] = useState<string>("");
+  const [eventCharacter, setEventCharacter] = useState<string>("");
 
-    return `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/honor/${honor.assetbundleName}_rip/degree_main.webp`;
-  }
-
-  function getRankingDegreeName(reward: EventRankingRewardRange) {
-    const honor = honors.find(
-      (honor) =>
-        honor.id ===
-        resourceBoxes
-          .find(
-            (resBox) =>
-              resBox.resourceBoxPurpose === "event_ranking_reward" &&
-              resBox.id === reward.eventRankingRewards[0].resourceBoxId
-          )!
-          .details.find((detail) => detail.resourceType === "honor")!.resourceId
-    )!;
-
-    return honor.name;
-  }
-
-  function getRankingDegreeFrameImg(reward: EventRankingRewardRange) {
-    const honor = honors.find(
-      (honor) =>
-        honor.id ===
-        resourceBoxes
-          .find(
-            (resBox) =>
-              resBox.resourceBoxPurpose === "event_ranking_reward" &&
-              resBox.id === reward.eventRankingRewards[0].resourceBoxId
-          )!
-          .details.find((detail) => detail.resourceType === "honor")!.resourceId
-    )!;
-
-    return degreeFrameMap[honor.honorRarity];
-  }
-
-  function getRankingDegreeFrameName(reward: EventRankingRewardRange) {
-    const honor = honors.find(
-      (honor) =>
-        honor.id ===
-        resourceBoxes
-          .find(
-            (resBox) =>
-              resBox.resourceBoxPurpose === "event_ranking_reward" &&
-              resBox.id === reward.eventRankingRewards[0].resourceBoxId
-          )!
-          .details.find((detail) => detail.resourceType === "honor")!.resourceId
-    )!;
-
-    return honor.honorRarity;
-  }
-
-  function getRankingDegreeRankImg(reward: EventRankingRewardRange) {
-    const honor = honors.find(
-      (honor) =>
-        honor.id ===
-        resourceBoxes
-          .find(
-            (resBox) =>
-              resBox.resourceBoxPurpose === "event_ranking_reward" &&
-              resBox.id === reward.eventRankingRewards[0].resourceBoxId
-          )!
-          .details.find((detail) => detail.resourceType === "honor")!.resourceId
-    )!;
-
-    return `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/honor/${honor.assetbundleName}_rip/rank_main.webp`;
-  }
-
-  function getRankingDegreeRankName(reward: EventRankingRewardRange) {
-    const honor = honors.find(
-      (honor) =>
-        honor.id ===
-        resourceBoxes
-          .find(
-            (resBox) =>
-              resBox.resourceBoxPurpose === "event_ranking_reward" &&
-              resBox.id === reward.eventRankingRewards[0].resourceBoxId
-          )!
-          .details.find((detail) => detail.resourceType === "honor")!.resourceId
-    )!;
-
-    return honor.levels[0].description;
-  }
+  useEffect(() => {
+    if (event) {
+      getRemoteAssetURL(
+        `event/${event.assetbundleName}/logo_rip/logo.webp`,
+        setEventLogo
+      );
+      getRemoteAssetURL(
+        `home/banner/${event.assetbundleName}_rip/${event.assetbundleName}.webp`,
+        setEventBanner
+      );
+      getRemoteAssetURL(
+        `event/${event.assetbundleName}/screen_rip/bg.webp`,
+        setEventBackground
+      );
+      getRemoteAssetURL(
+        `event/${event.assetbundleName}/screen_rip/character.webp`,
+        setEventCharacter
+      );
+    }
+  }, [event]);
 
   const getEventImages: () => ImageDecorator[] = useCallback(
     () =>
-      event
+      eventBackground && eventCharacter
         ? [
             {
-              src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/event/${event.assetbundleName}/screen_rip/bg.webp`,
+              src: eventBackground,
               alt: "event background",
-              downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/event/${event.assetbundleName}/screen_rip/bg.webp`,
+              downloadUrl: eventBackground,
             },
             {
-              src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/event/${event.assetbundleName}/screen_rip/character.webp`,
+              src: eventCharacter,
               alt: "event character",
-              downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/event/${event.assetbundleName}/screen_rip/character.webp`,
+              downloadUrl: eventCharacter,
             },
           ]
         : [],
-    [event]
+    [eventBackground, eventCharacter]
   );
 
   return event && eventDeckBonus.length && gameCharacterUnits.length ? (
@@ -333,15 +258,15 @@ const EventDetail: React.FC<{}> = () => {
                 <Grid item xs={12} md={6}>
                   <img
                     className={classes.bannerImg}
-                    src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/event/${event.assetbundleName}/logo_rip/logo.webp`}
+                    src={eventLogo}
                     alt="logo"
                   ></img>
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <img
                     className={classes.bannerImg}
-                    src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/home/banner/${event.assetbundleName}_rip/${event.assetbundleName}.webp`}
-                    alt="logo"
+                    src={eventBanner}
+                    alt="banner"
                   ></img>
                 </Grid>
               </Grid>
@@ -353,7 +278,7 @@ const EventDetail: React.FC<{}> = () => {
                   setVisible(true);
                 }}
                 className={classes.eventImg}
-                src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/event/${event.assetbundleName}/screen_rip/bg.webp`}
+                src={eventBackground}
                 alt="background"
               ></img>
             </TabPanel>
@@ -364,7 +289,7 @@ const EventDetail: React.FC<{}> = () => {
                   setVisible(true);
                 }}
                 className={classes.eventImg}
-                src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/event/${event.assetbundleName}/screen_rip/character.webp`}
+                src={eventCharacter}
                 alt="character"
               ></img>
             </TabPanel>
@@ -674,82 +599,57 @@ const EventDetail: React.FC<{}> = () => {
               ) : null}
               <Divider style={{ margin: "1% 0" }} />
               <Grid container direction="column">
-                {resourceBoxes.length && honors.length
-                  ? event.eventRankingRewardRanges.map((elem) =>
-                      elem.fromRank >= 100001 ? null : (
-                        <Fragment key={elem.toRank}>
-                          <Grid
-                            item
-                            container
-                            justify="space-between"
-                            alignItems="center"
-                          >
-                            <Grid item xs={6} md={4}>
-                              <Box position="relative">
-                                <img
-                                  style={{
-                                    position: "absolute",
-                                    top: 0,
-                                    left: elem.fromRank >= 10001 ? "2%" : 0,
-                                    maxWidth:
-                                      elem.fromRank >= 10001 ? "96%" : "100%",
-                                  }}
-                                  src={getRankingDegreeFrameImg(elem)}
-                                  alt={getRankingDegreeFrameName(elem)}
-                                ></img>
-                                <img
-                                  style={{ maxWidth: "100%" }}
-                                  src={getRankingDegreeImg(elem)}
-                                  alt={getRankingDegreeName(elem)}
-                                ></img>
-                                <img
-                                  style={{
-                                    position: "absolute",
-                                    right: "10.5%",
-                                    maxHeight: "80%",
-                                    top: "6%",
-                                  }}
-                                  src={getRankingDegreeRankImg(elem)}
-                                  alt={getRankingDegreeRankName(elem)}
-                                ></img>
-                              </Box>
-                            </Grid>
-                            <Grid item xs={6} container alignItems="center">
-                              <Grid item xs={12} md={6}>
-                                <Typography align="right">
-                                  {
-                                    (elem.toRank <= 10
-                                      ? rtRanking.first10.find(
-                                          (rt) => rt.rank === elem.toRank
-                                        )!
-                                      : rtRanking[
-                                          `rank${elem.toRank}` as "rank20"
-                                        ][0] || { name: "" }
-                                    ).name
-                                  }
-                                </Typography>
-                              </Grid>
-                              <Grid item xs={12} md={6}>
-                                <Typography variant="h6" align="right">
-                                  {
-                                    (elem.toRank <= 10
-                                      ? rtRanking.first10.find(
-                                          (rt) => rt.rank === elem.toRank
-                                        )!
-                                      : rtRanking[
-                                          `rank${elem.toRank}` as "rank20"
-                                        ][0] || { score: "N/A" }
-                                    ).score
-                                  }
-                                </Typography>
-                              </Grid>
-                            </Grid>
+                {event.eventRankingRewardRanges.map((elem) =>
+                  elem.fromRank >= 100001 ? null : (
+                    <Fragment key={elem.toRank}>
+                      <Grid
+                        item
+                        container
+                        justify="space-between"
+                        alignItems="center"
+                      >
+                        <Grid item xs={6} md={4}>
+                          <DegreeImage
+                            resourceBoxId={
+                              elem.eventRankingRewards[0].resourceBoxId
+                            }
+                          />
+                        </Grid>
+                        <Grid item xs={6} container alignItems="center">
+                          <Grid item xs={12} md={6}>
+                            <Typography align="right">
+                              {
+                                (elem.toRank <= 10
+                                  ? rtRanking.first10.find(
+                                      (rt) => rt.rank === elem.toRank
+                                    )!
+                                  : rtRanking[
+                                      `rank${elem.toRank}` as "rank20"
+                                    ][0] || { name: "" }
+                                ).name
+                              }
+                            </Typography>
                           </Grid>
-                          <Divider style={{ margin: "1% 0" }} />
-                        </Fragment>
-                      )
-                    )
-                  : null}
+                          <Grid item xs={12} md={6}>
+                            <Typography variant="h6" align="right">
+                              {
+                                (elem.toRank <= 10
+                                  ? rtRanking.first10.find(
+                                      (rt) => rt.rank === elem.toRank
+                                    )!
+                                  : rtRanking[
+                                      `rank${elem.toRank}` as "rank20"
+                                    ][0] || { score: "N/A" }
+                                ).score
+                              }
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                      <Divider style={{ margin: "1% 0" }} />
+                    </Fragment>
+                  )
+                )}
               </Grid>
             </Paper>
           </Container>

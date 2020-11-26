@@ -12,7 +12,7 @@ import { Link, useParams } from "react-router-dom";
 import { SettingContext } from "../context";
 import { useLayoutStyles } from "../styles/layout";
 import { IGameChara, IMusicInfo, IMusicTagInfo, IUnitProfile } from "../types";
-import { useCachedData, useCharaName } from "../utils";
+import { getRemoteAssetURL, useCachedData, useCharaName } from "../utils";
 import { useAssetI18n } from "../utils/i18n";
 import { charaIcons, UnitLogoMap } from "../utils/resources";
 import ColorPreview from "./subs/ColorPreview";
@@ -45,6 +45,23 @@ const useStyle = makeStyles((theme) => ({
 const unitIdTagMap: { [key: string]: string } = {
   light_sound: "light_music_club",
   piapro: "vocaloid",
+};
+
+const UnitMusicImage: React.FC<{
+  assetbundleName: string;
+  title: string;
+}> = ({ assetbundleName, title }) => {
+  const [img, setImg] = useState<string>("");
+
+  useEffect(() => {
+    if (!img)
+      getRemoteAssetURL(
+        `music/jacket/${assetbundleName}_rip/${assetbundleName}.webp`,
+        setImg
+      );
+  }, [assetbundleName, img]);
+
+  return <img src={img} alt={title} style={{ maxWidth: "100%" }}></img>;
 };
 
 const UnitDetail: React.FC<{}> = () => {
@@ -255,12 +272,11 @@ const UnitDetail: React.FC<{}> = () => {
                           justify="flex-end"
                           alignItems="flex-start"
                         >
-                          <img
+                          <UnitMusicImage
+                            assetbundleName={um.assetbundleName}
+                            title={um.title}
                             key={um.id}
-                            src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/jacket/${um.assetbundleName}_rip/${um.assetbundleName}.webp`}
-                            alt={um.title}
-                            style={{ maxWidth: "100%" }}
-                          ></img>
+                          />
                         </Grid>
                       </Grid>
                       <Grid item>

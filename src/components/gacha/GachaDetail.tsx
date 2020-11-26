@@ -12,7 +12,7 @@ import {
   Typography,
   Container,
 } from "@material-ui/core";
-import { useLayoutStyles } from "../styles/layout";
+import { useLayoutStyles } from "../../styles/layout";
 import { TabContext, TabPanel } from "@material-ui/lab";
 import React, {
   Fragment,
@@ -24,14 +24,19 @@ import React, {
 import { Link, useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
-import { GachaDetail, GachaStatistic, ICardInfo, IGachaInfo } from "../types";
-import { useCachedData, useRefState } from "../utils";
-import { CardThumb, CardThumbs } from "./subs/CardThumb";
-import rarityNormal from "../assets/rarity_star_normal.png";
+import {
+  GachaDetail,
+  GachaStatistic,
+  ICardInfo,
+  IGachaInfo,
+} from "../../types";
+import { getRemoteAssetURL, useCachedData } from "../../utils";
+import { CardThumb, CardThumbs } from "../subs/CardThumb";
+import rarityNormal from "../../assets/rarity_star_normal.png";
 import { useTranslation } from "react-i18next";
-import { useAssetI18n } from "../utils/i18n";
-import { SettingContext } from "../context";
-import { ContentTrans } from "./subs/ContentTrans";
+import { useAssetI18n } from "../../utils/i18n";
+import { SettingContext } from "../../context";
+import { ContentTrans } from "../subs/ContentTrans";
 
 const gachaImageNameMap: {
   [key: number]: {
@@ -80,51 +85,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function getGachaImages(gacha: IGachaInfo): ImageDecorator[] {
-  const ret: ImageDecorator[] = [];
-  if (gachaImageNameMap[gacha.id]) {
-    if (gachaImageNameMap[gacha.id].bg) {
-      ret.push({
-        src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/gacha/${
-          gacha.assetbundleName
-        }/screen_rip/texture/${gachaImageNameMap[gacha.id].bg}.webp`,
-        alt: "background",
-        downloadUrl: `${
-          process.env.REACT_APP_ASSET_DOMAIN
-        }/file/sekai-assets/gacha/${gacha.assetbundleName}/screen_rip/texture/${
-          gachaImageNameMap[gacha.id].bg
-        }.webp`,
-      });
-    }
-    if (gachaImageNameMap[gacha.id].feature) {
-      ret.push({
-        src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/gacha/${
-          gacha.assetbundleName
-        }/screen_rip/texture/${gachaImageNameMap[gacha.id].feature}.webp`,
-        alt: "feature",
-        downloadUrl: `${
-          process.env.REACT_APP_ASSET_DOMAIN
-        }/file/sekai-assets/gacha/${gacha.assetbundleName}/screen_rip/texture/${
-          gachaImageNameMap[gacha.id].feature
-        }.webp`,
-      });
-    }
-  } else {
-    ret.push({
-      src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/gacha/${gacha.assetbundleName}/screen_rip/texture/bg_gacha${gacha.id}.webp`,
-      alt: "background",
-      downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/gacha/${gacha.assetbundleName}/screen_rip/texture/bg_gacha${gacha.id}.webp`,
-    });
-    ret.push({
-      src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/gacha/${gacha.assetbundleName}/screen_rip/texture/img_gacha${gacha.id}.webp`,
-      alt: "feature",
-      downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/gacha/${gacha.assetbundleName}/screen_rip/texture/img_gacha${gacha.id}.webp`,
-    });
-  }
-
-  return ret;
-}
-
 const StarIcon: React.FC<{ num: number }> = ({ num }) => (
   <Fragment>
     {Array.from({ length: num }).map((_, idx) => (
@@ -156,8 +116,6 @@ const GachaDetailPage: React.FC<{}> = () => {
   const [currentGachaResult, setCurrentGachaResult] = useState<GachaDetail[]>(
     []
   );
-
-  const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
 
   const [cards] = useCachedData<ICardInfo>("cards");
 
@@ -299,11 +257,9 @@ const GachaDetailPage: React.FC<{}> = () => {
   }, [setStatistic, setCurrentGachaResult]);
 
   useEffect(() => {
-    setIsReady(Boolean(gachas.length));
-
-    if (Boolean(gachas.length))
+    if (gachas.length)
       setGacha(gachas.find((elem) => elem.id === Number(gachaId)));
-  }, [setIsReady, gachaId, gachas]);
+  }, [gachaId, gachas]);
 
   useEffect(() => {
     if (gacha) {
@@ -318,11 +274,73 @@ const GachaDetailPage: React.FC<{}> = () => {
     }
   }, [gacha, contentTransMode, gachaId, getTranslated, t]);
 
+  const [gachaBackground, setGachaBackground] = useState<string>("");
+  const [gachaImage, setGachaImage] = useState<string>("");
+  const [gachaIcon, setGachaIcon] = useState<string>("");
+
+  useEffect(() => {
+    if (gacha) {
+      getRemoteAssetURL(
+        `gacha/${gacha.assetbundleName}/screen_rip/texture/${
+          (gachaImageNameMap[gacha.id] || { bg: `bg_gacha${gacha.id}` }).bg
+        }.webp`,
+        setGachaBackground
+      );
+      getRemoteAssetURL(
+        `gacha/${gacha.assetbundleName}/screen_rip/texture/${
+          (gachaImageNameMap[gacha.id] || { feature: `img_gacha${gacha.id}` })
+            .feature
+        }.webp`,
+        setGachaImage
+      );
+      getRemoteAssetURL(
+        `gacha/${gacha.assetbundleName}/logo_rip/logo.webp`,
+        setGachaIcon
+      );
+    }
+  }, [gacha]);
+
+  const getGachaImages: (gacha: IGachaInfo) => ImageDecorator[] = useCallback(
+    (gacha) => {
+      const ret: ImageDecorator[] = [];
+      if (gachaImageNameMap[gacha.id]) {
+        if (gachaImageNameMap[gacha.id].bg) {
+          ret.push({
+            src: gachaBackground,
+            alt: "background",
+            downloadUrl: gachaBackground,
+          });
+        }
+        if (gachaImageNameMap[gacha.id].feature) {
+          ret.push({
+            src: gachaImage,
+            alt: "feature",
+            downloadUrl: gachaImage,
+          });
+        }
+      } else {
+        ret.push({
+          src: gachaBackground,
+          alt: "background",
+          downloadUrl: gachaBackground,
+        });
+        ret.push({
+          src: gachaImage,
+          alt: "feature",
+          downloadUrl: gachaImage,
+        });
+      }
+
+      return ret;
+    },
+    [gachaBackground, gachaImage]
+  );
+
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
     setPicTabVal(newValue);
   };
 
-  if (isReadyRef && gacha) {
+  if (gacha) {
     return (
       <Fragment>
         <Typography variant="h6" className={layoutClasses.header}>
@@ -358,19 +376,7 @@ const GachaDetailPage: React.FC<{}> = () => {
                 >
                   <CardMedia
                     className={classes.media}
-                    image={
-                      gacha
-                        ? `${
-                            process.env.REACT_APP_ASSET_DOMAIN
-                          }/file/sekai-assets/gacha/${
-                            gacha.assetbundleName
-                          }/screen_rip/texture/${
-                            gachaImageNameMap[gacha.id]
-                              ? gachaImageNameMap[gacha.id].bg
-                              : `bg_gacha${gachaId}`
-                          }.webp`
-                        : ""
-                    }
+                    image={gachaBackground}
                   ></CardMedia>
                 </Card>
               </TabPanel>
@@ -383,19 +389,7 @@ const GachaDetailPage: React.FC<{}> = () => {
                 >
                   <CardMedia
                     className={classes.media}
-                    image={
-                      gacha
-                        ? `${
-                            process.env.REACT_APP_ASSET_DOMAIN
-                          }/file/sekai-assets/gacha/${
-                            gacha.assetbundleName
-                          }/screen_rip/texture/${
-                            gachaImageNameMap[gacha.id]
-                              ? gachaImageNameMap[gacha.id].feature
-                              : `img_gacha${gachaId}`
-                          }.webp`
-                        : ""
-                    }
+                    image={gachaImage}
                   ></CardMedia>
                 </Card>
               </TabPanel>
@@ -594,7 +588,7 @@ const GachaDetailPage: React.FC<{}> = () => {
               </Typography>
               <img
                 style={{ maxWidth: "50%" }}
-                src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/gacha/${gacha.assetbundleName}/logo_rip/logo.webp`}
+                src={gachaIcon}
                 alt="logo icon"
               ></img>
             </Grid>

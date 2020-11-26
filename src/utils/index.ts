@@ -1,6 +1,9 @@
 import { IMusicMeta, IUnitProfile } from "./../types.d";
 import Axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { WebpMachine } from "webp-hero";
+import PQueue from "p-queue";
+import localforage from "localforage";
 import {
   IGachaInfo,
   ICardInfo,
@@ -28,6 +31,8 @@ import {
   ICharaProfile,
 } from "../types";
 import { useAssetI18n } from "./i18n";
+
+const webpMachine = new WebpMachine();
 
 export function useRefState<S>(
   initialValue: S
@@ -235,4 +240,33 @@ export function useMuisicMeta(): [
   }, [fetchCached, setCached]);
 
   return [cached, cachedRef];
+}
+
+const queue = new PQueue({ concurrency: 1 });
+
+export async function getRemoteAssetURL(
+  endpoint: string,
+  setFunc?: CallableFunction
+): Promise<string> {
+  const isWebpSupported = Modernizr.webplossless;
+  const url = `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/${endpoint}`;
+
+  if (endpoint.endsWith(".webp") && !isWebpSupported) {
+    let dataUrl = await localforage.getItem<string>(url);
+    if (!dataUrl) {
+      const res = await Axios.get(url, { responseType: "arraybuffer" });
+      dataUrl = await queue.add<string>(() =>
+        webpMachine.decode(new Uint8Array(res.data))
+      );
+      await localforage.setItem(url, dataUrl);
+      if (setFunc) setFunc(dataUrl);
+      return dataUrl;
+    } else {
+      if (setFunc) setFunc(dataUrl);
+      return dataUrl;
+    }
+  } else {
+    if (setFunc) setFunc(url);
+    return url;
+  }
 }

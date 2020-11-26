@@ -2,17 +2,12 @@ import {
   Avatar,
   Button,
   ButtonGroup,
-  Card,
-  CardMedia,
   Chip,
   Collapse,
   Container,
   Grid,
-  Link,
-  makeStyles,
   Typography,
   Paper,
-  CardContent,
 } from "@material-ui/core";
 import {
   GetApp,
@@ -23,7 +18,6 @@ import {
   SortOutlined,
   Update,
 } from "@material-ui/icons";
-import { Skeleton } from "@material-ui/lab";
 import { FilterOutline, Filter } from "mdi-material-ui";
 import React, {
   Fragment,
@@ -34,35 +28,19 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { SettingContext } from "../context";
-import { characterSelectReducer } from "../stores/reducers";
-import { useInteractiveStyles } from "../styles/interactive";
-import { useLayoutStyles } from "../styles/layout";
-import { IStampInfo } from "../types";
-import { useCachedData, useCharaName, useRefState } from "../utils";
-import { charaIcons } from "../utils/resources";
-import { ContentTrans } from "./subs/ContentTrans";
-import InfiniteScroll from "./subs/InfiniteScroll";
+import { SettingContext } from "../../context";
+import { characterSelectReducer } from "../../stores/reducers";
+import { useInteractiveStyles } from "../../styles/interactive";
+import { useLayoutStyles } from "../../styles/layout";
+import { IStampInfo } from "../../types";
+import { useCachedData, useCharaName, useRefState } from "../../utils";
+import { charaIcons } from "../../utils/resources";
+import GridView from "./GridView";
+import InfiniteScroll from "../subs/InfiniteScroll";
 
-const useStyles = makeStyles((theme) => ({
-  media: {
-    paddingTop: "75%",
-    backgroundSize: "contain",
-  },
-  card: {
-    // margin: theme.spacing(0.5),
-    cursor: "pointer",
-  },
-  subheader: {
-    // "white-space": "nowrap",
-    // overflow: "hidden",
-    // "text-overflow": "ellipsis",
-    // "max-width": "260px",
-  },
-}));
+const ListCard: React.FC<{ data?: IStampInfo }> = GridView;
 
 const StampList: React.FC<{}> = () => {
-  const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
@@ -156,50 +134,6 @@ const StampList: React.FC<{}> = () => {
     setIsReady(Boolean(stampsCache.length));
   }, [setIsReady, stampsCache]);
 
-  const ListCard: React.FC<{ data?: IStampInfo }> = ({ data }) => {
-    if (!data) {
-      // loading
-      return (
-        <Card className={classes.card}>
-          <Skeleton variant="rect" className={classes.media}></Skeleton>
-          <CardContent>
-            <Typography variant="subtitle1" className={classes.subheader}>
-              <Skeleton variant="text" width="90%"></Skeleton>
-            </Typography>
-          </CardContent>
-        </Card>
-      );
-    }
-    return (
-      <Link
-        href={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/stamp/${data.assetbundleName}_rip/${data.assetbundleName}/${data.assetbundleName}.webp`}
-        target="_blank"
-        style={{ textDecoration: "none" }}
-      >
-        <Card className={classes.card}>
-          <CardMedia
-            className={classes.media}
-            image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/stamp/${data.assetbundleName}_rip/${data.assetbundleName}/${data.assetbundleName}.webp`}
-            title={data.name}
-          ></CardMedia>
-          <CardContent style={{ paddingBottom: "16px" }}>
-            <ContentTrans
-              mode={contentTransMode}
-              contentKey={`stamp_name:${data.id}`}
-              original={data.name.replace(/\[.*\]/, "").replace(/^.*：/, "")}
-              originalProps={{
-                variant: "subtitle1",
-              }}
-              translatedProps={{
-                variant: "subtitle1",
-              }}
-            />
-          </CardContent>
-        </Card>
-      </Link>
-    );
-  };
-
   return (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
@@ -280,7 +214,7 @@ const StampList: React.FC<{}> = () => {
           </Paper>
         </Collapse>
         {InfiniteScroll<IStampInfo>({
-          viewComponent: ListCard,
+          ViewComponent: ListCard,
           callback,
           data: stamps,
           gridSize: {

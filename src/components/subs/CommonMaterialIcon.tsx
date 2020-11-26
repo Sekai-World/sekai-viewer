@@ -1,15 +1,15 @@
 import { Typography } from "@material-ui/core";
 import React, { Fragment } from "react";
 
-import coinIcon from "../../assets/common/material/coin.webp";
-import honor1Icon from "../../assets/common/material/honor_1.webp";
-import honor2Icon from "../../assets/common/material/honor_2.webp";
-import honor3Icon from "../../assets/common/material/honor_3.webp";
-import honor4Icon from "../../assets/common/material/honor_4.webp";
-import jewelIcon from "../../assets/common/material/jewel.webp";
-import livePointIcon from "../../assets/common/material/live_point.webp";
-import slotIcon from "../../assets/common/material/slot.webp";
-import virtualCoinIcon from "../../assets/common/material/virtual_coin.webp";
+import coinIcon from "../../assets/common/material/coin.png";
+import honor1Icon from "../../assets/common/material/honor_1.png";
+import honor2Icon from "../../assets/common/material/honor_2.png";
+import honor3Icon from "../../assets/common/material/honor_3.png";
+import honor4Icon from "../../assets/common/material/honor_4.png";
+import jewelIcon from "../../assets/common/material/jewel.png";
+import livePointIcon from "../../assets/common/material/live_point.png";
+import slotIcon from "../../assets/common/material/slot.png";
+import virtualCoinIcon from "../../assets/common/material/virtual_coin.png";
 
 const materialMap = {
   coin: coinIcon,

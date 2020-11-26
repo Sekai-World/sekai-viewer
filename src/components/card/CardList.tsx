@@ -1,12 +1,7 @@
 import {
-  Box,
   Button,
   ButtonGroup,
-  Card,
-  CardContent,
-  CardMedia,
   Grid,
-  makeStyles,
   Paper,
   Typography,
   Container,
@@ -17,9 +12,8 @@ import {
   Chip,
   Avatar,
 } from "@material-ui/core";
-import { useLayoutStyles } from "../styles/layout";
+import { useLayoutStyles } from "../../styles/layout";
 import { Sort, SortOutlined, ViewAgenda, ViewComfy } from "@material-ui/icons";
-import { Skeleton } from "@material-ui/lab";
 import {
   Filter,
   FilterOutline,
@@ -35,62 +29,21 @@ import React, {
   useReducer,
   useState,
 } from "react";
-import { Link, useRouteMatch } from "react-router-dom";
-import { ICardEpisode, ICardInfo, ICardRarity, IGameChara } from "../types";
-import { useCachedData, useCharaName, useRefState } from "../utils";
-import { CardThumb, CardThumbSkeleton } from "./subs/CardThumb";
-import InfiniteScroll from "./subs/InfiniteScroll";
+import { ICardEpisode, ICardInfo, ICardRarity, IGameChara } from "../../types";
+import { useCachedData, useCharaName, useRefState } from "../../utils";
+import InfiniteScroll from "../subs/InfiniteScroll";
+// import InfiniteScroll from "react-infinite-scroll-component";
 
 import { useTranslation } from "react-i18next";
-import { useInteractiveStyles } from "../styles/interactive";
-import { useAssetI18n } from "../utils/i18n";
-import { characterSelectReducer } from "../stores/reducers";
-import { charaIcons } from "../utils/resources";
-import { CardSmallImage } from "./subs/CardImage";
-import { SettingContext } from "../context";
-import { ContentTrans } from "./subs/ContentTrans";
+import { useInteractiveStyles } from "../../styles/interactive";
+import { characterSelectReducer } from "../../stores/reducers";
+import { charaIcons } from "../../utils/resources";
+import { SettingContext } from "../../context";
+import GridView from "./GridView";
+import AgendaView from "./AgendaView";
+import ComfyView from "./ComfyView";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
-
-const useStyles = makeStyles((theme) => ({
-  media: {
-    paddingTop: "56.25%",
-  },
-  card: {
-    // margin: theme.spacing(0.5),
-    cursor: "pointer",
-  },
-  subheader: {
-    // whiteSpace: "nowrap",
-    // overflow: "hidden",
-    // textOverflow: "ellipsis",
-  },
-  agendaWrapper: {
-    display: "block",
-    [theme.breakpoints.down("sm")]: {
-      maxWidth: "100%",
-    },
-    // [theme.breakpoints.only("md")]: {
-    //   maxWidth: "600px",
-    // },
-    maxWidth: "80%",
-    margin: "auto",
-    cursor: "pointer",
-  },
-  agenda: {
-    padding: "4% 4%",
-  },
-  comfy: {
-    padding: "6% 4%",
-    cursor: "pointer",
-  },
-  comfyPrefix: {
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    maxWidth: "100%",
-  },
-}));
 
 function getPaginatedCards(cards: ICardInfo[], page: number, limit: number) {
   return cards.slice(limit * (page - 1), limit * page);
@@ -129,13 +82,16 @@ function getMaxParam(
   return maxParam;
 }
 
+const ListCard: { [key: string]: React.FC<{ data?: ICardInfo }> } = {
+  grid: GridView,
+  agenda: AgendaView,
+  comfy: ComfyView,
+};
+
 const CardList: React.FC<{}> = () => {
-  const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
-  const { path } = useRouteMatch();
   const { t } = useTranslation();
-  const { assetT } = useAssetI18n();
   const { contentTransMode } = useContext(SettingContext)!;
   const getCharaName = useCharaName(contentTransMode);
 
@@ -149,7 +105,7 @@ const CardList: React.FC<{}> = () => {
     ICardInfo[]
   >([]);
   const [viewGridType, setViewGridType] = useState<ViewGridType>(
-    (localStorage.getItem("card-list-grid-view-type") || "grid") as ViewGridType
+    (localStorage.getItem("card-list-grid-view-type") || "Grid") as ViewGridType
   );
   const [page, pageRef, setPage] = useRefState<number>(0);
   const [limit, limitRef] = useRefState<number>(12);
@@ -248,267 +204,6 @@ const CardList: React.FC<{}> = () => {
       setLastQueryFin(true);
     }
   }, [page, limit, setLastQueryFin, sortedCache]);
-
-  const ListCard: { [key: string]: React.FC<{ data?: ICardInfo }> } = {
-    grid: ({ data }) => {
-      if (!data) {
-        // loading
-        return (
-          <Card className={classes.card}>
-            <Skeleton variant="rect" className={classes.media}></Skeleton>
-            <CardContent>
-              <Typography variant="subtitle1" className={classes.subheader}>
-                <Skeleton variant="text" width="90%"></Skeleton>
-              </Typography>
-              <Typography variant="body2" className={classes.subheader}>
-                <Skeleton variant="text" width="30%"></Skeleton>
-              </Typography>
-            </CardContent>
-          </Card>
-        );
-      }
-      return (
-        <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
-          <Card className={classes.card}>
-            <CardMedia
-              // className={classes.media}
-              // image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_small/${data.assetbundleName}_rip/card_normal.webp`}
-              title={
-                contentTransMode === "original"
-                  ? data.prefix
-                  : contentTransMode === "translated"
-                  ? assetT(`card_prefix:${data.id}`, data.prefix)
-                  : data.prefix
-              }
-            >
-              <CardSmallImage id={data.id}></CardSmallImage>
-            </CardMedia>
-            <CardContent style={{ paddingBottom: "16px" }}>
-              <Grid container direction="column" spacing={1}>
-                <Grid item>
-                  <ContentTrans
-                    mode={contentTransMode}
-                    contentKey={`card_prefix:${data.id}`}
-                    original={data.prefix}
-                    originalProps={{
-                      variant: "subtitle1",
-                      className: classes.subheader,
-                    }}
-                    translatedProps={{
-                      variant: "subtitle1",
-                      className: classes.subheader,
-                    }}
-                  />
-                </Grid>
-                <Grid item>
-                  <Typography
-                    variant="body2"
-                    className={classes.subheader}
-                    color="textSecondary"
-                  >
-                    {getCharaName(data.characterId)}
-                  </Typography>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-        </Link>
-      );
-    },
-    agenda: ({ data }) => {
-      if (!data) {
-        // loading
-        return (
-          <Box className={classes.agendaWrapper}>
-            <Paper className={classes.agenda}>
-              <Grid
-                container
-                alignItems="center"
-                spacing={2}
-                justify="space-between"
-              >
-                <Grid
-                  item
-                  xs={5}
-                  md={4}
-                  container
-                  direction="row"
-                  spacing={1}
-                  justify="center"
-                >
-                  <Grid item xs={12} md={6}>
-                    <CardThumbSkeleton></CardThumbSkeleton>
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <CardThumbSkeleton></CardThumbSkeleton>
-                  </Grid>
-                </Grid>
-                <Grid item xs={6} md={7}>
-                  <Typography variant="body1">
-                    <Skeleton variant="text" width="70%"></Skeleton>
-                  </Typography>
-                  <Typography variant="body2">
-                    <Skeleton variant="text" width="30%"></Skeleton>
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Paper>
-          </Box>
-        );
-      }
-      return (
-        <Link
-          to={path + "/" + data.id}
-          className={classes.agendaWrapper}
-          style={{ textDecoration: "none" }}
-        >
-          <Paper className={classes.agenda}>
-            <Grid
-              container
-              alignItems="center"
-              spacing={2}
-              justify="space-between"
-            >
-              <Grid
-                item
-                xs={5}
-                md={4}
-                container
-                direction="row"
-                spacing={1}
-                justify="center"
-              >
-                <Grid item xs={12} md={6}>
-                  <CardThumb cardId={data.id} />
-                </Grid>
-                {data.rarity >= 3 ? (
-                  <Grid item xs={12} md={6}>
-                    <CardThumb cardId={data.id} trained />
-                  </Grid>
-                ) : null}
-              </Grid>
-              <Grid item xs={6} md={7}>
-                <Grid container direction="column" spacing={1}>
-                  <Grid item>
-                    <ContentTrans
-                      mode={contentTransMode}
-                      contentKey={`card_prefix:${data.id}`}
-                      original={data.prefix}
-                      originalProps={{ variant: "body1" }}
-                      translatedProps={{ variant: "body1" }}
-                    />
-                  </Grid>
-                  <Grid item>
-                    <Typography variant="body2" color="textSecondary">
-                      {getCharaName(data.characterId)}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Paper>
-        </Link>
-      );
-    },
-    comfy: ({ data }) => {
-      if (!data) {
-        // loading
-        return (
-          <Paper className={classes.comfy}>
-            <Grid
-              container
-              direction="column"
-              alignItems="center"
-              spacing={2}
-              justify="space-between"
-            >
-              <Grid item container direction="row" spacing={1} justify="center">
-                <Grid item xs={4}>
-                  <CardThumbSkeleton></CardThumbSkeleton>
-                </Grid>
-                <Grid item xs={4}>
-                  <CardThumbSkeleton></CardThumbSkeleton>
-                </Grid>
-              </Grid>
-              <Grid item style={{ width: "100%" }}>
-                <Typography
-                  classes={{ root: classes.comfyPrefix }}
-                  variant="body1"
-                >
-                  <Skeleton
-                    variant="text"
-                    width="70%"
-                    style={{ margin: "0 auto" }}
-                  ></Skeleton>
-                </Typography>
-                <Typography variant="body2">
-                  <Skeleton
-                    variant="text"
-                    width="40%"
-                    style={{ margin: "0 auto" }}
-                  ></Skeleton>
-                </Typography>
-              </Grid>
-            </Grid>
-          </Paper>
-        );
-      }
-      return (
-        <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
-          <Paper className={classes.comfy}>
-            <Grid
-              container
-              direction="column"
-              alignItems="center"
-              spacing={2}
-              justify="space-between"
-            >
-              <Grid item container direction="row" spacing={1} justify="center">
-                <Grid item xs={4}>
-                  <CardThumb cardId={data.id} />
-                </Grid>
-                {data.rarity >= 3 ? (
-                  <Grid item xs={4}>
-                    <CardThumb cardId={data.id} trained />
-                  </Grid>
-                ) : null}
-              </Grid>
-              <Grid item style={{ width: "100%" }}>
-                <Grid container direction="column" spacing={1}>
-                  <Grid item>
-                    <ContentTrans
-                      mode={contentTransMode}
-                      contentKey={`card_prefix:${data.id}`}
-                      original={data.prefix}
-                      originalProps={{
-                        variant: "body1",
-                        className: classes.comfyPrefix,
-                        align: "center",
-                      }}
-                      translatedProps={{
-                        variant: "body1",
-                        className: classes.comfyPrefix,
-                        align: "center",
-                      }}
-                    />
-                  </Grid>
-                  <Grid item>
-                    <Typography
-                      variant="body2"
-                      align="center"
-                      color="textSecondary"
-                    >
-                      {getCharaName(data.characterId)}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Paper>
-        </Link>
-      );
-    },
-  };
 
   return (
     <Fragment>
@@ -682,27 +377,41 @@ const CardList: React.FC<{}> = () => {
             </Grid>
           </Paper>
         </Collapse>
-        {InfiniteScroll<ICardInfo>({
-          viewComponent: ListCard[viewGridType],
-          callback,
-          data: cards,
-          gridSize: ({
-            grid: {
-              xs: 12,
-              sm: 6,
-              md: 4,
-              lg: 3,
-            },
-            agenda: {
-              xs: 12,
-            },
-            comfy: {
-              xs: 12,
-              sm: 6,
-              md: 3,
-            },
-          } as const)[viewGridType],
-        })}
+        <InfiniteScroll<ICardInfo>
+          ViewComponent={ListCard[viewGridType]}
+          callback={callback}
+          data={cards}
+          gridSize={
+            ({
+              grid: {
+                xs: 12,
+                sm: 6,
+                md: 4,
+                lg: 3,
+              },
+              agenda: {
+                xs: 12,
+              },
+              comfy: {
+                xs: 12,
+                sm: 6,
+                md: 3,
+              },
+            } as const)[viewGridType]
+          }
+        />
+        {/* <InfiniteScroll
+          dataLength={cards.length}
+          next={fetchCards}
+          hasMore={hasMore}
+          loader={<Typography>Loading...</Typography>}
+        >
+          <Grid container spacing={1}>
+            {cards.map((card, index) => (
+              <GridCard key={index} data={card} />
+            ))}
+          </Grid>
+        </InfiniteScroll> */}
       </Container>
     </Fragment>
   );

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
 import { useLayoutStyles } from "../styles/layout";
 import { IGameChara, IUnitProfile } from "../types";
-import { useCachedData } from "../utils";
+import { getRemoteAssetURL, useCachedData } from "../utils";
 import { UnitLogoMap } from "../utils/resources";
 
 const useStyle = makeStyles((theme) => ({
@@ -20,11 +20,36 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
+const MemberImage: React.FC<{ id: number }> = ({ id }) => {
+  const classes = useStyle();
+  const { path } = useRouteMatch();
+
+  const [url, setUrl] = useState<string>("");
+
+  useEffect(() => {
+    getRemoteAssetURL(
+      `character/character_select_rip/chr_tl_${id}.webp`,
+      setUrl
+    );
+  }, [id]);
+
+  return (
+    <Grid item xs={3} md={2} key={`chara-${id}`}>
+      <Link to={path + "/" + id} style={{ textDecoration: "none" }}>
+        <img
+          className={classes.memberSelectImg}
+          src={url}
+          alt={String(id)}
+        ></img>
+      </Link>
+    </Grid>
+  );
+};
+
 const MemberList: React.FC<{}> = () => {
   const classes = useStyle();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
-  const { path } = useRouteMatch();
 
   const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
   const [gameCharas] = useCachedData<IGameChara>("gameCharacters");
@@ -76,18 +101,7 @@ const MemberList: React.FC<{}> = () => {
               style={{ marginBottom: "1em" }}
             >
               {charaUnitMap[unit].map((chara) => (
-                <Grid item xs={3} md={2} key={`chara-${chara.id}`}>
-                  <Link
-                    to={path + "/" + chara.id}
-                    style={{ textDecoration: "none" }}
-                  >
-                    <img
-                      className={classes.memberSelectImg}
-                      src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/character_select_rip/chr_tl_${chara.id}.webp`}
-                      alt={String(chara.id)}
-                    ></img>
-                  </Link>
-                </Grid>
+                <MemberImage id={chara.id} />
               ))}
             </Grid>
           </Fragment>

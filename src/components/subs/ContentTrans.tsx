@@ -30,7 +30,7 @@ export const ContentTrans: React.FC<{
       return <Typography {...originalProps}>{original}</Typography>;
     case "translated":
       return (
-        <Typography {...translatedProps}>
+        <Typography {...translatedProps} color="textPrimary">
           {assetT(contentKey, original, assetTOptions)}
         </Typography>
       );
@@ -70,13 +70,13 @@ export const CharaNameTrans: React.FC<{
     switch (mode) {
       case "original":
         return (
-          <Typography {...originalProps}>
+          <Typography {...originalProps} color="textPrimary">
             {chara.firstName} {chara.givenName}
           </Typography>
         );
       case "translated":
         return ["zh-CN", "zh-TW", "ko", "ja"].includes(assetI18n.language) ? (
-          <Typography {...translatedProps}>
+          <Typography {...translatedProps} color="textPrimary">
             {chara.firstName
               ? assetT(
                   `character_name:${characterId}.firstName`,

@@ -17,8 +17,8 @@ import {
   Switch,
   useTheme,
 } from "@material-ui/core";
-import { useLayoutStyles } from "../styles/layout";
-import { useInteractiveStyles } from "../styles/interactive";
+import { useLayoutStyles } from "../../styles/layout";
+import { useInteractiveStyles } from "../../styles/interactive";
 import { Alert, TabContext, TabPanel } from "@material-ui/lab";
 import { Close, Done } from "@material-ui/icons";
 import React, {
@@ -37,16 +37,21 @@ import {
   IMusicTagInfo,
   IMusicVocalInfo,
   IOutCharaProfile,
-} from "../types";
-import { musicTagToName, useCachedData, useCharaName } from "../utils";
-import { charaIcons } from "../utils/resources";
+} from "../../types";
+import {
+  getRemoteAssetURL,
+  musicTagToName,
+  useCachedData,
+  useCharaName,
+} from "../../utils";
+import { charaIcons } from "../../utils/resources";
 import { Trans, useTranslation } from "react-i18next";
-import { useAssetI18n } from "../utils/i18n";
-import { useDurationI18n } from "../utils/i18nDuration";
-import { useTrimMP3 } from "../utils/trimMP3";
-import MusicVideoPlayer from "./subs/MusicVideoPlayer";
-import { SettingContext } from "../context";
-import { ContentTrans, ReleaseCondTrans } from "./subs/ContentTrans";
+import { useAssetI18n } from "../../utils/i18n";
+import { useDurationI18n } from "../../utils/i18nDuration";
+import { useTrimMP3 } from "../../utils/trimMP3";
+import MusicVideoPlayer from "../subs/MusicVideoPlayer";
+import { SettingContext } from "../../context";
+import { ContentTrans, ReleaseCondTrans } from "../subs/ContentTrans";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -248,6 +253,17 @@ const MusicDetail: React.FC<{}> = () => {
     [musicVocal, outCharas]
   );
 
+  const [musicJacket, setMusicJacket] = useState<string>("");
+
+  useEffect(() => {
+    if (music) {
+      getRemoteAssetURL(
+        `music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}.webp`,
+        setMusicJacket
+      );
+    }
+  }, [music]);
+
   const getCharaIcon: (characterId: number) => JSX.Element = useCallback(
     (characterId) => {
       if (!characterId) return <span></span>;
@@ -362,7 +378,7 @@ const MusicDetail: React.FC<{}> = () => {
             setVisible(true);
           }}
           classes={{ root: classes["media-contain"] }}
-          image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}.webp`}
+          image={musicJacket}
         ></CardMedia>
         <Paper className={interactiveClasses.container}>
           <Grid container direction="column" spacing={1}>
