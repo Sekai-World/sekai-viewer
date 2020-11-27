@@ -1,5 +1,6 @@
 {
   "about_me": {
     "title": "Sobre mim"
-  }
+  },
+  "missing_hint": "Se você descobriu que seu nome está faltando aqui, por favor me diga!"
 }
