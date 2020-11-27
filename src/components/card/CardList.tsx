@@ -105,7 +105,7 @@ const CardList: React.FC<{}> = () => {
     ICardInfo[]
   >([]);
   const [viewGridType, setViewGridType] = useState<ViewGridType>(
-    (localStorage.getItem("card-list-grid-view-type") || "Grid") as ViewGridType
+    (localStorage.getItem("card-list-grid-view-type") || "grid") as ViewGridType
   );
   const [page, pageRef, setPage] = useRefState<number>(0);
   const [limit, limitRef] = useRefState<number>(12);
