@@ -20,7 +20,7 @@
     "title": "Ustawienia"
   },
   "language": "Język",
-  "darkmode": "Jasny Tryb",
+  "darkmode": "Tryb Jasności",
   "contentTranslationMode": {
     "title": "Tryb Wyświetlania Zawartości Gry",
     "original": "Oryginalne",
@@ -32,7 +32,7 @@
   "unit": "Jednostka",
   "support_unit": "Jednostka Wsparcia",
   "attribute": "Atrybut",
-  "startAt": "Dostępna Forma",
+  "startAt": "Dostępne Od",
   "rarity": "Rzadkość",
   "thumb": "Miniaturka",
   "skill": "Umiejętność",

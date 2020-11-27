@@ -1,0 +1,44 @@
+{
+  "result": {
+    "musicName": "Nome da Música",
+    "label": "Resultado",
+    "desc": "Apenas uma etapa e você termina."
+  },
+  "getResult": "Ver o Resultado",
+  "buildTeam": {
+    "label": "Construir Time",
+    "desc": "Construa seu time para o Recomendador de Músicas",
+    "addCard": "Adicionar Card",
+    "saveTeam": "Salvar Time",
+    "loadTeam": "Carregar Time",
+    "clearTeam": "Limpar a Equipe",
+    "teamPower": "Poder do Time",
+    "duplicatedCardError": "Não pode adicionar a mesma card em uma equipe.",
+    "cardMaxError": "Já tem cards o suficiente.",
+    "loadTeamError": "Verifique sua entrada.",
+    "teamTextCopied": "Texto da equipe copiado para a área de transferência."
+  },
+  "modeSelect": {
+    "label": "Seleção de Modo",
+    "desc": "Selecione o modo de trabalho do recomendador."
+  },
+  "assumption": "Suposição: tudo perfeito, bônus de evento de 0%, uso de bebida energética 0, multijogadores todos têm o mesmo poder de equipe.",
+  "addCardDialog": {
+    "title": "Adicionar Card",
+    "selectChara": "Personagem",
+    "selectRarity": "Raridade"
+  },
+  "saveTeamDialog": {
+    "title": "Salvar Time",
+    "desc": "Salve o código da equipe e carregue-o mais tarde."
+  },
+  "teamCode": "Código do Time",
+  "loadTeamDialog": {
+    "title": "Carregar Time",
+    "desc": "Cole o código da equipe salvo e carregue-o."
+  },
+  "songSelect": {
+    "label": "Selecionar Música",
+    "desc": "Selecione uma ou mais músicas para analisar. Deixe em branco para analisar todas as músicas."
+  }
+}
