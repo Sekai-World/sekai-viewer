@@ -23,6 +23,7 @@
     "join-discord": "Gabung Server Discord"
   },
   "detect": {
+    "warning": "Berjalan dalam mode kompatibilitas, Anda mungkin mengalami masalah pada kinerja. Pertimbangkan untuk meningkatkan browser atau versi iOS/macOS Anda. Info selengkapnya: <l>Dapatkah saya menggunakan - format gambar WebP</l>",
     "failed": "Sayangnya, Anda tidak dapat memuat sebagian besar gambar. Tingkatkan versi browser atau iOS/macOS Anda. Solusi kompatibilitas akan segera tersedia.<br> Info selengkapnya: <l>Dapatkah Saya Menggunakan - format gambar WebP</l>",
     "success": "Selamat! Browser Anda tampak modern, Anda dapat memuat gambar lebih cepat dan menghemat bandwidth."
   },
