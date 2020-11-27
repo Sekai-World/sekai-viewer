@@ -9,7 +9,7 @@
   "comic": "Quadrinhos",
   "character": "Personagem",
   "musicMeta": "Meta de música",
-  "scoreCalculator": "Calculador de Pontuação",
+  "musicRecommend": "Recomendador de Músicas (Beta)",
   "support": "Suporte",
   "toolbar": {
     "title": "Lista de Funções"
@@ -34,7 +34,7 @@
   "attribute": "Atributo",
   "startAt": "Disponível a partir de",
   "rarity": "Raridade",
-  "thumb": "Ícone",
+  "thumb": "Miniatura",
   "skill": "Habilidade",
   "performance": "Performance",
   "technique": "Técnica",
@@ -56,6 +56,15 @@
   "profile": "Perfil",
   "character_plural": "Personagens",
   "level": "Nível",
+  "back": "Voltar",
+  "next": "Próximo",
+  "betaIndicator": "Esta função está em beta. Reportar bugs é sempre bem-vindo",
+  "delete": "Deletar",
+  "all": "Todos",
+  "search": "Procurar",
+  "copyToClipboard": "Copiar para área de transferência",
+  "load": "Carregar",
+  "scoreCalculator": "Calculador de Pontuação",
   "update": "Atualização",
   "member": "Membros"
 }
