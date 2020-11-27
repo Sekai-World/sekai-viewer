@@ -23,7 +23,7 @@ import {
   ICardInfo,
   IUnitProfile,
 } from "../types";
-import { useCachedData, useCharaName } from "../utils";
+import { getRemoteAssetURL, useCachedData, useCharaName } from "../utils";
 import { UnitLogoMap } from "../utils/resources";
 import { CardThumb } from "./subs/CardThumb";
 import ColorPreview from "./subs/ColorPreview";
@@ -135,6 +135,25 @@ const MemberDetail: React.FC<{}> = () => {
     });
   }, [t, charaId, getCharaName]);
 
+  const [charaTrimImg, setCharaTrimImg] = useState<string>("");
+  const [charaLabelHImg, setCharaLabelHImg] = useState<string>("");
+  const [charaLabelVImg, setCharaLabelVImg] = useState<string>("");
+
+  useEffect(() => {
+    getRemoteAssetURL(
+      `character/trim_rip/chr_trim_${charaId}.webp`,
+      setCharaTrimImg
+    );
+    getRemoteAssetURL(
+      `character/label_rip/chr_h_lb_${charaId}.webp`,
+      setCharaLabelHImg
+    );
+    getRemoteAssetURL(
+      `character/label_vertical_rip/chr_v_lb_${charaId}.webp`,
+      setCharaLabelVImg
+    );
+  }, [charaId]);
+
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
     setTabVal(newValue);
   };
@@ -166,7 +185,7 @@ const MemberDetail: React.FC<{}> = () => {
               >
                 <CardMedia
                   classes={{ root: classes.media }}
-                  image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/trim_rip/chr_trim_${charaId}.webp`}
+                  image={charaTrimImg}
                 ></CardMedia>
               </Card>
             </TabPanel>
@@ -174,7 +193,7 @@ const MemberDetail: React.FC<{}> = () => {
               <Card>
                 <CardMedia
                   classes={{ root: classes.nameLabel }}
-                  image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/label_rip/chr_h_lb_${charaId}.webp`}
+                  image={charaLabelHImg}
                 ></CardMedia>
               </Card>
             </TabPanel>
@@ -182,7 +201,7 @@ const MemberDetail: React.FC<{}> = () => {
               <Card>
                 <CardMedia
                   classes={{ root: classes.nameVerticalLabel }}
-                  image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/label_vertical_rip/chr_v_lb_${charaId}.webp`}
+                  image={charaLabelVImg}
                 ></CardMedia>
               </Card>
             </TabPanel>
@@ -285,15 +304,17 @@ const MemberDetail: React.FC<{}> = () => {
                 justify="space-between"
                 alignItems="center"
               >
-                <Grid item>
+                <Grid item xs={3}>
                   <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                     {t("member:" + key)}
                   </Typography>
                 </Grid>
-                <Grid item>
-                  <Grid container spacing={1}>
+                <Grid item xs={8}>
+                  <Grid container spacing={1} justify="flex-end">
                     <Grid item>
-                      <Typography>{charaUnit[key as "colorCode"]}</Typography>
+                      <Typography style={{ textTransform: "uppercase" }}>
+                        {charaUnit[key as "colorCode"]}
+                      </Typography>
                     </Grid>
                     <Grid item>
                       <ColorPreview colorCode={charaUnit[key as "colorCode"]} />

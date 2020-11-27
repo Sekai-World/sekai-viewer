@@ -1,0 +1,90 @@
+import {
+  Card,
+  CardContent,
+  Typography,
+  CardMedia,
+  makeStyles,
+} from "@material-ui/core";
+import { Skeleton } from "@material-ui/lab";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, useRouteMatch } from "react-router-dom";
+import { SettingContext } from "../../context";
+import { IGachaInfo } from "../../types";
+import { getRemoteAssetURL } from "../../utils";
+import { ContentTrans } from "../subs/ContentTrans";
+
+const useStyles = makeStyles((theme) => ({
+  media: {
+    paddingTop: "56.25%",
+    backgroundSize: "contain",
+  },
+  card: {
+    // margin: theme.spacing(0.5),
+    cursor: "pointer",
+  },
+  subheader: {
+    "white-space": "nowrap",
+    overflow: "hidden",
+    "text-overflow": "ellipsis",
+    "max-width": "260px",
+  },
+}));
+
+const GridView: React.FC<{ data?: IGachaInfo }> = ({ data }) => {
+  const classes = useStyles();
+  const { path } = useRouteMatch();
+  const { contentTransMode } = useContext(SettingContext)!;
+
+  const [url, setUrl] = useState<string>("");
+
+  useEffect(() => {
+    if (data) {
+      getRemoteAssetURL(
+        `gacha/${data.assetbundleName}/logo_rip/logo.webp`,
+        setUrl
+      );
+    }
+  }, [data]);
+
+  if (!data) {
+    // loading
+    return (
+      <Card className={classes.card}>
+        <Skeleton variant="rect" className={classes.media}></Skeleton>
+        <CardContent>
+          <Typography variant="subtitle1" className={classes.subheader}>
+            <Skeleton variant="text" width="90%"></Skeleton>
+          </Typography>
+        </CardContent>
+      </Card>
+    );
+  }
+  return (
+    <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
+      <Card className={classes.card}>
+        <CardMedia
+          className={classes.media}
+          image={url}
+          title={data.name}
+        ></CardMedia>
+        <CardContent style={{ paddingBottom: "16px" }}>
+          <ContentTrans
+            mode={contentTransMode}
+            contentKey={`gacha_name:${data.id}`}
+            original={data.name}
+            originalProps={{
+              variant: "subtitle1",
+              className: classes.subheader,
+            }}
+            translatedProps={{
+              variant: "subtitle1",
+              className: classes.subheader,
+            }}
+          />
+        </CardContent>
+      </Card>
+    </Link>
+  );
+};
+
+export default GridView;

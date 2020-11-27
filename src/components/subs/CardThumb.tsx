@@ -2,7 +2,7 @@ import { Grid } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import React, { useEffect, useState } from "react";
 import { ICardInfo } from "../../types";
-import { useCachedData } from "../../utils";
+import { getRemoteAssetURL, useCachedData } from "../../utils";
 
 import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
@@ -22,22 +22,24 @@ export const CardThumb: React.FC<
     if (cards.length) setCard(cards.find((elem) => elem.id === cardId));
   }, [cards, cardId]);
 
+  const [cardThumbImg, setCardThumbImg] = useState<string>("");
+  useEffect(() => {
+    if (card) {
+      getRemoteAssetURL(
+        `thumbnail/chara_rip/${card.assetbundleName}_${
+          trained ? "after_training" : "normal"
+        }.webp`,
+        setCardThumbImg
+      );
+    }
+  }, [card, trained]);
+
   const rarityIcon = trained ? rarityAfterTraining : rarityNormal;
 
   return card ? (
     <div className={classes.svg} onClick={onClick} style={style}>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 156 156">
-        <image
-          href={`${
-            process.env.REACT_APP_ASSET_DOMAIN
-          }/file/sekai-assets/thumbnail/chara_rip/${card.assetbundleName}_${
-            trained ? "after_training" : "normal"
-          }.webp`}
-          x="8"
-          y="8"
-          height="140"
-          width="140"
-        />
+        <image href={cardThumbImg} x="8" y="8" height="140" width="140" />
         {/* frame */}
         <image
           href={cardThumbFrameMap[String(card.rarity)]}
