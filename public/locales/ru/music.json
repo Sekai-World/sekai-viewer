@@ -11,12 +11,6 @@
   "tag_plural": "Теги",
   "category": "Категория",
   "category_plural": "Категории",
-  "categoryType": {
-    "mv": "3D MV",
-    "mv_2d": "2D MV",
-    "original": "Original MV",
-    "image": "Static Image"
-  },
   "actualPlaybackTime": "Время воспроизведения",
   "arranger": "Аранжировщик",
   "composer": "Композитор",
@@ -28,5 +22,12 @@
   "vocalType": "Тип вокала",
   "difficulty": "Сложность",
   "difficulty_plural": "Сложности",
-  "noteCount": "Всего нот"
+  "noteCount": "Всего нот",
+  "preview": "Превью",
+  "categoryType": {
+    "mv": "3D MV",
+    "mv_2d": "2D MV",
+    "original": "Original MV",
+    "image": "Static Image"
+  }
 }

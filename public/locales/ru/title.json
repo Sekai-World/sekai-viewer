@@ -1,4 +1,5 @@
 {
+  "about": "О нас | Sekai Viewer",
   "cardDetail": "{{prefix}} | {{character}} | Карты | Sekai Viewer",
   "cardList": "Карты | Sekai Viewer",
   "comicList": "Ёнкомы | Sekai Viewer",
@@ -11,6 +12,7 @@
   "memberList": "Список персонажей | Sekai Viewer",
   "musicDetail": "{{title}} | Песни | Sekai Viewer",
   "musicList": "Песни | Sekai Viewer",
+  "musicRecommend": "Подбор песен (Бета) | Sekai Viewer",
   "stampList": "Штампы | Sekai Viewer",
   "unitDetail": "{{- name}} | Юнит | Sekai Viewer"
 }
