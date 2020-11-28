@@ -23,6 +23,7 @@
     "join-discord": "Dołącz do Serwera na Discordzie"
   },
   "detect": {
+    "warning": "Działając w trybie zgodności, możesz mieć problem z wydajnością. Rozważ zaaktualizowanie swojej przeglądarki lub wersji iOS/macOS. <br> Więcej informacji: <l>Czy Mogę Użyć - Formatu Obrazu WebP</l>",
     "failed": "Niestety, nie możesz zobaczyć większości zdjęć. Uaktualnij swoją przeglądarkę lub wersję iOS/macOS. Rozwiązanie dotyczące kompatybilności będzie wkrótce dostępne. <br> Więcej informacji: <l>Czy mogę użyć - formatu obrazu WebP</l>",
     "success": "Gratulacje! Wygląda na to, że twoja przeglądarka jest nowoczesna, możesz ładować szybciej obrazy i oszczędzać pasmo."
   },
