@@ -4,7 +4,7 @@
     "label": "结果",
     "desc": "再来一步就完成了！"
   },
-  "getResult": "获得结果",
+  "getResult": "获取结果",
   "buildTeam": {
     "label": "组建队伍",
     "desc": "组建你的队伍用于歌曲推荐器的运算。",
