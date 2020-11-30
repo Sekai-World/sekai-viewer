@@ -12,6 +12,7 @@
   "memberList": "Lista de personajes | Sekai Viewer",
   "musicDetail": "{{- title}} | Música | Sekai Viewer",
   "musicList": "Lista de música | Sekai Viewer",
+  "musicRecommend": "Recomendador de Música (Beta) | Sekai Viewer",
   "stampList": "Sticker List | Sekai Viewer",
   "unitDetail": "{{- name}} | Grupo | Sekai Viewer"
 }
