@@ -109,10 +109,10 @@ const About: React.FC<{}> = () => {
               ikareo, Karuta
             </li>
             <li>한：hodubidu3095, omitooshi, EleMas39, PJSEKAI, 아점</li>
-            <li>Pt-BR: mid</li>
+            <li>Pt-BR: Kuyaterai</li>
             <li>русский: Spyrohat</li>
             <li>Es: ruiemu, maravillas</li>
-            <li>It: SeaPu</li>
+            <li>It: SeaPu, RayFirefist</li>
             <li>Pl: sousie</li>
             <li>En: watatomo</li>
             <li>Fr: Yasito</li>
