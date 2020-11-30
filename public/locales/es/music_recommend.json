@@ -1,0 +1,44 @@
+{
+  "result": {
+    "musicName": "Nombre de la Música",
+    "label": "Resultado",
+    "desc": "Solo un paso más y habrás terminado."
+  },
+  "getResult": "Obtener Resultado",
+  "buildTeam": {
+    "label": "Formar Equipo",
+    "desc": "Formar tu equipo para el Recomendador de Canciones",
+    "addCard": "Agregar Carta",
+    "saveTeam": "Guardar Equipo",
+    "loadTeam": "Cargar Equipo",
+    "clearTeam": "Borrar Equipo",
+    "teamPower": "Poder del Equipo",
+    "duplicatedCardError": "No se puede agregar la misma carta a un equipo.",
+    "cardMaxError": "Ya hay suficientes cartas.",
+    "loadTeamError": "Revisa los datos ingresados.",
+    "teamTextCopied": "Texto del equipo copiado al portapapeles."
+  },
+  "modeSelect": {
+    "label": "Seleccionar Modo",
+    "desc": "Selecciona el modo de trabajo del recomendador."
+  },
+  "assumption": "Asumido: todas las notas perfect, bonus del evento 0%, uso de 0 bebidas energéticas, todos los jugadores en multijugador tienen el mismo poder de equipo.",
+  "addCardDialog": {
+    "title": "Agregar Carta",
+    "selectChara": "Personaje",
+    "selectRarity": "Rareza"
+  },
+  "saveTeamDialog": {
+    "title": "Guardar Equipo",
+    "desc": "Guardar código del equipo y cargarlo después."
+  },
+  "teamCode": "Código del Equipo",
+  "loadTeamDialog": {
+    "title": "Cargar Equipo",
+    "desc": "Pegar código del equipo guardado y cargarlo."
+  },
+  "songSelect": {
+    "label": "Seleccionar Canción",
+    "desc": "Selecciona una o más canciones para ser analizadas. Déjalo en blanco para analizar todas las canciones."
+  }
+}

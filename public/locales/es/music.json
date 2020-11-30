@@ -11,12 +11,6 @@
   "tag_plural": "Etiquetas",
   "category": "Categoría",
   "category_plural": "Categorías",
-  "categoryType": {
-    "mv": "3D MV",
-    "mv_2d": "2D MV",
-    "original": "MV Original",
-    "image": "Imagen estática"
-  },
   "actualPlaybackTime": "Tiempo real de reproducción",
   "arranger": "Arreglista",
   "composer": "Compositor",
@@ -28,5 +22,12 @@
   "vocalType": "Tipo de voz",
   "difficulty": "Dificultad",
   "difficulty_plural": "Dificultades",
-  "noteCount": "Número de notas"
+  "noteCount": "Número de notas",
+  "preview": "Vista previa",
+  "categoryType": {
+    "mv": "3D MV",
+    "mv_2d": "2D MV",
+    "original": "MV Original",
+    "image": "Imagen estática"
+  }
 }
