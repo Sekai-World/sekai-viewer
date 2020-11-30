@@ -1,0 +1,30 @@
+{
+  "tab": {
+    "title[0]": "ตัวละคร",
+    "title[1]": "ชื่อ (แนวนอน)",
+    "title[2]": "ชื่อ (แนวตั้ง)"
+  },
+  "name": "ชื่อ",
+  "hiragana": "ฟุริงานะ",
+  "gender": {
+    "caption": "เพศ",
+    "female": "ผู้หญิง",
+    "male": "ผู้ชาย",
+    "secret": "ความลับ"
+  },
+  "colorCode": "สีประจำตัวละคร",
+  "skinColorCode": "สีเนื้อ",
+  "skinShadowColorCode1": "เงาของสีเนื้อ 1",
+  "skinShadowColorCode2": "เงาของสีเนื้อ 2",
+  "height": "ส่วนสูง",
+  "birthday": "วันเกิด",
+  "characterVoice": "นักพากย์",
+  "school": "โรงเรียน",
+  "schoolYear": "ชั้นเรียน",
+  "hobby": "งานอดิเรก",
+  "specialSkill": "ความสามารถพิเศษ",
+  "favoriteFood": "อาหารที่ชอบ",
+  "hatedFood": "อาหารที่เกลียด",
+  "weak": "จุดอ่อน",
+  "introduction": "คำแนะนำตัว"
+}
