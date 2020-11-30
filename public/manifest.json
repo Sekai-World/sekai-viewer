@@ -5,8 +5,8 @@
   "background_color": "#2196f3",
   "display": "standalone",
   "orientation": "portrait",
-  "scope": "https://sekai-world.github.io/sekai-viewer/",
-  "start_url": "https://sekai-world.github.io/sekai-viewer/",
+  "scope": "https://sekai.best/",
+  "start_url": "https://sekai.best/",
   "icons": [
     {
       "src": "images/icons/icon-72x72.png",
