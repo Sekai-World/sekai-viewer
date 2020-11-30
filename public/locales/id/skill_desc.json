@@ -2,7 +2,7 @@
   "1": "Skor akan meningkat sebesar {{1;v}}% selama {{1;d}} detik",
   "2": "Skor akan meningkat sebesar {{2;v}}% selama {{2;d}} detik",
   "3": "Skor akan meningkat sebesar {{3;v}}% selama {{3;d}} detik",
-  "4": "{{4;v}}% skor akan meningkat selama {{4;d}} detik",
+  "4": "Skor akan meningkat sebesar {{4;v}}% selama {{4;d}} detik",
   "5": "Semua GREAT akan menjadi PERFECT selama {{8;d}} detik, {{5;v}}% skor akan meningkat selama {{5;d}} detik",
   "6": "Semua GOOD dan diatasnya akan menjadi PERFECT selama {{9;d}} detik, {{6;v}}% skor akan meningkat selama {{6;d}} detik",
   "7": "Semua BAD dan diatasnya akan menjadi PERFECT selama {{10;d}} detik, {{7;v}}% skor akan meningkat selama {{7;d}} detik",
