@@ -1,0 +1,10 @@
+{
+  "character": {
+    "caption": "ตัวละคร"
+  },
+  "sort": {
+    "caption": "แบ่งชนิด",
+    "ascending": "น้อยไปมาก",
+    "descending": "มากไปน้อย"
+  }
+}
