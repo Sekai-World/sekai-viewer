@@ -7,7 +7,7 @@
   "6": "Semua GOOD dan diatasnya akan menjadi PERFECT selama {{9;d}} detik dan Skor akan meningkat sebesar {{6;v}}% selama {{6;d}} detik",
   "7": "Semua BAD dan diatasnya akan menjadi PERFECT selama {{10;d}} detik dan Skor akan meningkat sebesar {{7;v}}% selama {{7;d}} detik",
   "8": "Memulihkan nyawa sebesar {{14;v}} dan Skor akan meningkat sebesar {{11;v}}% selama {{11;d}} detik",
-  "9": "Memulihkan nyawa sebesar {{15;v}} dan {{12;v}}% skor akan meningkat selama {{12;d}} detik",
+  "9": "Memulihkan nyawa sebesar {{15;v}} dan Skor akan meningkat sebesar {{12;v}}% selama {{12;d}} detik",
   "10": "Memulihkan nyawa sebesar {{16;v}} dan {{13;v}}% skor akan meningkat selama {{13;d}} detik",
   "11": "{{17;v}}% skor akan meningkat selama {{17;d}} detik hanya untuk PERFECT saja"
 }
