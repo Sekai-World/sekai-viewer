@@ -25,6 +25,7 @@ export function initGlobalI18n() {
         "pl",
         "fr",
         "id",
+        "th",
       ],
       ns: [
         "common",
@@ -75,6 +76,7 @@ assetI18n
       "pl",
       "fr",
       "id",
+      "th",
     ],
     ns: [
       "music_titles",
