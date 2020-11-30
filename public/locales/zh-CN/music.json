@@ -1,7 +1,6 @@
 {
   "vocal": "演唱者",
-  "alert[0]": "每首歌曲的<b>前九秒</b>是无声的。这不是Bug！",
-  "preview": "预览",
+  "alert[0]": "每首歌曲的<b>前九秒</b>是无声的。这不是程序错误！",
   "vocalTab": {
     "title[0]": "预览",
     "title[1]": "全曲",
@@ -24,6 +23,7 @@
   "difficulty": "难度",
   "difficulty_plural": "难度",
   "noteCount": "音符数量",
+  "preview": "预览",
   "categoryType": {
     "mv": "3DMV",
     "mv_2d": "2DMV",
