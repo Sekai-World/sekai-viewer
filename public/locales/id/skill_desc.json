@@ -1,5 +1,5 @@
 {
-  "1": "{{1;v}}% skor akan meningkat selama {{1;d}} detik",
+  "1": "Skor akan meningkat sebesar {{1;v}}% selama {{1;d}} detik",
   "2": "{{2;v}}% skor akan meningkat selama {{2;d}} detik",
   "3": "{{3;v}}% skor akan meningkat selama {{3;d}} detik",
   "4": "{{4;v}}% skor akan meningkat selama {{4;d}} detik",
