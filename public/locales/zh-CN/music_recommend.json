@@ -14,7 +14,7 @@
     "clearTeam": "清除队伍",
     "teamPower": "队伍综合力",
     "duplicatedCardError": "不能在一个队伍添加重复的卡。",
-    "cardMaxError": "队伍已经有足够的卡片了。",
+    "cardMaxError": "队伍内卡片已满。",
     "loadTeamError": "检查你的输入。",
     "teamTextCopied": "队伍代码已拷贝到剪贴板。"
   },
