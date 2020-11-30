@@ -7,7 +7,7 @@
   "getResult": "获取结果",
   "buildTeam": {
     "label": "组建队伍",
-    "desc": "组建你的队伍用于歌曲推荐器的运算。",
+    "desc": "为歌曲推荐器组建你的队伍。",
     "addCard": "添加卡片",
     "saveTeam": "保存队伍",
     "loadTeam": "载入队伍",
