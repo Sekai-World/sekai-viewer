@@ -592,14 +592,14 @@ function App() {
                   label="Fr"
                 ></FormControlLabel>
                 <FormControlLabel
-                  value="th"
-                  control={<Radio />}
-                  label="หาง"
-                ></FormControlLabel>
-                <FormControlLabel
                   value="id"
                   control={<Radio />}
                   label="Ind"
+                ></FormControlLabel>
+                <FormControlLabel
+                  value="th"
+                  control={<Radio />}
+                  label="หาง"
                 ></FormControlLabel>
                 <FormControlLabel
                   value="ru"

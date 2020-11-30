@@ -117,6 +117,7 @@ const About: React.FC<{}> = () => {
             <li>En: watatomo</li>
             <li>Fr: Yasito</li>
             <li>Ind: Rizkiawan</li>
+            <li>หาง: Revel</li>
           </ul>
         </Alert>
       </Container>
