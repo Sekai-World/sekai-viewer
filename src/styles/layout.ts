@@ -10,6 +10,9 @@ const useLayoutStyles = makeStyles((theme) => ({
     marginLeft: "auto",
     marginRight: "auto",
   },
+  alert: {
+    margin: theme.spacing(2, 0),
+  },
 }));
 
 export { useLayoutStyles };

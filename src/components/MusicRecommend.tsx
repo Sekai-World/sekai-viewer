@@ -429,7 +429,9 @@ const MusicRecommend: React.FC<{}> = () => {
       <Typography variant="h6" className={layoutClasses.header}>
         {t("common:musicRecommend")}
       </Typography>
-      <Alert severity="warning">{t("common:betaIndicator")}</Alert>
+      <Alert severity="warning" className={layoutClasses.alert}>
+        {t("common:betaIndicator")}
+      </Alert>
       {/* <Container> */}
       <Stepper
         activeStep={activeStep}
