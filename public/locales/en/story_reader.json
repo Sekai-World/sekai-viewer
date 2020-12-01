@@ -1,0 +1,11 @@
+{
+  "selectLabel": {
+    "storyType": ""
+  },
+  "selectValue": {
+    "eventStory": "",
+    "unitStory": "",
+    "charaStory": "",
+    "cardStory": ""
+  }
+}
