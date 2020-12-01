@@ -9,7 +9,7 @@
   "gender": {
     "caption": "เพศ",
     "female": "หญิง",
-    "male": "ผู้ชาย",
+    "male": "ชาย",
     "secret": "ความลับ"
   },
   "colorCode": "สีประจำตัวละคร",
