@@ -15,6 +15,7 @@ import { ContentTrans } from "../subs/ContentTrans";
 
 const useStyles = makeStyles((theme) => ({
   media: {
+    marginTop: "0.5em",
     paddingTop: "75%",
     backgroundSize: "contain",
   },

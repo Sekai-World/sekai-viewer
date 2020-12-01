@@ -225,8 +225,8 @@ const StampList: React.FC<{}> = () => {
           callback,
           data: stamps,
           gridSize: {
-            xs: 4,
-            sm: 3,
+            xs: 6,
+            sm: 4,
             md: 3,
             lg: 2,
           },
