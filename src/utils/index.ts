@@ -77,7 +77,7 @@ export function useCachedData<
 
   const fetchCached = useCallback(async () => {
     const { data }: { data: T[] } = await Axios.get(
-      `https://raw.githubusercontent.com/Sekai-World/sekai-master-db-diff/master/${name}.json`
+      `https://sekai-world.github.io/sekai-master-db-diff/${name}.json`
     );
     return data;
   }, [name]);
