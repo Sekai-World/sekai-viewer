@@ -1,32 +1,33 @@
 {
-  "vocal": "Vocal",
-  "alert[0]": "The first <b>nine seconds</b> of every music have no sound. That's NOT a bug.",
+  "vocal": "Cantante",
+  "alert[0]": "I primi<b>nove secondi</b> di ogni canzone non ha suono. NON è un errore.",
   "vocalTab": {
-    "title[0]": "Short version",
-    "title[1]": "Long version",
-    "title[2]": "Music video"
+    "title[0]": "Versione corta",
+    "title[1]": "Versione lunga",
+    "title[2]": "Video musicale"
   },
-  "skipBeginningSilence": "Skip beginning silence",
+  "skipBeginningSilence": "Salta il silenzio iniziale",
   "tag": "Tag",
   "tag_plural": "Tags",
-  "category": "Category",
-  "category_plural": "Categories",
+  "category": "Categoria",
+  "category_plural": "Categorie",
+  "actualPlaybackTime": "Tempo di ascolto",
+  "arranger": "Arrangiamenti",
+  "composer": "Compositore",
+  "lyricist": "Testi",
+  "danceMember": "Mambro danzante",
+  "danceMember_plural": "Membri danzanti",
+  "dancerCount": "Conteggio ballerini",
+  "vocal_plural": "Cantanti",
+  "vocalType": "Tipo cantanti",
+  "difficulty": "Difficoltà",
+  "difficulty_plural": "Difficoltà",
+  "noteCount": "Conteggio note",
+  "preview": "Anteprima",
   "categoryType": {
-    "mv": "3D MV",
-    "mv_2d": "2D MV",
-    "original": "Original MV",
-    "image": "Static Image"
-  },
-  "actualPlaybackTime": "Actual Playback Time",
-  "arranger": "Arranger",
-  "composer": "Composer",
-  "lyricist": "Lyricist",
-  "danceMember": "Dance Member",
-  "danceMember_plural": "Dance Members",
-  "dancerCount": "Dancer Count",
-  "vocal_plural": "Vocals",
-  "vocalType": "Vocal Type",
-  "difficulty": "Difficulty",
-  "difficulty_plural": "Difficulties",
-  "noteCount": "Note Count"
+    "mv": "Video 3D",
+    "mv_2d": "Video 2D",
+    "original": "Video originale",
+    "image": "Immagine statica"
+  }
 }
