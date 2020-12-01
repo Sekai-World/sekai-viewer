@@ -1,6 +1,6 @@
 {
   "vocal": "Voz",
-  "alert[0]": "Los primeros <b>nueve segundos</b> de cada música no tienen sonido. NO es un error. ",
+  "alert[0]": "Los primeros <b>nueve segundos</b> de cada música no tienen sonido. Esto NO es un error. ",
   "vocalTab": {
     "title[0]": "Versión corta",
     "title[1]": "Versión larga",
