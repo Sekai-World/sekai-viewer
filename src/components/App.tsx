@@ -85,6 +85,7 @@ const UnitDetail = lazy(() => import("./UnitDetail"));
 const About = lazy(() => import("./About"));
 const Support = lazy(() => import("./Support"));
 const MusicRecommend = lazy(() => import("./MusicRecommend"));
+const StoryReader = lazy(() => import("./storyreader/StoryReader"));
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -526,6 +527,9 @@ function App() {
               </Route>
               <Route path="/music_recommend" exact>
                 <MusicRecommend />
+              </Route>
+              <Route path="/storyreader" exact>
+                <StoryReader />
               </Route>
             </Suspense>
           </Switch>

@@ -44,6 +44,7 @@ export function initGlobalI18n() {
         "about",
         "support",
         "music_recommend",
+        "story_reader",
       ],
       fallbackLng: {
         default: ["en"],
@@ -93,6 +94,7 @@ assetI18n
       "release_cond",
       "card_episode_title",
       "music_vocal",
+      "unit_story_chapter_title",
     ],
     fallbackLng: {
       default: ["ja"],

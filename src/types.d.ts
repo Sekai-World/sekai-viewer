@@ -512,3 +512,34 @@ export interface IMusicRecommendResult {
   result: number;
   link: string;
 }
+
+export interface Episode {
+  id: number;
+  unit: string;
+  chapterNo: number;
+  episodeNo: number;
+  unitEpisodeCategory: string;
+  episodeNoLabel: string;
+  title: string;
+  assetbundleName: string;
+  scenarioId: string;
+  releaseConditionId: number;
+  rewardResourceBoxIds: number[];
+  andReleaseConditionId?: number;
+}
+
+export interface Chapter {
+  id: number;
+  unit: string;
+  chapterNo: number;
+  title: string;
+  assetbundleName: string;
+  episodes: Episode[];
+}
+
+export interface IUnitStory {
+  unit: string;
+  seq: number;
+  assetbundleName: string;
+  chapters: Chapter[];
+}
