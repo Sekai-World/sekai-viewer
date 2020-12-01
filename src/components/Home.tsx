@@ -32,9 +32,6 @@ import { IUserInformationInfo } from "../types";
 import { useCachedData } from "../utils";
 
 const useStyles = makeStyles((theme) => ({
-  alert: {
-    margin: theme.spacing(2, 0),
-  },
   "contact-link": {
     margin: theme.spacing(0, 0.5),
   },
@@ -217,16 +214,16 @@ function Home() {
             />
           </Grid>
         </Grid>
-        <Alert className={classes.alert} severity="info">
+        <Alert className={layoutClasses.alert} severity="info">
           {t("home:alert0")}
         </Alert>
-        <Alert className={classes.alert} severity="info">
+        <Alert className={layoutClasses.alert} severity="info">
           <Trans
             i18nKey="home:alert_settings"
             components={{ s: <Settings fontSize="inherit" /> }}
           />
         </Alert>
-        <Alert className={classes.alert} severity="warning">
+        <Alert className={layoutClasses.alert} severity="warning">
           <AlertTitle>{t("home:alert1.title")}</AlertTitle>
           <Link
             href="https://www.transifex.com/dnaroma/sekai-viewer"
@@ -288,7 +285,7 @@ function Home() {
         </Alert>
         {getWebpDetectSeverity(detected) !== "success" ? (
           <Alert
-            className={classes.alert}
+            className={layoutClasses.alert}
             severity={getWebpDetectSeverity(detected)}
           >
             <AlertTitle>WebP {t("common:support")}</AlertTitle>
