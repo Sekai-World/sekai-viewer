@@ -8,14 +8,14 @@
   "hiragana": "ฟุริงานะ",
   "gender": {
     "caption": "เพศ",
-    "female": "ผู้หญิง",
-    "male": "ผู้ชาย",
+    "female": "หญิง",
+    "male": "ชาย",
     "secret": "ความลับ"
   },
   "colorCode": "สีประจำตัวละคร",
-  "skinColorCode": "สีเนื้อ",
-  "skinShadowColorCode1": "เงาของสีเนื้อ 1",
-  "skinShadowColorCode2": "เงาของสีเนื้อ 2",
+  "skinColorCode": "สีผิว",
+  "skinShadowColorCode1": "เงาของสีผิว 1",
+  "skinShadowColorCode2": "เงาของสีผิว 2",
   "height": "ส่วนสูง",
   "birthday": "วันเกิด",
   "characterVoice": "นักพากย์",
@@ -26,5 +26,5 @@
   "favoriteFood": "อาหารที่ชอบ",
   "hatedFood": "อาหารที่เกลียด",
   "weak": "จุดอ่อน",
-  "introduction": "คำแนะนำตัว"
+  "introduction": "แนะนำตัวละคร"
 }

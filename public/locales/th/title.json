@@ -3,8 +3,8 @@
   "cardDetail": "{{- prefix}} | {{- character}} | การ์ด | Sekai Viewer",
   "cardList": "รายชื่อการ์ด | Sekai Viewer",
   "comicList": "รายชื่อคอมมิค | Sekai Viewer",
-  "eventDetail": "{{- name}} | อีเว้นต์ | Sekai Viewer",
-  "eventList": "รายชื่ออีเว้นต์ | Sekai Viewer",
+  "eventDetail": "{{- name}} | อีเวนต์ | Sekai Viewer",
+  "eventList": "รายชื่ออีเวนต์ | Sekai Viewer",
   "gachaDetail": "{{- name}} | กาชา | Sekai Viewer",
   "gachaList": "รายชื่อกาชา | Sekai Viewer",
   "home": "หน้าหลัก | Sekai Viewer",
@@ -12,7 +12,7 @@
   "memberList": "รายชื่อตัวละคร | Sekai Viewer",
   "musicDetail": "{{- title}} | เพลง | Sekai Viewer",
   "musicList": "รายชื่อเพลง | Sekai Viewer",
-  "musicRecommend": "แนะนำเพลงสำหรับปั่นอีเว้นต์ (รุ่นทดลอง) | Sekai Viewer",
+  "musicRecommend": "แนะนำเพลงสำหรับปั่นอีเวนต์ (รุ่นทดลอง) | Sekai Viewer",
   "stampList": "รายชื่อสติกเกอร์ | Sekai Viewer",
   "unitDetail": "{{- name}} | ยูนิต | Sekai Viewer"
 }
