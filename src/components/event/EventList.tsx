@@ -1,12 +1,25 @@
-import { Typography, Container } from "@material-ui/core";
+import {
+  Typography,
+  Container,
+  Grid,
+  ButtonGroup,
+  Button,
+} from "@material-ui/core";
 import { useLayoutStyles } from "../../styles/layout";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState, useCallback } from "react";
 import { IEventInfo } from "../../types";
 import { useCachedData, useRefState } from "../../utils";
 import InfiniteScroll from "../subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
 import GridView from "./GridView";
+import {
+  GetApp,
+  GetAppOutlined,
+  Publish,
+  PublishOutlined,
+  Update,
+} from "@material-ui/icons";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -33,6 +46,10 @@ const EventList: React.FC<{}> = () => {
   const [limit, limitRef] = useRefState<number>(12);
   const [, lastQueryFinRef, setLastQueryFin] = useRefState<boolean>(true);
   const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
+  const [updateSort, setUpdateSort] = useState<"asc" | "desc">(
+    (localStorage.getItem("event-list-update-sort") || "desc") as "desc"
+  );
+  const [sortedCache, setSortedCache] = useState<IEventInfo[]>([]);
 
   useEffect(() => {
     document.title = t("title:eventList");
@@ -41,10 +58,21 @@ const EventList: React.FC<{}> = () => {
   useEffect(() => {
     setEvents((events) => [
       ...events,
-      ...getPaginatedEvents(eventsCache, page, limit),
+      ...getPaginatedEvents(sortedCache, page, limit),
     ]);
     setLastQueryFin(true);
-  }, [page, limit, setLastQueryFin, eventsCache]);
+  }, [page, limit, setLastQueryFin, sortedCache]);
+
+  useEffect(() => {
+    let sortedCache = [...eventsCache];
+    if (updateSort === "desc") {
+      sortedCache = sortedCache.sort((a, b) => b.id - a.id);
+    } else if (updateSort === "asc") {
+      sortedCache = sortedCache.sort((a, b) => a.id - b.id);
+    }
+    setSortedCache(sortedCache);
+    setEvents([]);
+  }, [updateSort, eventsCache]);
 
   useEffect(() => {
     setIsReady(Boolean(eventsCache.length));
@@ -71,31 +99,50 @@ const EventList: React.FC<{}> = () => {
     }
   };
 
+  const handleUpdateSort = useCallback((sort: "asc" | "desc") => {
+    setUpdateSort(sort);
+    localStorage.setItem("event-list-update-sort", sort);
+  }, []);
+
   return (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
         {t("common:event")}
       </Typography>
       <Container className={layoutClasses.content}>
-        {InfiniteScroll<IEventInfo>({
-          ViewComponent: ListCard[viewGridType],
-          callback,
-          data: events,
-          gridSize: ({
-            grid: {
-              xs: 12,
-              sm: 6,
-              md: 4,
-              lg: 3,
-            },
-            agenda: {
-              xs: 12,
-            },
-            comfy: {
-              xs: 12,
-            },
-          } as const)[viewGridType],
-        })}
+        <Grid container justify="space-between">
+          <ButtonGroup color="primary" style={{ marginBottom: "1%" }}>
+            <Button size="medium" onClick={() => handleUpdateSort("asc")}>
+              <Update />
+              {updateSort === "asc" ? <Publish /> : <PublishOutlined />}
+            </Button>
+            <Button size="medium" onClick={() => handleUpdateSort("desc")}>
+              <Update />
+              {updateSort === "desc" ? <GetApp /> : <GetAppOutlined />}
+            </Button>
+          </ButtonGroup>
+        </Grid>
+        <InfiniteScroll<IEventInfo>
+          ViewComponent={ListCard[viewGridType]}
+          callback={callback}
+          data={events}
+          gridSize={
+            ({
+              grid: {
+                xs: 12,
+                sm: 6,
+                md: 4,
+                lg: 3,
+              },
+              agenda: {
+                xs: 12,
+              },
+              comfy: {
+                xs: 12,
+              },
+            } as const)[viewGridType]
+          }
+        />
       </Container>
     </Fragment>
   );

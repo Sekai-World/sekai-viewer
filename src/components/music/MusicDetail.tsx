@@ -228,7 +228,7 @@ const MusicDetail: React.FC<{}> = () => {
         <Grid container spacing={1} alignItems="center">
           {musicVocal[index].characters.map((chara) =>
             chara.characterType === "game_character" ? (
-              <Grid item>
+              <Grid item key={`chara-${chara.characterId}`}>
                 <img
                   key={chara.characterId}
                   height="42"
@@ -237,7 +237,7 @@ const MusicDetail: React.FC<{}> = () => {
                 ></img>
               </Grid>
             ) : (
-              <Grid item>
+              <Grid item key={`outchara-${chara.characterId}`}>
                 <span>
                   {outCharas.length
                     ? outCharas.find((elem) => elem.id === chara.characterId)!
@@ -268,7 +268,7 @@ const MusicDetail: React.FC<{}> = () => {
     (characterId) => {
       if (!characterId) return <span></span>;
       return (
-        <Grid item>
+        <Grid item key={`chara-${characterId}`}>
           <img
             key={characterId}
             height="42"
@@ -724,7 +724,7 @@ const MusicDetail: React.FC<{}> = () => {
       <Container className={layoutClasses.content} maxWidth="sm">
         <Paper className={interactiveClasses.container}>
           <Grid container direction="column" spacing={1}>
-            <Grid item xs={12} alignItems="center" justify="space-between">
+            <Grid item xs={12}>
               <FormControl disabled={vocalDisabled}>
                 <RadioGroup
                   row
@@ -765,7 +765,7 @@ const MusicDetail: React.FC<{}> = () => {
               <Grid item>
                 <Grid container direction="column">
                   {musicVocal[selectedVocalType].characters.map((chara) => (
-                    <Grid item>
+                    <Grid item key={`chara-${chara.characterId}`}>
                       <Typography align="right">
                         {getCharaName(chara.characterId)}
                       </Typography>

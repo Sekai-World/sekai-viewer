@@ -6,7 +6,7 @@ import {
   Grid,
 } from "@material-ui/core";
 import { useLayoutStyles } from "../../styles/layout";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useCachedData, useRefState } from "../../utils";
 import InfiniteScroll from "../subs/InfiniteScroll";
 
@@ -38,7 +38,9 @@ const GachaList: React.FC<{}> = () => {
   const [limit, limitRef] = useRefState<number>(12);
   const [, lastQueryFinRef, setLastQueryFin] = useRefState<boolean>(true);
   const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
-  const [updateSort, setUpdateSort] = useState<"asc" | "desc">("desc");
+  const [updateSort, setUpdateSort] = useState<"asc" | "desc">(
+    (localStorage.getItem("gacha-list-update-sort") || "desc") as "desc"
+  );
   const [sortedCache, setSortedCache] = useState<IGachaInfo[]>([]);
 
   useEffect(() => {
@@ -51,7 +53,7 @@ const GachaList: React.FC<{}> = () => {
       ...getPaginatedGachas(sortedCache, page, limit),
     ]);
     setLastQueryFin(true);
-  }, [page, limit, setLastQueryFin, gachasCache, sortedCache]);
+  }, [page, limit, setLastQueryFin, sortedCache]);
 
   useEffect(() => {
     let sortedCache = [...gachasCache];
@@ -89,6 +91,11 @@ const GachaList: React.FC<{}> = () => {
     }
   };
 
+  const handleUpdateSort = useCallback((sort: "asc" | "desc") => {
+    setUpdateSort(sort);
+    localStorage.setItem("gacha-list-update-sort", sort);
+  }, []);
+
   return (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
@@ -97,11 +104,11 @@ const GachaList: React.FC<{}> = () => {
       <Container className={layoutClasses.content}>
         <Grid container justify="space-between">
           <ButtonGroup color="primary" style={{ marginBottom: "1%" }}>
-            <Button size="medium" onClick={() => setUpdateSort("asc")}>
+            <Button size="medium" onClick={() => handleUpdateSort("asc")}>
               <Update />
               {updateSort === "asc" ? <Publish /> : <PublishOutlined />}
             </Button>
-            <Button size="medium" onClick={() => setUpdateSort("desc")}>
+            <Button size="medium" onClick={() => handleUpdateSort("desc")}>
               <Update />
               {updateSort === "desc" ? <GetApp /> : <GetAppOutlined />}
             </Button>

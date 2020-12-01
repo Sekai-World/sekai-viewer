@@ -54,7 +54,9 @@ const StampList: React.FC<{}> = () => {
     IStampInfo[]
   >([]);
   const [filterOpened, setFilterOpened] = useState<boolean>(false);
-  const [updateSort, setUpdateSort] = useState<"asc" | "desc">("asc");
+  const [updateSort, setUpdateSort] = useState<"asc" | "desc">(
+    (localStorage.getItem("stamp-list-update-sort") || "desc") as "desc"
+  );
   const [characterSelected, dispatchCharacterSelected] = useReducer(
     characterSelectReducer,
     []
@@ -134,6 +136,11 @@ const StampList: React.FC<{}> = () => {
     setIsReady(Boolean(stampsCache.length));
   }, [setIsReady, stampsCache]);
 
+  const handleUpdateSort = useCallback((sort: "asc" | "desc") => {
+    setUpdateSort(sort);
+    localStorage.setItem("stamp-list-update-sort", sort);
+  }, []);
+
   return (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
@@ -142,11 +149,11 @@ const StampList: React.FC<{}> = () => {
       <Container className={layoutClasses.content}>
         <Grid container justify="space-between">
           <ButtonGroup color="primary" style={{ marginBottom: "1%" }}>
-            <Button size="medium" onClick={() => setUpdateSort("asc")}>
+            <Button size="medium" onClick={() => handleUpdateSort("asc")}>
               <Update />
               {updateSort === "asc" ? <Publish /> : <PublishOutlined />}
             </Button>
-            <Button size="medium" onClick={() => setUpdateSort("desc")}>
+            <Button size="medium" onClick={() => handleUpdateSort("desc")}>
               <Update />
               {updateSort === "desc" ? <GetApp /> : <GetAppOutlined />}
             </Button>
