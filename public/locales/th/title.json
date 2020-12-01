@@ -3,7 +3,7 @@
   "cardDetail": "{{- prefix}} | {{- character}} | การ์ด | Sekai Viewer",
   "cardList": "รายชื่อการ์ด | Sekai Viewer",
   "comicList": "รายชื่อคอมมิค | Sekai Viewer",
-  "eventDetail": "{{- name}} | อีเว้นต์ | Sekai Viewer",
+  "eventDetail": "{{- name}} | อีเวนต์ | Sekai Viewer",
   "eventList": "รายชื่ออีเว้นต์ | Sekai Viewer",
   "gachaDetail": "{{- name}} | กาชา | Sekai Viewer",
   "gachaList": "รายชื่อกาชา | Sekai Viewer",
