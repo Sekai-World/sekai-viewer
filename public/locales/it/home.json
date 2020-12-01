@@ -1,28 +1,31 @@
 {
-  "game-news": {
-    "action": "Action",
-    "show-from": "Show From",
-    "title-column": "Title",
-    "show-until": "Show Until",
-    "title": "Game News"
-  },
-  "alert0": "Sekai Viewer is now in Open Beta!",
   "alert_contributor": {
-    "title": "Thanks to our development contributors!"
+    "title": "Grazie al contributo dei nostri sviluppatori!"
   },
   "alert_translate": {
-    "title": "Thanks to the translators!"
+    "title": "Grazie ai traduttori!"
   },
-  "alert_settings": "Use <s /> on the right top corner to change language, switch brightness mode and more.",
+  "game-news": {
+    "action": "Visualizza",
+    "show-from": "Mostra da",
+    "title-column": "Titolo",
+    "show-until": "Mostra fino a",
+    "title": "News di gioco"
+  },
+  "alert0": "Sekai Viewer è ora in beta pubblica!",
+  "alert_settings": "Usa <s /> nell'angolo in altro a destra per cambiare la lingua cambiare modalità luminosa ed altro ancora.",
   "alert1": {
-    "title": "Help needed!",
-    "translation": "Translations",
-    "development": "Development",
-    "contact": "Contact Me",
-    "join-discord": "Join Discord Server"
+    "title": "Aiuto necessario!",
+    "translation": "Traduzioni",
+    "development": "Sviluppo",
+    "see_contrib_list": "Vedi la lista dei contributori",
+    "contact": "Contattami",
+    "join-discord": "Unisciti al server Discord"
   },
   "detect": {
-    "success": "Congratulations! Your browser seems modern, you are able to load images faster and save bandwidth."
+    "warning": "Sta girando in modalità compatibilità, potresti avere dei problemi di performance. Considera di aggiornare il tuo browser o la tua versione di iOS/macOS. <br> Maggiori informazioni: <l> Posso usare - Immagini in formato WebP </l>",
+    "failed": "Sfortunatamente non puoi caricare molte delle immagini. Aggiorna il tuo browser o la tua versione di iOS/macOS. Soluzioni di compatibilità arriveranno presto. <br> Maggiori informazioni: <l> Posso usare - Immagini in formato WebP </l>",
+    "success": "Congratulazioni! Il tuo browser sembra essere moderno,  seems modern, puoi caricare le immagini velocemente e salvando la banda internet."
   },
-  "update": "Related Links"
+  "update": "Link correlati"
 }
