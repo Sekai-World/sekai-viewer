@@ -8,6 +8,7 @@
   "stamp": "Sticker",
   "comic": "Comic",
   "character": "Character",
+  "storyReader": "Story Reader",
   "musicMeta": "Music Meta",
   "musicRecommend": "Song Recommender (Beta)",
   "support": "Support",
@@ -64,7 +65,6 @@
   "search": "Search",
   "copyToClipboard": "Copy to Clipboard",
   "load": "Load",
-  "storyReader": "",
   "scoreCalculator": "Score Calculator",
   "update": "Update",
   "member": "Character"
