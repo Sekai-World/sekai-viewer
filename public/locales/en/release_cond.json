@@ -41,7 +41,7 @@
   "unit_story_11": "Read chapter 4 of Virtual Singer's Stage Sekai main story.",
   "master_rank": "Obtain [{{cardPrefix}}] {{cardCharaName}}.",
   "master_rank_level": "Get [{{cardPrefix}}] {{cardCharaName}}'s master rank to {{level}}.",
-  "character_rank": "｢{{charaName}}｣のキャラクターランク{{num}}でユニット編成数UP",
+  "character_rank": "｢{{charaName}}'s character rank {{num}} increases number of units in formation",
   "inherit_complete": "Complete the transfer.",
   "event_point": "Obtain {{point}} event points.",
   "event_story_1000016": "Read the ending of Imprisoned Marionette.",
