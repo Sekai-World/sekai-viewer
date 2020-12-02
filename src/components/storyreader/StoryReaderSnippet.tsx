@@ -1,7 +1,10 @@
 import {
   Avatar,
+  Button,
   Card,
+  CardMedia,
   Chip,
+  CircularProgress,
   Grid,
   IconButton,
   makeStyles,
@@ -9,6 +12,7 @@ import {
 } from "@material-ui/core";
 import { PlayArrow, Stop } from "@material-ui/icons";
 import React, { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { BufferLoader } from "../../utils/bufferLoader";
 import { charaIcons } from "../../utils/resources";
 
@@ -31,12 +35,14 @@ export const Talk: React.FC<{
 
   const [isPlay, setIsPlay] = useState(false);
   const [audioSource, setAudioSource] = useState<AudioBufferSourceNode>();
+  const [isAudioLoading, setIsAudioLoading] = useState(false);
 
   const PlayAudio = useCallback(() => {
     if (!isPlay) {
       if (audioSource) {
         audioSource.stop();
       }
+      setIsAudioLoading(true);
       const buf = new BufferLoader(audioContext, [voiceUrl], () => {
         const source = audioContext.createBufferSource();
         source.buffer = buf.bufferList[0];
@@ -45,9 +51,6 @@ export const Talk: React.FC<{
         source.connect(gain);
         gain.connect(audioContext.destination);
         source.start(audioContext.currentTime);
-        // workaround??
-        // source.stop();
-        // source.start(audioContext.currentTime);
         setAudioSource(source);
 
         source.addEventListener("ended", () => {
@@ -55,6 +58,7 @@ export const Talk: React.FC<{
           setIsPlay(false);
         });
         setIsPlay(true);
+        setIsAudioLoading(false);
       });
       buf.load();
     } else {
@@ -76,7 +80,7 @@ export const Talk: React.FC<{
             />
           </Grid>
         </Grid>
-        <Grid item xs={8} md={9}>
+        <Grid item xs={7} md={9}>
           <Grid container spacing={1}>
             <Grid item xs={12}>
               <Chip label={characterName} />
@@ -90,6 +94,256 @@ export const Talk: React.FC<{
           <Grid item xs={1}>
             <IconButton onClick={PlayAudio}>
               {isPlay ? <Stop /> : <PlayArrow />}
+              {isAudioLoading ? (
+                <CircularProgress variant="indeterminate" size="1rem" />
+              ) : null}
+            </IconButton>
+          </Grid>
+        ) : null}
+      </Grid>
+    </Card>
+  );
+};
+
+export const SpecialEffect: React.FC<{
+  seType: string;
+  text: string;
+  resource: string;
+}> = ({ seType, text, resource }) => {
+  const classes = useStyle();
+  const { t } = useTranslation();
+
+  const [isPlay, setIsPlay] = useState(false);
+  const [audioSource, setAudioSource] = useState<AudioBufferSourceNode>();
+  const [isBGOpen, setIsBGOpen] = useState(false);
+  const [isMovieOpen, setIsMovieOpen] = useState(false);
+  const [isAudioLoading, setIsAudioLoading] = useState(false);
+
+  const PlayAudio = useCallback(() => {
+    if (!isPlay) {
+      if (audioSource) {
+        audioSource.stop();
+      }
+      setIsAudioLoading(true);
+      const buf = new BufferLoader(audioContext, [resource], () => {
+        const source = audioContext.createBufferSource();
+        source.buffer = buf.bufferList[0];
+        const gain = audioContext.createGain();
+        gain.gain.value = 0.5;
+        source.connect(gain);
+        gain.connect(audioContext.destination);
+        source.start(audioContext.currentTime);
+        setAudioSource(source);
+
+        source.addEventListener("ended", () => {
+          setAudioSource(undefined);
+          setIsPlay(false);
+        });
+        setIsPlay(true);
+        setIsAudioLoading(false);
+      });
+      buf.load();
+    } else {
+      if (audioSource) {
+        audioSource.stop();
+        setAudioSource(undefined);
+      }
+      setIsPlay(false);
+    }
+  }, [resource, audioSource, isPlay]);
+
+  switch (seType) {
+    case "FullScreenText":
+      return (
+        <Card className={classes.card}>
+          <Grid container alignItems="center">
+            <Grid item xs={3} md={2}></Grid>
+            <Grid item xs={7} md={9}>
+              <Grid container spacing={1}>
+                <Grid item xs={12}>
+                  <Chip label={t("story_reader:snippet.FullScreenText")} />
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography>{text.trimStart()}</Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+            {resource ? (
+              <Grid item xs={1}>
+                <IconButton onClick={PlayAudio}>
+                  {isPlay ? <Stop /> : <PlayArrow />}
+                  {isAudioLoading ? (
+                    <CircularProgress variant="indeterminate" size="1rem" />
+                  ) : null}
+                </IconButton>
+              </Grid>
+            ) : null}
+          </Grid>
+        </Card>
+      );
+    case "Telop":
+      return (
+        <Card className={classes.card}>
+          <Grid container alignItems="center">
+            <Grid item xs={3} md={2}></Grid>
+            <Grid item xs={8} md={9}>
+              <Grid container spacing={1}>
+                <Grid item xs={12}>
+                  <Chip label={t("story_reader:snippet.Telop")} />
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography>{text.trimStart()}</Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Card>
+      );
+    case "ChangeBackground":
+      return (
+        <Card className={classes.card}>
+          <Grid container alignItems="center">
+            <Grid item xs={3} md={2}></Grid>
+            <Grid item xs={8} md={9}>
+              <Grid container spacing={1}>
+                <Grid item xs={12}>
+                  <Chip label={t("story_reader:snippet.ChangeBackground")} />
+                </Grid>
+                {isBGOpen ? (
+                  <Grid item xs={12}>
+                    <CardMedia
+                      onClick={() => window.open(resource, "_blank")}
+                      image={resource}
+                      style={{ paddingTop: "56.25%", cursor: "pointer" }}
+                    />
+                  </Grid>
+                ) : (
+                  <Grid item xs={12}>
+                    <Button
+                      variant="contained"
+                      onClick={() => setIsBGOpen(true)}
+                    >
+                      {t("story_reader:snippet.ShowBackground")}
+                    </Button>
+                  </Grid>
+                )}
+              </Grid>
+            </Grid>
+          </Grid>
+        </Card>
+      );
+    case "Movie":
+      return (
+        <Card className={classes.card}>
+          <Grid container alignItems="center">
+            <Grid item xs={3} md={2}></Grid>
+            <Grid item xs={8} md={9}>
+              <Grid container spacing={1}>
+                <Grid item xs={12}>
+                  <Chip label={t("story_reader:snippet.Movie")} />
+                </Grid>
+                {isMovieOpen ? (
+                  <Grid item xs={12}>
+                    <video style={{ maxWidth: "100%" }} controls>
+                      <source src={resource}></source>
+                    </video>
+                  </Grid>
+                ) : (
+                  <Grid item xs={12}>
+                    <Button
+                      variant="contained"
+                      onClick={() => setIsMovieOpen(true)}
+                    >
+                      {t("story_reader:snippet.ShowMovie")}
+                    </Button>
+                  </Grid>
+                )}
+              </Grid>
+            </Grid>
+          </Grid>
+        </Card>
+      );
+    default:
+      return null;
+  }
+};
+
+export const Sound: React.FC<{
+  hasBgm: boolean;
+  hasSe: boolean;
+  voiceUrl: string;
+}> = ({ hasBgm, hasSe, voiceUrl }) => {
+  const classes = useStyle();
+  const { t } = useTranslation();
+
+  const [isPlay, setIsPlay] = useState(false);
+  const [audioSource, setAudioSource] = useState<AudioBufferSourceNode>();
+  const [isAudioLoading, setIsAudioLoading] = useState(false);
+
+  const PlayAudio = useCallback(() => {
+    if (!isPlay) {
+      if (audioSource) {
+        audioSource.stop();
+      }
+      setIsAudioLoading(true);
+      const buf = new BufferLoader(audioContext, [voiceUrl], () => {
+        const source = audioContext.createBufferSource();
+        source.buffer = buf.bufferList[0];
+        const gain = audioContext.createGain();
+        gain.gain.value = 0.5;
+        source.connect(gain);
+        gain.connect(audioContext.destination);
+        source.start(audioContext.currentTime);
+        setAudioSource(source);
+
+        source.addEventListener("ended", () => {
+          setAudioSource(undefined);
+          setIsPlay(false);
+        });
+        setIsPlay(true);
+        setIsAudioLoading(false);
+      });
+      buf.load();
+    } else {
+      if (audioSource) {
+        audioSource.stop();
+        setAudioSource(undefined);
+      }
+      setIsPlay(false);
+    }
+  }, [voiceUrl, audioSource, isPlay]);
+
+  return (
+    <Card className={classes.card}>
+      <Grid container alignItems="center">
+        <Grid item xs={3} md={2}></Grid>
+        <Grid item xs={7} md={9}>
+          <Grid container spacing={1}>
+            <Grid item xs={12}>
+              <Chip
+                label={
+                  hasBgm
+                    ? t("story_reader:snippet.BGM")
+                    : hasSe
+                    ? t("story_reader:snippet.SE")
+                    : "UNKNOWN"
+                }
+              />
+            </Grid>
+            {voiceUrl.endsWith("bgm00000.mp3") ? (
+              <Grid item xs={12}>
+                <Typography>{t("story_reader:snippet.NoSound")}</Typography>
+              </Grid>
+            ) : null}
+          </Grid>
+        </Grid>
+        {voiceUrl && !voiceUrl.endsWith("bgm00000.mp3") ? (
+          <Grid item xs={1}>
+            <IconButton onClick={PlayAudio}>
+              {isPlay ? <Stop /> : <PlayArrow />}
+              {isAudioLoading ? (
+                <CircularProgress variant="indeterminate" size="1rem" />
+              ) : null}
             </IconButton>
           </Grid>
         ) : null}

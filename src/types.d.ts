@@ -245,7 +245,9 @@ export interface IReleaseCondition {
   id: number;
   sentence: string;
   releaseConditionType: string;
-  releaseConditionTypeLevel: number;
+  releaseConditionTypeId?: number;
+  releaseConditionTypeLevel?: number;
+  releaseConditionTypeQuantity?: number;
 }
 
 export interface IMusicDanceMembers {
@@ -711,4 +713,26 @@ export interface IMobCharacter {
   seq: number;
   name: string;
   gender: string;
+}
+
+export interface EventStoryEpisodeReward {
+  resourceBoxId: number;
+}
+
+export interface EventStoryEpisode {
+  id: number;
+  eventStoryId: number;
+  episodeNo: number;
+  title: string;
+  assetbundleName: string;
+  scenarioId: string;
+  releaseConditionId: number;
+  episodeRewards: EventStoryEpisodeReward[];
+}
+
+export interface IEventStory {
+  id: number;
+  eventId: number;
+  assetbundleName: string;
+  eventStoryEpisodes: EventStoryEpisode[];
 }
