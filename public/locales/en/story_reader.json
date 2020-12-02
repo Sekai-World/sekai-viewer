@@ -1,11 +1,17 @@
 {
   "selectLabel": {
-    "storyType": ""
+    "storyType": "Story Type",
+    "unitName": "",
+    "unitStoryChapter": "",
+    "unitStoryEpisode": ""
   },
   "selectValue": {
-    "eventStory": "",
-    "unitStory": "",
-    "charaStory": "",
-    "cardStory": ""
+    "eventStory": "Event Stories",
+    "unitStory": "Unit Stories",
+    "charaStory": "Character Stories",
+    "cardStory": "Card Stories"
+  },
+  "buttonLabel": {
+    "showEpisode": "Show Story Episode"
   }
 }
