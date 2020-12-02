@@ -186,6 +186,18 @@ export const ReleaseCondTrans: React.FC<{
           level: releaseCond.releaseConditionTypeLevel,
         });
         break;
+      case "unit_rank":
+        i18nKey = `release_cond:unit_rank_${releaseCond.releaseConditionTypeId}`;
+        assetTOptions = Object.assign({}, assetTOptions, {
+          rank: releaseCond.releaseConditionTypeLevel,
+        });
+        break;
+      case "event_point":
+        i18nKey = `release_cond:event_point`;
+        assetTOptions = Object.assign({}, assetTOptions, {
+          point: releaseCond.releaseConditionTypeQuantity,
+        });
+        break;
       default:
         i18nKey = `release_cond:${releaseCond.releaseConditionType}`;
         break;
