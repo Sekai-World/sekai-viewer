@@ -47,6 +47,7 @@ import {
   ExpandLess,
   Info,
   MonetizationOn,
+  Textsms,
 } from "@material-ui/icons";
 import {
   AccountGroup,
@@ -258,6 +259,12 @@ function App() {
         text: t("common:musicRecommend"),
         icon: <Calculator />,
         to: "/music_recommend",
+        disabled: false,
+      },
+      {
+        text: t("common:storyReader"),
+        icon: <Textsms></Textsms>,
+        to: "/storyreader",
         disabled: false,
       },
     ],
@@ -528,7 +535,7 @@ function App() {
               <Route path="/music_recommend" exact>
                 <MusicRecommend />
               </Route>
-              <Route path="/storyreader" exact>
+              <Route path="/storyreader">
                 <StoryReader />
               </Route>
             </Suspense>
