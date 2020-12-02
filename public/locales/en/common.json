@@ -8,9 +8,9 @@
   "stamp": "Sticker",
   "comic": "Comic",
   "character": "Character",
-  "storyReader": "Story Reader",
   "musicMeta": "Music Meta",
   "musicRecommend": "Song Recommender (Beta)",
+  "storyReader": "Story Reader",
   "support": "Support",
   "toolbar": {
     "title": "Function List"

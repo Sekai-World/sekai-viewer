@@ -38,6 +38,7 @@ import {
   SpecialEffectType,
   SnippetProgressBehavior,
   SoundPlayMode,
+  IEventStory,
 } from "../types.d";
 import { useAssetI18n } from "./i18n";
 
@@ -84,6 +85,7 @@ export function useCachedData<
     | IUnitStory
     | IMobCharacter
     | ICharacter2D
+    | IEventStory
 >(name: string): [T[], React.MutableRefObject<T[]>] {
   const [cached, cachedRef, setCached] = useRefState<T[]>([]);
 
@@ -292,7 +294,7 @@ export function useProcessedScenarioData(
   const getCharaName = useCharaName(contentTransMode);
 
   return useCallback(
-    async (scenarioPath: string) => {
+    async (scenarioPath: string, isCardStory: boolean) => {
       const ret: {
         characters: { id: number; name: string }[];
         actions: { [key: string]: any }[];
@@ -317,8 +319,38 @@ export function useProcessedScenarioData(
         // LayoutData,
         SpecialEffectData,
         SoundData,
+        FirstBgm,
+        FirstBackground,
       } = data;
 
+      if (FirstBackground) {
+        ret.actions.push({
+          type: SnippetAction.SpecialEffect,
+          isWait: SnippetProgressBehavior.WaitUnitilFinished,
+          delay: 0,
+          seType: "ChangeBackground",
+          body: FirstBgm,
+          resource: await getRemoteAssetURL(
+            `scenario/background/${FirstBackground}_rip/${FirstBackground}.webp`
+          ),
+        });
+      }
+      if (FirstBgm) {
+        ret.actions.push({
+          type: SnippetAction.Sound,
+          isWait: SnippetProgressBehavior.WaitUnitilFinished,
+          delay: 0,
+          playMode: SoundPlayMode[0],
+          hasBgm: true,
+          hasSe: false,
+          bgm: await getRemoteAssetURL(
+            `sound/scenario/bgm/${FirstBgm}_rip/${FirstBgm}.mp3`
+          ),
+          se: "",
+        });
+      }
+
+      // eslint-disable-next-line array-callback-return
       ret.characters = AppearCharacters.map((ap) => {
         const chara2d = chara2Ds.find((ch) => ch.id === ap.Character2dId)!;
         switch (chara2d.characterType) {
@@ -337,78 +369,114 @@ export function useProcessedScenarioData(
         }
       });
 
-      ret.actions = Snippets.map((snippet) => {
+      for (let snippet of Snippets) {
+        let action: { [key: string]: any } = {};
         switch (snippet.Action) {
-          case SnippetAction.Talk: {
-            const talkData = TalkData[snippet.ReferenceIndex];
-            // try get character
-            let chara = { id: 0, name: "" };
-            if (talkData.TalkCharacters[0].Character2dId) {
-              const chara2d = chara2Ds.find(
-                (ch) => ch.id === talkData.TalkCharacters[0].Character2dId
-              )!;
-              chara.id = chara2d.characterId;
-            }
-            chara.name = talkData.WindowDisplayName;
+          case SnippetAction.Talk:
+            {
+              const talkData = TalkData[snippet.ReferenceIndex];
+              // try get character
+              let chara = { id: 0, name: "" };
+              if (talkData.TalkCharacters[0].Character2dId) {
+                const chara2d = chara2Ds.find(
+                  (ch) => ch.id === talkData.TalkCharacters[0].Character2dId
+                )!;
+                chara.id = chara2d.characterId;
+              }
+              chara.name = talkData.WindowDisplayName;
+              let voiceUrl = talkData.Voices.length
+                ? `sound/${
+                    isCardStory ? "card_" : ""
+                  }scenario/voice/${ScenarioId}_rip/${
+                    talkData.Voices[0].VoiceId
+                  }.mp3`
+                : "";
 
-            return {
-              type: snippet.Action,
-              isWait:
-                snippet.ProgressBehavior ===
-                SnippetProgressBehavior.WaitUnitilFinished,
-              delay: snippet.Delay,
-              chara,
-              body: talkData.Body,
-              voice: talkData.Voices.length
-                ? `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/sound/scenario/voice/${ScenarioId}_rip/${talkData.Voices[0].VoiceId}.mp3`
-                : "",
-            };
-          }
-          case SnippetAction.SpecialEffect: {
-            const specialEffect = SpecialEffectData[snippet.ReferenceIndex];
-            const specialEffectType =
-              SpecialEffectType[specialEffect.EffectType];
+              if (
+                talkData.Voices.length &&
+                talkData.Voices[0].VoiceId.startsWith("partvoice")
+              ) {
+                const chara2d = chara2Ds.find(
+                  (ch) => ch.id === talkData.TalkCharacters[0].Character2dId
+                )!;
+                voiceUrl = `sound/scenario/part_voice/${chara2d.assetName}_${chara2d.unit}_rip/${talkData.Voices[0].VoiceId}.mp3`;
+              }
 
-            return {
-              type: snippet.Action,
-              isWait:
-                snippet.ProgressBehavior ===
-                SnippetProgressBehavior.WaitUnitilFinished,
-              delay: snippet.Delay,
-              seType: specialEffectType,
-              body: specialEffect.StringVal,
-              resource:
-                snippet.Action === 24
-                  ? `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/sound/scenario/voice/${ScenarioId}_rip/${specialEffect.StringValSub}.mp3`
-                  : snippet.Action === 7
-                  ? `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/scenario/background/${specialEffect.StringValSub}_rip/${specialEffect.StringValSub}.webp`
-                  : snippet.Action === 19
-                  ? `${
-                      process.env.REACT_APP_ASSET_DOMAIN
-                    }/file/sekai-assets/scenario/movie/${
-                      specialEffect.StringVal
-                    }_rip/${specialEffect.StringVal.split("_")[0]}.mp4`
+              action = {
+                type: snippet.Action,
+                isWait:
+                  snippet.ProgressBehavior ===
+                  SnippetProgressBehavior.WaitUnitilFinished,
+                delay: snippet.Delay,
+                chara,
+                body: talkData.Body,
+                voice: talkData.Voices.length
+                  ? await getRemoteAssetURL(voiceUrl)
                   : "",
-            };
-          }
-          case SnippetAction.Sound: {
-            const soundData = SoundData[snippet.ReferenceIndex];
+              };
+            }
+            break;
+          case SnippetAction.SpecialEffect:
+            {
+              const specialEffect = SpecialEffectData[snippet.ReferenceIndex];
+              const specialEffectType =
+                SpecialEffectType[specialEffect.EffectType];
 
-            return {
-              type: snippet.Action,
-              isWait:
-                snippet.ProgressBehavior ===
-                SnippetProgressBehavior.WaitUnitilFinished,
-              delay: snippet.Delay,
-              playMode: SoundPlayMode[soundData.PlayMode],
-              hasBgm: !!soundData.Bgm,
-              hasSe: !!soundData.Se,
-              bgm: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/sound/scenario/bgm/${soundData.Bgm}_rip/${soundData.Bgm}.mp3`,
-              se: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/sound/scenario/se/se_pack00001_rip/${soundData.Se}.mp3`,
-            };
-          }
+              action = {
+                type: snippet.Action,
+                isWait:
+                  snippet.ProgressBehavior ===
+                  SnippetProgressBehavior.WaitUnitilFinished,
+                delay: snippet.Delay,
+                seType: specialEffectType,
+                body: specialEffect.StringVal,
+                resource:
+                  specialEffectType === "FullScreenText"
+                    ? await getRemoteAssetURL(
+                        `sound/scenario/voice/${ScenarioId}_rip/${specialEffect.StringValSub}.mp3`
+                      )
+                    : specialEffectType === "ChangeBackground"
+                    ? await getRemoteAssetURL(
+                        `scenario/background/${specialEffect.StringValSub}_rip/${specialEffect.StringValSub}.webp`
+                      )
+                    : specialEffectType === "Movie"
+                    ? await getRemoteAssetURL(
+                        `scenario/movie/${specialEffect.StringVal}_rip/${
+                          specialEffect.StringVal.split("_")[0]
+                        }.mp4`
+                      )
+                    : "",
+              };
+            }
+            break;
+          case SnippetAction.Sound:
+            {
+              const soundData = SoundData[snippet.ReferenceIndex];
+
+              action = {
+                type: snippet.Action,
+                isWait:
+                  snippet.ProgressBehavior ===
+                  SnippetProgressBehavior.WaitUnitilFinished,
+                delay: snippet.Delay,
+                playMode: SoundPlayMode[soundData.PlayMode],
+                hasBgm: !!soundData.Bgm,
+                hasSe: !!soundData.Se,
+                bgm: soundData.Bgm
+                  ? await getRemoteAssetURL(
+                      `sound/scenario/bgm/${soundData.Bgm}_rip/${soundData.Bgm}.mp3`
+                    )
+                  : "",
+                se: soundData.Se
+                  ? await getRemoteAssetURL(
+                      `sound/scenario/se/se_pack00001_rip/${soundData.Se}.mp3`
+                    )
+                  : "",
+              };
+            }
+            break;
           default: {
-            return {
+            action = {
               type: snippet.Action,
               isWait:
                 snippet.ProgressBehavior ===
@@ -417,7 +485,9 @@ export function useProcessedScenarioData(
             };
           }
         }
-      });
+
+        ret.actions.push(action);
+      }
 
       return ret;
     },
