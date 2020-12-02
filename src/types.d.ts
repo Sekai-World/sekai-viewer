@@ -513,7 +513,7 @@ export interface IMusicRecommendResult {
   link: string;
 }
 
-export interface Episode {
+export interface IUnitStoryEpisode {
   id: number;
   unit: string;
   chapterNo: number;
@@ -528,18 +528,187 @@ export interface Episode {
   andReleaseConditionId?: number;
 }
 
-export interface Chapter {
+export interface IUnitStoryChapter {
   id: number;
   unit: string;
   chapterNo: number;
   title: string;
   assetbundleName: string;
-  episodes: Episode[];
+  episodes: IUnitStoryEpisode[];
 }
 
 export interface IUnitStory {
   unit: string;
   seq: number;
   assetbundleName: string;
-  chapters: Chapter[];
+  chapters: IUnitStoryChapter[];
+}
+
+export interface AppearCharacter {
+  Character2dId: number;
+  CostumeType: string;
+}
+
+export enum SnippetAction {
+  None = 0,
+  Talk = 1,
+  CharacerLayout = 2,
+  InputName = 3,
+  CharacterMotion = 4,
+  Selectable = 5,
+  SpecialEffect = 6,
+  Sound = 7,
+}
+
+export enum SnippetProgressBehavior {
+  Now = 0,
+  WaitUnitilFinished = 1,
+}
+
+export interface Snippet {
+  Action: SnippetAction;
+  ProgressBehavior: SnippetProgressBehavior;
+  ReferenceIndex: number;
+  Delay: number;
+}
+
+export interface TalkCharacter {
+  Character2dId: number;
+}
+
+export interface Motion {
+  Character2dId: number;
+  MotionName: string;
+  FacialName: string;
+  TimingSyncValue: number;
+}
+
+export interface Voice {
+  Character2dId: number;
+  VoiceId: string;
+  Volume: number;
+}
+
+export interface TalkData {
+  TalkCharacters: TalkCharacter[];
+  WindowDisplayName: string;
+  Body: string;
+  TalkTention: number;
+  LipSync: number;
+  MotionChangeFrom: number;
+  Motions: Motion[];
+  Voices: Voice[];
+  Speed: number;
+  FontSize: number;
+  WhenFinishCloseWindow: number;
+  RequirePlayEffect: number;
+  EffectReferenceIdx: number;
+  RequirePlaySound: number;
+  SoundReferenceIdx: number;
+}
+
+export interface LayoutData {
+  Type: number;
+  SideFrom: number;
+  SideFromOffsetX: number;
+  SideTo: number;
+  SideToOffsetX: number;
+  DepthType: number;
+  Character2dId: number;
+  CostumeType: string;
+  MotionName: string;
+  FacialName: string;
+  MoveSpeedType: number;
+}
+
+export enum SpecialEffectType {
+  None = 0,
+  BlackIn = 1,
+  BlackOut = 2,
+  WhiteIn = 3,
+  WhiteOut = 4,
+  ShakeScreen = 5,
+  ShakeWindow = 6,
+  ChangeBackground = 7,
+  Telop = 8,
+  FlashbackIn = 9,
+  FlashbackOut = 10,
+  ChangeCardStill = 11,
+  AmbientColorNormal = 12,
+  AmbientColorEvening = 13,
+  AmbientColorNight = 14,
+  PlayScenarioEffect = 15,
+  StopScenarioEffect = 16,
+  ChangeBackgroundStill = 17,
+  PlaceInfo = 18,
+  Movie = 19,
+  SekaiIn = 20,
+  SekaiOut = 21,
+  AttachCharacterShader = 22,
+  SimpleSelectable = 23,
+  FullScreenText = 24,
+  StopShakeScreen = 25,
+  StopShakeWindow = 26,
+}
+
+export interface SpecialEffectData {
+  EffectType: SpecialEffectType;
+  StringVal: string;
+  StringValSub: string;
+  Duration: number;
+  IntVal: number;
+}
+
+export enum SoundPlayMode {
+  CrossFade = 0,
+  Stack = 1,
+  SpecialSePlay = 2,
+  Stop = 3,
+}
+
+export interface SoundData {
+  PlayMode: SoundPlayMode;
+  Bgm: string;
+  Se: string;
+  Volume: number;
+  SeBundleName: string;
+  Duration: number;
+}
+
+export interface IScenarioData {
+  ScenarioId: string;
+  AppearCharacters: AppearCharacter[];
+  FirstLayout: any[];
+  FirstBgm: string;
+  FirstBackground: string;
+  Snippets: Snippet[];
+  TalkData: TalkData[];
+  LayoutData: LayoutData[];
+  SpecialEffectData: SpecialEffectData[];
+  SoundData: SoundData[];
+  NeedBundleNames: string[];
+  IncludeSoundDataBundleNames: any[];
+}
+
+export interface IEpisodeCharacter {
+  id: number;
+  seq: number;
+  character2dId: number;
+  storyType: string;
+  episodeId: number;
+}
+
+export interface ICharacter2D {
+  id: number;
+  characterType: "game_character" | "mob";
+  characterId: number;
+  unit: string;
+  assetName: string;
+}
+
+export interface IMobCharacter {
+  id: number;
+  seq: number;
+  name: string;
+  gender: string;
 }

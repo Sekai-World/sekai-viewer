@@ -11,7 +11,7 @@ import {
 import { Alert } from "@material-ui/lab";
 import React, { Fragment, useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Route, Switch } from "react-router-dom";
+import { Link, Route, Switch, useRouteMatch } from "react-router-dom";
 import { SettingContext } from "../../context";
 import { useLayoutStyles } from "../../styles/layout";
 import { IUnitProfile, IUnitStory } from "../../types";
@@ -26,9 +26,10 @@ const StoryReader: React.FC<{}> = () => {
   // const classes = useStyle();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
-  const { getTranslated } = useAssetI18n();
+  const { path, url } = useRouteMatch();
+  // const { getTranslated } = useAssetI18n();
   const { contentTransMode } = useContext(SettingContext)!;
-  const getCharaName = useCharaName(contentTransMode);
+  // const getCharaName = useCharaName(contentTransMode);
 
   const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
   const [unitStories] = useCachedData<IUnitStory>("unitStories");
@@ -58,7 +59,7 @@ const StoryReader: React.FC<{}> = () => {
                 value={storyType}
                 onChange={(e) => setStoryType(e.target.value as storyType)}
               >
-                <MenuItem value="eventStory">
+                <MenuItem value="eventStory" disabled>
                   <Typography>
                     {t("story_reader:selectValue.eventStory")}
                   </Typography>
@@ -68,12 +69,12 @@ const StoryReader: React.FC<{}> = () => {
                     {t("story_reader:selectValue.unitStory")}
                   </Typography>
                 </MenuItem>
-                <MenuItem value="charaStory">
+                <MenuItem value="charaStory" disabled>
                   <Typography>
                     {t("story_reader:selectValue.charaStory")}
                   </Typography>
                 </MenuItem>
-                <MenuItem value="cardStory">
+                <MenuItem value="cardStory" disabled>
                   <Typography>
                     {t("story_reader:selectValue.cardStory")}
                   </Typography>
@@ -91,10 +92,19 @@ const StoryReader: React.FC<{}> = () => {
                   <Select
                     labelId="select-unit-name"
                     value={unitId}
-                    onChange={(e) => setUnitId(e.target.value as string)}
+                    onChange={(e) => {
+                      setUnitId(e.target.value as string);
+                      setUnitStoryChapterId(1);
+                      setUnitStoryEpisodeId(
+                        unitStories
+                          .find((us) => us.unit === e.target.value)!
+                          .chapters.find((chapter) => chapter.chapterNo === 1)!
+                          .episodes[0].id
+                      );
+                    }}
                   >
                     {unitProfiles.map((unit) => (
-                      <MenuItem value={unit.unit}>
+                      <MenuItem value={unit.unit} key={unit.unit}>
                         <ContentTrans
                           mode={contentTransMode}
                           contentKey={`unit_profile:${unit.unit}.name`}
@@ -120,7 +130,10 @@ const StoryReader: React.FC<{}> = () => {
                     {unitStories
                       .find((us) => us.unit === unitId)!
                       .chapters.map((chapter) => (
-                        <MenuItem value={chapter.chapterNo}>
+                        <MenuItem
+                          value={chapter.chapterNo}
+                          key={chapter.chapterNo}
+                        >
                           <ContentTrans
                             mode={contentTransMode}
                             contentKey={`unit_story_chapter_title:${chapter.unit}-${chapter.chapterNo}`}
@@ -149,7 +162,7 @@ const StoryReader: React.FC<{}> = () => {
                         (chapter) => chapter.chapterNo === unitStoryChapterId
                       )!
                       .episodes.map((episode) => (
-                        <MenuItem value={episode.id}>
+                        <MenuItem value={episode.id} key={episode.id}>
                           <ContentTrans
                             mode={contentTransMode}
                             contentKey={`unit_story_episode_title:${episode.id}`}
@@ -165,17 +178,26 @@ const StoryReader: React.FC<{}> = () => {
         </Grid>
         <Grid container spacing={1}>
           <Grid item>
-            <Button variant="contained" color="primary">
+            <Button
+              variant="contained"
+              color="primary"
+              component={Link}
+              to={`${url}/${storyType}/${
+                storyType === "unitStory"
+                  ? `${unitId}-${unitStoryChapterId}-${unitStoryEpisodeId}`
+                  : 0
+              }`}
+            >
               {t("story_reader:buttonLabel.showEpisode")}
             </Button>
           </Grid>
         </Grid>
-        <Switch>
-          <Route path="/:storyType/:storyId">
-            <StoryReaderContent />
-          </Route>
-        </Switch>
       </Container>
+      <Switch>
+        <Route path={`${path}/:storyType/:storyId`}>
+          <StoryReaderContent />
+        </Route>
+      </Switch>
     </Fragment>
   ) : (
     <Fragment>
