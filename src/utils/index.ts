@@ -1,4 +1,3 @@
-import { IMusicMeta, IUnitProfile, IUnitStory } from "./../types.d";
 import Axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { WebpMachine } from "webp-hero";
@@ -29,7 +28,17 @@ import {
   ContentTransModeType,
   ITipInfo,
   ICharaProfile,
-} from "../types";
+  ICharacter2D,
+  IMobCharacter,
+  IMusicMeta,
+  IScenarioData,
+  IUnitProfile,
+  IUnitStory,
+  SnippetAction,
+  SpecialEffectType,
+  SnippetProgressBehavior,
+  SoundPlayMode,
+} from "../types.d";
 import { useAssetI18n } from "./i18n";
 
 const webpMachine = new WebpMachine();
@@ -73,6 +82,8 @@ export function useCachedData<
     | ICharaProfile
     | IUnitProfile
     | IUnitStory
+    | IMobCharacter
+    | ICharacter2D
 >(name: string): [T[], React.MutableRefObject<T[]>] {
   const [cached, cachedRef, setCached] = useRefState<T[]>([]);
 
@@ -270,4 +281,146 @@ export async function getRemoteAssetURL(
     if (setFunc) setFunc(url);
     return url;
   }
+}
+
+export function useProcessedScenarioData(
+  contentTransMode: ContentTransModeType
+) {
+  const [mobCharas] = useCachedData<IMobCharacter>("mobCharacters");
+  const [chara2Ds] = useCachedData<ICharacter2D>("character2ds");
+
+  const getCharaName = useCharaName(contentTransMode);
+
+  return useCallback(
+    async (scenarioPath: string) => {
+      const ret: {
+        characters: { id: number; name: string }[];
+        actions: { [key: string]: any }[];
+      } = {
+        characters: [],
+        actions: [],
+      };
+
+      if (!chara2Ds.length || !mobCharas.length || !scenarioPath) return ret;
+
+      const { data }: { data: IScenarioData } = await Axios.get(
+        await getRemoteAssetURL(scenarioPath),
+        {
+          responseType: "json",
+        }
+      );
+      const {
+        ScenarioId,
+        AppearCharacters,
+        Snippets,
+        TalkData,
+        // LayoutData,
+        SpecialEffectData,
+        SoundData,
+      } = data;
+
+      ret.characters = AppearCharacters.map((ap) => {
+        const chara2d = chara2Ds.find((ch) => ch.id === ap.Character2dId)!;
+        switch (chara2d.characterType) {
+          case "game_character": {
+            return {
+              id: chara2d.characterId,
+              name: getCharaName(chara2d.characterId)!,
+            };
+          }
+          case "mob": {
+            return {
+              id: chara2d.characterId,
+              name: mobCharas.find((mc) => mc.id === chara2d.characterId)!.name,
+            };
+          }
+        }
+      });
+
+      ret.actions = Snippets.map((snippet) => {
+        switch (snippet.Action) {
+          case SnippetAction.Talk: {
+            const talkData = TalkData[snippet.ReferenceIndex];
+            // try get character
+            let chara = { id: 0, name: "" };
+            if (talkData.TalkCharacters[0].Character2dId) {
+              const chara2d = chara2Ds.find(
+                (ch) => ch.id === talkData.TalkCharacters[0].Character2dId
+              )!;
+              chara.id = chara2d.characterId;
+            }
+            chara.name = talkData.WindowDisplayName;
+
+            return {
+              type: snippet.Action,
+              isWait:
+                snippet.ProgressBehavior ===
+                SnippetProgressBehavior.WaitUnitilFinished,
+              delay: snippet.Delay,
+              chara,
+              body: talkData.Body,
+              voice: talkData.Voices.length
+                ? `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/sound/scenario/voice/${ScenarioId}_rip/${talkData.Voices[0].VoiceId}.mp3`
+                : "",
+            };
+          }
+          case SnippetAction.SpecialEffect: {
+            const specialEffect = SpecialEffectData[snippet.ReferenceIndex];
+            const specialEffectType =
+              SpecialEffectType[specialEffect.EffectType];
+
+            return {
+              type: snippet.Action,
+              isWait:
+                snippet.ProgressBehavior ===
+                SnippetProgressBehavior.WaitUnitilFinished,
+              delay: snippet.Delay,
+              seType: specialEffectType,
+              body: specialEffect.StringVal,
+              resource:
+                snippet.Action === 24
+                  ? `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/sound/scenario/voice/${ScenarioId}_rip/${specialEffect.StringValSub}.mp3`
+                  : snippet.Action === 7
+                  ? `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/scenario/background/${specialEffect.StringValSub}_rip/${specialEffect.StringValSub}.webp`
+                  : snippet.Action === 19
+                  ? `${
+                      process.env.REACT_APP_ASSET_DOMAIN
+                    }/file/sekai-assets/scenario/movie/${
+                      specialEffect.StringVal
+                    }_rip/${specialEffect.StringVal.split("_")[0]}.mp4`
+                  : "",
+            };
+          }
+          case SnippetAction.Sound: {
+            const soundData = SoundData[snippet.ReferenceIndex];
+
+            return {
+              type: snippet.Action,
+              isWait:
+                snippet.ProgressBehavior ===
+                SnippetProgressBehavior.WaitUnitilFinished,
+              delay: snippet.Delay,
+              playMode: SoundPlayMode[soundData.PlayMode],
+              hasBgm: !!soundData.Bgm,
+              hasSe: !!soundData.Se,
+              bgm: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/sound/scenario/bgm/${soundData.Bgm}_rip/${soundData.Bgm}.mp3`,
+              se: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/sound/scenario/se/se_pack00001_rip/${soundData.Se}.mp3`,
+            };
+          }
+          default: {
+            return {
+              type: snippet.Action,
+              isWait:
+                snippet.ProgressBehavior ===
+                SnippetProgressBehavior.WaitUnitilFinished,
+              delay: snippet.Delay,
+            };
+          }
+        }
+      });
+
+      return ret;
+    },
+    [chara2Ds, getCharaName, mobCharas]
+  );
 }
