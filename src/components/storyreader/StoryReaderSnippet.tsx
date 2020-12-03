@@ -5,6 +5,7 @@ import {
   CardMedia,
   Chip,
   CircularProgress,
+  Fab,
   Grid,
   IconButton,
   makeStyles,
@@ -23,14 +24,7 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-export const Talk: React.FC<{
-  characterId: number;
-  characterName: string;
-  text: string;
-  voiceUrl: string;
-}> = ({ characterId, characterName, text, voiceUrl }) => {
-  const classes = useStyle();
-
+const AudioPlayButton: React.FC<{ url: string }> = ({ url }) => {
   const [isPlay, setIsPlay] = useState(false);
   const [audioSource, setAudioSource] = useState<Howl>();
   const [isAudioLoading, setIsAudioLoading] = useState(false);
@@ -38,28 +32,52 @@ export const Talk: React.FC<{
   const PlayAudio = useCallback(() => {
     if (!isPlay) {
       if (audioSource) {
-        audioSource.stop();
+        audioSource.play();
+        return;
       }
       setIsAudioLoading(true);
       const audio = new Howl({
-        src: [voiceUrl],
+        src: [url],
       });
-      audio.once("load", () => {
+      audio.on("load", () => {
         setIsAudioLoading(false);
         audio.play();
       });
-      audio.once("play", () => {
+      audio.on("play", () => {
         setIsPlay(true);
+      });
+      audio.on("end", () => {
+        setIsPlay(false);
       });
       setAudioSource(audio);
     } else {
       if (audioSource) {
         audioSource.stop();
-        setAudioSource(undefined);
       }
       setIsPlay(false);
     }
-  }, [voiceUrl, audioSource, isPlay]);
+  }, [url, audioSource, isPlay]);
+
+  return (
+    <Fab onClick={PlayAudio} size="small">
+      {isPlay ? (
+        <Stop />
+      ) : isAudioLoading ? (
+        <CircularProgress variant="indeterminate" size="1rem" color="inherit" />
+      ) : (
+        <PlayArrow />
+      )}
+    </Fab>
+  );
+};
+
+export const Talk: React.FC<{
+  characterId: number;
+  characterName: string;
+  text: string;
+  voiceUrl: string;
+}> = ({ characterId, characterName, text, voiceUrl }) => {
+  const classes = useStyle();
 
   return (
     <Card className={classes.card}>
@@ -83,12 +101,7 @@ export const Talk: React.FC<{
         </Grid>
         {voiceUrl ? (
           <Grid item xs={1}>
-            <IconButton onClick={PlayAudio}>
-              {isPlay ? <Stop /> : <PlayArrow />}
-              {isAudioLoading ? (
-                <CircularProgress variant="indeterminate" size="1rem" />
-              ) : null}
-            </IconButton>
+            <AudioPlayButton url={voiceUrl} />
           </Grid>
         ) : null}
       </Grid>
@@ -104,37 +117,8 @@ export const SpecialEffect: React.FC<{
   const classes = useStyle();
   const { t } = useTranslation();
 
-  const [isPlay, setIsPlay] = useState(false);
-  const [audioSource, setAudioSource] = useState<Howl>();
   const [isBGOpen, setIsBGOpen] = useState(false);
   const [isMovieOpen, setIsMovieOpen] = useState(false);
-  const [isAudioLoading, setIsAudioLoading] = useState(false);
-
-  const PlayAudio = useCallback(() => {
-    if (!isPlay) {
-      if (audioSource) {
-        audioSource.stop();
-      }
-      setIsAudioLoading(true);
-      const audio = new Howl({
-        src: [resource],
-      });
-      audio.once("load", () => {
-        setIsAudioLoading(false);
-        audio.play();
-      });
-      audio.once("play", () => {
-        setIsPlay(true);
-      });
-      setAudioSource(audio);
-    } else {
-      if (audioSource) {
-        audioSource.stop();
-        setAudioSource(undefined);
-      }
-      setIsPlay(false);
-    }
-  }, [resource, audioSource, isPlay]);
 
   switch (seType) {
     case "FullScreenText":
@@ -154,12 +138,7 @@ export const SpecialEffect: React.FC<{
             </Grid>
             {resource ? (
               <Grid item xs={1}>
-                <IconButton onClick={PlayAudio}>
-                  {isPlay ? <Stop /> : <PlayArrow />}
-                  {isAudioLoading ? (
-                    <CircularProgress variant="indeterminate" size="1rem" />
-                  ) : null}
-                </IconButton>
+                <AudioPlayButton url={resource} />
               </Grid>
             ) : null}
           </Grid>
@@ -316,12 +295,7 @@ export const Sound: React.FC<{
         </Grid>
         {voiceUrl && !voiceUrl.endsWith("bgm00000.mp3") ? (
           <Grid item xs={1}>
-            <IconButton onClick={PlayAudio}>
-              {isPlay ? <Stop /> : <PlayArrow />}
-              {isAudioLoading ? (
-                <CircularProgress variant="indeterminate" size="1rem" />
-              ) : null}
-            </IconButton>
+            <AudioPlayButton url={voiceUrl} />
           </Grid>
         ) : null}
       </Grid>
