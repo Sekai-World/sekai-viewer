@@ -13,7 +13,7 @@ import {
 import { PlayArrow, Stop } from "@material-ui/icons";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { BufferLoader } from "../../utils/bufferLoader";
+import { Howl } from "howler";
 import { charaIcons } from "../../utils/resources";
 
 const useStyle = makeStyles((theme) => ({
@@ -22,8 +22,6 @@ const useStyle = makeStyles((theme) => ({
     padding: theme.spacing(1.5, 0),
   },
 }));
-
-const audioContext = new AudioContext();
 
 export const Talk: React.FC<{
   characterId: number;
@@ -34,7 +32,7 @@ export const Talk: React.FC<{
   const classes = useStyle();
 
   const [isPlay, setIsPlay] = useState(false);
-  const [audioSource, setAudioSource] = useState<AudioBufferSourceNode>();
+  const [audioSource, setAudioSource] = useState<Howl>();
   const [isAudioLoading, setIsAudioLoading] = useState(false);
 
   const PlayAudio = useCallback(() => {
@@ -43,24 +41,17 @@ export const Talk: React.FC<{
         audioSource.stop();
       }
       setIsAudioLoading(true);
-      const buf = new BufferLoader(audioContext, [voiceUrl], () => {
-        const source = audioContext.createBufferSource();
-        source.buffer = buf.bufferList[0];
-        const gain = audioContext.createGain();
-        gain.gain.value = 0.5;
-        source.connect(gain);
-        gain.connect(audioContext.destination);
-        source.start(audioContext.currentTime);
-        setAudioSource(source);
-
-        source.addEventListener("ended", () => {
-          setAudioSource(undefined);
-          setIsPlay(false);
-        });
-        setIsPlay(true);
-        setIsAudioLoading(false);
+      const audio = new Howl({
+        src: [voiceUrl],
       });
-      buf.load();
+      audio.once("load", () => {
+        setIsAudioLoading(false);
+        audio.play();
+      });
+      audio.once("play", () => {
+        setIsPlay(true);
+      });
+      setAudioSource(audio);
     } else {
       if (audioSource) {
         audioSource.stop();
@@ -114,7 +105,7 @@ export const SpecialEffect: React.FC<{
   const { t } = useTranslation();
 
   const [isPlay, setIsPlay] = useState(false);
-  const [audioSource, setAudioSource] = useState<AudioBufferSourceNode>();
+  const [audioSource, setAudioSource] = useState<Howl>();
   const [isBGOpen, setIsBGOpen] = useState(false);
   const [isMovieOpen, setIsMovieOpen] = useState(false);
   const [isAudioLoading, setIsAudioLoading] = useState(false);
@@ -125,24 +116,17 @@ export const SpecialEffect: React.FC<{
         audioSource.stop();
       }
       setIsAudioLoading(true);
-      const buf = new BufferLoader(audioContext, [resource], () => {
-        const source = audioContext.createBufferSource();
-        source.buffer = buf.bufferList[0];
-        const gain = audioContext.createGain();
-        gain.gain.value = 0.5;
-        source.connect(gain);
-        gain.connect(audioContext.destination);
-        source.start(audioContext.currentTime);
-        setAudioSource(source);
-
-        source.addEventListener("ended", () => {
-          setAudioSource(undefined);
-          setIsPlay(false);
-        });
-        setIsPlay(true);
-        setIsAudioLoading(false);
+      const audio = new Howl({
+        src: [resource],
       });
-      buf.load();
+      audio.once("load", () => {
+        setIsAudioLoading(false);
+        audio.play();
+      });
+      audio.once("play", () => {
+        setIsPlay(true);
+      });
+      setAudioSource(audio);
     } else {
       if (audioSource) {
         audioSource.stop();
@@ -277,7 +261,7 @@ export const Sound: React.FC<{
   const { t } = useTranslation();
 
   const [isPlay, setIsPlay] = useState(false);
-  const [audioSource, setAudioSource] = useState<AudioBufferSourceNode>();
+  const [audioSource, setAudioSource] = useState<Howl>();
   const [isAudioLoading, setIsAudioLoading] = useState(false);
 
   const PlayAudio = useCallback(() => {
@@ -286,24 +270,17 @@ export const Sound: React.FC<{
         audioSource.stop();
       }
       setIsAudioLoading(true);
-      const buf = new BufferLoader(audioContext, [voiceUrl], () => {
-        const source = audioContext.createBufferSource();
-        source.buffer = buf.bufferList[0];
-        const gain = audioContext.createGain();
-        gain.gain.value = 0.5;
-        source.connect(gain);
-        gain.connect(audioContext.destination);
-        source.start(audioContext.currentTime);
-        setAudioSource(source);
-
-        source.addEventListener("ended", () => {
-          setAudioSource(undefined);
-          setIsPlay(false);
-        });
-        setIsPlay(true);
-        setIsAudioLoading(false);
+      const audio = new Howl({
+        src: [voiceUrl],
       });
-      buf.load();
+      audio.once("load", () => {
+        setIsAudioLoading(false);
+        audio.play();
+      });
+      audio.once("play", () => {
+        setIsPlay(true);
+      });
+      setAudioSource(audio);
     } else {
       if (audioSource) {
         audioSource.stop();
