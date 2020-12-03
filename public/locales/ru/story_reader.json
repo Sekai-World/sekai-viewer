@@ -1,0 +1,33 @@
+{
+  "selectLabel": {
+    "storyType": "Тип истории",
+    "unitName": "Название юнита",
+    "unitStoryChapter": "Глава",
+    "unitStoryEpisode": "Эпизод",
+    "eventName": "Название ивента",
+    "eventStoryEpisode": "Эпизод",
+    "charaName": "Имя персонажа",
+    "cardName": "Название карты",
+    "cardStoryEpisode": "Эпизод"
+  },
+  "selectValue": {
+    "eventStory": "Истории ивентов",
+    "unitStory": "Истории юнитов",
+    "charaStory": "Истории персонажей",
+    "cardStory": "Истории кард"
+  },
+  "buttonLabel": {
+    "showEpisode": "Загрузить эпизод истории"
+  },
+  "snippet": {
+    "FullScreenText": "Полноэкранный текст",
+    "Telop": "Заголовок",
+    "ChangeBackground": "Сменить фон",
+    "ShowBackground": "Показать фон",
+    "Movie": "Кино",
+    "ShowMovie": "Воспроизвести фильм",
+    "BGM": "Фоновая музыка",
+    "SE": "Звуковой эффект",
+    "NoSound": "Без звука"
+  }
+}
