@@ -1,0 +1,33 @@
+{
+  "selectLabel": {
+    "storyType": "Tipo storia",
+    "unitName": "Nome unità",
+    "unitStoryChapter": "Capitolo",
+    "unitStoryEpisode": "Episodio",
+    "eventName": "Nome evento",
+    "eventStoryEpisode": "Episodio",
+    "charaName": "Nome personaggio",
+    "cardName": "Nome carta",
+    "cardStoryEpisode": "Episodio"
+  },
+  "selectValue": {
+    "eventStory": "Storie eventi",
+    "unitStory": "Storie unità",
+    "charaStory": "Storie personaggio",
+    "cardStory": "Episodio carta"
+  },
+  "buttonLabel": {
+    "showEpisode": "Carica storia episodio"
+  },
+  "snippet": {
+    "FullScreenText": "Testo schermo intero",
+    "Telop": "Didascalia",
+    "ChangeBackground": "Cambia sfondo",
+    "ShowBackground": "Visualizza immagine di sfondo",
+    "Movie": "Video",
+    "ShowMovie": "Riproduci video",
+    "BGM": "Musica di sottofondo",
+    "SE": "Effetti sonori",
+    "NoSound": "Nessun suono"
+  }
+}
