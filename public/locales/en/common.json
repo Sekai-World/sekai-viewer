@@ -45,8 +45,8 @@
   "releaseCosts": "Release Costs",
   "rewards": "Rewards",
   "type": "Type",
-  "endAt": "Available Until",
   "icon": "Icon",
+  "endAt": "Available Until",
   "detect": {
     "checking": "Checking...",
     "unsupported": "Unsupported",

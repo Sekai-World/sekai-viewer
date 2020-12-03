@@ -492,7 +492,7 @@ const EventDetail: React.FC<{}> = () => {
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t("common:startAt")}
+              {t("event:startAt")}
             </Typography>
             <Typography align="right">
               {new Date(event.startAt).toLocaleString()}
@@ -508,10 +508,10 @@ const EventDetail: React.FC<{}> = () => {
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t("common:endAt")}
+              {t("event:closeAt")}
             </Typography>
             <Typography align="right">
-              {new Date(event.closedAt).toLocaleString()}
+              {new Date(event.aggregateAt).toLocaleString()}
             </Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
@@ -524,10 +524,10 @@ const EventDetail: React.FC<{}> = () => {
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t("event:aggregateAt")}
+              {t("event:endAt")}
             </Typography>
             <Typography align="right">
-              {new Date(event.aggregateAt).toLocaleString()}
+              {new Date(event.closedAt).toLocaleString()}
             </Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
