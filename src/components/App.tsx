@@ -11,6 +11,7 @@ import {
   DialogTitle,
   Divider,
   Drawer,
+  Fab,
   FormControl,
   FormControlLabel,
   FormLabel,
@@ -48,6 +49,7 @@ import {
   Info,
   MonetizationOn,
   Textsms,
+  KeyboardArrowUp,
 } from "@material-ui/icons";
 import {
   AccountGroup,
@@ -67,6 +69,7 @@ import {
 } from "react-router-dom";
 import { SettingContext } from "../context";
 import { ContentTransModeType, DisplayModeType } from "../types";
+import ScrollTop from "./subs/ScrollTop";
 
 const drawerWidth = 240;
 const CardList = lazy(() => import("./card/CardList"));
@@ -481,7 +484,7 @@ function App() {
           </Hidden>
         </nav>
         <Container className={classes.content}>
-          <div className={classes.toolbar}></div>
+          <div className={classes.toolbar} id="back-to-top-anchor"></div>
           <Switch>
             <Suspense fallback={<div>Loading...</div>}>
               <Route path="/" exact>
@@ -541,6 +544,11 @@ function App() {
             </Suspense>
           </Switch>
         </Container>
+        <ScrollTop>
+          <Fab color="secondary" size="small" aria-label="scroll back to top">
+            <KeyboardArrowUp />
+          </Fab>
+        </ScrollTop>
         <Dialog open={isSettingsOpen} onClose={() => setIsSettingsOpen(false)}>
           <DialogTitle>{t("common:settings.title")}</DialogTitle>
           <DialogContent>
