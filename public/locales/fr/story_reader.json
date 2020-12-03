@@ -1,0 +1,33 @@
+{
+  "selectLabel": {
+    "storyType": "Type d'histoire",
+    "unitName": "Nom du groupe",
+    "unitStoryChapter": "Chapitre",
+    "unitStoryEpisode": "Épisode",
+    "eventName": "Nom de l'événement",
+    "eventStoryEpisode": "Épisode",
+    "charaName": "Nom du personnage",
+    "cardName": "Nom de la carte",
+    "cardStoryEpisode": "Épisode"
+  },
+  "selectValue": {
+    "eventStory": "Histoires d'événements",
+    "unitStory": "Histoires des groupes",
+    "charaStory": "Histoires des personnages",
+    "cardStory": "Histoires des cartes"
+  },
+  "buttonLabel": {
+    "showEpisode": "Charger l'histoire"
+  },
+  "snippet": {
+    "FullScreenText": "Texte en plein écran",
+    "Telop": "Sous-titre",
+    "ChangeBackground": "Changement de fond",
+    "ShowBackground": "Afficher l'image de fond",
+    "Movie": "Vidéo",
+    "ShowMovie": "Jouer la vidéo",
+    "BGM": "Musique de fond",
+    "SE": "Effet sonore",
+    "NoSound": "Pas de son"
+  }
+}
