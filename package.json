@@ -22,6 +22,7 @@
     "@types/react-dom": "^16.9.8",
     "@types/react-gtm-module": "^2.0.0",
     "@types/react-router-dom": "^5.1.6",
+    "@types/wicg-mediasession": "^1.1.0",
     "axios": "^0.20.0",
     "cron": "^1.8.2",
     "howler": "^2.2.1",

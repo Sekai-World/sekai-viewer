@@ -281,6 +281,23 @@ const MusicDetail: React.FC<{}> = () => {
     []
   );
 
+  const onPlay = useCallback(() => {
+    if ("mediaSession" in window.navigator) {
+      window.navigator.mediaSession!.metadata = new MediaMetadata({
+        title: music?.title,
+        artist: music?.composer,
+        album: musicVocal[selectedVocalType].caption,
+        artwork: [
+          {
+            src: musicJacket,
+            sizes: "740x740",
+            type: "image/webp",
+          },
+        ],
+      });
+    }
+  }, [music, musicVocal, musicJacket, selectedVocalType]);
+
   useEffect(() => {
     if (musicVocal && musicVocal[selectedVocalType] && music) {
       let audio: HTMLAudioElement | undefined = new Audio();
@@ -308,12 +325,13 @@ const MusicDetail: React.FC<{}> = () => {
       };
       audio.preload = "metadata";
       audio.src = `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`;
+      audio.onplay = onPlay;
 
       return () => {
         audio = undefined;
       };
     }
-  }, [musicVocal, selectedVocalType, music, humanizeDurationShort]);
+  }, [musicVocal, selectedVocalType, music, humanizeDurationShort, onPlay]);
 
   const VocalTypeSelector: React.FC<{}> = useCallback(() => {
     return (
@@ -450,6 +468,7 @@ const MusicDetail: React.FC<{}> = () => {
                       <Switch
                         checked={trimSilence}
                         onChange={() => setTrimSilence((v) => !v)}
+                        disabled={!trimmedMP3URL || trimFailed}
                       />
                     }
                     label={
@@ -480,6 +499,7 @@ const MusicDetail: React.FC<{}> = () => {
             controls
             style={{ width: "100%" }}
             src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/short/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}_short.mp3`}
+            onPlay={onPlay}
           />
         ) : null}
         {vocalPreviewVal === "1" &&
@@ -498,6 +518,7 @@ const MusicDetail: React.FC<{}> = () => {
                 opacity: longMusicPlaybackURL ? undefined : "0.8",
               }}
               src={longMusicPlaybackURL}
+              onPlay={onPlay}
             />
             {longMusicPlaybackURL ? null : (
               <Box
