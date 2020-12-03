@@ -40,7 +40,7 @@ import {
   SoundPlayMode,
   IEventStory,
 } from "../types.d";
-import { useAssetI18n } from "./i18n";
+import { assetI18n, useAssetI18n } from "./i18n";
 
 const webpMachine = new WebpMachine();
 
@@ -167,12 +167,13 @@ export const musicCategoryToName: { [key: string]: string } = {
 
 export const musicTagToName: { [key: string]: string } = {
   all: "All",
-  vocaloid: "Vocaloid",
-  light_music_club: "Light Music Club",
-  idol: "Idol",
-  school_refusal: "School Refusal",
-  theme_park: "Theme Park",
-  street: "Street",
+  vocaloid: assetI18n.t(`unit_profile:piapro.name`),
+  light_music_club: assetI18n.t(`unit_profile:light_sound.name`),
+  idol: assetI18n.t(`unit_profile:idol.name`),
+  school_refusal: assetI18n.t(`unit_profile:school_refusal.name`),
+  theme_park: assetI18n.t(`unit_profile:theme_park.name`),
+  street: assetI18n.t(`unit_profile:street.name`),
+  other: "Other",
 };
 
 export function useCharaName(contentTransMode: ContentTransModeType) {

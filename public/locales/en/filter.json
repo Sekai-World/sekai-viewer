@@ -6,5 +6,8 @@
     "caption": "Sort",
     "ascending": "Ascending",
     "descending": "Descending"
+  },
+  "music_tag": {
+    "caption": "Song tag"
   }
 }

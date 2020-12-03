@@ -20,14 +20,14 @@ import {
   ViewGridOutline,
 } from "mdi-material-ui";
 import React, { Fragment, useEffect, useState } from "react";
-import { useCachedData, useRefState } from "../../utils";
+import { musicTagToName, useCachedData, useRefState } from "../../utils";
 import InfiniteScroll from "../subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
 import { useInteractiveStyles } from "../../styles/interactive";
 import GridView from "./GridView";
 import AgendaView from "./AgendaView";
-import { IMusicInfo } from "../../types";
+import { IMusicInfo, IMusicTagInfo } from "../../types";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -46,6 +46,7 @@ const MusicList: React.FC<{}> = () => {
   const { t } = useTranslation();
 
   const [musicsCache] = useCachedData<IMusicInfo>("musics");
+  const [musicTags] = useCachedData<IMusicTagInfo>("musicTags");
 
   const [musics, setMusics] = useState<IMusicInfo[]>([]);
   const [sortedCache, sortedCacheRef, setSortedCache] = useRefState<
@@ -67,6 +68,7 @@ const MusicList: React.FC<{}> = () => {
   const [sortBy, setSortBy] = useState<string>(
     localStorage.getItem("music-list-filter-sort-by") || "id"
   );
+  const [musicTag, setMusicTag] = useState<string>("all");
 
   useEffect(() => {
     document.title = t("title:musicList");
@@ -77,22 +79,38 @@ const MusicList: React.FC<{}> = () => {
   }, [setIsReady, musicsCache]);
 
   useEffect(() => {
-    if (musicsCache.length) {
-      // temporarily sort cards cache
+    if (musicsCache.length && musicTags.length) {
+      let result = [...musicsCache];
+      // do filter
+      if (musicTag) {
+        result = result.filter((c) =>
+          musicTags
+            .filter((mt) => mt.musicId === c.id)!
+            .some((mt) => musicTag === mt.musicTag)
+        );
+      }
+      // sort musics cache
       switch (sortBy) {
         case "id":
         case "publishedAt":
-          setSortedCache(
-            [...musicsCache].sort((a, b) =>
-              sortType === "asc" ? a[sortBy] - b[sortBy] : b[sortBy] - a[sortBy]
-            )
+          result = result.sort((a, b) =>
+            sortType === "asc" ? a[sortBy] - b[sortBy] : b[sortBy] - a[sortBy]
           );
           break;
       }
+      setSortedCache(result);
       setMusics([]);
       setPage(0);
     }
-  }, [musicsCache, sortBy, sortType, setPage, setSortedCache]);
+  }, [
+    musicsCache,
+    sortBy,
+    sortType,
+    setPage,
+    setSortedCache,
+    musicTags,
+    musicTag,
+  ]);
 
   useEffect(() => {
     if (sortedCache.length) {
@@ -185,12 +203,50 @@ const MusicList: React.FC<{}> = () => {
                 alignItems="center"
                 justify="space-between"
               >
-                <Grid item xs={12} md={2}>
+                <Grid item xs={12} md={1}>
+                  <Typography classes={{ root: interactiveClasses.caption }}>
+                    {t("filter:music_tag.caption")}
+                  </Typography>
+                </Grid>
+                <Grid item container xs={12} md={10} spacing={1}>
+                  <Grid item>
+                    <FormControl>
+                      <Select
+                        value={musicTag}
+                        onChange={(e) => {
+                          setMusicTag(e.target.value as string);
+                        }}
+                      >
+                        {[
+                          "all",
+                          "vocaloid",
+                          "theme_park",
+                          "street",
+                          "idol",
+                          "school_refusal",
+                          "light_music_club",
+                          "other",
+                        ].map((tag) => (
+                          <MenuItem value={tag}>{musicTagToName[tag]}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justify="space-between"
+              >
+                <Grid item xs={12} md={1}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
                     {t("filter:sort.caption")}
                   </Typography>
                 </Grid>
-                <Grid item container xs={12} md={9} spacing={1}>
+                <Grid item container xs={12} md={10} spacing={1}>
                   <Grid item>
                     <FormControl>
                       <Select

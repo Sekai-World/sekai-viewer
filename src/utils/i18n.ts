@@ -58,7 +58,7 @@ export function initGlobalI18n() {
     });
 }
 
-let assetI18n: typeof i18n = i18n.createInstance();
+export const assetI18n: typeof i18n = i18n.createInstance();
 assetI18n
   .use(fetchBackend)
   .use(detector)
