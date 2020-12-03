@@ -115,6 +115,7 @@ const StoryReaderContent: React.FC<{}> = () => {
             false
           ).then((data) => setScenarioData(data));
 
+          setChapterTitle("");
           setEpisodeTitle(`${episode.episodeNo} - ${episode.title}`);
           setReleaseConditionId(episode.releaseConditionId);
         }
@@ -133,7 +134,9 @@ const StoryReaderContent: React.FC<{}> = () => {
             false
           ).then((data) => setScenarioData(data));
 
+          setChapterTitle("");
           setEpisodeTitle(t("member:introduction"));
+          setReleaseConditionId(0);
         }
         break;
       case "cardStory":
@@ -154,6 +157,7 @@ const StoryReaderContent: React.FC<{}> = () => {
             true
           ).then((data) => setScenarioData(data));
 
+          setChapterTitle("");
           setEpisodeTitle(episode.title);
           setReleaseConditionId(episode.releaseConditionId);
         }
