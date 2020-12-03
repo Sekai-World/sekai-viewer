@@ -1,0 +1,33 @@
+{
+  "selectLabel": {
+    "storyType": "劇情種類",
+    "unitName": "組合名稱",
+    "unitStoryChapter": "章數",
+    "unitStoryEpisode": "集數",
+    "eventName": "活動名稱",
+    "eventStoryEpisode": "集數",
+    "charaName": "角色名稱",
+    "cardName": "卡面名稱",
+    "cardStoryEpisode": "集數"
+  },
+  "selectValue": {
+    "eventStory": "活動劇情",
+    "unitStory": "組合劇情",
+    "charaStory": "角色劇情",
+    "cardStory": "卡面劇情"
+  },
+  "buttonLabel": {
+    "showEpisode": "載入劇情"
+  },
+  "snippet": {
+    "FullScreenText": "全螢幕文字",
+    "Telop": "描述",
+    "ChangeBackground": "更換背景圖片",
+    "ShowBackground": "顯示背景圖片",
+    "Movie": "影片",
+    "ShowMovie": "播放影片",
+    "BGM": "背景音樂",
+    "SE": "聲效",
+    "NoSound": "靜音"
+  }
+}
