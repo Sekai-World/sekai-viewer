@@ -7,7 +7,6 @@ import {
   CircularProgress,
   Fab,
   Grid,
-  IconButton,
   makeStyles,
   Typography,
 } from "@material-ui/core";
@@ -238,36 +237,6 @@ export const Sound: React.FC<{
 }> = ({ hasBgm, hasSe, voiceUrl }) => {
   const classes = useStyle();
   const { t } = useTranslation();
-
-  const [isPlay, setIsPlay] = useState(false);
-  const [audioSource, setAudioSource] = useState<Howl>();
-  const [isAudioLoading, setIsAudioLoading] = useState(false);
-
-  const PlayAudio = useCallback(() => {
-    if (!isPlay) {
-      if (audioSource) {
-        audioSource.stop();
-      }
-      setIsAudioLoading(true);
-      const audio = new Howl({
-        src: [voiceUrl],
-      });
-      audio.once("load", () => {
-        setIsAudioLoading(false);
-        audio.play();
-      });
-      audio.once("play", () => {
-        setIsPlay(true);
-      });
-      setAudioSource(audio);
-    } else {
-      if (audioSource) {
-        audioSource.stop();
-        setAudioSource(undefined);
-      }
-      setIsPlay(false);
-    }
-  }, [voiceUrl, audioSource, isPlay]);
 
   return (
     <Card className={classes.card}>
