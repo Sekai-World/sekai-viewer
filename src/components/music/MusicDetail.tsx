@@ -417,15 +417,16 @@ const MusicDetail: React.FC<{}> = () => {
                     label={t("music:vocalTab.title[1]")}
                     labelPlacement="end"
                   />
-                  {music.categories.includes("original") ||
-                  music.categories.includes("mv_2d") ? (
-                    <FormControlLabel
-                      value="2"
-                      control={<Radio color="primary"></Radio>}
-                      label={t("music:vocalTab.title[2]")}
-                      labelPlacement="end"
-                    />
-                  ) : null}
+                  {music.categories
+                    .filter((cat) => ["original", "mv_2d"].includes(cat))
+                    .map((cat) => (
+                      <FormControlLabel
+                        value={cat}
+                        control={<Radio color="primary"></Radio>}
+                        label={t(`music:categoryType.${cat}`)}
+                        labelPlacement="end"
+                      />
+                    ))}
                 </RadioGroup>
               </Grid>
             </Grid>
@@ -517,7 +518,7 @@ const MusicDetail: React.FC<{}> = () => {
             )}
           </Box>
         ) : null}
-        {vocalPreviewVal === "2" &&
+        {["original", "mv_2d"].includes(vocalPreviewVal) &&
         musicVocalTypes.length &&
         musicVocal.length ? (
           <MusicVideoPlayer
@@ -525,9 +526,9 @@ const MusicDetail: React.FC<{}> = () => {
             videoPath={`${
               process.env.REACT_APP_ASSET_DOMAIN
             }/file/sekai-assets/live/2dmode/${
-              music.categories.includes("original")
+              vocalPreviewVal === "original"
                 ? "original_mv"
-                : music.categories.includes("mv_2d")
+                : vocalPreviewVal === "mv_2d"
                 ? "sekai_mv"
                 : ""
             }/${String(music.id).padStart(4, "0")}_rip/${String(
@@ -610,11 +611,13 @@ const MusicDetail: React.FC<{}> = () => {
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
               {t("music:category", { count: music.categories.length })}
             </Typography>
-            {music.categories.map((elem) => (
-              <Typography key={`music-cat-${elem}`}>
-                {t(`music:categoryType.${elem}`)}
-              </Typography>
-            ))}
+            <Grid item>
+              {music.categories.map((elem) => (
+                <Typography align="right" key={`music-cat-${elem}`}>
+                  {t(`music:categoryType.${elem}`)}
+                </Typography>
+              ))}
+            </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
           <Grid
