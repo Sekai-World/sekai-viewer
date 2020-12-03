@@ -1,0 +1,33 @@
+{
+  "selectLabel": {
+    "storyType": "스토리 유형",
+    "unitName": "유닛 이름",
+    "unitStoryChapter": "챕터",
+    "unitStoryEpisode": "에피소드",
+    "eventName": "이벤트 제목",
+    "eventStoryEpisode": "에피소드",
+    "charaName": "캐릭터 이름",
+    "cardName": "카드 이름",
+    "cardStoryEpisode": "에피소드"
+  },
+  "selectValue": {
+    "eventStory": "이벤트 스토리",
+    "unitStory": "유닛 스토리",
+    "charaStory": "캐릭터 스토리",
+    "cardStory": "카드 스토리"
+  },
+  "buttonLabel": {
+    "showEpisode": "스토리 챕터 불러오기"
+  },
+  "snippet": {
+    "FullScreenText": "전체화면 텍스트",
+    "Telop": "자막",
+    "ChangeBackground": "배경 전환",
+    "ShowBackground": "배경 이미지 보기",
+    "Movie": "영상",
+    "ShowMovie": "동영상 재생",
+    "BGM": "배경 음악",
+    "SE": "사운드 효과",
+    "NoSound": "음소거"
+  }
+}
