@@ -1,0 +1,33 @@
+{
+  "selectLabel": {
+    "storyType": "故事类型",
+    "unitName": "组合名称",
+    "unitStoryChapter": "章节",
+    "unitStoryEpisode": "选集",
+    "eventName": "活动名称",
+    "eventStoryEpisode": "选集",
+    "charaName": "角色名",
+    "cardName": "卡牌名",
+    "cardStoryEpisode": "选集"
+  },
+  "selectValue": {
+    "eventStory": "活动剧情",
+    "unitStory": "组合剧情",
+    "charaStory": "角色剧情",
+    "cardStory": "卡牌剧情"
+  },
+  "buttonLabel": {
+    "showEpisode": "加载剧情选集"
+  },
+  "snippet": {
+    "FullScreenText": "全屏幕文字",
+    "Telop": "标题",
+    "ChangeBackground": "背景切换",
+    "ShowBackground": "显示背景图像",
+    "Movie": "视频",
+    "ShowMovie": "播放视频",
+    "BGM": "背景音乐",
+    "SE": "音效",
+    "NoSound": "无声"
+  }
+}
