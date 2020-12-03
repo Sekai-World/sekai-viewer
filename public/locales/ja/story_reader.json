@@ -1,0 +1,33 @@
+{
+  "selectLabel": {
+    "storyType": "ストーリータイプ",
+    "unitName": "ユニット名",
+    "unitStoryChapter": "チャプター",
+    "unitStoryEpisode": "エピソード",
+    "eventName": "イベント名",
+    "eventStoryEpisode": "エピソード",
+    "charaName": "キャラクター名",
+    "cardName": "カード名",
+    "cardStoryEpisode": "エピソード"
+  },
+  "selectValue": {
+    "eventStory": "イベントストーリー",
+    "unitStory": "ユニットストーリー",
+    "charaStory": "キャラクター紹介",
+    "cardStory": "サイドストーリー"
+  },
+  "buttonLabel": {
+    "showEpisode": "ストーリーを読み込む"
+  },
+  "snippet": {
+    "FullScreenText": "フルスクリーン",
+    "Telop": "タイトル",
+    "ChangeBackground": "背景切り替え",
+    "ShowBackground": "背景画像を表示",
+    "Movie": "映像",
+    "ShowMovie": "再生",
+    "BGM": "BGM",
+    "SE": "効果音",
+    "NoSound": "サウンドなし"
+  }
+}
