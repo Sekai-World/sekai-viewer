@@ -236,25 +236,27 @@ const MusicList: React.FC<{}> = () => {
             </Grid>
           </Paper>
         </Collapse>
-        {InfiniteScroll<IMusicInfo>({
-          ViewComponent: ListCard[viewGridType],
-          callback,
-          data: musics,
-          gridSize: ({
-            grid: {
-              xs: 12,
-              sm: 6,
-              md: 4,
-              lg: 3,
-            },
-            agenda: {
-              xs: 12,
-            },
-            comfy: {
-              xs: 12,
-            },
-          } as const)[viewGridType],
-        })}
+        <InfiniteScroll<IMusicInfo>
+          ViewComponent={ListCard[viewGridType]}
+          callback={callback}
+          data={musics}
+          gridSize={
+            ({
+              grid: {
+                xs: 12,
+                sm: 6,
+                md: 4,
+                lg: 3,
+              },
+              agenda: {
+                xs: 12,
+              },
+              comfy: {
+                xs: 12,
+              },
+            } as const)[viewGridType]
+          }
+        />
       </Container>
     </Fragment>
   );
