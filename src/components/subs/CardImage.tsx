@@ -1,5 +1,11 @@
 import { Skeleton } from "@material-ui/lab";
-import React, { Fragment, useEffect, useState } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useSvgStyles } from "../../styles/svg";
 import { ICardInfo } from "../../types";
 import { getRemoteAssetURL, useCachedData, useRefState } from "../../utils";
@@ -86,9 +92,19 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
     const [hoveredArea, setHoveredArea] = useState<number>(0);
     const [imgLeftX, refImgLeftX, setImgLeftX] = useRefState<number>(-256);
     const [imgRightX, refImgRightX, setImgRightX] = useRefState<number>(512);
+    // const [requestId, refRequestId, setRequestId] = useRefState<number>(0);
+    const [imgLeftWidth, refImgLeftWidth, setImgLeftWidth] = useRefState<
+      number
+    >(768);
+    const [imgRightWidth, refImgRightWidth, setImgRightWidth] = useRefState<
+      number
+    >(768);
+
+    const svgElement = useRef<SVGSVGElement>(null);
 
     const rarityIcon =
       card && card.rarity >= 3 ? rarityAfterTraining : rarityNormal;
+    const animationDuration = 500;
 
     // useEffect(() => {
     //   if (cards.length) setCard(cards.find((elem) => elem.id === id));
@@ -110,74 +126,146 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
 
     useEffect(() => {
       if (hoveredArea === 2) {
-        const interval = setInterval(() => {
-          if (refImgLeftX.current < 0) {
-            setImgLeftX((x) => Math.floor(x + 10 * (-x / 256)));
-            setImgRightX((x) => Math.floor(x + 10 * ((768 - x) / 256)));
-          } else {
-            clearInterval(interval);
+        const start = performance.now();
+
+        const currLeftX = refImgLeftX.current;
+        const leftXDistance = 0 - refImgLeftX.current;
+        const currLeftWidth = refImgLeftWidth.current;
+        const leftWidthDistance = 940 - currLeftWidth;
+
+        const currRightX = refImgRightX.current;
+        const rightXDistance = 940 - refImgRightX.current;
+        const currRightWidth = refImgRightWidth.current;
+        const rightWidthDistance = 768 - currRightWidth;
+        let requestId = requestAnimationFrame(function animation(time) {
+          let timeFraction = (time - start) / animationDuration;
+          if (timeFraction > 1) timeFraction = 1;
+
+          setImgLeftX(Math.floor(currLeftX + leftXDistance * timeFraction));
+          setImgRightX(Math.floor(currRightX + rightXDistance * timeFraction));
+          setImgLeftWidth(
+            Math.floor(currLeftWidth + leftWidthDistance * timeFraction)
+          );
+          setImgRightWidth(
+            Math.floor(currRightWidth + rightWidthDistance * timeFraction)
+          );
+
+          if (timeFraction < 1) {
+            requestId = requestAnimationFrame(animation);
           }
-        }, 5);
-        return () => clearInterval(interval);
+        });
+        return () => cancelAnimationFrame(requestId);
       } else if (hoveredArea === 1) {
-        const interval = setInterval(() => {
-          if (refImgRightX.current > 256) {
-            setImgLeftX((x) => Math.floor(x - 10 * ((512 + x) / 256)));
-            setImgRightX((x) => Math.floor(x - 10 * ((x - 256) / 256)));
-          } else {
-            clearInterval(interval);
+        const start = performance.now();
+
+        const currLeftX = refImgLeftX.current;
+        const leftXDistance = -684 - refImgLeftX.current;
+        const currLeftWidth = refImgLeftWidth.current;
+        const leftWidthDistance = 768 - currLeftWidth;
+
+        const currRightX = refImgRightX.current;
+        const rightXDistance = 84 - refImgRightX.current;
+        const currRightWidth = refImgRightWidth.current;
+        const rightWidthDistance = 940 - currRightWidth;
+        let requestId = requestAnimationFrame(function animation(time) {
+          let timeFraction = (time - start) / animationDuration;
+          if (timeFraction > 1) timeFraction = 1;
+
+          setImgLeftX(Math.floor(currLeftX + leftXDistance * timeFraction));
+          setImgRightX(Math.floor(currRightX + rightXDistance * timeFraction));
+          setImgLeftWidth(
+            Math.floor(currLeftWidth + leftWidthDistance * timeFraction)
+          );
+          setImgRightWidth(
+            Math.floor(currRightWidth + rightWidthDistance * timeFraction)
+          );
+
+          if (timeFraction < 1) {
+            requestId = requestAnimationFrame(animation);
           }
-        }, 5);
-        return () => clearInterval(interval);
+        });
+        return () => cancelAnimationFrame(requestId);
       } else if (hoveredArea === 0) {
-        const interval = setInterval(() => {
-          if (refImgLeftX.current > -256) {
-            setImgLeftX((x) => Math.floor(x - 10 * ((256 + x) / 256)));
-            setImgRightX((x) => Math.floor(x - 10 * ((x - 512) / 256)));
-          } else if (refImgLeftX.current < -256) {
-            setImgLeftX((x) => Math.floor(x + 10 * ((-256 - x) / 256)));
-            setImgRightX((x) => Math.floor(x + 10 * ((512 - x) / 256)));
-          } else {
-            clearInterval(interval);
+        const start = performance.now();
+
+        const currLeftX = refImgLeftX.current;
+        const leftXDistance = -256 - refImgLeftX.current;
+        const currLeftWidth = refImgLeftWidth.current;
+        const leftWidthDistance = 768 - currLeftWidth;
+
+        const currRightX = refImgRightX.current;
+        const rightXDistance = 512 - refImgRightX.current;
+        const currRightWidth = refImgRightWidth.current;
+        const rightWidthDistance = 768 - currRightWidth;
+        let requestId = requestAnimationFrame(function animation(time) {
+          let timeFraction = (time - start) / animationDuration;
+          if (timeFraction > 1) timeFraction = 1;
+
+          setImgLeftX(Math.floor(currLeftX + leftXDistance * timeFraction));
+          setImgRightX(Math.floor(currRightX + rightXDistance * timeFraction));
+          setImgLeftWidth(
+            Math.floor(currLeftWidth + leftWidthDistance * timeFraction)
+          );
+          setImgRightWidth(
+            Math.floor(currRightWidth + rightWidthDistance * timeFraction)
+          );
+
+          if (timeFraction < 1) {
+            requestId = requestAnimationFrame(animation);
           }
-        }, 5);
-        return () => clearInterval(interval);
+        });
+        return () => cancelAnimationFrame(requestId);
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [hoveredArea]);
+
+    const handleMoseOver = useCallback(
+      (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+        if (!svgElement.current) {
+          return;
+        }
+        const rect = svgElement.current.getBoundingClientRect();
+        if (e.clientX - rect.left < rect.width / 2) {
+          setHoveredArea(2);
+        } else if (e.clientX - rect.left > rect.width / 2) {
+          setHoveredArea(1);
+        }
+      },
+      []
+    );
 
     return card ? (
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 1024 576"
         className={classes.svg}
+        ref={svgElement}
+        onMouseMove={handleMoseOver}
         onMouseLeave={() => setHoveredArea(0)}
       >
         {card.rarity >= 3 ? (
           <Fragment>
             <svg
-              x={imgRightX}
-              y="0"
-              width="768"
-              height="576"
-              preserveAspectRatio="xMaxYMid slice"
-              viewBox="0 0 1024 576"
-              onMouseOver={() => setHoveredArea(1)}
-              style={{ pointerEvents: "all" }}
-            >
-              <image width="1024" height="576" href={trainedImg}></image>
-            </svg>
-            <svg
               x={imgLeftX}
               y="0"
-              width="768"
+              width={imgLeftWidth}
               height="576"
               preserveAspectRatio="xMinYMid slice"
               viewBox="0 0 1024 576"
-              onMouseOver={() => setHoveredArea(2)}
-              style={{ pointerEvents: "all" }}
+              // style={{ pointerEvents: "all" }}
             >
               <image width="1024" height="576" href={normalImg}></image>
+            </svg>
+            <svg
+              x={imgRightX}
+              y="0"
+              width={imgRightWidth}
+              height="576"
+              preserveAspectRatio="xMaxYMid slice"
+              viewBox="0 0 1024 576"
+              // style={{ pointerEvents: "all" }}
+            >
+              <image width="1024" height="576" href={trainedImg}></image>
             </svg>
           </Fragment>
         ) : (

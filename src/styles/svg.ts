@@ -5,7 +5,7 @@ export const useSvgStyles = makeStyles(() => ({
     display: "block",
     width: "100%",
     height: "100%",
-    // pointerEvents: "none",
+    pointerEvents: "visibleStroke",
   },
   skeleton: {
     width: "100%",
