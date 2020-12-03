@@ -67,6 +67,10 @@ const StoryReaderContent: React.FC<{}> = () => {
   const [releaseConditionId, setReleaseConditionId] = useState<number>(0);
 
   useEffect(() => {
+    setScenarioData({
+      characters: [],
+      actions: [],
+    });
     switch (storyType) {
       case "unitStory":
         if (unitStories.length) {
