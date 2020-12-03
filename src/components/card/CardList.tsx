@@ -154,7 +154,7 @@ const CardList: React.FC<{}> = () => {
 
   useEffect(() => {
     if (cardsCache.length && rarities.length && episodes.length) {
-      let result = cardsCache;
+      let result = [...cardsCache];
       // do filter
       if (characterSelected.length) {
         result = result.filter((c) =>
@@ -166,12 +166,12 @@ const CardList: React.FC<{}> = () => {
         case "id":
         case "rarity":
         case "releaseAt":
-          result = [...result].sort((a, b) =>
+          result = result.sort((a, b) =>
             sortType === "asc" ? a[sortBy] - b[sortBy] : b[sortBy] - a[sortBy]
           );
           break;
         case "power":
-          result = [...result].sort((a, b) =>
+          result = result.sort((a, b) =>
             sortType === "asc"
               ? getMaxParam(a, rarities, episodes) -
                 getMaxParam(b, rarities, episodes)
