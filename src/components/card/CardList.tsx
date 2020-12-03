@@ -275,46 +275,50 @@ const CardList: React.FC<{}> = () => {
                 alignItems="center"
                 justify="space-between"
               >
-                <Grid item xs={12} md={2}>
+                <Grid item xs={12} md={1}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
                     {t("filter:character.caption")}
                   </Typography>
                 </Grid>
-                <Grid item container xs={12} md={9} spacing={1}>
-                  {Array.from({ length: 26 }).map((_, idx) => (
-                    <Grid key={"chara-filter-" + idx} item>
-                      <Chip
-                        clickable
-                        color={
-                          characterSelected.includes(idx + 1)
-                            ? "primary"
-                            : "default"
-                        }
-                        avatar={
-                          <Avatar
-                            alt={getCharaName(idx + 1)}
-                            src={
-                              charaIcons[`CharaIcon${idx + 1}` as "CharaIcon1"]
-                            }
-                          />
-                        }
-                        label={getCharaName(idx + 1)}
-                        onClick={() => {
-                          if (characterSelected.includes(idx + 1)) {
-                            dispatchCharacterSelected({
-                              type: "remove",
-                              payload: idx + 1,
-                            });
-                          } else {
-                            dispatchCharacterSelected({
-                              type: "add",
-                              payload: idx + 1,
-                            });
+                <Grid item xs={12} md={10}>
+                  <Grid container spacing={1}>
+                    {Array.from({ length: 26 }).map((_, idx) => (
+                      <Grid key={"chara-filter-" + idx} item>
+                        <Chip
+                          clickable
+                          color={
+                            characterSelected.includes(idx + 1)
+                              ? "primary"
+                              : "default"
                           }
-                        }}
-                      />
-                    </Grid>
-                  ))}
+                          avatar={
+                            <Avatar
+                              alt={getCharaName(idx + 1)}
+                              src={
+                                charaIcons[
+                                  `CharaIcon${idx + 1}` as "CharaIcon1"
+                                ]
+                              }
+                            />
+                          }
+                          label={getCharaName(idx + 1)}
+                          onClick={() => {
+                            if (characterSelected.includes(idx + 1)) {
+                              dispatchCharacterSelected({
+                                type: "remove",
+                                payload: idx + 1,
+                              });
+                            } else {
+                              dispatchCharacterSelected({
+                                type: "add",
+                                payload: idx + 1,
+                              });
+                            }
+                          }}
+                        />
+                      </Grid>
+                    ))}
+                  </Grid>
                 </Grid>
               </Grid>
               <Grid
@@ -324,12 +328,12 @@ const CardList: React.FC<{}> = () => {
                 alignItems="center"
                 justify="space-between"
               >
-                <Grid item xs={12} md={2}>
+                <Grid item xs={12} md={1}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
                     {t("filter:sort.caption")}
                   </Typography>
                 </Grid>
-                <Grid item container xs={12} md={9} spacing={1}>
+                <Grid item container xs={12} md={10} spacing={1}>
                   <Grid item>
                     <FormControl>
                       <Select
