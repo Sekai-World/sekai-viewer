@@ -23,6 +23,7 @@
     "join-discord": "Entre no nosso servidor do Discord"
   },
   "detect": {
+    "warning": "Executando no modo de compatibilidade, você pode ter problemas de desempenho. Considere atualizar seu navegador ou sua versão iOS / macOS. <br> Mais informações: <l>Posso usar - formato de imagem WebP</l>",
     "failed": "Infelizmente, você não consegue carregar a maioria das imagens. Atualize seu navegador ou sua versão iOS / macOS. A solução de compatibilidade estará disponível em breve.<br>  Mais informações:<l> Posso usar - formato de imagem WebP </l>",
     "success": "Parabéns! Seu navegador parece moderno, você vai conseguir carregar as imagens mais rápido e economizar dados."
   },
