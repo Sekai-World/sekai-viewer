@@ -11,13 +11,16 @@
   "boostAttribute": "Attribut favorisé",
   "boostCharacters": "Personnages favorisés",
   "maxBoost": "Boost max (lorsque les deux correspondent)",
-  "aggregateAt": "Fin de l'événement",
+  "startAt": "Commence le",
+  "endAt": "Disponible jusqu'au",
+  "closeAt": "Se termine le",
   "rankingAnnounceAt": "Annonce du classement",
   "distributionStartAt": "Distribution des récompenses",
   "distributionEndAt": "Fin de la distribution des récompenses",
   "ranking": "Classement",
   "realtime": "En temps réel le",
   "nextfetch": "Suivant",
+  "aggregateAt": "Fin de l'événement",
   "alreadyPast": "Déjà passé",
   "type": {
     "marathon": "Marathon"
