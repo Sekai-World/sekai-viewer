@@ -8,7 +8,7 @@
   },
   "normalRate": "Обычный шанс",
   "guaranteedRate": "Гарантированный шанс",
-  "pickupMember": "Повышение на карты",
+  "pickupMember": "Шанс на карты",
   "pickupMember_plural": "Доступные участники",
   "gachaType": {
     "ceil": "Перманент",
