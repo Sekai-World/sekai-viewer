@@ -495,3 +495,9 @@ export function useProcessedScenarioData(
     [chara2Ds, getCharaName, mobCharas]
   );
 }
+
+export function getJPTime() {
+  return new Date()
+    .toLocaleDateString("en-US", { timeZone: "Asia/Tokyo" })
+    .substr(0, 4);
+}

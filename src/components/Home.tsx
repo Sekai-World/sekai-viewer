@@ -29,7 +29,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Link as RouteLink } from "react-router-dom";
 import { IUserInformationInfo } from "../types";
-import { useCachedData } from "../utils";
+import { getJPTime, useCachedData } from "../utils";
 
 const useStyles = makeStyles((theme) => ({
   "contact-link": {
@@ -127,6 +127,7 @@ function Home() {
   const [gameNewsTag, setGameNewsTag] = useState<string>("information");
   const [open, setOpen] = useState<boolean>(false);
   const [info, setInfo] = useState<IUserInformationInfo>();
+  const [jpTime] = useState<string>(getJPTime());
 
   useEffect(() => {
     document.title = t("title:home");
@@ -205,13 +206,31 @@ function Home() {
         {/* <Typography variant="h4">Welcome to Sekai Viewer Open Beta!</Typography> */}
         <Grid container justify="center">
           <Grid item xs={12} md={8} lg={6}>
-            <img
-              src={`${process.env.PUBLIC_URL}/images/banner.png`}
-              alt="banner"
-              style={{ width: "100%", height: "auto" }}
-              width="1500"
-              height="500"
-            />
+            {jpTime === "12/6" ? (
+              <img
+                src={`${process.env.PUBLIC_URL}/images/banner-shizuku.png`}
+                alt="banner"
+                style={{ width: "100%", height: "auto" }}
+                width="1500"
+                height="500"
+              />
+            ) : jpTime === "12/27" ? (
+              <img
+                src={`${process.env.PUBLIC_URL}/images/banner-rin-ren.png`}
+                alt="banner"
+                style={{ width: "100%", height: "auto" }}
+                width="1500"
+                height="500"
+              />
+            ) : (
+              <img
+                src={`${process.env.PUBLIC_URL}/images/banner.png`}
+                alt="banner"
+                style={{ width: "100%", height: "auto" }}
+                width="1500"
+                height="500"
+              />
+            )}
           </Grid>
         </Grid>
         <Alert className={layoutClasses.alert} severity="info">
