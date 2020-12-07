@@ -736,3 +736,20 @@ export interface IEventStory {
   assetbundleName: string;
   eventStoryEpisodes: EventStoryEpisode[];
 }
+
+export interface MissionReward {
+  id: number;
+  missionType: string;
+  missionId: number;
+  seq: number;
+  resourceBoxId: number;
+}
+
+export interface IHonorMission {
+  id: number;
+  seq: number;
+  honorMissionType: string;
+  requirement: number;
+  sentence: string;
+  rewards: MissionReward[];
+}

@@ -39,6 +39,7 @@ import {
   SnippetProgressBehavior,
   SoundPlayMode,
   IEventStory,
+  IHonorMission,
 } from "../types.d";
 import { assetI18n, useAssetI18n } from "./i18n";
 
@@ -86,6 +87,7 @@ export function useCachedData<
     | IMobCharacter
     | ICharacter2D
     | IEventStory
+    | IHonorMission
 >(name: string): [T[], React.MutableRefObject<T[]>] {
   const [cached, cachedRef, setCached] = useRefState<T[]>([]);
 

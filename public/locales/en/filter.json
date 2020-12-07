@@ -7,6 +7,22 @@
     "ascending": "Ascending",
     "descending": "Descending"
   },
+  "missionType": {
+    "caption": "Mission Type",
+    "clear_live": "Live Clear",
+    "player_rank": "Player Rank",
+    "login": "Login",
+    "collect": "Collect",
+    "unit_rank": "Unit Rank",
+    "area_item": "Area Item",
+    "character_rank": "Character Rank",
+    "master": "Difficulty Master",
+    "multi_live": "Multiroom Live",
+    "duplicate_card": "Duplicated Card",
+    "action_set": "Area Talk",
+    "read_story": "Read Story",
+    "virtual_live": "Virtual Live"
+  },
   "music_tag": {
     "caption": "Song tag"
   }

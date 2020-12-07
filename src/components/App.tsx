@@ -50,6 +50,7 @@ import {
   MonetizationOn,
   Textsms,
   KeyboardArrowUp,
+  Assignment,
 } from "@material-ui/icons";
 import {
   AccountGroup,
@@ -57,7 +58,15 @@ import {
   CalendarText,
   StickerEmoji,
 } from "mdi-material-ui";
-import React, { forwardRef, useMemo, lazy, Suspense, useContext } from "react";
+import React, {
+  forwardRef,
+  useMemo,
+  lazy,
+  Suspense,
+  useContext,
+  Fragment,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import {
   Link,
@@ -90,6 +99,7 @@ const About = lazy(() => import("./About"));
 const Support = lazy(() => import("./Support"));
 const MusicRecommend = lazy(() => import("./MusicRecommend"));
 const StoryReader = lazy(() => import("./storyreader/StoryReader"));
+const HonorList = lazy(() => import("./mission/HonorList"));
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -125,6 +135,18 @@ const useStyles = makeStyles((theme) => ({
   },
   drawerPaper: {
     width: drawerWidth,
+    "&::-webkit-scrollbar": {
+      width: "0.5em",
+    },
+    "&::-webkit-scrollbar-track": {
+      "box-shadow": "inset 0 0 6px rgba(0,0,0,0.5)",
+      "border-radius": "10px",
+    },
+    "&::-webkit-scrollbar-thumb": {
+      "background-color": "darkgrey",
+      "border-radius": "10px",
+      outline: "1px solid slategrey",
+    },
   },
   content: {
     flexGrow: 1,
@@ -133,10 +155,22 @@ const useStyles = makeStyles((theme) => ({
       width: `calc(100% - ${drawerWidth}px)`,
     },
   },
+  listItem: {
+    "padding-top": "0px",
+    "padding-bottom": "0px",
+  },
+  listItemInner: {
+    "padding-top": "4px",
+    "padding-bottom": "4px",
+    [theme.breakpoints.down("md")]: {
+      "padding-top": "12px",
+      "padding-bottom": "12px",
+    },
+  },
 }));
 
 interface IListItemLinkProps {
-  icon: React.ReactElement;
+  icon?: React.ReactElement;
   text: string;
   to: string;
   disabled: boolean;
@@ -151,6 +185,7 @@ function ListItemLink(
     path: to,
     exact: to === "/",
   });
+  const classes = useStyles();
 
   const renderLink = useMemo(
     () =>
@@ -168,7 +203,10 @@ function ListItemLink(
     >
       {/*
       // @ts-ignore */}
-      <ListItem component={renderLink}>
+      <ListItem
+        component={renderLink}
+        classes={{ root: classes.listItemInner }}
+      >
         <ListItemIcon
           style={{
             color: match
@@ -188,6 +226,86 @@ function ListItemLink(
         ></ListItemText>
       </ListItem>
     </li>
+  );
+}
+
+function ListItemWithChildren(props: {
+  item: IListItemLinkProps;
+  theme: Theme;
+}): React.ReactElement<{
+  item: IListItemLinkProps;
+  theme: Theme;
+}> {
+  const { item, theme } = props;
+  const match = useRouteMatch({
+    path: item.to,
+    exact: item.to === "/",
+  });
+  const classes = useStyles();
+
+  const [expansionState, setExpansionState] = useState(Boolean(match));
+
+  return (
+    <Fragment>
+      <ListItem
+        disabled={item.disabled}
+        button
+        key={item.to}
+        classes={{
+          root: classes.listItem,
+        }}
+        onClick={() => setExpansionState((state) => !state)}
+      >
+        <ListItem
+          classes={{
+            root: classes.listItemInner,
+          }}
+        >
+          <ListItemIcon
+            style={{
+              color: match
+                ? theme!.palette.secondary.main
+                : theme!.palette.text.primary,
+            }}
+          >
+            {item.icon}
+          </ListItemIcon>
+          <ListItemText
+            primary={item.text}
+            style={{
+              color: match
+                ? theme!.palette.secondary.main
+                : theme!.palette.text.primary,
+            }}
+          ></ListItemText>
+          {/* {expansionState ? <ExpandLess /> : <ExpandMore />} */}
+        </ListItem>
+      </ListItem>
+      <Collapse in={expansionState} timeout="auto" unmountOnExit>
+        {item.children!.map((elem) => (
+          <ListItem
+            disabled={elem.disabled}
+            button
+            key={elem.to}
+            classes={{
+              root: classes.listItem,
+            }}
+          >
+            {elem.children ? (
+              <ListItemWithChildren item={elem} theme={theme} />
+            ) : (
+              <ListItemLink
+                to={elem.to}
+                text={elem.text}
+                icon={elem.icon}
+                disabled={elem.disabled}
+                theme={theme}
+              />
+            )}
+          </ListItem>
+        ))}
+      </Collapse>
+    </Fragment>
   );
 }
 
@@ -243,6 +361,39 @@ function App() {
         icon: <AccountGroup></AccountGroup>,
         to: "/chara",
         disabled: false,
+      },
+      {
+        text: t("common:mission.main"),
+        icon: <Assignment></Assignment>,
+        to: "/mission",
+        disabled: false,
+        children: [
+          {
+            text: t("common:mission.honor"),
+            to: "/mission/honor",
+            disabled: false,
+          },
+          {
+            text: t("common:mission.livepass"),
+            to: "/mission/livepass",
+            disabled: true,
+          },
+          {
+            text: t("common:character"),
+            to: "/mission/character",
+            disabled: true,
+          },
+          {
+            text: t("common:mission.normal"),
+            to: "/mission/normal",
+            disabled: true,
+          },
+          {
+            text: t("common:mission.beginner"),
+            to: "/mission/beginner",
+            disabled: true,
+          },
+        ],
       },
       {
         text: "Live2D",
@@ -356,19 +507,28 @@ function App() {
           {sidebarExpansionStates[0] ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
         <Collapse in={sidebarExpansionStates[0]} timeout="auto" unmountOnExit>
-          {leftBtns[0].map((elem) => {
-            return (
-              <ListItem disabled={elem.disabled} button key={elem.to}>
+          {leftBtns[0].map((elem) =>
+            elem.children ? (
+              <ListItemWithChildren key={elem.to} item={elem} theme={theme} />
+            ) : (
+              <ListItem
+                disabled={elem.disabled}
+                button
+                key={elem.to}
+                classes={{
+                  root: classes.listItem,
+                }}
+              >
                 <ListItemLink
                   to={elem.to}
                   text={elem.text}
                   icon={elem.icon}
                   disabled={elem.disabled}
                   theme={theme}
-                ></ListItemLink>
+                />
               </ListItem>
-            );
-          })}
+            )
+          )}
         </Collapse>
         <ListItem
           button
@@ -380,19 +540,24 @@ function App() {
           {sidebarExpansionStates[1] ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
         <Collapse in={sidebarExpansionStates[1]} timeout="auto" unmountOnExit>
-          {leftBtns[1].map((elem) => {
-            return (
-              <ListItem disabled={elem.disabled} button key={elem.to}>
-                <ListItemLink
-                  to={elem.to}
-                  text={elem.text}
-                  icon={elem.icon}
-                  disabled={elem.disabled}
-                  theme={theme}
-                ></ListItemLink>
-              </ListItem>
-            );
-          })}
+          {leftBtns[1].map((elem) => (
+            <ListItem
+              disabled={elem.disabled}
+              button
+              key={elem.to}
+              classes={{
+                root: classes.listItem,
+              }}
+            >
+              <ListItemLink
+                to={elem.to}
+                text={elem.text}
+                icon={elem.icon}
+                disabled={elem.disabled}
+                theme={theme}
+              />
+            </ListItem>
+          ))}
         </Collapse>
         <ListItem
           button
@@ -404,19 +569,24 @@ function App() {
           {sidebarExpansionStates[1] ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
         <Collapse in={sidebarExpansionStates[2]} timeout="auto" unmountOnExit>
-          {leftBtns[2].map((elem) => {
-            return (
-              <ListItem disabled={elem.disabled} button key={elem.to}>
-                <ListItemLink
-                  to={elem.to}
-                  text={elem.text}
-                  icon={elem.icon}
-                  disabled={elem.disabled}
-                  theme={theme}
-                ></ListItemLink>
-              </ListItem>
-            );
-          })}
+          {leftBtns[2].map((elem) => (
+            <ListItem
+              disabled={elem.disabled}
+              button
+              key={elem.to}
+              classes={{
+                root: classes.listItem,
+              }}
+            >
+              <ListItemLink
+                to={elem.to}
+                text={elem.text}
+                icon={elem.icon}
+                disabled={elem.disabled}
+                theme={theme}
+              />
+            </ListItem>
+          ))}
         </Collapse>
       </List>
     </div>
@@ -540,6 +710,9 @@ function App() {
               </Route>
               <Route path="/storyreader">
                 <StoryReader />
+              </Route>
+              <Route path="/mission/honor">
+                <HonorList />
               </Route>
             </Suspense>
           </Switch>

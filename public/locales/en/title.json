@@ -10,6 +10,7 @@
   "home": "Home | Sekai Viewer",
   "memberDetail": "{{- name}} | Character | Sekai Viewer",
   "memberList": "Character List | Sekai Viewer",
+  "honorList": "Title Achievement | Sekai Viewer",
   "musicDetail": "{{- title}} | Music | Sekai Viewer",
   "musicList": "Music List | Sekai Viewer",
   "musicRecommend": "Music Recommender (Beta) | Sekai Viewer",

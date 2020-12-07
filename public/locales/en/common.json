@@ -8,6 +8,13 @@
   "stamp": "Sticker",
   "comic": "Comic",
   "character": "Character",
+  "mission": {
+    "main": "Mission",
+    "honor": "Title",
+    "livepass": "Live",
+    "normal": "Normal",
+    "beginner": "Beginner"
+  },
   "musicMeta": "Music Meta",
   "musicRecommend": "Song Recommender (Beta)",
   "storyReader": "Story Reader",
