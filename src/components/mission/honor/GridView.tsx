@@ -10,11 +10,11 @@ import { Skeleton } from "@material-ui/lab";
 import React, { Fragment, useContext } from "react";
 // import { useTranslation } from "react-i18next";
 // import { Link, useRouteMatch } from "react-router-dom";
-import { SettingContext } from "../../context";
-import { IHonorMission } from "../../types";
-import { useAssetI18n } from "../../utils/i18n";
-import { ContentTrans } from "../subs/ContentTrans";
-import DegreeImage from "../subs/DegreeImage";
+import { SettingContext } from "../../../context";
+import { IHonorMission } from "../../../types";
+import { useAssetI18n } from "../../../utils/i18n";
+import { ContentTrans } from "../../subs/ContentTrans";
+import DegreeImage from "../../subs/DegreeImage";
 
 const useStyles = makeStyles((theme) => ({
   media: {

@@ -1,3 +1,4 @@
+import { IBeginnerMission, INormalMission } from "./../types.d";
 import Axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { WebpMachine } from "webp-hero";
@@ -88,6 +89,8 @@ export function useCachedData<
     | ICharacter2D
     | IEventStory
     | IHonorMission
+    | INormalMission
+    | IBeginnerMission
 >(name: string): [T[], React.MutableRefObject<T[]>] {
   const [cached, cachedRef, setCached] = useRefState<T[]>([]);
 

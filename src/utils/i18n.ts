@@ -95,6 +95,9 @@ assetI18n
       "card_episode_title",
       "music_vocal",
       "unit_story_chapter_title",
+      "honor_mission",
+      "normal_mission",
+      "beginner_mission",
     ],
     fallbackLng: {
       default: ["ja"],

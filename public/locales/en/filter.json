@@ -21,7 +21,17 @@
     "duplicate_card": "Duplicated Card",
     "action_set": "Area Talk",
     "read_story": "Read Story",
-    "virtual_live": "Virtual Live"
+    "virtual_live": "Virtual Live",
+    "make": "Make (e.g. Costum)",
+    "skill_level": "Skill Level",
+    "master_rank": "Master Rank",
+    "set_honor": "Set Title",
+    "clear": "Clear (e.g. Live)",
+    "read": "Read (e.g. Story)",
+    "use": "Use (e.g. Item)",
+    "buy": "Buy (e.g. Costum)",
+    "inherit": "Inherit",
+    "achieve": "Achievement"
   },
   "music_tag": {
     "caption": "Song tag"

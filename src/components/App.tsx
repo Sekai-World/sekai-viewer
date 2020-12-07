@@ -99,7 +99,13 @@ const About = lazy(() => import("./About"));
 const Support = lazy(() => import("./Support"));
 const MusicRecommend = lazy(() => import("./MusicRecommend"));
 const StoryReader = lazy(() => import("./storyreader/StoryReader"));
-const HonorList = lazy(() => import("./mission/HonorList"));
+const TitleMissionList = lazy(() => import("./mission/honor/TitleMissionList"));
+const NormalMissionList = lazy(
+  () => import("./mission/normal/NormalMissionList")
+);
+const BeginnerMissionList = lazy(
+  () => import("./mission/beginner/BeginnerMissionList")
+);
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -370,7 +376,7 @@ function App() {
         children: [
           {
             text: t("common:mission.honor"),
-            to: "/mission/honor",
+            to: "/mission/title",
             disabled: false,
           },
           {
@@ -386,12 +392,12 @@ function App() {
           {
             text: t("common:mission.normal"),
             to: "/mission/normal",
-            disabled: true,
+            disabled: false,
           },
           {
             text: t("common:mission.beginner"),
             to: "/mission/beginner",
-            disabled: true,
+            disabled: false,
           },
         ],
       },
@@ -711,8 +717,14 @@ function App() {
               <Route path="/storyreader">
                 <StoryReader />
               </Route>
-              <Route path="/mission/honor">
-                <HonorList />
+              <Route path="/mission/title">
+                <TitleMissionList />
+              </Route>
+              <Route path="/mission/normal">
+                <NormalMissionList />
+              </Route>
+              <Route path="/mission/beginner">
+                <BeginnerMissionList />
               </Route>
             </Suspense>
           </Switch>

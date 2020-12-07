@@ -12,22 +12,22 @@ import { Sort, SortOutlined } from "@material-ui/icons";
 import { Filter, FilterOutline } from "mdi-material-ui";
 import React, { useState, useEffect, Fragment, useReducer } from "react";
 import { useTranslation } from "react-i18next";
-import { missionTypeReducer } from "../../stores/reducers";
-import { useInteractiveStyles } from "../../styles/interactive";
-import { useLayoutStyles } from "../../styles/layout";
-import { IHonorMission } from "../../types";
-import { useCachedData, useRefState } from "../../utils";
-import InfiniteScroll from "../subs/InfiniteScroll";
+import { missionTypeReducer } from "../../../stores/reducers";
+import { useInteractiveStyles } from "../../../styles/interactive";
+import { useLayoutStyles } from "../../../styles/layout";
+import { INormalMission } from "../../../types";
+import { useCachedData, useRefState } from "../../../utils";
+import InfiniteScroll from "../../subs/InfiniteScroll";
 import GridView from "./GridView";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
-const ListCard: { [key: string]: React.FC<{ data?: IHonorMission }> } = {
+const ListCard: { [key: string]: React.FC<{ data?: INormalMission }> } = {
   grid: GridView,
 };
 
 function getPaginatedHonorMissions(
-  events: IHonorMission[],
+  events: INormalMission[],
   page: number,
   limit: number
 ) {
@@ -39,9 +39,9 @@ const HonorList: React.FC<{}> = () => {
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
 
-  const [honorMissionsCache] = useCachedData<IHonorMission>("honorMissions");
+  const [normalMissionsCache] = useCachedData<INormalMission>("normalMissions");
 
-  const [honorMissions, setHonorMissions] = useState<IHonorMission[]>([]);
+  const [normalMissions, setNormalMissions] = useState<INormalMission[]>([]);
 
   const [viewGridType] = useState<ViewGridType>(
     (localStorage.getItem("event-list-grid-view-type") ||
@@ -57,7 +57,7 @@ const HonorList: React.FC<{}> = () => {
     []
   );
   const [sortedCache, sortedCacheRef, setSortedCache] = useRefState<
-    IHonorMission[]
+    INormalMission[]
   >([]);
 
   useEffect(() => {
@@ -65,22 +65,22 @@ const HonorList: React.FC<{}> = () => {
   }, [t]);
 
   useEffect(() => {
-    if (honorMissionsCache.length) {
-      let result = [...honorMissionsCache];
+    if (normalMissionsCache.length) {
+      let result = [...normalMissionsCache];
       // do filter
       if (missionTypeSelected.length) {
         result = result.filter((c) =>
-          missionTypeSelected.some((mt) => c.honorMissionType.includes(mt))
+          missionTypeSelected.some((mt) => c.normalMissionType.includes(mt))
         );
       }
       setSortedCache(result);
-      setHonorMissions([]);
+      setNormalMissions([]);
       setPage(0);
     }
-  }, [honorMissionsCache, setPage, setSortedCache, missionTypeSelected]);
+  }, [normalMissionsCache, setPage, setSortedCache, missionTypeSelected]);
 
   useEffect(() => {
-    setHonorMissions((events) => [
+    setNormalMissions((events) => [
       ...events,
       ...getPaginatedHonorMissions(sortedCache, page, limit),
     ]);
@@ -88,8 +88,8 @@ const HonorList: React.FC<{}> = () => {
   }, [page, limit, setLastQueryFin, sortedCache]);
 
   useEffect(() => {
-    setIsReady(Boolean(honorMissionsCache.length));
-  }, [setIsReady, honorMissionsCache]);
+    setIsReady(Boolean(normalMissionsCache.length));
+  }, [setIsReady, normalMissionsCache]);
 
   const callback = (
     entries: readonly IntersectionObserverEntry[],
@@ -143,19 +143,16 @@ const HonorList: React.FC<{}> = () => {
                 </Grid>
                 <Grid item container xs={12} md={10} spacing={1}>
                   {[
-                    "clear_live",
-                    "player_rank",
+                    "make",
+                    "skill_level",
+                    "master_rank",
                     "character_rank",
-                    "unit_rank",
-                    "collect",
-                    "duplicate_card",
-                    "area_item",
-                    "login",
-                    "master",
-                    "multi_live",
-                    "action_set",
-                    "read_story",
-                    "virtual_live",
+                    "set_honor",
+                    "clear",
+                    "read",
+                    "use",
+                    "buy",
+                    "inherit",
                   ].map((tag) => (
                     <Grid key={"mission-type-" + tag} item>
                       <Chip
@@ -187,18 +184,15 @@ const HonorList: React.FC<{}> = () => {
             </Grid>
           </Paper>
         </Collapse>
-        <InfiniteScroll<IHonorMission>
+        <InfiniteScroll<INormalMission>
           ViewComponent={ListCard[viewGridType]}
           callback={callback}
-          data={honorMissions}
+          data={normalMissions}
           gridSize={
             ({
               grid: {
                 xs: 12,
-                sm: 6,
-                md: 4,
-                lg: 3,
-                xl: 2,
+                md: 6,
               },
               agenda: {
                 xs: 12,

@@ -1,5 +1,5 @@
-import { Typography } from "@material-ui/core";
-import React, { Fragment } from "react";
+import { Grid, Typography } from "@material-ui/core";
+import React from "react";
 
 import coinIcon from "../../assets/common/material/coin.png";
 import honor1Icon from "../../assets/common/material/honor_1.png";
@@ -25,8 +25,8 @@ const CommonMaterialIcon: React.FC<{
   materialId?: number;
   quantity?: number;
 }> = ({ materialName, materialId, quantity }) => (
-  <Fragment>
-    <div>
+  <Grid container direction="column">
+    <Grid item container justify="center">
       <img
         src={
           materialId
@@ -36,13 +36,15 @@ const CommonMaterialIcon: React.FC<{
         alt={`material ${materialName} ${materialId}`}
         style={{ maxHeight: "64px" }}
       ></img>
-    </div>
-    {quantity ? (
-      <Typography variant="body2" align="center">
-        x {quantity}
-      </Typography>
-    ) : null}
-  </Fragment>
+    </Grid>
+    <Grid item container justify="center">
+      {quantity ? (
+        <Typography variant="body2" align="center">
+          x {quantity}
+        </Typography>
+      ) : null}
+    </Grid>
+  </Grid>
 );
 
 export default CommonMaterialIcon;

@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 
 import material1Icon from "../../assets/common/material/material1.png";
 import material2Icon from "../../assets/common/material/material2.png";
@@ -44,7 +44,7 @@ import material41Icon from "../../assets/common/material/material41.png";
 import material42Icon from "../../assets/common/material/material42.png";
 import material43Icon from "../../assets/common/material/material43.png";
 import material44Icon from "../../assets/common/material/material44.png";
-import { Typography } from "@material-ui/core";
+import { Grid, Typography } from "@material-ui/core";
 
 const materialMap = [
   "",
@@ -98,18 +98,20 @@ const MaterialIcon: React.FC<{ materialId: number; quantity: number }> = ({
   materialId,
   quantity,
 }) => (
-  <Fragment>
-    <div>
+  <Grid container direction="column">
+    <Grid item container justify="center">
       <img
         src={materialMap[materialId]}
         alt={`material ${materialId}`}
         style={{ maxHeight: "64px" }}
       ></img>
-    </div>
-    <Typography variant="body2" align="center">
-      x {quantity}
-    </Typography>
-  </Fragment>
+    </Grid>
+    <Grid item container justify="center">
+      <Typography variant="body2" align="center">
+        x {quantity}
+      </Typography>
+    </Grid>
+  </Grid>
 );
 
 export default MaterialIcon;

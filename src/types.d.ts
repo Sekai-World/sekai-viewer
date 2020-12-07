@@ -753,3 +753,22 @@ export interface IHonorMission {
   sentence: string;
   rewards: MissionReward[];
 }
+
+export interface INormalMission {
+  id: number;
+  seq: number;
+  normalMissionType: string;
+  requirement: number;
+  sentence: string;
+  rewards: MissionReward[];
+}
+
+export interface IBeginnerMission {
+  id: number;
+  seq: number;
+  beginnerMissionType: string;
+  beginnerMissionCategory: string;
+  requirement: number;
+  sentence: string;
+  rewards: MissionReward[];
+}
