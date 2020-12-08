@@ -162,7 +162,7 @@ const HonorList: React.FC<{}> = () => {
                             ? "primary"
                             : "default"
                         }
-                        label={t(`filter:missionType.${tag}`)}
+                        label={t(`mission:type.${tag}`)}
                         onClick={() => {
                           if (missionTypeSelected.includes(tag)) {
                             dispatchMissionTypeSelected({

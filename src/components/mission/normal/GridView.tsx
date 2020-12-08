@@ -61,15 +61,19 @@ const GridView: React.FC<{ data?: INormalMission }> = ({ data }) => {
     // loading
     return (
       <Card className={classes.card}>
-        <Skeleton variant="rect" className={classes.media}></Skeleton>
-        <CardContent>
-          <Typography variant="subtitle1" className={classes.header}>
-            <Skeleton variant="text" width="90%"></Skeleton>
-          </Typography>
-          <Typography variant="body2">
-            <Skeleton variant="text" width="40%"></Skeleton>
-          </Typography>
-        </CardContent>
+        {/* <Skeleton variant="rect" className={classes.media}></Skeleton> */}
+        <Grid container alignItems="center">
+          <Grid item xs={8}>
+            <CardContent>
+              <Typography variant="subtitle1" className={classes.header}>
+                <Skeleton variant="text" width="90%"></Skeleton>
+              </Typography>
+            </CardContent>
+          </Grid>
+          <Grid item xs={4} container justify="center">
+            <Skeleton variant="rect" height="48px" width="48px"></Skeleton>
+          </Grid>
+        </Grid>
       </Card>
     );
   }
@@ -77,7 +81,7 @@ const GridView: React.FC<{ data?: INormalMission }> = ({ data }) => {
     <Fragment>
       <Card className={classes.card}>
         <Grid container alignItems="center">
-          <Grid item xs={8}>
+          <Grid item xs={8} md={9}>
             <CardContent style={{ paddingBottom: "16px" }}>
               <Grid container direction="column" spacing={1}>
                 <Grid item>
@@ -94,7 +98,7 @@ const GridView: React.FC<{ data?: INormalMission }> = ({ data }) => {
               </Grid>
             </CardContent>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={4} md={3}>
             <CardMedia
               className={classes.media}
               title={getTranslated(

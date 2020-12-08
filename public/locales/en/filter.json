@@ -8,30 +8,7 @@
     "descending": "Descending"
   },
   "missionType": {
-    "caption": "Mission Type",
-    "clear_live": "Live Clear",
-    "player_rank": "Player Rank",
-    "login": "Login",
-    "collect": "Collect",
-    "unit_rank": "Unit Rank",
-    "area_item": "Area Item",
-    "character_rank": "Character Rank",
-    "master": "Difficulty Master",
-    "multi_live": "Multiroom Live",
-    "duplicate_card": "Duplicated Card",
-    "action_set": "Area Talk",
-    "read_story": "Read Story",
-    "virtual_live": "Virtual Live",
-    "make": "Make (e.g. Costum)",
-    "skill_level": "Skill Level",
-    "master_rank": "Master Rank",
-    "set_honor": "Set Title",
-    "clear": "Clear (e.g. Live)",
-    "read": "Read (e.g. Story)",
-    "use": "Use (e.g. Item)",
-    "buy": "Buy (e.g. Costum)",
-    "inherit": "Inherit",
-    "achieve": "Achievement"
+    "caption": "Mission Type"
   },
   "music_tag": {
     "caption": "Song tag"
