@@ -106,6 +106,9 @@ const NormalMissionList = lazy(
 const BeginnerMissionList = lazy(
   () => import("./mission/beginner/BeginnerMissionList")
 );
+const CharacterMissionList = lazy(
+  () => import("./mission/character/CharacterMissionList")
+);
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -387,7 +390,7 @@ function App() {
           {
             text: t("common:character"),
             to: "/mission/character",
-            disabled: true,
+            disabled: false,
           },
           {
             text: t("common:mission.normal"),
@@ -725,6 +728,9 @@ function App() {
               </Route>
               <Route path="/mission/beginner">
                 <BeginnerMissionList />
+              </Route>
+              <Route path="/mission/character">
+                <CharacterMissionList />
               </Route>
             </Suspense>
           </Switch>
