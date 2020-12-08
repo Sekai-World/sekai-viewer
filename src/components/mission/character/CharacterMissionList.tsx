@@ -35,7 +35,7 @@ function getPaginatedHonorMissions(
   return events.slice(limit * (page - 1), limit * page);
 }
 
-const HonorList: React.FC<{}> = () => {
+const CharacterMissionList: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const { contentTransMode } = useContext(SettingContext)!;
@@ -64,7 +64,7 @@ const HonorList: React.FC<{}> = () => {
   >([]);
 
   useEffect(() => {
-    document.title = t("title:honorList");
+    document.title = t("title:characterMissionList");
   }, [t]);
 
   useEffect(() => {
@@ -195,4 +195,4 @@ const HonorList: React.FC<{}> = () => {
   );
 };
 
-export default HonorList;
+export default CharacterMissionList;
