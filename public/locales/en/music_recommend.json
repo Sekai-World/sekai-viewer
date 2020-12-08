@@ -18,10 +18,6 @@
     "loadTeamError": "Check your input.",
     "teamTextCopied": "Team text copied to clipboard."
   },
-  "modeSelect": {
-    "label": "Mode Select",
-    "desc": "Select recommender work mode."
-  },
   "assumption": "Assumption: all perfect, event bonus 0%, use 0 energy drink, multiplayers all have same team power.",
   "addCardDialog": {
     "title": "Add Card",
@@ -36,6 +32,10 @@
   "loadTeamDialog": {
     "title": "Load Team",
     "desc": "Paste saved team code and load it."
+  },
+  "modeSelect": {
+    "label": "Mode Select",
+    "desc": "Select recommender work mode."
   },
   "songSelect": {
     "label": "Song Select",

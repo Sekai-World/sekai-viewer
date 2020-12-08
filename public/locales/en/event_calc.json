@@ -1,0 +1,13 @@
+{
+  "songSelect": {
+    "label": "Song Select",
+    "desc": "Select one or more songs for analyzing. Leave it blank to analyze all songs."
+  },
+  "gameData": {
+    "label": "Game Data",
+    "desc": "Fill in the data from game for calculation",
+    "energyDrink": "Energy Drink Count",
+    "remainingTime": "Event Remaining Hours",
+    "eventBonusRate": "Event Bonus Rate (%)"
+  }
+}

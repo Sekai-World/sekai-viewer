@@ -5,6 +5,7 @@
   "comicList": "Comic List | Sekai Viewer",
   "eventDetail": "{{- name}} | Event | Sekai Viewer",
   "eventList": "Event List | Sekai Viewer",
+  "musicRecommend": "Music Recommender (Beta) | Sekai Viewer",
   "gachaDetail": "{{- name}} | Gacha | Sekai Viewer",
   "gachaList": "Gacha List | Sekai Viewer",
   "home": "Home | Sekai Viewer",
@@ -16,7 +17,6 @@
   "normalMissionList": "Normal | Mission | Sekai Viewer",
   "musicDetail": "{{- title}} | Music | Sekai Viewer",
   "musicList": "Music List | Sekai Viewer",
-  "musicRecommend": "Music Recommender (Beta) | Sekai Viewer",
   "stampList": "Sticker List | Sekai Viewer",
   "unitDetail": "{{- name}} | Unit | Sekai Viewer"
 }
