@@ -1,33 +1,40 @@
 {
-  "selectLabel": {
-    "storyType": "Tipe Cerita",
-    "unitName": "Nama Unit",
-    "unitStoryChapter": "Chapter",
-    "unitStoryEpisode": "Episode",
-    "eventName": "Nama Event",
-    "eventStoryEpisode": "Episode",
-    "charaName": "Nama Karakter",
-    "cardName": "Nama Kartu",
-    "cardStoryEpisode": "Episode"
+  "select": {
+    "charaName": "Nama Karakter"
   },
-  "selectValue": {
-    "eventStory": "Cerita Event",
-    "unitStory": "Cerita Unit",
-    "charaStory": "Cerita Karakter",
-    "cardStory": "Cerita Kartu"
+  "type": {
+    "caption": "Tipe Misi",
+    "clear_live": "Live Selesai",
+    "player_rank": "Rank Pemain",
+    "login": "Login",
+    "collect": "Koleksi",
+    "unit_rank": "Rank Unit",
+    "area_item": "Area Item",
+    "character_rank": "Rank Karakter",
+    "master": "Difficulty Master",
+    "multi_live": "Live Multiroom",
+    "duplicate_card": "Kartu Duplikat",
+    "action_set": "Area Diskusi",
+    "read_story": "Baca Cerita",
+    "virtual_live": "Virtual Live",
+    "make": "Buat (mis. Kostum)",
+    "skill_level": "Level Skill",
+    "master_rank": "Rank Master",
+    "set_honor": "Tetapkan Title",
+    "clear": "Selesai (mis. Live)",
+    "read": "Baca (mis. Cerita)",
+    "use": "Gunakan (mis. Item)",
+    "buy": "Beli (mis. Kostum)",
+    "inherit": "Lainnya",
+    "achieve": "Pencapaian",
+    "play_live": "Jumlah Bermain Live",
+    "waiting_room": "Ruang Tunggu",
+    "collect_costume_3d": "Koleksi Kostum 3D",
+    "collect_stamp": "Koleksi Stiker",
+    "read_area_talk": "Baca Area Diskusi",
+    "read_card_episode_first": "Baca Bagian Pertama Episode Kartu",
+    "read_card_episode_second": "Baca Bagian Kedua Episode Kartu"
   },
-  "buttonLabel": {
-    "showEpisode": "Muat Episode Cerita"
-  },
-  "snippet": {
-    "FullScreenText": "Teks Layar Penuh",
-    "Telop": "Caption",
-    "ChangeBackground": "Perubahan Latar Belakang",
-    "ShowBackground": "Lihat Latar Belakang",
-    "Movie": "Film",
-    "ShowMovie": "Mainkan Film",
-    "BGM": "Latar Belakang Musik",
-    "SE": "Efek Suara",
-    "NoSound": "Tidak ada Suara"
-  }
+  "requirement": "Jumlah yang Diperlukan",
+  "mission_group": "Misi Grup"
 }
