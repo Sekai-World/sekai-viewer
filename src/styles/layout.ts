@@ -11,7 +11,7 @@ const useLayoutStyles = makeStyles((theme) => ({
     marginRight: "auto",
   },
   alert: {
-    margin: theme.spacing(2, 0),
+    margin: theme.spacing(1, 0),
   },
 }));
 

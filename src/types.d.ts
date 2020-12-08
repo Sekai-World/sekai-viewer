@@ -736,3 +736,69 @@ export interface IEventStory {
   assetbundleName: string;
   eventStoryEpisodes: EventStoryEpisode[];
 }
+
+export interface MissionReward {
+  id: number;
+  missionType: string;
+  missionId: number;
+  seq: number;
+  resourceBoxId: number;
+}
+
+export interface IHonorMission {
+  id: number;
+  seq: number;
+  honorMissionType: string;
+  requirement: number;
+  sentence: string;
+  rewards: MissionReward[];
+}
+
+export interface INormalMission {
+  id: number;
+  seq: number;
+  normalMissionType: string;
+  requirement: number;
+  sentence: string;
+  rewards: MissionReward[];
+}
+
+export interface IBeginnerMission {
+  id: number;
+  seq: number;
+  beginnerMissionType: string;
+  beginnerMissionCategory: string;
+  requirement: number;
+  sentence: string;
+  rewards: MissionReward[];
+}
+
+export interface IHonorGroup {
+  id: number;
+  honorType: string;
+  name: string;
+}
+
+export enum CharacterMissionType {
+  PLAY_LIVE = "play_live",
+  // COLLECT_CARD = "collect_card",
+  WAITING_ROOM = "waiting_room",
+  COLLECT_COSTUME_3D = "collect_costume_3d",
+  // LIVE_CLEAR = "live_clear",
+  COLLECT_STAMP = "collect_stamp",
+  READ_AREA_TALK = "read_area_talk",
+  // SKILL_EXP = "skill_exp",
+  MASTER_RANK = "master_rank",
+  // READ_EPISODE = "read_episode",
+  READ_CARD_EPISODE_FIRST = "read_card_episode_first",
+  READ_CARD_EPISODE_SECOND = "read_card_episode_second",
+}
+
+export interface ICharacterMission {
+  id: number;
+  seq: number;
+  characterId: number;
+  characterMissionType: CharacterMissionType;
+  requirement: number;
+  sentence: string;
+}

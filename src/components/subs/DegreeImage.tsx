@@ -6,8 +6,8 @@ import { getRemoteAssetURL, useCachedData } from "../../utils";
 import { degreeFrameMap } from "../../utils/resources";
 
 const DegreeImage: React.FC<
-  { resourceBoxId: number } & React.HTMLProps<HTMLDivElement>
-> = ({ resourceBoxId, style }) => {
+  { resourceBoxId: number; type: string } & React.HTMLProps<HTMLDivElement>
+> = ({ resourceBoxId, type, style }) => {
   const classes = useSvgStyles();
 
   const [resourceBoxes] = useCachedData<IResourceBoxInfo>("resourceBoxes");
@@ -26,7 +26,7 @@ const DegreeImage: React.FC<
             resourceBoxes
               .find(
                 (resBox) =>
-                  resBox.resourceBoxPurpose === "event_ranking_reward" &&
+                  resBox.resourceBoxPurpose === type &&
                   resBox.id === resourceBoxId
               )!
               .details.find((detail) => detail.resourceType === "honor")!
@@ -34,7 +34,7 @@ const DegreeImage: React.FC<
         )!
       );
     }
-  }, [honors, resourceBoxes, resourceBoxId]);
+  }, [honors, resourceBoxes, resourceBoxId, type]);
 
   useEffect(() => {
     if (honor) {
@@ -42,12 +42,13 @@ const DegreeImage: React.FC<
         `honor/${honor.assetbundleName}_rip/degree_main.webp`,
         setDegreeImage
       );
-      getRemoteAssetURL(
-        `honor/${honor.assetbundleName}_rip/rank_main.webp`,
-        setDegreeRankImage
-      );
+      if (type === "event_ranking_reward")
+        getRemoteAssetURL(
+          `honor/${honor.assetbundleName}_rip/rank_main.webp`,
+          setDegreeRankImage
+        );
     }
-  }, [honor]);
+  }, [honor, type]);
 
   return honor ? (
     <div className={classes.svg} style={style}>
@@ -62,7 +63,9 @@ const DegreeImage: React.FC<
           width="380"
         />
         {/* rank */}
-        <image href={degreeRankImage} x="190" y="0" width="150" height="78" />
+        {type === "event_ranking_reward" ? (
+          <image href={degreeRankImage} x="190" y="0" width="150" height="78" />
+        ) : null}
       </svg>
     </div>
   ) : (

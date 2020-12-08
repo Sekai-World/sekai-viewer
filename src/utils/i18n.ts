@@ -45,6 +45,7 @@ export function initGlobalI18n() {
         "support",
         "music_recommend",
         "story_reader",
+        "mission",
       ],
       fallbackLng: {
         default: ["en"],
@@ -95,6 +96,11 @@ assetI18n
       "card_episode_title",
       "music_vocal",
       "unit_story_chapter_title",
+      "honor_mission",
+      "normal_mission",
+      "beginner_mission",
+      "honor_name",
+      "honorGroup_name",
     ],
     fallbackLng: {
       default: ["ja"],
