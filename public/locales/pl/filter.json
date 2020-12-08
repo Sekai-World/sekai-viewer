@@ -6,5 +6,11 @@
     "caption": "Sortuj",
     "ascending": "Rosnąco",
     "descending": "Malejąco"
+  },
+  "missionType": {
+    "caption": "Typ Misji"
+  },
+  "music_tag": {
+    "caption": "Tag Piosenki"
   }
 }
