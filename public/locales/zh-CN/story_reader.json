@@ -1,33 +1,40 @@
 {
-  "selectLabel": {
-    "storyType": "故事类型",
-    "unitName": "组合名称",
-    "unitStoryChapter": "章节",
-    "unitStoryEpisode": "选集",
-    "eventName": "活动名称",
-    "eventStoryEpisode": "选集",
-    "charaName": "角色名",
-    "cardName": "卡牌名",
-    "cardStoryEpisode": "选集"
+  "select": {
+    "charaName": "角色名"
   },
-  "selectValue": {
-    "eventStory": "活动剧情",
-    "unitStory": "组合剧情",
-    "charaStory": "角色剧情",
-    "cardStory": "卡牌剧情"
+  "type": {
+    "caption": "任务类型",
+    "clear_live": "完成Live",
+    "player_rank": "玩家等级",
+    "login": "登录",
+    "collect": "收集",
+    "unit_rank": "组合等级",
+    "area_item": "区域道具",
+    "character_rank": "角色等级",
+    "master": "Master难度",
+    "multi_live": "多人Live",
+    "duplicate_card": "重复卡牌",
+    "action_set": "区域对话",
+    "read_story": "阅读故事",
+    "virtual_live": "虚拟Live",
+    "make": "制作（服装等）",
+    "skill_level": "技能等级",
+    "master_rank": "卡牌突破",
+    "set_honor": "设置称号",
+    "clear": "完成（Live等）",
+    "read": "阅读（故事等）",
+    "use": "使用（道具等）",
+    "buy": "购买（服装等）",
+    "inherit": "继承账号",
+    "achieve": "成就",
+    "play_live": "Live游玩次数",
+    "waiting_room": "等候室（重复卡牌）",
+    "collect_costume_3d": "收集3D服装",
+    "collect_stamp": "收集表情",
+    "read_area_talk": "阅读区域对话",
+    "read_card_episode_first": "阅读卡牌番外前篇",
+    "read_card_episode_second": "阅读卡牌故事后篇"
   },
-  "buttonLabel": {
-    "showEpisode": "加载剧情选集"
-  },
-  "snippet": {
-    "FullScreenText": "全屏幕文字",
-    "Telop": "标题",
-    "ChangeBackground": "背景切换",
-    "ShowBackground": "显示背景图像",
-    "Movie": "视频",
-    "ShowMovie": "播放视频",
-    "BGM": "背景音乐",
-    "SE": "音效",
-    "NoSound": "无声"
-  }
+  "requirement": "需要的数量",
+  "mission_group": "任务分组"
 }
