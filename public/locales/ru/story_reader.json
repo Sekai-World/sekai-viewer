@@ -14,7 +14,7 @@
     "eventStory": "Истории ивентов",
     "unitStory": "Истории юнитов",
     "charaStory": "Истории персонажей",
-    "cardStory": "Истории кард"
+    "cardStory": "Истории карт"
   },
   "buttonLabel": {
     "showEpisode": "Загрузить эпизод истории"
