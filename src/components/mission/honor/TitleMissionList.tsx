@@ -174,7 +174,7 @@ const DetailDialog: React.FC<{
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            {t("common:mission_group")}
+            {t("mission:mission_group")}
           </Typography>
           <Typography>{honorGroup.honorType}</Typography>
         </Grid>

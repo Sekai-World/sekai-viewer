@@ -1,6 +1,6 @@
 {
   "select": {
-    "charaName": ""
+    "charaName": "Character Name"
   },
   "type": {
     "caption": "Mission Type",
@@ -35,5 +35,6 @@
     "read_card_episode_first": "Read Card Episode First Part",
     "read_card_episode_second": "Read Card Episode Second Part"
   },
-  "requirement": ""
+  "requirement": "Required Amount",
+  "mission_group": "Mission Group"
 }
