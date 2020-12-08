@@ -53,6 +53,7 @@ interface IISProps<T> {
   readonly data: readonly T[];
   readonly gridSize?: Readonly<GridSizeOptions>;
   readonly viewProps?: { [key: string]: any };
+  readonly onComponentClick?: (data: T) => void;
 }
 
 // NOTE: `breakpoints` must be sorted ascending by size
@@ -106,6 +107,7 @@ function InfiniteScroll<T>({
   data,
   gridSize: _gridSize,
   viewProps,
+  onComponentClick,
 }: React.PropsWithChildren<IISProps<T & { id: number }>>): React.ReactElement<
   IISProps<T>
 > {
@@ -156,6 +158,9 @@ function InfiniteScroll<T>({
                 md={gridSize.md}
                 lg={gridSize.lg}
                 xl={gridSize.xl}
+                onClick={() => {
+                  if (onComponentClick) onComponentClick(data);
+                }}
               >
                 <ViewComponent data={data} index={i} {...viewProps} />
               </Grid>

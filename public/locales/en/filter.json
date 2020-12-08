@@ -7,6 +7,9 @@
     "ascending": "Ascending",
     "descending": "Descending"
   },
+  "missionType": {
+    "caption": "Mission Type"
+  },
   "music_tag": {
     "caption": "Song tag"
   }

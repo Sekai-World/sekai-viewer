@@ -39,7 +39,12 @@ import {
   SnippetProgressBehavior,
   SoundPlayMode,
   IEventStory,
-} from "../types.d";
+  IHonorMission,
+  IBeginnerMission,
+  ICharacterMission,
+  IHonorGroup,
+  INormalMission,
+} from "./../types.d";
 import { assetI18n, useAssetI18n } from "./i18n";
 
 const webpMachine = new WebpMachine();
@@ -86,6 +91,11 @@ export function useCachedData<
     | IMobCharacter
     | ICharacter2D
     | IEventStory
+    | IHonorMission
+    | INormalMission
+    | IBeginnerMission
+    | IHonorGroup
+    | ICharacterMission
 >(name: string): [T[], React.MutableRefObject<T[]>] {
   const [cached, cachedRef, setCached] = useRefState<T[]>([]);
 
@@ -494,4 +504,10 @@ export function useProcessedScenarioData(
     },
     [chara2Ds, getCharaName, mobCharas]
   );
+}
+
+export function getJPTime() {
+  return new Date()
+    .toLocaleDateString("en-US", { timeZone: "Asia/Tokyo" })
+    .substr(0, 4);
 }

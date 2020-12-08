@@ -613,6 +613,7 @@ const EventDetail: React.FC<{}> = () => {
                             resourceBoxId={
                               elem.eventRankingRewards[0].resourceBoxId
                             }
+                            type="event_ranking_reward"
                           />
                         </Grid>
                         <Grid item xs={6} container alignItems="center">

@@ -113,7 +113,7 @@ const StoryReader: React.FC<{}> = () => {
       <Alert severity="warning" className={layoutClasses.alert}>
         {t("common:betaIndicator")}
       </Alert>
-      <Container maxWidth="lg">
+      <Container className={layoutClasses.content} maxWidth="lg">
         <Grid container spacing={1}>
           <Grid item xs={12} md={3}>
             <FormControl style={{ width: "100%" }}>

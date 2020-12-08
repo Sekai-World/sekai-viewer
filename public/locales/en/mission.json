@@ -1,0 +1,40 @@
+{
+  "select": {
+    "charaName": "Character Name"
+  },
+  "type": {
+    "caption": "Mission Type",
+    "clear_live": "Live Clear",
+    "player_rank": "Player Rank",
+    "login": "Login",
+    "collect": "Collect",
+    "unit_rank": "Unit Rank",
+    "area_item": "Area Item",
+    "character_rank": "Character Rank",
+    "master": "Difficulty Master",
+    "multi_live": "Multiroom Live",
+    "duplicate_card": "Duplicated Card",
+    "action_set": "Area Talk",
+    "read_story": "Read Story",
+    "virtual_live": "Virtual Live",
+    "make": "Make (e.g. Costum)",
+    "skill_level": "Skill Level",
+    "master_rank": "Master Rank",
+    "set_honor": "Set Title",
+    "clear": "Clear (e.g. Live)",
+    "read": "Read (e.g. Story)",
+    "use": "Use (e.g. Item)",
+    "buy": "Buy (e.g. Costum)",
+    "inherit": "Inherit",
+    "achieve": "Achievement",
+    "play_live": "Live Play Count",
+    "waiting_room": "Waiting Room",
+    "collect_costume_3d": "Collect 3D Costume",
+    "collect_stamp": "Collect Stamp",
+    "read_area_talk": "Read Area Talk",
+    "read_card_episode_first": "Read Card Episode First Part",
+    "read_card_episode_second": "Read Card Episode Second Part"
+  },
+  "requirement": "Required Amount",
+  "mission_group": "Mission Group"
+}

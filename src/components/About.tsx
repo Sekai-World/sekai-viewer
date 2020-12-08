@@ -112,7 +112,7 @@ const About: React.FC<{}> = () => {
             <li>Pt-BR: Kuyaterai</li>
             <li>русский: Spyrohat</li>
             <li>Es: ruiemu, maravillas</li>
-            <li>It: SeaPu, RayFirefist</li>
+            <li>It: SeaPu, RayFirefist, Kyon86</li>
             <li>Pl: sousie</li>
             <li>En: watatomo</li>
             <li>Fr: Yasito</li>
