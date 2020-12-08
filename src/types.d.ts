@@ -772,3 +772,9 @@ export interface IBeginnerMission {
   sentence: string;
   rewards: MissionReward[];
 }
+
+export interface IHonorGroup {
+  id: number;
+  honorType: string;
+  name: string;
+}

@@ -98,6 +98,8 @@ assetI18n
       "honor_mission",
       "normal_mission",
       "beginner_mission",
+      "honor_name",
+      "honorGroup_name",
     ],
     fallbackLng: {
       default: ["ja"],

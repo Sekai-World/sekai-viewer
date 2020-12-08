@@ -4,6 +4,9 @@ import {
   Chip,
   Collapse,
   Container,
+  Dialog,
+  DialogContent,
+  Divider,
   Grid,
   Paper,
   Typography,
@@ -15,8 +18,14 @@ import { useTranslation } from "react-i18next";
 import { missionTypeReducer } from "../../../stores/reducers";
 import { useInteractiveStyles } from "../../../styles/interactive";
 import { useLayoutStyles } from "../../../styles/layout";
-import { IHonorMission } from "../../../types";
+import {
+  IHonorGroup,
+  IHonorInfo,
+  IHonorMission,
+  IResourceBoxInfo,
+} from "../../../types";
 import { useCachedData, useRefState } from "../../../utils";
+import DegreeImage from "../../subs/DegreeImage";
 import InfiniteScroll from "../../subs/InfiniteScroll";
 import GridView from "./GridView";
 
@@ -34,7 +43,195 @@ function getPaginatedHonorMissions(
   return events.slice(limit * (page - 1), limit * page);
 }
 
-const HonorList: React.FC<{}> = () => {
+const DetailDialog: React.FC<{
+  resourceBoxId: number;
+  open: boolean;
+  onClose: (event: {}, reason: "backdropClick" | "escapeKeyDown") => void;
+  missionData?: IHonorMission;
+}> = ({ resourceBoxId, open, onClose, missionData }) => {
+  const { t } = useTranslation();
+
+  const [resourceBoxes] = useCachedData<IResourceBoxInfo>("resourceBoxes");
+  const [honors] = useCachedData<IHonorInfo>("honors");
+  const [honorGroups] = useCachedData<IHonorGroup>("honorGroups");
+
+  const [honor, setHonor] = useState<IHonorInfo>();
+  const [honorGroup, setHonorGroup] = useState<IHonorGroup>();
+
+  useEffect(() => {
+    if (
+      resourceBoxes.length &&
+      honors.length &&
+      honorGroups.length &&
+      resourceBoxId
+    ) {
+      const honor = honors.find(
+        (honor) =>
+          honor.id ===
+          resourceBoxes
+            .find(
+              (resBox) =>
+                resBox.resourceBoxPurpose === "mission_reward" &&
+                resBox.id === resourceBoxId
+            )!
+            .details.find((detail) => detail.resourceType === "honor")!
+            .resourceId
+      )!;
+      const honorGroup = honorGroups.find((hg) => hg.id === honor.groupId)!;
+      setHonor(honor);
+      setHonorGroup(honorGroup);
+    }
+  }, [honors, resourceBoxes, resourceBoxId, honorGroups]);
+
+  return honor && honorGroup && missionData ? (
+    <Dialog open={open} onClose={onClose} fullWidth>
+      <DialogContent>
+        <Grid container spacing={2}>
+          <Grid item container justify="center">
+            <DegreeImage resourceBoxId={resourceBoxId} type="mission_reward" />
+          </Grid>
+        </Grid>
+        <Grid
+          container
+          direction="row"
+          wrap="nowrap"
+          justify="space-between"
+          alignItems="center"
+        >
+          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+            {t("common:id")}
+          </Typography>
+          <Typography>{honor.id}</Typography>
+        </Grid>
+        <Divider style={{ margin: "1% 0" }} />
+        <Grid
+          container
+          direction="row"
+          wrap="nowrap"
+          justify="space-between"
+          alignItems="center"
+        >
+          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+            {t("common:title")}
+          </Typography>
+          <Typography>{honor.name}</Typography>
+        </Grid>
+        <Divider style={{ margin: "1% 0" }} />
+        <Grid
+          container
+          direction="row"
+          wrap="nowrap"
+          justify="space-between"
+          alignItems="center"
+        >
+          <Grid item xs={3} md={2}>
+            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+              {t("common:description")}
+            </Typography>
+          </Grid>
+          <Grid item xs={8} md={9}>
+            <Typography align="right">{missionData.sentence}</Typography>
+          </Grid>
+        </Grid>
+        <Divider style={{ margin: "1% 0" }} />
+        <Grid
+          container
+          direction="row"
+          wrap="nowrap"
+          justify="space-between"
+          alignItems="center"
+        >
+          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+            {t("mission:type.caption")}
+          </Typography>
+          <Typography>
+            {t(`mission:type.${missionData.honorMissionType}`)}
+          </Typography>
+        </Grid>
+        <Divider style={{ margin: "1% 0" }} />
+        <Grid
+          container
+          direction="row"
+          wrap="nowrap"
+          justify="space-between"
+          alignItems="center"
+        >
+          <Grid item xs={3} md={2}>
+            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+              {t("mission:requirement")}
+            </Typography>
+          </Grid>
+          <Grid item xs={8} md={9}>
+            <Typography align="right">{missionData.requirement}</Typography>
+          </Grid>
+        </Grid>
+        <Divider style={{ margin: "1% 0" }} />
+        <Grid
+          container
+          direction="row"
+          wrap="nowrap"
+          justify="space-between"
+          alignItems="center"
+        >
+          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+            {t("common:mission_group")}
+          </Typography>
+          <Typography>{honorGroup.honorType}</Typography>
+        </Grid>
+        <Divider style={{ margin: "1% 0" }} />
+        <Grid
+          container
+          direction="row"
+          wrap="nowrap"
+          justify="space-between"
+          alignItems="center"
+        >
+          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+            {t("common:rarity")}
+          </Typography>
+          <Typography>{honor.honorRarity}</Typography>
+        </Grid>
+        <Divider style={{ margin: "1% 0" }} />
+        {honor.levels.map((level) => (
+          <Fragment>
+            <Grid
+              container
+              direction="row"
+              wrap="nowrap"
+              justify="space-between"
+              alignItems="center"
+            >
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                {t("common:level")}
+              </Typography>
+              <Typography>{level.level}</Typography>
+            </Grid>
+            <Divider style={{ margin: "1% 0" }} />
+            <Grid
+              container
+              direction="row"
+              wrap="nowrap"
+              justify="space-between"
+              alignItems="center"
+            >
+              <Grid item xs={3} md={2}>
+                <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                  {t("common:description")}
+                </Typography>
+              </Grid>
+              <Grid item xs={8} md={9}>
+                <Typography align="right">{level.description}</Typography>
+              </Grid>
+            </Grid>
+            <Divider style={{ margin: "1% 0" }} />
+          </Fragment>
+        ))}
+      </DialogContent>
+    </Dialog>
+  ) : null;
+};
+
+const TitleMissionList: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
@@ -42,6 +239,9 @@ const HonorList: React.FC<{}> = () => {
   const [honorMissionsCache] = useCachedData<IHonorMission>("honorMissions");
 
   const [honorMissions, setHonorMissions] = useState<IHonorMission[]>([]);
+  const [open, setOpen] = useState<boolean>(false);
+  const [resourceBoxId, setResourceBoxId] = useState<number>(0);
+  const [honorMission, setHonorMission] = useState<IHonorMission>();
 
   const [viewGridType] = useState<ViewGridType>(
     (localStorage.getItem("event-list-grid-view-type") ||
@@ -208,10 +408,21 @@ const HonorList: React.FC<{}> = () => {
               },
             } as const)[viewGridType]
           }
+          onComponentClick={(data) => {
+            setHonorMission(data);
+            setResourceBoxId(data.rewards[0].resourceBoxId);
+            setOpen(true);
+          }}
         />
       </Container>
+      <DetailDialog
+        missionData={honorMission}
+        resourceBoxId={resourceBoxId}
+        open={open}
+        onClose={() => setOpen(false)}
+      />
     </Fragment>
   );
 };
 
-export default HonorList;
+export default TitleMissionList;
