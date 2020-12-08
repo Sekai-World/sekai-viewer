@@ -10,6 +10,7 @@
   "home": "首页 | Sekai Viewer",
   "memberDetail": "{{- name}} | 角色 | Sekai Viewer",
   "memberList": "角色列表 | Sekai Viewer",
+  "honorList": "称号成就 | Sekai Viewer",
   "musicDetail": "{{- title}} | 乐曲 | Sekai Viewer",
   "musicList": "乐曲列表 | Sekai Viewer",
   "musicRecommend": "歌曲推荐器（测试） | Sekai Viewer",
