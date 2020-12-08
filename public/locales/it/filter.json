@@ -6,5 +6,11 @@
     "caption": "Ordina",
     "ascending": "Crescente",
     "descending": "Decrescente"
+  },
+  "missionType": {
+    "caption": "Tipo missione"
+  },
+  "music_tag": {
+    "caption": "Tag canzone"
   }
 }
