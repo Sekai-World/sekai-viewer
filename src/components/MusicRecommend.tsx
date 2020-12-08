@@ -676,6 +676,7 @@ const MusicRecommend: React.FC<{}> = () => {
             <Button
               disabled={activeStep === 0}
               onClick={() => setActiveStep((s) => s - 1)}
+              variant="contained"
             >
               {t("common:back")}
             </Button>
