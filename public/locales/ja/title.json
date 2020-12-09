@@ -11,7 +11,7 @@
   "memberDetail": "{{- name}} | キャラクター | Sekai Viewer",
   "memberList": "キャラクター一覧 | Sekai Viewer",
   "beginnerMissionList": "スタートダッシュミッション | ミッション | Sekai Viewer",
-  "characterMissionList": "キャラクターミッション | ミッション | Sekai Viewer",
+  "characterMissionList": "キャラクター | ミッション | Sekai Viewer",
   "honorList": "称号アチーブメント | ミッション | Sekai Viewer",
   "normalMissionList": "定常 | ミッション | Sekai Viewer",
   "musicDetail": "{{- title}} | 楽曲 | Sekai Viewer",
