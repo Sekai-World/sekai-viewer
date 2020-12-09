@@ -1,7 +1,7 @@
 {
   "tab": {
     "title[0]": "Персонаж",
-    "title[1]": "Name Label (horizontal)",
+    "title[1]": "Лого имени (по горизонтали)",
     "title[2]": "Name Label (vertical)"
   },
   "name": "Name",
