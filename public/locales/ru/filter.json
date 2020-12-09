@@ -6,5 +6,11 @@
     "caption": "Порядок",
     "ascending": "По возрастанию",
     "descending": "По убыванию"
+  },
+  "missionType": {
+    "caption": "Тип миссии"
+  },
+  "music_tag": {
+    "caption": "Тег песни"
   }
 }

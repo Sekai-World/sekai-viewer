@@ -2,9 +2,9 @@
   "vocal": "Вокалист",
   "alert[0]": "Каждая песня не имеет звука первые <b>девять секунд. </b>Это НЕ баг.",
   "vocalTab": {
-    "title[0]": "Short version",
-    "title[1]": "Long version",
-    "title[2]": "Music video"
+    "title[0]": "Короткая версия",
+    "title[1]": "Длинная версия",
+    "title[2]": "Видео"
   },
   "skipBeginningSilence": "Пропустить тишину в начале",
   "tag": "Тег",
@@ -27,7 +27,7 @@
   "categoryType": {
     "mv": "3D MV",
     "mv_2d": "2D MV",
-    "original": "Original MV",
-    "image": "Static Image"
+    "original": "Оригинальное MV",
+    "image": "Изображение"
   }
 }

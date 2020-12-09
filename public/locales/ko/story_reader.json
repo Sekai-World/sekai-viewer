@@ -1,33 +1,40 @@
 {
-  "selectLabel": {
-    "storyType": "스토리 유형",
-    "unitName": "유닛 이름",
-    "unitStoryChapter": "챕터",
-    "unitStoryEpisode": "에피소드",
-    "eventName": "이벤트 제목",
-    "eventStoryEpisode": "에피소드",
-    "charaName": "캐릭터 이름",
-    "cardName": "카드 이름",
-    "cardStoryEpisode": "에피소드"
+  "select": {
+    "charaName": "캐릭터 이름"
   },
-  "selectValue": {
-    "eventStory": "이벤트 스토리",
-    "unitStory": "유닛 스토리",
-    "charaStory": "캐릭터 스토리",
-    "cardStory": "카드 스토리"
+  "type": {
+    "caption": "미션 종류",
+    "clear_live": "라이브 클리어",
+    "player_rank": "플레이어 랭크",
+    "login": "로그인",
+    "collect": "수집",
+    "unit_rank": "유닛 랭크",
+    "area_item": "에리어 아이템",
+    "character_rank": "캐릭터 랭크",
+    "master": "난이도 MASTER",
+    "multi_live": "멀티플레이",
+    "duplicate_card": "중복 카드",
+    "action_set": "에리어 대화",
+    "read_story": "스토리 읽기",
+    "virtual_live": "버추얼 라이브",
+    "make": "제작(의상 등)",
+    "skill_level": "스킬 레벨",
+    "master_rank": "마스터 랭크",
+    "set_honor": "칭호 설정",
+    "clear": "클리어(라이브 등)",
+    "read": "읽기(스토리 등)",
+    "use": "사용(아이템 등)",
+    "buy": "구입(의상 등)",
+    "inherit": "데이터 이전",
+    "achieve": "도전과제",
+    "play_live": "라이브 횟수",
+    "waiting_room": "대기실(控え室)",
+    "collect_costume_3d": "라이브 의상 수집",
+    "collect_stamp": "스탬프 수집",
+    "read_area_talk": "에리어 대화 읽기",
+    "read_card_episode_first": "사이드 스토리 전편 읽기",
+    "read_card_episode_second": "사이드 스토리 후편 읽기"
   },
-  "buttonLabel": {
-    "showEpisode": "스토리 챕터 불러오기"
-  },
-  "snippet": {
-    "FullScreenText": "전체화면 텍스트",
-    "Telop": "자막",
-    "ChangeBackground": "배경 전환",
-    "ShowBackground": "배경 이미지 보기",
-    "Movie": "영상",
-    "ShowMovie": "동영상 재생",
-    "BGM": "배경 음악",
-    "SE": "사운드 효과",
-    "NoSound": "음소거"
-  }
+  "requirement": "요구되는 횟수",
+  "mission_group": "미션 그룹"
 }

@@ -6,5 +6,11 @@
     "caption": "Trier",
     "ascending": "Croissant",
     "descending": "Décroissant"
+  },
+  "missionType": {
+    "caption": "Type de mission"
+  },
+  "music_tag": {
+    "caption": "Balise de chanson"
   }
 }

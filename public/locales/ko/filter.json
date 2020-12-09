@@ -1,10 +1,16 @@
 {
   "character": {
-    "caption": ""
+    "caption": "캐릭터"
   },
   "sort": {
     "caption": "정렬",
     "ascending": "오름차순",
     "descending": "내림차순"
+  },
+  "missionType": {
+    "caption": "미션 종류"
+  },
+  "music_tag": {
+    "caption": "노래 카테고리"
   }
 }
