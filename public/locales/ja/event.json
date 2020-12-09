@@ -11,13 +11,16 @@
   "boostAttribute": "ボーナスタイプ",
   "boostCharacters": "ボーナスキャラクター",
   "maxBoost": "ボーナス(両方一致）",
-  "aggregateAt": "集計開始時間",
+  "startAt": "イベント開始時間",
+  "closeAt": "イベント終了時間",
+  "endAt": "イベント参加期限",
   "rankingAnnounceAt": "ランキング公開時間",
   "distributionStartAt": "報酬配布時間",
   "distributionEndAt": "報酬受け取り期限",
   "ranking": "ランキング",
   "realtime": "更新時間",
   "nextfetch": "次の取得",
+  "aggregateAt": "集計開始時間",
   "alreadyPast": "経過時間",
   "type": {
     "marathon": "マラソン"
