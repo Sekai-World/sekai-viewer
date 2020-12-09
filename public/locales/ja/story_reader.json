@@ -1,33 +1,40 @@
 {
-  "selectLabel": {
-    "storyType": "ストーリータイプ",
-    "unitName": "ユニット名",
-    "unitStoryChapter": "チャプター",
-    "unitStoryEpisode": "エピソード",
-    "eventName": "イベント名",
-    "eventStoryEpisode": "エピソード",
-    "charaName": "キャラクター名",
-    "cardName": "カード名",
-    "cardStoryEpisode": "エピソード"
+  "select": {
+    "charaName": "キャラクター名"
   },
-  "selectValue": {
-    "eventStory": "イベントストーリー",
-    "unitStory": "ユニットストーリー",
-    "charaStory": "キャラクター紹介",
-    "cardStory": "サイドストーリー"
+  "type": {
+    "caption": "ミッションの種類",
+    "clear_live": "ライブクリア",
+    "player_rank": "プレイヤーランク",
+    "login": "ログイン",
+    "collect": "収集",
+    "unit_rank": "ユニットランク",
+    "area_item": "エリアアイテム",
+    "character_rank": "キャラクターランク",
+    "master": "難易度 MASTER",
+    "multi_live": "みんなでライブ",
+    "duplicate_card": "カード重複",
+    "action_set": "エリア会話",
+    "read_story": "ストーリーを読む",
+    "virtual_live": "バーチャルライブ",
+    "make": "作成（衣装）",
+    "skill_level": "スキルレベル",
+    "master_rank": "マスターランク",
+    "set_honor": "称号の設定",
+    "clear": "クリア（ライブ）",
+    "read": "読む（ストーリー）",
+    "use": "使用（アイテム）",
+    "buy": "購入（衣装）",
+    "inherit": "データ引き継ぎ",
+    "achieve": "称号アチーブメント",
+    "play_live": "ライブのプレイ回数",
+    "waiting_room": "待機室",
+    "collect_costume_3d": "3D衣装の収集",
+    "collect_stamp": "スタンプの収集",
+    "read_area_talk": "エリア会話を読む",
+    "read_card_episode_first": "サイドストーリー前編を読む",
+    "read_card_episode_second": "サイドストーリー後編を読む"
   },
-  "buttonLabel": {
-    "showEpisode": "ストーリーを読み込む"
-  },
-  "snippet": {
-    "FullScreenText": "フルスクリーン",
-    "Telop": "タイトル",
-    "ChangeBackground": "背景切り替え",
-    "ShowBackground": "背景画像を表示",
-    "Movie": "映像",
-    "ShowMovie": "再生",
-    "BGM": "BGM",
-    "SE": "効果音",
-    "NoSound": "サウンドなし"
-  }
+  "requirement": "必要数",
+  "mission_group": "称号の設定"
 }
