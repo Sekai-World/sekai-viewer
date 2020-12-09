@@ -2,9 +2,9 @@
   "tab": {
     "title[0]": "Персонаж",
     "title[1]": "Лого имени (по горизонтали)",
-    "title[2]": "Name Label (vertical)"
+    "title[2]": "Лого имени (по вертикали)"
   },
-  "name": "Name",
+  "name": "Имя",
   "hiragana": "Furigana",
   "gender": {
     "caption": "Gender",
