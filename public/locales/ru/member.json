@@ -9,7 +9,7 @@
   "gender": {
     "caption": "Пол",
     "female": "Женский",
-    "male": "Male",
+    "male": "Мужской",
     "secret": "Secret"
   },
   "introduction": "Introduction",
