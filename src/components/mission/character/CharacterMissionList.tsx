@@ -115,7 +115,7 @@ const CharacterMissionList: React.FC<{}> = () => {
   return (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:mission.main")} - {t("common:mission.livepass")}
+        {t("common:mission.main")} - {t("common:character")}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="lg">
         <Grid container spacing={1}>
