@@ -2,7 +2,7 @@
   "vocal": "Вокалист",
   "alert[0]": "Каждая песня не имеет звука первые <b>девять секунд. </b>Это НЕ баг.",
   "vocalTab": {
-    "title[0]": "Short version",
+    "title[0]": "Короткая версия",
     "title[1]": "Long version",
     "title[2]": "Music video"
   },
