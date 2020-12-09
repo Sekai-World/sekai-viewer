@@ -1,33 +1,40 @@
 {
-  "selectLabel": {
-    "storyType": "Тип истории",
-    "unitName": "Название юнита",
-    "unitStoryChapter": "Глава",
-    "unitStoryEpisode": "Эпизод",
-    "eventName": "Название ивента",
-    "eventStoryEpisode": "Эпизод",
-    "charaName": "Имя персонажа",
-    "cardName": "Название карты",
-    "cardStoryEpisode": "Эпизод"
+  "select": {
+    "charaName": "Имя персонажа"
   },
-  "selectValue": {
-    "eventStory": "Истории ивентов",
-    "unitStory": "Истории юнитов",
-    "charaStory": "Истории персонажей",
-    "cardStory": "Истории карт"
+  "type": {
+    "caption": "Тип миссии",
+    "clear_live": "Закончить песню",
+    "player_rank": "Ранг игрока",
+    "login": "Войти в игру",
+    "collect": "Собрать",
+    "unit_rank": "Ранг юнита",
+    "area_item": "Предметы локаций",
+    "character_rank": "Ранг персонажа",
+    "master": "Уровень MASTER",
+    "multi_live": "Multi Live",
+    "duplicate_card": "Повторы карт",
+    "action_set": "Диалоги на локациях",
+    "read_story": "Прочесть историю",
+    "virtual_live": "Virtual Live",
+    "make": "Сделать (например, костюм)",
+    "skill_level": "Уровень навыка",
+    "master_rank": "Мастер ранг",
+    "set_honor": "Титулы",
+    "clear": "Закончить (например, песню)",
+    "read": "Прочитать (например, историю)",
+    "use": "Использовать (например, предмет)",
+    "buy": "Купить (например, костюм)",
+    "inherit": "Передача данных",
+    "achieve": "Достижение",
+    "play_live": "Количество сыгранных песен",
+    "waiting_room": "Комната ожидания",
+    "collect_costume_3d": "Собрать костюмы",
+    "collect_stamp": "Собрать штампы",
+    "read_area_talk": "Прочесть диалоги на локациях",
+    "read_card_episode_first": "Прочитать первый эпизод карты",
+    "read_card_episode_second": "Прочитать второй эпизод карты"
   },
-  "buttonLabel": {
-    "showEpisode": "Загрузить эпизод истории"
-  },
-  "snippet": {
-    "FullScreenText": "Полноэкранный текст",
-    "Telop": "Заголовок",
-    "ChangeBackground": "Сменить фон",
-    "ShowBackground": "Показать фон",
-    "Movie": "Видео",
-    "ShowMovie": "Начать просмотр",
-    "BGM": "Фоновая музыка",
-    "SE": "Звуковой эффект",
-    "NoSound": "Без звука"
-  }
+  "requirement": "Нужное количество",
+  "mission_group": "Миссии группы"
 }
