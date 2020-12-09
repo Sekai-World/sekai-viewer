@@ -1,33 +1,40 @@
 {
-  "selectLabel": {
-    "storyType": "Type d'histoire",
-    "unitName": "Nom du groupe",
-    "unitStoryChapter": "Chapitre",
-    "unitStoryEpisode": "Épisode",
-    "eventName": "Nom de l'événement",
-    "eventStoryEpisode": "Épisode",
-    "charaName": "Nom du personnage",
-    "cardName": "Nom de la carte",
-    "cardStoryEpisode": "Épisode"
+  "select": {
+    "charaName": "Nom du personnage"
   },
-  "selectValue": {
-    "eventStory": "Histoires d'événements",
-    "unitStory": "Histoires des groupes",
-    "charaStory": "Histoires des personnages",
-    "cardStory": "Histoires des cartes"
+  "type": {
+    "caption": "Type de mission",
+    "clear_live": "Live complété",
+    "player_rank": "Rang du joueur",
+    "login": "Connexion",
+    "collect": "Collection",
+    "unit_rank": "Rang du groupe",
+    "area_item": "Objet de zone",
+    "character_rank": "Rang du personnage",
+    "master": "Difficulté Master",
+    "multi_live": "Live multijoueur",
+    "duplicate_card": "Carte dupliquée",
+    "action_set": "Zone de discussion",
+    "read_story": "Lire l'histoire",
+    "virtual_live": "Virtual Live",
+    "make": "Créer (ex. Costume)",
+    "skill_level": "Niveau de compétence",
+    "master_rank": "Rang Master",
+    "set_honor": "Mettre le titre",
+    "clear": "Compléter (ex. Live)",
+    "read": "Lire (ex. Histoire)",
+    "use": "Utiliser (ex. Objet)",
+    "buy": "Acheter (ex. Costume)",
+    "inherit": "Hériter",
+    "achieve": "Succès",
+    "play_live": "Nombre de parties jouées",
+    "waiting_room": "Salle d'attente",
+    "collect_costume_3d": "Collectionner les costumes 3D",
+    "collect_stamp": "Collectionner les timbres",
+    "read_area_talk": "Lire la zone de discussion",
+    "read_card_episode_first": "Lire la première partie de la carte",
+    "read_card_episode_second": "Lire la seconde partie de la carte"
   },
-  "buttonLabel": {
-    "showEpisode": "Charger l'histoire"
-  },
-  "snippet": {
-    "FullScreenText": "Texte en plein écran",
-    "Telop": "Sous-titre",
-    "ChangeBackground": "Changement de fond",
-    "ShowBackground": "Afficher l'image de fond",
-    "Movie": "Vidéo",
-    "ShowMovie": "Jouer la vidéo",
-    "BGM": "Musique de fond",
-    "SE": "Effet sonore",
-    "NoSound": "Pas de son"
-  }
+  "requirement": "Nombre requis",
+  "mission_group": "Mission de groupe"
 }
