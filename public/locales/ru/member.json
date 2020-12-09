@@ -13,7 +13,7 @@
     "secret": "Секрет"
   },
   "introduction": "Описание",
-  "colorCode": "Image Color",
+  "colorCode": "Основной цвет",
   "skinColorCode": "Skin Color",
   "skinShadowColorCode1": "Skin Shadow Color 1",
   "skinShadowColorCode2": "Skin Shadow Color 2",
