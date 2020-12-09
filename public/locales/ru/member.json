@@ -7,7 +7,7 @@
   "name": "Имя",
   "hiragana": "Furigana",
   "gender": {
-    "caption": "Gender",
+    "caption": "Пол",
     "female": "Female",
     "male": "Male",
     "secret": "Secret"
