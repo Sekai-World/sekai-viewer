@@ -11,13 +11,16 @@
   "boostAttribute": "부스트 속성",
   "boostCharacters": "부스트 캐릭터",
   "maxBoost": "최대 부스트 (두 조건 모두 충족)",
-  "aggregateAt": "집계 개시",
+  "startAt": "이벤트 개시일시",
+  "closeAt": "이벤트 종료일시",
+  "endAt": "이벤트 접속가능 시한",
   "rankingAnnounceAt": "순위 발표",
   "distributionStartAt": "보상 지급 개시",
   "distributionEndAt": "보상 지급 종료",
   "ranking": "랭킹",
   "realtime": "실시간 순위 - 기준시각",
   "nextfetch": "다음 갱신",
+  "aggregateAt": "집계 개시",
   "alreadyPast": "경과일",
   "type": {
     "marathon": "마라톤"
