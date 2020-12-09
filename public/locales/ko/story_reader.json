@@ -3,7 +3,7 @@
     "charaName": "캐릭터 이름"
   },
   "type": {
-    "caption": "미션 타입",
+    "caption": "미션 종류",
     "clear_live": "라이브 클리어",
     "player_rank": "플레이어 랭크",
     "login": "로그인",
