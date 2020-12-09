@@ -8,7 +8,7 @@
   "hiragana": "Фуригана",
   "gender": {
     "caption": "Пол",
-    "female": "Female",
+    "female": "Женский",
     "male": "Male",
     "secret": "Secret"
   },
