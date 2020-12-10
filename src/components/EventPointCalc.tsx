@@ -9,7 +9,7 @@ import {
   DialogTitle,
   FormControl,
   Grid,
-  IconButton,
+  // IconButton,
   Input,
   // Input,
   InputLabel,
@@ -41,7 +41,6 @@ import {
   ICardInfo,
   IGameChara,
   IMusicInfo,
-  IMusicRecommendResult,
   ISkillInfo,
   ITeamCardState,
 } from "../types";
@@ -50,9 +49,7 @@ import { CardThumb } from "./subs/CardThumb";
 import rarityNormal from "../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../assets/rarity_star_afterTraining.png";
 import { useAssetI18n } from "../utils/i18n";
-import { ColDef, DataGrid, ValueFormatterParams } from "@material-ui/data-grid";
-import { Link } from "react-router-dom";
-import { OpenInNew } from "@material-ui/icons";
+import { useScoreCalc } from "../utils/scoreCalc";
 
 const useStyle = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -79,6 +76,14 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
+const difficulties: Record<number, string> = {
+  0: "easy",
+  1: "normal",
+  2: "hard",
+  3: "expert",
+  4: "master",
+};
+
 const MusicRecommend: React.FC<{}> = () => {
   const classes = useStyle();
   const layoutClasses = useLayoutStyles();
@@ -92,6 +97,13 @@ const MusicRecommend: React.FC<{}> = () => {
   const [charas] = useCachedData<IGameChara>("gameCharacters");
   const [musics] = useCachedData<IMusicInfo>("musics");
   const [metas] = useMuisicMeta();
+
+  const {
+    getCardSkillRates,
+    getMultiAverageSkillRates,
+    getScore,
+    getEventPoint,
+  } = useScoreCalc();
 
   const maxStep = 4;
 
@@ -124,11 +136,14 @@ const MusicRecommend: React.FC<{}> = () => {
   );
   // const [selectedMode, setSelectedMode] = useState<string>("event_pt_per_hour");
   const [energyDrinkCount, setEnergyDrinkCount] = useState<number>(0);
+  const [targetPoint, setTargetPoint] = useState<number>(1000000);
   const [remainTime, setRemainTime] = useState<number>(198);
-  const [eventBonusRate, setEventBonusRate] = useState<number>(250);
-  const [recommendResult, setRecommandResult] = useState<
-    IMusicRecommendResult[]
-  >([]);
+  const [eventBonusRate, setEventBonusRate] = useState<number>(190);
+  const [needTimeHour, setNeedTimeHour] = useState<number>(0);
+  const [needTimeMinute, setNeedTimeMinute] = useState<number>(0);
+  const [needBoost, setNeedBoost] = useState<number>(0);
+  const [needCount, setNeedCount] = useState<number>(0);
+  const [eventPoint, setEventPoint] = useState<number>(0);
 
   const saveTeamTextareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -136,179 +151,62 @@ const MusicRecommend: React.FC<{}> = () => {
     document.title = t("title:musicRecommend");
   }, [t]);
 
-  const columns: ColDef[] = [
-    {
-      field: "name",
-      headerName: t("music_recommend:result.musicName"),
-      width: 500,
-    },
-    {
-      field: "level",
-      headerName: t("music:difficulty"),
-      width: 65,
-      cellClassName: (it) => {
-        let diff = it.getValue("difficulty") as string;
-        // @ts-ignore
-        return classes[diff];
-      },
-    },
-    {
-      field: "duration",
-      headerName: t("music:actualPlaybackTime"),
-      width: 125,
-    },
-    {
-      field: "combo",
-      headerName: t("music:noteCount"),
-      width: 90,
-    },
-    {
-      field: "result",
-      headerName: t("music_recommend:result.label"),
-      width: 100,
-      sortDirection: "desc",
-    },
-    {
-      field: "action",
-      headerName: t("home:game-news.action"),
-      width: 80,
-      renderCell: (params: ValueFormatterParams) => {
-        const info = params.data as IMusicRecommendResult;
-        return (
-          <Link to={info.link} target="_blank">
-            <IconButton color="primary">
-              <OpenInNew></OpenInNew>
-            </IconButton>
-          </Link>
-        );
-      },
-      sortable: false,
-    },
-  ];
-
-  const levelWeight = useCallback((level: number) => {
-    return 1 + Math.max(0, level - 5) * 0.005;
-  }, []);
-
-  const eventPoint = useCallback(
-    (score: number, other: number, rate: number, unitRate: number = 0) => {
-      return Math.floor(
-        ((((100 + Math.floor(score / 20000) + Math.min(7, other / 400000)) *
-          rate) /
-          100) *
-          (100 + unitRate)) /
-          100
-      );
-    },
-    []
-  );
-
   const calcResult = useCallback(() => {
-    let teamSkills: number[] = [];
-    teamCardsStates.forEach((card) => {
-      let skillId = cards.filter((it) => it.id === card.cardId)[0].skillId;
-      let skill = skills.filter((it) => it.id === skillId)[0];
-      skill.skillEffects.forEach((it) => {
-        if (it.skillEffectType === "score_up") {
-          if (card.skillLevel <= it.skillEffectDetails.length) {
-            teamSkills.push(
-              it.skillEffectDetails[card.skillLevel - 1].activateEffectValue
-            );
-          }
-        }
-      });
-    });
+    let meta = metas.filter(
+      (it) =>
+        it.music_id === selectedSongId &&
+        it.difficulty === difficulties[selectedSongDifficulty]
+    );
+    if (metas.length === 0) {
+      console.log("META NOT FOUND");
+      return;
+    }
+    let musicMeta = meta[0];
+    console.log(musicMeta);
+    let teamSkills = getCardSkillRates(cards, skills, teamCardsStates);
     console.log(teamSkills);
-
-    let skillLeader = teamSkills[0] / 100;
-    let sum = 0;
-    teamSkills.forEach((it) => {
-      sum += it;
-    });
-    let skillMember = sum / teamSkills.length / 100;
-
-    // let isSolo = selectedMode === "solo";
-    // if (!isSolo) {
-    //   let skill = 1 + skillLeader;
-    //   for (let i = 1; i < teamSkills.length; ++i) {
-    //     skill *= 1 + teamSkills[i] / 500;
-    //   }
-    //   skillLeader = skill - 1;
-    //   skillMember = skill - 1;
-    // }
-
-    //console.log(skillLeader);
-    //console.log(skillMember);
-
-    let ii = 0;
-    //console.log(metas.length);
-    let result: IMusicRecommendResult[] = metas.map((meta) => {
-      let music0 = musics.filter((it) => it.id === meta.music_id);
-      if (music0.length === 0) return {} as IMusicRecommendResult;
-      let music = music0[0];
-
-      let skillScore = 0;
-      let skillScores = meta.skill_score_multi;
-      skillScores.forEach((it, i) => {
-        skillScore += it * (i === 5 ? skillLeader : skillMember);
-      });
-      if (music.id === 11) console.log(skillScore);
-
-      let score =
-        teamPowerStates *
-        4 *
-        (meta.base_score +
-          skillScore +
-          meta.fever_score * 0.5 +
-          0.05 * levelWeight(meta.level));
-      score = Math.floor(score);
-
-      let result = 0;
-      // switch (selectedMode) {
-      //   case "solo":
-      //   case "multi":
-      //     result = score;
-      //     break;
-      //   case "event_pt":
-      //     result = eventPoint(score, score * 4, meta.event_rate);
-      //     break;
-      //   case "event_pt_per_hour":
-      //     result =
-      //       (eventPoint(score, score * 4, meta.event_rate) /
-      //         (meta.music_time + 30)) *
-      //       3600;
-      // }
-      result = Math.floor(result);
-
-      return {
-        id: ++ii,
-        name: getTranslated(
-          contentTransMode,
-          `music_titles:${meta.music_id}`,
-          music.title
-        ),
-        level: meta.level,
-        difficulty: meta.difficulty,
-        combo: meta.combo,
-        duration: meta.music_time,
-        result: result,
-        link: `/music/${music.id}`,
-      } as IMusicRecommendResult;
-    });
-    //console.log(result.length);
-    setRecommandResult(result);
+    let averageSkills = getMultiAverageSkillRates(teamSkills);
+    console.log(averageSkills);
+    let score = getScore(musicMeta, teamPowerStates, averageSkills, false);
+    console.log("Score: " + score);
+    let eventPoint = getEventPoint(
+      score,
+      score * 4,
+      musicMeta.event_rate / 100,
+      1 + eventBonusRate / 100,
+      energyDrinkCount
+    );
+    setEventPoint(eventPoint);
+    let count = Math.ceil(targetPoint / eventPoint);
+    setNeedCount(count);
+    let timeSeconds = count * (musicMeta.music_time + 30);
+    let timeHours = Math.floor(timeSeconds / 3600);
+    let timeMinutes = Math.floor(timeSeconds / 60 - timeHours * 60);
+    setNeedTimeHour(timeHours);
+    setNeedTimeMinute(timeMinutes);
+    let boost = count * energyDrinkCount;
+    setNeedBoost(boost);
     setActiveStep(maxStep - 1);
   }, [
-    teamCardsStates,
+    cards,
     metas,
     skills,
-    cards,
-    musics,
+    energyDrinkCount,
+    eventBonusRate,
+    getCardSkillRates,
+    getEventPoint,
+    getMultiAverageSkillRates,
+    getScore,
+    selectedSongDifficulty,
+    selectedSongId,
+    teamCardsStates,
     teamPowerStates,
-    levelWeight,
-    getTranslated,
-    contentTransMode,
-    eventPoint,
+    targetPoint,
+    setNeedTimeHour,
+    setNeedTimeMinute,
+    setNeedBoost,
+    setNeedCount,
+    setEventPoint,
   ]);
 
   const filterCards = useCallback(() => {
@@ -425,7 +323,7 @@ const MusicRecommend: React.FC<{}> = () => {
   return (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:musicRecommend")}
+        {t("common:eventCalc")}
       </Typography>
       <Alert severity="warning" className={layoutClasses.alert}>
         {t("common:betaIndicator")}
@@ -637,6 +535,28 @@ const MusicRecommend: React.FC<{}> = () => {
               </Grid>
               <Grid item xs={12} sm={6} lg={3} xl={2}>
                 <TextField
+                  label={t("event_calc:gameData.targetPoint")}
+                  type="number"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  inputProps={{
+                    min: "0",
+                  }}
+                  value={targetPoint}
+                  onChange={(e) => setTargetPoint(Number(e.target.value))}
+                  style={{ width: "100%" }}
+                />
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                lg={3}
+                xl={2}
+                style={{ display: "none" }}
+              >
+                <TextField
                   label={t("event_calc:gameData.remainingTime")}
                   type="number"
                   InputLabelProps={{
@@ -644,7 +564,7 @@ const MusicRecommend: React.FC<{}> = () => {
                   }}
                   inputProps={{
                     min: "0",
-                    max: "198",
+                    max: "222",
                   }}
                   value={remainTime}
                   onChange={(e) => setRemainTime(Number(e.target.value))}
@@ -675,7 +595,7 @@ const MusicRecommend: React.FC<{}> = () => {
         <Step>
           <StepLabel>{t("music_recommend:result.label")}</StepLabel>
           <StepContent>
-            <Alert severity="info">{t("music_recommend:assumption")}</Alert>
+            <Alert severity="info">{t("event_calc:assumption")}</Alert>
             <Button
               disabled={activeStep === 0}
               onClick={() => setActiveStep((s) => s - 1)}
@@ -683,14 +603,12 @@ const MusicRecommend: React.FC<{}> = () => {
             >
               {t("common:back")}
             </Button>
-            <div style={{ height: 650 }}>
-              <DataGrid
-                pagination
-                autoPageSize
-                rows={recommendResult}
-                columns={columns}
-              />
+            <div>Event Point Per Play: {eventPoint}</div>
+            <div>Play Count: {needCount}</div>
+            <div>
+              Play Time: {needTimeHour} Hours {needTimeMinute} Minutes
             </div>
+            <div>Use Boost: {needBoost}</div>
           </StepContent>
         </Step>
       </Stepper>

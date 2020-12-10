@@ -18,7 +18,7 @@
     "loadTeamError": "Check your input.",
     "teamTextCopied": "Team text copied to clipboard."
   },
-  "assumption": "Assumption: all perfect, event bonus 0%, use 0 energy drink, multiplayers all have same team power.",
+  "assumption": "Assumption: all perfect, event bonus 0%, use 0 energy drink, multiplayers all have same team.",
   "addCardDialog": {
     "title": "Add Card",
     "selectChara": "Character",

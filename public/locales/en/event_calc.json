@@ -6,8 +6,10 @@
   "gameData": {
     "label": "Game Data",
     "desc": "Fill in the data from game for calculation",
-    "energyDrink": "Energy Drink Count",
+    "energyDrink": "Boost Cost",
+    "targetPoint": "Target Point",
     "remainingTime": "Event Remaining Hours",
     "eventBonusRate": "Event Bonus Rate (%)"
-  }
+  },
+  "assumption": "Assumption: all perfect, multiplayers all have same team."
 }
