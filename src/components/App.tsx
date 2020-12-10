@@ -98,6 +98,7 @@ const UnitDetail = lazy(() => import("./UnitDetail"));
 const About = lazy(() => import("./About"));
 const Support = lazy(() => import("./Support"));
 const MusicRecommend = lazy(() => import("./MusicRecommend"));
+const EventPointCalc = lazy(() => import("./EventPointCalc"));
 const StoryReader = lazy(() => import("./storyreader/StoryReader"));
 const TitleMissionList = lazy(() => import("./mission/honor/TitleMissionList"));
 const NormalMissionList = lazy(
@@ -425,6 +426,12 @@ function App() {
         disabled: false,
       },
       {
+        text: t("common:eventCalc"),
+        icon: <Calculator />,
+        to: "/event_calc",
+        disabled: false,
+      },
+      {
         text: t("common:storyReader"),
         icon: <Textsms></Textsms>,
         to: "/storyreader",
@@ -716,6 +723,9 @@ function App() {
               </Route>
               <Route path="/music_recommend" exact>
                 <MusicRecommend />
+              </Route>
+              <Route path="/event_calc" exact>
+                <EventPointCalc />
               </Route>
               <Route path="/storyreader">
                 <StoryReader />

@@ -1,0 +1,12 @@
+{
+  "saveTeamDialog": {
+    "title": "Save Team",
+    "desc": "Save new team entry or replace existing team entry."
+  },
+  "noTeams": "No saved team entries.",
+  "saveNewEntry": "Save new team entry",
+  "loadTeamDialog": {
+    "title": "Load Team",
+    "desc": "Load team from saved team entries."
+  }
+}

@@ -1,9 +1,4 @@
 {
-  "result": {
-    "musicName": "Music Name",
-    "label": "Result",
-    "desc": "Just one step and you're finished."
-  },
   "getResult": "Get Result",
   "buildTeam": {
     "label": "Build Team",
@@ -16,13 +11,19 @@
     "duplicatedCardError": "Can't add same card to one team.",
     "cardMaxError": "There are already enough cards.",
     "loadTeamError": "Check your input.",
-    "teamTextCopied": "Team text copied to clipboard."
+    "teamTextCopied": "Team text copied to clipboard.",
+    "teamTextSaved": ""
+  },
+  "result": {
+    "label": "Result",
+    "musicName": "Music Name",
+    "desc": "Just one step and you're finished."
   },
   "modeSelect": {
     "label": "Mode Select",
     "desc": "Select recommender work mode."
   },
-  "assumption": "Assumption: all perfect, event bonus 0%, use 0 energy drink, multiplayers all have same team power.",
+  "assumption": "Assumption: all perfect, event bonus 0%, use 0 energy drink, multiplayers all have same team.",
   "addCardDialog": {
     "title": "Add Card",
     "selectChara": "Character",
