@@ -492,6 +492,12 @@ export interface ITeamCardState {
   skillLevel: number;
 }
 
+export interface ITeamBuild {
+  teamCards: number[];
+  teamCardsStates: ITeamCardState[];
+  teamPowerStates: number;
+}
+
 export interface IMusicMeta {
   music_id: number;
   difficulty: string;

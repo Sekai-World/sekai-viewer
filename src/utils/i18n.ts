@@ -47,6 +47,7 @@ export function initGlobalI18n() {
         "story_reader",
         "mission",
         "event_calc",
+        "team_build",
       ],
       fallbackLng: {
         default: ["en"],

@@ -1,7 +1,5 @@
 import {
   Button,
-  // Chip,
-  // Container,
   Dialog,
   DialogActions,
   DialogContent,
@@ -11,11 +9,9 @@ import {
   Grid,
   // IconButton,
   Input,
-  // Input,
   InputLabel,
   makeStyles,
   MenuItem,
-  Paper,
   Select,
   Snackbar,
   Step,
@@ -50,6 +46,7 @@ import rarityNormal from "../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../assets/rarity_star_afterTraining.png";
 import { useAssetI18n } from "../utils/i18n";
 import { useScoreCalc } from "../utils/scoreCalc";
+import TeamBuiler from "./subs/TeamBuilder";
 
 const useStyle = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -242,14 +239,6 @@ const MusicRecommend: React.FC<{}> = () => {
     [teamCards]
   );
 
-  const removeTeamCard = useCallback((index: number) => {
-    setTeamCards((tc) => [...tc.slice(0, index), ...tc.slice(index + 1)]);
-    setTeamCardsStates((tcs) => [
-      ...tcs.slice(0, index),
-      ...tcs.slice(index + 1),
-    ]);
-  }, []);
-
   const handleCopyTeamText = useCallback(
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       if (saveTeamTextareaRef.current) {
@@ -338,120 +327,14 @@ const MusicRecommend: React.FC<{}> = () => {
           <StepLabel>{t("music_recommend:buildTeam.label")}</StepLabel>
           <StepContent>
             <Typography>{t("music_recommend:buildTeam.desc")}</Typography>
-            <div>
-              <Grid container spacing={1}>
-                <Grid item>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => setAddCardDialogVisible(true)}
-                    disabled={teamCards.length === 5}
-                  >
-                    {t("music_recommend:buildTeam.addCard")}
-                  </Button>
-                </Grid>
-                <Grid item>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => setSaveTeamDialogVisible(true)}
-                    disabled={teamCards.length === 0}
-                  >
-                    {t("music_recommend:buildTeam.saveTeam")}
-                  </Button>
-                </Grid>
-                <Grid item>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => setLoadTeamDialogVisible(true)}
-                    // disabled={teamCards.length === 0}
-                  >
-                    {t("music_recommend:buildTeam.loadTeam")}
-                  </Button>
-                </Grid>
-                <Grid item>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => {
-                      setTeamCards([]);
-                      setTeamCardsStates([]);
-                    }}
-                    disabled={teamCards.length === 0}
-                  >
-                    {t("music_recommend:buildTeam.clearTeam")}
-                  </Button>
-                </Grid>
-              </Grid>
-              <Grid container direction="row" spacing={1}>
-                {teamCards.map((cardId, index) => (
-                  <Grid key={`team-card-${cardId}`} item xs={12} sm={6} lg={4}>
-                    <Paper style={{ padding: "0.5em" }}>
-                      <Grid
-                        container
-                        direction="row"
-                        alignItems="center"
-                        spacing={2}
-                      >
-                        <Grid item xs={5} md={3}>
-                          <CardThumb cardId={cardId} />
-                        </Grid>
-                        <Grid item xs={7} md={9}>
-                          <Grid container spacing={1}>
-                            <Grid item xs={12} md={4}>
-                              <TextField
-                                label={t("card:skillLevel")}
-                                type="number"
-                                InputLabelProps={{
-                                  shrink: true,
-                                }}
-                                inputProps={{
-                                  min: "1",
-                                  max: "4",
-                                }}
-                                value={teamCardsStates[index].skillLevel}
-                                onChange={(e) =>
-                                  setTeamCardsStates((tcs) => {
-                                    tcs[index].skillLevel = Number(
-                                      e.target.value
-                                    );
-                                    return [...tcs];
-                                  })
-                                }
-                                style={{ width: "100%" }}
-                              />
-                            </Grid>
-                            <Grid item xs={12} md={4}>
-                              <Button
-                                variant="outlined"
-                                color="secondary"
-                                onClick={() => removeTeamCard(index)}
-                              >
-                                {t("common:delete")}
-                              </Button>
-                            </Grid>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                    </Paper>
-                  </Grid>
-                ))}
-              </Grid>
-              <Grid container spacing={1}>
-                <Grid item>
-                  <TextField
-                    label={t("music_recommend:buildTeam.teamPower")}
-                    type="number"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    value={teamPowerStates}
-                    onChange={(e) => setTeamPowerStates(Number(e.target.value))}
-                  />
-                </Grid>
-              </Grid>
-            </div>
+            <TeamBuiler
+              teamCards={teamCards}
+              teamCardsStates={teamCardsStates}
+              teamPowerStates={teamPowerStates}
+              setTeamCards={setTeamCards}
+              setTeamCardsStates={setTeamCardsStates}
+              setTeamPowerStates={setTeamPowerStates}
+            />
             <br />
             <StepButtons nextDisabled={!teamCards.length} />
           </StepContent>
