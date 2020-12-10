@@ -8,17 +8,14 @@ import {
   DialogContentText,
   DialogTitle,
   FormControl,
-  FormControlLabel,
-  FormLabel,
   Grid,
-  IconButton,
+  // IconButton,
+  Input,
   // Input,
   InputLabel,
   makeStyles,
   MenuItem,
   Paper,
-  Radio,
-  RadioGroup,
   Select,
   Snackbar,
   Step,
@@ -44,7 +41,6 @@ import {
   ICardInfo,
   IGameChara,
   IMusicInfo,
-  IMusicRecommendResult,
   ISkillInfo,
   ITeamCardState,
 } from "../types";
@@ -53,9 +49,6 @@ import { CardThumb } from "./subs/CardThumb";
 import rarityNormal from "../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../assets/rarity_star_afterTraining.png";
 import { useAssetI18n } from "../utils/i18n";
-import { ColDef, DataGrid, ValueFormatterParams } from "@material-ui/data-grid";
-import { Link } from "react-router-dom";
-import { OpenInNew } from "@material-ui/icons";
 import { useScoreCalc } from "../utils/scoreCalc";
 
 const useStyle = makeStyles((theme) => ({
@@ -78,7 +71,18 @@ const useStyle = makeStyles((theme) => ({
   master: {
     backgroundColor: "#AC3EE6",
   },
+  attrIcon: {
+    maxWidth: "32px",
+  },
 }));
+
+const difficulties: Record<number, string> = {
+  0: "easy",
+  1: "normal",
+  2: "hard",
+  3: "expert",
+  4: "master",
+};
 
 const MusicRecommend: React.FC<{}> = () => {
   const classes = useStyle();
@@ -94,7 +98,14 @@ const MusicRecommend: React.FC<{}> = () => {
   const [musics] = useCachedData<IMusicInfo>("musics");
   const [metas] = useMuisicMeta();
 
-  const maxStep = 3;
+  const {
+    getCardSkillRates,
+    getMultiAverageSkillRates,
+    getScore,
+    getEventPoint,
+  } = useScoreCalc();
+
+  const maxStep = 4;
 
   const [activeStep, setActiveStep] = useState<number>(0);
   const [addCardDialogVisible, setAddCardDialogVisible] = useState<boolean>(
@@ -119,20 +130,20 @@ const MusicRecommend: React.FC<{}> = () => {
     false
   );
   const [loadTeamText, setLoadTeamText] = useState<string>("");
-  // const [selectedSongIds, setSelectedSongIds] = useState<number[]>([]);
-  const [selectedMode, setSelectedMode] = useState<string>("event_pt_per_hour");
-  const [recommendResult, setRecommandResult] = useState<
-    IMusicRecommendResult[]
-  >([]);
-
-  const {
-    getCardSkillRates,
-    getMultiAverageSkillRates,
-    getSoloAverageSkillRates,
-    getScore,
-    getEventPoint,
-    getEventPointPerHour,
-  } = useScoreCalc();
+  const [selectedSongId, setSelectedSongId] = useState<number>(1);
+  const [selectedSongDifficulty, setSelectedSongDifficulty] = useState<number>(
+    4
+  );
+  // const [selectedMode, setSelectedMode] = useState<string>("event_pt_per_hour");
+  const [energyDrinkCount, setEnergyDrinkCount] = useState<number>(0);
+  const [targetPoint, setTargetPoint] = useState<number>(1000000);
+  const [remainTime, setRemainTime] = useState<number>(198);
+  const [eventBonusRate, setEventBonusRate] = useState<number>(190);
+  const [needTimeHour, setNeedTimeHour] = useState<number>(0);
+  const [needTimeMinute, setNeedTimeMinute] = useState<number>(0);
+  const [needBoost, setNeedBoost] = useState<number>(0);
+  const [needCount, setNeedCount] = useState<number>(0);
+  const [eventPoint, setEventPoint] = useState<number>(0);
 
   const saveTeamTextareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -140,126 +151,62 @@ const MusicRecommend: React.FC<{}> = () => {
     document.title = t("title:musicRecommend");
   }, [t]);
 
-  const columns: ColDef[] = [
-    {
-      field: "name",
-      headerName: t("music_recommend:result.musicName"),
-      width: 500,
-    },
-    {
-      field: "level",
-      headerName: t("music:difficulty"),
-      width: 65,
-      cellClassName: (it) => {
-        let diff = it.getValue("difficulty") as string;
-        // @ts-ignore
-        return classes[diff];
-      },
-    },
-    {
-      field: "duration",
-      headerName: t("music:actualPlaybackTime"),
-      width: 125,
-    },
-    {
-      field: "combo",
-      headerName: t("music:noteCount"),
-      width: 90,
-    },
-    {
-      field: "result",
-      headerName: t("music_recommend:result.label"),
-      width: 100,
-      sortDirection: "desc",
-    },
-    {
-      field: "action",
-      headerName: t("home:game-news.action"),
-      width: 80,
-      renderCell: (params: ValueFormatterParams) => {
-        const info = params.data as IMusicRecommendResult;
-        return (
-          <Link to={info.link} target="_blank">
-            <IconButton color="primary">
-              <OpenInNew></OpenInNew>
-            </IconButton>
-          </Link>
-        );
-      },
-      sortable: false,
-    },
-  ];
-
   const calcResult = useCallback(() => {
-    let isSolo = selectedMode === "solo";
-
-    let cardSkills = getCardSkillRates(cards, skills, teamCardsStates);
-    let skillRates = isSolo
-      ? getSoloAverageSkillRates(cardSkills)
-      : getMultiAverageSkillRates(cardSkills);
-
-    let ii = 0;
-    let result: IMusicRecommendResult[] = metas.map((meta) => {
-      let music0 = musics.filter((it) => it.id === meta.music_id);
-      if (music0.length === 0) return {} as IMusicRecommendResult;
-      let music = music0[0];
-      let score = getScore(meta, teamPowerStates, skillRates, isSolo);
-
-      let result = 0;
-      switch (selectedMode) {
-        case "solo":
-        case "multi":
-          result = score;
-          break;
-        case "event_pt":
-          result = getEventPoint(score, score * 4, meta.event_rate / 100, 1, 0);
-          break;
-        case "event_pt_per_hour":
-          result = getEventPointPerHour(
-            score,
-            score * 4,
-            meta.event_rate / 100,
-            1,
-            0,
-            meta.music_time
-          );
-      }
-      result = Math.floor(result);
-
-      return {
-        id: ++ii,
-        name: getTranslated(
-          contentTransMode,
-          `music_titles:${meta.music_id}`,
-          music.title
-        ),
-        level: meta.level,
-        difficulty: meta.difficulty,
-        combo: meta.combo,
-        duration: meta.music_time,
-        result: result,
-        link: `/music/${music.id}`,
-      } as IMusicRecommendResult;
-    });
-    //console.log(result.length);
-    setRecommandResult(result);
+    let meta = metas.filter(
+      (it) =>
+        it.music_id === selectedSongId &&
+        it.difficulty === difficulties[selectedSongDifficulty]
+    );
+    if (metas.length === 0) {
+      console.log("META NOT FOUND");
+      return;
+    }
+    let musicMeta = meta[0];
+    console.log(musicMeta);
+    let teamSkills = getCardSkillRates(cards, skills, teamCardsStates);
+    console.log(teamSkills);
+    let averageSkills = getMultiAverageSkillRates(teamSkills);
+    console.log(averageSkills);
+    let score = getScore(musicMeta, teamPowerStates, averageSkills, false);
+    console.log("Score: " + score);
+    let eventPoint = getEventPoint(
+      score,
+      score * 4,
+      musicMeta.event_rate / 100,
+      1 + eventBonusRate / 100,
+      energyDrinkCount
+    );
+    setEventPoint(eventPoint);
+    let count = Math.ceil(targetPoint / eventPoint);
+    setNeedCount(count);
+    let timeSeconds = count * (musicMeta.music_time + 30);
+    let timeHours = Math.floor(timeSeconds / 3600);
+    let timeMinutes = Math.floor(timeSeconds / 60 - timeHours * 60);
+    setNeedTimeHour(timeHours);
+    setNeedTimeMinute(timeMinutes);
+    let boost = count * energyDrinkCount;
+    setNeedBoost(boost);
     setActiveStep(maxStep - 1);
   }, [
-    selectedMode,
-    getCardSkillRates,
     cards,
-    skills,
-    teamCardsStates,
-    getSoloAverageSkillRates,
-    getMultiAverageSkillRates,
     metas,
-    musics,
-    getScore,
-    teamPowerStates,
-    getTranslated,
-    contentTransMode,
+    skills,
+    energyDrinkCount,
+    eventBonusRate,
+    getCardSkillRates,
     getEventPoint,
-    getEventPointPerHour,
+    getMultiAverageSkillRates,
+    getScore,
+    selectedSongDifficulty,
+    selectedSongId,
+    teamCardsStates,
+    teamPowerStates,
+    targetPoint,
+    setNeedTimeHour,
+    setNeedTimeMinute,
+    setNeedBoost,
+    setNeedCount,
+    setEventPoint,
   ]);
 
   const filterCards = useCallback(() => {
@@ -376,7 +323,7 @@ const MusicRecommend: React.FC<{}> = () => {
   return (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:musicRecommend")}
+        {t("common:eventCalc")}
       </Typography>
       <Alert severity="warning" className={layoutClasses.alert}>
         {t("common:betaIndicator")}
@@ -452,24 +399,6 @@ const MusicRecommend: React.FC<{}> = () => {
                         </Grid>
                         <Grid item xs={7} md={9}>
                           <Grid container spacing={1}>
-                            {/*
-                            <Grid item xs={12} md={4}>
-                              <TextField
-                                label={t("card:cardLevel")}
-                                type="number"
-                                InputLabelProps={{
-                                  shrink: true,
-                                }}
-                                value={teamCardsStates[index].level}
-                                onChange={(e) =>
-                                  setTeamCardsStates((tcs) => {
-                                    tcs[index].level = Number(e.target.value);
-                                    return [...tcs];
-                                  })
-                                }
-                              />
-                            </Grid>
-                            */}
                             <Grid item xs={12} md={4}>
                               <TextField
                                 label={t("card:skillLevel")}
@@ -527,93 +456,138 @@ const MusicRecommend: React.FC<{}> = () => {
             <StepButtons nextDisabled={!teamCards.length} />
           </StepContent>
         </Step>
-        {/*
         <Step>
-          <StepLabel>{t("music_recommend:songSelect.label")}</StepLabel>
+          <StepLabel>{t("event_calc:songSelect.label")}</StepLabel>
           <StepContent>
-            <Typography>{t("music_recommend:songSelect.desc")}</Typography>
-            <div>
-              <FormControl style={{ minWidth: 200 }}>
-                <InputLabel id="song-select-label">Selected Songs</InputLabel>
-                <Select
-                  labelId="song-select-label"
-                  multiple
-                  value={selectedSongIds}
-                  onChange={(e, v) =>
-                    setSelectedSongIds(e.target.value as number[])
-                  }
-                  input={<Input />}
-                  renderValue={(selected) => (
-                    <Grid container spacing={1}>
-                      {(selected as number[]).map((v) => {
-                        const m = musics.find((music) => music.id === v);
-                        return (
-                          <Grid item>
-                            <Chip
-                              key={v}
-                              label={getTranslated(
-                                contentTransMode,
-                                `music_titles:${v}`,
-                                m!.title
-                              )}
-                            />
-                          </Grid>
-                        );
-                      })}
-                    </Grid>
-                  )}
-                >
-                  {musics.map((music) => (
-                    <MenuItem key={`music-${music.id}`} value={music.id}>
-                      {getTranslated(
-                        contentTransMode,
-                        `music_titles:${music.id}`,
-                        music!.title
-                      )}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </div>
+            <Typography>{t("event_calc:songSelect.desc")}</Typography>
+            <Grid container>
+              <Grid item xs={12} sm={4} lg={3}>
+                <FormControl style={{ minWidth: 200 }}>
+                  <InputLabel id="song-select-label">Song</InputLabel>
+                  <Select
+                    labelId="song-select-label"
+                    value={selectedSongId}
+                    onChange={(e, v) =>
+                      setSelectedSongId(e.target.value as number)
+                    }
+                    input={<Input />}
+                  >
+                    {musics.map((music) => (
+                      <MenuItem key={`music-${music.id}`} value={music.id}>
+                        {getTranslated(
+                          contentTransMode,
+                          `music_titles:${music.id}`,
+                          music!.title
+                        )}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={4} lg={3}>
+                <FormControl style={{ minWidth: 200 }}>
+                  <InputLabel id="song-difficulty-select-label">
+                    Difficulty
+                  </InputLabel>
+                  <Select
+                    labelId="song-difficulty-select-label"
+                    value={selectedSongDifficulty}
+                    onChange={(e, v) =>
+                      setSelectedSongDifficulty(e.target.value as number)
+                    }
+                    input={<Input />}
+                  >
+                    {["Easy", "Normal", "Hard", "Expert", "Master"].map(
+                      (diffi, idx) => (
+                        <MenuItem key={`music-diffi-${diffi}`} value={idx}>
+                          {diffi}
+                        </MenuItem>
+                      )
+                    )}
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
             <br />
             <StepButtons />
           </StepContent>
         </Step>
-        */}
         <Step>
-          <StepLabel>{t("music_recommend:modeSelect.label")}</StepLabel>
+          <StepLabel>{t("event_calc:gameData.label")}</StepLabel>
           <StepContent>
-            <Typography>{t("music_recommend:modeSelect.desc")}</Typography>
-            <div>
-              <FormControl component="fieldset">
-                <FormLabel component="legend">Select Mode</FormLabel>
-                <RadioGroup
-                  value={selectedMode}
-                  onChange={(e) => setSelectedMode(e.target.value)}
-                >
-                  <FormControlLabel
-                    value="solo"
-                    control={<Radio />}
-                    label="Solo"
-                  />
-                  <FormControlLabel
-                    value="multi"
-                    control={<Radio />}
-                    label="Multiplayer"
-                  />
-                  <FormControlLabel
-                    value="event_pt"
-                    control={<Radio />}
-                    label="Event Point (per play count)"
-                  />
-                  <FormControlLabel
-                    value="event_pt_per_hour"
-                    control={<Radio />}
-                    label="Event Point (per hour)"
-                  />
-                </RadioGroup>
-              </FormControl>
-            </div>
+            <Typography>{t("event_calc:gameData.desc")}</Typography>
+            <Grid container spacing={1}>
+              <Grid item xs={12} sm={6} lg={3} xl={2}>
+                <TextField
+                  label={t("event_calc:gameData.energyDrink")}
+                  type="number"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  inputProps={{
+                    min: "0",
+                    max: "10",
+                  }}
+                  value={energyDrinkCount}
+                  onChange={(e) => setEnergyDrinkCount(Number(e.target.value))}
+                  style={{ width: "100%" }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} lg={3} xl={2}>
+                <TextField
+                  label={t("event_calc:gameData.targetPoint")}
+                  type="number"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  inputProps={{
+                    min: "0",
+                  }}
+                  value={targetPoint}
+                  onChange={(e) => setTargetPoint(Number(e.target.value))}
+                  style={{ width: "100%" }}
+                />
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                lg={3}
+                xl={2}
+                style={{ display: "none" }}
+              >
+                <TextField
+                  label={t("event_calc:gameData.remainingTime")}
+                  type="number"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  inputProps={{
+                    min: "0",
+                    max: "222",
+                  }}
+                  value={remainTime}
+                  onChange={(e) => setRemainTime(Number(e.target.value))}
+                  style={{ width: "100%" }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} lg={3} xl={2}>
+                <TextField
+                  label={t("event_calc:gameData.eventBonusRate")}
+                  type="number"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  inputProps={{
+                    min: "0",
+                    max: "250",
+                  }}
+                  value={eventBonusRate}
+                  onChange={(e) => setEventBonusRate(Number(e.target.value))}
+                  style={{ width: "100%" }}
+                />
+              </Grid>
+            </Grid>
             <br />
             <StepButtons />
           </StepContent>
@@ -621,7 +595,7 @@ const MusicRecommend: React.FC<{}> = () => {
         <Step>
           <StepLabel>{t("music_recommend:result.label")}</StepLabel>
           <StepContent>
-            <Alert severity="info">{t("music_recommend:assumption")}</Alert>
+            <Alert severity="info">{t("event_calc:assumption")}</Alert>
             <Button
               disabled={activeStep === 0}
               onClick={() => setActiveStep((s) => s - 1)}
@@ -629,14 +603,13 @@ const MusicRecommend: React.FC<{}> = () => {
             >
               {t("common:back")}
             </Button>
-            <div style={{ height: 650 }}>
-              <DataGrid
-                pagination
-                autoPageSize
-                rows={recommendResult}
-                columns={columns}
-              />
+            <div>Event Point Per Play: {eventPoint}</div>
+            <div>Play Count: {needCount}</div>
+            <div>
+              Play Time: {needTimeHour} Hours {needTimeMinute} Minutes
             </div>
+            <div>Use Boost: {needBoost}</div>
+            <div>Total Event Point: {eventPoint * needCount}</div>
           </StepContent>
         </Step>
       </Stepper>
