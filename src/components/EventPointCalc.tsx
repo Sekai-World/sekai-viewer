@@ -609,6 +609,7 @@ const MusicRecommend: React.FC<{}> = () => {
               Play Time: {needTimeHour} Hours {needTimeMinute} Minutes
             </div>
             <div>Use Boost: {needBoost}</div>
+            <div>Total Event Point: {eventPoint * needCount}</div>
           </StepContent>
         </Step>
       </Stepper>
