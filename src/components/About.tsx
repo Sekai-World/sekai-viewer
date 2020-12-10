@@ -91,7 +91,7 @@ const About: React.FC<{}> = () => {
                 rel="noopener noreferrer"
               >
                 <GitHub fontSize="inherit"></GitHub>
-                Xfl03
+                xfl03
               </Link>
             </li>
           </ul>

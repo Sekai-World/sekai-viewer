@@ -13,6 +13,9 @@ const useLayoutStyles = makeStyles((theme) => ({
   alert: {
     margin: theme.spacing(1, 0),
   },
+  bold: {
+    fontWeight: theme.typography.fontWeightBold,
+  },
 }));
 
 export { useLayoutStyles };

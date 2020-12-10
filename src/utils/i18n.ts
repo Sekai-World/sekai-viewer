@@ -46,6 +46,8 @@ export function initGlobalI18n() {
         "music_recommend",
         "story_reader",
         "mission",
+        "event_calc",
+        "team_build",
       ],
       fallbackLng: {
         default: ["en"],

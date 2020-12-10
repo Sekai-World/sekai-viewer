@@ -119,7 +119,7 @@ const BeginnerMissionList: React.FC<{}> = () => {
   return (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:mission.main")} - {t("common:mission.honor")}
+        {t("common:mission.main")} - {t("common:mission.beginner")}
       </Typography>
       <Container className={layoutClasses.content}>
         <Grid container justify="flex-end">
