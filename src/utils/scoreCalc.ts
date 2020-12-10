@@ -110,6 +110,28 @@ export function useScoreCalc() {
     },
     []
   );
+  const getEventPointPerHour = useCallback(
+    (
+      selfScore: number,
+      otherScore: number,
+      musicRate: number,
+      unitRate: number,
+      boostCost: number,
+      musicTime: number
+    ) => {
+      let point = getEventPoint(
+        selfScore,
+        otherScore,
+        musicRate,
+        unitRate,
+        boostCost
+      );
+      let fullTime = musicTime + 30;
+      let pointPerSecond = point / fullTime;
+      return pointPerSecond * 3600;
+    },
+    [getEventPoint]
+  );
 
   return {
     getCardSkillRate,
@@ -120,5 +142,6 @@ export function useScoreCalc() {
     getSoloAverageSkillRates,
     getScore,
     getEventPoint,
+    getEventPointPerHour,
   };
 }

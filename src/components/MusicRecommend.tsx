@@ -56,6 +56,7 @@ import { useAssetI18n } from "../utils/i18n";
 import { ColDef, DataGrid, ValueFormatterParams } from "@material-ui/data-grid";
 import { Link } from "react-router-dom";
 import { OpenInNew } from "@material-ui/icons";
+import { useScoreCalc } from "../utils/scoreCalc";
 
 const useStyle = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -124,6 +125,15 @@ const MusicRecommend: React.FC<{}> = () => {
     IMusicRecommendResult[]
   >([]);
 
+  const {
+    getCardSkillRates,
+    getMultiAverageSkillRates,
+    getSoloAverageSkillRates,
+    getScore,
+    getEventPoint,
+    getEventPointPerHour,
+  } = useScoreCalc();
+
   const saveTeamTextareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -180,89 +190,20 @@ const MusicRecommend: React.FC<{}> = () => {
     },
   ];
 
-  const levelWeight = useCallback((level: number) => {
-    return 1 + Math.max(0, level - 5) * 0.005;
-  }, []);
-
-  const eventPoint = useCallback(
-    (score: number, other: number, rate: number, unitRate: number = 0) => {
-      return Math.floor(
-        ((((100 + Math.floor(score / 20000) + Math.min(7, other / 400000)) *
-          rate) /
-          100) *
-          (100 + unitRate)) /
-          100
-      );
-    },
-    []
-  );
-
   const calcResult = useCallback(() => {
-    let teamSkills: number[] = [];
-    teamCardsStates.forEach((card) => {
-      let skillId = cards.filter((it) => it.id === card.cardId)[0].skillId;
-      let skill = skills.filter((it) => it.id === skillId)[0];
-      skill.skillEffects.forEach((it) => {
-        if (it.skillEffectType === "score_up") {
-          if (card.skillLevel <= it.skillEffectDetails.length) {
-            teamSkills.push(
-              it.skillEffectDetails[card.skillLevel - 1].activateEffectValue
-            );
-          }
-        }
-      });
-    });
-    console.log(teamSkills);
-
-    let skillLeader = teamSkills[0] / 100;
-    let sum = 0;
-    teamSkills.forEach((it) => {
-      sum += it;
-    });
-    let skillMember = sum / teamSkills.length / 100;
-
     let isSolo = selectedMode === "solo";
-    if (!isSolo) {
-      let skill = 1 + skillLeader;
-      for (let i = 1; i < teamSkills.length; ++i) {
-        skill *= 1 + teamSkills[i] / 500;
-      }
-      skillLeader = skill - 1;
-      skillMember = skill - 1;
-    }
 
-    //console.log(skillLeader);
-    //console.log(skillMember);
+    let cardSkills = getCardSkillRates(cards, skills, teamCardsStates);
+    let skillRates = isSolo
+      ? getSoloAverageSkillRates(cardSkills)
+      : getMultiAverageSkillRates(cardSkills);
 
     let ii = 0;
-    //console.log(metas.length);
     let result: IMusicRecommendResult[] = metas.map((meta) => {
       let music0 = musics.filter((it) => it.id === meta.music_id);
       if (music0.length === 0) return {} as IMusicRecommendResult;
       let music = music0[0];
-
-      let skillScore = 0;
-      let skillScores = isSolo ? meta.skill_score_solo : meta.skill_score_multi;
-      skillScores.forEach((it, i) => {
-        skillScore +=
-          it *
-          (i === 5
-            ? skillLeader
-            : isSolo && i >= teamSkills.length
-            ? 0
-            : skillMember);
-      });
-      if (music.id === 11) console.log(skillScore);
-
-      let score =
-        teamPowerStates *
-        4 *
-        (meta.base_score +
-          skillScore +
-          (isSolo
-            ? 0
-            : meta.fever_score * 0.5 + 0.05 * levelWeight(meta.level)));
-      score = Math.floor(score);
+      let score = getScore(meta, teamPowerStates, skillRates, isSolo);
 
       let result = 0;
       switch (selectedMode) {
@@ -271,13 +212,17 @@ const MusicRecommend: React.FC<{}> = () => {
           result = score;
           break;
         case "event_pt":
-          result = eventPoint(score, score * 4, meta.event_rate);
+          result = getEventPoint(score, score * 4, meta.event_rate / 100, 1, 0);
           break;
         case "event_pt_per_hour":
-          result =
-            (eventPoint(score, score * 4, meta.event_rate) /
-              (meta.music_time + 30)) *
-            3600;
+          result = getEventPointPerHour(
+            score,
+            score * 4,
+            meta.event_rate / 100,
+            1,
+            0,
+            meta.music_time
+          );
       }
       result = Math.floor(result);
 
@@ -300,17 +245,21 @@ const MusicRecommend: React.FC<{}> = () => {
     setRecommandResult(result);
     setActiveStep(maxStep - 1);
   }, [
-    teamCardsStates,
     selectedMode,
-    metas,
-    skills,
+    getCardSkillRates,
     cards,
+    skills,
+    teamCardsStates,
+    getSoloAverageSkillRates,
+    getMultiAverageSkillRates,
+    metas,
     musics,
+    getScore,
     teamPowerStates,
-    levelWeight,
     getTranslated,
     contentTransMode,
-    eventPoint,
+    getEventPoint,
+    getEventPointPerHour,
   ]);
 
   const filterCards = useCallback(() => {
