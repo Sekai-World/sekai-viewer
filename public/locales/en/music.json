@@ -1,7 +1,4 @@
 {
-  "difficulty": "Difficulty",
-  "actualPlaybackTime": "Actual Playback Time",
-  "noteCount": "Note Count",
   "vocal": "Vocal",
   "alert[0]": "The first <b>nine seconds</b> of every song have no sound. This is NOT a bug.",
   "vocalTab": {
@@ -14,6 +11,7 @@
   "tag_plural": "Tags",
   "category": "Category",
   "category_plural": "Categories",
+  "actualPlaybackTime": "Actual Playback Time",
   "arranger": "Arranger",
   "composer": "Composer",
   "lyricist": "Lyricist",
@@ -22,7 +20,9 @@
   "dancerCount": "Dancer Count",
   "vocal_plural": "Vocals",
   "vocalType": "Vocal Type",
+  "difficulty": "Difficulty",
   "difficulty_plural": "Difficulties",
+  "noteCount": "Note Count",
   "preview": "Preview",
   "categoryType": {
     "mv": "3D MV",

@@ -56,10 +56,6 @@
   "back": "Back",
   "next": "Next",
   "betaIndicator": "This function is in beta. Reporting bugs is welcomed.",
-  "all": "All",
-  "search": "Search",
-  "copyToClipboard": "Copy to Clipboard",
-  "load": "Load",
   "icon": "Icon",
   "endAt": "Available Until",
   "detect": {
@@ -74,7 +70,11 @@
   "level": "Level",
   "character_plural": "Characters",
   "delete": "Delete",
+  "all": "All",
+  "search": "Search",
   "replace": "Replace",
+  "load": "Load",
+  "copyToClipboard": "Copy to Clipboard",
   "scoreCalculator": "Score Calculator",
   "update": "Update",
   "member": "Character"
