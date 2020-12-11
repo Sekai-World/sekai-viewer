@@ -101,22 +101,31 @@ const About: React.FC<{}> = () => {
           <Typography>{t("about:missing_hint")}</Typography>
           <ul>
             <li>
-              简：Stargazing Koishi, Nightwheel, MoeDev, hodubidu3095, sgkoishi
+              简：Stargazing Koishi, Nightwheel, MoeDev, hodubidu3095, sgkoishi,
+              Shui
             </li>
-            <li>繁：Natsuzawa, ch ko, tofutofuo, Fryer, ayjchen</li>
+            <li>
+              繁：Natsuzawa, ch ko, tofutofuo, Fryer, ayjchen, yumisky0226
+            </li>
             <li>
               日：Passion, Cee, k0tayan, Natsuzawa, Build774, あいうえお菓子,
-              ikareo, Karuta
+              ikareo, Karuta, MoeDev, watatomo, yumisky0236, aceticke, Harlia
             </li>
-            <li>한：hodubidu3095, omitooshi, EleMas39, PJSEKAI, 아점</li>
-            <li>Pt-BR: Kuyaterai</li>
-            <li>русский: Spyrohat</li>
-            <li>Es: ruiemu, maravillas</li>
-            <li>It: SeaPu, RayFirefist, Kyon86</li>
-            <li>Pl: sousie</li>
-            <li>En: watatomo</li>
+            <li>
+              한：hodubidu3095, omitooshi, EleMas39, PJSEKAI, 아점, 쿠인/いずく,
+              ioeyeong842, Sn_Kinos, kemono, switchP
+            </li>
+            <li>Pt-BR: Kuyaterai, LariBee, ayunjapan</li>
+            <li>русский: Spyrohat, Yukina Minato</li>
+            <li>
+              Es: ruiemu, maravillas, Jackiore, Mochitachi70, Nachuki, NeoKM,
+              ReiZenKai, Tlayoli, Vlxx, fivian_clark
+            </li>
+            <li>It: SeaPu, RayFirefist, Kyon86, MattiVocaloidLover</li>
+            <li>Pl: sousie, Wheatley</li>
+            <li>En: watatomo, Wandering Spirit</li>
             <li>Fr: Yasito</li>
-            <li>Ind: Rizkiawan (Fueeru)</li>
+            <li>Ind: Rizkiawan (Fueeru), CrystL, Muko Mitsune</li>
             <li>ไทย: Revel</li>
           </ul>
         </Alert>
