@@ -21,7 +21,7 @@
     "label": "Seleccionar Modo",
     "desc": "Selecciona el modo de trabajo del recomendador."
   },
-  "assumption": "Suponiendo que: solo PERFECT, beneficio de evento 0%, usas 0 bebidas de energía, todos los jugadores tienen el mismo equipo",
+  "assumption": "Suponiendo que: solo PERFECT, beneficio de evento 0%, usas 0 bebidas de energía, todos los jugadores tienen el mismo equipo.",
   "addCardDialog": {
     "title": "Agregar Carta",
     "selectChara": "Personaje",
