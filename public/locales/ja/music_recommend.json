@@ -1,9 +1,4 @@
 {
-  "result": {
-    "musicName": "楽曲名",
-    "label": "結果",
-    "desc": "たった一つの操作で完了です。"
-  },
   "getResult": "結果を表示",
   "buildTeam": {
     "label": "チーム編成",
@@ -16,13 +11,17 @@
     "duplicatedCardError": "同じカードは追加できません。",
     "cardMaxError": "これ以上追加できません。",
     "loadTeamError": "値が間違っています。",
-    "teamTextCopied": "編成をクリップボードにコピーしました。"
+    "teamTextCopied": "編成をクリップボードにコピーしました。"},
+  "result": {
+    "label": "結果",
+    "musicName": "楽曲名",
+    "desc": "たった一つの操作で完了です。"
   },
   "modeSelect": {
     "label": "モード選択",
     "desc": "Recommender のモードを選択してください。"
   },
-  "assumption": "仮定：All Perfect、イベントボーナス 0%、電池消費 0、マルチプレイヤー全員の総合力が同じ。",
+  "assumption": "前提：ALL PERFECT、イベントボーナス0%、ライブPを0個使用、仲間は全員同じチームを使用",
   "addCardDialog": {
     "title": "カードを追加",
     "selectChara": "キャラクター",

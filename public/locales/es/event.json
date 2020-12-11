@@ -11,13 +11,16 @@
   "boostAttribute": "Atributo de aumento",
   "boostCharacters": "Personajes de aumento",
   "maxBoost": "Máximo aumento (Ambos usados) ",
-  "aggregateAt": "Aggregate Timepoint",
+  "startAt": "El evento empieza a las",
+  "closeAt": "El evento termina a las",
+  "endAt": "Se puede jugar en el evento hasta las",
   "rankingAnnounceAt": "Anuncio de ranking en ",
   "distributionStartAt": "Distribución de recompensas desde",
   "distributionEndAt": "Distribución de recompensas hasta",
   "ranking": "Ranking",
   "realtime": "En tiempo real el",
   "nextfetch": "Next fetch",
+  "aggregateAt": "Aggregate Timepoint",
   "alreadyPast": "Already Past",
   "type": {
     "marathon": "Marathon"
