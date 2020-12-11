@@ -1,9 +1,4 @@
 {
-  "result": {
-    "musicName": "Nombre de la Música",
-    "label": "Resultado",
-    "desc": "Solo un paso más y habrás terminado."
-  },
   "getResult": "Obtener Resultado",
   "buildTeam": {
     "label": "Formar Equipo",
@@ -16,13 +11,17 @@
     "duplicatedCardError": "No se puede agregar la misma carta a un equipo.",
     "cardMaxError": "Ya hay suficientes cartas.",
     "loadTeamError": "Revisa los datos ingresados.",
-    "teamTextCopied": "Texto del equipo copiado al portapapeles."
+    "teamTextCopied": "Texto del equipo copiado al portapapeles."},
+  "result": {
+    "label": "Resultado",
+    "musicName": "Nombre de la Música",
+    "desc": "Solo un paso más y habrás terminado."
   },
   "modeSelect": {
     "label": "Seleccionar Modo",
     "desc": "Selecciona el modo de trabajo del recomendador."
   },
-  "assumption": "Asumido: todas las notas perfect, bonus del evento 0%, uso de 0 bebidas energéticas, todos los jugadores en multijugador tienen el mismo poder de equipo.",
+  "assumption": "Suponiendo que: solo PERFECT, beneficio de evento 0%, usas 0 bebidas de energía, todos los jugadores tienen el mismo equipo",
   "addCardDialog": {
     "title": "Agregar Carta",
     "selectChara": "Personaje",
