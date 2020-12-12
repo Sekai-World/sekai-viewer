@@ -1,9 +1,4 @@
 {
-  "result": {
-    "musicName": "Nom de la musique",
-    "label": "Résultat",
-    "desc": "Encore une étape et vous avez fini."
-  },
   "getResult": "Obtenir les résultats",
   "buildTeam": {
     "label": "Construire l'équipe",
@@ -16,13 +11,17 @@
     "duplicatedCardError": "Impossible d'ajouter la même carte à une équipe.",
     "cardMaxError": "Il y a déjà assez de cartes.",
     "loadTeamError": "Vérifiez vos entrées.",
-    "teamTextCopied": "Texte de l'équipe copié dans le presse-papiers."
+    "teamTextCopied": "Texte de l'équipe copié dans le presse-papiers."},
+  "result": {
+    "label": "Résultat",
+    "musicName": "Nom de la musique",
+    "desc": "Encore une étape et vous avez fini."
   },
   "modeSelect": {
     "label": "Choix de mode",
     "desc": "Sélectionnez le mode que vous allez jouer."
   },
-  "assumption": "Hypothèse : tout est parfait, 0% de bonus d'événement, utilisation de 0 boisson énergétique, les multijoueurs ont tous la même puissance d'équipe.",
+  "assumption": "Hypothèse : tout est parfait, 0% de bonus d'événement, utilisation de 0 boisson énergétique, les joueurs ont tous la même puissance d'équipe.",
   "addCardDialog": {
     "title": "Ajouter une carte",
     "selectChara": "Personnage",
