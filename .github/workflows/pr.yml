@@ -10,20 +10,23 @@ jobs:
       matrix:
         node-version: [14.x]
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v2
         with:
           ref: ${{github.event.pull_request.head.ref}}
           repository: ${{github.event.pull_request.head.repo.full_name}}
-      -
-        name: Use Node.js ${{ matrix.node-version }}
+      - name: Checkout translation
+        uses: actions/checkout@v2
+        with:
+          ref: deploy
+          repository: Sekai-World/sekai-i18n
+          path: public/locales
+      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2.1.2
         with:
           node-version: ${{ matrix.node-version }}
 
-      -
-        name: Cache node modules
+      - name: Cache node modules
         uses: actions/cache@v2
         env:
           cache-name: cache-node-modules
@@ -36,19 +39,16 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
-      -
-        name: Install packages
+      - name: Install packages
         run: npm ci
 
-      -
-        name: Build pages
+      - name: Build pages
         run: |
           pr_number=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
           remote_branch="pr-$pr_number"
           PUBLIC_URL="/$remote_branch" npm run build
 
-      -
-        name: Store build result
+      - name: Store build result
         uses: actions/upload-artifact@v2
         with:
           name: pages
@@ -58,14 +58,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      -
-        name: Fetch build result
+      - name: Fetch build result
         uses: actions/download-artifact@v2
         with:
           name: pages
           path: build/
-      -
-        name: Deploy
+      - name: Deploy
         run: |
           pr_number=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
           remote_branch="pr-$pr_number"
@@ -84,8 +82,7 @@ jobs:
           PR_GITHUB_REPOSITORY: ${{ secrets.PR_REPO_NAME }}
           SECRET_PR_GITHUB_TOKEN: ${{ secrets.PR_GITHUB_TOKEN }}
 
-      -
-        name: Comment
+      - name: Comment
         uses: actions/github-script@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}

@@ -17,6 +17,7 @@ jobs:
       - name: Checkout translation
         uses: actions/checkout@v2
         with:
+          ref: deploy
           repository: Sekai-World/sekai-i18n
           path: public/locales
 
