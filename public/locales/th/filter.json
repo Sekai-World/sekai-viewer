@@ -6,5 +6,11 @@
     "caption": "แบ่งชนิด",
     "ascending": "น้อยไปมาก",
     "descending": "มากไปน้อย"
+  },
+  "missionType": {
+    "caption": "ประเภทภารกิจ"
+  },
+  "music_tag": {
+    "caption": "แทคของเพลง"
   }
 }
