@@ -45,6 +45,12 @@ jobs:
       - name: Build pages
         run: npm run build
 
+      - name: Remove unnecessary files
+        run: |
+          rm -r build/locales/.git
+          rm build/locales/LICENSE
+          rm build/locales/README.md
+
       - name: Store build result
         uses: actions/upload-artifact@v2
         with:
