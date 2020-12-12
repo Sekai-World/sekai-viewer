@@ -1,9 +1,4 @@
 {
-  "result": {
-    "musicName": "Nama Musik",
-    "label": "Hasil",
-    "desc": "Cukup satu langkah dan Anda selesai."
-  },
   "getResult": "Dapatkan Hasil",
   "buildTeam": {
     "label": "Buat Tim",
@@ -16,7 +11,11 @@
     "duplicatedCardError": "Tidak dapat menambahkan kartu yang sama ke satu tim.",
     "cardMaxError": "Sudah cukup banyak kartu.",
     "loadTeamError": "Periksa masukan Anda.",
-    "teamTextCopied": "Teks tim disalin ke papan klip."
+    "teamTextCopied": "Teks tim disalin ke papan klip."},
+  "result": {
+    "label": "Hasil",
+    "musicName": "Nama Musik",
+    "desc": "Cukup satu langkah dan Anda selesai."
   },
   "modeSelect": {
     "label": "Pilih Mode",
