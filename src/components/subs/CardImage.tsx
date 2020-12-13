@@ -23,12 +23,23 @@ export const CardImage: React.FC<{ id: number; trained?: boolean }> = ({
   const classes = useSvgStyles();
   const [cards] = useCachedData<ICardInfo>("cards");
   const [card, setCard] = useState<ICardInfo>();
+  const [cardImg, setCardImg] = useState<string>("");
 
   const rarityIcon = trained ? rarityAfterTraining : rarityNormal;
 
   useEffect(() => {
     if (cards.length) setCard(cards.find((elem) => elem.id === id));
   }, [cards, id]);
+
+  useEffect(() => {
+    if (card)
+      getRemoteAssetURL(
+        `character/member/${card.assetbundleName}_rip/card_${
+          trained ? "after_training" : "normal"
+        }.webp`,
+        setCardImg
+      );
+  }, [card, trained]);
 
   return card ? (
     <svg
@@ -37,11 +48,7 @@ export const CardImage: React.FC<{ id: number; trained?: boolean }> = ({
       className={classes.svg}
     >
       <image
-        href={`${
-          process.env.REACT_APP_ASSET_DOMAIN
-        }/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_${
-          trained ? "after_training" : "normal"
-        }.webp`}
+        href={cardImg}
         x="0"
         y="-50"
         width="1024"
