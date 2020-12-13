@@ -296,40 +296,40 @@ const CardDetail: React.FC<{}> = () => {
         ? card?.rarity >= 3
           ? [
               {
-                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.png`,
+                src: normalImg,
                 alt: "card normal",
-                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.png`,
+                downloadUrl: normalImg,
               },
               {
-                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.png`,
+                src: normalTrimImg,
                 alt: "card normal trim",
-                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.png`,
+                downloadUrl: normalTrimImg,
               },
               {
-                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_after_training.png`,
+                src: trainedImg,
                 alt: "card after training",
-                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_after_training.png`,
+                downloadUrl: trainedImg,
               },
               {
-                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/after_training.png`,
+                src: trainedTrimImg,
                 alt: "card after training trim",
-                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/after_training.png`,
+                downloadUrl: trainedTrimImg,
               },
             ]
           : [
               {
-                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.png`,
+                src: normalImg,
                 alt: "card normal",
-                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member/${card.assetbundleName}_rip/card_normal.png`,
+                downloadUrl: normalImg,
               },
               {
-                src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.png`,
+                src: normalTrimImg,
                 alt: "card normal",
-                downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_cutout_trm/${card.assetbundleName}_rip/normal.png`,
+                downloadUrl: normalTrimImg,
               },
             ]
         : [],
-    [card]
+    [card, normalImg, normalTrimImg, trainedImg, trainedTrimImg]
   );
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {

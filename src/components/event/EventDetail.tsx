@@ -78,6 +78,7 @@ const EventDetail: React.FC<{}> = () => {
   const [pastTimePercent, setPastTimePercent] = useState<number>(0);
   const [visible, setVisible] = useState<boolean>(false);
   const [activeIdx, setActiveIdx] = useState<number>(0);
+  const [eventBgm, setEventBgm] = useState<string>("");
 
   useEffect(() => {
     if (event) {
@@ -89,6 +90,10 @@ const EventDetail: React.FC<{}> = () => {
       document.title = t("title:eventDetail", {
         name,
       });
+      getRemoteAssetURL(
+        `${event.bgmAssetbundleName.replace("bgm", "bgm_rip")}.mp3`,
+        setEventBgm
+      );
     }
   }, [event, eventId, contentTransMode, getTranslated, t]);
 
@@ -298,12 +303,7 @@ const EventDetail: React.FC<{}> = () => {
         <audio
           style={{ width: "100%", margin: "1% 0" }}
           controls
-          src={`${
-            process.env.REACT_APP_ASSET_DOMAIN
-          }/file/sekai-assets/${event.bgmAssetbundleName.replace(
-            "bgm",
-            "bgm_rip"
-          )}.mp3`}
+          src={eventBgm}
         ></audio>
         <Grid className={classes["grid-out"]} container direction="column">
           <Grid

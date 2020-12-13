@@ -128,6 +128,14 @@ const MusicDetail: React.FC<{}> = () => {
   const [longMusicPlaybackURL, setLongMusicPlaybackURL] = useState<
     string | undefined
   >();
+  const [
+    trimmedLongMusicPlaybackURL,
+    setTrimmedLongMusicPlaybackURL,
+  ] = useState<string | undefined>();
+  const [shortMusicPlaybackURL, setShortMusicPlaybackURL] = useState<
+    string | undefined
+  >();
+  const [musicVideoURL, setMusicVideoURL] = useState<string>("");
 
   useEffect(() => {
     if (music) {
@@ -170,15 +178,47 @@ const MusicDetail: React.FC<{}> = () => {
   }, [danceMembers, musicId]);
 
   useEffect(() => {
+    if (music && musicVocal && musicVocal[selectedVocalType]) {
+      getRemoteAssetURL(
+        `long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`,
+        setLongMusicPlaybackURL
+      );
+      getRemoteAssetURL(
+        `short/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}_short.mp3`,
+        setShortMusicPlaybackURL
+      );
+    }
+  }, [music, musicVocal, selectedVocalType]);
+
+  useEffect(() => {
+    if (music && musicVocal && musicVocal[selectedVocalType]) {
+      getRemoteAssetURL(
+        `live/2dmode/${
+          vocalPreviewVal === "original"
+            ? "original_mv"
+            : vocalPreviewVal === "mv_2d"
+            ? "sekai_mv"
+            : ""
+        }/${String(music.id).padStart(4, "0")}_rip/${String(music.id).padStart(
+          4,
+          "0"
+        )}.mp4`,
+        setMusicVideoURL
+      );
+    }
+  }, [music, musicVocal, selectedVocalType, vocalPreviewVal]);
+
+  useEffect(() => {
     if (
       vocalPreviewVal === "1" &&
       musicVocal &&
       musicVocal[selectedVocalType] &&
-      music
+      music &&
+      longMusicPlaybackURL
     ) {
-      const url = `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`;
+      // const url = `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`;
       setTrimOptions({
-        sourceURL: url,
+        sourceURL: longMusicPlaybackURL,
         trimDuration: music.fillerSec,
         inclusive: false,
       });
@@ -194,23 +234,19 @@ const MusicDetail: React.FC<{}> = () => {
     vocalPreviewVal,
     setTrimOptions,
     setTrimLoading,
+    longMusicPlaybackURL,
   ]);
 
   useEffect(() => {
-    if (musicVocal && musicVocal[selectedVocalType] && music) {
-      setLongMusicPlaybackURL(
-        trimSilence
-          ? trimmedMP3URL
-          : `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`
-      );
+    if (musicVocal && musicVocal[selectedVocalType] && music && trimmedMP3URL) {
+      setTrimmedLongMusicPlaybackURL(trimmedMP3URL);
     } else {
-      setLongMusicPlaybackURL(undefined);
+      setTrimmedLongMusicPlaybackURL(undefined);
     }
   }, [
     music,
     musicVocal,
     selectedVocalType,
-    trimSilence,
     trimmedMP3URL,
     setLongMusicPlaybackURL,
   ]);
@@ -299,7 +335,12 @@ const MusicDetail: React.FC<{}> = () => {
   }, [music, musicVocal, musicJacket, selectedVocalType]);
 
   useEffect(() => {
-    if (musicVocal && musicVocal[selectedVocalType] && music) {
+    if (
+      musicVocal &&
+      musicVocal[selectedVocalType] &&
+      music &&
+      longMusicPlaybackURL
+    ) {
       let audio: HTMLAudioElement | undefined = new Audio();
       audio.onloadedmetadata = () => {
         if (!audio) {
@@ -324,14 +365,21 @@ const MusicDetail: React.FC<{}> = () => {
         audio = undefined;
       };
       audio.preload = "metadata";
-      audio.src = `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`;
+      audio.src = longMusicPlaybackURL;
       audio.onplay = onPlay;
 
       return () => {
         audio = undefined;
       };
     }
-  }, [musicVocal, selectedVocalType, music, humanizeDurationShort, onPlay]);
+  }, [
+    musicVocal,
+    selectedVocalType,
+    music,
+    humanizeDurationShort,
+    onPlay,
+    longMusicPlaybackURL,
+  ]);
 
   const VocalTypeSelector: React.FC<{}> = useCallback(() => {
     return (
@@ -498,7 +546,7 @@ const MusicDetail: React.FC<{}> = () => {
           <audio
             controls
             style={{ width: "100%" }}
-            src={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/short/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}_short.mp3`}
+            src={shortMusicPlaybackURL}
             onPlay={onPlay}
           />
         ) : null}
@@ -517,7 +565,9 @@ const MusicDetail: React.FC<{}> = () => {
                 width: "100%",
                 opacity: longMusicPlaybackURL ? undefined : "0.8",
               }}
-              src={longMusicPlaybackURL}
+              src={
+                trimSilence ? trimmedLongMusicPlaybackURL : longMusicPlaybackURL
+              }
               onPlay={onPlay}
             />
             {longMusicPlaybackURL ? null : (
@@ -541,20 +591,11 @@ const MusicDetail: React.FC<{}> = () => {
         ) : null}
         {["original", "mv_2d"].includes(vocalPreviewVal) &&
         musicVocalTypes.length &&
-        musicVocal.length ? (
+        musicVocal.length &&
+        longMusicPlaybackURL ? (
           <MusicVideoPlayer
-            audioPath={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`}
-            videoPath={`${
-              process.env.REACT_APP_ASSET_DOMAIN
-            }/file/sekai-assets/live/2dmode/${
-              vocalPreviewVal === "original"
-                ? "original_mv"
-                : vocalPreviewVal === "mv_2d"
-                ? "sekai_mv"
-                : ""
-            }/${String(music.id).padStart(4, "0")}_rip/${String(
-              music.id
-            ).padStart(4, "0")}.mp4`}
+            audioPath={longMusicPlaybackURL}
+            videoPath={musicVideoURL}
             onPlay={() => setVocalDisabled(true)}
             onPause={() => setVocalDisabled(false)}
             onEnded={() => setVocalDisabled(false)}
@@ -925,9 +966,9 @@ const MusicDetail: React.FC<{}> = () => {
         onClose={() => setVisible(false)}
         images={[
           {
-            src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}.webp`,
+            src: musicJacket,
             alt: "music jacket",
-            downloadUrl: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}.webp`,
+            downloadUrl: musicJacket,
           },
         ]}
         zIndex={2000}

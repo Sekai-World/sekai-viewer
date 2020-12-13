@@ -441,7 +441,7 @@ const MemberDetail: React.FC<{}> = () => {
         onClose={() => setVisible(false)}
         images={[
           {
-            src: `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/trim_rip/chr_trim_${charaId}.webp`,
+            src: charaTrimImg,
             alt: t("member:tab.title[0]"),
           },
         ]}

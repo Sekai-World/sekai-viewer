@@ -15,6 +15,11 @@ TagManager.initialize({
   gtmId: "GTM-NFC6SW2",
 });
 
+window.isChinaMainland = false;
+window.IPCallBack = ({ err }) => {
+  window.isChinaMainland = err === "";
+};
+
 ReactDOM.render(
   <React.StrictMode>
     <Router>
