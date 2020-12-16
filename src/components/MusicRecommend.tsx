@@ -153,48 +153,56 @@ const MusicRecommend: React.FC<{}> = () => {
       : getMultiAverageSkillRates(cardSkills);
 
     let ii = 0;
-    let result: IMusicRecommendResult[] = metas.map((meta) => {
-      let music0 = musics.filter((it) => it.id === meta.music_id);
-      if (music0.length === 0) return {} as IMusicRecommendResult;
-      let music = music0[0];
-      let score = getScore(meta, teamPowerStates, skillRates, isSolo);
+    let result: IMusicRecommendResult[] = metas
+      .map((meta) => {
+        let music0 = musics.filter((it) => it.id === meta.music_id);
+        if (music0.length === 0) return {} as IMusicRecommendResult;
+        let music = music0[0];
+        let score = getScore(meta, teamPowerStates, skillRates, isSolo);
 
-      let result = 0;
-      switch (selectedMode) {
-        case "solo":
-        case "multi":
-          result = score;
-          break;
-        case "event_pt":
-          result = getEventPoint(score, score * 4, meta.event_rate / 100, 1, 0);
-          break;
-        case "event_pt_per_hour":
-          result = getEventPointPerHour(
-            score,
-            score * 4,
-            meta.event_rate / 100,
-            1,
-            0,
-            meta.music_time
-          );
-      }
-      result = Math.floor(result);
+        let result = 0;
+        switch (selectedMode) {
+          case "solo":
+          case "multi":
+            result = score;
+            break;
+          case "event_pt":
+            result = getEventPoint(
+              score,
+              score * 4,
+              meta.event_rate / 100,
+              1,
+              0
+            );
+            break;
+          case "event_pt_per_hour":
+            result = getEventPointPerHour(
+              score,
+              score * 4,
+              meta.event_rate / 100,
+              1,
+              0,
+              meta.music_time
+            );
+        }
+        result = Math.floor(result);
 
-      return {
-        id: ++ii,
-        name: getTranslated(
-          contentTransMode,
-          `music_titles:${meta.music_id}`,
-          music.title
-        ),
-        level: meta.level,
-        difficulty: meta.difficulty,
-        combo: meta.combo,
-        duration: meta.music_time,
-        result: result,
-        link: `/music/${music.id}`,
-      } as IMusicRecommendResult;
-    });
+        return {
+          id: ++ii,
+          name: getTranslated(
+            contentTransMode,
+            `music_titles:${meta.music_id}`,
+            music.title
+          ),
+          level: meta.level,
+          difficulty: meta.difficulty,
+          combo: meta.combo,
+          duration: meta.music_time,
+          result: result,
+          link: `/music/${music.id}`,
+        } as IMusicRecommendResult;
+      })
+      .filter((result) => result.result);
     //console.log(result.length);
     setRecommandResult(result);
     setActiveStep(maxStep - 1);
