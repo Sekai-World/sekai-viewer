@@ -49,9 +49,9 @@ const GridView: React.FC<{
             setImageURL
           );
           break;
-        case "fr":
+        default:
           getRemoteAssetURL(
-            `comic_fr/${data.assetbundleName}.png`,
+            `comic_${lang}/${data.assetbundleName}.png`,
             setImageURL
           );
           break;

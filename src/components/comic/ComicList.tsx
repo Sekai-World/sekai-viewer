@@ -8,6 +8,7 @@ import {
 } from "@material-ui/core";
 import { Twitter } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
+import { Vk } from "mdi-material-ui";
 import React, {
   Fragment,
   useCallback,
@@ -52,7 +53,9 @@ const ComicList: React.FC<{}> = () => {
   const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
   const [activeIdx, setActiveIdx] = useState<number>(0);
-  const [resourceLang, setResourceLang] = useState<"ja" | "fr">("ja");
+  const [resourceLang, setResourceLang] = useState<
+    "ja" | "fr" | "ru" | "zhs" | "zht"
+  >("ja");
   const [comicImages, setComicImages] = useState<ImageDecorator[]>([]);
 
   const getPaginatedTips = useCallback(
@@ -71,8 +74,8 @@ const ComicList: React.FC<{}> = () => {
           case "ja":
             url = `comic/one_frame_rip/${comic.assetbundleName}.webp`;
             break;
-          case "fr":
-            url = `comic_fr/${comic.assetbundleName}.png`;
+          default:
+            url = `comic_${resourceLang}/${comic.assetbundleName}.png`;
             break;
         }
         images.push({
@@ -158,6 +161,27 @@ const ComicList: React.FC<{}> = () => {
             >
               <Typography>FR</Typography>
             </Button>
+            <Button
+              size="medium"
+              color={resourceLang === "ru" ? "secondary" : "primary"}
+              onClick={() => setResourceLang("ru")}
+            >
+              <Typography>RU</Typography>
+            </Button>
+            <Button
+              size="medium"
+              color={resourceLang === "zhs" ? "secondary" : "primary"}
+              onClick={() => setResourceLang("zhs")}
+            >
+              <Typography>简</Typography>
+            </Button>
+            <Button
+              size="medium"
+              color={resourceLang === "zht" ? "secondary" : "primary"}
+              onClick={() => setResourceLang("zht")}
+            >
+              <Typography>繁</Typography>
+            </Button>
           </ButtonGroup>
         </Grid>
         {resourceLang === "fr" ? (
@@ -172,6 +196,34 @@ const ComicList: React.FC<{}> = () => {
               </Link>
               )
             </Typography>
+          </Alert>
+        ) : resourceLang === "ru" ? (
+          <Alert severity="info">
+            <Typography>
+              Credit:
+              <Link
+                href="https://vk.com/pjsekai_ru"
+                style={{ textDecorationLine: "none" }}
+              >
+                <Vk fontSize="inherit" /> Project SEKAI Russian Group
+              </Link>
+            </Typography>
+          </Alert>
+        ) : resourceLang === "zhs" ? (
+          <Alert severity="info">
+            <Typography>
+              Credit:
+              <Link
+                href="https://space.bilibili.com/13148307/"
+                style={{ textDecorationLine: "none" }}
+              >
+                Project_SEKAI资讯站@bilibili
+              </Link>
+            </Typography>
+          </Alert>
+        ) : resourceLang === "zht" ? (
+          <Alert severity="info">
+            <Typography>Credit: CHKO</Typography>
           </Alert>
         ) : null}
         <InfiniteScroll<ITipInfoComic>
