@@ -1,13 +1,6 @@
-import {
-  Button,
-  ButtonGroup,
-  Container,
-  Grid,
-  Link,
-  Typography,
-} from "@material-ui/core";
+import { Container, Grid, Link, Typography } from "@material-ui/core";
 import { Twitter } from "@material-ui/icons";
-import { Alert } from "@material-ui/lab";
+import { Alert, ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 import { Vk } from "mdi-material-ui";
 import React, {
   Fragment,
@@ -146,43 +139,29 @@ const ComicList: React.FC<{}> = () => {
       </Typography>
       <Container className={layoutClasses.content}>
         <Grid container justify="space-between">
-          <ButtonGroup style={{ marginBottom: "1%" }}>
-            <Button
-              size="medium"
-              color={resourceLang === "ja" ? "secondary" : "primary"}
-              onClick={() => setResourceLang("ja")}
-            >
+          <ToggleButtonGroup
+            value={resourceLang}
+            exclusive
+            onChange={(ev, lang) => setResourceLang(lang as "ja")}
+            style={{ marginBottom: "1%" }}
+            aria-label="resource language"
+          >
+            <ToggleButton size="medium" value="ja">
               <Typography>JA</Typography>
-            </Button>
-            <Button
-              size="medium"
-              color={resourceLang === "fr" ? "secondary" : "primary"}
-              onClick={() => setResourceLang("fr")}
-            >
+            </ToggleButton>
+            <ToggleButton size="medium" value="fr">
               <Typography>FR</Typography>
-            </Button>
-            <Button
-              size="medium"
-              color={resourceLang === "ru" ? "secondary" : "primary"}
-              onClick={() => setResourceLang("ru")}
-            >
+            </ToggleButton>
+            <ToggleButton size="medium" value="ru">
               <Typography>RU</Typography>
-            </Button>
-            <Button
-              size="medium"
-              color={resourceLang === "zhs" ? "secondary" : "primary"}
-              onClick={() => setResourceLang("zhs")}
-            >
+            </ToggleButton>
+            <ToggleButton size="medium" value="zhs">
               <Typography>简</Typography>
-            </Button>
-            <Button
-              size="medium"
-              color={resourceLang === "zht" ? "secondary" : "primary"}
-              onClick={() => setResourceLang("zht")}
-            >
+            </ToggleButton>
+            <ToggleButton size="medium" value="zht">
               <Typography>繁</Typography>
-            </Button>
-          </ButtonGroup>
+            </ToggleButton>
+          </ToggleButtonGroup>
         </Grid>
         {resourceLang === "fr" ? (
           <Alert severity="info">
