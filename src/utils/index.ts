@@ -103,7 +103,7 @@ export function useCachedData<
     const { data }: { data: T[] } = await Axios.get(
       `${
         window.isChinaMainland
-          ? "https://sekai-json-1258184166.file.myqcloud.com"
+          ? process.env.REACT_APP_JSON_DOMAIN_CN + "/master"
           : "https://sekai-world.github.io/sekai-master-db-diff"
       }/${name}.json`
     );
@@ -278,11 +278,7 @@ export async function getRemoteAssetURL(
   setFunc?: CallableFunction
 ): Promise<string> {
   const isWebpSupported = Modernizr.webplossless;
-  const url = `${
-    window.isChinaMainland
-      ? process.env.REACT_APP_ASSET_DOMAIN_CN
-      : process.env.REACT_APP_ASSET_DOMAIN
-  }/file/sekai-assets/${endpoint}`;
+  const url = `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/${endpoint}`;
 
   if (endpoint.endsWith(".webp") && !isWebpSupported) {
     let dataUrl = await localforage.getItem<string>(url);
