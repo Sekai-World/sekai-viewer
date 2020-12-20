@@ -4,6 +4,7 @@ import { Patreon } from "mdi-material-ui";
 import React, { Fragment } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { useLayoutStyles } from "../styles/layout";
+import AifadianQRCode from "../assets/aifadian-qrcode.png";
 
 const Support: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
@@ -20,6 +21,21 @@ const Support: React.FC<{}> = () => {
           <Trans i18nKey="support:general.desc" />
         </Typography>
         <br />
+        {window.isChinaMainland ? (
+          <Fragment>
+            <Typography variant="subtitle1" className={layoutClasses.header}>
+              爱发电 <Patreon fontSize="inherit" />
+            </Typography>
+            <Typography>
+              {/* <Trans i18nKey="support:patreon.desc" /> */}
+              为中国大陆地区用户准备的赞助渠道
+            </Typography>
+            <Link href="https://afdian.net/@sekaiviewer" target="_blank">
+              <img src={AifadianQRCode} width="96" alt="爱发电二维码"></img>
+            </Link>
+            <br />
+          </Fragment>
+        ) : null}
         <Typography variant="subtitle1" className={layoutClasses.header}>
           Patreon <Patreon fontSize="inherit" />
         </Typography>
