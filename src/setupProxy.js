@@ -8,4 +8,14 @@ module.exports = function (app) {
       changeOrigin: true,
     })
   );
+  app.use(
+    "/api",
+    createProxyMiddleware({
+      target: "https://api.sekai.best/",
+      changeOrigin: true,
+      pathRewrite: {
+        "^/api": "/",
+      },
+    })
+  );
 };

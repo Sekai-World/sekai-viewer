@@ -9,29 +9,30 @@ import "./modernizr-custom";
 import { initGlobalI18n } from "./utils/i18n";
 import "./index.css";
 import { SettingProvider } from "./context";
+import Axios from "axios";
 
-initGlobalI18n();
 TagManager.initialize({
   gtmId: "GTM-NFC6SW2",
 });
 
 window.isChinaMainland = false;
-window.IPCallBack = ({ err }) => {
-  window.isChinaMainland = err === "";
-};
+Axios.get(`${process.env.REACT_APP_API_BACKEND_BASE}/country`).then((res) => {
+  window.isChinaMainland = res.data.data.country === "CN";
+  initGlobalI18n();
 
-ReactDOM.render(
-  <React.StrictMode>
-    <Router>
-      <Suspense fallback="loading">
-        <SettingProvider>
-          <App />
-        </SettingProvider>
-      </Suspense>
-    </Router>
-  </React.StrictMode>,
-  document.getElementById("root")
-);
+  ReactDOM.render(
+    <React.StrictMode>
+      <Router>
+        <Suspense fallback="loading">
+          <SettingProvider>
+            <App />
+          </SettingProvider>
+        </Suspense>
+      </Router>
+    </React.StrictMode>,
+    document.getElementById("root")
+  );
+});
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
