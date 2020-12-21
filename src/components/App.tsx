@@ -51,6 +51,7 @@ import {
   Textsms,
   KeyboardArrowUp,
   Assignment,
+  AccountCircle,
 } from "@material-ui/icons";
 import {
   AccountGroup,
@@ -110,6 +111,8 @@ const BeginnerMissionList = lazy(
 const CharacterMissionList = lazy(
   () => import("./mission/character/CharacterMissionList")
 );
+const User = lazy(() => import("./user/User"));
+const Connect = lazy(() => import("./user/Connect"));
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -455,9 +458,9 @@ function App() {
   ];
 
   const classes = useStyles();
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
-  const [sidebarExpansionStates, setSidebarExpansionStates] = React.useState([
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [sidebarExpansionStates, setSidebarExpansionStates] = useState([
     true,
     true,
     true,
@@ -626,17 +629,34 @@ function App() {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" noWrap classes={{ root: classes.title }}>
-              Sekai Viewer{" "}
-              <Typography component="span" variant="body2">
-                Open Beta
-              </Typography>
+              Sekai Viewer
             </Typography>
-            <IconButton color="inherit" onClick={() => goBack()} disableRipple>
-              <ArrowBackIosIcon />
+            <IconButton
+              color="inherit"
+              onClick={() => goBack()}
+              disableRipple
+              style={{ padding: ".6rem" }}
+              size="medium"
+            >
+              <ArrowBackIosIcon fontSize="inherit" />
             </IconButton>
-            <IconButton color="inherit" onClick={() => setIsSettingsOpen(true)}>
-              <SettingsIcon />
+            <IconButton
+              color="inherit"
+              onClick={() => setIsSettingsOpen(true)}
+              style={{ padding: ".6rem" }}
+              size="medium"
+            >
+              <SettingsIcon fontSize="inherit" />
             </IconButton>
+            <Link to="/user" style={{ color: theme.palette.common.white }}>
+              <IconButton
+                color="inherit"
+                style={{ padding: ".6rem" }}
+                size="medium"
+              >
+                <AccountCircle fontSize="inherit" />
+              </IconButton>
+            </Link>
           </Toolbar>
         </AppBar>
         <nav className={classes.drawer}>
@@ -741,6 +761,12 @@ function App() {
               </Route>
               <Route path="/mission/character">
                 <CharacterMissionList />
+              </Route>
+              <Route path="/user">
+                <User />
+              </Route>
+              <Route path="/connect/:provider/redirect">
+                <Connect />
               </Route>
             </Suspense>
           </Switch>

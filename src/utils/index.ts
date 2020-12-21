@@ -46,6 +46,7 @@ import {
   INormalMission,
 } from "./../types.d";
 import { assetI18n, useAssetI18n } from "./i18n";
+import { useLocation } from "react-router-dom";
 
 const webpMachine = new WebpMachine();
 
@@ -516,4 +517,8 @@ export function getJPTime() {
     .split("/")
     .slice(0, 2)
     .join("/");
+}
+
+export function useQuery() {
+  return new URLSearchParams(useLocation().search);
 }

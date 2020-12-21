@@ -11,6 +11,7 @@ import "./index.css";
 import { SettingProvider } from "./context";
 import Axios from "axios";
 import localforage from "localforage";
+import { UserModel } from "./types";
 
 TagManager.initialize({
   gtmId: "GTM-NFC6SW2",
@@ -50,6 +51,31 @@ localforage
       document.getElementById("root")
     );
   });
+
+// check user info
+(async () => {
+  const lastCheck = Number(localStorage.getItem("lastUserCheck") || "0");
+
+  if (new Date().getTime() - lastCheck > 24 * 3600 * 1000) {
+    // recheck user info
+    const userData = JSON.parse(
+      localStorage.getItem("userData") || "null"
+    ) as UserModel | null;
+    const token = localStorage.getItem("authToken") || "";
+    if (userData && token) {
+      const axios = Axios.create({
+        baseURL: process.env.REACT_APP_STRAPI_BASE,
+      });
+      const { data } = await axios.get<UserModel>(`/users/me`, {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
+      localStorage.setItem("userData", JSON.stringify(data));
+      localStorage.setItem("lastUserCheck", String(new Date().getTime()));
+    }
+  }
+})();
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

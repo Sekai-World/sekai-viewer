@@ -808,3 +808,35 @@ export interface ICharacterMission {
   requirement: number;
   sentence: string;
 }
+
+export interface LoginValues {
+  identifier: string;
+  password: string;
+}
+
+export interface LoginLocalApiReturn {
+  user: any;
+  jwt: string;
+}
+
+export interface RegisterValues {
+  username: string;
+  password: string;
+  email: string;
+}
+
+export interface UserRoleModel {
+  name: string;
+  description: string;
+  type: string;
+}
+
+export interface UserModel {
+  username: string;
+  email: string;
+  provider: string;
+  confirmed: boolean;
+  blocked: boolean;
+  role: UserRoleModel;
+  avatar: string;
+}
