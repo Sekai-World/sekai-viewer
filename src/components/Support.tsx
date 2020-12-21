@@ -1,10 +1,15 @@
 import { Avatar, Container, Grid, Link, Typography } from "@material-ui/core";
-import { GitHub, OpenInNew } from "@material-ui/icons";
+import {
+  GitHub,
+  MonetizationOn,
+  OpenInNew,
+  Translate,
+} from "@material-ui/icons";
 import { Patreon } from "mdi-material-ui";
 import React, { Fragment } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { useLayoutStyles } from "../styles/layout";
-import AifadianQRCode from "../assets/aifadian-qrcode.png";
+// import AifadianQRCode from "../assets/aifadian-qrcode.png";
 
 const Support: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
@@ -24,68 +29,79 @@ const Support: React.FC<{}> = () => {
         {window.isChinaMainland ? (
           <Fragment>
             <Typography variant="subtitle1" className={layoutClasses.header}>
-              爱发电 <Patreon fontSize="inherit" />
+              爱发电 <MonetizationOn fontSize="inherit" />
             </Typography>
             <Typography>
               {/* <Trans i18nKey="support:patreon.desc" /> */}
-              为中国大陆地区用户准备的赞助渠道
+              如果你喜欢本站，欢迎赞助支持！你的支持可以进一步提高本站在大陆地区的访问速度。
             </Typography>
             <Link href="https://afdian.net/@sekaiviewer" target="_blank">
-              <img src={AifadianQRCode} width="96" alt="爱发电二维码"></img>
+              <Typography>
+                通过爱发电支持我！ <OpenInNew fontSize="inherit" />
+              </Typography>
+              <img
+                style={{ maxWidth: "100%" }}
+                src={`${process.env.PUBLIC_URL}/images/afdian-SekaiViewer.jpg`}
+                // width="320"
+                alt="爱发电二维码"
+              ></img>
             </Link>
             <br />
           </Fragment>
-        ) : null}
-        <Typography variant="subtitle1" className={layoutClasses.header}>
-          Patreon <Patreon fontSize="inherit" />
-        </Typography>
-        <Typography>
-          <Trans i18nKey="support:patreon.desc" />
-        </Typography>
-        <Link href="https://www.patreon.com/SekaiViewer" target="_blank">
-          <Typography>
-            Become a Patron! <OpenInNew fontSize="inherit" />
-          </Typography>
-        </Link>
-        <br />
-        <Container>
-          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Tier Happy
-          </Typography>
-          <Grid container spacing={1}>
-            <Grid item xs={12} md={4} lg={3}>
-              <Grid container alignItems="center" spacing={1}>
-                <Grid item>
-                  <Avatar
-                    src="https://c8.patreon.com/2/200/45497536"
-                    alt="zaurus"
-                  ></Avatar>
-                </Grid>
-                <Grid item>
-                  <Typography>zaurus</Typography>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            Tier Lucky
-          </Typography>
-          <Grid container spacing={1}>
-            <Grid item xs={12} md={4} lg={3}>
-              <Grid container alignItems="center" spacing={1}>
-                <Grid item>
-                  <Avatar>NA</Avatar>
-                </Grid>
-                <Grid item>
-                  <Typography>N/A</Typography>
+        ) : (
+          <Fragment>
+            <Typography variant="subtitle1" className={layoutClasses.header}>
+              Patreon <Patreon fontSize="inherit" />
+            </Typography>
+            <Typography>
+              <Trans i18nKey="support:patreon.desc" />
+            </Typography>
+            <Link href="https://www.patreon.com/SekaiViewer" target="_blank">
+              <Typography>
+                Become a Patron! <OpenInNew fontSize="inherit" />
+              </Typography>
+            </Link>
+            <br />
+            <Container>
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                Tier Happy
+              </Typography>
+              <Grid container spacing={1}>
+                <Grid item xs={12} md={4} lg={3}>
+                  <Grid container alignItems="center" spacing={1}>
+                    <Grid item>
+                      <Avatar
+                        src="https://c8.patreon.com/2/200/45497536"
+                        alt="zaurus"
+                      ></Avatar>
+                    </Grid>
+                    <Grid item>
+                      <Typography>zaurus</Typography>
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Grid>
-            </Grid>
-          </Grid>
-        </Container>
-        <br />
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                Tier Lucky
+              </Typography>
+              <Grid container spacing={1}>
+                <Grid item xs={12} md={4} lg={3}>
+                  <Grid container alignItems="center" spacing={1}>
+                    <Grid item>
+                      <Avatar>NA</Avatar>
+                    </Grid>
+                    <Grid item>
+                      <Typography>N/A</Typography>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Container>
+            <br />
+          </Fragment>
+        )}
         <Typography variant="subtitle1" className={layoutClasses.header}>
-          {t("support:translation.title")}
+          {t("support:translation.title")} <Translate fontSize="inherit" />
         </Typography>
         <Typography>
           <Trans i18nKey="support:translation.desc" />

@@ -18,6 +18,7 @@ import { useInteractiveStyles } from "../styles/interactive";
 import { ColDef, DataGrid, ValueFormatterParams } from "@material-ui/data-grid";
 import {
   GitHub,
+  MonetizationOn,
   OpenInNew,
   Settings,
   Translate,
@@ -242,6 +243,16 @@ function Home() {
             components={{ s: <Settings fontSize="inherit" /> }}
           />
         </Alert>
+        {window.isChinaMainland && (
+          <Alert className={layoutClasses.alert} severity="info">
+            本站已启用腾讯云CDN加速数据加载，并计划迁移更多数据加速本站访问，但是费用相对高昂，你可以通过
+            <Link href="https://afdian.net/@sekaiviewer" target="_blank">
+              <MonetizationOn fontSize="inherit" />
+              爱发电
+            </Link>
+            来赞助支持让我更轻松地进行迁移工作。
+          </Alert>
+        )}
         <Alert className={layoutClasses.alert} severity="warning">
           <AlertTitle>{t("home:alert1.title")}</AlertTitle>
           <Link
@@ -263,14 +274,18 @@ function Home() {
           </Link>
           （Sekai-World/sekai-viewer）
           <br></br>
-          <Link
-            href="https://www.patreon.com/bePatron?u=6503151"
-            target="_blank"
-          >
-            <Patreon fontSize="inherit"></Patreon>
-            Patreon
-          </Link>
-          <br></br>
+          {!window.isChinaMainland && (
+            <Fragment>
+              <Link
+                href="https://www.patreon.com/bePatron?u=6503151"
+                target="_blank"
+              >
+                <Patreon fontSize="inherit"></Patreon>
+                Patreon
+              </Link>
+              <br></br>
+            </Fragment>
+          )}
           <RouteLink to="/about" style={{ textDecoration: "none" }}>
             <Link>
               <OpenInNew fontSize="inherit" />{" "}
