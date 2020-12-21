@@ -180,11 +180,11 @@ const MusicDetail: React.FC<{}> = () => {
   useEffect(() => {
     if (music && musicVocal && musicVocal[selectedVocalType]) {
       getRemoteAssetURL(
-        `long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`,
+        `music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`,
         setLongMusicPlaybackURL
       );
       getRemoteAssetURL(
-        `short/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}_short.mp3`,
+        `music/short/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}_short.mp3`,
         setShortMusicPlaybackURL
       );
     }
