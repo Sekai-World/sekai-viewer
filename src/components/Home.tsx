@@ -295,18 +295,14 @@ function Home() {
           <br></br>
           {t("home:alert1.contact")}:
           <Link
-            href="https://www.twitter.com/miku_zura"
+            href="https://www.twitter.com/SekaiViewer"
             target="_blank"
             className={classes["contact-link"]}
           >
             <Twitter fontSize="inherit"></Twitter>
-            @miku_zura
+            @SekaiViewer
           </Link>
-          <Link href="#" className={classes["contact-link"]}>
-            <Discord fontSize="inherit"></Discord>
-            DNARoma#0646
-          </Link>
-          <br></br>
+          <br />
           {t("home:alert1.join-discord")}
           <Link
             href="https://discord.gg/xcDBRMd"
