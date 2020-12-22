@@ -1,7 +1,7 @@
 import { Typography } from "@material-ui/core";
 import React, { Fragment, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useLocation, useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { useLayoutStyles } from "../../styles/layout";
 import { useQuery } from "../../utils";
 import { useStrapi } from "../../utils/apiClient";
