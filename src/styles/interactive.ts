@@ -15,6 +15,9 @@ const useInteractiveStyles = makeStyles((theme) => ({
       paddingRight: theme.spacing(5),
     },
   },
+  inputHidden: {
+    display: "none",
+  },
 }));
 
 export { useInteractiveStyles };

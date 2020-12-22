@@ -43,9 +43,19 @@ export function useStrapi() {
     },
     async getUserMe(token: string): Promise<UserModel> {
       return (
-        await axios.get<UserModel>(`/users/me`, {
+        await axios.get<UserModel>("/users/me", {
           headers: {
-            authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
+          },
+        })
+      ).data;
+    },
+    async postUpload(token: string, formData: FormData) {
+      return (
+        await axios.post("/upload", formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
           },
         })
       ).data;

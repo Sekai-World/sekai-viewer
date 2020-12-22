@@ -56,7 +56,10 @@ localforage
 (async () => {
   const lastCheck = Number(localStorage.getItem("lastUserCheck") || "0");
 
-  if (new Date().getTime() - lastCheck > 24 * 3600 * 1000) {
+  if (
+    process.env.NODE_ENV === "development" ||
+    new Date().getTime() - lastCheck > 24 * 3600 * 1000
+  ) {
     // recheck user info
     const userData = JSON.parse(
       localStorage.getItem("userData") || "null"

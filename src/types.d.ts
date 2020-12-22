@@ -831,6 +831,12 @@ export interface UserRoleModel {
   type: string;
 }
 
+export interface UserMetadatumModel {
+  avatar: {
+    url: string;
+  };
+}
+
 export interface UserModel {
   username: string;
   email: string;
@@ -838,5 +844,5 @@ export interface UserModel {
   confirmed: boolean;
   blocked: boolean;
   role: UserRoleModel;
-  avatar: string;
+  user_metadatum: UserMetadatumModel;
 }
