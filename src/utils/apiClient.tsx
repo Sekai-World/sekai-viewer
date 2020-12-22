@@ -56,8 +56,8 @@ export function useStrapi() {
 /**
  * Access api.sekai.best endpoints.
  */
-export function useApi() {
-  const axios = Axios.create({
-    baseURL: process.env.REACT_APP_API_BACKEND_BASE,
-  });
-}
+// export function useApi() {
+//   const axios = Axios.create({
+//     baseURL: process.env.REACT_APP_API_BACKEND_BASE,
+//   });
+// }

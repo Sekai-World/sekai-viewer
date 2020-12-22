@@ -16,6 +16,19 @@ const useLayoutStyles = makeStyles((theme) => ({
   bold: {
     fontWeight: theme.typography.fontWeightBold,
   },
+  avatarProfile: {
+    [theme.breakpoints.down("sm")]: {
+      height: theme.spacing(10),
+      width: theme.spacing(10),
+    },
+    [theme.breakpoints.up("md")]: {
+      height: theme.spacing(20),
+      width: theme.spacing(20),
+    },
+  },
+  capitalize: {
+    textTransform: "capitalize",
+  },
 }));
 
 export { useLayoutStyles };
