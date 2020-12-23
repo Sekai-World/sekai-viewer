@@ -16,7 +16,7 @@ import { Alert } from "@material-ui/lab";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-material-ui";
 import { Upload, Logout } from "mdi-material-ui";
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { useInteractiveStyles } from "../../styles/interactive";
@@ -42,6 +42,10 @@ const UserHome: React.FC<{}> = () => {
   const [nickname, setNickname] = useState(user.user_metadatum.nickname);
   const [isUploading, setIsUploading] = useState(false);
   const [isEditingNickname, setIsEditingNickname] = useState(false);
+
+  useEffect(() => {
+    document.title = t("title:user_home");
+  }, [t]);
 
   return (
     <Fragment>

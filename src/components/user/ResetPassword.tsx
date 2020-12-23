@@ -11,7 +11,7 @@ import { Email } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-material-ui";
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLayoutStyles } from "../../styles/layout";
 import { useStrapi } from "../../utils/apiClient";
@@ -24,6 +24,10 @@ const ResetPassword: React.FC<{}> = () => {
   const [isError, setIsError] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [isSucceed, setIsSucceed] = useState(false);
+
+  useEffect(() => {
+    document.title = t("title:reset_password");
+  }, [t]);
 
   return (
     <Fragment>
