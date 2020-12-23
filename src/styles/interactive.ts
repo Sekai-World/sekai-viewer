@@ -18,6 +18,9 @@ const useInteractiveStyles = makeStyles((theme) => ({
   inputHidden: {
     display: "none",
   },
+  noDecoration: {
+    textDecoration: "none",
+  },
 }));
 
 export { useInteractiveStyles };
