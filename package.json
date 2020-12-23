@@ -45,6 +45,7 @@
     "react-i18next": "^11.7.3",
     "react-infinite-scroll-component": "^5.1.0",
     "react-jwt": "^1.0.8",
+    "react-password-strength-bar": "^0.3.2",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.4",
     "react-viewer": "^3.2.2",

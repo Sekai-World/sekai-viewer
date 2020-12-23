@@ -822,6 +822,7 @@ export interface LoginLocalApiReturn {
 export interface RegisterValues {
   username: string;
   password: string;
+  confirmPassword: string;
   email: string;
 }
 
@@ -835,6 +836,7 @@ export interface UserMetadatumModel {
   avatar: {
     url: string;
   };
+  nickname: string;
 }
 
 export interface UserModel {
