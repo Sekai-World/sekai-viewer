@@ -46,10 +46,21 @@ import cardThumbFrameS2 from "../assets/frame/cardFrame_S_2.png";
 import cardThumbFrameS3 from "../assets/frame/cardFrame_S_3.png";
 import cardThumbFrameS4 from "../assets/frame/cardFrame_S_4.png";
 
+import cardThumbFrameM1 from "../assets/frame/cardFrame_M_1.png";
+import cardThumbFrameM2 from "../assets/frame/cardFrame_M_2.png";
+import cardThumbFrameM3 from "../assets/frame/cardFrame_M_3.png";
+import cardThumbFrameM4 from "../assets/frame/cardFrame_M_4.png";
+
 import cardImageFrameS1 from "../assets/frame/cardFrame_L_1.png";
 import cardImageFrameS2 from "../assets/frame/cardFrame_L_2.png";
 import cardImageFrameS3 from "../assets/frame/cardFrame_L_3.png";
 import cardImageFrameS4 from "../assets/frame/cardFrame_L_4.png";
+
+import cardMasterRankS0 from "../assets/common/master_rank/masterRank_S_0.png";
+import cardMasterRankS1 from "../assets/common/master_rank/masterRank_S_1.png";
+import cardMasterRankS2 from "../assets/common/master_rank/masterRank_S_2.png";
+import cardMasterRankS3 from "../assets/common/master_rank/masterRank_S_3.png";
+import cardMasterRankS4 from "../assets/common/master_rank/masterRank_S_4.png";
 
 import LogoLightSound from "../assets/common/logol_outline/logo_light_sound.png";
 import LogoIdol from "../assets/common/logol_outline/logo_idol.png";
@@ -123,11 +134,26 @@ export const cardThumbFrameMap: { [key: string]: string } = {
   4: cardThumbFrameS4,
 };
 
+export const cardThumbMediumFrameMap: { [key: string]: string } = {
+  1: cardThumbFrameM1,
+  2: cardThumbFrameM2,
+  3: cardThumbFrameM3,
+  4: cardThumbFrameM4,
+};
+
 export const cardImageFrameMap: { [key: string]: string } = {
   1: cardImageFrameS1,
   2: cardImageFrameS2,
   3: cardImageFrameS3,
   4: cardImageFrameS4,
+};
+
+export const cardMasterRankSmallMap: { [key: string]: string } = {
+  0: cardMasterRankS0,
+  1: cardMasterRankS1,
+  2: cardMasterRankS2,
+  3: cardMasterRankS3,
+  4: cardMasterRankS4,
 };
 
 export const UnitLogoMap: { [key: string]: string } = {
