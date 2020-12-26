@@ -7,7 +7,12 @@ import { getRemoteAssetURL, useCachedData } from "../../utils";
 import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
 import { useSvgStyles } from "../../styles/svg";
-import { attrIconMap, cardThumbFrameMap } from "../../utils/resources";
+import {
+  attrIconMap,
+  cardMasterRankSmallMap,
+  cardThumbFrameMap,
+  cardThumbMediumFrameMap,
+} from "../../utils/resources";
 
 export const CardThumb: React.FC<
   { cardId: number; trained?: boolean } & React.HTMLProps<HTMLDivElement>
@@ -115,5 +120,131 @@ export const CardThumbsSkeleton: React.FC<{ length: number }> = ({
         </Grid>
       ))}
     </Grid>
+  );
+};
+
+export const CardThumbMedium: React.FC<
+  {
+    cardId: number;
+    trained: boolean;
+    cardLevel?: number;
+    masterRank?: number;
+  } & React.HTMLProps<HTMLDivElement>
+> = ({ cardId, trained, cardLevel, masterRank, onClick, style }) => {
+  const skeleton = CardThumbSkeleton({});
+  const classes = useSvgStyles();
+  const [cards] = useCachedData<ICardInfo>("cards");
+  const [card, setCard] = useState<ICardInfo>();
+
+  useEffect(() => {
+    if (cards.length) setCard(cards.find((elem) => elem.id === cardId));
+  }, [cards, cardId]);
+
+  const [cardThumbImg, setCardThumbImg] = useState<string>("");
+  useEffect(() => {
+    if (card) {
+      getRemoteAssetURL(
+        `character/member_cutout/${card.assetbundleName}_rip/${
+          trained ? "after_training" : "normal"
+        }.webp`,
+        setCardThumbImg
+      );
+    }
+  }, [card, trained]);
+
+  const rarityIcon = trained ? rarityAfterTraining : rarityNormal;
+
+  return card ? (
+    <div className={classes.svg} onClick={onClick} style={style}>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 520">
+        <defs>
+          <pattern
+            width="330"
+            height="520"
+            id={`mediumThumb-${cardId}`}
+            patternUnits="userSpaceOnUse"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 520">
+              <image
+                preserveAspectRatio="none"
+                href={cardThumbImg}
+                x="-135"
+                y="0"
+                height="576"
+                width="620"
+              />
+              {/* level */}
+              <rect
+                x="0"
+                y="470"
+                width="330"
+                height="50"
+                fill="black"
+                fillOpacity="0.8"
+              />
+              <text
+                x="30"
+                y="498"
+                width="200"
+                height="30"
+                fontSize="30"
+                fontWeight="lighter"
+                fill="white"
+              >
+                Lv.{cardLevel}
+              </text>
+              {/* frame */}
+              <image
+                href={cardThumbMediumFrameMap[String(card.rarity)]}
+                x="0"
+                y="0"
+                height="520"
+                width="330"
+              />
+              {/* attr */}
+              <image
+                href={attrIconMap[card.attr]}
+                x="9"
+                y="12"
+                width="50"
+                height="50"
+              />
+              {/* rarity */}
+              {Array.from({ length: card.rarity }).map((_, i) => (
+                <image
+                  key={`card-rarity-${i}`}
+                  href={rarityIcon}
+                  x={i * 33 + 16}
+                  y="435"
+                  width="33"
+                  height="33"
+                />
+              ))}
+              {/* masterRank */}
+              {masterRank && (
+                <image
+                  href={cardMasterRankSmallMap[String(masterRank)]}
+                  x="215"
+                  y="405"
+                  width="105"
+                  height="105"
+                ></image>
+              )}
+            </svg>
+          </pattern>
+        </defs>
+        <rect
+          x="4"
+          y="4"
+          rx="30"
+          ry="30"
+          width="322"
+          height="512"
+          fill={`url(#mediumThumb-${cardId})`}
+        />
+      </svg>
+    </div>
+  ) : (
+    skeleton
   );
 };
