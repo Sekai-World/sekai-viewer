@@ -513,5 +513,7 @@ export function useProcessedScenarioData(
 export function getJPTime() {
   return new Date()
     .toLocaleDateString("en-US", { timeZone: "Asia/Tokyo" })
-    .substr(0, 4);
+    .split("/")
+    .slice(0, 2)
+    .join("/");
 }
