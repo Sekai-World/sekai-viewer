@@ -10,19 +10,23 @@ import {
   Snackbar,
   useTheme,
   InputAdornment,
+  Tooltip,
 } from "@material-ui/core";
 import { Check, Clear, Create } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-material-ui";
 import { Upload, Logout } from "mdi-material-ui";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
+import { UserContext } from "../../context";
 import { useInteractiveStyles } from "../../styles/interactive";
 import { useLayoutStyles } from "../../styles/layout";
 import { useStrapi } from "../../utils/apiClient";
-import useJwtAuth from "../../utils/jwt";
+import { CardThumbMedium } from "../subs/CardThumb";
+// import useJwtAuth from "../../utils/jwt";
+import BindSekaiID from "./subs/BindSekaiID";
 
 const UserHome: React.FC<{}> = () => {
   const theme = useTheme();
@@ -30,18 +34,33 @@ const UserHome: React.FC<{}> = () => {
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const history = useHistory();
-  const jwtAuth = useJwtAuth();
-  const { user, token } = useJwtAuth();
-  const { getUserMe, postUpload, putUserMetadata } = useStrapi(token);
+  // const jwtAuth = useJwtAuth();
+  // const { user, token } = useJwtAuth();
+  const {
+    user,
+    jwtToken,
+    sekaiProfile,
+    updateUser,
+    logout,
+    usermeta,
+    updateUserMeta,
+  } = useContext(UserContext)!;
+  const {
+    getUserMe,
+    postUpload,
+    putUserMetadataMe,
+    getUserMetadataMe,
+  } = useStrapi(jwtToken);
   // let { path } = useRouteMatch();
 
   const [isUploadAvatarError, setIsUploadAvatarError] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(
-    (user.user_metadatum.avatar || { url: "" }).url
+    usermeta ? (usermeta.avatar || { url: "" }).url : ""
   );
-  const [nickname, setNickname] = useState(user.user_metadatum.nickname);
+  const [nickname, setNickname] = useState(usermeta?.nickname || "");
   const [isUploading, setIsUploading] = useState(false);
   const [isEditingNickname, setIsEditingNickname] = useState(false);
+  const [isShowEmail, setIsShowEmail] = useState(false);
 
   useEffect(() => {
     document.title = t("title:user_home");
@@ -77,7 +96,7 @@ const UserHome: React.FC<{}> = () => {
 
                     const form = new FormData();
                     form.append("files", file);
-                    form.append("refId", user.user_metadatum.id);
+                    form.append("refId", String(usermeta?.id));
                     form.append("ref", "user-metadata");
                     form.append("field", "avatar");
 
@@ -87,11 +106,12 @@ const UserHome: React.FC<{}> = () => {
                     postUpload(form)
                       .then(() => {
                         // update user data
-                        return getUserMe();
+                        return getUserMetadataMe();
                       })
                       .then((data) => {
-                        jwtAuth.user = data;
-                        setAvatarUrl(data.user_metadatum.avatar.url);
+                        // jwtAuth.user = data;
+                        updateUserMeta(data);
+                        setAvatarUrl(data.avatar.url);
                         setIsUploading(false);
                       })
                       .catch(() => {
@@ -110,7 +130,7 @@ const UserHome: React.FC<{}> = () => {
                     disabled={isUploading}
                     startIcon={<Upload />}
                   >
-                    {t("user:profile.upload_avatar")}{" "}
+                    {t("user:profile.upload_avatar")}
                     {isUploading && <CircularProgress size={16} />}
                   </Button>
                 </label>
@@ -118,8 +138,7 @@ const UserHome: React.FC<{}> = () => {
               <Grid item xs={12} container justify="center">
                 <Button
                   onClick={() => {
-                    jwtAuth.token = "";
-                    jwtAuth.user = "";
+                    logout();
                     history.replace("/user/login");
                   }}
                   variant="outlined"
@@ -138,7 +157,7 @@ const UserHome: React.FC<{}> = () => {
                   <Typography className={layoutClasses.bold}>
                     {t("user:profile.username")}
                   </Typography>
-                  <Typography>{user.username}</Typography>
+                  <Typography>{user?.username}</Typography>
                 </Grid>
               </Grid>
               <Grid item xs={12}>
@@ -147,7 +166,7 @@ const UserHome: React.FC<{}> = () => {
               <Grid item xs={12}>
                 <Grid container justify="space-between" alignItems="center">
                   <Typography className={layoutClasses.bold}>
-                    {t("user:profile.nickname")}{" "}
+                    {t("user:profile.nickname")}
                     <IconButton
                       size="small"
                       onClick={() => setIsEditingNickname((state) => !state)}
@@ -160,12 +179,13 @@ const UserHome: React.FC<{}> = () => {
                       initialValues={{ nickname }}
                       onSubmit={async (values, { setErrors }) => {
                         try {
-                          await putUserMetadata(user.user_metadatum.id, {
+                          await putUserMetadataMe(usermeta!.id, {
                             nickname: values.nickname,
                           });
                           setNickname(values.nickname);
                           setIsEditingNickname(false);
-                          jwtAuth.user = await getUserMe();
+                          updateUser(await getUserMe());
+                          updateUserMeta(await getUserMetadataMe());
                         } catch (error) {
                           console.log(error);
                         }
@@ -222,18 +242,29 @@ const UserHome: React.FC<{}> = () => {
                   <Typography className={layoutClasses.bold}>
                     {t("user:profile.role")}
                   </Typography>
-                  <Typography>{user.role.name}</Typography>
+                  <Tooltip title={user?.role.description || ""} arrow>
+                    <Typography>{user?.role.name}</Typography>
+                  </Tooltip>
                 </Grid>
               </Grid>
               <Grid item xs={12}>
                 <Divider />
               </Grid>
               <Grid item xs={12}>
-                <Grid container justify="space-between">
+                <Grid container justify="space-between" alignItems="center">
                   <Typography className={layoutClasses.bold}>
                     {t("user:profile.email")}
                   </Typography>
-                  <Typography>{user.email}</Typography>
+                  {isShowEmail ? (
+                    <Typography>{user?.email}</Typography>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      onClick={() => setIsShowEmail(true)}
+                    >
+                      {t("user:profile.button.show_email")}
+                    </Button>
+                  )}
                 </Grid>
               </Grid>
               <Grid item xs={12}>
@@ -246,12 +277,14 @@ const UserHome: React.FC<{}> = () => {
                   </Typography>
                   <Typography
                     style={{
-                      color: user.confirmed
+                      color: user?.confirmed
                         ? theme.palette.success.main
                         : theme.palette.error.main,
                     }}
                   >
-                    {t(`user:profile.email_confirmed_status.${user.confirmed}`)}
+                    {t(
+                      `user:profile.email_confirmed_status.${user?.confirmed}`
+                    )}
                   </Typography>
                 </Grid>
               </Grid>
@@ -260,21 +293,13 @@ const UserHome: React.FC<{}> = () => {
               </Grid>
               <Grid item xs={12}>
                 <Grid container justify="space-between" alignItems="center">
-                  <Grid item>
+                  <Grid item xs={3}>
                     <Typography className={layoutClasses.bold}>
                       {t("user:profile.sekai_id")}
                     </Typography>
                   </Grid>
-                  <Grid item>
-                    {Number(user.user_metadatum.sekai_userid) ? (
-                      <Typography>
-                        {user.user_metadatum.sekai_userid}
-                      </Typography>
-                    ) : (
-                      <Button variant="contained" color="primary">
-                        {t("user:profile.button.bind_sekai_id")}
-                      </Button>
-                    )}
+                  <Grid item xs={8}>
+                    <BindSekaiID />
                   </Grid>
                 </Grid>
               </Grid>
@@ -283,6 +308,55 @@ const UserHome: React.FC<{}> = () => {
         </Grid>
         {/* {JSON.stringify(user)} */}
       </Container>
+      {sekaiProfile && sekaiProfile.sekaiUserProfile && (
+        <Fragment>
+          <Typography variant="h6" className={layoutClasses.header}>
+            {t("user:profile.title.user_deck")}
+          </Typography>
+          <Container>
+            <Grid container spacing={2} justify="center">
+              {Array.from({ length: 5 }).map((_, idx) => (
+                <Grid item xs={4} md={2} key={`user-deck-${idx}`}>
+                  <CardThumbMedium
+                    cardId={
+                      sekaiProfile.sekaiUserProfile!.userDecks[0][
+                        `member${idx + 1}` as "member1"
+                      ]
+                    }
+                    trained={
+                      sekaiProfile.sekaiUserProfile!.userCards.find(
+                        (card) =>
+                          card.cardId ===
+                          sekaiProfile.sekaiUserProfile!.userDecks[0][
+                            `member${idx + 1}` as "member1"
+                          ]
+                      )!.defaultImage === "special_training"
+                    }
+                    cardLevel={
+                      sekaiProfile.sekaiUserProfile!.userCards.find(
+                        (card) =>
+                          card.cardId ===
+                          sekaiProfile.sekaiUserProfile!.userDecks[0][
+                            `member${idx + 1}` as "member1"
+                          ]
+                      )!.level
+                    }
+                    masterRank={
+                      sekaiProfile.sekaiUserProfile!.userCards.find(
+                        (card) =>
+                          card.cardId ===
+                          sekaiProfile.sekaiUserProfile!.userDecks[0][
+                            `member${idx + 1}` as "member1"
+                          ]
+                      )!.masterRank
+                    }
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          </Container>
+        </Fragment>
+      )}
       <Snackbar
         open={isUploadAvatarError}
         autoHideDuration={3000}
