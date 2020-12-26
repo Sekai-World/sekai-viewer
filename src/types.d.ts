@@ -809,42 +809,121 @@ export interface ICharacterMission {
   sentence: string;
 }
 
-export interface LoginValues {
-  identifier: string;
-  password: string;
-}
-
-export interface LoginLocalApiReturn {
-  user: any;
-  jwt: string;
-}
-
-export interface RegisterValues {
-  username: string;
-  password: string;
-  confirmPassword: string;
-  email: string;
-}
-
-export interface UserRoleModel {
+export interface UserGamedata {
+  userId: number;
   name: string;
-  description: string;
-  type: string;
+  deck: number;
+  rank: number;
 }
 
-export interface UserMetadatumModel {
-  avatar: {
-    url: string;
-  };
-  nickname: string;
+export interface User {
+  userGamedata: UserGamedata;
 }
 
-export interface UserModel {
-  username: string;
-  email: string;
-  provider: string;
-  confirmed: boolean;
-  blocked: boolean;
-  role: UserRoleModel;
-  user_metadatum: UserMetadatumModel;
+export interface UserProfile {
+  userId: number;
+  word: string;
+  honorId1: number;
+  honorLevel1: number;
+  honorId2: number;
+  honorLevel2: number;
+  honorId3: number;
+  honorLevel3: number;
+  twitterId: string;
+  profileImageType: string;
+}
+
+export interface UserDeck {
+  leader: number;
+  member1: number;
+  member2: number;
+  member3: number;
+  member4: number;
+  member5: number;
+}
+
+export interface UserCardEpisode {
+  cardEpisodeId: number;
+  scenarioStatus: string;
+  scenarioStatusReasons: string[];
+  isNotSkipped: boolean;
+}
+
+export interface UserCard {
+  cardId: number;
+  level: number;
+  masterRank: number;
+  specialTrainingStatus: string;
+  defaultImage: string;
+  episodes: UserCardEpisode[];
+}
+
+export interface UserMusicResult {
+  userId: number;
+  musicId: number;
+  musicDifficulty: string;
+  playType: string;
+  playResult: string;
+  highScore: number;
+  fullComboFlg: boolean;
+  fullPerfectFlg: boolean;
+  mvpCount: number;
+  superStarCount: number;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface UserMusicDifficultyStatus {
+  musicId: number;
+  musicDifficulty: string;
+  musicDifficultyStatus: string;
+  userMusicResults: UserMusicResult[];
+}
+
+export interface UserMusic {
+  userId: number;
+  musicId: number;
+  userMusicDifficultyStatuses: UserMusicDifficultyStatus[];
+}
+
+export interface UserCharacter {
+  characterId: number;
+  characterRank: number;
+}
+
+export interface UserChallengeLiveSoloResult {
+  characterId: number;
+  highScore: number;
+}
+
+export interface UserChallengeLiveSoloStage {
+  challengeLiveStageType: string;
+  characterId: number;
+  challengeLiveStageId: number;
+  rank: number;
+}
+
+export interface UserAreaItem {
+  areaItemId: number;
+  level: number;
+}
+
+export interface UserHonor {
+  userId: number;
+  honorId: number;
+  level: number;
+  obtainedAt: number;
+}
+
+export interface IUserProfile {
+  user: User;
+  userProfile: UserProfile;
+  userDecks: UserDeck[];
+  userCards: UserCard[];
+  userMusics: UserMusic[];
+  userCharacters: UserCharacter[];
+  userChallengeLiveSoloResults: UserChallengeLiveSoloResult[];
+  userChallengeLiveSoloStages: UserChallengeLiveSoloStage[];
+  userAreaItems: UserAreaItem[];
+  userHonors: UserHonor[];
 }

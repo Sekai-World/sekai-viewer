@@ -11,7 +11,7 @@ import "./index.css";
 import { SettingProvider } from "./context";
 import Axios from "axios";
 import localforage from "localforage";
-import { UserModel } from "./types";
+import { UserMetadatumModel, UserModel } from "./strapi-model";
 
 TagManager.initialize({
   gtmId: "GTM-NFC6SW2",
@@ -58,7 +58,7 @@ localforage
 
   if (
     process.env.NODE_ENV === "development" ||
-    new Date().getTime() - lastCheck > 24 * 3600 * 1000
+    new Date().getTime() - lastCheck > 3600 * 1000
   ) {
     // recheck user info
     const userData = JSON.parse(
@@ -69,12 +69,22 @@ localforage
       const axios = Axios.create({
         baseURL: process.env.REACT_APP_STRAPI_BASE,
       });
-      const { data } = await axios.get<UserModel>(`/users/me`, {
+      let { data: userData } = await axios.get<UserModel>(`/users/me`, {
         headers: {
           authorization: `Bearer ${token}`,
         },
       });
-      localStorage.setItem("userData", JSON.stringify(data));
+      localStorage.setItem("userData", JSON.stringify(userData));
+      let { data: userMetaDatum } = await axios.get<UserMetadatumModel>(
+        `/user-metadata/me`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      localStorage.setItem("userMetaDatum", JSON.stringify(userMetaDatum));
+
       localStorage.setItem("lastUserCheck", String(new Date().getTime()));
     }
   }
