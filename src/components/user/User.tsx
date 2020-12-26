@@ -1,12 +1,14 @@
-import React, { Fragment, lazy } from "react";
+import React, { lazy } from "react";
 import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 import useJwtAuth from "../../utils/jwt";
-import ResetPassword from "./ResetPasswordCallback";
-import ResetPasswordCallback from "./ResetPassword";
-import UserHome from "./UserHome";
+import { UserProvider } from "../../context";
 
 const Login = lazy(() => import("./Login"));
 const Signup = lazy(() => import("./Signup"));
+const ResetPassword = lazy(() => import("./ResetPassword"));
+const ResetPasswordCallback = lazy(() => import("./ResetPasswordCallback"));
+const UserHome = lazy(() => import("./UserHome"));
+const Confirmation = lazy(() => import("./EmailConfirm"));
 
 const User: React.FC<{}> = () => {
   // const interactiveClasses = useInteractiveStyles();
@@ -14,7 +16,7 @@ const User: React.FC<{}> = () => {
   let { path } = useRouteMatch();
 
   return (
-    <Fragment>
+    <UserProvider>
       <Switch>
         <Route exact path={path}>
           {isExpired || !token || !user ? (
@@ -37,14 +39,17 @@ const User: React.FC<{}> = () => {
             <Signup />
           )}
         </Route>
-        <Route path={`${path}/forgot`}>
+        <Route exact path={`${path}/forgot`}>
           <ResetPassword />
         </Route>
         <Route path={`${path}/forgot/callback`}>
           <ResetPasswordCallback />
         </Route>
+        <Route path={`${path}/confirmation`}>
+          <Confirmation />
+        </Route>
       </Switch>
-    </Fragment>
+    </UserProvider>
   );
 };
 

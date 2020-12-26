@@ -22,7 +22,7 @@ import { useHistory, Link as RouteLink } from "react-router-dom";
 import { useInteractiveStyles } from "../../styles/interactive";
 // import { useInteractiveStyles } from "../../styles/interactive";
 import { useLayoutStyles } from "../../styles/layout";
-import { LoginValues } from "../../types";
+import { LoginValues } from "../../strapi-model";
 import { useQuery } from "../../utils";
 import { useStrapi } from "../../utils/apiClient";
 import useJwtAuth from "../../utils/jwt";
@@ -36,7 +36,11 @@ const Login: React.FC<{}> = () => {
   const history = useHistory();
   const jwtAuth = useJwtAuth();
   const { decodedToken } = useJwtAuth();
-  const { postLoginLocal, getRedirectConnectLoginUrl } = useStrapi();
+  const {
+    postLoginLocal,
+    getRedirectConnectLoginUrl,
+    getUserMetadataMe,
+  } = useStrapi();
 
   const matchMdUp = useMediaQuery(theme.breakpoints.up("md"));
   const [isError, setIsError] = useState(!!query.get("error"));
@@ -72,6 +76,7 @@ const Login: React.FC<{}> = () => {
               const data = await postLoginLocal(values);
               jwtAuth.token = data.jwt;
               jwtAuth.user = data.user;
+              jwtAuth.usermeta = await getUserMetadataMe(data.jwt);
               history.replace("/user");
               // window.location.reload();
               localStorage.setItem(
@@ -80,13 +85,14 @@ const Login: React.FC<{}> = () => {
               );
             } catch (error) {
               // console.log(error.response.data);
-              if (
-                error.response.data.data[0].messages[0].id ===
-                "Auth.form.error.invalid"
-              )
+              if (error.id === "Auth.form.error.invalid")
                 setErrors({
                   identifier: t("auth:login.error.invalid"),
                   password: t("auth:login.error.invalid"),
+                });
+              else if (error.id === "Auth.form.error.confirmed")
+                setErrors({
+                  identifier: t("auth:login.error.email_not_confirmed"),
                 });
             }
           }}

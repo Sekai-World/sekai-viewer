@@ -1,22 +1,26 @@
 import {
   Button,
+  // Chip,
   CircularProgress,
   Container,
+  FormControl,
   Grid,
   InputAdornment,
+  InputLabel,
+  MenuItem,
   Typography,
 } from "@material-ui/core";
 import { AccountCircle, Email, VpnKey } from "@material-ui/icons";
 import { Field } from "formik";
 import { Form, Formik } from "formik";
-import { TextField } from "formik-material-ui";
+import { Select, TextField } from "formik-material-ui";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, Link as RouteLink } from "react-router-dom";
 import PasswordStrengthBar from "react-password-strength-bar";
 import { useInteractiveStyles } from "../../styles/interactive";
 import { useLayoutStyles } from "../../styles/layout";
-import { RegisterValues } from "../../types";
+import { LanguageModel, RegisterValues } from "../../strapi-model";
 import { useStrapi } from "../../utils/apiClient";
 import useJwtAuth from "../../utils/jwt";
 
@@ -26,13 +30,18 @@ const Signup: React.FC<{}> = () => {
   const { t } = useTranslation();
   const jwtAuth = useJwtAuth();
   const history = useHistory();
-  const { postRegisterLocal } = useStrapi();
+  const { postRegisterLocal, getLanguages, getUserMetadataMe } = useStrapi();
 
   const [passwordScore, setPasswordScore] = useState(0);
+  const [langs, setLangs] = useState<LanguageModel[]>([]);
 
   useEffect(() => {
     document.title = t("title:signup");
   }, [t]);
+
+  useEffect(() => {
+    getLanguages().then((data) => setLangs(data));
+  }, [getLanguages]);
 
   const handleValidate = useCallback(
     (values) => {
@@ -76,6 +85,7 @@ const Signup: React.FC<{}> = () => {
             email: "",
             password: "",
             confirmPassword: "",
+            languages: [],
           }}
           validate={handleValidate}
           onSubmit={async (values, { setErrors }) => {
@@ -83,6 +93,7 @@ const Signup: React.FC<{}> = () => {
               const data = await postRegisterLocal(values);
               jwtAuth.token = data.jwt;
               jwtAuth.user = data.user;
+              jwtAuth.usermeta = await getUserMetadataMe(data.jwt);
               history.push("/user/confirmation");
               // window.location.reload();
               localStorage.setItem(
@@ -90,20 +101,19 @@ const Signup: React.FC<{}> = () => {
                 String(new Date().getTime())
               );
             } catch (error) {
-              console.log(error.response.data);
-              // if (
-              //   error.response.data.data[0].messages[0].id ===
-              //   "Auth.form.error.invalid"
-              // )
-              //   setErrors({
-              //     username: t("auth:login.error.invalid"),
-              //     email: t("auth:login.error.invalid"),
-              //     password: t("auth:login.error.invalid"),
-              //   });
+              // console.log(error.response.data);
+              if (error.id === "Auth.form.error.email.taken")
+                setErrors({
+                  email: t("auth:error.email_taken"),
+                });
+              else if (error.id === "Auth.form.error.username.taken")
+                setErrors({
+                  username: t("auth:error.usernameTaken"),
+                });
             }
           }}
         >
-          {({ submitForm, isSubmitting, errors, dirty, isValid, values }) => (
+          {({ submitForm, isSubmitting, dirty, isValid, values }) => (
             <Grid container justify="center">
               <Grid item>
                 <Form>
@@ -180,6 +190,32 @@ const Signup: React.FC<{}> = () => {
                   ></Field>
                   <br />
                   <br />
+                  <FormControl>
+                    <InputLabel shrink htmlFor="language-select">
+                      {t("auth:signup.label.prefer_langs")}
+                    </InputLabel>
+                    <Field
+                      component={Select}
+                      type="text"
+                      multiple={true}
+                      name="languages"
+                      inputProps={{
+                        name: "languages",
+                        id: "language-select",
+                      }}
+                      style={{ width: 210 }}
+                    >
+                      {langs
+                        .filter((lang) => lang.enabled)
+                        .map((lang) => (
+                          <MenuItem value={lang.id} key={`lang-${lang.code}`}>
+                            {lang.name}
+                          </MenuItem>
+                        ))}
+                    </Field>
+                  </FormControl>
+                  <br />
+                  <br />
                   <RouteLink
                     to="/user/login"
                     className={interactiveClasses.noDecoration}
@@ -198,7 +234,7 @@ const Signup: React.FC<{}> = () => {
                     onClick={submitForm}
                   >
                     {t("auth:common.signupButton")}{" "}
-                    {isSubmitting && <CircularProgress />}
+                    {isSubmitting && <CircularProgress size={20} />}
                   </Button>
                 </Form>
               </Grid>

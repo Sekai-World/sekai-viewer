@@ -15,7 +15,7 @@ const Connect: React.FC<{}> = () => {
   const location = useLocation();
   const history = useHistory();
   const jwtAuth = useJwtAuth();
-  const { getConnectCallback, getUserMe } = useStrapi();
+  const { getConnectCallback, getUserMe, getUserMetadataMe } = useStrapi();
 
   useEffect(() => {
     document.title = t("title:connectRedirect");
@@ -25,9 +25,10 @@ const Connect: React.FC<{}> = () => {
     getConnectCallback(provider, location.search || "")
       .then(async (data) => {
         jwtAuth.token = data.jwt;
-        jwtAuth.user = data.user.user_metadatum
+        jwtAuth.user = data.user.userMetadatum
           ? data.user
           : await getUserMe(data.jwt);
+        jwtAuth.usermeta = await getUserMetadataMe(data.jwt);
         history.push("/user");
         // window.location.reload();
         localStorage.setItem("lastUserCheck", String(new Date().getTime()));
