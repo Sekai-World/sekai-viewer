@@ -58,6 +58,7 @@ import {
   ContentTrans,
   ReleaseCondTrans,
 } from "../subs/ContentTrans";
+import ResourceBox from "../subs/ResourceBox";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -1096,26 +1097,14 @@ const CardDetail: React.FC<{}> = () => {
                     {t("common:rewards")}
                   </Typography>
                 </Grid>
-                <Grid item container spacing={1} xs={10} justify="flex-end">
-                  {resourceBoxes
-                    .filter(
-                      (rb) =>
-                        rb.resourceBoxPurpose === "episode_reward" &&
-                        cardEpisode[0].rewardResourceBoxIds.includes(rb.id)
-                    )
-                    .reduce(
-                      (sum, rb) => [...sum, ...rb.details],
-                      [] as ResourceBoxDetail[]
-                    )
-                    .map((rbd, idx) => (
-                      <Grid key={`episode-reward-${idx}`} item>
-                        <CommonMaterialIcon
-                          materialName={rbd.resourceType}
-                          materialId={rbd.resourceId}
-                          quantity={rbd.resourceQuantity}
-                        />
-                      </Grid>
-                    ))}
+                <Grid item xs={10}>
+                  {cardEpisode[0].rewardResourceBoxIds.map((id) => (
+                    <ResourceBox
+                      resourceBoxId={id}
+                      resourceBoxPurpose="episode_reward"
+                      justify="flex-end"
+                    />
+                  ))}
                 </Grid>
               </Grid>
               <Divider style={{ margin: "1% 0" }} />
