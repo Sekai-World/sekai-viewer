@@ -44,7 +44,7 @@ const ResetPassword: React.FC<{}> = () => {
       <Alert severity="warning" className={layoutClasses.alert}>
         {t("auth:reset_password_no_provider")}
       </Alert>
-      <Container maxWidth="md">
+      <Container className={layoutClasses.content} maxWidth="md">
         <Formik
           initialValues={{
             code: query.get("code") || "",
@@ -145,7 +145,7 @@ const ResetPassword: React.FC<{}> = () => {
                     >
                       {t("auth:common.sendResetPasswordButton")}
                     </Button>
-                    {isSubmitting && <CircularProgress size={20} />}
+                    {isSubmitting && <CircularProgress size={24} />}
                   </Grid>
                 </Grid>
               </Form>

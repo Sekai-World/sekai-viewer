@@ -200,7 +200,7 @@ const BindSekaiID: React.FC<{}> = () => {
               disabled={isVerifying}
             >
               {t("user:profile.button.verify_sekai_id")}
-              {isVerifying && <CircularProgress size={20} />}
+              {isVerifying && <CircularProgress size={24} />}
             </Button>
           </Grid>
         </Grid>
@@ -267,7 +267,7 @@ const BindSekaiID: React.FC<{}> = () => {
                   }
                 >
                   {isUpdatingProfile ? (
-                    <CircularProgress size={20} />
+                    <CircularProgress size={24} />
                   ) : (
                     <Update />
                   )}

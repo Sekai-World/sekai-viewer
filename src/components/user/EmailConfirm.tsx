@@ -12,7 +12,7 @@ const Confirmation: React.FC<{}> = () => {
       <Typography variant="h6" className={layoutClasses.header}>
         {t("auth:send_email_confirmation")}
       </Typography>
-      <Container>
+      <Container className={layoutClasses.content}>
         <Typography>{t("auth:register_email_confirmation")}</Typography>
       </Container>
     </Fragment>

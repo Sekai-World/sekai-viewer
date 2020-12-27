@@ -78,7 +78,7 @@ const Signup: React.FC<{}> = () => {
       <Typography variant="h6" className={layoutClasses.header}>
         {t("common:signup")}
       </Typography>
-      <Container maxWidth="md">
+      <Container className={layoutClasses.content} maxWidth="md">
         <Formik
           initialValues={{
             username: "",
@@ -234,7 +234,7 @@ const Signup: React.FC<{}> = () => {
                     onClick={submitForm}
                   >
                     {t("auth:common.signupButton")}{" "}
-                    {isSubmitting && <CircularProgress size={20} />}
+                    {isSubmitting && <CircularProgress size={24} />}
                   </Button>
                 </Form>
               </Grid>

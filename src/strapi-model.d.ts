@@ -1,4 +1,4 @@
-import { IUserProfile } from "./types.d";
+import { IUserProfile, IEventInfo } from "./types.d";
 
 export interface LanguageModel {
   id: number;
@@ -61,4 +61,18 @@ export interface SekaiProfileModel {
   eventGetUsed: number;
   eventHistorySync: boolean;
   dailySyncEnabled: boolean;
+}
+
+export interface SekaiCurrentEventModel {
+  eventId: number;
+  eventJson: IEventInfo;
+}
+
+export interface SekaiProfileEventRecordModel {
+  id: number;
+  eventId: number;
+  eventRank: number;
+  eventPoint: number;
+  created_at: string;
+  updated_at: string;
 }

@@ -37,7 +37,7 @@ const ResetPassword: React.FC<{}> = () => {
       <Alert severity="warning" className={layoutClasses.alert}>
         {t("auth:reset_password_no_provider")}
       </Alert>
-      <Container maxWidth="md">
+      <Container className={layoutClasses.content} maxWidth="md">
         <Formik
           initialValues={{
             email: "",
@@ -92,7 +92,7 @@ const ResetPassword: React.FC<{}> = () => {
                     >
                       {t("auth:common.sendResetPasswordEmailButton")}
                     </Button>
-                    {isSubmitting && <CircularProgress size={20} />}
+                    {isSubmitting && <CircularProgress size={24} />}
                   </Grid>
                 </Grid>
               </Form>

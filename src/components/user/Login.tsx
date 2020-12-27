@@ -55,7 +55,7 @@ const Login: React.FC<{}> = () => {
       <Typography variant="h6" className={layoutClasses.header}>
         {t("common:login")}
       </Typography>
-      <Container maxWidth="md">
+      <Container className={layoutClasses.content} maxWidth="md">
         <Formik
           initialValues={{
             identifier: decodedToken ? decodedToken.identifier : "",
@@ -165,7 +165,7 @@ const Login: React.FC<{}> = () => {
                       >
                         {t("auth:common.loginButton")}
                       </Button>
-                      {isSubmitting && <CircularProgress size={20} />}
+                      {isSubmitting && <CircularProgress size={24} />}
                     </Grid>
                   </Grid>
                 </Form>

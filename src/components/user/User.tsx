@@ -1,7 +1,7 @@
-import React, { lazy } from "react";
+import React, { Fragment, lazy } from "react";
 import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 import useJwtAuth from "../../utils/jwt";
-import { UserProvider } from "../../context";
+// import { UserProvider } from "../../context";
 
 const Login = lazy(() => import("./Login"));
 const Signup = lazy(() => import("./Signup"));
@@ -16,7 +16,7 @@ const User: React.FC<{}> = () => {
   let { path } = useRouteMatch();
 
   return (
-    <UserProvider>
+    <Fragment>
       <Switch>
         <Route exact path={path}>
           {isExpired || !token || !user ? (
@@ -49,7 +49,7 @@ const User: React.FC<{}> = () => {
           <Confirmation />
         </Route>
       </Switch>
-    </UserProvider>
+    </Fragment>
   );
 };
 

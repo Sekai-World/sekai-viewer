@@ -11,20 +11,35 @@ import {
   useTheme,
   InputAdornment,
   Tooltip,
+  Collapse,
 } from "@material-ui/core";
-import { Check, Clear, Create } from "@material-ui/icons";
+import {
+  ArrowDropDown,
+  ArrowDropUp,
+  Check,
+  Clear,
+  Create,
+  OpenInNew,
+  Update,
+} from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-material-ui";
 import { Upload, Logout } from "mdi-material-ui";
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
-import { UserContext } from "../../context";
+import { Link, useHistory } from "react-router-dom";
+import { SettingContext, UserContext } from "../../context";
+import {
+  SekaiCurrentEventModel,
+  SekaiProfileEventRecordModel,
+} from "../../strapi-model";
 import { useInteractiveStyles } from "../../styles/interactive";
 import { useLayoutStyles } from "../../styles/layout";
 import { useStrapi } from "../../utils/apiClient";
+// import { useAssetI18n } from "../../utils/i18n";
 import { CardThumbMedium } from "../subs/CardThumb";
+import { ContentTrans } from "../subs/ContentTrans";
 // import useJwtAuth from "../../utils/jwt";
 import BindSekaiID from "./subs/BindSekaiID";
 
@@ -33,6 +48,7 @@ const UserHome: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
+  // const {} = useAssetI18n();
   const history = useHistory();
   // const jwtAuth = useJwtAuth();
   // const { user, token } = useJwtAuth();
@@ -44,34 +60,56 @@ const UserHome: React.FC<{}> = () => {
     logout,
     usermeta,
     updateUserMeta,
+    updateSekaiProfile,
   } = useContext(UserContext)!;
   const {
     getUserMe,
     postUpload,
     putUserMetadataMe,
     getUserMetadataMe,
+    getSekaiCurrentEvent,
+    getSekaiProfileEventRecordMe,
+    postSekaiProfileEventRecord,
   } = useStrapi(jwtToken);
   // let { path } = useRouteMatch();
+  const { contentTransMode } = useContext(SettingContext)!;
 
   const [isUploadAvatarError, setIsUploadAvatarError] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(
     usermeta ? (usermeta.avatar || { url: "" }).url : ""
   );
   const [nickname, setNickname] = useState(usermeta?.nickname || "");
+  const [currentEvent, setCurrentEvent] = useState<SekaiCurrentEventModel>();
+  const [eventRecords, setEventRecords] = useState<
+    SekaiProfileEventRecordModel[]
+  >([]);
+
   const [isUploading, setIsUploading] = useState(false);
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [isShowEmail, setIsShowEmail] = useState(false);
+  const [isUserDeckOpen, setIsUserDeckOpen] = useState(false);
+  const [isUserEventOpen, setIsUserEventOpen] = useState(false);
+  const [isEventRecording, setIsEventRecording] = useState(false);
 
   useEffect(() => {
     document.title = t("title:user_home");
   }, [t]);
+
+  useEffect(() => {
+    const update = async () => {
+      let currEvent;
+      setCurrentEvent((currEvent = await getSekaiCurrentEvent()));
+      setEventRecords(await getSekaiProfileEventRecordMe(currEvent.eventId));
+    };
+    update();
+  }, [getSekaiCurrentEvent, getSekaiProfileEventRecordMe]);
 
   return (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
         {t("common:user")}
       </Typography>
-      <Container maxWidth="md">
+      <Container className={layoutClasses.content} maxWidth="md">
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
             <Grid container spacing={2}>
@@ -303,6 +341,9 @@ const UserHome: React.FC<{}> = () => {
                   </Grid>
                 </Grid>
               </Grid>
+              <Grid item xs={12}>
+                <Divider />
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
@@ -311,50 +352,176 @@ const UserHome: React.FC<{}> = () => {
       {sekaiProfile && sekaiProfile.sekaiUserProfile && (
         <Fragment>
           <Typography variant="h6" className={layoutClasses.header}>
-            {t("user:profile.title.user_deck")}
+            {t("user:profile.title.user_event")}
+            <IconButton
+              onClick={() => setIsUserEventOpen((state) => !state)}
+              size="small"
+            >
+              {isUserEventOpen ? (
+                <ArrowDropUp fontSize="large" />
+              ) : (
+                <ArrowDropDown fontSize="large" />
+              )}
+            </IconButton>
           </Typography>
-          <Container>
-            <Grid container spacing={2} justify="center">
-              {Array.from({ length: 5 }).map((_, idx) => (
-                <Grid item xs={4} md={2} key={`user-deck-${idx}`}>
-                  <CardThumbMedium
-                    cardId={
-                      sekaiProfile.sekaiUserProfile!.userDecks[0][
-                        `member${idx + 1}` as "member1"
-                      ]
-                    }
-                    trained={
-                      sekaiProfile.sekaiUserProfile!.userCards.find(
-                        (card) =>
-                          card.cardId ===
-                          sekaiProfile.sekaiUserProfile!.userDecks[0][
-                            `member${idx + 1}` as "member1"
-                          ]
-                      )!.defaultImage === "special_training"
-                    }
-                    cardLevel={
-                      sekaiProfile.sekaiUserProfile!.userCards.find(
-                        (card) =>
-                          card.cardId ===
-                          sekaiProfile.sekaiUserProfile!.userDecks[0][
-                            `member${idx + 1}` as "member1"
-                          ]
-                      )!.level
-                    }
-                    masterRank={
-                      sekaiProfile.sekaiUserProfile!.userCards.find(
-                        (card) =>
-                          card.cardId ===
-                          sekaiProfile.sekaiUserProfile!.userDecks[0][
-                            `member${idx + 1}` as "member1"
-                          ]
-                      )!.masterRank
-                    }
-                  />
+          <Collapse in={isUserEventOpen && !!currentEvent}>
+            <Container className={layoutClasses.content} maxWidth="md">
+              <Grid container spacing={2} alignItems="center">
+                <Grid item>
+                  <Typography>
+                    {t("user:profile.event.current_name")}{" "}
+                  </Typography>
                 </Grid>
-              ))}
-            </Grid>
-          </Container>
+                <Grid item>
+                  <Button endIcon={<OpenInNew />}>
+                    <Link
+                      to={`/event/${currentEvent?.eventId}`}
+                      className={interactiveClasses.noDecoration}
+                    >
+                      <ContentTrans
+                        mode={contentTransMode}
+                        contentKey={`event_name:${currentEvent?.eventId}`}
+                        original={currentEvent?.eventJson.name || ""}
+                      />
+                    </Link>
+                  </Button>
+                </Grid>
+              </Grid>
+              <Grid container spacing={1} alignItems="center">
+                <Grid item>
+                  <Typography>
+                    {t("user:profile.event.current_record_info")}
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Tooltip
+                    title={
+                      t("user:profile.label.update_left", {
+                        allowed: sekaiProfile.eventGetAvailable,
+                        used: sekaiProfile.eventGetUsed,
+                      }) as string
+                    }
+                    disableFocusListener
+                    arrow
+                    interactive
+                  >
+                    <span>
+                      <IconButton
+                        size="small"
+                        onClick={() => {
+                          setIsEventRecording(true);
+                          postSekaiProfileEventRecord(
+                            currentEvent!.eventId
+                          ).then(async (data) => {
+                            setEventRecords(
+                              await getSekaiProfileEventRecordMe()
+                            );
+                            updateSekaiProfile(
+                              Object.assign({}, sekaiProfile, {
+                                eventGetUsed: sekaiProfile.eventGetUsed + 1,
+                              })
+                            );
+                            setIsEventRecording(false);
+                          });
+                        }}
+                        disabled={
+                          isEventRecording ||
+                          sekaiProfile.eventGetAvailable <=
+                            sekaiProfile.eventGetUsed
+                        }
+                      >
+                        {isEventRecording ? (
+                          <CircularProgress size={24} />
+                        ) : (
+                          <Update />
+                        )}
+                      </IconButton>
+                    </span>
+                  </Tooltip>
+                </Grid>
+                {eventRecords[0] && (
+                  <Fragment>
+                    <Grid item>
+                      <Typography>
+                        {t("user:profile.event.current_record_point")}{" "}
+                        {eventRecords[0].eventPoint}
+                      </Typography>
+                    </Grid>
+                    <Grid item>
+                      <Typography>
+                        {t("user:profile.event.current_record_rank")}{" "}
+                        {eventRecords[0].eventRank}
+                      </Typography>
+                    </Grid>
+                    <Grid item>
+                      <Typography>
+                        {t("user:profile.event.current_record_time")}{" "}
+                        {new Date(eventRecords[0].created_at).toLocaleString()}
+                      </Typography>
+                    </Grid>
+                  </Fragment>
+                )}
+              </Grid>
+            </Container>
+          </Collapse>
+          <br />
+          <Typography variant="h6" className={layoutClasses.header}>
+            {t("user:profile.title.user_deck")}
+            <IconButton
+              onClick={() => setIsUserDeckOpen((state) => !state)}
+              size="small"
+            >
+              {isUserDeckOpen ? (
+                <ArrowDropUp fontSize="large" />
+              ) : (
+                <ArrowDropDown fontSize="large" />
+              )}
+            </IconButton>
+          </Typography>
+          <Collapse in={isUserDeckOpen}>
+            <Container className={layoutClasses.content} maxWidth="lg">
+              <Grid container spacing={2} justify="center">
+                {Array.from({ length: 5 }).map((_, idx) => (
+                  <Grid item xs={4} md={2} key={`user-deck-${idx}`}>
+                    <CardThumbMedium
+                      cardId={
+                        sekaiProfile.sekaiUserProfile!.userDecks[0][
+                          `member${idx + 1}` as "member1"
+                        ]
+                      }
+                      trained={
+                        sekaiProfile.sekaiUserProfile!.userCards.find(
+                          (card) =>
+                            card.cardId ===
+                            sekaiProfile.sekaiUserProfile!.userDecks[0][
+                              `member${idx + 1}` as "member1"
+                            ]
+                        )!.defaultImage === "special_training"
+                      }
+                      cardLevel={
+                        sekaiProfile.sekaiUserProfile!.userCards.find(
+                          (card) =>
+                            card.cardId ===
+                            sekaiProfile.sekaiUserProfile!.userDecks[0][
+                              `member${idx + 1}` as "member1"
+                            ]
+                        )!.level
+                      }
+                      masterRank={
+                        sekaiProfile.sekaiUserProfile!.userCards.find(
+                          (card) =>
+                            card.cardId ===
+                            sekaiProfile.sekaiUserProfile!.userDecks[0][
+                              `member${idx + 1}` as "member1"
+                            ]
+                        )!.masterRank
+                      }
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            </Container>
+          </Collapse>
         </Fragment>
       )}
       <Snackbar
