@@ -138,6 +138,14 @@ export interface IMusicInfo {
   fillerSec: number;
 }
 
+export interface IMusicAchievement {
+  id: number;
+  musicAchievementType: string;
+  musicAchievementTypeValue: string;
+  resourceBoxId: number;
+  musicDifficultyType: string;
+}
+
 export interface SkillEffectDetail {
   id: number;
   level: number;
@@ -926,4 +934,53 @@ export interface IUserProfile {
   userChallengeLiveSoloStages: UserChallengeLiveSoloStage[];
   userAreaItems: UserAreaItem[];
   userHonors: UserHonor[];
+}
+
+export type EventGraphRanking =
+  | 1
+  | 2
+  | 3
+  | 4
+  | 5
+  | 6
+  | 7
+  | 8
+  | 9
+  | 10
+  | 20
+  | 30
+  | 40
+  | 50
+  | 100
+  | 200
+  | 300
+  | 400
+  | 500
+  | 1000
+  | 2000
+  | 3000
+  | 4000
+  | 5000
+  | 10000
+  | 20000
+  | 30000
+  | 40000
+  | 50000
+  | 100000;
+export interface EventRankingResponse {
+  id: number;
+  eventId: number;
+  timestamp: string;
+  rank: number;
+  score: number;
+  userId: string;
+  userName: string;
+  userCard?: UserCard;
+  userProfile?: UserProfile;
+}
+
+export interface IEventCard {
+  id: number;
+  cardId: number;
+  eventId: number;
 }
