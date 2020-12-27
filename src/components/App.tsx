@@ -22,6 +22,8 @@ import {
   ListItemIcon,
   ListItemText,
   makeStyles,
+  Menu,
+  MenuItem,
   Radio,
   RadioGroup,
   Theme,
@@ -52,6 +54,8 @@ import {
   KeyboardArrowUp,
   Assignment,
   AccountCircle,
+  Timeline,
+  MoreVert,
 } from "@material-ui/icons";
 import {
   AccountGroup,
@@ -77,7 +81,7 @@ import {
   useHistory,
   useRouteMatch,
 } from "react-router-dom";
-import { SettingContext } from "../context";
+import { SettingContext, UserProvider } from "../context";
 import { ContentTransModeType, DisplayModeType } from "../types";
 import ScrollTop from "./subs/ScrollTop";
 
@@ -113,6 +117,7 @@ const CharacterMissionList = lazy(
 );
 const User = lazy(() => import("./user/User"));
 const Connect = lazy(() => import("./user/Connect"));
+const EventTracker = lazy(() => import("./event/EventTracker"));
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -324,138 +329,160 @@ function ListItemWithChildren(props: {
 
 function App() {
   const { t } = useTranslation();
+  const {
+    lang,
+    displayMode,
+    contentTransMode,
+    updateLang,
+    updateDisplayMode,
+    updateContentTransMode,
+  } = useContext(SettingContext)!;
+  const history = useHistory();
 
-  const leftBtns: IListItemLinkProps[][] = [
-    [
-      {
-        text: t("common:home"),
-        icon: <HomeIcon></HomeIcon>,
-        to: "/",
-        disabled: false,
-      },
-      {
-        text: t("common:card"),
-        icon: <AspectRatioIcon></AspectRatioIcon>,
-        to: "/card",
-        disabled: false,
-      },
-      {
-        text: t("common:music"),
-        icon: <AlbumIcon></AlbumIcon>,
-        to: "/music",
-        disabled: false,
-      },
-      {
-        text: t("common:gacha"),
-        icon: <MoveToInboxIcon></MoveToInboxIcon>,
-        to: "/gacha",
-        disabled: false,
-      },
-      {
-        text: t("common:event"),
-        icon: <CalendarText></CalendarText>,
-        to: "/event",
-        disabled: false,
-      },
-      {
-        text: t("common:stamp"),
-        icon: <StickerEmoji />,
-        to: "/stamp",
-        disabled: false,
-      },
-      {
-        text: t("common:comic"),
-        icon: <CropOriginal />,
-        to: "/comic",
-        disabled: false,
-      },
-      {
-        text: t("common:character"),
-        icon: <AccountGroup></AccountGroup>,
-        to: "/chara",
-        disabled: false,
-      },
-      {
-        text: t("common:mission.main"),
-        icon: <Assignment></Assignment>,
-        to: "/mission",
-        disabled: false,
-        children: [
-          {
-            text: t("common:mission.honor"),
-            to: "/mission/title",
-            disabled: false,
-          },
-          {
-            text: t("common:mission.livepass"),
-            to: "/mission/livepass",
-            disabled: true,
-          },
-          {
-            text: t("common:character"),
-            to: "/mission/character",
-            disabled: false,
-          },
-          {
-            text: t("common:mission.normal"),
-            to: "/mission/normal",
-            disabled: false,
-          },
-          {
-            text: t("common:mission.beginner"),
-            to: "/mission/beginner",
-            disabled: false,
-          },
-        ],
-      },
-      {
-        text: "Live2D",
-        icon: <ControlCamera></ControlCamera>,
-        to: "/live2d",
-        disabled: true,
-      },
+  const { goBack } = useHistory();
+
+  const preferDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+
+  const leftBtns: IListItemLinkProps[][] = React.useMemo(
+    () => [
+      [
+        {
+          text: t("common:home"),
+          icon: <HomeIcon></HomeIcon>,
+          to: "/",
+          disabled: false,
+        },
+        {
+          text: t("common:card"),
+          icon: <AspectRatioIcon></AspectRatioIcon>,
+          to: "/card",
+          disabled: false,
+        },
+        {
+          text: t("common:music"),
+          icon: <AlbumIcon></AlbumIcon>,
+          to: "/music",
+          disabled: false,
+        },
+        {
+          text: t("common:gacha"),
+          icon: <MoveToInboxIcon></MoveToInboxIcon>,
+          to: "/gacha",
+          disabled: false,
+        },
+        {
+          text: t("common:event"),
+          icon: <CalendarText></CalendarText>,
+          to: "/event",
+          disabled: false,
+        },
+        {
+          text: t("common:stamp"),
+          icon: <StickerEmoji />,
+          to: "/stamp",
+          disabled: false,
+        },
+        {
+          text: t("common:comic"),
+          icon: <CropOriginal />,
+          to: "/comic",
+          disabled: false,
+        },
+        {
+          text: t("common:character"),
+          icon: <AccountGroup></AccountGroup>,
+          to: "/chara",
+          disabled: false,
+        },
+        {
+          text: t("common:mission.main"),
+          icon: <Assignment></Assignment>,
+          to: "/mission",
+          disabled: false,
+          children: [
+            {
+              text: t("common:mission.honor"),
+              to: "/mission/title",
+              disabled: false,
+            },
+            {
+              text: t("common:mission.livepass"),
+              to: "/mission/livepass",
+              disabled: true,
+            },
+            {
+              text: t("common:character"),
+              to: "/mission/character",
+              disabled: false,
+            },
+            {
+              text: t("common:mission.normal"),
+              to: "/mission/normal",
+              disabled: false,
+            },
+            {
+              text: t("common:mission.beginner"),
+              to: "/mission/beginner",
+              disabled: false,
+            },
+          ],
+        },
+        {
+          text: "Live2D",
+          icon: <ControlCamera></ControlCamera>,
+          to: "/live2d",
+          disabled: true,
+        },
+      ],
+      [
+        {
+          text: t("common:musicMeta"),
+          icon: <QueueMusic />,
+          to: "/music_meta",
+          disabled: true,
+        },
+        {
+          text: t("common:musicRecommend"),
+          icon: <Calculator />,
+          to: "/music_recommend",
+          disabled: false,
+        },
+        {
+          text: t("common:eventCalc"),
+          icon: <Calculator />,
+          to: "/event_calc",
+          disabled: false,
+        },
+        {
+          text: t("common:storyReader"),
+          icon: <Textsms></Textsms>,
+          to: "/storyreader",
+          disabled: false,
+        },
+        {
+          text: t("common:eventTracker"),
+          icon: <Timeline></Timeline>,
+          to: "/eventtracker",
+          disabled: false,
+        },
+      ],
+      [
+        {
+          text: t("common:support"),
+          icon: <MonetizationOn />,
+          to: "/support",
+          disabled: false,
+        },
+        {
+          text: t("common:about"),
+          icon: <Info />,
+          to: "/about",
+          disabled: false,
+        },
+      ],
     ],
-    [
-      {
-        text: t("common:musicMeta"),
-        icon: <QueueMusic />,
-        to: "/music_meta",
-        disabled: true,
-      },
-      {
-        text: t("common:musicRecommend"),
-        icon: <Calculator />,
-        to: "/music_recommend",
-        disabled: false,
-      },
-      {
-        text: t("common:eventCalc"),
-        icon: <Calculator />,
-        to: "/event_calc",
-        disabled: false,
-      },
-      {
-        text: t("common:storyReader"),
-        icon: <Textsms></Textsms>,
-        to: "/storyreader",
-        disabled: false,
-      },
-    ],
-    [
-      {
-        text: t("common:support"),
-        icon: <MonetizationOn />,
-        to: "/support",
-        disabled: false,
-      },
-      {
-        text: t("common:about"),
-        icon: <Info />,
-        to: "/about",
-        disabled: false,
-      },
-    ],
-  ];
+    [t]
+  );
 
   const classes = useStyles();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -465,18 +492,11 @@ function App() {
     true,
     true,
   ]);
-  const {
-    lang,
-    displayMode,
-    contentTransMode,
-    updateLang,
-    updateDisplayMode,
-    updateContentTransMode,
-  } = useContext(SettingContext)!;
-
-  const { goBack } = useHistory();
-
-  const preferDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [
+    mobileMenuAnchorEl,
+    setMobileMenuAnchorEl,
+  ] = useState<HTMLElement | null>(null);
 
   const theme = React.useMemo(
     () =>
@@ -640,25 +660,72 @@ function App() {
             >
               <ArrowBackIosIcon fontSize="inherit" />
             </IconButton>
-            <IconButton
-              color="inherit"
-              onClick={() => setIsSettingsOpen(true)}
-              style={{ padding: ".6rem" }}
-              size="medium"
-            >
-              <SettingsIcon fontSize="inherit" />
-            </IconButton>
-            <Link to="/user" style={{ color: theme.palette.common.white }}>
+            <Hidden smDown implementation="css">
               <IconButton
                 color="inherit"
+                onClick={() => setIsSettingsOpen(true)}
                 style={{ padding: ".6rem" }}
                 size="medium"
               >
-                <AccountCircle fontSize="inherit" />
+                <SettingsIcon fontSize="inherit" />
               </IconButton>
-            </Link>
+              <Link to="/user" style={{ color: theme.palette.common.white }}>
+                <IconButton
+                  color="inherit"
+                  style={{ padding: ".6rem" }}
+                  size="medium"
+                >
+                  <AccountCircle fontSize="inherit" />
+                </IconButton>
+              </Link>
+            </Hidden>
+            <Hidden mdUp implementation="css">
+              <IconButton
+                onClick={(ev) => {
+                  setMobileMenuOpen(true);
+                  setMobileMenuAnchorEl(ev.currentTarget);
+                }}
+                color="inherit"
+              >
+                <MoreVert />
+              </IconButton>
+            </Hidden>
           </Toolbar>
         </AppBar>
+        <Menu
+          anchorEl={mobileMenuAnchorEl}
+          keepMounted
+          open={mobileMenuOpen}
+          onClose={() => {
+            setMobileMenuOpen(false);
+            setMobileMenuAnchorEl(null);
+          }}
+        >
+          <MenuItem
+            onClick={() => {
+              setIsSettingsOpen(true);
+              setMobileMenuOpen(false);
+              setMobileMenuAnchorEl(null);
+            }}
+          >
+            <IconButton color="inherit" size="medium">
+              <SettingsIcon fontSize="inherit" />
+            </IconButton>
+            <Typography>{t("common:settings.title")}</Typography>
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              history.push("/user");
+              setMobileMenuOpen(false);
+              setMobileMenuAnchorEl(null);
+            }}
+          >
+            <IconButton color="inherit" size="medium">
+              <AccountCircle fontSize="inherit" />
+            </IconButton>
+            <Typography>{t("common:user")}</Typography>
+          </MenuItem>
+        </Menu>
         <nav className={classes.drawer}>
           <Hidden mdUp implementation="css">
             <Drawer
@@ -691,85 +758,90 @@ function App() {
         </nav>
         <Container className={classes.content}>
           <div className={classes.toolbar} id="back-to-top-anchor"></div>
-          <Switch>
-            <Suspense fallback={<div>Loading...</div>}>
-              <Route path="/" exact>
-                <HomeView />
-              </Route>
-              <Route path="/card" exact>
-                <CardList />
-              </Route>
-              <Route path="/card/:cardId(\d+)">
-                <CardDetail />
-              </Route>
-              <Route path="/music" exact>
-                <MusicList />
-              </Route>
-              <Route path="/music/:musicId(\d+)">
-                <MusicDetail />
-              </Route>
-              <Route path="/gacha" exact>
-                <GachaList />
-              </Route>
-              <Route path="/gacha/:gachaId">
-                <GachaDetail />
-              </Route>
-              <Route path="/event" exact>
-                <EventList />
-              </Route>
-              <Route path="/event/:eventId">
-                <EventDetail />
-              </Route>
-              <Route path="/stamp">
-                <StampList />
-              </Route>
-              <Route path="/comic">
-                <ComicList />
-              </Route>
-              <Route path="/chara" exact>
-                <MemberList />
-              </Route>
-              <Route path="/chara/:charaId">
-                <MemberDetail />
-              </Route>
-              <Route path="/unit/:unitId">
-                <UnitDetail />
-              </Route>
-              <Route path="/about" exact>
-                <About />
-              </Route>
-              <Route path="/support" exact>
-                <Support />
-              </Route>
-              <Route path="/music_recommend" exact>
-                <MusicRecommend />
-              </Route>
-              <Route path="/event_calc" exact>
-                <EventPointCalc />
-              </Route>
-              <Route path="/storyreader">
-                <StoryReader />
-              </Route>
-              <Route path="/mission/title">
-                <TitleMissionList />
-              </Route>
-              <Route path="/mission/normal">
-                <NormalMissionList />
-              </Route>
-              <Route path="/mission/beginner">
-                <BeginnerMissionList />
-              </Route>
-              <Route path="/mission/character">
-                <CharacterMissionList />
-              </Route>
-              <Route path="/user">
-                <User />
-              </Route>
-              <Route path="/connect/:provider/redirect">
-                <Connect />
-              </Route>
-            </Suspense>
-          </Switch>
+          <UserProvider>
+            <Switch>
+              <Suspense fallback={<div>Loading...</div>}>
+                <Route path="/" exact>
+                  <HomeView />
+                </Route>
+                <Route path="/card" exact>
+                  <CardList />
+                </Route>
+                <Route path="/card/:cardId(\d+)">
+                  <CardDetail />
+                </Route>
+                <Route path="/music" exact>
+                  <MusicList />
+                </Route>
+                <Route path="/music/:musicId(\d+)">
+                  <MusicDetail />
+                </Route>
+                <Route path="/gacha" exact>
+                  <GachaList />
+                </Route>
+                <Route path="/gacha/:gachaId">
+                  <GachaDetail />
+                </Route>
+                <Route path="/event" exact>
+                  <EventList />
+                </Route>
+                <Route path="/event/:eventId">
+                  <EventDetail />
+                </Route>
+                <Route path="/stamp">
+                  <StampList />
+                </Route>
+                <Route path="/comic">
+                  <ComicList />
+                </Route>
+                <Route path="/chara" exact>
+                  <MemberList />
+                </Route>
+                <Route path="/chara/:charaId">
+                  <MemberDetail />
+                </Route>
+                <Route path="/unit/:unitId">
+                  <UnitDetail />
+                </Route>
+                <Route path="/about" exact>
+                  <About />
+                </Route>
+                <Route path="/support" exact>
+                  <Support />
+                </Route>
+                <Route path="/music_recommend" exact>
+                  <MusicRecommend />
+                </Route>
+                <Route path="/event_calc" exact>
+                  <EventPointCalc />
+                </Route>
+                <Route path="/storyreader">
+                  <StoryReader />
+                </Route>
+                <Route path="/mission/title">
+                  <TitleMissionList />
+                </Route>
+                <Route path="/mission/normal">
+                  <NormalMissionList />
+                </Route>
+                <Route path="/mission/beginner">
+                  <BeginnerMissionList />
+                </Route>
+                <Route path="/mission/character">
+                  <CharacterMissionList />
+                </Route>
+                <Route path="/user">
+                  <User />
+                </Route>
+                <Route path="/connect/:provider/redirect">
+                  <Connect />
+                </Route>
+                <Route path="/eventtracker">
+                  <EventTracker />
+                </Route>
+              </Suspense>
+            </Switch>
+          </UserProvider>
         </Container>
         <ScrollTop>
           <Fab color="secondary" size="small" aria-label="scroll back to top">
