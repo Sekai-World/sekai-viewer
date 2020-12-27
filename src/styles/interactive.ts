@@ -20,6 +20,10 @@ const useInteractiveStyles = makeStyles((theme) => ({
   },
   noDecoration: {
     textDecoration: "none",
+    "&:hover": {
+      textDecoration: "underline",
+    },
+    color: theme.palette.text.primary,
   },
 }));
 
