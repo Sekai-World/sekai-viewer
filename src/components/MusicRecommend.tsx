@@ -131,7 +131,7 @@ const MusicRecommend: React.FC<{}> = () => {
       headerName: t("home:game-news.action"),
       width: 80,
       renderCell: (params: ValueFormatterParams) => {
-        const info = params.data as IMusicRecommendResult;
+        const info = params.row as IMusicRecommendResult;
         return (
           <Link to={info.link} target="_blank">
             <IconButton color="primary">
