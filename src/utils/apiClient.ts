@@ -5,6 +5,8 @@ import {
   LoginLocalApiReturn,
   LoginValues,
   RegisterValues,
+  SekaiCurrentEventModel,
+  SekaiProfileEventRecordModel,
   SekaiProfileModel,
   UserMetadatumModel,
   UserModel,
@@ -205,6 +207,37 @@ export function useStrapi(token?: string) {
                 }
               : {}
           )
+        ).data;
+      },
+      [axios]
+    ),
+    getSekaiCurrentEvent: useCallback(async (): Promise<
+      SekaiCurrentEventModel
+    > => {
+      return (await axios.get<SekaiCurrentEventModel>("/sekai-current-event"))
+        .data;
+    }, [axios]),
+    getSekaiProfileEventRecordMe: useCallback(
+      async (eventId?: number): Promise<SekaiProfileEventRecordModel[]> => {
+        return (
+          await axios.get<SekaiProfileEventRecordModel[]>(
+            "/sekai-profile-event-records/me",
+            {
+              params: eventId
+                ? {
+                    eventId,
+                  }
+                : {},
+            }
+          )
+        ).data;
+      },
+      [axios]
+    ),
+    postSekaiProfileEventRecord: useCallback(
+      async (eventId: number) => {
+        return (
+          await axios.post("/sekai-profile-event-records/record", { eventId })
         ).data;
       },
       [axios]
