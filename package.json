@@ -9,7 +9,6 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@material-ui/pickers": "^3.2.10",
-    "@reduxjs/toolkit": "^1.4.0",
     "@rumess/react-flip-countdown": "^1.1.1",
     "apexcharts": "^3.23.0",
     "axios": "^0.20.0",

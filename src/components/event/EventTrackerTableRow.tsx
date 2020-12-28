@@ -67,7 +67,7 @@ export const HistoryRow: React.FC<{
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell colSpan={4}>
+        <TableCell colSpan={4} style={{ paddingTop: 0, paddingBottom: 0 }}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Grid container alignItems="center" spacing={3}>
               <Grid item xs={3} md={2}>
@@ -160,7 +160,7 @@ export const LiveRow: React.FC<{
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell colSpan={4}>
+        <TableCell colSpan={4} style={{ paddingTop: 0, paddingBottom: 0 }}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Grid container alignItems="center" spacing={3}>
               {rankingData.userCard && (

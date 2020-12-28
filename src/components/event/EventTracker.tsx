@@ -109,8 +109,7 @@ const EventTracker: React.FC<{}> = () => {
 
   const [chartData, setChartData] = useState<
     {
-      time: number;
-      [key: string]: number;
+      [key: string]: any;
     }[]
   >([]);
   const [rtRanking, setRtRanking] = useState<EventRankingResponse[]>([]);
@@ -203,7 +202,7 @@ const EventTracker: React.FC<{}> = () => {
         currentTime <= event.rankingAnnounceAt + 5 * 60 * 1000
       ) {
         if (refreshCron) refreshCron.stop();
-        const cron = new CronJob("10 */2 * * * *", () => {
+        const cron = new CronJob("10 * * * * *", () => {
           const currentTime = Date.now();
           if (currentTime > event.rankingAnnounceAt + 5 * 60 * 1000)
             cron.stop();
@@ -238,6 +237,7 @@ const EventTracker: React.FC<{}> = () => {
     selectedRankings.forEach((ranking, idx) => {
       datas[idx].forEach((data, _idx) => {
         baseData[_idx][`T${ranking}`] = data.score;
+        baseData[_idx][`T${ranking}_name`] = data.userName;
       });
     });
     setChartData(baseData);
@@ -444,6 +444,12 @@ const EventTracker: React.FC<{}> = () => {
                         contentStyle={{
                           backgroundColor: theme.palette.background.default,
                         }}
+                        formatter={(value, name, props) => {
+                          return [
+                            `${value} - ${props.payload[`${name}_name`]}`,
+                            name,
+                          ];
+                        }}
                       />
                       <Legend
                         onClick={(e) => {
@@ -502,7 +508,7 @@ const EventTracker: React.FC<{}> = () => {
                 {t("event:nextfetch")}: {nextRefreshTime.fromNow()}
               </Typography>
             )}
-            <Divider style={{ margin: "1% 0" }} />
+            {/* <Divider style={{ margin: "1% 0" }} /> */}
             <TableContainer component={Paper}>
               <Table size="small">
                 <TableHead>
