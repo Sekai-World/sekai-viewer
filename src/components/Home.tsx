@@ -12,6 +12,7 @@ import {
   useMediaQuery,
   useTheme,
   Grid,
+  Box,
 } from "@material-ui/core";
 import { useLayoutStyles } from "../styles/layout";
 import { useInteractiveStyles } from "../styles/interactive";
@@ -29,6 +30,7 @@ import { Discord, Patreon } from "mdi-material-ui";
 import React, { Fragment, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Link as RouteLink } from "react-router-dom";
+import FlipCountdown from "@rumess/react-flip-countdown";
 import { IUserInformationInfo } from "../types";
 import { getJPTime, useCachedData } from "../utils";
 
@@ -205,6 +207,25 @@ function Home() {
       </Typography>
       <Container className={layoutClasses.content}>
         {/* <Typography variant="h4">Welcome to Sekai Viewer Open Beta!</Typography> */}
+        <Box paddingTop="1%" paddingBottom="1%">
+          {new Date().getTime() < 1609426800000 ? (
+            <Fragment>
+              <Typography align="center" variant="h4">
+                {t("home:new_year_countdown")}
+              </Typography>
+              <FlipCountdown
+                endAt="2020-12-31T15:00:00Z"
+                hideYear
+                hideMonth
+                titlePosition="bottom"
+              />
+            </Fragment>
+          ) : (
+            <Typography align="center" variant="h4">
+              {t("home:happy_new_year")}
+            </Typography>
+          )}
+        </Box>
         <Grid container justify="center">
           <Grid item xs={12} md={8} lg={6}>
             {jpTime === "12/6" ? (
