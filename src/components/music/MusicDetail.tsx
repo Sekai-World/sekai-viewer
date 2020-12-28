@@ -31,6 +31,7 @@ import React, {
 import { useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import {
+  IMusicAchievement,
   IMusicDanceMembers,
   IMusicDifficultyInfo,
   IMusicInfo,
@@ -52,6 +53,7 @@ import { useTrimMP3 } from "../../utils/trimMP3";
 import MusicVideoPlayer from "../subs/MusicVideoPlayer";
 import { SettingContext } from "../../context";
 import { ContentTrans, ReleaseCondTrans } from "../subs/ContentTrans";
+import ResourceBox from "../subs/ResourceBox";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -107,6 +109,9 @@ const MusicDetail: React.FC<{}> = () => {
   const [outCharas] = useCachedData<IOutCharaProfile>("outsideCharacters");
   // const [releaseConds] = useCachedData<IReleaseCondition>("releaseConditions");
   const [danceMembers] = useCachedData<IMusicDanceMembers>("musicDanceMembers");
+  const [musicAchievements] = useCachedData<IMusicAchievement>(
+    "musicAchievements"
+  );
 
   const { musicId } = useParams<{ musicId: string }>();
 
@@ -421,11 +426,7 @@ const MusicDetail: React.FC<{}> = () => {
     getVocalCharaIcons,
   ]);
 
-  return music &&
-    musicVocals.length &&
-    musicDiffis.length &&
-    // releaseConds.length &&
-    danceMembers.length ? (
+  return music && musicVocals.length ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
         {getTranslated(
@@ -883,83 +884,220 @@ const MusicDetail: React.FC<{}> = () => {
             .length,
         })}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
-        <TabContext value={diffiInfoTabVal}>
-          <Paper className={interactiveClasses.container}>
-            <Tabs
-              value={diffiInfoTabVal}
-              onChange={(e, v) => {
-                setDiffiInfoTabVal(v);
-              }}
-              variant="scrollable"
-              scrollButtons="desktop"
-            >
-              {musicDiffis
-                .filter((elem) => elem.musicId === Number(musicId))
-                .map((elem, idx) => (
-                  <Tab
-                    key={`diffi-info-tab-${idx}`}
-                    label={elem.musicDifficulty}
-                    value={String(idx)}
-                  ></Tab>
-                ))}
-            </Tabs>
-          </Paper>
-          {musicDiffis
-            .filter((elem) => elem.musicId === Number(musicId))
-            .map((elem, idx) => (
-              <TabPanel
-                value={String(idx)}
-                key={`diffi-info-tab-panel-${idx}`}
-                style={{ paddingLeft: 0, paddingRight: 0 }}
+      {musicDiffis.length && (
+        <Container className={layoutClasses.content} maxWidth="sm">
+          <TabContext value={diffiInfoTabVal}>
+            <Paper className={interactiveClasses.container}>
+              <Tabs
+                value={diffiInfoTabVal}
+                onChange={(e, v) => {
+                  setDiffiInfoTabVal(v);
+                }}
+                variant="scrollable"
+                scrollButtons="desktop"
               >
-                <Grid container direction="column">
-                  <Grid item container direction="row" justify="space-between">
-                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                      {t("common:level")}
-                    </Typography>
-                    <Grid item>{elem.playLevel}</Grid>
-                  </Grid>
-                  <Divider style={{ margin: "1% 0" }} />
-                  <Grid item container direction="row" justify="space-between">
-                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                      {t("music:noteCount")}
-                    </Typography>
-                    <Grid item>{elem.noteCount}</Grid>
-                  </Grid>
-                  <Divider style={{ margin: "1% 0" }} />
-                  <Grid item>
+                {musicDiffis
+                  .filter((elem) => elem.musicId === Number(musicId))
+                  .map((elem, idx) => (
+                    <Tab
+                      key={`diffi-info-tab-${idx}`}
+                      label={elem.musicDifficulty}
+                      value={String(idx)}
+                    ></Tab>
+                  ))}
+              </Tabs>
+            </Paper>
+            {musicDiffis
+              .filter((elem) => elem.musicId === Number(musicId))
+              .map((elem, idx) => (
+                <TabPanel
+                  value={String(idx)}
+                  key={`diffi-info-tab-panel-${idx}`}
+                  style={{ paddingLeft: 0, paddingRight: 0 }}
+                >
+                  <Grid container direction="column">
                     <Grid
+                      item
                       container
                       direction="row"
                       justify="space-between"
-                      alignItems="center"
                     >
-                      <Grid item>
-                        <Typography
-                          variant="subtitle1"
-                          style={{ fontWeight: 600 }}
-                        >
-                          {t("common:releaseCondition")}
-                        </Typography>
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {t("common:level")}
+                      </Typography>
+                      <Grid item>{elem.playLevel}</Grid>
+                    </Grid>
+                    <Divider style={{ margin: "1% 0" }} />
+                    <Grid
+                      item
+                      container
+                      direction="row"
+                      justify="space-between"
+                    >
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {t("music:noteCount")}
+                      </Typography>
+                      <Grid item>{elem.noteCount}</Grid>
+                    </Grid>
+                    <Divider style={{ margin: "1% 0" }} />
+                    <Grid item>
+                      <Grid
+                        container
+                        direction="row"
+                        justify="space-between"
+                        alignItems="center"
+                      >
+                        <Grid item>
+                          <Typography
+                            variant="subtitle1"
+                            style={{ fontWeight: 600 }}
+                          >
+                            {t("common:releaseCondition")}
+                          </Typography>
+                        </Grid>
+                        <Grid item>
+                          <ReleaseCondTrans
+                            mode={contentTransMode}
+                            releaseCondId={elem.releaseConditionId}
+                            originalProps={{ align: "right" }}
+                            translatedProps={{ align: "right" }}
+                          />
+                        </Grid>
                       </Grid>
-                      <Grid item>
-                        <ReleaseCondTrans
-                          mode={contentTransMode}
-                          releaseCondId={elem.releaseConditionId}
-                          originalProps={{ align: "right" }}
-                          translatedProps={{ align: "right" }}
-                        />
-                      </Grid>
+                    </Grid>
+                    <Divider style={{ margin: "1% 0" }} />
+                  </Grid>
+                </TabPanel>
+              ))}
+          </TabContext>
+        </Container>
+      )}
+      <Typography variant="h6" className={layoutClasses.header}>
+        {t("music:achievement")}
+      </Typography>
+      {!!musicAchievements.length && !!musicDiffis.length && (
+        <Container className={layoutClasses.content} maxWidth="sm">
+          <Grid container direction="column">
+            <Grid item container justify="space-between" alignItems="center">
+              <Grid item xs={2}>
+                <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                  {t("music:scoreRankAchievement.title")}
+                </Typography>
+              </Grid>
+              <Grid item xs={9} container spacing={1}>
+                <Grid item xs={6} md={3} container direction="column">
+                  <Grid item>
+                    <Typography align="center">
+                      {t("music:scoreRankAchievement.rankC")}
+                    </Typography>
+                  </Grid>
+                  <Grid item>
+                    <ResourceBox
+                      resourceBoxId={musicAchievements[0].resourceBoxId}
+                      resourceBoxPurpose="music_achievement"
+                    />
+                  </Grid>
+                </Grid>
+                <Grid item xs={6} md={3} container direction="column">
+                  <Grid item>
+                    <Typography align="center">
+                      {t("music:scoreRankAchievement.rankB")}
+                    </Typography>
+                  </Grid>
+                  <Grid item>
+                    <ResourceBox
+                      resourceBoxId={musicAchievements[1].resourceBoxId}
+                      resourceBoxPurpose="music_achievement"
+                    />
+                  </Grid>
+                </Grid>
+                <Grid item xs={6} md={3} container direction="column">
+                  <Grid item>
+                    <Typography align="center">
+                      {t("music:scoreRankAchievement.rankA")}
+                    </Typography>
+                  </Grid>
+                  <Grid item>
+                    <ResourceBox
+                      resourceBoxId={musicAchievements[2].resourceBoxId}
+                      resourceBoxPurpose="music_achievement"
+                    />
+                  </Grid>
+                </Grid>
+                <Grid item xs={6} md={3} container direction="column">
+                  <Grid item>
+                    <Typography align="center">
+                      {t("music:scoreRankAchievement.rankS")}
+                    </Typography>
+                  </Grid>
+                  <Grid item>
+                    <ResourceBox
+                      resourceBoxId={musicAchievements[3].resourceBoxId}
+                      resourceBoxPurpose="music_achievement"
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+            <Divider style={{ margin: "1% 0" }} />
+            {["easy", "normal", "hard", "expert", "master"].map((diffi) => {
+              const achieves = musicAchievements.filter(
+                (ma) => ma.musicDifficultyType === diffi
+              );
+              return (
+                <Fragment>
+                  <Grid
+                    item
+                    container
+                    justify="space-between"
+                    alignItems="center"
+                  >
+                    <Grid item xs={2}>
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600, textTransform: "capitalize" }}
+                      >
+                        {diffi}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={9} container spacing={1}>
+                      {achieves.map((achieve) => (
+                        <Grid item xs={6} md={3} container direction="column">
+                          <Grid item>
+                            <Typography align="center">
+                              {Math.floor(
+                                musicDiffis.find(
+                                  (elem) =>
+                                    elem.musicId === Number(musicId) &&
+                                    elem.musicDifficulty === diffi
+                                )!.noteCount *
+                                  Number(achieve.musicAchievementTypeValue)
+                              )}
+                            </Typography>
+                          </Grid>
+                          <Grid item>
+                            <ResourceBox
+                              resourceBoxId={achieve.resourceBoxId}
+                              resourceBoxPurpose="music_achievement"
+                            />
+                          </Grid>
+                        </Grid>
+                      ))}
                     </Grid>
                   </Grid>
                   <Divider style={{ margin: "1% 0" }} />
-                </Grid>
-              </TabPanel>
-            ))}
-        </TabContext>
-        {/* <Divider style={{ margin: "1% 0" }} /> */}
-      </Container>
+                </Fragment>
+              );
+            })}
+          </Grid>
+        </Container>
+      )}
 
       <Viewer
         visible={visible}
