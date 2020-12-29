@@ -469,18 +469,6 @@ const CardList: React.FC<{}> = () => {
             } as const)[viewGridType]
           }
         />
-        {/* <InfiniteScroll
-          dataLength={cards.length}
-          next={fetchCards}
-          hasMore={hasMore}
-          loader={<Typography>Loading...</Typography>}
-        >
-          <Grid container spacing={1}>
-            {cards.map((card, index) => (
-              <GridCard key={index} data={card} />
-            ))}
-          </Grid>
-        </InfiniteScroll> */}
       </Container>
     </Fragment>
   );

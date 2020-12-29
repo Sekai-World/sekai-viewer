@@ -33,10 +33,8 @@ import {
   ICardRarity,
   ICharacterRank,
   IGameChara,
-  IResourceBoxInfo,
   ISkillInfo,
   IUnitProfile,
-  ResourceBoxDetail,
 } from "../../types";
 import { getRemoteAssetURL, useCachedData, useCharaName } from "../../utils";
 import rarityNormal from "../../assets/rarity_star_normal.png";
@@ -50,7 +48,6 @@ import {
 } from "../../utils/resources";
 import { useTranslation } from "react-i18next";
 import MaterialIcon from "../subs/MaterialIcon";
-import CommonMaterialIcon from "../subs/CommonMaterialIcon";
 import { useAssetI18n } from "../../utils/i18n";
 import { SettingContext } from "../../context";
 import {
@@ -110,8 +107,6 @@ const CardDetail: React.FC<{}> = () => {
   const [episodes] = useCachedData<ICardEpisode>("cardEpisodes");
   const [charaRanks] = useCachedData<ICharacterRank>("characterRanks");
   const [skills] = useCachedData<ISkillInfo>("skills");
-  // const [releaseConds] = useCachedData<IReleaseCondition>("releaseConditions");
-  const [resourceBoxes] = useCachedData<IResourceBoxInfo>("resourceBoxes");
   const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
 
   const { cardId } = useParams<{ cardId: string }>();
@@ -337,11 +332,7 @@ const CardDetail: React.FC<{}> = () => {
     setTabVal(newValue);
   };
 
-  return card &&
-    charaRanks.length &&
-    // releaseConds.length &&
-    resourceBoxes.length &&
-    unitProfiles.length ? (
+  return card && charaRanks.length && unitProfiles.length ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
         {cardTitle}
@@ -1184,25 +1175,13 @@ const CardDetail: React.FC<{}> = () => {
                   </Typography>
                 </Grid>
                 <Grid item container spacing={1} xs={10} justify="flex-end">
-                  {resourceBoxes
-                    .filter(
-                      (rb) =>
-                        rb.resourceBoxPurpose === "episode_reward" &&
-                        cardEpisode[1].rewardResourceBoxIds.includes(rb.id)
-                    )
-                    .reduce(
-                      (sum, rb) => [...sum, ...rb.details],
-                      [] as ResourceBoxDetail[]
-                    )
-                    .map((rbd, idx) => (
-                      <Grid key={`episode-reward-${idx}`} item>
-                        <CommonMaterialIcon
-                          materialName={rbd.resourceType}
-                          materialId={rbd.resourceId}
-                          quantity={rbd.resourceQuantity}
-                        />
-                      </Grid>
-                    ))}
+                  {cardEpisode[1].rewardResourceBoxIds.map((id) => (
+                    <ResourceBox
+                      resourceBoxId={id}
+                      resourceBoxPurpose="episode_reward"
+                      justify="flex-end"
+                    />
+                  ))}
                 </Grid>
               </Grid>
               <Divider style={{ margin: "1% 0" }} />
