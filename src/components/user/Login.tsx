@@ -217,13 +217,11 @@ const Login: React.FC<{}> = () => {
         autoHideDuration={3000}
         onClose={() => {
           setIsError(false);
-          history.replace("/user/login");
         }}
       >
         <Alert
           onClose={() => {
             setIsError(false);
-            history.replace("/user/login");
           }}
           severity="error"
         >
