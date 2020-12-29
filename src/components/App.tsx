@@ -59,6 +59,7 @@ import {
 } from "@material-ui/icons";
 import {
   AccountGroup,
+  Bullhorn,
   Calculator,
   CalendarText,
   StickerEmoji,
@@ -118,6 +119,10 @@ const CharacterMissionList = lazy(
 const User = lazy(() => import("./user/User"));
 const Connect = lazy(() => import("./user/Connect"));
 const EventTracker = lazy(() => import("./event/EventTracker"));
+const AnnouncementList = lazy(() => import("./announcement/AnnouncementList"));
+const AnnouncementDetail = lazy(
+  () => import("./announcement/AnnouncementDetail")
+);
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -353,6 +358,14 @@ function App() {
           disabled: false,
         },
         {
+          text: t("common:announcement"),
+          icon: <Bullhorn></Bullhorn>,
+          to: "/announcement",
+          disabled: false,
+        },
+      ],
+      [
+        {
           text: t("common:card"),
           icon: <AspectRatioIcon></AspectRatioIcon>,
           to: "/card",
@@ -487,11 +500,9 @@ function App() {
   const classes = useStyles();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [sidebarExpansionStates, setSidebarExpansionStates] = useState([
-    true,
-    true,
-    true,
-  ]);
+  const [sidebarExpansionStates, setSidebarExpansionStates] = useState<
+    boolean[]
+  >(leftBtns.map(() => true));
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [
     mobileMenuAnchorEl,
@@ -540,9 +551,7 @@ function App() {
             setSidebarExpansionStates((s) => [!s[0], ...s.slice(1)])
           }
         >
-          <Typography color="textSecondary">
-            {t("common:information")}
-          </Typography>
+          <Typography color="textSecondary">{t("common:community")}</Typography>
           {sidebarExpansionStates[0] ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
         <Collapse in={sidebarExpansionStates[0]} timeout="auto" unmountOnExit>
@@ -575,7 +584,9 @@ function App() {
             setSidebarExpansionStates((s) => [s[0], !s[1], ...s.slice(2)])
           }
         >
-          <Typography color="textSecondary">{t("common:tools")}</Typography>
+          <Typography color="textSecondary">
+            {t("common:information")}
+          </Typography>
           {sidebarExpansionStates[1] ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
         <Collapse in={sidebarExpansionStates[1]} timeout="auto" unmountOnExit>
@@ -604,11 +615,44 @@ function App() {
             setSidebarExpansionStates((s) => [s[0], s[1], !s[2], ...s.slice(3)])
           }
         >
-          <Typography color="textSecondary">{t("common:about")}</Typography>
-          {sidebarExpansionStates[1] ? <ExpandLess /> : <ExpandMore />}
+          <Typography color="textSecondary">{t("common:tools")}</Typography>
+          {sidebarExpansionStates[2] ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
         <Collapse in={sidebarExpansionStates[2]} timeout="auto" unmountOnExit>
           {leftBtns[2].map((elem) => (
+            <ListItem
+              disabled={elem.disabled}
+              button
+              key={elem.to}
+              classes={{
+                root: classes.listItem,
+              }}
+            >
+              <ListItemLink
+                to={elem.to}
+                text={elem.text}
+                icon={elem.icon}
+                disabled={elem.disabled}
+                theme={theme}
+              />
+            </ListItem>
+          ))}
+        </Collapse>
+        <ListItem
+          button
+          onClick={() =>
+            setSidebarExpansionStates((s) => [
+              ...s.slice(0, 3),
+              !s[3],
+              ...s.slice(4),
+            ])
+          }
+        >
+          <Typography color="textSecondary">{t("common:about")}</Typography>
+          {sidebarExpansionStates[3] ? <ExpandLess /> : <ExpandMore />}
+        </ListItem>
+        <Collapse in={sidebarExpansionStates[3]} timeout="auto" unmountOnExit>
+          {leftBtns[3].map((elem) => (
             <ListItem
               disabled={elem.disabled}
               button
@@ -838,6 +882,12 @@ function App() {
                 </Route>
                 <Route path="/eventtracker">
                   <EventTracker />
+                </Route>
+                <Route path="/announcement" exact>
+                  <AnnouncementList />
+                </Route>
+                <Route path="/announcement/:id">
+                  <AnnouncementDetail />
                 </Route>
               </Suspense>
             </Switch>

@@ -23,6 +23,7 @@ export interface UserMetadatumModel {
 }
 
 export interface UserModel {
+  id: number;
   username: string;
   email: string;
   provider: string;
@@ -73,6 +74,73 @@ export interface SekaiProfileEventRecordModel {
   eventId: number;
   eventRank: number;
   eventPoint: number;
-  created_at: string;
-  updated_at: string;
+  created_at: Date;
+  updated_at: Date;
 }
+
+export interface LanguageModel {
+  id: number;
+  code: string;
+  name: string;
+  enabled: boolean;
+  created_at: Date;
+  updated_at: Date;
+}
+
+// export interface CommentModel {
+//   id: number;
+//   content: string;
+//   blocked?: boolean;
+//   blockedThread?: boolean;
+//   blockReason?: string;
+//   points?: number;
+//   authorUser: UserModel;
+//   authorType?: string;
+//   authorId?: string;
+//   authorName?: string;
+//   authorEmail?: string;
+//   authorAvatar?: string;
+//   relatedSlug: string;
+//   created_by?: any;
+//   updated_by?: any;
+//   created_at: Date;
+//   updated_at: Date;
+//   reports: any[];
+//   children: CommentModel[];
+// }
+
+export interface CommentModel {
+  id: number;
+  content: string;
+  blocked?: boolean;
+  blockedThread?: boolean;
+  blockReason?: string;
+  points?: number;
+  authorUser: number | UserModel;
+  authorType?: any;
+  authorId?: any;
+  authorName?: any;
+  authorEmail?: any;
+  authorAvatar?: any;
+  threadOf?: any;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface AnnouncementModel {
+  id: number;
+  title: string;
+  description: string;
+  content: string;
+  category: string;
+  showAt?: Date;
+  user: UserModel;
+  language: LanguageModel;
+  isPin: boolean;
+  published_at: Date;
+  created_at: Date;
+  updated_at: Date;
+  comments: CommentModel[];
+}
+
+export type CommentAbuseReason = "OTHER" | "BAD_WORDS" | "DISCRIMINATION";

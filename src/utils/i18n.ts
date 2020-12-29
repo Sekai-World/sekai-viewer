@@ -52,6 +52,8 @@ export function initGlobalI18n() {
         "team_build",
         "user",
         "auth",
+        "announcement",
+        "comment",
       ],
       fallbackLng: {
         default: ["en"],
