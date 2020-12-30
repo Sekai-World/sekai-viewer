@@ -996,7 +996,7 @@ function App() {
                 <FormControlLabel
                   value="th"
                   control={<Radio />}
-                  label="ไทย"
+                  label="ภาษาไทย"
                 ></FormControlLabel>
                 <FormControlLabel
                   value="ru"
