@@ -31,6 +31,7 @@ export interface UserModel {
   blocked: boolean;
   role: UserRoleModel;
   userMetadatum: UserMetadatumModel;
+  avatarUrl?: string;
 }
 export interface LoginValues {
   identifier: string;
