@@ -693,7 +693,7 @@ function App() {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" noWrap classes={{ root: classes.title }}>
-              Sekai Viewer
+              Sekai Viewer <small>{process.env.REACT_APP_VERSION}</small>
             </Typography>
             <IconButton
               color="inherit"
