@@ -124,7 +124,7 @@ const MusicDetail: React.FC<{}> = () => {
     IMusicDanceMembers
   >();
   const [selectedVocalType, setSelectedVocalType] = useState<number>(0);
-  const [vocalPreviewVal, setVocalPreviewVal] = useState<string>("0");
+  const [vocalPreviewVal, setVocalPreviewVal] = useState<string>("1");
   const [vocalDisabled, setVocalDisabled] = useState<boolean>(false);
   const [diffiInfoTabVal, setDiffiInfoTabVal] = useState<string>("4");
   const [actualPlaybackTime, setActualPlaybackTime] = useState<string>("");
@@ -830,13 +830,25 @@ const MusicDetail: React.FC<{}> = () => {
               {/* <Grid item>{getVocalCharaIcons(selectedVocalType)}</Grid> */}
               <Grid item>
                 <Grid container direction="column">
-                  {musicVocal[selectedVocalType].characters.map((chara) => (
-                    <Grid item key={`chara-${chara.characterId}`}>
-                      <Typography align="right">
-                        {getCharaName(chara.characterId)}
-                      </Typography>
-                    </Grid>
-                  ))}
+                  {musicVocal[selectedVocalType].characters.map((chara) =>
+                    chara.characterType === "game_character" ? (
+                      <Grid item key={`chara-${chara.characterId}`}>
+                        <Typography align="right">
+                          {getCharaName(chara.characterId)}
+                        </Typography>
+                      </Grid>
+                    ) : (
+                      <Grid item key={`outchara-${chara.characterId}`}>
+                        <Typography align="right">
+                          {outCharas.length
+                            ? outCharas.find(
+                                (elem) => elem.id === chara.characterId
+                              )!.name
+                            : `Outside Character ${chara.characterId}`}
+                        </Typography>
+                      </Grid>
+                    )
+                  )}
                 </Grid>
               </Grid>
             </Grid>
