@@ -51,6 +51,9 @@ const AnnouncementWidget: React.FC<{}> = () => {
               </Link>
             </Grid>
           ))}
+          {!announcements.length && (
+            <Typography>{t("announcement:no_entry")}</Typography>
+          )}
         </Grid>
       </Box>
     </Fragment>

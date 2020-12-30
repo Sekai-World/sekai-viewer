@@ -1,4 +1,5 @@
-import { CardMedia, Container, Grid, Typography } from "@material-ui/core";
+import { Container, Grid, makeStyles, Typography } from "@material-ui/core";
+import { Skeleton } from "@material-ui/lab";
 import FlipCountdown from "@rumess/react-flip-countdown";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -7,7 +8,17 @@ import { useLayoutStyles } from "../../styles/layout";
 import { getRemoteAssetURL } from "../../utils";
 import { useStrapi } from "../../utils/apiClient";
 
+const useStyles = makeStyles((theme) => ({
+  banner: {
+    [theme.breakpoints.up("md")]: {
+      maxWidth: "50%",
+    },
+    maxWidth: "90%",
+  },
+}));
+
 const CurrentEventWidget: React.FC<{}> = () => {
+  const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const { getSekaiCurrentEvent } = useStrapi();
@@ -31,13 +42,17 @@ const CurrentEventWidget: React.FC<{}> = () => {
       </Typography>
       <Container className={layoutClasses.content}>
         <Grid container spacing={1}>
-          {eventBanner && (
+          {eventBanner ? (
             <Grid item xs={12} container justify="center">
               <img
                 src={eventBanner}
                 alt="event banner"
-                style={{ maxWidth: "100%" }}
+                className={classes.banner}
               />
+            </Grid>
+          ) : (
+            <Grid item xs={12} container justify="center">
+              <Skeleton variant="rect" height={150} width={250} />
             </Grid>
           )}
           {currEvent &&
