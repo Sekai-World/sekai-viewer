@@ -3,6 +3,8 @@ import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import MarkdownIt from "markdown-it";
+// @ts-ignore
+import MarkdownItCollapsible from "markdown-it-collapsible";
 import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
 import { AnnouncementModel } from "../../strapi-model";
@@ -18,7 +20,10 @@ const AnnouncementDetail: React.FC<{}> = () => {
   const { t } = useTranslation();
 
   const mdParser = useMemo(
-    () => new MarkdownIt({ linkify: true, typographer: true }),
+    () =>
+      new MarkdownIt({ linkify: true, typographer: true }).use(
+        MarkdownItCollapsible
+      ),
     []
   );
 
@@ -37,7 +42,7 @@ const AnnouncementDetail: React.FC<{}> = () => {
         <Grid item>
           <Typography variant="subtitle2" color="textSecondary">
             {t("announcement:category")}:{" "}
-            {t(`announcement:category_name.${announcement.category}`)}
+            {t(`announcement:categoryName.${announcement.category}`)}
           </Typography>
         </Grid>
         <Grid item>
