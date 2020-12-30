@@ -1,5 +1,4 @@
 import {
-  Box,
   CardMedia,
   CircularProgress,
   Divider,
@@ -30,6 +29,8 @@ import React, {
 } from "react";
 import { useParams } from "react-router-dom";
 import Viewer from "react-viewer";
+import AudioPlayer from "react-h5-audio-player";
+import "react-h5-audio-player/lib/styles.css";
 import {
   IMusicAchievement,
   IMusicDanceMembers,
@@ -248,13 +249,7 @@ const MusicDetail: React.FC<{}> = () => {
     } else {
       setTrimmedLongMusicPlaybackURL(undefined);
     }
-  }, [
-    music,
-    musicVocal,
-    selectedVocalType,
-    trimmedMP3URL,
-    setLongMusicPlaybackURL,
-  ]);
+  }, [music, musicVocal, selectedVocalType, trimmedMP3URL]);
 
   // useEffect(() => {
   //   if (musicVocalTypes.length) {
@@ -339,52 +334,27 @@ const MusicDetail: React.FC<{}> = () => {
     }
   }, [music, musicVocal, musicJacket, selectedVocalType]);
 
-  useEffect(() => {
-    if (
-      musicVocal &&
-      musicVocal[selectedVocalType] &&
-      music &&
-      longMusicPlaybackURL
-    ) {
-      let audio: HTMLAudioElement | undefined = new Audio();
-      audio.onloadedmetadata = () => {
-        if (!audio) {
-          return;
-        }
-
-        const durationMsec = (audio.duration - music.fillerSec) * 1000;
-        setActualPlaybackTime(
-          `${humanizeDurationShort(durationMsec, {
-            units: ["s"],
-            delimiter: " ",
-            spacer: "",
-            maxDecimalPoints: 1,
-          })} (${humanizeDurationShort(durationMsec, {
-            units: ["m", "s"],
-            delimiter: " ",
-            spacer: "",
-            maxDecimalPoints: 1,
-          })})`
-        );
-
-        audio = undefined;
-      };
-      audio.preload = "metadata";
-      audio.src = longMusicPlaybackURL;
-      audio.onplay = onPlay;
-
-      return () => {
-        audio = undefined;
-      };
-    }
-  }, [
-    musicVocal,
-    selectedVocalType,
-    music,
-    humanizeDurationShort,
-    onPlay,
-    longMusicPlaybackURL,
-  ]);
+  const getActalPlaybackTime = useCallback(
+    (event: Event) => {
+      if (!music || !!actualPlaybackTime) return;
+      const audio = event.currentTarget as HTMLAudioElement;
+      const durationMsec = (audio.duration - music.fillerSec) * 1000;
+      setActualPlaybackTime(
+        `${humanizeDurationShort(durationMsec, {
+          units: ["s"],
+          delimiter: " ",
+          spacer: "",
+          maxDecimalPoints: 1,
+        })} (${humanizeDurationShort(durationMsec, {
+          units: ["m", "s"],
+          delimiter: " ",
+          spacer: "",
+          maxDecimalPoints: 1,
+        })})`
+      );
+    },
+    [actualPlaybackTime, humanizeDurationShort, music]
+  );
 
   const VocalTypeSelector: React.FC<{}> = useCallback(() => {
     return (
@@ -542,66 +512,35 @@ const MusicDetail: React.FC<{}> = () => {
           </Grid>
         </Paper>
         {vocalPreviewVal === "0" &&
-        musicVocalTypes.length &&
-        musicVocal.length ? (
-          <audio
-            controls
-            style={{ width: "100%" }}
-            src={shortMusicPlaybackURL}
-            onPlay={onPlay}
-          />
-        ) : null}
+          musicVocalTypes.length &&
+          musicVocal.length &&
+          shortMusicPlaybackURL && (
+            <AudioPlayer src={shortMusicPlaybackURL} onPlay={onPlay} />
+          )}
         {vocalPreviewVal === "1" &&
-        musicVocalTypes.length &&
-        musicVocal.length ? (
-          <Box
-            style={{
-              position: "relative",
-              lineHeight: "0",
-            }}
-          >
-            <audio
-              controls
-              style={{
-                width: "100%",
-                opacity: longMusicPlaybackURL ? undefined : "0.8",
-              }}
+          musicVocalTypes.length &&
+          musicVocal.length &&
+          longMusicPlaybackURL && (
+            <AudioPlayer
               src={
                 trimSilence ? trimmedLongMusicPlaybackURL : longMusicPlaybackURL
               }
               onPlay={onPlay}
+              onCanPlay={getActalPlaybackTime}
             />
-            {longMusicPlaybackURL ? null : (
-              <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                style={{
-                  position: "absolute",
-                  left: "0",
-                  top: "0",
-                  width: "100%",
-                  height: "100%",
-                  cursor: trimFailed ? "not-allowed" : "wait",
-                }}
-              >
-                {trimFailed ? null : <CircularProgress size={32} />}
-              </Box>
-            )}
-          </Box>
-        ) : null}
+          )}
         {["original", "mv_2d"].includes(vocalPreviewVal) &&
-        musicVocalTypes.length &&
-        musicVocal.length &&
-        longMusicPlaybackURL ? (
-          <MusicVideoPlayer
-            audioPath={longMusicPlaybackURL}
-            videoPath={musicVideoURL}
-            onPlay={() => setVocalDisabled(true)}
-            onPause={() => setVocalDisabled(false)}
-            onEnded={() => setVocalDisabled(false)}
-          />
-        ) : null}
+          musicVocalTypes.length &&
+          musicVocal.length &&
+          longMusicPlaybackURL && (
+            <MusicVideoPlayer
+              audioPath={longMusicPlaybackURL}
+              videoPath={musicVideoURL}
+              onPlay={() => setVocalDisabled(true)}
+              onPause={() => setVocalDisabled(false)}
+              onEnded={() => setVocalDisabled(false)}
+            />
+          )}
 
         <Grid className={classes["grid-out"]} container direction="column">
           <Grid
@@ -1063,7 +1002,7 @@ const MusicDetail: React.FC<{}> = () => {
                 (ma) => ma.musicDifficultyType === diffi
               );
               return (
-                <Fragment>
+                <Fragment key={diffi}>
                   <Grid
                     item
                     container
@@ -1080,7 +1019,14 @@ const MusicDetail: React.FC<{}> = () => {
                     </Grid>
                     <Grid item xs={9} container spacing={1}>
                       {achieves.map((achieve) => (
-                        <Grid item xs={6} md={3} container direction="column">
+                        <Grid
+                          key={achieve.id}
+                          item
+                          xs={6}
+                          md={3}
+                          container
+                          direction="column"
+                        >
                           <Grid item>
                             <Typography align="center">
                               {Math.floor(
