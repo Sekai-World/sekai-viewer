@@ -227,7 +227,9 @@ const MusicList: React.FC<{}> = () => {
                           "light_music_club",
                           "other",
                         ].map((tag) => (
-                          <MenuItem value={tag}>{musicTagToName[tag]}</MenuItem>
+                          <MenuItem key={tag} value={tag}>
+                            {musicTagToName[tag]}
+                          </MenuItem>
                         ))}
                       </Select>
                     </FormControl>

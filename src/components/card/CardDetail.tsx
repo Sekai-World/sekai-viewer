@@ -999,6 +999,8 @@ const CardDetail: React.FC<{}> = () => {
                     mode={contentTransMode}
                     contentKey={`card_episode_title:${cardEpisode[0].title}`}
                     original={cardEpisode[0].title}
+                    originalProps={{ variant: "body2" }}
+                    translatedProps={{ variant: "body2" }}
                   />
                 }
                 value="1"
@@ -1009,6 +1011,8 @@ const CardDetail: React.FC<{}> = () => {
                     mode={contentTransMode}
                     contentKey={`card_episode_title:${cardEpisode[1].title}`}
                     original={cardEpisode[1].title}
+                    originalProps={{ variant: "body2" }}
+                    translatedProps={{ variant: "body2" }}
                   />
                 }
                 value="2"
