@@ -87,7 +87,6 @@ export const UserContext = createContext<
 
 export const UserProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
   const auth = useJwtAuth();
-  const { user, token, usermeta } = useJwtAuth();
 
   const [sekaiProfile, setSekaiProfile] = useState<
     SekaiProfileModel | undefined
@@ -96,8 +95,12 @@ export const UserProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
   return (
     <UserContext.Provider
       value={{
-        user,
-        jwtToken: token,
+        get user() {
+          return auth.user;
+        },
+        get jwtToken() {
+          return auth.token;
+        },
         sekaiProfile,
         updateUser: useCallback(
           (newUser: UserModel | null) => {
@@ -122,7 +125,9 @@ export const UserProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
           setSekaiProfile(undefined);
           localStorage.removeItem("sekaiProfile");
         }, [auth.token, auth.user]),
-        usermeta,
+        get usermeta() {
+          return auth.usermeta;
+        },
         updateUserMeta: useCallback(
           (data) => {
             auth.usermeta = data;
