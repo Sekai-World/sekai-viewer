@@ -159,6 +159,8 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
 
           if (timeFraction < 1) {
             requestId = requestAnimationFrame(animation);
+          } else {
+            cancelAnimationFrame(requestId);
           }
         });
         return () => cancelAnimationFrame(requestId);
@@ -189,6 +191,8 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
 
           if (timeFraction < 1) {
             requestId = requestAnimationFrame(animation);
+          } else {
+            cancelAnimationFrame(requestId);
           }
         });
         return () => cancelAnimationFrame(requestId);
@@ -219,6 +223,8 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
 
           if (timeFraction < 1) {
             requestId = requestAnimationFrame(animation);
+          } else {
+            cancelAnimationFrame(requestId);
           }
         });
         return () => cancelAnimationFrame(requestId);
