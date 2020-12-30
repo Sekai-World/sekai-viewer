@@ -3,6 +3,7 @@ import { Skeleton } from "@material-ui/lab";
 import FlipCountdown from "@rumess/react-flip-countdown";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import { SekaiCurrentEventModel } from "../../strapi-model";
 import { useLayoutStyles } from "../../styles/layout";
 import { getRemoteAssetURL } from "../../utils";
@@ -43,16 +44,20 @@ const CurrentEventWidget: React.FC<{}> = () => {
       <Container className={layoutClasses.content}>
         <Grid container spacing={1}>
           {eventBanner ? (
-            <Grid item xs={12} container justify="center">
-              <img
-                src={eventBanner}
-                alt="event banner"
-                className={classes.banner}
-              />
+            <Grid item xs={12}>
+              <Link to={`/event/${currEvent?.eventId}`}>
+                <Grid container justify="center">
+                  <img
+                    src={eventBanner}
+                    alt="event banner"
+                    className={classes.banner}
+                  />
+                </Grid>
+              </Link>
             </Grid>
           ) : (
             <Grid item xs={12} container justify="center">
-              <Skeleton variant="rect" height={150} width={250} />
+              <Skeleton variant="rect" height={100} width={250} />
             </Grid>
           )}
           {currEvent &&
