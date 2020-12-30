@@ -15,6 +15,16 @@ const useInteractiveStyles = makeStyles((theme) => ({
       paddingRight: theme.spacing(5),
     },
   },
+  inputHidden: {
+    display: "none",
+  },
+  noDecoration: {
+    textDecoration: "none",
+    "&:hover": {
+      textDecoration: "underline",
+    },
+    color: theme.palette.text.primary,
+  },
 }));
 
 export { useInteractiveStyles };

@@ -36,8 +36,11 @@ import InfiniteScroll from "../subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
 import { useInteractiveStyles } from "../../styles/interactive";
-import { characterSelectReducer } from "../../stores/reducers";
-import { charaIcons } from "../../utils/resources";
+import {
+  characterSelectReducer,
+  attrSelectReducer,
+} from "../../stores/reducers";
+import { charaIcons, attrIconMap } from "../../utils/resources";
 import { SettingContext } from "../../context";
 import GridView from "./GridView";
 import AgendaView from "./AgendaView";
@@ -122,6 +125,10 @@ const CardList: React.FC<{}> = () => {
     characterSelectReducer,
     []
   );
+  const [attrSelected, dispatchAttrSelected] = useReducer(
+    attrSelectReducer,
+    []
+  );
 
   const callback = (
     entries: readonly IntersectionObserverEntry[],
@@ -161,6 +168,9 @@ const CardList: React.FC<{}> = () => {
           characterSelected.includes(c.characterId)
         );
       }
+      if (attrSelected.length) {
+        result = result.filter((c) => attrSelected.includes(c.attr));
+      }
       // temporarily sort cards cache
       switch (sortBy) {
         case "id":
@@ -193,6 +203,7 @@ const CardList: React.FC<{}> = () => {
     episodes,
     setSortedCache,
     characterSelected,
+    attrSelected,
   ]);
 
   useEffect(() => {
@@ -330,6 +341,60 @@ const CardList: React.FC<{}> = () => {
               >
                 <Grid item xs={12} md={1}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
+                    {t("common:attribute")}
+                  </Typography>
+                </Grid>
+                <Grid item container xs={12} md={10} spacing={1}>
+                  {["cute", "mysterious", "cool", "happy", "pure"].map(
+                    (attr) => (
+                      <Grid key={"attr-filter-" + attr} item>
+                        <Chip
+                          clickable
+                          color={
+                            attrSelected.includes(attr) ? "primary" : "default"
+                          }
+                          avatar={
+                            <Avatar
+                              alt={attr}
+                              src={attrIconMap[attr as "cool"]}
+                            />
+                          }
+                          label={
+                            <Typography
+                              variant="body2"
+                              style={{ textTransform: "capitalize" }}
+                            >
+                              {attr}
+                            </Typography>
+                          }
+                          onClick={() => {
+                            if (attrSelected.includes(attr)) {
+                              dispatchAttrSelected({
+                                type: "remove",
+                                payload: attr,
+                              });
+                            } else {
+                              dispatchAttrSelected({
+                                type: "add",
+                                payload: attr,
+                              });
+                            }
+                          }}
+                        />
+                      </Grid>
+                    )
+                  )}
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justify="space-between"
+              >
+                <Grid item xs={12} md={1}>
+                  <Typography classes={{ root: interactiveClasses.caption }}>
                     {t("filter:sort.caption")}
                   </Typography>
                 </Grid>
@@ -404,18 +469,6 @@ const CardList: React.FC<{}> = () => {
             } as const)[viewGridType]
           }
         />
-        {/* <InfiniteScroll
-          dataLength={cards.length}
-          next={fetchCards}
-          hasMore={hasMore}
-          loader={<Typography>Loading...</Typography>}
-        >
-          <Grid container spacing={1}>
-            {cards.map((card, index) => (
-              <GridCard key={index} data={card} />
-            ))}
-          </Grid>
-        </InfiniteScroll> */}
       </Container>
     </Fragment>
   );

@@ -33,6 +33,8 @@ import { Link as RouteLink } from "react-router-dom";
 import FlipCountdown from "@rumess/react-flip-countdown";
 import { IUserInformationInfo } from "../types";
 import { getJPTime, useCachedData } from "../utils";
+import AnnouncementWidget from "./announcement/AnnouncementWidget";
+import CurrentEventWidget from "./event/CurrentEventWidget";
 
 const useStyles = makeStyles((theme) => ({
   "contact-link": {
@@ -158,7 +160,7 @@ function Home() {
       headerName: t("home:game-news.action"),
       width: 80,
       renderCell: (params: ValueFormatterParams) => {
-        const info = params.data as IUserInformationInfo;
+        const info = params.row as IUserInformationInfo;
         return info.browseType === "internal" ? (
           <InfoInternal
             onClick={() => {
@@ -221,9 +223,11 @@ function Home() {
               />
             </Fragment>
           ) : (
-            <Typography align="center" variant="h4">
-              {t("home:happy_new_year")}
-            </Typography>
+            new Date().getTime() - 1609426800000 < 259200000 && (
+              <Typography align="center" variant="h4">
+                {t("home:happy_new_year")}
+              </Typography>
+            )
           )}
         </Box>
         <Grid container justify="center">
@@ -349,6 +353,14 @@ function Home() {
           </Alert>
         ) : null}
       </Container>
+      <Grid container spacing={1}>
+        <Grid item xs={12} md={6}>
+          <AnnouncementWidget />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <CurrentEventWidget />
+        </Grid>
+      </Grid>
       <Typography variant="h6" className={layoutClasses.header}>
         {t("home:game-news.title")}
       </Typography>

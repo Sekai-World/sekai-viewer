@@ -11,8 +11,8 @@ import {
 } from "@material-ui/core";
 import { useLayoutStyles } from "../../styles/layout";
 import { TabContext, TabPanel } from "@material-ui/lab";
-import { CronJob } from "cron";
-import moment from "moment";
+// import { CronJob } from "cron";
+// import moment from "moment";
 import React, {
   Fragment,
   useCallback,
@@ -21,21 +21,24 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
-import { IEventDeckBonus, IEventInfo, IGameCharaUnit } from "../../types";
 import {
-  getRemoteAssetURL,
-  useCachedData,
-  useRealtimeEventData,
-} from "../../utils";
+  IEventCard,
+  IEventDeckBonus,
+  IEventInfo,
+  IGameCharaUnit,
+} from "../../types";
+import { getRemoteAssetURL, useCachedData } from "../../utils";
 import { attrIconMap, charaIcons } from "../../utils/resources";
 import { useAssetI18n } from "../../utils/i18n";
 import { useDurationI18n } from "../../utils/i18nDuration";
 import { SettingContext } from "../../context";
 import { ContentTrans } from "../subs/ContentTrans";
+import { CardThumb } from "../subs/CardThumb";
 import DegreeImage from "../subs/DegreeImage";
+import ResourceBox from "../subs/ResourceBox";
 
 const useStyle = makeStyles((theme) => ({
   bannerImg: {
@@ -54,7 +57,7 @@ const useStyle = makeStyles((theme) => ({
 }));
 
 const EventDetail: React.FC<{}> = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { eventId } = useParams<{ eventId: string }>();
   const classes = useStyle();
   const layoutClasses = useLayoutStyles();
@@ -67,13 +70,14 @@ const EventDetail: React.FC<{}> = () => {
   const [gameCharacterUnits] = useCachedData<IGameCharaUnit>(
     "gameCharacterUnits"
   );
-  const [refreshData, rtRanking] = useRealtimeEventData(Number(eventId));
+  const [eventCardsCache] = useCachedData<IEventCard>("eventCards");
 
   const [event, setEvent] = useState<IEventInfo>();
+  const [eventCards, setEventCards] = useState<IEventCard[]>([]);
   const [eventDeckBonus, setEventDeckBonus] = useState<IEventDeckBonus[]>([]);
   const [imgTabVal, setImgTabVal] = useState<string>("0");
   // const [intervalId, setIntervalId] = useState<number>();
-  const [nextRefreshTime, setNextRefreshTime] = useState<moment.Moment>();
+  // const [nextRefreshTime, setNextRefreshTime] = useState<moment.Moment>();
   const [remainingTime, setRemainingTime] = useState<string>("");
   const [pastTimePercent, setPastTimePercent] = useState<number>(0);
   const [visible, setVisible] = useState<boolean>(false);
@@ -98,45 +102,16 @@ const EventDetail: React.FC<{}> = () => {
   }, [event, eventId, contentTransMode, getTranslated, t]);
 
   useEffect(() => {
-    if (events.length && eventDeckBonuses.length) {
+    if (events.length && eventDeckBonuses.length && eventCardsCache.length) {
       setEvent(events.find((elem) => elem.id === Number(eventId)));
       setEventDeckBonus(
         eventDeckBonuses.filter((elem) => elem.eventId === Number(eventId))
       );
+      setEventCards(
+        eventCardsCache.filter((elem) => elem.eventId === Number(eventId))
+      );
     }
-  }, [events, eventId, eventDeckBonuses]);
-
-  useEffect(() => {
-    const currentTime = Date.now();
-    if (
-      event &&
-      currentTime >= event.startAt &&
-      currentTime <= event.rankingAnnounceAt + 5 * 60 * 1000
-    ) {
-      const cron = new CronJob("5 * * * * *", () => {
-        const currentTime = Date.now();
-        if (currentTime > event.rankingAnnounceAt + 5 * 60 * 1000) cron.stop();
-        else {
-          refreshData();
-          setNextRefreshTime(cron.nextDate());
-        }
-      });
-      cron.start();
-      refreshData();
-      setNextRefreshTime(cron.nextDate());
-
-      const interval = window.setInterval(() => {
-        setNextRefreshTime((nextDate) => nextDate);
-      }, 60);
-
-      return () => {
-        cron.stop();
-        window.clearInterval(interval);
-      };
-    } else if (event && currentTime >= event.rankingAnnounceAt) {
-      refreshData();
-    }
-  }, [refreshData, event]);
+  }, [events, eventId, eventDeckBonuses, eventCardsCache]);
 
   useEffect(() => {
     if (!event) {
@@ -240,7 +215,10 @@ const EventDetail: React.FC<{}> = () => {
     [eventBackground, eventCharacter]
   );
 
-  return event && eventDeckBonus.length && gameCharacterUnits.length ? (
+  return event &&
+    eventDeckBonus.length &&
+    gameCharacterUnits.length &&
+    eventCards.length ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
         {getTranslated(contentTransMode, `event_name:${eventId}`, event.name)}
@@ -383,6 +361,37 @@ const EventDetail: React.FC<{}> = () => {
             justify="space-between"
             alignItems="center"
           >
+            <Grid item xs={3}>
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                {t("event:eventCards")}
+              </Typography>
+            </Grid>
+            <Grid item xs={7} container justify="flex-end" spacing={2}>
+              {eventCards.map((card) => (
+                <Grid item xs={6} md={4}>
+                  <Link to={`/card/${card.cardId}`}>
+                    <CardThumb cardId={card.cardId} />
+                  </Link>
+                </Grid>
+              ))}
+            </Grid>
+          </Grid>
+          <Divider style={{ margin: "1% 0" }} />
+        </Grid>
+      </Container>
+      <Typography variant="h6" className={layoutClasses.header}>
+        {t("event:title.boost")}
+      </Typography>
+      <Container className={layoutClasses.content} maxWidth="sm">
+        <Grid className={classes["grid-out"]} container direction="column">
+          <Grid
+            item
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+          >
             <Grid item>
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                 {t("event:boostAttribute")}
@@ -483,6 +492,13 @@ const EventDetail: React.FC<{}> = () => {
             <Typography>+50%</Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
+        </Grid>
+      </Container>
+      <Typography variant="h6" className={layoutClasses.header}>
+        {t("event:title.timepoint")}
+      </Typography>
+      <Container className={layoutClasses.content} maxWidth="sm">
+        <Grid className={classes["grid-out"]} container direction="column">
           <Grid
             item
             container
@@ -581,93 +597,79 @@ const EventDetail: React.FC<{}> = () => {
           <Divider style={{ margin: "1% 0" }} />
         </Grid>
       </Container>
-      {rtRanking.time ? (
-        <Fragment>
-          <Typography variant="h6" className={layoutClasses.header}>
-            {t("event:ranking")}
-          </Typography>
-          <Container className={layoutClasses.content} maxWidth="sm">
-            <Paper style={{ padding: "2%" }}>
-              <Typography variant="h6">
-                {t("event:realtime")}{" "}
-                {new Date(rtRanking.time).toLocaleString(i18n.language)}
-              </Typography>
-              {nextRefreshTime ? (
-                <Typography variant="body2" color="textSecondary">
-                  {t("event:nextfetch")}: {nextRefreshTime.fromNow()}
-                </Typography>
-              ) : null}
-              <Divider style={{ margin: "1% 0" }} />
-              <Grid container direction="column">
-                {event.eventRankingRewardRanges.map((elem) =>
-                  elem.fromRank >= 100001 ? null : (
-                    <Fragment key={elem.toRank}>
-                      <Grid
-                        item
-                        container
-                        justify="space-between"
-                        alignItems="center"
-                      >
-                        <Grid item xs={6} md={4}>
-                          <DegreeImage
-                            resourceBoxId={
-                              elem.eventRankingRewards[0].resourceBoxId
-                            }
-                            type="event_ranking_reward"
-                          />
-                        </Grid>
-                        <Grid item xs={6} container alignItems="center">
-                          <Grid item xs={12} md={6}>
-                            <Typography align="right">
-                              {
-                                (elem.toRank <= 10
-                                  ? rtRanking.first10.find(
-                                      (rt) => rt.rank === elem.toRank
-                                    )!
-                                  : rtRanking[
-                                      `rank${elem.toRank}` as "rank20"
-                                    ][0] || { name: "" }
-                                ).name
-                              }
-                            </Typography>
-                          </Grid>
-                          <Grid item xs={12} md={6}>
-                            <Typography variant="h6" align="right">
-                              {
-                                (elem.toRank <= 10
-                                  ? rtRanking.first10.find(
-                                      (rt) => rt.rank === elem.toRank
-                                    )!
-                                  : rtRanking[
-                                      `rank${elem.toRank}` as "rank20"
-                                    ][0] || { score: "N/A" }
-                                ).score
-                              }
-                            </Typography>
-                          </Grid>
-                        </Grid>
+      <Typography variant="h6" className={layoutClasses.header}>
+        {t("event:title.rankingRewards")}
+      </Typography>
+      <Container className={layoutClasses.content} maxWidth="sm">
+        <Grid className={classes["grid-out"]} container direction="column">
+          {event.eventRankingRewardRanges.map((rankingReward) => (
+            <Fragment>
+              <Grid
+                item
+                container
+                direction="row"
+                wrap="nowrap"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Grid item xs={4}>
+                  <Typography>
+                    {t("event:rankingReward.start")}: {rankingReward.fromRank}
+                  </Typography>
+                  <Typography>
+                    {t("event:rankingReward.end")}: {rankingReward.toRank}
+                  </Typography>
+                </Grid>
+                <Grid item xs={8} container spacing={1} alignItems="center">
+                  {rankingReward.toRank <= 100000 ? (
+                    <Fragment>
+                      <Grid item xs={6}>
+                        <DegreeImage
+                          style={{ minHeight: "30px", maxHeight: "40px" }}
+                          resourceBoxId={
+                            rankingReward.eventRankingRewards[0].resourceBoxId
+                          }
+                          type="event_ranking_reward"
+                        />
                       </Grid>
-                      <Divider style={{ margin: "1% 0" }} />
+                      <Grid item xs={6}>
+                        <ResourceBox
+                          resourceBoxId={
+                            rankingReward.eventRankingRewards[0].resourceBoxId
+                          }
+                          resourceBoxPurpose="event_ranking_reward"
+                        />
+                      </Grid>
                     </Fragment>
-                  )
-                )}
+                  ) : (
+                    <Grid item xs={12}>
+                      <ResourceBox
+                        resourceBoxId={
+                          rankingReward.eventRankingRewards[0].resourceBoxId
+                        }
+                        resourceBoxPurpose="event_ranking_reward"
+                      />
+                    </Grid>
+                  )}
+                </Grid>
               </Grid>
-            </Paper>
-          </Container>
-          <Viewer
-            visible={visible}
-            onClose={() => setVisible(false)}
-            images={getEventImages()}
-            zIndex={2000}
-            activeIndex={activeIdx}
-            downloadable
-            downloadInNewWindow
-            onMaskClick={() => setVisible(false)}
-            zoomSpeed={0.25}
-            onChange={(_, idx) => setActiveIdx(idx)}
-          />
-        </Fragment>
-      ) : null}
+              <Divider style={{ margin: "1% 0" }} />
+            </Fragment>
+          ))}
+        </Grid>
+      </Container>
+      <Viewer
+        visible={visible}
+        onClose={() => setVisible(false)}
+        images={getEventImages()}
+        zIndex={2000}
+        activeIndex={activeIdx}
+        downloadable
+        downloadInNewWindow
+        onMaskClick={() => setVisible(false)}
+        zoomSpeed={0.25}
+        onChange={(_, idx) => setActiveIdx(idx)}
+      />
     </Fragment>
   ) : (
     <div>

@@ -21,7 +21,6 @@ import {
   IEventInfo,
   IEventDeckBonus,
   IGameCharaUnit,
-  IEventRealtimeRank,
   IResourceBoxInfo,
   IHonorInfo,
   ICardEpisode,
@@ -44,8 +43,11 @@ import {
   ICharacterMission,
   IHonorGroup,
   INormalMission,
+  IEventCard,
+  IMusicAchievement,
 } from "./../types.d";
 import { assetI18n, useAssetI18n } from "./i18n";
+import { useLocation } from "react-router-dom";
 
 const webpMachine = new WebpMachine();
 
@@ -96,6 +98,8 @@ export function useCachedData<
     | IBeginnerMission
     | IHonorGroup
     | ICharacterMission
+    | IEventCard
+    | IMusicAchievement
 >(name: string): [T[], React.MutableRefObject<T[]>] {
   const [cached, cachedRef, setCached] = useRefState<T[]>([]);
 
@@ -121,54 +125,6 @@ export function useCachedData<
   }, [fetchCached, name, setCached]);
 
   return [cached, cachedRef];
-}
-
-export function useRealtimeEventData(
-  eventId: number
-): [
-  () => Promise<IEventRealtimeRank>,
-  IEventRealtimeRank,
-  React.MutableRefObject<IEventRealtimeRank>
-] {
-  const [
-    eventRealtimeData,
-    eventRealtimeDataRef,
-    setEventRealtimeData,
-  ] = useRefState<IEventRealtimeRank>({
-    time: 0,
-    first10: [],
-    rank20: [],
-    rank30: [],
-    rank40: [],
-    rank50: [],
-    rank100: [],
-    rank200: [],
-    rank300: [],
-    rank400: [],
-    rank500: [],
-    rank1000: [],
-    rank2000: [],
-    rank3000: [],
-    rank4000: [],
-    rank5000: [],
-    rank10000: [],
-    rank20000: [],
-    rank30000: [],
-    rank40000: [],
-    rank50000: [],
-    rank100000: [],
-  });
-
-  const refreshData = useCallback(async () => {
-    const { data }: { data: IEventRealtimeRank } = await Axios.get(
-      `https://bitbucket.org/sekai-world/sekai-event-track/raw/main/event${eventId}.json?t=${Date.now()}`
-    );
-
-    setEventRealtimeData(data);
-    return data;
-  }, [eventId, setEventRealtimeData]);
-
-  return [refreshData, eventRealtimeData, eventRealtimeDataRef];
 }
 
 export const musicCategoryToName: { [key: string]: string } = {
@@ -516,4 +472,21 @@ export function getJPTime() {
     .split("/")
     .slice(0, 2)
     .join("/");
+}
+
+export function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
+
+export function getColorArray(num: number) {
+  const result = [];
+  for (let i = 0; i < num; i += 1) {
+    const letters = "0123456789ABCDEF".split("");
+    let color = "#";
+    for (let j = 0; j < 6; j += 1) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    result.push(color);
+  }
+  return result;
 }

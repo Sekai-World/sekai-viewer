@@ -10,6 +10,9 @@ import jewelIcon from "../../assets/common/material/jewel.png";
 import livePointIcon from "../../assets/common/material/live_point.png";
 import slotIcon from "../../assets/common/material/slot.png";
 import virtualCoinIcon from "../../assets/common/material/virtual_coin.png";
+import skillPracticeTicket1 from "../../assets/common/material/ticket1.png";
+import skillPracticeTicket2 from "../../assets/common/material/ticket2.png";
+import skillPracticeTicket3 from "../../assets/common/material/ticket3.png";
 
 const materialMap = {
   coin: coinIcon,
@@ -18,6 +21,12 @@ const materialMap = {
   live_point: livePointIcon,
   slot: slotIcon,
   virtual_coin: virtualCoinIcon,
+  skill_practice_ticket: [
+    "",
+    skillPracticeTicket1,
+    skillPracticeTicket2,
+    skillPracticeTicket3,
+  ],
 };
 
 const CommonMaterialIcon: React.FC<{

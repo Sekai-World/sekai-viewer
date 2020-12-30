@@ -1,5 +1,4 @@
 import {
-  Box,
   CardMedia,
   CircularProgress,
   Divider,
@@ -30,7 +29,10 @@ import React, {
 } from "react";
 import { useParams } from "react-router-dom";
 import Viewer from "react-viewer";
+import AudioPlayer from "react-h5-audio-player";
+import "react-h5-audio-player/lib/styles.css";
 import {
+  IMusicAchievement,
   IMusicDanceMembers,
   IMusicDifficultyInfo,
   IMusicInfo,
@@ -52,6 +54,7 @@ import { useTrimMP3 } from "../../utils/trimMP3";
 import MusicVideoPlayer from "../subs/MusicVideoPlayer";
 import { SettingContext } from "../../context";
 import { ContentTrans, ReleaseCondTrans } from "../subs/ContentTrans";
+import ResourceBox from "../subs/ResourceBox";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -107,6 +110,9 @@ const MusicDetail: React.FC<{}> = () => {
   const [outCharas] = useCachedData<IOutCharaProfile>("outsideCharacters");
   // const [releaseConds] = useCachedData<IReleaseCondition>("releaseConditions");
   const [danceMembers] = useCachedData<IMusicDanceMembers>("musicDanceMembers");
+  const [musicAchievements] = useCachedData<IMusicAchievement>(
+    "musicAchievements"
+  );
 
   const { musicId } = useParams<{ musicId: string }>();
 
@@ -119,7 +125,7 @@ const MusicDetail: React.FC<{}> = () => {
     IMusicDanceMembers
   >();
   const [selectedVocalType, setSelectedVocalType] = useState<number>(0);
-  const [vocalPreviewVal, setVocalPreviewVal] = useState<string>("0");
+  const [vocalPreviewVal, setVocalPreviewVal] = useState<string>("1");
   const [vocalDisabled, setVocalDisabled] = useState<boolean>(false);
   const [diffiInfoTabVal, setDiffiInfoTabVal] = useState<string>("4");
   const [actualPlaybackTime, setActualPlaybackTime] = useState<string>("");
@@ -243,13 +249,7 @@ const MusicDetail: React.FC<{}> = () => {
     } else {
       setTrimmedLongMusicPlaybackURL(undefined);
     }
-  }, [
-    music,
-    musicVocal,
-    selectedVocalType,
-    trimmedMP3URL,
-    setLongMusicPlaybackURL,
-  ]);
+  }, [music, musicVocal, selectedVocalType, trimmedMP3URL]);
 
   // useEffect(() => {
   //   if (musicVocalTypes.length) {
@@ -334,52 +334,27 @@ const MusicDetail: React.FC<{}> = () => {
     }
   }, [music, musicVocal, musicJacket, selectedVocalType]);
 
-  useEffect(() => {
-    if (
-      musicVocal &&
-      musicVocal[selectedVocalType] &&
-      music &&
-      longMusicPlaybackURL
-    ) {
-      let audio: HTMLAudioElement | undefined = new Audio();
-      audio.onloadedmetadata = () => {
-        if (!audio) {
-          return;
-        }
-
-        const durationMsec = (audio.duration - music.fillerSec) * 1000;
-        setActualPlaybackTime(
-          `${humanizeDurationShort(durationMsec, {
-            units: ["s"],
-            delimiter: " ",
-            spacer: "",
-            maxDecimalPoints: 1,
-          })} (${humanizeDurationShort(durationMsec, {
-            units: ["m", "s"],
-            delimiter: " ",
-            spacer: "",
-            maxDecimalPoints: 1,
-          })})`
-        );
-
-        audio = undefined;
-      };
-      audio.preload = "metadata";
-      audio.src = longMusicPlaybackURL;
-      audio.onplay = onPlay;
-
-      return () => {
-        audio = undefined;
-      };
-    }
-  }, [
-    musicVocal,
-    selectedVocalType,
-    music,
-    humanizeDurationShort,
-    onPlay,
-    longMusicPlaybackURL,
-  ]);
+  const getActalPlaybackTime = useCallback(
+    (event: Event) => {
+      if (!music || !!actualPlaybackTime) return;
+      const audio = event.currentTarget as HTMLAudioElement;
+      const durationMsec = (audio.duration - music.fillerSec) * 1000;
+      setActualPlaybackTime(
+        `${humanizeDurationShort(durationMsec, {
+          units: ["s"],
+          delimiter: " ",
+          spacer: "",
+          maxDecimalPoints: 1,
+        })} (${humanizeDurationShort(durationMsec, {
+          units: ["m", "s"],
+          delimiter: " ",
+          spacer: "",
+          maxDecimalPoints: 1,
+        })})`
+      );
+    },
+    [actualPlaybackTime, humanizeDurationShort, music]
+  );
 
   const VocalTypeSelector: React.FC<{}> = useCallback(() => {
     return (
@@ -421,11 +396,7 @@ const MusicDetail: React.FC<{}> = () => {
     getVocalCharaIcons,
   ]);
 
-  return music &&
-    musicVocals.length &&
-    musicDiffis.length &&
-    // releaseConds.length &&
-    danceMembers.length ? (
+  return music && musicVocals.length ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
         {getTranslated(
@@ -541,66 +512,35 @@ const MusicDetail: React.FC<{}> = () => {
           </Grid>
         </Paper>
         {vocalPreviewVal === "0" &&
-        musicVocalTypes.length &&
-        musicVocal.length ? (
-          <audio
-            controls
-            style={{ width: "100%" }}
-            src={shortMusicPlaybackURL}
-            onPlay={onPlay}
-          />
-        ) : null}
+          musicVocalTypes.length &&
+          musicVocal.length &&
+          shortMusicPlaybackURL && (
+            <AudioPlayer src={shortMusicPlaybackURL} onPlay={onPlay} />
+          )}
         {vocalPreviewVal === "1" &&
-        musicVocalTypes.length &&
-        musicVocal.length ? (
-          <Box
-            style={{
-              position: "relative",
-              lineHeight: "0",
-            }}
-          >
-            <audio
-              controls
-              style={{
-                width: "100%",
-                opacity: longMusicPlaybackURL ? undefined : "0.8",
-              }}
+          musicVocalTypes.length &&
+          musicVocal.length &&
+          longMusicPlaybackURL && (
+            <AudioPlayer
               src={
                 trimSilence ? trimmedLongMusicPlaybackURL : longMusicPlaybackURL
               }
               onPlay={onPlay}
+              onCanPlay={getActalPlaybackTime}
             />
-            {longMusicPlaybackURL ? null : (
-              <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                style={{
-                  position: "absolute",
-                  left: "0",
-                  top: "0",
-                  width: "100%",
-                  height: "100%",
-                  cursor: trimFailed ? "not-allowed" : "wait",
-                }}
-              >
-                {trimFailed ? null : <CircularProgress size={32} />}
-              </Box>
-            )}
-          </Box>
-        ) : null}
+          )}
         {["original", "mv_2d"].includes(vocalPreviewVal) &&
-        musicVocalTypes.length &&
-        musicVocal.length &&
-        longMusicPlaybackURL ? (
-          <MusicVideoPlayer
-            audioPath={longMusicPlaybackURL}
-            videoPath={musicVideoURL}
-            onPlay={() => setVocalDisabled(true)}
-            onPause={() => setVocalDisabled(false)}
-            onEnded={() => setVocalDisabled(false)}
-          />
-        ) : null}
+          musicVocalTypes.length &&
+          musicVocal.length &&
+          longMusicPlaybackURL && (
+            <MusicVideoPlayer
+              audioPath={longMusicPlaybackURL}
+              videoPath={musicVideoURL}
+              onPlay={() => setVocalDisabled(true)}
+              onPause={() => setVocalDisabled(false)}
+              onEnded={() => setVocalDisabled(false)}
+            />
+          )}
 
         <Grid className={classes["grid-out"]} container direction="column">
           <Grid
@@ -829,13 +769,25 @@ const MusicDetail: React.FC<{}> = () => {
               {/* <Grid item>{getVocalCharaIcons(selectedVocalType)}</Grid> */}
               <Grid item>
                 <Grid container direction="column">
-                  {musicVocal[selectedVocalType].characters.map((chara) => (
-                    <Grid item key={`chara-${chara.characterId}`}>
-                      <Typography align="right">
-                        {getCharaName(chara.characterId)}
-                      </Typography>
-                    </Grid>
-                  ))}
+                  {musicVocal[selectedVocalType].characters.map((chara) =>
+                    chara.characterType === "game_character" ? (
+                      <Grid item key={`chara-${chara.characterId}`}>
+                        <Typography align="right">
+                          {getCharaName(chara.characterId)}
+                        </Typography>
+                      </Grid>
+                    ) : (
+                      <Grid item key={`outchara-${chara.characterId}`}>
+                        <Typography align="right">
+                          {outCharas.length
+                            ? outCharas.find(
+                                (elem) => elem.id === chara.characterId
+                              )!.name
+                            : `Outside Character ${chara.characterId}`}
+                        </Typography>
+                      </Grid>
+                    )
+                  )}
                 </Grid>
               </Grid>
             </Grid>
@@ -883,83 +835,227 @@ const MusicDetail: React.FC<{}> = () => {
             .length,
         })}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
-        <TabContext value={diffiInfoTabVal}>
-          <Paper className={interactiveClasses.container}>
-            <Tabs
-              value={diffiInfoTabVal}
-              onChange={(e, v) => {
-                setDiffiInfoTabVal(v);
-              }}
-              variant="scrollable"
-              scrollButtons="desktop"
-            >
-              {musicDiffis
-                .filter((elem) => elem.musicId === Number(musicId))
-                .map((elem, idx) => (
-                  <Tab
-                    key={`diffi-info-tab-${idx}`}
-                    label={elem.musicDifficulty}
-                    value={String(idx)}
-                  ></Tab>
-                ))}
-            </Tabs>
-          </Paper>
-          {musicDiffis
-            .filter((elem) => elem.musicId === Number(musicId))
-            .map((elem, idx) => (
-              <TabPanel
-                value={String(idx)}
-                key={`diffi-info-tab-panel-${idx}`}
-                style={{ paddingLeft: 0, paddingRight: 0 }}
+      {musicDiffis.length && (
+        <Container className={layoutClasses.content} maxWidth="sm">
+          <TabContext value={diffiInfoTabVal}>
+            <Paper className={interactiveClasses.container}>
+              <Tabs
+                value={diffiInfoTabVal}
+                onChange={(e, v) => {
+                  setDiffiInfoTabVal(v);
+                }}
+                variant="scrollable"
+                scrollButtons="desktop"
               >
-                <Grid container direction="column">
-                  <Grid item container direction="row" justify="space-between">
-                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                      {t("common:level")}
-                    </Typography>
-                    <Grid item>{elem.playLevel}</Grid>
-                  </Grid>
-                  <Divider style={{ margin: "1% 0" }} />
-                  <Grid item container direction="row" justify="space-between">
-                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                      {t("music:noteCount")}
-                    </Typography>
-                    <Grid item>{elem.noteCount}</Grid>
-                  </Grid>
-                  <Divider style={{ margin: "1% 0" }} />
-                  <Grid item>
+                {musicDiffis
+                  .filter((elem) => elem.musicId === Number(musicId))
+                  .map((elem, idx) => (
+                    <Tab
+                      key={`diffi-info-tab-${idx}`}
+                      label={elem.musicDifficulty}
+                      value={String(idx)}
+                    ></Tab>
+                  ))}
+              </Tabs>
+            </Paper>
+            {musicDiffis
+              .filter((elem) => elem.musicId === Number(musicId))
+              .map((elem, idx) => (
+                <TabPanel
+                  value={String(idx)}
+                  key={`diffi-info-tab-panel-${idx}`}
+                  style={{ paddingLeft: 0, paddingRight: 0 }}
+                >
+                  <Grid container direction="column">
                     <Grid
+                      item
                       container
                       direction="row"
                       justify="space-between"
-                      alignItems="center"
                     >
-                      <Grid item>
-                        <Typography
-                          variant="subtitle1"
-                          style={{ fontWeight: 600 }}
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {t("common:level")}
+                      </Typography>
+                      <Grid item>{elem.playLevel}</Grid>
+                    </Grid>
+                    <Divider style={{ margin: "1% 0" }} />
+                    <Grid
+                      item
+                      container
+                      direction="row"
+                      justify="space-between"
+                    >
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {t("music:noteCount")}
+                      </Typography>
+                      <Grid item>{elem.noteCount}</Grid>
+                    </Grid>
+                    <Divider style={{ margin: "1% 0" }} />
+                    <Grid item>
+                      <Grid
+                        container
+                        direction="row"
+                        justify="space-between"
+                        alignItems="center"
+                      >
+                        <Grid item>
+                          <Typography
+                            variant="subtitle1"
+                            style={{ fontWeight: 600 }}
+                          >
+                            {t("common:releaseCondition")}
+                          </Typography>
+                        </Grid>
+                        <Grid item>
+                          <ReleaseCondTrans
+                            mode={contentTransMode}
+                            releaseCondId={elem.releaseConditionId}
+                            originalProps={{ align: "right" }}
+                            translatedProps={{ align: "right" }}
+                          />
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                    <Divider style={{ margin: "1% 0" }} />
+                  </Grid>
+                </TabPanel>
+              ))}
+          </TabContext>
+        </Container>
+      )}
+      <Typography variant="h6" className={layoutClasses.header}>
+        {t("music:achievement")}
+      </Typography>
+      {!!musicAchievements.length && !!musicDiffis.length && (
+        <Container className={layoutClasses.content} maxWidth="sm">
+          <Grid container direction="column">
+            <Grid item container justify="space-between" alignItems="center">
+              <Grid item xs={2}>
+                <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                  {t("music:scoreRankAchievement.title")}
+                </Typography>
+              </Grid>
+              <Grid item xs={9} container spacing={1}>
+                <Grid item xs={6} md={3} container direction="column">
+                  <Grid item>
+                    <Typography align="center">
+                      {t("music:scoreRankAchievement.rankC")}
+                    </Typography>
+                  </Grid>
+                  <Grid item>
+                    <ResourceBox
+                      resourceBoxId={musicAchievements[0].resourceBoxId}
+                      resourceBoxPurpose="music_achievement"
+                    />
+                  </Grid>
+                </Grid>
+                <Grid item xs={6} md={3} container direction="column">
+                  <Grid item>
+                    <Typography align="center">
+                      {t("music:scoreRankAchievement.rankB")}
+                    </Typography>
+                  </Grid>
+                  <Grid item>
+                    <ResourceBox
+                      resourceBoxId={musicAchievements[1].resourceBoxId}
+                      resourceBoxPurpose="music_achievement"
+                    />
+                  </Grid>
+                </Grid>
+                <Grid item xs={6} md={3} container direction="column">
+                  <Grid item>
+                    <Typography align="center">
+                      {t("music:scoreRankAchievement.rankA")}
+                    </Typography>
+                  </Grid>
+                  <Grid item>
+                    <ResourceBox
+                      resourceBoxId={musicAchievements[2].resourceBoxId}
+                      resourceBoxPurpose="music_achievement"
+                    />
+                  </Grid>
+                </Grid>
+                <Grid item xs={6} md={3} container direction="column">
+                  <Grid item>
+                    <Typography align="center">
+                      {t("music:scoreRankAchievement.rankS")}
+                    </Typography>
+                  </Grid>
+                  <Grid item>
+                    <ResourceBox
+                      resourceBoxId={musicAchievements[3].resourceBoxId}
+                      resourceBoxPurpose="music_achievement"
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+            <Divider style={{ margin: "1% 0" }} />
+            {["easy", "normal", "hard", "expert", "master"].map((diffi) => {
+              const achieves = musicAchievements.filter(
+                (ma) => ma.musicDifficultyType === diffi
+              );
+              return (
+                <Fragment key={diffi}>
+                  <Grid
+                    item
+                    container
+                    justify="space-between"
+                    alignItems="center"
+                  >
+                    <Grid item xs={2}>
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600, textTransform: "capitalize" }}
+                      >
+                        {diffi}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={9} container spacing={1}>
+                      {achieves.map((achieve) => (
+                        <Grid
+                          key={achieve.id}
+                          item
+                          xs={6}
+                          md={3}
+                          container
+                          direction="column"
                         >
-                          {t("common:releaseCondition")}
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <ReleaseCondTrans
-                          mode={contentTransMode}
-                          releaseCondId={elem.releaseConditionId}
-                          originalProps={{ align: "right" }}
-                          translatedProps={{ align: "right" }}
-                        />
-                      </Grid>
+                          <Grid item>
+                            <Typography align="center">
+                              {Math.floor(
+                                musicDiffis.find(
+                                  (elem) =>
+                                    elem.musicId === Number(musicId) &&
+                                    elem.musicDifficulty === diffi
+                                )!.noteCount *
+                                  Number(achieve.musicAchievementTypeValue)
+                              )}
+                            </Typography>
+                          </Grid>
+                          <Grid item>
+                            <ResourceBox
+                              resourceBoxId={achieve.resourceBoxId}
+                              resourceBoxPurpose="music_achievement"
+                            />
+                          </Grid>
+                        </Grid>
+                      ))}
                     </Grid>
                   </Grid>
                   <Divider style={{ margin: "1% 0" }} />
-                </Grid>
-              </TabPanel>
-            ))}
-        </TabContext>
-        {/* <Divider style={{ margin: "1% 0" }} /> */}
-      </Container>
+                </Fragment>
+              );
+            })}
+          </Grid>
+        </Container>
+      )}
 
       <Viewer
         visible={visible}

@@ -15,6 +15,7 @@ import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Howl } from "howler";
 import { charaIcons } from "../../utils/resources";
+import { useEffect } from "react";
 
 const useStyle = makeStyles((theme) => ({
   card: {
@@ -56,6 +57,12 @@ const AudioPlayButton: React.FC<{ url: string }> = ({ url }) => {
       setIsPlay(false);
     }
   }, [url, audioSource, isPlay]);
+
+  useEffect(() => {
+    return () => {
+      if (audioSource) audioSource.stop();
+    };
+  }, [audioSource]);
 
   return (
     <Fab onClick={PlayAudio} size="small">

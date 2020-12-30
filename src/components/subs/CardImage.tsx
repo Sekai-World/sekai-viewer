@@ -3,6 +3,7 @@ import React, {
   Fragment,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -131,7 +132,7 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
       );
     }, [card]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
       if (hoveredArea === 2) {
         const start = performance.now();
 
@@ -159,6 +160,8 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
 
           if (timeFraction < 1) {
             requestId = requestAnimationFrame(animation);
+          } else {
+            cancelAnimationFrame(requestId);
           }
         });
         return () => cancelAnimationFrame(requestId);
@@ -189,6 +192,8 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
 
           if (timeFraction < 1) {
             requestId = requestAnimationFrame(animation);
+          } else {
+            cancelAnimationFrame(requestId);
           }
         });
         return () => cancelAnimationFrame(requestId);
@@ -219,6 +224,8 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
 
           if (timeFraction < 1) {
             requestId = requestAnimationFrame(animation);
+          } else {
+            cancelAnimationFrame(requestId);
           }
         });
         return () => cancelAnimationFrame(requestId);
