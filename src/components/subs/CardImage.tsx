@@ -3,6 +3,7 @@ import React, {
   Fragment,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -131,7 +132,7 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
       );
     }, [card]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
       if (hoveredArea === 2) {
         const start = performance.now();
 

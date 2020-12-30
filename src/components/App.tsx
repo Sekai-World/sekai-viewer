@@ -538,141 +538,170 @@ function App() {
     setMobileOpen(!mobileOpen);
   };
 
-  const drawer = (
-    <div>
-      <div className={classes.toolbar}>
-        <Typography variant="h6">{t("common:toolbar.title")}</Typography>
-      </div>
-      <Divider></Divider>
-      <List>
-        <ListItem
-          button
-          onClick={() =>
-            setSidebarExpansionStates((s) => [!s[0], ...s.slice(1)])
-          }
-        >
-          <Typography color="textSecondary">{t("common:community")}</Typography>
-          {sidebarExpansionStates[0] ? <ExpandLess /> : <ExpandMore />}
-        </ListItem>
-        <Collapse in={sidebarExpansionStates[0]} timeout="auto" unmountOnExit>
-          {leftBtns[0].map((elem) =>
-            elem.children ? (
-              <ListItemWithChildren key={elem.to} item={elem} theme={theme} />
-            ) : (
-              <ListItem
-                disabled={elem.disabled}
-                button
-                key={elem.to}
-                classes={{
-                  root: classes.listItem,
-                }}
-              >
-                <ListItemLink
-                  to={elem.to}
-                  text={elem.text}
-                  icon={elem.icon}
+  const drawer = useMemo(
+    () => (
+      <div>
+        <div className={classes.toolbar}>
+          <Typography variant="h6">{t("common:toolbar.title")}</Typography>
+        </div>
+        <Divider></Divider>
+        <List>
+          <ListItem
+            button
+            onClick={() =>
+              setSidebarExpansionStates((s) => [!s[0], ...s.slice(1)])
+            }
+          >
+            <Typography color="textSecondary">
+              {t("common:community")}
+            </Typography>
+            {sidebarExpansionStates[0] ? <ExpandLess /> : <ExpandMore />}
+          </ListItem>
+          <Collapse in={sidebarExpansionStates[0]} timeout="auto" unmountOnExit>
+            {leftBtns[0].map((elem) =>
+              elem.children ? (
+                <ListItemWithChildren key={elem.to} item={elem} theme={theme} />
+              ) : (
+                <ListItem
                   disabled={elem.disabled}
-                  theme={theme}
-                />
-              </ListItem>
-            )
-          )}
-        </Collapse>
-        <ListItem
-          button
-          onClick={() =>
-            setSidebarExpansionStates((s) => [s[0], !s[1], ...s.slice(2)])
-          }
-        >
-          <Typography color="textSecondary">
-            {t("common:information")}
-          </Typography>
-          {sidebarExpansionStates[1] ? <ExpandLess /> : <ExpandMore />}
-        </ListItem>
-        <Collapse in={sidebarExpansionStates[1]} timeout="auto" unmountOnExit>
-          {leftBtns[1].map((elem) => (
-            <ListItem
-              disabled={elem.disabled}
-              button
-              key={elem.to}
-              classes={{
-                root: classes.listItem,
-              }}
-            >
-              <ListItemLink
-                to={elem.to}
-                text={elem.text}
-                icon={elem.icon}
-                disabled={elem.disabled}
-                theme={theme}
-              />
-            </ListItem>
-          ))}
-        </Collapse>
-        <ListItem
-          button
-          onClick={() =>
-            setSidebarExpansionStates((s) => [s[0], s[1], !s[2], ...s.slice(3)])
-          }
-        >
-          <Typography color="textSecondary">{t("common:tools")}</Typography>
-          {sidebarExpansionStates[2] ? <ExpandLess /> : <ExpandMore />}
-        </ListItem>
-        <Collapse in={sidebarExpansionStates[2]} timeout="auto" unmountOnExit>
-          {leftBtns[2].map((elem) => (
-            <ListItem
-              disabled={elem.disabled}
-              button
-              key={elem.to}
-              classes={{
-                root: classes.listItem,
-              }}
-            >
-              <ListItemLink
-                to={elem.to}
-                text={elem.text}
-                icon={elem.icon}
-                disabled={elem.disabled}
-                theme={theme}
-              />
-            </ListItem>
-          ))}
-        </Collapse>
-        <ListItem
-          button
-          onClick={() =>
-            setSidebarExpansionStates((s) => [
-              ...s.slice(0, 3),
-              !s[3],
-              ...s.slice(4),
-            ])
-          }
-        >
-          <Typography color="textSecondary">{t("common:about")}</Typography>
-          {sidebarExpansionStates[3] ? <ExpandLess /> : <ExpandMore />}
-        </ListItem>
-        <Collapse in={sidebarExpansionStates[3]} timeout="auto" unmountOnExit>
-          {leftBtns[3].map((elem) => (
-            <ListItem
-              disabled={elem.disabled}
-              button
-              key={elem.to}
-              classes={{
-                root: classes.listItem,
-              }}
-            >
-              <ListItemLink
-                to={elem.to}
-                text={elem.text}
-                icon={elem.icon}
-                disabled={elem.disabled}
-                theme={theme}
-              />
-            </ListItem>
-          ))}
-        </Collapse>
-      </List>
-    </div>
+                  button
+                  key={elem.to}
+                  classes={{
+                    root: classes.listItem,
+                  }}
+                >
+                  <ListItemLink
+                    to={elem.to}
+                    text={elem.text}
+                    icon={elem.icon}
+                    disabled={elem.disabled}
+                    theme={theme}
+                  />
+                </ListItem>
+              )
+            )}
+          </Collapse>
+          <ListItem
+            button
+            onClick={() =>
+              setSidebarExpansionStates((s) => [s[0], !s[1], ...s.slice(2)])
+            }
+          >
+            <Typography color="textSecondary">
+              {t("common:information")}
+            </Typography>
+            {sidebarExpansionStates[1] ? <ExpandLess /> : <ExpandMore />}
+          </ListItem>
+          <Collapse in={sidebarExpansionStates[1]} timeout="auto" unmountOnExit>
+            {leftBtns[1].map((elem) =>
+              elem.children ? (
+                <ListItemWithChildren key={elem.to} item={elem} theme={theme} />
+              ) : (
+                <ListItem
+                  disabled={elem.disabled}
+                  button
+                  key={elem.to}
+                  classes={{
+                    root: classes.listItem,
+                  }}
+                >
+                  <ListItemLink
+                    to={elem.to}
+                    text={elem.text}
+                    icon={elem.icon}
+                    disabled={elem.disabled}
+                    theme={theme}
+                  />
+                </ListItem>
+              )
+            )}
+          </Collapse>
+          <ListItem
+            button
+            onClick={() =>
+              setSidebarExpansionStates((s) => [
+                s[0],
+                s[1],
+                !s[2],
+                ...s.slice(3),
+              ])
+            }
+          >
+            <Typography color="textSecondary">{t("common:tools")}</Typography>
+            {sidebarExpansionStates[2] ? <ExpandLess /> : <ExpandMore />}
+          </ListItem>
+          <Collapse in={sidebarExpansionStates[2]} timeout="auto" unmountOnExit>
+            {leftBtns[2].map((elem) =>
+              elem.children ? (
+                <ListItemWithChildren key={elem.to} item={elem} theme={theme} />
+              ) : (
+                <ListItem
+                  disabled={elem.disabled}
+                  button
+                  key={elem.to}
+                  classes={{
+                    root: classes.listItem,
+                  }}
+                >
+                  <ListItemLink
+                    to={elem.to}
+                    text={elem.text}
+                    icon={elem.icon}
+                    disabled={elem.disabled}
+                    theme={theme}
+                  />
+                </ListItem>
+              )
+            )}
+          </Collapse>
+          <ListItem
+            button
+            onClick={() =>
+              setSidebarExpansionStates((s) => [
+                ...s.slice(0, 3),
+                !s[3],
+                ...s.slice(4),
+              ])
+            }
+          >
+            <Typography color="textSecondary">{t("common:about")}</Typography>
+            {sidebarExpansionStates[3] ? <ExpandLess /> : <ExpandMore />}
+          </ListItem>
+          <Collapse in={sidebarExpansionStates[3]} timeout="auto" unmountOnExit>
+            {leftBtns[3].map((elem) =>
+              elem.children ? (
+                <ListItemWithChildren key={elem.to} item={elem} theme={theme} />
+              ) : (
+                <ListItem
+                  disabled={elem.disabled}
+                  button
+                  key={elem.to}
+                  classes={{
+                    root: classes.listItem,
+                  }}
+                >
+                  <ListItemLink
+                    to={elem.to}
+                    text={elem.text}
+                    icon={elem.icon}
+                    disabled={elem.disabled}
+                    theme={theme}
+                  />
+                </ListItem>
+              )
+            )}
+          </Collapse>
+        </List>
+      </div>
+    ),
+    [
+      classes.listItem,
+      classes.toolbar,
+      leftBtns,
+      sidebarExpansionStates,
+      t,
+      theme,
+    ]
   );
 
   const container =

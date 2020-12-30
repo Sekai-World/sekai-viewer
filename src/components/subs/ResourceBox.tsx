@@ -30,7 +30,7 @@ const ResourceBox: React.FC<{
     <Fragment>
       <Grid container spacing={1} justify={justify}>
         {resource.details.map((detail) => (
-          <Grid item>
+          <Grid item key={`${detail.resourceType}-${detail.resourceBoxId}`}>
             {detail.resourceType === "material" ? (
               <MaterialIcon
                 materialId={detail.resourceId!}
