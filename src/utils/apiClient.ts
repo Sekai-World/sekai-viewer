@@ -32,7 +32,9 @@ export function useStrapi(token?: string) {
     axios.interceptors.response.use(
       (res) => res,
       (err) => {
-        err.id = err.response.data.message[0].messages[0].id;
+        if (err.response.data.message)
+          err.id = err.response.data.message[0].messages[0].id;
+        else err.id = err.message;
         throw err;
       }
     );
@@ -86,12 +88,19 @@ export function useStrapi(token?: string) {
       [axios]
     ),
     postUpload: useCallback(
-      async (formData: FormData) =>
+      async (formData: FormData, token?: string) =>
         (
           await axios.post("/upload", formData, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
+            headers: Object.assign(
+              {
+                "Content-Type": "multipart/form-data",
+              },
+              token
+                ? {
+                    authorization: `Bearer ${token}`,
+                  }
+                : {}
+            ),
           })
         ).data,
       [axios]
