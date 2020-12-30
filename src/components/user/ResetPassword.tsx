@@ -83,16 +83,22 @@ const ResetPassword: React.FC<{}> = () => {
                 <br />
                 <input type="submit" style={{ display: "none" }} />
                 <Grid container spacing={1}>
-                  <Grid item xs={12}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      disabled={isSubmitting || !dirty || !isValid}
-                      onClick={submitForm}
-                    >
-                      {t("auth:common.sendResetPasswordEmailButton")}
-                    </Button>
-                    {isSubmitting && <CircularProgress size={24} />}
+                  <Grid item xs={12} container alignItems="center" spacing={1}>
+                    <Grid item>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        disabled={isSubmitting || !dirty || !isValid}
+                        onClick={submitForm}
+                      >
+                        {t("auth:common.sendResetPasswordEmailButton")}
+                      </Button>
+                    </Grid>
+                    {isSubmitting && (
+                      <Grid item>
+                        <CircularProgress size={24} />
+                      </Grid>
+                    )}
                   </Grid>
                 </Grid>
               </Form>

@@ -192,16 +192,22 @@ const BindSekaiID: React.FC<{}> = () => {
               {sekaiProfile.sekaiUserToken}
             </Typography>
           </Grid>
-          <Grid item>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => setIsVerifyCarouselOpen(true)}
-              disabled={isVerifying}
-            >
-              {t("user:profile.button.verify_sekai_id")}
-              {isVerifying && <CircularProgress size={24} />}
-            </Button>
+          <Grid item container alignItems="center" spacing={1}>
+            <Grid item>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => setIsVerifyCarouselOpen(true)}
+                disabled={isVerifying}
+              >
+                {t("user:profile.button.verify_sekai_id")}
+              </Button>
+            </Grid>
+            {isVerifying && (
+              <Grid item>
+                <CircularProgress size={24} />
+              </Grid>
+            )}
           </Grid>
         </Grid>
       )}

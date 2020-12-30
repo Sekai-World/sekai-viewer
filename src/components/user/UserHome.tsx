@@ -162,15 +162,23 @@ const UserHome: React.FC<{}> = () => {
                   }}
                 />
                 <label htmlFor="upload-avatar-button">
-                  <Button
-                    variant="outlined"
-                    component="span"
-                    disabled={isUploading}
-                    startIcon={<Upload />}
-                  >
-                    {t("user:profile.upload_avatar")}
-                    {isUploading && <CircularProgress size={16} />}
-                  </Button>
+                  <Grid container alignItems="center" spacing={1}>
+                    <Grid item>
+                      <Button
+                        variant="outlined"
+                        component="span"
+                        disabled={isUploading}
+                        startIcon={<Upload />}
+                      >
+                        {t("user:profile.upload_avatar")}
+                      </Button>
+                    </Grid>
+                    {isUploading && (
+                      <Grid item>
+                        <CircularProgress size={24} />
+                      </Grid>
+                    )}
+                  </Grid>
                 </label>
               </Grid>
               <Grid item xs={12} container justify="center">

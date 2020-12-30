@@ -30,7 +30,7 @@ const Signup: React.FC<{}> = () => {
   const { t } = useTranslation();
   const jwtAuth = useJwtAuth();
   const history = useHistory();
-  const { postRegisterLocal, getLanguages, getUserMetadataMe } = useStrapi();
+  const { postRegisterLocal, getLanguages } = useStrapi();
 
   const [passwordScore, setPasswordScore] = useState(0);
   const [langs, setLangs] = useState<LanguageModel[]>([]);
@@ -91,9 +91,9 @@ const Signup: React.FC<{}> = () => {
           onSubmit={async (values, { setErrors }) => {
             try {
               const data = await postRegisterLocal(values);
-              jwtAuth.token = data.jwt;
+              // jwtAuth.token = data.jwt;
               jwtAuth.user = data.user;
-              jwtAuth.usermeta = await getUserMetadataMe(data.jwt);
+              // jwtAuth.usermeta = await getUserMetadataMe(data.jwt);
               history.push("/user/confirmation");
               // window.location.reload();
               localStorage.setItem(
@@ -227,15 +227,23 @@ const Signup: React.FC<{}> = () => {
                   <br />
                   <br />
                   <input type="submit" style={{ display: "none" }} />
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    disabled={isSubmitting || !dirty || !isValid}
-                    onClick={submitForm}
-                  >
-                    {t("auth:common.signupButton")}{" "}
-                    {isSubmitting && <CircularProgress size={24} />}
-                  </Button>
+                  <Grid container alignItems="center" spacing={1}>
+                    <Grid item>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        disabled={isSubmitting || !dirty || !isValid}
+                        onClick={submitForm}
+                      >
+                        {t("auth:common.signupButton")}{" "}
+                      </Button>
+                    </Grid>
+                    {isSubmitting && (
+                      <Grid item>
+                        <CircularProgress size={24} />
+                      </Grid>
+                    )}
+                  </Grid>
                 </Form>
               </Grid>
             </Grid>
