@@ -47,8 +47,7 @@
   },
   "scripts": {
     "start": "cross-env TSC_WATCHFILE=UseFsEventsWithFallbackDynamicPolling react-scripts start",
-    "build": "GENERATE_SOURCEMAP=false react-scripts build",
-    "winbuild": "set \"GENERATE_SOURCEMAP=false\" && react-scripts build",
+    "build": "cross-env GENERATE_SOURCEMAP=false react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "exti18n": "i18next -c ./i18next-parser.config.js -s",
