@@ -105,9 +105,7 @@ const MusicRecommend: React.FC<{}> = () => {
       headerName: t("music:difficulty"),
       width: 65,
       cellClassName: (it) => {
-        let diff = it.getValue("difficulty") as string;
-        // @ts-ignore
-        return classes[diff];
+        return classes[it.row["difficulty"] as "easy"];
       },
     },
     {

@@ -97,13 +97,13 @@ const MusicRecommend: React.FC<{}> = () => {
       return;
     }
     const musicMeta = meta[0];
-    console.log(musicMeta);
+    // console.log(musicMeta);
     const teamSkills = getCardSkillRates(cards, skills, teamCardsStates);
-    console.log(teamSkills);
+    // console.log(teamSkills);
     const averageSkills = getMultiAverageSkillRates(teamSkills);
-    console.log(averageSkills);
+    // console.log(averageSkills);
     const score = getScore(musicMeta, teamPowerStates, averageSkills, false);
-    console.log("Score: " + score);
+    // console.log("Score: " + score);
     const eventPoint = getEventPoint(
       score,
       score * 4,
