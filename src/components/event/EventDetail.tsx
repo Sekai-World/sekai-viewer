@@ -39,6 +39,8 @@ import { ContentTrans } from "../subs/ContentTrans";
 import { CardThumb } from "../subs/CardThumb";
 import DegreeImage from "../subs/DegreeImage";
 import ResourceBox from "../subs/ResourceBox";
+import { OpenInNew } from "@material-ui/icons";
+import { useInteractiveStyles } from "../../styles/interactive";
 
 const useStyle = makeStyles((theme) => ({
   bannerImg: {
@@ -61,6 +63,7 @@ const EventDetail: React.FC<{}> = () => {
   const { eventId } = useParams<{ eventId: string }>();
   const classes = useStyle();
   const layoutClasses = useLayoutStyles();
+  const interactiveClasses = useInteractiveStyles();
   const { getTranslated } = useAssetI18n();
   const { contentTransMode } = useContext(SettingContext)!;
   const [humanizeDuration] = useDurationI18n();
@@ -374,6 +377,31 @@ const EventDetail: React.FC<{}> = () => {
                   </Link>
                 </Grid>
               ))}
+            </Grid>
+          </Grid>
+          <Divider style={{ margin: "1% 0" }} />
+          <Grid
+            item
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Grid item xs={4}>
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                {t("common:eventTracker")}
+              </Typography>
+            </Grid>
+            <Grid item xs={6} container justify="flex-end">
+              <Link
+                to={`/eventtracker?id=${eventId}`}
+                className={interactiveClasses.noDecoration}
+              >
+                <Grid container alignItems="center">
+                  <OpenInNew />
+                </Grid>
+              </Link>
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />

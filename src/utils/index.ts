@@ -1,5 +1,5 @@
 import Axios from "axios";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { WebpMachine } from "webp-hero";
 import PQueue from "p-queue";
 import localforage from "localforage";
@@ -475,7 +475,9 @@ export function getJPTime() {
 }
 
 export function useQuery() {
-  return new URLSearchParams(useLocation().search);
+  const { search } = useLocation();
+  const query = useMemo(() => new URLSearchParams(search), [search]);
+  return query;
 }
 
 export function getColorArray(num: number) {
