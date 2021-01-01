@@ -48,11 +48,11 @@ jobs:
           remote_branch="pr-$pr_number"
           PUBLIC_URL="/$remote_branch" npm run build
 
-      - name: Remove unnecessary files
-        run: |
-          rm -r build/locales/.git
-          rm build/locales/LICENSE
-          rm build/locales/README.md
+      # - name: Remove unnecessary files
+      #   run: |
+      #     rm -r build/locales/.git
+      #     rm build/locales/LICENSE
+      #     rm build/locales/README.md
 
       - name: Store build result
         uses: actions/upload-artifact@v2
