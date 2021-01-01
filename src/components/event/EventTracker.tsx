@@ -51,7 +51,7 @@ import {
   IEventInfo,
   UserRanking,
 } from "../../types";
-import { getColorArray, useCachedData } from "../../utils";
+import { getColorArray, useCachedData, useQuery } from "../../utils";
 import { useStrapi } from "../../utils/apiClient";
 import {
   useEventTrackerAPI,
@@ -72,6 +72,7 @@ const EventTracker: React.FC<{}> = () => {
   const theme = useTheme();
   const layoutClasses = useLayoutStyles();
   const classes = useStyles();
+  const query = useQuery();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
   const { getSekaiCurrentEvent } = useStrapi();
@@ -123,19 +124,33 @@ const EventTracker: React.FC<{}> = () => {
     document.title = t("title:eventTracker");
   }, [t]);
 
-  const getCurrentEvent = useCallback(() => {
-    getSekaiCurrentEvent().then((data) => {
-      setCurrEvent(data);
+  const getCurrentEvent = useCallback(async () => {
+    const curr = await getSekaiCurrentEvent();
+    setCurrEvent(curr);
+    if (query.get("id") && !Number.isNaN(Number(query.get("id")))) {
+      if (events.length) {
+        const ev = events.find((elem) => elem.id === Number(query.get("id")));
+        if (ev)
+          setSelectedEvent({
+            name: getTranslated(
+              contentTransMode,
+              `event_name:${query.get("id")}`,
+              ev.name
+            ),
+            id: ev.id,
+          });
+      }
+    } else {
       setSelectedEvent({
         name: getTranslated(
           contentTransMode,
-          `event_name:${data.eventId}`,
-          data.eventJson.name
+          `event_name:${curr.eventId}`,
+          curr.eventJson.name
         ),
-        id: data.eventId,
+        id: curr.eventId,
       });
-    });
-  }, [contentTransMode, getSekaiCurrentEvent, getTranslated]);
+    }
+  }, [contentTransMode, events, getSekaiCurrentEvent, getTranslated, query]);
 
   useEffect(() => {
     getCurrentEvent();
@@ -153,6 +168,25 @@ const EventTracker: React.FC<{}> = () => {
     setRtRanking(data);
     setRtTime(new Date(data[0].timestamp));
   }, [getLive]);
+
+  useEffect(() => {
+    if (graphRankings.length && rtRanking.length) {
+      setChartData((chartData) => [
+        ...chartData,
+        Object.assign(
+          {
+            time: new Date(rtRanking[0].timestamp).getTime(),
+          },
+          graphRankings.reduce((sum, ranking) => {
+            const _data = rtRanking.find((elem) => elem.rank === ranking)!;
+            sum[`T${ranking}`] = _data.score;
+            sum[`T${ranking}_name`] = _data.userName;
+            return sum;
+          }, {} as { [key: string]: any })
+        ),
+      ]);
+    }
+  }, [graphRankings, rtRanking]);
 
   const getHistoryData = useCallback(
     async (eventId: number) => {
