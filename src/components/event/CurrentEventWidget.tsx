@@ -1,6 +1,5 @@
 import { Container, Grid, makeStyles, Typography } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
-import FlipCountdown from "@rumess/react-flip-countdown";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -8,6 +7,7 @@ import { SekaiCurrentEventModel } from "../../strapi-model";
 import { useLayoutStyles } from "../../styles/layout";
 import { getRemoteAssetURL } from "../../utils";
 import { useStrapi } from "../../utils/apiClient";
+import Countdown from "../subs/Countdown";
 
 const useStyles = makeStyles((theme) => ({
   banner: {
@@ -60,21 +60,13 @@ const CurrentEventWidget: React.FC<{}> = () => {
               <Skeleton variant="rect" height={100} width={250} />
             </Grid>
           )}
-          {currEvent &&
-            (currEvent.eventJson.aggregateAt >= new Date().getTime() ? (
-              <Grid item xs={12} container justify="center">
-                <FlipCountdown
-                  endAt={new Date(
-                    currEvent.eventJson.aggregateAt
-                  ).toISOString()}
-                  hideYear
-                  hideMonth
-                  titlePosition="bottom"
-                />
-              </Grid>
-            ) : (
-              <Typography>{t("event:alreadyEnded")}</Typography>
-            ))}
+          {currEvent && (
+            <Grid item xs={12} container justify="center">
+              <Countdown endDate={new Date(currEvent.eventJson.aggregateAt)}>
+                <Typography>{t("event:alreadyEnded")}</Typography>
+              </Countdown>
+            </Grid>
+          )}
         </Grid>
       </Container>
     </Grid>
