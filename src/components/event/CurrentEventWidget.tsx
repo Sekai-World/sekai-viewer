@@ -12,7 +12,7 @@ import Countdown from "../subs/Countdown";
 const useStyles = makeStyles((theme) => ({
   banner: {
     [theme.breakpoints.up("md")]: {
-      maxWidth: "50%",
+      maxWidth: "60%",
     },
     maxWidth: "90%",
   },
@@ -46,7 +46,7 @@ const CurrentEventWidget: React.FC<{}> = () => {
           {eventBanner ? (
             <Grid item xs={12}>
               <Link to={`/event/${currEvent?.eventId}`}>
-                <Grid container justify="center">
+                <Grid container justify="center" alignItems="flex-start">
                   <img
                     src={eventBanner}
                     alt="event banner"
