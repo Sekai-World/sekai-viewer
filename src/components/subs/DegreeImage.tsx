@@ -55,7 +55,7 @@ const DegreeImage: React.FC<
           `honor/${honor.assetbundleName}_rip/rank_main.webp`,
           setDegreeRankImage
         );
-      else if (honor.name.startsWith("TOP"))
+      else if (honor.name.startsWith("TOP") || honor.name.includes("位"))
         getRemoteAssetURL(
           `honor/${honor.assetbundleName}_rip/rank_main.webp`,
           setDegreeRankImage
