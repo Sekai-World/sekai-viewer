@@ -63,8 +63,8 @@ export function initGlobalI18n() {
       backend: {
         loadPath:
           (window.isChinaMainland
-            ? process.env.REACT_APP_JSON_DOMAIN_CN
-            : process.env.PUBLIC_URL) + "/locales/{{lng}}/{{ns}}.json",
+            ? process.env.REACT_APP_JSON_DOMAIN_CN + "/locales"
+            : process.env.REACT_APP_JSON_DOMAIN_WW) + "/{{lng}}/{{ns}}.json",
       },
       returnEmptyString: false,
     });
@@ -118,8 +118,8 @@ export function initGlobalI18n() {
       backend: {
         loadPath:
           (window.isChinaMainland
-            ? process.env.REACT_APP_JSON_DOMAIN_CN
-            : process.env.PUBLIC_URL) + "/locales/{{lng}}/{{ns}}.json",
+            ? process.env.REACT_APP_JSON_DOMAIN_CN + "/locales"
+            : process.env.REACT_APP_JSON_DOMAIN_WW) + "/{{lng}}/{{ns}}.json",
       },
       returnEmptyString: false,
     });
