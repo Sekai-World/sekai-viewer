@@ -644,7 +644,7 @@ const EventTracker: React.FC<{}> = () => {
                       />
                       {graphRankings.map((ranking, idx) => (
                         <Line
-                          type="linear"
+                          // type="natural"
                           dataKey={`T${ranking}`}
                           dot={false}
                           stroke={colorArray[idx]}
