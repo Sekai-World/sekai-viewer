@@ -96,6 +96,21 @@ const EventTracker: React.FC<{}> = () => {
     id: number;
   } | null>(null);
   const [graphRankings, setGraphRankings] = useState<EventGraphRanking[]>([]);
+  const [speedAllTime, setSpeedAllTime] = useState<
+    {
+      [key in Partial<EventGraphRanking>]?: string;
+    }
+  >({});
+  const [speedLast24h, setSpeedLast24h] = useState<
+    {
+      [key in Partial<EventGraphRanking>]?: string;
+    }
+  >({});
+  const [speedLast1h, setSpeedLast1h] = useState<
+    {
+      [key in Partial<EventGraphRanking>]?: string;
+    }
+  >({});
   // const [isRealtimeChecked, setIsRealtimeChecked] = useState(false);
   // const [isRealtimeEnabled, setIsRealtimeEnabled] = useState(true);
   const [fetchProgress, setFetchProgress] = useState(0);
@@ -187,6 +202,78 @@ const EventTracker: React.FC<{}> = () => {
       ]);
     }
   }, [graphRankings, rtRanking]);
+
+  useEffect(() => {
+    if (chartData.length) {
+      setSpeedAllTime(
+        graphRankings.reduce(
+          (sum, ranking) => {
+            sum[ranking] = (
+              (chartData[chartData.length - 1][`T${ranking}`] -
+                chartData[0][`T${ranking}`]) /
+              ((chartData[chartData.length - 1].time - chartData[0].time) /
+                1000 /
+                3600)
+            ).toFixed(2);
+            return sum;
+          },
+          {} as {
+            [key in Partial<EventGraphRanking>]?: string;
+          }
+        )
+      );
+      setSpeedLast24h(
+        graphRankings.reduce(
+          (sum, ranking) => {
+            const last = chartData[chartData.length - 1];
+            let first;
+            if (last.time - chartData[0].time <= 24 * 3600 * 1000) {
+              // no enough 24h data
+              first = chartData[0];
+            } else {
+              first = chartData
+                .slice()
+                .reverse()
+                .find((cd) => cd.time <= last.time - 24 * 3600 * 1000)!;
+            }
+            sum[ranking] = (
+              (last[`T${ranking}`] - first[`T${ranking}`]) /
+              ((last.time - first.time) / 1000 / 3600)
+            ).toFixed(2);
+            return sum;
+          },
+          {} as {
+            [key in Partial<EventGraphRanking>]?: string;
+          }
+        )
+      );
+      setSpeedLast1h(
+        graphRankings.reduce(
+          (sum, ranking) => {
+            const last = chartData[chartData.length - 1];
+            let first;
+            if (last.time - chartData[0].time <= 1 * 3600 * 1000) {
+              // no enough 1h data
+              first = chartData[0];
+            } else {
+              first = chartData
+                .slice()
+                .reverse()
+                .find((cd) => cd.time <= last.time - 1 * 3600 * 1000)!;
+            }
+            sum[ranking] = (
+              (last[`T${ranking}`] - first[`T${ranking}`]) /
+              ((last.time - first.time) / 1000 / 3600)
+            ).toFixed(2);
+            return sum;
+          },
+          {} as {
+            [key in Partial<EventGraphRanking>]?: string;
+          }
+        )
+      );
+    }
+  }, [chartData, chartData.length, graphRankings]);
 
   const getHistoryData = useCallback(
     async (eventId: number) => {
@@ -526,6 +613,45 @@ const EventTracker: React.FC<{}> = () => {
               </Grid>
             </Grid>
           </Container>
+          <Typography variant="h6" className={layoutClasses.header}>
+            {t("event:tracker.title.average_speed")}
+          </Typography>
+          <Container className={layoutClasses.content}>
+            <TableContainer component={Paper}>
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>{t("event:ranking")}</TableCell>
+                    <TableCell align="center">
+                      {t("event:speedTable.head.all_time")}
+                    </TableCell>
+                    <TableCell align="center">
+                      {t("event:speedTable.head.last_24h")}
+                    </TableCell>
+                    <TableCell align="center">
+                      {t("event:speedTable.head.last_1h")}
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {graphRankings.map((ranking) => (
+                    <TableRow>
+                      <TableCell>T{ranking}</TableCell>
+                      <TableCell align="center">
+                        {speedAllTime[ranking]}
+                      </TableCell>
+                      <TableCell align="center">
+                        {speedLast24h[ranking]}
+                      </TableCell>
+                      <TableCell align="center">
+                        {speedLast1h[ranking]}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Container>
         </Fragment>
       )}
       {!!graphEvent && !!rtRanking.length && !!rtTime && (
@@ -548,9 +674,7 @@ const EventTracker: React.FC<{}> = () => {
                 <TableHead>
                   <TableRow>
                     <TableCell />
-                    <TableCell>
-                      {t("event:rankingTable.head.ranking")}
-                    </TableCell>
+                    <TableCell align="center">{t("event:ranking")}</TableCell>
                     <TableCell align="center">
                       {t("event:rankingTable.head.userProfile")}
                     </TableCell>
@@ -599,9 +723,7 @@ const EventTracker: React.FC<{}> = () => {
                 <TableHead>
                   <TableRow>
                     <TableCell />
-                    <TableCell>
-                      {t("event:rankingTable.head.ranking")}
-                    </TableCell>
+                    <TableCell>{t("event:ranking")}</TableCell>
                     <TableCell align="center">
                       {t("event:rankingTable.head.userProfile")}
                     </TableCell>
