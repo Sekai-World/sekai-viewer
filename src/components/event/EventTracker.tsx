@@ -193,9 +193,11 @@ const EventTracker: React.FC<{}> = () => {
             time: new Date(rtRanking[0].timestamp).getTime(),
           },
           graphRankings.reduce((sum, ranking) => {
-            const _data = rtRanking.find((elem) => elem.rank === ranking)!;
-            sum[`T${ranking}`] = _data.score;
-            sum[`T${ranking}_name`] = _data.userName;
+            const _data = rtRanking.find((elem) => elem.rank === ranking);
+            if (_data) {
+              sum[`T${ranking}`] = _data.score;
+              sum[`T${ranking}_name`] = _data.userName;
+            }
             return sum;
           }, {} as { [key: string]: any })
         ),
@@ -208,12 +210,15 @@ const EventTracker: React.FC<{}> = () => {
       setSpeedAllTime(
         graphRankings.reduce(
           (sum, ranking) => {
+            const last = chartData[chartData.length - 1];
+            const first = chartData.find((cd) => cd[`T${ranking}`]);
+            if (!first) {
+              sum[ranking] = t("event:no_enough_data");
+              return sum;
+            }
             sum[ranking] = (
-              (chartData[chartData.length - 1][`T${ranking}`] -
-                chartData[0][`T${ranking}`]) /
-              ((chartData[chartData.length - 1].time - chartData[0].time) /
-                1000 /
-                3600)
+              (last[`T${ranking}`] - first[`T${ranking}`]) /
+              ((last.time - first.time) / 1000 / 3600)
             ).toFixed(2);
             return sum;
           },
@@ -229,12 +234,16 @@ const EventTracker: React.FC<{}> = () => {
             let first;
             if (last.time - chartData[0].time <= 24 * 3600 * 1000) {
               // no enough 24h data
-              first = chartData[0];
+              first = chartData.find((cd) => cd[`T${ranking}`]);
             } else {
               first = chartData
                 .slice()
                 .reverse()
                 .find((cd) => cd.time <= last.time - 24 * 3600 * 1000)!;
+            }
+            if (!first) {
+              sum[ranking] = t("event:no_enough_data");
+              return sum;
             }
             sum[ranking] = (
               (last[`T${ranking}`] - first[`T${ranking}`]) /
@@ -254,12 +263,16 @@ const EventTracker: React.FC<{}> = () => {
             let first;
             if (last.time - chartData[0].time <= 1 * 3600 * 1000) {
               // no enough 1h data
-              first = chartData[0];
+              first = chartData.find((cd) => cd[`T${ranking}`]);
             } else {
               first = chartData
                 .slice()
                 .reverse()
                 .find((cd) => cd.time <= last.time - 1 * 3600 * 1000)!;
+            }
+            if (!first) {
+              sum[ranking] = t("event:no_enough_data");
+              return sum;
             }
             sum[ranking] = (
               (last[`T${ranking}`] - first[`T${ranking}`]) /
@@ -273,7 +286,7 @@ const EventTracker: React.FC<{}> = () => {
         )
       );
     }
-  }, [chartData, chartData.length, graphRankings]);
+  }, [chartData, chartData.length, graphRankings, t]);
 
   const getHistoryData = useCallback(
     async (eventId: number) => {
@@ -352,15 +365,53 @@ const EventTracker: React.FC<{}> = () => {
       fetched += 1;
       setFetchProgress(Math.floor((fetched / total) * 100));
     }
-    const baseData: typeof chartData = datas[0].map((data) => ({
+    let baseData: typeof chartData = datas[0].map((data) => ({
       time: new Date(data.timestamp).getTime(),
     }));
     selectedRankings.forEach((ranking, idx) => {
-      datas[idx].forEach((data, _idx) => {
-        baseData[_idx][`T${ranking}`] = data.score;
-        baseData[_idx][`T${ranking}_name`] = data.userName;
+      datas[idx].forEach((data) => {
+        const _idx = baseData.findIndex(
+          (bd) => bd.time === new Date(data.timestamp).getTime()
+        );
+        if (_idx !== -1) {
+          baseData[_idx][`T${ranking}`] = data.score;
+          baseData[_idx][`T${ranking}_name`] = data.userName;
+        } else {
+          baseData.push({
+            time: new Date(data.timestamp).getTime(),
+            [`T${ranking}`]: data.score,
+            [`T${ranking}_name`]: data.userName,
+          });
+        }
       });
     });
+    baseData = baseData
+      .sort((a, b) => a.time - b.time)
+      .map((data, idx, arr) => {
+        for (let ranking of selectedRankings) {
+          if (!data[`T${ranking}`]) {
+            if (idx === 0) {
+              data[`T${ranking}`] = 0;
+              data[`T${ranking}_name`] = "";
+            } else if (idx === arr.length - 1) {
+              data[`T${ranking}`] = arr[idx - 1][`T${ranking}`];
+              data[`T${ranking}_name`] = "";
+            } else if (
+              arr[idx - 1][`T${ranking}`] &&
+              arr[idx + 1][`T${ranking}`]
+            ) {
+              data[`T${ranking}`] =
+                arr[idx - 1][`T${ranking}`] +
+                ((arr[idx + 1][`T${ranking}`] - arr[idx - 1][`T${ranking}`]) /
+                  (arr[idx + 1].time - arr[idx - 1].time)) *
+                  (data.time - arr[idx - 1].time);
+              data[`T${ranking}_name`] = "";
+            }
+          }
+        }
+
+        return data;
+      });
     setChartData(baseData);
     setColorArray(getColorArray(selectedRankings.length));
     setLineProps(
@@ -593,7 +644,7 @@ const EventTracker: React.FC<{}> = () => {
                       />
                       {graphRankings.map((ranking, idx) => (
                         <Line
-                          type="natural"
+                          type="linear"
                           dataKey={`T${ranking}`}
                           dot={false}
                           stroke={colorArray[idx]}
