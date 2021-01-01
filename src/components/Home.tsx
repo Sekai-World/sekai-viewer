@@ -259,9 +259,9 @@ function Home() {
             )}
           </Grid>
         </Grid>
-        <Alert className={layoutClasses.alert} severity="info">
+        {/* <Alert className={layoutClasses.alert} severity="info">
           {t("home:alert0")}
-        </Alert>
+        </Alert> */}
         <Alert className={layoutClasses.alert} severity="info">
           <Trans
             i18nKey="home:alert_settings"
