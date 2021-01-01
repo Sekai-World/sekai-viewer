@@ -14,12 +14,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Checkout translation
-        uses: actions/checkout@v2
-        with:
-          ref: deploy
-          repository: Sekai-World/sekai-i18n
-          path: public/locales
+      # - name: Checkout translation
+      #   uses: actions/checkout@v2
+      #   with:
+      #     ref: deploy
+      #     repository: Sekai-World/sekai-i18n
+      #     path: public/locales
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2.1.2
