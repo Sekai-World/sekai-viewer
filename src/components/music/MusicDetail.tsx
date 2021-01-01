@@ -222,7 +222,7 @@ const MusicDetail: React.FC<{}> = () => {
       music &&
       longMusicPlaybackURL
     ) {
-      // const url = `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`;
+      // const url = `${process.env.REACT_APP_ASSET_DOMAIN_WW}/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`;
       setTrimOptions({
         sourceURL: longMusicPlaybackURL,
         trimDuration: music.fillerSec,

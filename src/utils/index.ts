@@ -231,10 +231,13 @@ const queue = new PQueue({ concurrency: 1 });
 
 export async function getRemoteAssetURL(
   endpoint: string,
-  setFunc?: CallableFunction
+  setFunc?: CallableFunction,
+  cnDomain?: boolean
 ): Promise<string> {
   const isWebpSupported = Modernizr.webplossless;
-  const url = `${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/${endpoint}`;
+  const url = cnDomain
+    ? `${process.env.REACT_APP_ASSET_DOMAIN_CN}/${endpoint}`
+    : `${process.env.REACT_APP_ASSET_DOMAIN_WW}/file/sekai-assets/${endpoint}`;
 
   if (endpoint.endsWith(".webp") && !isWebpSupported) {
     let dataUrl = await localforage.getItem<string>(url);

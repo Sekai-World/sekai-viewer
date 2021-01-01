@@ -4,6 +4,6 @@ import "@types/modernizr";
 
 declare global {
   interface Window {
-    isChinaMainland: Boolean;
+    isChinaMainland: boolean;
   }
 }

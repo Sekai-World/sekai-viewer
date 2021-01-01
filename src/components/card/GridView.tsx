@@ -58,8 +58,6 @@ const GridView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
     <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
       <Card className={classes.card}>
         <CardMedia
-          // className={classes.media}
-          // image={`${process.env.REACT_APP_ASSET_DOMAIN}/file/sekai-assets/character/member_small/${data.assetbundleName}_rip/card_normal.webp`}
           title={getTranslated(
             contentTransMode,
             `card_prefix:${data.id}`,

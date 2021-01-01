@@ -34,7 +34,8 @@ export const CardThumb: React.FC<
         `thumbnail/chara_rip/${card.assetbundleName}_${
           trained ? "after_training" : "normal"
         }.webp`,
-        setCardThumbImg
+        setCardThumbImg,
+        window.isChinaMainland
       );
     }
   }, [card, trained]);

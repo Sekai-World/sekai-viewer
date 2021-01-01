@@ -124,11 +124,13 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
     useEffect(() => {
       getRemoteAssetURL(
         `character/member_small/${card.assetbundleName}_rip/card_normal.webp`,
-        setNormalImg
+        setNormalImg,
+        window.isChinaMainland
       );
       getRemoteAssetURL(
         `character/member_small/${card.assetbundleName}_rip/card_after_training.webp`,
-        setTrainedImg
+        setTrainedImg,
+        window.isChinaMainland
       );
     }, [card]);
 

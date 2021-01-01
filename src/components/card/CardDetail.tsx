@@ -267,20 +267,24 @@ const CardDetail: React.FC<{}> = () => {
     if (card) {
       getRemoteAssetURL(
         `character/member/${card.assetbundleName}_rip/card_normal.webp`,
-        setNormalImg
+        setNormalImg,
+        window.isChinaMainland
       );
       getRemoteAssetURL(
         `character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`,
-        setNormalTrimImg
+        setNormalTrimImg,
+        window.isChinaMainland
       );
       if (card.rarity >= 3) {
         getRemoteAssetURL(
           `character/member/${card.assetbundleName}_rip/card_after_training.webp`,
-          setTrainedImg
+          setTrainedImg,
+          window.isChinaMainland
         );
         getRemoteAssetURL(
           `character/member_cutout_trm/${card.assetbundleName}_rip/after_training.webp`,
-          setTrainedTrimImg
+          setTrainedTrimImg,
+          window.isChinaMainland
         );
       }
     }
