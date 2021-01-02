@@ -3,7 +3,7 @@ import {
   Button,
   Collapse,
   Container,
-  createMuiTheme,
+  unstable_createMuiStrictModeTheme as createMuiTheme,
   CssBaseline,
   Dialog,
   DialogActions,
@@ -65,7 +65,7 @@ import {
   StickerEmoji,
 } from "mdi-material-ui";
 import React, {
-  forwardRef,
+  // forwardRef,
   useMemo,
   lazy,
   Suspense,
@@ -76,7 +76,7 @@ import React, {
 import { useTranslation } from "react-i18next";
 import {
   Link,
-  LinkProps,
+  // LinkProps,
   Route,
   Switch,
   useHistory,
@@ -210,13 +210,13 @@ function ListItemLink(
   });
   const classes = useStyles();
 
-  const renderLink = useMemo(
-    () =>
-      forwardRef<HTMLAnchorElement, Omit<LinkProps, "to">>((itemProps, ref) => (
-        <Link to={to} ref={ref} {...itemProps} />
-      )),
-    [to]
-  );
+  // const renderLink = useMemo(
+  //   () =>
+  //     forwardRef<HTMLAnchorElement, Omit<LinkProps, "to">>((itemProps, ref) => (
+  //       <Link to={to} ref={ref} {...itemProps} />
+  //     )),
+  //   [to]
+  // );
 
   return (
     <li
@@ -224,11 +224,10 @@ function ListItemLink(
         width: "100%",
       }}
     >
-      {/*
-      // @ts-ignore */}
       <ListItem
-        component={renderLink}
+        component={Link}
         classes={{ root: classes.listItemInner }}
+        to={to}
       >
         <ListItemIcon
           style={{
