@@ -504,7 +504,16 @@ const UserHome: React.FC<{}> = () => {
                             sekaiProfile.sekaiUserProfile!.userDecks[0][
                               `member${idx + 1}` as "member1"
                             ]
-                        )!.defaultImage === "special_training"
+                        )!.specialTrainingStatus === "done"
+                      }
+                      defaultImage={
+                        sekaiProfile.sekaiUserProfile!.userCards.find(
+                          (card) =>
+                            card.cardId ===
+                            sekaiProfile.sekaiUserProfile!.userDecks[0][
+                              `member${idx + 1}` as "member1"
+                            ]
+                        )!.defaultImage
                       }
                       cardLevel={
                         sekaiProfile.sekaiUserProfile!.userCards.find(

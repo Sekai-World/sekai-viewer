@@ -128,10 +128,19 @@ export const CardThumbMedium: React.FC<
   {
     cardId: number;
     trained: boolean;
+    defaultImage?: string;
     cardLevel?: number;
     masterRank?: number;
   } & React.HTMLProps<HTMLDivElement>
-> = ({ cardId, trained, cardLevel, masterRank, onClick, style }) => {
+> = ({
+  cardId,
+  trained,
+  defaultImage,
+  cardLevel,
+  masterRank,
+  onClick,
+  style,
+}) => {
   const skeleton = CardThumbSkeleton({});
   const classes = useSvgStyles();
   const [cards] = useCachedData<ICardInfo>("cards");
@@ -146,12 +155,18 @@ export const CardThumbMedium: React.FC<
     if (card) {
       getRemoteAssetURL(
         `character/member_cutout/${card.assetbundleName}_rip/${
-          trained ? "after_training" : "normal"
+          defaultImage
+            ? defaultImage === "special_training"
+              ? "after_training"
+              : "normal"
+            : trained
+            ? "after_training"
+            : "normal"
         }.webp`,
         setCardThumbImg
       );
     }
-  }, [card, trained]);
+  }, [card, defaultImage, trained]);
 
   const rarityIcon = trained ? rarityAfterTraining : rarityNormal;
 
