@@ -236,7 +236,7 @@ export function useStrapi(token?: string) {
         (
           await axios.get<AnnouncementModel[]>("/announcements?", {
             params: {
-              _sort: "isPin:DESC",
+              _sort: "isPin:DESC,published_at:DESC",
             },
           })
         ).data,
@@ -254,7 +254,7 @@ export function useStrapi(token?: string) {
             params: {
               _limit: limit,
               _start: page * limit,
-              _sort: "isPin:DESC",
+              _sort: "isPin:DESC,published_at:DESC",
             },
           })
         ).data,
