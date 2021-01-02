@@ -16,7 +16,7 @@ const Countdown: React.FC<React.PropsWithChildren<{ endDate: Date }>> = ({
       endAt={endDate.toISOString()}
       hideYear
       hideMonth
-      // titlePosition="bottom"
+      titlePosition="bottom"
       dayTitle={t("common:countdown.day")}
       hourTitle={t("common:countdown.hour")}
       minuteTitle={t("common:countdown.minute")}
