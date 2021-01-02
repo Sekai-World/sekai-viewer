@@ -91,7 +91,8 @@ const AgendaView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
     if (data)
       getRemoteAssetURL(
         `music/jacket/${data.assetbundleName}_rip/${data.assetbundleName}.webp`,
-        setJacket
+        setJacket,
+        window.isChinaMainland
       );
   }, [data]);
 

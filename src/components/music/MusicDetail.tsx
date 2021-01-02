@@ -190,11 +190,13 @@ const MusicDetail: React.FC<{}> = () => {
     if (music && musicVocal && musicVocal[selectedPreviewVocalType]) {
       getRemoteAssetURL(
         `music/long/${musicVocal[selectedPreviewVocalType].assetbundleName}_rip/${musicVocal[selectedPreviewVocalType].assetbundleName}.mp3`,
-        setLongMusicPlaybackURL
+        setLongMusicPlaybackURL,
+        window.isChinaMainland
       );
       getRemoteAssetURL(
         `music/short/${musicVocal[selectedPreviewVocalType].assetbundleName}_rip/${musicVocal[selectedPreviewVocalType].assetbundleName}_short.mp3`,
-        setShortMusicPlaybackURL
+        setShortMusicPlaybackURL,
+        window.isChinaMainland
       );
     }
   }, [music, musicVocal, selectedPreviewVocalType]);
@@ -212,7 +214,8 @@ const MusicDetail: React.FC<{}> = () => {
           4,
           "0"
         )}.mp4`,
-        setMusicVideoURL
+        setMusicVideoURL,
+        window.isChinaMainland
       );
     }
   }, [music, musicVocal, selectedPreviewVocalType, vocalPreviewVal]);
@@ -295,7 +298,8 @@ const MusicDetail: React.FC<{}> = () => {
     if (music) {
       getRemoteAssetURL(
         `music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}.webp`,
-        setMusicJacket
+        setMusicJacket,
+        window.isChinaMainland
       );
     }
   }, [music]);
