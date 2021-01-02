@@ -124,6 +124,9 @@ const MusicDetail: React.FC<{}> = () => {
   const [musicDanceMember, setMusicDanceMember] = useState<
     IMusicDanceMembers
   >();
+  const [selectedPreviewVocalType, setSelectedPreviewVocalType] = useState<
+    number
+  >(0);
   const [selectedVocalType, setSelectedVocalType] = useState<number>(0);
   const [vocalPreviewVal, setVocalPreviewVal] = useState<string>("1");
   const [vocalDisabled, setVocalDisabled] = useState<boolean>(false);
@@ -184,20 +187,20 @@ const MusicDetail: React.FC<{}> = () => {
   }, [danceMembers, musicId]);
 
   useEffect(() => {
-    if (music && musicVocal && musicVocal[selectedVocalType]) {
+    if (music && musicVocal && musicVocal[selectedPreviewVocalType]) {
       getRemoteAssetURL(
-        `music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`,
+        `music/long/${musicVocal[selectedPreviewVocalType].assetbundleName}_rip/${musicVocal[selectedPreviewVocalType].assetbundleName}.mp3`,
         setLongMusicPlaybackURL
       );
       getRemoteAssetURL(
-        `music/short/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}_short.mp3`,
+        `music/short/${musicVocal[selectedPreviewVocalType].assetbundleName}_rip/${musicVocal[selectedPreviewVocalType].assetbundleName}_short.mp3`,
         setShortMusicPlaybackURL
       );
     }
-  }, [music, musicVocal, selectedVocalType]);
+  }, [music, musicVocal, selectedPreviewVocalType]);
 
   useEffect(() => {
-    if (music && musicVocal && musicVocal[selectedVocalType]) {
+    if (music && musicVocal && musicVocal[selectedPreviewVocalType]) {
       getRemoteAssetURL(
         `live/2dmode/${
           vocalPreviewVal === "original"
@@ -212,17 +215,16 @@ const MusicDetail: React.FC<{}> = () => {
         setMusicVideoURL
       );
     }
-  }, [music, musicVocal, selectedVocalType, vocalPreviewVal]);
+  }, [music, musicVocal, selectedPreviewVocalType, vocalPreviewVal]);
 
   useEffect(() => {
     if (
       vocalPreviewVal === "1" &&
       musicVocal &&
-      musicVocal[selectedVocalType] &&
+      musicVocal[selectedPreviewVocalType] &&
       music &&
       longMusicPlaybackURL
     ) {
-      // const url = `${process.env.REACT_APP_ASSET_DOMAIN_WW}/file/sekai-assets/music/long/${musicVocal[selectedVocalType].assetbundleName}_rip/${musicVocal[selectedVocalType].assetbundleName}.mp3`;
       setTrimOptions({
         sourceURL: longMusicPlaybackURL,
         trimDuration: music.fillerSec,
@@ -236,7 +238,7 @@ const MusicDetail: React.FC<{}> = () => {
   }, [
     music,
     musicVocal,
-    selectedVocalType,
+    selectedPreviewVocalType,
     vocalPreviewVal,
     setTrimOptions,
     setTrimLoading,
@@ -244,19 +246,17 @@ const MusicDetail: React.FC<{}> = () => {
   ]);
 
   useEffect(() => {
-    if (musicVocal && musicVocal[selectedVocalType] && music && trimmedMP3URL) {
+    if (
+      musicVocal &&
+      musicVocal[selectedPreviewVocalType] &&
+      music &&
+      trimmedMP3URL
+    ) {
       setTrimmedLongMusicPlaybackURL(trimmedMP3URL);
     } else {
       setTrimmedLongMusicPlaybackURL(undefined);
     }
-  }, [music, musicVocal, selectedVocalType, trimmedMP3URL]);
-
-  // useEffect(() => {
-  //   if (musicVocalTypes.length) {
-  //     console.log(musicVocalTypes)
-  //     setSelectedVocalType(musicVocalTypes[0])
-  //   }
-  // }, [musicVocalTypes])
+  }, [music, musicVocal, selectedPreviewVocalType, trimmedMP3URL]);
 
   const getVocalCharaIcons: (index: number) => JSX.Element = useCallback(
     (index: number) => {
@@ -322,7 +322,7 @@ const MusicDetail: React.FC<{}> = () => {
       window.navigator.mediaSession!.metadata = new MediaMetadata({
         title: music?.title,
         artist: music?.composer,
-        album: musicVocal[selectedVocalType].caption,
+        album: musicVocal[selectedPreviewVocalType].caption,
         artwork: [
           {
             src: musicJacket,
@@ -332,7 +332,7 @@ const MusicDetail: React.FC<{}> = () => {
         ],
       });
     }
-  }, [music, musicVocal, musicJacket, selectedVocalType]);
+  }, [music, musicVocal, musicJacket, selectedPreviewVocalType]);
 
   const getActalPlaybackTime = useCallback(
     (event: Event) => {
@@ -356,45 +356,56 @@ const MusicDetail: React.FC<{}> = () => {
     [actualPlaybackTime, humanizeDurationShort, music]
   );
 
-  const VocalTypeSelector: React.FC<{}> = useCallback(() => {
-    return (
-      <Grid item container xs={12} alignItems="center" justify="space-between">
-        <Grid item xs={12} md={2}>
-          <Typography classes={{ root: interactiveClasses.caption }}>
-            {t("music:vocal")}
-          </Typography>
+  const VocalTypeSelector: React.FC<{
+    vocalType: number;
+    onSelect: (value: number) => void;
+  }> = useCallback(
+    ({ vocalType, onSelect }) => {
+      return (
+        <Grid
+          item
+          container
+          xs={12}
+          alignItems="center"
+          justify="space-between"
+        >
+          <Grid item xs={12} md={2}>
+            <Typography classes={{ root: interactiveClasses.caption }}>
+              {t("music:vocal")}
+            </Typography>
+          </Grid>
+          <Grid item container xs={12} md={9} spacing={1}>
+            <FormControl disabled={vocalDisabled}>
+              <RadioGroup
+                row
+                aria-label="vocal type"
+                name="vocal-type"
+                value={vocalType}
+                onChange={(e, v) => onSelect(Number(v))}
+              >
+                {musicVocalTypes.map((elem, idx) => (
+                  <FormControlLabel
+                    key={`vocal-type-${idx}`}
+                    value={idx}
+                    control={<Radio color="primary"></Radio>}
+                    label={getVocalCharaIcons(idx)}
+                    labelPlacement="end"
+                  />
+                ))}
+              </RadioGroup>
+            </FormControl>
+          </Grid>
         </Grid>
-        <Grid item container xs={12} md={9} spacing={1}>
-          <FormControl disabled={vocalDisabled}>
-            <RadioGroup
-              row
-              aria-label="vocal type"
-              name="vocal-type"
-              value={selectedVocalType}
-              onChange={(e, v) => setSelectedVocalType(Number(v))}
-            >
-              {musicVocalTypes.map((elem, idx) => (
-                <FormControlLabel
-                  key={`vocal-type-${idx}`}
-                  value={idx}
-                  control={<Radio color="primary"></Radio>}
-                  label={getVocalCharaIcons(idx)}
-                  labelPlacement="end"
-                />
-              ))}
-            </RadioGroup>
-          </FormControl>
-        </Grid>
-      </Grid>
-    );
-  }, [
-    interactiveClasses.caption,
-    t,
-    vocalDisabled,
-    selectedVocalType,
-    musicVocalTypes,
-    getVocalCharaIcons,
-  ]);
+      );
+    },
+    [
+      interactiveClasses.caption,
+      t,
+      vocalDisabled,
+      musicVocalTypes,
+      getVocalCharaIcons,
+    ]
+  );
 
   return music && musicVocals.length ? (
     <Fragment>
@@ -467,7 +478,10 @@ const MusicDetail: React.FC<{}> = () => {
                 </RadioGroup>
               </Grid>
             </Grid>
-            <VocalTypeSelector />
+            <VocalTypeSelector
+              vocalType={selectedPreviewVocalType}
+              onSelect={(v) => setSelectedPreviewVocalType(v)}
+            />
             {vocalPreviewVal === "1" ? (
               <Grid
                 item
@@ -729,27 +743,10 @@ const MusicDetail: React.FC<{}> = () => {
       <Container className={layoutClasses.content} maxWidth="sm">
         <Paper className={interactiveClasses.container}>
           <Grid container direction="column" spacing={1}>
-            <Grid item xs={12}>
-              <FormControl disabled={vocalDisabled}>
-                <RadioGroup
-                  row
-                  aria-label="vocal type"
-                  name="vocal-type"
-                  value={selectedVocalType}
-                  onChange={(e, v) => setSelectedVocalType(Number(v))}
-                >
-                  {musicVocalTypes.map((elem, idx) => (
-                    <FormControlLabel
-                      key={`vocal-type-${idx}`}
-                      value={idx}
-                      control={<Radio color="primary"></Radio>}
-                      label={getVocalCharaIcons(idx)}
-                      labelPlacement="end"
-                    />
-                  ))}
-                </RadioGroup>
-              </FormControl>
-            </Grid>
+            <VocalTypeSelector
+              vocalType={selectedVocalType}
+              onSelect={(v) => setSelectedVocalType(v)}
+            />
           </Grid>
         </Paper>
         {musicVocal.length && musicVocal[selectedVocalType] ? (
