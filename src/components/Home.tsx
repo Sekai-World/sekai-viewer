@@ -30,7 +30,7 @@ import { Discord, Patreon } from "mdi-material-ui";
 import React, { Fragment, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Link as RouteLink } from "react-router-dom";
-import FlipCountdown from "@rumess/react-flip-countdown";
+// import FlipCountdown from "@rumess/react-flip-countdown";
 import { IUserInformationInfo } from "../types";
 import { getJPTime, useCachedData } from "../utils";
 import AnnouncementWidget from "./announcement/AnnouncementWidget";
@@ -215,12 +215,12 @@ function Home() {
               <Typography align="center" variant="h4">
                 {t("home:new_year_countdown")}
               </Typography>
-              <FlipCountdown
+              {/* <FlipCountdown
                 endAt="2020-12-31T15:00:00Z"
                 hideYear
                 hideMonth
                 titlePosition="bottom"
-              />
+              /> */}
             </Fragment>
           ) : (
             new Date().getTime() - 1609426800000 < 259200000 && (
@@ -311,11 +311,8 @@ function Home() {
               <br></br>
             </Fragment>
           )}
-          <RouteLink to="/about" style={{ textDecoration: "none" }}>
-            <Link>
-              <OpenInNew fontSize="inherit" />{" "}
-              {t("home:alert1.see_contrib_list")}
-            </Link>
+          <RouteLink to="/about" className={interactiveClasses.noDecoration}>
+            <OpenInNew fontSize="inherit" /> {t("home:alert1.see_contrib_list")}
           </RouteLink>
           <br></br>
           {t("home:alert1.contact")}:

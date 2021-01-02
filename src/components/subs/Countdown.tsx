@@ -1,7 +1,6 @@
-import FlipCountdown from "@rumess/react-flip-countdown";
+import FlipCountdown from "@sekai-world/react-flip-countdown";
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
-import "./Countdown.css";
 
 const Countdown: React.FC<React.PropsWithChildren<{ endDate: Date }>> = ({
   children,
@@ -12,6 +11,7 @@ const Countdown: React.FC<React.PropsWithChildren<{ endDate: Date }>> = ({
   return new Date() > endDate ? (
     <Fragment>{children}</Fragment>
   ) : (
+    // @ts-ignore
     <FlipCountdown
       endAt={endDate.toISOString()}
       hideYear
