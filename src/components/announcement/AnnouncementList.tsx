@@ -1,5 +1,11 @@
 import { Container, Typography } from "@material-ui/core";
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { AnnouncementModel } from "../../strapi-model";
 import { useLayoutStyles } from "../../styles/layout";
@@ -18,6 +24,10 @@ const AnnouncementList: React.FC<{}> = () => {
   const [lastQueryFin, setLastQueryFin] = useState(false);
   const [page, setPage] = useState(0);
   const [limit] = useState(30);
+
+  useLayoutEffect(() => {
+    document.title = t("title:announcementList");
+  }, [t]);
 
   useEffect(() => {
     getAnnouncementCount().then((data) => {
