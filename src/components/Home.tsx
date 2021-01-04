@@ -6,7 +6,6 @@ import {
   Paper,
   Tab,
   Tabs,
-  // Theme,
   Typography,
   Container,
   useMediaQuery,
@@ -30,7 +29,6 @@ import { Discord, Patreon } from "mdi-material-ui";
 import React, { Fragment, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Link as RouteLink } from "react-router-dom";
-// import FlipCountdown from "@rumess/react-flip-countdown";
 import { IUserInformationInfo } from "../types";
 import { getJPTime, useCachedData } from "../utils";
 import AnnouncementWidget from "./announcement/AnnouncementWidget";
@@ -215,12 +213,6 @@ function Home() {
               <Typography align="center" variant="h4">
                 {t("home:new_year_countdown")}
               </Typography>
-              {/* <FlipCountdown
-                endAt="2020-12-31T15:00:00Z"
-                hideYear
-                hideMonth
-                titlePosition="bottom"
-              /> */}
             </Fragment>
           ) : (
             new Date().getTime() - 1609426800000 < 259200000 && (
@@ -243,6 +235,14 @@ function Home() {
             ) : jpTime === "12/27" ? (
               <img
                 src={`${process.env.PUBLIC_URL}/images/banner-rin-ren.png`}
+                alt="banner"
+                style={{ width: "100%", height: "auto" }}
+                width="1500"
+                height="500"
+              />
+            ) : jpTime === "1/8" ? (
+              <img
+                src={`${process.env.PUBLIC_URL}/images/banner-shiho.png`}
                 alt="banner"
                 style={{ width: "100%", height: "auto" }}
                 width="1500"
@@ -311,7 +311,11 @@ function Home() {
               <br></br>
             </Fragment>
           )}
-          <RouteLink to="/about" className={interactiveClasses.noDecoration}>
+          <RouteLink
+            to="/about"
+            className={interactiveClasses.noDecoration}
+            style={{ color: theme.palette.primary.main }}
+          >
             <OpenInNew fontSize="inherit" /> {t("home:alert1.see_contrib_list")}
           </RouteLink>
           <br></br>

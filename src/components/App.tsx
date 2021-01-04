@@ -123,6 +123,7 @@ const AnnouncementList = lazy(() => import("./announcement/AnnouncementList"));
 const AnnouncementDetail = lazy(
   () => import("./announcement/AnnouncementDetail")
 );
+const Live2D = lazy(() => import("./live2d/Live2D"));
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -442,8 +443,8 @@ function App() {
         {
           text: "Live2D",
           icon: <ControlCamera></ControlCamera>,
-          to: "/live2d",
-          disabled: true,
+          to: "/l2d",
+          disabled: false,
         },
       ],
       [
@@ -916,6 +917,9 @@ function App() {
                 </Route>
                 <Route path="/announcement/:id">
                   <AnnouncementDetail />
+                </Route>
+                <Route path="/l2d">
+                  <Live2D />
                 </Route>
               </Suspense>
             </Switch>

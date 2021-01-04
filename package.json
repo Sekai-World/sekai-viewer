@@ -9,6 +9,7 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@material-ui/pickers": "^3.2.10",
+    "@sekai-world/find-live2d-v3": "^1.6.10",
     "@sekai-world/react-flip-countdown": "^1.2.0",
     "axios": "^0.20.0",
     "cron": "^1.8.2",

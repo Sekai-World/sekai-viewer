@@ -9,9 +9,19 @@ module.exports = function (app) {
     })
   );
   app.use(
+    "/minio/",
+    createProxyMiddleware({
+      target: "https://minio.dnaroma.eu",
+      changeOrigin: true,
+      pathRewrite: {
+        "^/minio/": "/",
+      },
+    })
+  );
+  app.use(
     "/api",
     createProxyMiddleware({
-      target: "https://api.sekai.best/",
+      target: "https://api.sekai.best",
       changeOrigin: true,
       pathRewrite: {
         "^/api": "/",
