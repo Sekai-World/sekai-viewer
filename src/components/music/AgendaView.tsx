@@ -16,6 +16,7 @@ import { IMusicDifficultyInfo, IMusicInfo } from "../../types";
 import { getRemoteAssetURL, useCachedData } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
 import { ContentTrans } from "../subs/ContentTrans";
+import SpoilerTag from "../subs/SpoilerTag";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -163,6 +164,9 @@ const AgendaView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
           </Grid>
           <Grid item xs={6} md={7}>
             <Grid container direction="column" spacing={1}>
+              <Grid item>
+                <SpoilerTag releaseTime={new Date(data.publishedAt)} />
+              </Grid>
               <Grid item>
                 <ContentTrans
                   mode={contentTransMode}

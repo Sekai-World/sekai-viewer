@@ -12,6 +12,7 @@ import { SettingContext } from "../../context";
 import { IGachaInfo } from "../../types";
 import { getRemoteAssetURL } from "../../utils";
 import { ContentTrans } from "../subs/ContentTrans";
+import SpoilerTag from "../subs/SpoilerTag";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -68,6 +69,7 @@ const GridView: React.FC<{ data?: IGachaInfo }> = ({ data }) => {
           title={data.name}
         ></CardMedia>
         <CardContent style={{ paddingBottom: "16px" }}>
+          <SpoilerTag releaseTime={new Date(data.startAt)} />
           <ContentTrans
             mode={contentTransMode}
             contentKey={`gacha_name:${data.id}`}
@@ -81,6 +83,12 @@ const GridView: React.FC<{ data?: IGachaInfo }> = ({ data }) => {
               className: classes.subheader,
             }}
           />
+          <Typography variant="body2" color="textSecondary">
+            {new Date(data.startAt).toLocaleString()} ~
+          </Typography>
+          <Typography variant="body2" color="textSecondary">
+            {new Date(data.endAt).toLocaleString()}
+          </Typography>
         </CardContent>
       </Card>
     </Link>

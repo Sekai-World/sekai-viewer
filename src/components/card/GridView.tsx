@@ -15,6 +15,7 @@ import { useCharaName } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
 import { CardSmallImage } from "../subs/CardImage";
 import { ContentTrans } from "../subs/ContentTrans";
+import SpoilerTag from "../subs/SpoilerTag";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -68,6 +69,9 @@ const GridView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
         </CardMedia>
         <CardContent style={{ paddingBottom: "16px" }}>
           <Grid container direction="column" spacing={1}>
+            <Grid item>
+              <SpoilerTag releaseTime={new Date(data.releaseAt)} />
+            </Grid>
             <Grid item>
               <ContentTrans
                 mode={contentTransMode}

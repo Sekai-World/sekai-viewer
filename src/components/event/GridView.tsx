@@ -15,6 +15,7 @@ import { IEventInfo } from "../../types";
 import { getRemoteAssetURL } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
 import { ContentTrans } from "../subs/ContentTrans";
+import SpoilerTag from "../subs/SpoilerTag";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -88,6 +89,9 @@ const GridView: React.FC<{ data?: IEventInfo }> = ({ data }) => {
         <CardContent style={{ paddingBottom: "16px" }}>
           <Grid container direction="column" spacing={1}>
             <Grid item>
+              <SpoilerTag releaseTime={new Date(data.startAt)} />
+            </Grid>
+            <Grid item>
               <ContentTrans
                 mode={contentTransMode}
                 contentKey={`event_name:${data.id}`}
@@ -101,6 +105,12 @@ const GridView: React.FC<{ data?: IEventInfo }> = ({ data }) => {
             <Grid item>
               <Typography variant="body2" color="textSecondary">
                 {t(`event:type.${data.eventType}`)}
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                {new Date(data.startAt).toLocaleString()} ~
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                {new Date(data.aggregateAt).toLocaleString()}
               </Typography>
             </Grid>
           </Grid>

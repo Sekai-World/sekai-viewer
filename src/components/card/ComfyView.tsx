@@ -7,6 +7,7 @@ import { ICardInfo } from "../../types";
 import { useCharaName } from "../../utils";
 import { CardThumbSkeleton, CardThumb } from "../subs/CardThumb";
 import { ContentTrans } from "../subs/ContentTrans";
+import SpoilerTag from "../subs/SpoilerTag";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -100,6 +101,11 @@ const ComfyView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
           </Grid>
           <Grid item style={{ width: "100%" }}>
             <Grid container direction="column" spacing={1}>
+              <Grid item>
+                <Grid container justify="center">
+                  <SpoilerTag releaseTime={new Date(data.releaseAt)} />
+                </Grid>
+              </Grid>
               <Grid item>
                 <ContentTrans
                   mode={contentTransMode}

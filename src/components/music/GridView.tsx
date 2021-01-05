@@ -15,6 +15,7 @@ import { IMusicInfo } from "../../types";
 import { getRemoteAssetURL } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
 import { ContentTrans } from "../subs/ContentTrans";
+import SpoilerTag from "../subs/SpoilerTag";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -79,6 +80,9 @@ const GridView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
         ></CardMedia>
         <CardContent style={{ paddingBottom: "16px" }}>
           <Grid container direction="column" spacing={1}>
+            <Grid item>
+              <SpoilerTag releaseTime={new Date(data.publishedAt)} />
+            </Grid>
             <Grid item>
               <ContentTrans
                 mode={contentTransMode}

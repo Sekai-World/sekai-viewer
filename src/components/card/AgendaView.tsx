@@ -7,6 +7,7 @@ import { ICardInfo } from "../../types";
 import { useCharaName } from "../../utils";
 import { CardThumbSkeleton, CardThumb } from "../subs/CardThumb";
 import { ContentTrans } from "../subs/ContentTrans";
+import SpoilerTag from "../subs/SpoilerTag";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -112,6 +113,9 @@ const AgendaView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
           </Grid>
           <Grid item xs={6} md={7}>
             <Grid container direction="column" spacing={1}>
+              <Grid item>
+                <SpoilerTag releaseTime={new Date(data.releaseAt)} />
+              </Grid>
               <Grid item>
                 <ContentTrans
                   mode={contentTransMode}
