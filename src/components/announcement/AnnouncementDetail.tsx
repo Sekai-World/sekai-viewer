@@ -1,5 +1,11 @@
 import { Container, Divider, Grid, Typography } from "@material-ui/core";
-import React, { Fragment, useEffect, useMemo, useState } from "react";
+import React, {
+  Fragment,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import MarkdownIt from "markdown-it";
@@ -28,6 +34,12 @@ const AnnouncementDetail: React.FC<{}> = () => {
   );
 
   const [announcement, setAnnouncement] = useState<AnnouncementModel>();
+
+  useLayoutEffect(() => {
+    document.title = t("title:announcementDetail", {
+      name: announcement?.title,
+    });
+  }, [announcement, t]);
 
   useEffect(() => {
     getAnnouncementById(id).then(setAnnouncement);

@@ -54,6 +54,7 @@ export function initGlobalI18n() {
         "auth",
         "announcement",
         "comment",
+        "live2d",
       ],
       fallbackLng: {
         default: ["en"],
