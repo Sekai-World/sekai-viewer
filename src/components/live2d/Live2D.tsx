@@ -162,26 +162,42 @@ const Live2DView: React.FC<{}> = () => {
           AdditionalMotionData: any[];
           CategoryRules: any[];
         }>(
-          `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets/live2d/model/${modelName}_rip/buildmodeldata.asset`,
+          `${
+            window.isChinaMainland
+              ? process.env.REACT_APP_ASSET_DOMAIN_CN
+              : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+          }/live2d/model/${modelName}_rip/buildmodeldata.asset`,
           { responseType: "json" }
         );
 
         setProgress(20);
         setProgressWords(t("live2d:load_progress.model_texture"));
         await Axios.get(
-          `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets/live2d/model/${modelName}_rip/${modelData.TextureNames[0]}`
+          `${
+            window.isChinaMainland
+              ? process.env.REACT_APP_ASSET_DOMAIN_CN
+              : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+          }/live2d/model/${modelName}_rip/${modelData.TextureNames[0]}`
         );
 
         setProgress(40);
         setProgressWords(t("live2d:load_progress.model_moc3"));
         await Axios.get(
-          `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets/live2d/model/${modelName}_rip/${modelData.Moc3FileName}`
+          `${
+            window.isChinaMainland
+              ? process.env.REACT_APP_ASSET_DOMAIN_CN
+              : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+          }/live2d/model/${modelName}_rip/${modelData.Moc3FileName}`
         );
 
         setProgress(60);
         setProgressWords(t("live2d:load_progress.model_physics"));
         await Axios.get(
-          `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets/live2d/model/${modelName}_rip/${modelData.PhysicsFileName}`
+          `${
+            window.isChinaMainland
+              ? process.env.REACT_APP_ASSET_DOMAIN_CN
+              : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+          }/live2d/model/${modelName}_rip/${modelData.PhysicsFileName}`
         );
 
         let motionData;
@@ -192,7 +208,11 @@ const Live2DView: React.FC<{}> = () => {
             motions: string[];
             expressions: string[];
           }>(
-            `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets/live2d/motion/${motionName}_rip/BuildMotionData.json`,
+            `${
+              window.isChinaMainland
+                ? process.env.REACT_APP_ASSET_DOMAIN_CN
+                : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+            }/live2d/motion/${motionName}_rip/BuildMotionData.json`,
             { responseType: "json" }
           );
           motionData = data;
@@ -208,7 +228,11 @@ const Live2DView: React.FC<{}> = () => {
         const filename = modelData.Moc3FileName.replace(".moc3.bytes", "");
         const model = await live2dManager.addModel(
           {
-            path: `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets/live2d/model/${modelName}_rip/`,
+            path: `${
+              window.isChinaMainland
+                ? process.env.REACT_APP_ASSET_DOMAIN_CN
+                : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+            }/live2d/model/${modelName}_rip/`,
             fileName: filename,
             modelName,
             modelSize: wrap.current!.clientWidth,
@@ -216,11 +240,19 @@ const Live2DView: React.FC<{}> = () => {
             motions: [
               ...motionData.motions.map((name) => ({
                 name,
-                url: `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets/live2d/motion/${motionName}_rip/${name}.motion3.json`,
+                url: `${
+                  window.isChinaMainland
+                    ? process.env.REACT_APP_ASSET_DOMAIN_CN
+                    : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+                }/live2d/motion/${motionName}_rip/${name}.motion3.json`,
               })),
               ...motionData.expressions.map((name) => ({
                 name,
-                url: `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets/live2d/motion/${motionName}_rip/${name}.motion3.json`,
+                url: `${
+                  window.isChinaMainland
+                    ? process.env.REACT_APP_ASSET_DOMAIN_CN
+                    : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+                }/live2d/motion/${motionName}_rip/${name}.motion3.json`,
               })),
             ],
             expressions: [],
@@ -256,7 +288,11 @@ const Live2DView: React.FC<{}> = () => {
       AdditionalMotionData: any[];
       CategoryRules: any[];
     }>(
-      `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets/live2d/model/${modelName}_rip/buildmodeldata.asset`,
+      `${
+        window.isChinaMainland
+          ? process.env.REACT_APP_ASSET_DOMAIN_CN
+          : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+      }/live2d/model/${modelName}_rip/buildmodeldata.asset`,
       { responseType: "json" }
     );
 
@@ -306,10 +342,12 @@ const Live2DView: React.FC<{}> = () => {
 
     setProgress(10);
     setProgressWords(t("live2d:pack_progress.download_texture"));
-    const {
-      data: texture,
-    } = await Axios.get(
-      `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets/live2d/model/${modelName}_rip/${modelData.TextureNames[0]}`,
+    const { data: texture } = await Axios.get(
+      `${
+        window.isChinaMainland
+          ? process.env.REACT_APP_ASSET_DOMAIN_CN
+          : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+      }/live2d/model/${modelName}_rip/${modelData.TextureNames[0]}`,
       { responseType: "blob" }
     );
 
@@ -317,10 +355,12 @@ const Live2DView: React.FC<{}> = () => {
 
     setProgress(20);
     setProgressWords(t("live2d:pack_progress.download_moc3"));
-    const {
-      data: moc3,
-    } = await Axios.get(
-      `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets/live2d/model/${modelName}_rip/${modelData.Moc3FileName}`,
+    const { data: moc3 } = await Axios.get(
+      `${
+        window.isChinaMainland
+          ? process.env.REACT_APP_ASSET_DOMAIN_CN
+          : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+      }/live2d/model/${modelName}_rip/${modelData.Moc3FileName}`,
       { responseType: "blob" }
     );
 
@@ -328,10 +368,12 @@ const Live2DView: React.FC<{}> = () => {
 
     setProgress(30);
     setProgressWords(t("live2d:pack_progress.download_physics"));
-    const {
-      data: physics,
-    } = await Axios.get(
-      `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets/live2d/model/${modelName}_rip/${modelData.PhysicsFileName}`,
+    const { data: physics } = await Axios.get(
+      `${
+        window.isChinaMainland
+          ? process.env.REACT_APP_ASSET_DOMAIN_CN
+          : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+      }/live2d/model/${modelName}_rip/${modelData.PhysicsFileName}`,
       { responseType: "blob" }
     );
 
@@ -356,7 +398,11 @@ const Live2DView: React.FC<{}> = () => {
     for (let [name, motion] of Object.entries(model3.FileReferences.Motions)) {
       tasks.push(
         Axios.get<Blob>(
-          `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets/live2d/motion/${motionName}_rip/${name}.motion3.json`,
+          `${
+            window.isChinaMainland
+              ? process.env.REACT_APP_ASSET_DOMAIN_CN
+              : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+          }/live2d/motion/${motionName}_rip/${name}.motion3.json`,
           { responseType: "blob" }
         ).then(({ data }) => {
           updateCount();
