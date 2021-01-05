@@ -18,19 +18,36 @@ import {
   Grid,
   IconButton,
   LinearProgress,
+  Menu,
+  MenuItem,
+  Paper,
   TextField,
+  Toolbar,
+  Tooltip,
   Typography,
+  useTheme,
 } from "@material-ui/core";
 import modelList from "./modelList.json";
 import { useTranslation } from "react-i18next";
 import { useLayoutStyles } from "../../styles/layout";
-import { CloudDownload } from "@material-ui/icons";
+import {
+  Camera,
+  CloudDownload,
+  Fullscreen,
+  FullscreenExit,
+  Videocam,
+  VideocamOff,
+} from "@material-ui/icons";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
+import fscreen from "fscreen";
+// @ts-ignore
+import { CanvasRecorder } from "@tawaship/canvas-recorder";
 
 const Live2DView: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
+  const theme = useTheme();
 
   const live2dInstance = useMemo(() => new Live2D(), []);
   const [live2dManager, setLive2dManager] = useState<LAppLive2DManager>();
@@ -49,28 +66,43 @@ const Live2DView: React.FC<{}> = () => {
   const [showProgress, setShowProgress] = useState(false);
   const [progress, setProgress] = useState(0);
   const [progressWords, setProgressWords] = useState("");
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recorder, setRecorder] = useState<any>();
+  const [recordType, setRecordType] = useState("");
+  const [anchorEl, setAnchorEl] = useState<HTMLElement>();
 
   const wrap = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
 
+  const fullScreenEnabled = fscreen.fullscreenEnabled;
+
   const updateSize = useCallback(() => {
     if (wrap.current && canvas.current && model) {
-      canvas.current.width = wrap.current.clientWidth;
-      // model.disappear();
+      // canvas.current.width = wrap.current.clientWidth;
+      const styleWidth = wrap.current.clientWidth;
+      const styleHeight =
+        styleWidth >= theme.breakpoints.values.md
+          ? (styleWidth * 9) / 16
+          : (styleWidth * 4) / 3;
+      const displayWidth = styleWidth * window.devicePixelRatio;
+      const displayHeight = styleHeight * window.devicePixelRatio;
       model._modelSize =
-        wrap.current!.clientWidth > 678
-          ? wrap.current!.clientWidth * 1.5
-          : wrap.current!.clientWidth * 3.5;
-      canvas.current.height =
-        canvas.current.width > 678
-          ? (canvas.current.width * 9) / 16
-          : (canvas.current.width * 4) / 3;
+        displayWidth >= theme.breakpoints.values.md
+          ? displayWidth * 1.5
+          : displayWidth * 3.5;
+
+      canvas.current.style.width = `${styleWidth}px`;
+      canvas.current.style.height = `${styleHeight}px`;
+      canvas.current.width = displayWidth;
+      canvas.current.height = displayHeight;
+
       model.appear({
         pointX: 150,
-        pointY: 100,
+        pointY: 70,
       });
     }
-  }, [model]);
+  }, [model, theme.breakpoints.values.md]);
 
   useLayoutEffect(() => {
     const _us = updateSize;
@@ -87,6 +119,9 @@ const Live2DView: React.FC<{}> = () => {
 
   useLayoutEffect(() => {
     if (wrap.current && canvas.current) {
+      canvas.current.getContext("webgl", {
+        preserveDrawingBuffer: true,
+      });
       setLive2dManager(
         live2dInstance.initialize(undefined, {
           wrap: wrap.current,
@@ -98,6 +133,17 @@ const Live2DView: React.FC<{}> = () => {
       live2dInstance.release();
     };
   }, [live2dInstance]);
+
+  useLayoutEffect(() => {
+    let handler: (e?: Event) => void;
+    if (fullScreenEnabled) {
+      handler = () => setIsFullscreen(!!fscreen.fullscreenElement);
+      fscreen.addEventListener("fullscreenchange", handler);
+    }
+    return () => {
+      if (handler) fscreen.removeEventListener("fullscreenchange", handler);
+    };
+  }, [fullScreenEnabled]);
 
   useEffect(() => {
     const func = async () => {
@@ -332,6 +378,40 @@ const Live2DView: React.FC<{}> = () => {
     setProgressWords("");
   }, [expressions, modelName, motionName, motions, t]);
 
+  const handleScreenshot = useCallback(() => {
+    if (canvas.current) {
+      const screenshot = canvas.current.toDataURL();
+      saveAs(screenshot);
+    }
+  }, []);
+
+  const handleRecord = useCallback(
+    async (mimeType: string) => {
+      if (isRecording) {
+        // end record
+        const movie = await recorder!.finishAsync();
+        saveAs(movie.blobURL);
+        recorder.destroy();
+        setRecorder(undefined);
+        setIsRecording(false);
+      } else {
+        // start record
+        setRecordType(mimeType);
+        const canvasRecorder = await CanvasRecorder.createAsync(
+          canvas.current!,
+          {
+            mimeType,
+          }
+        );
+        setRecorder(canvasRecorder);
+        canvasRecorder.start();
+        setAnchorEl(undefined);
+        setIsRecording(true);
+      }
+    },
+    [isRecording, recorder]
+  );
+
   return (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
@@ -367,84 +447,7 @@ const Live2DView: React.FC<{}> = () => {
           >
             {t("common:show")}
           </Button>
-          {model && (
-            <IconButton disabled={!model} onClick={handleDownload}>
-              <CloudDownload fontSize="inherit" />
-            </IconButton>
-          )}
         </Grid>
-        {model && (
-          <Fragment>
-            <Grid item xs={9} md={4} lg={3} xl={2}>
-              <Autocomplete
-                value={selectedMotion}
-                onChange={(e, v) => setSelectedMotion(v)}
-                options={motions}
-                getOptionLabel={(option) => option}
-                renderInput={(props) => (
-                  <TextField {...props} label={t("live2d:select.motions")} />
-                )}
-              />
-            </Grid>
-            <Grid item xs={2}>
-              <Button
-                disabled={!selectedMotion}
-                variant="contained"
-                onClick={() => {
-                  if (selectedMotion) {
-                    model.startMotion({
-                      groupName: selectedMotion,
-                      no: 0,
-                      priority: 3,
-                      autoIdle: false,
-                      autoAppear: false,
-                      fadeInTime: 0.1,
-                      fadeOutTime: 0.1,
-                    });
-                  }
-                }}
-              >
-                {t("common:apply")}
-              </Button>
-            </Grid>
-            <Grid item xs={9} md={4} lg={3} xl={2}>
-              <Autocomplete
-                value={selectedExpression}
-                onChange={(e, v) => setSelectedExpression(v)}
-                options={expressions}
-                getOptionLabel={(option) => option}
-                renderInput={(props) => (
-                  <TextField
-                    {...props}
-                    label={t("live2d:select.expressions")}
-                  />
-                )}
-              />
-            </Grid>
-
-            <Grid item xs={2}>
-              <Button
-                disabled={!selectedExpression}
-                variant="contained"
-                onClick={() => {
-                  if (selectedExpression) {
-                    model.startMotion({
-                      groupName: selectedExpression,
-                      no: 0,
-                      priority: 3,
-                      autoIdle: false,
-                      autoAppear: false,
-                      fadeInTime: 0.1,
-                      fadeOutTime: 0.1,
-                    });
-                  }
-                }}
-              >
-                {t("common:apply")}
-              </Button>
-            </Grid>
-          </Fragment>
-        )}
       </Grid>
       {showProgress && (
         <Container className={layoutClasses.content}>
@@ -453,6 +456,199 @@ const Live2DView: React.FC<{}> = () => {
         </Container>
       )}
       <Container ref={wrap} className={layoutClasses.content}>
+        {model && (
+          <Toolbar component={Paper}>
+            <Grid container spacing={1} alignItems="center">
+              <Grid item>
+                <Tooltip title={t("live2d:tooltip.download") as string}>
+                  <IconButton disabled={!model} onClick={handleDownload}>
+                    <CloudDownload fontSize="inherit" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title={t("live2d:tooltip.fullscreen") as string}>
+                  {isFullscreen ? (
+                    <IconButton
+                      disabled={!fullScreenEnabled}
+                      onClick={() => {
+                        fscreen.exitFullscreen();
+                      }}
+                    >
+                      <FullscreenExit fontSize="inherit" />
+                    </IconButton>
+                  ) : (
+                    <IconButton
+                      disabled={!fullScreenEnabled}
+                      onClick={() => {
+                        fscreen.requestFullscreen(wrap.current!);
+                      }}
+                    >
+                      <Fullscreen fontSize="inherit" />
+                    </IconButton>
+                  )}
+                </Tooltip>
+                <Tooltip title={t("live2d:tooltip.shot") as string}>
+                  <IconButton disabled={!model} onClick={handleScreenshot}>
+                    <Camera fontSize="inherit" />
+                  </IconButton>
+                </Tooltip>
+                {window.MediaRecorder && (
+                  <Fragment>
+                    <Tooltip
+                      title={
+                        isRecording
+                          ? (t("live2d:tooltip.stop_record") as string)
+                          : (t("live2d:tooltip.start_record") as string)
+                      }
+                    >
+                      <IconButton
+                        disabled={!model}
+                        onClick={(e) => {
+                          if (isRecording) {
+                            handleRecord(recordType);
+                          } else {
+                            setAnchorEl(e.currentTarget);
+                          }
+                        }}
+                      >
+                        {isRecording ? (
+                          <Videocam fontSize="inherit" />
+                        ) : (
+                          <VideocamOff fontSize="inherit" />
+                        )}
+                      </IconButton>
+                    </Tooltip>
+                    <Menu
+                      anchorEl={anchorEl}
+                      open={!!anchorEl}
+                      onClose={() => setAnchorEl(undefined)}
+                    >
+                      <MenuItem
+                        disabled={
+                          !window.MediaRecorder.isTypeSupported(
+                            "video/webm; codecs=vp8"
+                          )
+                        }
+                        onClick={() => {
+                          handleRecord("video/webm; codecs=vp8");
+                        }}
+                      >
+                        WebM VP8
+                      </MenuItem>
+                      <MenuItem
+                        disabled={
+                          !window.MediaRecorder.isTypeSupported(
+                            "video/webm; codecs=vp9"
+                          )
+                        }
+                        onClick={() => {
+                          handleRecord("video/webm; codecs=vp9");
+                        }}
+                      >
+                        WebM VP9
+                      </MenuItem>
+                      <MenuItem
+                        disabled={
+                          !window.MediaRecorder.isTypeSupported(
+                            "video/webm; codecs=h264"
+                          )
+                        }
+                        onClick={() => {
+                          handleRecord("video/webm; codecs=h264");
+                        }}
+                      >
+                        WebM H.264 (MKV)
+                      </MenuItem>
+                      <MenuItem
+                        disabled={
+                          !window.MediaRecorder.isTypeSupported(
+                            "video/webm; codecs=h265"
+                          )
+                        }
+                        onClick={() => {
+                          handleRecord("video/webm; codecs=h265");
+                        }}
+                      >
+                        WebM H.265
+                      </MenuItem>
+                    </Menu>
+                  </Fragment>
+                )}
+              </Grid>
+              <Grid item>
+                <Grid container>
+                  <Autocomplete
+                    value={selectedMotion}
+                    onChange={(e, v) => setSelectedMotion(v)}
+                    options={motions}
+                    getOptionLabel={(option) => option}
+                    renderInput={(props) => (
+                      <TextField
+                        {...props}
+                        label={t("live2d:select.motions")}
+                      />
+                    )}
+                    style={{ minWidth: "170px" }}
+                  />
+                  <Button
+                    disabled={!selectedMotion}
+                    variant="contained"
+                    onClick={() => {
+                      if (selectedMotion) {
+                        model.startMotion({
+                          groupName: selectedMotion,
+                          no: 0,
+                          priority: 3,
+                          autoIdle: false,
+                          autoAppear: false,
+                          fadeInTime: 0.5,
+                          fadeOutTime: 0.5,
+                        });
+                      }
+                    }}
+                  >
+                    {t("common:apply")}
+                  </Button>
+                </Grid>
+              </Grid>
+              <Grid item>
+                <Grid container>
+                  <Autocomplete
+                    value={selectedExpression}
+                    onChange={(e, v) => setSelectedExpression(v)}
+                    options={expressions}
+                    getOptionLabel={(option) => option}
+                    renderInput={(props) => (
+                      <TextField
+                        {...props}
+                        label={t("live2d:select.expressions")}
+                      />
+                    )}
+                    style={{ minWidth: "170px" }}
+                  />
+                  <Button
+                    disabled={!selectedExpression}
+                    variant="contained"
+                    onClick={() => {
+                      if (selectedExpression) {
+                        model.startMotion({
+                          groupName: selectedExpression,
+                          no: 0,
+                          priority: 3,
+                          autoIdle: false,
+                          autoAppear: false,
+                          fadeInTime: 0.5,
+                          fadeOutTime: 0.5,
+                        });
+                      }
+                    }}
+                  >
+                    {t("common:apply")}
+                  </Button>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Toolbar>
+        )}
         <canvas ref={canvas}></canvas>
       </Container>
     </Fragment>
