@@ -29,8 +29,8 @@ import React, {
 } from "react";
 import { useParams } from "react-router-dom";
 import Viewer from "react-viewer";
-import AudioPlayer from "react-h5-audio-player";
-import "react-h5-audio-player/lib/styles.css";
+// import AudioPlayer from "react-h5-audio-player";
+// import "react-h5-audio-player/lib/styles.css";
 import {
   IMusicAchievement,
   IMusicDanceMembers,
@@ -55,6 +55,9 @@ import MusicVideoPlayer from "../subs/MusicVideoPlayer";
 import { SettingContext } from "../../context";
 import { ContentTrans, ReleaseCondTrans } from "../subs/ContentTrans";
 import ResourceBox from "../subs/ResourceBox";
+import AudioPlayer from "./AudioPlayer";
+import { Howl } from "howler";
+import { saveAs } from "file-saver";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -339,10 +342,9 @@ const MusicDetail: React.FC<{}> = () => {
   }, [music, musicVocal, musicJacket, selectedPreviewVocalType]);
 
   const getActalPlaybackTime = useCallback(
-    (event: Event) => {
+    (howl: Howl) => {
       if (!music || !!actualPlaybackTime) return;
-      const audio = event.currentTarget as HTMLAudioElement;
-      const durationMsec = (audio.duration - music.fillerSec) * 1000;
+      const durationMsec = (howl.duration() - music.fillerSec) * 1000;
       setActualPlaybackTime(
         `${humanizeDurationShort(durationMsec, {
           units: ["s"],
@@ -358,6 +360,19 @@ const MusicDetail: React.FC<{}> = () => {
       );
     },
     [actualPlaybackTime, humanizeDurationShort, music]
+  );
+
+  const onSave = useCallback(
+    (src: string) => {
+      console.log(src);
+      saveAs(
+        src,
+        `${music?.title}-${
+          selectedPreviewVocalType === 0 ? "full" : "preview"
+        }.mp3`
+      );
+    },
+    [music, selectedPreviewVocalType]
   );
 
   const VocalTypeSelector: React.FC<{
@@ -533,7 +548,11 @@ const MusicDetail: React.FC<{}> = () => {
           musicVocalTypes.length &&
           musicVocal.length &&
           shortMusicPlaybackURL && (
-            <AudioPlayer src={shortMusicPlaybackURL} onPlay={onPlay} />
+            <AudioPlayer
+              src={shortMusicPlaybackURL}
+              onPlay={onPlay}
+              onSave={onSave}
+            />
           )}
         {vocalPreviewVal === "1" &&
           musicVocalTypes.length &&
@@ -541,10 +560,13 @@ const MusicDetail: React.FC<{}> = () => {
           longMusicPlaybackURL && (
             <AudioPlayer
               src={
-                trimSilence ? trimmedLongMusicPlaybackURL : longMusicPlaybackURL
+                trimSilence && trimmedLongMusicPlaybackURL
+                  ? trimmedLongMusicPlaybackURL
+                  : longMusicPlaybackURL
               }
               onPlay={onPlay}
-              onCanPlay={getActalPlaybackTime}
+              onLoad={getActalPlaybackTime}
+              onSave={onSave}
             />
           )}
         {["original", "mv_2d"].includes(vocalPreviewVal) &&
