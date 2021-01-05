@@ -4,6 +4,7 @@ import {
   Container,
   Divider,
   Grid,
+  IconButton,
   makeStyles,
   Paper,
   Tab,
@@ -13,7 +14,7 @@ import {
 import { TabContext, TabPanel } from "@material-ui/lab";
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useParams } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import { useLayoutStyles } from "../styles/layout";
 import {
@@ -29,6 +30,7 @@ import { CardThumb } from "./subs/CardThumb";
 import ColorPreview from "./subs/ColorPreview";
 import { SettingContext } from "../context";
 import { CharaNameTrans, ContentTrans } from "./subs/ContentTrans";
+import { OpenInNew } from "@material-ui/icons";
 
 const useStyle = makeStyles((theme) => ({
   tabpanel: {
@@ -65,6 +67,7 @@ const MemberDetail: React.FC<{}> = () => {
   const { t } = useTranslation();
   const { contentTransMode } = useContext(SettingContext)!;
   const getCharaName = useCharaName(contentTransMode);
+  const history = useHistory();
 
   const [cards] = useCachedData<ICardInfo>("cards");
   const [charas] = useCachedData<IGameChara>("gameCharacters");
@@ -355,8 +358,14 @@ const MemberDetail: React.FC<{}> = () => {
                           mode={contentTransMode}
                           contentKey={`character_profile:${charaId}.${key}`}
                           original={charaProfile[key as "height"]}
-                          originalProps={{ align: "right" }}
-                          translatedProps={{ align: "right" }}
+                          originalProps={{
+                            align: "right",
+                            style: { whiteSpace: "pre-line" },
+                          }}
+                          translatedProps={{
+                            align: "right",
+                            style: { whiteSpace: "pre-line" },
+                          }}
                         />
                       </Grid>
                     </Grid>
@@ -365,6 +374,27 @@ const MemberDetail: React.FC<{}> = () => {
                 <Divider style={{ margin: "1% 0" }} />
               </Fragment>
             ))}
+          <Grid
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+              {t("member:scenario")}
+            </Typography>
+            <IconButton
+              onClick={() =>
+                history.push(
+                  `/storyreader/charaStory/${charaProfile.characterId}`
+                )
+              }
+            >
+              <OpenInNew />
+            </IconButton>
+          </Grid>
+          <Divider style={{ margin: "1% 0" }} />
         </Grid>
       </Container>
       {charaSupportUnits.length ? (
