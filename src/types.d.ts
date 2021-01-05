@@ -43,10 +43,11 @@ export interface IGachaInfo {
   rarity4Rate: number;
   startAt: number;
   endAt: number;
+  gachaCeilItemId: number;
   gachaDetails: GachaDetail[];
   gachaBehaviors: GachaBehavior[];
   gachaPickups: GachaPickup[];
-  gachaPickupCostumes: any[];
+  gachaPickupCostumes: never[];
   gachaInformation: GachaInformation;
 }
 
@@ -983,4 +984,13 @@ export interface IEventCard {
   id: number;
   cardId: number;
   eventId: number;
+}
+
+export interface IGachaCeilItem {
+  id: number;
+  gachaId: number;
+  name: string;
+  assetbundleName: string;
+  convertStartAt: number;
+  convertResourceBoxId: number;
 }

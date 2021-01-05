@@ -45,6 +45,7 @@ import {
   INormalMission,
   IEventCard,
   IMusicAchievement,
+  IGachaCeilItem,
 } from "./../types.d";
 import { assetI18n, useAssetI18n } from "./i18n";
 import { useLocation } from "react-router-dom";
@@ -100,6 +101,7 @@ export function useCachedData<
     | ICharacterMission
     | IEventCard
     | IMusicAchievement
+    | IGachaCeilItem
 >(name: string): [T[], React.MutableRefObject<T[]>] {
   const [cached, cachedRef, setCached] = useRefState<T[]>([]);
 

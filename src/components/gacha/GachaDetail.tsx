@@ -11,6 +11,16 @@ import {
   Tabs,
   Typography,
   Container,
+  Tooltip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableBody,
+  TableCell,
 } from "@material-ui/core";
 import { useLayoutStyles } from "../../styles/layout";
 import { TabContext, TabPanel } from "@material-ui/lab";
@@ -19,6 +29,8 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
+  useMemo,
   useState,
 } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -28,6 +40,7 @@ import {
   GachaDetail,
   GachaStatistic,
   ICardInfo,
+  IGachaCeilItem,
   IGachaInfo,
 } from "../../types";
 import { getRemoteAssetURL, useCachedData } from "../../utils";
@@ -37,6 +50,7 @@ import { useTranslation } from "react-i18next";
 import { useAssetI18n } from "../../utils/i18n";
 import { SettingContext } from "../../context";
 import { ContentTrans } from "../subs/ContentTrans";
+import { useInteractiveStyles } from "../../styles/interactive";
 
 const gachaImageNameMap: {
   [key: number]: {
@@ -83,6 +97,9 @@ const useStyles = makeStyles((theme) => ({
   gachaBtn: {
     margin: theme.spacing(0, 1),
   },
+  bannerImg: {
+    maxWidth: "100%",
+  },
 }));
 
 const StarIcon: React.FC<{ num: number }> = ({ num }) => (
@@ -96,15 +113,20 @@ const StarIcon: React.FC<{ num: number }> = ({ num }) => (
 const GachaDetailPage: React.FC<{}> = () => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
+  const interactiveClasses = useInteractiveStyles();
   const { gachaId } = useParams<{ gachaId: string }>();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
   const { contentTransMode } = useContext(SettingContext)!;
 
-  const [gacha, setGacha] = useState<IGachaInfo>();
   const [gachas] = useCachedData<IGachaInfo>("gachas");
+  const [gachaCeilItems] = useCachedData<IGachaCeilItem>("gachaCeilItems");
+  const [cards] = useCachedData<ICardInfo>("cards");
+
+  const [gacha, setGacha] = useState<IGachaInfo>();
+  const [gachaCeilItem, setGachaCeilItem] = useState<IGachaCeilItem>();
   const [visible, setVisible] = useState<boolean>(false);
-  const [picTabVal, setPicTabVal] = useState<string>("4");
+  const [picTabVal, setPicTabVal] = useState<string>("2");
   const [activeIdx, setActiveIdx] = useState<number>(0);
   const [statistic, setStatistic] = useState<GachaStatistic>({
     total: 0,
@@ -116,36 +138,57 @@ const GachaDetailPage: React.FC<{}> = () => {
   const [currentGachaResult, setCurrentGachaResult] = useState<GachaDetail[]>(
     []
   );
-
-  const [cards] = useCachedData<ICardInfo>("cards");
+  const [weights, setWeights] = useState<number[]>([0, 0, 0, 0]);
+  const [normalRates, setNormalRates] = useState<number[]>([0, 0, 0, 0]);
+  const [guaranteedRate, setGuaranteedRate] = useState<number[]>([0, 0, 0, 0]);
+  const [isSummaryDialog, setIsSummaryDialog] = useState(false);
+  const [isDescDialog, setIsDescDialog] = useState(false);
+  const [isCardsDialog, setIsCardsDialog] = useState(false);
+  const [gachaCards, setGachaCards] = useState<number[]>([]);
 
   const doGacha = useCallback(
     (times: number) => {
+      if (!gacha) return;
       const rollTimes = times;
       const rollResult = [
-        gacha?.rarity1Rate,
-        gacha?.rarity1Rate! + gacha?.rarity2Rate!,
-        gacha?.rarity1Rate! + gacha?.rarity2Rate! + gacha?.rarity3Rate!,
-        gacha?.rarity1Rate! +
-          gacha?.rarity2Rate! +
-          gacha?.rarity3Rate! +
-          gacha?.rarity4Rate!,
+        gacha.rarity1Rate,
+        gacha.rarity1Rate! + gacha.rarity2Rate!,
+        gacha.rarity1Rate! + gacha.rarity2Rate! + gacha.rarity3Rate!,
+        gacha.rarity1Rate! +
+          gacha.rarity2Rate! +
+          gacha.rarity3Rate! +
+          gacha.rarity4Rate!,
       ];
-      const must3RollResult = [100 - gacha?.rarity4Rate!, 100];
+      const must3RollResult = [100 - gacha.rarity4Rate!, 100];
       const rollCards = [
-        gacha?.gachaDetails.filter(
-          (elem) => cards.find((card) => card.id === elem.cardId)?.rarity === 1
-        )!,
-        gacha?.gachaDetails.filter(
-          (elem) => cards.find((card) => card.id === elem.cardId)?.rarity === 2
-        )!,
-        gacha?.gachaDetails.filter(
-          (elem) => cards.find((card) => card.id === elem.cardId)?.rarity === 3
-        )!,
-        gacha?.gachaDetails.filter(
-          (elem) => cards.find((card) => card.id === elem.cardId)?.rarity === 4
-        )!,
+        gacha.gachaDetails
+          .filter(
+            (elem) =>
+              cards.find((card) => card.id === elem.cardId)?.rarity === 1
+          )!
+          .sort((a, b) => a.weight - b.weight),
+        gacha.gachaDetails
+          .filter(
+            (elem) =>
+              cards.find((card) => card.id === elem.cardId)?.rarity === 2
+          )!
+          .sort((a, b) => a.weight - b.weight),
+        gacha.gachaDetails
+          .filter(
+            (elem) =>
+              cards.find((card) => card.id === elem.cardId)?.rarity === 3
+          )!
+          .sort((a, b) => a.weight - b.weight),
+        gacha.gachaDetails
+          .filter(
+            (elem) =>
+              cards.find((card) => card.id === elem.cardId)?.rarity === 4
+          )!
+          .sort((a, b) => a.weight - b.weight),
       ];
+      const rollWeights = rollCards.map((elem) =>
+        elem?.map((_elem) => _elem.weight)
+      );
       const tmpGachaResult: GachaDetail[] = [];
       let noStar3Count = 0;
       for (let i = 0; i < rollTimes; i++) {
@@ -161,8 +204,15 @@ const GachaDetailPage: React.FC<{}> = () => {
               })
             );
             // roll a 3* card
+            let acc = 0;
+            const weightArr = rollWeights[2].map((weight) => (acc += weight));
+            const weightSum = weights[2];
             tmpGachaResult.push(
-              rollCards[2][Math.floor(Math.random() * rollCards[2]?.length)]
+              rollCards[2][
+                weightArr.filter(
+                  (weight) => weight < Math.floor(Math.random() * weightSum)
+                ).length
+              ]
             );
           } else if (roll < must3RollResult[1]) {
             // get 4* card
@@ -173,8 +223,15 @@ const GachaDetailPage: React.FC<{}> = () => {
               })
             );
             // roll a 4* card
+            let acc = 0;
+            const weightArr = rollWeights[3].map((weight) => (acc += weight));
+            const weightSum = weights[3];
             tmpGachaResult.push(
-              rollCards[3][Math.floor(Math.random() * rollCards[3]?.length)]
+              rollCards[3][
+                weightArr.filter(
+                  (weight) => weight < Math.floor(Math.random() * weightSum)
+                ).length
+              ]
             );
           } else {
             console.log(roll, must3RollResult);
@@ -194,8 +251,15 @@ const GachaDetailPage: React.FC<{}> = () => {
             })
           );
           // roll a 1* card
+          let acc = 0;
+          const weightArr = rollWeights[0].map((weight) => (acc += weight));
+          const weightSum = weights[0];
           tmpGachaResult.push(
-            rollCards[0][Math.floor(Math.random() * rollCards[0]?.length)]
+            rollCards[0][
+              weightArr.filter(
+                (weight) => weight < Math.floor(Math.random() * weightSum)
+              ).length
+            ]
           );
           noStar3Count++;
         } else if (roll <= rollResult[1]!) {
@@ -207,8 +271,15 @@ const GachaDetailPage: React.FC<{}> = () => {
             })
           );
           // roll a 2* card
+          let acc = 0;
+          const weightArr = rollWeights[1].map((weight) => (acc += weight));
+          const weightSum = weights[1];
           tmpGachaResult.push(
-            rollCards[1][Math.floor(Math.random() * rollCards[1]?.length)]
+            rollCards[1][
+              weightArr.filter(
+                (weight) => weight < Math.floor(Math.random() * weightSum)
+              ).length
+            ]
           );
           noStar3Count++;
         } else if (roll <= rollResult[2]!) {
@@ -220,8 +291,15 @@ const GachaDetailPage: React.FC<{}> = () => {
             })
           );
           // roll a 3* card
+          let acc = 0;
+          const weightArr = rollWeights[2].map((weight) => (acc += weight));
+          const weightSum = weights[2];
           tmpGachaResult.push(
-            rollCards[2][Math.floor(Math.random() * rollCards[2]?.length)]
+            rollCards[2][
+              weightArr.filter(
+                (weight) => weight < Math.floor(Math.random() * weightSum)
+              ).length
+            ]
           );
         } else if (roll <= rollResult[3]!) {
           // get 4* card
@@ -232,8 +310,15 @@ const GachaDetailPage: React.FC<{}> = () => {
             })
           );
           // roll a 4* card
+          let acc = 0;
+          const weightArr = rollWeights[3].map((weight) => (acc += weight));
+          const weightSum = weights[3];
           tmpGachaResult.push(
-            rollCards[3][Math.floor(Math.random() * rollCards[3]?.length)]
+            rollCards[3][
+              weightArr.filter(
+                (weight) => weight < Math.floor(Math.random() * weightSum)
+              ).length
+            ]
           );
         } else {
           console.log(roll, rollResult);
@@ -242,7 +327,7 @@ const GachaDetailPage: React.FC<{}> = () => {
 
       setCurrentGachaResult(tmpGachaResult.slice(-10));
     },
-    [cards, gacha]
+    [cards, gacha, weights]
   );
 
   const resetGacha = useCallback(() => {
@@ -262,6 +347,14 @@ const GachaDetailPage: React.FC<{}> = () => {
   }, [gachaId, gachas]);
 
   useEffect(() => {
+    if (gacha && gachaCeilItems.length) {
+      setGachaCeilItem(
+        gachaCeilItems.find((elem) => elem.id === gacha.gachaCeilItemId)
+      );
+    }
+  }, [gacha, gachaCeilItems]);
+
+  useEffect(() => {
     if (gacha) {
       const name = getTranslated(
         contentTransMode,
@@ -271,14 +364,35 @@ const GachaDetailPage: React.FC<{}> = () => {
       document.title = t("title:gachaDetail", {
         name,
       });
+      setNormalRates([
+        gacha.rarity1Rate,
+        gacha.rarity2Rate,
+        gacha.rarity3Rate,
+        gacha.rarity4Rate,
+      ]);
+      setGuaranteedRate([0, 0, 100 - gacha.rarity4Rate, gacha.rarity4Rate]);
     }
   }, [gacha, contentTransMode, gachaId, getTranslated, t]);
+
+  useEffect(() => {
+    if (gacha && cards.length) {
+      // sum rate for rarity 1~4
+      const weightArr = [0, 0, 0, 0];
+      gacha.gachaDetails.forEach((detail) => {
+        const card = cards.find((elem) => elem.id === detail.cardId)!;
+        weightArr[card.rarity - 1] += detail.weight;
+      });
+      setWeights(weightArr);
+    }
+  }, [cards, gacha]);
 
   const [gachaBackground, setGachaBackground] = useState<string>("");
   const [gachaImage, setGachaImage] = useState<string>("");
   const [gachaIcon, setGachaIcon] = useState<string>("");
+  const [gachaBanner, setGachaBanner] = useState("");
+  const [gachaCeilItemIcon, setGachaCeilItemIcon] = useState("");
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (gacha) {
       getRemoteAssetURL(
         `gacha/${gacha.assetbundleName}/screen_rip/texture/${
@@ -297,8 +411,21 @@ const GachaDetailPage: React.FC<{}> = () => {
         `gacha/${gacha.assetbundleName}/logo_rip/logo.webp`,
         setGachaIcon
       );
+      getRemoteAssetURL(
+        `home/banner/banner_gacha${gacha.id}_rip/banner_gacha${gacha.id}.webp`,
+        setGachaBanner
+      );
     }
   }, [gacha]);
+
+  useLayoutEffect(() => {
+    if (gachaCeilItem) {
+      getRemoteAssetURL(
+        `thumbnail/gacha_item_rip/${gachaCeilItem.assetbundleName}.webp`,
+        setGachaCeilItemIcon
+      );
+    }
+  }, [gachaCeilItem]);
 
   const getGachaImages: (gacha: IGachaInfo) => ImageDecorator[] = useCallback(
     (gacha) => {
@@ -340,7 +467,22 @@ const GachaDetailPage: React.FC<{}> = () => {
     setPicTabVal(newValue);
   };
 
-  if (gacha) {
+  const getCardRate = useCallback(
+    (cardId: number) => {
+      if (gacha && cards.length) {
+        const detail = gacha.gachaDetails.find(
+          (detail) => detail.cardId === cardId
+        )!;
+        const card = cards.find((card) => card.id === cardId)!;
+
+        return (detail.weight / weights[card.rarity - 1]).toFixed(2) + " %";
+      }
+      return "";
+    },
+    [cards, gacha, weights]
+  );
+
+  if (gacha && gachaCeilItem) {
     return (
       <Fragment>
         <Typography variant="h6" className={layoutClasses.header}>
@@ -355,9 +497,7 @@ const GachaDetailPage: React.FC<{}> = () => {
                 variant="scrollable"
                 scrollButtons="desktop"
               >
-                <Tab label={t("gacha:tab.title[0]")} value="2"></Tab>
-                <Tab label={t("gacha:tab.title[1]")} value="3"></Tab>
-                <Tab label={t("gacha:tab.title[2]")} value="4"></Tab>
+                <Tab label={t("gacha:tab.title.banner_logo")} value="2"></Tab>
                 <Tab label={t("gacha:tab.title[3]")} value="0"></Tab>
                 {gachaImageNameMap[gacha.id] ? (
                   gachaImageNameMap[gacha.id].feature ? (
@@ -394,149 +534,22 @@ const GachaDetailPage: React.FC<{}> = () => {
                 </Card>
               </TabPanel>
               <TabPanel value="2" classes={{ root: classes.tabpanel }}>
-                <Card>
-                  <CardContent>
-                    {gacha.gachaInformation.description
-                      .split("\n")
-                      .map((str, line) => (
-                        <Typography
-                          paragraph
-                          variant="body2"
-                          key={`desc-${line}`}
-                        >
-                          {str}
-                        </Typography>
-                      ))}
-                  </CardContent>
-                </Card>
-              </TabPanel>
-              <TabPanel value="3" classes={{ root: classes.tabpanel }}>
-                <Card>
-                  <CardContent>
-                    {gacha.gachaInformation.summary
-                      .split("\n")
-                      .map((str, line) => (
-                        <Typography
-                          paragraph
-                          variant="body2"
-                          key={`summary-${line}`}
-                        >
-                          {str}
-                        </Typography>
-                      ))}
-                  </CardContent>
-                </Card>
-              </TabPanel>
-              <TabPanel value="4" classes={{ root: classes.tabpanel }}>
-                <Card>
-                  <CardContent>
-                    <Grid container spacing={1} justify="center">
-                      <Grid item>
-                        <Button
-                          variant="contained"
-                          className={classes.gachaBtn}
-                          color="secondary"
-                          onClick={() => doGacha(1)}
-                        >
-                          Gacha!
-                        </Button>
-                      </Grid>
-                      <Grid item>
-                        <Button
-                          variant="contained"
-                          className={classes.gachaBtn}
-                          color="primary"
-                          onClick={() => doGacha(10)}
-                        >
-                          Gacha * 10
-                        </Button>
-                      </Grid>
-                      {/* <Grid item xs={4}>
-                        <Button
-                          variant="contained"
-                          className={classes.gachaBtn}
-                          color="primary"
-                          onClick={() => doGacha(100)}
-                        >
-                          Gacha * 100
-                        </Button>
-                      </Grid>
-                      <Grid item xs={4}>
-                        <Button
-                          variant="contained"
-                          className={classes.gachaBtn}
-                          color="primary"
-                          onClick={() => doGacha(1000)}
-                        >
-                          Gacha * 1000
-                        </Button>
-                      </Grid> */}
-                      <Grid item>
-                        <Button
-                          variant="contained"
-                          className={classes.gachaBtn}
-                          color="primary"
-                          onClick={() => resetGacha()}
-                        >
-                          Reset
-                        </Button>
-                      </Grid>
-                    </Grid>
-                    <Grid container spacing={1} justify="center">
-                      <Grid item>
-                        <Typography>
-                          Total: {statistic.total} Cost: {statistic.total * 300}
-                        </Typography>
-                      </Grid>
-                      <Grid item container spacing={1} justify="center">
-                        <Grid item>
-                          <Typography>
-                            <StarIcon num={2} />
-                            {statistic.rarity2}{" "}
-                            {statistic.total
-                              ? (
-                                  (statistic.rarity2 / statistic.total) *
-                                  100
-                                ).toFixed(2)
-                              : 0}{" "}
-                            %
-                          </Typography>
-                        </Grid>
-                        <Grid item>
-                          <Typography>
-                            <StarIcon num={3} />
-                            {statistic.rarity3}{" "}
-                            {statistic.total
-                              ? (
-                                  (statistic.rarity3 / statistic.total) *
-                                  100
-                                ).toFixed(2)
-                              : 0}{" "}
-                            %
-                          </Typography>
-                        </Grid>
-                        <Grid item>
-                          <Typography>
-                            <StarIcon num={4} />
-                            {statistic.rarity4}{" "}
-                            {statistic.total
-                              ? (
-                                  (statistic.rarity4 / statistic.total) *
-                                  100
-                                ).toFixed(2)
-                              : 0}{" "}
-                            %
-                          </Typography>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </CardContent>
-                  <CardContent>
-                    <CardThumbs
-                      cardIds={currentGachaResult.map((elem) => elem.cardId)}
-                    />
-                  </CardContent>
-                </Card>
+                <Grid container direction="row">
+                  <Grid item xs={12} md={6}>
+                    <img
+                      className={classes.bannerImg}
+                      src={gachaIcon}
+                      alt="logo"
+                    ></img>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <img
+                      className={classes.bannerImg}
+                      src={gachaBanner}
+                      alt="banner"
+                    ></img>
+                  </Grid>
+                </Grid>
               </TabPanel>
             </Paper>
           </TabContext>
@@ -565,32 +578,13 @@ const GachaDetailPage: React.FC<{}> = () => {
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                 {t("common:title")}
               </Typography>
-              <Typography>
-                <ContentTrans
-                  mode={contentTransMode}
-                  contentKey={`gacha_name:${gachaId}`}
-                  original={gacha.name}
-                  originalProps={{ align: "right" }}
-                  translatedProps={{ align: "right" }}
-                />
-              </Typography>
-            </Grid>
-            <Divider style={{ margin: "1% 0" }} />
-            <Grid
-              item
-              container
-              direction="row"
-              justify="space-between"
-              alignItems="center"
-            >
-              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                {t("common:icon")}
-              </Typography>
-              <img
-                style={{ maxWidth: "50%" }}
-                src={gachaIcon}
-                alt="logo icon"
-              ></img>
+              <ContentTrans
+                mode={contentTransMode}
+                contentKey={`gacha_name:${gachaId}`}
+                original={gacha.name}
+                originalProps={{ align: "right" }}
+                translatedProps={{ align: "right" }}
+              />
             </Grid>
             <Divider style={{ margin: "1% 0" }} />
             <Grid
@@ -636,6 +630,63 @@ const GachaDetailPage: React.FC<{}> = () => {
               </Typography>
             </Grid>
             <Divider style={{ margin: "1% 0" }} />
+            {gacha.gachaType === "ceil" && (
+              <Fragment>
+                <Grid
+                  item
+                  container
+                  direction="row"
+                  justify="space-between"
+                  alignItems="center"
+                >
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("gacha:ceil_item")}
+                  </Typography>
+                  <img src={gachaCeilItemIcon} alt="gacha ceil item" />
+                </Grid>
+                <Divider style={{ margin: "1% 0" }} />
+              </Fragment>
+            )}
+            <Grid
+              item
+              container
+              direction="row"
+              justify="space-between"
+              alignItems="center"
+            >
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                {t("gacha:summary")}
+              </Typography>
+              <Button
+                onClick={() => setIsSummaryDialog(true)}
+                variant="contained"
+              >
+                {t("common:show")}
+              </Button>
+            </Grid>
+            <Divider style={{ margin: "1% 0" }} />
+            <Grid
+              item
+              container
+              direction="row"
+              justify="space-between"
+              alignItems="center"
+            >
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                {t("gacha:description")}
+              </Typography>
+              <Button onClick={() => setIsDescDialog(true)} variant="contained">
+                {t("common:show")}
+              </Button>
+            </Grid>
+            <Divider style={{ margin: "1% 0" }} />
+          </Grid>
+        </Container>
+        <Typography variant="h6" className={layoutClasses.header}>
+          {t("gacha:gacha_rate")}
+        </Typography>
+        <Container className={layoutClasses.content} maxWidth="sm">
+          <Grid container direction="column">
             {gacha.gachaBehaviors.find(
               (gb) => gb.gachaBehaviorType === "normal"
             ) ? (
@@ -665,7 +716,7 @@ const GachaDetailPage: React.FC<{}> = () => {
                         <StarIcon num={2} />
                       </Grid>
                       <Grid item xs={5} style={{ textAlign: "right" }}>
-                        {gacha.rarity2Rate} %
+                        {normalRates[1]} %
                       </Grid>
                     </Grid>
                     <Grid item container alignItems="center">
@@ -673,7 +724,7 @@ const GachaDetailPage: React.FC<{}> = () => {
                         <StarIcon num={3} />
                       </Grid>
                       <Grid item xs={5} style={{ textAlign: "right" }}>
-                        {gacha.rarity3Rate} %
+                        {normalRates[2]} %
                       </Grid>
                     </Grid>
                     <Grid item container alignItems="center">
@@ -681,7 +732,7 @@ const GachaDetailPage: React.FC<{}> = () => {
                         <StarIcon num={4} />
                       </Grid>
                       <Grid item xs={5} style={{ textAlign: "right" }}>
-                        {gacha.rarity4Rate} %
+                        {normalRates[3]} %
                       </Grid>
                     </Grid>
                   </Grid>
@@ -691,7 +742,7 @@ const GachaDetailPage: React.FC<{}> = () => {
             ) : null}
             {gacha.gachaBehaviors.find(
               (gb) => gb.gachaBehaviorType === "over_rarity_3_once"
-            ) ? (
+            ) && (
               <Fragment>
                 <Grid
                   item
@@ -715,18 +766,10 @@ const GachaDetailPage: React.FC<{}> = () => {
                   >
                     <Grid item container alignItems="center">
                       <Grid item xs={7} style={{ textAlign: "right" }}>
-                        <StarIcon num={2} />
-                      </Grid>
-                      <Grid item xs={5} style={{ textAlign: "right" }}>
-                        0 %
-                      </Grid>
-                    </Grid>
-                    <Grid item container alignItems="center">
-                      <Grid item xs={7} style={{ textAlign: "right" }}>
                         <StarIcon num={3} />
                       </Grid>
                       <Grid item xs={5} style={{ textAlign: "right" }}>
-                        {100 - gacha.rarity4Rate} %
+                        {guaranteedRate[2]} %
                       </Grid>
                     </Grid>
                     <Grid item container alignItems="center">
@@ -734,14 +777,21 @@ const GachaDetailPage: React.FC<{}> = () => {
                         <StarIcon num={4} />
                       </Grid>
                       <Grid item xs={5} style={{ textAlign: "right" }}>
-                        {gacha.rarity4Rate} %
+                        {guaranteedRate[3]} %
                       </Grid>
                     </Grid>
                   </Grid>
                 </Grid>
                 <Divider style={{ margin: "1% 0" }} />
               </Fragment>
-            ) : null}
+            )}
+          </Grid>
+        </Container>
+        <Typography variant="h6" className={layoutClasses.header}>
+          {t("gacha:gacha_cards")}
+        </Typography>
+        <Container className={layoutClasses.content} maxWidth="sm">
+          <Grid container direction="column">
             <Grid
               container
               wrap="nowrap"
@@ -749,31 +799,142 @@ const GachaDetailPage: React.FC<{}> = () => {
               alignItems="center"
             >
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                {t("gacha:pickupMember", { count: gacha.gachaPickups.length })}
+                {t("gacha:pickupMember", {
+                  count: gacha.gachaPickups.length,
+                })}
               </Typography>
-              <Grid
-                item
-                container
-                direction="row"
-                xs={6}
-                spacing={1}
-                justify="flex-end"
+              <Button
+                onClick={() => {
+                  setGachaCards(
+                    gacha.gachaPickups.map((pickup) => pickup.cardId)
+                  );
+                  setIsCardsDialog(true);
+                }}
+                variant="contained"
               >
-                {gacha.gachaPickups.map((elem) => (
-                  <Grid key={`pickup-${elem.id}`} item xs={8} md={4}>
-                    <Link
-                      to={"/card/" + elem.cardId}
-                      style={{ textDecoration: "none" }}
-                    >
-                      <CardThumb cardId={elem.cardId} />
-                    </Link>
-                  </Grid>
-                ))}
-              </Grid>
+                {t("common:show")}
+              </Button>
             </Grid>
             <Divider style={{ margin: "1% 0" }} />
+            {[4, 3, 2].map((rarity) => (
+              <Fragment key={rarity}>
+                <Grid
+                  container
+                  wrap="nowrap"
+                  justify="space-between"
+                  alignItems="center"
+                >
+                  <Grid item>
+                    <StarIcon num={rarity} />
+                  </Grid>
+                  <Button
+                    onClick={() => {
+                      setGachaCards(
+                        gacha.gachaDetails
+                          .map((detail) => detail.cardId)
+                          .filter(
+                            (cardId) =>
+                              cards.find((card) => card.id === cardId)!
+                                .rarity === rarity
+                          )
+                      );
+                      setIsCardsDialog(true);
+                    }}
+                    variant="contained"
+                  >
+                    {t("common:show")}
+                  </Button>
+                </Grid>
+                <Divider style={{ margin: "1% 0" }} />
+              </Fragment>
+            ))}
           </Grid>
-          {/* </Container> */}
+        </Container>
+        <Typography variant="h6" className={layoutClasses.header}>
+          {t("gacha:gacha_cards")}
+        </Typography>
+        <Container className={layoutClasses.content} maxWidth="sm">
+          <Grid container spacing={1} justify="center">
+            <Grid item>
+              <Button
+                variant="contained"
+                className={classes.gachaBtn}
+                color="primary"
+                onClick={() => doGacha(1)}
+              >
+                Gacha!
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                variant="contained"
+                className={classes.gachaBtn}
+                color="primary"
+                onClick={() => doGacha(10)}
+              >
+                Gacha * 10
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                variant="contained"
+                className={classes.gachaBtn}
+                color="secondary"
+                onClick={() => resetGacha()}
+              >
+                Reset
+              </Button>
+            </Grid>
+          </Grid>
+          <Grid container spacing={1} justify="center">
+            <Grid item>
+              <Typography>
+                {t("gacha:simulator.total")}: {statistic.total}
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Typography>
+                {t("gacha:simulator.cost")}: {statistic.total * 300}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} container justify="center">
+              <TableContainer component={Paper}>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>{t("common:rarity")}</TableCell>
+                      <TableCell>{t("gacha:simulator.count")}</TableCell>
+                      <TableCell>{t("gacha:simulator.percentage")}</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {[2, 3, 4].map((rarity) => (
+                      <Fragment key={rarity}>
+                        <TableRow>
+                          <TableCell>
+                            <StarIcon num={rarity} />
+                          </TableCell>
+                          <TableCell>
+                            {statistic[`rarity${rarity}` as "rarity1"]}
+                          </TableCell>
+                          <TableCell>
+                            {statistic.total
+                              ? (
+                                  (statistic[`rarity${rarity}` as "rarity1"] /
+                                    statistic.total) *
+                                  100
+                                ).toFixed(2)
+                              : 0}
+                          </TableCell>
+                        </TableRow>
+                      </Fragment>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Grid>
+          </Grid>
+          <CardThumbs cardIds={currentGachaResult.map((elem) => elem.cardId)} />
         </Container>
         <Viewer
           visible={visible}
@@ -787,6 +948,55 @@ const GachaDetailPage: React.FC<{}> = () => {
           zoomSpeed={0.25}
           onChange={(_, idx) => setActiveIdx(idx)}
         />
+        <Dialog
+          open={isSummaryDialog}
+          onClose={() => setIsSummaryDialog(false)}
+        >
+          <DialogTitle>{t("gacha:summary")}</DialogTitle>
+          <DialogContent>
+            <Typography style={{ whiteSpace: "pre-line" }}>
+              {gacha.gachaInformation.summary}
+            </Typography>
+          </DialogContent>
+        </Dialog>
+        <Dialog open={isDescDialog} onClose={() => setIsDescDialog(false)}>
+          <DialogTitle>{t("gacha:description")}</DialogTitle>
+          <DialogContent>
+            <Typography style={{ whiteSpace: "pre-line" }}>
+              {gacha.gachaInformation.description}
+            </Typography>
+          </DialogContent>
+        </Dialog>
+        <Dialog
+          open={isCardsDialog}
+          onClose={() => {
+            setGachaCards([]);
+            setIsCardsDialog(false);
+          }}
+          fullWidth
+        >
+          <DialogTitle>{t("gacha:gacha_cards")}</DialogTitle>
+          <DialogContent>
+            <Grid container spacing={1}>
+              {gachaCards.map((cardId) => (
+                <Grid key={cardId} item xs={4} md={2}>
+                  <Link
+                    to={"/card/" + cardId}
+                    className={interactiveClasses.noDecoration}
+                    target="_blank"
+                  >
+                    <Grid container direction="column">
+                      <CardThumb cardId={cardId} />
+                      <Typography align="center">
+                        {getCardRate(cardId)}
+                      </Typography>
+                    </Grid>
+                  </Link>
+                </Grid>
+              ))}
+            </Grid>
+          </DialogContent>
+        </Dialog>
       </Fragment>
     );
   } else {
