@@ -9,10 +9,9 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
-import React, { Fragment, useContext, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Route, Switch, useRouteMatch } from "react-router-dom";
-import { SettingContext } from "../../context";
 import { useLayoutStyles } from "../../styles/layout";
 import {
   ICardEpisode,
@@ -39,10 +38,6 @@ const StoryReader: React.FC<{}> = () => {
     storyType: storyType;
     storyId: string;
   }>("/storyreader/:storyType/:storyId");
-  // const { getTranslated } = useAssetI18n();
-  const { contentTransMode } = useContext(SettingContext)!;
-  // const getCharaName = useCharaName(contentTransMode);
-
   const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
   const [unitStories] = useCachedData<IUnitStory>("unitStories");
   const [eventStories] = useCachedData<IEventStory>("eventStories");
@@ -174,7 +169,6 @@ const StoryReader: React.FC<{}> = () => {
                       {unitProfiles.map((unit) => (
                         <MenuItem value={unit.unit} key={unit.unit}>
                           <ContentTrans
-                            mode={contentTransMode}
                             contentKey={`unit_profile:${unit.unit}.name`}
                             original={unit.unitName}
                           />
@@ -203,7 +197,6 @@ const StoryReader: React.FC<{}> = () => {
                             key={chapter.chapterNo}
                           >
                             <ContentTrans
-                              mode={contentTransMode}
                               contentKey={`unit_story_chapter_title:${chapter.unit}-${chapter.chapterNo}`}
                               original={chapter.title}
                               originalProps={{ style: { overflow: "hidden" } }}
@@ -236,7 +229,6 @@ const StoryReader: React.FC<{}> = () => {
                         .episodes.map((episode) => (
                           <MenuItem value={episode.id} key={episode.id}>
                             <ContentTrans
-                              mode={contentTransMode}
                               contentKey={`unit_story_episode_title:${episode.id}`}
                               original={`${episode.episodeNoLabel} - ${episode.title}`}
                               originalProps={{ style: { overflow: "hidden" } }}
@@ -274,7 +266,6 @@ const StoryReader: React.FC<{}> = () => {
                       {events.map((ev) => (
                         <MenuItem value={ev.id} key={ev.id}>
                           <ContentTrans
-                            mode={contentTransMode}
                             contentKey={`event_name:${ev.id}`}
                             original={ev.name}
                             originalProps={{ style: { overflow: "hidden" } }}
@@ -302,7 +293,6 @@ const StoryReader: React.FC<{}> = () => {
                         .eventStoryEpisodes.map((episode) => (
                           <MenuItem value={episode.id} key={episode.id}>
                             <ContentTrans
-                              mode={contentTransMode}
                               contentKey={`event_story_episode_title:${episode.id}`}
                               original={`${episode.episodeNo} - ${episode.title}`}
                               originalProps={{ style: { overflow: "hidden" } }}
@@ -334,10 +324,7 @@ const StoryReader: React.FC<{}> = () => {
                     >
                       {characterProfiles.map((cp) => (
                         <MenuItem value={cp.characterId} key={cp.characterId}>
-                          <CharaNameTrans
-                            mode={contentTransMode}
-                            characterId={cp.characterId}
-                          />
+                          <CharaNameTrans characterId={cp.characterId} />
                         </MenuItem>
                       ))}
                     </Select>
@@ -369,10 +356,7 @@ const StoryReader: React.FC<{}> = () => {
                     >
                       {characterProfiles.map((cp) => (
                         <MenuItem value={cp.characterId} key={cp.characterId}>
-                          <CharaNameTrans
-                            mode={contentTransMode}
-                            characterId={cp.characterId}
-                          />
+                          <CharaNameTrans characterId={cp.characterId} />
                         </MenuItem>
                       ))}
                     </Select>
@@ -400,7 +384,6 @@ const StoryReader: React.FC<{}> = () => {
                         .map((card) => (
                           <MenuItem value={card.id} key={card.id}>
                             <ContentTrans
-                              mode={contentTransMode}
                               contentKey={`card_prefix:${card.id}`}
                               original={card.prefix}
                               originalProps={{ style: { overflow: "hidden" } }}
@@ -430,7 +413,6 @@ const StoryReader: React.FC<{}> = () => {
                         .map((episode) => (
                           <MenuItem value={episode.id} key={episode.id}>
                             <ContentTrans
-                              mode={contentTransMode}
                               contentKey={`card_episode_title:${episode.title}`}
                               original={`${episode.title}`}
                               originalProps={{ style: { overflow: "hidden" } }}

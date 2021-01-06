@@ -124,12 +124,14 @@ const MusicDetail: React.FC<{}> = () => {
   const [music, setMusic] = useState<IMusicInfo>();
   const [musicVocal, setMusicVocal] = useState<IMusicVocalInfo[]>([]);
   const [musicVocalTypes, setMusicVocalTypes] = useState<string[]>([]);
-  const [musicDanceMember, setMusicDanceMember] = useState<
-    IMusicDanceMembers
-  >();
-  const [selectedPreviewVocalType, setSelectedPreviewVocalType] = useState<
-    number
-  >(0);
+  const [
+    musicDanceMember,
+    setMusicDanceMember,
+  ] = useState<IMusicDanceMembers>();
+  const [
+    selectedPreviewVocalType,
+    setSelectedPreviewVocalType,
+  ] = useState<number>(0);
   const [selectedVocalType, setSelectedVocalType] = useState<number>(0);
   const [vocalPreviewVal, setVocalPreviewVal] = useState<string>("1");
   const [vocalDisabled, setVocalDisabled] = useState<boolean>(false);
@@ -610,7 +612,6 @@ const MusicDetail: React.FC<{}> = () => {
             </Grid>
             <Grid item>
               <ContentTrans
-                mode={contentTransMode}
                 contentKey={`music_titles:${musicId}`}
                 original={music.title}
                 originalProps={{ align: "right" }}
@@ -829,7 +830,6 @@ const MusicDetail: React.FC<{}> = () => {
                 </Grid>
                 <Grid item>
                   <ReleaseCondTrans
-                    mode={contentTransMode}
                     releaseCondId={
                       musicVocal[selectedVocalType].releaseConditionId
                     }
@@ -937,7 +937,6 @@ const MusicDetail: React.FC<{}> = () => {
                         </Grid>
                         <Grid item>
                           <ReleaseCondTrans
-                            mode={contentTransMode}
                             releaseCondId={elem.releaseConditionId}
                             originalProps={{ align: "right" }}
                             translatedProps={{ align: "right" }}

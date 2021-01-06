@@ -56,6 +56,7 @@ import {
   AccountCircle,
   Timeline,
   MoreVert,
+  LiveTv,
 } from "@material-ui/icons";
 import {
   AccountGroup,
@@ -124,6 +125,10 @@ const AnnouncementDetail = lazy(
   () => import("./announcement/AnnouncementDetail")
 );
 const Live2D = lazy(() => import("./live2d/Live2D"));
+const VirtualLiveList = lazy(() => import("./virtual_live/VirtualLiveList"));
+const VirtualLiveDetail = lazy(
+  () => import("./virtual_live/VirtualLiveDetail")
+);
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -444,6 +449,12 @@ function App() {
           text: "Live2D",
           icon: <ControlCamera></ControlCamera>,
           to: "/l2d",
+          disabled: false,
+        },
+        {
+          text: t("common:virtualLive"),
+          icon: <LiveTv></LiveTv>,
+          to: "/virtual_live",
           disabled: false,
         },
       ],
@@ -920,6 +931,12 @@ function App() {
                 </Route>
                 <Route path="/l2d">
                   <Live2D />
+                </Route>
+                <Route path="/virtual_live" exact>
+                  <VirtualLiveList />
+                </Route>
+                <Route path="/virtual_live/:id">
+                  <VirtualLiveDetail />
                 </Route>
               </Suspense>
             </Switch>

@@ -154,7 +154,6 @@ const UnitDetail: React.FC<{}> = () => {
             <Grid item xs={6} md={8}>
               <Grid container justify="flex-end">
                 <ContentTrans
-                  mode={contentTransMode}
                   contentKey={`unit_profile:${unit.unit}.profileSentence`}
                   original={unit.profileSentence}
                 />
@@ -223,7 +222,6 @@ const UnitDetail: React.FC<{}> = () => {
                       </Grid>
                       <Grid item>
                         <CharaNameTrans
-                          mode={contentTransMode}
                           characterId={uc.id}
                           originalProps={{
                             variant: "subtitle1",
@@ -281,7 +279,6 @@ const UnitDetail: React.FC<{}> = () => {
                       </Grid>
                       <Grid item>
                         <ContentTrans
-                          mode={contentTransMode}
                           contentKey={`music_titles:${um.id}`}
                           original={um.title}
                           originalProps={{

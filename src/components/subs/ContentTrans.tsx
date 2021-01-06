@@ -1,31 +1,28 @@
 import { Grid, Typography, TypographyProps } from "@material-ui/core";
 import { StringMap, TOptions } from "i18next";
-import React, { useEffect, useState } from "react";
-import {
-  ContentTransModeType,
-  IGameChara,
-  IReleaseCondition,
-} from "../../types";
+import React, { useContext, useEffect, useState } from "react";
+import { SettingContext } from "../../context";
+import { IGameChara, IReleaseCondition } from "../../types";
 import { useCachedData } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
 
 export const ContentTrans: React.FC<{
-  mode: ContentTransModeType;
   contentKey: string;
   original: string;
   originalProps?: TypographyProps;
   translatedProps?: TypographyProps;
   assetTOptions?: string | TOptions<StringMap>;
 }> = ({
-  mode,
   contentKey,
   original,
   originalProps,
   translatedProps,
   assetTOptions,
 }) => {
+  const { contentTransMode } = useContext(SettingContext)!;
   const { assetT } = useAssetI18n();
-  switch (mode) {
+
+  switch (contentTransMode) {
     case "original":
       return <Typography {...originalProps}>{original}</Typography>;
     case "translated":
@@ -49,12 +46,13 @@ export const ContentTrans: React.FC<{
 };
 
 export const CharaNameTrans: React.FC<{
-  mode: ContentTransModeType;
   characterId: number;
   originalProps?: TypographyProps;
   translatedProps?: TypographyProps;
   assetTOptions?: string | TOptions<StringMap>;
-}> = ({ mode, characterId, originalProps, translatedProps, assetTOptions }) => {
+}> = ({ characterId, originalProps, translatedProps, assetTOptions }) => {
+  const { contentTransMode } = useContext(SettingContext)!;
+
   const [charas] = useCachedData<IGameChara>("gameCharacters");
   const { assetT, assetI18n } = useAssetI18n();
 
@@ -67,7 +65,7 @@ export const CharaNameTrans: React.FC<{
   }, [charas, characterId]);
 
   if (chara) {
-    switch (mode) {
+    switch (contentTransMode) {
       case "original":
         return (
           <Typography {...originalProps} color="textPrimary">
@@ -152,18 +150,11 @@ export const CharaNameTrans: React.FC<{
 };
 
 export const ReleaseCondTrans: React.FC<{
-  mode: ContentTransModeType;
   releaseCondId: number;
   originalProps?: TypographyProps;
   translatedProps?: TypographyProps;
   assetTOptions?: string | TOptions<StringMap>;
-}> = ({
-  mode,
-  releaseCondId,
-  originalProps,
-  translatedProps,
-  assetTOptions,
-}) => {
+}> = ({ releaseCondId, originalProps, translatedProps, assetTOptions }) => {
   const [releaseConds] = useCachedData<IReleaseCondition>("releaseConditions");
 
   const [releaseCond, setReleaseCond] = useState<IReleaseCondition>();
@@ -204,7 +195,6 @@ export const ReleaseCondTrans: React.FC<{
     }
     return (
       <ContentTrans
-        mode={mode}
         contentKey={i18nKey}
         original={releaseCond.sentence}
         originalProps={originalProps}

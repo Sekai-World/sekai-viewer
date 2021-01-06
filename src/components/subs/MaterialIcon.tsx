@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "material-ui-image";
 
 import material1Icon from "../../assets/common/material/material1.png";
 import material2Icon from "../../assets/common/material/material2.png";
@@ -100,11 +101,13 @@ const MaterialIcon: React.FC<{ materialId: number; quantity: number }> = ({
 }) => (
   <Grid container direction="column">
     <Grid item container justify="center">
-      <img
+      <Image
         src={materialMap[materialId]}
         alt={`material ${materialId}`}
-        style={{ maxHeight: "64px" }}
-      ></img>
+        aspectRatio={1}
+        style={{ height: "64px", width: "64px" }}
+        color=""
+      ></Image>
     </Grid>
     <Grid item container justify="center">
       <Typography variant="body2" align="center">

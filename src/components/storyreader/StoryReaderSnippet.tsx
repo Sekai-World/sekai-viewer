@@ -24,7 +24,7 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-const AudioPlayButton: React.FC<{ url: string }> = ({ url }) => {
+export const AudioPlayButton: React.FC<{ url: string }> = ({ url }) => {
   const [isPlay, setIsPlay] = useState(false);
   const [audioSource, setAudioSource] = useState<Howl>();
   const [isAudioLoading, setIsAudioLoading] = useState(false);

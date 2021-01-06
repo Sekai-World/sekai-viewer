@@ -1,5 +1,6 @@
 import { Grid, GridJustification } from "@material-ui/core";
 import React, { Fragment, useEffect, useState } from "react";
+import Image from "material-ui-image";
 import { IResourceBoxInfo } from "../../types";
 import { useCachedData } from "../../utils";
 import CommonMaterialIcon from "./CommonMaterialIcon";
@@ -35,6 +36,22 @@ const ResourceBox: React.FC<{
               <MaterialIcon
                 materialId={detail.resourceId!}
                 quantity={detail.resourceQuantity}
+              />
+            ) : detail.resourceType === "stamp" ? (
+              <Image
+                src={`${
+                  process.env.REACT_APP_ASSET_DOMAIN_WW
+                }/file/sekai-assets/stamp/stamp${String(
+                  detail.resourceId
+                ).padStart(4, "0")}_rip/stamp${String(
+                  detail.resourceId
+                ).padStart(4, "0")}/stamp${String(detail.resourceId).padStart(
+                  4,
+                  "0"
+                )}.png`}
+                aspectRatio={1}
+                style={{ height: "64px", width: "64px" }}
+                color=""
               />
             ) : detail.resourceType !== "honor" ? (
               <CommonMaterialIcon

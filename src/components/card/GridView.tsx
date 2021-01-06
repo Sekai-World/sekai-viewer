@@ -74,7 +74,6 @@ const GridView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
             </Grid>
             <Grid item>
               <ContentTrans
-                mode={contentTransMode}
                 contentKey={`card_prefix:${data.id}`}
                 original={data.prefix}
                 originalProps={{

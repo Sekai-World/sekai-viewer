@@ -7,9 +7,8 @@ import {
   Typography,
   MenuItem,
 } from "@material-ui/core";
-import React, { useState, useEffect, Fragment, useContext } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { useTranslation } from "react-i18next";
-import { SettingContext } from "../../../context";
 import { useLayoutStyles } from "../../../styles/layout";
 import {
   CharacterMissionType,
@@ -38,7 +37,6 @@ function getPaginatedHonorMissions(
 const CharacterMissionList: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
-  const { contentTransMode } = useContext(SettingContext)!;
 
   const [characterMissionsCache] = useCachedData<ICharacterMission>(
     "characterMissions"
@@ -135,10 +133,7 @@ const CharacterMissionList: React.FC<{}> = () => {
                   >
                     {characterProfiles.map((cp) => (
                       <MenuItem value={cp.characterId} key={cp.characterId}>
-                        <CharaNameTrans
-                          mode={contentTransMode}
-                          characterId={cp.characterId}
-                        />
+                        <CharaNameTrans characterId={cp.characterId} />
                       </MenuItem>
                     ))}
                   </Select>

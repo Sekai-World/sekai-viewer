@@ -6,9 +6,8 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useRouteMatch } from "react-router-dom";
-import { SettingContext } from "../../context";
 import { IGachaInfo } from "../../types";
 import { getRemoteAssetURL } from "../../utils";
 import { ContentTrans } from "../subs/ContentTrans";
@@ -34,7 +33,6 @@ const useStyles = makeStyles((theme) => ({
 const GridView: React.FC<{ data?: IGachaInfo }> = ({ data }) => {
   const classes = useStyles();
   const { path } = useRouteMatch();
-  const { contentTransMode } = useContext(SettingContext)!;
 
   const [url, setUrl] = useState<string>("");
 
@@ -71,7 +69,6 @@ const GridView: React.FC<{ data?: IGachaInfo }> = ({ data }) => {
         <CardContent style={{ paddingBottom: "16px" }}>
           <SpoilerTag releaseTime={new Date(data.startAt)} />
           <ContentTrans
-            mode={contentTransMode}
             contentKey={`gacha_name:${data.id}`}
             original={data.name}
             originalProps={{

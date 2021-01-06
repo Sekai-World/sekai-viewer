@@ -85,7 +85,6 @@ const GridView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
             </Grid>
             <Grid item>
               <ContentTrans
-                mode={contentTransMode}
                 contentKey={`music_titles:${data.id}`}
                 original={data.title}
                 originalProps={{

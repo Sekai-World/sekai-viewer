@@ -441,7 +441,6 @@ const CardDetail: React.FC<{}> = () => {
             </Grid>
             <Grid item>
               <ContentTrans
-                mode={contentTransMode}
                 contentKey={`card_prefix:${card.id}`}
                 original={card.prefix}
                 originalProps={{ align: "right" }}
@@ -475,7 +474,6 @@ const CardDetail: React.FC<{}> = () => {
                 >
                   <Grid item>
                     <CharaNameTrans
-                      mode={contentTransMode}
                       characterId={card.characterId}
                       originalProps={{ align: "right", color: "textPrimary" }}
                       translatedProps={{ align: "right" }}
@@ -518,7 +516,6 @@ const CardDetail: React.FC<{}> = () => {
                 >
                   <Grid item>
                     <ContentTrans
-                      mode={contentTransMode}
                       contentKey={`unit_profile:${getCharaUnitName(
                         card.characterId
                       )}.name`}
@@ -570,7 +567,6 @@ const CardDetail: React.FC<{}> = () => {
                     >
                       <Grid item>
                         <ContentTrans
-                          mode={contentTransMode}
                           contentKey={`unit_profile:${card.supportUnit}.name`}
                           original={
                             unitProfiles.find(
@@ -763,7 +759,6 @@ const CardDetail: React.FC<{}> = () => {
             </Grid>
             <Grid item xs={9}>
               <ContentTrans
-                mode={contentTransMode}
                 contentKey={`card_skill_name:${cardId}`}
                 original={card.cardSkillName}
                 originalProps={{ align: "right" }}
@@ -1000,7 +995,6 @@ const CardDetail: React.FC<{}> = () => {
               <Tab
                 label={
                   <ContentTrans
-                    mode={contentTransMode}
                     contentKey={`card_episode_title:${cardEpisode[0].title}`}
                     original={cardEpisode[0].title}
                     originalProps={{ variant: "body2" }}
@@ -1012,7 +1006,6 @@ const CardDetail: React.FC<{}> = () => {
               <Tab
                 label={
                   <ContentTrans
-                    mode={contentTransMode}
                     contentKey={`card_episode_title:${cardEpisode[1].title}`}
                     original={cardEpisode[1].title}
                     originalProps={{ variant: "body2" }}
@@ -1052,7 +1045,6 @@ const CardDetail: React.FC<{}> = () => {
                 </Grid>
                 <Grid item xs={8} container justify="flex-end">
                   <ReleaseCondTrans
-                    mode={contentTransMode}
                     releaseCondId={cardEpisode[0].releaseConditionId}
                     originalProps={{ align: "right" }}
                     translatedProps={{ align: "right" }}
@@ -1138,7 +1130,6 @@ const CardDetail: React.FC<{}> = () => {
                 </Grid>
                 <Grid item xs={8} container justify="flex-end">
                   <ReleaseCondTrans
-                    mode={contentTransMode}
                     releaseCondId={cardEpisode[1].releaseConditionId}
                     originalProps={{ align: "right" }}
                     translatedProps={{ align: "right" }}

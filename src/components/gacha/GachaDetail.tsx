@@ -598,7 +598,6 @@ const GachaDetailPage: React.FC<{}> = () => {
                 {t("common:title")}
               </Typography>
               <ContentTrans
-                mode={contentTransMode}
                 contentKey={`gacha_name:${gachaId}`}
                 original={gacha.name}
                 originalProps={{ align: "right" }}

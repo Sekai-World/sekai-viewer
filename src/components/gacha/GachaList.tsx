@@ -58,13 +58,14 @@ const GachaList: React.FC<{}> = () => {
   useEffect(() => {
     let sortedCache = [...gachasCache];
     if (updateSort === "desc") {
-      sortedCache = sortedCache.sort((a, b) => b.id - a.id);
+      sortedCache = sortedCache.sort((a, b) => b.startAt - a.startAt);
     } else if (updateSort === "asc") {
-      sortedCache = sortedCache.sort((a, b) => a.id - b.id);
+      sortedCache = sortedCache.sort((a, b) => a.startAt - b.startAt);
     }
     setSortedCache(sortedCache);
     setGachas([]);
-  }, [updateSort, gachasCache]);
+    setPage(0);
+  }, [updateSort, gachasCache, setPage]);
 
   useEffect(() => {
     setIsReady(Boolean(gachasCache.length));

@@ -1,18 +1,10 @@
 import {
-  Typography,
+  Button,
+  ButtonGroup,
   Container,
   Grid,
-  ButtonGroup,
-  Button,
+  Typography,
 } from "@material-ui/core";
-import { useLayoutStyles } from "../../styles/layout";
-import React, { Fragment, useEffect, useState, useCallback } from "react";
-import { IEventInfo } from "../../types";
-import { useCachedData, useRefState } from "../../utils";
-import InfiniteScroll from "../subs/InfiniteScroll";
-
-import { useTranslation } from "react-i18next";
-import GridView from "./GridView";
 import {
   GetApp,
   GetAppOutlined,
@@ -20,64 +12,78 @@ import {
   PublishOutlined,
   Update,
 } from "@material-ui/icons";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useLayoutStyles } from "../../styles/layout";
+import { IVirtualLiveInfo } from "../../types";
+import { useCachedData, useRefState } from "../../utils";
+import InfiniteScroll from "../subs/InfiniteScroll";
+import AgendaView from "./AgendaView";
 
-type ViewGridType = "grid" | "agenda" | "comfy";
+type ViewGridType = "agenda";
 
-function getPaginatedEvents(events: IEventInfo[], page: number, limit: number) {
-  return events.slice(limit * (page - 1), limit * page);
+function getPaginatedVirtualLives(
+  virtualLives: IVirtualLiveInfo[],
+  page: number,
+  limit: number
+) {
+  return virtualLives.slice(limit * (page - 1), limit * page);
 }
 
-const ListCard: { [key: string]: React.FC<{ data?: IEventInfo }> } = {
-  grid: GridView,
+const ListCard: { [key: string]: React.FC<{ data?: IVirtualLiveInfo }> } = {
+  agenda: AgendaView,
 };
 
-const EventList: React.FC<{}> = () => {
+const VirtualLiveList: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
 
-  const [events, setEvents] = useState<IEventInfo[]>([]);
-  const [eventsCache, eventsCacheRef] = useCachedData<IEventInfo>("events");
+  const [virtualLives, setVirtualLives] = useState<IVirtualLiveInfo[]>([]);
+  const [
+    virtualLivesCache,
+    virtualLivesCacheRef,
+  ] = useCachedData<IVirtualLiveInfo>("virtualLives");
 
   const [viewGridType] = useState<ViewGridType>(
-    (localStorage.getItem("event-list-grid-view-type") ||
-      "grid") as ViewGridType
+    (localStorage.getItem("virtual-live-list-grid-view-type") ||
+      "agenda") as ViewGridType
   );
   const [page, pageRef, setPage] = useRefState<number>(1);
   const [limit, limitRef] = useRefState<number>(12);
   const [, lastQueryFinRef, setLastQueryFin] = useRefState<boolean>(true);
   const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
   const [updateSort, setUpdateSort] = useState<"asc" | "desc">(
-    (localStorage.getItem("event-list-update-sort") || "desc") as "desc"
+    (localStorage.getItem("virtual-live-list-update-sort") || "desc") as "desc"
   );
-  const [sortedCache, setSortedCache] = useState<IEventInfo[]>([]);
+  const [sortedCache, setSortedCache] = useState<IVirtualLiveInfo[]>([]);
 
   useEffect(() => {
-    document.title = t("title:eventList");
+    document.title = t("title:virtualLiveList");
   }, [t]);
 
   useEffect(() => {
-    setEvents((events) => [
-      ...events,
-      ...getPaginatedEvents(sortedCache, page, limit),
+    setVirtualLives((virtualLives) => [
+      ...virtualLives,
+      ...getPaginatedVirtualLives(sortedCache, page, limit),
     ]);
     setLastQueryFin(true);
   }, [page, limit, setLastQueryFin, sortedCache]);
 
   useEffect(() => {
-    let sortedCache = [...eventsCache];
+    let sortedCache = [...virtualLivesCache];
     if (updateSort === "desc") {
       sortedCache = sortedCache.sort((a, b) => b.startAt - a.startAt);
     } else if (updateSort === "asc") {
       sortedCache = sortedCache.sort((a, b) => a.startAt - b.startAt);
     }
     setSortedCache(sortedCache);
-    setEvents([]);
+    setVirtualLives([]);
     setPage(0);
-  }, [updateSort, eventsCache, setPage]);
+  }, [setPage, updateSort, virtualLivesCache]);
 
   useEffect(() => {
-    setIsReady(Boolean(eventsCache.length));
-  }, [setIsReady, eventsCache]);
+    setIsReady(Boolean(virtualLivesCache.length));
+  }, [setIsReady, virtualLivesCache]);
 
   const callback = (
     entries: readonly IntersectionObserverEntry[],
@@ -87,14 +93,15 @@ const EventList: React.FC<{}> = () => {
     if (
       entries[0].isIntersecting &&
       lastQueryFinRef.current &&
-      (!eventsCacheRef.current.length ||
-        eventsCacheRef.current.length > pageRef.current * limitRef.current)
+      (!virtualLivesCacheRef.current.length ||
+        virtualLivesCacheRef.current.length >
+          pageRef.current * limitRef.current)
     ) {
       setPage((page) => page + 1);
       setLastQueryFin(false);
     } else if (
-      eventsCacheRef.current.length &&
-      eventsCacheRef.current.length <= pageRef.current * limitRef.current
+      virtualLivesCacheRef.current.length &&
+      virtualLivesCacheRef.current.length <= pageRef.current * limitRef.current
     ) {
       setHasMore(false);
     }
@@ -102,13 +109,13 @@ const EventList: React.FC<{}> = () => {
 
   const handleUpdateSort = useCallback((sort: "asc" | "desc") => {
     setUpdateSort(sort);
-    localStorage.setItem("event-list-update-sort", sort);
+    localStorage.setItem("virtual-live-list-update-sort", sort);
   }, []);
 
   return (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:event")}
+        {t("common:virtualLive")}
       </Typography>
       <Container className={layoutClasses.content}>
         <Grid container justify="space-between">
@@ -123,22 +130,13 @@ const EventList: React.FC<{}> = () => {
             </Button>
           </ButtonGroup>
         </Grid>
-        <InfiniteScroll<IEventInfo>
+        <InfiniteScroll<IVirtualLiveInfo>
           ViewComponent={ListCard[viewGridType]}
           callback={callback}
-          data={events}
+          data={virtualLives}
           gridSize={
             ({
-              grid: {
-                xs: 12,
-                sm: 6,
-                md: 4,
-                lg: 3,
-              },
               agenda: {
-                xs: 12,
-              },
-              comfy: {
                 xs: 12,
               },
             } as const)[viewGridType]
@@ -149,4 +147,4 @@ const EventList: React.FC<{}> = () => {
   );
 };
 
-export default EventList;
+export default VirtualLiveList;
