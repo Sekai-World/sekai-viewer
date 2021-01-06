@@ -252,10 +252,12 @@ export async function getRemoteAssetURL(
       if (setFunc) setFunc(dataUrl);
       return dataUrl;
     } else {
+      await Axios.head(url);
       if (setFunc) setFunc(dataUrl);
       return dataUrl;
     }
   } else {
+    await Axios.head(url);
     if (setFunc) setFunc(url);
     return url;
   }
