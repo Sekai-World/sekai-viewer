@@ -51,6 +51,7 @@ import { useAssetI18n } from "../../utils/i18n";
 import { SettingContext } from "../../context";
 import { ContentTrans } from "../subs/ContentTrans";
 import { useInteractiveStyles } from "../../styles/interactive";
+import CommonMaterialIcon from "../subs/CommonMaterialIcon";
 
 const gachaImageNameMap: {
   [key: number]: {
@@ -482,7 +483,7 @@ const GachaDetailPage: React.FC<{}> = () => {
     [cards, gacha, weights]
   );
 
-  if (gacha && gachaCeilItem) {
+  if (gacha) {
     return (
       <Fragment>
         <Typography variant="h6" className={layoutClasses.header}>
@@ -498,14 +499,12 @@ const GachaDetailPage: React.FC<{}> = () => {
                 scrollButtons="desktop"
               >
                 <Tab label={t("gacha:tab.title.banner_logo")} value="2"></Tab>
-                <Tab label={t("gacha:tab.title[3]")} value="0"></Tab>
-                {gachaImageNameMap[gacha.id] ? (
-                  gachaImageNameMap[gacha.id].feature ? (
-                    <Tab label={t("gacha:tab.title[4]")} value="1"></Tab>
-                  ) : null
-                ) : gacha.id >= 4 ? (
+                {gachaBackground && (
+                  <Tab label={t("gacha:tab.title[3]")} value="0"></Tab>
+                )}
+                {gachaImage && (
                   <Tab label={t("gacha:tab.title[4]")} value="1"></Tab>
-                ) : null}
+                )}
               </Tabs>
               <TabPanel value="0" classes={{ root: classes.tabpanel }}>
                 <Card
@@ -543,11 +542,13 @@ const GachaDetailPage: React.FC<{}> = () => {
                     ></img>
                   </Grid>
                   <Grid item xs={12} md={6}>
-                    <img
-                      className={classes.bannerImg}
-                      src={gachaBanner}
-                      alt="banner"
-                    ></img>
+                    {gachaBanner && (
+                      <img
+                        className={classes.bannerImg}
+                        src={gachaBanner}
+                        alt="banner"
+                      ></img>
+                    )}
                   </Grid>
                 </Grid>
               </TabPanel>
@@ -851,7 +852,37 @@ const GachaDetailPage: React.FC<{}> = () => {
           </Grid>
         </Container>
         <Typography variant="h6" className={layoutClasses.header}>
-          {t("gacha:gacha_cards")}
+          {t("gacha:gacha_behaviors")}
+        </Typography>
+        <Container className={layoutClasses.content} maxWidth="sm">
+          <Grid container direction="column">
+            {gacha.gachaBehaviors.map((behavior) => (
+              <Fragment key={behavior.id}>
+                <Grid
+                  container
+                  wrap="nowrap"
+                  justify="space-between"
+                  alignItems="center"
+                >
+                  <Grid item>
+                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                      {t("gacha:behavior." + behavior.gachaBehaviorType)}
+                    </Typography>
+                  </Grid>
+                  <Grid item>
+                    <CommonMaterialIcon
+                      materialName={behavior.costResourceType}
+                      quantity={behavior.costResourceQuantity}
+                    />
+                  </Grid>
+                </Grid>
+                <Divider style={{ margin: "1% 0" }} />
+              </Fragment>
+            ))}
+          </Grid>
+        </Container>
+        <Typography variant="h6" className={layoutClasses.header}>
+          {t("gacha:gacha_simulator")}
         </Typography>
         <Container className={layoutClasses.content} maxWidth="sm">
           <Grid container spacing={1} justify="center">
