@@ -46,6 +46,8 @@ import {
   IEventCard,
   IMusicAchievement,
   IGachaCeilItem,
+  ICharacter3D,
+  ICostume3DModel,
 } from "./../types.d";
 import { assetI18n, useAssetI18n } from "./i18n";
 import { useLocation } from "react-router-dom";
@@ -102,6 +104,8 @@ export function useCachedData<
     | IEventCard
     | IMusicAchievement
     | IGachaCeilItem
+    | ICharacter3D
+    | ICostume3DModel
 >(name: string): [T[], React.MutableRefObject<T[]>] {
   const [cached, cachedRef, setCached] = useRefState<T[]>([]);
 
@@ -234,11 +238,14 @@ const queue = new PQueue({ concurrency: 1 });
 export async function getRemoteAssetURL(
   endpoint: string,
   setFunc?: CallableFunction,
-  cnDomain?: boolean
+  cnDomain: boolean = false,
+  minioDomain: boolean = false
 ): Promise<string> {
   const isWebpSupported = Modernizr.webplossless;
   const url = cnDomain
     ? `${process.env.REACT_APP_ASSET_DOMAIN_CN}/${endpoint}`
+    : minioDomain
+    ? `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets/${endpoint}`
     : `${process.env.REACT_APP_ASSET_DOMAIN_WW}/file/sekai-assets/${endpoint}`;
 
   if (endpoint.endsWith(".webp") && !isWebpSupported) {

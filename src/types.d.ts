@@ -994,3 +994,161 @@ export interface IGachaCeilItem {
   convertStartAt: number;
   convertResourceBoxId: number;
 }
+
+export interface VirtualLiveSetlist {
+  id: number;
+  virtualLiveId: number;
+  seq: number;
+  virtualLiveSetlistType: string;
+  assetbundleName: string;
+  virtualLiveStageId: number;
+  musicId?: number;
+  musicVocalId?: number;
+  character3dId1?: number;
+  character3dId2?: number;
+  character3dId3?: number;
+  character3dId4?: number;
+  character3dId5?: number;
+}
+
+export interface VirtualLiveBeginnerSchedule {
+  id: number;
+  virtualLiveId: number;
+  dayOfWeek: string;
+  startTime: string;
+  endTime: string;
+}
+
+export interface VirtualLiveSchedule {
+  id: number;
+  virtualLiveId: number;
+  seq: number;
+  startAt: any;
+  endAt: any;
+}
+
+export interface VirtualLiveCharacter {
+  id: number;
+  virtualLiveId: number;
+  gameCharacterUnitId: number;
+  seq: number;
+}
+
+export interface VirtualLiveReward {
+  id: number;
+  virtualLiveType: string;
+  virtualLiveId: number;
+  resourceBoxId: number;
+}
+
+export interface VirtualLiveReward2 {
+  id: number;
+  virtualLiveType: string;
+  virtualLiveId: number;
+  resourceBoxId: number;
+}
+
+export interface VirtualLiveWaitingRoom {
+  id: number;
+  virtualLiveId: number;
+  assetbundleName: string;
+  startAt: any;
+  endAt: any;
+}
+
+export interface VirtualItem {
+  id: number;
+  virtualItemCategory: string;
+  seq: number;
+  priority: number;
+  name: string;
+  assetbundleName: string;
+  costVirtualCoin: number;
+  costJewel: number;
+  cheerPoint: number;
+  effectAssetbundleName: string;
+  effectExpressionType: string;
+  virtualItemLabelType: string;
+}
+
+export interface IVirtualLiveInfo {
+  id: number;
+  virtualLiveType: string;
+  virtualLivePlatform: string;
+  seq: number;
+  name: string;
+  assetbundleName: string;
+  screenMvMusicVocalId: number;
+  startAt: any;
+  endAt: any;
+  rankingAnnounceAt: any;
+  virtualLiveSetlists: VirtualLiveSetlist[];
+  virtualLiveBeginnerSchedules: VirtualLiveBeginnerSchedule[];
+  virtualLiveSchedules: VirtualLiveSchedule[];
+  virtualLiveCharacters: VirtualLiveCharacter[];
+  virtualLiveReward: VirtualLiveReward;
+  virtualLiveRewards: VirtualLiveReward2[];
+  virtualLiveCheerPointRewards: any[];
+  virtualLiveWaitingRoom: VirtualLiveWaitingRoom;
+  virtualItems: VirtualItem[];
+  archiveReleaseConditionId?: number;
+}
+
+export interface MasterOfCermonyBaseEvent {
+  Id: int;
+  Time: float;
+  Duration: float;
+  Character3dId: int;
+  FaicialKey: string;
+  MotionKey: string;
+}
+
+export interface CharacterSpawnEvent extends MasterOfCermonyBaseEvent {
+  HeadCostume3dId: number;
+  BodyCostume3dId: number;
+}
+
+export interface CharacterUnspawnEvent extends MasterOfCermonyBaseEvent {}
+
+export interface CharacterTalkEvent extends MasterOfCermonyBaseEvent {
+  Serif: string;
+  VoiceKey: string;
+}
+
+export interface IMasterOfCermonyData {
+  Id: string;
+  characterSpawnEvents: CharacterSpawnEvent[];
+  characterUnspawnEvents: CharacterUnspawnEvent[];
+  // characterMoveEvents: CharacterMoveEvent[];
+  // characterRotateEvents: CharacterRotateEvent[];
+  // characterMotionEvents: CharacterMotionEvent[];
+  characterTalkEvents: CharacterTalkEvent[];
+  // characterIntaractionEvents: any[];
+  // effectMCEvents: any[];
+  // lightEvents: LightEvent[];
+  soundEvents: SoundEvent[];
+  // bgmEvents: any[];
+  // audienceEvents: AudienceEvent[];
+  // stageObjectSpawnEvents: any[];
+  // globalSpotlightEvents: GlobalSpotlightEvent[];
+  // aisacEvents: AisacEvent[];
+  // screenFadeEvents: any[];
+}
+
+export interface ICharacter3D {
+  id: number;
+  characterType: string;
+  characterId: number;
+  unit: string;
+  name: string;
+  headCostume3dId: number;
+  bodyCostume3dId: number;
+}
+
+export interface ICostume3DModel {
+  id: number;
+  costume3dId: number;
+  unit: string;
+  assetbundleName: string;
+  thumbnailAssetbundleName: string;
+}
