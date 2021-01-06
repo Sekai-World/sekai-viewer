@@ -1,5 +1,6 @@
 import { Grid, Typography } from "@material-ui/core";
 import React from "react";
+import Image from "material-ui-image";
 
 import coinIcon from "../../assets/common/material/coin.png";
 import honor1Icon from "../../assets/common/material/honor_1.png";
@@ -42,15 +43,16 @@ const CommonMaterialIcon: React.FC<{
 }> = ({ materialName, materialId, quantity }) => (
   <Grid container direction="column">
     <Grid item container justify="center">
-      <img
+      <Image
         src={
           materialId
             ? materialMap[materialName as "honor"][materialId]
             : materialMap[materialName as "coin"]
         }
         alt={`material ${materialName} ${materialId}`}
-        style={{ maxHeight: "64px" }}
-      ></img>
+        style={{ height: "64px", width: "64px" }}
+        color=""
+      ></Image>
     </Grid>
     <Grid item container justify="center">
       {isNumber(quantity) ? (
