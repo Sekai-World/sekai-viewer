@@ -110,7 +110,13 @@ const GridView: React.FC<{ data?: IVirtualLiveInfo }> = ({ data }) => {
             <Grid container direction="column" spacing={1}>
               <Grid item>
                 <SpoilerTag
-                  releaseTime={new Date(data.virtualLiveSchedules[0].startAt)}
+                  releaseTime={
+                    new Date(
+                      data.virtualLiveSchedules[0]
+                        ? data.virtualLiveSchedules[0].startAt
+                        : data.startAt
+                    )
+                  }
                 />
               </Grid>
               <Grid item>
