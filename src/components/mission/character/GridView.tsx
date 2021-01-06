@@ -6,8 +6,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
-import React, { Fragment, useContext } from "react";
-import { SettingContext } from "../../../context";
+import React, { Fragment } from "react";
 import { ICharacterMission } from "../../../types";
 import { ContentTrans } from "../../subs/ContentTrans";
 
@@ -27,7 +26,6 @@ const useStyles = makeStyles((theme) => ({
 
 const GridView: React.FC<{ data?: ICharacterMission }> = ({ data }) => {
   const classes = useStyles();
-  const { contentTransMode } = useContext(SettingContext)!;
 
   if (!data) {
     // loading
@@ -51,7 +49,6 @@ const GridView: React.FC<{ data?: ICharacterMission }> = ({ data }) => {
               <Grid container direction="column" spacing={1}>
                 <Grid item>
                   <ContentTrans
-                    mode={contentTransMode}
                     contentKey={`normal_mission:${data.id}`}
                     original={data.sentence}
                     originalProps={{

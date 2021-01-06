@@ -7,8 +7,7 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
-import React, { useContext, useEffect, useState } from "react";
-import { SettingContext } from "../../context";
+import React, { useEffect, useState } from "react";
 import { IStampInfo } from "../../types";
 import { getRemoteAssetURL } from "../../utils";
 import { ContentTrans } from "../subs/ContentTrans";
@@ -33,7 +32,6 @@ const useStyles = makeStyles((theme) => ({
 
 const GridView: React.FC<{ data?: IStampInfo }> = ({ data }) => {
   const classes = useStyles();
-  const { contentTransMode } = useContext(SettingContext)!;
 
   const [url, setUrl] = useState<string>("");
 
@@ -69,7 +67,6 @@ const GridView: React.FC<{ data?: IStampInfo }> = ({ data }) => {
         ></CardMedia>
         <CardContent style={{ paddingBottom: "16px" }}>
           <ContentTrans
-            mode={contentTransMode}
             contentKey={`stamp_name:${data.id}`}
             original={data.name.replace(/\[.*\]/, "").replace(/^.*：/, "")}
             originalProps={{

@@ -86,7 +86,6 @@ const GridView: React.FC<{ data?: IBeginnerMission }> = ({ data }) => {
               <Grid container direction="column" spacing={1}>
                 <Grid item>
                   <ContentTrans
-                    mode={contentTransMode}
                     contentKey={`beginner_mission:${data.id}`}
                     original={data.sentence}
                     originalProps={{

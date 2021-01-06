@@ -41,6 +41,7 @@ import DegreeImage from "../subs/DegreeImage";
 import ResourceBox from "../subs/ResourceBox";
 import { OpenInNew } from "@material-ui/icons";
 import { useInteractiveStyles } from "../../styles/interactive";
+import AudioPlayer from "../music/AudioPlayer";
 
 const useStyle = makeStyles((theme) => ({
   bannerImg: {
@@ -126,7 +127,7 @@ const EventDetail: React.FC<{}> = () => {
     const update = () => {
       if (Date.now() > event.aggregateAt) {
         // event already ended
-        if (interval != null) {
+        if (interval) {
           window.clearInterval(interval);
           interval = undefined;
         }
@@ -134,7 +135,7 @@ const EventDetail: React.FC<{}> = () => {
         setPastTimePercent(100);
         return false;
       } else if (Date.now() < event.startAt) {
-        if (interval != null) {
+        if (interval) {
           window.clearInterval(interval);
           interval = undefined;
         }
@@ -166,7 +167,7 @@ const EventDetail: React.FC<{}> = () => {
     interval = window.setInterval(update, 60000);
 
     return () => {
-      if (interval != null) {
+      if (interval) {
         window.clearInterval(interval);
         interval = undefined;
       }
@@ -281,11 +282,10 @@ const EventDetail: React.FC<{}> = () => {
             </TabPanel>
           </Paper>
         </TabContext>
-        <audio
+        <AudioPlayer
           style={{ width: "100%", margin: "1% 0" }}
-          controls
           src={eventBgm}
-        ></audio>
+        ></AudioPlayer>
         <Grid className={classes["grid-out"]} container direction="column">
           <Grid
             item
@@ -332,7 +332,6 @@ const EventDetail: React.FC<{}> = () => {
             <Grid item>
               <Grid container direction="column" spacing={1}>
                 <ContentTrans
-                  mode={contentTransMode}
                   contentKey={`event_name:${eventId}`}
                   original={event.name}
                   originalProps={{ align: "right" }}

@@ -207,7 +207,6 @@ const StoryReaderContent: React.FC<{}> = () => {
               {releaseConditionId ? (
                 <Grid item xs={12}>
                   <ReleaseCondTrans
-                    mode={contentTransMode}
                     releaseCondId={releaseConditionId}
                     originalProps={{ align: "center" }}
                     translatedProps={{ align: "center" }}

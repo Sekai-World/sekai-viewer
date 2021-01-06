@@ -66,13 +66,14 @@ const EventList: React.FC<{}> = () => {
   useEffect(() => {
     let sortedCache = [...eventsCache];
     if (updateSort === "desc") {
-      sortedCache = sortedCache.sort((a, b) => b.id - a.id);
+      sortedCache = sortedCache.sort((a, b) => b.startAt - a.startAt);
     } else if (updateSort === "asc") {
-      sortedCache = sortedCache.sort((a, b) => a.id - b.id);
+      sortedCache = sortedCache.sort((a, b) => a.startAt - b.startAt);
     }
     setSortedCache(sortedCache);
     setEvents([]);
-  }, [updateSort, eventsCache]);
+    setPage(0);
+  }, [updateSort, eventsCache, setPage]);
 
   useEffect(() => {
     setIsReady(Boolean(eventsCache.length));

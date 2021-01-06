@@ -6,8 +6,7 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
-import React, { useContext, useEffect, useState } from "react";
-import { SettingContext } from "../../context";
+import React, { useEffect, useState } from "react";
 import { ITipInfoComic } from "../../types";
 import { getRemoteAssetURL } from "../../utils";
 import { ContentTrans } from "../subs/ContentTrans";
@@ -35,7 +34,6 @@ const GridView: React.FC<{
   lang?: string;
   handleCardClick?: (index: number) => void;
 }> = ({ data, index, lang, handleCardClick }) => {
-  const { contentTransMode } = useContext(SettingContext)!;
   const classes = useStyles();
 
   const [imageURL, setImageURL] = useState<string>("");
@@ -86,7 +84,6 @@ const GridView: React.FC<{
       ></CardMedia>
       <CardContent style={{ paddingBottom: "16px" }}>
         <ContentTrans
-          mode={contentTransMode}
           contentKey={`comic_title:${data.id}`}
           original={data.title}
           originalProps={{

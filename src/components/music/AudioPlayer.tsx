@@ -22,7 +22,8 @@ const AudioPlayer: React.FC<{
   onPlay?: (howl: Howl) => void;
   onLoad?: (howl: Howl) => void;
   onSave?: (src: string) => void;
-}> = ({ src, onPlay, onLoad, onSave }) => {
+  style?: React.CSSProperties;
+}> = ({ src, onPlay, onLoad, onSave, style }) => {
   const [sound, setSound] = useState<Howl>();
   const [playbackTime, setPlaybackTime] = useState(0);
   const [totalTime, setTotalTime] = useState(0);
@@ -32,7 +33,7 @@ const AudioPlayer: React.FC<{
   const [volume, setVolume] = useState(100);
 
   useEffect(() => {
-    console.log(src);
+    // console.log(src);
     const _sound = new Howl({
       src: [src],
       html5: true,
@@ -88,7 +89,7 @@ const AudioPlayer: React.FC<{
   }, []);
 
   return (
-    <Paper>
+    <Paper style={style}>
       <Container>
         <Grid container justify="space-between" alignItems="center">
           <Grid item xs={2} md={1}>

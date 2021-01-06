@@ -29,7 +29,7 @@ import { Upload, Logout } from "mdi-material-ui";
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory } from "react-router-dom";
-import { SettingContext, UserContext } from "../../context";
+import { UserContext } from "../../context";
 import {
   SekaiCurrentEventModel,
   SekaiProfileEventRecordModel,
@@ -71,9 +71,6 @@ const UserHome: React.FC<{}> = () => {
     getSekaiProfileEventRecordMe,
     postSekaiProfileEventRecord,
   } = useStrapi(jwtToken);
-  // let { path } = useRouteMatch();
-  const { contentTransMode } = useContext(SettingContext)!;
-
   const [isUploadAvatarError, setIsUploadAvatarError] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(
     usermeta ? (usermeta.avatar || { url: "" }).url : ""
@@ -387,7 +384,6 @@ const UserHome: React.FC<{}> = () => {
                       className={interactiveClasses.noDecoration}
                     >
                       <ContentTrans
-                        mode={contentTransMode}
                         contentKey={`event_name:${currentEvent?.eventId}`}
                         original={currentEvent?.eventJson.name || ""}
                       />

@@ -93,7 +93,6 @@ const GridView: React.FC<{ data?: IEventInfo }> = ({ data }) => {
             </Grid>
             <Grid item>
               <ContentTrans
-                mode={contentTransMode}
                 contentKey={`event_name:${data.id}`}
                 original={data.name}
                 originalProps={{

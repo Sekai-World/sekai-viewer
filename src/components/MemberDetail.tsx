@@ -238,7 +238,6 @@ const MemberDetail: React.FC<{}> = () => {
             </Grid>
             <Grid item>
               <CharaNameTrans
-                mode={contentTransMode}
                 characterId={Number(charaId)}
                 originalProps={{ align: "right" }}
                 translatedProps={{ align: "right" }}
@@ -355,7 +354,6 @@ const MemberDetail: React.FC<{}> = () => {
                     <Grid container justify="flex-end">
                       <Grid item>
                         <ContentTrans
-                          mode={contentTransMode}
                           contentKey={`character_profile:${charaId}.${key}`}
                           original={charaProfile[key as "height"]}
                           originalProps={{
