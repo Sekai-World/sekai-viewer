@@ -13,11 +13,15 @@ import virtualCoinIcon from "../../assets/common/material/virtual_coin.png";
 import skillPracticeTicket1 from "../../assets/common/material/ticket1.png";
 import skillPracticeTicket2 from "../../assets/common/material/ticket2.png";
 import skillPracticeTicket3 from "../../assets/common/material/ticket3.png";
+// import gachaTicket from "../../assets/common/material/gacha_ticket.png";
+import overThe3Ticket from "../../assets/common/material/over_the_3_ticket.png";
+import { isNumber } from "@material-ui/data-grid";
 
 const materialMap = {
   coin: coinIcon,
   honor: ["", honor1Icon, honor2Icon, honor3Icon, honor4Icon],
   jewel: jewelIcon,
+  paid_jewel: jewelIcon,
   live_point: livePointIcon,
   slot: slotIcon,
   virtual_coin: virtualCoinIcon,
@@ -27,6 +31,8 @@ const materialMap = {
     skillPracticeTicket2,
     skillPracticeTicket3,
   ],
+  gacha_ticket: overThe3Ticket,
+  over_the_3_ticket: overThe3Ticket,
 };
 
 const CommonMaterialIcon: React.FC<{
@@ -47,7 +53,7 @@ const CommonMaterialIcon: React.FC<{
       ></img>
     </Grid>
     <Grid item container justify="center">
-      {quantity ? (
+      {isNumber(quantity) ? (
         <Typography variant="body2" align="center">
           x {quantity}
         </Typography>
