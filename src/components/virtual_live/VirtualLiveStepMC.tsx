@@ -1,4 +1,11 @@
-import { Avatar, Chip, Grid, Paper, Typography } from "@material-ui/core";
+import {
+  Avatar,
+  Chip,
+  Container,
+  Grid,
+  Paper,
+  Typography,
+} from "@material-ui/core";
 import axios from "axios";
 import React, {
   Fragment,
@@ -90,7 +97,8 @@ const MCCharacterSpawn: React.FC<{ data: CharacterSpawnEvent }> = ({
     if (headCostume) {
       getRemoteAssetURL(
         `thumbnail/costume_rip/${headCostume.thumbnailAssetbundleName}.webp`,
-        setHeadThumbnail
+        setHeadThumbnail,
+        window.isChinaMainland
       );
     }
   }, [headCostume]);
@@ -99,7 +107,8 @@ const MCCharacterSpawn: React.FC<{ data: CharacterSpawnEvent }> = ({
     if (bodyCostume) {
       getRemoteAssetURL(
         `thumbnail/costume_rip/${bodyCostume.thumbnailAssetbundleName}.webp`,
-        setBodyThumbnail
+        setBodyThumbnail,
+        window.isChinaMainland
       );
     }
   }, [bodyCostume]);
@@ -199,7 +208,9 @@ const MCCharacterTalk: React.FC<{ data: CharacterTalkEvent; mcId: string }> = ({
   useEffect(() => {
     getRemoteAssetURL(
       `virtual_live/mc/voice/${mcId}_rip/${data.VoiceKey}.mp3`,
-      setVoiceUrl
+      setVoiceUrl,
+      window.isChinaMainland,
+      true
     );
   }, [data.VoiceKey, mcId]);
 
@@ -211,7 +222,7 @@ const MCCharacterTalk: React.FC<{ data: CharacterTalkEvent; mcId: string }> = ({
           avatar={<Avatar src={charaIcons[`CharaIcon${character.id}`]} />}
         />
       </Grid>
-      <Grid item xs={8} md={7} lg={8}>
+      <Grid item xs={10} md={11}>
         <Typography>{data.Serif}</Typography>
       </Grid>
       <Grid item xs={2} md={1}>
@@ -232,7 +243,7 @@ const VirtualLiveStepMC: React.FC<{
     getRemoteAssetURL(
       `virtual_live/mc/scenario/${data.assetbundleName}_rip/${data.assetbundleName}.asset`,
       setAssetBundleURL,
-      false,
+      window.isChinaMainland,
       true
     );
   }, [data.assetbundleName]);
@@ -272,13 +283,15 @@ const VirtualLiveStepMC: React.FC<{
       {mcSerialData.map((mc) => (
         <Grid item xs={12}>
           <Paper>
-            <Grid container key={mc.data.Id} alignItems="center" spacing={1}>
-              {mc.type === "spawn" && <MCCharacterSpawn data={mc.data} />}
-              {mc.type === "unspawn" && <MCCharacterUnspawn data={mc.data} />}
-              {mc.type === "talk" && (
-                <MCCharacterTalk data={mc.data} mcId={mcId} />
-              )}
-            </Grid>
+            <Container>
+              <Grid container key={mc.data.Id} alignItems="center" spacing={1}>
+                {mc.type === "spawn" && <MCCharacterSpawn data={mc.data} />}
+                {mc.type === "unspawn" && <MCCharacterUnspawn data={mc.data} />}
+                {mc.type === "talk" && (
+                  <MCCharacterTalk data={mc.data} mcId={mcId} />
+                )}
+              </Grid>
+            </Container>
           </Paper>
         </Grid>
       ))}
