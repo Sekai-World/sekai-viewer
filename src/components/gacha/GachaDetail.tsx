@@ -1,7 +1,6 @@
 import {
   Button,
   Card,
-  CardContent,
   CardMedia,
   Divider,
   Grid,
@@ -11,7 +10,6 @@ import {
   Tabs,
   Typography,
   Container,
-  Tooltip,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -30,7 +28,6 @@ import React, {
   useContext,
   useEffect,
   useLayoutEffect,
-  useMemo,
   useState,
 } from "react";
 import { Link, useParams } from "react-router-dom";
