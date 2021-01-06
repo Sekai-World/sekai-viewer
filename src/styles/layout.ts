@@ -29,6 +29,12 @@ const useLayoutStyles = makeStyles((theme) => ({
   capitalize: {
     textTransform: "capitalize",
   },
+  tabpanel: {
+    padding: theme.spacing("1%", 0, 0, 0),
+  },
+  "grid-out": {
+    padding: theme.spacing("1%", "0"),
+  },
 }));
 
 export { useLayoutStyles };
