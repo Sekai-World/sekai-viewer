@@ -473,11 +473,32 @@ const GachaDetailPage: React.FC<{}> = () => {
         )!;
         const card = cards.find((card) => card.id === cardId)!;
 
-        return (detail.weight / weights[card.rarity - 1]).toFixed(2) + " %";
+        return (
+          Math.round(
+            (detail.weight / weights[card.rarity - 1]) *
+              normalRates[card.rarity - 1] *
+              1000
+          ) /
+            1000 +
+          " %" +
+          (card.rarity >= 3 &&
+          gacha.gachaBehaviors.some(
+            (behavior) => behavior.gachaBehaviorType === "over_rarity_3_once"
+          )
+            ? "\n" +
+              Math.round(
+                (detail.weight / weights[card.rarity - 1]) *
+                  guaranteedRate[card.rarity - 1] *
+                  1000
+              ) /
+                1000 +
+              " %"
+            : "")
+        );
       }
       return "";
     },
-    [cards, gacha, weights]
+    [cards, gacha, guaranteedRate, normalRates, weights]
   );
 
   if (gacha) {
@@ -1015,7 +1036,10 @@ const GachaDetailPage: React.FC<{}> = () => {
                   >
                     <Grid container direction="column">
                       <CardThumb cardId={cardId} />
-                      <Typography align="center">
+                      <Typography
+                        align="center"
+                        style={{ whiteSpace: "pre-line" }}
+                      >
                         {getCardRate(cardId)}
                       </Typography>
                     </Grid>
