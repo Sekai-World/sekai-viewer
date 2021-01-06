@@ -318,6 +318,7 @@ const EventTracker: React.FC<{}> = () => {
     setIsFetching(true);
     setIsShowChart(false);
     setLineProps({ hover: "" });
+    if (refreshCron) refreshCron.stop();
     if (!selectedRankings.length || !selectedEvent) {
       setIsFetching(false);
       setFetchProgress(0);
@@ -335,7 +336,6 @@ const EventTracker: React.FC<{}> = () => {
         currentTime >= event.startAt &&
         currentTime <= event.rankingAnnounceAt + 5 * 60 * 1000
       ) {
-        if (refreshCron) refreshCron.stop();
         const cron = new CronJob("10 * * * * *", () => {
           const currentTime = Date.now();
           if (currentTime > event.rankingAnnounceAt + 5 * 60 * 1000)
