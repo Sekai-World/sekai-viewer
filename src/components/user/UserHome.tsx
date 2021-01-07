@@ -12,6 +12,7 @@ import {
   InputAdornment,
   Tooltip,
   Collapse,
+  makeStyles,
 } from "@material-ui/core";
 import {
   ArrowDropDown,
@@ -43,8 +44,22 @@ import { ContentTrans } from "../subs/ContentTrans";
 // import useJwtAuth from "../../utils/jwt";
 import BindSekaiID from "./subs/BindSekaiID";
 
+const useStyles = makeStyles((theme) => ({
+  avatarProfile: {
+    [theme.breakpoints.down("sm")]: {
+      height: theme.spacing(10),
+      width: theme.spacing(10),
+    },
+    [theme.breakpoints.up("md")]: {
+      height: theme.spacing(20),
+      width: theme.spacing(20),
+    },
+  },
+}));
+
 const UserHome: React.FC<{}> = () => {
   const theme = useTheme();
+  const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
@@ -111,10 +126,7 @@ const UserHome: React.FC<{}> = () => {
           <Grid item xs={12} md={4}>
             <Grid container spacing={2}>
               <Grid item xs={12} container justify="center">
-                <Avatar
-                  src={avatarUrl || ""}
-                  className={layoutClasses.avatarProfile}
-                >
+                <Avatar src={avatarUrl || ""} className={classes.avatarProfile}>
                   {(nickname || "").substr(0, 2).toUpperCase()}
                 </Avatar>
               </Grid>
