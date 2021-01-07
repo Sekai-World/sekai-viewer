@@ -76,7 +76,10 @@ const CommentBlock: React.FC<{
           <MdEditor
             value={comment.content}
             renderHTML={(text) => mdParser.render(text)}
-            config={{ view: { html: true }, canView: { html: true } }}
+            config={{
+              view: { html: true, md: false, menu: false },
+              canView: { html: true, md: false, menu: false },
+            }}
           />
         </Typography>
       </Grid>

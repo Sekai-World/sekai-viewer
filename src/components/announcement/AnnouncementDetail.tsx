@@ -74,7 +74,11 @@ const AnnouncementDetail: React.FC<{}> = () => {
         <MdEditor
           value={announcement.content}
           renderHTML={(text) => mdParser.render(text)}
-          config={{ view: { html: true }, canView: { html: true } }}
+          config={{
+            view: { html: true, md: false, menu: false },
+            canView: { html: true, md: false, menu: false },
+          }}
+          readOnly
         />
       </Container>
       <Typography variant="h6" className={layoutClasses.header}>
