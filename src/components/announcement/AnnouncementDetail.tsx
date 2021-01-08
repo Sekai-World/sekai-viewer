@@ -8,6 +8,7 @@ import {
 } from "@material-ui/core";
 import React, {
   Fragment,
+  useContext,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -20,18 +21,28 @@ import MarkdownIt from "markdown-it";
 import MarkdownItCollapsible from "markdown-it-collapsible";
 import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
-import { AnnouncementModel, CommentModel } from "../../strapi-model";
+import {
+  AnnouncementModel,
+  CommentModel,
+  UserMetadatumModel,
+} from "../../strapi-model";
 import { useLayoutStyles } from "../../styles/layout";
 import { useStrapi } from "../../utils/apiClient";
 import Comment from "../comment/Comment";
 import { CommentTextMultiple } from "mdi-material-ui";
 import { useQuery } from "../../utils";
+import { UserContext } from "../../context";
 
 const AnnouncementDetail: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const { id } = useParams<{ id: string }>();
   const query = useQuery();
-  const { getAnnouncementById, getComments } = useStrapi();
+  const { usermeta } = useContext(UserContext)!;
+  const {
+    getAnnouncementById,
+    getComments,
+    getTranslationBySlug,
+  } = useStrapi();
   const { t } = useTranslation();
 
   const mdParser = useMemo(
@@ -44,6 +55,7 @@ const AnnouncementDetail: React.FC<{}> = () => {
 
   const [announcement, setAnnouncement] = useState<AnnouncementModel>();
   const [comments, setComments] = useState<CommentModel[]>([]);
+  const [contributors, setContributors] = useState<UserMetadatumModel[]>([]);
 
   useLayoutEffect(() => {
     document.title = t("title:announcementDetail", {
@@ -61,7 +73,21 @@ const AnnouncementDetail: React.FC<{}> = () => {
         : {}
     ).then(setAnnouncement);
     getComments("announcement", id).then(setComments);
-  }, [getAnnouncementById, getComments, id, query]);
+    getTranslationBySlug(`announcement:${id}`, "target").then(
+      (data) =>
+        data[0] &&
+        setContributors(
+          data[0].users.filter((meta) => meta.id !== (usermeta || { id: 0 }).id)
+        )
+    );
+  }, [
+    getAnnouncementById,
+    getComments,
+    getTranslationBySlug,
+    id,
+    query,
+    usermeta,
+  ]);
 
   return !!announcement ? (
     <Fragment>
@@ -90,6 +116,28 @@ const AnnouncementDetail: React.FC<{}> = () => {
       </Grid>
       <Divider style={{ margin: "1% 0" }} />
       <Container className={layoutClasses.content}>
+        {!!contributors.length && (
+          <Grid container spacing={1} alignItems="center">
+            <Grid item>
+              <Typography color="textSecondary">
+                {t("announcement:co-authors")}
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Grid container spacing={1}>
+                {contributors.map((userMeta) => (
+                  <Grid item>
+                    <Chip
+                      label={userMeta.nickname}
+                      avatar={<Avatar src={userMeta.avatar.url} />}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            </Grid>
+          </Grid>
+        )}
+        <br />
         <MdEditor
           value={announcement.content}
           renderHTML={(text) => mdParser.render(text)}

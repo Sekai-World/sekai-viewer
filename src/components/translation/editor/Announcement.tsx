@@ -1,5 +1,7 @@
 import {
+  Avatar,
   Button,
+  Chip,
   CircularProgress,
   Container,
   Dialog,
@@ -27,7 +29,11 @@ import MarkdownIt from "markdown-it";
 import MarkdownItCollapsible from "markdown-it-collapsible";
 import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
-import { AnnouncementModel, TranslationModel } from "../../../strapi-model";
+import {
+  AnnouncementModel,
+  TranslationModel,
+  UserMetadatumModel,
+} from "../../../strapi-model";
 import { UserContext } from "../../../context";
 import { useStrapi } from "../../../utils/apiClient";
 import { useLayoutStyles } from "../../../styles/layout";
@@ -61,6 +67,9 @@ const Announcement: React.FC<{
     null
   );
   const [targetData, setTargetData] = useState<TranslationModel[]>([]);
+  const [targetContributors, setTargetContributors] = useState<
+    UserMetadatumModel[]
+  >([]);
   const [copySourceOpen, setCopySourceOpen] = useState(false);
   const [translationId, setTranslationId] = useState<number>();
   const [isSuccess, setIsSuccess] = useState(false);
@@ -82,7 +91,7 @@ const Announcement: React.FC<{
       const _source = await getAnnouncementById(contentId);
       setSourceData(_source);
       setSourceLoading(false);
-      const _data = await getTranslationBySlug(slug, {
+      const _data = await getTranslationBySlug(slug, "source", {
         targetLang_in: usermeta?.languages.map((lang) => lang.id),
       });
       if (!_data.length) return;
@@ -107,6 +116,7 @@ const Announcement: React.FC<{
         setTranslationId(_datum.id);
         setIsFin(_datum.isFin);
         setIsTartgetExisted(false);
+        setTargetContributors(_datum.users);
         const [targetModel, targetContentId] = _datum.targetSlug!.split(":");
 
         if (targetModel === "announcement") {
@@ -125,6 +135,7 @@ const Announcement: React.FC<{
         setTargetDesc("");
         setTargetContent("");
         setIsTartgetExisted(false);
+        setTargetContributors([]);
       }
     })(targetLang);
   }, [getAnnouncementById, targetData, targetLang]);
@@ -177,7 +188,7 @@ const Announcement: React.FC<{
             canView: { html: true, md: true, menu: false, hideMenu: false },
           }}
           readOnly
-          style={{ maxHeight: "calc(50vh)" }}
+          style={{ height: "calc(50vh)" }}
         />
       </Container>
       <Typography variant="h6" className={layoutClasses.header}>
@@ -216,6 +227,28 @@ const Announcement: React.FC<{
             </Button>
           </Grid>
         </Grid>
+        {isTartgetExisted && (
+          <Grid container spacing={1} alignItems="center">
+            <Grid item>
+              <Typography color="textSecondary">
+                {t("translate:editor.target_contributors")}
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Grid container spacing={1}>
+                {targetContributors.map((userMeta) => (
+                  <Grid item>
+                    <Chip
+                      label={userMeta.nickname}
+                      key={userMeta.id}
+                      avatar={<Avatar src={userMeta.avatar.url} />}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            </Grid>
+          </Grid>
+        )}
         <Grid container spacing={1} alignItems="center">
           <Grid item xs={12}>
             <TextField
@@ -240,9 +273,10 @@ const Announcement: React.FC<{
           renderHTML={(text) => mdParser.render(text)}
           config={{
             view: { html: true, md: true },
+            canView: { fullScreen: false },
           }}
           onChange={({ text }) => setTargetContent(text)}
-          style={{ maxHeight: "calc(50vh)" }}
+          style={{ height: "calc(50vh)" }}
         />
       </Container>
       <Grid container spacing={2}>
@@ -297,15 +331,19 @@ const Announcement: React.FC<{
                     target,
                     targetLang,
                   });
-                else
-                  await postTranslation(
+                else {
+                  const { id } = await postTranslation(
                     usermeta,
                     slug,
                     sourceData.language.id,
                     target,
                     targetLang!
                   );
+                  setTranslationId(id);
+                }
                 if (!isTartgetExisted) setIsTartgetExisted(true);
+                if (!targetContributors.find((elem) => elem.id === usermeta.id))
+                  setTargetContributors([...targetContributors, usermeta]);
                 setIsSuccess(true);
               } catch (error) {
                 setIsFailed(true);

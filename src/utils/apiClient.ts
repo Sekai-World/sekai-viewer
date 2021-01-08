@@ -347,12 +347,13 @@ export function useStrapi(token?: string) {
       [axios]
     ),
     getTranslations: useCallback(
-      async (page: number, limit: number) =>
+      async (page: number, limit: number, params?: { [key: string]: any }) =>
         (
           await axios.get<TranslationModel[]>("/translations", {
             params: {
               _limit: limit,
               _start: page * limit,
+              ...(params || {}),
             },
           })
         ).data,
@@ -364,11 +365,14 @@ export function useStrapi(token?: string) {
       [axios]
     ),
     getTranslationBySlug: useCallback(
-      async (slug: string, params?: any) =>
+      async (slug: string, type: "source" | "target", params?: any) =>
         (
-          await axios.get<TranslationModel[]>(`/translations/slug/${slug}`, {
-            params,
-          })
+          await axios.get<TranslationModel[]>(
+            `/translations/slug/${type}/${slug}`,
+            {
+              params,
+            }
+          )
         ).data,
       [axios]
     ),

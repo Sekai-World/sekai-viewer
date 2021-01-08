@@ -18,7 +18,7 @@ import { SettingContext, UserContext } from "../../context";
 import { useLayoutStyles } from "../../styles/layout";
 import { useStrapi } from "../../utils/apiClient";
 import TableAnnouncements from "./table/TableAnnouncements";
-import TableMe from "./table/TableMe";
+import TableMe from "./table/TableWork";
 
 interface preferLangValues {
   languages: number[];

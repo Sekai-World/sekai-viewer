@@ -26,7 +26,7 @@ const TableMe: React.FC<Props> = (props: Props) => {
   const { t } = useTranslation();
   // const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
-  const { jwtToken } = useContext(UserContext)!;
+  const { jwtToken, usermeta } = useContext(UserContext)!;
   const { getTranslations, getTranslationCount, putTranslationId } = useStrapi(
     jwtToken
   );
@@ -42,11 +42,13 @@ const TableMe: React.FC<Props> = (props: Props) => {
     setLoading(true);
 
     setRowCount(await getTranslationCount());
-    const newRows = await getTranslations(page - 1, pageSize);
+    const newRows = await getTranslations(page - 1, pageSize, {
+      targetLang_in: usermeta?.languages.map((lang) => lang.id),
+    });
 
     setTranslations(newRows);
     setLoading(false);
-  }, [getTranslationCount, getTranslations, page, pageSize]);
+  }, [getTranslationCount, getTranslations, page, pageSize, usermeta]);
 
   useEffect(() => {
     updateData();
@@ -147,19 +149,6 @@ const TableMe: React.FC<Props> = (props: Props) => {
       </div>
       <br />
       <Grid container spacing={2}>
-        {selectedWork?.isFin === false && (
-          <Grid item>
-            <Button
-              variant="contained"
-              color="primary"
-              disabled={!selectedWork}
-              component={Link}
-              to={`/translation/${selectedWork?.sourceSlug}?targetLang=${selectedWork?.targetLang?.id}`}
-            >
-              {t("translate:button.continue_translate")}
-            </Button>
-          </Grid>
-        )}
         <Grid item>
           {selectedWork?.isFin ? (
             <Button
@@ -201,6 +190,19 @@ const TableMe: React.FC<Props> = (props: Props) => {
             )
           )}
         </Grid>
+        {selectedWork?.isFin === false && (
+          <Grid item>
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={!selectedWork}
+              component={Link}
+              to={`/translation/${selectedWork?.sourceSlug}?targetLang=${selectedWork?.targetLang?.id}`}
+            >
+              {t("translate:button.continue_translate")}
+            </Button>
+          </Grid>
+        )}
       </Grid>
     </Fragment>
   );

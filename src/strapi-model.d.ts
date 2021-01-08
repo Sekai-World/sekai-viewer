@@ -150,7 +150,7 @@ export type CommentAbuseReason = "OTHER" | "BAD_WORDS" | "DISCRIMINATION";
 
 export interface TranslationModel {
   id: number;
-  user: UserModel;
+  users: UserMetadatumModel[];
   isFin: boolean;
   source?: any;
   sourceSlug?: string;
