@@ -205,12 +205,9 @@ const GachaDetailPage: React.FC<{}> = () => {
             let acc = 0;
             const weightArr = rollWeights[2].map((weight) => (acc += weight));
             const weightSum = weights[2];
+            const rand = Math.floor(Math.random() * weightSum);
             tmpGachaResult.push(
-              rollCards[2][
-                weightArr.filter(
-                  (weight) => weight < Math.floor(Math.random() * weightSum)
-                ).length
-              ]
+              rollCards[2][weightArr.filter((weight) => weight < rand).length]
             );
           } else if (roll < must3RollResult[1]) {
             // get 4* card
@@ -224,12 +221,9 @@ const GachaDetailPage: React.FC<{}> = () => {
             let acc = 0;
             const weightArr = rollWeights[3].map((weight) => (acc += weight));
             const weightSum = weights[3];
+            const rand = Math.floor(Math.random() * weightSum);
             tmpGachaResult.push(
-              rollCards[3][
-                weightArr.filter(
-                  (weight) => weight < Math.floor(Math.random() * weightSum)
-                ).length
-              ]
+              rollCards[3][weightArr.filter((weight) => weight < rand).length]
             );
           } else {
             console.log(roll, must3RollResult);
@@ -252,12 +246,9 @@ const GachaDetailPage: React.FC<{}> = () => {
           let acc = 0;
           const weightArr = rollWeights[0].map((weight) => (acc += weight));
           const weightSum = weights[0];
+          const rand = Math.floor(Math.random() * weightSum);
           tmpGachaResult.push(
-            rollCards[0][
-              weightArr.filter(
-                (weight) => weight < Math.floor(Math.random() * weightSum)
-              ).length
-            ]
+            rollCards[0][weightArr.filter((weight) => weight < rand).length]
           );
           noStar3Count++;
         } else if (roll <= rollResult[1]!) {
@@ -272,12 +263,9 @@ const GachaDetailPage: React.FC<{}> = () => {
           let acc = 0;
           const weightArr = rollWeights[1].map((weight) => (acc += weight));
           const weightSum = weights[1];
+          const rand = Math.floor(Math.random() * weightSum);
           tmpGachaResult.push(
-            rollCards[1][
-              weightArr.filter(
-                (weight) => weight < Math.floor(Math.random() * weightSum)
-              ).length
-            ]
+            rollCards[1][weightArr.filter((weight) => weight < rand).length]
           );
           noStar3Count++;
         } else if (roll <= rollResult[2]!) {
@@ -292,12 +280,9 @@ const GachaDetailPage: React.FC<{}> = () => {
           let acc = 0;
           const weightArr = rollWeights[2].map((weight) => (acc += weight));
           const weightSum = weights[2];
+          const rand = Math.floor(Math.random() * weightSum);
           tmpGachaResult.push(
-            rollCards[2][
-              weightArr.filter(
-                (weight) => weight < Math.floor(Math.random() * weightSum)
-              ).length
-            ]
+            rollCards[2][weightArr.filter((weight) => weight < rand).length]
           );
         } else if (roll <= rollResult[3]!) {
           // get 4* card
@@ -311,12 +296,9 @@ const GachaDetailPage: React.FC<{}> = () => {
           let acc = 0;
           const weightArr = rollWeights[3].map((weight) => (acc += weight));
           const weightSum = weights[3];
+          const rand = Math.floor(Math.random() * weightSum);
           tmpGachaResult.push(
-            rollCards[3][
-              weightArr.filter(
-                (weight) => weight < Math.floor(Math.random() * weightSum)
-              ).length
-            ]
+            rollCards[3][weightArr.filter((weight) => weight < rand).length]
           );
         } else {
           console.log(roll, rollResult);
