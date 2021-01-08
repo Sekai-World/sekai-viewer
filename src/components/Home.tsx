@@ -156,7 +156,7 @@ function Home() {
     {
       field: "action",
       headerName: t("home:game-news.action"),
-      width: 80,
+      width: 100,
       renderCell: (params: ValueFormatterParams) => {
         const info = params.row as IUserInformationInfo;
         return info.browseType === "internal" ? (
