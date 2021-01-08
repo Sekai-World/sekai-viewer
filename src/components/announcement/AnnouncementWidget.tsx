@@ -14,7 +14,7 @@ const AnnouncementWidget: React.FC<{}> = () => {
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const { usermeta } = useContext(UserContext)!;
-  const { languages } = useContext(SettingContext)!;
+  const { languages, lang } = useContext(SettingContext)!;
   const { getAnnouncementPage } = useStrapi();
 
   const [announcements, setAnnouncements] = useState<AnnouncementModel[]>([]);
@@ -22,6 +22,7 @@ const AnnouncementWidget: React.FC<{}> = () => {
   useEffect(() => {
     (async () => {
       const enId = languages.find((lang) => lang.code === "en")!.id;
+      const langId = languages.find((elem) => elem.code === lang)!.id;
       const data = await getAnnouncementPage(
         10,
         0,
@@ -29,6 +30,7 @@ const AnnouncementWidget: React.FC<{}> = () => {
           ? {
               language_in: [
                 enId,
+                langId,
                 ...usermeta?.languages.map((lang) => lang.id),
               ],
             }
@@ -36,7 +38,7 @@ const AnnouncementWidget: React.FC<{}> = () => {
       );
       setAnnouncements(data);
     })();
-  }, [getAnnouncementPage, languages, usermeta]);
+  }, [getAnnouncementPage, lang, languages, usermeta]);
 
   return (
     <Fragment>

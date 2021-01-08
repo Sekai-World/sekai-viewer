@@ -19,7 +19,7 @@ const AnnouncementList: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const { usermeta } = useContext(UserContext)!;
-  const { languages } = useContext(SettingContext)!;
+  const { languages, lang } = useContext(SettingContext)!;
   const { getAnnouncementPage, getAnnouncementCount } = useStrapi();
 
   const [announcements, setAnnouncements] = useState<AnnouncementModel[]>([]);
@@ -43,6 +43,7 @@ const AnnouncementList: React.FC<{}> = () => {
   useEffect(() => {
     (async () => {
       const enId = languages.find((lang) => lang.code === "en")!.id;
+      const langId = languages.find((elem) => elem.code === lang)!.id;
       const data = await getAnnouncementPage(
         limit,
         page,
@@ -50,6 +51,7 @@ const AnnouncementList: React.FC<{}> = () => {
           ? {
               language_in: [
                 enId,
+                langId,
                 ...usermeta?.languages.map((lang) => lang.id),
               ],
             }
@@ -58,7 +60,7 @@ const AnnouncementList: React.FC<{}> = () => {
       setAnnouncements((announcements) => [...announcements, ...data]);
       setLastQueryFin(true);
     })();
-  }, [getAnnouncementPage, languages, limit, page, usermeta]);
+  }, [getAnnouncementPage, lang, languages, limit, page, usermeta]);
 
   const callback = useCallback(
     (
