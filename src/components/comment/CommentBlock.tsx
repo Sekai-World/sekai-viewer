@@ -1,44 +1,40 @@
-import { Button, ButtonGroup, Grid, Typography } from "@material-ui/core";
+import {
+  Avatar,
+  Button,
+  ButtonGroup,
+  Chip,
+  Grid,
+  Typography,
+} from "@material-ui/core";
 import { Report, ThumbUp } from "@material-ui/icons";
 import MarkdownIt from "markdown-it";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 // import { useTranslation } from "react-i18next";
 import MdEditor from "react-markdown-editor-lite";
-import { CommentModel, UserModel } from "../../strapi-model";
-import { useStrapi } from "../../utils/apiClient";
+import { CommentModel } from "../../strapi-model";
 
 const CommentBlock: React.FC<{
   comment: CommentModel;
   onThumbsUp?: (id: number) => Promise<void>;
   onReport?: (id: number) => Promise<void>;
 }> = ({ comment, onThumbsUp, onReport }) => {
-  const { getUserInfo } = useStrapi();
-  // const { t } = useTranslation();
-
   const mdParser = useMemo(
     () => new MarkdownIt({ linkify: true, typographer: true }),
     []
   );
 
-  const [user, setUser] = useState<UserModel>();
   const [points, setPoints] = useState(comment.points || 0);
-
-  useEffect(() => {
-    getUserInfo(
-      // @ts-ignore
-      isNaN(comment.authorUser) ? comment.authorUser.id : comment.authorUser
-    ).then(setUser);
-  }, [comment.authorUser, getUserInfo]);
 
   return (
     <Grid container spacing={1}>
       <Grid item xs={12} container justify="space-between" alignItems="center">
         <Grid item>
-          <Grid container spacing={1}>
+          <Grid container spacing={1} alignItems="center">
             <Grid item>
-              <Typography color="textSecondary" variant="subtitle2">
-                {user?.username}
-              </Typography>
+              <Chip
+                label={comment.authorUser.nickname}
+                avatar={<Avatar src={comment.authorAvatar} />}
+              />
             </Grid>
             <Grid item>
               <Typography variant="subtitle2">
@@ -78,7 +74,7 @@ const CommentBlock: React.FC<{
             renderHTML={(text) => mdParser.render(text)}
             config={{
               view: { html: true, md: false, menu: false },
-              canView: { html: true, md: false, menu: false },
+              canView: { html: true, md: false, menu: false, hideMenu: false },
             }}
           />
         </Typography>

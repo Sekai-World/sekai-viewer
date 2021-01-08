@@ -101,12 +101,16 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
     const [imgLeftX, refImgLeftX, setImgLeftX] = useRefState<number>(-256);
     const [imgRightX, refImgRightX, setImgRightX] = useRefState<number>(512);
     // const [requestId, refRequestId, setRequestId] = useRefState<number>(0);
-    const [imgLeftWidth, refImgLeftWidth, setImgLeftWidth] = useRefState<
-      number
-    >(768);
-    const [imgRightWidth, refImgRightWidth, setImgRightWidth] = useRefState<
-      number
-    >(768);
+    const [
+      imgLeftWidth,
+      refImgLeftWidth,
+      setImgLeftWidth,
+    ] = useRefState<number>(768);
+    const [
+      imgRightWidth,
+      refImgRightWidth,
+      setImgRightWidth,
+    ] = useRefState<number>(768);
 
     const svgElement = useRef<SVGSVGElement>(null);
 

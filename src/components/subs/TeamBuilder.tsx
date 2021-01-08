@@ -78,9 +78,10 @@ const TeamBuiler: React.FC<{
   const [characterId, setCharacterId] = useState<number>(0);
   const [rarity, setRarity] = useState<number>(4);
   const [filteredCards, setFilteredCards] = useState<ICardInfo[]>([]);
-  const [duplicatedCardErrorOpen, setDuplicatedCardErrorOpen] = useState<
-    boolean
-  >(false);
+  const [
+    duplicatedCardErrorOpen,
+    setDuplicatedCardErrorOpen,
+  ] = useState<boolean>(false);
   const [cardMaxErrorOpen, setCardMaxErrorOpen] = useState<boolean>(false);
   const [teamTextCopiedOpen, setTeamTextCopiedOpen] = useState<boolean>(false);
   const [loadTeamErrorOpen, setLoadTeamErrorOpen] = useState<boolean>(false);

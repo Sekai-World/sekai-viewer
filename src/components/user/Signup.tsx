@@ -197,11 +197,11 @@ const Signup: React.FC<{}> = () => {
                     <Field
                       component={Select}
                       type="text"
-                      multiple={true}
                       name="languages"
                       inputProps={{
                         name: "languages",
                         id: "language-select",
+                        multiple: true,
                       }}
                       style={{ width: 210 }}
                     >
