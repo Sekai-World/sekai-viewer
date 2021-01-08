@@ -4,31 +4,21 @@ import { initReactI18next } from "react-i18next";
 import fetchBackend from "i18next-fetch-backend";
 import detector from "i18next-browser-languagedetector";
 import { useCallback } from "react";
+import { getLanguages } from "./apiClient";
 
 export const assetI18n: typeof i18n = i18n.createInstance();
+// export const announcementI18n: typeof i18n = i18n.createInstance();
 
-export function initGlobalI18n() {
+export async function initGlobalI18n() {
+  const languages = await getLanguages();
+  const codes = languages.map((lang) => lang.code);
+
   i18n
     .use(initReactI18next)
     .use(fetchBackend)
     .use(detector)
     .init({
-      supportedLngs: [
-        "en",
-        "zh-CN",
-        "zh-TW",
-        "ja",
-        "ko",
-        "es",
-        "de",
-        "pt-BR",
-        "ru",
-        "it",
-        "pl",
-        "fr",
-        "id",
-        "th",
-      ],
+      supportedLngs: codes,
       ns: [
         "common",
         "home",
@@ -56,6 +46,7 @@ export function initGlobalI18n() {
         "comment",
         "live2d",
         "virtual_live",
+        "translate",
       ],
       fallbackLng: {
         default: ["en"],
@@ -75,22 +66,7 @@ export function initGlobalI18n() {
     .use(fetchBackend)
     .use(detector)
     .init({
-      supportedLngs: [
-        "en",
-        "zh-CN",
-        "zh-TW",
-        "ja",
-        "ko",
-        "es",
-        "de",
-        "pt-BR",
-        "ru",
-        "it",
-        "pl",
-        "fr",
-        "id",
-        "th",
-      ],
+      supportedLngs: codes,
       ns: [
         "music_titles",
         "card_prefix",
@@ -125,6 +101,23 @@ export function initGlobalI18n() {
       },
       returnEmptyString: false,
     });
+
+  // announcementI18n
+  //   .use(fetchBackend)
+  //   .use(detector)
+  //   .init({
+  //     supportedLngs: codes,
+  //     fallbackLng: {
+  //       default: ["en"],
+  //       pt: ["pt-BR", "en"],
+  //     },
+  //     backend: {
+  //       loadPath:
+  //         process.env.REACT_APP_STRAPI_BASE +
+  //         "/announcement/{{ns}}/translation/{{lng}}",
+  //     },
+  //     returnEmptyString: false,
+  //   });
 }
 
 export function useAssetI18n() {
@@ -155,3 +148,11 @@ export function useAssetI18n() {
   );
   return { assetT, assetI18n, getTranslated };
 }
+
+// export function useAnnouncementI18n() {
+//   return {
+//     t: announcementI18n.t,
+//     i18n: announcementI18n,
+//     loadNS: announcementI18n.loadNamespaces,
+//   };
+// }

@@ -2,6 +2,7 @@ import React, {
   createContext,
   PropsWithChildren,
   useCallback,
+  useMemo,
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
@@ -36,9 +37,10 @@ export const SettingProvider: React.FC<PropsWithChildren<{}>> = ({
   const [displayMode, setDisplayMode] = useState<DisplayModeType>(
     (localStorage.getItem("display-mode") as DisplayModeType) || "auto"
   );
-  const [contentTransMode, setContentTransMode] = useState<
-    ContentTransModeType
-  >(
+  const [
+    contentTransMode,
+    setContentTransMode,
+  ] = useState<ContentTransModeType>(
     (localStorage.getItem(
       "content-translation-mode"
     ) as ContentTransModeType) || "translated"
@@ -88,6 +90,10 @@ export const UserContext = createContext<
 export const UserProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
   const auth = useJwtAuth();
 
+  const [user, setUser] = useState(auth.user);
+  const [token, setToken] = useState(auth.token);
+  const [usermeta, setUsermeta] = useState(auth.usermeta);
+
   const [sekaiProfile, setSekaiProfile] = useState<
     SekaiProfileModel | undefined
   >(JSON.parse(localStorage.getItem("sekaiProfile") || "null") || undefined);
@@ -95,22 +101,20 @@ export const UserProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
   return (
     <UserContext.Provider
       value={{
-        get user() {
-          return auth.user;
-        },
-        get jwtToken() {
-          return auth.token;
-        },
+        user: useMemo(() => user, [user]),
+        jwtToken: useMemo(() => token, [token]),
         sekaiProfile,
         updateUser: useCallback(
           (newUser: UserModel | null) => {
             auth.user = newUser;
+            setUser(newUser);
           },
           [auth.user]
         ),
         updateJwtToken: useCallback(
           (newToken: string) => {
             auth.token = newToken;
+            setToken(newToken);
           },
           [auth.token]
         ),
@@ -125,12 +129,11 @@ export const UserProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
           setSekaiProfile(undefined);
           localStorage.removeItem("sekaiProfile");
         }, [auth.token, auth.user]),
-        get usermeta() {
-          return auth.usermeta;
-        },
+        usermeta: useMemo(() => usermeta, [usermeta]),
         updateUserMeta: useCallback(
           (data) => {
             auth.usermeta = data;
+            setUsermeta(data);
           },
           [auth.usermeta]
         ),

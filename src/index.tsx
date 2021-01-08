@@ -18,39 +18,33 @@ TagManager.initialize({
 });
 
 window.isChinaMainland = false;
-localforage
-  .getItem<string>("country")
-  .then((country) => {
-    if (!country)
-      return Axios.get<{ data: { country: string } }>(
+(async () => {
+  let country = await localforage.getItem<string>("country");
+  if (!country) {
+    country = (
+      await Axios.get<{ data: { country: string } }>(
         `${process.env.REACT_APP_API_BACKEND_BASE}/country`
-      );
-    else {
-      window.isChinaMainland = country === "CN";
-      initGlobalI18n();
-      return null;
-    }
-  })
-  .then((res) => {
-    if (res) {
-      window.isChinaMainland = res.data.data.country === "CN";
-      initGlobalI18n();
-      localforage.setItem<string>("country", res.data.data.country);
-    }
+      )
+    ).data.data.country;
+    localforage.setItem<string>("country", country);
+  }
 
-    ReactDOM.render(
-      <React.StrictMode>
-        <Router>
-          <Suspense fallback="loading">
-            <SettingProvider>
-              <App />
-            </SettingProvider>
-          </Suspense>
-        </Router>
-      </React.StrictMode>,
-      document.getElementById("root")
-    );
-  });
+  window.isChinaMainland = country === "CN";
+  await initGlobalI18n();
+
+  ReactDOM.render(
+    <React.StrictMode>
+      <Router>
+        <Suspense fallback="loading">
+          <SettingProvider>
+            <App />
+          </SettingProvider>
+        </Suspense>
+      </Router>
+    </React.StrictMode>,
+    document.getElementById("root")
+  );
+})();
 
 // check user info
 (async () => {

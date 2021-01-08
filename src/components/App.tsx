@@ -1,20 +1,12 @@
 import {
   AppBar,
-  Button,
   Collapse,
   Container,
   unstable_createMuiStrictModeTheme as createMuiTheme,
   CssBaseline,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Divider,
   Drawer,
   Fab,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
   Hidden,
   IconButton,
   List,
@@ -24,8 +16,6 @@ import {
   makeStyles,
   Menu,
   MenuItem,
-  Radio,
-  RadioGroup,
   Theme,
   ThemeProvider,
   Toolbar,
@@ -40,9 +30,6 @@ import {
   MoveToInbox as MoveToInboxIcon,
   ArrowBackIos as ArrowBackIosIcon,
   Settings as SettingsIcon,
-  Brightness4,
-  Brightness7,
-  BrightnessAuto,
   ControlCamera,
   QueueMusic,
   CropOriginal,
@@ -57,6 +44,7 @@ import {
   Timeline,
   MoreVert,
   LiveTv,
+  Translate,
 } from "@material-ui/icons";
 import {
   AccountGroup,
@@ -83,9 +71,9 @@ import {
   useHistory,
   useRouteMatch,
 } from "react-router-dom";
-import { SettingContext, UserProvider } from "../context";
-import { ContentTransModeType, DisplayModeType } from "../types";
+import { SettingContext, UserContext, UserProvider } from "../context";
 import ScrollTop from "./subs/ScrollTop";
+import Settings from "./subs/Settings";
 
 const drawerWidth = 240;
 const CardList = lazy(() => import("./card/CardList"));
@@ -129,6 +117,8 @@ const VirtualLiveList = lazy(() => import("./virtual_live/VirtualLiveList"));
 const VirtualLiveDetail = lazy(
   () => import("./virtual_live/VirtualLiveDetail")
 );
+const TranslationPage = lazy(() => import("./translation/TranslationPage"));
+const TranslationEditor = lazy(() => import("./translation/TranslationEditor"));
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -203,6 +193,7 @@ interface IListItemLinkProps {
   text: string;
   to: string;
   disabled: boolean;
+  visibleRoles?: string[];
   children?: IListItemLinkProps[];
 }
 
@@ -210,19 +201,18 @@ function ListItemLink(
   props: IListItemLinkProps & { theme: Theme }
 ): React.ReactElement<IListItemLinkProps> {
   const { icon, text, to, theme } = props;
+  const { user } = useContext(UserContext)!;
   const match = useRouteMatch({
     path: to,
     exact: to === "/",
   });
   const classes = useStyles();
 
-  // const renderLink = useMemo(
-  //   () =>
-  //     forwardRef<HTMLAnchorElement, Omit<LinkProps, "to">>((itemProps, ref) => (
-  //       <Link to={to} ref={ref} {...itemProps} />
-  //     )),
-  //   [to]
-  // );
+  if (
+    props.visibleRoles &&
+    (!user || !props.visibleRoles.includes(user!.role.name))
+  )
+    return <Fragment></Fragment>;
 
   return (
     <li
@@ -265,6 +255,8 @@ function ListItemWithChildren(props: {
   theme: Theme;
 }> {
   const { item, theme } = props;
+  const { user } = useContext(UserContext)!;
+
   const match = useRouteMatch({
     path: item.to,
     exact: item.to === "/",
@@ -272,6 +264,12 @@ function ListItemWithChildren(props: {
   const classes = useStyles();
 
   const [expansionState, setExpansionState] = useState(Boolean(match));
+
+  if (
+    item.visibleRoles &&
+    (!user || !item.visibleRoles.includes(user!.role.name))
+  )
+    return <Fragment></Fragment>;
 
   return (
     <Fragment>
@@ -339,14 +337,7 @@ function ListItemWithChildren(props: {
 
 function App() {
   const { t } = useTranslation();
-  const {
-    lang,
-    displayMode,
-    contentTransMode,
-    updateLang,
-    updateDisplayMode,
-    updateContentTransMode,
-  } = useContext(SettingContext)!;
+  const { displayMode } = useContext(SettingContext)!;
   const history = useHistory();
 
   const { goBack } = useHistory();
@@ -367,6 +358,13 @@ function App() {
           icon: <Bullhorn></Bullhorn>,
           to: "/announcement",
           disabled: false,
+        },
+        {
+          text: t("common:translation"),
+          icon: <Translate></Translate>,
+          to: "/translation",
+          disabled: false,
+          visibleRoles: ["Translator", "Admin"],
         },
       ],
       [
@@ -551,159 +549,187 @@ function App() {
 
   const drawer = useMemo(
     () => (
-      <div>
-        <div className={classes.toolbar}>
-          <Typography variant="h6">{t("common:toolbar.title")}</Typography>
+      <UserProvider>
+        <div>
+          <div className={classes.toolbar}>
+            <Typography variant="h6">{t("common:toolbar.title")}</Typography>
+          </div>
+          <Divider></Divider>
+          <List>
+            <ListItem
+              button
+              onClick={() =>
+                setSidebarExpansionStates((s) => [!s[0], ...s.slice(1)])
+              }
+            >
+              <Typography color="textSecondary">
+                {t("common:community")}
+              </Typography>
+              {sidebarExpansionStates[0] ? <ExpandLess /> : <ExpandMore />}
+            </ListItem>
+            <Collapse
+              in={sidebarExpansionStates[0]}
+              timeout="auto"
+              unmountOnExit
+            >
+              {leftBtns[0].map((elem) =>
+                elem.children ? (
+                  <ListItemWithChildren
+                    key={elem.to}
+                    item={elem}
+                    theme={theme}
+                  />
+                ) : (
+                  <ListItem
+                    disabled={elem.disabled}
+                    button
+                    key={elem.to}
+                    classes={{
+                      root: classes.listItem,
+                    }}
+                  >
+                    <ListItemLink {...elem} theme={theme} />
+                  </ListItem>
+                )
+              )}
+            </Collapse>
+            <ListItem
+              button
+              onClick={() =>
+                setSidebarExpansionStates((s) => [s[0], !s[1], ...s.slice(2)])
+              }
+            >
+              <Typography color="textSecondary">
+                {t("common:information")}
+              </Typography>
+              {sidebarExpansionStates[1] ? <ExpandLess /> : <ExpandMore />}
+            </ListItem>
+            <Collapse
+              in={sidebarExpansionStates[1]}
+              timeout="auto"
+              unmountOnExit
+            >
+              {leftBtns[1].map((elem) =>
+                elem.children ? (
+                  <ListItemWithChildren
+                    key={elem.to}
+                    item={elem}
+                    theme={theme}
+                  />
+                ) : (
+                  <ListItem
+                    disabled={elem.disabled}
+                    button
+                    key={elem.to}
+                    classes={{
+                      root: classes.listItem,
+                    }}
+                  >
+                    <ListItemLink
+                      to={elem.to}
+                      text={elem.text}
+                      icon={elem.icon}
+                      disabled={elem.disabled}
+                      theme={theme}
+                    />
+                  </ListItem>
+                )
+              )}
+            </Collapse>
+            <ListItem
+              button
+              onClick={() =>
+                setSidebarExpansionStates((s) => [
+                  s[0],
+                  s[1],
+                  !s[2],
+                  ...s.slice(3),
+                ])
+              }
+            >
+              <Typography color="textSecondary">{t("common:tools")}</Typography>
+              {sidebarExpansionStates[2] ? <ExpandLess /> : <ExpandMore />}
+            </ListItem>
+            <Collapse
+              in={sidebarExpansionStates[2]}
+              timeout="auto"
+              unmountOnExit
+            >
+              {leftBtns[2].map((elem) =>
+                elem.children ? (
+                  <ListItemWithChildren
+                    key={elem.to}
+                    item={elem}
+                    theme={theme}
+                  />
+                ) : (
+                  <ListItem
+                    disabled={elem.disabled}
+                    button
+                    key={elem.to}
+                    classes={{
+                      root: classes.listItem,
+                    }}
+                  >
+                    <ListItemLink
+                      to={elem.to}
+                      text={elem.text}
+                      icon={elem.icon}
+                      disabled={elem.disabled}
+                      theme={theme}
+                    />
+                  </ListItem>
+                )
+              )}
+            </Collapse>
+            <ListItem
+              button
+              onClick={() =>
+                setSidebarExpansionStates((s) => [
+                  ...s.slice(0, 3),
+                  !s[3],
+                  ...s.slice(4),
+                ])
+              }
+            >
+              <Typography color="textSecondary">{t("common:about")}</Typography>
+              {sidebarExpansionStates[3] ? <ExpandLess /> : <ExpandMore />}
+            </ListItem>
+            <Collapse
+              in={sidebarExpansionStates[3]}
+              timeout="auto"
+              unmountOnExit
+            >
+              {leftBtns[3].map((elem) =>
+                elem.children ? (
+                  <ListItemWithChildren
+                    key={elem.to}
+                    item={elem}
+                    theme={theme}
+                  />
+                ) : (
+                  <ListItem
+                    disabled={elem.disabled}
+                    button
+                    key={elem.to}
+                    classes={{
+                      root: classes.listItem,
+                    }}
+                  >
+                    <ListItemLink
+                      to={elem.to}
+                      text={elem.text}
+                      icon={elem.icon}
+                      disabled={elem.disabled}
+                      theme={theme}
+                    />
+                  </ListItem>
+                )
+              )}
+            </Collapse>
+          </List>
         </div>
-        <Divider></Divider>
-        <List>
-          <ListItem
-            button
-            onClick={() =>
-              setSidebarExpansionStates((s) => [!s[0], ...s.slice(1)])
-            }
-          >
-            <Typography color="textSecondary">
-              {t("common:community")}
-            </Typography>
-            {sidebarExpansionStates[0] ? <ExpandLess /> : <ExpandMore />}
-          </ListItem>
-          <Collapse in={sidebarExpansionStates[0]} timeout="auto" unmountOnExit>
-            {leftBtns[0].map((elem) =>
-              elem.children ? (
-                <ListItemWithChildren key={elem.to} item={elem} theme={theme} />
-              ) : (
-                <ListItem
-                  disabled={elem.disabled}
-                  button
-                  key={elem.to}
-                  classes={{
-                    root: classes.listItem,
-                  }}
-                >
-                  <ListItemLink
-                    to={elem.to}
-                    text={elem.text}
-                    icon={elem.icon}
-                    disabled={elem.disabled}
-                    theme={theme}
-                  />
-                </ListItem>
-              )
-            )}
-          </Collapse>
-          <ListItem
-            button
-            onClick={() =>
-              setSidebarExpansionStates((s) => [s[0], !s[1], ...s.slice(2)])
-            }
-          >
-            <Typography color="textSecondary">
-              {t("common:information")}
-            </Typography>
-            {sidebarExpansionStates[1] ? <ExpandLess /> : <ExpandMore />}
-          </ListItem>
-          <Collapse in={sidebarExpansionStates[1]} timeout="auto" unmountOnExit>
-            {leftBtns[1].map((elem) =>
-              elem.children ? (
-                <ListItemWithChildren key={elem.to} item={elem} theme={theme} />
-              ) : (
-                <ListItem
-                  disabled={elem.disabled}
-                  button
-                  key={elem.to}
-                  classes={{
-                    root: classes.listItem,
-                  }}
-                >
-                  <ListItemLink
-                    to={elem.to}
-                    text={elem.text}
-                    icon={elem.icon}
-                    disabled={elem.disabled}
-                    theme={theme}
-                  />
-                </ListItem>
-              )
-            )}
-          </Collapse>
-          <ListItem
-            button
-            onClick={() =>
-              setSidebarExpansionStates((s) => [
-                s[0],
-                s[1],
-                !s[2],
-                ...s.slice(3),
-              ])
-            }
-          >
-            <Typography color="textSecondary">{t("common:tools")}</Typography>
-            {sidebarExpansionStates[2] ? <ExpandLess /> : <ExpandMore />}
-          </ListItem>
-          <Collapse in={sidebarExpansionStates[2]} timeout="auto" unmountOnExit>
-            {leftBtns[2].map((elem) =>
-              elem.children ? (
-                <ListItemWithChildren key={elem.to} item={elem} theme={theme} />
-              ) : (
-                <ListItem
-                  disabled={elem.disabled}
-                  button
-                  key={elem.to}
-                  classes={{
-                    root: classes.listItem,
-                  }}
-                >
-                  <ListItemLink
-                    to={elem.to}
-                    text={elem.text}
-                    icon={elem.icon}
-                    disabled={elem.disabled}
-                    theme={theme}
-                  />
-                </ListItem>
-              )
-            )}
-          </Collapse>
-          <ListItem
-            button
-            onClick={() =>
-              setSidebarExpansionStates((s) => [
-                ...s.slice(0, 3),
-                !s[3],
-                ...s.slice(4),
-              ])
-            }
-          >
-            <Typography color="textSecondary">{t("common:about")}</Typography>
-            {sidebarExpansionStates[3] ? <ExpandLess /> : <ExpandMore />}
-          </ListItem>
-          <Collapse in={sidebarExpansionStates[3]} timeout="auto" unmountOnExit>
-            {leftBtns[3].map((elem) =>
-              elem.children ? (
-                <ListItemWithChildren key={elem.to} item={elem} theme={theme} />
-              ) : (
-                <ListItem
-                  disabled={elem.disabled}
-                  button
-                  key={elem.to}
-                  classes={{
-                    root: classes.listItem,
-                  }}
-                >
-                  <ListItemLink
-                    to={elem.to}
-                    text={elem.text}
-                    icon={elem.icon}
-                    disabled={elem.disabled}
-                    theme={theme}
-                  />
-                </ListItem>
-              )
-            )}
-          </Collapse>
-        </List>
-      </div>
+      </UserProvider>
     ),
     [
       classes.listItem,
@@ -938,6 +964,12 @@ function App() {
                 <Route path="/virtual_live/:id">
                   <VirtualLiveDetail />
                 </Route>
+                <Route path="/translation" exact>
+                  <TranslationPage />
+                </Route>
+                <Route path="/translation/:slug">
+                  <TranslationEditor />
+                </Route>
               </Suspense>
             </Switch>
           </UserProvider>
@@ -947,150 +979,10 @@ function App() {
             <KeyboardArrowUp />
           </Fab>
         </ScrollTop>
-        <Dialog open={isSettingsOpen} onClose={() => setIsSettingsOpen(false)}>
-          <DialogTitle>{t("common:settings.title")}</DialogTitle>
-          <DialogContent>
-            <FormControl component="fieldset" style={{ margin: "1% 0" }}>
-              <FormLabel component="legend">{t("common:language")}</FormLabel>
-              <RadioGroup
-                row
-                aria-label="language"
-                value={lang}
-                onChange={(e, v) => updateLang(v)}
-              >
-                <FormControlLabel
-                  value="en"
-                  control={<Radio />}
-                  label="EN"
-                ></FormControlLabel>
-                <FormControlLabel
-                  value="zh-CN"
-                  control={<Radio />}
-                  label="简"
-                ></FormControlLabel>
-                <FormControlLabel
-                  value="zh-TW"
-                  control={<Radio />}
-                  label="繁"
-                ></FormControlLabel>
-                <FormControlLabel
-                  value="ja"
-                  control={<Radio />}
-                  label="日"
-                ></FormControlLabel>
-                <FormControlLabel
-                  value="ko"
-                  control={<Radio />}
-                  label="한"
-                ></FormControlLabel>
-                <FormControlLabel
-                  value="es"
-                  control={<Radio />}
-                  label="Es"
-                ></FormControlLabel>
-                <FormControlLabel
-                  value="it"
-                  control={<Radio />}
-                  label="It"
-                ></FormControlLabel>
-                <FormControlLabel
-                  value="pl"
-                  control={<Radio />}
-                  label="Pl"
-                ></FormControlLabel>
-                <FormControlLabel
-                  value="pt-BR"
-                  control={<Radio />}
-                  label="Pt-BR"
-                ></FormControlLabel>
-                <FormControlLabel
-                  value="fr"
-                  control={<Radio />}
-                  label="Fr"
-                ></FormControlLabel>
-                <FormControlLabel
-                  value="id"
-                  control={<Radio />}
-                  label="Ind"
-                ></FormControlLabel>
-                <FormControlLabel
-                  value="th"
-                  control={<Radio />}
-                  label="ภาษาไทย"
-                ></FormControlLabel>
-                <FormControlLabel
-                  value="ru"
-                  control={<Radio />}
-                  label="русский"
-                ></FormControlLabel>
-                <FormControlLabel
-                  value="de"
-                  control={<Radio />}
-                  label="De"
-                ></FormControlLabel>
-              </RadioGroup>
-            </FormControl>
-            <FormControl component="fieldset" style={{ margin: "1% 0" }}>
-              <FormLabel component="legend">{t("common:darkmode")}</FormLabel>
-              <RadioGroup
-                row
-                aria-label="dark mode"
-                value={displayMode}
-                onChange={(e, v) => updateDisplayMode(v as DisplayModeType)}
-              >
-                <FormControlLabel
-                  value="dark"
-                  control={<Radio />}
-                  label={<Brightness4 />}
-                ></FormControlLabel>
-                <FormControlLabel
-                  value="light"
-                  control={<Radio />}
-                  label={<Brightness7 />}
-                ></FormControlLabel>
-                <FormControlLabel
-                  value="auto"
-                  control={<Radio />}
-                  label={<BrightnessAuto />}
-                ></FormControlLabel>
-              </RadioGroup>
-            </FormControl>
-            <FormControl component="fieldset" style={{ margin: "1% 0" }}>
-              <FormLabel component="legend">
-                {t("common:contentTranslationMode.title")}
-              </FormLabel>
-              <RadioGroup
-                row
-                aria-label="show translated"
-                value={contentTransMode}
-                onChange={(e, v) =>
-                  updateContentTransMode(v as ContentTransModeType)
-                }
-              >
-                <FormControlLabel
-                  value="original"
-                  control={<Radio />}
-                  label={t("common:contentTranslationMode.original")}
-                ></FormControlLabel>
-                <FormControlLabel
-                  value="translated"
-                  control={<Radio />}
-                  label={t("common:contentTranslationMode.translated")}
-                ></FormControlLabel>
-                <FormControlLabel
-                  value="both"
-                  control={<Radio />}
-                  label={t("common:contentTranslationMode.both")}
-                ></FormControlLabel>
-              </RadioGroup>
-            </FormControl>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setIsSettingsOpen(false)} color="primary">
-              Close
-            </Button>
-          </DialogActions>
-        </Dialog>
+        <Settings
+          open={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+        />
       </div>
     </ThemeProvider>
   );

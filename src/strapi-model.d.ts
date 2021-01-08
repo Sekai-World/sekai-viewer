@@ -13,13 +13,15 @@ export interface UserRoleModel {
   type: string;
 }
 
+export interface AvatarModel {
+  url: string;
+}
+
 export interface UserMetadatumModel {
   id: number;
-  avatar: {
-    url: string;
-  };
+  avatar: AvatarModel;
   nickname: string;
-  languages: LanguageModel;
+  languages: LanguageModel[];
 }
 
 export interface UserModel {
@@ -117,7 +119,7 @@ export interface CommentModel {
   blockedThread?: boolean;
   blockReason?: string;
   points?: number;
-  authorUser: number | UserModel;
+  authorUser: UserMetadatumModel;
   authorType?: any;
   authorId?: any;
   authorName?: any;
@@ -135,7 +137,7 @@ export interface AnnouncementModel {
   content: string;
   category: string;
   showAt?: Date;
-  user: UserModel;
+  user: UserMetadatumModel;
   language: LanguageModel;
   isPin: boolean;
   published_at: Date;
@@ -145,3 +147,17 @@ export interface AnnouncementModel {
 }
 
 export type CommentAbuseReason = "OTHER" | "BAD_WORDS" | "DISCRIMINATION";
+
+export interface TranslationModel {
+  id: number;
+  user: UserModel;
+  isFin: boolean;
+  source?: any;
+  sourceSlug?: string;
+  sourceLang?: LanguageModel;
+  target?: any;
+  targetSlug?: string;
+  targetLang?: LanguageModel;
+  created_at: Date;
+  updated_at: Date;
+}
