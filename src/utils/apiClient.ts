@@ -1,4 +1,9 @@
-import { CommentAbuseReason, CommentModel } from "./../strapi-model.d";
+import {
+  AvatarModel,
+  CommentAbuseReason,
+  CommentModel,
+  TranslationModel,
+} from "./../strapi-model.d";
 import Axios from "axios";
 import { useCallback, useMemo } from "react";
 import {
@@ -232,29 +237,36 @@ export function useStrapi(token?: string) {
       [axios]
     ),
     getAnnouncements: useCallback(
-      async () =>
+      async (params?: { [key: string]: any }) =>
         (
           await axios.get<AnnouncementModel[]>("/announcements?", {
             params: {
               _sort: "isPin:DESC,published_at:DESC",
+              ...(params || {}),
             },
           })
         ).data,
       [axios]
     ),
     getAnnouncementById: useCallback(
-      async (id: string) =>
-        (await axios.get<AnnouncementModel>(`/announcements/${id}`)).data,
+      async (id: string, params?: { [key: string]: any }) =>
+        (await axios.get<AnnouncementModel>(`/announcements/${id}`, { params }))
+          .data,
       [axios]
     ),
     getAnnouncementPage: useCallback(
-      async (limit: number = 30, page: number = 0) =>
+      async (
+        limit: number = 30,
+        page: number = 0,
+        params?: { [key: string]: any }
+      ) =>
         (
           await axios.get<AnnouncementModel[]>("/announcements", {
             params: {
               _limit: limit,
               _start: page * limit,
               _sort: "isPin:DESC,published_at:DESC",
+              ...(params || {}),
             },
           })
         ).data,
@@ -274,11 +286,13 @@ export function useStrapi(token?: string) {
         contentType: string,
         id: string | number,
         userId: number,
+        avatar: AvatarModel,
         content: string
       ) =>
         (
           await axios.post(`/comments/${contentType}:${id}`, {
             authorUser: userId,
+            authorAvatar: avatar.url,
             content,
             related: [
               {
@@ -291,9 +305,13 @@ export function useStrapi(token?: string) {
         ).data,
       [axios]
     ),
-    getUserInfo: useCallback(
+    getUserProfile: useCallback(
       async (id: string | number) =>
-        (await axios.get<UserModel>(`/users/${id}`)).data,
+        (
+          await axios.get<UserMetadatumModel>(
+            `/user-metadata/profile/user/${id}`
+          )
+        ).data,
       [axios]
     ),
     patchCommentLike: useCallback(
@@ -328,7 +346,87 @@ export function useStrapi(token?: string) {
         ).data,
       [axios]
     ),
+    getTranslations: useCallback(
+      async (page: number, limit: number, params?: { [key: string]: any }) =>
+        (
+          await axios.get<TranslationModel[]>("/translations", {
+            params: {
+              _limit: limit,
+              _start: page * limit,
+              ...(params || {}),
+            },
+          })
+        ).data,
+      [axios]
+    ),
+    getTranslationById: useCallback(
+      async (id: number) =>
+        (await axios.get<TranslationModel>(`/translations/${id}`)).data,
+      [axios]
+    ),
+    getTranslationBySlug: useCallback(
+      async (slug: string, type: "source" | "target", params?: any) =>
+        (
+          await axios.get<TranslationModel[]>(
+            `/translations/slug/${type}/${slug}`,
+            {
+              params,
+            }
+          )
+        ).data,
+      [axios]
+    ),
+    postTranslation: useCallback(
+      async (
+        user: UserMetadatumModel,
+        sourceSlug: string,
+        sourceLang: number,
+        target: any,
+        targetLang: number
+      ) =>
+        (
+          await axios.post<TranslationModel>("/translations", {
+            user: user.id,
+            sourceSlug,
+            sourceLang,
+            target,
+            targetLang,
+          })
+        ).data,
+      [axios]
+    ),
+    putTranslationId: useCallback(
+      async (
+        id: number | string,
+        body: { target?: any; targetLang?: number; isFin?: boolean }
+      ) =>
+        (await axios.put<TranslationModel>(`/translations/${id}`, body)).data,
+      [axios]
+    ),
+    getTranslationCount: useCallback(
+      async () => (await axios.get<number>("/translations/count")).data,
+      [axios]
+    ),
+    getTranslationBySourceSlug: useCallback(
+      async (sourceSlug: string) =>
+        (
+          await axios.get<TranslationModel[]>("/translations", {
+            params: {
+              sourceSlug,
+            },
+          })
+        ).data[0],
+      [axios]
+    ),
   };
+}
+
+export async function getLanguages() {
+  return (
+    await Axios.get<LanguageModel[]>(
+      `${process.env.REACT_APP_STRAPI_BASE}/languages`
+    )
+  ).data;
 }
 
 /**

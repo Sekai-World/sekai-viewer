@@ -2,11 +2,13 @@ import { Container, Typography } from "@material-ui/core";
 import React, {
   Fragment,
   useCallback,
+  useContext,
   useEffect,
   useLayoutEffect,
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
+import { SettingContext, UserContext } from "../../context";
 import { AnnouncementModel } from "../../strapi-model";
 import { useLayoutStyles } from "../../styles/layout";
 import { useStrapi } from "../../utils/apiClient";
@@ -16,6 +18,8 @@ import GridView from "./GridView";
 const AnnouncementList: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
+  const { usermeta } = useContext(UserContext)!;
+  const { languages, lang } = useContext(SettingContext)!;
   const { getAnnouncementPage, getAnnouncementCount } = useStrapi();
 
   const [announcements, setAnnouncements] = useState<AnnouncementModel[]>([]);
@@ -37,11 +41,26 @@ const AnnouncementList: React.FC<{}> = () => {
   }, [getAnnouncementCount]);
 
   useEffect(() => {
-    getAnnouncementPage(limit, page).then((data) => {
+    (async () => {
+      const enId = languages.find((lang) => lang.code === "en")!.id;
+      const langId = languages.find((elem) => elem.code === lang)!.id;
+      const data = await getAnnouncementPage(
+        limit,
+        page,
+        usermeta
+          ? {
+              language_in: [
+                enId,
+                langId,
+                ...usermeta?.languages.map((lang) => lang.id),
+              ],
+            }
+          : {}
+      );
       setAnnouncements((announcements) => [...announcements, ...data]);
       setLastQueryFin(true);
-    });
-  }, [getAnnouncementPage, limit, page]);
+    })();
+  }, [getAnnouncementPage, lang, languages, limit, page, usermeta]);
 
   const callback = useCallback(
     (

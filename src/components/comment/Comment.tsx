@@ -38,7 +38,7 @@ const Comment: React.FC<{
   contentId: string | number;
 }> = ({ comments, contentId, contentType }) => {
   const { t } = useTranslation();
-  const { user, jwtToken } = useContext(UserContext)!;
+  const { jwtToken, usermeta } = useContext(UserContext)!;
   const { postComment, postCommentAbuse } = useStrapi(jwtToken);
 
   const mdParser = useMemo(
@@ -67,7 +67,7 @@ const Comment: React.FC<{
 
   return (
     <Grid container spacing={1}>
-      {user && (
+      {usermeta && (
         <Grid item xs={12}>
           {isCompose ? (
             <Grid container direction="column" spacing={1}>
@@ -89,7 +89,8 @@ const Comment: React.FC<{
                     const data = await postComment(
                       contentType,
                       contentId,
-                      user.id,
+                      usermeta.id,
+                      usermeta.avatar,
                       content
                     );
                     setTmpComments([...tmpComments, data]);
@@ -153,6 +154,7 @@ const Comment: React.FC<{
               onChange={(ev) =>
                 setReportReason(ev.target.value as CommentAbuseReason)
               }
+              style={{ minWidth: "150px" }}
             >
               <MenuItem value="OTHER">
                 {t("comment:report-abuse.reason.other")}

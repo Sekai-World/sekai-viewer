@@ -14,15 +14,22 @@ import { AccountCircle, Email, VpnKey } from "@material-ui/icons";
 import { Field } from "formik";
 import { Form, Formik } from "formik";
 import { Select, TextField } from "formik-material-ui";
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, Link as RouteLink } from "react-router-dom";
 import PasswordStrengthBar from "react-password-strength-bar";
 import { useInteractiveStyles } from "../../styles/interactive";
 import { useLayoutStyles } from "../../styles/layout";
-import { LanguageModel, RegisterValues } from "../../strapi-model";
+import { RegisterValues } from "../../strapi-model";
 import { useStrapi } from "../../utils/apiClient";
 import useJwtAuth from "../../utils/jwt";
+import { SettingContext } from "../../context";
 
 const Signup: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
@@ -30,18 +37,14 @@ const Signup: React.FC<{}> = () => {
   const { t } = useTranslation();
   const jwtAuth = useJwtAuth();
   const history = useHistory();
-  const { postRegisterLocal, getLanguages } = useStrapi();
+  const { languages } = useContext(SettingContext)!;
+  const { postRegisterLocal } = useStrapi();
 
   const [passwordScore, setPasswordScore] = useState(0);
-  const [langs, setLangs] = useState<LanguageModel[]>([]);
 
   useEffect(() => {
     document.title = t("title:signup");
   }, [t]);
-
-  useEffect(() => {
-    getLanguages().then((data) => setLangs(data));
-  }, [getLanguages]);
 
   const handleValidate = useCallback(
     (values) => {
@@ -197,15 +200,15 @@ const Signup: React.FC<{}> = () => {
                     <Field
                       component={Select}
                       type="text"
-                      multiple={true}
                       name="languages"
                       inputProps={{
                         name: "languages",
                         id: "language-select",
+                        multiple: true,
                       }}
                       style={{ width: 210 }}
                     >
-                      {langs
+                      {languages
                         .filter((lang) => lang.enabled)
                         .map((lang) => (
                           <MenuItem value={lang.id} key={`lang-${lang.code}`}>

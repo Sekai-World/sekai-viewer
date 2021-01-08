@@ -9,9 +9,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ScrollTop: React.FC<React.PropsWithChildren<{
-  window?: () => Window;
-}>> = (props) => {
+const ScrollTop: React.FC<
+  React.PropsWithChildren<{
+    window?: () => Window;
+  }>
+> = (props) => {
   const { children, window } = props;
   const classes = useStyles();
   // Note that you normally won't need to set the window ref as useScrollTrigger
