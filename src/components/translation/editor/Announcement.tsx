@@ -75,6 +75,7 @@ const Announcement: React.FC<{
   const [isSuccess, setIsSuccess] = useState(false);
   const [isFailed, setIsFailed] = useState(false);
   const [isFin, setIsFin] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [sourceModel, contentId] = useMemo(() => slug.split(":"), [slug]);
   const mdParser = useMemo(
@@ -285,6 +286,7 @@ const Announcement: React.FC<{
             variant="contained"
             color={isFin ? "secondary" : "primary"}
             disabled={
+              isSubmitting ||
               !isTartgetExisted ||
               !targetLang ||
               !targetTitle ||
@@ -292,11 +294,17 @@ const Announcement: React.FC<{
               !targetContent
             }
             style={{ width: "100%" }}
-            onClick={() =>
-              putTranslationId(translationId!, { isFin: !isFin }).then(() => {
+            onClick={async () => {
+              setIsSubmitting(true);
+              try {
+                await putTranslationId(translationId!, { isFin: !isFin });
                 setIsFin(!isFin);
-              })
-            }
+                setIsSuccess(true);
+              } catch (error) {
+                setIsFailed(true);
+              }
+              setIsSubmitting(false);
+            }}
           >
             {isFin
               ? t("translate:button.mark_unfinished")
@@ -306,6 +314,7 @@ const Announcement: React.FC<{
         <Grid item xs={12} md={6}>
           <Button
             disabled={
+              isSubmitting ||
               isTartgetExisted === null ||
               (isTartgetExisted && isFin) ||
               !targetLang ||
@@ -326,6 +335,7 @@ const Announcement: React.FC<{
                 category: sourceData.category,
               };
               try {
+                setIsSubmitting(true);
                 if (isTartgetExisted)
                   await putTranslationId(translationId!, {
                     target,
@@ -345,7 +355,9 @@ const Announcement: React.FC<{
                 if (!targetContributors.find((elem) => elem.id === usermeta.id))
                   setTargetContributors([...targetContributors, usermeta]);
                 setIsSuccess(true);
+                setIsSubmitting(false);
               } catch (error) {
+                setIsSubmitting(false);
                 setIsFailed(true);
               }
             }}
