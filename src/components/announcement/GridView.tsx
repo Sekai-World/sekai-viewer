@@ -3,7 +3,14 @@ import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
 import { useInteractiveStyles } from "../../styles/interactive";
 import { AnnouncementModel } from "../../strapi-model";
-import { Card, CardContent, Grid, Typography } from "@material-ui/core";
+import {
+  Avatar,
+  Card,
+  CardContent,
+  Chip,
+  Grid,
+  Typography,
+} from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import { useTranslation } from "react-i18next";
 
@@ -25,7 +32,7 @@ const GridView: React.FC<{ data?: AnnouncementModel }> = ({ data }) => {
             <Typography>{data.description}</Typography>
           </CardContent>
           <CardContent>
-            <Grid container spacing={1}>
+            <Grid container spacing={1} alignItems="center">
               <Grid item>
                 <Typography variant="subtitle2" color="textSecondary">
                   {t("announcement:category")}:{" "}
@@ -33,9 +40,13 @@ const GridView: React.FC<{ data?: AnnouncementModel }> = ({ data }) => {
                 </Typography>
               </Grid>
               <Grid item>
-                <Typography variant="subtitle2" color="textSecondary">
-                  {t("announcement:author")}: {data.user.username}
-                </Typography>
+                {/* <Typography variant="subtitle2" color="textSecondary">
+                  {t("announcement:author")}:{" "}
+                </Typography> */}
+                <Chip
+                  label={data.user.nickname}
+                  avatar={<Avatar src={data.user.avatar.url} />}
+                />
               </Grid>
               <Grid item>
                 <Typography variant="subtitle2" color="textSecondary">

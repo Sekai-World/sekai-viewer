@@ -1,8 +1,9 @@
 import { Box, Card, CardContent, Grid, Typography } from "@material-ui/core";
 import { Pin } from "mdi-material-ui";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { UserContext } from "../../context";
 import { AnnouncementModel } from "../../strapi-model";
 import { useInteractiveStyles } from "../../styles/interactive";
 import { useLayoutStyles } from "../../styles/layout";
@@ -12,13 +13,30 @@ const AnnouncementWidget: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
-  const { getAnnouncementPage } = useStrapi();
+  const { usermeta } = useContext(UserContext)!;
+  const { getAnnouncementPage, getLanguages } = useStrapi();
 
   const [announcements, setAnnouncements] = useState<AnnouncementModel[]>([]);
 
   useEffect(() => {
-    getAnnouncementPage(10).then(setAnnouncements);
-  }, [getAnnouncementPage]);
+    (async () => {
+      const langs = await getLanguages();
+      const enId = langs.find((lang) => lang.code === "en")!.id;
+      const data = await getAnnouncementPage(
+        10,
+        0,
+        usermeta
+          ? {
+              language_in: [
+                enId,
+                ...usermeta?.languages.map((lang) => lang.id),
+              ],
+            }
+          : {}
+      );
+      setAnnouncements(data);
+    })();
+  }, [getAnnouncementPage, getLanguages, usermeta]);
 
   return (
     <Fragment>
