@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  LanguageModel,
   SekaiProfileModel,
   UserMetadatumModel,
   UserModel,
@@ -20,6 +21,7 @@ export const SettingContext = createContext<
       lang: string;
       displayMode: DisplayModeType;
       contentTransMode: ContentTransModeType;
+      languages: LanguageModel[];
       updateLang(newLang: string): void;
       updateDisplayMode(newMode: DisplayModeType): void;
       updateContentTransMode(newMode: ContentTransModeType): void;
@@ -36,6 +38,11 @@ export const SettingProvider: React.FC<PropsWithChildren<{}>> = ({
   const [lang, setLang] = useState(i18n.language);
   const [displayMode, setDisplayMode] = useState<DisplayModeType>(
     (localStorage.getItem("display-mode") as DisplayModeType) || "auto"
+  );
+  const [languages] = useState<LanguageModel[]>(
+    JSON.parse(
+      localStorage.getItem("languages-cache") || "[]"
+    ) as LanguageModel[]
   );
   const [
     contentTransMode,
@@ -65,6 +72,7 @@ export const SettingProvider: React.FC<PropsWithChildren<{}>> = ({
           setContentTransMode(newMode);
           localStorage.setItem("content-translation-mode", newMode);
         },
+        languages,
       }}
     >
       {children}

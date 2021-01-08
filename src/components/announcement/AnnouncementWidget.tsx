@@ -3,7 +3,7 @@ import { Pin } from "mdi-material-ui";
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { UserContext } from "../../context";
+import { SettingContext, UserContext } from "../../context";
 import { AnnouncementModel } from "../../strapi-model";
 import { useInteractiveStyles } from "../../styles/interactive";
 import { useLayoutStyles } from "../../styles/layout";
@@ -14,14 +14,14 @@ const AnnouncementWidget: React.FC<{}> = () => {
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const { usermeta } = useContext(UserContext)!;
-  const { getAnnouncementPage, getLanguages } = useStrapi();
+  const { languages } = useContext(SettingContext)!;
+  const { getAnnouncementPage } = useStrapi();
 
   const [announcements, setAnnouncements] = useState<AnnouncementModel[]>([]);
 
   useEffect(() => {
     (async () => {
-      const langs = await getLanguages();
-      const enId = langs.find((lang) => lang.code === "en")!.id;
+      const enId = languages.find((lang) => lang.code === "en")!.id;
       const data = await getAnnouncementPage(
         10,
         0,
@@ -36,7 +36,7 @@ const AnnouncementWidget: React.FC<{}> = () => {
       );
       setAnnouncements(data);
     })();
-  }, [getAnnouncementPage, getLanguages, usermeta]);
+  }, [getAnnouncementPage, languages, usermeta]);
 
   return (
     <Fragment>

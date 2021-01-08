@@ -11,12 +11,10 @@ import {
   RadioGroup,
 } from "@material-ui/core";
 import { Brightness4, Brightness7, BrightnessAuto } from "@material-ui/icons";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { SettingContext } from "../../context";
-import { LanguageModel } from "../../strapi-model";
 import { DisplayModeType, ContentTransModeType } from "../../types";
-import { useStrapi } from "../../utils/apiClient";
 
 const Settings: React.FC<{
   open: boolean;
@@ -30,14 +28,8 @@ const Settings: React.FC<{
     updateLang,
     updateDisplayMode,
     updateContentTransMode,
+    languages,
   } = useContext(SettingContext)!;
-  const { getLanguages } = useStrapi();
-
-  const [langs, setLangs] = useState<LanguageModel[]>([]);
-
-  useEffect(() => {
-    getLanguages().then(setLangs);
-  }, [getLanguages]);
 
   return (
     <Dialog open={open} onClose={onClose}>
@@ -51,7 +43,7 @@ const Settings: React.FC<{
             value={lang}
             onChange={(e, v) => updateLang(v)}
           >
-            {langs
+            {languages
               .filter((lang) => lang.enabled)
               .map((lang) => (
                 <FormControlLabel

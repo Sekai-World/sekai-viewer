@@ -8,7 +8,7 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { UserContext } from "../../context";
+import { SettingContext, UserContext } from "../../context";
 import { AnnouncementModel } from "../../strapi-model";
 import { useLayoutStyles } from "../../styles/layout";
 import { useStrapi } from "../../utils/apiClient";
@@ -19,11 +19,8 @@ const AnnouncementList: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const { usermeta } = useContext(UserContext)!;
-  const {
-    getAnnouncementPage,
-    getAnnouncementCount,
-    getLanguages,
-  } = useStrapi();
+  const { languages } = useContext(SettingContext)!;
+  const { getAnnouncementPage, getAnnouncementCount } = useStrapi();
 
   const [announcements, setAnnouncements] = useState<AnnouncementModel[]>([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -45,8 +42,7 @@ const AnnouncementList: React.FC<{}> = () => {
 
   useEffect(() => {
     (async () => {
-      const langs = await getLanguages();
-      const enId = langs.find((lang) => lang.code === "en")!.id;
+      const enId = languages.find((lang) => lang.code === "en")!.id;
       const data = await getAnnouncementPage(
         limit,
         page,
@@ -62,7 +58,7 @@ const AnnouncementList: React.FC<{}> = () => {
       setAnnouncements((announcements) => [...announcements, ...data]);
       setLastQueryFin(true);
     })();
-  }, [getAnnouncementPage, getLanguages, limit, page, usermeta]);
+  }, [getAnnouncementPage, languages, limit, page, usermeta]);
 
   const callback = useCallback(
     (

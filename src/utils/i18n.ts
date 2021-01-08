@@ -11,6 +11,7 @@ export const assetI18n: typeof i18n = i18n.createInstance();
 
 export async function initGlobalI18n() {
   const languages = await getLanguages();
+  localStorage.setItem("languages-cache", JSON.stringify(languages));
   const codes = languages.map((lang) => lang.code);
 
   i18n

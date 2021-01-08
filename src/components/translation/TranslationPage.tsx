@@ -10,17 +10,10 @@ import {
 } from "@material-ui/core";
 import { Field, Formik } from "formik";
 import { Select } from "formik-material-ui";
-import React, {
-  Fragment,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from "react";
+import React, { Fragment, useContext, useLayoutEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { UserContext } from "../../context";
-import { LanguageModel } from "../../strapi-model";
+import { SettingContext, UserContext } from "../../context";
 // import { useInteractiveStyles } from "../../styles/interactive";
 import { useLayoutStyles } from "../../styles/layout";
 import { useStrapi } from "../../utils/apiClient";
@@ -40,19 +33,14 @@ const Translation: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   // const interactiveClasses = useInteractiveStyles();
   const { usermeta, jwtToken, updateUserMeta } = useContext(UserContext)!;
-  const { getLanguages } = useStrapi();
+  const { languages } = useContext(SettingContext)!;
   const { putUserMetadataMe, getUserMetadataMe } = useStrapi(jwtToken);
 
-  const [langs, setLangs] = useState<LanguageModel[]>([]);
   const [selectedContent, setSelectedContent] = useState("");
 
   useLayoutEffect(() => {
     document.title = t("title:translation");
   }, [t]);
-
-  useEffect(() => {
-    getLanguages().then(setLangs);
-  }, [getLanguages]);
 
   return !!usermeta && !!jwtToken ? (
     <Fragment>
@@ -72,7 +60,7 @@ const Translation: React.FC<{}> = () => {
                 errors.languages = t("auth:error.required");
               else if (
                 !values.languages.some(
-                  (langId) => !!langs.find((lang) => lang.id === langId)
+                  (langId) => !!languages.find((lang) => lang.id === langId)
                 )
               )
                 errors.languages = t("translate:error.lang_mismatch");
@@ -82,7 +70,7 @@ const Translation: React.FC<{}> = () => {
             onSubmit={async (values, { setSubmitting, resetForm }) => {
               await putUserMetadataMe(usermeta.id, {
                 languages: values.languages.map(
-                  (id) => langs.find((lang) => lang.id === id)!
+                  (id) => languages.find((lang) => lang.id === id)!
                 ),
               });
               updateUserMeta(await getUserMetadataMe());
@@ -104,7 +92,7 @@ const Translation: React.FC<{}> = () => {
                       }}
                       name="languages"
                     >
-                      {langs.map((lang) => (
+                      {languages.map((lang) => (
                         <MenuItem value={lang.id} key={`lang-${lang.code}`}>
                           {lang.name}
                         </MenuItem>
@@ -141,14 +129,14 @@ const Translation: React.FC<{}> = () => {
         {t("translate:title.my_works")}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="md">
-        <TableMe languages={langs} />
+        <TableMe languages={languages} />
       </Container>
       <Typography variant="h6" className={layoutClasses.header}>
         {t("translate:title.available_contents")}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="md">
         <TableAnnouncements
-          languages={langs}
+          languages={languages}
           onSelected={(param) => {
             setSelectedContent(`announcement:${param.data.id}`);
           }}
