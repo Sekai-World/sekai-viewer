@@ -55,7 +55,9 @@ const AnnouncementList: React.FC<{}> = () => {
                 ...usermeta?.languages.map((lang) => lang.id),
               ],
             }
-          : {}
+          : {
+              language_in: [enId, langId],
+            }
       );
       setAnnouncements((announcements) => [...announcements, ...data]);
       setLastQueryFin(true);

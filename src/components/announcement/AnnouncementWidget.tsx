@@ -34,7 +34,9 @@ const AnnouncementWidget: React.FC<{}> = () => {
                 ...usermeta?.languages.map((lang) => lang.id),
               ],
             }
-          : {}
+          : {
+              language_in: [enId, langId],
+            }
       );
       setAnnouncements(data);
     })();
