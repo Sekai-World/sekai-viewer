@@ -45,7 +45,7 @@ const AnnouncementWidget: React.FC<{}> = () => {
       <Typography variant="h6" className={layoutClasses.header}>
         {t("common:announcement")}
       </Typography>
-      <Box padding="3% 5% 3% 3%" maxHeight={340} overflow="overlay">
+      <Box padding="3% 5% 3% 3%" maxHeight={340} overflow="auto">
         <Grid container spacing={1}>
           {announcements.map((data) => (
             <Grid key={data.id} item xs={12}>
