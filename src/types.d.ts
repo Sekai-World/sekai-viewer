@@ -803,6 +803,7 @@ export enum CharacterMissionType {
   COLLECT_STAMP = "collect_stamp",
   READ_AREA_TALK = "read_area_talk",
   // SKILL_EXP = "skill_exp",
+  SKILL_LEVEL_UP = "skill_level_up",
   MASTER_RANK = "master_rank",
   // READ_EPISODE = "read_episode",
   READ_CARD_EPISODE_FIRST = "read_card_episode_first",

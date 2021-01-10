@@ -115,11 +115,11 @@ const CharacterMissionList: React.FC<{}> = () => {
       <Typography variant="h6" className={layoutClasses.header}>
         {t("common:mission.main")} - {t("common:character")}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="lg">
-        <Grid container spacing={1}>
+      <Container className={layoutClasses.content} maxWidth="md">
+        <Grid container spacing={1} justify="center">
           {characterProfiles.length ? (
             <Fragment>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={4}>
                 <FormControl style={{ width: "100%" }}>
                   <InputLabel id="select-chara-name">
                     {t("mission:select.charaName")}
@@ -143,7 +143,7 @@ const CharacterMissionList: React.FC<{}> = () => {
           ) : null}
           {Object.values(CharacterMissionType).length ? (
             <Fragment>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={4}>
                 <FormControl style={{ width: "100%" }}>
                   <InputLabel id="select-chara-name">
                     {t("mission:type.caption")}
@@ -166,6 +166,8 @@ const CharacterMissionList: React.FC<{}> = () => {
             </Fragment>
           ) : null}
         </Grid>
+      </Container>
+      <Container className={layoutClasses.content} maxWidth="sm">
         <InfiniteScroll<ICharacterMission>
           ViewComponent={ListCard[viewGridType]}
           callback={callback}
@@ -174,7 +176,6 @@ const CharacterMissionList: React.FC<{}> = () => {
             ({
               grid: {
                 xs: 12,
-                md: 6,
               },
               agenda: {
                 xs: 12,

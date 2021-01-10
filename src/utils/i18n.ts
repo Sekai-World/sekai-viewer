@@ -93,6 +93,7 @@ export async function initGlobalI18n() {
         "virtualLive_name",
         "unit_story_episode_title",
         "event_story_episode_title",
+        "character_mission",
       ],
       fallbackLng: {
         default: ["ja"],
