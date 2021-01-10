@@ -1,6 +1,11 @@
-import { Collapse, Container, Grid, Typography } from "@material-ui/core";
-import { ExpandLess, ExpandMore } from "@material-ui/icons";
-import React, { useState } from "react";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Typography,
+} from "@material-ui/core";
+import { ExpandMore } from "@material-ui/icons";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { VirtualLiveSetlist } from "../../types";
 import VirtualLiveStepMC from "./VirtualLiveStepMC";
@@ -11,33 +16,22 @@ const VirtualLiveStep: React.FC<{
 }> = ({ data }) => {
   const { t } = useTranslation();
 
-  const [isCollapse, setIsCollapse] = useState(false);
-
   return (
-    <Grid container spacing={1}>
-      <Grid item xs={12} onClick={() => setIsCollapse(!isCollapse)}>
-        <Grid container spacing={1} alignItems="center">
-          <Grid item>
-            <Typography variant="h6">
-              {t("virtual_live:step." + data.virtualLiveSetlistType)}
-            </Typography>
-          </Grid>
-          <Grid item>{isCollapse ? <ExpandLess /> : <ExpandMore />}</Grid>
-        </Grid>
-      </Grid>
-      <Grid item xs={12}>
-        <Collapse in={isCollapse}>
-          <Container>
-            {data.virtualLiveSetlistType === "music" && (
-              <VirtualLiveStepMusic data={data} />
-            )}
-            {data.virtualLiveSetlistType === "mc" && (
-              <VirtualLiveStepMC data={data} />
-            )}
-          </Container>
-        </Collapse>
-      </Grid>
-    </Grid>
+    <Accordion>
+      <AccordionSummary expandIcon={<ExpandMore />}>
+        <Typography>
+          {t("virtual_live:step." + data.virtualLiveSetlistType)}
+        </Typography>
+      </AccordionSummary>
+      <AccordionDetails>
+        {data.virtualLiveSetlistType === "music" && (
+          <VirtualLiveStepMusic data={data} />
+        )}
+        {data.virtualLiveSetlistType === "mc" && (
+          <VirtualLiveStepMC data={data} />
+        )}
+      </AccordionDetails>
+    </Accordion>
   );
 };
 

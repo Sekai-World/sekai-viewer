@@ -288,13 +288,9 @@ const VirtualLiveDetail: React.FC<{}> = () => {
         {t("virtual_live:title.setlist")}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="md">
-        <Grid className={layoutClasses["grid-out"]} container spacing={1}>
-          {virtualLive.virtualLiveSetlists.map((setlist) => (
-            <Grid item xs={12}>
-              <VirtualLiveStep data={setlist} />
-            </Grid>
-          ))}
-        </Grid>
+        {virtualLive.virtualLiveSetlists.map((setlist) => (
+          <VirtualLiveStep key={setlist.id} data={setlist} />
+        ))}
       </Container>
     </Fragment>
   ) : (

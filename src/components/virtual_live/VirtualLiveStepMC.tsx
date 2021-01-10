@@ -30,6 +30,7 @@ import { charaIcons } from "../../utils/resources";
 import { SettingContext } from "../../context";
 import { useTranslation } from "react-i18next";
 import { AudioPlayButton } from "../storyreader/StoryReaderSnippet";
+import { useLayoutStyles } from "../../styles/layout";
 
 type MCSerialData =
   | {
@@ -216,14 +217,18 @@ const MCCharacterTalk: React.FC<{ data: CharacterTalkEvent; mcId: string }> = ({
 
   return character ? (
     <Fragment>
-      <Grid item xs={12} md={4} lg={3}>
-        <Chip
-          label={getCharaName(character.id)}
-          avatar={<Avatar src={charaIcons[`CharaIcon${character.id}`]} />}
-        />
-      </Grid>
       <Grid item xs={10} md={11}>
-        <Typography>{data.Serif}</Typography>
+        <Grid container spacing={1}>
+          <Grid item xs={12}>
+            <Chip
+              label={getCharaName(character.id)}
+              avatar={<Avatar src={charaIcons[`CharaIcon${character.id}`]} />}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Typography>{data.Serif}</Typography>
+          </Grid>
+        </Grid>
       </Grid>
       <Grid item xs={2} md={1}>
         <AudioPlayButton url={voiceUrl} />
@@ -235,6 +240,8 @@ const MCCharacterTalk: React.FC<{ data: CharacterTalkEvent; mcId: string }> = ({
 const VirtualLiveStepMC: React.FC<{
   data: VirtualLiveSetlist;
 }> = ({ data }) => {
+  const layoutClasses = useLayoutStyles();
+
   const [assetBundleURL, setAssetBundleURL] = useState("");
   const [mcSerialData, setMcSerialData] = useState<MCSerialData[]>([]);
   const [mcId, setMcId] = useState("");
@@ -282,8 +289,8 @@ const VirtualLiveStepMC: React.FC<{
     <Grid container spacing={2}>
       {mcSerialData.map((mc) => (
         <Grid item xs={12}>
-          <Paper>
-            <Container>
+          <Paper variant="outlined">
+            <Container className={layoutClasses.content}>
               <Grid container key={mc.data.Id} alignItems="center" spacing={1}>
                 {mc.type === "spawn" && <MCCharacterSpawn data={mc.data} />}
                 {mc.type === "unspawn" && <MCCharacterUnspawn data={mc.data} />}
