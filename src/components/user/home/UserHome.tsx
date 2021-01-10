@@ -136,16 +136,17 @@ const UserHome: React.FC<{}> = () => {
                         variant="outlined"
                         component="span"
                         disabled={isUploading}
-                        startIcon={<Upload />}
+                        startIcon={
+                          isUploading ? (
+                            <CircularProgress size={24} />
+                          ) : (
+                            <Upload />
+                          )
+                        }
                       >
                         {t("user:profile.upload_avatar")}
                       </Button>
                     </Grid>
-                    {isUploading && (
-                      <Grid item>
-                        <CircularProgress size={24} />
-                      </Grid>
-                    )}
                   </Grid>
                 </label>
               </Grid>
@@ -224,13 +225,14 @@ const UserHome: React.FC<{}> = () => {
                                       disabled={isSubmitting}
                                     >
                                       {isSubmitting ? (
-                                        <CircularProgress size="inherit" />
+                                        <CircularProgress size={24} />
                                       ) : (
                                         <Check />
                                       )}
                                     </IconButton>
                                     <IconButton
                                       size="small"
+                                      disabled={isSubmitting}
                                       onClick={() =>
                                         setIsEditingNickname(false)
                                       }
@@ -372,13 +374,14 @@ const UserHome: React.FC<{}> = () => {
                                   disabled={isSubmitting}
                                 >
                                   {isSubmitting ? (
-                                    <CircularProgress size="inherit" />
+                                    <CircularProgress size={24} />
                                   ) : (
                                     <Check />
                                   )}
                                 </IconButton>
                                 <IconButton
                                   size="small"
+                                  disabled={isSubmitting}
                                   onClick={() => setIsEditingPreferLangs(false)}
                                 >
                                   <Clear />
