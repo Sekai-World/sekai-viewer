@@ -1,20 +1,17 @@
 import {
   Card,
   CardContent,
-  CardMedia,
   Grid,
   makeStyles,
   Typography,
 } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
-import React, { Fragment, useContext, useEffect, useState } from "react";
-import { SettingContext } from "../../../context";
+import React, { Fragment, useEffect, useState } from "react";
 import {
   IBeginnerMission,
   IResourceBoxInfo,
   ResourceBoxDetail,
 } from "../../../types";
-import { useAssetI18n } from "../../../utils/i18n";
 import { ContentTrans } from "../../subs/ContentTrans";
 import CommonMaterialIcon from "../../subs/CommonMaterialIcon";
 import { useCachedData } from "../../../utils";
@@ -37,9 +34,7 @@ const useStyles = makeStyles((theme) => ({
 const GridView: React.FC<{ data?: IBeginnerMission }> = ({ data }) => {
   const classes = useStyles();
   // const { t } = useTranslation();
-  const { getTranslated } = useAssetI18n();
   // const { path } = useRouteMatch();
-  const { contentTransMode } = useContext(SettingContext)!;
 
   const [resourceBoxes] = useCachedData<IResourceBoxInfo>("resourceBoxes");
 
@@ -80,7 +75,7 @@ const GridView: React.FC<{ data?: IBeginnerMission }> = ({ data }) => {
   return (
     <Fragment>
       <Card className={classes.card}>
-        <Grid container alignItems="center">
+        <Grid container alignItems="center" wrap="nowrap">
           <Grid item xs={8} md={9}>
             <CardContent style={{ paddingBottom: "16px" }}>
               <Grid container direction="column" spacing={1}>
@@ -97,29 +92,24 @@ const GridView: React.FC<{ data?: IBeginnerMission }> = ({ data }) => {
               </Grid>
             </CardContent>
           </Grid>
-          <Grid item xs={4} md={3}>
-            <CardMedia
-              className={classes.media}
-              title={getTranslated(
-                contentTransMode,
-                `beginner_mission:${data.id}`,
-                data.sentence
-              )}
-            >
-              {rewards.map((reward) =>
-                reward.resourceType === "material" ? (
+          <Grid item xs={4} md={3} container spacing={1} justify="flex-end">
+            {rewards.map((reward) =>
+              reward.resourceType === "material" ? (
+                <Grid item key={reward.resourceBoxId}>
                   <MaterialIcon
                     materialId={reward.resourceId!}
                     quantity={reward.resourceQuantity}
                   />
-                ) : (
+                </Grid>
+              ) : (
+                <Grid item key={reward.resourceBoxId}>
                   <CommonMaterialIcon
                     materialName={reward.resourceType}
                     quantity={reward.resourceQuantity}
                   />
-                )
-              )}
-            </CardMedia>
+                </Grid>
+              )
+            )}
           </Grid>
         </Grid>
       </Card>
