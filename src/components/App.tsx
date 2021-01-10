@@ -45,6 +45,7 @@ import {
   MoreVert,
   LiveTv,
   Translate,
+  Dns,
 } from "@material-ui/icons";
 import {
   AccountGroup,
@@ -119,6 +120,7 @@ const VirtualLiveDetail = lazy(
 );
 const TranslationPage = lazy(() => import("./translation/TranslationPage"));
 const TranslationEditor = lazy(() => import("./translation/TranslationEditor"));
+const HonorList = lazy(() => import("./honor/HonorList"));
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -442,6 +444,12 @@ function App() {
               disabled: false,
             },
           ],
+        },
+        {
+          text: t("honor:page_title"),
+          icon: <Dns></Dns>,
+          to: "/honor",
+          disabled: false,
         },
         {
           text: "Live2D",
@@ -969,6 +977,9 @@ function App() {
                 </Route>
                 <Route path="/translation/:slug">
                   <TranslationEditor />
+                </Route>
+                <Route path="/honor">
+                  <HonorList />
                 </Route>
               </Suspense>
             </Switch>

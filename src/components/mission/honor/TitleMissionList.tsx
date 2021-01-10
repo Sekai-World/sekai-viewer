@@ -217,7 +217,7 @@ const DetailDialog: React.FC<{
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
             {t("common:rarity")}
           </Typography>
-          <Typography>{honor.honorRarity}</Typography>
+          <Typography>{t(`honor:rarity.${honor.honorRarity}`)}</Typography>
         </Grid>
         <Divider style={{ margin: "1% 0" }} />
         {honor.levels.map((level) => (

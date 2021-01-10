@@ -5,7 +5,13 @@ import {
   useMediaQuery,
   useTheme,
 } from "@material-ui/core";
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 // only divisor of 12
 type GridSize = 1 | 2 | 3 | 4 | 6 | 12 | undefined;
@@ -118,11 +124,16 @@ function InfiniteScroll<T>({
 
   const [hasMore, setHasMore] = useState<boolean>(true);
 
-  const observer = useRef(
-    new IntersectionObserver((entries) => callback(entries, setHasMore), {
-      threshold: 0.5,
-    })
+  const observerCallback = useCallback(
+    (entries: readonly IntersectionObserverEntry[]) =>
+      callback(entries, setHasMore),
+    [callback]
   );
+  // const observer = useRef(
+  //   new IntersectionObserver(observerCallback, {
+  //     threshold: 0.5,
+  //   })
+  // );
   const listElementRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -130,16 +141,18 @@ function InfiniteScroll<T>({
   }, [data]);
 
   useEffect(() => {
-    const currentObserver = observer.current;
+    const currentObserver = new IntersectionObserver(observerCallback, {
+      threshold: 0.5,
+    });
     const currentElement = listElementRef.current;
     if (currentElement) currentObserver.observe(currentElement);
 
     return () => {
       if (currentElement) {
-        currentObserver.unobserve(currentElement);
+        currentObserver.disconnect();
       }
     };
-  });
+  }, [observerCallback]);
 
   const viewGridSize = gridSize[breakpoint];
   const itemsPerRow = 12 / viewGridSize;
