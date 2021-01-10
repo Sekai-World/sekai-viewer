@@ -844,9 +844,10 @@ const MusicDetail: React.FC<{}> = () => {
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                 {t("music:vocalType")}
               </Typography>
-              <Typography>
-                {musicVocal[selectedVocalType].musicVocalType}
-              </Typography>
+              <ContentTrans
+                contentKey={`music_vocal:${musicVocal[selectedVocalType].musicVocalType}`}
+                original={musicVocal[selectedVocalType].musicVocalType}
+              />
             </Grid>
             <Divider style={{ margin: "1% 0" }} />
           </Grid>
