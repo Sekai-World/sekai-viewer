@@ -77,7 +77,9 @@ const GridView: React.FC<{ data?: IHonorMission }> = ({ data }) => {
                 original={data.sentence}
                 originalProps={{
                   variant: "subtitle1",
-                  className: classes.header,
+                }}
+                translatedProps={{
+                  variant: "subtitle1",
                 }}
               />
             </Grid>

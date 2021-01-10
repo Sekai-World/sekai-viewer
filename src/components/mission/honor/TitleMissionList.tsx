@@ -25,6 +25,7 @@ import {
   IResourceBoxInfo,
 } from "../../../types";
 import { useCachedData, useRefState } from "../../../utils";
+import { ContentTrans } from "../../subs/ContentTrans";
 import DegreeImage from "../../subs/DegreeImage";
 import InfiniteScroll from "../../subs/InfiniteScroll";
 import GridView from "./GridView";
@@ -130,7 +131,16 @@ const DetailDialog: React.FC<{
             </Typography>
           </Grid>
           <Grid item xs={8} md={9}>
-            <Typography align="right">{missionData.sentence}</Typography>
+            <ContentTrans
+              contentKey={`honor_mission:${missionData.id}`}
+              original={missionData.sentence}
+              originalProps={{
+                align: "right",
+              }}
+              translatedProps={{
+                align: "right",
+              }}
+            />
           </Grid>
         </Grid>
         <Divider style={{ margin: "1% 0" }} />
