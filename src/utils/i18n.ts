@@ -89,6 +89,9 @@ export async function initGlobalI18n() {
         "beginner_mission",
         "honor_name",
         "honorGroup_name",
+        "virtualLive_name",
+        "unit_story_episode_title",
+        "event_story_episode_title",
       ],
       fallbackLng: {
         default: ["ja"],

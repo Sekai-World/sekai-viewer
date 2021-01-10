@@ -229,8 +229,8 @@ const StoryReader: React.FC<{}> = () => {
                         .episodes.map((episode) => (
                           <MenuItem value={episode.id} key={episode.id}>
                             <ContentTrans
-                              contentKey={`unit_story_episode_title:${episode.id}`}
-                              original={`${episode.episodeNoLabel} - ${episode.title}`}
+                              contentKey={`unit_story_episode_title:${episode.unit}-${episode.chapterNo}-${episode.episodeNo}`}
+                              original={episode.title}
                               originalProps={{ style: { overflow: "hidden" } }}
                               translatedProps={{
                                 style: { overflow: "hidden" },
@@ -293,8 +293,8 @@ const StoryReader: React.FC<{}> = () => {
                         .eventStoryEpisodes.map((episode) => (
                           <MenuItem value={episode.id} key={episode.id}>
                             <ContentTrans
-                              contentKey={`event_story_episode_title:${episode.id}`}
-                              original={`${episode.episodeNo} - ${episode.title}`}
+                              contentKey={`event_story_episode_title:${episode.eventStoryId}-${episode.episodeNo}`}
+                              original={episode.title}
                               originalProps={{ style: { overflow: "hidden" } }}
                               translatedProps={{
                                 style: { overflow: "hidden" },
