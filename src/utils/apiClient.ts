@@ -205,7 +205,7 @@ export function useStrapi(token?: string) {
     ),
     getLanguages: useCallback(
       async (): Promise<LanguageModel[]> =>
-        (await axios.get<LanguageModel[]>("/languages")).data,
+        (await axios.get<LanguageModel[]>("/languages?_sort=id:ASC")).data,
       [axios]
     ),
     getUserMetadataMe: useCallback(
@@ -437,7 +437,7 @@ export function useStrapi(token?: string) {
 export async function getLanguages() {
   return (
     await Axios.get<LanguageModel[]>(
-      `${process.env.REACT_APP_STRAPI_BASE}/languages`
+      `${process.env.REACT_APP_STRAPI_BASE}/languages?_sort=id:ASC`
     )
   ).data;
 }
