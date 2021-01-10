@@ -57,7 +57,11 @@
     "eject": "react-scripts eject",
     "exti18n": "i18next -c ./i18next-parser.config.js -s",
     "lint": "eslint --fix **/*.{js,jsx,ts,tsx}",
-    "commit": "cz"
+    "commit": "cz",
+    "release": "standard-version",
+    "release:minor": "standard-version --release-as minor",
+    "release:patch": "standard-version --release-as patch",
+    "release:major": "standard-version --release-as major"
   },
   "browserslist": {
     "production": [
@@ -72,6 +76,8 @@
     ]
   },
   "devDependencies": {
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
     "@testing-library/jest-dom": "^5.11.8",
     "@testing-library/react": "^11.2.2",
     "@testing-library/user-event": "^12.6.0",
@@ -96,8 +102,10 @@
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-prettier": "^3.3.1",
     "http-proxy-middleware": "^1.0.6",
+    "husky": "^4.3.7",
     "i18next-parser": "^3.6.0",
-    "prettier": "^2.2.1"
+    "prettier": "^2.2.1",
+    "standard-version": "^9.1.0"
   },
   "config": {
     "commitizen": {
@@ -153,6 +161,11 @@
           "title": "Reverts"
         }
       }
+    }
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   }
 }
