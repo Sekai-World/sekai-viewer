@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const BindSekaiID: React.FC<{}> = () => {
+const SekaiID: React.FC<{}> = () => {
   const { t } = useTranslation();
   // const { token } = useJwtAuth();
   const theme = useTheme();
@@ -76,8 +76,8 @@ const BindSekaiID: React.FC<{}> = () => {
   }, [getSekaiProfileMe, updateSekaiProfile]);
 
   return (
-    <Fragment>
-      <Grid container justify="flex-end" alignItems="center" spacing={1}>
+    <Grid container direction="column" spacing={1}>
+      <Grid item container alignItems="center" spacing={1}>
         {sekaiProfile ? (
           <Fragment>
             {!sekaiProfile.sekaiUserProfile && (
@@ -91,101 +91,101 @@ const BindSekaiID: React.FC<{}> = () => {
             )}
             {!isEditingSekaiID && (
               <Grid item>
-                <Typography>
-                  {sekaiProfile.sekaiUserId}
-                  {/* <Tooltip
-                    title={
-                      t("user:profile.label.update_left", {
-                        allowed: sekaiProfile.updateAvailable,
-                        used: sekaiProfile.updateUsed,
-                      }) as string
-                    }
-                    disableFocusListener
-                    arrow
-                    interactive
-                  >
-                    <span> */}
-                  <IconButton
-                    size="small"
-                    onClick={() => setIsEditingSekaiID(true)}
-                    disabled={
-                      sekaiProfile.updateAvailable <= sekaiProfile.updateUsed
-                    }
-                  >
-                    <Create />
-                  </IconButton>
-                  {/* </span>
-                  </Tooltip> */}
-                </Typography>
+                <Grid container alignItems="center" spacing={1}>
+                  <Grid item>
+                    <Chip
+                      size="small"
+                      label={t("user:profile.label.sekai_user_id")}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Typography>{sekaiProfile.sekaiUserId}</Typography>
+                  </Grid>
+                  <Grid item>
+                    <IconButton
+                      size="small"
+                      onClick={() => setIsEditingSekaiID(true)}
+                      disabled={
+                        sekaiProfile.updateAvailable <= sekaiProfile.updateUsed
+                      }
+                    >
+                      <Create />
+                    </IconButton>
+                  </Grid>
+                </Grid>
               </Grid>
             )}
           </Fragment>
         ) : (
           !isEditingSekaiID && (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => setIsEditingSekaiID(true)}
-            >
-              {t("user:profile.button.bind_sekai_id")}
-            </Button>
+            <Grid item>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => setIsEditingSekaiID(true)}
+              >
+                {t("user:profile.button.bind_sekai_id")}
+              </Button>
+            </Grid>
           )
         )}
         {isEditingSekaiID && (
-          <Formik
-            initialValues={{ userid: sekaiProfile?.sekaiUserId || "" }}
-            onSubmit={async (values, { setErrors }) => {
-              try {
-                await postSekaiProfileVerify(values.userid);
-                updateSekaiProfile(await getSekaiProfileMe());
-                setIsEditingSekaiID(false);
-                // jwtAuth.user = await getUserMe();
-              } catch (error) {
-                console.log(error);
-                setIsError(true);
-                setErrMsg(t("user:profile.error.sekai_id_already_bind"));
-              }
-            }}
-          >
-            {({ submitForm, isSubmitting }) => (
-              <Fragment>
-                <Form>
-                  <Field
-                    component={TextField}
-                    name="userid"
-                    type="text"
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            size="small"
-                            onClick={() => submitForm()}
-                            disabled={isSubmitting}
-                          >
-                            <Check />{" "}
-                            {isSubmitting && (
-                              <CircularProgress size="inherit" />
-                            )}
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            onClick={() => setIsEditingSekaiID(false)}
-                          >
-                            <Clear />
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  ></Field>
-                  <input type="submit" style={{ display: "none" }} />
-                </Form>
-              </Fragment>
-            )}
-          </Formik>
+          <Grid item>
+            <Formik
+              initialValues={{ userid: sekaiProfile?.sekaiUserId || "" }}
+              onSubmit={async (values, { setErrors }) => {
+                try {
+                  await postSekaiProfileVerify(values.userid);
+                  updateSekaiProfile(await getSekaiProfileMe());
+                  setIsEditingSekaiID(false);
+                  // jwtAuth.user = await getUserMe();
+                } catch (error) {
+                  console.log(error);
+                  setIsError(true);
+                  setErrMsg(t("user:profile.error.sekai_id_already_bind"));
+                }
+              }}
+            >
+              {({ submitForm, isSubmitting }) => (
+                <Fragment>
+                  <Form>
+                    <Field
+                      component={TextField}
+                      name="userid"
+                      type="text"
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              size="small"
+                              onClick={() => submitForm()}
+                              disabled={isSubmitting}
+                            >
+                              <Check />{" "}
+                              {isSubmitting && (
+                                <CircularProgress size="inherit" />
+                              )}
+                            </IconButton>
+                            <IconButton
+                              size="small"
+                              onClick={() => setIsEditingSekaiID(false)}
+                            >
+                              <Clear />
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    ></Field>
+                    <input type="submit" style={{ display: "none" }} />
+                  </Form>
+                </Fragment>
+              )}
+            </Formik>
+          </Grid>
         )}
       </Grid>
       {sekaiProfile && !sekaiProfile.sekaiUserProfile && (
-        <Grid container justify="flex-end" alignItems="center" spacing={1}>
+        <Grid container alignItems="center" spacing={1}>
           <Grid item>
             <Typography>
               {t("user:profile.label.sekai_id_verify_token")}:{" "}
@@ -212,38 +212,8 @@ const BindSekaiID: React.FC<{}> = () => {
         </Grid>
       )}
       {sekaiProfile && sekaiProfile.sekaiUserProfile && (
-        <Grid container justify="flex-end" alignItems="center" spacing={1}>
-          <Grid item container xs={10} md={11} justify="flex-end">
-            <Grid
-              item
-              xs={12}
-              md={6}
-              lg={4}
-              xl={3}
-              container
-              justify="flex-end"
-            >
-              <Typography>
-                {t("user:profile.label.sekai_user_name")}:{" "}
-                {sekaiProfile.sekaiUserProfile.user.userGamedata.name}
-              </Typography>
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              md={6}
-              lg={4}
-              xl={3}
-              container
-              justify="flex-end"
-            >
-              <Typography>
-                {t("user:profile.label.sekai_user_rank")}:{" "}
-                {sekaiProfile.sekaiUserProfile.user.userGamedata.rank}
-              </Typography>
-            </Grid>
-          </Grid>
-          <Grid item xs={2} md={1}>
+        <Grid item container alignItems="center" spacing={1}>
+          <Grid item xs={12}>
             <Tooltip
               title={
                 t("user:profile.label.update_left", {
@@ -256,7 +226,7 @@ const BindSekaiID: React.FC<{}> = () => {
               interactive
             >
               <span>
-                <IconButton
+                <Button
                   size="small"
                   onClick={() => {
                     setIsUpdatingProfile(true);
@@ -271,15 +241,48 @@ const BindSekaiID: React.FC<{}> = () => {
                     isUpdatingProfile ||
                     sekaiProfile.updateAvailable <= sekaiProfile.updateUsed
                   }
+                  variant="contained"
+                  color="primary"
                 >
                   {isUpdatingProfile ? (
                     <CircularProgress size={24} />
                   ) : (
                     <Update />
                   )}
-                </IconButton>
+                  {t("user:profile.button.update_sekai_profile")}
+                </Button>
               </span>
             </Tooltip>
+          </Grid>
+          <Grid item xs={12} md={4} xl={3}>
+            <Grid container alignItems="center" spacing={1}>
+              <Grid item>
+                <Chip
+                  size="small"
+                  label={t("user:profile.label.sekai_user_name")}
+                />
+              </Grid>
+              <Grid item>
+                <Typography>
+                  {sekaiProfile.sekaiUserProfile.user.userGamedata.name}
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={12} md={4} xl={3}>
+            <Grid container alignItems="center" spacing={1}>
+              <Grid item>
+                <Chip
+                  size="small"
+                  label={t("user:profile.label.sekai_user_rank")}
+                />
+              </Grid>
+              <Grid item>
+                <Typography>
+                  {sekaiProfile.sekaiUserProfile.user.userGamedata.rank}
+                </Typography>
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
       )}
@@ -350,8 +353,8 @@ const BindSekaiID: React.FC<{}> = () => {
           {errMsg}
         </Alert>
       </Snackbar>
-    </Fragment>
+    </Grid>
   );
 };
 
-export default BindSekaiID;
+export default SekaiID;
