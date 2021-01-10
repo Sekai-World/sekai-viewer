@@ -104,7 +104,13 @@ const AnnouncementDetail: React.FC<{}> = () => {
         <Grid item>
           <Chip
             label={announcement.user.nickname}
-            avatar={<Avatar src={announcement.user.avatar.url} />}
+            avatar={
+              <Avatar
+                src={
+                  announcement.user.avatar ? announcement.user.avatar.url : ""
+                }
+              />
+            }
           />
         </Grid>
         <Grid item>
@@ -129,7 +135,11 @@ const AnnouncementDetail: React.FC<{}> = () => {
                   <Grid item>
                     <Chip
                       label={userMeta.nickname}
-                      avatar={<Avatar src={userMeta.avatar.url} />}
+                      avatar={
+                        <Avatar
+                          src={userMeta.avatar ? userMeta.avatar.url : ""}
+                        />
+                      }
                     />
                   </Grid>
                 ))}

@@ -299,13 +299,13 @@ export function useStrapi(token?: string) {
         contentType: string,
         id: string | number,
         userId: number,
-        avatar: AvatarModel,
+        avatar: AvatarModel | null,
         content: string
       ) =>
         (
           await axios.post(`/comments/${contentType}:${id}`, {
             authorUser: userId,
-            authorAvatar: avatar.url,
+            authorAvatar: avatar ? avatar.url : null,
             content,
             related: [
               {

@@ -45,7 +45,11 @@ const GridView: React.FC<{ data?: AnnouncementModel }> = ({ data }) => {
                 </Typography> */}
                 <Chip
                   label={data.user.nickname}
-                  avatar={<Avatar src={data.user.avatar.url} />}
+                  avatar={
+                    <Avatar
+                      src={data.user.avatar ? data.user.avatar.url : ""}
+                    />
+                  }
                 />
               </Grid>
               <Grid item>

@@ -19,7 +19,7 @@ export interface AvatarModel {
 
 export interface UserMetadatumModel {
   id: number;
-  avatar: AvatarModel;
+  avatar: AvatarModel | null;
   nickname: string;
   languages: LanguageModel[];
 }

@@ -242,7 +242,11 @@ const Announcement: React.FC<{
                     <Chip
                       label={userMeta.nickname}
                       key={userMeta.id}
-                      avatar={<Avatar src={userMeta.avatar.url} />}
+                      avatar={
+                        <Avatar
+                          src={userMeta.avatar ? userMeta.avatar.url : ""}
+                        />
+                      }
                     />
                   </Grid>
                 ))}

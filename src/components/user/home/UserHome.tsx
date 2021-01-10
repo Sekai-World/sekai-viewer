@@ -117,7 +117,7 @@ const UserHome: React.FC<{}> = () => {
                       .then((data) => {
                         // jwtAuth.user = data;
                         updateUserMeta(data);
-                        setAvatarUrl(data.avatar.url);
+                        setAvatarUrl(data.avatar ? data.avatar.url : "");
                         setIsUploading(false);
                       })
                       .catch(() => {

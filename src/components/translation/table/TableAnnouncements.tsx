@@ -100,7 +100,12 @@ const TableMe: React.FC<Props> = (props: Props) => {
             <Chip
               label={(params.value as UserMetadatumModel).nickname}
               avatar={
-                <Avatar src={(params.value as UserMetadatumModel).avatar.url} />
+                <Avatar
+                  src={
+                    ((params.value as UserMetadatumModel).avatar || { url: "" })
+                      .url
+                  }
+                />
               }
             />
           );
