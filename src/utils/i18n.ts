@@ -48,6 +48,7 @@ export async function initGlobalI18n() {
         "live2d",
         "virtual_live",
         "translate",
+        "honor",
       ],
       fallbackLng: {
         default: ["en"],

@@ -115,7 +115,16 @@ const DetailDialog: React.FC<{
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
             {t("common:title")}
           </Typography>
-          <Typography>{honor.name}</Typography>
+          <ContentTrans
+            contentKey={`honor_name:${honor.name}`}
+            original={honor.name}
+            originalProps={{
+              align: "right",
+            }}
+            translatedProps={{
+              align: "right",
+            }}
+          />
         </Grid>
         <Divider style={{ margin: "1% 0" }} />
         <Grid
@@ -166,12 +175,12 @@ const DetailDialog: React.FC<{
           justify="space-between"
           alignItems="center"
         >
-          <Grid item xs={3} md={2}>
+          <Grid item xs={3}>
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
               {t("mission:requirement")}
             </Typography>
           </Grid>
-          <Grid item xs={8} md={9}>
+          <Grid item xs={8}>
             <Typography align="right">{missionData.requirement}</Typography>
           </Grid>
         </Grid>
@@ -184,9 +193,18 @@ const DetailDialog: React.FC<{
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            {t("mission:mission_group")}
+            {t("honor:honor_group")}
           </Typography>
-          <Typography>{honorGroup.honorType}</Typography>
+          <ContentTrans
+            contentKey={`honorGroup_name:${honorGroup.id}`}
+            original={honorGroup.name}
+            originalProps={{
+              align: "right",
+            }}
+            translatedProps={{
+              align: "right",
+            }}
+          />
         </Grid>
         <Divider style={{ margin: "1% 0" }} />
         <Grid
