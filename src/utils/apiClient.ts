@@ -112,10 +112,23 @@ export function useStrapi(token?: string) {
     ),
     putUserMetadataMe: useCallback(
       async (
-        userMetaId: number,
         data: Partial<UserMetadatumModel>
-      ): Promise<UserMetadatumModel> =>
-        (await axios.put<UserMetadatumModel>("/user-metadata/me", data)).data,
+      ): Promise<UserMetadatumModel> => {
+        return (
+          await axios.put<UserMetadatumModel>(
+            "/user-metadata/me",
+            Object.assign(
+              {},
+              data,
+              data.languages
+                ? {
+                    languages: data.languages.map((lang) => lang.id),
+                  }
+                : {}
+            )
+          )
+        ).data;
+      },
       [axios]
     ),
     postForgotPassword: useCallback(

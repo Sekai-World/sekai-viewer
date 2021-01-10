@@ -12,20 +12,23 @@ import {
   InputAdornment,
   Tooltip,
   makeStyles,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@material-ui/core";
 import { Check, Clear, Create } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
 import { Field, Form, Formik } from "formik";
-import { TextField } from "formik-material-ui";
+import { Select, TextField } from "formik-material-ui";
 import { Upload, Logout } from "mdi-material-ui";
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import { UserContext } from "../../context";
-import { useInteractiveStyles } from "../../styles/interactive";
-import { useLayoutStyles } from "../../styles/layout";
-import { useStrapi } from "../../utils/apiClient";
-import SekaiProfile from "./sekai_profile/SekaiProfile";
+import { SettingContext, UserContext } from "../../../context";
+import { useInteractiveStyles } from "../../../styles/interactive";
+import { useLayoutStyles } from "../../../styles/layout";
+import { useStrapi } from "../../../utils/apiClient";
+import SekaiProfile from "../sekai_profile/SekaiProfile";
 
 const useStyles = makeStyles((theme) => ({
   avatarProfile: {
@@ -46,33 +49,27 @@ const UserHome: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
-  // const {} = useAssetI18n();
   const history = useHistory();
-  // const jwtAuth = useJwtAuth();
-  // const { user, token } = useJwtAuth();
-  const {
-    user,
-    jwtToken,
-    updateUser,
-    logout,
-    usermeta,
-    updateUserMeta,
-  } = useContext(UserContext)!;
-  const {
-    getUserMe,
-    postUpload,
-    putUserMetadataMe,
-    getUserMetadataMe,
-  } = useStrapi(jwtToken);
+  const { user, jwtToken, logout, usermeta, updateUserMeta } = useContext(
+    UserContext
+  )!;
+  const { languages } = useContext(SettingContext)!;
+  const { postUpload, putUserMetadataMe, getUserMetadataMe } = useStrapi(
+    jwtToken
+  );
   const [isUploadAvatarError, setIsUploadAvatarError] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(
     usermeta ? (usermeta.avatar || { url: "" }).url : ""
   );
   const [nickname, setNickname] = useState(usermeta?.nickname || "");
+  const [preferLangs, setPreferLangs] = useState<number[]>(
+    usermeta?.languages.map((lang) => lang.id) || []
+  );
 
   const [isUploading, setIsUploading] = useState(false);
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [isShowEmail, setIsShowEmail] = useState(false);
+  const [isEditingPreferLangs, setIsEditingPreferLangs] = useState(false);
 
   useEffect(() => {
     document.title = t("title:user_home");
@@ -184,24 +181,26 @@ const UserHome: React.FC<{}> = () => {
                 <Grid container justify="space-between" alignItems="center">
                   <Typography className={layoutClasses.bold}>
                     {t("user:profile.nickname")}
-                    <IconButton
-                      size="small"
-                      onClick={() => setIsEditingNickname((state) => !state)}
-                    >
-                      <Create />
-                    </IconButton>
+                    {!isEditingNickname && (
+                      <IconButton
+                        size="small"
+                        onClick={() => setIsEditingNickname((state) => !state)}
+                      >
+                        <Create />
+                      </IconButton>
+                    )}
                   </Typography>
                   {isEditingNickname ? (
                     <Formik
                       initialValues={{ nickname }}
                       onSubmit={async (values) => {
                         try {
-                          await putUserMetadataMe(usermeta!.id, {
+                          await putUserMetadataMe({
                             nickname: values.nickname,
                           });
                           setNickname(values.nickname);
                           setIsEditingNickname(false);
-                          updateUser(await getUserMe());
+                          // updateUser(await getUserMe());
                           updateUserMeta(await getUserMetadataMe());
                         } catch (error) {
                           console.log(error);
@@ -224,9 +223,10 @@ const UserHome: React.FC<{}> = () => {
                                       onClick={() => submitForm()}
                                       disabled={isSubmitting}
                                     >
-                                      <Check />{" "}
-                                      {isSubmitting && (
+                                      {isSubmitting ? (
                                         <CircularProgress size="inherit" />
+                                      ) : (
+                                        <Check />
                                       )}
                                     </IconButton>
                                     <IconButton
@@ -303,6 +303,102 @@ const UserHome: React.FC<{}> = () => {
                       `user:profile.email_confirmed_status.${user?.confirmed}`
                     )}
                   </Typography>
+                </Grid>
+              </Grid>
+              <Grid item xs={12}>
+                <Divider />
+              </Grid>
+              <Grid item xs={12}>
+                <Grid container justify="space-between" alignItems="center">
+                  <Typography className={layoutClasses.bold}>
+                    {t("auth:signup.label.prefer_langs")}
+                    {!isEditingPreferLangs && (
+                      <IconButton
+                        size="small"
+                        onClick={() =>
+                          setIsEditingPreferLangs((state) => !state)
+                        }
+                      >
+                        <Create />
+                      </IconButton>
+                    )}
+                  </Typography>
+                  {isEditingPreferLangs ? (
+                    <Formik
+                      initialValues={{ preferLangs }}
+                      onSubmit={async (values) => {
+                        try {
+                          await putUserMetadataMe({
+                            languages: values.preferLangs.map(
+                              (elem) =>
+                                languages.find((lang) => lang.id === elem)!
+                            ),
+                          });
+                          setPreferLangs(values.preferLangs);
+                          setIsEditingPreferLangs(false);
+                          updateUserMeta(await getUserMetadataMe());
+                        } catch (error) {
+                          console.log(error);
+                        }
+                      }}
+                    >
+                      {({ submitForm, isSubmitting }) => (
+                        <Fragment>
+                          <Form>
+                            <Grid container alignItems="center">
+                              <Grid item>
+                                <FormControl>
+                                  <InputLabel htmlFor="select-prefer-langs">
+                                    {t("auth:signup.label.prefer_langs")}
+                                  </InputLabel>
+                                  <Field
+                                    component={Select}
+                                    name="preferLangs"
+                                    multiple
+                                    style={{ width: "150px" }}
+                                  >
+                                    {languages.map((lang) => (
+                                      <MenuItem key={lang.code} value={lang.id}>
+                                        {lang.name}
+                                      </MenuItem>
+                                    ))}
+                                  </Field>
+                                </FormControl>
+                              </Grid>
+                              <Grid item>
+                                <IconButton
+                                  size="small"
+                                  onClick={() => submitForm()}
+                                  disabled={isSubmitting}
+                                >
+                                  {isSubmitting ? (
+                                    <CircularProgress size="inherit" />
+                                  ) : (
+                                    <Check />
+                                  )}
+                                </IconButton>
+                                <IconButton
+                                  size="small"
+                                  onClick={() => setIsEditingPreferLangs(false)}
+                                >
+                                  <Clear />
+                                </IconButton>
+                              </Grid>
+                            </Grid>
+                          </Form>
+                        </Fragment>
+                      )}
+                    </Formik>
+                  ) : (
+                    <Typography>
+                      {preferLangs
+                        .map(
+                          (elem) =>
+                            languages.find((lang) => lang.id === elem)!.name
+                        )
+                        .join(", ")}
+                    </Typography>
+                  )}
                 </Grid>
               </Grid>
               <Grid item xs={12}>

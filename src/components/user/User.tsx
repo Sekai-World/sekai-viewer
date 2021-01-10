@@ -7,7 +7,7 @@ const Login = lazy(() => import("./Login"));
 const Signup = lazy(() => import("./Signup"));
 const ResetPassword = lazy(() => import("./ResetPassword"));
 const ResetPasswordCallback = lazy(() => import("./ResetPasswordCallback"));
-const UserHome = lazy(() => import("./UserHome"));
+const UserHome = lazy(() => import("./home/UserHome"));
 const Confirmation = lazy(() => import("./EmailConfirm"));
 
 const User: React.FC<{}> = () => {

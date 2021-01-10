@@ -68,7 +68,7 @@ const Translation: React.FC<{}> = () => {
               return errors;
             }}
             onSubmit={async (values, { setSubmitting, resetForm }) => {
-              await putUserMetadataMe(usermeta.id, {
+              await putUserMetadataMe({
                 languages: values.languages.map(
                   (id) => languages.find((lang) => lang.id === id)!
                 ),
