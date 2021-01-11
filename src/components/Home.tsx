@@ -34,15 +34,6 @@ import { getJPTime, useCachedData } from "../utils";
 import AnnouncementWidget from "./announcement/AnnouncementWidget";
 import CurrentEventWidget from "./event/CurrentEventWidget";
 
-const useStyles = makeStyles((theme) => ({
-  "contact-link": {
-    margin: theme.spacing(0, 0.5),
-  },
-  "game-news-title": {
-    paddingTop: theme.spacing(2),
-  },
-}));
-
 interface IDetectResult {
   webp: number;
   webpLossless: number;
@@ -62,19 +53,6 @@ function getWebpDetectSeverity(detected: IDetectResult) {
       return "warning";
   }
 }
-
-// function getWebpDetectDesc(t: TFunction, result: number) {
-//   switch (result) {
-//     case -1:
-//       return t("common:detect.checking");
-//     case 0:
-//       return t("common:detect.unsupported");
-//     case 1:
-//       return t("common:detect.supported");
-//     default:
-//       return "";
-//   }
-// }
 
 const useIframeStyle = makeStyles((theme) => ({
   iframe: {
@@ -118,7 +96,6 @@ function InfoInternal(props: { onClick: () => void }) {
 
 function Home() {
   const theme = useTheme();
-  const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
@@ -280,66 +257,85 @@ function Home() {
         )}
         <Alert className={layoutClasses.alert} severity="warning">
           <AlertTitle>{t("home:alert1.title")}</AlertTitle>
-          <Link
-            href="https://www.transifex.com/dnaroma/sekai-viewer"
-            target="_blank"
-          >
-            <Translate fontSize="inherit"></Translate>
-            {t("home:alert1.translation")}
-          </Link>
-          （English，简中，繁中，日本語，한국어，Deutsch, Español, others upon
-          request）
-          <br></br>
-          <Link
-            href="https://github.com/Sekai-World/sekai-viewer"
-            target="_blank"
-          >
-            <GitHub fontSize="inherit"></GitHub>
-            {t("home:alert1.development")}
-          </Link>
-          （Sekai-World/sekai-viewer）
-          <br></br>
-          {!window.isChinaMainland && (
-            <Fragment>
+          <Grid container spacing={2}>
+            <Grid item>
               <Link
-                href="https://www.patreon.com/bePatron?u=6503151"
+                href="https://www.transifex.com/dnaroma/sekai-viewer"
                 target="_blank"
               >
-                <Patreon fontSize="inherit"></Patreon>
-                Patreon
+                <Grid container direction="row" alignItems="center">
+                  <Grid item>
+                    <Translate fontSize="small"></Translate>
+                  </Grid>
+                  <Grid item>{t("home:alert1.translation")}</Grid>
+                </Grid>
               </Link>
-              <br></br>
-            </Fragment>
-          )}
-          <RouteLink
-            to="/about"
-            className={interactiveClasses.noDecoration}
-            style={{ color: theme.palette.primary.main }}
-          >
-            <OpenInNew fontSize="inherit" /> {t("home:alert1.see_contrib_list")}
-          </RouteLink>
-          <br></br>
-          {t("home:alert1.contact")}:
-          <Link
-            href="https://www.twitter.com/SekaiViewer"
-            target="_blank"
-            className={classes["contact-link"]}
-          >
-            <Twitter fontSize="inherit"></Twitter>
-            @SekaiViewer
-          </Link>
-          <br />
-          {t("home:alert1.join-discord")}
-          <Link
-            href="https://discord.gg/xcDBRMd"
-            target="_blank"
-            className={classes["contact-link"]}
-          >
-            <Discord fontSize="inherit"></Discord>
-            Sekai Viewer
-          </Link>
+            </Grid>
+            <Grid item>
+              <Link
+                href="https://github.com/Sekai-World/sekai-viewer"
+                target="_blank"
+              >
+                <Grid container direction="row" alignItems="center">
+                  <Grid item>
+                    <GitHub fontSize="small"></GitHub>
+                  </Grid>
+                  <Grid item>{t("home:alert1.development")}</Grid>
+                </Grid>
+              </Link>
+            </Grid>
+            {!window.isChinaMainland && (
+              <Grid item>
+                <Link
+                  href="https://www.patreon.com/bePatron?u=6503151"
+                  target="_blank"
+                >
+                  <Grid container direction="row" alignItems="center">
+                    <Grid item>
+                      <Patreon fontSize="small" />
+                    </Grid>
+                    <Grid item>Patreon</Grid>
+                  </Grid>
+                </Link>
+              </Grid>
+            )}
+            <Grid item>
+              <RouteLink
+                to="/about"
+                className={interactiveClasses.noDecoration}
+                style={{ color: theme.palette.primary.main }}
+              >
+                <Grid container direction="row" alignItems="center">
+                  <Grid item>
+                    <OpenInNew fontSize="small" />
+                  </Grid>
+                  <Grid item>{t("home:alert1.see_contrib_list")}</Grid>
+                </Grid>
+              </RouteLink>
+            </Grid>
+            <Grid item>
+              <Link href="https://www.twitter.com/SekaiViewer" target="_blank">
+                <Grid container direction="row" alignItems="center">
+                  <Grid item>
+                    <Twitter fontSize="small"></Twitter>
+                  </Grid>
+                  <Grid item>@SekaiViewer</Grid>
+                </Grid>
+              </Link>
+            </Grid>
+            <Grid item>
+              <Link href="https://discord.gg/xcDBRMd" target="_blank">
+                <Grid container direction="row" alignItems="center">
+                  <Grid item>
+                    <Discord fontSize="small"></Discord>
+                  </Grid>
+                  <Grid item>Sekai Viewer</Grid>
+                </Grid>
+              </Link>
+            </Grid>
+          </Grid>
         </Alert>
-        {getWebpDetectSeverity(detected) !== "success" ? (
+        {getWebpDetectSeverity(detected) !== "success" && (
           <Alert
             className={layoutClasses.alert}
             severity={getWebpDetectSeverity(detected)}
@@ -352,7 +348,7 @@ function Home() {
               }}
             />
           </Alert>
-        ) : null}
+        )}
       </Container>
       <Grid container spacing={1}>
         <Grid item xs={12} md={6}>
