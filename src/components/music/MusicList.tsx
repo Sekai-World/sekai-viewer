@@ -9,6 +9,7 @@ import {
   FormControl,
   MenuItem,
   Select,
+  Chip,
 } from "@material-ui/core";
 import { useLayoutStyles } from "../../styles/layout";
 import { ViewAgenda, Sort, SortOutlined } from "@material-ui/icons";
@@ -209,31 +210,27 @@ const MusicList: React.FC<{}> = () => {
                   </Typography>
                 </Grid>
                 <Grid item container xs={12} md={10} spacing={1}>
-                  <Grid item>
-                    <FormControl>
-                      <Select
-                        value={musicTag}
-                        onChange={(e) => {
-                          setMusicTag(e.target.value as string);
+                  {[
+                    "all",
+                    "vocaloid",
+                    "theme_park",
+                    "street",
+                    "idol",
+                    "school_refusal",
+                    "light_music_club",
+                    "other",
+                  ].map((tag) => (
+                    <Grid key={tag} item>
+                      <Chip
+                        clickable
+                        color={musicTag === tag ? "primary" : "default"}
+                        label={musicTagToName[tag]}
+                        onClick={() => {
+                          setMusicTag(tag);
                         }}
-                      >
-                        {[
-                          "all",
-                          "vocaloid",
-                          "theme_park",
-                          "street",
-                          "idol",
-                          "school_refusal",
-                          "light_music_club",
-                          "other",
-                        ].map((tag) => (
-                          <MenuItem key={tag} value={tag}>
-                            {musicTagToName[tag]}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Grid>
+                      />
+                    </Grid>
+                  ))}
                 </Grid>
               </Grid>
               <Grid
@@ -260,6 +257,7 @@ const MusicList: React.FC<{}> = () => {
                             e.target.value as string
                           );
                         }}
+                        style={{ minWidth: "100px" }}
                       >
                         <MenuItem value="asc">
                           {t("filter:sort.ascending")}
@@ -281,6 +279,7 @@ const MusicList: React.FC<{}> = () => {
                             e.target.value as string
                           );
                         }}
+                        style={{ minWidth: "100px" }}
                       >
                         <MenuItem value="id">{t("common:id")}</MenuItem>
                         <MenuItem value="publishedAt">
