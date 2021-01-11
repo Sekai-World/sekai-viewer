@@ -26,12 +26,6 @@ const useStyles = makeStyles((theme) => ({
     padding: "6% 4%",
     cursor: "pointer",
   },
-  comfyPrefix: {
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    maxWidth: "100%",
-  },
 }));
 
 const ComfyView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
@@ -59,14 +53,16 @@ const ComfyView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
               <CardThumbSkeleton></CardThumbSkeleton>
             </Grid>
           </Grid>
-          <Grid item style={{ width: "100%" }}>
-            <Typography classes={{ root: classes.comfyPrefix }} variant="body1">
+          <Grid item>
+            <Typography variant="body1">
               <Skeleton
                 variant="text"
                 width="70%"
                 style={{ margin: "0 auto" }}
               ></Skeleton>
             </Typography>
+          </Grid>
+          <Grid item>
             <Typography variant="body2">
               <Skeleton
                 variant="text"
@@ -112,12 +108,10 @@ const ComfyView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
                   original={data.prefix}
                   originalProps={{
                     variant: "body1",
-                    className: classes.comfyPrefix,
                     align: "center",
                   }}
                   translatedProps={{
                     variant: "body1",
-                    className: classes.comfyPrefix,
                     align: "center",
                   }}
                 />
