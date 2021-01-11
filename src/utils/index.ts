@@ -158,12 +158,13 @@ export function useCharaName(contentTransMode: ContentTransModeType) {
   return useCallback(
     (charaId: number): string | undefined => {
       const chara = charas.find((chara) => chara.id === charaId);
+      const jpOrderCodes = ["zh-CN", "zh-TW", "ko", "ja", "id", "ms"];
       if (chara?.firstName) {
         switch (contentTransMode) {
           case "original":
             return `${chara.firstName} ${chara.givenName}`;
           case "translated":
-            return ["zh-CN", "zh-TW", "ko", "ja"].includes(assetI18n.language)
+            return jpOrderCodes.includes(assetI18n.language)
               ? `${assetT(
                   `character_name:${charaId}.firstName`,
                   chara.firstName
@@ -181,7 +182,7 @@ export function useCharaName(contentTransMode: ContentTransModeType) {
           case "both":
             return (
               `${chara.firstName} ${chara.givenName} | ` +
-              (["zh-CN", "zh-TW", "ko", "ja"].includes(assetI18n.language)
+              (jpOrderCodes.includes(assetI18n.language)
                 ? `${assetT(
                     `character_name:${charaId}.firstName`,
                     chara.firstName
