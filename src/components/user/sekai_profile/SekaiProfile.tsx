@@ -26,7 +26,7 @@ const SekaiProfile = () => {
   const [isUserEventOpen, setIsUserEventOpen] = useState(false);
   // const [isSekaiIDOpen, setIsSekaiIDOpen] = useState(false);
 
-  return sekaiProfile ? (
+  return (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
         {t("user:profile.title.sekai_profile")}
@@ -34,7 +34,7 @@ const SekaiProfile = () => {
       <Container className={layoutClasses.content} maxWidth="md">
         <SekaiID />
         <br />
-        {sekaiProfile.sekaiUserProfile && (
+        {sekaiProfile && sekaiProfile.sekaiUserProfile && (
           <Fragment>
             <Accordion
               expanded={isUserEventOpen}
@@ -69,7 +69,7 @@ const SekaiProfile = () => {
         )}
       </Container>
     </Fragment>
-  ) : null;
+  );
 };
 
 export default SekaiProfile;
