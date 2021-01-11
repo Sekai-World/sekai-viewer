@@ -57,7 +57,7 @@
     "eject": "react-scripts eject",
     "exti18n": "i18next -c ./i18next-parser.config.js -s",
     "lint": "eslint **/*.{js,jsx,ts,tsx}",
-    "lint:fix": "eslint **/*.{js,jsx,ts,tsx}",
+    "lint:fix": "eslint --fix **/*.{js,jsx,ts,tsx}",
     "commit": "cz",
     "release": "standard-version",
     "release:minor": "standard-version --release-as minor",
@@ -166,7 +166,8 @@
   },
   "husky": {
     "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "npm run lint"
     }
   }
 }
