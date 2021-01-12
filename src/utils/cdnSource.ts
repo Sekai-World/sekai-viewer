@@ -7,6 +7,7 @@ export interface Cdn {
 
 export interface JsonCdnStruct {
   cdns: Cdn[];
+  dbCdns: Cdn[];
 }
 
 class CdnSource {
@@ -15,10 +16,15 @@ class CdnSource {
   private cdns: JsonCdnStruct;
   private selectedCdn: Cdn | null;
 
+  private pointedDbCdn: string | null;
+  private selectedDbCdn: Cdn | null;
+
   constructor() {
 
     this.pointedCdn = localStorage.getItem("pointedCdn");
     this.selectedCdn = null;
+    this.pointedDbCdn = localStorage.getItem("pointedDbCdn");
+    this.selectedDbCdn = null;
 
     try {
       try {
@@ -49,6 +55,14 @@ class CdnSource {
             secret: null,
             l10n_name: "dummy"
           }
+        ],
+        dbCdns: [
+          {
+            name: "prod",
+            url: '',
+            secret: null,
+            l10n_name: "dummy"
+          }
         ]
       }
 
@@ -58,6 +72,8 @@ class CdnSource {
   }
 
   getRemoteAssetUrl(endpoint: string) {
+    if (this.selectedCdn?.url.search("assets/") && endpoint.search("assets/"))
+      endpoint = endpoint.replace("/assets/", "")
     return `${this.selectedCdn?.url}/${endpoint}`.replaceAll("//", "/") ;
   }
 
