@@ -32,7 +32,6 @@
     "material-auto-rotating-carousel": "^3.0.2",
     "material-ui-image": "^3.3.1",
     "mdi-material-ui": "^6.21.0",
-    "mui-extension": "^1.7.0",
     "p-queue": "^6.6.2",
     "react": "^16.14.0",
     "react-device-detect": "^1.15.0",
@@ -43,16 +42,22 @@
     "react-markdown-editor-lite": "^1.2.4",
     "react-password-strength-bar": "^0.3.2",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.4",
+    "react-scripts": "4.0.1",
     "react-swipeable-views": "^0.13.9",
     "react-viewer": "^3.2.2",
     "recharts": "^1.8.5",
     "typescript": "^3.9.7",
-    "webp-hero": "0.0.0-dev.27"
+    "webp-hero": "0.0.0-dev.27",
+    "workbox-core": "^6.0.2",
+    "workbox-expiration": "^6.0.2",
+    "workbox-precaching": "^6.0.2",
+    "workbox-routing": "^6.0.2",
+    "workbox-strategies": "^6.0.2"
   },
   "scripts": {
     "start": "cross-env TSC_WATCHFILE=UseFsEventsWithFallbackDynamicPolling react-scripts start",
     "build": "cross-env GENERATE_SOURCEMAP=false react-scripts build",
+    "build:sourcemap": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "exti18n": "i18next -c ./i18next-parser.config.js -s",
@@ -62,7 +67,8 @@
     "release": "standard-version",
     "release:minor": "standard-version --release-as minor",
     "release:patch": "standard-version --release-as patch",
-    "release:major": "standard-version --release-as major"
+    "release:major": "standard-version --release-as major",
+    "analyze": "source-map-explorer 'build/static/js/*.js'"
   },
   "browserslist": {
     "production": [
@@ -106,6 +112,7 @@
     "husky": "^4.3.7",
     "i18next-parser": "^3.6.0",
     "prettier": "^2.2.1",
+    "source-map-explorer": "^2.5.2",
     "standard-version": "^9.1.0"
   },
   "config": {

@@ -151,7 +151,7 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
         const rightXDistance = 940 - refImgRightX.current;
         const currRightWidth = refImgRightWidth.current;
         const rightWidthDistance = 768 - currRightWidth;
-        let requestId = requestAnimationFrame(function animation(time) {
+        let requestId = requestAnimationFrame(function animation(time: number) {
           let timeFraction = (time - start) / animationDuration;
           if (timeFraction > 1) timeFraction = 1;
 
@@ -183,7 +183,7 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
         const rightXDistance = 84 - refImgRightX.current;
         const currRightWidth = refImgRightWidth.current;
         const rightWidthDistance = 940 - currRightWidth;
-        let requestId = requestAnimationFrame(function animation(time) {
+        let requestId = requestAnimationFrame(function animation(time: number) {
           let timeFraction = (time - start) / animationDuration;
           if (timeFraction > 1) timeFraction = 1;
 
@@ -215,7 +215,7 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
         const rightXDistance = 512 - refImgRightX.current;
         const currRightWidth = refImgRightWidth.current;
         const rightWidthDistance = 768 - currRightWidth;
-        let requestId = requestAnimationFrame(function animation(time) {
+        let requestId = requestAnimationFrame(function animation(time: number) {
           let timeFraction = (time - start) / animationDuration;
           if (timeFraction > 1) timeFraction = 1;
 

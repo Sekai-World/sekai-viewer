@@ -117,14 +117,14 @@ export const UserProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
             auth.user = newUser;
             setUser(newUser);
           },
-          [auth.user]
+          [auth]
         ),
         updateJwtToken: useCallback(
           (newToken: string) => {
             auth.token = newToken;
             setToken(newToken);
           },
-          [auth.token]
+          [auth]
         ),
         updateSekaiProfile: useCallback((data) => {
           setSekaiProfile(data);
@@ -136,14 +136,14 @@ export const UserProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
           auth.token = "";
           setSekaiProfile(undefined);
           localStorage.removeItem("sekaiProfile");
-        }, [auth.token, auth.user]),
+        }, [auth]),
         usermeta: useMemo(() => usermeta, [usermeta]),
         updateUserMeta: useCallback(
           (data) => {
             auth.usermeta = data;
             setUsermeta(data);
           },
-          [auth.usermeta]
+          [auth]
         ),
       }}
     >

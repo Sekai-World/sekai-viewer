@@ -427,7 +427,6 @@ const EventTracker: React.FC<{}> = () => {
     setIsFetching(false);
     setIsShowChart(true);
   }, [
-    chartData,
     currEvent,
     events,
     getGraph,

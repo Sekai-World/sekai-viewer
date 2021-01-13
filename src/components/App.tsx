@@ -22,6 +22,8 @@ import {
   Typography,
   useMediaQuery,
   Grid,
+  Snackbar,
+  Button,
 } from "@material-ui/core";
 import {
   Menu as MenuIcon,
@@ -48,7 +50,7 @@ import {
   Translate,
   Dns,
 } from "@material-ui/icons";
-import { Skeleton } from "@material-ui/lab";
+import { Alert, Skeleton } from "@material-ui/lab";
 import {
   AccountGroup,
   Bullhorn,
@@ -64,6 +66,8 @@ import React, {
   useContext,
   Fragment,
   useState,
+  useEffect,
+  useCallback,
 } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -77,6 +81,7 @@ import {
 import { SettingContext, UserContext, UserProvider } from "../context";
 import ScrollTop from "./subs/ScrollTop";
 import Settings from "./subs/Settings";
+import * as serviceWorker from "../serviceWorker";
 
 const drawerWidth = 240;
 const CardList = lazy(() => import("./card/CardList"));
@@ -526,6 +531,10 @@ function App() {
     mobileMenuAnchorEl,
     setMobileMenuAnchorEl,
   ] = useState<HTMLElement | null>(null);
+  const [updateBarOpen, setUpdateBarOpen] = useState(false);
+  const [waitingWorker, setWaitingWorker] = useState<ServiceWorker | null>(
+    null
+  );
 
   const theme = React.useMemo(
     () =>
@@ -752,6 +761,24 @@ function App() {
 
   const container =
     window !== undefined ? () => window.document.body : undefined;
+
+  const onServiceWorkerUpdate = useCallback(
+    (registration: ServiceWorkerRegistration) => {
+      setUpdateBarOpen(true);
+      setWaitingWorker(registration.waiting);
+    },
+    []
+  );
+
+  useEffect(() => {
+    serviceWorker.register({ onUpdate: onServiceWorkerUpdate });
+  }, [onServiceWorkerUpdate]);
+
+  const updateServiceWorker = useCallback(() => {
+    if (waitingWorker) waitingWorker.postMessage({ type: "SKIP_WAITING" });
+    setUpdateBarOpen(false);
+    window.location.reload();
+  }, [waitingWorker]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -1010,6 +1037,22 @@ function App() {
           onClose={() => setIsSettingsOpen(false)}
         />
       </div>
+      <Snackbar open={updateBarOpen}>
+        <Alert
+          severity="info"
+          action={
+            <Button
+              color="inherit"
+              size="small"
+              onClick={() => updateServiceWorker()}
+            >
+              {t("common:update")}
+            </Button>
+          }
+        >
+          {t("common:update-available")}
+        </Alert>
+      </Snackbar>
     </ThemeProvider>
   );
 }

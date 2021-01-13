@@ -28,8 +28,6 @@ import InfiniteScroll from "../subs/InfiniteScroll";
 import GridView from "./GridView";
 import DetailDialog from "./HonorDetailDialog";
 
-interface Props {}
-
 type ViewGridType = "grid";
 
 const ListCard: { [key: string]: React.FC<{ data?: IHonorInfo }> } = {

@@ -26,3 +26,5 @@ debug.log
 
 /.idea
 public/locales
+.eslintcache
+*.local
