@@ -12,6 +12,7 @@ import { SettingProvider } from "./context";
 import Axios from "axios";
 import localforage from "localforage";
 import { UserMetadatumModel, UserModel } from "./strapi-model";
+import AppSkeleton from "./components/AppSkeleton";
 
 TagManager.initialize({
   gtmId: "GTM-NFC6SW2",
@@ -35,7 +36,7 @@ window.isChinaMainland = false;
   ReactDOM.render(
     <React.StrictMode>
       <Router>
-        <Suspense fallback="loading">
+        <Suspense fallback={<AppSkeleton />}>
           <SettingProvider>
             <App />
           </SettingProvider>

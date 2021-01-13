@@ -21,6 +21,7 @@ import {
   Toolbar,
   Typography,
   useMediaQuery,
+  Grid,
 } from "@material-ui/core";
 import {
   Menu as MenuIcon,
@@ -47,6 +48,7 @@ import {
   Translate,
   Dns,
 } from "@material-ui/icons";
+import { Skeleton } from "@material-ui/lab";
 import {
   AccountGroup,
   Bullhorn,
@@ -341,9 +343,7 @@ function App() {
   const { t } = useTranslation();
   const { displayMode } = useContext(SettingContext)!;
   const history = useHistory();
-
   const { goBack } = useHistory();
-
   const preferDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
 
   const leftBtns: IListItemLinkProps[][] = React.useMemo(
@@ -515,6 +515,7 @@ function App() {
   );
 
   const classes = useStyles();
+
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [sidebarExpansionStates, setSidebarExpansionStates] = useState<
@@ -878,7 +879,21 @@ function App() {
           <div className={classes.toolbar} id="back-to-top-anchor"></div>
           <UserProvider>
             <Switch>
-              <Suspense fallback={<div>Loading...</div>}>
+              <Suspense
+                fallback={
+                  <Grid container direction="column" spacing={3}>
+                    <Grid item>
+                      <Skeleton variant="rect" width="30%" height={30} />
+                    </Grid>
+                    <Grid item>
+                      <Skeleton variant="rect" width="90%" height={200} />
+                    </Grid>
+                    <Grid item>
+                      <Skeleton variant="rect" width="90%" height={200} />
+                    </Grid>
+                  </Grid>
+                }
+              >
                 <Route path="/" exact>
                   <HomeView />
                 </Route>
