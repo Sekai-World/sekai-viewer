@@ -290,6 +290,37 @@ export function useStrapi(token?: string) {
       async () => Number((await axios.get("/announcements/count")).data),
       [axios]
     ),
+    getAnnouncementByLanguagesPage: useCallback(
+      async (
+        limit: number = 30,
+        page: number = 0,
+        languages: number[],
+        params?: { [key: string]: any }
+      ) =>
+        (
+          await axios.get<AnnouncementModel[]>("/announcements/language", {
+            params: {
+              _limit: limit,
+              _start: page * limit,
+              _sort: "isPin:DESC,published_at:DESC",
+              targetLangs: languages,
+              ...(params || {}),
+            },
+          })
+        ).data,
+      [axios]
+    ),
+    getAnnouncementByLanguagesCount: useCallback(
+      async (languages: number[]) =>
+        Number(
+          (
+            await axios.get("/announcements/language/count", {
+              params: { targetLangs: languages },
+            })
+          ).data
+        ),
+      [axios]
+    ),
     getComments: useCallback(
       async (contentType: string, id: string | number) =>
         (await axios.get(`/comments/${contentType}:${id}`)).data,
@@ -472,6 +503,34 @@ export function useAnnouncements(page = 0, limit = 0, params?: any) {
   );
   const { data, error } = useSWR(
     [`${process.env.REACT_APP_STRAPI_BASE}/announcements`, _params],
+    axiosFetcher
+  );
+
+  return {
+    announcements: data as AnnouncementModel[],
+    isLoading: !error && !data,
+    error,
+  };
+}
+
+export function useAnnouncementsByLanguages(
+  page = 0,
+  limit = 0,
+  languages: number[],
+  params?: any
+) {
+  const _params = useMemo(
+    () => ({
+      _limit: limit,
+      _start: page * limit,
+      _sort: "isPin:DESC,published_at:DESC",
+      targetLangs: languages,
+      ...(params || {}),
+    }),
+    [languages, limit, page, params]
+  );
+  const { data, error } = useSWR(
+    [`${process.env.REACT_APP_STRAPI_BASE}/announcements/language`, _params],
     axiosFetcher
   );
 

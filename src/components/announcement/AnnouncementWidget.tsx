@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { SettingContext, UserContext } from "../../context";
 import { useInteractiveStyles } from "../../styles/interactive";
 import { useLayoutStyles } from "../../styles/layout";
-import { useAnnouncements } from "../../utils/apiClient";
+import { useAnnouncementsByLanguages } from "../../utils/apiClient";
 
 const AnnouncementWidget: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
@@ -15,9 +15,6 @@ const AnnouncementWidget: React.FC<{}> = () => {
   const { usermeta } = useContext(UserContext)!;
   const { languages, lang } = useContext(SettingContext)!;
 
-  const enId = useMemo(() => languages.find((lang) => lang.code === "en")!.id, [
-    languages,
-  ]);
   const langId = useMemo(
     () => languages.find((elem) => elem.code === lang)!.id,
     [lang, languages]
@@ -25,19 +22,15 @@ const AnnouncementWidget: React.FC<{}> = () => {
   const params = useMemo(
     () =>
       usermeta
-        ? {
-            language_in: [
-              enId,
-              langId,
-              ...usermeta?.languages.map((lang) => lang.id),
-            ],
-          }
-        : {
-            language_in: [enId, langId],
-          },
-    [enId, langId, usermeta]
+        ? [langId, ...usermeta?.languages.map((lang) => lang.id)]
+        : [langId],
+    [langId, usermeta]
   );
-  const { announcements, isLoading, error } = useAnnouncements(0, 10, params);
+  const { announcements, isLoading, error } = useAnnouncementsByLanguages(
+    0,
+    10,
+    params
+  );
 
   return (
     <Fragment>
