@@ -129,6 +129,7 @@ const TableMe: React.FC<Props> = (props: Props) => {
         loading={loading}
         rowHeight={45}
         onRowSelected={props.onSelected}
+        disableColumnFilter
       />
     </div>
   );

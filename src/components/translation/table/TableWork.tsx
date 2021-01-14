@@ -145,6 +145,7 @@ const TableMe: React.FC<Props> = (props: Props) => {
           onRowSelected={(param) =>
             setSelectedWork(param.data as TranslationModel)
           }
+          disableColumnFilter
         />
       </div>
       <br />
