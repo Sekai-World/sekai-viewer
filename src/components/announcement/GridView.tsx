@@ -4,10 +4,10 @@ import { Link } from "react-router-dom";
 import { useInteractiveStyles } from "../../styles/interactive";
 import { AnnouncementModel } from "../../strapi-model";
 import {
-  Avatar,
+  // Avatar,
   Card,
   CardContent,
-  Chip,
+  // Chip,
   Grid,
   Typography,
 } from "@material-ui/core";
@@ -39,10 +39,7 @@ const GridView: React.FC<{ data?: AnnouncementModel }> = ({ data }) => {
                   {t(`announcement:categoryName.${data.category}`)}
                 </Typography>
               </Grid>
-              <Grid item>
-                {/* <Typography variant="subtitle2" color="textSecondary">
-                  {t("announcement:author")}:{" "}
-                </Typography> */}
+              {/* <Grid item>
                 <Chip
                   label={data.user.nickname}
                   avatar={
@@ -51,7 +48,7 @@ const GridView: React.FC<{ data?: AnnouncementModel }> = ({ data }) => {
                     />
                   }
                 />
-              </Grid>
+              </Grid> */}
               <Grid item>
                 <Typography variant="subtitle2" color="textSecondary">
                   {t("announcement:published_at")}:{" "}

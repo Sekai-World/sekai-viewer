@@ -101,7 +101,7 @@ const AnnouncementDetail: React.FC<{}> = () => {
             {t(`announcement:categoryName.${announcement.category}`)}
           </Typography>
         </Grid>
-        <Grid item>
+        {/* <Grid item>
           <Chip
             label={announcement.user.nickname}
             avatar={
@@ -112,7 +112,7 @@ const AnnouncementDetail: React.FC<{}> = () => {
               />
             }
           />
-        </Grid>
+        </Grid> */}
         <Grid item>
           <Typography variant="subtitle2" color="textSecondary">
             {t("announcement:published_at")}:{" "}
@@ -126,7 +126,7 @@ const AnnouncementDetail: React.FC<{}> = () => {
           <Grid container spacing={1} alignItems="center">
             <Grid item>
               <Typography color="textSecondary">
-                {t("announcement:co-authors")}
+                {t("announcement:translators")}
               </Typography>
             </Grid>
             <Grid item>
