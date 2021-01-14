@@ -94,3 +94,33 @@ registerRoute(
     ],
   })
 );
+
+registerRoute(
+  // Add in any other file extensions or routing criteria as needed.
+  ({ url }) => url.origin === "https://i18n-json.sekai.best",
+  // Customize this strategy as needed, e.g., by changing to CacheFirst.
+  new StaleWhileRevalidate({
+    cacheName: "i18next",
+    plugins: [
+      // Ensure that once this runtime cache reaches a maximum size the
+      // least-recently used images are removed.
+      new ExpirationPlugin(),
+    ],
+  })
+);
+
+registerRoute(
+  // Add in any other file extensions or routing criteria as needed.
+  ({ url }) =>
+    url.origin === "https://sekai-world.github.io" &&
+    url.pathname.startsWith("/sekai-master-db-diff"),
+  // Customize this strategy as needed, e.g., by changing to CacheFirst.
+  new StaleWhileRevalidate({
+    cacheName: "sekaiMaster",
+    plugins: [
+      // Ensure that once this runtime cache reaches a maximum size the
+      // least-recently used images are removed.
+      new ExpirationPlugin(),
+    ],
+  })
+);
