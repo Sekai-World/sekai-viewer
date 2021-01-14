@@ -14,9 +14,7 @@ import {
   TableRow,
   TextField,
   Typography,
-  // useMediaQuery,
   useTheme,
-  // useTheme,
 } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import { CronJob } from "cron";
@@ -25,11 +23,9 @@ import React, {
   useCallback,
   useContext,
   useEffect,
-  // useMemo,
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-// import ApexChart from "react-apexcharts";
 import {
   LineChart,
   Line,
@@ -41,9 +37,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-// import { isMobile } from "react-device-detect";
 import { SettingContext } from "../../context";
-import { SekaiCurrentEventModel } from "../../strapi-model";
 import { useLayoutStyles } from "../../styles/layout";
 import {
   EventGraphRanking,
@@ -52,7 +46,7 @@ import {
   UserRanking,
 } from "../../types";
 import { getColorArray, useCachedData, useQuery } from "../../utils";
-import { useStrapi } from "../../utils/apiClient";
+import { useCurrentEvent } from "../../utils/apiClient";
 import {
   useEventTrackerAPI,
   useRealtimeEventData,
@@ -61,7 +55,7 @@ import { useAssetI18n } from "../../utils/i18n";
 // import DegreeImage from "../subs/DegreeImage";
 import { HistoryRow, LiveRow } from "./EventTrackerTableRow";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   eventSelect: {
     width: "100%",
     maxWidth: 300,
@@ -75,15 +69,12 @@ const EventTracker: React.FC<{}> = () => {
   const query = useQuery();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
-  const { getSekaiCurrentEvent } = useStrapi();
   const { getGraph, getLive } = useEventTrackerAPI();
   const { contentTransMode } = useContext(SettingContext)!;
-  // const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
-  // const preferDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
   const [refreshData] = useRealtimeEventData();
+  const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
 
   const [events] = useCachedData<IEventInfo>("events");
-  const [currEvent, setCurrEvent] = useState<SekaiCurrentEventModel>();
   const [selectedEvent, setSelectedEvent] = useState<{
     name: string;
     id: number;
@@ -111,8 +102,6 @@ const EventTracker: React.FC<{}> = () => {
       [key in Partial<EventGraphRanking>]?: string;
     }
   >({});
-  // const [isRealtimeChecked, setIsRealtimeChecked] = useState(false);
-  // const [isRealtimeEnabled, setIsRealtimeEnabled] = useState(true);
   const [fetchProgress, setFetchProgress] = useState(0);
   const [isFetching, setIsFetching] = useState(false);
   const [isShowChart, setIsShowChart] = useState(false);
@@ -139,37 +128,33 @@ const EventTracker: React.FC<{}> = () => {
     document.title = t("title:eventTracker");
   }, [t]);
 
-  const getCurrentEvent = useCallback(async () => {
-    const curr = await getSekaiCurrentEvent();
-    setCurrEvent(curr);
-    if (query.get("id") && !Number.isNaN(Number(query.get("id")))) {
-      if (events.length) {
-        const ev = events.find((elem) => elem.id === Number(query.get("id")));
-        if (ev)
-          setSelectedEvent({
-            name: getTranslated(
-              contentTransMode,
-              `event_name:${query.get("id")}`,
-              ev.name
-            ),
-            id: ev.id,
-          });
-      }
-    } else {
-      setSelectedEvent({
-        name: getTranslated(
-          contentTransMode,
-          `event_name:${curr.eventId}`,
-          curr.eventJson.name
-        ),
-        id: curr.eventId,
-      });
-    }
-  }, [contentTransMode, events, getSekaiCurrentEvent, getTranslated, query]);
-
   useEffect(() => {
-    getCurrentEvent();
-  }, [getCurrentEvent]);
+    if (currEvent && events) {
+      if (query.get("id") && !Number.isNaN(Number(query.get("id")))) {
+        if (events.length) {
+          const ev = events.find((elem) => elem.id === Number(query.get("id")));
+          if (ev)
+            setSelectedEvent({
+              name: getTranslated(
+                contentTransMode,
+                `event_name:${query.get("id")}`,
+                ev.name
+              ),
+              id: ev.id,
+            });
+        }
+      } else {
+        setSelectedEvent({
+          name: getTranslated(
+            contentTransMode,
+            `event_name:${currEvent.eventId}`,
+            currEvent.eventJson.name
+          ),
+          id: currEvent.eventId,
+        });
+      }
+    }
+  }, [contentTransMode, currEvent, events, getTranslated, query]);
 
   useEffect(() => {
     return () => {
@@ -307,6 +292,7 @@ const EventTracker: React.FC<{}> = () => {
   );
 
   const handleFetchGraph = useCallback(async () => {
+    if (!events || !events.length) return;
     setGraphRankings([]);
     setGraphEvent(null);
     setRtRanking([]);
@@ -446,7 +432,7 @@ const EventTracker: React.FC<{}> = () => {
         <Grid container spacing={1} alignItems="center">
           <Grid item className={classes.eventSelect}>
             <Autocomplete
-              options={events.map((ev) => ({
+              options={(events || []).map((ev) => ({
                 name: getTranslated(
                   contentTransMode,
                   `event_name:${ev.id}`,
@@ -467,14 +453,23 @@ const EventTracker: React.FC<{}> = () => {
               onChange={(_, value) => {
                 setSelectedEvent(value);
               }}
-              disabled={isFetching}
+              disabled={isCurrEventLoading || isFetching}
             />
           </Grid>
           <Grid item>
             <Button
               variant="contained"
-              onClick={() => getCurrentEvent()}
-              disabled={isFetching}
+              onClick={() =>
+                setSelectedEvent({
+                  name: getTranslated(
+                    contentTransMode,
+                    `event_name:${currEvent.eventId}`,
+                    currEvent.eventJson.name
+                  ),
+                  id: currEvent.eventId,
+                })
+              }
+              disabled={isCurrEventLoading || isFetching}
             >
               {t("event:tracker.button.curr_event")}
             </Button>
@@ -637,7 +632,7 @@ const EventTracker: React.FC<{}> = () => {
                           lineProps[e.dataKey] !== "disabled" &&
                           setLineProps({ ...lineProps, hover: e.dataKey })
                         }
-                        onMouseLeave={(e) =>
+                        onMouseLeave={() =>
                           setLineProps({ ...lineProps, hover: "" })
                         }
                       />
@@ -734,24 +729,25 @@ const EventTracker: React.FC<{}> = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {events
-                    .find((ev) => ev.id === graphEvent.id)!
-                    .eventRankingRewardRanges.map(
-                      (rankingReward) =>
-                        rankingReward.fromRank <= 100000 &&
-                        rtRanking.find(
-                          (elem) => elem.rank === rankingReward.toRank
-                        ) && (
-                          <LiveRow
-                            rankingReward={rankingReward}
-                            rankingData={
-                              rtRanking.find(
-                                (elem) => elem.rank === rankingReward.toRank
-                              )!
-                            }
-                          />
-                        )
-                    )}
+                  {events &&
+                    events
+                      .find((ev) => ev.id === graphEvent.id)!
+                      .eventRankingRewardRanges.map(
+                        (rankingReward) =>
+                          rankingReward.fromRank <= 100000 &&
+                          rtRanking.find(
+                            (elem) => elem.rank === rankingReward.toRank
+                          ) && (
+                            <LiveRow
+                              rankingReward={rankingReward}
+                              rankingData={
+                                rtRanking.find(
+                                  (elem) => elem.rank === rankingReward.toRank
+                                )!
+                              }
+                            />
+                          )
+                      )}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -783,21 +779,22 @@ const EventTracker: React.FC<{}> = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {events
-                    .find((ev) => ev.id === graphEvent.id)!
-                    .eventRankingRewardRanges.map(
-                      (rankingReward) =>
-                        rankingReward.fromRank <= 100000 && (
-                          <HistoryRow
-                            rankingReward={rankingReward}
-                            rankingData={
-                              historyRanking.find(
-                                (elem) => elem.rank === rankingReward.toRank
-                              )!
-                            }
-                          />
-                        )
-                    )}
+                  {events &&
+                    events
+                      .find((ev) => ev.id === graphEvent.id)!
+                      .eventRankingRewardRanges.map(
+                        (rankingReward) =>
+                          rankingReward.fromRank <= 100000 && (
+                            <HistoryRow
+                              rankingReward={rankingReward}
+                              rankingData={
+                                historyRanking.find(
+                                  (elem) => elem.rank === rankingReward.toRank
+                                )!
+                              }
+                            />
+                          )
+                      )}
                 </TableBody>
               </Table>
             </TableContainer>

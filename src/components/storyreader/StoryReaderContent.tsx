@@ -73,7 +73,7 @@ const StoryReaderContent: React.FC<{}> = () => {
     });
     switch (storyType) {
       case "unitStory":
-        if (unitStories.length) {
+        if (unitStories) {
           const [unitId, chapterNo, episodeId] = storyId.split("-");
 
           const chapter = unitStories
@@ -99,7 +99,7 @@ const StoryReaderContent: React.FC<{}> = () => {
         }
         break;
       case "eventStory":
-        if (eventStories.length) {
+        if (eventStories) {
           const [eventId, episodeId] = storyId.split("-");
 
           const chapter = eventStories.find(
@@ -125,7 +125,7 @@ const StoryReaderContent: React.FC<{}> = () => {
         }
         break;
       case "charaStory":
-        if (characterProfiles.length) {
+        if (characterProfiles) {
           const [charaId] = storyId.split("-");
 
           const episode = characterProfiles.find(
@@ -144,7 +144,7 @@ const StoryReaderContent: React.FC<{}> = () => {
         }
         break;
       case "cardStory":
-        if (cardEpisodes.length) {
+        if (cardEpisodes) {
           const [, , cardEpisodeId] = storyId.split("-");
 
           const episode = cardEpisodes.find(

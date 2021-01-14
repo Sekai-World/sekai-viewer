@@ -29,7 +29,7 @@ export const CardImage: React.FC<{ id: number; trained?: boolean }> = ({
   const rarityIcon = trained ? rarityAfterTraining : rarityNormal;
 
   useEffect(() => {
-    if (cards.length) setCard(cards.find((elem) => elem.id === id));
+    if (cards) setCard(cards.find((elem) => elem.id === id));
   }, [cards, id]);
 
   useEffect(() => {

@@ -143,6 +143,16 @@ const MusicRecommend: React.FC<{}> = () => {
   ];
 
   const calcResult = useCallback(() => {
+    if (
+      !cards ||
+      !cards.length ||
+      !skills ||
+      !skills.length ||
+      !musics ||
+      !musics.length ||
+      !metas
+    )
+      return;
     let isSolo = selectedMode === "solo";
 
     let cardSkills = getCardSkillRates(cards, skills, teamCardsStates);

@@ -88,10 +88,15 @@ const MemberDetail: React.FC<{}> = () => {
 
   useEffect(() => {
     if (
+      charas &&
       charas.length &&
+      charaUnits &&
       charaUnits.length &&
+      charaProfiles &&
       charaProfiles.length &&
+      cards &&
       cards.length &&
+      unitProfiles &&
       unitProfiles.length
     ) {
       const chara = charas.find((c) => c.id === Number(charaId));

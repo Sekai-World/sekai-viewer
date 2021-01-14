@@ -50,7 +50,7 @@ const VirtualLiveDetail: React.FC<{}> = () => {
   }, [contentTransMode, getTranslated, t, virtualLive, virtualLiveId]);
 
   useEffect(() => {
-    if (virtualLives.length) {
+    if (virtualLives) {
       setVirtualLive(
         virtualLives.find((elem) => elem.id === Number(virtualLiveId))
       );
@@ -75,7 +75,7 @@ const VirtualLiveDetail: React.FC<{}> = () => {
     }
   }, [virtualLive, virtualLiveId]);
 
-  return virtualLive && gameCharacterUnits.length ? (
+  return virtualLive && gameCharacterUnits ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
         {getTranslated(

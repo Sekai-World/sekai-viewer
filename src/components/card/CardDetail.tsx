@@ -182,6 +182,7 @@ const CardDetail: React.FC<{}> = () => {
 
   const getCharaUnitName = useCallback(
     (charaId: number) => {
+      if (!charas || !charas.length) return;
       const chara = charas.find((chara) => chara.id === charaId);
       return chara?.unit;
     },
@@ -190,6 +191,7 @@ const CardDetail: React.FC<{}> = () => {
 
   const getCharaUnitImage = useCallback(
     (charaId: number) => {
+      if (!charas || !charas.length) return;
       const chara = charas.find((chara) => chara.id === charaId);
       return chara ? UnitLogoMiniMap[chara!.unit] : undefined;
     },
@@ -197,6 +199,7 @@ const CardDetail: React.FC<{}> = () => {
   );
 
   useEffect(() => {
+    if (!cards || !cards.length) return;
     const _card = cards.find((elem) => elem.id === Number(cardId))!;
     if (_card) {
       const prefix = getTranslated(
@@ -212,7 +215,16 @@ const CardDetail: React.FC<{}> = () => {
   }, [cards, cardId, contentTransMode, getCharaName, assetT, getTranslated, t]);
 
   useEffect(() => {
-    if (cards.length && rarities.length && skills.length && episodes.length) {
+    if (
+      cards &&
+      cards.length &&
+      rarities &&
+      rarities.length &&
+      skills &&
+      skills.length &&
+      episodes &&
+      episodes.length
+    ) {
       const _card = cards.find((elem) => elem.id === Number(cardId))!;
       setCard(
         Object.assign({}, _card, {
@@ -336,7 +348,11 @@ const CardDetail: React.FC<{}> = () => {
     setTabVal(newValue);
   };
 
-  return card && charaRanks.length && unitProfiles.length ? (
+  return card &&
+    charaRanks &&
+    charaRanks.length &&
+    unitProfiles &&
+    unitProfiles.length ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
         {cardTitle}

@@ -144,7 +144,7 @@ const StoryReader: React.FC<{}> = () => {
             </FormControl>
           </Grid>
           {storyType === "unitStory" ? (
-            unitProfiles.length && unitStories.length ? (
+            unitProfiles && unitStories ? (
               <Fragment>
                 <Grid item xs={12} md={3}>
                   <FormControl style={{ width: "100%" }}>
@@ -244,7 +244,7 @@ const StoryReader: React.FC<{}> = () => {
               </Fragment>
             ) : null
           ) : storyType === "eventStory" ? (
-            eventStories.length ? (
+            eventStories && events ? (
               <Fragment>
                 <Grid item xs={12} md={3}>
                   <FormControl style={{ width: "100%" }}>
@@ -308,7 +308,7 @@ const StoryReader: React.FC<{}> = () => {
               </Fragment>
             ) : null
           ) : storyType === "charaStory" ? (
-            characterProfiles.length ? (
+            characterProfiles ? (
               <Fragment>
                 <Grid item xs={12} md={3}>
                   <FormControl style={{ width: "100%" }}>
@@ -333,7 +333,7 @@ const StoryReader: React.FC<{}> = () => {
               </Fragment>
             ) : null
           ) : storyType === "cardStory" ? (
-            cards.length && cardEpisodes.length ? (
+            cards && cardEpisodes && characterProfiles ? (
               <Fragment>
                 <Grid item xs={12} md={3}>
                   <FormControl style={{ width: "100%" }}>

@@ -24,7 +24,7 @@ export const CardThumb: React.FC<
   const [card, setCard] = useState<ICardInfo>();
 
   useEffect(() => {
-    if (cards.length) setCard(cards.find((elem) => elem.id === cardId));
+    if (cards) setCard(cards.find((elem) => elem.id === cardId));
   }, [cards, cardId]);
 
   const [cardThumbImg, setCardThumbImg] = useState<string>("");
@@ -147,7 +147,7 @@ export const CardThumbMedium: React.FC<
   const [card, setCard] = useState<ICardInfo>();
 
   useEffect(() => {
-    if (cards.length) setCard(cards.find((elem) => elem.id === cardId));
+    if (cards) setCard(cards.find((elem) => elem.id === cardId));
   }, [cards, cardId]);
 
   const [cardThumbImg, setCardThumbImg] = useState<string>("");

@@ -98,7 +98,7 @@ const AgendaView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
   }, [data]);
 
   useEffect(() => {
-    if (data && musicDiffis.length) {
+    if (data && musicDiffis && musicDiffis.length) {
       setDiffis(musicDiffis.filter((elem) => elem.musicId === data.id));
     }
   }, [musicDiffis, data]);

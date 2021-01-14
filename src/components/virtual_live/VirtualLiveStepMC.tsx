@@ -64,7 +64,7 @@ const MCCharacterSpawn: React.FC<{ data: CharacterSpawnEvent }> = ({
   const [bodyThumbnail, setBodyThumbnail] = useState("");
 
   useEffect(() => {
-    if (character3ds.length) {
+    if (character3ds) {
       setCharacter3d(
         character3ds.find((elem) => elem.id === data.Character3dId)
       );
@@ -72,7 +72,7 @@ const MCCharacterSpawn: React.FC<{ data: CharacterSpawnEvent }> = ({
   }, [character3ds, data.Character3dId]);
 
   useEffect(() => {
-    if (character3d) {
+    if (character3d && characters) {
       setCharacter(
         characters.find((elem) => elem.id === character3d.characterId)
       );
@@ -80,7 +80,7 @@ const MCCharacterSpawn: React.FC<{ data: CharacterSpawnEvent }> = ({
   }, [character3d, characters]);
 
   useEffect(() => {
-    if (character3d && costume3dModels.length) {
+    if (character3d && costume3dModels) {
       setHeadCostume(
         costume3dModels.find(
           (elem) => elem.costume3dId === character3d.headCostume3dId
@@ -146,7 +146,7 @@ const MCCharacterUnspawn: React.FC<{ data: CharacterUnspawnEvent }> = ({
   const [character, setCharacter] = useState<IGameChara>();
 
   useEffect(() => {
-    if (character3ds.length) {
+    if (character3ds) {
       setCharacter3d(
         character3ds.find((elem) => elem.id === data.Character3dId)
       );
@@ -154,7 +154,7 @@ const MCCharacterUnspawn: React.FC<{ data: CharacterUnspawnEvent }> = ({
   }, [character3ds, data.Character3dId]);
 
   useEffect(() => {
-    if (character3d) {
+    if (character3d && characters) {
       setCharacter(
         characters.find((elem) => elem.id === character3d.characterId)
       );
@@ -191,7 +191,7 @@ const MCCharacterTalk: React.FC<{ data: CharacterTalkEvent; mcId: string }> = ({
   const [voiceUrl, setVoiceUrl] = useState("");
 
   useEffect(() => {
-    if (character3ds.length) {
+    if (character3ds) {
       setCharacter3d(
         character3ds.find((elem) => elem.id === data.Character3dId)
       );
@@ -199,7 +199,7 @@ const MCCharacterTalk: React.FC<{ data: CharacterTalkEvent; mcId: string }> = ({
   }, [character3ds, data.Character3dId]);
 
   useEffect(() => {
-    if (character3d) {
+    if (character3d && characters) {
       setCharacter(
         characters.find((elem) => elem.id === character3d.characterId)
       );

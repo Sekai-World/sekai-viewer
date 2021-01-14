@@ -106,7 +106,14 @@ const EventDetail: React.FC<{}> = () => {
   }, [event, eventId, contentTransMode, getTranslated, t]);
 
   useEffect(() => {
-    if (events.length && eventDeckBonuses.length && eventCardsCache.length) {
+    if (
+      events &&
+      events.length &&
+      eventDeckBonuses &&
+      eventDeckBonuses.length &&
+      eventCardsCache &&
+      eventCardsCache.length
+    ) {
       setEvent(events.find((elem) => elem.id === Number(eventId)));
       setEventDeckBonus(
         eventDeckBonuses.filter((elem) => elem.eventId === Number(eventId))
@@ -221,6 +228,7 @@ const EventDetail: React.FC<{}> = () => {
 
   return event &&
     eventDeckBonus.length &&
+    gameCharacterUnits &&
     gameCharacterUnits.length &&
     eventCards.length ? (
     <Fragment>

@@ -87,12 +87,7 @@ const UnitDetail: React.FC<{}> = () => {
   }, [t, unit]);
 
   useEffect(() => {
-    if (
-      unitProfiles.length &&
-      gameCharas.length &&
-      musics.length &&
-      musicTags.length
-    ) {
+    if (unitProfiles && gameCharas && musics && musicTags) {
       setUnit(unitProfiles.find((up) => up.unit === unitId));
       setUnitCharas(gameCharas.filter((gc) => gc.unit === unitId));
       const unitMusicIds = musicTags

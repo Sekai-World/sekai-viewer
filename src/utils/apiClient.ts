@@ -19,6 +19,7 @@ import {
   UserModel,
 } from "../strapi-model";
 import { IUserProfile } from "../types";
+import useSWR from "swr";
 
 /**
  * Access Strapi endpoints.
@@ -440,6 +441,58 @@ export async function getLanguages() {
       `${process.env.REACT_APP_STRAPI_BASE}/languages?_sort=id:ASC`
     )
   ).data;
+}
+
+const axiosFetcher = async (url: string, params?: any) =>
+  (await Axios.get(url, { params })).data;
+
+export function useRemoteLanguages() {
+  const params = useMemo(() => ({ _sort: "id:ASC" }), []);
+  const { data, error } = useSWR(
+    [`${process.env.REACT_APP_STRAPI_BASE}/languages`, params],
+    axiosFetcher
+  );
+
+  return {
+    languages: data as LanguageModel[],
+    isLoading: !error && !data,
+    error,
+  };
+}
+
+export function useAnnouncements(page = 0, limit = 0, params?: any) {
+  const _params = useMemo(
+    () => ({
+      _limit: limit,
+      _start: page * limit,
+      _sort: "isPin:DESC,published_at:DESC",
+      ...(params || {}),
+    }),
+    [limit, page, params]
+  );
+  const { data, error } = useSWR(
+    [`${process.env.REACT_APP_STRAPI_BASE}/announcements`, _params],
+    axiosFetcher
+  );
+
+  return {
+    announcements: data as AnnouncementModel[],
+    isLoading: !error && !data,
+    error,
+  };
+}
+
+export function useCurrentEvent() {
+  const { data, error } = useSWR(
+    `${process.env.REACT_APP_STRAPI_BASE}/sekai-current-event`,
+    axiosFetcher
+  );
+
+  return {
+    currEvent: data as SekaiCurrentEventModel,
+    isLoading: !error && !data,
+    error,
+  };
 }
 
 /**

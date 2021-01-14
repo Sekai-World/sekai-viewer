@@ -7,7 +7,7 @@ import {
 } from "@material-ui/core";
 import { useLayoutStyles } from "../../styles/layout";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { useCachedData, useRefState } from "../../utils";
+import { useCachedData } from "../../utils";
 import InfiniteScroll from "../subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
@@ -32,12 +32,12 @@ const GachaList: React.FC<{}> = () => {
   const { t } = useTranslation();
 
   const [gachas, setGachas] = useState<IGachaInfo[]>([]);
-  const [gachasCache, gachasCacheRef] = useCachedData<IGachaInfo>("gachas");
+  const [gachasCache] = useCachedData<IGachaInfo>("gachas");
 
-  const [page, pageRef, setPage] = useRefState<number>(1);
-  const [limit, limitRef] = useRefState<number>(12);
-  const [, lastQueryFinRef, setLastQueryFin] = useRefState<boolean>(true);
-  const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
+  const [limit] = useState<number>(12);
+  const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
+  const [isReady, setIsReady] = useState<boolean>(false);
   const [updateSort, setUpdateSort] = useState<"asc" | "desc">(
     (localStorage.getItem("gacha-list-update-sort") || "desc") as "desc"
   );
@@ -56,6 +56,7 @@ const GachaList: React.FC<{}> = () => {
   }, [page, limit, setLastQueryFin, sortedCache]);
 
   useEffect(() => {
+    if (!gachasCache || !gachasCache.length) return;
     let sortedCache = [...gachasCache];
     if (updateSort === "desc") {
       sortedCache = sortedCache.sort((a, b) => b.startAt - a.startAt);
@@ -68,29 +69,28 @@ const GachaList: React.FC<{}> = () => {
   }, [updateSort, gachasCache, setPage]);
 
   useEffect(() => {
-    setIsReady(Boolean(gachasCache.length));
+    setIsReady(Boolean(gachasCache && gachasCache.length));
   }, [setIsReady, gachasCache]);
 
-  const callback = (
-    entries: readonly IntersectionObserverEntry[],
-    setHasMore: React.Dispatch<React.SetStateAction<boolean>>
-  ) => {
-    if (!isReadyRef.current) return;
-    if (
-      entries[0].isIntersecting &&
-      lastQueryFinRef.current &&
-      (!gachasCacheRef.current.length ||
-        gachasCacheRef.current.length > pageRef.current * limitRef.current)
-    ) {
-      setPage((page) => page + 1);
-      setLastQueryFin(false);
-    } else if (
-      gachasCacheRef.current.length &&
-      gachasCacheRef.current.length <= pageRef.current * limitRef.current
-    ) {
-      setHasMore(false);
-    }
-  };
+  const callback = useCallback(
+    (
+      entries: readonly IntersectionObserverEntry[],
+      setHasMore: React.Dispatch<React.SetStateAction<boolean>>
+    ) => {
+      if (!isReady) return;
+      if (
+        entries[0].isIntersecting &&
+        lastQueryFin &&
+        (!sortedCache.length || sortedCache.length > page * limit)
+      ) {
+        setPage((page) => page + 1);
+        setLastQueryFin(false);
+      } else if (sortedCache.length && sortedCache.length <= page * limit) {
+        setHasMore(false);
+      }
+    },
+    [isReady, lastQueryFin, limit, page, sortedCache.length]
+  );
 
   const handleUpdateSort = useCallback((sort: "asc" | "desc") => {
     setUpdateSort(sort);

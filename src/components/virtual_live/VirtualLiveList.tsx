@@ -16,7 +16,7 @@ import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLayoutStyles } from "../../styles/layout";
 import { IVirtualLiveInfo } from "../../types";
-import { useCachedData, useRefState } from "../../utils";
+import { useCachedData } from "../../utils";
 import InfiniteScroll from "../subs/InfiniteScroll";
 import AgendaView from "./AgendaView";
 
@@ -39,19 +39,16 @@ const VirtualLiveList: React.FC<{}> = () => {
   const { t } = useTranslation();
 
   const [virtualLives, setVirtualLives] = useState<IVirtualLiveInfo[]>([]);
-  const [
-    virtualLivesCache,
-    virtualLivesCacheRef,
-  ] = useCachedData<IVirtualLiveInfo>("virtualLives");
+  const [virtualLivesCache] = useCachedData<IVirtualLiveInfo>("virtualLives");
 
   const [viewGridType] = useState<ViewGridType>(
     (localStorage.getItem("virtual-live-list-grid-view-type") ||
       "agenda") as ViewGridType
   );
-  const [page, pageRef, setPage] = useRefState<number>(1);
-  const [limit, limitRef] = useRefState<number>(12);
-  const [, lastQueryFinRef, setLastQueryFin] = useRefState<boolean>(true);
-  const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
+  const [limit] = useState<number>(12);
+  const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
+  const [isReady, setIsReady] = useState<boolean>(false);
   const [updateSort, setUpdateSort] = useState<"asc" | "desc">(
     (localStorage.getItem("virtual-live-list-update-sort") || "desc") as "desc"
   );
@@ -70,6 +67,7 @@ const VirtualLiveList: React.FC<{}> = () => {
   }, [page, limit, setLastQueryFin, sortedCache]);
 
   useEffect(() => {
+    if (!virtualLivesCache) return;
     let sortedCache = [...virtualLivesCache];
     if (updateSort === "desc") {
       sortedCache = sortedCache.sort((a, b) => b.startAt - a.startAt);
@@ -82,30 +80,28 @@ const VirtualLiveList: React.FC<{}> = () => {
   }, [setPage, updateSort, virtualLivesCache]);
 
   useEffect(() => {
-    setIsReady(Boolean(virtualLivesCache.length));
+    setIsReady(Boolean(virtualLivesCache));
   }, [setIsReady, virtualLivesCache]);
 
-  const callback = (
-    entries: readonly IntersectionObserverEntry[],
-    setHasMore: React.Dispatch<React.SetStateAction<boolean>>
-  ) => {
-    if (!isReadyRef.current) return;
-    if (
-      entries[0].isIntersecting &&
-      lastQueryFinRef.current &&
-      (!virtualLivesCacheRef.current.length ||
-        virtualLivesCacheRef.current.length >
-          pageRef.current * limitRef.current)
-    ) {
-      setPage((page) => page + 1);
-      setLastQueryFin(false);
-    } else if (
-      virtualLivesCacheRef.current.length &&
-      virtualLivesCacheRef.current.length <= pageRef.current * limitRef.current
-    ) {
-      setHasMore(false);
-    }
-  };
+  const callback = useCallback(
+    (
+      entries: readonly IntersectionObserverEntry[],
+      setHasMore: React.Dispatch<React.SetStateAction<boolean>>
+    ) => {
+      if (!isReady) return;
+      if (
+        entries[0].isIntersecting &&
+        lastQueryFin &&
+        (!sortedCache.length || sortedCache.length > page * limit)
+      ) {
+        setPage((page) => page + 1);
+        setLastQueryFin(false);
+      } else if (sortedCache.length && sortedCache.length <= page * limit) {
+        setHasMore(false);
+      }
+    },
+    [isReady, lastQueryFin, limit, page, sortedCache.length]
+  );
 
   const handleUpdateSort = useCallback((sort: "asc" | "desc") => {
     setUpdateSort(sort);

@@ -20,8 +20,8 @@ import {
   ViewGrid,
   ViewGridOutline,
 } from "mdi-material-ui";
-import React, { Fragment, useEffect, useState } from "react";
-import { musicTagToName, useCachedData, useRefState } from "../../utils";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
+import { musicTagToName, useCachedData } from "../../utils";
 import InfiniteScroll from "../subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
@@ -50,18 +50,16 @@ const MusicList: React.FC<{}> = () => {
   const [musicTags] = useCachedData<IMusicTagInfo>("musicTags");
 
   const [musics, setMusics] = useState<IMusicInfo[]>([]);
-  const [sortedCache, sortedCacheRef, setSortedCache] = useRefState<
-    IMusicInfo[]
-  >([]);
+  const [sortedCache, setSortedCache] = useState<IMusicInfo[]>([]);
   const [viewGridType, setViewGridType] = useState<ViewGridType>(
     (localStorage.getItem("music-list-grid-view-type") ||
       "grid") as ViewGridType
   );
-  const [page, pageRef, setPage] = useRefState<number>(0);
-  const [limit, limitRef] = useRefState<number>(12);
-  // const [, totalMusicsRef, setTotalMusics] = useRefState<number>(0);
-  const [, lastQueryFinRef, setLastQueryFin] = useRefState<boolean>(true);
-  const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
+  const [page, setPage] = useState<number>(0);
+  const [limit] = useState<number>(12);
+  // const [, totalMusicsRef, setTotalMusics] = useState<number>(0);
+  const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
+  const [isReady, setIsReady] = useState<boolean>(false);
   const [filterOpened, setFilterOpened] = useState<boolean>(false);
   const [sortType, setSortType] = useState<string>(
     localStorage.getItem("music-list-filter-sort-type") || "asc"
@@ -76,11 +74,11 @@ const MusicList: React.FC<{}> = () => {
   }, [t]);
 
   useEffect(() => {
-    setIsReady(Boolean(musicsCache.length));
+    setIsReady(Boolean(musicsCache));
   }, [setIsReady, musicsCache]);
 
   useEffect(() => {
-    if (musicsCache.length && musicTags.length) {
+    if (musicsCache && musicTags) {
       let result = [...musicsCache];
       // do filter
       if (musicTag) {
@@ -123,26 +121,25 @@ const MusicList: React.FC<{}> = () => {
     }
   }, [page, limit, setLastQueryFin, sortedCache]);
 
-  const callback = (
-    entries: readonly IntersectionObserverEntry[],
-    setHasMore: React.Dispatch<React.SetStateAction<boolean>>
-  ) => {
-    if (!isReadyRef.current) return;
-    if (
-      entries[0].isIntersecting &&
-      lastQueryFinRef.current &&
-      (!sortedCacheRef.current.length ||
-        sortedCacheRef.current.length > pageRef.current * limitRef.current)
-    ) {
-      setPage((page) => page + 1);
-      setLastQueryFin(false);
-    } else if (
-      sortedCacheRef.current.length &&
-      sortedCacheRef.current.length <= pageRef.current * limitRef.current
-    ) {
-      setHasMore(false);
-    }
-  };
+  const callback = useCallback(
+    (
+      entries: readonly IntersectionObserverEntry[],
+      setHasMore: React.Dispatch<React.SetStateAction<boolean>>
+    ) => {
+      if (!isReady) return;
+      if (
+        entries[0].isIntersecting &&
+        lastQueryFin &&
+        (!sortedCache.length || sortedCache.length > page * limit)
+      ) {
+        setPage((page) => page + 1);
+        setLastQueryFin(false);
+      } else if (sortedCache.length && sortedCache.length <= page * limit) {
+        setHasMore(false);
+      }
+    },
+    [isReady, lastQueryFin, limit, page, sortedCache.length]
+  );
 
   return (
     <Fragment>

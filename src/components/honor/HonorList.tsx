@@ -68,7 +68,12 @@ const HonorList = () => {
   }, [t]);
 
   useEffect(() => {
-    if (honorsCache.length) {
+    if (
+      honorsCache &&
+      honorsCache.length &&
+      honorGroups &&
+      honorGroups.length
+    ) {
       let result = [...honorsCache];
       // do filter
       if (honorType) {
@@ -100,8 +105,8 @@ const HonorList = () => {
   }, [page, limit, setLastQueryFin, filteredCache]);
 
   useLayoutEffect(() => {
-    setIsReady(Boolean(honorsCache.length));
-  }, [honorsCache.length, setIsReady]);
+    setIsReady(Boolean(honorsCache && honorsCache.length));
+  }, [honorsCache, setIsReady]);
 
   const callback = useCallback(
     (
@@ -123,7 +128,7 @@ const HonorList = () => {
     [filteredCache.length, isReady, lastQueryFin, limit, page]
   );
 
-  return isReady && honorGroups.length ? (
+  return isReady && honorGroups && honorGroups.length ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
         {t("honor:page_title")}

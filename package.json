@@ -46,6 +46,7 @@
     "react-swipeable-views": "^0.13.9",
     "react-viewer": "^3.2.2",
     "recharts": "^1.8.5",
+    "swr": "^0.4.0",
     "typescript": "^3.9.7",
     "webp-hero": "0.0.0-dev.27",
     "workbox-core": "^6.0.2",

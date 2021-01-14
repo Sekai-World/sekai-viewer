@@ -103,6 +103,7 @@ const TeamBuiler: React.FC<{
   );
 
   const filterCards = useCallback(() => {
+    if (!cards || !cards.length) return;
     setFilteredCards(
       cards.filter((card) =>
         characterId
@@ -344,14 +345,15 @@ const TeamBuiler: React.FC<{
                   onChange={(e) => setCharacterId(e.target.value as number)}
                 >
                   <MenuItem value={0}>{t("common:all")}</MenuItem>
-                  {charas.map((chara) => (
-                    <MenuItem
-                      key={`chara-select-item-${chara.id}`}
-                      value={chara.id}
-                    >
-                      {getCharaName(chara.id)}
-                    </MenuItem>
-                  ))}
+                  {charas &&
+                    charas.map((chara) => (
+                      <MenuItem
+                        key={`chara-select-item-${chara.id}`}
+                        value={chara.id}
+                      >
+                        {getCharaName(chara.id)}
+                      </MenuItem>
+                    ))}
                 </Select>
               </FormControl>
             </Grid>
