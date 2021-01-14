@@ -287,7 +287,8 @@ export function useStrapi(token?: string) {
       [axios]
     ),
     getAnnouncementCount: useCallback(
-      async () => Number((await axios.get("/announcements/count")).data),
+      async (params?: any) =>
+        Number((await axios.get("/announcements/count", { params })).data),
       [axios]
     ),
     getAnnouncementByLanguagesPage: useCallback(
@@ -449,7 +450,8 @@ export function useStrapi(token?: string) {
       [axios]
     ),
     getTranslationCount: useCallback(
-      async () => (await axios.get<number>("/translations/count")).data,
+      async (params?: any) =>
+        (await axios.get<number>("/translations/count", { params })).data,
       [axios]
     ),
     getTranslationBySourceSlug: useCallback(
