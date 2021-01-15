@@ -16,7 +16,7 @@ const ResourceBox: React.FC<{
   const [resource, setResource] = useState<IResourceBoxInfo>();
 
   useEffect(() => {
-    if (resourceBoxes.length) {
+    if (resourceBoxes) {
       setResource(
         resourceBoxes.find(
           (elem) =>

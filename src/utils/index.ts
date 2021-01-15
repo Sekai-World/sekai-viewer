@@ -51,6 +51,7 @@ import {
 } from "./../types.d";
 import { assetI18n, useAssetI18n } from "./i18n";
 import { useLocation } from "react-router-dom";
+import useSWR from "swr";
 
 const webpMachine = new WebpMachine();
 
@@ -64,8 +65,6 @@ export function useRefState<S>(
   }, [state]);
   return [state, stateRef, setState];
 }
-
-let masterDataCache: { [key: string]: any[] } = {};
 
 export function useCachedData<
   T extends
@@ -106,10 +105,10 @@ export function useCachedData<
     | IGachaCeilItem
     | ICharacter3D
     | ICostume3DModel
->(name: string): [T[], React.MutableRefObject<T[]>] {
-  const [cached, cachedRef, setCached] = useRefState<T[]>([]);
+>(name: string): [T[] | undefined, boolean, any] {
+  // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
 
-  const fetchCached = useCallback(async () => {
+  const fetchCached = useCallback(async (name: string) => {
     const { data }: { data: T[] } = await Axios.get(
       `${
         window.isChinaMainland
@@ -118,19 +117,11 @@ export function useCachedData<
       }/${name}.json`
     );
     return data;
-  }, [name]);
+  }, []);
 
-  useEffect(() => {
-    if (masterDataCache[name] && masterDataCache[name].length)
-      setCached(masterDataCache[name]);
-    else
-      fetchCached().then((data) => {
-        setCached(data);
-        masterDataCache[name] = data;
-      });
-  }, [fetchCached, name, setCached]);
+  const { data, error } = useSWR(name, fetchCached);
 
-  return [cached, cachedRef];
+  return [data, !error && !data, error];
 }
 
 export const musicCategoryToName: { [key: string]: string } = {
@@ -157,6 +148,7 @@ export function useCharaName(contentTransMode: ContentTransModeType) {
   const { assetT, assetI18n } = useAssetI18n();
   return useCallback(
     (charaId: number): string | undefined => {
+      if (!charas || !charas.length) return;
       const chara = charas.find((chara) => chara.id === charaId);
       const jpOrderCodes = ["zh-CN", "zh-TW", "ko", "ja", "id", "ms"];
       if (chara?.firstName) {
@@ -206,32 +198,18 @@ export function useCharaName(contentTransMode: ContentTransModeType) {
   );
 }
 
-export function useMuisicMeta(): [
-  IMusicMeta[],
-  React.MutableRefObject<IMusicMeta[]>
-] {
-  const [cached, cachedRef, setCached] = useRefState<IMusicMeta[]>([]);
-
-  const fetchCached = useCallback(async () => {
+export function useMuisicMeta() {
+  const fetchCached = useCallback(async (name: string) => {
     const { data }: { data: IMusicMeta[] } = await Axios.get(
-      process.env.PUBLIC_URL + "/metas.json"
+      process.env.PUBLIC_URL + `/${name}.json`
     );
     //console.log(data.length);
     return data;
   }, []);
 
-  useEffect(() => {
-    let name = "metas";
-    if (masterDataCache[name] && masterDataCache[name].length)
-      setCached(masterDataCache[name]);
-    else
-      fetchCached().then((data) => {
-        setCached(data);
-        masterDataCache[name] = data;
-      });
-  }, [fetchCached, setCached]);
+  const { data } = useSWR("metas", fetchCached);
 
-  return [cached, cachedRef];
+  return [data];
 }
 
 const queue = new PQueue({ concurrency: 1 });
@@ -289,7 +267,14 @@ export function useProcessedScenarioData(
         actions: [],
       };
 
-      if (!chara2Ds.length || !mobCharas.length || !scenarioPath) return ret;
+      if (
+        !chara2Ds ||
+        !chara2Ds.length ||
+        !mobCharas ||
+        !mobCharas.length ||
+        !scenarioPath
+      )
+        return ret;
 
       const { data }: { data: IScenarioData } = await Axios.get(
         await getRemoteAssetURL(scenarioPath),

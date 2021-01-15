@@ -5,6 +5,7 @@ import React, {
   useContext,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
@@ -20,7 +21,10 @@ const AnnouncementList: React.FC<{}> = () => {
   const { t } = useTranslation();
   const { usermeta } = useContext(UserContext)!;
   const { languages, lang } = useContext(SettingContext)!;
-  const { getAnnouncementPage, getAnnouncementCount } = useStrapi();
+  const {
+    getAnnouncementByLanguagesPage,
+    getAnnouncementByLanguagesCount,
+  } = useStrapi();
 
   const [announcements, setAnnouncements] = useState<AnnouncementModel[]>([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -29,40 +33,48 @@ const AnnouncementList: React.FC<{}> = () => {
   const [page, setPage] = useState(0);
   const [limit] = useState(30);
 
+  const langId = useMemo(
+    () => languages.find((elem) => elem.code === lang)!.id,
+    [lang, languages]
+  );
+  const targetLangs = useMemo(
+    () =>
+      usermeta
+        ? [langId, ...usermeta?.languages.map((lang) => lang.id)]
+        : [langId],
+    [langId, usermeta]
+  );
+
   useLayoutEffect(() => {
     document.title = t("title:announcementList");
   }, [t]);
 
   useEffect(() => {
-    getAnnouncementCount().then((data) => {
+    getAnnouncementByLanguagesCount(targetLangs).then((data) => {
       setTotalCount(data);
       setIsReady(true);
     });
-  }, [getAnnouncementCount]);
+  }, [getAnnouncementByLanguagesCount, targetLangs]);
 
   useEffect(() => {
     (async () => {
-      const enId = languages.find((lang) => lang.code === "en")!.id;
-      const langId = languages.find((elem) => elem.code === lang)!.id;
-      const data = await getAnnouncementPage(
+      const data = await getAnnouncementByLanguagesPage(
         limit,
         page,
-        usermeta
-          ? {
-              language_in: [
-                enId,
-                langId,
-                ...usermeta?.languages.map((lang) => lang.id),
-              ],
-            }
-          : {
-              language_in: [enId, langId],
-            }
+        targetLangs
       );
       setAnnouncements((announcements) => [...announcements, ...data]);
       setLastQueryFin(true);
     })();
-  }, [getAnnouncementPage, lang, languages, limit, page, usermeta]);
+  }, [
+    getAnnouncementByLanguagesPage,
+    lang,
+    languages,
+    limit,
+    page,
+    targetLangs,
+    usermeta,
+  ]);
 
   const callback = useCallback(
     (

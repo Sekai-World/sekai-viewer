@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import TagManager from "react-gtm-module";
 
 import App from "./components/App";
-import * as serviceWorker from "./serviceWorker";
+// import * as serviceWorker from "./serviceWorker";
 import { BrowserRouter as Router } from "react-router-dom";
 import "./modernizr-custom";
 import { initGlobalI18n } from "./utils/i18n";
@@ -12,6 +12,7 @@ import { SettingProvider } from "./context";
 import Axios from "axios";
 import localforage from "localforage";
 import { UserMetadatumModel, UserModel } from "./strapi-model";
+import AppSkeleton from "./components/AppSkeleton";
 
 TagManager.initialize({
   gtmId: "GTM-NFC6SW2",
@@ -35,7 +36,7 @@ window.isChinaMainland = false;
   ReactDOM.render(
     <React.StrictMode>
       <Router>
-        <Suspense fallback="loading">
+        <Suspense fallback={<AppSkeleton />}>
           <SettingProvider>
             <App />
           </SettingProvider>
@@ -87,4 +88,4 @@ window.isChinaMainland = false;
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+// serviceWorker.register();

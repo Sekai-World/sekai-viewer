@@ -22,13 +22,13 @@ const VirtualLiveStepMusic: React.FC<{
   const [musicVocalURL, setMusicVocalURL] = useState<string>("");
 
   useLayoutEffect(() => {
-    if (musics.length) {
+    if (musics) {
       setMusic(musics.find((elem) => elem.id === data.musicId!));
     }
   }, [data.musicId, musics]);
 
   useLayoutEffect(() => {
-    if (musicVocals.length) {
+    if (musicVocals) {
       setMusicVocal(musicVocals.find((elem) => elem.id === data.musicVocalId!));
     }
   }, [data.musicVocalId, musicVocal, musicVocals]);

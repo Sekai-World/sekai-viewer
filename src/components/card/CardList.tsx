@@ -24,13 +24,14 @@ import {
 } from "mdi-material-ui";
 import React, {
   Fragment,
+  useCallback,
   useContext,
   useEffect,
   useReducer,
   useState,
 } from "react";
 import { ICardEpisode, ICardInfo, ICardRarity, IGameChara } from "../../types";
-import { useCachedData, useCharaName, useRefState } from "../../utils";
+import { useCachedData, useCharaName } from "../../utils";
 import InfiniteScroll from "../subs/InfiniteScroll";
 // import InfiniteScroll from "react-infinite-scroll-component";
 
@@ -107,16 +108,14 @@ const CardList: React.FC<{}> = () => {
   const [episodes] = useCachedData<ICardEpisode>("cardEpisodes");
 
   const [cards, setCards] = useState<ICardInfo[]>([]);
-  const [sortedCache, sortedCacheRef, setSortedCache] = useRefState<
-    ICardInfo[]
-  >([]);
+  const [sortedCache, setSortedCache] = useState<ICardInfo[]>([]);
   const [viewGridType, setViewGridType] = useState<ViewGridType>(
     (localStorage.getItem("card-list-grid-view-type") || "grid") as ViewGridType
   );
-  const [page, pageRef, setPage] = useRefState<number>(0);
-  const [limit, limitRef] = useRefState<number>(12);
-  const [, lastQueryFinRef, setLastQueryFin] = useRefState<boolean>(true);
-  const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
+  const [page, setPage] = useState<number>(0);
+  const [limit] = useState<number>(12);
+  const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
+  const [isReady, setIsReady] = useState<boolean>(false);
   const [filterOpened, setFilterOpened] = useState<boolean>(false);
   const [sortType, setSortType] = useState<string>(
     localStorage.getItem("card-list-filter-sort-type") || "asc"
@@ -137,37 +136,46 @@ const CardList: React.FC<{}> = () => {
     []
   );
 
-  const callback = (
-    entries: readonly IntersectionObserverEntry[],
-    setHasMore: React.Dispatch<React.SetStateAction<boolean>>
-  ) => {
-    if (!isReadyRef.current) return;
-    if (
-      entries[0].isIntersecting &&
-      lastQueryFinRef.current &&
-      (!sortedCacheRef.current.length ||
-        sortedCacheRef.current.length > pageRef.current * limitRef.current)
-    ) {
-      setPage((page) => page + 1);
-      setLastQueryFin(false);
-    } else if (
-      sortedCacheRef.current.length &&
-      sortedCacheRef.current.length <= pageRef.current * limitRef.current
-    ) {
-      setHasMore(false);
-    }
-  };
+  const callback = useCallback(
+    (
+      entries: readonly IntersectionObserverEntry[],
+      setHasMore: React.Dispatch<React.SetStateAction<boolean>>
+    ) => {
+      if (!isReady) return;
+      if (
+        entries[0].isIntersecting &&
+        lastQueryFin &&
+        (!sortedCache.length || sortedCache.length > page * limit)
+      ) {
+        setPage((page) => page + 1);
+        setLastQueryFin(false);
+      } else if (sortedCache.length && sortedCache.length <= page * limit) {
+        setHasMore(false);
+      }
+    },
+    [isReady, lastQueryFin, limit, page, sortedCache.length]
+  );
 
   useEffect(() => {
     document.title = t("title:cardList");
   }, [t]);
 
   useEffect(() => {
-    setIsReady(Boolean(cardsCache.length) && Boolean(charas.length));
+    setIsReady(
+      Boolean(cardsCache && cardsCache.length) &&
+        Boolean(charas && charas.length)
+    );
   }, [setIsReady, cardsCache, charas]);
 
   useEffect(() => {
-    if (cardsCache.length && rarities.length && episodes.length) {
+    if (
+      cardsCache &&
+      cardsCache.length &&
+      rarities &&
+      rarities.length &&
+      episodes &&
+      episodes.length
+    ) {
       let result = [...cardsCache];
       // do filter
       if (characterSelected.length) {

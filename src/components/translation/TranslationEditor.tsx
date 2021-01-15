@@ -2,8 +2,6 @@ import React, { Fragment, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import Announcement from "./editor/Announcement";
 
-interface Props {}
-
 const TranslationEditor = () => {
   const { slug } = useParams<{ slug: string }>();
 

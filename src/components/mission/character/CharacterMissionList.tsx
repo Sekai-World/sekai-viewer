@@ -7,7 +7,7 @@ import {
   Typography,
   MenuItem,
 } from "@material-ui/core";
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect, Fragment, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useLayoutStyles } from "../../../styles/layout";
 import {
@@ -15,7 +15,7 @@ import {
   ICharacterMission,
   ICharaProfile,
 } from "../../../types.d";
-import { useCachedData, useRefState } from "../../../utils";
+import { useCachedData } from "../../../utils";
 import { CharaNameTrans } from "../../subs/ContentTrans";
 import InfiniteScroll from "../../subs/InfiniteScroll";
 import GridView from "./GridView";
@@ -53,20 +53,18 @@ const CharacterMissionList: React.FC<{}> = () => {
     (localStorage.getItem("event-list-grid-view-type") ||
       "grid") as ViewGridType
   );
-  const [page, pageRef, setPage] = useRefState<number>(1);
-  const [limit, limitRef] = useRefState<number>(12);
-  const [, lastQueryFinRef, setLastQueryFin] = useRefState<boolean>(true);
-  const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
-  const [sortedCache, sortedCacheRef, setSortedCache] = useRefState<
-    ICharacterMission[]
-  >([]);
+  const [page, setPage] = useState<number>(1);
+  const [limit] = useState<number>(12);
+  const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
+  const [isReady, setIsReady] = useState<boolean>(false);
+  const [sortedCache, setSortedCache] = useState<ICharacterMission[]>([]);
 
   useEffect(() => {
     document.title = t("title:characterMissionList");
   }, [t]);
 
   useEffect(() => {
-    if (characterMissionsCache.length) {
+    if (characterMissionsCache && characterMissionsCache.length) {
       let result = [...characterMissionsCache];
       // do filter
       result = result.filter((c) => c.characterId === charaId);
@@ -86,29 +84,30 @@ const CharacterMissionList: React.FC<{}> = () => {
   }, [page, limit, setLastQueryFin, sortedCache]);
 
   useEffect(() => {
-    setIsReady(Boolean(characterMissionsCache.length));
+    setIsReady(
+      Boolean(characterMissionsCache && characterMissionsCache.length)
+    );
   }, [setIsReady, characterMissionsCache]);
 
-  const callback = (
-    entries: readonly IntersectionObserverEntry[],
-    setHasMore: React.Dispatch<React.SetStateAction<boolean>>
-  ) => {
-    if (!isReadyRef.current) return;
-    if (
-      entries[0].isIntersecting &&
-      lastQueryFinRef.current &&
-      (!sortedCacheRef.current.length ||
-        sortedCacheRef.current.length > pageRef.current * limitRef.current)
-    ) {
-      setPage((page) => page + 1);
-      setLastQueryFin(false);
-    } else if (
-      sortedCacheRef.current.length &&
-      sortedCacheRef.current.length <= pageRef.current * limitRef.current
-    ) {
-      setHasMore(false);
-    }
-  };
+  const callback = useCallback(
+    (
+      entries: readonly IntersectionObserverEntry[],
+      setHasMore: React.Dispatch<React.SetStateAction<boolean>>
+    ) => {
+      if (!isReady) return;
+      if (
+        entries[0].isIntersecting &&
+        lastQueryFin &&
+        (!sortedCache.length || sortedCache.length > page * limit)
+      ) {
+        setPage((page) => page + 1);
+        setLastQueryFin(false);
+      } else if (sortedCache.length && sortedCache.length <= page * limit) {
+        setHasMore(false);
+      }
+    },
+    [isReady, lastQueryFin, limit, page, sortedCache.length]
+  );
 
   return (
     <Fragment>
@@ -117,7 +116,7 @@ const CharacterMissionList: React.FC<{}> = () => {
       </Typography>
       <Container className={layoutClasses.content} maxWidth="md">
         <Grid container spacing={1} justify="center">
-          {characterProfiles.length ? (
+          {characterProfiles && characterProfiles.length ? (
             <Fragment>
               <Grid item xs={12} md={4}>
                 <FormControl style={{ width: "100%" }}>

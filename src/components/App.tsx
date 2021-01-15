@@ -21,6 +21,9 @@ import {
   Toolbar,
   Typography,
   useMediaQuery,
+  Grid,
+  Snackbar,
+  Button,
 } from "@material-ui/core";
 import {
   Menu as MenuIcon,
@@ -47,6 +50,7 @@ import {
   Translate,
   Dns,
 } from "@material-ui/icons";
+import { Alert, Skeleton } from "@material-ui/lab";
 import {
   AccountGroup,
   Bullhorn,
@@ -62,6 +66,8 @@ import React, {
   useContext,
   Fragment,
   useState,
+  useEffect,
+  useCallback,
 } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -75,6 +81,7 @@ import {
 import { SettingContext, UserContext, UserProvider } from "../context";
 import ScrollTop from "./subs/ScrollTop";
 import Settings from "./subs/Settings";
+import * as serviceWorker from "../serviceWorker";
 
 const drawerWidth = 240;
 const CardList = lazy(() => import("./card/CardList"));
@@ -341,9 +348,7 @@ function App() {
   const { t } = useTranslation();
   const { displayMode } = useContext(SettingContext)!;
   const history = useHistory();
-
   const { goBack } = useHistory();
-
   const preferDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
 
   const leftBtns: IListItemLinkProps[][] = React.useMemo(
@@ -515,6 +520,7 @@ function App() {
   );
 
   const classes = useStyles();
+
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [sidebarExpansionStates, setSidebarExpansionStates] = useState<
@@ -525,6 +531,10 @@ function App() {
     mobileMenuAnchorEl,
     setMobileMenuAnchorEl,
   ] = useState<HTMLElement | null>(null);
+  const [updateBarOpen, setUpdateBarOpen] = useState(false);
+  const [waitingWorker, setWaitingWorker] = useState<ServiceWorker | null>(
+    null
+  );
 
   const theme = React.useMemo(
     () =>
@@ -752,6 +762,24 @@ function App() {
   const container =
     window !== undefined ? () => window.document.body : undefined;
 
+  const onServiceWorkerUpdate = useCallback(
+    (registration: ServiceWorkerRegistration) => {
+      setUpdateBarOpen(true);
+      setWaitingWorker(registration.waiting);
+    },
+    []
+  );
+
+  useEffect(() => {
+    serviceWorker.register({ onUpdate: onServiceWorkerUpdate });
+  }, [onServiceWorkerUpdate]);
+
+  const updateServiceWorker = useCallback(() => {
+    if (waitingWorker) waitingWorker.postMessage({ type: "SKIP_WAITING" });
+    setUpdateBarOpen(false);
+    window.location.reload();
+  }, [waitingWorker]);
+
   return (
     <ThemeProvider theme={theme}>
       <div className={classes.root}>
@@ -878,7 +906,21 @@ function App() {
           <div className={classes.toolbar} id="back-to-top-anchor"></div>
           <UserProvider>
             <Switch>
-              <Suspense fallback={<div>Loading...</div>}>
+              <Suspense
+                fallback={
+                  <Grid container direction="column" spacing={3}>
+                    <Grid item>
+                      <Skeleton variant="rect" width="30%" height={30} />
+                    </Grid>
+                    <Grid item>
+                      <Skeleton variant="rect" width="90%" height={200} />
+                    </Grid>
+                    <Grid item>
+                      <Skeleton variant="rect" width="90%" height={200} />
+                    </Grid>
+                  </Grid>
+                }
+              >
                 <Route path="/" exact>
                   <HomeView />
                 </Route>
@@ -995,6 +1037,22 @@ function App() {
           onClose={() => setIsSettingsOpen(false)}
         />
       </div>
+      <Snackbar open={updateBarOpen}>
+        <Alert
+          severity="info"
+          action={
+            <Button
+              color="inherit"
+              size="small"
+              onClick={() => updateServiceWorker()}
+            >
+              {t("common:update")}
+            </Button>
+          }
+        >
+          {t("common:update-available")}
+        </Alert>
+      </Snackbar>
     </ThemeProvider>
   );
 }

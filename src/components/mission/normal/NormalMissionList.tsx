@@ -10,13 +10,19 @@ import {
 } from "@material-ui/core";
 import { Sort, SortOutlined } from "@material-ui/icons";
 import { Filter, FilterOutline } from "mdi-material-ui";
-import React, { useState, useEffect, Fragment, useReducer } from "react";
+import React, {
+  useState,
+  useEffect,
+  Fragment,
+  useReducer,
+  useCallback,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { missionTypeReducer } from "../../../stores/reducers";
 import { useInteractiveStyles } from "../../../styles/interactive";
 import { useLayoutStyles } from "../../../styles/layout";
 import { INormalMission } from "../../../types";
-import { useCachedData, useRefState } from "../../../utils";
+import { useCachedData } from "../../../utils";
 import InfiniteScroll from "../../subs/InfiniteScroll";
 import GridView from "./GridView";
 
@@ -47,25 +53,23 @@ const NormalMissionList: React.FC<{}> = () => {
     (localStorage.getItem("event-list-grid-view-type") ||
       "grid") as ViewGridType
   );
-  const [page, pageRef, setPage] = useRefState<number>(1);
-  const [limit, limitRef] = useRefState<number>(12);
-  const [, lastQueryFinRef, setLastQueryFin] = useRefState<boolean>(true);
-  const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
+  const [limit] = useState<number>(12);
+  const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
+  const [isReady, setIsReady] = useState<boolean>(false);
   const [filterOpened, setFilterOpened] = useState<boolean>(false);
   const [missionTypeSelected, dispatchMissionTypeSelected] = useReducer(
     missionTypeReducer,
     []
   );
-  const [sortedCache, sortedCacheRef, setSortedCache] = useRefState<
-    INormalMission[]
-  >([]);
+  const [sortedCache, setSortedCache] = useState<INormalMission[]>([]);
 
   useEffect(() => {
     document.title = t("title:normalMissionList");
   }, [t]);
 
   useEffect(() => {
-    if (normalMissionsCache.length) {
+    if (normalMissionsCache && normalMissionsCache.length) {
       let result = [...normalMissionsCache];
       // do filter
       if (missionTypeSelected.length) {
@@ -88,29 +92,28 @@ const NormalMissionList: React.FC<{}> = () => {
   }, [page, limit, setLastQueryFin, sortedCache]);
 
   useEffect(() => {
-    setIsReady(Boolean(normalMissionsCache.length));
+    setIsReady(Boolean(normalMissionsCache && normalMissionsCache.length));
   }, [setIsReady, normalMissionsCache]);
 
-  const callback = (
-    entries: readonly IntersectionObserverEntry[],
-    setHasMore: React.Dispatch<React.SetStateAction<boolean>>
-  ) => {
-    if (!isReadyRef.current) return;
-    if (
-      entries[0].isIntersecting &&
-      lastQueryFinRef.current &&
-      (!sortedCacheRef.current.length ||
-        sortedCacheRef.current.length > pageRef.current * limitRef.current)
-    ) {
-      setPage((page) => page + 1);
-      setLastQueryFin(false);
-    } else if (
-      sortedCacheRef.current.length &&
-      sortedCacheRef.current.length <= pageRef.current * limitRef.current
-    ) {
-      setHasMore(false);
-    }
-  };
+  const callback = useCallback(
+    (
+      entries: readonly IntersectionObserverEntry[],
+      setHasMore: React.Dispatch<React.SetStateAction<boolean>>
+    ) => {
+      if (!isReady) return;
+      if (
+        entries[0].isIntersecting &&
+        lastQueryFin &&
+        (!sortedCache.length || sortedCache.length > page * limit)
+      ) {
+        setPage((page) => page + 1);
+        setLastQueryFin(false);
+      } else if (sortedCache.length && sortedCache.length <= page * limit) {
+        setHasMore(false);
+      }
+    },
+    [isReady, lastQueryFin, limit, page, sortedCache.length]
+  );
 
   return (
     <Fragment>

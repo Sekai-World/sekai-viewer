@@ -25,6 +25,7 @@ export const SettingContext = createContext<
       updateLang(newLang: string): void;
       updateDisplayMode(newMode: DisplayModeType): void;
       updateContentTransMode(newMode: ContentTransModeType): void;
+      updateLanguages(newLangs: LanguageModel[]): void;
     }
   | undefined
 >(undefined);
@@ -39,7 +40,7 @@ export const SettingProvider: React.FC<PropsWithChildren<{}>> = ({
   const [displayMode, setDisplayMode] = useState<DisplayModeType>(
     (localStorage.getItem("display-mode") as DisplayModeType) || "auto"
   );
-  const [languages] = useState<LanguageModel[]>(
+  const [languages, setLanguages] = useState<LanguageModel[]>(
     JSON.parse(
       localStorage.getItem("languages-cache") || "[]"
     ) as LanguageModel[]
@@ -73,6 +74,10 @@ export const SettingProvider: React.FC<PropsWithChildren<{}>> = ({
           localStorage.setItem("content-translation-mode", newMode);
         },
         languages,
+        updateLanguages(newLangs: LanguageModel[]) {
+          setLanguages(newLangs);
+          localStorage.setItem("languages-cache", JSON.stringify(newLangs));
+        },
       }}
     >
       {children}
@@ -117,14 +122,14 @@ export const UserProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
             auth.user = newUser;
             setUser(newUser);
           },
-          [auth.user]
+          [auth]
         ),
         updateJwtToken: useCallback(
           (newToken: string) => {
             auth.token = newToken;
             setToken(newToken);
           },
-          [auth.token]
+          [auth]
         ),
         updateSekaiProfile: useCallback((data) => {
           setSekaiProfile(data);
@@ -136,14 +141,14 @@ export const UserProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
           auth.token = "";
           setSekaiProfile(undefined);
           localStorage.removeItem("sekaiProfile");
-        }, [auth.token, auth.user]),
+        }, [auth]),
         usermeta: useMemo(() => usermeta, [usermeta]),
         updateUserMeta: useCallback(
           (data) => {
             auth.usermeta = data;
             setUsermeta(data);
           },
-          [auth.usermeta]
+          [auth]
         ),
       }}
     >

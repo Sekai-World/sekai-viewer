@@ -25,7 +25,7 @@ const DetailDialog: React.FC<{
   const [honorGroup, setHonorGroup] = useState<IHonorGroup>();
 
   useEffect(() => {
-    if (honors.length && honorGroups.length && data) {
+    if (honors && honors.length && honorGroups && honorGroups.length && data) {
       const honorGroup = honorGroups.find((hg) => hg.id === data.groupId)!;
       setHonorGroup(honorGroup);
     }

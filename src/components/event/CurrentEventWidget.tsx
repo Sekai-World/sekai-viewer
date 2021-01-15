@@ -3,10 +3,9 @@ import { Skeleton } from "@material-ui/lab";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { SekaiCurrentEventModel } from "../../strapi-model";
 import { useLayoutStyles } from "../../styles/layout";
 import { getRemoteAssetURL } from "../../utils";
-import { useStrapi } from "../../utils/apiClient";
+import { useCurrentEvent } from "../../utils/apiClient";
 import Countdown from "../subs/Countdown";
 
 const useStyles = makeStyles((theme) => ({
@@ -22,9 +21,8 @@ const CurrentEventWidget: React.FC<{}> = () => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
-  const { getSekaiCurrentEvent } = useStrapi();
+  const { currEvent } = useCurrentEvent();
 
-  const [currEvent, setCurrEvent] = useState<SekaiCurrentEventModel>();
   const [eventBanner, setEventBanner] = useState("");
 
   useEffect(() => {
@@ -33,8 +31,8 @@ const CurrentEventWidget: React.FC<{}> = () => {
         `home/banner/${currEvent.eventJson.assetbundleName}_rip/${currEvent.eventJson.assetbundleName}.webp`,
         setEventBanner
       );
-    } else getSekaiCurrentEvent().then(setCurrEvent);
-  }, [currEvent, getSekaiCurrentEvent]);
+    }
+  }, [currEvent]);
 
   return (
     <Grid container>

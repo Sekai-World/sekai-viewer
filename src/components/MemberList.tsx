@@ -63,7 +63,12 @@ const MemberList: React.FC<{}> = () => {
   }, [t]);
 
   useEffect(() => {
-    if (unitProfiles.length && gameCharas.length) {
+    if (
+      unitProfiles &&
+      unitProfiles.length &&
+      gameCharas &&
+      gameCharas.length
+    ) {
       const units = unitProfiles
         .sort((a, b) => a.seq - b.seq)
         .map((up) => up.unit);

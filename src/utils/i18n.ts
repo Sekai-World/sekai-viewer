@@ -4,22 +4,16 @@ import { initReactI18next } from "react-i18next";
 import fetchBackend from "i18next-fetch-backend";
 import detector from "i18next-browser-languagedetector";
 import { useCallback } from "react";
-import { getLanguages } from "./apiClient";
 
 export const assetI18n: typeof i18n = i18n.createInstance();
 // export const announcementI18n: typeof i18n = i18n.createInstance();
 
 export async function initGlobalI18n() {
-  const languages = await getLanguages();
-  localStorage.setItem("languages-cache", JSON.stringify(languages));
-  const codes = languages.map((lang) => lang.code);
-
   i18n
     .use(initReactI18next)
     .use(fetchBackend)
     .use(detector)
     .init({
-      supportedLngs: codes,
       ns: [
         "common",
         "home",
@@ -68,7 +62,6 @@ export async function initGlobalI18n() {
     .use(fetchBackend)
     .use(detector)
     .init({
-      supportedLngs: codes,
       ns: [
         "music_titles",
         "card_prefix",

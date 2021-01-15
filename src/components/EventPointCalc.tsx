@@ -87,15 +87,15 @@ const MusicRecommend: React.FC<{}> = () => {
   }, [t]);
 
   const calcResult = useCallback(() => {
+    if (!metas || !metas.length || !cards || !skills) {
+      console.log("META NOT FOUND");
+      return;
+    }
     const meta = metas.filter(
       (it) =>
         it.music_id === selectedSongId &&
         it.difficulty === difficulties[selectedSongDifficulty]
     );
-    if (metas.length === 0) {
-      console.log("META NOT FOUND");
-      return;
-    }
     const musicMeta = meta[0];
     // console.log(musicMeta);
     const teamSkills = getCardSkillRates(cards, skills, teamCardsStates);
@@ -219,15 +219,16 @@ const MusicRecommend: React.FC<{}> = () => {
                     }
                     input={<Input />}
                   >
-                    {musics.map((music) => (
-                      <MenuItem key={`music-${music.id}`} value={music.id}>
-                        {getTranslated(
-                          contentTransMode,
-                          `music_titles:${music.id}`,
-                          music!.title
-                        )}
-                      </MenuItem>
-                    ))}
+                    {musics &&
+                      musics.map((music) => (
+                        <MenuItem key={`music-${music.id}`} value={music.id}>
+                          {getTranslated(
+                            contentTransMode,
+                            `music_titles:${music.id}`,
+                            music!.title
+                          )}
+                        </MenuItem>
+                      ))}
                   </Select>
                 </FormControl>
               </Grid>

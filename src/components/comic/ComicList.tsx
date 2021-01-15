@@ -15,7 +15,7 @@ import { ImageDecorator } from "react-viewer/lib/ViewerProps";
 import { SettingContext } from "../../context";
 import { useLayoutStyles } from "../../styles/layout";
 import { ITipInfo, ITipInfoComic } from "../../types";
-import { getRemoteAssetURL, useCachedData, useRefState } from "../../utils";
+import { getRemoteAssetURL, useCachedData } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
 import InfiniteScroll from "../subs/InfiniteScroll";
 import GridView from "./GridView";
@@ -36,14 +36,12 @@ const ComicList: React.FC<{}> = () => {
   const [tipsCache] = useCachedData<ITipInfo>("tips");
 
   const [comics, setComics] = useState<ITipInfoComic[]>([]);
-  const [filteredCache, filteredCacheRef, setFilteredCache] = useRefState<
-    ITipInfoComic[]
-  >([]);
+  const [filteredCache, setFilteredCache] = useState<ITipInfoComic[]>([]);
 
-  const [page, pageRef, setPage] = useRefState<number>(0);
-  const [limit, limitRef] = useRefState<number>(12);
-  const [, lastQueryFinRef, setLastQueryFin] = useRefState<boolean>(true);
-  const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
+  const [page, setPage] = useState<number>(0);
+  const [limit] = useState<number>(12);
+  const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
+  const [isReady, setIsReady] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
   const [activeIdx, setActiveIdx] = useState<number>(0);
   const [resourceLang, setResourceLang] = useState<
@@ -87,33 +85,32 @@ const ComicList: React.FC<{}> = () => {
     f();
   }, [filteredCache, contentTransMode, getTranslated, resourceLang]);
 
-  const callback = (
-    entries: readonly IntersectionObserverEntry[],
-    setHasMore: React.Dispatch<React.SetStateAction<boolean>>
-  ) => {
-    if (!isReadyRef.current) return;
-    if (
-      entries[0].isIntersecting &&
-      lastQueryFinRef.current &&
-      (!filteredCacheRef.current.length ||
-        filteredCacheRef.current.length > pageRef.current * limitRef.current)
-    ) {
-      setPage((page) => page + 1);
-      setLastQueryFin(false);
-    } else if (
-      filteredCacheRef.current.length &&
-      filteredCacheRef.current.length <= pageRef.current * limitRef.current
-    ) {
-      setHasMore(false);
-    }
-  };
+  const callback = useCallback(
+    (
+      entries: readonly IntersectionObserverEntry[],
+      setHasMore: React.Dispatch<React.SetStateAction<boolean>>
+    ) => {
+      if (!isReady) return;
+      if (
+        entries[0].isIntersecting &&
+        lastQueryFin &&
+        (!filteredCache.length || filteredCache.length > page * limit)
+      ) {
+        setPage((page) => page + 1);
+        setLastQueryFin(false);
+      } else if (filteredCache.length && filteredCache.length <= page * limit) {
+        setHasMore(false);
+      }
+    },
+    [filteredCache.length, isReady, lastQueryFin, limit, page]
+  );
 
   useEffect(() => {
     document.title = t("title:comicList");
   }, [t]);
 
   useEffect(() => {
-    if (tipsCache.length) {
+    if (tipsCache && tipsCache.length) {
       const filtered = tipsCache.filter(
         (tip): tip is ITipInfoComic => "assetbundleName" in tip
       );
@@ -129,7 +126,7 @@ const ComicList: React.FC<{}> = () => {
   }, [page, limit, tipsCache, setLastQueryFin, getPaginatedTips]);
 
   useEffect(() => {
-    setIsReady(Boolean(tipsCache.length));
+    setIsReady(Boolean(tipsCache && tipsCache.length));
   }, [setIsReady, tipsCache]);
 
   return (

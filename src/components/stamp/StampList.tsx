@@ -33,7 +33,7 @@ import { characterSelectReducer } from "../../stores/reducers";
 import { useInteractiveStyles } from "../../styles/interactive";
 import { useLayoutStyles } from "../../styles/layout";
 import { IStampInfo } from "../../types";
-import { useCachedData, useCharaName, useRefState } from "../../utils";
+import { useCachedData, useCharaName } from "../../utils";
 import { charaIcons } from "../../utils/resources";
 import GridView from "./GridView";
 import InfiniteScroll from "../subs/InfiniteScroll";
@@ -50,9 +50,7 @@ const StampList: React.FC<{}> = () => {
   const [stampsCache] = useCachedData<IStampInfo>("stamps");
 
   const [stamps, setStamps] = useState<IStampInfo[]>([]);
-  const [filteredCache, filteredCacheRef, setFilteredCache] = useRefState<
-    IStampInfo[]
-  >([]);
+  const [filteredCache, setFilteredCache] = useState<IStampInfo[]>([]);
   const [filterOpened, setFilterOpened] = useState<boolean>(false);
   const [updateSort, setUpdateSort] = useState<"asc" | "desc">(
     (localStorage.getItem("stamp-list-update-sort") || "desc") as "desc"
@@ -62,10 +60,10 @@ const StampList: React.FC<{}> = () => {
     []
   );
 
-  const [page, pageRef, setPage] = useRefState<number>(0);
-  const [limit, limitRef] = useRefState<number>(12);
-  const [, lastQueryFinRef, setLastQueryFin] = useRefState<boolean>(true);
-  const [, isReadyRef, setIsReady] = useRefState<boolean>(false);
+  const [page, setPage] = useState<number>(0);
+  const [limit] = useState<number>(12);
+  const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
+  const [isReady, setIsReady] = useState<boolean>(false);
 
   const getPaginatedStamps = useCallback(
     (page: number, limit: number) => {
@@ -74,33 +72,32 @@ const StampList: React.FC<{}> = () => {
     [filteredCache]
   );
 
-  const callback = (
-    entries: readonly IntersectionObserverEntry[],
-    setHasMore: React.Dispatch<React.SetStateAction<boolean>>
-  ) => {
-    if (!isReadyRef.current) return;
-    if (
-      entries[0].isIntersecting &&
-      lastQueryFinRef.current &&
-      (!filteredCacheRef.current.length ||
-        filteredCacheRef.current.length > pageRef.current * limitRef.current)
-    ) {
-      setPage((page) => page + 1);
-      setLastQueryFin(false);
-    } else if (
-      filteredCacheRef.current.length &&
-      filteredCacheRef.current.length <= pageRef.current * limitRef.current
-    ) {
-      setHasMore(false);
-    }
-  };
+  const callback = useCallback(
+    (
+      entries: readonly IntersectionObserverEntry[],
+      setHasMore: React.Dispatch<React.SetStateAction<boolean>>
+    ) => {
+      if (!isReady) return;
+      if (
+        entries[0].isIntersecting &&
+        lastQueryFin &&
+        (!filteredCache.length || filteredCache.length > page * limit)
+      ) {
+        setPage((page) => page + 1);
+        setLastQueryFin(false);
+      } else if (filteredCache.length && filteredCache.length <= page * limit) {
+        setHasMore(false);
+      }
+    },
+    [filteredCache.length, isReady, lastQueryFin, limit, page]
+  );
 
   useEffect(() => {
     document.title = t("title:stampList");
   }, [t]);
 
   useEffect(() => {
-    if (stampsCache.length) {
+    if (stampsCache && stampsCache.length) {
       let cache = stampsCache;
       if (characterSelected.length) {
         cache = stampsCache.filter((s) =>
@@ -133,7 +130,7 @@ const StampList: React.FC<{}> = () => {
   }, [page, limit, setLastQueryFin, stampsCache, getPaginatedStamps]);
 
   useEffect(() => {
-    setIsReady(Boolean(stampsCache.length));
+    setIsReady(Boolean(stampsCache && stampsCache.length));
   }, [setIsReady, stampsCache]);
 
   const handleUpdateSort = useCallback((sort: "asc" | "desc") => {

@@ -23,7 +23,7 @@ const DegreeImage: React.FC<
   const [degreeRankImage, setDegreeRankImage] = useState<string>("");
 
   useEffect(() => {
-    if (resourceBoxes.length && honors.length) {
+    if (resourceBoxes && honors) {
       setHonor(
         honors.find((honor) =>
           resourceBoxId

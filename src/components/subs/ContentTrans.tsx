@@ -59,7 +59,7 @@ export const CharaNameTrans: React.FC<{
   const [chara, setChara] = useState<IGameChara>();
 
   useEffect(() => {
-    if (charas.length) {
+    if (charas) {
       setChara(charas.find((c) => c.id === characterId));
     }
   }, [charas, characterId]);
@@ -160,7 +160,7 @@ export const ReleaseCondTrans: React.FC<{
   const [releaseCond, setReleaseCond] = useState<IReleaseCondition>();
 
   useEffect(() => {
-    if (releaseConds.length) {
+    if (releaseConds) {
       setReleaseCond(releaseConds.find((rc) => rc.id === releaseCondId));
     }
   }, [releaseCondId, releaseConds]);

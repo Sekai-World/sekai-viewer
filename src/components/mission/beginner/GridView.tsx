@@ -41,7 +41,7 @@ const GridView: React.FC<{ data?: IBeginnerMission }> = ({ data }) => {
   const [rewards, setRewards] = useState<ResourceBoxDetail[]>([]);
 
   useEffect(() => {
-    if (resourceBoxes.length && data) {
+    if (resourceBoxes && resourceBoxes.length && data) {
       setRewards(
         resourceBoxes.find(
           (rb) =>

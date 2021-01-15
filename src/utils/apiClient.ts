@@ -19,6 +19,7 @@ import {
   UserModel,
 } from "../strapi-model";
 import { IUserProfile } from "../types";
+import useSWR from "swr";
 
 /**
  * Access Strapi endpoints.
@@ -286,7 +287,39 @@ export function useStrapi(token?: string) {
       [axios]
     ),
     getAnnouncementCount: useCallback(
-      async () => Number((await axios.get("/announcements/count")).data),
+      async (params?: any) =>
+        Number((await axios.get("/announcements/count", { params })).data),
+      [axios]
+    ),
+    getAnnouncementByLanguagesPage: useCallback(
+      async (
+        limit: number = 30,
+        page: number = 0,
+        languages: number[],
+        params?: { [key: string]: any }
+      ) =>
+        (
+          await axios.get<AnnouncementModel[]>("/announcements/language", {
+            params: {
+              _limit: limit,
+              _start: page * limit,
+              _sort: "isPin:DESC,published_at:DESC",
+              targetLangs: languages,
+              ...(params || {}),
+            },
+          })
+        ).data,
+      [axios]
+    ),
+    getAnnouncementByLanguagesCount: useCallback(
+      async (languages: number[]) =>
+        Number(
+          (
+            await axios.get("/announcements/language/count", {
+              params: { targetLangs: languages },
+            })
+          ).data
+        ),
       [axios]
     ),
     getComments: useCallback(
@@ -417,7 +450,8 @@ export function useStrapi(token?: string) {
       [axios]
     ),
     getTranslationCount: useCallback(
-      async () => (await axios.get<number>("/translations/count")).data,
+      async (params?: any) =>
+        (await axios.get<number>("/translations/count", { params })).data,
       [axios]
     ),
     getTranslationBySourceSlug: useCallback(
@@ -440,6 +474,86 @@ export async function getLanguages() {
       `${process.env.REACT_APP_STRAPI_BASE}/languages?_sort=id:ASC`
     )
   ).data;
+}
+
+const axiosFetcher = async (url: string, params?: any) =>
+  (await Axios.get(url, { params })).data;
+
+export function useRemoteLanguages() {
+  const params = useMemo(() => ({ _sort: "id:ASC" }), []);
+  const { data, error } = useSWR(
+    [`${process.env.REACT_APP_STRAPI_BASE}/languages`, params],
+    axiosFetcher
+  );
+
+  return {
+    languages: data as LanguageModel[],
+    isLoading: !error && !data,
+    error,
+  };
+}
+
+export function useAnnouncements(page = 0, limit = 0, params?: any) {
+  const _params = useMemo(
+    () => ({
+      _limit: limit,
+      _start: page * limit,
+      _sort: "isPin:DESC,published_at:DESC",
+      ...(params || {}),
+    }),
+    [limit, page, params]
+  );
+  const { data, error } = useSWR(
+    [`${process.env.REACT_APP_STRAPI_BASE}/announcements`, _params],
+    axiosFetcher
+  );
+
+  return {
+    announcements: data as AnnouncementModel[],
+    isLoading: !error && !data,
+    error,
+  };
+}
+
+export function useAnnouncementsByLanguages(
+  page = 0,
+  limit = 0,
+  languages: number[],
+  params?: any
+) {
+  const _params = useMemo(
+    () => ({
+      _limit: limit,
+      _start: page * limit,
+      _sort: "isPin:DESC,published_at:DESC",
+      targetLangs: languages,
+      ...(params || {}),
+    }),
+    [languages, limit, page, params]
+  );
+  const { data, error } = useSWR(
+    [`${process.env.REACT_APP_STRAPI_BASE}/announcements/language`, _params],
+    axiosFetcher
+  );
+
+  return {
+    announcements: data as AnnouncementModel[],
+    isLoading: !error && !data,
+    error,
+  };
+}
+
+export function useCurrentEvent() {
+  const { data, error } = useSWR(
+    `${process.env.REACT_APP_STRAPI_BASE}/sekai-current-event`,
+    axiosFetcher
+  );
+
+  return {
+    currEvent: data as SekaiCurrentEventModel,
+    isLoading: !error && !data,
+    error,
+  };
 }
 
 /**

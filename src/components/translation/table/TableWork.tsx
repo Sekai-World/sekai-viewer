@@ -1,4 +1,12 @@
-import { Button, Chip, Grid } from "@material-ui/core";
+import {
+  Button,
+  Chip,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@material-ui/core";
 import { ColDef, DataGrid } from "@material-ui/data-grid";
 import React, {
   Fragment,
@@ -11,7 +19,7 @@ import React, {
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 // import { useTranslation } from "react-i18next";
-import { UserContext } from "../../../context";
+import { SettingContext, UserContext } from "../../../context";
 import { LanguageModel, TranslationModel } from "../../../strapi-model";
 import { useInteractiveStyles } from "../../../styles/interactive";
 // import { useLayoutStyles } from "../../styles/layout";
@@ -27,6 +35,7 @@ const TableMe: React.FC<Props> = (props: Props) => {
   // const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { jwtToken, usermeta } = useContext(UserContext)!;
+  const { languages } = useContext(SettingContext)!;
   const { getTranslations, getTranslationCount, putTranslationId } = useStrapi(
     jwtToken
   );
@@ -37,18 +46,39 @@ const TableMe: React.FC<Props> = (props: Props) => {
   const [pageSize, setPageSize] = useState(5);
   const [loading, setLoading] = useState(false);
   const [selectedWork, setSelectedWork] = useState<TranslationModel>();
+  const [selectedSourceLanguage, setSelectedSourceLanguage] = useState(0);
+  const [selectedTargetLanguage, setSelectedTargetLanguage] = useState(0);
 
   const updateData = useCallback(async () => {
     setLoading(true);
 
-    setRowCount(await getTranslationCount());
-    const newRows = await getTranslations(page - 1, pageSize, {
-      targetLang_in: usermeta?.languages.map((lang) => lang.id),
-    });
+    const params = Object.assign(
+      {},
+      {
+        targetLang_in: selectedTargetLanguage
+          ? [selectedTargetLanguage]
+          : usermeta?.languages.map((lang) => lang.id),
+      },
+      selectedSourceLanguage
+        ? {
+            sourceLang: selectedSourceLanguage,
+          }
+        : {}
+    );
+    setRowCount(await getTranslationCount(params));
+    const newRows = await getTranslations(page - 1, pageSize, params);
 
     setTranslations(newRows);
     setLoading(false);
-  }, [getTranslationCount, getTranslations, page, pageSize, usermeta]);
+  }, [
+    getTranslationCount,
+    getTranslations,
+    page,
+    pageSize,
+    selectedSourceLanguage,
+    selectedTargetLanguage,
+    usermeta?.languages,
+  ]);
 
   useEffect(() => {
     updateData();
@@ -130,6 +160,49 @@ const TableMe: React.FC<Props> = (props: Props) => {
 
   return (
     <Fragment>
+      <Grid container spacing={2}>
+        <Grid item>
+          <FormControl>
+            <InputLabel htmlFor="table-lang-filter">
+              {t("filter:language.source")}
+            </InputLabel>
+            <Select
+              id="table-lang-filter"
+              value={selectedSourceLanguage}
+              onChange={(e) =>
+                setSelectedSourceLanguage(e.target.value as number)
+              }
+              style={{ minWidth: "150px" }}
+            >
+              <MenuItem value={0}>{t("filter:not_set")}</MenuItem>
+              {languages.map((lang) => (
+                <MenuItem value={lang.id}>{lang.name}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item>
+          <FormControl>
+            <InputLabel htmlFor="table-lang-filter">
+              {t("filter:language.target")}
+            </InputLabel>
+            <Select
+              id="table-lang-filter"
+              value={selectedTargetLanguage}
+              onChange={(e) =>
+                setSelectedTargetLanguage(e.target.value as number)
+              }
+              style={{ minWidth: "150px" }}
+            >
+              <MenuItem value={0}>{t("filter:not_set")}</MenuItem>
+              {usermeta?.languages.map((lang) => (
+                <MenuItem value={lang.id}>{lang.name}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+      </Grid>
+      <br />
       <div style={{ height: "350px" }}>
         <DataGrid
           rows={translations}
@@ -145,6 +218,7 @@ const TableMe: React.FC<Props> = (props: Props) => {
           onRowSelected={(param) =>
             setSelectedWork(param.data as TranslationModel)
           }
+          disableColumnFilter
         />
       </div>
       <br />

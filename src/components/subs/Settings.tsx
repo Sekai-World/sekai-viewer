@@ -11,16 +11,19 @@ import {
   RadioGroup,
 } from "@material-ui/core";
 import { Brightness4, Brightness7, BrightnessAuto } from "@material-ui/icons";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { SettingContext } from "../../context";
 import { DisplayModeType, ContentTransModeType } from "../../types";
+import { useRemoteLanguages } from "../../utils/apiClient";
+import { useAssetI18n } from "../../utils/i18n";
 
 const Settings: React.FC<{
   open: boolean;
   onClose?: () => void;
 }> = ({ open, onClose }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { assetI18n } = useAssetI18n();
   const {
     lang,
     displayMode,
@@ -29,7 +32,17 @@ const Settings: React.FC<{
     updateDisplayMode,
     updateContentTransMode,
     languages,
+    updateLanguages,
   } = useContext(SettingContext)!;
+  const { languages: remoteLanguages, isLoading, error } = useRemoteLanguages();
+
+  useEffect(() => {
+    if (!isLoading && !error) {
+      updateLanguages(remoteLanguages);
+      i18n.loadLanguages(remoteLanguages.map((lang) => lang.code));
+      assetI18n.loadLanguages(remoteLanguages.map((lang) => lang.code));
+    }
+  }, [assetI18n, error, i18n, isLoading, remoteLanguages, updateLanguages]);
 
   return (
     <Dialog open={open} onClose={onClose}>

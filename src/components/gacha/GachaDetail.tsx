@@ -146,7 +146,7 @@ const GachaDetailPage: React.FC<{}> = () => {
 
   const doGacha = useCallback(
     (times: number) => {
-      if (!gacha) return;
+      if (!gacha || !cards) return;
       const rollTimes = times;
       const rollResult = [
         gacha.rarity1Rate,
@@ -322,12 +322,12 @@ const GachaDetailPage: React.FC<{}> = () => {
   }, [setStatistic, setCurrentGachaResult]);
 
   useEffect(() => {
-    if (gachas.length)
+    if (gachas && gachas.length)
       setGacha(gachas.find((elem) => elem.id === Number(gachaId)));
   }, [gachaId, gachas]);
 
   useEffect(() => {
-    if (gacha && gachaCeilItems.length) {
+    if (gacha && gachaCeilItems && gachaCeilItems.length) {
       setGachaCeilItem(
         gachaCeilItems.find((elem) => elem.id === gacha.gachaCeilItemId)
       );
@@ -355,7 +355,7 @@ const GachaDetailPage: React.FC<{}> = () => {
   }, [gacha, contentTransMode, gachaId, getTranslated, t]);
 
   useEffect(() => {
-    if (gacha && cards.length) {
+    if (gacha && cards && cards.length) {
       // sum rate for rarity 1~4
       const weightArr = [0, 0, 0, 0];
       gacha.gachaDetails.forEach((detail) => {
@@ -449,7 +449,7 @@ const GachaDetailPage: React.FC<{}> = () => {
 
   const getCardRate = useCallback(
     (cardId: number) => {
-      if (gacha && cards.length) {
+      if (gacha && cards && cards.length) {
         const detail = gacha.gachaDetails.find(
           (detail) => detail.cardId === cardId
         )!;
@@ -829,6 +829,7 @@ const GachaDetailPage: React.FC<{}> = () => {
                   </Grid>
                   <Button
                     onClick={() => {
+                      if (!cards || !cards.length) return;
                       setGachaCards(
                         gacha.gachaDetails
                           .map((detail) => detail.cardId)
