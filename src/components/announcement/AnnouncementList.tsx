@@ -34,7 +34,8 @@ const AnnouncementList: React.FC<{}> = () => {
   const [limit] = useState(30);
 
   const langId = useMemo(
-    () => languages.find((elem) => elem.code === lang)!.id,
+    () =>
+      languages.length ? languages.find((elem) => elem.code === lang)!.id : 1,
     [lang, languages]
   );
   const targetLangs = useMemo(

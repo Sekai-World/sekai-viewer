@@ -16,7 +16,8 @@ const AnnouncementWidget: React.FC<{}> = () => {
   const { languages, lang } = useContext(SettingContext)!;
 
   const langId = useMemo(
-    () => languages.find((elem) => elem.code === lang)!.id,
+    () =>
+      languages.length ? languages.find((elem) => elem.code === lang)!.id : 1,
     [lang, languages]
   );
   const params = useMemo(
