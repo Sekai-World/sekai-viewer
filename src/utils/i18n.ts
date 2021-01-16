@@ -44,11 +44,13 @@ export async function initGlobalI18n() {
         "translate",
         "honor",
       ],
+      defaultNS: "common",
       fallbackLng: {
         default: ["en"],
         pt: ["pt-BR", "en"],
       },
       fallbackNS: "common",
+      load: "currentOnly",
       backend: {
         loadPath:
           (window.isChinaMainland
@@ -92,6 +94,7 @@ export async function initGlobalI18n() {
         default: ["ja"],
         pt: ["pt-BR", "ja"],
       },
+      load: "currentOnly",
       backend: {
         loadPath:
           (window.isChinaMainland
@@ -123,7 +126,7 @@ export function useAssetI18n() {
   const assetT = useCallback(
     (key: string, original: string, options?: string | TOptions): string => {
       const translated = assetI18n.t(key, options);
-      return !Number.isNaN(Number(translated)) ? original : translated;
+      return translated === key.split(":")[1] ? original : translated;
     },
     []
   );

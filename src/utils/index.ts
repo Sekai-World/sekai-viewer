@@ -147,6 +147,7 @@ export const musicTagToName: { [key: string]: string } = {
 export function useCharaName(contentTransMode: ContentTransModeType) {
   const [charas] = useCachedData<IGameChara>("gameCharacters");
   const { assetT, assetI18n } = useAssetI18n();
+
   return useCallback(
     (charaId: number): string | undefined => {
       if (!charas || !charas.length) return;

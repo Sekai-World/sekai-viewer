@@ -39,8 +39,6 @@ const Settings: React.FC<{
   useEffect(() => {
     if (!isLoading && !error) {
       updateLanguages(remoteLanguages);
-      i18n.loadLanguages(remoteLanguages.map((lang) => lang.code));
-      assetI18n.loadLanguages(remoteLanguages.map((lang) => lang.code));
     }
   }, [assetI18n, error, i18n, isLoading, remoteLanguages, updateLanguages]);
 
@@ -54,7 +52,11 @@ const Settings: React.FC<{
             row
             aria-label="language"
             value={lang}
-            onChange={(e, v) => updateLang(v)}
+            onChange={(e, v) => {
+              i18n.loadLanguages([v]);
+              assetI18n.loadLanguages([v]);
+              updateLang(v);
+            }}
           >
             {languages
               .filter((lang) => lang.enabled)
