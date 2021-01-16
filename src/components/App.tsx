@@ -128,6 +128,7 @@ const VirtualLiveDetail = lazy(
 const TranslationPage = lazy(() => import("./translation/TranslationPage"));
 const TranslationEditor = lazy(() => import("./translation/TranslationEditor"));
 const HonorList = lazy(() => import("./honor/HonorList"));
+const AssetsBrowser = lazy(() => import("./assets_browser/AssetsBrowser"));
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
