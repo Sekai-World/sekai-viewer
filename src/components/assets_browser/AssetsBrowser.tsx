@@ -107,6 +107,10 @@ class AssetsBrowser extends React.Component<IProps, IState> {
     //
   }
 
+  nextPath(path: string) {
+    this.props.history.push(path);
+  }
+
   render() {
 
     console.log(this.state);
@@ -143,7 +147,7 @@ class AssetsBrowser extends React.Component<IProps, IState> {
         {
           paths.map(path => {
             return <Grid item md={2} sm={3} xs={4}>
-              <Card>
+              <Card onClick={() => {this.nextPath("./" + path)}}>
                 <CardActionArea>
                   <div style={
                     {
@@ -185,7 +189,7 @@ class AssetsBrowser extends React.Component<IProps, IState> {
                 break;
             }
             return <Grid item md={2} sm={3} xs={4}>
-              <Card>
+              <Card onClick={() => {this.nextPath("/assetsBrowser/" + asset.path)}}>
                 <CardActionArea>
                   {previewArea}
                   <CardContent>
