@@ -1,0 +1,8 @@
+{
+    "cdns": [{
+        "name": "test",
+        "url": "https://cdn.sekai.makoo.eu/assets/",
+        "secret": null,
+        "l10n_name": "TEST"
+    }]
+}

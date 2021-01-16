@@ -52,6 +52,7 @@ import {
 import { assetI18n, useAssetI18n } from "./i18n";
 import { useLocation } from "react-router-dom";
 import useSWR from "swr";
+import CdnSource from "./cdnSource";
 
 const webpMachine = new WebpMachine();
 
@@ -213,6 +214,7 @@ export function useMuisicMeta() {
 }
 
 const queue = new PQueue({ concurrency: 1 });
+const cdnSource = new CdnSource();
 
 export async function getRemoteAssetURL(
   endpoint: string,
@@ -221,11 +223,7 @@ export async function getRemoteAssetURL(
   minioDomain: boolean = false
 ): Promise<string> {
   const isWebpSupported = Modernizr.webplossless;
-  const url = cnDomain
-    ? `${process.env.REACT_APP_ASSET_DOMAIN_CN}/${endpoint}`
-    : minioDomain
-    ? `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets/${endpoint}`
-    : `${process.env.REACT_APP_ASSET_DOMAIN_WW}/file/sekai-assets/${endpoint}`;
+  const url = cdnSource.getRemoteAssetUrl(endpoint);
 
   if (endpoint.endsWith(".webp") && !isWebpSupported) {
     let dataUrl = await localforage.getItem<string>(url);
