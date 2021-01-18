@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - "src/**"
+      - "public/**"
   repository_dispatch:
     types: [new-translation]
 jobs:
