@@ -21,6 +21,7 @@ const useStyles = makeStyles((theme) => ({
   media: {
     paddingTop: "56.25%",
     backgroundSize: "contain",
+    position: "relative",
   },
   card: {
     // margin: theme.spacing(0.5),
@@ -85,12 +86,18 @@ const GridView: React.FC<{ data?: IEventInfo }> = ({ data }) => {
             `event_name:${data.id}`,
             data.name
           )}
-        ></CardMedia>
+        >
+          <SpoilerTag
+            style={{
+              position: "absolute",
+              top: "1%",
+              left: "1%",
+            }}
+            releaseTime={new Date(data.startAt)}
+          />
+        </CardMedia>
         <CardContent style={{ paddingBottom: "16px" }}>
           <Grid container direction="column" spacing={1}>
-            <Grid item>
-              <SpoilerTag releaseTime={new Date(data.startAt)} />
-            </Grid>
             <Grid item>
               <ContentTrans
                 contentKey={`event_name:${data.id}`}

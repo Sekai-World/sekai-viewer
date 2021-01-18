@@ -116,7 +116,7 @@ const AnnouncementDetail: React.FC<{}> = () => {
         <Grid item>
           <Typography variant="subtitle2" color="textSecondary">
             {t("announcement:published_at")}:{" "}
-            {new Date(announcement.published_at).toLocaleString()}
+            {new Date(announcement.created_at).toLocaleString()}
           </Typography>
         </Grid>
       </Grid>

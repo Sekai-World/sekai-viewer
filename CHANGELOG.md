@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.2](https://github.com/Sekai-World/sekai-viewer/compare/v0.3.1...v0.3.2) (2021-01-18)
+
+
+### Features
+
+* sort by id for all list page ([a4f755e](https://github.com/Sekai-World/sekai-viewer/commits/a4f755e118b62bebd41e11e8e0393491d4f7ba2b))
+* **event:** allow track more rankings ([d57d8fa](https://github.com/Sekai-World/sekai-viewer/commits/d57d8fae1eb887e1e015ce235d94b0999eeded6d))
+* **music:** add music mv type filter ([2591712](https://github.com/Sekai-World/sekai-viewer/commits/25917120f277819d8e0a3891a7dd33191978760d))
+
+
+### Bug Fixes
+
+* language code not in list may cause error ([e7c9587](https://github.com/Sekai-World/sekai-viewer/commits/e7c9587052e07ef632bd1da4abaa4b97c628563b))
+* **live2d:** wrong model size on mobile device full screen ([1ecafaa](https://github.com/Sekai-World/sekai-viewer/commits/1ecafaae19e1e882696289ea5be1e589999e8a97))
+* **pwa:** update notification not shown in firefox ([09a1488](https://github.com/Sekai-World/sekai-viewer/commits/09a14887ff6fc5cb4c27edfc186feaf0fae09ecf))
+
+
+### Refactors
+
+* move spoiler tag inside image in grid view ([da1bcc2](https://github.com/Sekai-World/sekai-viewer/commits/da1bcc2086c6827b9850d7599e49bcc3aef56673))
+* **annoucnement:** use created_at instead of published_at as publication time ([891a893](https://github.com/Sekai-World/sekai-viewer/commits/891a89388c02240f398fbc1a5df8755714876562))
+
 ### [0.3.1](https://github.com/Sekai-World/sekai-viewer/compare/v0.3.0...v0.3.1) (2021-01-16)
 
 

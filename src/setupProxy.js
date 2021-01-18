@@ -28,4 +28,14 @@ module.exports = function (app) {
       },
     })
   );
+  app.use(
+    "/strapi",
+    createProxyMiddleware({
+      target: "https://strapi.sekai.best",
+      changeOrigin: true,
+      pathRewrite: {
+        "^/strapi": "/",
+      },
+    })
+  );
 };

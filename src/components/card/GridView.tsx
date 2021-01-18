@@ -64,14 +64,22 @@ const GridView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
             `card_prefix:${data.id}`,
             data.prefix
           )}
+          style={{
+            position: "relative",
+          }}
         >
           <CardSmallImage card={data}></CardSmallImage>
+          <SpoilerTag
+            style={{
+              position: "absolute",
+              top: "1%",
+              left: "1%",
+            }}
+            releaseTime={new Date(data.releaseAt)}
+          />
         </CardMedia>
         <CardContent style={{ paddingBottom: "16px" }}>
           <Grid container direction="column" spacing={1}>
-            <Grid item>
-              <SpoilerTag releaseTime={new Date(data.releaseAt)} />
-            </Grid>
             <Grid item>
               <ContentTrans
                 contentKey={`card_prefix:${data.id}`}

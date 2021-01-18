@@ -1,10 +1,4 @@
-import {
-  Typography,
-  Container,
-  Button,
-  ButtonGroup,
-  Grid,
-} from "@material-ui/core";
+import { Typography, Container, Grid } from "@material-ui/core";
 import { useLayoutStyles } from "../../styles/layout";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useCachedData } from "../../utils";
@@ -20,6 +14,8 @@ import {
   GetApp,
   GetAppOutlined,
 } from "@material-ui/icons";
+import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
+import { Pound } from "mdi-material-ui";
 
 function getPaginatedGachas(gachas: IGachaInfo[], page: number, limit: number) {
   return gachas.slice(limit * (page - 1), limit * page);
@@ -38,8 +34,11 @@ const GachaList: React.FC<{}> = () => {
   const [limit] = useState<number>(12);
   const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
   const [isReady, setIsReady] = useState<boolean>(false);
-  const [updateSort, setUpdateSort] = useState<"asc" | "desc">(
+  const [sortType, setSortType] = useState<string>(
     (localStorage.getItem("gacha-list-update-sort") || "desc") as "desc"
+  );
+  const [sortBy, setSortBy] = useState<string>(
+    localStorage.getItem("gacha-list-filter-sort-by") || "startAt"
   );
   const [sortedCache, setSortedCache] = useState<IGachaInfo[]>([]);
 
@@ -58,15 +57,19 @@ const GachaList: React.FC<{}> = () => {
   useEffect(() => {
     if (!gachasCache || !gachasCache.length) return;
     let sortedCache = [...gachasCache];
-    if (updateSort === "desc") {
-      sortedCache = sortedCache.sort((a, b) => b.startAt - a.startAt);
-    } else if (updateSort === "asc") {
-      sortedCache = sortedCache.sort((a, b) => a.startAt - b.startAt);
+    if (sortType === "desc") {
+      sortedCache = sortedCache.sort(
+        (a, b) => b[sortBy as "startAt"] - a[sortBy as "startAt"]
+      );
+    } else if (sortType === "asc") {
+      sortedCache = sortedCache.sort(
+        (a, b) => a[sortBy as "startAt"] - b[sortBy as "startAt"]
+      );
     }
     setSortedCache(sortedCache);
     setGachas([]);
     setPage(0);
-  }, [updateSort, gachasCache, setPage]);
+  }, [gachasCache, setPage, sortType, sortBy]);
 
   useEffect(() => {
     setIsReady(Boolean(gachasCache && gachasCache.length));
@@ -92,9 +95,14 @@ const GachaList: React.FC<{}> = () => {
     [isReady, lastQueryFin, limit, page, sortedCache.length]
   );
 
-  const handleUpdateSort = useCallback((sort: "asc" | "desc") => {
-    setUpdateSort(sort);
-    localStorage.setItem("gacha-list-update-sort", sort);
+  const handleUpdateSortType = useCallback((_, sort: string) => {
+    setSortType(sort);
+    localStorage.setItem("gacha-list-filter-sort-type", sort);
+  }, []);
+
+  const handleUpdateSortBy = useCallback((_, sort: string) => {
+    setSortBy(sort);
+    localStorage.setItem("gacha-list-filter-sort-by", sort);
   }, []);
 
   return (
@@ -103,18 +111,40 @@ const GachaList: React.FC<{}> = () => {
         {t("common:gacha")}
       </Typography>
       <Container className={layoutClasses.content}>
-        <Grid container justify="space-between">
-          <ButtonGroup color="primary" style={{ marginBottom: "1%" }}>
-            <Button size="medium" onClick={() => handleUpdateSort("asc")}>
-              <Update />
-              {updateSort === "asc" ? <Publish /> : <PublishOutlined />}
-            </Button>
-            <Button size="medium" onClick={() => handleUpdateSort("desc")}>
-              <Update />
-              {updateSort === "desc" ? <GetApp /> : <GetAppOutlined />}
-            </Button>
-          </ButtonGroup>
+        <Grid container spacing={1}>
+          <Grid item>
+            <ToggleButtonGroup
+              value={sortType}
+              color="primary"
+              exclusive
+              onChange={handleUpdateSortType}
+            >
+              <ToggleButton value="asc">
+                {sortType === "asc" ? <Publish /> : <PublishOutlined />}
+              </ToggleButton>
+              <ToggleButton value="desc">
+                {sortType === "desc" ? <GetApp /> : <GetAppOutlined />}
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Grid>
+          <Grid item>
+            <ToggleButtonGroup
+              size="medium"
+              value={sortBy}
+              color="primary"
+              exclusive
+              onChange={handleUpdateSortBy}
+            >
+              <ToggleButton value="id">
+                <Pound />
+              </ToggleButton>
+              <ToggleButton value="startAt">
+                <Update />
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Grid>
         </Grid>
+        <br />
         <InfiniteScroll<IGachaInfo>
           ViewComponent={ListCard}
           callback={callback}

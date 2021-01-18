@@ -1,7 +1,5 @@
 import {
   Avatar,
-  Button,
-  ButtonGroup,
   Chip,
   Collapse,
   Container,
@@ -16,9 +14,8 @@ import {
   PublishOutlined,
   Sort,
   SortOutlined,
-  Update,
 } from "@material-ui/icons";
-import { FilterOutline, Filter } from "mdi-material-ui";
+import { FilterOutline, Filter, Pound } from "mdi-material-ui";
 import React, {
   Fragment,
   useCallback,
@@ -37,6 +34,7 @@ import { useCachedData, useCharaName } from "../../utils";
 import { charaIcons } from "../../utils/resources";
 import GridView from "./GridView";
 import InfiniteScroll from "../subs/InfiniteScroll";
+import { ToggleButtonGroup, ToggleButton } from "@material-ui/lab";
 
 const ListCard: React.FC<{ data?: IStampInfo }> = GridView;
 
@@ -52,8 +50,11 @@ const StampList: React.FC<{}> = () => {
   const [stamps, setStamps] = useState<IStampInfo[]>([]);
   const [filteredCache, setFilteredCache] = useState<IStampInfo[]>([]);
   const [filterOpened, setFilterOpened] = useState<boolean>(false);
-  const [updateSort, setUpdateSort] = useState<"asc" | "desc">(
+  const [sortType, setSortType] = useState<string>(
     (localStorage.getItem("stamp-list-update-sort") || "desc") as "desc"
+  );
+  const [sortBy, setSortBy] = useState<string>(
+    localStorage.getItem("stamp-list-filter-sort-by") || "id"
   );
   const [characterSelected, dispatchCharacterSelected] = useReducer(
     characterSelectReducer,
@@ -106,10 +107,10 @@ const StampList: React.FC<{}> = () => {
       } else {
         cache = stampsCache;
       }
-      if (updateSort === "desc") {
-        cache = cache.sort((a, b) => b.id - a.id);
-      } else if (updateSort === "asc") {
-        cache = cache.sort((a, b) => a.id - b.id);
+      if (sortType === "desc") {
+        cache = cache.sort((a, b) => b[sortBy as "id"] - a[sortBy as "id"]);
+      } else if (sortType === "asc") {
+        cache = cache.sort((a, b) => a[sortBy as "id"] - b[sortBy as "id"]);
       }
       setFilteredCache(cache);
       setStamps([]);
@@ -121,7 +122,8 @@ const StampList: React.FC<{}> = () => {
     setStamps,
     setPage,
     setFilteredCache,
-    updateSort,
+    sortType,
+    sortBy,
   ]);
 
   useEffect(() => {
@@ -133,9 +135,16 @@ const StampList: React.FC<{}> = () => {
     setIsReady(Boolean(stampsCache && stampsCache.length));
   }, [setIsReady, stampsCache]);
 
-  const handleUpdateSort = useCallback((sort: "asc" | "desc") => {
-    setUpdateSort(sort);
-    localStorage.setItem("stamp-list-update-sort", sort);
+  const handleUpdateSortType = useCallback((_, sort: string) => {
+    if (!sort) return;
+    setSortType(sort);
+    localStorage.setItem("gacha-list-filter-sort-type", sort);
+  }, []);
+
+  const handleUpdateSortBy = useCallback((_, sort: string) => {
+    if (!sort) return;
+    setSortBy(sort);
+    localStorage.setItem("gacha-list-filter-sort-by", sort);
   }, []);
 
   return (
@@ -145,23 +154,50 @@ const StampList: React.FC<{}> = () => {
       </Typography>
       <Container className={layoutClasses.content}>
         <Grid container justify="space-between">
-          <ButtonGroup color="primary" style={{ marginBottom: "1%" }}>
-            <Button size="medium" onClick={() => handleUpdateSort("asc")}>
-              <Update />
-              {updateSort === "asc" ? <Publish /> : <PublishOutlined />}
-            </Button>
-            <Button size="medium" onClick={() => handleUpdateSort("desc")}>
-              <Update />
-              {updateSort === "desc" ? <GetApp /> : <GetAppOutlined />}
-            </Button>
-          </ButtonGroup>
-          <ButtonGroup color="primary" style={{ marginBottom: "1%" }}>
-            <Button size="medium" onClick={() => setFilterOpened((v) => !v)}>
+          <Grid item>
+            <Grid container spacing={1}>
+              <Grid item>
+                <ToggleButtonGroup
+                  value={sortType}
+                  color="primary"
+                  exclusive
+                  onChange={handleUpdateSortType}
+                >
+                  <ToggleButton value="asc">
+                    {sortType === "asc" ? <Publish /> : <PublishOutlined />}
+                  </ToggleButton>
+                  <ToggleButton value="desc">
+                    {sortType === "desc" ? <GetApp /> : <GetAppOutlined />}
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </Grid>
+              <Grid item>
+                <ToggleButtonGroup
+                  size="medium"
+                  value={sortBy}
+                  color="primary"
+                  exclusive
+                  onChange={handleUpdateSortBy}
+                >
+                  <ToggleButton value="id">
+                    <Pound />
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item>
+            <ToggleButton
+              value="check"
+              selected={filterOpened}
+              onChange={() => setFilterOpened((v) => !v)}
+            >
               {filterOpened ? <Filter /> : <FilterOutline />}
               {filterOpened ? <Sort /> : <SortOutlined />}
-            </Button>
-          </ButtonGroup>
+            </ToggleButton>
+          </Grid>
         </Grid>
+        <br />
         <Collapse in={filterOpened}>
           <Paper className={interactiveClasses.container}>
             <Grid container direction="column" spacing={1}>

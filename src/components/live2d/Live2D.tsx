@@ -71,6 +71,8 @@ const Live2DView: React.FC<{}> = () => {
   const [recorder, setRecorder] = useState<any>();
   const [recordType, setRecordType] = useState("");
   const [anchorEl, setAnchorEl] = useState<HTMLElement>();
+  // const [currentWidth, setCurrentWidth] = useState(0);
+  // const [currentStyleWidth, setCurrentStyleWidth] = useState(0);
 
   const wrap = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -82,15 +84,19 @@ const Live2DView: React.FC<{}> = () => {
       // canvas.current.width = wrap.current.clientWidth;
       const styleWidth = wrap.current.clientWidth;
       const styleHeight =
-        styleWidth >= theme.breakpoints.values.md
+        window.screen.width * window.devicePixelRatio >=
+        theme.breakpoints.values.md
           ? (styleWidth * 9) / 16
           : (styleWidth * 4) / 3;
       const displayWidth = styleWidth * window.devicePixelRatio;
       const displayHeight = styleHeight * window.devicePixelRatio;
       model._modelSize =
-        displayWidth >= theme.breakpoints.values.md
+        window.screen.width * window.devicePixelRatio >=
+        theme.breakpoints.values.md
           ? displayWidth * 1.5
           : displayWidth * 3.5;
+      // setCurrentWidth(displayWidth);
+      // setCurrentStyleWidth(styleWidth);
 
       canvas.current.style.width = `${styleWidth}px`;
       canvas.current.style.height = `${styleHeight}px`;
@@ -692,6 +698,10 @@ const Live2DView: React.FC<{}> = () => {
                   </Button>
                 </Grid>
               </Grid>
+              {/* <Grid item>
+                {theme.breakpoints.width("md")} {window.screen.width}{" "}
+                {currentStyleWidth}
+              </Grid> */}
             </Grid>
           </Toolbar>
         )}

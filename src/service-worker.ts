@@ -97,7 +97,26 @@ registerRoute(
 
 registerRoute(
   // Add in any other file extensions or routing criteria as needed.
-  ({ url }) => url.origin === "https://i18n-json.sekai.best",
+  ({ url }) =>
+    url.origin === "https://minio.dnaroma.eu" &&
+    (url.pathname.endsWith(".png") || url.pathname.endsWith(".webp")),
+  // Customize this strategy as needed, e.g., by changing to CacheFirst.
+  new CacheFirst({
+    cacheName: "minioImages",
+    plugins: [
+      // Ensure that once this runtime cache reaches a maximum size the
+      // least-recently used images are removed.
+      new ExpirationPlugin({ maxEntries: 500 }),
+    ],
+  })
+);
+
+registerRoute(
+  // Add in any other file extensions or routing criteria as needed.
+  ({ url }) =>
+    url.origin === "https://i18n-json.sekai.best" ||
+    (url.origin === "https://sekai-json-1258184166.file.myqcloud.com" &&
+      url.pathname.startsWith("/locales")),
   // Customize this strategy as needed, e.g., by changing to CacheFirst.
   new StaleWhileRevalidate({
     cacheName: "i18next",
@@ -112,8 +131,10 @@ registerRoute(
 registerRoute(
   // Add in any other file extensions or routing criteria as needed.
   ({ url }) =>
-    url.origin === "https://sekai-world.github.io" &&
-    url.pathname.startsWith("/sekai-master-db-diff"),
+    (url.origin === "https://sekai-world.github.io" &&
+      url.pathname.startsWith("/sekai-master-db-diff")) ||
+    (url.origin === "https://sekai-json-1258184166.file.myqcloud.com" &&
+      url.pathname.startsWith("/master")),
   // Customize this strategy as needed, e.g., by changing to CacheFirst.
   new StaleWhileRevalidate({
     cacheName: "sekaiMaster",

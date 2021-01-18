@@ -193,6 +193,7 @@ const HonorList = () => {
                     />
                   }
                   label={t("filter:honorType.group_only_once")}
+                  labelPlacement="start"
                 />
               </Grid>
             </Grid>
