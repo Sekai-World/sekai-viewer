@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.1](https://github.com/Sekai-World/sekai-viewer/compare/v0.3.0...v0.3.1) (2021-01-16)
+
+
+### Bug Fixes
+
+* home screen white blank page bug ([a634397](https://github.com/Sekai-World/sekai-viewer/commits/a634397255e80b42ae5473142a95ea1a85d2bdd3))
+
+
+### Refactors
+
+* reduce load i18n json requests ([e6e26c4](https://github.com/Sekai-World/sekai-viewer/commits/e6e26c429fbcc5a50f75754aba28ec8058f713bd))
+
 ## [0.3.0](https://github.com/Sekai-World/sekai-viewer/compare/v0.2.2...v0.3.0) (2021-01-14)
 
 
