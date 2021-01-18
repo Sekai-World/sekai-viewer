@@ -59,7 +59,7 @@ jobs:
             const branch = `pr-${prNumber}`;
             const url = `${process.env.PR_DEPLOY_ORIGIN}/${branch}/`;
             github.issues.createComment({
-              issue_number: context.issue.number,
+              issue_number: prNumber,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: `Your PR build is now available at [${url}](${url})!`,
