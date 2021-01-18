@@ -52,7 +52,7 @@ const GridView: React.FC<{ data?: AnnouncementModel }> = ({ data }) => {
               <Grid item>
                 <Typography variant="subtitle2" color="textSecondary">
                   {t("announcement:published_at")}:{" "}
-                  {new Date(data.published_at).toLocaleString()}
+                  {new Date(data.created_at).toLocaleString()}
                 </Typography>
               </Grid>
             </Grid>
