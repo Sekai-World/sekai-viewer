@@ -68,6 +68,7 @@ const MusicList: React.FC<{}> = () => {
     localStorage.getItem("music-list-filter-sort-by") || "id"
   );
   const [musicTag, setMusicTag] = useState<string>("all");
+  const [musicMVType, setMusicMVType] = useState<string>("");
 
   useEffect(() => {
     document.title = t("title:musicList");
@@ -87,6 +88,9 @@ const MusicList: React.FC<{}> = () => {
             .filter((mt) => mt.musicId === c.id)!
             .some((mt) => musicTag === mt.musicTag)
         );
+      }
+      if (musicMVType) {
+        result = result.filter((c) => c.categories.includes(musicMVType));
       }
       // sort musics cache
       switch (sortBy) {
@@ -109,6 +113,7 @@ const MusicList: React.FC<{}> = () => {
     setSortedCache,
     musicTags,
     musicTag,
+    musicMVType,
   ]);
 
   useEffect(() => {
@@ -224,6 +229,35 @@ const MusicList: React.FC<{}> = () => {
                         label={musicTagToName[tag]}
                         onClick={() => {
                           setMusicTag(tag);
+                        }}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justify="space-between"
+              >
+                <Grid item xs={12} md={1}>
+                  <Typography classes={{ root: interactiveClasses.caption }}>
+                    {t("filter:music_mv.caption")}
+                  </Typography>
+                </Grid>
+                <Grid item container xs={12} md={10} spacing={1}>
+                  {["mv", "mv_2d", "original", "image"].map((cat) => (
+                    <Grid key={cat} item>
+                      <Chip
+                        clickable
+                        color={musicMVType === cat ? "primary" : "default"}
+                        label={t(`music:categoryType.${cat}`)}
+                        onClick={() => {
+                          musicMVType === cat
+                            ? setMusicMVType("")
+                            : setMusicMVType(cat);
                         }}
                       />
                     </Grid>
