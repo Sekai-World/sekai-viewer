@@ -33,11 +33,18 @@ const AnnouncementList: React.FC<{}> = () => {
   const [page, setPage] = useState(0);
   const [limit] = useState(30);
 
-  const langId = useMemo(
-    () =>
-      languages.length ? languages.find((elem) => elem.code === lang)!.id : 1,
-    [lang, languages]
-  );
+  const langId = useMemo(() => {
+    let id = 1;
+    if (languages.length) {
+      let currentLang =
+        languages.find((elem) => elem.code === lang) ||
+        languages.find((elem) => elem.code === lang.split("-")[0]);
+      if (currentLang) {
+        id = currentLang.id;
+      }
+    }
+    return id;
+  }, [lang, languages]);
   const targetLangs = useMemo(
     () =>
       usermeta

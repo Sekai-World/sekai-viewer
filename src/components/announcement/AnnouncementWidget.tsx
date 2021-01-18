@@ -15,11 +15,18 @@ const AnnouncementWidget: React.FC<{}> = () => {
   const { usermeta } = useContext(UserContext)!;
   const { languages, lang } = useContext(SettingContext)!;
 
-  const langId = useMemo(
-    () =>
-      languages.length ? languages.find((elem) => elem.code === lang)!.id : 1,
-    [lang, languages]
-  );
+  const langId = useMemo(() => {
+    let id = 1;
+    if (languages.length) {
+      let currentLang =
+        languages.find((elem) => elem.code === lang) ||
+        languages.find((elem) => elem.code === lang.split("-")[0]);
+      if (currentLang) {
+        id = currentLang.id;
+      }
+    }
+    return id;
+  }, [lang, languages]);
   const params = useMemo(
     () =>
       usermeta

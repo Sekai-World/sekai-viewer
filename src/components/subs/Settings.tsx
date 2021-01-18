@@ -39,8 +39,23 @@ const Settings: React.FC<{
   useEffect(() => {
     if (!isLoading && !error) {
       updateLanguages(remoteLanguages);
+      if (!remoteLanguages.find((rl) => rl.code === lang)) {
+        // try setting correct language code
+        if (remoteLanguages.find((rl) => rl.code === lang.split("-")[0])) {
+          updateLang(lang.split("-")[0]);
+        }
+      }
     }
-  }, [assetI18n, error, i18n, isLoading, remoteLanguages, updateLanguages]);
+  }, [
+    assetI18n,
+    error,
+    i18n,
+    isLoading,
+    lang,
+    remoteLanguages,
+    updateLang,
+    updateLanguages,
+  ]);
 
   return (
     <Dialog open={open} onClose={onClose}>
