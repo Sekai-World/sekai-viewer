@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
   media: {
     paddingTop: "56.25%",
     backgroundSize: "contain",
+    position: "relative",
   },
   card: {
     // margin: theme.spacing(0.5),
@@ -61,13 +62,17 @@ const GridView: React.FC<{ data?: IGachaInfo }> = ({ data }) => {
   return (
     <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
       <Card className={classes.card}>
-        <CardMedia
-          className={classes.media}
-          image={url}
-          title={data.name}
-        ></CardMedia>
+        <CardMedia className={classes.media} image={url} title={data.name}>
+          <SpoilerTag
+            style={{
+              position: "absolute",
+              top: "1%",
+              left: "1%",
+            }}
+            releaseTime={new Date(data.startAt)}
+          />
+        </CardMedia>
         <CardContent style={{ paddingBottom: "16px" }}>
-          <SpoilerTag releaseTime={new Date(data.startAt)} />
           <ContentTrans
             contentKey={`gacha_name:${data.id}`}
             original={data.name}

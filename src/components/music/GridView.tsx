@@ -20,6 +20,7 @@ import SpoilerTag from "../subs/SpoilerTag";
 const useStyles = makeStyles((theme) => ({
   media: {
     paddingTop: "75%",
+    position: "relative",
   },
   card: {
     // margin: theme.spacing(0.5),
@@ -77,12 +78,18 @@ const GridView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
             `music_titles:${data.id}`,
             data.title
           )}
-        ></CardMedia>
+        >
+          <SpoilerTag
+            style={{
+              position: "absolute",
+              top: "1%",
+              left: "1%",
+            }}
+            releaseTime={new Date(data.publishedAt)}
+          />
+        </CardMedia>
         <CardContent style={{ paddingBottom: "16px" }}>
           <Grid container direction="column" spacing={1}>
-            <Grid item>
-              <SpoilerTag releaseTime={new Date(data.publishedAt)} />
-            </Grid>
             <Grid item>
               <ContentTrans
                 contentKey={`music_titles:${data.id}`}
