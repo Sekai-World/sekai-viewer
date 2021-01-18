@@ -1,10 +1,4 @@
-import {
-  Button,
-  ButtonGroup,
-  Container,
-  Grid,
-  Typography,
-} from "@material-ui/core";
+import { Container, Grid, Typography } from "@material-ui/core";
 import {
   GetApp,
   GetAppOutlined,
@@ -12,6 +6,8 @@ import {
   PublishOutlined,
   Update,
 } from "@material-ui/icons";
+import { ToggleButtonGroup, ToggleButton } from "@material-ui/lab";
+import { Pound } from "mdi-material-ui";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLayoutStyles } from "../../styles/layout";
@@ -49,8 +45,11 @@ const VirtualLiveList: React.FC<{}> = () => {
   const [limit] = useState<number>(12);
   const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
   const [isReady, setIsReady] = useState<boolean>(false);
-  const [updateSort, setUpdateSort] = useState<"asc" | "desc">(
-    (localStorage.getItem("virtual-live-list-update-sort") || "desc") as "desc"
+  const [sortType, setSortType] = useState<string>(
+    (localStorage.getItem("gacha-list-update-sort") || "desc") as "desc"
+  );
+  const [sortBy, setSortBy] = useState<string>(
+    localStorage.getItem("gacha-list-filter-sort-by") || "startAt"
   );
   const [sortedCache, setSortedCache] = useState<IVirtualLiveInfo[]>([]);
 
@@ -69,15 +68,19 @@ const VirtualLiveList: React.FC<{}> = () => {
   useEffect(() => {
     if (!virtualLivesCache) return;
     let sortedCache = [...virtualLivesCache];
-    if (updateSort === "desc") {
-      sortedCache = sortedCache.sort((a, b) => b.startAt - a.startAt);
-    } else if (updateSort === "asc") {
-      sortedCache = sortedCache.sort((a, b) => a.startAt - b.startAt);
+    if (sortType === "desc") {
+      sortedCache = sortedCache.sort(
+        (a, b) => b[sortBy as "startAt"] - a[sortBy as "startAt"]
+      );
+    } else if (sortType === "asc") {
+      sortedCache = sortedCache.sort(
+        (a, b) => a[sortBy as "startAt"] - b[sortBy as "startAt"]
+      );
     }
     setSortedCache(sortedCache);
     setVirtualLives([]);
     setPage(0);
-  }, [setPage, updateSort, virtualLivesCache]);
+  }, [setPage, sortBy, sortType, virtualLivesCache]);
 
   useEffect(() => {
     setIsReady(Boolean(virtualLivesCache));
@@ -103,9 +106,14 @@ const VirtualLiveList: React.FC<{}> = () => {
     [isReady, lastQueryFin, limit, page, sortedCache.length]
   );
 
-  const handleUpdateSort = useCallback((sort: "asc" | "desc") => {
-    setUpdateSort(sort);
-    localStorage.setItem("virtual-live-list-update-sort", sort);
+  const handleUpdateSortType = useCallback((_, sort: string) => {
+    setSortType(sort);
+    localStorage.setItem("gacha-list-filter-sort-type", sort);
+  }, []);
+
+  const handleUpdateSortBy = useCallback((_, sort: string) => {
+    setSortBy(sort);
+    localStorage.setItem("gacha-list-filter-sort-by", sort);
   }, []);
 
   return (
@@ -114,18 +122,40 @@ const VirtualLiveList: React.FC<{}> = () => {
         {t("common:virtualLive")}
       </Typography>
       <Container className={layoutClasses.content}>
-        <Grid container justify="space-between">
-          <ButtonGroup color="primary" style={{ marginBottom: "1%" }}>
-            <Button size="medium" onClick={() => handleUpdateSort("asc")}>
-              <Update />
-              {updateSort === "asc" ? <Publish /> : <PublishOutlined />}
-            </Button>
-            <Button size="medium" onClick={() => handleUpdateSort("desc")}>
-              <Update />
-              {updateSort === "desc" ? <GetApp /> : <GetAppOutlined />}
-            </Button>
-          </ButtonGroup>
+        <Grid container spacing={1}>
+          <Grid item>
+            <ToggleButtonGroup
+              value={sortType}
+              color="primary"
+              exclusive
+              onChange={handleUpdateSortType}
+            >
+              <ToggleButton value="asc">
+                {sortType === "asc" ? <Publish /> : <PublishOutlined />}
+              </ToggleButton>
+              <ToggleButton value="desc">
+                {sortType === "desc" ? <GetApp /> : <GetAppOutlined />}
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Grid>
+          <Grid item>
+            <ToggleButtonGroup
+              size="medium"
+              value={sortBy}
+              color="primary"
+              exclusive
+              onChange={handleUpdateSortBy}
+            >
+              <ToggleButton value="id">
+                <Pound />
+              </ToggleButton>
+              <ToggleButton value="startAt">
+                <Update />
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Grid>
         </Grid>
+        <br />
         <InfiniteScroll<IVirtualLiveInfo>
           ViewComponent={ListCard[viewGridType]}
           callback={callback}
