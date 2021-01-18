@@ -1,9 +1,17 @@
 {
     "cdns": [{
-        "name": "test",
+        "name": "ray",
         "url": "https://cdn.sekai.makoo.eu/assets/",
         "secret": null,
-        "l10n_name": "TEST"
+        "l10n_name": "TEST",
+        "apiSchema": ""
+    },
+    {
+        "name": "pjsek.ai",
+        "url": "https://api.pjsek.ai/assets?path=",
+        "secret": null,
+        "l10n_name": "PJSEK_DOT_AI_CDN",
+        "apiSchema": "pjsekai"
     }],
     "dbCdns": []
 }
