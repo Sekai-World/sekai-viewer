@@ -775,9 +775,15 @@ function App() {
   }, [onServiceWorkerUpdate]);
 
   const updateServiceWorker = useCallback(() => {
-    if (waitingWorker) waitingWorker.postMessage({ type: "SKIP_WAITING" });
+    if (waitingWorker) {
+      waitingWorker.onstatechange = () => {
+        if (waitingWorker.state === "activated") window.location.reload();
+      };
+      waitingWorker.postMessage({ type: "SKIP_WAITING" });
+    }
     setUpdateBarOpen(false);
-    window.location.reload();
+    // eslint-disable-next-line no-self-assign
+    // window.location.href = window.location.href;
   }, [waitingWorker]);
 
   return (
