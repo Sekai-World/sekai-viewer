@@ -14,8 +14,17 @@
 <!--- If it fixes an open issue, please link to the issue here. -->
 
 ## How Has This Been Tested?
-<!--- Please describe in detail how you tested your changes. -->
-<!--- Include details of your testing environment, and the tests you ran to -->
-<!--- see how your change affects other areas of the code, etc. -->
+<!--- Please ensure your code is running good at least on following platform. -->
+<!--- To test on mobile device, make sure they are connected to the same WiFi -->
+<!--- with your developement machine. -->
+<!--- If you can't test Safari browser, you can ignore them. -->
+
+- [ ] Chrome (Desktop)
+- [ ] Chrome (Mobile)
+- [ ] Firefox (Desktop)
+- [ ] Firefox (Mobile)
+- [ ] Safari (Desktop, optional)
+- [ ] Safari (iPhone, optional)
+- [ ] Safari (iPad, optional)
 
 ## Screenshots (if appropriate):
