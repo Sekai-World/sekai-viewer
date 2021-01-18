@@ -6,8 +6,7 @@ on:
     paths:
       - "src/**"
       - "public/**"
-  repository_dispatch:
-    types: [new-translation]
+      - ".env.production"
 jobs:
   build:
     runs-on: ubuntu-latest
