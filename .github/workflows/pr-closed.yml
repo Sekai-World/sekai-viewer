@@ -1,9 +1,10 @@
 name: "PR: Remove preview on close"
 on:
-  pull_request_target:
+  pull_request:
     types: [closed]
     branches:
       - main
+      - dev
 jobs:
   remove:
     runs-on: ubuntu-latest
