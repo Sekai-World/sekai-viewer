@@ -4,6 +4,10 @@ on:
     branches:
       - main
       - dev
+    paths:
+      - "src/**"
+      - "public/**"
+      - ".env.production"
 jobs:
   build:
     runs-on: ubuntu-latest
