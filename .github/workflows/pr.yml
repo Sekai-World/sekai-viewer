@@ -1,6 +1,10 @@
 name: "PR: Build"
 on:
   pull_request:
+    types:
+      - opened
+      - reopened
+      - unlocked
     branches:
       - main
       - dev

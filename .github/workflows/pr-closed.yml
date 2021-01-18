@@ -1,7 +1,9 @@
 name: "PR: Remove preview on close"
 on:
   pull_request:
-    types: [closed]
+    types:
+      - closed
+      - locked
     branches:
       - main
       - dev
