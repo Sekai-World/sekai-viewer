@@ -55,7 +55,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
-            const prNumber = Number(fs.readFileSync('./NR'));
+            const prNumber = Number(fs.readFileSync('./build/NR'));
             const branch = `pr-${prNumber}`;
             const url = `${process.env.PR_DEPLOY_ORIGIN}/${branch}/`;
             github.issues.createComment({
