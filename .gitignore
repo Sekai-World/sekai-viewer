@@ -28,3 +28,6 @@ debug.log
 public/locales
 .eslintcache
 *.local
+
+# local files
+src/cdn_local.json
