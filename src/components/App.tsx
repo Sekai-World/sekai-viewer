@@ -49,6 +49,7 @@ import {
   LiveTv,
   Translate,
   Dns,
+  Folder,
 } from "@material-ui/icons";
 import { Alert, Skeleton } from "@material-ui/lab";
 import {
@@ -507,6 +508,12 @@ function App() {
           text: t("common:support"),
           icon: <MonetizationOn />,
           to: "/support",
+          disabled: false,
+        },
+        {
+          text: t("common:assetsBrowser"),
+          icon: <Folder />,
+          to: "/assetsBrowser",
           disabled: false,
         },
         {
@@ -1023,6 +1030,12 @@ function App() {
                 </Route>
                 <Route path="/honor">
                   <HonorList />
+                </Route>
+                <Route path="/assetsBrowser" exact>
+                  <AssetsBrowser />
+                </Route>
+                <Route path="/assetsBrowser/:path">
+                  <AssetsBrowser />
                 </Route>
               </Suspense>
             </Switch>
