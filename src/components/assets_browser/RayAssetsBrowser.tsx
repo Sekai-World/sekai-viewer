@@ -88,10 +88,13 @@ class RayAssetsBrowser extends AbstractBrowser {
       }
     });
 
+    assets.sort((a, b) => (a.filename > b.filename ? 1 : -1));
+
     paths = paths.sort();
 
     return (
       <>
+        <h3 hidden={paths.length === 0}>assetBrowser.paths: </h3>
         <Grid container spacing={2}>
           {paths.map((path) => {
             return (
@@ -128,6 +131,9 @@ class RayAssetsBrowser extends AbstractBrowser {
               </Grid>
             );
           })}
+        </Grid>
+        <h3 hidden={assets.length === 0}>assetBrowser.files: </h3>
+        <Grid container spacing={2}>
           {assets.map((asset) => {
             let previewArea: any;
             switch (asset.type) {

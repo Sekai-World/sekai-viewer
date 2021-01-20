@@ -198,7 +198,10 @@ class AssetModal extends React.Component<IProps, IState> {
     }
 
     return (
-      <div hidden={!this.state.open} style={{ height: "100%" }}>
+      <div
+        hidden={!this.state.open}
+        style={{ height: "100%", width: "100%", maxWidth: "75vh" }}
+      >
         <Modal
           aria-labelledby="transition-modal-title"
           aria-describedby="transition-modal-description"

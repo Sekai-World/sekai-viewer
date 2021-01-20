@@ -92,11 +92,11 @@ abstract class AbstractBrowser extends React.Component<IProps, IState> {
 
   render() {
     if (this.state.loading) {
-      return <>Loading</>;
+      return <>common.loading</>;
     }
 
     if (this.state.error) {
-      return <>Error: {this.state.error}</>;
+      return <>common.error: {this.state.error}</>;
     }
 
     let path = renderBreadcrumb(
@@ -106,7 +106,7 @@ abstract class AbstractBrowser extends React.Component<IProps, IState> {
 
     return (
       <>
-        Path:
+        assetBrowser.path:
         {path}
         <br></br>
         {this.renderAssets()}
