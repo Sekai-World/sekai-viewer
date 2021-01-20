@@ -28,7 +28,7 @@
   "dbCdns": [
     {
       "name": "github",
-      "url": "",
+      "url": "https://sekai-world.github.io/sekai-master-db-diff",
       "secret": null,
       "l10n_name": "dbCdn.default",
       "apiSchema": "split",
@@ -36,7 +36,7 @@
     },
     {
       "name": "china1",
-      "url": "",
+      "url": "https://sekai-json-1258184166.file.myqcloud.com/master",
       "secret": null,
       "l10n_name": "dbCdn.chinaMainland",
       "apiSchema": "split",
