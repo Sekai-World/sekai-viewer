@@ -38,8 +38,17 @@ class CdnSource {
         }
       });
 
+      this.cdns.dbCdns.forEach((cdn) => {
+        if (this.pointedDbCdn === cdn.name) {
+          this.selectedDbCdn = cdn;
+        }
+      });
+
       if (this.selectedCdn === null) {
         this.setPointedCdn(this.cdns.cdns[0]);
+      }
+      if (this.selectedDbCdn === null) {
+        this.setPointedDbCdn(this.cdns.dbCdns[0]);
       }
     } catch (e) {
       console.warn("going with default setting");
@@ -68,6 +77,7 @@ class CdnSource {
       };
 
       this.selectedCdn = this.cdns.cdns[0];
+      this.selectedDbCdn = this.cdns.dbCdns[0];
     }
   }
 
@@ -75,6 +85,10 @@ class CdnSource {
     if (this.selectedCdn?.url.search("assets/") && endpoint.search("assets/"))
       endpoint = endpoint.replace("/assets/", "");
     return `${this.selectedCdn?.url}/${endpoint}`.replaceAll("//", "/");
+  }
+
+  getRemoteDbUrl(endpoint: string) {
+    return `${this.selectedDbCdn?.url}/${endpoint}.json`;
   }
 
   getSelectedCdn(): Cdn | null {
@@ -114,6 +128,30 @@ class CdnSource {
           success(e);
         });
     });
+  }
+
+  async setPointedDbCdn(
+    cdn: Cdn,
+    secretUsername: string | null = null,
+    secretPassword: string | null = null
+  ) {
+    // If the CDN needs authorization in order to be used
+    if (cdn.secret) {
+      let result: boolean = await this.secretChallenge(
+        cdn,
+        secretUsername,
+        secretPassword
+      );
+
+      // If it's not authorized, it's useless to bring over the CDN
+      if (!result) {
+        throw new Error("invalid access");
+      }
+    }
+
+    this.selectedCdn = cdn;
+    this.pointedCdn = cdn.name;
+    localStorage.setItem("pointedDbCdn", cdn.name);
   }
 
   async setPointedCdn(
