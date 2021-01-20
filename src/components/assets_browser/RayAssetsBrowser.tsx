@@ -10,6 +10,7 @@ import {
   Grid,
 } from "@material-ui/core";
 import { Folder } from "@material-ui/icons";
+import { FileCode } from "mdi-material-ui";
 
 interface RayPathInformation extends AbstractPathInformation {
   path: string;
@@ -26,11 +27,32 @@ class RayAssetsBrowser extends AbstractBrowser {
     if (path.startsWith("/")) {
       path = path.substr(1);
     }
-    this.setState({ path: path });
+
+    this.state = {
+      path: path,
+      loading: false,
+      error: null,
+      pathInformation: [],
+      pathModal: "",
+      openModal: false,
+      typeSelectedAsset: "",
+    };
   }
 
   componentDidMount() {
     this.retreivePathInformation();
+  }
+
+  componentDidUpdate() {
+    let newPath: string =
+      this.props.history.location.pathname ?? "/assetsBrowser";
+    newPath = newPath.replace("/assetsBrowser", "").replaceAll("//", "/");
+    if (newPath.startsWith("/")) newPath = newPath.substr(1);
+    if (this.state.path !== newPath) {
+      this.retreivePathInformation(newPath);
+      return true;
+    }
+    return false;
   }
 
   retreivePathInformation(path: string = this.state.path) {
@@ -73,10 +95,15 @@ class RayAssetsBrowser extends AbstractBrowser {
         <Grid container spacing={2}>
           {paths.map((path) => {
             return (
-              <Grid item md={2} sm={3} xs={4}>
+              <Grid item md={2} sm={3} xs={6} key={path}>
                 <Card
                   onClick={() => {
-                    this.nextPath("./" + path);
+                    this.nextPath(
+                      "/assetsBrowser/" +
+                        this.state.path.replace("/assets/", "") +
+                        "/" +
+                        path
+                    );
                   }}
                 >
                   <CardActionArea>
@@ -117,12 +144,27 @@ class RayAssetsBrowser extends AbstractBrowser {
                   />
                 );
                 break;
+              default:
+                previewArea = (
+                  <div
+                    style={{
+                      paddingTop: "20px",
+                      height: "100%",
+                      maxHeight: "300px",
+                      alignContent: "center",
+                      textAlign: "center",
+                    }}
+                  >
+                    <FileCode />
+                  </div>
+                );
+                break;
             }
             return (
-              <Grid item md={2} sm={3} xs={4}>
+              <Grid item md={2} sm={3} xs={6} key={asset.filename}>
                 <Card
                   onClick={() => {
-                    this.nextPath("/assetsBrowser/" + asset.path);
+                    this.openFileModal(asset.path, asset.type);
                   }}
                 >
                   <CardActionArea>

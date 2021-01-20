@@ -1,9 +1,19 @@
-import React from "react";
+//import React from "react";
 import AbstractBrowser from "./AbstractBrowser";
 
 class PjSekAiBrowser extends AbstractBrowser {
   constructor(props: any) {
     super(props);
+
+    this.state = {
+      path: props.path,
+      pathInformation: [],
+      loading: true,
+      error: null,
+      pathModal: "",
+      openModal: false,
+      typeSelectedAsset: "",
+    };
   }
 
   retreivePathInformation(path: string = this.state.path) {

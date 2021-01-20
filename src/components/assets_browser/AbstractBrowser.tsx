@@ -3,6 +3,7 @@ import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import CdnSource from "../../utils/cdnSource";
+import AssetModal from "./AssetModal";
 
 const cdns = new CdnSource();
 
@@ -19,7 +20,10 @@ interface AbstractPathInformation {
 
 interface IState {
   path: string;
+  pathModal: string;
   pathInformation: AbstractPathInformation[];
+  typeSelectedAsset: string;
+  openModal: boolean;
   loading: boolean;
   error: string | null;
 }
@@ -61,6 +65,9 @@ abstract class AbstractBrowser extends React.Component<IProps, IState> {
       pathInformation: [],
       loading: true,
       error: null,
+      pathModal: "",
+      openModal: false,
+      typeSelectedAsset: "api",
     };
   }
 
@@ -72,7 +79,15 @@ abstract class AbstractBrowser extends React.Component<IProps, IState> {
   }
 
   nextPath(path: string) {
-    this.props.history.push(path);
+    this.props.history.push(path.replace("//", "/"));
+  }
+
+  openFileModal(path: string, type: string) {
+    this.setState({ path: path, openModal: true, typeSelectedAsset: type });
+  }
+
+  closeFileModal() {
+    this.setState({ openModal: false });
   }
 
   render() {
@@ -95,6 +110,12 @@ abstract class AbstractBrowser extends React.Component<IProps, IState> {
         {path}
         <br></br>
         {this.renderAssets()}
+        <AssetModal
+          openModal={this.state.openModal}
+          path={this.state.path}
+          type={this.state.typeSelectedAsset}
+          callbackCloseModal={this.closeFileModal.bind(this)}
+        />
       </>
     );
   }
