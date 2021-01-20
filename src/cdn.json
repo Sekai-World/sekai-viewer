@@ -1,17 +1,46 @@
 {
-    "cdns": [{
-        "name": "ray",
-        "url": "https://cdn.sekai.makoo.eu/assets/",
-        "secret": null,
-        "l10n_name": "TEST",
-        "apiSchema": ""
+  "cdns": [
+    {
+      "name": "ray",
+      "url": "https://cdn.sekai.makoo.eu/assets/",
+      "secret": null,
+      "l10n_name": "cdn.dummy",
+      "apiSchema": "ray",
+      "chinaMainland": false
     },
     {
-        "name": "pjsek.ai",
-        "url": "https://api.pjsek.ai/assets?path=",
-        "secret": null,
-        "l10n_name": "PJSEK_DOT_AI_CDN",
-        "apiSchema": "pjsekai"
-    }],
-    "dbCdns": []
+      "name": "pjsek.ai",
+      "url": "https://api.pjsek.ai/assets?path=",
+      "secret": null,
+      "l10n_name": "cdn.pjsekai",
+      "apiSchema": "pjsekai",
+      "chinaMainland": false
+    },
+    {
+      "name": "china1",
+      "url": "https://sekai-assets-1258184166.file.myqcloud.com/",
+      "secret": null,
+      "l10n_name": "cdn.chinaMainland",
+      "apiSchema": "none",
+      "chinaMainland": true
+    }
+  ],
+  "dbCdns": [
+    {
+      "name": "github",
+      "url": "",
+      "secret": null,
+      "l10n_name": "dbCdn.default",
+      "apiSchema": "split",
+      "chinaMainland": false
+    },
+    {
+      "name": "china1",
+      "url": "",
+      "secret": null,
+      "l10n_name": "dbCdn.chinaMainland",
+      "apiSchema": "split",
+      "chinaMainland": true
+    }
+  ]
 }
