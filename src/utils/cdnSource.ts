@@ -4,6 +4,7 @@ export interface Cdn {
   secret?: any;
   l10n_name: string;
   apiSchema: string;
+  chinaMainland: boolean | undefined;
 }
 
 export interface JsonCdnStruct {
@@ -51,15 +52,17 @@ class CdnSource {
             secret: null,
             l10n_name: "dummy",
             apiSchema: "none",
+            chinaMainland: false,
           },
         ],
         dbCdns: [
           {
             name: "prod",
-            url: "",
+            url: "https://sekai-world.github.io/sekai-master-db-diff",
             secret: null,
             l10n_name: "dummy",
             apiSchema: "github",
+            chinaMainland: false,
           },
         ],
       };
