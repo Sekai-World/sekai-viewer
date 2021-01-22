@@ -31,7 +31,7 @@ module.exports = function (app) {
   app.use(
     "/strapi",
     createProxyMiddleware({
-      target: "https://strapi.sekai.best",
+      target: "https://strapi-staging.sekai.best",
       changeOrigin: true,
       pathRewrite: {
         "^/strapi": "/",
