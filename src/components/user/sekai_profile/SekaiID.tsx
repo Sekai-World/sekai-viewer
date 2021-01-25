@@ -311,7 +311,7 @@ const SekaiID: React.FC<{}> = () => {
         <Slide
           media={
             <CardMedia
-              image={`${process.env.REACT_APP_FRONTEND_ASSET_BASE}/verify/step_1.png`}
+              image={`${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-best-assets/verify/step_1.png`}
               title="sekai id verify step 1"
               className={classes.media}
             />
@@ -324,7 +324,7 @@ const SekaiID: React.FC<{}> = () => {
         <Slide
           media={
             <CardMedia
-              image={`${process.env.REACT_APP_FRONTEND_ASSET_BASE}/verify/step_2.png`}
+              image={`${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-best-assets/verify/step_2.png`}
               title="sekai id verify step 2"
               className={classes.media}
             />
