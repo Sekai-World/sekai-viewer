@@ -53,6 +53,12 @@ export interface RegisterValues {
   languages: number[];
 }
 
+export interface SekaiCard {
+  cardId: number;
+  level: number;
+  masterRank: number;
+}
+
 export interface SekaiProfileModel {
   id: number;
   user: UserModel;
@@ -65,6 +71,7 @@ export interface SekaiProfileModel {
   eventGetUsed: number;
   eventHistorySync: boolean;
   dailySyncEnabled: boolean;
+  cardList: SekaiCard[] | null;
 }
 
 export interface SekaiCurrentEventModel {

@@ -2,6 +2,7 @@ import {
   AvatarModel,
   CommentAbuseReason,
   CommentModel,
+  SekaiCard,
   TranslationModel,
 } from "./../strapi-model.d";
 import Axios from "axios";
@@ -248,6 +249,11 @@ export function useStrapi(token?: string) {
       async (eventId: number) =>
         (await axios.post("/sekai-profile-event-records/record", { eventId }))
           .data,
+      [axios]
+    ),
+    postSekaiCardList: useCallback(
+      async (id: number, cardList: SekaiCard[]) =>
+        (await axios.post(`/sekai-profiles/${id}/cardlist`, cardList)).data,
       [axios]
     ),
     getAnnouncements: useCallback(

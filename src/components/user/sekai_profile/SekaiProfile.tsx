@@ -14,6 +14,7 @@ import { useLayoutStyles } from "../../../styles/layout";
 import SekaiEventRecord from "./SekaiEventRecord";
 import SekaiID from "./SekaiID";
 import SekaiUserDeck from "./SekaiUserDeck";
+import SekaiUserImportMember from "./SekaiUserImportMember";
 
 const SekaiProfile = () => {
   const layoutClasses = useLayoutStyles();
@@ -25,6 +26,7 @@ const SekaiProfile = () => {
   const [isUserDeckOpen, setIsUserDeckOpen] = useState(false);
   const [isUserEventOpen, setIsUserEventOpen] = useState(false);
   // const [isSekaiIDOpen, setIsSekaiIDOpen] = useState(false);
+  const [isUserMemberOpen, setIsUserMemberOpen] = useState(false);
 
   return (
     <Fragment>
@@ -39,6 +41,7 @@ const SekaiProfile = () => {
             <Accordion
               expanded={isUserEventOpen}
               onChange={(e, state) => setIsUserEventOpen(state)}
+              TransitionProps={{ unmountOnExit: true }}
             >
               <AccordionSummary expandIcon={<ExpandMore />}>
                 <Typography className={layoutClasses.header}>
@@ -52,6 +55,7 @@ const SekaiProfile = () => {
             <Accordion
               expanded={isUserDeckOpen}
               onChange={(e, state) => setIsUserDeckOpen(state)}
+              TransitionProps={{ unmountOnExit: true }}
             >
               <AccordionSummary expandIcon={<ExpandMore />}>
                 <Typography className={layoutClasses.header}>
@@ -63,6 +67,20 @@ const SekaiProfile = () => {
                   userDecks={sekaiProfile.sekaiUserProfile.userDecks}
                   userCards={sekaiProfile.sekaiUserProfile.userCards}
                 />
+              </AccordionDetails>
+            </Accordion>
+            <Accordion
+              expanded={isUserMemberOpen}
+              onChange={(e, state) => setIsUserMemberOpen(state)}
+              TransitionProps={{ unmountOnExit: true }}
+            >
+              <AccordionSummary expandIcon={<ExpandMore />}>
+                <Typography className={layoutClasses.header}>
+                  {t("user:profile.title.import_card")}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <SekaiUserImportMember />
               </AccordionDetails>
             </Accordion>
           </Fragment>
