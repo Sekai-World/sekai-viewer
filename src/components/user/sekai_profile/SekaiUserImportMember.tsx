@@ -26,10 +26,11 @@ import { ColDef, DataGrid, RowModel } from "@material-ui/data-grid";
 import { createWorker, createScheduler } from "tesseract.js";
 import { useCachedData } from "../../../utils";
 import { ICardInfo } from "../../../types";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { UserContext } from "../../../context";
 import { useStrapi } from "../../../utils/apiClient";
 import { Alert } from "@material-ui/lab";
+import { useLayoutStyles } from "../../../styles/layout";
 
 function initCOS(N: number = 64) {
   const entries = 2 * N * (N - 1);
@@ -100,13 +101,13 @@ function distance(a: string, b: string) {
 }
 
 const SekaiUserImportMember = () => {
-  // const layoutClasses = useLayoutStyles();
+  const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const { jwtToken, sekaiProfile, updateSekaiProfile } = useContext(
     UserContext
   )!;
-  const { postSekaiCardList } = useStrapi(jwtToken);
+  const { putSekaiCardList } = useStrapi(jwtToken);
 
   const [cards] = useCachedData<ICardInfo>("cards");
 
@@ -117,10 +118,11 @@ const SekaiUserImportMember = () => {
       full: string[];
       hashResults: [string, number][];
       distances: number[];
-      level: number;
+      power: number;
       masterRank: number;
       cardIds: number[];
       useIndex: number;
+      trained: boolean;
     })[]
   >([]);
   const [ocrEnable, setOcrEnabled] = useState(false);
@@ -395,7 +397,7 @@ const SekaiUserImportMember = () => {
 
           // card thumbnail segmentation
           const cardThumbnails: MarvinImage[] = [];
-          const cardLevels: MarvinImage[] = [];
+          const cardPowers: MarvinImage[] = [];
           const cardMasterRanks: MarvinImage[] = [];
           const cardHashes: string[] = [];
           const len = Math.max(avgWidth, avgHeight) + 4;
@@ -422,18 +424,16 @@ const SekaiUserImportMember = () => {
               const hashed = hash(cropped.data, 32).join("");
               cardHashes.push(hashed);
 
-              const levelText = new MarvinImage();
-              Marvin.crop(card, levelText, 3, len - 27, len - 50, 27);
-              Marvin.blackAndWhite(levelText.clone(), levelText, 10);
-              Marvin.invertColors(levelText.clone(), levelText);
-              cardLevels.push(levelText);
+              const _card = card.clone();
+              Marvin.blackAndWhite(_card.clone(), _card, 10);
+              Marvin.invertColors(_card.clone(), _card);
+              const powerText = new MarvinImage();
+              Marvin.crop(_card, powerText, 3, len - 27, len - 50, 27);
+              cardPowers.push(powerText);
 
               const masterRank = new MarvinImage();
-              Marvin.crop(card, masterRank, len - 36, len - 36, 26, 26);
-              Marvin.blackAndWhite(masterRank.clone(), masterRank, 10);
-              Marvin.invertColors(masterRank.clone(), masterRank);
+              Marvin.crop(_card, masterRank, len - 36, len - 36, 26, 26);
               cardMasterRanks.push(masterRank);
-              // Marvin.crop(card.clone(), card, len - 36, len - 36, 26, 26);
             });
           });
 
@@ -475,7 +475,7 @@ const SekaiUserImportMember = () => {
 
           // console.log(hashResults);
 
-          let ocrLevelResults: string[] = [];
+          let ocrPowerResults: string[] = [];
           let ocrMasterRankResults: string[] = [];
           if (ocrEnable) {
             const workers = Array.from({ length: 4 }).map(() => createWorker());
@@ -488,17 +488,17 @@ const SekaiUserImportMember = () => {
             }
 
             const levelResults = await Promise.all(
-              cardLevels.map((levelText) => {
+              cardPowers.map((powerText) => {
                 // create pseudo canvas
                 const _canvas = document.createElement("canvas");
-                _canvas.width = levelText.getWidth();
-                _canvas.height = levelText.getHeight();
+                _canvas.width = powerText.getWidth();
+                _canvas.height = powerText.getHeight();
                 const _context = _canvas.getContext("2d");
-                _context?.putImageData(levelText.loadImageData(), 0, 0);
+                _context?.putImageData(powerText.loadImageData(), 0, 0);
                 return scheduler.addJob("recognize", _canvas.toDataURL());
               })
             );
-            ocrLevelResults = levelResults.map((r) => r.data.text);
+            ocrPowerResults = levelResults.map((r) => r.data.text);
 
             const mrResults = await Promise.all(
               cardMasterRanks.map((mrText) => {
@@ -515,7 +515,7 @@ const SekaiUserImportMember = () => {
 
             scheduler.terminate();
           }
-          // console.log(ocrLevelResults);
+          // console.log(ocrPowerResults);
           // console.log(ocrMasterRankResults);
 
           const _rows = cardDataURLs.map((dataURL, idx) => ({
@@ -531,9 +531,8 @@ const SekaiUserImportMember = () => {
             distances: hashResults[idx].length
               ? hashResults[idx].map((result) => result[1])
               : [0],
-            level: ocrLevelResults.length
-              ? Number(ocrLevelResults[idx].replace(/\D*(\d{1,2}).*/, "$1")) ||
-                1
+            power: ocrPowerResults.length
+              ? Number(ocrPowerResults[idx].replace(/^(\d{4,5}).*/, "$1")) || 1
               : 1,
             masterRank: ocrMasterRankResults.length
               ? Number(ocrMasterRankResults[idx]) || 0
@@ -547,8 +546,11 @@ const SekaiUserImportMember = () => {
                 )
               : [-1],
             useIndex: 0,
+            trained:
+              !!hashResults[idx].length &&
+              hashResults[idx][0][0].includes("after_training"),
           }));
-          // console.log(_rows);
+          console.log(_rows);
           setRows(_rows.filter((row) => row.distances[0] !== 64));
 
           setIsUploading(false);
@@ -558,12 +560,12 @@ const SekaiUserImportMember = () => {
     [cards, ocrEnable]
   );
 
-  const handleLevelChange = useCallback(
+  const handlePowerChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>, row: RowModel) => {
       const { id } = row;
       const idx = rows.findIndex((row) => row.id === id);
       const elem = rows[idx];
-      elem.level = Number(e.target.value);
+      elem.power = Number(e.target.value);
 
       setRows([...rows.slice(0, idx), elem, ...rows.slice(idx + 1)]);
     },
@@ -594,9 +596,21 @@ const SekaiUserImportMember = () => {
     [rows]
   );
 
+  const handleTrainedChange = useCallback(
+    (checked: boolean, row: RowModel) => {
+      const { id } = row;
+      const idx = rows.findIndex((row) => row.id === id);
+      const elem = rows[idx];
+      elem.trained = checked;
+
+      setRows([...rows.slice(0, idx), elem, ...rows.slice(idx + 1)]);
+    },
+    [rows]
+  );
+
   const columns = useMemo(
     (): ColDef[] => [
-      { field: "id", headerName: "ID", width: 80 },
+      { field: "id", headerName: t("common:id"), width: 80 },
       {
         field: "crop",
         headerName: t("user:profile.import_card.table.row.cropped_image"),
@@ -622,26 +636,20 @@ const SekaiUserImportMember = () => {
             (card) => card.id === (params.getValue("cardIds") as number[])[idx]
           )!;
           return card ? (
-            <Link
-              to={`/card/${card.id}`}
-              target="_blank"
-              className={interactiveClasses.noDecoration}
-            >
-              <Grid container direction="column" alignItems="center">
-                <img
-                  src={(params.getValue("full") as string[])[idx]}
-                  style={{ height: "64px", width: "64px" }}
-                  alt={`${(
-                    (1 - (params.getValue("distances") as number[])[idx] / 64) *
-                    100
-                  ).toFixed(1)}%`}
-                />
-                <Typography>{`${(
+            <Grid container direction="column" alignItems="center">
+              <img
+                src={(params.getValue("full") as string[])[idx]}
+                style={{ height: "64px", width: "64px" }}
+                alt={`${(
                   (1 - (params.getValue("distances") as number[])[idx] / 64) *
                   100
-                ).toFixed(1)}%`}</Typography>
-              </Grid>
-            </Link>
+                ).toFixed(1)}%`}
+              />
+              <Typography>{`${(
+                (1 - (params.getValue("distances") as number[])[idx] / 64) *
+                100
+              ).toFixed(1)}%`}</Typography>
+            </Grid>
           ) : (
             <Fragment></Fragment>
           );
@@ -649,21 +657,18 @@ const SekaiUserImportMember = () => {
         align: "center",
       },
       {
-        field: "level",
-        headerName: t("user:profile.import_card.table.row.card_level"),
-        width: 150,
+        field: "power",
+        headerName: t("user:profile.import_card.table.row.card_power"),
+        width: 100,
         renderCell(params) {
           return (
             <Input
               value={params.value as string}
               type="number"
               inputMode="numeric"
-              inputProps={{
-                min: 1,
-                max: 60,
-              }}
+              fullWidth
               onChange={(e) =>
-                handleLevelChange(
+                handlePowerChange(
                   e as React.ChangeEvent<HTMLInputElement>,
                   params.row
                 )
@@ -675,7 +680,7 @@ const SekaiUserImportMember = () => {
       {
         field: "masterRank",
         headerName: t("user:profile.import_card.table.row.card_master_rank"),
-        width: 150,
+        width: 120,
         renderCell(params) {
           return (
             <Input
@@ -691,6 +696,23 @@ const SekaiUserImportMember = () => {
                   e as React.ChangeEvent<HTMLInputElement>,
                   params.row
                 )
+              }
+            />
+          );
+        },
+      },
+      {
+        field: "trained",
+        headerName: t(
+          "user:profile.import_card.table.row.card_training_status"
+        ),
+        width: 120,
+        renderCell(params) {
+          return (
+            <Switch
+              checked={params.value as boolean}
+              onChange={(e, checked) =>
+                handleTrainedChange(checked, params.row)
               }
             />
           );
@@ -746,28 +768,42 @@ const SekaiUserImportMember = () => {
       },
     ],
     [
-      cards,
-      handleLevelChange,
-      handleMasterRankChange,
-      handleUseIndexChange,
-      interactiveClasses.noDecoration,
-      rows,
       t,
+      rows,
+      cards,
+      handlePowerChange,
+      handleMasterRankChange,
+      handleTrainedChange,
+      handleUseIndexChange,
     ]
   );
 
   const handleSubmitCardList = useCallback(async () => {
+    if (!sekaiProfile) return;
     setPostingCardList(true);
     try {
       const cardList = rows
-        .map((row) => ({
-          cardId: row.cardIds[row.useIndex],
-          level: row.level,
-          masterRank: row.masterRank,
-        }))
+        .map((row) => {
+          const cardId = row.cardIds[row.useIndex];
+          return {
+            cardId,
+            power: row.power,
+            masterRank: row.masterRank,
+            trained: row.trained,
+          };
+        })
         .sort((a, b) => a.cardId - b.cardId);
 
-      await postSekaiCardList(sekaiProfile!.id, cardList);
+      await putSekaiCardList(sekaiProfile.id, cardList);
+
+      if (sekaiProfile.cardList && sekaiProfile.cardList.length) {
+        sekaiProfile.cardList.forEach((card) => {
+          if (!cardList.find((_card) => _card.cardId === card.cardId)) {
+            cardList.push(card);
+          }
+        });
+        cardList.sort((a, b) => a.cardId - b.cardId);
+      }
 
       updateSekaiProfile(
         Object.assign({}, sekaiProfile, {
@@ -782,10 +818,13 @@ const SekaiUserImportMember = () => {
       setIsError(true);
     }
     setPostingCardList(false);
-  }, [postSekaiCardList, rows, sekaiProfile, t, updateSekaiProfile]);
+  }, [putSekaiCardList, rows, sekaiProfile, t, updateSekaiProfile]);
 
   return (
-    <Fragment>
+    <Grid container direction="column">
+      <Alert severity="warning" className={layoutClasses.alert}>
+        {t("common:betaIndicator")}
+      </Alert>
       <Grid container spacing={1}>
         <Grid item xs={12}>
           <Grid container>
@@ -836,9 +875,14 @@ const SekaiUserImportMember = () => {
           <Grid container>
             <Grid item>
               <Tooltip
-                title={t(
-                  "user:profile.import_card.enable_ocr_tooltip"
-                ).toString()}
+                title={
+                  <Typography
+                    variant="caption"
+                    style={{ whiteSpace: "pre-line" }}
+                  >
+                    {t("user:profile.import_card.enable_ocr_tooltip")}
+                  </Typography>
+                }
                 arrow
               >
                 <FormControl>
@@ -917,7 +961,7 @@ const SekaiUserImportMember = () => {
           {successMsg}
         </Alert>
       </Snackbar>
-    </Fragment>
+    </Grid>
   );
 };
 
