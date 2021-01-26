@@ -11,10 +11,13 @@ import { useTranslation } from "react-i18next";
 import { UserContext } from "../../../context";
 // import { useInteractiveStyles } from "../../../styles/interactive";
 import { useLayoutStyles } from "../../../styles/layout";
-import SekaiEventRecord from "./SekaiEventRecord";
-import SekaiID from "./SekaiID";
-import SekaiUserDeck from "./SekaiUserDeck";
-import SekaiUserImportMember from "./SekaiUserImportMember";
+const SekaiEventRecord = React.lazy(() => import("./SekaiEventRecord"));
+const SekaiID = React.lazy(() => import("./SekaiID"));
+const SekaiUserCardList = React.lazy(() => import("./SekaiUserCardList"));
+const SekaiUserDeck = React.lazy(() => import("./SekaiUserDeck"));
+const SekaiUserImportMember = React.lazy(
+  () => import("./SekaiUserImportMember")
+);
 
 const SekaiProfile = () => {
   const layoutClasses = useLayoutStyles();
@@ -27,6 +30,7 @@ const SekaiProfile = () => {
   const [isUserEventOpen, setIsUserEventOpen] = useState(false);
   // const [isSekaiIDOpen, setIsSekaiIDOpen] = useState(false);
   const [isUserMemberOpen, setIsUserMemberOpen] = useState(false);
+  const [isUserImportMemberOpen, setIsUserImportMemberOpen] = useState(false);
 
   return (
     <Fragment>
@@ -41,7 +45,6 @@ const SekaiProfile = () => {
             <Accordion
               expanded={isUserEventOpen}
               onChange={(e, state) => setIsUserEventOpen(state)}
-              TransitionProps={{ unmountOnExit: true }}
             >
               <AccordionSummary expandIcon={<ExpandMore />}>
                 <Typography className={layoutClasses.header}>
@@ -55,7 +58,6 @@ const SekaiProfile = () => {
             <Accordion
               expanded={isUserDeckOpen}
               onChange={(e, state) => setIsUserDeckOpen(state)}
-              TransitionProps={{ unmountOnExit: true }}
             >
               <AccordionSummary expandIcon={<ExpandMore />}>
                 <Typography className={layoutClasses.header}>
@@ -72,7 +74,19 @@ const SekaiProfile = () => {
             <Accordion
               expanded={isUserMemberOpen}
               onChange={(e, state) => setIsUserMemberOpen(state)}
-              TransitionProps={{ unmountOnExit: true }}
+            >
+              <AccordionSummary expandIcon={<ExpandMore />}>
+                <Typography className={layoutClasses.header}>
+                  {t("user:profile.title.card_list")}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <SekaiUserCardList />
+              </AccordionDetails>
+            </Accordion>
+            <Accordion
+              expanded={isUserImportMemberOpen}
+              onChange={(e, state) => setIsUserImportMemberOpen(state)}
             >
               <AccordionSummary expandIcon={<ExpandMore />}>
                 <Typography className={layoutClasses.header}>
