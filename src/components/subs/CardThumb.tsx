@@ -15,8 +15,14 @@ import {
 } from "../../utils/resources";
 
 export const CardThumb: React.FC<
-  { cardId: number; trained?: boolean } & React.HTMLProps<HTMLDivElement>
-> = ({ cardId, trained = false, onClick, style }) => {
+  {
+    cardId: number;
+    trained?: boolean;
+    level?: number;
+    masterRank?: number;
+    power?: number;
+  } & React.HTMLProps<HTMLDivElement>
+> = ({ cardId, trained = false, onClick, style, level, masterRank, power }) => {
   const skeleton = CardThumbSkeleton({});
 
   const classes = useSvgStyles();
@@ -46,6 +52,43 @@ export const CardThumb: React.FC<
     <div className={classes.svg} onClick={onClick} style={style}>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 156 156">
         <image href={cardThumbImg} x="8" y="8" height="140" width="140" />
+        {/* level */}
+        {(level || power) && (
+          <rect
+            x="0"
+            y="119"
+            width="156"
+            height="35"
+            fill="black"
+            fillOpacity="0.8"
+          />
+        )}
+        {level && (
+          <text
+            x="15"
+            y="144"
+            width="156"
+            height="30"
+            fontSize="28"
+            fontWeight="lighter"
+            fill="white"
+          >
+            Lv.{level}
+          </text>
+        )}
+        {power && (
+          <text
+            x="15"
+            y="144"
+            width="156"
+            height="30"
+            fontSize="28"
+            fontWeight="lighter"
+            fill="white"
+          >
+            {power}
+          </text>
+        )}
         {/* frame */}
         <image
           href={cardThumbFrameMap[String(card.rarity)]}
@@ -57,8 +100,8 @@ export const CardThumb: React.FC<
         {/* attr */}
         <image
           href={attrIconMap[card.attr]}
-          x="0"
-          y="0"
+          x="1"
+          y="1"
           width="35"
           height="35"
         />
@@ -67,12 +110,22 @@ export const CardThumb: React.FC<
           <image
             key={`card-rarity-${i}`}
             href={rarityIcon}
-            x={i * 22 + 8}
-            y="124"
-            width="22"
-            height="22"
+            x={i * 24 + 10}
+            y={level || power ? "87" : "124"}
+            width="28"
+            height="28"
           />
         ))}
+        {/* masterRank */}
+        {masterRank && (
+          <image
+            href={cardMasterRankSmallMap[String(masterRank)]}
+            x="97"
+            y="93"
+            width="60"
+            height="60"
+          ></image>
+        )}
       </svg>
     </div>
   ) : (
