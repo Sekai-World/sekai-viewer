@@ -110,8 +110,8 @@ export const CardThumb: React.FC<
           <image
             key={`card-rarity-${i}`}
             href={rarityIcon}
-            x={i * 24 + 10}
-            y={level || power ? "87" : "124"}
+            x={i * 26 + 10}
+            y={level || power ? "87" : "118"}
             width="28"
             height="28"
           />
