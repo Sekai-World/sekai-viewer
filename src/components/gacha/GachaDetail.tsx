@@ -415,26 +415,26 @@ const GachaDetailPage: React.FC<{}> = () => {
           ret.push({
             src: gachaBackground,
             alt: "background",
-            downloadUrl: gachaBackground,
+            downloadUrl: gachaBackground.replace(".webp", ".png"),
           });
         }
         if (gachaImageNameMap[gacha.id].feature) {
           ret.push({
             src: gachaImage,
             alt: "feature",
-            downloadUrl: gachaImage,
+            downloadUrl: gachaImage.replace(".webp", ".png"),
           });
         }
       } else {
         ret.push({
           src: gachaBackground,
           alt: "background",
-          downloadUrl: gachaBackground,
+          downloadUrl: gachaBackground.replace(".webp", ".png"),
         });
         ret.push({
           src: gachaImage,
           alt: "feature",
-          downloadUrl: gachaImage,
+          downloadUrl: gachaImage.replace(".webp", ".png"),
         });
       }
 

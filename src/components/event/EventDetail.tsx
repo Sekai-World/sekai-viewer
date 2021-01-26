@@ -214,12 +214,12 @@ const EventDetail: React.FC<{}> = () => {
             {
               src: eventBackground,
               alt: "event background",
-              downloadUrl: eventBackground,
+              downloadUrl: eventBackground.replace(".webp", ".png"),
             },
             {
               src: eventCharacter,
               alt: "event character",
-              downloadUrl: eventCharacter,
+              downloadUrl: eventCharacter.replace(".webp", ".png"),
             },
           ]
         : [],
