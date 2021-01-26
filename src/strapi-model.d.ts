@@ -55,8 +55,9 @@ export interface RegisterValues {
 
 export interface SekaiCard {
   cardId: number;
-  level: number;
+  power: number;
   masterRank: number;
+  trained: boolean;
 }
 
 export interface SekaiProfileModel {

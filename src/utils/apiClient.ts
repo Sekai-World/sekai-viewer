@@ -251,9 +251,19 @@ export function useStrapi(token?: string) {
           .data,
       [axios]
     ),
-    postSekaiCardList: useCallback(
+    putSekaiCardList: useCallback(
       async (id: number, cardList: SekaiCard[]) =>
-        (await axios.post(`/sekai-profiles/${id}/cardlist`, cardList)).data,
+        (await axios.put(`/sekai-profiles/${id}/cardlist`, cardList)).data,
+      [axios]
+    ),
+    deleteSekaiCardList: useCallback(
+      async (id: number, cardIds: number[]) => {
+        await axios.delete(`/sekai-profiles/${id}/cardlist`, {
+          params: {
+            cards: cardIds,
+          },
+        });
+      },
       [axios]
     ),
     getAnnouncements: useCallback(
