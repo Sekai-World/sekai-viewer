@@ -61,6 +61,7 @@ import cardMasterRankS1 from "../assets/common/master_rank/masterRank_S_1.png";
 import cardMasterRankS2 from "../assets/common/master_rank/masterRank_S_2.png";
 import cardMasterRankS3 from "../assets/common/master_rank/masterRank_S_3.png";
 import cardMasterRankS4 from "../assets/common/master_rank/masterRank_S_4.png";
+import cardMasterRankS5 from "../assets/common/master_rank/masterRank_S_5.png";
 
 import LogoLightSound from "../assets/common/logol_outline/logo_light_sound.png";
 import LogoIdol from "../assets/common/logol_outline/logo_idol.png";
@@ -154,6 +155,7 @@ export const cardMasterRankSmallMap: { [key: string]: string } = {
   2: cardMasterRankS2,
   3: cardMasterRankS3,
   4: cardMasterRankS4,
+  5: cardMasterRankS5,
 };
 
 export const UnitLogoMap: { [key: string]: string } = {
