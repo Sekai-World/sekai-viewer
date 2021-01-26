@@ -86,7 +86,7 @@ const TableMe: React.FC<Props> = (props: Props) => {
 
   const columns = useMemo(
     (): ColDef[] => [
-      { field: "id", headerName: "ID", width: 80 },
+      { field: "id", headerName: t("common:id"), width: 80 },
       {
         field: "isFin",
         headerName: "Status",

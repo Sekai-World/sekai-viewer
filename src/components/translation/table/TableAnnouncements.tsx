@@ -106,7 +106,7 @@ const TableMe: React.FC<Props> = (props: Props) => {
         sortable: false,
         filterable: false,
       },
-      { field: "id", headerName: "ID", width: 80 },
+      { field: "id", headerName: t("common:id"), width: 80 },
       {
         field: "title",
         headerName: t("announcement:title"),
