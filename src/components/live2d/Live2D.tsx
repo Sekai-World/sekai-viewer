@@ -27,7 +27,6 @@ import {
   Typography,
   useTheme,
 } from "@material-ui/core";
-import modelList from "./modelList.json";
 import { useTranslation } from "react-i18next";
 import { useLayoutStyles } from "../../styles/layout";
 import {
@@ -43,6 +42,7 @@ import { saveAs } from "file-saver";
 import fscreen from "fscreen";
 // @ts-ignore
 import { CanvasRecorder } from "@tawaship/canvas-recorder";
+import { useLive2dModelList } from "../../utils/apiClient";
 
 const Live2DView: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
@@ -73,6 +73,8 @@ const Live2DView: React.FC<{}> = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement>();
   // const [currentWidth, setCurrentWidth] = useState(0);
   // const [currentStyleWidth, setCurrentStyleWidth] = useState(0);
+
+  const { modelList } = useLive2dModelList();
 
   const wrap = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -477,7 +479,7 @@ const Live2DView: React.FC<{}> = () => {
           <Autocomplete
             value={selectedModelName}
             onChange={(e, v) => setSelectedModelName(v)}
-            options={modelList}
+            options={modelList?.sort() || []}
             getOptionLabel={(option) => option}
             renderInput={(props) => (
               <TextField {...props} label={t("live2d:select.model")} />
