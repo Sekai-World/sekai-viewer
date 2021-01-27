@@ -67,6 +67,8 @@ export function useRefState<S>(
   return [state, stateRef, setState];
 }
 
+const cdns = new CdnSource();
+
 export function useCachedData<
   T extends
     | IGachaInfo
@@ -110,13 +112,7 @@ export function useCachedData<
   // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
 
   const fetchCached = useCallback(async (name: string) => {
-    const { data }: { data: T[] } = await Axios.get(
-      `${
-        window.isChinaMainland
-          ? process.env.REACT_APP_JSON_DOMAIN_CN + "/master"
-          : "https://sekai-world.github.io/sekai-master-db-diff"
-      }/${name}.json`
-    );
+    const { data }: { data: T[] } = await Axios.get(cdns.getRemoteDbUrl(name));
     return data;
   }, []);
 
