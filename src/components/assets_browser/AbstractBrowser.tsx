@@ -28,6 +28,8 @@ interface IState {
   error: string | null;
 }
 
+const homePath: string = "HOME";
+
 function renderBreadcrumb(assetPath: string, callback: any) {
   let splittedPath: string[] = assetPath.split("/");
   let temp: string = "";
@@ -35,24 +37,30 @@ function renderBreadcrumb(assetPath: string, callback: any) {
     let tempElement: string | undefined = splittedPath.pop();
     assetPath = assetPath.replace(tempElement + "/", "");
   }
-  let out: any = splittedPath.map((entry) => {
-    temp = temp + "/" + entry;
-    let isLast = assetPath.endsWith(entry);
-    return (
-      <Link
-        style={{
-          textDecoration: "none",
-          color: isLast ? "textPrimary" : "inherit",
-        }}
-        to={"/assetsBrowser" + temp + "/"}
-        //onClick={() => callback(temp)}
-        aria-current={isLast ? "page" : undefined}
-      >
-        {entry}
-      </Link>
-    );
-  });
-  return <Breadcrumbs aria-label="breadcrumb">{out}</Breadcrumbs>;
+  splittedPath.unshift(homePath);
+  return (
+    <Breadcrumbs aria-label="breadcrumb">
+      {splittedPath.map((entry) => {
+        let isHome = entry.indexOf(homePath) > -1;
+        temp = isHome ? temp : temp + "/" + entry;
+        console.log(temp);
+        let isLast = assetPath.endsWith(entry);
+        return (
+          <Link
+            style={{
+              textDecoration: "none",
+              color: "inherit",
+            }}
+            to={isHome ? `/assetsBrowser/` : `/assetsBrowser${temp}/`}
+            //onClick={() => callback(temp)}
+            aria-current={isLast ? "page" : undefined}
+          >
+            {entry}
+          </Link>
+        );
+      })}
+    </Breadcrumbs>
+  );
 }
 abstract class AbstractBrowser extends React.Component<IProps, IState> {
   protected cdns: CdnSource = cdns;
@@ -74,12 +82,10 @@ abstract class AbstractBrowser extends React.Component<IProps, IState> {
   abstract renderAssets(): any;
   abstract retreivePathInformation(path: string): void;
 
-  selectAsset(assetPath: string) {
-    //
-  }
-
   nextPath(path: string) {
-    this.props.history.push(path.replace("//", "/"));
+    path = path.replace(homePath, "").replace("//", "/");
+    console.log("next path", path);
+    this.props.history.push(path);
   }
 
   openFileModal(path: string, type: string) {

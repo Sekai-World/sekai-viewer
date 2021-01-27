@@ -42,5 +42,15 @@
       "apiSchema": "split",
       "chinaMainland": true
     }
+  ],
+  "changelogCdns": [
+    {
+      "name": "prod",
+      "url": "https://api.pjsek.ai/changelogs",
+      "secret": null,
+      "l10n_name": "changelogCdn.pjsekai",
+      "apiSchema": "pjsekai",
+      "chinaMainland": false
+    }
   ]
 }

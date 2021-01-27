@@ -30,4 +30,4 @@ public/locales
 *.local
 
 # local files
-src/cdn_local.json
+src/*cdn_local.json

@@ -38,6 +38,7 @@
     "react-dom": "^16.14.0",
     "react-gtm-module": "^2.0.11",
     "react-i18next": "^11.8.5",
+    "react-json-view": "^1.20.4",
     "react-jwt": "^1.1.0",
     "react-markdown-editor-lite": "^1.2.4",
     "react-password-strength-bar": "^0.3.2",

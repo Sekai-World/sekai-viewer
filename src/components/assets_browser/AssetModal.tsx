@@ -5,6 +5,7 @@ import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
 import CdnSource from "../../utils/cdnSource";
 import { Button, Paper } from "@material-ui/core";
+import ReactJson from "react-json-view";
 
 interface IProps {
   openModal: boolean;
@@ -137,15 +138,34 @@ class AssetModal extends React.Component<IProps, IState> {
           fetch(cdns.getRemoteAssetUrl(this.state.path))
             .then((r) => r.text())
             .then((data) => {
-              let testJson = JSON.parse(data);
-              if (testJson) {
+              let testJson;
+              try {
+                testJson = JSON.parse(data);
+              } catch (e) {
+                console.error(e);
+                testJson = data;
+              }
+              if (typeof testJson !== "string") {
                 if (testJson.response_data === undefined) {
-                  this.setState({ loading: false, contents: data, path: path });
+                  this.setState({
+                    loading: false,
+                    contents: (
+                      <ReactJson
+                        src={testJson}
+                        style={{ backgroundColor: "lightgray" }}
+                      />
+                    ),
+                    path: path,
+                  });
                 } else {
                   this.setState({ loading: true, path: path });
                 }
               } else {
-                this.setState({ loading: false, contents: data, path: path });
+                this.setState({
+                  loading: false,
+                  contents: <pre>{data}</pre>,
+                  path: path,
+                });
               }
             })
             .catch((err) =>
@@ -189,7 +209,13 @@ class AssetModal extends React.Component<IProps, IState> {
         <div>
           <div style={style}>
             <h3>assetPreview</h3>
-            {this.state.contents}
+            <div
+              style={{
+                textAlign: this.props.type === "unknown" ? "left" : "justify",
+              }}
+            >
+              {this.state.contents}
+            </div>
           </div>
           <br />
           <Button onClick={this.handleClose.bind(this)}>Close</Button>

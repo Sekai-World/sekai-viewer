@@ -10,6 +10,7 @@ export interface Cdn {
 export interface JsonCdnStruct {
   cdns: Cdn[];
   dbCdns: Cdn[];
+  changelogCdns: Cdn[];
 }
 
 class CdnSource {
@@ -19,11 +20,15 @@ class CdnSource {
 
   private pointedDbCdn: string | null;
   private selectedDbCdn: Cdn | null;
+  private pointedChangelogCdn: string | null;
+  private selectedChangelogCdn: Cdn | null;
   constructor() {
     this.pointedCdn = localStorage.getItem("pointedCdn");
     this.selectedCdn = null;
     this.pointedDbCdn = localStorage.getItem("pointedDbCdn");
     this.selectedDbCdn = null;
+    this.pointedChangelogCdn = localStorage.getItem("pointedChangelogCdn");
+    this.selectedChangelogCdn = null;
 
     try {
       try {
@@ -44,11 +49,20 @@ class CdnSource {
         }
       });
 
+      this.cdns.changelogCdns.forEach((cdn) => {
+        if (this.pointedChangelogCdn === cdn.name) {
+          this.selectedChangelogCdn = cdn;
+        }
+      });
+
       if (this.selectedCdn === null) {
         this.setPointedCdn(this.cdns.cdns[0]);
       }
       if (this.selectedDbCdn === null) {
         this.setPointedDbCdn(this.cdns.dbCdns[0]);
+      }
+      if (this.selectedChangelogCdn === null) {
+        this.setPointedChangelogCdn(this.cdns.changelogCdns[0]);
       }
     } catch (e) {
       console.warn("going with default setting");
@@ -74,10 +88,21 @@ class CdnSource {
             chinaMainland: false,
           },
         ],
+        changelogCdns: [
+          {
+            name: "prod",
+            url: "https://api.pjsek.ai/changelogs",
+            secret: null,
+            l10n_name: "changelogCdn.pjsekai",
+            apiSchema: "pjsekai",
+            chinaMainland: false,
+          },
+        ],
       };
 
       this.selectedCdn = this.cdns.cdns[0];
       this.selectedDbCdn = this.cdns.dbCdns[0];
+      this.selectedChangelogCdn = this.cdns.changelogCdns[0];
     }
   }
 
@@ -89,6 +114,14 @@ class CdnSource {
 
   getRemoteDbUrl(endpoint: string) {
     return `${this.selectedDbCdn?.url}/${endpoint}.json`;
+  }
+
+  getRemoteChangelogUrl(endpoint: string, parameters: string | null = null) {
+    let url = `${this.selectedChangelogCdn?.url}${endpoint}`;
+    if (parameters !== null) {
+      url += `?${parameters}`;
+    }
+    return url;
   }
 
   getSelectedCdn(): Cdn | null {
@@ -176,6 +209,30 @@ class CdnSource {
     this.selectedCdn = cdn;
     this.pointedCdn = cdn.name;
     localStorage.setItem("pointedCdn", cdn.name);
+  }
+
+  async setPointedChangelogCdn(
+    cdn: Cdn,
+    secretUsername: string | null = null,
+    secretPassword: string | null = null
+  ) {
+    // If the CDN needs authorization in order to be used
+    if (cdn.secret) {
+      let result: boolean = await this.secretChallenge(
+        cdn,
+        secretUsername,
+        secretPassword
+      );
+
+      // If it's not authorized, it's useless to bring over the CDN
+      if (!result) {
+        throw new Error("invalid access");
+      }
+    }
+
+    this.selectedCdn = cdn;
+    this.pointedCdn = cdn.name;
+    localStorage.setItem("pointedChangelogCdn", cdn.name);
   }
 }
 
