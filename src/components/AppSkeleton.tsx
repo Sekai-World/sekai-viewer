@@ -64,18 +64,6 @@ const useStyles = makeStyles((theme) => ({
   },
   drawerPaper: {
     width: drawerWidth,
-    "&::-webkit-scrollbar": {
-      width: "0.5em",
-    },
-    "&::-webkit-scrollbar-track": {
-      "box-shadow": "inset 0 0 6px rgba(0,0,0,0.5)",
-      "border-radius": "10px",
-    },
-    "&::-webkit-scrollbar-thumb": {
-      "background-color": "darkgrey",
-      "border-radius": "10px",
-      outline: "1px solid slategrey",
-    },
   },
   content: {
     flexGrow: 1,
