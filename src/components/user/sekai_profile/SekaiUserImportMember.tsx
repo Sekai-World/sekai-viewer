@@ -123,6 +123,7 @@ const SekaiUserImportMember = () => {
       cardIds: number[];
       useIndex: number;
       trained: boolean;
+      skillLevel: number;
     })[]
   >([]);
   const [ocrEnable, setOcrEnabled] = useState(false);
@@ -549,6 +550,7 @@ const SekaiUserImportMember = () => {
             trained:
               !!hashResults[idx].length &&
               hashResults[idx][0][0].includes("after_training"),
+            skillLevel: 1,
           }));
           console.log(_rows);
           setRows(_rows.filter((row) => row.distances[0] !== 64));
@@ -684,7 +686,31 @@ const SekaiUserImportMember = () => {
         renderCell(params) {
           return (
             <Input
-              value={params.value as string}
+              value={params.value as number}
+              type="number"
+              inputMode="numeric"
+              inputProps={{
+                min: 0,
+                max: 5,
+              }}
+              onChange={(e) =>
+                handleMasterRankChange(
+                  e as React.ChangeEvent<HTMLInputElement>,
+                  params.row
+                )
+              }
+            />
+          );
+        },
+      },
+      {
+        field: "skillLevel",
+        headerName: t("card:skillLevel"),
+        width: 120,
+        renderCell(params) {
+          return (
+            <Input
+              value={params.value as number}
               type="number"
               inputMode="numeric"
               inputProps={{
@@ -725,7 +751,7 @@ const SekaiUserImportMember = () => {
         ),
         width:
           100 *
-          (Math.max(...rows.map((row) => row.hashResults.length)) - 1 || 0),
+          (Math.max(...rows.map((row) => row.hashResults.length)) - 1 || 0.1),
         renderCell(params) {
           const useIdx = params.getValue("useIndex") as number;
           return (
@@ -789,6 +815,7 @@ const SekaiUserImportMember = () => {
             cardId,
             power: row.power,
             masterRank: row.masterRank,
+            skillLevel: 1,
             trained: row.trained,
           };
         })
@@ -805,11 +832,9 @@ const SekaiUserImportMember = () => {
         cardList.sort((a, b) => a.cardId - b.cardId);
       }
 
-      updateSekaiProfile(
-        Object.assign({}, sekaiProfile, {
-          cardList,
-        })
-      );
+      updateSekaiProfile({
+        cardList,
+      });
 
       setSuccessMsg(t("user:profile.import_card.submit_success"));
       setIsSuccess(true);

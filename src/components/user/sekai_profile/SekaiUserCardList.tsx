@@ -40,7 +40,6 @@ import React, {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { SettingContext, UserContext } from "../../../context";
-import { SekaiCard } from "../../../strapi-model";
 import { useInteractiveStyles } from "../../../styles/interactive";
 import { useStrapi } from "../../../utils/apiClient";
 import { CardThumb } from "../../subs/CardThumb";
@@ -52,7 +51,7 @@ import {
   raritySelectReducer,
 } from "../../../stores/reducers";
 import { attrIconMap } from "../../../utils/resources";
-import { ICardInfo, IGameChara } from "../../../types";
+import { ICardInfo, IGameChara, ITeamCardState } from "../../../types";
 import { useCachedData, useCharaName } from "../../../utils";
 
 const SekaiUserCardList = () => {
@@ -73,11 +72,10 @@ const SekaiUserCardList = () => {
   const [rarity, setRarity] = useState<number>(4);
   const [filteredCards, setFilteredCards] = useState<ICardInfo[]>([]);
 
-  const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
-  const [cardList, setCardList] = useState<SekaiCard[]>([]);
-  const [displayCardList, setDisplayCardList] = useState<SekaiCard[]>([]);
-  const [card, setCard] = useState<SekaiCard>();
-  const [editList, setEditList] = useState<SekaiCard[]>([]);
+  const [cardList, setCardList] = useState<ITeamCardState[]>([]);
+  const [displayCardList, setDisplayCardList] = useState<ITeamCardState[]>([]);
+  const [card, setCard] = useState<ITeamCardState>();
+  const [editList, setEditList] = useState<ITeamCardState[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [isError, setIsError] = useState(false);
   const [errMsg, setErrMsg] = useState("");
@@ -101,6 +99,9 @@ const SekaiUserCardList = () => {
     localStorage.getItem("user-profile-sekai-cards-sort-by") || "id"
   );
   const [addCardDialogVisible, setAddCardDialogVisible] = useState(false);
+
+  const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
+  const open = useMemo(() => Boolean(anchorEl), [anchorEl]);
 
   useEffect(() => {
     if (cards && cards.length && sekaiProfile && sekaiProfile.cardList) {
@@ -162,7 +163,7 @@ const SekaiUserCardList = () => {
   ]);
 
   const handleClick = useCallback(
-    (event: React.MouseEvent<HTMLDivElement>, card: SekaiCard) => {
+    (event: React.MouseEvent<HTMLDivElement>, card: ITeamCardState) => {
       setAnchorEl(event.currentTarget);
       setCard(card);
     },
@@ -203,6 +204,26 @@ const SekaiUserCardList = () => {
     [card, cardList, editList]
   );
 
+  const handleDelete = useCallback(() => {
+    if (!card) return;
+    const idx = cardList.findIndex((c) => c.cardId === card.cardId);
+    const editIdx = editList.findIndex((el) => el.cardId === card.cardId);
+    if (editIdx !== -1)
+      setEditList((cards) => [
+        ...cards.slice(0, editIdx),
+        ...cards.slice(editIdx + 1),
+      ]);
+    const addIdx = addCardIds.findIndex((id) => card.cardId === id);
+    if (addIdx !== -1)
+      setAddCardIds((ids) => [
+        ...ids.slice(0, addIdx),
+        ...ids.slice(addIdx + 1),
+      ]);
+    else setDeleteCardIds((dc) => [...dc, cardList![idx].cardId]);
+    setCardList((cards) => [...cards.slice(0, idx), ...cards.slice(idx + 1)]);
+    handleClose();
+  }, [addCardIds, card, cardList, editList, handleClose]);
+
   const filterCards = useCallback(() => {
     if (!cards || !cards.length) return;
     setFilteredCards(
@@ -227,6 +248,7 @@ const SekaiUserCardList = () => {
         cardId: card.id,
         power: maxPower,
         masterRank: 0,
+        skillLevel: 1,
         trained: false,
       },
     ]);
@@ -237,13 +259,12 @@ const SekaiUserCardList = () => {
         cardId: card.id,
         power: maxPower,
         masterRank: 0,
+        skillLevel: 1,
         trained: false,
       },
     ]);
     setFilteredCards((cards) => cards.filter((c) => c.id !== card.id));
   }, []);
-
-  const open = useMemo(() => Boolean(anchorEl), [anchorEl]);
 
   return (
     <Grid container spacing={1}>
@@ -273,11 +294,9 @@ const SekaiUserCardList = () => {
                         );
                       setEditList([]);
                       setDeleteCardIds([]);
-                      updateSekaiProfile(
-                        Object.assign({}, sekaiProfile!, {
-                          cardList: cardList,
-                        })
-                      );
+                      updateSekaiProfile({
+                        cardList: cardList,
+                      });
                       setIsSuccess(true);
                       setSuccessMsg(t("user:profile.card_list.submit_success"));
                     } catch (error) {
@@ -420,7 +439,7 @@ const SekaiUserCardList = () => {
               <Grid item xs={12} md={10}>
                 <Grid container spacing={1}>
                   {[1, 2, 3, 4].map((rarity) => (
-                    <Grid key={rarity} item>
+                    <Grid key={`rarity-${rarity}`} item>
                       <Chip
                         clickable
                         color={
@@ -430,8 +449,8 @@ const SekaiUserCardList = () => {
                         }
                         label={
                           <Grid container>
-                            {Array.from({ length: rarity }).map(() => (
-                              <Grid item>
+                            {Array.from({ length: rarity }).map((_, idx) => (
+                              <Grid key={`rarity-${rarity}-${idx}`} item>
                                 <img
                                   src={
                                     rarity >= 3
@@ -592,6 +611,21 @@ const SekaiUserCardList = () => {
                 />
               </Grid>
               <Grid item>
+                <TextField
+                  label={t("card:skillLevel")}
+                  value={card.skillLevel}
+                  type="number"
+                  onChange={(e) =>
+                    handleChange(Number(e.target.value), "skillLevel")
+                  }
+                  inputProps={{
+                    min: "1",
+                    max: "4",
+                  }}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item>
                 <FormControlLabel
                   control={<Switch checked={card.trained} />}
                   label={t("card:trained")}
@@ -602,34 +636,7 @@ const SekaiUserCardList = () => {
                 <Button
                   variant="contained"
                   color="secondary"
-                  onClick={() => {
-                    const idx = cardList.findIndex(
-                      (c) => c.cardId === card.cardId
-                    );
-                    const editIdx = editList.findIndex(
-                      (el) => el.cardId === card.cardId
-                    );
-                    if (editIdx !== -1)
-                      setEditList((cards) => [
-                        ...cards.slice(0, editIdx),
-                        ...cards.slice(editIdx + 1),
-                      ]);
-                    const addIdx = addCardIds.findIndex(
-                      (id) => card.cardId === id
-                    );
-                    if (addIdx !== -1)
-                      setAddCardIds((ids) => [
-                        ...ids.slice(0, addIdx),
-                        ...ids.slice(addIdx + 1),
-                      ]);
-                    else
-                      setDeleteCardIds((dc) => [...dc, cardList![idx].cardId]);
-                    setCardList((cards) => [
-                      ...cards.slice(0, idx),
-                      ...cards.slice(idx + 1),
-                    ]);
-                    handleClose();
-                  }}
+                  onClick={handleDelete}
                 >
                   {t("common:delete")}
                 </Button>
@@ -673,10 +680,9 @@ const SekaiUserCardList = () => {
       <Dialog
         open={addCardDialogVisible}
         onClose={() => {
-          setFilteredCards([]);
+          // setFilteredCards([]);
           setAddCardDialogVisible(false);
         }}
-        // maxWidth="sm"
       >
         <DialogTitle>{t("music_recommend:addCardDialog.title")}</DialogTitle>
         <DialogContent>
@@ -753,7 +759,7 @@ const SekaiUserCardList = () => {
           </Grid>
           <Grid container direction="row" spacing={1}>
             {filteredCards.map((card) => (
-              <Grid key={`filtered-card-${card.id}`} item xs={4} md={3}>
+              <Grid key={`filtered-card-${card.id}`} item xs={4} md={3} lg={2}>
                 <CardThumb
                   cardId={card.id}
                   onClick={() => handleCardThumbClick(card)}
