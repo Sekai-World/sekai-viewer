@@ -77,8 +77,8 @@ const SekaiID: React.FC<{}> = () => {
 
   return (
     <Grid container direction="column" spacing={1}>
-      <Grid item xs={12} alignItems="center" spacing={1}>
-        <Grid container>
+      <Grid item xs={12}>
+        <Grid container spacing={1} alignItems="center">
           {sekaiProfile ? (
             <Fragment>
               {!sekaiProfile.sekaiUserProfile && (
@@ -91,18 +91,16 @@ const SekaiID: React.FC<{}> = () => {
                 </Grid>
               )}
               {!isEditingSekaiID && (
-                <Grid item>
-                  <Grid container alignItems="center" spacing={1}>
-                    <Grid item>
-                      <Chip
-                        size="small"
-                        label={t("user:profile.label.sekai_user_id")}
-                      />
-                    </Grid>
-                    <Grid item>
+                <Fragment>
+                  <Grid item>
+                    <Chip
+                      size="small"
+                      label={t("user:profile.label.sekai_user_id")}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Grid container alignItems="center">
                       <Typography>{sekaiProfile.sekaiUserId}</Typography>
-                    </Grid>
-                    <Grid item>
                       <IconButton
                         size="small"
                         onClick={() => setIsEditingSekaiID(true)}
@@ -115,7 +113,51 @@ const SekaiID: React.FC<{}> = () => {
                       </IconButton>
                     </Grid>
                   </Grid>
-                </Grid>
+                  {sekaiProfile.sekaiUserProfile && (
+                    <Grid item>
+                      <Tooltip
+                        title={
+                          t("user:profile.label.update_left", {
+                            allowed: sekaiProfile.updateAvailable,
+                            used: sekaiProfile.updateUsed,
+                          }) as string
+                        }
+                        disableFocusListener
+                        arrow
+                        interactive
+                      >
+                        <span>
+                          <Button
+                            size="small"
+                            onClick={() => {
+                              setIsUpdatingProfile(true);
+                              putSekaiProfileUpdate(sekaiProfile.id).then(
+                                async (data) => {
+                                  updateSekaiProfile(await getSekaiProfileMe());
+                                  setIsUpdatingProfile(false);
+                                }
+                              );
+                            }}
+                            disabled={
+                              isUpdatingProfile ||
+                              sekaiProfile.updateAvailable <=
+                                sekaiProfile.updateUsed
+                            }
+                            variant="contained"
+                            color="primary"
+                          >
+                            {isUpdatingProfile ? (
+                              <CircularProgress size={24} />
+                            ) : (
+                              <Update />
+                            )}
+                            {t("user:profile.button.update_sekai_profile")}
+                          </Button>
+                        </span>
+                      </Tooltip>
+                    </Grid>
+                  )}
+                </Fragment>
               )}
             </Fragment>
           ) : (
@@ -218,48 +260,7 @@ const SekaiID: React.FC<{}> = () => {
       )}
       {sekaiProfile && sekaiProfile.sekaiUserProfile && (
         <Grid item container alignItems="center" spacing={1}>
-          <Grid item xs={12}>
-            <Tooltip
-              title={
-                t("user:profile.label.update_left", {
-                  allowed: sekaiProfile.updateAvailable,
-                  used: sekaiProfile.updateUsed,
-                }) as string
-              }
-              disableFocusListener
-              arrow
-              interactive
-            >
-              <span>
-                <Button
-                  size="small"
-                  onClick={() => {
-                    setIsUpdatingProfile(true);
-                    putSekaiProfileUpdate(sekaiProfile.id).then(
-                      async (data) => {
-                        updateSekaiProfile(await getSekaiProfileMe());
-                        setIsUpdatingProfile(false);
-                      }
-                    );
-                  }}
-                  disabled={
-                    isUpdatingProfile ||
-                    sekaiProfile.updateAvailable <= sekaiProfile.updateUsed
-                  }
-                  variant="contained"
-                  color="primary"
-                >
-                  {isUpdatingProfile ? (
-                    <CircularProgress size={24} />
-                  ) : (
-                    <Update />
-                  )}
-                  {t("user:profile.button.update_sekai_profile")}
-                </Button>
-              </span>
-            </Tooltip>
-          </Grid>
-          <Grid item xs={12} md={6} lg={4} xl={3}>
+          <Grid item xs={12} sm={6} lg={4} xl={3}>
             <Grid container alignItems="center" spacing={1}>
               <Grid item>
                 <Chip
@@ -274,7 +275,7 @@ const SekaiID: React.FC<{}> = () => {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={12} md={6} lg={4} xl={3}>
+          <Grid item xs={12} sm={6} lg={4} xl={3}>
             <Grid container alignItems="center" spacing={1}>
               <Grid item>
                 <Chip
