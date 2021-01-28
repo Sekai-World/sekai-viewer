@@ -96,11 +96,9 @@ const SekaiEventRecord = (props: Props) => {
                   postSekaiProfileEventRecord(currentEvent!.eventId).then(
                     async (data) => {
                       setEventRecords(await getSekaiProfileEventRecordMe());
-                      updateSekaiProfile(
-                        Object.assign({}, props.profile, {
-                          eventGetUsed: props.profile.eventGetUsed + 1,
-                        })
-                      );
+                      updateSekaiProfile({
+                        eventGetUsed: props.profile.eventGetUsed + 1,
+                      });
                       setIsEventRecording(false);
                     }
                   );
