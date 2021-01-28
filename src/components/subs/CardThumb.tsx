@@ -182,17 +182,19 @@ export const CardThumbMedium: React.FC<
     cardId: number;
     trained: boolean;
     defaultImage?: string;
-    cardLevel?: number;
+    level?: number;
     masterRank?: number;
+    power?: number;
   } & React.HTMLProps<HTMLDivElement>
 > = ({
   cardId,
   trained,
   defaultImage,
-  cardLevel,
+  level,
   masterRank,
   onClick,
   style,
+  power,
 }) => {
   const skeleton = CardThumbSkeleton({});
   const classes = useSvgStyles();
@@ -230,7 +232,7 @@ export const CardThumbMedium: React.FC<
           <pattern
             width="330"
             height="520"
-            id={`mediumThumb-${cardId}`}
+            id={`mediumThumb-${cardId}-${level}-${power}`}
             patternUnits="userSpaceOnUse"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 520">
@@ -245,22 +247,23 @@ export const CardThumbMedium: React.FC<
               {/* level */}
               <rect
                 x="0"
-                y="470"
+                y="460"
                 width="330"
-                height="50"
+                height="60"
                 fill="black"
                 fillOpacity="0.8"
               />
               <text
                 x="30"
-                y="498"
+                y="493"
                 width="200"
-                height="30"
-                fontSize="30"
+                height="40"
+                fontSize="40"
                 fontWeight="lighter"
                 fill="white"
               >
-                Lv.{cardLevel}
+                {!!level && `Lv.${level}`}
+                {!!power && `${power}`}
               </text>
               {/* frame */}
               <image
@@ -283,20 +286,20 @@ export const CardThumbMedium: React.FC<
                 <image
                   key={`card-rarity-${i}`}
                   href={rarityIcon}
-                  x={i * 33 + 16}
-                  y="435"
-                  width="33"
-                  height="33"
+                  x={i * 50 + 16}
+                  y="405"
+                  width="50"
+                  height="50"
                 />
               ))}
               {/* masterRank */}
               {masterRank && (
                 <image
                   href={cardMasterRankSmallMap[String(masterRank)]}
-                  x="215"
-                  y="405"
-                  width="105"
-                  height="105"
+                  x="225"
+                  y="415"
+                  width="95"
+                  height="95"
                 ></image>
               )}
             </svg>
@@ -309,7 +312,7 @@ export const CardThumbMedium: React.FC<
           ry="30"
           width="322"
           height="512"
-          fill={`url(#mediumThumb-${cardId})`}
+          fill={`url(#mediumThumb-${cardId}-${level}-${power})`}
         />
       </svg>
     </div>
