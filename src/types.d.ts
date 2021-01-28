@@ -497,11 +497,15 @@ export interface IUnitProfile {
 
 export interface ITeamCardState {
   cardId: number;
-  level: number;
+  level?: number;
   skillLevel: number;
+  trained: boolean;
+  power: number;
+  masterRank: number;
 }
 
 export interface ITeamBuild {
+  id?: number;
   teamCards: number[];
   teamCardsStates: ITeamCardState[];
   teamPowerStates: number;
