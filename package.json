@@ -48,7 +48,7 @@
     "react-viewer": "^3.2.2",
     "recharts": "^1.8.5",
     "swr": "^0.4.0",
-    "tesseract.js": "^2.1.4",
+    "tesseract.js": "2.1.4",
     "typescript": "^3.9.7",
     "webp-hero": "0.0.0-dev.27",
     "workbox-core": "^6.0.2",

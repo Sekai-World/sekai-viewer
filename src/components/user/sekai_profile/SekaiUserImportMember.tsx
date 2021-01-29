@@ -481,7 +481,25 @@ const SekaiUserImportMember = () => {
           let ocrLevelResults: string[] = [];
           let ocrMasterRankResults: string[] = [];
           if (ocrEnable) {
-            const workers = Array.from({ length: 4 }).map(() => createWorker());
+            const workers = Array.from({ length: 4 }).map(() =>
+              createWorker({
+                corePath: window.isChinaMainland
+                  ? `${
+                      process.env.REACT_APP_FRONTEND_ASSET_BASE_CN
+                    }/tesseract-core.${
+                      typeof WebAssembly === "object" ? "wasm" : "asm"
+                    }.js`
+                  : `https://unpkg.com/tesseract.js-core@2.2.0/tesseract-core.${
+                      typeof WebAssembly === "object" ? "wasm" : "asm"
+                    }.js`,
+                workerPath: window.isChinaMainland
+                  ? `${process.env.REACT_APP_FRONTEND_ASSET_BASE_CN}/worker.min.js`
+                  : `https://unpkg.com/tesseract.js@2.1.4/dist/worker.min.js`,
+                langPath: window.isChinaMainland
+                  ? process.env.REACT_APP_FRONTEND_ASSET_BASE_CN
+                  : "https://tessdata.projectnaptha.com/4.0.0",
+              })
+            );
             const scheduler = createScheduler();
             for (let worker of workers) {
               await worker.load();
@@ -812,7 +830,7 @@ const SekaiUserImportMember = () => {
 
       if (sekaiProfile.cardList && sekaiProfile.cardList.length) {
         sekaiProfile.cardList.forEach((card) => {
-          if (!cardList.find((_card) => _card.cardId === card.cardId)) {
+          if (!cardList.some((_card) => _card.cardId === card.cardId)) {
             cardList.push(card);
           }
         });
