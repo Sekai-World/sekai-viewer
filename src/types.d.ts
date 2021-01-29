@@ -1157,3 +1157,18 @@ export interface ICostume3DModel {
   assetbundleName: string;
   thumbnailAssetbundleName: string;
 }
+
+export interface IAreaItemLevel {
+  areaItemId: number;
+  level: number;
+  targetUnit: string;
+  targetCardAttr: string;
+  targetGameCharacterId: number;
+  power1BonusRate: number;
+  power1AllMatchBonusRate: number;
+  power2BonusRate: number;
+  power2AllMatchBonusRate: number;
+  power3BonusRate: number;
+  power3AllMatchBonusRate: number;
+  sentence: string;
+}

@@ -18,6 +18,7 @@ const SekaiUserDeck = React.lazy(() => import("./SekaiUserDeck"));
 const SekaiUserImportMember = React.lazy(
   () => import("./SekaiUserImportMember")
 );
+const SekaiUserTeams = React.lazy(() => import("./SekaiUserTeams"));
 
 const SekaiProfile = () => {
   const layoutClasses = useLayoutStyles();
@@ -31,6 +32,7 @@ const SekaiProfile = () => {
   // const [isSekaiIDOpen, setIsSekaiIDOpen] = useState(false);
   const [isUserMemberOpen, setIsUserMemberOpen] = useState(false);
   const [isUserImportMemberOpen, setIsUserImportMemberOpen] = useState(false);
+  const [isUserTeamsOpen, setIsUserTeamsOpen] = useState(false);
 
   return (
     <Fragment>
@@ -95,6 +97,19 @@ const SekaiProfile = () => {
               </AccordionSummary>
               <AccordionDetails>
                 <SekaiUserImportMember />
+              </AccordionDetails>
+            </Accordion>
+            <Accordion
+              expanded={isUserTeamsOpen}
+              onChange={(e, state) => setIsUserTeamsOpen(state)}
+            >
+              <AccordionSummary expandIcon={<ExpandMore />}>
+                <Typography className={layoutClasses.header}>
+                  {t("user:profile.title.manage_teams")}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <SekaiUserTeams />
               </AccordionDetails>
             </Accordion>
           </Fragment>

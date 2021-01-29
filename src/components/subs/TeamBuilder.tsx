@@ -15,23 +15,39 @@ import {
   Snackbar,
   makeStyles,
   Typography,
+  Popover,
+  Container,
+  FormControlLabel,
+  Switch,
+  RadioGroup,
+  FormLabel,
+  Radio,
+  CircularProgress,
 } from "@material-ui/core";
 import React, {
-  Fragment,
   useCallback,
   useContext,
+  useEffect,
+  useMemo,
   useReducer,
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { SettingContext } from "../../context";
+import { SettingContext, UserContext } from "../../context";
 import { ICardInfo, IGameChara, ITeamCardState } from "../../types";
-import { useCachedData, useCharaName } from "../../utils";
-import { CardThumb } from "./CardThumb";
+import {
+  useCachedData,
+  useCharaName,
+  useLocalStorage,
+  useToggle,
+} from "../../utils";
+import { CardThumb, CardThumbMedium } from "./CardThumb";
 import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
 import { Alert } from "@material-ui/lab";
 import { teamBuildReducer } from "../../stores/reducers";
+import { useStrapi } from "../../utils/apiClient";
+import { useTeamCalc } from "../../utils/teamCalc";
 
 const useStyle = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -52,7 +68,7 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-const TeamBuiler: React.FC<{
+const TeamBuilder: React.FC<{
   teamCards: number[];
   teamCardsStates: ITeamCardState[];
   teamPowerStates: number;
@@ -71,9 +87,19 @@ const TeamBuiler: React.FC<{
   const { t } = useTranslation();
   const { contentTransMode } = useContext(SettingContext)!;
   const getCharaName = useCharaName(contentTransMode);
+  const { jwtToken, sekaiProfile, updateSekaiProfile } = useContext(
+    UserContext
+  )!;
+  const { putSekaiDeckList, deleteSekaiDeckList } = useStrapi(jwtToken);
 
   const [cards] = useCachedData<ICardInfo>("cards");
   const [charas] = useCachedData<IGameChara>("gameCharacters");
+
+  const {
+    getAreaItemBonus,
+    getCharacterRankBouns,
+    getHonorBonus,
+  } = useTeamCalc();
 
   const [characterId, setCharacterId] = useState<number>(0);
   const [rarity, setRarity] = useState<number>(4);
@@ -95,12 +121,42 @@ const TeamBuiler: React.FC<{
     false
   );
   const [teamTextSavedOpen, setTeamTextSavedOpen] = useState<boolean>(false);
+  const [editingCard, setEditingCard] = useState<ITeamCardState>();
+  const [isSyncCardState, setIsSyncCardState] = useLocalStorage(
+    "team-build-use-sekai-card-state",
+    false
+  );
+  const [storageLocation, setStorageLocation] = useState<"local" | "cloud">(
+    "local"
+  );
+  const [isSavingEntry, toggleIsSaveingEntry] = useToggle(false);
+  const [saveTeamErrorOpen, setSaveTeamErrorOpen] = useState(false);
+  const [isAutoCalcBonus, toggleIsAutoCalcBonus] = useToggle(false);
 
   const [teamBuildArray, dispatchTeamBuildArray] = useReducer(
     teamBuildReducer,
-    "team-build-array",
-    (storageName) => JSON.parse(localStorage.getItem(storageName) || "[]")
+    {
+      teams: JSON.parse(localStorage.getItem("team-build-array") || "[]"),
+      localKey: "team-build-array",
+      storageLocation: "local",
+    }
   );
+
+  useEffect(() => {
+    dispatchTeamBuildArray({
+      type: "reload",
+      payload: {
+        location: storageLocation,
+        teams:
+          storageLocation === "local"
+            ? JSON.parse(localStorage.getItem("team-build-array") || "[]")
+            : sekaiProfile?.deckList || [],
+      },
+    });
+  }, [sekaiProfile?.deckList, storageLocation]);
+
+  const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
+  const open = useMemo(() => Boolean(anchorEl), [anchorEl]);
 
   const filterCards = useCallback(() => {
     if (!cards || !cards.length) return;
@@ -122,73 +178,237 @@ const TeamBuiler: React.FC<{
         setCardMaxErrorOpen(true);
         return;
       }
+      const maxLevel = [0, 20, 30, 40, 50];
       setTeamCards((tc) => [...tc, card.id]);
+      let stateFrom = sekaiProfile!.cardList!.find(
+        (cl) => cl.cardId === card.id
+      );
       setTeamCardsStates((tcs) => [
         ...tcs,
-        {
-          cardId: card.id,
-          level: card.cardParameters[card.cardParameters.length - 1].cardLevel,
-          skillLevel: 1,
-        },
+        isSyncCardState && !!stateFrom
+          ? stateFrom
+          : {
+              cardId: card.id,
+              skillLevel: 1,
+              masterRank: 0,
+              power: card.cardParameters
+                .filter((elem) => elem.cardLevel === maxLevel[card.rarity])
+                .reduce((sum, elem) => sum + elem.power, 0),
+              trained: false,
+            },
       ]);
       // setAddCardDialogVisible(false);
     },
-    [teamCards, setTeamCards, setTeamCardsStates]
+    [teamCards, setTeamCards, setTeamCardsStates, isSyncCardState, sekaiProfile]
   );
 
-  const removeTeamCard = useCallback(
-    (index: number) => {
-      setTeamCards((tc) => [...tc.slice(0, index), ...tc.slice(index + 1)]);
-      setTeamCardsStates((tcs) => [
-        ...tcs.slice(0, index),
-        ...tcs.slice(index + 1),
-      ]);
+  const handleClick = useCallback(
+    (event: React.MouseEvent<HTMLDivElement>, card: ITeamCardState) => {
+      setAnchorEl(event.currentTarget);
+      setEditingCard(card);
     },
-    [setTeamCards, setTeamCardsStates]
+    []
   );
+
+  const handleClose = useCallback(() => {
+    setAnchorEl(null);
+    setEditingCard(undefined);
+  }, []);
+
+  const handleChange = useCallback(
+    (value: any, key: string) => {
+      if (editingCard) {
+        const newCard = Object.assign({}, editingCard, {
+          [key]: value,
+        });
+        setEditingCard(newCard);
+        const idx = teamCards.indexOf(newCard.cardId);
+        setTeamCardsStates((tcs) => [
+          ...tcs.slice(0, idx),
+          newCard,
+          ...tcs.slice(idx + 1),
+        ]);
+      }
+    },
+    [editingCard, setTeamCardsStates, teamCards]
+  );
+
+  const handleDelete = useCallback(() => {
+    if (!editingCard) return;
+    const index = teamCards.indexOf(editingCard.cardId);
+    setTeamCards((tc) => [...tc.slice(0, index), ...tc.slice(index + 1)]);
+    setTeamCardsStates((tcs) => [
+      ...tcs.slice(0, index),
+      ...tcs.slice(index + 1),
+    ]);
+    handleClose();
+  }, [editingCard, handleClose, setTeamCards, setTeamCardsStates, teamCards]);
 
   const handleAddTeamEntry = useCallback(() => {
     const toSaveEntry = {
+      // id: teamBuildArray.teams.length + 1,
       teamCards: teamCards,
       teamCardsStates: teamCardsStates,
       teamPowerStates: teamPowerStates,
     };
 
-    dispatchTeamBuildArray({
-      type: "add",
-      payload: toSaveEntry,
-    });
-  }, [teamCards, teamCardsStates, teamPowerStates]);
+    toggleIsSaveingEntry();
+
+    if (storageLocation === "cloud") {
+      if (!sekaiProfile) return;
+      putSekaiDeckList(sekaiProfile.id, [toSaveEntry])
+        .then(() => {
+          dispatchTeamBuildArray({
+            type: "add",
+            payload: toSaveEntry,
+          });
+          updateSekaiProfile({
+            deckList: [...(sekaiProfile.deckList || []), toSaveEntry],
+          });
+          toggleIsSaveingEntry();
+        })
+        .catch(() => {
+          setSaveTeamErrorOpen(true);
+          toggleIsSaveingEntry();
+        });
+    } else if (storageLocation === "local") {
+      dispatchTeamBuildArray({
+        type: "add",
+        payload: toSaveEntry,
+      });
+      toggleIsSaveingEntry();
+    }
+  }, [
+    putSekaiDeckList,
+    sekaiProfile,
+    storageLocation,
+    teamCards,
+    teamCardsStates,
+    teamPowerStates,
+    toggleIsSaveingEntry,
+    updateSekaiProfile,
+  ]);
 
   const handleReplaceTeamEntry = useCallback(
     (id) => {
       const currentEntry = {
+        // id: id + 1,
         teamCards: teamCards,
         teamCardsStates: teamCardsStates,
         teamPowerStates: teamPowerStates,
       };
 
-      dispatchTeamBuildArray({
-        type: "replace",
-        payload: {
-          id,
-          data: currentEntry,
-        },
-      });
+      toggleIsSaveingEntry();
+
+      if (storageLocation === "cloud") {
+        if (!sekaiProfile) return;
+        putSekaiDeckList(sekaiProfile.id, [
+          Object.assign({}, currentEntry, { id }),
+        ])
+          .then(() => {
+            dispatchTeamBuildArray({
+              type: "replace",
+              payload: {
+                id,
+                data: currentEntry,
+              },
+            });
+            updateSekaiProfile({
+              deckList: [
+                ...sekaiProfile!.deckList!.slice(0, id),
+                currentEntry,
+                ...sekaiProfile!.deckList!.slice(id + 1),
+              ],
+            });
+            toggleIsSaveingEntry();
+          })
+          .catch(() => {
+            setSaveTeamErrorOpen(true);
+            toggleIsSaveingEntry();
+          });
+      } else if (storageLocation === "local") {
+        dispatchTeamBuildArray({
+          type: "replace",
+          payload: {
+            id,
+            data: currentEntry,
+          },
+        });
+        toggleIsSaveingEntry();
+      }
     },
-    [teamCards, teamCardsStates, teamPowerStates]
+    [
+      putSekaiDeckList,
+      sekaiProfile,
+      storageLocation,
+      teamCards,
+      teamCardsStates,
+      teamPowerStates,
+      toggleIsSaveingEntry,
+      updateSekaiProfile,
+    ]
   );
 
-  const handleDeleteTeamEntry = useCallback((id) => {
-    dispatchTeamBuildArray({
-      type: "remove",
-      payload: id,
-    });
-  }, []);
+  const handleDeleteTeamEntry = useCallback(
+    (id) => {
+      toggleIsSaveingEntry();
+
+      if (storageLocation === "cloud") {
+        if (!sekaiProfile) return;
+        deleteSekaiDeckList(sekaiProfile.id, [id])
+          .then(() => {
+            dispatchTeamBuildArray({
+              type: "remove",
+              payload: id,
+            });
+            updateSekaiProfile({
+              deckList: [
+                ...sekaiProfile!.deckList!.slice(0, id),
+                ...sekaiProfile!.deckList!.slice(id + 1),
+              ],
+            });
+            toggleIsSaveingEntry();
+          })
+          .catch(() => {
+            setSaveTeamErrorOpen(true);
+            toggleIsSaveingEntry();
+          });
+      } else if (storageLocation === "local") {
+        dispatchTeamBuildArray({
+          type: "remove",
+          payload: id,
+        });
+        toggleIsSaveingEntry();
+      }
+    },
+    [
+      deleteSekaiDeckList,
+      sekaiProfile,
+      storageLocation,
+      toggleIsSaveingEntry,
+      updateSekaiProfile,
+    ]
+  );
 
   const handleLoadTeamEntry = useCallback(
     (idx) => {
-      const currentEntry = teamBuildArray[idx];
+      const currentEntry = teamBuildArray.teams[idx];
+      if (currentEntry.teamCardsStates[0].level) {
+        // convert data
+        currentEntry.teamCardsStates = currentEntry.teamCardsStates.map(
+          (state) => {
+            const card = cards!.find((elem) => elem.id === state.cardId)!;
+            return Object.assign({}, state, {
+              level: undefined,
+              masterRank: 0,
+              power: card.cardParameters
+                .filter((elem) => elem.cardLevel === state.level)
+                .reduce((sum, elem) => sum + elem.power, 0),
+              trained: false,
+            });
+          }
+        );
+      }
 
       setTeamCards(currentEntry.teamCards);
       setTeamCardsStates(currentEntry.teamCardsStates);
@@ -196,140 +416,153 @@ const TeamBuiler: React.FC<{
 
       setLoadTeamDialogVisible(false);
     },
-    [setTeamCards, setTeamCardsStates, setTeamPowerStates, teamBuildArray]
+    [
+      cards,
+      setTeamCards,
+      setTeamCardsStates,
+      setTeamPowerStates,
+      teamBuildArray,
+    ]
   );
 
+  const calcTotalPower = useCallback(() => {
+    const pureDeckPower = teamCardsStates.reduce(
+      (sum, cardState) => sum + cardState.power,
+      0
+    );
+
+    if (isAutoCalcBonus && sekaiProfile && sekaiProfile.sekaiUserProfile) {
+      const areaItemBonus = getAreaItemBonus(
+        teamCardsStates,
+        sekaiProfile.sekaiUserProfile.userAreaItems
+      );
+
+      const characterRankBonus = getCharacterRankBouns(
+        sekaiProfile.sekaiUserProfile.userCharacters,
+        teamCardsStates
+      );
+
+      const honorBonus = getHonorBonus(
+        sekaiProfile.sekaiUserProfile.userHonors
+      );
+
+      console.log(pureDeckPower, areaItemBonus, characterRankBonus, honorBonus);
+
+      return pureDeckPower + areaItemBonus + characterRankBonus + honorBonus;
+    }
+
+    return pureDeckPower;
+  }, [
+    getAreaItemBonus,
+    getCharacterRankBouns,
+    getHonorBonus,
+    isAutoCalcBonus,
+    sekaiProfile,
+    teamCardsStates,
+  ]);
+
   return (
-    <Fragment>
-      <Grid container spacing={1}>
-        <Grid item>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => setAddCardDialogVisible(true)}
-            disabled={teamCards.length === 5}
-          >
-            {t("music_recommend:buildTeam.addCard")}
-          </Button>
-        </Grid>
-        <Grid item>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => setSaveTeamDialogVisible(true)}
-            disabled={teamCards.length === 0}
-          >
-            {t("music_recommend:buildTeam.saveTeam")}
-          </Button>
-        </Grid>
-        <Grid item>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => setLoadTeamDialogVisible(true)}
-            // disabled={teamCards.length === 0}
-          >
-            {t("music_recommend:buildTeam.loadTeam")}
-          </Button>
-        </Grid>
-        <Grid item>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => {
-              setTeamCards([]);
-              setTeamCardsStates([]);
-            }}
-            disabled={teamCards.length === 0}
-          >
-            {t("music_recommend:buildTeam.clearTeam")}
-          </Button>
-        </Grid>
-      </Grid>
-      <Grid container direction="row" spacing={1}>
-        {teamCards.map((cardId, index) => (
-          <Grid key={`team-card-${cardId}`} item xs={12} sm={6} lg={4}>
-            <Paper style={{ padding: "0.5em" }}>
-              <Grid container direction="row" alignItems="center" spacing={2}>
-                <Grid item xs={5} md={3}>
-                  <CardThumb cardId={cardId} />
-                </Grid>
-                <Grid item xs={7} md={9}>
-                  <Grid container spacing={1}>
-                    {/*
-                            <Grid item xs={12} md={4}>
-                              <TextField
-                                label={t("card:cardLevel")}
-                                type="number"
-                                InputLabelProps={{
-                                  shrink: true,
-                                }}
-                                value={teamCardsStates[index].level}
-                                onChange={(e) =>
-                                  setTeamCardsStates((tcs) => {
-                                    tcs[index].level = Number(e.target.value);
-                                    return [...tcs];
-                                  })
-                                }
-                              />
-                            </Grid>
-                            */}
-                    <Grid item xs={12} md={4}>
-                      <TextField
-                        label={t("card:skillLevel")}
-                        type="number"
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                        inputProps={{
-                          min: "1",
-                          max: "4",
-                        }}
-                        value={teamCardsStates[index].skillLevel}
-                        onChange={(e) =>
-                          setTeamCardsStates((tcs) => {
-                            tcs[index].skillLevel = Number(e.target.value);
-                            return [...tcs];
-                          })
-                        }
-                        style={{ width: "100%" }}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                      <Button
-                        variant="outlined"
-                        color="secondary"
-                        onClick={() => removeTeamCard(index)}
-                      >
-                        {t("common:delete")}
-                      </Button>
-                    </Grid>
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Paper>
-          </Grid>
-        ))}
-      </Grid>
-      <Grid container spacing={1}>
-        {teamCards.length > 0 ? (
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <Grid container spacing={1}>
           <Grid item>
-            <TextField
-              label={t("music_recommend:buildTeam.teamPower")}
-              type="number"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              value={teamPowerStates}
-              onChange={(e) => setTeamPowerStates(Number(e.target.value))}
-            />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setAddCardDialogVisible(true)}
+              disabled={teamCards.length === 5}
+            >
+              {t("music_recommend:buildTeam.addCard")}
+            </Button>
           </Grid>
-        ) : null}
+          <Grid item>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setSaveTeamDialogVisible(true)}
+              disabled={teamCards.length === 0}
+            >
+              {t("music_recommend:buildTeam.saveTeam")}
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setLoadTeamDialogVisible(true)}
+              disabled={!cards || cards.length === 0}
+            >
+              {t("music_recommend:buildTeam.loadTeam")}
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => {
+                setTeamCards([]);
+                setTeamCardsStates([]);
+              }}
+              disabled={teamCards.length === 0}
+            >
+              {t("music_recommend:buildTeam.clearTeam")}
+            </Button>
+          </Grid>
+        </Grid>
+      </Grid>
+      <Grid item xs={12}>
+        <Grid container spacing={1} justify="center">
+          {teamCards.map((cardId, index) => (
+            <Grid key={`team-card-${cardId}`} item xs={2}>
+              <CardThumbMedium
+                cardId={cardId}
+                trained={teamCardsStates[index].trained}
+                power={teamCardsStates[index].power}
+                masterRank={teamCardsStates[index].masterRank}
+                style={{ cursor: "pointer" }}
+                onClick={(e) => handleClick(e, teamCardsStates[index])}
+              />
+            </Grid>
+          ))}
+        </Grid>
+      </Grid>
+      <Grid item xs={12}>
+        {teamCards.length > 0 && (
+          <Grid container spacing={1} alignItems="center">
+            <Grid item>
+              <TextField
+                label={t("music_recommend:buildTeam.teamPower")}
+                type="number"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                value={teamPowerStates}
+                onChange={(e) => setTeamPowerStates(Number(e.target.value))}
+              />
+            </Grid>
+            <Grid item>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => setTeamPowerStates(calcTotalPower())}
+              >
+                {t("team_build:button.calc_total_power")}
+              </Button>
+            </Grid>
+            <Grid item>
+              <FormControlLabel
+                control={<Switch checked={isAutoCalcBonus} />}
+                onChange={() => toggleIsAutoCalcBonus()}
+                label={t("team_build:auto_calc_bonus")}
+                disabled={!sekaiProfile || !sekaiProfile.sekaiUserProfile}
+              />
+            </Grid>
+          </Grid>
+        )}
       </Grid>
       <Dialog
         open={addCardDialogVisible}
         onClose={() => setAddCardDialogVisible(false)}
-        // maxWidth="sm"
       >
         <DialogTitle>{t("music_recommend:addCardDialog.title")}</DialogTitle>
         <DialogContent>
@@ -404,9 +637,29 @@ const TeamBuiler: React.FC<{
               </Button>
             </Grid>
           </Grid>
+          {!!filteredCards.length && (
+            <Grid container spacing={1}>
+              <Grid item>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={isSyncCardState}
+                      onChange={(_, checked) => setIsSyncCardState(checked)}
+                    />
+                  }
+                  label={t("team_build:use_sekai_card_state")}
+                  disabled={
+                    !sekaiProfile ||
+                    !sekaiProfile.cardList ||
+                    !sekaiProfile.cardList.length
+                  }
+                />
+              </Grid>
+            </Grid>
+          )}
           <Grid container direction="row" spacing={1}>
             {filteredCards.map((card) => (
-              <Grid key={`filtered-card-${card.id}`} item xs={4} md={3}>
+              <Grid key={`filtered-card-${card.id}`} item xs={4} md={3} lg={2}>
                 <CardThumb
                   cardId={card.id}
                   onClick={() => handleCardThumbClick(card)}
@@ -428,9 +681,39 @@ const TeamBuiler: React.FC<{
           <DialogContentText>
             {t("team_build:saveTeamDialog.desc")}
           </DialogContentText>
+          <FormControl component="fieldset">
+            <FormLabel component="legend">
+              {t("team_build:storage_location.label")}
+            </FormLabel>
+            <RadioGroup
+              row
+              value={storageLocation}
+              onChange={(_, v) => setStorageLocation(v as "local")}
+            >
+              <FormControlLabel
+                value="local"
+                control={<Radio />}
+                label={t("team_build:storage_location.local")}
+                labelPlacement="end"
+              />
+              <FormControlLabel
+                value="cloud"
+                control={<Radio />}
+                label={t("team_build:storage_location.cloud")}
+                labelPlacement="end"
+                disabled={!sekaiProfile}
+              />
+            </RadioGroup>
+          </FormControl>
+          {storageLocation === "cloud" && (
+            <DialogContentText>
+              {t("team_build:storage_space")}: {teamBuildArray.teams.length} /{" "}
+              {sekaiProfile!.maxDeckList}
+            </DialogContentText>
+          )}
           <Grid container spacing={1}>
-            {teamBuildArray.map((team, idx) => (
-              <Grid item xs={12}>
+            {teamBuildArray.teams.map((team, idx) => (
+              <Grid key={`save-team-${idx}`} item xs={12}>
                 <Paper variant="outlined" className={classes["dialog-paper"]}>
                   <Grid container spacing={1} alignItems="center">
                     <Grid item xs={12} md={2}>
@@ -439,7 +722,12 @@ const TeamBuiler: React.FC<{
                     <Grid item xs={12} md={6}>
                       <Grid container spacing={1}>
                         {team.teamCards.map((cardId) => (
-                          <Grid item xs={4} sm={2}>
+                          <Grid
+                            key={`save-team-card-${cardId}`}
+                            item
+                            xs={4}
+                            sm={2}
+                          >
                             <CardThumb cardId={cardId} />
                           </Grid>
                         ))}
@@ -451,6 +739,7 @@ const TeamBuiler: React.FC<{
                           <Button
                             variant="outlined"
                             onClick={() => handleReplaceTeamEntry(idx)}
+                            disabled={isSavingEntry}
                           >
                             {t("common:replace")}
                           </Button>
@@ -460,6 +749,7 @@ const TeamBuiler: React.FC<{
                             variant="outlined"
                             onClick={() => handleDeleteTeamEntry(idx)}
                             color="secondary"
+                            disabled={isSavingEntry}
                           >
                             {t("common:delete")}
                           </Button>
@@ -470,16 +760,22 @@ const TeamBuiler: React.FC<{
                 </Paper>
               </Grid>
             ))}
-            {teamBuildArray.length === 0 ? (
+            {teamBuildArray.teams.length === 0 ? (
               <Typography>{t("team_build:noTeams")}</Typography>
             ) : null}
           </Grid>
         </DialogContent>
         <DialogActions>
+          {isSavingEntry && <CircularProgress size={24} />}
           <Button
             variant="contained"
             color="primary"
             onClick={handleAddTeamEntry}
+            disabled={
+              isSavingEntry ||
+              (storageLocation === "cloud" &&
+                teamBuildArray.teams.length >= sekaiProfile!.maxDeckList)
+            }
           >
             {t("team_build:saveNewEntry")}
           </Button>
@@ -495,9 +791,32 @@ const TeamBuiler: React.FC<{
           <DialogContentText>
             {t("team_build:loadTeamDialog.desc")}
           </DialogContentText>
+          <FormControl component="fieldset">
+            <FormLabel component="legend">
+              {t("team_build:storage_location.label")}
+            </FormLabel>
+            <RadioGroup
+              row
+              value={storageLocation}
+              onChange={(_, v) => setStorageLocation(v as "local")}
+            >
+              <FormControlLabel
+                value="local"
+                control={<Radio />}
+                label={t("team_build:storage_location.local")}
+                labelPlacement="end"
+              />
+              <FormControlLabel
+                value="cloud"
+                control={<Radio />}
+                label={t("team_build:storage_location.cloud")}
+                labelPlacement="end"
+              />
+            </RadioGroup>
+          </FormControl>
           <Grid container spacing={1}>
-            {teamBuildArray.map((team, idx) => (
-              <Grid item xs={12}>
+            {teamBuildArray.teams.map((team, idx) => (
+              <Grid key={`load-team-${idx}`} item xs={12}>
                 <Paper variant="outlined" className={classes["dialog-paper"]}>
                   <Grid container spacing={1} alignItems="center">
                     <Grid item xs={12} md={2}>
@@ -506,7 +825,12 @@ const TeamBuiler: React.FC<{
                     <Grid item xs={12} md={6}>
                       <Grid container spacing={1}>
                         {team.teamCards.map((cardId) => (
-                          <Grid item xs={4} sm={2}>
+                          <Grid
+                            key={`load-team-card-${cardId}`}
+                            item
+                            xs={4}
+                            sm={2}
+                          >
                             <CardThumb cardId={cardId} />
                           </Grid>
                         ))}
@@ -537,12 +861,94 @@ const TeamBuiler: React.FC<{
                 </Paper>
               </Grid>
             ))}
-            {teamBuildArray.length === 0 ? (
+            {teamBuildArray.teams.length === 0 ? (
               <Typography>{t("team_build:noTeams")}</Typography>
             ) : null}
           </Grid>
         </DialogContent>
       </Dialog>
+      <Popover
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        transformOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+      >
+        {editingCard && (
+          <Container>
+            <Grid container direction="column" spacing={1}>
+              <Grid item>
+                <TextField
+                  label={t("user:profile.import_card.table.row.card_power")}
+                  value={editingCard.power}
+                  type="number"
+                  onChange={(e) =>
+                    handleChange(Number(e.target.value), "power")
+                  }
+                  inputProps={{
+                    min: "1",
+                  }}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item>
+                <TextField
+                  label={t(
+                    "user:profile.import_card.table.row.card_master_rank"
+                  )}
+                  value={editingCard.masterRank}
+                  type="number"
+                  onChange={(e) =>
+                    handleChange(Number(e.target.value), "masterRank")
+                  }
+                  inputProps={{
+                    min: "0",
+                    max: "5",
+                  }}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item>
+                <TextField
+                  label={t("card:skillLevel")}
+                  value={editingCard.skillLevel}
+                  type="number"
+                  onChange={(e) =>
+                    handleChange(Number(e.target.value), "skillLevel")
+                  }
+                  inputProps={{
+                    min: "1",
+                    max: "4",
+                  }}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item>
+                <FormControlLabel
+                  control={<Switch checked={editingCard.trained} />}
+                  label={t("card:trained")}
+                  onChange={(e, checked) => handleChange(checked, "trained")}
+                />
+              </Grid>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => handleDelete()}
+                >
+                  {t("common:delete")}
+                </Button>
+              </Grid>
+            </Grid>
+          </Container>
+        )}
+      </Popover>
       <Snackbar
         open={duplicatedCardErrorOpen}
         autoHideDuration={3000}
@@ -588,8 +994,17 @@ const TeamBuiler: React.FC<{
           {t("music_recommend:buildTeam.teamTextSaved")}
         </Alert>
       </Snackbar>
-    </Fragment>
+      <Snackbar
+        open={saveTeamErrorOpen}
+        autoHideDuration={3000}
+        onClose={() => setSaveTeamErrorOpen(false)}
+      >
+        <Alert variant="filled" severity="error">
+          {t("team_build:error.save_team_failed")}
+        </Alert>
+      </Snackbar>
+    </Grid>
   );
 };
 
-export default TeamBuiler;
+export default TeamBuilder;
