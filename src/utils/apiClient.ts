@@ -588,7 +588,11 @@ export function useCurrentEvent() {
 
 export function useLive2dModelList() {
   const { data, error } = useSWR(
-    `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-best-assets/models.json`,
+    `${
+      window.isChinaMainland
+        ? process.env.REACT_APP_FRONTEND_ASSET_BASE
+        : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-best-assets`
+    }/models.json`,
     axiosFetcher
   );
 

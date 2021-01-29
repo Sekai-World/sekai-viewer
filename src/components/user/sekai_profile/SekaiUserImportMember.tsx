@@ -454,7 +454,11 @@ const SekaiUserImportMember = () => {
           }
 
           const { data: charaHash } = await axios.get<[string, string][]>(
-            `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-best-assets/chara_hash.json`
+            `${
+              window.isChinaMainland
+                ? process.env.REACT_APP_FRONTEND_ASSET_BASE
+                : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-best-assets`
+            }/chara_hash.json`
           );
 
           // match hash
