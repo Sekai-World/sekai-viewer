@@ -60,12 +60,12 @@ export const useTeamCalc = () => {
         const card = userCards[idx];
         return masterRankRewards[card.rarity] * state.masterRank;
       });
-      console.log(
-        userCardPowers,
-        userCardTrainingRewards,
-        userCardEpisodeRewards,
-        userCardMasterRankRewards
-      );
+      // console.log(
+      //   userCardPowers,
+      //   userCardTrainingRewards,
+      //   userCardEpisodeRewards,
+      //   userCardMasterRankRewards
+      // );
 
       return userCardPowers.map((powers, idx) =>
         powers.map(
@@ -99,7 +99,7 @@ export const useTeamCalc = () => {
         );
       // [[power1, power2, power3], [power1, power2, power3]...]
       const userCardPowers = getUserCardPowers(userTeamCardStates, userCards);
-      console.log(userCardPowers);
+      // console.log(userCardPowers);
       if (!userCardPowers) return -1;
 
       const itemLevels = userAreaItems.map(
@@ -108,23 +108,23 @@ export const useTeamCalc = () => {
             (ai) => ai.areaItemId === elem.areaItemId && ai.level === elem.level
           )!
       );
-      console.log(
-        itemLevels,
-        itemLevels.filter((il) =>
-          userCards.some(
-            (card) => card.characterId === il.targetGameCharacterId
-          )
-        ),
-        itemLevels.filter((il) =>
-          userCards.some((card) => card.attr === il.targetCardAttr)
-        ),
-        itemLevels.filter((il) =>
-          userCards.some(
-            (card) =>
-              card.unit === il.targetUnit || card.supportUnit === il.targetUnit
-          )
-        )
-      );
+      // console.log(
+      //   itemLevels,
+      //   itemLevels.filter((il) =>
+      //     userCards.some(
+      //       (card) => card.characterId === il.targetGameCharacterId
+      //     )
+      //   ),
+      //   itemLevels.filter((il) =>
+      //     userCards.some((card) => card.attr === il.targetCardAttr)
+      //   ),
+      //   itemLevels.filter((il) =>
+      //     userCards.some(
+      //       (card) =>
+      //         card.unit === il.targetUnit || card.supportUnit === il.targetUnit
+      //     )
+      //   )
+      // );
 
       // characters
       const cardCharas = userCards.map((card) => card.characterId);
