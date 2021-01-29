@@ -1,7 +1,8 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useCachedData } from ".";
 import {
   IAreaItemLevel,
+  ICardEpisode,
   ICardInfo,
   ICharacterRank,
   IGameChara,
@@ -14,10 +15,70 @@ import {
 
 export const useTeamCalc = () => {
   const [cards] = useCachedData<ICardInfo>("cards");
+  const [cardEpisodes] = useCachedData<ICardEpisode>("cardEpisodes");
   const [areaItemLevels] = useCachedData<IAreaItemLevel>("areaItemLevels");
   const [gameCharas] = useCachedData<IGameChara>("gameCharacters");
   const [characterRanks] = useCachedData<ICharacterRank>("characterRanks");
   const [honors] = useCachedData<IHonorInfo>("honors");
+
+  const masterRankRewards = useMemo(() => [0, 50, 100, 150, 200], []);
+
+  const getUserCardPowers = useCallback(
+    (
+      userTeamCardStates: ITeamCardState[],
+      userCards: (ICardInfo & {
+        unit: string;
+      })[]
+    ) => {
+      if (!cardEpisodes || !masterRankRewards) return;
+
+      const userCardPowers = userTeamCardStates.map((state, idx) =>
+        userCards[idx].cardParameters
+          .filter((param) => param.cardLevel === state.level)
+          .sort((a, b) =>
+            a.cardParameterType > b.cardParameterType
+              ? 1
+              : a.cardParameterType < b.cardParameterType
+              ? -1
+              : 0
+          )
+          .map((param) => param.power)
+      );
+      const userCardTrainingRewards = userTeamCardStates.map((state, idx) => {
+        const card = userCards[idx];
+        return state.trained ? card.specialTrainingPower1BonusFixed : 0;
+      });
+      const userCardEpisodeRewards = userTeamCardStates.map((state, idx) => {
+        const card = userCards[idx];
+        const episodes = cardEpisodes.filter((ce) => ce.cardId === card.id);
+        return (
+          Number(state.story1Unlock) * episodes[0].power1BonusFixed +
+          Number(state.story2Unlock) * episodes[1].power1BonusFixed
+        );
+      });
+      const userCardMasterRankRewards = userTeamCardStates.map((state, idx) => {
+        const card = userCards[idx];
+        return masterRankRewards[card.rarity] * state.masterRank;
+      });
+      console.log(
+        userCardPowers,
+        userCardTrainingRewards,
+        userCardEpisodeRewards,
+        userCardMasterRankRewards
+      );
+
+      return userCardPowers.map((powers, idx) =>
+        powers.map(
+          (power) =>
+            power +
+            userCardTrainingRewards[idx] +
+            userCardEpisodeRewards[idx] +
+            userCardMasterRankRewards[idx]
+        )
+      );
+    },
+    [cardEpisodes, masterRankRewards]
+  );
 
   /**
    * Take user cards, states to calculate the bonus provided by area items.
@@ -36,6 +97,10 @@ export const useTeamCalc = () => {
             unit: gameCharas.find((gc) => gc.id === card.characterId)!.unit,
           })
         );
+      // [[power1, power2, power3], [power1, power2, power3]...]
+      const userCardPowers = getUserCardPowers(userTeamCardStates, userCards);
+      console.log(userCardPowers);
+      if (!userCardPowers) return -1;
 
       const itemLevels = userAreaItems.map(
         (elem) =>
@@ -43,38 +108,36 @@ export const useTeamCalc = () => {
             (ai) => ai.areaItemId === elem.areaItemId && ai.level === elem.level
           )!
       );
-      // console.log(
-      //   itemLevels,
-      //   itemLevels.filter((il) =>
-      //     userCards.some(
-      //       (card) => card.characterId === il.targetGameCharacterId
-      //     )
-      //   ),
-      //   itemLevels.filter((il) =>
-      //     userCards.some((card) => card.attr === il.targetCardAttr)
-      //   ),
-      //   itemLevels.filter((il) =>
-      //     userCards.some((card) => card.unit === il.targetUnit)
-      //   )
-      // );
+      console.log(
+        itemLevels,
+        itemLevels.filter((il) =>
+          userCards.some(
+            (card) => card.characterId === il.targetGameCharacterId
+          )
+        ),
+        itemLevels.filter((il) =>
+          userCards.some((card) => card.attr === il.targetCardAttr)
+        ),
+        itemLevels.filter((il) =>
+          userCards.some(
+            (card) =>
+              card.unit === il.targetUnit || card.supportUnit === il.targetUnit
+          )
+        )
+      );
 
       // characters
       const cardCharas = userCards.map((card) => card.characterId);
-      const cardPowers = userTeamCardStates.map((state) => state.power);
       const cardCharaItemLevels = cardCharas.map((characterId) =>
         itemLevels.filter((il) => il.targetGameCharacterId === characterId)
       );
-      const cardCharaBonuses = cardPowers.map((power, idx) =>
-        cardCharaItemLevels[idx].reduce(
-          (sum, item) => sum + Math.floor((power * item.power1BonusRate) / 100),
-          0
+      const cardCharaBonusRates = cardCharaItemLevels.map((itemLevels) =>
+        Number(
+          itemLevels
+            .reduce((sum, item) => sum + item["power1BonusRate"], 0)
+            .toPrecision(3)
         )
       );
-      const cardCharaBonus = cardCharaBonuses.reduce(
-        (sum, bonus) => sum + bonus,
-        0
-      );
-      // console.log(cardCharaBonuses, cardCharaBonus);
 
       // attr
       const cardAttrs = userCards.map((card) => card.attr);
@@ -82,27 +145,22 @@ export const useTeamCalc = () => {
       const cardAttrItemLevels = cardAttrs.map((attr) =>
         itemLevels.filter((il) => il.targetCardAttr === attr)
       );
-      const cardAttrBonuses = cardPowers.map((power, idx) =>
-        cardAttrItemLevels[idx].reduce(
-          (sum, item) =>
-            sum +
-            Math.floor(
-              (power *
+      const cardAttrBonusRates = cardAttrItemLevels.map((itemLevels) =>
+        Number(
+          itemLevels
+            .reduce(
+              (sum, item) =>
+                sum +
                 item[
                   cardAttrsAllSame
                     ? "power1AllMatchBonusRate"
                     : "power1BonusRate"
-                ]) /
-                100
-            ),
-          0
+                ],
+              0
+            )
+            .toPrecision(3)
         )
       );
-      const cardAttrBonus = cardAttrBonuses.reduce(
-        (sum, bonus) => sum + bonus,
-        0
-      );
-      // console.log(cardAttrBonuses, cardAttrBonus);
 
       // team without piapro
       // check all same at first (all piapro or other with piapro same support unit)
@@ -116,62 +174,27 @@ export const useTeamCalc = () => {
       const cardUnitItemLevels = cardUnits.map((unit) =>
         itemLevels.filter((il) => il.targetUnit === unit)
       );
-      const cardUnitBonuses = cardPowers.map((power, idx) =>
-        cardUnits[idx] === "piapro" // skip piapro for now
-          ? 0
-          : cardUnitItemLevels[idx].reduce(
+      const cardUnitBonusRates = cardUnitItemLevels.map((itemLevels) =>
+        Number(
+          itemLevels
+            .reduce(
               (sum, item) =>
                 sum +
-                Math.floor(
-                  (power *
-                    item[
-                      cardUnitsAllSame
-                        ? "power1AllMatchBonusRate"
-                        : "power1BonusRate"
-                    ]) /
-                    100
-                ),
+                item[
+                  cardUnitsAllSame
+                    ? "power1AllMatchBonusRate"
+                    : "power1BonusRate"
+                ],
               0
             )
-      );
-      const cardUnitBonus = cardUnitBonuses.reduce(
-        (sum, bonus) => sum + bonus,
-        0
-      );
-      // console.log(cardUnitBonuses, cardUnitBonus);
-
-      // for piapro cards, calc bonus for targetUnit === "piapro" and targetUnit matching supportUnit
-      const piaproCards = userCards.filter((card) => card.unit === "piapro");
-      const piaproCardPowers = userTeamCardStates
-        .filter((state) => piaproCards.some((card) => card.id === state.cardId))
-        .map((state) => state.power);
-      const piaproItemLevels = itemLevels.filter(
-        (il) => il.targetUnit === "piapro"
-      );
-      const piaproCardBonuses = piaproCardPowers.map((power) =>
-        piaproItemLevels.reduce(
-          (sum, item) =>
-            sum +
-            Math.floor(
-              (power *
-                Math.ceil(
-                  item[
-                    cardUnitsAllSame
-                      ? "power1AllMatchBonusRate"
-                      : "power1BonusRate"
-                  ] * 100
-                )) /
-                10000
-            ),
-          0
+            .toPrecision(3)
         )
       );
-      const piaproCardBonus = piaproCardBonuses.reduce(
-        (sum, bonus) => sum + bonus,
-        0
-      );
-      // console.log(piaproCardBonuses, piaproCardBonus);
 
+      // for piapro cards, calc bonus for supportUnit
+      const piaproCardIdxs = userCards
+        .map((_, idx) => idx)
+        .filter((idx) => userCards[idx].supportUnit !== "none");
       const piaproSupportCards = userCards.filter(
         (card) => card.supportUnit !== "none"
       );
@@ -180,72 +203,111 @@ export const useTeamCalc = () => {
           il.targetUnit !== "piapro" &&
           piaproSupportCards.some((card) => card.supportUnit === il.targetUnit)
       );
-      const piaproSupportCardPowers = userTeamCardStates
-        .filter((state) =>
-          piaproSupportCards.some((card) => card.id === state.cardId)
-        )
-        .map((state) => state.power);
-      const piaproSupportCardBonuses = piaproSupportCardPowers.map((power) =>
-        piaproSupportItemLevels.reduce(
-          (sum, item) =>
-            sum +
-            Math.floor(
-              (power *
-                item[
-                  cardUnitsAllSame
-                    ? "power1AllMatchBonusRate"
-                    : "power1BonusRate"
-                ]) /
-                100
-            ),
-          0
-        )
+      const piaproSupportBonusRate = Number(
+        piaproSupportItemLevels
+          .reduce(
+            (sum, item) =>
+              sum +
+              item[
+                cardUnitsAllSame ? "power1AllMatchBonusRate" : "power1BonusRate"
+              ],
+            0
+          )
+          .toPrecision(3)
       );
-      const piaproSupportCardBonus = piaproSupportCardBonuses.reduce(
-        (sum, bonus) => sum + bonus,
+
+      piaproCardIdxs.forEach((idx) => {
+        cardUnitBonusRates[idx] = Math.max(
+          cardUnitBonusRates[idx],
+          piaproSupportBonusRate
+        );
+      });
+
+      // sum all bonus rates
+      const sumBonusRates = userCards.map(
+        (_, idx) =>
+          cardCharaBonusRates[idx] +
+          cardAttrBonusRates[idx] +
+          cardUnitBonusRates[idx]
+      );
+
+      return sumBonusRates.reduce(
+        (sum, bonusRate, idx) =>
+          sum +
+          Math.floor((userCardPowers[idx][0] * bonusRate) / 100) +
+          Math.floor((userCardPowers[idx][1] * bonusRate) / 100) +
+          Math.floor((userCardPowers[idx][2] * bonusRate) / 100),
         0
       );
-      // console.log(piaproSupportCardBonuses, piaproSupportCardBonus);
-
-      const piaproBonus =
-        piaproCardBonus > piaproSupportCardBonus
-          ? piaproCardBonus
-          : piaproCardBonus;
-
-      return cardCharaBonus + cardAttrBonus + cardUnitBonus + piaproBonus;
     },
-    [areaItemLevels, cards, gameCharas]
+    [areaItemLevels, cards, gameCharas, getUserCardPowers]
   );
 
   const getCharacterRankBouns = useCallback(
     (userCharacters: UserCharacter[], userTeamCardStates: ITeamCardState[]) => {
-      if (!characterRanks || !cards) return -1;
+      if (!characterRanks || !cards || !gameCharas) return -1;
 
       const userCardCharas = userTeamCardStates
         .map((elem) => elem.cardId)
-        .map((cardId) => cards.find((card) => card.id === cardId)!.characterId);
-
-      return userCharacters
-        .filter((chara) => userCardCharas.includes(chara.characterId))
-        .reduce(
-          (sum, chara) =>
-            sum +
-            Math.floor(
-              (Math.round(
-                characterRanks.find(
-                  (cr) =>
-                    cr.characterId === chara.characterId &&
-                    cr.characterRank === chara.characterRank
-                )!.power1BonusRate * 100
-              ) /
-                10000) *
-                userTeamCardStates[userCardCharas.indexOf(chara.characterId)]
-                  .power
-            ),
-          0
+        .map((cardId) => cards.find((card) => card.id === cardId)!.characterId)
+        .map(
+          (charaId) =>
+            userCharacters.find((chara) => chara.characterId === charaId)!
         );
+
+      const userCards = userTeamCardStates
+        .map((elem) => elem.cardId)
+        .map((cardId) => cards.find((card) => card.id === cardId)!)
+        .map((card) =>
+          Object.assign({}, card, {
+            unit: gameCharas.find((gc) => gc.id === card.characterId)!.unit,
+          })
+        );
+
+      // [[power1, power2, power3], [power1, power2, power3]...]
+      const userCardPowers = getUserCardPowers(userTeamCardStates, userCards);
+      if (!userCardPowers) return -1;
+
+      return userCardCharas.reduce(
+        (sum, chara, idx) =>
+          sum +
+          Math.floor(
+            (Math.round(
+              characterRanks.find(
+                (cr) =>
+                  cr.characterId === chara.characterId &&
+                  cr.characterRank === chara.characterRank
+              )!.power1BonusRate * 100
+            ) /
+              10000) *
+              userCardPowers[idx][0]
+          ) +
+          Math.floor(
+            (Math.round(
+              characterRanks.find(
+                (cr) =>
+                  cr.characterId === chara.characterId &&
+                  cr.characterRank === chara.characterRank
+              )!.power2BonusRate * 100
+            ) /
+              10000) *
+              userCardPowers[idx][1]
+          ) +
+          Math.floor(
+            (Math.round(
+              characterRanks.find(
+                (cr) =>
+                  cr.characterId === chara.characterId &&
+                  cr.characterRank === chara.characterRank
+              )!.power3BonusRate * 100
+            ) /
+              10000) *
+              userCardPowers[idx][2]
+          ),
+        0
+      );
     },
-    [cards, characterRanks]
+    [cards, characterRanks, gameCharas, getUserCardPowers]
   );
 
   const getHonorBonus = useCallback(
@@ -264,9 +326,35 @@ export const useTeamCalc = () => {
     [honors]
   );
 
+  const getPureTeamPowers = useCallback(
+    (userTeamCardStates: ITeamCardState[]) => {
+      if (!characterRanks || !cards || !gameCharas) return -1;
+
+      const userCards = userTeamCardStates
+        .map((elem) => elem.cardId)
+        .map((cardId) => cards.find((card) => card.id === cardId)!)
+        .map((card) =>
+          Object.assign({}, card, {
+            unit: gameCharas.find((gc) => gc.id === card.characterId)!.unit,
+          })
+        );
+
+      // [[power1, power2, power3], [power1, power2, power3]...]
+      const userCardPowers = getUserCardPowers(userTeamCardStates, userCards);
+      if (!userCardPowers) return -1;
+
+      return userCardPowers.reduce(
+        (sum, powers) => sum + powers.reduce((_sum, power) => _sum + power, 0),
+        0
+      );
+    },
+    [cards, characterRanks, gameCharas, getUserCardPowers]
+  );
+
   return {
     getAreaItemBonus,
     getCharacterRankBouns,
     getHonorBonus,
+    getPureTeamPowers,
   };
 };
