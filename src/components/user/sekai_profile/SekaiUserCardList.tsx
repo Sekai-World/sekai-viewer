@@ -321,8 +321,9 @@ const SekaiUserCardList = () => {
                   color="primary"
                   disabled={
                     isSaving ||
-                    !sekaiProfile!.cardList ||
-                    !sekaiProfile!.cardList.length ||
+                    !sekaiProfile ||
+                    !sekaiProfile.cardList ||
+                    !sekaiProfile.cardList.length ||
                     (!deleteCardIds.length && !editList.length)
                   }
                   onClick={() => {
@@ -341,8 +342,9 @@ const SekaiUserCardList = () => {
                   color="primary"
                   disabled={
                     isSaving ||
-                    !sekaiProfile!.cardList ||
-                    !sekaiProfile!.cardList.length
+                    !sekaiProfile ||
+                    !sekaiProfile.cardList ||
+                    !sekaiProfile.cardList.length
                   }
                   onClick={() => {
                     setAddCardDialogVisible(true);
