@@ -136,29 +136,24 @@ const Settings: React.FC<{
             {t("common:cdnSources.title")}
           </FormLabel>
           {t("common:cdnSources.description")}
-          <RadioGroup
-            row
-            aria-label="show translated"
-            value={contentTransMode}
-            onChange={(e, v) =>
-              updateContentTransMode(v as ContentTransModeType)
-            }
+          <Select
+            value={cdns.getSelectedCdn()}
+            onChange={(e, v: any) => {
+              v = v.props.value;
+              cdns.setPointedCdn(v, "", "");
+            }}
+            label="CDNs"
           >
-            <Select
-              value={cdns.getSelectedCdn()}
-              onChange={(e, v: any) => {
-                v = v.props.value;
-                cdns.setPointedCdn(v, "", "");
-              }}
-              label="CDNs"
-            >
-              {cdns.getAssetCdns().map((cdn) => (
-                <MenuItem key={cdn.name} value={cdn.name}>
-                  {t(cdn.l10n_name)}
-                </MenuItem>
-              ))}
-            </Select>
-          </RadioGroup>
+            {cdns.getAssetCdns().map((cdn) => {
+              if (!cdn.chinaMainland || window.isChinaMainland) {
+                return (
+                  <MenuItem key={cdn.name} value={cdn.name}>
+                    {t(cdn.l10n_name)}
+                  </MenuItem>
+                );
+              }
+            })}
+          </Select>
         </FormControl>
         <br />
         {/** DB CDN Source */}
@@ -167,56 +162,53 @@ const Settings: React.FC<{
             {t("common:dbCdnSources.title")}
           </FormLabel>
           {t("common:dbCdnSources.description")}
-          <RadioGroup
-            row
-            aria-label="show translated"
-            value={contentTransMode}
-            onChange={(e, v) =>
-              updateContentTransMode(v as ContentTransModeType)
-            }
-          >
-            <Select
-              value={cdns.getSelectedCdn()}
-              onChange={(e, v: any) => {
-                v = v.props.value;
-                cdns.setPointedDbCdn(v, "", "");
-              }}
-              label="CDNs"
-            >
-              {cdns.getDbCdns().map((cdn) => (
-                <MenuItem key={cdn.name} value={cdn.name}>
-                  {t(cdn.l10n_name)}
-                </MenuItem>
-              ))}
-            </Select>
-          </RadioGroup>
-        </FormControl>
-        <br />
-        {/** Changelog CDN Source */}
-        <FormControl
-          component="fieldset"
-          style={{ margin: "2% 0" }}
-          hidden={true}
-        >
-          <FormLabel component="legend">
-            {t("common:changelogCdnSources.title")}
-          </FormLabel>
-          {t("common:changelogCdnSources.description")}
           <Select
             value={cdns.getSelectedCdn()}
             onChange={(e, v: any) => {
               v = v.props.value;
-              cdns.setPointedChangelogCdn(v, "", "");
+              cdns.setPointedDbCdn(v, "", "");
             }}
             label="CDNs"
           >
-            {cdns.getChangelogCdns().map((cdn) => (
-              <MenuItem key={cdn.name} value={cdn.name}>
-                {t(cdn.l10n_name)}
-              </MenuItem>
-            ))}
+            {cdns.getDbCdns().map((cdn) => {
+              if (!cdn.chinaMainland || window.isChinaMainland) {
+                return (
+                  <MenuItem key={cdn.name} value={cdn.name}>
+                    {t(cdn.l10n_name)}
+                  </MenuItem>
+                );
+              }
+            })}
           </Select>
         </FormControl>
+        <br />
+        {/** Changelog CDN Source */}
+        <div hidden={true}>
+          <FormControl component="fieldset" style={{ margin: "2% 0" }}>
+            <FormLabel component="legend">
+              {t("common:changelogCdnSources.title")}
+            </FormLabel>
+            {t("common:changelogCdnSources.description")}
+            <Select
+              value={cdns.getSelectedCdn()}
+              onChange={(e, v: any) => {
+                v = v.props.value;
+                cdns.setPointedChangelogCdn(v, "", "");
+              }}
+              label="CDNs"
+            >
+              {cdns.getChangelogCdns().map((cdn) => {
+                if (!cdn.chinaMainland || window.isChinaMainland) {
+                  return (
+                    <MenuItem key={cdn.name} value={cdn.name}>
+                      {t(cdn.l10n_name)}
+                    </MenuItem>
+                  );
+                }
+              })}
+            </Select>
+          </FormControl>
+        </div>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="primary">
