@@ -73,7 +73,7 @@ const SekaiUserCardList = () => {
   const [filteredCards, setFilteredCards] = useState<ICardInfo[]>([]);
 
   const [cardList, setCardList] = useState<ITeamCardState[]>([]);
-  const [displayCardList, setDisplayCardList] = useState<ITeamCardState[]>([]);
+  // const [displayCardList, setDisplayCardList] = useState<ITeamCardState[]>([]);
   const [card, setCard] = useState<ITeamCardState>();
   const [editList, setEditList] = useState<ITeamCardState[]>([]);
   const [isSaving, setIsSaving] = useState(false);
@@ -111,11 +111,10 @@ const SekaiUserCardList = () => {
       sekaiProfile.cardList &&
       sekaiProfile.cardList.length
     ) {
-      let _cardList = (cardList.length ? cardList : sekaiProfile.cardList).map(
-        (elem) =>
-          Object.assign({}, elem, {
-            card: cards.find((c) => c.id === elem.cardId)!,
-          })
+      let _cardList = sekaiProfile.cardList.map((elem) =>
+        Object.assign({}, elem, {
+          card: cards.find((c) => c.id === elem.cardId)!,
+        })
       );
       if (attrSelected.length) {
         _cardList = _cardList.filter((elem) =>
@@ -127,7 +126,45 @@ const SekaiUserCardList = () => {
           raritySelected.includes(elem.card.rarity)
         );
       }
-      setDisplayCardList(
+      // apply modifications
+      _cardList = _cardList.filter(
+        (card) => !deleteCardIds.includes(card.cardId)
+      );
+      _cardList = _cardList.map((card) =>
+        Object.assign(
+          {},
+          card,
+          editList.find((el) => el.cardId === card.cardId) || {}
+        )
+      );
+      _cardList = [
+        ..._cardList,
+        ...addCardIds.map((cardId) =>
+          Object.assign(
+            {},
+            editList.find((el) => el.cardId === cardId),
+            {
+              card: cards.find((c) => c.id === cardId)!,
+            }
+          )
+        ),
+      ];
+      // setDisplayCardList(
+      //   _cardList
+      //     .sort((a, b) =>
+      //       sortBy === "level"
+      //         ? sortType === "asc"
+      //           ? a.level - b.level
+      //           : b.level - a.level
+      //         : sortType === "asc"
+      //         ? a.card[sortBy as "id"] - b.card[sortBy as "id"]
+      //         : b.card[sortBy as "id"] - a.card[sortBy as "id"]
+      //     )
+      //     .map((card, idx) =>
+      //       Object.assign({}, card, { id: idx + 1, card: undefined })
+      //     )
+      // );
+      setCardList(
         _cardList
           .sort((a, b) =>
             sortBy === "level"
@@ -138,23 +175,15 @@ const SekaiUserCardList = () => {
               ? a.card[sortBy as "id"] - b.card[sortBy as "id"]
               : b.card[sortBy as "id"] - a.card[sortBy as "id"]
           )
-          .map((card, idx) =>
-            Object.assign({}, card, { id: idx + 1, card: undefined })
-          )
+          .map((card) => {
+            const { card: _, ...newCard } = card;
+            return newCard;
+          })
       );
-      if (!cardList.length) {
-        setCardList(
-          _cardList
-            .sort((a, b) => a.card["id"] - b.card["id"])
-            .map((card, idx) =>
-              Object.assign({}, card, { id: idx + 1, card: undefined })
-            )
-        );
-      }
     }
   }, [
+    addCardIds,
     attrSelected,
-    cardList,
     cards,
     deleteCardIds,
     editList,
@@ -257,18 +286,18 @@ const SekaiUserCardList = () => {
       },
     ]);
     setAddCardIds((ids) => [...ids, card.id]);
-    setCardList((list) => [
-      ...list,
-      {
-        cardId: card.id,
-        masterRank: 0,
-        skillLevel: 1,
-        level: maxLevel[card.rarity],
-        trained: card.rarity >= 3,
-        story1Unlock: true,
-        story2Unlock: true,
-      },
-    ]);
+    // setCardList((list) => [
+    //   ...list,
+    //   {
+    //     cardId: card.id,
+    //     masterRank: 0,
+    //     skillLevel: 1,
+    //     level: maxLevel[card.rarity],
+    //     trained: card.rarity >= 3,
+    //     story1Unlock: true,
+    //     story2Unlock: true,
+    //   },
+    // ]);
     setFilteredCards((cards) => cards.filter((c) => c.id !== card.id));
   }, []);
 
@@ -300,6 +329,7 @@ const SekaiUserCardList = () => {
                         );
                       setEditList([]);
                       setDeleteCardIds([]);
+                      setAddCardIds([]);
                       updateSekaiProfile({
                         cardList: cardList,
                       });
@@ -560,7 +590,7 @@ const SekaiUserCardList = () => {
       </Grid>
       <Grid item xs={12}>
         <Grid container spacing={1}>
-          {displayCardList.map((card) => (
+          {cardList.map((card) => (
             <Grid item xs={3} sm={2} lg={1} key={card.cardId}>
               <CardThumb
                 cardId={card.cardId}
