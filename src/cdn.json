@@ -1,19 +1,19 @@
 {
   "cdns": [
     {
-      "name": "ray",
-      "url": "https://cdn.sekai.makoo.eu/assets/",
+      "name": "prod",
+      "url": "https://sekai-res.dnaroma.eu/file/sekai-assets/",
       "secret": null,
-      "l10n_name": "cdn.dummy",
-      "apiSchema": "ray",
+      "l10n_name": "cdn.mainServer",
+      "apiSchema": "none",
       "chinaMainland": false
     },
     {
-      "name": "pjsek.ai",
-      "url": "https://api.pjsek.ai/assets?path=",
+      "name": "ray",
+      "url": "https://cdn.sekai.makoo.eu/assets/",
       "secret": null,
-      "l10n_name": "cdn.pjsekai",
-      "apiSchema": "pjsekai",
+      "l10n_name": "cdn.assetsBrowserServer",
+      "apiSchema": "ray",
       "chinaMainland": false
     },
     {

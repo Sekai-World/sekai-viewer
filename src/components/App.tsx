@@ -83,6 +83,7 @@ import { SettingContext, UserContext, UserProvider } from "../context";
 import ScrollTop from "./subs/ScrollTop";
 import Settings from "./subs/Settings";
 import * as serviceWorker from "../serviceWorker";
+import ChangelogMainPage from "./changelog/ChangelogMainPage";
 
 const drawerWidth = 240;
 const CardList = lazy(() => import("./card/CardList"));
@@ -473,6 +474,12 @@ function App() {
       ],
       [
         {
+          text: t("common:assetsBrowser"),
+          icon: <Folder />,
+          to: "/assetsBrowser",
+          disabled: false,
+        },
+        {
           text: t("common:musicMeta"),
           icon: <QueueMusic />,
           to: "/music_meta",
@@ -508,12 +515,6 @@ function App() {
           text: t("common:support"),
           icon: <MonetizationOn />,
           to: "/support",
-          disabled: false,
-        },
-        {
-          text: t("common:assetsBrowser"),
-          icon: <Folder />,
-          to: "/assetsBrowser",
           disabled: false,
         },
         {
@@ -1036,6 +1037,9 @@ function App() {
                 </Route>
                 <Route path="/assetsBrowser/:path">
                   <AssetsBrowser />
+                </Route>
+                <Route path="/changelog" exact>
+                  <ChangelogMainPage />
                 </Route>
               </Suspense>
             </Switch>

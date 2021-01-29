@@ -234,6 +234,18 @@ class CdnSource {
     this.pointedCdn = cdn.name;
     localStorage.setItem("pointedChangelogCdn", cdn.name);
   }
+
+  getAssetCdns() {
+    return this.cdns.cdns;
+  }
+
+  getDbCdns() {
+    return this.cdns.dbCdns;
+  }
+
+  getChangelogCdns() {
+    return this.cdns.changelogCdns;
+  }
 }
 
 export default CdnSource;
