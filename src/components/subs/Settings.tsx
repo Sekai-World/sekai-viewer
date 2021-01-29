@@ -7,8 +7,10 @@ import {
   FormControl,
   FormControlLabel,
   FormLabel,
+  MenuItem,
   Radio,
   RadioGroup,
+  Select,
 } from "@material-ui/core";
 import { Brightness4, Brightness7, BrightnessAuto } from "@material-ui/icons";
 import React, { useContext, useEffect } from "react";
@@ -16,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import { SettingContext } from "../../context";
 import { DisplayModeType, ContentTransModeType } from "../../types";
 import { useRemoteLanguages } from "../../utils/apiClient";
+import CdnSource from "../../utils/cdnSource";
 import { useAssetI18n } from "../../utils/i18n";
 
 const Settings: React.FC<{
@@ -36,6 +39,8 @@ const Settings: React.FC<{
   } = useContext(SettingContext)!;
   const { languages: remoteLanguages, isLoading, error } = useRemoteLanguages();
 
+  const cdns = new CdnSource();
+
   useEffect(() => {
     if (!isLoading && !error) {
       updateLanguages(remoteLanguages);
@@ -46,30 +51,30 @@ const Settings: React.FC<{
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>{t("common:settings.title")}</DialogTitle>
       <DialogContent>
-        <FormControl component="fieldset" style={{ margin: "1% 0" }}>
+        {/** L18n */}
+        <FormControl component="fieldset" style={{ marginBottom: "1%" }}>
           <FormLabel component="legend">{t("common:language")}</FormLabel>
-          <RadioGroup
-            row
-            aria-label="language"
+          <Select
             value={lang}
-            onChange={(e, v) => {
+            onChange={(e, v: any) => {
+              v = v.props.value;
               i18n.loadLanguages([v]);
               assetI18n.loadLanguages([v]);
               updateLang(v);
             }}
+            label="Language"
           >
             {languages
               .filter((lang) => lang.enabled)
               .map((lang) => (
-                <FormControlLabel
-                  key={lang.id}
-                  value={lang.code}
-                  control={<Radio />}
-                  label={lang.name}
-                ></FormControlLabel>
+                <MenuItem key={lang.id} value={lang.code}>
+                  {lang.name}
+                </MenuItem>
               ))}
-          </RadioGroup>
+          </Select>
         </FormControl>
+        <br />
+        {/** Light/Dark theme */}
         <FormControl component="fieldset" style={{ margin: "1% 0" }}>
           <FormLabel component="legend">{t("common:darkmode")}</FormLabel>
           <RadioGroup
@@ -95,6 +100,7 @@ const Settings: React.FC<{
             ></FormControlLabel>
           </RadioGroup>
         </FormControl>
+        {/** Translation mode */}
         <FormControl component="fieldset" style={{ margin: "1% 0" }}>
           <FormLabel component="legend">
             {t("common:contentTranslationMode.title")}
@@ -123,6 +129,93 @@ const Settings: React.FC<{
               label={t("common:contentTranslationMode.both")}
             ></FormControlLabel>
           </RadioGroup>
+        </FormControl>
+        {/** CDN Source */}
+        <FormControl component="fieldset" style={{ margin: "1% 0" }}>
+          <FormLabel component="legend">
+            {t("common:cdnSources.title")}
+          </FormLabel>
+          {t("common:cdnSources.description")}
+          <RadioGroup
+            row
+            aria-label="show translated"
+            value={contentTransMode}
+            onChange={(e, v) =>
+              updateContentTransMode(v as ContentTransModeType)
+            }
+          >
+            <Select
+              value={cdns.getSelectedCdn()}
+              onChange={(e, v: any) => {
+                v = v.props.value;
+                cdns.setPointedCdn(v, "", "");
+              }}
+              label="CDNs"
+            >
+              {cdns.getAssetCdns().map((cdn) => (
+                <MenuItem key={cdn.name} value={cdn.name}>
+                  {t(cdn.l10n_name)}
+                </MenuItem>
+              ))}
+            </Select>
+          </RadioGroup>
+        </FormControl>
+        <br />
+        {/** DB CDN Source */}
+        <FormControl component="fieldset" style={{ margin: "2% 0" }}>
+          <FormLabel component="legend">
+            {t("common:dbCdnSources.title")}
+          </FormLabel>
+          {t("common:dbCdnSources.description")}
+          <RadioGroup
+            row
+            aria-label="show translated"
+            value={contentTransMode}
+            onChange={(e, v) =>
+              updateContentTransMode(v as ContentTransModeType)
+            }
+          >
+            <Select
+              value={cdns.getSelectedCdn()}
+              onChange={(e, v: any) => {
+                v = v.props.value;
+                cdns.setPointedDbCdn(v, "", "");
+              }}
+              label="CDNs"
+            >
+              {cdns.getDbCdns().map((cdn) => (
+                <MenuItem key={cdn.name} value={cdn.name}>
+                  {t(cdn.l10n_name)}
+                </MenuItem>
+              ))}
+            </Select>
+          </RadioGroup>
+        </FormControl>
+        <br />
+        {/** Changelog CDN Source */}
+        <FormControl
+          component="fieldset"
+          style={{ margin: "2% 0" }}
+          hidden={true}
+        >
+          <FormLabel component="legend">
+            {t("common:changelogCdnSources.title")}
+          </FormLabel>
+          {t("common:changelogCdnSources.description")}
+          <Select
+            value={cdns.getSelectedCdn()}
+            onChange={(e, v: any) => {
+              v = v.props.value;
+              cdns.setPointedChangelogCdn(v, "", "");
+            }}
+            label="CDNs"
+          >
+            {cdns.getChangelogCdns().map((cdn) => (
+              <MenuItem key={cdn.name} value={cdn.name}>
+                {t(cdn.l10n_name)}
+              </MenuItem>
+            ))}
+          </Select>
         </FormControl>
       </DialogContent>
       <DialogActions>
