@@ -1,6 +1,6 @@
 import { Grid } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ICardInfo } from "../../types";
 import { getRemoteAssetURL, useCachedData } from "../../utils";
 
@@ -83,7 +83,6 @@ export const CardThumb: React.FC<
             width="156"
             height="30"
             fontSize="28"
-            fontWeight="lighter"
             fill="white"
           >
             {power}
@@ -224,6 +223,7 @@ export const CardThumbMedium: React.FC<
   }, [card, defaultImage, trained]);
 
   const rarityIcon = trained ? rarityAfterTraining : rarityNormal;
+  const randomNum = useMemo(() => Math.floor(100 * Math.random()), []);
 
   return card ? (
     <div className={classes.svg} onClick={onClick} style={style}>
@@ -232,7 +232,7 @@ export const CardThumbMedium: React.FC<
           <pattern
             width="330"
             height="520"
-            id={`mediumThumb-${cardId}-${level}-${power}`}
+            id={`mediumThumb-${cardId}-${level}-${randomNum}`}
             patternUnits="userSpaceOnUse"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 520">
@@ -247,9 +247,9 @@ export const CardThumbMedium: React.FC<
               {/* level */}
               <rect
                 x="0"
-                y="460"
+                y="450"
                 width="330"
-                height="60"
+                height="70"
                 fill="black"
                 fillOpacity="0.8"
               />
@@ -257,9 +257,8 @@ export const CardThumbMedium: React.FC<
                 x="30"
                 y="493"
                 width="200"
-                height="40"
-                fontSize="40"
-                fontWeight="lighter"
+                height="50"
+                fontSize="50"
                 fill="white"
               >
                 {!!level && `Lv.${level}`}
@@ -287,7 +286,7 @@ export const CardThumbMedium: React.FC<
                   key={`card-rarity-${i}`}
                   href={rarityIcon}
                   x={i * 50 + 16}
-                  y="405"
+                  y="395"
                   width="50"
                   height="50"
                 />
@@ -312,7 +311,7 @@ export const CardThumbMedium: React.FC<
           ry="30"
           width="322"
           height="512"
-          fill={`url(#mediumThumb-${cardId}-${level}-${power})`}
+          fill={`url(#mediumThumb-${cardId}-${level}-${randomNum})`}
         />
       </svg>
     </div>

@@ -99,6 +99,7 @@ const TeamBuilder: React.FC<{
     getAreaItemBonus,
     getCharacterRankBouns,
     getHonorBonus,
+    getPureTeamPowers,
   } = useTeamCalc();
 
   const [characterId, setCharacterId] = useState<number>(0);
@@ -178,7 +179,7 @@ const TeamBuilder: React.FC<{
         setCardMaxErrorOpen(true);
         return;
       }
-      const maxLevel = [0, 20, 30, 40, 50];
+      const maxLevel = [0, 20, 30, 50, 60];
       setTeamCards((tc) => [...tc, card.id]);
       let stateFrom = sekaiProfile!.cardList!.find(
         (cl) => cl.cardId === card.id
@@ -191,10 +192,10 @@ const TeamBuilder: React.FC<{
               cardId: card.id,
               skillLevel: 1,
               masterRank: 0,
-              power: card.cardParameters
-                .filter((elem) => elem.cardLevel === maxLevel[card.rarity])
-                .reduce((sum, elem) => sum + elem.power, 0),
-              trained: false,
+              level: maxLevel[card.rarity],
+              trained: card.rarity >= 3,
+              story1Unlock: true,
+              story2Unlock: true,
             },
       ]);
       // setAddCardDialogVisible(false);
@@ -393,18 +394,22 @@ const TeamBuilder: React.FC<{
   const handleLoadTeamEntry = useCallback(
     (idx) => {
       const currentEntry = teamBuildArray.teams[idx];
-      if (currentEntry.teamCardsStates[0].level) {
+      if (
+        !Object.prototype.hasOwnProperty.call(
+          currentEntry.teamCardsStates[0],
+          "story1Unlock"
+        )
+      ) {
         // convert data
         currentEntry.teamCardsStates = currentEntry.teamCardsStates.map(
           (state) => {
             const card = cards!.find((elem) => elem.id === state.cardId)!;
+            const maxNormalLevel = [0, 20, 30, 50, 60];
             return Object.assign({}, state, {
-              level: undefined,
               masterRank: 0,
-              power: card.cardParameters
-                .filter((elem) => elem.cardLevel === state.level)
-                .reduce((sum, elem) => sum + elem.power, 0),
-              trained: false,
+              trained: state.level > maxNormalLevel[card.rarity],
+              story1Unlock: false,
+              story2Unlock: false,
             });
           }
         );
@@ -426,10 +431,7 @@ const TeamBuilder: React.FC<{
   );
 
   const calcTotalPower = useCallback(() => {
-    const pureDeckPower = teamCardsStates.reduce(
-      (sum, cardState) => sum + cardState.power,
-      0
-    );
+    const pureDeckPower = getPureTeamPowers(teamCardsStates);
 
     if (isAutoCalcBonus && sekaiProfile && sekaiProfile.sekaiUserProfile) {
       const areaItemBonus = getAreaItemBonus(
@@ -456,6 +458,7 @@ const TeamBuilder: React.FC<{
     getAreaItemBonus,
     getCharacterRankBouns,
     getHonorBonus,
+    getPureTeamPowers,
     isAutoCalcBonus,
     sekaiProfile,
     teamCardsStates,
@@ -517,7 +520,7 @@ const TeamBuilder: React.FC<{
               <CardThumbMedium
                 cardId={cardId}
                 trained={teamCardsStates[index].trained}
-                power={teamCardsStates[index].power}
+                level={teamCardsStates[index].level}
                 masterRank={teamCardsStates[index].masterRank}
                 style={{ cursor: "pointer" }}
                 onClick={(e) => handleClick(e, teamCardsStates[index])}
@@ -885,11 +888,11 @@ const TeamBuilder: React.FC<{
             <Grid container direction="column" spacing={1}>
               <Grid item>
                 <TextField
-                  label={t("user:profile.import_card.table.row.card_power")}
-                  value={editingCard.power}
+                  label={t("card:cardLevel")}
+                  value={editingCard.level}
                   type="number"
                   onChange={(e) =>
-                    handleChange(Number(e.target.value), "power")
+                    handleChange(Number(e.target.value), "level")
                   }
                   inputProps={{
                     min: "1",
@@ -934,6 +937,24 @@ const TeamBuilder: React.FC<{
                   control={<Switch checked={editingCard.trained} />}
                   label={t("card:trained")}
                   onChange={(e, checked) => handleChange(checked, "trained")}
+                />
+              </Grid>
+              <Grid item>
+                <FormControlLabel
+                  control={<Switch checked={editingCard.story1Unlock} />}
+                  label={t("card:sideStory1Unlocked")}
+                  onChange={(e, checked) =>
+                    handleChange(checked, "story1Unlock")
+                  }
+                />
+              </Grid>
+              <Grid item>
+                <FormControlLabel
+                  control={<Switch checked={editingCard.story2Unlock} />}
+                  label={t("card:sideStory2Unlocked")}
+                  onChange={(e, checked) =>
+                    handleChange(checked, "story2Unlock")
+                  }
                 />
               </Grid>
               <Grid item>

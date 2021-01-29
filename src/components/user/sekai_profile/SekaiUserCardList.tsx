@@ -104,7 +104,13 @@ const SekaiUserCardList = () => {
   const open = useMemo(() => Boolean(anchorEl), [anchorEl]);
 
   useEffect(() => {
-    if (cards && cards.length && sekaiProfile && sekaiProfile.cardList) {
+    if (
+      cards &&
+      cards.length &&
+      sekaiProfile &&
+      sekaiProfile.cardList &&
+      sekaiProfile.cardList.length
+    ) {
       let _cardList = (cardList.length ? cardList : sekaiProfile.cardList).map(
         (elem) =>
           Object.assign({}, elem, {
@@ -124,10 +130,10 @@ const SekaiUserCardList = () => {
       setDisplayCardList(
         _cardList
           .sort((a, b) =>
-            sortBy === "power"
+            sortBy === "level"
               ? sortType === "asc"
-                ? a.power - b.power
-                : b.power - a.power
+                ? a.level - b.level
+                : b.level - a.level
               : sortType === "asc"
               ? a.card[sortBy as "id"] - b.card[sortBy as "id"]
               : b.card[sortBy as "id"] - a.card[sortBy as "id"]
@@ -139,11 +145,7 @@ const SekaiUserCardList = () => {
       if (!cardList.length) {
         setCardList(
           _cardList
-            .sort((a, b) =>
-              sortType === "asc"
-                ? a.card[sortBy as "id"] - b.card[sortBy as "id"]
-                : b.card[sortBy as "id"] - a.card[sortBy as "id"]
-            )
+            .sort((a, b) => a.card["id"] - b.card["id"])
             .map((card, idx) =>
               Object.assign({}, card, { id: idx + 1, card: undefined })
             )
@@ -238,18 +240,20 @@ const SekaiUserCardList = () => {
   }, [cardList, cards, characterId, rarity]);
 
   const handleCardThumbClick = useCallback((card: ICardInfo) => {
-    const maxLevel = [0, 20, 30, 40, 50];
-    const maxPower = card.cardParameters
-      .filter((elem) => elem.cardLevel === maxLevel[card.rarity])
-      .reduce((sum, elem) => sum + elem.power, 0);
+    const maxLevel = [0, 20, 30, 50, 60];
+    // const maxPower = card.cardParameters
+    //   .filter((elem) => elem.cardLevel === maxLevel[card.rarity])
+    //   .reduce((sum, elem) => sum + elem.power, 0);
     setEditList((list) => [
       ...list,
       {
         cardId: card.id,
-        power: maxPower,
         masterRank: 0,
         skillLevel: 1,
-        trained: false,
+        level: maxLevel[card.rarity],
+        trained: card.rarity >= 3,
+        story1Unlock: true,
+        story2Unlock: true,
       },
     ]);
     setAddCardIds((ids) => [...ids, card.id]);
@@ -257,10 +261,12 @@ const SekaiUserCardList = () => {
       ...list,
       {
         cardId: card.id,
-        power: maxPower,
         masterRank: 0,
         skillLevel: 1,
-        trained: false,
+        level: maxLevel[card.rarity],
+        trained: card.rarity >= 3,
+        story1Unlock: true,
+        story2Unlock: true,
       },
     ]);
     setFilteredCards((cards) => cards.filter((c) => c.id !== card.id));
@@ -534,10 +540,13 @@ const SekaiUserCardList = () => {
                       >
                         <MenuItem value="id">{t("common:id")}</MenuItem>
                         <MenuItem value="rarity">{t("common:rarity")}</MenuItem>
+                        <MenuItem value="level">{t("common:level")}</MenuItem>
                         <MenuItem value="releaseAt">
                           {t("common:startAt")}
                         </MenuItem>
-                        <MenuItem value="power">{t("card:power")}</MenuItem>
+                        <MenuItem value="power" disabled>
+                          {t("card:power")}
+                        </MenuItem>
                       </Select>
                     </FormControl>
                   </Grid>
@@ -550,11 +559,11 @@ const SekaiUserCardList = () => {
       <Grid item xs={12}>
         <Grid container spacing={1}>
           {displayCardList.map((card) => (
-            <Grid item xs={3} sm={2} md={1} key={card.cardId}>
+            <Grid item xs={3} sm={2} lg={1} key={card.cardId}>
               <CardThumb
                 cardId={card.cardId}
                 trained={card.trained}
-                power={card.power}
+                level={card.level}
                 masterRank={card.masterRank}
                 onClick={(e) => handleClick(e, card)}
                 style={{ cursor: "pointer" }}
@@ -581,11 +590,11 @@ const SekaiUserCardList = () => {
             <Grid container direction="column" spacing={1}>
               <Grid item>
                 <TextField
-                  label={t("user:profile.import_card.table.row.card_power")}
-                  value={card.power}
+                  label={t("card:cardLevel")}
+                  value={card.level}
                   type="number"
                   onChange={(e) =>
-                    handleChange(Number(e.target.value), "power")
+                    handleChange(Number(e.target.value), "level")
                   }
                   inputProps={{
                     min: "1",
@@ -630,6 +639,24 @@ const SekaiUserCardList = () => {
                   control={<Switch checked={card.trained} />}
                   label={t("card:trained")}
                   onChange={(e, checked) => handleChange(checked, "trained")}
+                />
+              </Grid>
+              <Grid item>
+                <FormControlLabel
+                  control={<Switch checked={card.story1Unlock} />}
+                  label={t("card:sideStory1Unlocked")}
+                  onChange={(e, checked) =>
+                    handleChange(checked, "story1Unlock")
+                  }
+                />
+              </Grid>
+              <Grid item>
+                <FormControlLabel
+                  control={<Switch checked={card.story2Unlock} />}
+                  label={t("card:sideStory2Unlocked")}
+                  onChange={(e, checked) =>
+                    handleChange(checked, "story2Unlock")
+                  }
                 />
               </Grid>
               <Grid item>

@@ -118,12 +118,14 @@ const SekaiUserImportMember = () => {
       full: string[];
       hashResults: [string, number][];
       distances: number[];
-      power: number;
+      level: number;
       masterRank: number;
       cardIds: number[];
       useIndex: number;
       trained: boolean;
       skillLevel: number;
+      story1Unlock: boolean;
+      story2Unlock: boolean;
     })[]
   >([]);
   const [ocrEnable, setOcrEnabled] = useState(false);
@@ -325,7 +327,7 @@ const SekaiUserImportMember = () => {
               );
               // check first row
               // console.log(rowStartY);
-              console.log(Math.abs(heights[0] - avgHeight));
+              // console.log(Math.abs(heights[0] - avgHeight));
               if (Math.abs(heights[0] - avgHeight) > 10) rowStartY.unshift();
               else if (Math.abs(heights[0] - avgHeight) >= 4)
                 rowStartY[0] = rowStartY[0] - Math.abs(heights[0] - avgHeight);
@@ -398,7 +400,7 @@ const SekaiUserImportMember = () => {
 
           // card thumbnail segmentation
           const cardThumbnails: MarvinImage[] = [];
-          const cardPowers: MarvinImage[] = [];
+          const cardLevels: MarvinImage[] = [];
           const cardMasterRanks: MarvinImage[] = [];
           const cardHashes: string[] = [];
           const len = Math.max(avgWidth, avgHeight) + 4;
@@ -428,9 +430,9 @@ const SekaiUserImportMember = () => {
               const _card = card.clone();
               Marvin.blackAndWhite(_card.clone(), _card, 10);
               Marvin.invertColors(_card.clone(), _card);
-              const powerText = new MarvinImage();
-              Marvin.crop(_card, powerText, 3, len - 27, len - 50, 27);
-              cardPowers.push(powerText);
+              const levelText = new MarvinImage();
+              Marvin.crop(_card, levelText, 3, len - 27, len - 50, 27);
+              cardLevels.push(levelText);
 
               const masterRank = new MarvinImage();
               Marvin.crop(_card, masterRank, len - 36, len - 36, 26, 26);
@@ -476,7 +478,7 @@ const SekaiUserImportMember = () => {
 
           // console.log(hashResults);
 
-          let ocrPowerResults: string[] = [];
+          let ocrLevelResults: string[] = [];
           let ocrMasterRankResults: string[] = [];
           if (ocrEnable) {
             const workers = Array.from({ length: 4 }).map(() => createWorker());
@@ -489,17 +491,17 @@ const SekaiUserImportMember = () => {
             }
 
             const levelResults = await Promise.all(
-              cardPowers.map((powerText) => {
+              cardLevels.map((levelText) => {
                 // create pseudo canvas
                 const _canvas = document.createElement("canvas");
-                _canvas.width = powerText.getWidth();
-                _canvas.height = powerText.getHeight();
+                _canvas.width = levelText.getWidth();
+                _canvas.height = levelText.getHeight();
                 const _context = _canvas.getContext("2d");
-                _context?.putImageData(powerText.loadImageData(), 0, 0);
+                _context?.putImageData(levelText.loadImageData(), 0, 0);
                 return scheduler.addJob("recognize", _canvas.toDataURL());
               })
             );
-            ocrPowerResults = levelResults.map((r) => r.data.text);
+            ocrLevelResults = levelResults.map((r) => r.data.text);
 
             const mrResults = await Promise.all(
               cardMasterRanks.map((mrText) => {
@@ -516,7 +518,7 @@ const SekaiUserImportMember = () => {
 
             scheduler.terminate();
           }
-          // console.log(ocrPowerResults);
+          // console.log(ocrLevelResults);
           // console.log(ocrMasterRankResults);
 
           const _rows = cardDataURLs.map((dataURL, idx) => ({
@@ -532,8 +534,10 @@ const SekaiUserImportMember = () => {
             distances: hashResults[idx].length
               ? hashResults[idx].map((result) => result[1])
               : [0],
-            power: ocrPowerResults.length
-              ? Number(ocrPowerResults[idx].replace(/^(\d{4,5}).*/, "$1")) || 1
+            level: ocrLevelResults.length
+              ? Number(
+                  ocrLevelResults[idx].replace(/.*Lv.(\d{1,2}).*/, "$1")
+                ) || 1
               : 1,
             masterRank: ocrMasterRankResults.length
               ? Number(ocrMasterRankResults[idx]) || 0
@@ -551,8 +555,10 @@ const SekaiUserImportMember = () => {
               !!hashResults[idx].length &&
               hashResults[idx][0][0].includes("after_training"),
             skillLevel: 1,
+            story1Unlock: true,
+            story2Unlock: true,
           }));
-          console.log(_rows);
+          // console.log(_rows);
           setRows(_rows.filter((row) => row.distances[0] !== 64));
 
           setIsUploading(false);
@@ -562,48 +568,12 @@ const SekaiUserImportMember = () => {
     [cards, ocrEnable]
   );
 
-  const handlePowerChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>, row: RowModel) => {
+  const handleValueChange = useCallback(
+    (value: any, field: string, row: RowModel) => {
       const { id } = row;
       const idx = rows.findIndex((row) => row.id === id);
       const elem = rows[idx];
-      elem.power = Number(e.target.value);
-
-      setRows([...rows.slice(0, idx), elem, ...rows.slice(idx + 1)]);
-    },
-    [rows]
-  );
-
-  const handleMasterRankChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>, row: RowModel) => {
-      const { id } = row;
-      const idx = rows.findIndex((row) => row.id === id);
-      const elem = rows[idx];
-      elem.masterRank = Number(e.target.value);
-
-      setRows([...rows.slice(0, idx), elem, ...rows.slice(idx + 1)]);
-    },
-    [rows]
-  );
-
-  const handleUseIndexChange = useCallback(
-    (newIndex: number, row: RowModel) => {
-      const { id } = row;
-      const idx = rows.findIndex((row) => row.id === id);
-      const elem = rows[idx];
-      elem.useIndex = newIndex;
-
-      setRows([...rows.slice(0, idx), elem, ...rows.slice(idx + 1)]);
-    },
-    [rows]
-  );
-
-  const handleTrainedChange = useCallback(
-    (checked: boolean, row: RowModel) => {
-      const { id } = row;
-      const idx = rows.findIndex((row) => row.id === id);
-      const elem = rows[idx];
-      elem.trained = checked;
+      elem[field] = Number(value);
 
       setRows([...rows.slice(0, idx), elem, ...rows.slice(idx + 1)]);
     },
@@ -659,92 +629,6 @@ const SekaiUserImportMember = () => {
         align: "center",
       },
       {
-        field: "power",
-        headerName: t("user:profile.import_card.table.row.card_power"),
-        width: 100,
-        renderCell(params) {
-          return (
-            <Input
-              value={params.value as string}
-              type="number"
-              inputMode="numeric"
-              fullWidth
-              onChange={(e) =>
-                handlePowerChange(
-                  e as React.ChangeEvent<HTMLInputElement>,
-                  params.row
-                )
-              }
-            />
-          );
-        },
-      },
-      {
-        field: "masterRank",
-        headerName: t("user:profile.import_card.table.row.card_master_rank"),
-        width: 120,
-        renderCell(params) {
-          return (
-            <Input
-              value={params.value as number}
-              type="number"
-              inputMode="numeric"
-              inputProps={{
-                min: 0,
-                max: 5,
-              }}
-              onChange={(e) =>
-                handleMasterRankChange(
-                  e as React.ChangeEvent<HTMLInputElement>,
-                  params.row
-                )
-              }
-            />
-          );
-        },
-      },
-      {
-        field: "skillLevel",
-        headerName: t("card:skillLevel"),
-        width: 120,
-        renderCell(params) {
-          return (
-            <Input
-              value={params.value as number}
-              type="number"
-              inputMode="numeric"
-              inputProps={{
-                min: 0,
-                max: 5,
-              }}
-              onChange={(e) =>
-                handleMasterRankChange(
-                  e as React.ChangeEvent<HTMLInputElement>,
-                  params.row
-                )
-              }
-            />
-          );
-        },
-      },
-      {
-        field: "trained",
-        headerName: t(
-          "user:profile.import_card.table.row.card_training_status"
-        ),
-        width: 120,
-        renderCell(params) {
-          return (
-            <Switch
-              checked={params.value as boolean}
-              onChange={(e, checked) =>
-                handleTrainedChange(checked, params.row)
-              }
-            />
-          );
-        },
-      },
-      {
         field: "changeCard",
         headerName: t(
           "user:profile.import_card.table.row.other_possible_result"
@@ -777,7 +661,9 @@ const SekaiUserImportMember = () => {
                               64) *
                           100
                         ).toFixed(1)}%`}
-                        onClick={() => handleUseIndexChange(idx, params.row)}
+                        onClick={() =>
+                          handleValueChange(idx, "useIndex", params.row)
+                        }
                       />
                       <Typography>{`${(
                         (1 -
@@ -792,16 +678,115 @@ const SekaiUserImportMember = () => {
           );
         },
       },
+      {
+        field: "level",
+        headerName: t("card:cardLevel"),
+        width: 100,
+        renderCell(params) {
+          return (
+            <Input
+              value={params.value as string}
+              type="number"
+              inputMode="numeric"
+              fullWidth
+              onChange={(e) =>
+                handleValueChange(e.target.value, "level", params.row)
+              }
+            />
+          );
+        },
+      },
+      {
+        field: "masterRank",
+        headerName: t("user:profile.import_card.table.row.card_master_rank"),
+        width: 120,
+        renderCell(params) {
+          return (
+            <Input
+              value={params.value as number}
+              type="number"
+              inputMode="numeric"
+              inputProps={{
+                min: 0,
+                max: 5,
+              }}
+              onChange={(e) =>
+                handleValueChange(e.target.value, "masterRank", params.row)
+              }
+            />
+          );
+        },
+      },
+      {
+        field: "skillLevel",
+        headerName: t("card:skillLevel"),
+        width: 120,
+        renderCell(params) {
+          return (
+            <Input
+              value={params.value as number}
+              type="number"
+              inputMode="numeric"
+              inputProps={{
+                min: 0,
+                max: 5,
+              }}
+              onChange={(e) =>
+                handleValueChange(e.target.value, "skillLevel", params.row)
+              }
+            />
+          );
+        },
+      },
+      {
+        field: "trained",
+        headerName: t("card:trained"),
+        width: 120,
+        renderCell(params) {
+          return (
+            <Switch
+              checked={params.value as boolean}
+              onChange={(e, checked) =>
+                handleValueChange(checked, "trained", params.row)
+              }
+            />
+          );
+        },
+      },
+      {
+        field: "story1Unlock",
+        headerName: t("card:sideStory1Unlocked"),
+        width: 180,
+        align: "center",
+        renderCell(params) {
+          return (
+            <Switch
+              checked={params.value as boolean}
+              onChange={(e, checked) =>
+                handleValueChange(checked, "story1Unlock", params.row)
+              }
+            />
+          );
+        },
+      },
+      {
+        field: "story2Unlock",
+        headerName: t("card:sideStory2Unlocked"),
+        width: 180,
+        align: "center",
+        renderCell(params) {
+          return (
+            <Switch
+              checked={params.value as boolean}
+              onChange={(e, checked) =>
+                handleValueChange(checked, "story2Unlock", params.row)
+              }
+            />
+          );
+        },
+      },
     ],
-    [
-      t,
-      rows,
-      cards,
-      handlePowerChange,
-      handleMasterRankChange,
-      handleTrainedChange,
-      handleUseIndexChange,
-    ]
+    [t, rows, cards, handleValueChange]
   );
 
   const handleSubmitCardList = useCallback(async () => {
@@ -813,10 +798,12 @@ const SekaiUserImportMember = () => {
           const cardId = row.cardIds[row.useIndex];
           return {
             cardId,
-            power: row.power,
+            level: row.level,
             masterRank: row.masterRank,
-            skillLevel: 1,
+            skillLevel: row.skillLevel,
             trained: row.trained,
+            story1Unlock: row.story1Unlock,
+            story2Unlock: row.story2Unlock,
           };
         })
         .sort((a, b) => a.cardId - b.cardId);
