@@ -5,7 +5,7 @@
   "homepage": "https://sekai.best/",
   "dependencies": {
     "@material-ui/core": "^4.11.2",
-    "@material-ui/data-grid": "^4.0.0-alpha.15",
+    "@material-ui/data-grid": "^4.0.0-alpha.18",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@material-ui/pickers": "^3.2.10",
