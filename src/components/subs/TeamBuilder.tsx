@@ -828,16 +828,16 @@ const TeamBuilder: React.FC<{
             {t("team_build:loadTeamDialog.desc")}
           </DialogContentText>
           <DialogContentText>
-            {t("team_build:loadTeamDialog.sekai_team")}
+            {t("user:profile.title.user_deck")}
           </DialogContentText>
           {(!!sekaiProfile && !!sekaiProfile.sekaiUserProfile && (
             <Grid container spacing={1}>
               <Grid item xs={12}>
                 <Paper variant="outlined" className={classes["dialog-paper"]}>
                   <Grid container spacing={1} alignItems="center">
-                    <Grid item xs={12} md={2}>
+                    <Grid item xs={12} md={3}>
                       <Typography>
-                        {t("team_build:loadTeamDialog.sekai_team")}
+                        {t("user:profile.title.user_deck")}
                       </Typography>
                     </Grid>
                     <Grid item xs={12} md={6}>
@@ -860,7 +860,7 @@ const TeamBuilder: React.FC<{
                         ))}
                       </Grid>
                     </Grid>
-                    <Grid item xs={12} md={4}>
+                    <Grid item xs={12} md={3}>
                       <Grid container spacing={1} justify="flex-end">
                         <Grid item>
                           <Button
@@ -878,6 +878,7 @@ const TeamBuilder: React.FC<{
             </Grid>
           )) ||
             null}
+          <br />
           <FormControl component="fieldset">
             <FormLabel component="legend">
               {t("team_build:storage_location.label")}
@@ -906,7 +907,7 @@ const TeamBuilder: React.FC<{
               <Grid key={`load-team-${idx}`} item xs={12}>
                 <Paper variant="outlined" className={classes["dialog-paper"]}>
                   <Grid container spacing={1} alignItems="center">
-                    <Grid item xs={12} md={2}>
+                    <Grid item xs={12} md={3}>
                       <Typography># {idx + 1}</Typography>
                     </Grid>
                     <Grid item xs={12} md={6}>
@@ -923,7 +924,7 @@ const TeamBuilder: React.FC<{
                         ))}
                       </Grid>
                     </Grid>
-                    <Grid item xs={12} md={4}>
+                    <Grid item xs={12} md={3}>
                       <Grid container spacing={1} justify="flex-end">
                         <Grid item>
                           <Button
@@ -948,7 +949,7 @@ const TeamBuilder: React.FC<{
                 </Paper>
               </Grid>
             ))}
-            {!!teamBuildArray.teams.length && (
+            {!teamBuildArray.teams.length && (
               <Typography>{t("team_build:noTeams")}</Typography>
             )}
           </Grid>
