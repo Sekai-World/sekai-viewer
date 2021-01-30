@@ -2,6 +2,50 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.4.0](https://github.com/Sekai-World/sekai-viewer/compare/v0.3.2...v0.4.0) (2021-01-30)
+
+
+### Features
+
+* **api:** add putSekaiDeckList and deleteSekaiDeckList ([ad5ce76](https://github.com/Sekai-World/sekai-viewer/commits/ad5ce762f736c1055d056627c6fc634a1d64cf8a))
+* **card:** medium thumbnail supports showing card power as well ([95511cd](https://github.com/Sekai-World/sekai-viewer/commits/95511cde0cb631565d015325e21248db3b9b6458))
+* **card:** thumbnail show card data ([5cf7779](https://github.com/Sekai-World/sekai-viewer/commits/5cf77793e340d30f08dbeb9061d707ee3ded3d7d))
+* **user:** add sekai card management board ([0b1e50c](https://github.com/Sekai-World/sekai-viewer/commits/0b1e50c74b5f0d59171b2bc2e42e690059c8d43b))
+* **user:** allow modify skill level upon importing and modifying in list ([7931948](https://github.com/Sekai-World/sekai-viewer/commits/79319480f28c691fb778b620957f44c115ddc9c8))
+* **user:** allow partial update sekai profile and user meta ([4c73e08](https://github.com/Sekai-World/sekai-viewer/commits/4c73e08f80e39ba0ec2421e02c27bf3c105637a1))
+* **user:** import sekai cards ([76586e7](https://github.com/Sekai-World/sekai-viewer/commits/76586e7c505df215909763c7fe541e575e3be84d))
+* **user:** load sekai user team ([6386169](https://github.com/Sekai-World/sekai-viewer/commits/6386169d819e0e580f6e7d7177bbb28cfb8c8f95))
+* **user:** sekai profile sub components lazy laoding ([ad7d665](https://github.com/Sekai-World/sekai-viewer/commits/ad7d6650b2d1a75c88ec733ebb73bbca1cb96e1a))
+* **utils:** add useLocalStorage and useToggle hooks ([0d8d7e9](https://github.com/Sekai-World/sekai-viewer/commits/0d8d7e95b81b88a2c1e0e18b62072529703e69ca))
+
+
+### Bug Fixes
+
+* **card:** thumbnail rarity star position ([eb4c394](https://github.com/Sekai-World/sekai-viewer/commits/eb4c394e2deac992a38f3a35bac93b07ea293356))
+* **music:** audio player animation stop after seeking ([9029ec5](https://github.com/Sekai-World/sekai-viewer/commits/9029ec5bd8e52dd923091f9e64f05258d08aa9de))
+* **music-recommend:** typo ([d800b76](https://github.com/Sekai-World/sekai-viewer/commits/d800b76bc1431220b7c479d0b82aaca787b184f6))
+* **types:** remove SekaiCard, use ITeamCardState directly ([6fe9ad9](https://github.com/Sekai-World/sekai-viewer/commits/6fe9ad97dd1a078fa15d169349462dcb34dfbe27))
+* **user:** correct auto total power calc process ([30a4e22](https://github.com/Sekai-World/sekai-viewer/commits/30a4e22355a49fd6391ccab3197dc84feda2c45b))
+* **user:** due to change of other module ([0c4ab44](https://github.com/Sekai-World/sekai-viewer/commits/0c4ab446349a759b86f1c101b53ed690826667d3))
+* **user:** sekai profile crash when no sekai profile created ([f674ec8](https://github.com/Sekai-World/sekai-viewer/commits/f674ec80b4ac0f501cfb6e112e144917225f1e18))
+* card master rank icon level 5 ([4705fb8](https://github.com/Sekai-World/sekai-viewer/commits/4705fb8ddde251990379fd1d1fbdb226f8a1c444))
+* preview download png instead of webp ([5a61fe1](https://github.com/Sekai-World/sekai-viewer/commits/5a61fe15c86fb0f40104f21617018e123c98d54d))
+
+
+### Refactors
+
+* **api:** strapi card model fix, add put and delete sekai card list api ([5c196c6](https://github.com/Sekai-World/sekai-viewer/commits/5c196c62cd54c108d99566c543dfee916963d1a5))
+* **live2d:** read model list from remote ([1fbe666](https://github.com/Sekai-World/sekai-viewer/commits/1fbe666278a983a962eabc91455046605483395e))
+* **user:** import card power instead of level ([83ed3b6](https://github.com/Sekai-World/sekai-viewer/commits/83ed3b653c43c242d9a6273d3d6a6e9618bbfd00))
+* **user:** load team sekai team text change and space between sections ([18004d1](https://github.com/Sekai-World/sekai-viewer/commits/18004d10e2d18a8644452fa76f54f762d6b52fad))
+* **user:** move update sekai profile button to same line of sekai id ([b130018](https://github.com/Sekai-World/sekai-viewer/commits/b130018de95a0d4a771443869b9e9cda39a4c360))
+* **user:** remove unnecessary console.log ([793ce9e](https://github.com/Sekai-World/sekai-viewer/commits/793ce9e5a3195c454381af01071da7ca40320dfd))
+* **user:** sekai id panel layout fix ([55308ae](https://github.com/Sekai-World/sekai-viewer/commits/55308aefefc7437cac614dde0a6fe1855c0b6b69))
+* **user:** store more card states for calculating card power ([31fd647](https://github.com/Sekai-World/sekai-viewer/commits/31fd6472fbaf5b654c463067732eaaf5e08555f2))
+* **user:** team manager layout change, edit card power, auto calc total power ([7288929](https://github.com/Sekai-World/sekai-viewer/commits/72889298949caab47599f6c82fff52d68e8d3a59))
+* **user:** user card list changes when cloud card list changes ([9cdf769](https://github.com/Sekai-World/sekai-viewer/commits/9cdf7693e72eacef74e9ba3c8474f2b282aa252c))
+* modify global scrollbar style (only for webkit) ([90badc9](https://github.com/Sekai-World/sekai-viewer/commits/90badc9aef7dcbaae7bf2000cbddccc11c1719b7))
+
 ### [0.3.2](https://github.com/Sekai-World/sekai-viewer/compare/v0.3.1...v0.3.2) (2021-01-18)
 
 
