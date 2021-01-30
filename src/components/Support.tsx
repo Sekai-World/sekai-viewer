@@ -70,6 +70,21 @@ const Support: React.FC<{}> = () => {
                 <Grid item xs={12} md={4} lg={3}>
                   <Grid container alignItems="center" spacing={1}>
                     <Grid item>
+                      <Avatar>NA</Avatar>
+                    </Grid>
+                    <Grid item>
+                      <Typography>N/A</Typography>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                Tier Lucky
+              </Typography>
+              <Grid container spacing={1}>
+                {/* <Grid item xs={12} md={4} lg={3}>
+                  <Grid container alignItems="center" spacing={1}>
+                    <Grid item>
                       <Avatar
                         src="https://c8.patreon.com/2/200/45497536"
                         alt="zaurus"
@@ -79,12 +94,7 @@ const Support: React.FC<{}> = () => {
                       <Typography>zaurus</Typography>
                     </Grid>
                   </Grid>
-                </Grid>
-              </Grid>
-              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                Tier Lucky
-              </Typography>
-              <Grid container spacing={1}>
+                </Grid> */}
                 <Grid item xs={12} md={4} lg={3}>
                   <Grid container alignItems="center" spacing={1}>
                     <Grid item>
