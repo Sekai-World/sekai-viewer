@@ -448,7 +448,7 @@ const TeamBuilder: React.FC<{
         sekaiProfile.sekaiUserProfile.userHonors
       );
 
-      console.log(pureDeckPower, areaItemBonus, characterRankBonus, honorBonus);
+      // console.log(pureDeckPower, areaItemBonus, characterRankBonus, honorBonus);
 
       return pureDeckPower + areaItemBonus + characterRankBonus + honorBonus;
     }
@@ -463,6 +463,39 @@ const TeamBuilder: React.FC<{
     sekaiProfile,
     teamCardsStates,
   ]);
+
+  const handleLoadSekaiTeamEntry = useCallback(() => {
+    if (!sekaiProfile || !sekaiProfile.sekaiUserProfile) return;
+
+    const cardIds = Array.from({ length: 5 }).map(
+      (_, idx) =>
+        sekaiProfile.sekaiUserProfile!.userDecks[0][
+          `member${idx + 1}` as "member1"
+        ]
+    );
+
+    const cardStates: ITeamCardState[] = cardIds.map((cardId) => {
+      const userCard = sekaiProfile.sekaiUserProfile!.userCards.find(
+        (state) => state.cardId === cardId
+      )!;
+
+      return {
+        cardId,
+        level: userCard.level,
+        masterRank: userCard.masterRank,
+        trained: userCard.specialTrainingStatus === "done",
+        skillLevel: 1,
+        story1Unlock: userCard.episodes[0].scenarioStatus !== "unreleased",
+        story2Unlock: userCard.episodes[1].scenarioStatus !== "unreleased",
+      };
+    });
+
+    setTeamCards(cardIds);
+    setTeamCardsStates(cardStates);
+    setTeamPowerStates(0);
+
+    setLoadTeamDialogVisible(false);
+  }, [sekaiProfile, setTeamCards, setTeamCardsStates, setTeamPowerStates]);
 
   return (
     <Grid container spacing={2}>
@@ -794,6 +827,57 @@ const TeamBuilder: React.FC<{
           <DialogContentText>
             {t("team_build:loadTeamDialog.desc")}
           </DialogContentText>
+          <DialogContentText>
+            {t("team_build:loadTeamDialog.sekai_team")}
+          </DialogContentText>
+          {(!!sekaiProfile && !!sekaiProfile.sekaiUserProfile && (
+            <Grid container spacing={1}>
+              <Grid item xs={12}>
+                <Paper variant="outlined" className={classes["dialog-paper"]}>
+                  <Grid container spacing={1} alignItems="center">
+                    <Grid item xs={12} md={2}>
+                      <Typography>
+                        {t("team_build:loadTeamDialog.sekai_team")}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <Grid container spacing={1}>
+                        {Array.from({ length: 5 }).map((_, idx) => (
+                          <Grid
+                            key={`load-team-card-${idx + 100000}`}
+                            item
+                            xs={4}
+                            sm={2}
+                          >
+                            <CardThumb
+                              cardId={
+                                sekaiProfile.sekaiUserProfile!.userDecks[0][
+                                  `member${idx + 1}` as "member1"
+                                ]
+                              }
+                            />
+                          </Grid>
+                        ))}
+                      </Grid>
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                      <Grid container spacing={1} justify="flex-end">
+                        <Grid item>
+                          <Button
+                            variant="outlined"
+                            onClick={() => handleLoadSekaiTeamEntry()}
+                          >
+                            {t("common:load")}
+                          </Button>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Paper>
+              </Grid>
+            </Grid>
+          )) ||
+            null}
           <FormControl component="fieldset">
             <FormLabel component="legend">
               {t("team_build:storage_location.label")}
@@ -864,9 +948,9 @@ const TeamBuilder: React.FC<{
                 </Paper>
               </Grid>
             ))}
-            {teamBuildArray.teams.length === 0 ? (
+            {!!teamBuildArray.teams.length && (
               <Typography>{t("team_build:noTeams")}</Typography>
-            ) : null}
+            )}
           </Grid>
         </DialogContent>
       </Dialog>
