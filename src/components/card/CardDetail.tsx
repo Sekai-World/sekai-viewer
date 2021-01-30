@@ -310,34 +310,34 @@ const CardDetail: React.FC<{}> = () => {
               {
                 src: normalImg,
                 alt: "card normal",
-                downloadUrl: normalImg,
+                downloadUrl: normalImg.replace(".webp", ".png"),
               },
               {
                 src: normalTrimImg,
                 alt: "card normal trim",
-                downloadUrl: normalTrimImg,
+                downloadUrl: normalTrimImg.replace(".webp", ".png"),
               },
               {
                 src: trainedImg,
                 alt: "card after training",
-                downloadUrl: trainedImg,
+                downloadUrl: trainedImg.replace(".webp", ".png"),
               },
               {
                 src: trainedTrimImg,
                 alt: "card after training trim",
-                downloadUrl: trainedTrimImg,
+                downloadUrl: trainedTrimImg.replace(".webp", ".png"),
               },
             ]
           : [
               {
                 src: normalImg,
                 alt: "card normal",
-                downloadUrl: normalImg,
+                downloadUrl: normalImg.replace(".webp", ".png"),
               },
               {
                 src: normalTrimImg,
                 alt: "card normal",
-                downloadUrl: normalTrimImg,
+                downloadUrl: normalTrimImg.replace(".webp", ".png"),
               },
             ]
         : [],

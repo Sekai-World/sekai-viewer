@@ -11,9 +11,14 @@ import { useTranslation } from "react-i18next";
 import { UserContext } from "../../../context";
 // import { useInteractiveStyles } from "../../../styles/interactive";
 import { useLayoutStyles } from "../../../styles/layout";
-import SekaiEventRecord from "./SekaiEventRecord";
-import SekaiID from "./SekaiID";
-import SekaiUserDeck from "./SekaiUserDeck";
+const SekaiEventRecord = React.lazy(() => import("./SekaiEventRecord"));
+const SekaiID = React.lazy(() => import("./SekaiID"));
+const SekaiUserCardList = React.lazy(() => import("./SekaiUserCardList"));
+const SekaiUserDeck = React.lazy(() => import("./SekaiUserDeck"));
+const SekaiUserImportMember = React.lazy(
+  () => import("./SekaiUserImportMember")
+);
+const SekaiUserTeams = React.lazy(() => import("./SekaiUserTeams"));
 
 const SekaiProfile = () => {
   const layoutClasses = useLayoutStyles();
@@ -25,6 +30,9 @@ const SekaiProfile = () => {
   const [isUserDeckOpen, setIsUserDeckOpen] = useState(false);
   const [isUserEventOpen, setIsUserEventOpen] = useState(false);
   // const [isSekaiIDOpen, setIsSekaiIDOpen] = useState(false);
+  const [isUserMemberOpen, setIsUserMemberOpen] = useState(false);
+  const [isUserImportMemberOpen, setIsUserImportMemberOpen] = useState(false);
+  const [isUserTeamsOpen, setIsUserTeamsOpen] = useState(false);
 
   return (
     <Fragment>
@@ -63,6 +71,45 @@ const SekaiProfile = () => {
                   userDecks={sekaiProfile.sekaiUserProfile.userDecks}
                   userCards={sekaiProfile.sekaiUserProfile.userCards}
                 />
+              </AccordionDetails>
+            </Accordion>
+            <Accordion
+              expanded={isUserMemberOpen}
+              onChange={(e, state) => setIsUserMemberOpen(state)}
+            >
+              <AccordionSummary expandIcon={<ExpandMore />}>
+                <Typography className={layoutClasses.header}>
+                  {t("user:profile.title.card_list")}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <SekaiUserCardList />
+              </AccordionDetails>
+            </Accordion>
+            <Accordion
+              expanded={isUserImportMemberOpen}
+              onChange={(e, state) => setIsUserImportMemberOpen(state)}
+            >
+              <AccordionSummary expandIcon={<ExpandMore />}>
+                <Typography className={layoutClasses.header}>
+                  {t("user:profile.title.import_card")}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <SekaiUserImportMember />
+              </AccordionDetails>
+            </Accordion>
+            <Accordion
+              expanded={isUserTeamsOpen}
+              onChange={(e, state) => setIsUserTeamsOpen(state)}
+            >
+              <AccordionSummary expandIcon={<ExpandMore />}>
+                <Typography className={layoutClasses.header}>
+                  {t("user:profile.title.manage_teams")}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <SekaiUserTeams />
               </AccordionDetails>
             </Accordion>
           </Fragment>

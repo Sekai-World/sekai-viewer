@@ -76,7 +76,7 @@ const ComicList: React.FC<{}> = () => {
             `comic_title:${comic.id}`,
             comic.title
           ),
-          downloadUrl: await getRemoteAssetURL(url),
+          downloadUrl: await getRemoteAssetURL(url.replace(".webp", ".png")),
         });
       }
       setComicImages(images);

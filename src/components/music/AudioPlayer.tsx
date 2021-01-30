@@ -47,10 +47,11 @@ const AudioPlayer: React.FC<{
     _sound.on("play", () => {
       if (onPlay) onPlay(_sound);
       requestAnimationFrame(function update() {
+        if (!_sound.playing()) return;
         const currentTime = _sound.seek() as number;
         setPlaybackTime(currentTime);
 
-        if (_sound.playing()) requestAnimationFrame(update);
+        requestAnimationFrame(update);
       });
     });
     _sound.on("stop", () => {
@@ -64,15 +65,21 @@ const AudioPlayer: React.FC<{
     setSound(_sound);
     return () => {
       _sound.stop();
-      // _sound.unload();
+      _sound.unload();
     };
   }, [onLoad, onPlay, src]);
 
   const seekHandler = useCallback(
     (_, v: number | number[]) => {
       if (sound) {
-        sound.seek(v as number);
         setPlaybackTime(v as number);
+        if (sound.playing()) {
+          sound.pause();
+          sound.seek(v as number);
+          sound.play();
+        } else {
+          sound.seek(v as number);
+        }
       }
     },
     [sound]

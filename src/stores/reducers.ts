@@ -77,34 +77,51 @@ export function missionTypeReducer(
 }
 
 export function teamBuildReducer(
-  state: ITeamBuild[],
+  state: {
+    teams: ITeamBuild[];
+    localKey: string;
+    storageLocation: "local" | "cloud";
+  },
   action:
     | { type: "add"; payload: ITeamBuild }
     | { type: "remove"; payload: number }
     | { type: "replace"; payload: { id: number; data: ITeamBuild } }
+    | {
+        type: "reload";
+        payload: { location: "local" | "cloud"; teams: ITeamBuild[] };
+      }
 ) {
   switch (action.type) {
     case "add": {
-      const teams = [...state, action.payload];
-      localStorage.setItem("team-build-array", JSON.stringify(teams));
-      return teams;
+      const teams = [...state.teams, action.payload];
+      if (state.storageLocation === "local")
+        localStorage.setItem(state.localKey, JSON.stringify(teams));
+      return Object.assign({}, state, { teams });
     }
     case "remove": {
       const teams = [
-        ...state.slice(0, action.payload),
-        ...state.slice(action.payload + 1),
+        ...state.teams.slice(0, action.payload),
+        ...state.teams.slice(action.payload + 1),
       ];
-      localStorage.setItem("team-build-array", JSON.stringify(teams));
-      return teams;
+      if (state.storageLocation === "local")
+        localStorage.setItem(state.localKey, JSON.stringify(teams));
+      return Object.assign({}, state, { teams });
     }
     case "replace": {
       const teams = [
-        ...state.slice(0, action.payload.id),
+        ...state.teams.slice(0, action.payload.id),
         action.payload.data,
-        ...state.slice(action.payload.id + 1),
+        ...state.teams.slice(action.payload.id + 1),
       ];
-      localStorage.setItem("team-build-array", JSON.stringify(teams));
-      return teams;
+      if (state.storageLocation === "local")
+        localStorage.setItem(state.localKey, JSON.stringify(teams));
+      return Object.assign({}, state, { teams });
+    }
+    case "reload": {
+      return Object.assign({}, state, {
+        storageLocation: action.payload.location,
+        teams: action.payload.teams,
+      });
     }
     default:
       throw new Error();
