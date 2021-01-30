@@ -29,7 +29,7 @@ const SekaiUserDeck = (props: Props) => {
                   props.userDecks[0][`member${idx + 1}` as "member1"]
               )!.defaultImage
             }
-            cardLevel={
+            level={
               props.userCards.find(
                 (card) =>
                   card.cardId ===

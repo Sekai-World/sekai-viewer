@@ -499,9 +499,15 @@ export interface ITeamCardState {
   cardId: number;
   level: number;
   skillLevel: number;
+  trained: boolean;
+  // power: number;
+  masterRank: number;
+  story1Unlock: boolean;
+  story2Unlock: boolean;
 }
 
 export interface ITeamBuild {
+  id?: number;
   teamCards: number[];
   teamCardsStates: ITeamCardState[];
   teamPowerStates: number;
@@ -1152,4 +1158,19 @@ export interface ICostume3DModel {
   unit: string;
   assetbundleName: string;
   thumbnailAssetbundleName: string;
+}
+
+export interface IAreaItemLevel {
+  areaItemId: number;
+  level: number;
+  targetUnit: string;
+  targetCardAttr: string;
+  targetGameCharacterId: number;
+  power1BonusRate: number;
+  power1AllMatchBonusRate: number;
+  power2BonusRate: number;
+  power2AllMatchBonusRate: number;
+  power3BonusRate: number;
+  power3AllMatchBonusRate: number;
+  sentence: string;
 }

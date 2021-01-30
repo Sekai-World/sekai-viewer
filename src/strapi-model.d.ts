@@ -1,4 +1,9 @@
-import { IUserProfile, IEventInfo } from "./types.d";
+import {
+  IUserProfile,
+  IEventInfo,
+  ITeamCardState,
+  ITeamBuild,
+} from "./types.d";
 
 export interface LanguageModel {
   id: number;
@@ -53,6 +58,13 @@ export interface RegisterValues {
   languages: number[];
 }
 
+// export interface SekaiCard {
+//   cardId: number;
+//   power: number;
+//   masterRank: number;
+//   trained: boolean;
+// }
+
 export interface SekaiProfileModel {
   id: number;
   user: UserModel;
@@ -65,6 +77,9 @@ export interface SekaiProfileModel {
   eventGetUsed: number;
   eventHistorySync: boolean;
   dailySyncEnabled: boolean;
+  cardList: ITeamCardState[] | null;
+  deckList: ITeamBuild[] | null;
+  maxDeckList: number;
 }
 
 export interface SekaiCurrentEventModel {

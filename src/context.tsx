@@ -92,10 +92,10 @@ export const UserContext = createContext<
       jwtToken: string;
       updateJwtToken(newToken: string): void;
       sekaiProfile?: SekaiProfileModel;
-      updateSekaiProfile(data?: SekaiProfileModel): void;
+      updateSekaiProfile(data?: Partial<SekaiProfileModel>): void;
       logout(): void;
       usermeta: UserMetadatumModel | null;
-      updateUserMeta(data: UserMetadatumModel | null): void;
+      updateUserMeta(data: Partial<UserMetadatumModel> | null): void;
     }
   | undefined
 >(undefined);
@@ -132,7 +132,7 @@ export const UserProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
           [auth]
         ),
         updateSekaiProfile: useCallback((data) => {
-          setSekaiProfile(data);
+          setSekaiProfile((profile) => Object.assign({}, profile, data));
           if (data) localStorage.setItem("sekaiProfile", JSON.stringify(data));
           else localStorage.removeItem("sekaiProfile");
         }, []),
@@ -145,8 +145,8 @@ export const UserProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
         usermeta: useMemo(() => usermeta, [usermeta]),
         updateUserMeta: useCallback(
           (data) => {
-            auth.usermeta = data;
-            setUsermeta(data);
+            auth.usermeta = Object.assign({}, auth.usermeta, data);
+            setUsermeta((usermeta) => Object.assign({}, usermeta, data));
           },
           [auth]
         ),

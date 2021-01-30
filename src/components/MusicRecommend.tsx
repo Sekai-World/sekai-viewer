@@ -37,7 +37,7 @@ import { ColDef, DataGrid, ValueFormatterParams } from "@material-ui/data-grid";
 import { Link } from "react-router-dom";
 import { OpenInNew } from "@material-ui/icons";
 import { useScoreCalc } from "../utils/scoreCalc";
-import TeamBuiler from "./subs/TeamBuilder";
+import TeamBuilder from "./subs/TeamBuilder";
 
 const useStyle = makeStyles((theme) => ({
   easy: {
@@ -282,7 +282,7 @@ const MusicRecommend: React.FC<{}> = () => {
           <StepLabel>{t("music_recommend:buildTeam.label")}</StepLabel>
           <StepContent>
             <Typography>{t("music_recommend:buildTeam.desc")}</Typography>
-            <TeamBuiler
+            <TeamBuilder
               teamCards={teamCards}
               teamCardsStates={teamCardsStates}
               teamPowerStates={teamPowerStates}

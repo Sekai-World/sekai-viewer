@@ -18,7 +18,7 @@ import {
   UserMetadatumModel,
   UserModel,
 } from "../strapi-model";
-import { IUserProfile } from "../types";
+import { ITeamBuild, ITeamCardState, IUserProfile } from "../types";
 import useSWR from "swr";
 
 /**
@@ -248,6 +248,36 @@ export function useStrapi(token?: string) {
       async (eventId: number) =>
         (await axios.post("/sekai-profile-event-records/record", { eventId }))
           .data,
+      [axios]
+    ),
+    putSekaiCardList: useCallback(
+      async (id: number, cardList: ITeamCardState[]) =>
+        (await axios.put(`/sekai-profiles/${id}/cardlist`, cardList)).data,
+      [axios]
+    ),
+    deleteSekaiCardList: useCallback(
+      async (id: number, cardIds: number[]) => {
+        await axios.delete(`/sekai-profiles/${id}/cardlist`, {
+          params: {
+            cards: cardIds,
+          },
+        });
+      },
+      [axios]
+    ),
+    putSekaiDeckList: useCallback(
+      async (id: number, deckList: ITeamBuild[]) =>
+        (await axios.put(`/sekai-profiles/${id}/decklist`, deckList)).data,
+      [axios]
+    ),
+    deleteSekaiDeckList: useCallback(
+      async (id: number, deckIds: number[]) => {
+        await axios.delete(`/sekai-profiles/${id}/decklist`, {
+          params: {
+            decks: deckIds,
+          },
+        });
+      },
       [axios]
     ),
     getAnnouncements: useCallback(
@@ -551,6 +581,23 @@ export function useCurrentEvent() {
 
   return {
     currEvent: data as SekaiCurrentEventModel,
+    isLoading: !error && !data,
+    error,
+  };
+}
+
+export function useLive2dModelList() {
+  const { data, error } = useSWR(
+    `${
+      window.isChinaMainland
+        ? process.env.REACT_APP_FRONTEND_ASSET_BASE
+        : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-best-assets`
+    }/models.json`,
+    axiosFetcher
+  );
+
+  return {
+    modelList: data as string[] | undefined,
     isLoading: !error && !data,
     error,
   };

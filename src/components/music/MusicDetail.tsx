@@ -1100,7 +1100,7 @@ const MusicDetail: React.FC<{}> = () => {
           {
             src: musicJacket,
             alt: "music jacket",
-            downloadUrl: musicJacket,
+            downloadUrl: musicJacket.replace(".webp", ".png"),
           },
         ]}
         zIndex={2000}

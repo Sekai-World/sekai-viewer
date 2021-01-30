@@ -287,12 +287,10 @@ const CardList: React.FC<{}> = () => {
             </Button>
           </ButtonGroup>
           <ButtonGroup color="primary" style={{ marginBottom: "1%" }}>
-            <ButtonGroup color="primary" style={{ marginBottom: "1%" }}>
-              <Button size="medium" onClick={() => setFilterOpened((v) => !v)}>
-                {filterOpened ? <Filter /> : <FilterOutline />}
-                {filterOpened ? <Sort /> : <SortOutlined />}
-              </Button>
-            </ButtonGroup>
+            <Button size="medium" onClick={() => setFilterOpened((v) => !v)}>
+              {filterOpened ? <Filter /> : <FilterOutline />}
+              {filterOpened ? <Sort /> : <SortOutlined />}
+            </Button>
           </ButtonGroup>
         </Grid>
         <Collapse in={filterOpened}>
