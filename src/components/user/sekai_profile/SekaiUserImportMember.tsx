@@ -485,7 +485,7 @@ const SekaiUserImportMember = () => {
           let ocrLevelResults: string[] = [];
           let ocrMasterRankResults: string[] = [];
           if (ocrEnable) {
-            const workers = Array.from({ length: 4 }).map(() =>
+            const workers = Array.from({ length: 1 }).map(() =>
               createWorker({
                 corePath: window.isChinaMainland
                   ? `${
