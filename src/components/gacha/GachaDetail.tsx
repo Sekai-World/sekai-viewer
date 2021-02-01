@@ -49,6 +49,7 @@ import { SettingContext } from "../../context";
 import { ContentTrans } from "../subs/ContentTrans";
 import { useInteractiveStyles } from "../../styles/interactive";
 import CommonMaterialIcon from "../subs/CommonMaterialIcon";
+import { Adsense } from "@ctrl/react-adsense";
 
 const gachaImageNameMap: {
   [key: number]: {
@@ -966,6 +967,17 @@ const GachaDetailPage: React.FC<{}> = () => {
             </Grid>
           </Grid>
           <CardThumbs cardIds={currentGachaResult.map((elem) => elem.cardId)} />
+        </Container>
+        <Typography variant="h6" className={layoutClasses.header}>
+          {t("common:advertisement")}
+        </Typography>
+        <Container className={layoutClasses.content} maxWidth="sm">
+          <Adsense
+            client="ca-pub-7767752375383260"
+            slot="5596436251"
+            format="auto"
+            responsive="true"
+          />
         </Container>
         <Viewer
           visible={visible}

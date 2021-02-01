@@ -29,6 +29,7 @@ import { Discord, Patreon } from "mdi-material-ui";
 import React, { Fragment, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Link as RouteLink } from "react-router-dom";
+import { Adsense } from "@ctrl/react-adsense";
 import { IUserInformationInfo } from "../types";
 import { getJPTime, useCachedData } from "../utils";
 import AnnouncementWidget from "./announcement/AnnouncementWidget";
@@ -358,6 +359,12 @@ function Home() {
           <CurrentEventWidget />
         </Grid>
       </Grid>
+      <Adsense
+        client="ca-pub-7767752375383260"
+        slot="7908750736"
+        format="auto"
+        responsive="true"
+      />
       <Typography variant="h6" className={layoutClasses.header}>
         {t("home:game-news.title")}
       </Typography>
@@ -387,6 +394,7 @@ function Home() {
                 (info) => info.informationTag === gameNewsTag
               )}
               columns={columns}
+              disableColumnMenu
             ></DataGrid>
           </div>
         </Container>

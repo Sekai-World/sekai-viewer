@@ -42,6 +42,7 @@ import ResourceBox from "../subs/ResourceBox";
 import { OpenInNew } from "@material-ui/icons";
 import { useInteractiveStyles } from "../../styles/interactive";
 import AudioPlayer from "../music/AudioPlayer";
+import { Adsense } from "@ctrl/react-adsense";
 
 const useStyle = makeStyles((theme) => ({
   bannerImg: {
@@ -378,7 +379,7 @@ const EventDetail: React.FC<{}> = () => {
             </Grid>
             <Grid item xs={7} container justify="flex-end" spacing={2}>
               {eventCards.map((card) => (
-                <Grid item xs={6} md={4}>
+                <Grid key={card.cardId} item xs={6} md={4}>
                   <Link to={`/card/${card.cardId}`}>
                     <CardThumb cardId={card.cardId} />
                   </Link>
@@ -692,6 +693,17 @@ const EventDetail: React.FC<{}> = () => {
             </Fragment>
           ))}
         </Grid>
+      </Container>
+      <Typography variant="h6" className={layoutClasses.header}>
+        {t("common:advertisement")}
+      </Typography>
+      <Container className={layoutClasses.content} maxWidth="sm">
+        <Adsense
+          client="ca-pub-7767752375383260"
+          slot="5596436251"
+          format="auto"
+          responsive="true"
+        />
       </Container>
       <Viewer
         visible={visible}
