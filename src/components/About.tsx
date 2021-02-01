@@ -109,24 +109,28 @@ const About: React.FC<{}> = () => {
             </li>
             <li>
               日：Passion, Cee, k0tayan, Natsuzawa, Build774, あいうえお菓子,
-              ikareo, Karuta, MoeDev, watatomo, yumisky0236, aceticke, Harlia
+              ikareo, Karuta, MoeDev, watatomo, yumisky0236, aceticke, Harlia,
+              おにぶるお
             </li>
             <li>
               한：hodubidu3095, omitooshi, EleMas39, PJSEKAI, 아점, 쿠인/いずく,
-              ioeyeong842, Sn_Kinos, kemono, switchP
+              ioeyeong842, Sn_Kinos, kemono, switchP, A Kim
             </li>
             <li>Pt-BR: Kuyaterai, LariBee, ayunjapan</li>
             <li>русский: Spyrohat, Yukina Minato</li>
             <li>
               Es: ruiemu, maravillas, Jackiore, Mochitachi70, Nachuki, NeoKM,
-              ReiZenKai, Tlayoli, Vlxx, fivian_clark
+              ReiZenKai, Tlayoli, Vlxx, fivian_clark, kevinthojedat
             </li>
-            <li>It: SeaPu, RayFirefist, Kyon86, MattiVocaloidLover</li>
-            <li>Pl: sousie, Wheatley</li>
+            <li>
+              It: SeaPu, RayFirefist, Kyon86, MattiVocaloidLover, Aki Ryuzaki
+            </li>
+            <li>Pl: sousie, Wheatley, Kimochi</li>
             <li>En: watatomo, Wandering Spirit</li>
             <li>Fr: Yasito</li>
             <li>Ind: Rizkiawan (Fueeru), CrystL, Muko Mitsune</li>
             <li>ไทย: Revel</li>
+            <li>Ms: mnh48</li>
           </ul>
         </Alert>
       </Container>
