@@ -49,7 +49,7 @@ import { SettingContext } from "../../context";
 import { ContentTrans } from "../subs/ContentTrans";
 import { useInteractiveStyles } from "../../styles/interactive";
 import CommonMaterialIcon from "../subs/CommonMaterialIcon";
-import { Adsense } from "@ctrl/react-adsense";
+import AdSense from "../subs/AdSense";
 
 const gachaImageNameMap: {
   [key: number]: {
@@ -972,7 +972,7 @@ const GachaDetailPage: React.FC<{}> = () => {
           {t("common:advertisement")}
         </Typography>
         <Container className={layoutClasses.content} maxWidth="sm">
-          <Adsense
+          <AdSense
             client="ca-pub-7767752375383260"
             slot="5596436251"
             format="auto"

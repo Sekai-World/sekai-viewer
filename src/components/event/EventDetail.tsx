@@ -42,7 +42,7 @@ import ResourceBox from "../subs/ResourceBox";
 import { OpenInNew } from "@material-ui/icons";
 import { useInteractiveStyles } from "../../styles/interactive";
 import AudioPlayer from "../music/AudioPlayer";
-import { Adsense } from "@ctrl/react-adsense";
+import AdSense from "../subs/AdSense";
 
 const useStyle = makeStyles((theme) => ({
   bannerImg: {
@@ -698,7 +698,7 @@ const EventDetail: React.FC<{}> = () => {
         {t("common:advertisement")}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="sm">
-        <Adsense
+        <AdSense
           client="ca-pub-7767752375383260"
           slot="5596436251"
           format="auto"

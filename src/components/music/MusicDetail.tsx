@@ -58,7 +58,7 @@ import ResourceBox from "../subs/ResourceBox";
 import AudioPlayer from "./AudioPlayer";
 import { Howl } from "howler";
 import { saveAs } from "file-saver";
-import { Adsense } from "@ctrl/react-adsense";
+import AdSense from "../subs/AdSense";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -1097,7 +1097,7 @@ const MusicDetail: React.FC<{}> = () => {
         {t("common:advertisement")}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="sm">
-        <Adsense
+        <AdSense
           client="ca-pub-7767752375383260"
           slot="5596436251"
           format="auto"
