@@ -181,7 +181,7 @@ const TeamBuilder: React.FC<{
       }
       const maxLevel = [0, 20, 30, 50, 60];
       setTeamCards((tc) => [...tc, card.id]);
-      let stateFrom = sekaiProfile!.cardList!.find(
+      let stateFrom = sekaiProfile?.cardList?.find(
         (cl) => cl.cardId === card.id
       );
       setTeamCardsStates((tcs) => [
