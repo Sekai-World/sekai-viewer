@@ -56,6 +56,7 @@ import {
   ReleaseCondTrans,
 } from "../subs/ContentTrans";
 import ResourceBox from "../subs/ResourceBox";
+import AdSense from "../subs/AdSense";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -1034,19 +1035,6 @@ const CardDetail: React.FC<{}> = () => {
           </Paper>
           <TabPanel value="1" classes={{ root: classes.tabpanel }}>
             <Grid container direction="column">
-              {/* <Grid
-                container
-                direction="row"
-                wrap="nowrap"
-                justify="space-between"
-                alignItems="center"
-              >
-                <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                  {t("common:title")}
-                </Typography>
-                <Typography>{cardEpisode[0].title}</Typography>
-              </Grid>
-              <Divider style={{ margin: "1% 0" }} /> */}
               <Grid
                 container
                 direction="row"
@@ -1119,19 +1107,6 @@ const CardDetail: React.FC<{}> = () => {
           </TabPanel>
           <TabPanel value="2" classes={{ root: classes.tabpanel }}>
             <Grid container direction="column">
-              {/* <Grid
-                container
-                direction="row"
-                wrap="nowrap"
-                justify="space-between"
-                alignItems="center"
-              >
-                <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                  {t("common:title")}
-                </Typography>
-                <Typography>{cardEpisode[1].title}</Typography>
-              </Grid>
-              <Divider style={{ margin: "1% 0" }} /> */}
               <Grid
                 container
                 direction="row"
@@ -1203,6 +1178,17 @@ const CardDetail: React.FC<{}> = () => {
             </Grid>
           </TabPanel>
         </TabContext>
+      </Container>
+      <Typography variant="h6" className={layoutClasses.header}>
+        {t("common:advertisement")}
+      </Typography>
+      <Container className={layoutClasses.content} maxWidth="sm">
+        <AdSense
+          client="ca-pub-7767752375383260"
+          slot="5596436251"
+          format="auto"
+          responsive="true"
+        />
       </Container>
       <Viewer
         visible={visible}

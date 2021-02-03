@@ -20,6 +20,7 @@ import { ContentTrans } from "../subs/ContentTrans";
 import { charaIcons } from "../../utils/resources";
 import ResourceBox from "../subs/ResourceBox";
 import VirtualLiveStep from "./VirtualLiveStep";
+import AdSense from "../subs/AdSense";
 
 const VirtualLiveDetail: React.FC<{}> = () => {
   const { t } = useTranslation();
@@ -291,6 +292,17 @@ const VirtualLiveDetail: React.FC<{}> = () => {
         {virtualLive.virtualLiveSetlists.map((setlist) => (
           <VirtualLiveStep key={setlist.id} data={setlist} />
         ))}
+      </Container>
+      <Typography variant="h6" className={layoutClasses.header}>
+        {t("common:advertisement")}
+      </Typography>
+      <Container className={layoutClasses.content} maxWidth="sm">
+        <AdSense
+          client="ca-pub-7767752375383260"
+          slot="5596436251"
+          format="auto"
+          responsive="true"
+        />
       </Container>
     </Fragment>
   ) : (

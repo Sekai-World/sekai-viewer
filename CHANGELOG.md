@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.1](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.0...v0.4.1) (2021-02-03)
+
+
+### Features
+
+* **user:** add help to import cards ([9d44612](https://github.com/Sekai-World/sekai-viewer/commits/9d446126fb5b826d80cb89a6e1e07998e4eb58a3))
+* add adsense blocks ([9c666f2](https://github.com/Sekai-World/sekai-viewer/commits/9c666f26a7463b8073440f904a607253dd2604d0))
+
+
+### Bug Fixes
+
+* **team-build:** add card crash if not logged in ([31d7441](https://github.com/Sekai-World/sekai-viewer/commits/31d7441d411f69af0a0c343b0e11221ba8bbd6df))
+* **user:** import tweak to solve some screenshot matching problem ([f8077b1](https://github.com/Sekai-World/sekai-viewer/commits/f8077b1579b9a84115c74fffe65278b04c6efff6))
+
+
+### Refactors
+
+* **user:** reduce tesseract worker count to 1 to save memory ([c6d9b06](https://github.com/Sekai-World/sekai-viewer/commits/c6d9b069e032ad52061be096ecefb232212d09da))
+
 ## [0.4.0](https://github.com/Sekai-World/sekai-viewer/compare/v0.3.2...v0.4.0) (2021-01-30)
 
 

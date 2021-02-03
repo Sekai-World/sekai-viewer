@@ -3,34 +3,44 @@ import React, {
   useCallback,
   useContext,
   useMemo,
+  // useRef,
   useState,
 } from "react";
 import { Marvin, MarvinImage, MarvinSegment } from "marvinj-ts";
 import { useInteractiveStyles } from "../../../styles/interactive";
 import {
   Button,
+  CardMedia,
   CircularProgress,
+  Dialog,
+  DialogContent,
+  DialogContentText,
   FormControl,
   FormControlLabel,
   Grid,
   Input,
+  makeStyles,
   Snackbar,
   Switch,
   Tooltip,
   Typography,
+  useTheme,
 } from "@material-ui/core";
-import { Upload } from "mdi-material-ui";
+import { Information, Upload } from "mdi-material-ui";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { ColDef, DataGrid, RowModel } from "@material-ui/data-grid";
 import { createWorker, createScheduler } from "tesseract.js";
-import { useCachedData } from "../../../utils";
+import { useCachedData, useToggle } from "../../../utils";
 import { ICardInfo } from "../../../types";
 // import { Link } from "react-router-dom";
 import { UserContext } from "../../../context";
 import { useStrapi } from "../../../utils/apiClient";
 import { Alert } from "@material-ui/lab";
 import { useLayoutStyles } from "../../../styles/layout";
+// @ts-ignore
+import { AutoRotatingCarousel, Slide } from "material-auto-rotating-carousel";
+import { isMobile } from "react-device-detect";
 
 function initCOS(N: number = 64) {
   const entries = 2 * N * (N - 1);
@@ -100,9 +110,31 @@ function distance(a: string, b: string) {
   return count;
 }
 
+const useStyles = makeStyles((theme) => ({
+  media: {
+    [theme.breakpoints.down("sm")]: {
+      paddingTop: "75%",
+    },
+    [theme.breakpoints.up("md")]: {
+      paddingTop: "56.25%",
+    },
+    backgroundSize: "contain",
+    width: "100%",
+  },
+  slideSubtitle: {
+    "& > div:nth-child(2) > p:nth-child(2)": {
+      whiteSpace: "pre-line",
+      textAlign: "left",
+    },
+    height: "100%",
+  },
+}));
+
 const SekaiUserImportMember = () => {
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
+  const theme = useTheme();
+  const classes = useStyles();
   const { t } = useTranslation();
   const { jwtToken, sekaiProfile, updateSekaiProfile } = useContext(
     UserContext
@@ -134,6 +166,9 @@ const SekaiUserImportMember = () => {
   const [errMsg, setErrMsg] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
+  const [isCardSelectionOpen, toggleIsCardSelectionOpen] = useToggle(false);
+  const [editId, setEditId] = useState(-1);
+  const [helpOpen, toggleHelpOpen] = useToggle(false);
 
   // const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -195,7 +230,7 @@ const SekaiUserImportMember = () => {
           }
           areaBoundary.height = areaBoundary.y2 - areaBoundary.y1;
           // vertical scan
-          const Ythreshold = 0.95;
+          const Ythreshold = 0.9;
           for (let x = 0; x < scaled.getWidth(); x++) {
             let whitePixels = 0;
             for (let y = areaBoundary.y1; y < areaBoundary.y2; y++) {
@@ -219,7 +254,7 @@ const SekaiUserImportMember = () => {
             }
           }
           areaBoundary.width = areaBoundary.x2 - areaBoundary.x1;
-          // console.log(areaBoundary);
+          console.log(areaBoundary);
 
           // crop
           Marvin.crop(
@@ -248,7 +283,8 @@ const SekaiUserImportMember = () => {
           //   (scaled.getHeight() / scaled.getWidth())
           // }px`;
           // canvasRef.current.width = scaled.getWidth() * window.devicePixelRatio;
-          // canvasRef.current.height = scaled.getHeight() * window.devicePixelRatio;
+          // canvasRef.current.height =
+          //   scaled.getHeight() * window.devicePixelRatio;
           // context?.clearRect(
           //   0,
           //   0,
@@ -336,7 +372,8 @@ const SekaiUserImportMember = () => {
           }
 
           // determine right icon width
-          for (let y = rowStartY[1] - 20; y < scaled.getHeight(); y++) {
+          let xSegments = 2;
+          for (let y = rowStartY[0] - 20; y < scaled.getHeight(); y++) {
             let cardX: number[] = [];
             let widths: number[] = [];
             let inCardArea = false;
@@ -349,10 +386,47 @@ const SekaiUserImportMember = () => {
                 cardX.push(x);
                 inCardArea = false;
               }
-              if (cardX.length === 4) {
-                columnStartX.push(cardX[0]);
-                const width = cardX[1] - cardX[0] + cardX[3] - cardX[2];
+              // in extrem situation, for upper boundary of card thumb nail it may have more than 2 segmentations, e.g. 3.
+              // if the calculated width from 2 segments is too small, can try 3 segments.
+              if (cardX.length === xSegments * 2) {
+                // console.log(cardX);
+                // cardX.forEach((x) => {
+                //   context?.beginPath();
+                //   context?.moveTo(x, 0);
+                //   context?.lineTo(x, original.getHeight());
+                //   context?.stroke();
+                // });
+                const _cardX = [...cardX];
+                const width = Array.from<number>({ length: xSegments }).reduce(
+                  (sum, _, idx) => {
+                    const segWidth = _cardX[idx * 2 + 1] - _cardX[idx * 2];
+                    return sum + segWidth;
+                  },
+                  0
+                );
+                if (width < 60) {
+                  xSegments += 1;
+                  if (xSegments > 3) {
+                    // do not use this x line to determine width, try next one
+                    xSegments = 2;
+                    y = rowStartY[1] - 15;
+                    columnStartX = [];
+                    widths = [];
+                    break;
+                  }
+                  x = -1;
+                  cardX = [];
+                  continue;
+                }
+                if (
+                  !!columnStartX.length &&
+                  cardX[0] - columnStartX[columnStartX.length - 1] < 20
+                ) {
+                  // ignore this
+                  continue;
+                }
                 widths.push(width);
+                columnStartX.push(cardX[0]);
                 cardX = [];
               }
             }
@@ -416,10 +490,10 @@ const SekaiUserImportMember = () => {
               Marvin.crop(
                 card,
                 cropped,
-                Math.floor(len * 0.165),
-                Math.floor(len * 0.165),
-                Math.floor(len * 0.445),
-                Math.floor(len * 0.445)
+                Math.round(len * 0.165),
+                Math.round(len * 0.165),
+                Math.round(len * 0.445),
+                Math.round(len * 0.445)
               );
               // cropped.draw(canvasRef.current!, x, y, null);
               Marvin.scale(cropped.clone(), cropped, 32, 32);
@@ -431,11 +505,32 @@ const SekaiUserImportMember = () => {
               Marvin.blackAndWhite(_card.clone(), _card, 10);
               Marvin.invertColors(_card.clone(), _card);
               const levelText = new MarvinImage();
-              Marvin.crop(_card, levelText, 3, len - 27, len - 50, 27);
+              Marvin.crop(
+                _card,
+                levelText,
+                3,
+                len - Math.round(len * 0.2),
+                Math.round(len * 0.5),
+                Math.round(len * 0.2)
+              );
+              // levelText.draw(canvasRef.current!, x, y, null);
               cardLevels.push(levelText);
 
               const masterRank = new MarvinImage();
-              Marvin.crop(_card, masterRank, len - 36, len - 36, 26, 26);
+              const minusCoor =
+                len > 115 ? Math.round(len * 0.24) : Math.round(len * 0.253);
+              const size =
+                len > 115 ? Math.round(len * 0.18) : Math.round(len * 0.17);
+              Marvin.crop(
+                _card,
+                masterRank,
+                len - minusCoor,
+                len - minusCoor,
+                size,
+                size
+              );
+              Marvin.scale(masterRank.clone(), masterRank, 32, 32);
+              // masterRank.draw(canvasRef.current!, x, y, null);
               cardMasterRanks.push(masterRank);
             });
           });
@@ -464,12 +559,13 @@ const SekaiUserImportMember = () => {
           // match hash
           const hashResults: [string, number][][] = [];
           cardHashes.forEach((hashValue) => {
-            const mapped: [string, number][] = charaHash.map((ch) => [
-              ch[0],
-              distance(ch[1], hashValue),
-            ]);
+            const mapped: [string, number][] = charaHash
+              .map(
+                (ch) => [ch[0], distance(ch[1], hashValue)] as [string, number]
+              )
+              .sort((a, b) => a[1] - b[1]);
             const matched = mapped
-              .filter((m) => m[1] <= 16)
+              .filter((m) => m[1] <= 24)
               .sort((a, b) => a[1] - b[1]);
             hashResults.push(
               matched.length
@@ -485,7 +581,7 @@ const SekaiUserImportMember = () => {
           let ocrLevelResults: string[] = [];
           let ocrMasterRankResults: string[] = [];
           if (ocrEnable) {
-            const workers = Array.from({ length: 4 }).map(() =>
+            const workers = Array.from({ length: 1 }).map(() =>
               createWorker({
                 corePath: window.isChinaMainland
                   ? `${
@@ -541,7 +637,7 @@ const SekaiUserImportMember = () => {
             scheduler.terminate();
           }
           // console.log(ocrLevelResults);
-          // console.log(ocrMasterRankResults);
+          console.log(ocrMasterRankResults);
 
           const _rows = cardDataURLs.map((dataURL, idx) => ({
             id: idx + 1,
@@ -562,7 +658,10 @@ const SekaiUserImportMember = () => {
                 ) || 1
               : 1,
             masterRank: ocrMasterRankResults.length
-              ? Number(ocrMasterRankResults[idx]) || 0
+              ? Math.min(
+                  Number(ocrMasterRankResults[idx].replace(/\D/g, "")),
+                  5
+                ) || 0
               : 0,
             cardIds: hashResults[idx].length
               ? hashResults[idx].map(
@@ -604,7 +703,7 @@ const SekaiUserImportMember = () => {
 
   const columns = useMemo(
     (): ColDef[] => [
-      { field: "id", headerName: t("common:id"), width: 80 },
+      { field: "id", headerName: t("common:id"), width: 60 },
       {
         field: "crop",
         headerName: t("user:profile.import_card.table.row.cropped_image"),
@@ -630,10 +729,18 @@ const SekaiUserImportMember = () => {
             (card) => card.id === (params.getValue("cardIds") as number[])[idx]
           )!;
           return card ? (
-            <Grid container direction="column" alignItems="center">
+            <Grid
+              container
+              direction="column"
+              alignItems="center"
+              onClick={() => {
+                setEditId(Number(params.row.id));
+                toggleIsCardSelectionOpen();
+              }}
+            >
               <img
                 src={(params.getValue("full") as string[])[idx]}
-                style={{ height: "64px", width: "64px" }}
+                style={{ height: "64px", width: "64px", cursor: "pointer" }}
                 alt={`${(
                   (1 - (params.getValue("distances") as number[])[idx] / 64) *
                   100
@@ -650,56 +757,56 @@ const SekaiUserImportMember = () => {
         },
         align: "center",
       },
-      {
-        field: "changeCard",
-        headerName: t(
-          "user:profile.import_card.table.row.other_possible_result"
-        ),
-        width:
-          100 *
-          (Math.max(...rows.map((row) => row.hashResults.length)) - 1 || 0.1),
-        renderCell(params) {
-          const useIdx = params.getValue("useIndex") as number;
-          return (
-            <Grid container spacing={1}>
-              {Array.from({
-                length: (params.getValue("distances") as number[]).length,
-              })
-                .map((_, idx) => idx)
-                .filter((idx) => idx !== useIdx)
-                .map((idx) => (
-                  <Grid item key={idx}>
-                    <Grid container direction="column" alignItems="center">
-                      <img
-                        src={(params.getValue("full") as string[])[idx]}
-                        style={{
-                          height: "64px",
-                          width: "64px",
-                          cursor: "pointer",
-                        }}
-                        alt={`${(
-                          (1 -
-                            (params.getValue("distances") as number[])[idx] /
-                              64) *
-                          100
-                        ).toFixed(1)}%`}
-                        onClick={() =>
-                          handleValueChange(idx, "useIndex", params.row)
-                        }
-                      />
-                      <Typography>{`${(
-                        (1 -
-                          (params.getValue("distances") as number[])[idx] /
-                            64) *
-                        100
-                      ).toFixed(1)}%`}</Typography>
-                    </Grid>
-                  </Grid>
-                ))}
-            </Grid>
-          );
-        },
-      },
+      // {
+      //   field: "changeCard",
+      //   headerName: t(
+      //     "user:profile.import_card.table.row.other_possible_result"
+      //   ),
+      //   width:
+      //     100 *
+      //     (Math.max(...rows.map((row) => row.hashResults.length)) - 1 || 0.1),
+      //   renderCell(params) {
+      //     const useIdx = params.getValue("useIndex") as number;
+      //     return (
+      //       <Grid container spacing={1}>
+      //         {Array.from({
+      //           length: (params.getValue("distances") as number[]).length,
+      //         })
+      //           .map((_, idx) => idx)
+      //           .filter((idx) => idx !== useIdx)
+      //           .map((idx) => (
+      //             <Grid item key={idx}>
+      //               <Grid container direction="column" alignItems="center">
+      //                 <img
+      //                   src={(params.getValue("full") as string[])[idx]}
+      //                   style={{
+      //                     height: "64px",
+      //                     width: "64px",
+      //                     cursor: "pointer",
+      //                   }}
+      //                   alt={`${(
+      //                     (1 -
+      //                       (params.getValue("distances") as number[])[idx] /
+      //                         64) *
+      //                     100
+      //                   ).toFixed(1)}%`}
+      //                   onClick={() =>
+      //                     handleValueChange(idx, "useIndex", params.row)
+      //                   }
+      //                 />
+      //                 <Typography>{`${(
+      //                   (1 -
+      //                     (params.getValue("distances") as number[])[idx] /
+      //                       64) *
+      //                   100
+      //                 ).toFixed(1)}%`}</Typography>
+      //               </Grid>
+      //             </Grid>
+      //           ))}
+      //       </Grid>
+      //     );
+      //   },
+      // },
       {
         field: "level",
         headerName: t("card:cardLevel"),
@@ -727,6 +834,7 @@ const SekaiUserImportMember = () => {
             <Input
               value={params.value as number}
               type="number"
+              fullWidth
               inputMode="numeric"
               inputProps={{
                 min: 0,
@@ -742,12 +850,13 @@ const SekaiUserImportMember = () => {
       {
         field: "skillLevel",
         headerName: t("card:skillLevel"),
-        width: 120,
+        width: 100,
         renderCell(params) {
           return (
             <Input
               value={params.value as number}
               type="number"
+              fullWidth
               inputMode="numeric"
               inputProps={{
                 min: 0,
@@ -763,7 +872,7 @@ const SekaiUserImportMember = () => {
       {
         field: "trained",
         headerName: t("card:trained"),
-        width: 120,
+        width: 100,
         renderCell(params) {
           return (
             <Switch
@@ -778,7 +887,7 @@ const SekaiUserImportMember = () => {
       {
         field: "story1Unlock",
         headerName: t("card:sideStory1Unlocked"),
-        width: 180,
+        width: 120,
         align: "center",
         renderCell(params) {
           return (
@@ -794,7 +903,7 @@ const SekaiUserImportMember = () => {
       {
         field: "story2Unlock",
         headerName: t("card:sideStory2Unlocked"),
-        width: 180,
+        width: 120,
         align: "center",
         renderCell(params) {
           return (
@@ -808,7 +917,7 @@ const SekaiUserImportMember = () => {
         },
       },
     ],
-    [t, rows, cards, handleValueChange]
+    [t, cards, toggleIsCardSelectionOpen, handleValueChange]
   );
 
   const handleSubmitCardList = useCallback(async () => {
@@ -861,50 +970,57 @@ const SekaiUserImportMember = () => {
       </Alert>
       <Grid container spacing={1}>
         <Grid item xs={12}>
-          <Grid container>
-            <input
-              accept="image/png,image/jpeg"
-              className={interactiveClasses.inputHidden}
-              id="upload-member-button"
-              type="file"
-              onChange={(e) => {
-                if (!e.target.files || !e.target.files.length) return;
-                const file = e.target.files.item(0);
-                if (!file?.type.startsWith("image/")) return;
+          <input
+            accept="image/png,image/jpeg"
+            className={interactiveClasses.inputHidden}
+            id="upload-member-button"
+            type="file"
+            onChange={(e) => {
+              if (!e.target.files || !e.target.files.length) return;
+              const file = e.target.files.item(0);
+              if (!file?.type.startsWith("image/")) return;
 
-                const reader = new FileReader();
+              const reader = new FileReader();
 
-                reader.onload = onReaderLoad;
+              reader.onload = onReaderLoad;
 
-                reader.readAsDataURL(file);
+              reader.readAsDataURL(file);
 
-                e.target.value = "";
-              }}
-              disabled={isUploading || !cards || !cards.length}
-            />
-            <label htmlFor="upload-member-button">
-              <Grid container alignItems="center" spacing={1}>
-                <Grid item>
-                  <Button
-                    variant="outlined"
-                    component="span"
-                    disabled={isUploading || !cards || !cards.length}
-                    startIcon={
-                      isUploading ? <CircularProgress size={24} /> : <Upload />
-                    }
-                  >
-                    {t("user:profile.import_card.import_button")}
-                  </Button>
-                </Grid>
-              </Grid>
-            </label>
+              e.target.value = "";
+            }}
+            disabled={isUploading || !cards || !cards.length}
+          />
+          <Grid container alignItems="center" spacing={1}>
+            <Grid item>
+              <label htmlFor="upload-member-button">
+                <Button
+                  variant="outlined"
+                  component="span"
+                  disabled={isUploading || !cards || !cards.length}
+                  startIcon={
+                    isUploading ? <CircularProgress size={24} /> : <Upload />
+                  }
+                >
+                  {t("user:profile.import_card.import_button")}
+                </Button>
+              </label>
+            </Grid>
+            <Grid item>
+              <Button
+                variant="outlined"
+                startIcon={<Information />}
+                onClick={() => toggleHelpOpen()}
+              >
+                {t("common:help")}
+              </Button>
+            </Grid>
           </Grid>
         </Grid>
         {/* <Grid item container>
-        <Grid item xs={12}>
-          <canvas ref={canvasRef} style={{ width: "100%" }}></canvas>
-        </Grid>
-      </Grid> */}
+          <Grid item xs={12}>
+            <canvas ref={canvasRef} style={{ width: "100%" }}></canvas>
+          </Grid>
+        </Grid> */}
         <Grid item xs={12}>
           <Grid container>
             <Grid item>
@@ -995,6 +1111,148 @@ const SekaiUserImportMember = () => {
           {successMsg}
         </Alert>
       </Snackbar>
+      <Dialog
+        open={isCardSelectionOpen}
+        onClose={() => toggleIsCardSelectionOpen()}
+      >
+        <DialogContent>
+          <DialogContentText>
+            {t("user:profile.import_card.table.row.other_possible_result")}
+          </DialogContentText>
+          <Grid container spacing={1}>
+            {!!rows.length &&
+              editId !== -1 &&
+              rows
+                .find((row) => row.id === editId)!
+                .full.map((url, idx) => (
+                  <Grid
+                    key={idx}
+                    item
+                    onClick={() => {
+                      const rowIndex = rows.findIndex(
+                        (row) => row.id === editId
+                      )!;
+                      const row = rows[rowIndex];
+                      row.useIndex = idx;
+                      row.trained = url.includes("after_training");
+                      setRows([
+                        ...rows.slice(0, rowIndex),
+                        row,
+                        ...rows.slice(rowIndex + 1),
+                      ]);
+                      toggleIsCardSelectionOpen();
+                      setEditId(-1);
+                    }}
+                  >
+                    <Grid container direction="column" alignItems="center">
+                      <img
+                        src={url}
+                        style={{
+                          height: "64px",
+                          width: "64px",
+                          cursor: "pointer",
+                        }}
+                        alt={`${(
+                          (1 -
+                            rows.find((row) => row.id === editId)!.distances[
+                              idx
+                            ] /
+                              64) *
+                          100
+                        ).toFixed(1)}%`}
+                      />
+                      <Typography>{`${(
+                        (1 -
+                          rows.find((row) => row.id === editId)!.distances[
+                            idx
+                          ] /
+                            64) *
+                        100
+                      ).toFixed(1)}%`}</Typography>
+                    </Grid>
+                  </Grid>
+                ))}
+          </Grid>
+          <DialogContentText>
+            {t("user:profile.import_card.wrong_result")}
+          </DialogContentText>
+          <Button
+            color="secondary"
+            variant="contained"
+            onClick={() => {
+              const idx = rows.findIndex((row) => row.id === editId)!;
+              setRows([...rows.slice(0, idx), ...rows.slice(idx + 1)]);
+              toggleIsCardSelectionOpen();
+              setEditId(-1);
+            }}
+          >
+            {t("common:delete")}
+          </Button>
+        </DialogContent>
+      </Dialog>
+      <AutoRotatingCarousel
+        autoplay={false}
+        mobile={isMobile}
+        open={helpOpen}
+        onClose={() => toggleHelpOpen()}
+      >
+        <Slide
+          className={classes.slideSubtitle}
+          media={
+            <CardMedia
+              image={`${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/strapi-upload/IMG_0128_a70218cb12.png`}
+              title="import card step 1"
+              className={classes.media}
+            />
+          }
+          mediaBackgroundStyle={{ backgroundColor: theme.palette.primary.main }}
+          style={{ backgroundColor: theme.palette.primary.main }}
+          title={t("user:profile.import_card.help.step1.title")}
+          subtitle={t("user:profile.import_card.help.step1.subtitle")}
+        ></Slide>
+        <Slide
+          className={classes.slideSubtitle}
+          media={
+            <CardMedia
+              image={`${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-best-assets/import_cards/step2.png`}
+              title="import card step 2"
+              className={classes.media}
+            />
+          }
+          mediaBackgroundStyle={{ backgroundColor: theme.palette.primary.main }}
+          style={{ backgroundColor: theme.palette.primary.main }}
+          title={t("user:profile.import_card.help.step2.title")}
+          subtitle={t("user:profile.import_card.help.step2.subtitle")}
+        ></Slide>
+        <Slide
+          className={classes.slideSubtitle}
+          media={
+            <CardMedia
+              image={`${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-best-assets/import_cards/step3.png`}
+              title="import card step 3"
+              className={classes.media}
+            />
+          }
+          mediaBackgroundStyle={{ backgroundColor: theme.palette.primary.main }}
+          style={{ backgroundColor: theme.palette.primary.main }}
+          title={t("user:profile.import_card.help.step3.title")}
+          subtitle={t("user:profile.import_card.help.step3.subtitle")}
+        ></Slide>
+        <Slide
+          className={classes.slideSubtitle}
+          media={
+            <CardMedia
+              image={`${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-best-assets/import_cards/step4.png`}
+              title="import card step 4"
+              className={classes.media}
+            />
+          }
+          mediaBackgroundStyle={{ backgroundColor: theme.palette.primary.main }}
+          style={{ backgroundColor: theme.palette.primary.main }}
+          title={t("user:profile.import_card.help.step4.title")}
+          subtitle={t("user:profile.import_card.help.step4.subtitle")}
+        ></Slide>
+      </AutoRotatingCarousel>
     </Grid>
   );
 };
