@@ -1,0 +1,6 @@
+.github/
+.vscode/
+build/
+# nginx/
+node_modules/
+public/locales/
