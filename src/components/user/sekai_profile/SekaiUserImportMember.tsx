@@ -10,6 +10,7 @@ import { Marvin, MarvinImage, MarvinSegment } from "marvinj-ts";
 import { useInteractiveStyles } from "../../../styles/interactive";
 import {
   Button,
+  CardMedia,
   CircularProgress,
   Dialog,
   DialogContent,
@@ -18,12 +19,14 @@ import {
   FormControlLabel,
   Grid,
   Input,
+  makeStyles,
   Snackbar,
   Switch,
   Tooltip,
   Typography,
+  useTheme,
 } from "@material-ui/core";
-import { Upload } from "mdi-material-ui";
+import { Information, Upload } from "mdi-material-ui";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { ColDef, DataGrid, RowModel } from "@material-ui/data-grid";
@@ -35,6 +38,9 @@ import { UserContext } from "../../../context";
 import { useStrapi } from "../../../utils/apiClient";
 import { Alert } from "@material-ui/lab";
 import { useLayoutStyles } from "../../../styles/layout";
+// @ts-ignore
+import { AutoRotatingCarousel, Slide } from "material-auto-rotating-carousel";
+import { isMobile } from "react-device-detect";
 
 function initCOS(N: number = 64) {
   const entries = 2 * N * (N - 1);
@@ -104,9 +110,31 @@ function distance(a: string, b: string) {
   return count;
 }
 
+const useStyles = makeStyles((theme) => ({
+  media: {
+    [theme.breakpoints.down("sm")]: {
+      paddingTop: "75%",
+    },
+    [theme.breakpoints.up("md")]: {
+      paddingTop: "56.25%",
+    },
+    backgroundSize: "contain",
+    width: "100%",
+  },
+  slideSubtitle: {
+    "& > div:nth-child(2) > p:nth-child(2)": {
+      whiteSpace: "pre-line",
+      textAlign: "left",
+    },
+    height: "100%",
+  },
+}));
+
 const SekaiUserImportMember = () => {
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
+  const theme = useTheme();
+  const classes = useStyles();
   const { t } = useTranslation();
   const { jwtToken, sekaiProfile, updateSekaiProfile } = useContext(
     UserContext
@@ -140,6 +168,7 @@ const SekaiUserImportMember = () => {
   const [successMsg, setSuccessMsg] = useState("");
   const [isCardSelectionOpen, toggleIsCardSelectionOpen] = useToggle(false);
   const [editId, setEditId] = useState(-1);
+  const [helpOpen, toggleHelpOpen] = useToggle(false);
 
   // const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -674,7 +703,7 @@ const SekaiUserImportMember = () => {
 
   const columns = useMemo(
     (): ColDef[] => [
-      { field: "id", headerName: t("common:id"), width: 80 },
+      { field: "id", headerName: t("common:id"), width: 60 },
       {
         field: "crop",
         headerName: t("user:profile.import_card.table.row.cropped_image"),
@@ -805,6 +834,7 @@ const SekaiUserImportMember = () => {
             <Input
               value={params.value as number}
               type="number"
+              fullWidth
               inputMode="numeric"
               inputProps={{
                 min: 0,
@@ -820,12 +850,13 @@ const SekaiUserImportMember = () => {
       {
         field: "skillLevel",
         headerName: t("card:skillLevel"),
-        width: 120,
+        width: 100,
         renderCell(params) {
           return (
             <Input
               value={params.value as number}
               type="number"
+              fullWidth
               inputMode="numeric"
               inputProps={{
                 min: 0,
@@ -841,7 +872,7 @@ const SekaiUserImportMember = () => {
       {
         field: "trained",
         headerName: t("card:trained"),
-        width: 120,
+        width: 100,
         renderCell(params) {
           return (
             <Switch
@@ -856,7 +887,7 @@ const SekaiUserImportMember = () => {
       {
         field: "story1Unlock",
         headerName: t("card:sideStory1Unlocked"),
-        width: 180,
+        width: 120,
         align: "center",
         renderCell(params) {
           return (
@@ -872,7 +903,7 @@ const SekaiUserImportMember = () => {
       {
         field: "story2Unlock",
         headerName: t("card:sideStory2Unlocked"),
-        width: 180,
+        width: 120,
         align: "center",
         renderCell(params) {
           return (
@@ -939,43 +970,50 @@ const SekaiUserImportMember = () => {
       </Alert>
       <Grid container spacing={1}>
         <Grid item xs={12}>
-          <Grid container>
-            <input
-              accept="image/png,image/jpeg"
-              className={interactiveClasses.inputHidden}
-              id="upload-member-button"
-              type="file"
-              onChange={(e) => {
-                if (!e.target.files || !e.target.files.length) return;
-                const file = e.target.files.item(0);
-                if (!file?.type.startsWith("image/")) return;
+          <input
+            accept="image/png,image/jpeg"
+            className={interactiveClasses.inputHidden}
+            id="upload-member-button"
+            type="file"
+            onChange={(e) => {
+              if (!e.target.files || !e.target.files.length) return;
+              const file = e.target.files.item(0);
+              if (!file?.type.startsWith("image/")) return;
 
-                const reader = new FileReader();
+              const reader = new FileReader();
 
-                reader.onload = onReaderLoad;
+              reader.onload = onReaderLoad;
 
-                reader.readAsDataURL(file);
+              reader.readAsDataURL(file);
 
-                e.target.value = "";
-              }}
-              disabled={isUploading || !cards || !cards.length}
-            />
-            <label htmlFor="upload-member-button">
-              <Grid container alignItems="center" spacing={1}>
-                <Grid item>
-                  <Button
-                    variant="outlined"
-                    component="span"
-                    disabled={isUploading || !cards || !cards.length}
-                    startIcon={
-                      isUploading ? <CircularProgress size={24} /> : <Upload />
-                    }
-                  >
-                    {t("user:profile.import_card.import_button")}
-                  </Button>
-                </Grid>
-              </Grid>
-            </label>
+              e.target.value = "";
+            }}
+            disabled={isUploading || !cards || !cards.length}
+          />
+          <Grid container alignItems="center" spacing={1}>
+            <Grid item>
+              <label htmlFor="upload-member-button">
+                <Button
+                  variant="outlined"
+                  component="span"
+                  disabled={isUploading || !cards || !cards.length}
+                  startIcon={
+                    isUploading ? <CircularProgress size={24} /> : <Upload />
+                  }
+                >
+                  {t("user:profile.import_card.import_button")}
+                </Button>
+              </label>
+            </Grid>
+            <Grid item>
+              <Button
+                variant="outlined"
+                startIcon={<Information />}
+                onClick={() => toggleHelpOpen()}
+              >
+                {t("common:help")}
+              </Button>
+            </Grid>
           </Grid>
         </Grid>
         {/* <Grid item container>
@@ -1152,6 +1190,69 @@ const SekaiUserImportMember = () => {
           </Button>
         </DialogContent>
       </Dialog>
+      <AutoRotatingCarousel
+        autoplay={false}
+        mobile={isMobile}
+        open={helpOpen}
+        onClose={() => toggleHelpOpen()}
+      >
+        <Slide
+          className={classes.slideSubtitle}
+          media={
+            <CardMedia
+              image={`${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/strapi-upload/IMG_0128_a70218cb12.png`}
+              title="import card step 1"
+              className={classes.media}
+            />
+          }
+          mediaBackgroundStyle={{ backgroundColor: theme.palette.primary.main }}
+          style={{ backgroundColor: theme.palette.primary.main }}
+          title={t("user:profile.import_card.help.step1.title")}
+          subtitle={t("user:profile.import_card.help.step1.subtitle")}
+        ></Slide>
+        <Slide
+          className={classes.slideSubtitle}
+          media={
+            <CardMedia
+              image={`${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-best-assets/import_cards/step2.png`}
+              title="import card step 2"
+              className={classes.media}
+            />
+          }
+          mediaBackgroundStyle={{ backgroundColor: theme.palette.primary.main }}
+          style={{ backgroundColor: theme.palette.primary.main }}
+          title={t("user:profile.import_card.help.step2.title")}
+          subtitle={t("user:profile.import_card.help.step2.subtitle")}
+        ></Slide>
+        <Slide
+          className={classes.slideSubtitle}
+          media={
+            <CardMedia
+              image={`${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-best-assets/import_cards/step3.png`}
+              title="import card step 3"
+              className={classes.media}
+            />
+          }
+          mediaBackgroundStyle={{ backgroundColor: theme.palette.primary.main }}
+          style={{ backgroundColor: theme.palette.primary.main }}
+          title={t("user:profile.import_card.help.step3.title")}
+          subtitle={t("user:profile.import_card.help.step3.subtitle")}
+        ></Slide>
+        <Slide
+          className={classes.slideSubtitle}
+          media={
+            <CardMedia
+              image={`${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-best-assets/import_cards/step4.png`}
+              title="import card step 4"
+              className={classes.media}
+            />
+          }
+          mediaBackgroundStyle={{ backgroundColor: theme.palette.primary.main }}
+          style={{ backgroundColor: theme.palette.primary.main }}
+          title={t("user:profile.import_card.help.step4.title")}
+          subtitle={t("user:profile.import_card.help.step4.subtitle")}
+        ></Slide>
+      </AutoRotatingCarousel>
     </Grid>
   );
 };
