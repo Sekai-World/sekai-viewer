@@ -1191,10 +1191,12 @@ const SekaiUserImportMember = () => {
         </DialogContent>
       </Dialog>
       <AutoRotatingCarousel
+        label={t("common:close")}
         autoplay={false}
         mobile={isMobile}
         open={helpOpen}
         onClose={() => toggleHelpOpen()}
+        onStart={() => toggleHelpOpen()}
       >
         <Slide
           className={classes.slideSubtitle}
