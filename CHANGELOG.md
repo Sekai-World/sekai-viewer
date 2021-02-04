@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.2](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.1...v0.4.2) (2021-02-04)
+
+
+### Features
+
+* **user:** add user sekai statistics panel ([c91eedc](https://github.com/Sekai-World/sekai-viewer/commits/c91eedc4575dedd56ff96b77dd6cca5189410c03))
+* add area items cached data ([56bc7a8](https://github.com/Sekai-World/sekai-viewer/commits/56bc7a8eb3d40657268444919468488235713625))
+* **user:** show user honors in sekai profile ([3198142](https://github.com/Sekai-World/sekai-viewer/commits/31981425a42459ef3f4df0faef8f07483cdfd6f3))
+
+
+### Bug Fixes
+
+* **about:** it translator name ([27f5b0e](https://github.com/Sekai-World/sekai-viewer/commits/27f5b0e4d21adea53193933a01be9b3a5f7de1e3))
+* **user:** missing close button of help carousel ([70f11e4](https://github.com/Sekai-World/sekai-viewer/commits/70f11e4137bd5c5f47438c71b059ad110defce74))
+
+
+### Refactors
+
+* improve adsense block display ([3fe781c](https://github.com/Sekai-World/sekai-viewer/commits/3fe781c5a0379110c71a9fa780813a752a155784))
+
 ### [0.4.1](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.0...v0.4.1) (2021-02-03)
 
 
