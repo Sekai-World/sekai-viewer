@@ -56,6 +56,7 @@ import {
   ICharacter3D,
   ICostume3DModel,
   IAreaItemLevel,
+  IAreaItem,
 } from "./../types.d";
 import { assetI18n, useAssetI18n } from "./i18n";
 import { useLocation } from "react-router-dom";
@@ -114,6 +115,7 @@ export function useCachedData<
     | ICharacter3D
     | ICostume3DModel
     | IAreaItemLevel
+    | IAreaItem
 >(name: string): [T[] | undefined, boolean, any] {
   // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
 
