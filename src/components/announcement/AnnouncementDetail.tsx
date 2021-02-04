@@ -158,14 +158,13 @@ const AnnouncementDetail: React.FC<{}> = () => {
           }}
           readOnly
         />
-        <br />
-        <AdSense
-          client="ca-pub-7767752375383260"
-          slot="5596436251"
-          format="auto"
-          responsive="true"
-        />
       </Container>
+      <AdSense
+        client="ca-pub-7767752375383260"
+        slot="5596436251"
+        format="auto"
+        responsive="true"
+      />
       {!query.get("preview") && (
         <Fragment>
           <Typography variant="h6" className={layoutClasses.header}>

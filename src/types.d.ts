@@ -1174,3 +1174,12 @@ export interface IAreaItemLevel {
   power3AllMatchBonusRate: number;
   sentence: string;
 }
+
+export interface IAreaItem {
+  id: number;
+  areaId: number;
+  name: string;
+  flavorText: string;
+  spawnPoint: string;
+  assetbundleName: string;
+}

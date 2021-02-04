@@ -25,6 +25,7 @@ import { useStrapi } from "../../../utils/apiClient";
 // import useJwtAuth from "../../../utils/jwt";
 import { Alert } from "@material-ui/lab";
 import { UserContext } from "../../../context";
+import DegreeImage from "../../subs/DegreeImage";
 // import useJwtAuth from "../../../utils/jwt";
 
 const useStyles = makeStyles((theme) => ({
@@ -302,6 +303,34 @@ const SekaiID: React.FC<{}> = () => {
                 <Typography>
                   {sekaiProfile.sekaiUserProfile.userProfile.word}
                 </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={12}>
+            <Grid container spacing={1}>
+              <Grid item xs={12} md={4}>
+                <DegreeImage
+                  honorId={sekaiProfile.sekaiUserProfile.userProfile.honorId1}
+                  honorLevel={
+                    sekaiProfile.sekaiUserProfile.userProfile.honorLevel1
+                  }
+                />
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <DegreeImage
+                  honorId={sekaiProfile.sekaiUserProfile.userProfile.honorId2}
+                  honorLevel={
+                    sekaiProfile.sekaiUserProfile.userProfile.honorLevel2
+                  }
+                />
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <DegreeImage
+                  honorId={sekaiProfile.sekaiUserProfile.userProfile.honorId3}
+                  honorLevel={
+                    sekaiProfile.sekaiUserProfile.userProfile.honorLevel3
+                  }
+                />
               </Grid>
             </Grid>
           </Grid>

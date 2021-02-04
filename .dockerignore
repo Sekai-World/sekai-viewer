@@ -1,0 +1,7 @@
+.github/
+.vscode/
+build/
+# nginx/
+node_modules/
+public/locales/
+.env.production.local

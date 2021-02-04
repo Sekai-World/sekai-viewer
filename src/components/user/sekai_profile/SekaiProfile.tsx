@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { UserContext } from "../../../context";
 // import { useInteractiveStyles } from "../../../styles/interactive";
 import { useLayoutStyles } from "../../../styles/layout";
+import SekaiUserStatistics from "./SekaiUserStatistics";
 const SekaiEventRecord = React.lazy(() => import("./SekaiEventRecord"));
 const SekaiID = React.lazy(() => import("./SekaiID"));
 const SekaiUserCardList = React.lazy(() => import("./SekaiUserCardList"));
@@ -29,7 +30,7 @@ const SekaiProfile = () => {
 
   const [isUserDeckOpen, setIsUserDeckOpen] = useState(false);
   const [isUserEventOpen, setIsUserEventOpen] = useState(false);
-  // const [isSekaiIDOpen, setIsSekaiIDOpen] = useState(false);
+  const [isUserStatisticsOpen, setIsUserStatisticsOpen] = useState(false);
   const [isUserMemberOpen, setIsUserMemberOpen] = useState(false);
   const [isUserImportMemberOpen, setIsUserImportMemberOpen] = useState(false);
   const [isUserTeamsOpen, setIsUserTeamsOpen] = useState(false);
@@ -71,6 +72,19 @@ const SekaiProfile = () => {
                   userDecks={sekaiProfile.sekaiUserProfile.userDecks}
                   userCards={sekaiProfile.sekaiUserProfile.userCards}
                 />
+              </AccordionDetails>
+            </Accordion>
+            <Accordion
+              expanded={isUserStatisticsOpen}
+              onChange={(e, state) => setIsUserStatisticsOpen(state)}
+            >
+              <AccordionSummary expandIcon={<ExpandMore />}>
+                <Typography className={layoutClasses.header}>
+                  {t("user:profile.title.user_statistics")}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <SekaiUserStatistics />
               </AccordionDetails>
             </Accordion>
             <Accordion

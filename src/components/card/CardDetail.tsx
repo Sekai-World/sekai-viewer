@@ -1179,17 +1179,12 @@ const CardDetail: React.FC<{}> = () => {
           </TabPanel>
         </TabContext>
       </Container>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:advertisement")}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
-        <AdSense
-          client="ca-pub-7767752375383260"
-          slot="5596436251"
-          format="auto"
-          responsive="true"
-        />
-      </Container>
+      <AdSense
+        client="ca-pub-7767752375383260"
+        slot="5596436251"
+        format="auto"
+        responsive="true"
+      />
       <Viewer
         visible={visible}
         onClose={() => setVisible(false)}
