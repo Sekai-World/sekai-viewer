@@ -57,6 +57,25 @@ export function raritySelectReducer(
   }
 }
 
+export function skillSelectReducer(
+  state: string[],
+  action: { type: "add" | "remove" | "reset"; payload: string }
+) {
+  switch (action.type) {
+    case "add":
+      return [...state, action.payload];
+    case "remove":
+      return [
+        ...state.slice(0, state.indexOf(action.payload)),
+        ...state.slice(state.indexOf(action.payload) + 1),
+      ];
+    case "reset":
+      return [];
+    default:
+      throw new Error();
+  }
+}
+
 export function missionTypeReducer(
   state: string[],
   action: { type: "add" | "remove" | "reset"; payload: string }
