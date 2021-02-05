@@ -8,18 +8,19 @@ We love your input! We want to make contributing to this project as easy and tra
 - Becoming a maintainer
 
 ## We Develop with Github
-We use github to host code, to track issues and feature requests, as well as accept pull requests.
+We use github to host code, to track issues and feature requests, as well as accept pull requests. Pull requests should be only against `dev` branch, a pull request targeting `main` branch will be closed.
 
 ## We Welcome All Kinds of Code Changes Through Pull Requests
 Pull requests are the best way to propose changes to the codebase. We actively welcome your pull requests:
 
 1. Fork the repo.
-2. ~~If you've added code that should be tested, add tests. (Not yet)~~
-3. ~~Ensure the test suite passes. (Not yet)~~
-4. Make sure your code lints.
-5. Format you code with `prettier`.
-6. Commit message with [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) style
-7. Issue that pull request!
+2. Switch to branch `dev`, or create a branch based on `dev`.
+3. ~~If you've added code that should be tested, add tests. (Not yet)~~
+4. ~~Ensure the test suite passes. (Not yet)~~
+5. Make sure your code lints.
+6. Format you code with `prettier`.
+7. Commit message with [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) style
+8. Issue that pull request against `dev` branch!
 
 ## Any contributions you make will be under the GNU GENERAL PUBLIC LICENSE
 In short, when you submit code changes, your submissions are understood to be under the same [GNU GENERAL PUBLIC LICENSE](https://choosealicense.com/licenses/gpl-3.0/) that covers the project. Feel free to contact the maintainers if that's a concern.
@@ -50,7 +51,7 @@ It's very simple:
 ## Handling `i18next` Namespace Right
 `i18next` allow developer to set namespace for different strings in different domain, therefore use a right namespace for the key is important.
 
-Normally you can use namespace `common` if your string will show up everywhere in the project. Otherwise use a proper namespace for where the string should stay, for example the strings in CardDetail page is supposed to stay in namespace `card` with exception of `power` which can be displayed in other places.
+Normally you can use namespace `common` if your string will show up everywhere in the project. Otherwise use a proper namespace for where the string should stay, for example the strings in CardDetail page is supposed to stay in namespace `card` with exception of `power` which will be displayed only in context of cards.
 
 If you added or created a namespace, please add it `initGlobalI18n` in `src/utils/i18n.ts`.
 
