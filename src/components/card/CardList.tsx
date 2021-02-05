@@ -30,7 +30,13 @@ import React, {
   useReducer,
   useState,
 } from "react";
-import { ICardEpisode, ICardInfo, ICardRarity, IGameChara } from "../../types";
+import {
+  ICardEpisode,
+  ICardInfo,
+  ICardRarity,
+  IGameChara,
+  ISkillInfo,
+} from "../../types";
 import { useCachedData, useCharaName } from "../../utils";
 import InfiniteScroll from "../subs/InfiniteScroll";
 // import InfiniteScroll from "react-infinite-scroll-component";
@@ -41,6 +47,7 @@ import {
   characterSelectReducer,
   attrSelectReducer,
   raritySelectReducer,
+  skillSelectReducer,
 } from "../../stores/reducers";
 import { charaIcons, attrIconMap } from "../../utils/resources";
 import { SettingContext } from "../../context";
@@ -51,6 +58,26 @@ import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
+
+const skillMapping = [
+  //skills.json
+  {
+    name: "スコアＵＰ",
+    descriptionSpriteName: "score_up",
+  },
+  {
+    name: "判定強化＆スコアＵＰ",
+    descriptionSpriteName: "judgment_up",
+  },
+  {
+    name: "ライフ回復＆スコアＵＰ",
+    descriptionSpriteName: "life_recovery",
+  },
+  {
+    name: "PERFECTのときのみスコアＵＰ",
+    descriptionSpriteName: "perfect_score_up",
+  },
+];
 
 function getPaginatedCards(cards: ICardInfo[], page: number, limit: number) {
   return cards.slice(limit * (page - 1), limit * page);
@@ -106,6 +133,7 @@ const CardList: React.FC<{}> = () => {
   const [charas] = useCachedData<IGameChara>("gameCharacters");
   const [rarities] = useCachedData<ICardRarity>("cardRarities");
   const [episodes] = useCachedData<ICardEpisode>("cardEpisodes");
+  const [skills] = useCachedData<ISkillInfo>("skills");
 
   const [cards, setCards] = useState<ICardInfo[]>([]);
   const [sortedCache, setSortedCache] = useState<ICardInfo[]>([]);
@@ -133,6 +161,11 @@ const CardList: React.FC<{}> = () => {
   );
   const [raritySelected, dispatchRaritySelected] = useReducer(
     raritySelectReducer,
+    []
+  );
+
+  const [skillSelected, dispatchSkillSelected] = useReducer(
+    skillSelectReducer,
     []
   );
 
@@ -174,7 +207,9 @@ const CardList: React.FC<{}> = () => {
       rarities &&
       rarities.length &&
       episodes &&
-      episodes.length
+      episodes.length &&
+      skills &&
+      skills.length
     ) {
       let result = [...cardsCache];
       // do filter
@@ -188,6 +223,14 @@ const CardList: React.FC<{}> = () => {
       }
       if (raritySelected.length) {
         result = result.filter((c) => raritySelected.includes(c.rarity));
+      }
+      if (skillSelected.length) {
+        result = result.filter((c) => {
+          let skill = skills.find((s) => c.skillId === s.id);
+          return skill
+            ? skillSelected.includes(skill.descriptionSpriteName)
+            : true;
+        });
       }
       // temporarily sort cards cache
       switch (sortBy) {
@@ -219,10 +262,12 @@ const CardList: React.FC<{}> = () => {
     setPage,
     rarities,
     episodes,
+    skills,
     setSortedCache,
     characterSelected,
     attrSelected,
     raritySelected,
+    skillSelected,
   ]);
 
   useEffect(() => {
@@ -404,6 +449,57 @@ const CardList: React.FC<{}> = () => {
                         </Grid>
                       )
                     )}
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justify="space-between"
+              >
+                <Grid item xs={12} md={1}>
+                  <Typography classes={{ root: interactiveClasses.caption }}>
+                    {t("common:skill")}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={10}>
+                  <Grid container spacing={1}>
+                    {skillMapping.map((skill, index) => (
+                      <Grid key={"skill-filter-" + index} item>
+                        <Chip
+                          clickable
+                          color={
+                            skillSelected.includes(skill.descriptionSpriteName)
+                              ? "primary"
+                              : "default"
+                          }
+                          label={
+                            <Grid container>
+                              <Grid item>{skill.name}</Grid>
+                            </Grid>
+                          }
+                          onClick={() => {
+                            if (
+                              skillSelected.includes(
+                                skill.descriptionSpriteName
+                              )
+                            ) {
+                              dispatchSkillSelected({
+                                type: "remove",
+                                payload: skill.descriptionSpriteName,
+                              });
+                            } else {
+                              dispatchSkillSelected({
+                                type: "add",
+                                payload: skill.descriptionSpriteName,
+                              });
+                            }
+                          }}
+                        />
+                      </Grid>
+                    ))}
                   </Grid>
                 </Grid>
               </Grid>
