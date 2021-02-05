@@ -227,9 +227,13 @@ const CardList: React.FC<{}> = () => {
       if (skillSelected.length) {
         result = result.filter((c) => {
           let skill = skills.find((s) => c.skillId === s.id);
-          return skill
-            ? skillSelected.includes(skill.descriptionSpriteName)
-            : true;
+          if (skill) {
+            let descriptionSpriteName = skill.descriptionSpriteName;
+            if (skill.skillEffects[0].activateNotesJudgmentType === "perfect")
+              descriptionSpriteName = "perfect_score_up";
+            return skillSelected.includes(descriptionSpriteName);
+          }
+          return true;
         });
       }
       // temporarily sort cards cache
