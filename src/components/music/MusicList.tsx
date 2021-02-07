@@ -205,13 +205,14 @@ const MusicList: React.FC<{}> = () => {
                 xs={12}
                 alignItems="center"
                 justify="space-between"
+                spacing={1}
               >
                 <Grid item xs={12} md={1}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
                     {t("filter:music_tag.caption")}
                   </Typography>
                 </Grid>
-                <Grid item container xs={12} md={10} spacing={1}>
+                <Grid item container xs={12} md={11} spacing={1}>
                   {[
                     "all",
                     "vocaloid",
@@ -241,13 +242,14 @@ const MusicList: React.FC<{}> = () => {
                 xs={12}
                 alignItems="center"
                 justify="space-between"
+                spacing={1}
               >
                 <Grid item xs={12} md={1}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
                     {t("filter:music_mv.caption")}
                   </Typography>
                 </Grid>
-                <Grid item container xs={12} md={10} spacing={1}>
+                <Grid item container xs={12} md={11} spacing={1}>
                   {["mv", "mv_2d", "original", "image"].map((cat) => (
                     <Grid key={cat} item>
                       <Chip
@@ -270,13 +272,14 @@ const MusicList: React.FC<{}> = () => {
                 xs={12}
                 alignItems="center"
                 justify="space-between"
+                spacing={1}
               >
                 <Grid item xs={12} md={1}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
                     {t("filter:sort.caption")}
                   </Typography>
                 </Grid>
-                <Grid item container xs={12} md={10} spacing={1}>
+                <Grid item container xs={12} md={11} spacing={1}>
                   <Grid item>
                     <FormControl>
                       <Select

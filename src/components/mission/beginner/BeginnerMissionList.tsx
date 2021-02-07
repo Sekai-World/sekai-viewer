@@ -142,13 +142,14 @@ const BeginnerMissionList: React.FC<{}> = () => {
                 xs={12}
                 alignItems="center"
                 justify="space-between"
+                spacing={1}
               >
                 <Grid item xs={12} md={1}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
                     {t("filter:missionType.caption")}
                   </Typography>
                 </Grid>
-                <Grid item container xs={12} md={10} spacing={1}>
+                <Grid item container xs={12} md={11} spacing={1}>
                   {["make", "clear", "read", "buy", "achieve"].map((tag) => (
                     <Grid key={"mission-type-" + tag} item>
                       <Chip

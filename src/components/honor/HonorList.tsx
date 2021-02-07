@@ -151,13 +151,14 @@ const HonorList = () => {
                 xs={12}
                 alignItems="center"
                 justify="space-between"
+                spacing={1}
               >
                 <Grid item xs={12} md={1}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
                     {t("filter:honorType.caption")}
                   </Typography>
                 </Grid>
-                <Grid item container xs={12} md={10} spacing={1}>
+                <Grid item container xs={12} md={11} spacing={1}>
                   <Grid item>
                     <Chip
                       clickable
@@ -184,17 +185,27 @@ const HonorList = () => {
                   ))}
                 </Grid>
               </Grid>
-              <Grid item xs={12}>
-                <FormControlLabel
-                  control={
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justify="space-between"
+                spacing={1}
+              >
+                <Grid item xs={12} md={1}>
+                  <Typography classes={{ root: interactiveClasses.caption }}>
+                    {t("filter:honorType.group_only_once")}
+                  </Typography>
+                </Grid>
+                <Grid item container xs={12} md={11} spacing={1}>
+                  <Grid item>
                     <Switch
                       checked={isHonorGroupOnce}
                       onChange={() => setIsHonorGroupOnce((state) => !state)}
                     />
-                  }
-                  label={t("filter:honorType.group_only_once")}
-                  labelPlacement="start"
-                />
+                  </Grid>
+                </Grid>
               </Grid>
             </Grid>
           </Paper>

@@ -27,6 +27,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useReducer,
   useState,
 } from "react";
@@ -58,26 +59,6 @@ import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
-
-const skillMapping = [
-  //skills.json
-  {
-    name: "スコアＵＰ",
-    descriptionSpriteName: "score_up",
-  },
-  {
-    name: "判定強化＆スコアＵＰ",
-    descriptionSpriteName: "judgment_up",
-  },
-  {
-    name: "ライフ回復＆スコアＵＰ",
-    descriptionSpriteName: "life_recovery",
-  },
-  {
-    name: "PERFECTのときのみスコアＵＰ",
-    descriptionSpriteName: "perfect_score_up",
-  },
-];
 
 function getPaginatedCards(cards: ICardInfo[], page: number, limit: number) {
   return cards.slice(limit * (page - 1), limit * page);
@@ -167,6 +148,33 @@ const CardList: React.FC<{}> = () => {
   const [skillSelected, dispatchSkillSelected] = useReducer(
     skillSelectReducer,
     []
+  );
+
+  const skillMapping = useMemo(
+    () => [
+      //skills.json
+      {
+        // name: "スコアＵＰ",
+        name: t("filter:skill.score_up"),
+        descriptionSpriteName: "score_up",
+      },
+      {
+        // name: "判定強化＆スコアＵＰ",
+        name: t("filter:skill.judgment_up"),
+        descriptionSpriteName: "judgment_up",
+      },
+      {
+        // name: "ライフ回復＆スコアＵＰ",
+        name: t("filter:skill.life_recovery"),
+        descriptionSpriteName: "life_recovery",
+      },
+      {
+        // name: "PERFECTのときのみスコアＵＰ",
+        name: t("filter:skill.perfect_score_up"),
+        descriptionSpriteName: "perfect_score_up",
+      },
+    ],
+    [t]
   );
 
   const callback = useCallback(
@@ -351,13 +359,14 @@ const CardList: React.FC<{}> = () => {
                 xs={12}
                 alignItems="center"
                 justify="space-between"
+                spacing={1}
               >
                 <Grid item xs={12} md={1}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
                     {t("filter:character.caption")}
                   </Typography>
                 </Grid>
-                <Grid item xs={12} md={10}>
+                <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
                     {Array.from({ length: 26 }).map((_, idx) => (
                       <Grid key={"chara-filter-" + idx} item>
@@ -404,13 +413,14 @@ const CardList: React.FC<{}> = () => {
                 xs={12}
                 alignItems="center"
                 justify="space-between"
+                spacing={1}
               >
                 <Grid item xs={12} md={1}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
                     {t("common:attribute")}
                   </Typography>
                 </Grid>
-                <Grid item xs={12} md={10}>
+                <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
                     {["cute", "mysterious", "cool", "happy", "pure"].map(
                       (attr) => (
@@ -462,13 +472,14 @@ const CardList: React.FC<{}> = () => {
                 xs={12}
                 alignItems="center"
                 justify="space-between"
+                spacing={1}
               >
                 <Grid item xs={12} md={1}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
                     {t("common:skill")}
                   </Typography>
                 </Grid>
-                <Grid item xs={12} md={10}>
+                <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
                     {skillMapping.map((skill, index) => (
                       <Grid key={"skill-filter-" + index} item>
@@ -513,13 +524,14 @@ const CardList: React.FC<{}> = () => {
                 xs={12}
                 alignItems="center"
                 justify="space-between"
+                spacing={1}
               >
                 <Grid item xs={12} md={1}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
                     {t("card:rarity")}
                   </Typography>
                 </Grid>
-                <Grid item xs={12} md={10}>
+                <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
                     {[1, 2, 3, 4].map((rarity) => (
                       <Grid key={rarity} item>
@@ -572,13 +584,14 @@ const CardList: React.FC<{}> = () => {
                 xs={12}
                 alignItems="center"
                 justify="space-between"
+                spacing={1}
               >
                 <Grid item xs={12} md={1}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
                     {t("filter:sort.caption")}
                   </Typography>
                 </Grid>
-                <Grid item xs={12} md={10}>
+                <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
                     <Grid item>
                       <FormControl>
