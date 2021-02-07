@@ -104,14 +104,8 @@ const SekaiUserCardList = () => {
   const open = useMemo(() => Boolean(anchorEl), [anchorEl]);
 
   useEffect(() => {
-    if (
-      cards &&
-      cards.length &&
-      sekaiProfile &&
-      sekaiProfile.cardList &&
-      sekaiProfile.cardList.length
-    ) {
-      let _cardList = sekaiProfile.cardList.map((elem) =>
+    if (cards && cards.length && sekaiProfile) {
+      let _cardList = (sekaiProfile.cardList || []).map((elem) =>
         Object.assign({}, elem, {
           card: cards.find((c) => c.id === elem.cardId)!,
         })
@@ -126,6 +120,7 @@ const SekaiUserCardList = () => {
           raritySelected.includes(elem.card.rarity)
         );
       }
+      console.log(_cardList, deleteCardIds, editList, addCardIds);
       // apply modifications
       _cardList = _cardList.filter(
         (card) => !deleteCardIds.includes(card.cardId)
@@ -352,14 +347,15 @@ const SekaiUserCardList = () => {
                   disabled={
                     isSaving ||
                     !sekaiProfile ||
-                    !sekaiProfile.cardList ||
-                    !sekaiProfile.cardList.length ||
                     (!deleteCardIds.length && !editList.length)
                   }
                   onClick={() => {
                     setEditList([]);
                     setDeleteCardIds([]);
-                    setCardList([...sekaiProfile!.cardList!]);
+                    setAddCardIds([]);
+                    setCardList(
+                      sekaiProfile!.cardList ? [...sekaiProfile!.cardList] : []
+                    );
                   }}
                   startIcon={<RotateLeft />}
                 >
@@ -370,12 +366,7 @@ const SekaiUserCardList = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  disabled={
-                    isSaving ||
-                    !sekaiProfile ||
-                    !sekaiProfile.cardList ||
-                    !sekaiProfile.cardList.length
-                  }
+                  disabled={isSaving || !sekaiProfile}
                   onClick={() => {
                     setAddCardDialogVisible(true);
                   }}
@@ -590,6 +581,7 @@ const SekaiUserCardList = () => {
       </Grid>
       <Grid item xs={12}>
         <Grid container spacing={1}>
+          {/* {JSON.stringify(cardList)} */}
           {cardList.map((card) => (
             <Grid item xs={3} sm={2} lg={1} key={card.cardId}>
               <CardThumb
