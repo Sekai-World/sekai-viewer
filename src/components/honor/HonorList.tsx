@@ -1,10 +1,9 @@
 import {
+  Badge,
   Button,
-  ButtonGroup,
   Chip,
   Collapse,
   Container,
-  FormControlLabel,
   Grid,
   Paper,
   Switch,
@@ -23,7 +22,7 @@ import { useTranslation } from "react-i18next";
 import { useInteractiveStyles } from "../../styles/interactive";
 import { useLayoutStyles } from "../../styles/layout";
 import { IHonorGroup, IHonorInfo } from "../../types";
-import { useCachedData } from "../../utils";
+import { useCachedData, useLocalStorage } from "../../utils";
 import InfiniteScroll from "../subs/InfiniteScroll";
 import GridView from "./GridView";
 import DetailDialog from "./HonorDetailDialog";
@@ -51,16 +50,16 @@ const HonorList = () => {
   const [selectedHonor, setSelectedHonor] = useState<IHonorInfo>();
   const [isHonorGroupOnce, setIsHonorGroupOnce] = useState(false);
 
-  const [viewGridType] = useState<ViewGridType>(
-    (localStorage.getItem("event-list-grid-view-type") ||
-      "grid") as ViewGridType
-  );
+  const [viewGridType] = useState<ViewGridType>("grid");
   const [page, setPage] = useState<number>(1);
   const [limit] = useState<number>(12);
   const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [filterOpened, setFilterOpened] = useState<boolean>(false);
-  const [honorType, setHonorType] = useState("");
+  const [honorType, setHonorType] = useLocalStorage(
+    "honor-list-filter-type",
+    ""
+  );
   const [filteredCache, setFilteredCache] = useState<IHonorInfo[]>([]);
 
   useLayoutEffect(() => {
@@ -134,13 +133,16 @@ const HonorList = () => {
         {t("honor:page_title")}
       </Typography>
       <Container className={layoutClasses.content}>
-        <Grid container justify="flex-end">
-          <ButtonGroup color="primary" style={{ marginBottom: "1%" }}>
-            <Button size="medium" onClick={() => setFilterOpened((v) => !v)}>
+        <Grid container justify="flex-end" style={{ marginBottom: "0.5rem" }}>
+          <Badge color="secondary" variant="dot" invisible={!honorType}>
+            <Button
+              variant="outlined"
+              onClick={() => setFilterOpened((v) => !v)}
+            >
               {filterOpened ? <Filter /> : <FilterOutline />}
               {filterOpened ? <Sort /> : <SortOutlined />}
             </Button>
-          </ButtonGroup>
+          </Badge>
         </Grid>
         <Collapse in={filterOpened}>
           <Paper className={interactiveClasses.container}>
@@ -153,36 +155,40 @@ const HonorList = () => {
                 justify="space-between"
                 spacing={1}
               >
-                <Grid item xs={12} md={1}>
+                <Grid item xs={12} md={2}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
                     {t("filter:honorType.caption")}
                   </Typography>
                 </Grid>
-                <Grid item container xs={12} md={11} spacing={1}>
-                  <Grid item>
-                    <Chip
-                      clickable
-                      color={honorType === "" ? "primary" : "default"}
-                      label={t("filter:not_set")}
-                      onClick={() => {
-                        setHonorType("");
-                      }}
-                    />
-                  </Grid>
-                  {Array.from(
-                    new Set(honorGroups.map((hg) => hg.honorType))
-                  ).map((hg) => (
-                    <Grid key={hg} item>
+                <Grid item xs={12} md={10}>
+                  <Grid container spacing={1}>
+                    <Grid item>
                       <Chip
                         clickable
-                        color={honorType === hg ? "primary" : "default"}
-                        label={t(`honor:type.${hg}`)}
+                        color={honorType === "" ? "primary" : "default"}
+                        label={t("filter:not_set")}
                         onClick={() => {
-                          setHonorType(hg);
+                          setHonorType("");
                         }}
                       />
                     </Grid>
-                  ))}
+                    {Array.from(
+                      new Set(honorGroups.map((hg) => hg.honorType))
+                    ).map((hg) => (
+                      <Grid key={hg} item>
+                        <Chip
+                          clickable
+                          color={honorType === hg ? "primary" : "default"}
+                          label={t(`honor:type.${hg}`)}
+                          onClick={() => {
+                            honorType === hg
+                              ? setHonorType("")
+                              : setHonorType(hg);
+                          }}
+                        />
+                      </Grid>
+                    ))}
+                  </Grid>
                 </Grid>
               </Grid>
               <Grid
@@ -193,17 +199,19 @@ const HonorList = () => {
                 justify="space-between"
                 spacing={1}
               >
-                <Grid item xs={12} md={1}>
+                <Grid item xs={12} md={2}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
                     {t("filter:honorType.group_only_once")}
                   </Typography>
                 </Grid>
-                <Grid item container xs={12} md={11} spacing={1}>
-                  <Grid item>
-                    <Switch
-                      checked={isHonorGroupOnce}
-                      onChange={() => setIsHonorGroupOnce((state) => !state)}
-                    />
+                <Grid item xs={12} md={10}>
+                  <Grid container spacing={1}>
+                    <Grid item>
+                      <Switch
+                        checked={isHonorGroupOnce}
+                        onChange={() => setIsHonorGroupOnce((state) => !state)}
+                      />
+                    </Grid>
                   </Grid>
                 </Grid>
               </Grid>
