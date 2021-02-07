@@ -164,7 +164,7 @@ export const useTeamCalc = () => {
 
       // team without piapro
       // check all same at first (all piapro or other with piapro same support unit)
-      const cardUnits = userCards.map((card) => card.unit);
+      //const cardUnits = userCards.map((card) => card.unit);
       const cardSupportUnits = userCards.map((card) =>
         card.unit === "piapro" ? card.supportUnit : card.unit
       );
