@@ -164,14 +164,14 @@ export const useTeamCalc = () => {
 
       // team without piapro
       // check all same at first (all piapro or other with piapro same support unit)
-      const cardUnits = userCards.map((card) => card.unit);
+      //const cardUnits = userCards.map((card) => card.unit);
       const cardSupportUnits = userCards.map((card) =>
         card.unit === "piapro" ? card.supportUnit : card.unit
       );
       const cardUnitsAllSame =
-        Array.from(new Set(cardUnits)).length === 1 ||
+        userCards.length === 5 &&
         Array.from(new Set(cardSupportUnits)).length === 1;
-      const cardUnitItemLevels = cardUnits.map((unit) =>
+      const cardUnitItemLevels = cardSupportUnits.map((unit) =>
         itemLevels.filter((il) => il.targetUnit === unit)
       );
       const cardUnitBonusRates = cardUnitItemLevels.map((itemLevels) =>
@@ -195,22 +195,17 @@ export const useTeamCalc = () => {
       const piaproCardIdxs = userCards
         .map((_, idx) => idx)
         .filter((idx) => userCards[idx].supportUnit !== "none");
-      const piaproSupportCards = userCards.filter(
-        (card) => card.supportUnit !== "none"
-      );
+      const piaproCards = userCards.filter((card) => card.unit === "piapro");
+      const isAllPiapro = piaproCards.length === 5;
       const piaproSupportItemLevels = itemLevels.filter(
-        (il) =>
-          il.targetUnit !== "piapro" &&
-          piaproSupportCards.some((card) => card.supportUnit === il.targetUnit)
+        (il) => il.targetUnit === "piapro"
       );
-      const piaproSupportBonusRate = Number(
+      const piaproBonusRate = Number(
         piaproSupportItemLevels
           .reduce(
             (sum, item) =>
               sum +
-              item[
-                cardUnitsAllSame ? "power1AllMatchBonusRate" : "power1BonusRate"
-              ],
+              item[isAllPiapro ? "power1AllMatchBonusRate" : "power1BonusRate"],
             0
           )
           .toPrecision(3)
@@ -219,7 +214,7 @@ export const useTeamCalc = () => {
       piaproCardIdxs.forEach((idx) => {
         cardUnitBonusRates[idx] = Math.max(
           cardUnitBonusRates[idx],
-          piaproSupportBonusRate
+          piaproBonusRate
         );
       });
 
@@ -230,6 +225,8 @@ export const useTeamCalc = () => {
           cardAttrBonusRates[idx] +
           cardUnitBonusRates[idx]
       );
+
+      console.log(sumBonusRates);
 
       return sumBonusRates.reduce(
         (sum, bonusRate, idx) =>
@@ -243,7 +240,7 @@ export const useTeamCalc = () => {
     [areaItemLevels, cards, gameCharas, getUserCardPowers]
   );
 
-  const getCharacterRankBouns = useCallback(
+  const getCharacterRankBonus = useCallback(
     (userCharacters: UserCharacter[], userTeamCardStates: ITeamCardState[]) => {
       if (!characterRanks || !cards || !gameCharas) return -1;
 
@@ -353,7 +350,7 @@ export const useTeamCalc = () => {
 
   return {
     getAreaItemBonus,
-    getCharacterRankBouns,
+    getCharacterRankBonus,
     getHonorBonus,
     getPureTeamPowers,
   };
