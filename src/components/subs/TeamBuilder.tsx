@@ -97,7 +97,7 @@ const TeamBuilder: React.FC<{
 
   const {
     getAreaItemBonus,
-    getCharacterRankBouns,
+    getCharacterRankBonus,
     getHonorBonus,
     getPureTeamPowers,
   } = useTeamCalc();
@@ -439,7 +439,9 @@ const TeamBuilder: React.FC<{
         sekaiProfile.sekaiUserProfile.userAreaItems
       );
 
-      const characterRankBonus = getCharacterRankBouns(
+      console.log(areaItemBonus);
+
+      const characterRankBonus = getCharacterRankBonus(
         sekaiProfile.sekaiUserProfile.userCharacters,
         teamCardsStates
       );
@@ -456,7 +458,7 @@ const TeamBuilder: React.FC<{
     return pureDeckPower;
   }, [
     getAreaItemBonus,
-    getCharacterRankBouns,
+    getCharacterRankBonus,
     getHonorBonus,
     getPureTeamPowers,
     isAutoCalcBonus,
