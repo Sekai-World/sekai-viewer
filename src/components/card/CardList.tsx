@@ -11,9 +11,16 @@ import {
   MenuItem,
   Chip,
   Avatar,
+  Badge,
 } from "@material-ui/core";
 import { useLayoutStyles } from "../../styles/layout";
-import { Sort, SortOutlined, ViewAgenda, ViewComfy } from "@material-ui/icons";
+import {
+  RotateLeft,
+  Sort,
+  SortOutlined,
+  ViewAgenda,
+  ViewComfy,
+} from "@material-ui/icons";
 import {
   Filter,
   FilterOutline,
@@ -38,7 +45,12 @@ import {
   IGameChara,
   ISkillInfo,
 } from "../../types";
-import { useCachedData, useCharaName } from "../../utils";
+import {
+  useCachedData,
+  useCharaName,
+  useLocalStorage,
+  useToggle,
+} from "../../utils";
 import InfiniteScroll from "../subs/InfiniteScroll";
 // import InfiniteScroll from "react-infinite-scroll-component";
 
@@ -57,6 +69,7 @@ import AgendaView from "./AgendaView";
 import ComfyView from "./ComfyView";
 import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
+import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -125,29 +138,31 @@ const CardList: React.FC<{}> = () => {
   const [limit] = useState<number>(12);
   const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
   const [isReady, setIsReady] = useState<boolean>(false);
-  const [filterOpened, setFilterOpened] = useState<boolean>(false);
-  const [sortType, setSortType] = useState<string>(
-    localStorage.getItem("card-list-filter-sort-type") || "asc"
+  const [filterOpen, togglefilterOpen] = useToggle(false);
+  const [sortType, setSortType] = useLocalStorage<string>(
+    "card-list-filter-sort-type",
+    "asc"
   );
-  const [sortBy, setSortBy] = useState<string>(
-    localStorage.getItem("card-list-filter-sort-by") || "id"
+  const [sortBy, setSortBy] = useLocalStorage<string>(
+    "card-list-filter-sort-by",
+    "id"
   );
   const [characterSelected, dispatchCharacterSelected] = useReducer(
     characterSelectReducer,
-    []
+    JSON.parse(localStorage.getItem("card-list-filter-charas") || "[]")
   );
   const [attrSelected, dispatchAttrSelected] = useReducer(
     attrSelectReducer,
-    []
+    JSON.parse(localStorage.getItem("card-list-filter-attrs") || "[]")
   );
   const [raritySelected, dispatchRaritySelected] = useReducer(
     raritySelectReducer,
-    []
+    JSON.parse(localStorage.getItem("card-list-filter-rarities") || "[]")
   );
 
   const [skillSelected, dispatchSkillSelected] = useReducer(
     skillSelectReducer,
-    []
+    JSON.parse(localStorage.getItem("card-list-filter-skills") || "[]")
   );
 
   const skillMapping = useMemo(
@@ -298,59 +313,61 @@ const CardList: React.FC<{}> = () => {
         {t("common:card")}
       </Typography>
       <Container className={layoutClasses.content}>
-        <Grid container justify="space-between">
-          <ButtonGroup style={{ marginBottom: "1%" }}>
-            <Button
-              // variant={viewGridType === "grid" ? "outlined" : "contained"}
-              onClick={() => {
-                setViewGridType("grid");
+        <Grid
+          container
+          justify="space-between"
+          style={{ marginBottom: "0.5rem" }}
+        >
+          <Grid item>
+            <ToggleButtonGroup
+              value={viewGridType}
+              color="primary"
+              exclusive
+              onChange={(_, gridType) => {
+                setViewGridType(gridType as "grid");
                 localStorage.setItem("card-list-grid-view-type", "grid");
               }}
-              color={viewGridType === "grid" ? "primary" : "default"}
             >
-              {viewGridType === "grid" ? (
-                <ViewGrid></ViewGrid>
-              ) : (
-                <ViewGridOutline></ViewGridOutline>
-              )}
+              <ToggleButton value="grid">
+                {viewGridType === "grid" ? (
+                  <ViewGrid></ViewGrid>
+                ) : (
+                  <ViewGridOutline></ViewGridOutline>
+                )}
+              </ToggleButton>
+              <ToggleButton value="agenda">
+                {viewGridType === "agenda" ? (
+                  <ViewAgenda></ViewAgenda>
+                ) : (
+                  <ViewAgendaOutline></ViewAgendaOutline>
+                )}
+              </ToggleButton>
+              <ToggleButton value="comfy">
+                {viewGridType === "comfy" ? (
+                  <ViewComfy></ViewComfy>
+                ) : (
+                  <ViewComfyOutline></ViewComfyOutline>
+                )}
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Grid>
+          <Badge
+            color="secondary"
+            variant="dot"
+            invisible={
+              !characterSelected.length &&
+              !attrSelected.length &&
+              !skillSelected.length &&
+              !raritySelected.length
+            }
+          >
+            <Button variant="outlined" onClick={() => togglefilterOpen()}>
+              {filterOpen ? <Filter /> : <FilterOutline />}
+              {filterOpen ? <Sort /> : <SortOutlined />}
             </Button>
-            <Button
-              // variant={viewGridType === "agenda" ? "outlined" : "contained"}
-              onClick={() => {
-                setViewGridType("agenda");
-                localStorage.setItem("card-list-grid-view-type", "agenda");
-              }}
-              color={viewGridType === "agenda" ? "primary" : "default"}
-            >
-              {viewGridType === "agenda" ? (
-                <ViewAgenda></ViewAgenda>
-              ) : (
-                <ViewAgendaOutline></ViewAgendaOutline>
-              )}
-            </Button>
-            <Button
-              // variant={viewGridType === "comfy" ? "outlined" : "contained"}
-              onClick={() => {
-                setViewGridType("comfy");
-                localStorage.setItem("card-list-grid-view-type", "comfy");
-              }}
-              color={viewGridType === "comfy" ? "primary" : "default"}
-            >
-              {viewGridType === "comfy" ? (
-                <ViewComfy></ViewComfy>
-              ) : (
-                <ViewComfyOutline></ViewComfyOutline>
-              )}
-            </Button>
-          </ButtonGroup>
-          <ButtonGroup color="primary" style={{ marginBottom: "1%" }}>
-            <Button size="medium" onClick={() => setFilterOpened((v) => !v)}>
-              {filterOpened ? <Filter /> : <FilterOutline />}
-              {filterOpened ? <Sort /> : <SortOutlined />}
-            </Button>
-          </ButtonGroup>
+          </Badge>
         </Grid>
-        <Collapse in={filterOpened}>
+        <Collapse in={filterOpen}>
           <Paper className={interactiveClasses.container}>
             <Grid container direction="column" spacing={2}>
               <Grid
@@ -599,10 +616,6 @@ const CardList: React.FC<{}> = () => {
                           value={sortType}
                           onChange={(e) => {
                             setSortType(e.target.value as string);
-                            localStorage.setItem(
-                              "card-list-filter-sort-type",
-                              e.target.value as string
-                            );
                           }}
                           style={{ minWidth: "100px" }}
                         >
@@ -621,10 +634,6 @@ const CardList: React.FC<{}> = () => {
                           value={sortBy}
                           onChange={(e) => {
                             setSortBy(e.target.value as string);
-                            localStorage.setItem(
-                              "card-list-filter-sort-by",
-                              e.target.value as string
-                            );
                           }}
                           style={{ minWidth: "100px" }}
                         >
@@ -640,6 +649,49 @@ const CardList: React.FC<{}> = () => {
                       </FormControl>
                     </Grid>
                   </Grid>
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                // justify="space-between"
+                // spacing={1}
+              >
+                <Grid item xs={false} md={1}></Grid>
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    disabled={
+                      !characterSelected.length &&
+                      !attrSelected.length &&
+                      !skillSelected.length &&
+                      !raritySelected.length
+                    }
+                    onClick={() => {
+                      dispatchCharacterSelected({
+                        type: "reset",
+                        payload: 0,
+                      });
+                      dispatchAttrSelected({
+                        type: "reset",
+                        payload: "",
+                      });
+                      dispatchRaritySelected({
+                        type: "reset",
+                        payload: 0,
+                      });
+                      dispatchSkillSelected({
+                        type: "reset",
+                        payload: "",
+                      });
+                    }}
+                    startIcon={<RotateLeft />}
+                  >
+                    {t("common:reset")}
+                  </Button>
                 </Grid>
               </Grid>
             </Grid>
