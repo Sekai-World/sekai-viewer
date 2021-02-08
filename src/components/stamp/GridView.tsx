@@ -58,7 +58,11 @@ const GridView: React.FC<{ data?: IStampInfo }> = ({ data }) => {
     );
   }
   return (
-    <Link href={url} target="_blank" style={{ textDecoration: "none" }}>
+    <Link
+      href={url.replace(".webp", ".png")}
+      target="_blank"
+      style={{ textDecoration: "none" }}
+    >
       <Card className={classes.card}>
         <CardMedia
           className={classes.media}
