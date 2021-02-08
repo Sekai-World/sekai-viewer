@@ -1,6 +1,5 @@
 import {
   Button,
-  ButtonGroup,
   Grid,
   Paper,
   Typography,
@@ -11,9 +10,16 @@ import {
   MenuItem,
   Chip,
   Avatar,
+  Badge,
 } from "@material-ui/core";
 import { useLayoutStyles } from "../../styles/layout";
-import { Sort, SortOutlined, ViewAgenda, ViewComfy } from "@material-ui/icons";
+import {
+  RotateLeft,
+  Sort,
+  SortOutlined,
+  ViewAgenda,
+  ViewComfy,
+} from "@material-ui/icons";
 import {
   Filter,
   FilterOutline,
@@ -27,11 +33,23 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useReducer,
   useState,
 } from "react";
-import { ICardEpisode, ICardInfo, ICardRarity, IGameChara } from "../../types";
-import { useCachedData, useCharaName } from "../../utils";
+import {
+  ICardEpisode,
+  ICardInfo,
+  ICardRarity,
+  IGameChara,
+  ISkillInfo,
+} from "../../types";
+import {
+  useCachedData,
+  useCharaName,
+  useLocalStorage,
+  useToggle,
+} from "../../utils";
 import InfiniteScroll from "../subs/InfiniteScroll";
 // import InfiniteScroll from "react-infinite-scroll-component";
 
@@ -41,6 +59,7 @@ import {
   characterSelectReducer,
   attrSelectReducer,
   raritySelectReducer,
+  skillSelectReducer,
 } from "../../stores/reducers";
 import { charaIcons, attrIconMap } from "../../utils/resources";
 import { SettingContext } from "../../context";
@@ -49,6 +68,7 @@ import AgendaView from "./AgendaView";
 import ComfyView from "./ComfyView";
 import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
+import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -106,6 +126,7 @@ const CardList: React.FC<{}> = () => {
   const [charas] = useCachedData<IGameChara>("gameCharacters");
   const [rarities] = useCachedData<ICardRarity>("cardRarities");
   const [episodes] = useCachedData<ICardEpisode>("cardEpisodes");
+  const [skills] = useCachedData<ISkillInfo>("skills");
 
   const [cards, setCards] = useState<ICardInfo[]>([]);
   const [sortedCache, setSortedCache] = useState<ICardInfo[]>([]);
@@ -116,24 +137,58 @@ const CardList: React.FC<{}> = () => {
   const [limit] = useState<number>(12);
   const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
   const [isReady, setIsReady] = useState<boolean>(false);
-  const [filterOpened, setFilterOpened] = useState<boolean>(false);
-  const [sortType, setSortType] = useState<string>(
-    localStorage.getItem("card-list-filter-sort-type") || "asc"
+  const [filterOpen, togglefilterOpen] = useToggle(false);
+  const [sortType, setSortType] = useLocalStorage<string>(
+    "card-list-filter-sort-type",
+    "asc"
   );
-  const [sortBy, setSortBy] = useState<string>(
-    localStorage.getItem("card-list-filter-sort-by") || "id"
+  const [sortBy, setSortBy] = useLocalStorage<string>(
+    "card-list-filter-sort-by",
+    "id"
   );
   const [characterSelected, dispatchCharacterSelected] = useReducer(
     characterSelectReducer,
-    []
+    JSON.parse(localStorage.getItem("card-list-filter-charas") || "[]")
   );
   const [attrSelected, dispatchAttrSelected] = useReducer(
     attrSelectReducer,
-    []
+    JSON.parse(localStorage.getItem("card-list-filter-attrs") || "[]")
   );
   const [raritySelected, dispatchRaritySelected] = useReducer(
     raritySelectReducer,
-    []
+    JSON.parse(localStorage.getItem("card-list-filter-rarities") || "[]")
+  );
+
+  const [skillSelected, dispatchSkillSelected] = useReducer(
+    skillSelectReducer,
+    JSON.parse(localStorage.getItem("card-list-filter-skills") || "[]")
+  );
+
+  const skillMapping = useMemo(
+    () => [
+      //skills.json
+      {
+        // name: "スコアＵＰ",
+        name: t("filter:skill.score_up"),
+        descriptionSpriteName: "score_up",
+      },
+      {
+        // name: "判定強化＆スコアＵＰ",
+        name: t("filter:skill.judgment_up"),
+        descriptionSpriteName: "judgment_up",
+      },
+      {
+        // name: "ライフ回復＆スコアＵＰ",
+        name: t("filter:skill.life_recovery"),
+        descriptionSpriteName: "life_recovery",
+      },
+      {
+        // name: "PERFECTのときのみスコアＵＰ",
+        name: t("filter:skill.perfect_score_up"),
+        descriptionSpriteName: "perfect_score_up",
+      },
+    ],
+    [t]
   );
 
   const callback = useCallback(
@@ -174,7 +229,9 @@ const CardList: React.FC<{}> = () => {
       rarities &&
       rarities.length &&
       episodes &&
-      episodes.length
+      episodes.length &&
+      skills &&
+      skills.length
     ) {
       let result = [...cardsCache];
       // do filter
@@ -188,6 +245,18 @@ const CardList: React.FC<{}> = () => {
       }
       if (raritySelected.length) {
         result = result.filter((c) => raritySelected.includes(c.rarity));
+      }
+      if (skillSelected.length) {
+        result = result.filter((c) => {
+          let skill = skills.find((s) => c.skillId === s.id);
+          if (skill) {
+            let descriptionSpriteName = skill.descriptionSpriteName;
+            if (skill.skillEffects[0].activateNotesJudgmentType === "perfect")
+              descriptionSpriteName = "perfect_score_up";
+            return skillSelected.includes(descriptionSpriteName);
+          }
+          return true;
+        });
       }
       // temporarily sort cards cache
       switch (sortBy) {
@@ -219,10 +288,12 @@ const CardList: React.FC<{}> = () => {
     setPage,
     rarities,
     episodes,
+    skills,
     setSortedCache,
     characterSelected,
     attrSelected,
     raritySelected,
+    skillSelected,
   ]);
 
   useEffect(() => {
@@ -241,59 +312,61 @@ const CardList: React.FC<{}> = () => {
         {t("common:card")}
       </Typography>
       <Container className={layoutClasses.content}>
-        <Grid container justify="space-between">
-          <ButtonGroup style={{ marginBottom: "1%" }}>
-            <Button
-              // variant={viewGridType === "grid" ? "outlined" : "contained"}
-              onClick={() => {
-                setViewGridType("grid");
+        <Grid
+          container
+          justify="space-between"
+          style={{ marginBottom: "0.5rem" }}
+        >
+          <Grid item>
+            <ToggleButtonGroup
+              value={viewGridType}
+              color="primary"
+              exclusive
+              onChange={(_, gridType) => {
+                setViewGridType(gridType as "grid");
                 localStorage.setItem("card-list-grid-view-type", "grid");
               }}
-              color={viewGridType === "grid" ? "primary" : "default"}
             >
-              {viewGridType === "grid" ? (
-                <ViewGrid></ViewGrid>
-              ) : (
-                <ViewGridOutline></ViewGridOutline>
-              )}
+              <ToggleButton value="grid">
+                {viewGridType === "grid" ? (
+                  <ViewGrid></ViewGrid>
+                ) : (
+                  <ViewGridOutline></ViewGridOutline>
+                )}
+              </ToggleButton>
+              <ToggleButton value="agenda">
+                {viewGridType === "agenda" ? (
+                  <ViewAgenda></ViewAgenda>
+                ) : (
+                  <ViewAgendaOutline></ViewAgendaOutline>
+                )}
+              </ToggleButton>
+              <ToggleButton value="comfy">
+                {viewGridType === "comfy" ? (
+                  <ViewComfy></ViewComfy>
+                ) : (
+                  <ViewComfyOutline></ViewComfyOutline>
+                )}
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Grid>
+          <Badge
+            color="secondary"
+            variant="dot"
+            invisible={
+              !characterSelected.length &&
+              !attrSelected.length &&
+              !skillSelected.length &&
+              !raritySelected.length
+            }
+          >
+            <Button variant="outlined" onClick={() => togglefilterOpen()}>
+              {filterOpen ? <Filter /> : <FilterOutline />}
+              {filterOpen ? <Sort /> : <SortOutlined />}
             </Button>
-            <Button
-              // variant={viewGridType === "agenda" ? "outlined" : "contained"}
-              onClick={() => {
-                setViewGridType("agenda");
-                localStorage.setItem("card-list-grid-view-type", "agenda");
-              }}
-              color={viewGridType === "agenda" ? "primary" : "default"}
-            >
-              {viewGridType === "agenda" ? (
-                <ViewAgenda></ViewAgenda>
-              ) : (
-                <ViewAgendaOutline></ViewAgendaOutline>
-              )}
-            </Button>
-            <Button
-              // variant={viewGridType === "comfy" ? "outlined" : "contained"}
-              onClick={() => {
-                setViewGridType("comfy");
-                localStorage.setItem("card-list-grid-view-type", "comfy");
-              }}
-              color={viewGridType === "comfy" ? "primary" : "default"}
-            >
-              {viewGridType === "comfy" ? (
-                <ViewComfy></ViewComfy>
-              ) : (
-                <ViewComfyOutline></ViewComfyOutline>
-              )}
-            </Button>
-          </ButtonGroup>
-          <ButtonGroup color="primary" style={{ marginBottom: "1%" }}>
-            <Button size="medium" onClick={() => setFilterOpened((v) => !v)}>
-              {filterOpened ? <Filter /> : <FilterOutline />}
-              {filterOpened ? <Sort /> : <SortOutlined />}
-            </Button>
-          </ButtonGroup>
+          </Badge>
         </Grid>
-        <Collapse in={filterOpened}>
+        <Collapse in={filterOpen}>
           <Paper className={interactiveClasses.container}>
             <Grid container direction="column" spacing={2}>
               <Grid
@@ -302,13 +375,14 @@ const CardList: React.FC<{}> = () => {
                 xs={12}
                 alignItems="center"
                 justify="space-between"
+                spacing={1}
               >
                 <Grid item xs={12} md={1}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
                     {t("filter:character.caption")}
                   </Typography>
                 </Grid>
-                <Grid item xs={12} md={10}>
+                <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
                     {Array.from({ length: 26 }).map((_, idx) => (
                       <Grid key={"chara-filter-" + idx} item>
@@ -355,13 +429,14 @@ const CardList: React.FC<{}> = () => {
                 xs={12}
                 alignItems="center"
                 justify="space-between"
+                spacing={1}
               >
                 <Grid item xs={12} md={1}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
                     {t("common:attribute")}
                   </Typography>
                 </Grid>
-                <Grid item xs={12} md={10}>
+                <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
                     {["cute", "mysterious", "cool", "happy", "pure"].map(
                       (attr) => (
@@ -413,13 +488,66 @@ const CardList: React.FC<{}> = () => {
                 xs={12}
                 alignItems="center"
                 justify="space-between"
+                spacing={1}
+              >
+                <Grid item xs={12} md={1}>
+                  <Typography classes={{ root: interactiveClasses.caption }}>
+                    {t("common:skill")}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={11}>
+                  <Grid container spacing={1}>
+                    {skillMapping.map((skill, index) => (
+                      <Grid key={"skill-filter-" + index} item>
+                        <Chip
+                          clickable
+                          color={
+                            skillSelected.includes(skill.descriptionSpriteName)
+                              ? "primary"
+                              : "default"
+                          }
+                          label={
+                            <Grid container>
+                              <Grid item>{skill.name}</Grid>
+                            </Grid>
+                          }
+                          onClick={() => {
+                            if (
+                              skillSelected.includes(
+                                skill.descriptionSpriteName
+                              )
+                            ) {
+                              dispatchSkillSelected({
+                                type: "remove",
+                                payload: skill.descriptionSpriteName,
+                              });
+                            } else {
+                              dispatchSkillSelected({
+                                type: "add",
+                                payload: skill.descriptionSpriteName,
+                              });
+                            }
+                          }}
+                        />
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justify="space-between"
+                spacing={1}
               >
                 <Grid item xs={12} md={1}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
                     {t("card:rarity")}
                   </Typography>
                 </Grid>
-                <Grid item xs={12} md={10}>
+                <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
                     {[1, 2, 3, 4].map((rarity) => (
                       <Grid key={rarity} item>
@@ -472,13 +600,14 @@ const CardList: React.FC<{}> = () => {
                 xs={12}
                 alignItems="center"
                 justify="space-between"
+                spacing={1}
               >
                 <Grid item xs={12} md={1}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
                     {t("filter:sort.caption")}
                   </Typography>
                 </Grid>
-                <Grid item xs={12} md={10}>
+                <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
                     <Grid item>
                       <FormControl>
@@ -486,10 +615,6 @@ const CardList: React.FC<{}> = () => {
                           value={sortType}
                           onChange={(e) => {
                             setSortType(e.target.value as string);
-                            localStorage.setItem(
-                              "card-list-filter-sort-type",
-                              e.target.value as string
-                            );
                           }}
                           style={{ minWidth: "100px" }}
                         >
@@ -508,10 +633,6 @@ const CardList: React.FC<{}> = () => {
                           value={sortBy}
                           onChange={(e) => {
                             setSortBy(e.target.value as string);
-                            localStorage.setItem(
-                              "card-list-filter-sort-by",
-                              e.target.value as string
-                            );
                           }}
                           style={{ minWidth: "100px" }}
                         >
@@ -527,6 +648,49 @@ const CardList: React.FC<{}> = () => {
                       </FormControl>
                     </Grid>
                   </Grid>
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                // justify="space-between"
+                // spacing={1}
+              >
+                <Grid item xs={false} md={1}></Grid>
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    disabled={
+                      !characterSelected.length &&
+                      !attrSelected.length &&
+                      !skillSelected.length &&
+                      !raritySelected.length
+                    }
+                    onClick={() => {
+                      dispatchCharacterSelected({
+                        type: "reset",
+                        payload: 0,
+                      });
+                      dispatchAttrSelected({
+                        type: "reset",
+                        payload: "",
+                      });
+                      dispatchRaritySelected({
+                        type: "reset",
+                        payload: 0,
+                      });
+                      dispatchSkillSelected({
+                        type: "reset",
+                        payload: "",
+                      });
+                    }}
+                    startIcon={<RotateLeft />}
+                  >
+                    {t("common:reset")}
+                  </Button>
                 </Grid>
               </Grid>
             </Grid>

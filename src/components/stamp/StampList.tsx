@@ -207,13 +207,14 @@ const StampList: React.FC<{}> = () => {
                 xs={12}
                 alignItems="center"
                 justify="space-between"
+                spacing={1}
               >
                 <Grid item xs={12} md={1}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
                     {t("filter:character.caption")}
                   </Typography>
                 </Grid>
-                <Grid item xs={12} md={10}>
+                <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
                     {Array.from({ length: 26 }).map((_, idx) => (
                       <Grid key={"chara-filter-" + idx} item>

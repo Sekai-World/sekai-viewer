@@ -1,6 +1,6 @@
 import {
+  Badge,
   Button,
-  ButtonGroup,
   Chip,
   Collapse,
   Container,
@@ -8,7 +8,7 @@ import {
   Paper,
   Typography,
 } from "@material-ui/core";
-import { Sort, SortOutlined } from "@material-ui/icons";
+import { RotateLeft, Sort, SortOutlined } from "@material-ui/icons";
 import { Filter, FilterOutline } from "mdi-material-ui";
 import React, {
   useState,
@@ -60,7 +60,7 @@ const NormalMissionList: React.FC<{}> = () => {
   const [filterOpened, setFilterOpened] = useState<boolean>(false);
   const [missionTypeSelected, dispatchMissionTypeSelected] = useReducer(
     missionTypeReducer,
-    []
+    JSON.parse(localStorage.getItem("mission-normal-list-filter-type") || "[]")
   );
   const [sortedCache, setSortedCache] = useState<INormalMission[]>([]);
 
@@ -121,13 +121,20 @@ const NormalMissionList: React.FC<{}> = () => {
         {t("common:mission.main")} - {t("common:mission.normal")}
       </Typography>
       <Container className={layoutClasses.content}>
-        <Grid container justify="flex-end">
-          <ButtonGroup color="primary" style={{ marginBottom: "1%" }}>
-            <Button size="medium" onClick={() => setFilterOpened((v) => !v)}>
+        <Grid container justify="flex-end" style={{ marginBottom: "0.5rem" }}>
+          <Badge
+            color="secondary"
+            variant="dot"
+            invisible={!missionTypeSelected.length}
+          >
+            <Button
+              variant="outlined"
+              onClick={() => setFilterOpened((v) => !v)}
+            >
               {filterOpened ? <Filter /> : <FilterOutline />}
               {filterOpened ? <Sort /> : <SortOutlined />}
             </Button>
-          </ButtonGroup>
+          </Badge>
         </Grid>
         <Collapse in={filterOpened}>
           <Paper className={interactiveClasses.container}>
@@ -138,50 +145,82 @@ const NormalMissionList: React.FC<{}> = () => {
                 xs={12}
                 alignItems="center"
                 justify="space-between"
+                spacing={1}
               >
                 <Grid item xs={12} md={1}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
                     {t("filter:missionType.caption")}
                   </Typography>
                 </Grid>
-                <Grid item container xs={12} md={10} spacing={1}>
-                  {[
-                    "make",
-                    "skill_level",
-                    "master_rank",
-                    "character_rank",
-                    "set_honor",
-                    "clear",
-                    "read",
-                    "use",
-                    "buy",
-                    "inherit",
-                  ].map((tag) => (
-                    <Grid key={"mission-type-" + tag} item>
-                      <Chip
-                        clickable
-                        color={
-                          missionTypeSelected.includes(tag)
-                            ? "primary"
-                            : "default"
-                        }
-                        label={t(`mission:type.${tag}`)}
-                        onClick={() => {
-                          if (missionTypeSelected.includes(tag)) {
-                            dispatchMissionTypeSelected({
-                              type: "remove",
-                              payload: tag,
-                            });
-                          } else {
-                            dispatchMissionTypeSelected({
-                              type: "add",
-                              payload: tag,
-                            });
+                <Grid item xs={12} md={11}>
+                  <Grid container spacing={1}>
+                    {[
+                      "make",
+                      "skill_level",
+                      "master_rank",
+                      "character_rank",
+                      "set_honor",
+                      "clear",
+                      "read",
+                      "use",
+                      "buy",
+                      "inherit",
+                    ].map((tag) => (
+                      <Grid key={"mission-type-" + tag} item>
+                        <Chip
+                          clickable
+                          color={
+                            missionTypeSelected.includes(tag)
+                              ? "primary"
+                              : "default"
                           }
-                        }}
-                      />
-                    </Grid>
-                  ))}
+                          label={t(`mission:type.${tag}`)}
+                          onClick={() => {
+                            if (missionTypeSelected.includes(tag)) {
+                              dispatchMissionTypeSelected({
+                                type: "remove",
+                                payload: tag,
+                                storeName: "mission-normal-list-filter-type",
+                              });
+                            } else {
+                              dispatchMissionTypeSelected({
+                                type: "add",
+                                payload: tag,
+                                storeName: "mission-normal-list-filter-type",
+                              });
+                            }
+                          }}
+                        />
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                // justify="space-between"
+                spacing={1}
+              >
+                <Grid item xs={false} md={1}></Grid>
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    disabled={!missionTypeSelected.length}
+                    onClick={() => {
+                      dispatchMissionTypeSelected({
+                        type: "reset",
+                        payload: "",
+                        storeName: "mission-normal-list-filter-type",
+                      });
+                    }}
+                    startIcon={<RotateLeft />}
+                  >
+                    {t("common:reset")}
+                  </Button>
                 </Grid>
               </Grid>
             </Grid>

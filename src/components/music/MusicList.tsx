@@ -1,6 +1,5 @@
 import {
   Button,
-  ButtonGroup,
   Grid,
   Paper,
   Typography,
@@ -10,9 +9,10 @@ import {
   MenuItem,
   Select,
   Chip,
+  Badge,
 } from "@material-ui/core";
 import { useLayoutStyles } from "../../styles/layout";
-import { ViewAgenda, Sort, SortOutlined } from "@material-ui/icons";
+import { ViewAgenda, Sort, SortOutlined, RotateLeft } from "@material-ui/icons";
 import {
   Filter,
   FilterOutline,
@@ -21,7 +21,7 @@ import {
   ViewGridOutline,
 } from "mdi-material-ui";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { musicTagToName, useCachedData } from "../../utils";
+import { musicTagToName, useCachedData, useLocalStorage } from "../../utils";
 import InfiniteScroll from "../subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
@@ -29,6 +29,7 @@ import { useInteractiveStyles } from "../../styles/interactive";
 import GridView from "./GridView";
 import AgendaView from "./AgendaView";
 import { IMusicInfo, IMusicTagInfo } from "../../types";
+import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -61,14 +62,22 @@ const MusicList: React.FC<{}> = () => {
   const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [filterOpened, setFilterOpened] = useState<boolean>(false);
-  const [sortType, setSortType] = useState<string>(
-    localStorage.getItem("music-list-filter-sort-type") || "asc"
+  const [sortType, setSortType] = useLocalStorage<string>(
+    "music-list-filter-sort-type",
+    "asc"
   );
-  const [sortBy, setSortBy] = useState<string>(
-    localStorage.getItem("music-list-filter-sort-by") || "id"
+  const [sortBy, setSortBy] = useLocalStorage<string>(
+    "music-list-filter-sort-by",
+    "id"
   );
-  const [musicTag, setMusicTag] = useState<string>("all");
-  const [musicMVType, setMusicMVType] = useState<string>("");
+  const [musicTag, setMusicTag] = useLocalStorage<string>(
+    "music-list-filter-tag",
+    "all"
+  );
+  const [musicMVType, setMusicMVType] = useLocalStorage<string>(
+    "music-list-filter-mv-type",
+    ""
+  );
 
   useEffect(() => {
     document.title = t("title:musicList");
@@ -152,87 +161,92 @@ const MusicList: React.FC<{}> = () => {
         {t("common:music")}
       </Typography>
       <Container className={layoutClasses.content}>
-        <Grid container justify="space-between">
-          <ButtonGroup style={{ marginBottom: "1%" }}>
-            <Button
-              // variant={viewGridType === "grid" ? "outlined" : "contained"}
-              onClick={() => {
-                setViewGridType("grid");
+        <Grid
+          container
+          justify="space-between"
+          style={{ marginBottom: "0.5rem" }}
+        >
+          <Grid item>
+            <ToggleButtonGroup
+              value={viewGridType}
+              color="primary"
+              exclusive
+              onChange={(_, gridType) => {
+                setViewGridType(gridType as "grid");
                 localStorage.setItem("music-list-grid-view-type", "grid");
               }}
-              color={viewGridType === "grid" ? "primary" : "default"}
             >
-              {viewGridType === "grid" ? (
-                <ViewGrid></ViewGrid>
-              ) : (
-                <ViewGridOutline></ViewGridOutline>
-              )}
-            </Button>
+              <ToggleButton value="grid">
+                {viewGridType === "grid" ? (
+                  <ViewGrid></ViewGrid>
+                ) : (
+                  <ViewGridOutline></ViewGridOutline>
+                )}
+              </ToggleButton>
+              <ToggleButton value="agenda">
+                {viewGridType === "agenda" ? (
+                  <ViewAgenda></ViewAgenda>
+                ) : (
+                  <ViewAgendaOutline></ViewAgendaOutline>
+                )}
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Grid>
+          <Badge
+            color="secondary"
+            variant="dot"
+            invisible={musicTag === "all" && !musicMVType}
+          >
             <Button
-              // variant={viewGridType === "agenda" ? "outlined" : "contained"}
-              onClick={() => {
-                setViewGridType("agenda");
-                localStorage.setItem("music-list-grid-view-type", "agenda");
-              }}
-              color={viewGridType === "agenda" ? "primary" : "default"}
+              variant="outlined"
+              onClick={() => setFilterOpened((v) => !v)}
             >
-              {viewGridType === "agenda" ? (
-                <ViewAgenda></ViewAgenda>
-              ) : (
-                <ViewAgendaOutline></ViewAgendaOutline>
-              )}
-            </Button>
-            {/* <Button
-              variant={viewGridType === "comfy" ? "outlined" : "contained"}
-              onClick={() => setViewGridType("comfy")}
-            >
-              <ViewComfy></ViewComfy>
-            </Button> */}
-          </ButtonGroup>
-          <ButtonGroup color="primary" style={{ marginBottom: "1%" }}>
-            <Button size="medium" onClick={() => setFilterOpened((v) => !v)}>
               {filterOpened ? <Filter /> : <FilterOutline />}
               {filterOpened ? <Sort /> : <SortOutlined />}
             </Button>
-          </ButtonGroup>
+          </Badge>
         </Grid>
         <Collapse in={filterOpened}>
           <Paper className={interactiveClasses.container}>
-            <Grid container direction="column" spacing={1}>
+            <Grid container direction="column" spacing={2}>
               <Grid
                 item
                 container
                 xs={12}
                 alignItems="center"
                 justify="space-between"
+                spacing={1}
               >
                 <Grid item xs={12} md={1}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
                     {t("filter:music_tag.caption")}
                   </Typography>
                 </Grid>
-                <Grid item container xs={12} md={10} spacing={1}>
-                  {[
-                    "all",
-                    "vocaloid",
-                    "theme_park",
-                    "street",
-                    "idol",
-                    "school_refusal",
-                    "light_music_club",
-                    "other",
-                  ].map((tag) => (
-                    <Grid key={tag} item>
-                      <Chip
-                        clickable
-                        color={musicTag === tag ? "primary" : "default"}
-                        label={musicTagToName[tag]}
-                        onClick={() => {
-                          setMusicTag(tag);
-                        }}
-                      />
-                    </Grid>
-                  ))}
+                <Grid item xs={12} md={11}>
+                  <Grid container spacing={1}>
+                    {[
+                      "all",
+                      "vocaloid",
+                      "theme_park",
+                      "street",
+                      "idol",
+                      "school_refusal",
+                      "light_music_club",
+                      "other",
+                    ].map((tag) => (
+                      <Grid key={tag} item>
+                        <Chip
+                          clickable
+                          color={musicTag === tag ? "primary" : "default"}
+                          label={musicTagToName[tag]}
+                          onClick={() => {
+                            if (musicTag === tag) setMusicTag("all");
+                            else setMusicTag(tag);
+                          }}
+                        />
+                      </Grid>
+                    ))}
+                  </Grid>
                 </Grid>
               </Grid>
               <Grid
@@ -241,27 +255,30 @@ const MusicList: React.FC<{}> = () => {
                 xs={12}
                 alignItems="center"
                 justify="space-between"
+                spacing={1}
               >
                 <Grid item xs={12} md={1}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
                     {t("filter:music_mv.caption")}
                   </Typography>
                 </Grid>
-                <Grid item container xs={12} md={10} spacing={1}>
-                  {["mv", "mv_2d", "original", "image"].map((cat) => (
-                    <Grid key={cat} item>
-                      <Chip
-                        clickable
-                        color={musicMVType === cat ? "primary" : "default"}
-                        label={t(`music:categoryType.${cat}`)}
-                        onClick={() => {
-                          musicMVType === cat
-                            ? setMusicMVType("")
-                            : setMusicMVType(cat);
-                        }}
-                      />
-                    </Grid>
-                  ))}
+                <Grid item xs={12} md={11}>
+                  <Grid container spacing={1}>
+                    {["mv", "mv_2d", "original", "image"].map((cat) => (
+                      <Grid key={cat} item>
+                        <Chip
+                          clickable
+                          color={musicMVType === cat ? "primary" : "default"}
+                          label={t(`music:categoryType.${cat}`)}
+                          onClick={() => {
+                            musicMVType === cat
+                              ? setMusicMVType("")
+                              : setMusicMVType(cat);
+                          }}
+                        />
+                      </Grid>
+                    ))}
+                  </Grid>
                 </Grid>
               </Grid>
               <Grid
@@ -270,55 +287,82 @@ const MusicList: React.FC<{}> = () => {
                 xs={12}
                 alignItems="center"
                 justify="space-between"
+                spacing={1}
               >
                 <Grid item xs={12} md={1}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
                     {t("filter:sort.caption")}
                   </Typography>
                 </Grid>
-                <Grid item container xs={12} md={10} spacing={1}>
-                  <Grid item>
-                    <FormControl>
-                      <Select
-                        value={sortType}
-                        onChange={(e) => {
-                          setSortType(e.target.value as string);
-                          localStorage.setItem(
-                            "music-list-filter-sort-type",
-                            e.target.value as string
-                          );
-                        }}
-                        style={{ minWidth: "100px" }}
-                      >
-                        <MenuItem value="asc">
-                          {t("filter:sort.ascending")}
-                        </MenuItem>
-                        <MenuItem value="desc">
-                          {t("filter:sort.descending")}
-                        </MenuItem>
-                      </Select>
-                    </FormControl>
+                <Grid item xs={12} md={11}>
+                  <Grid container spacing={1}>
+                    <Grid item>
+                      <FormControl>
+                        <Select
+                          value={sortType}
+                          onChange={(e) => {
+                            setSortType(e.target.value as string);
+                            localStorage.setItem(
+                              "music-list-filter-sort-type",
+                              e.target.value as string
+                            );
+                          }}
+                          style={{ minWidth: "100px" }}
+                        >
+                          <MenuItem value="asc">
+                            {t("filter:sort.ascending")}
+                          </MenuItem>
+                          <MenuItem value="desc">
+                            {t("filter:sort.descending")}
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item>
+                      <FormControl>
+                        <Select
+                          value={sortBy}
+                          onChange={(e) => {
+                            setSortBy(e.target.value as string);
+                            localStorage.setItem(
+                              "music-list-filter-sort-by",
+                              e.target.value as string
+                            );
+                          }}
+                          style={{ minWidth: "100px" }}
+                        >
+                          <MenuItem value="id">{t("common:id")}</MenuItem>
+                          <MenuItem value="publishedAt">
+                            {t("common:startAt")}
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
                   </Grid>
-                  <Grid item>
-                    <FormControl>
-                      <Select
-                        value={sortBy}
-                        onChange={(e) => {
-                          setSortBy(e.target.value as string);
-                          localStorage.setItem(
-                            "music-list-filter-sort-by",
-                            e.target.value as string
-                          );
-                        }}
-                        style={{ minWidth: "100px" }}
-                      >
-                        <MenuItem value="id">{t("common:id")}</MenuItem>
-                        <MenuItem value="publishedAt">
-                          {t("common:startAt")}
-                        </MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                // justify="space-between"
+                spacing={1}
+              >
+                <Grid item xs={false} md={1}></Grid>
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    disabled={musicTag === "all" && !musicMVType}
+                    onClick={() => {
+                      setMusicTag("all");
+                      setMusicMVType("");
+                    }}
+                    startIcon={<RotateLeft />}
+                  >
+                    {t("common:reset")}
+                  </Button>
                 </Grid>
               </Grid>
             </Grid>
