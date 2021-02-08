@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.3](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.2...v0.4.3) (2021-02-08)
+
+
+### Features
+
+* **card:** filter local storage save, add reset filter button ([89b566b](https://github.com/Sekai-World/sekai-viewer/commits/89b566bc08e20e10019b40176c53036119a3645a))
+* **honor:** list filter memory in local storage ([f9860ae](https://github.com/Sekai-World/sekai-viewer/commits/f9860ae222e801f8707e53433ce6eb89e845f1ea))
+* **misson:** list filter memory using local storage ([cd47dbe](https://github.com/Sekai-World/sekai-viewer/commits/cd47dbe864cd49495ae320d204c9d4432c6052a2))
+* **music:** do same thing as in card list filter ([1bc0ca7](https://github.com/Sekai-World/sekai-viewer/commits/1bc0ca71687fbb1e539889c102c5d78ea781b3bb))
+* skill filter for cardList ([bfe4e3c](https://github.com/Sekai-World/sekai-viewer/commits/bfe4e3c7b7de359dd4bd0cc374d02172cf136d01))
+
+
+### Bug Fixes
+
+* **card:** remove warning ([19f298e](https://github.com/Sekai-World/sekai-viewer/commits/19f298ed29b82bca276e392fa6dee012ae4683ac))
+* **stamp:** download url ([111cb71](https://github.com/Sekai-World/sekai-viewer/commits/111cb71b5050235eaa9f0205984654c164be5adc))
+* **team:** fix build ([ed20745](https://github.com/Sekai-World/sekai-viewer/commits/ed2074559089c3e58d34b7ff540a522a1814dc4e))
+* **team:** team power calculation ([f5ee163](https://github.com/Sekai-World/sekai-viewer/commits/f5ee1633fe1ac1df8428142e9f8cb5cd6c270b18))
+* **user:** "perfect_score_up" skill type filtering ([8f6b56b](https://github.com/Sekai-World/sekai-viewer/commits/8f6b56bd891a7f8f08c7e5a6725878f755545ce5))
+* **user:** cannot add card when card list is empty ([e9c7321](https://github.com/Sekai-World/sekai-viewer/commits/e9c7321b6c040338bf10569066bb55753be48cd4))
+
+
+### Refactors
+
+* filter dense layout ([801a447](https://github.com/Sekai-World/sekai-viewer/commits/801a4475bd1a06789c3cae4cf9787af9b97d8814))
+
 ### [0.4.2](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.1...v0.4.2) (2021-02-04)
 
 
