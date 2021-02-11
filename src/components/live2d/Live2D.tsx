@@ -86,17 +86,17 @@ const Live2DView: React.FC<{}> = () => {
       // canvas.current.width = wrap.current.clientWidth;
       const styleWidth = wrap.current.clientWidth;
       const styleHeight =
-        window.screen.width * window.devicePixelRatio >=
+        window.innerWidth * window.devicePixelRatio >=
         theme.breakpoints.values.md
           ? (styleWidth * 9) / 16
           : (styleWidth * 4) / 3;
       const displayWidth = styleWidth * window.devicePixelRatio;
       const displayHeight = styleHeight * window.devicePixelRatio;
       model._modelSize =
-        window.screen.width * window.devicePixelRatio >=
+        window.innerWidth * window.devicePixelRatio >=
         theme.breakpoints.values.md
-          ? displayWidth * 1.5
-          : displayWidth * 3.5;
+          ? displayWidth * 1.3
+          : displayWidth * 3;
       // setCurrentWidth(displayWidth);
       // setCurrentStyleWidth(styleWidth);
 
@@ -106,8 +106,8 @@ const Live2DView: React.FC<{}> = () => {
       canvas.current.height = displayHeight;
 
       model.appear({
-        pointX: 150,
-        pointY: 70,
+        pointX: 140,
+        pointY: 60,
       });
     }
   }, [model, theme.breakpoints.values.md]);
@@ -488,7 +488,7 @@ const Live2DView: React.FC<{}> = () => {
         </Grid>
         <Grid item xs={2}>
           <Button
-            disabled={!selectedModelName}
+            disabled={!selectedModelName || showProgress}
             variant="contained"
             onClick={() => {
               setModelName(selectedModelName);
