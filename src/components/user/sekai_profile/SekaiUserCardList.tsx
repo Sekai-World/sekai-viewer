@@ -52,7 +52,7 @@ import {
 } from "../../../stores/reducers";
 import { attrIconMap } from "../../../utils/resources";
 import { ICardInfo, IGameChara, ITeamCardState } from "../../../types";
-import { useCachedData, useCharaName } from "../../../utils";
+import { useCachedData, useCharaName, useLocalStorage } from "../../../utils";
 
 const SekaiUserCardList = () => {
   // const layoutClasses = useLayoutStyles();
@@ -92,11 +92,13 @@ const SekaiUserCardList = () => {
     raritySelectReducer,
     []
   );
-  const [sortType, setSortType] = useState<string>(
-    localStorage.getItem("user-profile-sekai-cards-sort-type") || "asc"
+  const [sortType, setSortType] = useLocalStorage<string>(
+    "user-profile-sekai-cards-sort-type",
+    "asc"
   );
-  const [sortBy, setSortBy] = useState<string>(
-    localStorage.getItem("user-profile-sekai-cards-sort-by") || "id"
+  const [sortBy, setSortBy] = useLocalStorage<string>(
+    "user-profile-sekai-cards-sort-by",
+    "id"
   );
   const [addCardDialogVisible, setAddCardDialogVisible] = useState(false);
 
@@ -532,10 +534,6 @@ const SekaiUserCardList = () => {
                         value={sortType}
                         onChange={(e) => {
                           setSortType(e.target.value as string);
-                          localStorage.setItem(
-                            "user-profile-sekai-cards-sort-type",
-                            e.target.value as string
-                          );
                         }}
                         style={{ minWidth: "100px" }}
                       >
@@ -554,10 +552,6 @@ const SekaiUserCardList = () => {
                         value={sortBy}
                         onChange={(e) => {
                           setSortBy(e.target.value as string);
-                          localStorage.setItem(
-                            "user-profile-sekai-cards-sort-by",
-                            e.target.value as string
-                          );
                         }}
                         style={{ minWidth: "100px" }}
                       >

@@ -130,8 +130,9 @@ const CardList: React.FC<{}> = () => {
 
   const [cards, setCards] = useState<ICardInfo[]>([]);
   const [sortedCache, setSortedCache] = useState<ICardInfo[]>([]);
-  const [viewGridType, setViewGridType] = useState<ViewGridType>(
-    (localStorage.getItem("card-list-grid-view-type") || "grid") as ViewGridType
+  const [viewGridType, setViewGridType] = useLocalStorage<ViewGridType>(
+    "card-list-grid-view-type",
+    "grid"
   );
   const [page, setPage] = useState<number>(0);
   const [limit] = useState<number>(12);
@@ -324,7 +325,6 @@ const CardList: React.FC<{}> = () => {
               exclusive
               onChange={(_, gridType) => {
                 setViewGridType(gridType as "grid");
-                localStorage.setItem("card-list-grid-view-type", "grid");
               }}
             >
               <ToggleButton value="grid">

@@ -30,7 +30,7 @@ import { characterSelectReducer } from "../../stores/reducers";
 import { useInteractiveStyles } from "../../styles/interactive";
 import { useLayoutStyles } from "../../styles/layout";
 import { IStampInfo } from "../../types";
-import { useCachedData, useCharaName } from "../../utils";
+import { useCachedData, useCharaName, useLocalStorage } from "../../utils";
 import { charaIcons } from "../../utils/resources";
 import GridView from "./GridView";
 import InfiniteScroll from "../subs/InfiniteScroll";
@@ -50,11 +50,13 @@ const StampList: React.FC<{}> = () => {
   const [stamps, setStamps] = useState<IStampInfo[]>([]);
   const [filteredCache, setFilteredCache] = useState<IStampInfo[]>([]);
   const [filterOpened, setFilterOpened] = useState<boolean>(false);
-  const [sortType, setSortType] = useState<string>(
-    (localStorage.getItem("stamp-list-update-sort") || "desc") as "desc"
+  const [sortType, setSortType] = useLocalStorage<string>(
+    "stamp-list-update-sort",
+    "desc"
   );
-  const [sortBy, setSortBy] = useState<string>(
-    localStorage.getItem("stamp-list-filter-sort-by") || "id"
+  const [sortBy, setSortBy] = useLocalStorage<string>(
+    "stamp-list-filter-sort-by",
+    "id"
   );
   const [characterSelected, dispatchCharacterSelected] = useReducer(
     characterSelectReducer,
@@ -135,17 +137,21 @@ const StampList: React.FC<{}> = () => {
     setIsReady(Boolean(stampsCache && stampsCache.length));
   }, [setIsReady, stampsCache]);
 
-  const handleUpdateSortType = useCallback((_, sort: string) => {
-    if (!sort) return;
-    setSortType(sort);
-    localStorage.setItem("gacha-list-filter-sort-type", sort);
-  }, []);
+  const handleUpdateSortType = useCallback(
+    (_, sort: string) => {
+      if (!sort) return;
+      setSortType(sort);
+    },
+    [setSortType]
+  );
 
-  const handleUpdateSortBy = useCallback((_, sort: string) => {
-    if (!sort) return;
-    setSortBy(sort);
-    localStorage.setItem("gacha-list-filter-sort-by", sort);
-  }, []);
+  const handleUpdateSortBy = useCallback(
+    (_, sort: string) => {
+      if (!sort) return;
+      setSortBy(sort);
+    },
+    [setSortBy]
+  );
 
   return (
     <Fragment>

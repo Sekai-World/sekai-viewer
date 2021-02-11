@@ -52,9 +52,9 @@ const MusicList: React.FC<{}> = () => {
 
   const [musics, setMusics] = useState<IMusicInfo[]>([]);
   const [sortedCache, setSortedCache] = useState<IMusicInfo[]>([]);
-  const [viewGridType, setViewGridType] = useState<ViewGridType>(
-    (localStorage.getItem("music-list-grid-view-type") ||
-      "grid") as ViewGridType
+  const [viewGridType, setViewGridType] = useLocalStorage<ViewGridType>(
+    "music-list-grid-view-type",
+    "grid"
   );
   const [page, setPage] = useState<number>(0);
   const [limit] = useState<number>(12);
@@ -173,7 +173,6 @@ const MusicList: React.FC<{}> = () => {
               exclusive
               onChange={(_, gridType) => {
                 setViewGridType(gridType as "grid");
-                localStorage.setItem("music-list-grid-view-type", "grid");
               }}
             >
               <ToggleButton value="grid">
@@ -302,10 +301,6 @@ const MusicList: React.FC<{}> = () => {
                           value={sortType}
                           onChange={(e) => {
                             setSortType(e.target.value as string);
-                            localStorage.setItem(
-                              "music-list-filter-sort-type",
-                              e.target.value as string
-                            );
                           }}
                           style={{ minWidth: "100px" }}
                         >
@@ -324,10 +319,6 @@ const MusicList: React.FC<{}> = () => {
                           value={sortBy}
                           onChange={(e) => {
                             setSortBy(e.target.value as string);
-                            localStorage.setItem(
-                              "music-list-filter-sort-by",
-                              e.target.value as string
-                            );
                           }}
                           style={{ minWidth: "100px" }}
                         >
