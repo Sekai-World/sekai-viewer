@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.4](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.3...v0.4.4) (2021-02-11)
+
+
+### Bug Fixes
+
+* **live2d:** small screen size error, avoid loading interruption ([a271938](https://github.com/Sekai-World/sekai-viewer/commits/a27193893ad90ee325cb16cf96becb3f737b6e02))
+
+
+### Refactors
+
+* **card:** agenda view fit large screen ([8e3723c](https://github.com/Sekai-World/sekai-viewer/commits/8e3723c5d824cfc467da9053237a68b558c32b1e))
+* use useLocalStorage hooks instead of setItem ([633d8fe](https://github.com/Sekai-World/sekai-viewer/commits/633d8fe02372f521cecb4b06c11a3d691ad03de0))
+
 ### [0.4.3](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.2...v0.4.3) (2021-02-08)
 
 
