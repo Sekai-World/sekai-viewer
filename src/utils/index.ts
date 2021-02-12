@@ -58,7 +58,7 @@ import {
   IAreaItemLevel,
   IAreaItem,
 } from "./../types.d";
-import { assetI18n, useAssetI18n } from "./i18n";
+import { useAssetI18n } from "./i18n";
 import { useLocation } from "react-router-dom";
 import useSWR from "swr";
 
@@ -143,16 +143,72 @@ export const musicCategoryToName: { [key: string]: string } = {
   mv_2d: "2D MV",
 };
 
-export const musicTagToName: { [key: string]: string } = {
-  all: "All",
-  vocaloid: assetI18n.t(`unit_profile:piapro.name`),
-  light_music_club: assetI18n.t(`unit_profile:light_sound.name`),
-  idol: assetI18n.t(`unit_profile:idol.name`),
-  school_refusal: assetI18n.t(`unit_profile:school_refusal.name`),
-  theme_park: assetI18n.t(`unit_profile:theme_park.name`),
-  street: assetI18n.t(`unit_profile:street.name`),
-  other: "Other",
-};
+export function useMusicTagName(contentTransMode: ContentTransModeType) {
+  const { assetT } = useAssetI18n();
+
+  switch (contentTransMode) {
+    case "both": {
+      return {
+        all: "All",
+        vocaloid: `バーチャル・シンガー | ${assetT(
+          `unit_profile:piapro.name`,
+          "バーチャル・シンガー"
+        )}`,
+        light_music_club: `Leo/need | ${assetT(
+          `unit_profile:light_sound.name`,
+          "Leo/need"
+        )}`,
+        idol: `MORE MORE JUMP! | ${assetT(
+          `unit_profile:idol.name`,
+          "MORE MORE JUMP!"
+        )}`,
+        school_refusal: `25時、ナイトコードで。 | ${assetT(
+          `unit_profile:school_refusal.name`,
+          "25時、ナイトコードで。"
+        )}`,
+        theme_park: `ワンダーランズ×ショウタイム | ${assetT(
+          `unit_profile:theme_park.name`,
+          "ワンダーランズ×ショウタイム"
+        )}`,
+        street: `Vivid BAD SQUAD | ${assetT(
+          `unit_profile:street.name`,
+          "Vivid BAD SQUAD"
+        )}`,
+        other: "Other",
+      };
+    }
+    case "original": {
+      return {
+        all: "All",
+        vocaloid: `バーチャル・シンガー`,
+        light_music_club: `Leo/need`,
+        idol: `MORE MORE JUMP!`,
+        school_refusal: `25時、ナイトコードで。`,
+        theme_park: `ワンダーランズ×ショウタイム`,
+        street: `Vivid BAD SQUAD`,
+        other: "Other",
+      };
+    }
+    case "translated": {
+      return {
+        all: "All",
+        vocaloid: assetT(`unit_profile:piapro.name`, "バーチャル・シンガー"),
+        light_music_club: assetT(`unit_profile:light_sound.name`, "Leo/need"),
+        idol: assetT(`unit_profile:idol.name`, "MORE MORE JUMP!"),
+        school_refusal: assetT(
+          `unit_profile:school_refusal.name`,
+          "25時、ナイトコードで。"
+        ),
+        theme_park: assetT(
+          `unit_profile:theme_park.name`,
+          "ワンダーランズ×ショウタイム"
+        ),
+        street: assetT(`unit_profile:street.name`, "Vivid BAD SQUAD"),
+        other: "Other",
+      };
+    }
+  }
+}
 
 export function useCharaName(contentTransMode: ContentTransModeType) {
   const [charas] = useCachedData<IGameChara>("gameCharacters");

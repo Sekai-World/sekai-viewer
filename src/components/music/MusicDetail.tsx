@@ -42,9 +42,9 @@ import {
 } from "../../types";
 import {
   getRemoteAssetURL,
-  musicTagToName,
   useCachedData,
   useCharaName,
+  useMusicTagName,
 } from "../../utils";
 import { charaIcons } from "../../utils/resources";
 import { Trans, useTranslation } from "react-i18next";
@@ -103,6 +103,7 @@ const MusicDetail: React.FC<{}> = () => {
   const [, humanizeDurationShort] = useDurationI18n();
   const [trimmedMP3URL, trimFailed, setTrimOptions] = useTrimMP3();
   const getCharaName = useCharaName(contentTransMode);
+  const musicTagToName = useMusicTagName(contentTransMode);
 
   const [musics] = useCachedData<IMusicInfo>("musics");
   const [musicVocals] = useCachedData<IMusicVocalInfo>("musicVocals");
@@ -644,7 +645,7 @@ const MusicDetail: React.FC<{}> = () => {
                       align="right"
                       key={`music-tag-${elem.musicTag}`}
                     >
-                      {musicTagToName[elem.musicTag] || elem.musicTag}
+                      {musicTagToName[elem.musicTag as "all"] || elem.musicTag}
                     </Typography>
                   ))}
             </Grid>

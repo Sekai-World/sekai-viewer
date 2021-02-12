@@ -20,8 +20,14 @@ import {
   ViewGrid,
   ViewGridOutline,
 } from "mdi-material-ui";
-import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { musicTagToName, useCachedData, useLocalStorage } from "../../utils";
+import React, {
+  Fragment,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { useCachedData, useLocalStorage, useMusicTagName } from "../../utils";
 import InfiniteScroll from "../subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
@@ -30,6 +36,7 @@ import GridView from "./GridView";
 import AgendaView from "./AgendaView";
 import { IMusicInfo, IMusicTagInfo } from "../../types";
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
+import { SettingContext } from "../../context";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -46,6 +53,8 @@ const MusicList: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
+  const { contentTransMode } = useContext(SettingContext)!;
+  const musicTagToName = useMusicTagName(contentTransMode);
 
   const [musicsCache] = useCachedData<IMusicInfo>("musics");
   const [musicTags] = useCachedData<IMusicTagInfo>("musicTags");
@@ -237,7 +246,7 @@ const MusicList: React.FC<{}> = () => {
                         <Chip
                           clickable
                           color={musicTag === tag ? "primary" : "default"}
-                          label={musicTagToName[tag]}
+                          label={musicTagToName[tag as "all"]}
                           onClick={() => {
                             if (musicTag === tag) setMusicTag("all");
                             else setMusicTag(tag);
