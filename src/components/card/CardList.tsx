@@ -11,9 +11,15 @@ import {
   Chip,
   Avatar,
   Badge,
+  TextField,
+  InputAdornment,
+  IconButton,
+  Popover,
 } from "@material-ui/core";
 import { useLayoutStyles } from "../../styles/layout";
 import {
+  Check,
+  // Clear,
   RotateLeft,
   Sort,
   SortOutlined,
@@ -41,8 +47,12 @@ import {
   ICardEpisode,
   ICardInfo,
   ICardRarity,
+  IEventDeckBonus,
+  IEventInfo,
   IGameChara,
+  IGameCharaUnit,
   ISkillInfo,
+  IUnitProfile,
 } from "../../types";
 import {
   useCachedData,
@@ -60,8 +70,13 @@ import {
   attrSelectReducer,
   raritySelectReducer,
   skillSelectReducer,
+  supportUnitSelectReducer,
 } from "../../stores/reducers";
-import { charaIcons, attrIconMap } from "../../utils/resources";
+import {
+  charaIcons,
+  attrIconMap,
+  UnitLogoMiniMap,
+} from "../../utils/resources";
 import { SettingContext } from "../../context";
 import GridView from "./GridView";
 import AgendaView from "./AgendaView";
@@ -69,6 +84,8 @@ import ComfyView from "./ComfyView";
 import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
+import { ContentTrans } from "../subs/ContentTrans";
+import { useCurrentEvent } from "../../utils/apiClient";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -121,12 +138,17 @@ const CardList: React.FC<{}> = () => {
   const { t } = useTranslation();
   const { contentTransMode } = useContext(SettingContext)!;
   const getCharaName = useCharaName(contentTransMode);
+  const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
 
   const [cardsCache] = useCachedData<ICardInfo>("cards");
   const [charas] = useCachedData<IGameChara>("gameCharacters");
   const [rarities] = useCachedData<ICardRarity>("cardRarities");
   const [episodes] = useCachedData<ICardEpisode>("cardEpisodes");
   const [skills] = useCachedData<ISkillInfo>("skills");
+  const [events] = useCachedData<IEventInfo>("events");
+  const [eventDeckBonuses] = useCachedData<IEventDeckBonus>("eventDeckBonuses");
+  const [charaUnits] = useCachedData<IGameCharaUnit>("gameCharacterUnits");
+  const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
 
   const [cards, setCards] = useState<ICardInfo[]>([]);
   const [sortedCache, setSortedCache] = useState<ICardInfo[]>([]);
@@ -159,11 +181,20 @@ const CardList: React.FC<{}> = () => {
     raritySelectReducer,
     JSON.parse(localStorage.getItem("card-list-filter-rarities") || "[]")
   );
-
   const [skillSelected, dispatchSkillSelected] = useReducer(
     skillSelectReducer,
     JSON.parse(localStorage.getItem("card-list-filter-skills") || "[]")
   );
+  const [supportUnitSelected, dispatchSupportUnitSelected] = useReducer(
+    supportUnitSelectReducer,
+    JSON.parse(localStorage.getItem("card-list-filter-support-units") || "[]")
+  );
+
+  const [anchorElEvent, setAnchorElEvent] = useState<HTMLButtonElement | null>(
+    null
+  );
+  const eventOpen = useMemo(() => Boolean(anchorElEvent), [anchorElEvent]);
+  const [eventId, setEventId] = useState(1);
 
   const skillMapping = useMemo(
     () => [
@@ -224,6 +255,12 @@ const CardList: React.FC<{}> = () => {
   }, [setIsReady, cardsCache, charas]);
 
   useEffect(() => {
+    if (!isCurrEventLoading) {
+      setEventId(currEvent.eventId);
+    }
+  }, [currEvent, isCurrEventLoading]);
+
+  useEffect(() => {
     if (
       cardsCache &&
       cardsCache.length &&
@@ -243,6 +280,13 @@ const CardList: React.FC<{}> = () => {
       }
       if (attrSelected.length) {
         result = result.filter((c) => attrSelected.includes(c.attr));
+      }
+      if (supportUnitSelected.length) {
+        result = result.filter(
+          (c) =>
+            c.supportUnit === "none" ||
+            supportUnitSelected.includes(c.supportUnit)
+        );
       }
       if (raritySelected.length) {
         result = result.filter((c) => raritySelected.includes(c.rarity));
@@ -295,6 +339,7 @@ const CardList: React.FC<{}> = () => {
     attrSelected,
     raritySelected,
     skillSelected,
+    supportUnitSelected,
   ]);
 
   useEffect(() => {
@@ -306,6 +351,10 @@ const CardList: React.FC<{}> = () => {
       setLastQueryFin(true);
     }
   }, [page, limit, setLastQueryFin, sortedCache]);
+
+  const handleEventClose = useCallback(() => {
+    setAnchorElEvent(null);
+  }, []);
 
   return (
     <Fragment>
@@ -409,11 +458,13 @@ const CardList: React.FC<{}> = () => {
                               dispatchCharacterSelected({
                                 type: "remove",
                                 payload: idx + 1,
+                                storeName: "card-list-filter-charas",
                               });
                             } else {
                               dispatchCharacterSelected({
                                 type: "add",
                                 payload: idx + 1,
+                                storeName: "card-list-filter-charas",
                               });
                             }
                           }}
@@ -467,11 +518,13 @@ const CardList: React.FC<{}> = () => {
                                 dispatchAttrSelected({
                                   type: "remove",
                                   payload: attr,
+                                  storeName: "card-list-filter-attrs",
                                 });
                               } else {
                                 dispatchAttrSelected({
                                   type: "add",
                                   payload: attr,
+                                  storeName: "card-list-filter-attrs",
                                 });
                               }
                             }}
@@ -479,6 +532,76 @@ const CardList: React.FC<{}> = () => {
                         </Grid>
                       )
                     )}
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justify="space-between"
+                spacing={1}
+              >
+                <Grid item xs={12} md={1}>
+                  <Typography classes={{ root: interactiveClasses.caption }}>
+                    {t("common:support_unit")}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={11}>
+                  <Grid container spacing={1}>
+                    {unitProfiles &&
+                      [
+                        "theme_park",
+                        "street",
+                        "idol",
+                        "school_refusal",
+                        "light_sound",
+                      ].map((supportUnit) => (
+                        <Grid key={"supportUnit-filter-" + supportUnit} item>
+                          <Chip
+                            clickable
+                            color={
+                              supportUnitSelected.includes(supportUnit)
+                                ? "primary"
+                                : "default"
+                            }
+                            avatar={
+                              <Avatar
+                                alt={supportUnit}
+                                src={UnitLogoMiniMap[supportUnit as "idol"]}
+                              />
+                            }
+                            label={
+                              <ContentTrans
+                                original={
+                                  unitProfiles.find(
+                                    (up) => up.unit === supportUnit
+                                  )!.unitName
+                                }
+                                contentKey={`unit_profile:${supportUnit}.name`}
+                                originalProps={{ variant: "body2" }}
+                                translatedProps={{ variant: "body2" }}
+                              />
+                            }
+                            onClick={() => {
+                              if (supportUnitSelected.includes(supportUnit)) {
+                                dispatchSupportUnitSelected({
+                                  type: "remove",
+                                  payload: supportUnit,
+                                  storeName: "card-list-filter-support-units",
+                                });
+                              } else {
+                                dispatchSupportUnitSelected({
+                                  type: "add",
+                                  payload: supportUnit,
+                                  storeName: "card-list-filter-support-units",
+                                });
+                              }
+                            }}
+                          />
+                        </Grid>
+                      ))}
                   </Grid>
                 </Grid>
               </Grid>
@@ -580,11 +703,13 @@ const CardList: React.FC<{}> = () => {
                               dispatchRaritySelected({
                                 type: "remove",
                                 payload: rarity,
+                                storeName: "card-list-filter-rarities",
                               });
                             } else {
                               dispatchRaritySelected({
                                 type: "add",
                                 payload: rarity,
+                                storeName: "card-list-filter-rarities",
                               });
                             }
                           }}
@@ -656,7 +781,7 @@ const CardList: React.FC<{}> = () => {
                 xs={12}
                 alignItems="center"
                 // justify="space-between"
-                // spacing={1}
+                spacing={1}
               >
                 <Grid item xs={false} md={1}></Grid>
                 <Grid item>
@@ -673,23 +798,43 @@ const CardList: React.FC<{}> = () => {
                       dispatchCharacterSelected({
                         type: "reset",
                         payload: 0,
+                        storeName: "card-list-filter-charas",
                       });
                       dispatchAttrSelected({
                         type: "reset",
                         payload: "",
+                        storeName: "card-list-filter-attrs",
                       });
                       dispatchRaritySelected({
                         type: "reset",
                         payload: 0,
+                        storeName: "card-list-filter-rarities",
                       });
                       dispatchSkillSelected({
                         type: "reset",
                         payload: "",
                       });
+                      dispatchSupportUnitSelected({
+                        type: "reset",
+                        payload: "",
+                        storeName: "card-list-filter-support-units",
+                      });
                     }}
                     startIcon={<RotateLeft />}
                   >
                     {t("common:reset")}
+                  </Button>
+                </Grid>
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    disabled={!events || !eventDeckBonuses || !charaUnits}
+                    onClick={(e) => {
+                      setAnchorElEvent(e.currentTarget);
+                    }}
+                  >
+                    {t("card:apply_event_filter")}
                   </Button>
                 </Grid>
               </Grid>
@@ -720,6 +865,100 @@ const CardList: React.FC<{}> = () => {
           }
         />
       </Container>
+      <Popover
+        open={eventOpen}
+        anchorEl={anchorElEvent}
+        onClose={handleEventClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        transformOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+      >
+        <Container style={{ paddingTop: "1em", paddingBottom: "1em" }}>
+          <TextField
+            select
+            label={t("common:event")}
+            value={eventId}
+            onChange={(e) => setEventId(Number(e.target.value))}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="start">
+                  <IconButton
+                    size="small"
+                    onClick={() => {
+                      const bonuses = eventDeckBonuses!.filter(
+                        (edb) => edb.eventId === eventId && edb.bonusRate === 50
+                      );
+                      // console.log(bonuses, eventId, eventDeckBonuses);
+                      const attr = bonuses[0].cardAttr;
+                      dispatchAttrSelected({
+                        type: "reset",
+                        payload: "",
+                        storeName: "card-list-filter-rarities",
+                      });
+                      dispatchAttrSelected({
+                        type: "add",
+                        payload: attr,
+                        storeName: "card-list-filter-attrs",
+                      });
+                      const charas = bonuses.map(
+                        (bonus) =>
+                          charaUnits!.find(
+                            (cu) => cu.id === bonus.gameCharacterUnitId
+                          )!
+                      );
+                      dispatchCharacterSelected({
+                        type: "reset",
+                        payload: 0,
+                        storeName: "card-list-filter-charas",
+                      });
+                      charas.forEach((chara) =>
+                        dispatchCharacterSelected({
+                          type: "add",
+                          payload: chara.gameCharacterId,
+                          storeName: "card-list-filter-charas",
+                        })
+                      );
+                      dispatchSupportUnitSelected({
+                        type: "reset",
+                        payload: "",
+                        storeName: "card-list-filter-support-units",
+                      });
+                      charas
+                        .filter((chara) => chara.gameCharacterId >= 21)
+                        .forEach((chara) => {
+                          dispatchSupportUnitSelected({
+                            type: "add",
+                            payload: chara.unit,
+                            storeName: "card-list-filter-support-units",
+                          });
+                        });
+                      handleEventClose();
+                    }}
+                    disabled={eventId === 0}
+                  >
+                    <Check />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          >
+            {events &&
+              events.map((ev) => (
+                <MenuItem key={ev.id} value={ev.id}>
+                  <ContentTrans
+                    original={ev.name}
+                    contentKey={`event_name:${ev.id}`}
+                  />
+                </MenuItem>
+              ))}
+          </TextField>
+        </Container>
+      </Popover>
     </Fragment>
   );
 };

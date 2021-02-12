@@ -2,12 +2,16 @@ import { ITeamBuild } from "../types";
 
 export function characterSelectReducer(
   state: number[],
-  action: { type: "add" | "remove" | "reset"; payload: number }
+  action: {
+    type: "add" | "remove" | "reset";
+    payload: number;
+    storeName: string;
+  }
 ) {
   switch (action.type) {
     case "add": {
       const data = [...state, action.payload];
-      localStorage.setItem("card-list-filter-charas", JSON.stringify(data));
+      localStorage.setItem(action.storeName, JSON.stringify(data));
       return data;
     }
     case "remove": {
@@ -15,11 +19,11 @@ export function characterSelectReducer(
         ...state.slice(0, state.indexOf(action.payload)),
         ...state.slice(state.indexOf(action.payload) + 1),
       ];
-      localStorage.setItem("card-list-filter-charas", JSON.stringify(data));
+      localStorage.setItem(action.storeName, JSON.stringify(data));
       return data;
     }
     case "reset":
-      localStorage.setItem("card-list-filter-charas", JSON.stringify([]));
+      localStorage.setItem(action.storeName, JSON.stringify([]));
       return [];
     default:
       throw new Error();
@@ -28,12 +32,16 @@ export function characterSelectReducer(
 
 export function attrSelectReducer(
   state: string[],
-  action: { type: "add" | "remove" | "reset"; payload: string }
+  action: {
+    type: "add" | "remove" | "reset";
+    payload: string;
+    storeName: string;
+  }
 ) {
   switch (action.type) {
     case "add": {
       const data = [...state, action.payload];
-      localStorage.setItem("card-list-filter-attrs", JSON.stringify(data));
+      localStorage.setItem(action.storeName, JSON.stringify(data));
       return data;
     }
     case "remove": {
@@ -41,11 +49,41 @@ export function attrSelectReducer(
         ...state.slice(0, state.indexOf(action.payload)),
         ...state.slice(state.indexOf(action.payload) + 1),
       ];
-      localStorage.setItem("card-list-filter-attrs", JSON.stringify(data));
+      localStorage.setItem(action.storeName, JSON.stringify(data));
       return data;
     }
     case "reset":
-      localStorage.setItem("card-list-filter-attrs", JSON.stringify([]));
+      localStorage.setItem(action.storeName, JSON.stringify([]));
+      return [];
+    default:
+      throw new Error();
+  }
+}
+
+export function supportUnitSelectReducer(
+  state: string[],
+  action: {
+    type: "add" | "remove" | "reset";
+    payload: string;
+    storeName: string;
+  }
+) {
+  switch (action.type) {
+    case "add": {
+      const data = [...state, action.payload];
+      localStorage.setItem(action.storeName, JSON.stringify(data));
+      return data;
+    }
+    case "remove": {
+      const data = [
+        ...state.slice(0, state.indexOf(action.payload)),
+        ...state.slice(state.indexOf(action.payload) + 1),
+      ];
+      localStorage.setItem(action.storeName, JSON.stringify(data));
+      return data;
+    }
+    case "reset":
+      localStorage.setItem(action.storeName, JSON.stringify([]));
       return [];
     default:
       throw new Error();
@@ -54,12 +92,16 @@ export function attrSelectReducer(
 
 export function raritySelectReducer(
   state: number[],
-  action: { type: "add" | "remove" | "reset"; payload: number }
+  action: {
+    type: "add" | "remove" | "reset";
+    payload: number;
+    storeName: string;
+  }
 ) {
   switch (action.type) {
     case "add": {
       const data = [...state, action.payload];
-      localStorage.setItem("card-list-filter-rarities", JSON.stringify(data));
+      localStorage.setItem(action.storeName, JSON.stringify(data));
       return data;
     }
     case "remove": {
@@ -67,11 +109,11 @@ export function raritySelectReducer(
         ...state.slice(0, state.indexOf(action.payload)),
         ...state.slice(state.indexOf(action.payload) + 1),
       ];
-      localStorage.setItem("card-list-filter-rarities", JSON.stringify(data));
+      localStorage.setItem(action.storeName, JSON.stringify(data));
       return data;
     }
     case "reset":
-      localStorage.setItem("card-list-filter-rarities", JSON.stringify([]));
+      localStorage.setItem(action.storeName, JSON.stringify([]));
       return [];
     default:
       throw new Error();
