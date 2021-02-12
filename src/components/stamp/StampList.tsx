@@ -60,7 +60,7 @@ const StampList: React.FC<{}> = () => {
   );
   const [characterSelected, dispatchCharacterSelected] = useReducer(
     characterSelectReducer,
-    []
+    JSON.parse(localStorage.getItem("stamp-list-filter-charas") || "[]")
   );
 
   const [page, setPage] = useState<number>(0);
@@ -247,11 +247,13 @@ const StampList: React.FC<{}> = () => {
                               dispatchCharacterSelected({
                                 type: "remove",
                                 payload: idx + 1,
+                                storeName: "stamp-list-filter-charas",
                               });
                             } else {
                               dispatchCharacterSelected({
                                 type: "add",
                                 payload: idx + 1,
+                                storeName: "stamp-list-filter-charas",
                               });
                             }
                           }}
