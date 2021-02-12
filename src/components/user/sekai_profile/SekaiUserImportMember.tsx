@@ -11,6 +11,7 @@ import { useInteractiveStyles } from "../../../styles/interactive";
 import {
   Button,
   CardMedia,
+  Checkbox,
   CircularProgress,
   Dialog,
   DialogContent,
@@ -20,10 +21,13 @@ import {
   Grid,
   Input,
   makeStyles,
+  Paper,
   Snackbar,
   Switch,
+  TextField,
   Tooltip,
   Typography,
+  useMediaQuery,
   useTheme,
 } from "@material-ui/core";
 import { Information, Upload } from "mdi-material-ui";
@@ -171,6 +175,10 @@ const SekaiUserImportMember = () => {
   const [helpOpen, toggleHelpOpen] = useToggle(false);
 
   // const canvasRef = useRef<HTMLCanvasElement>(null);
+  const maxLevels = useMemo(() => [0, 20, 30, 50, 60], []);
+  const trainingLevels = useMemo(() => [0, 999, 999, 40, 50], []);
+
+  const mdUp = useMediaQuery(theme.breakpoints.up("sm"));
 
   const onReaderLoad = useCallback(
     (e: ProgressEvent<FileReader>) => {
@@ -254,7 +262,7 @@ const SekaiUserImportMember = () => {
             }
           }
           areaBoundary.width = areaBoundary.x2 - areaBoundary.x1;
-          console.log(areaBoundary);
+          // console.log(areaBoundary);
 
           // crop
           Marvin.crop(
@@ -637,48 +645,62 @@ const SekaiUserImportMember = () => {
             scheduler.terminate();
           }
           // console.log(ocrLevelResults);
-          console.log(ocrMasterRankResults);
+          // console.log(ocrMasterRankResults);
 
-          const _rows = cardDataURLs.map((dataURL, idx) => ({
-            id: idx + 1,
-            crop: dataURL,
-            full: hashResults[idx].length
-              ? hashResults[idx].map(
-                  (result) =>
-                    `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets/thumbnail/chara_rip/${result[0]}`
-                )
-              : [""],
-            hashResults: hashResults[idx],
-            distances: hashResults[idx].length
-              ? hashResults[idx].map((result) => result[1])
-              : [0],
-            level: ocrLevelResults.length
+          const _rows = cardDataURLs.map((dataURL, idx) => {
+            const cardIds =
+              hashResults[idx].length && cards
+                ? hashResults[idx].map(
+                    (result) =>
+                      cards!.find((card) =>
+                        result[0].includes(card.assetbundleName)
+                      )?.id || -1
+                  )
+                : [-1];
+            const level = ocrLevelResults.length
               ? Number(
                   ocrLevelResults[idx].replace(/.*Lv.(\d{1,2}).*/, "$1")
                 ) || 1
-              : 1,
-            masterRank: ocrMasterRankResults.length
-              ? Math.min(
-                  Number(ocrMasterRankResults[idx].replace(/\D/g, "")),
-                  5
-                ) || 0
-              : 0,
-            cardIds: hashResults[idx].length
-              ? hashResults[idx].map(
-                  (result) =>
-                    cards!.find((card) =>
-                      result[0].includes(card.assetbundleName)
-                    )?.id || -1
-                )
-              : [-1],
-            useIndex: 0,
-            trained:
-              !!hashResults[idx].length &&
-              hashResults[idx][0][0].includes("after_training"),
-            skillLevel: 1,
-            story1Unlock: true,
-            story2Unlock: true,
-          }));
+              : 1;
+            return {
+              id: idx + 1,
+              crop: dataURL,
+              full: hashResults[idx].length
+                ? hashResults[idx].map(
+                    (result) =>
+                      `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets/thumbnail/chara_rip/${result[0]}`
+                  )
+                : [""],
+              hashResults: hashResults[idx],
+              distances: hashResults[idx].length
+                ? hashResults[idx].map((result) => result[1])
+                : [0],
+              level,
+              masterRank: ocrMasterRankResults.length
+                ? Math.min(
+                    Number(ocrMasterRankResults[idx].replace(/\D/g, "")),
+                    5
+                  ) || 0
+                : 0,
+              cardIds,
+              useIndex: 0,
+              trained:
+                (!!hashResults[idx].length &&
+                  hashResults[idx][0][0].includes("after_training")) ||
+                level >=
+                  trainingLevels[
+                    cards!.find((card) => card.id === cardIds[0])!.rarity
+                  ],
+              skillLevel: 1,
+              story1Unlock: cardIds[0] !== -1,
+              story2Unlock:
+                cardIds[0] !== -1 &&
+                level >=
+                  maxLevels[
+                    cards!.find((card) => card.id === cardIds[0])!.rarity
+                  ],
+            };
+          });
           // console.log(_rows);
           setRows(_rows.filter((row) => row.distances[0] !== 64));
 
@@ -686,7 +708,7 @@ const SekaiUserImportMember = () => {
         });
       }
     },
-    [cards, ocrEnable]
+    [cards, maxLevels, ocrEnable, trainingLevels]
   );
 
   const handleValueChange = useCallback(
@@ -817,6 +839,10 @@ const SekaiUserImportMember = () => {
               value={params.value as string}
               type="number"
               inputMode="numeric"
+              inputProps={{
+                min: 0,
+                max: 60,
+              }}
               fullWidth
               onChange={(e) =>
                 handleValueChange(e.target.value, "level", params.row)
@@ -828,7 +854,7 @@ const SekaiUserImportMember = () => {
       {
         field: "masterRank",
         headerName: t("user:profile.import_card.table.row.card_master_rank"),
-        width: 120,
+        width: 100,
         renderCell(params) {
           return (
             <Input
@@ -860,7 +886,7 @@ const SekaiUserImportMember = () => {
               inputMode="numeric"
               inputProps={{
                 min: 0,
-                max: 5,
+                max: 4,
               }}
               onChange={(e) =>
                 handleValueChange(e.target.value, "skillLevel", params.row)
@@ -870,49 +896,58 @@ const SekaiUserImportMember = () => {
         },
       },
       {
-        field: "trained",
-        headerName: t("card:trained"),
-        width: 100,
+        field: "card_states",
+        headerName: t("user:profile.import_card.table.row.card_states"),
+        width: 250,
         renderCell(params) {
           return (
-            <Switch
-              checked={params.value as boolean}
-              onChange={(e, checked) =>
-                handleValueChange(checked, "trained", params.row)
-              }
-            />
-          );
-        },
-      },
-      {
-        field: "story1Unlock",
-        headerName: t("card:sideStory1Unlocked"),
-        width: 120,
-        align: "center",
-        renderCell(params) {
-          return (
-            <Switch
-              checked={params.value as boolean}
-              onChange={(e, checked) =>
-                handleValueChange(checked, "story1Unlock", params.row)
-              }
-            />
-          );
-        },
-      },
-      {
-        field: "story2Unlock",
-        headerName: t("card:sideStory2Unlocked"),
-        width: 120,
-        align: "center",
-        renderCell(params) {
-          return (
-            <Switch
-              checked={params.value as boolean}
-              onChange={(e, checked) =>
-                handleValueChange(checked, "story2Unlock", params.row)
-              }
-            />
+            <Grid container direction="column">
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={params.getValue("trained") as boolean}
+                    onChange={(e, checked) =>
+                      handleValueChange(checked, "trained", params.row)
+                    }
+                    style={{
+                      paddingTop: "0.1rem",
+                      paddingBottom: "0.1rem",
+                    }}
+                  />
+                }
+                label={t("card:trained")}
+              ></FormControlLabel>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={params.getValue("story1Unlock") as boolean}
+                    onChange={(e, checked) =>
+                      handleValueChange(checked, "story1Unlock", params.row)
+                    }
+                    style={{
+                      paddingTop: "0.1rem",
+                      paddingBottom: "0.1rem",
+                    }}
+                  />
+                }
+                label={t("card:sideStory1Unlocked")}
+              ></FormControlLabel>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={params.getValue("story2Unlock") as boolean}
+                    onChange={(e, checked) =>
+                      handleValueChange(checked, "story2Unlock", params.row)
+                    }
+                    style={{
+                      paddingTop: "0.1rem",
+                      paddingBottom: "0.1rem",
+                    }}
+                  />
+                }
+                label={t("card:sideStory2Unlocked")}
+              ></FormControlLabel>
+            </Grid>
           );
         },
       },
@@ -1050,22 +1085,197 @@ const SekaiUserImportMember = () => {
             </Grid>
           </Grid>
         </Grid>
+        {mdUp && (
+          <Grid item xs={12} style={{ height: "600px" }}>
+            <DataGrid
+              columns={columns}
+              rows={rows}
+              disableColumnFilter
+              disableColumnReorder
+              disableColumnMenu
+              disableSelectionOnClick
+              rowHeight={100}
+              pageSize={100}
+            />
+          </Grid>
+        )}
         <Grid item xs={12}>
-          <Grid container>
-            <Grid item xs={12} style={{ height: "600px" }}>
-              <DataGrid
-                columns={columns}
-                rows={rows}
-                disableColumnFilter
-                disableColumnReorder
-                disableColumnMenu
-                disableSelectionOnClick
-                rowHeight={100}
-                pageSize={100}
-              />
-            </Grid>
+          <Grid container spacing={1}>
+            {!mdUp &&
+              rows.map((row) => (
+                <Grid item xs={12} key={row.id}>
+                  <Paper variant="outlined" style={{ padding: "0.5rem" }}>
+                    <Grid container spacing={1}>
+                      <Grid item xs={12}>
+                        <Grid
+                          container
+                          justify="space-around"
+                          alignItems="center"
+                          spacing={1}
+                        >
+                          <Grid item>
+                            <img
+                              src={row.crop}
+                              style={{ height: "64px", width: "64px" }}
+                              alt=""
+                            />
+                          </Grid>
+                          <Grid item>
+                            <Grid
+                              container
+                              direction="column"
+                              alignItems="center"
+                              onClick={() => {
+                                setEditId(Number(row.id));
+                                toggleIsCardSelectionOpen();
+                              }}
+                            >
+                              <img
+                                src={row.full[row.useIndex]}
+                                style={{
+                                  height: "64px",
+                                  width: "64px",
+                                  cursor: "pointer",
+                                }}
+                                alt={`${(
+                                  (1 - row.distances[row.useIndex] / 64) *
+                                  100
+                                ).toFixed(1)}%`}
+                              />
+                              <Typography>{`${(
+                                (1 - row.distances[row.useIndex] / 64) *
+                                100
+                              ).toFixed(1)}%`}</Typography>
+                            </Grid>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Grid container spacing={1}>
+                          <Grid item xs={4}>
+                            <TextField
+                              value={row.level}
+                              type="number"
+                              fullWidth
+                              inputMode="numeric"
+                              inputProps={{
+                                min: 0,
+                                max: 60,
+                              }}
+                              label={t("card:cardLevel")}
+                              onChange={(e) =>
+                                handleValueChange(e.target.value, "level", row)
+                              }
+                            />
+                          </Grid>
+                          <Grid item xs={4}>
+                            <TextField
+                              value={row.masterRank}
+                              type="number"
+                              fullWidth
+                              inputMode="numeric"
+                              inputProps={{
+                                min: 0,
+                                max: 5,
+                              }}
+                              label={t(
+                                "user:profile.import_card.table.row.card_master_rank"
+                              )}
+                              onChange={(e) =>
+                                handleValueChange(
+                                  e.target.value,
+                                  "masterRank",
+                                  row
+                                )
+                              }
+                            />
+                          </Grid>
+                          <Grid item xs={4}>
+                            <TextField
+                              value={row.skillLevel}
+                              type="number"
+                              fullWidth
+                              inputMode="numeric"
+                              inputProps={{
+                                min: 0,
+                                max: 4,
+                              }}
+                              label={t("card:skillLevel")}
+                              onChange={(e) =>
+                                handleValueChange(
+                                  e.target.value,
+                                  "skillLevel",
+                                  row
+                                )
+                              }
+                            />
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Grid container direction="column">
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={row.trained}
+                                onChange={(e, checked) =>
+                                  handleValueChange(checked, "trained", row)
+                                }
+                                style={{
+                                  paddingTop: "0.1rem",
+                                  paddingBottom: "0.1rem",
+                                }}
+                              />
+                            }
+                            label={t("card:trained")}
+                          ></FormControlLabel>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={row.story1Unlock}
+                                onChange={(e, checked) =>
+                                  handleValueChange(
+                                    checked,
+                                    "story1Unlock",
+                                    row
+                                  )
+                                }
+                                style={{
+                                  paddingTop: "0.1rem",
+                                  paddingBottom: "0.1rem",
+                                }}
+                              />
+                            }
+                            label={t("card:sideStory1Unlocked")}
+                          ></FormControlLabel>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={row.story2Unlock}
+                                onChange={(e, checked) =>
+                                  handleValueChange(
+                                    checked,
+                                    "story2Unlock",
+                                    row
+                                  )
+                                }
+                                style={{
+                                  paddingTop: "0.1rem",
+                                  paddingBottom: "0.1rem",
+                                }}
+                              />
+                            }
+                            label={t("card:sideStory2Unlocked")}
+                          ></FormControlLabel>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </Paper>
+                </Grid>
+              ))}
           </Grid>
         </Grid>
+
         <Grid item xs={12}>
           <Button
             variant="contained"
