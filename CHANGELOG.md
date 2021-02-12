@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.5](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.4...v0.4.5) (2021-02-12)
+
+
+### Features
+
+* **filter:** stamp list character filter local storage ([2d93902](https://github.com/Sekai-World/sekai-viewer/commits/2d93902f968f9c55087dc4055b46a93ce9e9f102))
+* card filter of event bonuses ([73d3c73](https://github.com/Sekai-World/sekai-viewer/commits/73d3c73bc7170e1c52c63c5cdf908ab4d748aee7))
+* **user:** better card importer ([ccc6829](https://github.com/Sekai-World/sekai-viewer/commits/ccc6829a97d0371d7cf53422e54fa2aa55c39aa9))
+
+
+### Bug Fixes
+
+* **music:** music tag translation empty ([463f1dd](https://github.com/Sekai-World/sekai-viewer/commits/463f1dd6b2490f8dde77ebb1df22a99bebea3be8))
+
 ### [0.4.4](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.3...v0.4.4) (2021-02-11)
 
 
