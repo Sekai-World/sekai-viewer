@@ -293,7 +293,7 @@ export async function getRemoteAssetURL(
     ? `${process.env.REACT_APP_ASSET_DOMAIN_CN}/${endpoint}`
     : minioDomain
     ? `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets/${endpoint}`
-    : `${process.env.REACT_APP_ASSET_DOMAIN_WW}/file/sekai-assets/${endpoint}`;
+    : `${process.env.REACT_APP_ASSET_DOMAIN_WW}/sekai-assets/${endpoint}`;
 
   if (endpoint.endsWith(".webp") && !isWebpSupported) {
     let dataUrl = await localforage.getItem<string>(url);

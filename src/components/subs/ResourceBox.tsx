@@ -41,14 +41,13 @@ const ResourceBox: React.FC<{
               <Image
                 src={`${
                   process.env.REACT_APP_ASSET_DOMAIN_WW
-                }/file/sekai-assets/stamp/stamp${String(
-                  detail.resourceId
-                ).padStart(4, "0")}_rip/stamp${String(
-                  detail.resourceId
-                ).padStart(4, "0")}/stamp${String(detail.resourceId).padStart(
+                }/sekai-assets/stamp/stamp${String(detail.resourceId).padStart(
                   4,
                   "0"
-                )}.png`}
+                )}_rip/stamp${String(detail.resourceId).padStart(
+                  4,
+                  "0"
+                )}/stamp${String(detail.resourceId).padStart(4, "0")}.png`}
                 aspectRatio={1}
                 style={{ height: "64px", width: "64px" }}
                 color=""
