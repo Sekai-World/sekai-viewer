@@ -82,20 +82,20 @@ const Support: React.FC<{}> = () => {
                 Tier Lucky
               </Typography>
               <Grid container spacing={1}>
-                {/* <Grid item xs={12} md={4} lg={3}>
+                <Grid item xs={12} md={4} lg={3}>
                   <Grid container alignItems="center" spacing={1}>
                     <Grid item>
                       <Avatar
-                        src="https://c8.patreon.com/2/200/45497536"
-                        alt="zaurus"
+                        src="https://c8.patreon.com/2/200/2681512"
+                        alt="Pepe Maglutac"
                       ></Avatar>
                     </Grid>
                     <Grid item>
-                      <Typography>zaurus</Typography>
+                      <Typography>Pepe Maglutac</Typography>
                     </Grid>
                   </Grid>
-                </Grid> */}
-                <Grid item xs={12} md={4} lg={3}>
+                </Grid>
+                {/* <Grid item xs={12} md={4} lg={3}>
                   <Grid container alignItems="center" spacing={1}>
                     <Grid item>
                       <Avatar>NA</Avatar>
@@ -104,7 +104,7 @@ const Support: React.FC<{}> = () => {
                       <Typography>N/A</Typography>
                     </Grid>
                   </Grid>
-                </Grid>
+                </Grid> */}
               </Grid>
             </Container>
             <br />
