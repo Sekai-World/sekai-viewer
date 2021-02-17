@@ -1,4 +1,9 @@
-import { Container, Grid, makeStyles, Typography } from "@material-ui/core";
+import {
+  Container,
+  Grid,
+  /* makeStyles, */
+  Typography,
+} from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -9,17 +14,17 @@ import { getRemoteAssetURL } from "../../utils";
 import { useCurrentEvent } from "../../utils/apiClient";
 import Countdown from "../subs/Countdown";
 
-const useStyles = makeStyles((theme) => ({
-  banner: {
-    [theme.breakpoints.up("md")]: {
-      maxWidth: "60%",
-    },
-    maxWidth: "90%",
-  },
-}));
+// const useStyles = makeStyles((theme) => ({
+//   banner: {
+//     [theme.breakpoints.up("md")]: {
+//       maxWidth: "60%",
+//     },
+//     maxWidth: "90%",
+//   },
+// }));
 
 const CurrentEventWidget: React.FC<{}> = () => {
-  const classes = useStyles();
+  // const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const { currEvent } = useCurrentEvent();
