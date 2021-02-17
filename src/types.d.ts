@@ -1183,3 +1183,19 @@ export interface IAreaItem {
   spawnPoint: string;
   assetbundleName: string;
 }
+
+export interface EventPrediction {
+  data: {
+    ts: number;
+    "100": number;
+    "200": number;
+    "500": number;
+    "1000": number;
+    "2000": number;
+    "5000": number;
+    "10000": number;
+    "20000": number;
+    "50000": number;
+    "100000": number;
+  };
+}
