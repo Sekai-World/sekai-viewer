@@ -42,7 +42,7 @@ import ResourceBox from "../subs/ResourceBox";
 import { OpenInNew } from "@material-ui/icons";
 import { useInteractiveStyles } from "../../styles/interactive";
 import AudioPlayer from "../music/AudioPlayer";
-import AdSense from "../subs/AdSense";
+// import AdSense from "../subs/AdSense";
 
 const useStyle = makeStyles((theme) => ({
   bannerImg: {
@@ -694,12 +694,12 @@ const EventDetail: React.FC<{}> = () => {
           ))}
         </Grid>
       </Container>
-      <AdSense
+      {/* <AdSense
         client="ca-pub-7767752375383260"
         slot="5596436251"
         format="auto"
         responsive="true"
-      />
+      /> */}
       <Viewer
         visible={visible}
         onClose={() => setVisible(false)}

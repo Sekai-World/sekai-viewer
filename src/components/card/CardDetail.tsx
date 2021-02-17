@@ -56,7 +56,7 @@ import {
   ReleaseCondTrans,
 } from "../subs/ContentTrans";
 import ResourceBox from "../subs/ResourceBox";
-import AdSense from "../subs/AdSense";
+// import AdSense from "../subs/AdSense";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -1179,12 +1179,12 @@ const CardDetail: React.FC<{}> = () => {
           </TabPanel>
         </TabContext>
       </Container>
-      <AdSense
+      {/* <AdSense
         client="ca-pub-7767752375383260"
         slot="5596436251"
         format="auto"
         responsive="true"
-      />
+      /> */}
       <Viewer
         visible={visible}
         onClose={() => setVisible(false)}
