@@ -3,6 +3,7 @@ import { Skeleton } from "@material-ui/lab";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import Image from "material-ui-image";
 import { useLayoutStyles } from "../../styles/layout";
 import { getRemoteAssetURL } from "../../utils";
 import { useCurrentEvent } from "../../utils/apiClient";
@@ -40,17 +41,17 @@ const CurrentEventWidget: React.FC<{}> = () => {
         {t("common:ongoing_event")}
       </Typography>
       <Container className={layoutClasses.content}>
-        <Grid container spacing={1}>
+        <Grid container spacing={2} justify="center">
           {eventBanner ? (
-            <Grid item xs={12}>
+            <Grid item xs={7}>
               <Link to={`/event/${currEvent?.eventId}`}>
-                <Grid container justify="center" alignItems="flex-start">
-                  <img
-                    src={eventBanner}
-                    alt="event banner"
-                    className={classes.banner}
-                  />
-                </Grid>
+                <Image
+                  src={eventBanner}
+                  alt="event banner"
+                  // className={classes.banner}
+                  aspectRatio={5 / 2}
+                  color=""
+                />
               </Link>
             </Grid>
           ) : (
@@ -61,7 +62,7 @@ const CurrentEventWidget: React.FC<{}> = () => {
           {currEvent && (
             <Grid item xs={12} container justify="center">
               <Countdown endDate={new Date(currEvent.eventJson.aggregateAt)}>
-                <Typography>{t("event:alreadyEnded")}</Typography>
+                <Typography variant="h4">{t("event:alreadyEnded")}</Typography>
               </Countdown>
             </Grid>
           )}
