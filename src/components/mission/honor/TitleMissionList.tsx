@@ -388,6 +388,7 @@ const TitleMissionList: React.FC<{}> = () => {
                       "action_set",
                       "read_story",
                       "virtual_live",
+                      "friend",
                     ].map((tag) => (
                       <Grid key={"mission-type-" + tag} item>
                         <Chip

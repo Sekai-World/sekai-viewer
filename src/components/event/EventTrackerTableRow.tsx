@@ -120,6 +120,7 @@ export const HistoryRow: React.FC<{
                       <Grid item xs={4} md={3} lg={2}>
                         <DegreeImage
                           honorId={rankingData.userProfile.honorId1}
+                          honorLevel={rankingData.userProfile.honorLevel1}
                         />
                       </Grid>
                     )}
@@ -127,6 +128,7 @@ export const HistoryRow: React.FC<{
                       <Grid item xs={4} md={3} lg={2}>
                         <DegreeImage
                           honorId={rankingData.userProfile.honorId2}
+                          honorLevel={rankingData.userProfile.honorLevel2}
                         />
                       </Grid>
                     )}
@@ -134,6 +136,7 @@ export const HistoryRow: React.FC<{
                       <Grid item xs={4} md={3} lg={2}>
                         <DegreeImage
                           honorId={rankingData.userProfile.honorId3}
+                          honorLevel={rankingData.userProfile.honorLevel3}
                         />
                       </Grid>
                     )}
@@ -261,6 +264,7 @@ export const LiveRow: React.FC<{
                         <Grid item xs={6} md={4} lg={3}>
                           <DegreeImage
                             honorId={rankingData.userProfile.honorId1}
+                            honorLevel={rankingData.userProfile.honorLevel1}
                           />
                         </Grid>
                       )}
@@ -268,6 +272,7 @@ export const LiveRow: React.FC<{
                         <Grid item xs={6} md={4} lg={3}>
                           <DegreeImage
                             honorId={rankingData.userProfile.honorId2}
+                            honorLevel={rankingData.userProfile.honorLevel2}
                           />
                         </Grid>
                       )}
@@ -275,6 +280,7 @@ export const LiveRow: React.FC<{
                         <Grid item xs={6} md={4} lg={3}>
                           <DegreeImage
                             honorId={rankingData.userProfile.honorId3}
+                            honorLevel={rankingData.userProfile.honorLevel3}
                           />
                         </Grid>
                       )}
