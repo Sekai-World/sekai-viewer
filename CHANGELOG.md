@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.6](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.5...v0.4.6) (2021-02-18)
+
+
+### Features
+
+* **degree:** show degree level icons ([ba6a13f](https://github.com/Sekai-World/sekai-viewer/commits/ba6a13f924724fb15d777f5430b4eb645b859e46))
+* **user:** sekai profile music statistics ([aaa77bc](https://github.com/Sekai-World/sekai-viewer/commits/aaa77bcca11846f60e267a5c80ab53404bf9147d))
+
+
+### Bug Fixes
+
+* **unit-detail:** music name use translation ([4b2b7b0](https://github.com/Sekai-World/sekai-viewer/commits/4b2b7b0034b3467903ad134f80fe94e0146dd8f4))
+* **widget:** event banner no jump ([36d8c5e](https://github.com/Sekai-World/sekai-viewer/commits/36d8c5ead6ce6a3a0f510601404c674ca1f192be))
+
+
+### Refactors
+
+* **event:** event tracker layout refine ([2b8de3c](https://github.com/Sekai-World/sekai-viewer/commits/2b8de3c8aadb57f45cfb8faec99c4ef25e4b019f))
+* change adsense behaviour ([3d95319](https://github.com/Sekai-World/sekai-viewer/commits/3d95319bad44fb1279714840fc977340772f91fd))
+* unregister service worker if hostname not match ([6f3ace6](https://github.com/Sekai-World/sekai-viewer/commits/6f3ace6cfe00ea3a0a17a945759b69a6f6c713b0))
+
 ### [0.4.5](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.4...v0.4.5) (2021-02-12)
 
 
