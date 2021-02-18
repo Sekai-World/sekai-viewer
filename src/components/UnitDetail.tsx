@@ -9,6 +9,7 @@ import {
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
+import Image from "material-ui-image";
 import { SettingContext } from "../context";
 import { useLayoutStyles } from "../styles/layout";
 import { IGameChara, IMusicInfo, IMusicTagInfo, IUnitProfile } from "../types";
@@ -61,7 +62,7 @@ const UnitMusicImage: React.FC<{
       );
   }, [assetbundleName, img]);
 
-  return <img src={img} alt={title} style={{ maxWidth: "100%" }}></img>;
+  return <Image src={img} alt={title} aspectRatio={1} color="" />;
 };
 
 const UnitDetail: React.FC<{}> = () => {
@@ -253,26 +254,19 @@ const UnitDetail: React.FC<{}> = () => {
               <Grid item xs={6} md={3} lg={2}>
                 <Link to={"/music/" + um.id} style={{ textDecoration: "none" }}>
                   <Paper>
-                    <Grid
-                      container
-                      direction="column"
-                      alignItems="center"
-                      spacing={1}
-                    >
-                      <Grid item>
-                        <Grid
-                          container
-                          justify="flex-end"
-                          alignItems="flex-start"
-                        >
-                          <UnitMusicImage
-                            assetbundleName={um.assetbundleName}
-                            title={um.title}
-                            key={um.id}
-                          />
-                        </Grid>
+                    <Grid container spacing={1}>
+                      <Grid item xs={12}>
+                        <UnitMusicImage
+                          assetbundleName={um.assetbundleName}
+                          title={getTranslated(
+                            contentTransMode,
+                            `music_titles:${um.id}`,
+                            um.title
+                          )}
+                          key={um.id}
+                        />
                       </Grid>
-                      <Grid item>
+                      <Grid item xs={12}>
                         <ContentTrans
                           contentKey={`music_titles:${um.id}`}
                           original={um.title}
