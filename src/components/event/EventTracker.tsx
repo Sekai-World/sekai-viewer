@@ -485,6 +485,17 @@ const EventTracker: React.FC<{}> = () => {
                 {new Date(predData.data.ts).toLocaleString()}
               </Typography>
             )}
+            <FormGroup row>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={isFullRank}
+                    onChange={() => toggleIsFullRank()}
+                  />
+                }
+                label={t("event:tracker.show_all_rank")}
+              />
+            </FormGroup>
             {/* <Divider style={{ margin: "1% 0" }} /> */}
             <TableContainer component={Paper}>
               <Table size="small">
