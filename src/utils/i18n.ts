@@ -47,7 +47,6 @@ export async function initGlobalI18n() {
       defaultNS: "common",
       fallbackLng: {
         default: ["en"],
-        pt: ["pt-BR", "en"],
       },
       fallbackNS: "common",
       load: "currentOnly",
@@ -92,7 +91,6 @@ export async function initGlobalI18n() {
       ],
       fallbackLng: {
         default: ["ja"],
-        pt: ["pt-BR", "ja"],
       },
       load: "currentOnly",
       backend: {
