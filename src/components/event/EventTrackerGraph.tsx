@@ -1,6 +1,5 @@
 import {
   CircularProgress,
-  Container,
   Grid,
   Paper,
   Table,
@@ -33,7 +32,8 @@ const EventTrackerGraph: React.FC<{
   rtRanking?: EventRankingResponse;
   ranking: EventGraphRanking;
   eventId: number;
-}> = ({ rtRanking, ranking, eventId }) => {
+  mobileTable?: boolean;
+}> = ({ rtRanking, ranking, eventId, mobileTable = false }) => {
   const theme = useTheme();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
@@ -156,70 +156,89 @@ const EventTrackerGraph: React.FC<{
 
   return isShowChart ? (
     <Fragment>
-      {/* <Typography variant="h6" className={layoutClasses.header}>
-        {t("event:tracker.title.data_graph")}
-      </Typography> */}
-      <Container className={layoutClasses.content}>
-        <Grid container>
-          <Grid item xs={12}>
-            <Paper>
-              <ResponsiveContainer height={500}>
-                <LineChart data={chartData}>
-                  <CartesianGrid
-                    stroke={theme.palette.divider}
-                    strokeDasharray="10 10"
-                  />
-                  <XAxis
-                    dataKey="time"
-                    scale="time"
-                    type="number"
-                    domain={["auto", "auto"]}
-                    tickFormatter={(tick) => new Date(tick).toLocaleString()}
-                  />
-                  <YAxis type="number" domain={["auto", "auto"]} />
-                  <Brush
-                    dataKey="time"
-                    tickFormatter={(tick) => new Date(tick).toLocaleString()}
-                  />
-                  <Tooltip
-                    labelFormatter={(label) =>
-                      new Date(Number(label)).toLocaleString()
-                    }
-                    contentStyle={{
-                      backgroundColor: theme.palette.background.default,
-                    }}
-                    formatter={(value, name, props) => {
-                      return [
-                        `${value} - ${props.payload[`${name}_name`]}`,
-                        name,
-                      ];
-                    }}
-                  />
-                  <Legend />
-                  <Line
-                    // type="natural"
-                    dataKey={`T${ranking}`}
-                    dot={false}
-                    // stroke={colorArray[idx]}
-                    // hide={lineProps[`T${ranking}`] === "disabled"}
-                    strokeWidth={4}
-                    // strokeOpacity={
-                    //   !lineProps.hover || lineProps.hover === `T${ranking}`
-                    //     ? 1
-                    //     : 0.4
-                    // }
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </Paper>
-          </Grid>
+      <Grid container className={layoutClasses.content}>
+        <Grid item xs={12}>
+          <Paper variant={mobileTable ? "elevation" : "outlined"}>
+            <ResponsiveContainer height={500}>
+              <LineChart data={chartData}>
+                <CartesianGrid
+                  stroke={theme.palette.divider}
+                  strokeDasharray="10 10"
+                />
+                <XAxis
+                  dataKey="time"
+                  scale="time"
+                  type="number"
+                  domain={["auto", "auto"]}
+                  tickFormatter={(tick) => new Date(tick).toLocaleString()}
+                />
+                <YAxis type="number" domain={["auto", "auto"]} />
+                <Brush
+                  dataKey="time"
+                  tickFormatter={(tick) => new Date(tick).toLocaleString()}
+                />
+                <Tooltip
+                  labelFormatter={(label) =>
+                    new Date(Number(label)).toLocaleString()
+                  }
+                  contentStyle={{
+                    backgroundColor: theme.palette.background.default,
+                  }}
+                  formatter={(value, name, props) => {
+                    return [
+                      `${value} - ${props.payload[`${name}_name`]}`,
+                      name,
+                    ];
+                  }}
+                />
+                <Legend />
+                <Line
+                  // type="natural"
+                  dataKey={`T${ranking}`}
+                  dot={false}
+                  // stroke={colorArray[idx]}
+                  // hide={lineProps[`T${ranking}`] === "disabled"}
+                  strokeWidth={4}
+                  // strokeOpacity={
+                  //   !lineProps.hover || lineProps.hover === `T${ranking}`
+                  //     ? 1
+                  //     : 0.4
+                  // }
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </Paper>
         </Grid>
-      </Container>
-      {/* <Typography variant="h6" className={layoutClasses.header}>
-        {t("event:tracker.title.average_speed")}
-      </Typography> */}
-      <Container className={layoutClasses.content}>
-        <TableContainer component={Paper}>
+      </Grid>
+      {mobileTable ? (
+        <TableContainer
+          component={Paper}
+          variant={mobileTable ? "elevation" : "outlined"}
+          className={layoutClasses.content}
+        >
+          <Table size="small">
+            <TableBody>
+              <TableRow>
+                <TableCell>{t("event:speedTable.head.all_time")}</TableCell>
+                <TableCell align="center">{speedAllTime}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>{t("event:speedTable.head.last_24h")}</TableCell>
+                <TableCell align="center">{speedLast24h}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>{t("event:speedTable.head.last_1h")}</TableCell>
+                <TableCell align="center">{speedLast1h}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      ) : (
+        <TableContainer
+          component={Paper}
+          variant="outlined"
+          className={layoutClasses.content}
+        >
           <Table size="small">
             <TableHead>
               <TableRow>
@@ -245,7 +264,7 @@ const EventTrackerGraph: React.FC<{
             </TableBody>
           </Table>
         </TableContainer>
-      </Container>
+      )}
     </Fragment>
   ) : (
     <CircularProgress size={24} />
