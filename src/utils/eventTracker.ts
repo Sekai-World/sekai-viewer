@@ -2,6 +2,7 @@ import Axios from "axios";
 import { useCallback, useMemo } from "react";
 import {
   EventGraphRanking,
+  EventPrediction,
   EventRankingResponse,
   IEventRealtimeRank,
 } from "../types";
@@ -35,6 +36,32 @@ export function useEventTrackerAPI() {
             "/event/live"
           )
         ).data.data.eventRankings,
+      [axios]
+    ),
+    getEventPred: useCallback(async () => {
+      return (await axios.get<EventPrediction>(`/event/pred`)).data;
+    }, [axios]),
+    getEventTimePoints: useCallback(
+      async (eventId: number) => {
+        return (
+          await axios.get<{ data: string[] }>(`/event/${eventId}/rankings/time`)
+        ).data;
+      },
+      [axios]
+    ),
+    getEventRankingsByTimestamp: useCallback(
+      async (eventId: number, timestamp: Date) => {
+        return (
+          await axios.get<{ data: { eventRankings: EventRankingResponse[] } }>(
+            `/event/${eventId}/rankings`,
+            {
+              params: {
+                timestamp: timestamp.toISOString(),
+              },
+            }
+          )
+        ).data;
+      },
       [axios]
     ),
   };

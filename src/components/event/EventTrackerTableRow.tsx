@@ -161,7 +161,14 @@ export const LiveRow: React.FC<{
   rankingData: EventRankingResponse;
   eventDuration: number;
   rankingPred?: number;
-}> = ({ rankingReward, rankingData, eventDuration, rankingPred }) => {
+  noPred?: boolean;
+}> = ({
+  rankingReward,
+  rankingData,
+  eventDuration,
+  rankingPred,
+  noPred = false,
+}) => {
   // const { t } = useTranslation();
   const classes = useRowStyles();
   const layoutClasses = useLayoutStyles();
@@ -215,9 +222,11 @@ export const LiveRow: React.FC<{
             {Math.round(rankingData.score / (eventDuration / 1000 / 3600))}
           </Typography>
         </TableCell>
-        <TableCell>
-          <Typography align="right">{rankingPred || "N/A"}</Typography>
-        </TableCell>
+        {!noPred && (
+          <TableCell>
+            <Typography align="right">{rankingPred || "N/A"}</Typography>
+          </TableCell>
+        )}
       </TableRow>
       <TableRow>
         <TableCell colSpan={6} style={{ paddingTop: 0, paddingBottom: 0 }}>

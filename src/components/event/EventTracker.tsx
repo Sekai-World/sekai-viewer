@@ -1,5 +1,6 @@
 import {
   Button,
+  CircularProgress,
   Container,
   FormControlLabel,
   FormGroup,
@@ -8,6 +9,7 @@ import {
   LinearProgress,
   makeStyles,
   Paper,
+  Slider,
   Switch,
   Table,
   TableBody,
@@ -40,7 +42,7 @@ import {
   UserRanking,
 } from "../../types";
 import { useCachedData, useQuery, useToggle } from "../../utils";
-import { getEventPred, useCurrentEvent } from "../../utils/apiClient";
+import { useCurrentEvent } from "../../utils/apiClient";
 import {
   useEventTrackerAPI,
   useRealtimeEventData,
@@ -49,6 +51,7 @@ import { useAssetI18n } from "../../utils/i18n";
 import { HistoryMobileRow, LiveMobileRow } from "./EventTrackerMobileRow";
 // import DegreeImage from "../subs/DegreeImage";
 import { HistoryRow, LiveRow } from "./EventTrackerTableRow";
+import { useDebouncedCallback } from "use-debounce";
 
 const useStyles = makeStyles(() => ({
   eventSelect: {
@@ -64,7 +67,12 @@ const EventTracker: React.FC<{}> = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
-  const { getLive } = useEventTrackerAPI();
+  const {
+    getLive,
+    getEventPred,
+    getEventTimePoints,
+    getEventRankingsByTimestamp,
+  } = useEventTrackerAPI();
   const { contentTransMode } = useContext(SettingContext)!;
   const [refreshData] = useRealtimeEventData();
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
@@ -87,10 +95,18 @@ const EventTracker: React.FC<{}> = () => {
   const [nextRefreshTime, setNextRefreshTime] = useState<moment.Moment>();
   const [refreshCron, setRefreshCron] = useState<CronJob>();
   const [isFullRank, toggleIsFullRank] = useToggle(false);
+  const [isTimeTravel, toggleIsTimeTravel] = useToggle(false);
   // const [isGetPred, toggleIsGetPred] = useToggle(false);
   const [eventDuration, setEventDuration] = useState(0);
   const [predCron, setPredCron] = useState<CronJob>();
   const [predData, setPredData] = useState<EventPrediction>();
+  const [timePoints, setTimePoints] = useState<Date[]>([]);
+  const [sliderTime, setSliderTime] = useState<Date>();
+  const [sliderDefaultTime, setSliderDefaultTime] = useState<Date>();
+  const [sliderTimeRanking, setSliderTimeRanking] = useState<
+    EventRankingResponse[]
+  >([]);
+  const [fetchingTimePoints, toggleFetchingTimePoints] = useToggle(false);
 
   const fullRank = useMemo(
     () => [
@@ -158,7 +174,7 @@ const EventTracker: React.FC<{}> = () => {
   const refreshPrediction = useCallback(async () => {
     const data = await getEventPred();
     setPredData(data);
-  }, []);
+  }, [getEventPred]);
 
   const getHistoryData = useCallback(
     async (eventId: number) => {
@@ -167,7 +183,7 @@ const EventTracker: React.FC<{}> = () => {
       const rankingData = Object.values(data).filter((elem) =>
         Array.isArray(elem)
       ) as UserRanking[][];
-      console.log(Object.values(data), rankingData);
+      // console.log(Object.values(data), rankingData);
       setHistoryRanking(
         rankingData.reduce(
           (sum, elem) => [...sum, ...elem],
@@ -186,6 +202,12 @@ const EventTracker: React.FC<{}> = () => {
       setRtTime(undefined);
       setHistoryRanking([]);
       setHistoryTime(undefined);
+      setPredData(undefined);
+      setNextRefreshTime(undefined);
+      setTimePoints([]);
+      setSliderTime(undefined);
+      setSliderDefaultTime(undefined);
+      setSliderTimeRanking([]);
 
       setFetchProgress(0);
       setIsFetching(true);
@@ -291,6 +313,54 @@ const EventTracker: React.FC<{}> = () => {
     handleFetchGraph,
     query,
   ]);
+
+  const handleSliderChange = useDebouncedCallback(
+    async (_, value: number | number[]) => {
+      // setSliderTimeRanking([]);
+      setSliderTime(new Date(value as number));
+      setSliderTimeRanking(
+        (
+          await getEventRankingsByTimestamp(
+            selectedEventId,
+            new Date(value as number)
+          )
+        ).data.eventRankings
+      );
+    },
+    200
+  );
+
+  const handleTimeTravelChange = useCallback(
+    async (_, checked) => {
+      if (checked && !timePoints.length) {
+        toggleFetchingTimePoints();
+        const tps = (await getEventTimePoints(selectedEventId)).data.map(
+          (dateString) => new Date(dateString)
+        );
+        setTimePoints(tps);
+        setSliderTime(tps[tps.length - 1]);
+        setSliderDefaultTime(tps[tps.length - 1]);
+        setSliderTimeRanking(
+          (
+            await getEventRankingsByTimestamp(
+              selectedEventId,
+              tps[tps.length - 1]
+            )
+          ).data.eventRankings
+        );
+        toggleFetchingTimePoints();
+      }
+      toggleIsTimeTravel();
+    },
+    [
+      getEventRankingsByTimestamp,
+      getEventTimePoints,
+      selectedEventId,
+      timePoints.length,
+      toggleFetchingTimePoints,
+      toggleIsTimeTravel,
+    ]
+  );
 
   return (
     <Fragment>
@@ -436,187 +506,246 @@ const EventTracker: React.FC<{}> = () => {
           )}
         </Grid>
       </Container>
-      {!!selectedEventId &&
-        selectedEventId === currEvent.eventId &&
-        !!rtRanking.length &&
-        !!rtTime && (
-          <Fragment>
-            <Typography variant="h6" className={layoutClasses.header}>
-              {t("event:ranking")}
+      <Typography variant="h6" className={layoutClasses.header}>
+        {t("event:ranking")}
+      </Typography>
+      {!!selectedEventId && (!!rtRanking.length || !!historyRanking.length) && (
+        <Container className={layoutClasses.content}>
+          <Typography variant="h6">
+            {t("event:realtime")}{" "}
+            {isTimeTravel
+              ? sliderTime?.toLocaleString()
+              : (rtTime || historyTime || new Date(0)).toLocaleString()}
+          </Typography>
+          {!!nextRefreshTime && (
+            <Typography variant="body2" color="textSecondary">
+              {t("event:nextfetch")}: {nextRefreshTime.fromNow()}
             </Typography>
-            <Container className={layoutClasses.content}>
-              <Typography variant="h6">
-                {t("event:realtime")} {rtTime.toLocaleString()}
-              </Typography>
-              {!!nextRefreshTime && (
-                <Typography variant="body2" color="textSecondary">
-                  {t("event:nextfetch")}: {nextRefreshTime.fromNow()}
-                </Typography>
-              )}
-              {!!predData && (
-                <Typography variant="body2" color="textSecondary">
-                  {t("event:tracker.pred_at")}:{" "}
-                  {new Date(predData.data.ts).toLocaleString()}
-                </Typography>
-              )}
-              <FormGroup row>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={isFullRank}
-                      onChange={() => toggleIsFullRank()}
-                    />
-                  }
-                  label={t("event:tracker.show_all_rank")}
+          )}
+          {!!predData && (
+            <Typography variant="body2" color="textSecondary">
+              {t("event:tracker.pred_at")}:{" "}
+              {new Date(predData.data.ts).toLocaleString()}
+            </Typography>
+          )}
+          <FormGroup row>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={isFullRank}
+                  onChange={() => toggleIsFullRank()}
                 />
-              </FormGroup>
-              {/* <Divider style={{ margin: "1% 0" }} /> */}
-              <Alert severity="info" className={layoutClasses.alert}>
+              }
+              label={t("event:tracker.show_all_rank")}
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={isTimeTravel}
+                  onChange={handleTimeTravelChange}
+                  disabled={fetchingTimePoints}
+                />
+              }
+              label={
                 <Typography>
-                  {t("event:tracker.tooltip.get_prediction")}
+                  {t("event:tracker.time_travel_enabled")}{" "}
+                  {fetchingTimePoints && <CircularProgress size="12px" />}
                 </Typography>
-              </Alert>
-              {isMobile ? (
-                <Grid container spacing={1}>
-                  {events &&
-                    (isFullRank ? fullRank : critialRank).map((rank) => (
-                      <Grid item xs={12}>
-                        <LiveMobileRow
+              }
+            />
+          </FormGroup>
+          {isTimeTravel && (
+            <Slider
+              step={null}
+              min={timePoints[0].getTime()}
+              max={timePoints[timePoints.length - 1].getTime()}
+              marks={timePoints.map((tp) => ({ value: tp.getTime() }))}
+              disabled={!isTimeTravel}
+              defaultValue={sliderDefaultTime?.getTime()}
+              onChange={handleSliderChange.callback}
+            />
+          )}
+          {!isTimeTravel && !!rtRanking.length && !!rtTime && (
+            <Alert severity="info" className={layoutClasses.alert}>
+              <Typography>
+                {t("event:tracker.tooltip.get_prediction")}
+              </Typography>
+            </Alert>
+          )}
+          {!isTimeTravel &&
+            !!rtRanking.length &&
+            !!rtTime &&
+            (isMobile ? (
+              <Grid container spacing={1}>
+                {events &&
+                  (isFullRank ? fullRank : critialRank).map((rank) => (
+                    <Grid key={rank} item xs={12}>
+                      <LiveMobileRow
+                        rankingData={
+                          rtRanking.find((elem) => elem.rank === rank)!
+                        }
+                        rankingPred={predData?.data[String(rank) as "100"]}
+                      />
+                    </Grid>
+                  ))}
+              </Grid>
+            ) : (
+              <TableContainer component={Paper}>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell />
+                      <TableCell align="center">{t("event:ranking")}</TableCell>
+                      <TableCell align="center">
+                        {t("event:rankingTable.head.userProfile")}
+                      </TableCell>
+                      <TableCell align="right">
+                        {t("event:rankingTable.head.score")}
+                      </TableCell>
+                      <TableCell align="right">
+                        {t("event:rankingTable.head.speed_per_hour")}
+                      </TableCell>
+                      <TableCell align="right">
+                        {t("event:rankingTable.head.prediction")}
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {events &&
+                      (isFullRank ? fullRank : critialRank).map((rank) => (
+                        <LiveRow
+                          key={rank}
+                          rankingReward={events
+                            .find((ev) => ev.id === selectedEventId)!
+                            .eventRankingRewardRanges.find(
+                              (r) => r.toRank === rank
+                            )}
                           rankingData={
                             rtRanking.find((elem) => elem.rank === rank)!
                           }
+                          eventDuration={eventDuration}
                           rankingPred={predData?.data[String(rank) as "100"]}
                         />
-                      </Grid>
-                    ))}
-                </Grid>
-              ) : (
-                <TableContainer component={Paper}>
-                  <Table size="small">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell />
-                        <TableCell align="center">
-                          {t("event:ranking")}
-                        </TableCell>
-                        <TableCell align="center">
-                          {t("event:rankingTable.head.userProfile")}
-                        </TableCell>
-                        <TableCell align="right">
-                          {t("event:rankingTable.head.score")}
-                        </TableCell>
-                        <TableCell align="right">
-                          {t("event:rankingTable.head.speed_per_hour")}
-                        </TableCell>
-                        <TableCell align="right">
-                          {t("event:rankingTable.head.prediction")}
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {events &&
-                        (isFullRank ? fullRank : critialRank).map((rank) => (
-                          <LiveRow
-                            rankingReward={events
-                              .find((ev) => ev.id === selectedEventId)!
-                              .eventRankingRewardRanges.find(
-                                (r) => r.toRank === rank
-                              )}
-                            rankingData={
-                              rtRanking.find((elem) => elem.rank === rank)!
-                            }
-                            eventDuration={eventDuration}
-                            rankingPred={predData?.data[String(rank) as "100"]}
-                          />
-                        ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              )}
-            </Container>
-          </Fragment>
-        )}
-      {!!selectedEventId &&
-        selectedEventId !== currEvent.eventId &&
-        !!historyRanking.length &&
-        !!historyTime && (
-          <Fragment>
-            <Typography variant="h6" className={layoutClasses.header}>
-              {t("event:ranking")}
-            </Typography>
-            <Container className={layoutClasses.content}>
-              <Typography variant="h6">
-                {t("event:realtime")} {historyTime.toLocaleString()}
-              </Typography>
-              {/* <Divider style={{ margin: "1% 0" }} /> */}
-              <FormGroup row>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={isFullRank}
-                      onChange={() => toggleIsFullRank()}
-                    />
-                  }
-                  label={t("event:tracker.show_all_rank")}
-                />
-              </FormGroup>
-              {isMobile ? (
-                <Grid container spacing={1}>
-                  {events &&
-                    (isFullRank ? fullRank : critialRank).map((rank) => (
-                      <Grid item xs={12}>
-                        <HistoryMobileRow
+                      ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            ))}
+          {!isTimeTravel &&
+            !!historyRanking.length &&
+            !!historyTime &&
+            (isMobile ? (
+              <Grid container spacing={1}>
+                {events &&
+                  (isFullRank ? fullRank : critialRank).map((rank) => (
+                    <Grid key={rank} item xs={12}>
+                      <HistoryMobileRow
+                        rankingData={
+                          historyRanking.find((elem) => elem.rank === rank)!
+                        }
+                        eventId={selectedEvent!.id}
+                      />
+                    </Grid>
+                  ))}
+              </Grid>
+            ) : (
+              <TableContainer component={Paper}>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell />
+                      <TableCell align="center">{t("event:ranking")}</TableCell>
+                      <TableCell align="center">
+                        {t("event:rankingTable.head.userProfile")}
+                      </TableCell>
+                      <TableCell align="right">
+                        {t("event:rankingTable.head.score")}
+                      </TableCell>
+                      <TableCell align="right">
+                        {t("event:rankingTable.head.speed_per_hour")}
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {events &&
+                      (isFullRank ? fullRank : critialRank).map((rank) => (
+                        <HistoryRow
+                          key={rank}
+                          rankingReward={events
+                            .find((ev) => ev.id === selectedEventId)!
+                            .eventRankingRewardRanges.find(
+                              (r) => r.toRank === rank
+                            )}
                           rankingData={
                             historyRanking.find((elem) => elem.rank === rank)!
                           }
+                          eventDuration={eventDuration}
                           eventId={selectedEvent!.id}
                         />
-                      </Grid>
-                    ))}
-                </Grid>
-              ) : (
-                <TableContainer component={Paper}>
-                  <Table size="small">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell />
-                        <TableCell align="center">
-                          {t("event:ranking")}
-                        </TableCell>
-                        <TableCell align="center">
-                          {t("event:rankingTable.head.userProfile")}
-                        </TableCell>
-                        <TableCell align="right">
-                          {t("event:rankingTable.head.score")}
-                        </TableCell>
-                        <TableCell align="right">
-                          {t("event:rankingTable.head.speed_per_hour")}
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {events &&
-                        (isFullRank ? fullRank : critialRank).map((rank) => (
-                          <HistoryRow
-                            rankingReward={events
-                              .find((ev) => ev.id === selectedEventId)!
-                              .eventRankingRewardRanges.find(
-                                (r) => r.toRank === rank
-                              )}
-                            rankingData={
-                              historyRanking.find((elem) => elem.rank === rank)!
-                            }
-                            eventDuration={eventDuration}
-                            eventId={selectedEvent!.id}
-                          />
-                        ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              )}
-            </Container>
-          </Fragment>
-        )}
+                      ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            ))}
+          {isTimeTravel &&
+            !!sliderTimeRanking.length &&
+            (isMobile ? (
+              <Grid container spacing={1}>
+                {events &&
+                  (isFullRank ? fullRank : critialRank).map((rank) => (
+                    <Grid key={rank} item xs={12}>
+                      <LiveMobileRow
+                        rankingData={
+                          sliderTimeRanking.find((elem) => elem.rank === rank)!
+                        }
+                        noPred={true}
+                      />
+                    </Grid>
+                  ))}
+              </Grid>
+            ) : (
+              <TableContainer component={Paper}>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell />
+                      <TableCell align="center">{t("event:ranking")}</TableCell>
+                      <TableCell align="center">
+                        {t("event:rankingTable.head.userProfile")}
+                      </TableCell>
+                      <TableCell align="right">
+                        {t("event:rankingTable.head.score")}
+                      </TableCell>
+                      <TableCell align="right">
+                        {t("event:rankingTable.head.speed_per_hour")}
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {events &&
+                      (isFullRank ? fullRank : critialRank).map((rank) => (
+                        <LiveRow
+                          key={rank}
+                          rankingReward={events
+                            .find((ev) => ev.id === selectedEventId)!
+                            .eventRankingRewardRanges.find(
+                              (r) => r.toRank === rank
+                            )}
+                          rankingData={
+                            sliderTimeRanking.find(
+                              (elem) => elem.rank === rank
+                            )!
+                          }
+                          eventDuration={eventDuration}
+                          noPred={true}
+                        />
+                      ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            ))}
+        </Container>
+      )}
     </Fragment>
   );
 };

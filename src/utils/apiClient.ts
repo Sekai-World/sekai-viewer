@@ -18,12 +18,7 @@ import {
   UserMetadatumModel,
   UserModel,
 } from "../strapi-model";
-import {
-  EventPrediction,
-  ITeamBuild,
-  ITeamCardState,
-  IUserProfile,
-} from "../types";
+import { ITeamBuild, ITeamCardState, IUserProfile } from "../types";
 import useSWR from "swr";
 
 /**
@@ -606,14 +601,6 @@ export function useLive2dModelList() {
     isLoading: !error && !data,
     error,
   };
-}
-
-export async function getEventPred() {
-  return (
-    await Axios.get<EventPrediction>(
-      `${process.env.REACT_APP_API_BACKEND_BASE}/event/pred`
-    )
-  ).data;
 }
 
 /**
