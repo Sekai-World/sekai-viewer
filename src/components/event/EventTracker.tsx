@@ -317,6 +317,7 @@ const EventTracker: React.FC<{}> = () => {
   const handleSliderChange = useDebouncedCallback(
     async (_, value: number | number[]) => {
       // setSliderTimeRanking([]);
+      toggleFetchingTimePoints();
       setSliderTime(new Date(value as number));
       setSliderTimeRanking(
         (
@@ -326,6 +327,7 @@ const EventTracker: React.FC<{}> = () => {
           )
         ).data.eventRankings
       );
+      toggleFetchingTimePoints();
     },
     200
   );
@@ -563,7 +565,7 @@ const EventTracker: React.FC<{}> = () => {
               min={timePoints[0].getTime()}
               max={timePoints[timePoints.length - 1].getTime()}
               marks={timePoints.map((tp) => ({ value: tp.getTime() }))}
-              disabled={!isTimeTravel}
+              disabled={fetchingTimePoints}
               defaultValue={sliderDefaultTime?.getTime()}
               onChange={handleSliderChange.callback}
             />
