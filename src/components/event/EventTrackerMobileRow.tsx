@@ -7,6 +7,7 @@ import {
 } from "@material-ui/core";
 import { KeyboardArrowUp, KeyboardArrowDown } from "@material-ui/icons";
 import React, { Fragment, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useLayoutStyles } from "../../styles/layout";
 import { EventRankingResponse, UserRanking } from "../../types";
 import { CardThumb } from "../subs/CardThumb";
@@ -24,7 +25,7 @@ export const HistoryMobileRow: React.FC<{
   return (
     <Fragment>
       <Grid container onClick={() => setOpen(!open)} component={Paper}>
-        <Grid item>
+        <Grid item xs={2}>
           <IconButton
             aria-label="expand row"
             size="small"
@@ -115,8 +116,9 @@ export const HistoryMobileRow: React.FC<{
 export const LiveMobileRow: React.FC<{
   rankingData: EventRankingResponse;
   rankingPred?: number;
-}> = ({ rankingData, rankingPred }) => {
-  // const { t } = useTranslation();
+  noPred?: boolean;
+}> = ({ rankingData, rankingPred, noPred = false }) => {
+  const { t } = useTranslation();
   // const classes = useRowStyles();
   const layoutClasses = useLayoutStyles();
 
@@ -126,7 +128,7 @@ export const LiveMobileRow: React.FC<{
   return (
     <Fragment>
       <Grid container onClick={() => setOpen(!open)} component={Paper}>
-        <Grid item>
+        <Grid item xs={2}>
           <IconButton
             aria-label="expand row"
             size="small"
@@ -141,6 +143,17 @@ export const LiveMobileRow: React.FC<{
         <Grid item xs={4}>
           <Typography align="right">{rankingData.score} P</Typography>
         </Grid>
+        <Grid item xs={3}></Grid>
+        {!noPred && (
+          <Grid item xs={5}>
+            <Typography>{t("event:rankingTable.head.prediction")}</Typography>
+          </Grid>
+        )}
+        {!noPred && (
+          <Grid item xs={4}>
+            <Typography align="right">{rankingPred || "N/A"} P</Typography>
+          </Grid>
+        )}
         <Grid item xs={12}>
           <Grid container alignItems="center" spacing={1}>
             {rankingData.userCard && (
