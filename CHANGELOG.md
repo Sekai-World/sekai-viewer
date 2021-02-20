@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.7](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.6...v0.4.7) (2021-02-20)
+
+
+### Features
+
+* add placeholder for event analyzer ([48f3221](https://github.com/Sekai-World/sekai-viewer/commits/48f3221d7f3fc3183a0f0e43f3b79086e1bb07f6))
+* **event:** event tracker time travel ([ea49c1a](https://github.com/Sekai-World/sekai-viewer/commits/ea49c1a8875a9885bff162dd8b16f021ba0f2e72))
+
+
+### Bug Fixes
+
+* **event:** add missing prediction to event tracker mobile view ([05b4da1](https://github.com/Sekai-World/sekai-viewer/commits/05b4da1a0ffdcc45ee39372a08b23938f44185e5))
+* **event:** add show full rank switch to event tracker ([bd55669](https://github.com/Sekai-World/sekai-viewer/commits/bd556696977b5919048353db26e12c562fe7b011))
+
+
+### Refactors
+
+* **event:** event tracker better mobile view, remove unnecessary buttons ([da19859](https://github.com/Sekai-World/sekai-viewer/commits/da19859defdae25ed7d071a30641893e06c93767))
+
 ### [0.4.6](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.5...v0.4.6) (2021-02-18)
 
 
