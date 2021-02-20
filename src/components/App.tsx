@@ -129,6 +129,7 @@ const VirtualLiveDetail = lazy(
 const TranslationPage = lazy(() => import("./translation/TranslationPage"));
 const TranslationEditor = lazy(() => import("./translation/TranslationEditor"));
 const HonorList = lazy(() => import("./honor/HonorList"));
+const EventAnalyzer = lazy(() => import("./event/EventAnalyzer"));
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -488,6 +489,12 @@ function App() {
           icon: <Timeline></Timeline>,
           to: "/eventtracker",
           disabled: false,
+        },
+        {
+          text: t("common:eventAnalyzer"),
+          icon: <Timeline></Timeline>,
+          to: "/eventanalyzer",
+          disabled: true,
         },
       ],
       [
@@ -1017,6 +1024,9 @@ function App() {
                 </Route>
                 <Route path="/honor">
                   <HonorList />
+                </Route>
+                <Route path="/eventanalyzer">
+                  <EventAnalyzer />
                 </Route>
               </Suspense>
             </Switch>
