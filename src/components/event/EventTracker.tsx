@@ -406,7 +406,7 @@ const EventTracker: React.FC<{}> = () => {
           <Grid item>
             <Button
               variant="contained"
-              onClick={() =>
+              onClick={() => {
                 setSelectedEvent({
                   name: getTranslated(
                     contentTransMode,
@@ -414,8 +414,11 @@ const EventTracker: React.FC<{}> = () => {
                     currEvent.eventJson.name
                   ),
                   id: currEvent.eventId,
-                })
-              }
+                });
+                setRefreshCron(undefined);
+                setPredCron(undefined);
+                handleFetchGraph(currEvent.eventId);
+              }}
               disabled={isCurrEventLoading || isFetching}
             >
               {t("event:tracker.button.curr_event")}
