@@ -303,13 +303,26 @@ const MusicDetail: React.FC<{}> = () => {
 
   useEffect(() => {
     if (music) {
-      getRemoteAssetURL(
-        `music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}.webp`,
-        setMusicJacket,
-        window.isChinaMainland
-      );
+      if (
+        music.id === 19 &&
+        musicVocalTypes.length &&
+        musicVocalTypes[selectedPreviewVocalType].includes("original")
+      ) {
+        console.log(musicVocalTypes[selectedPreviewVocalType]);
+        getRemoteAssetURL(
+          `music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}_org.webp`,
+          setMusicJacket,
+          window.isChinaMainland
+        );
+      } else {
+        getRemoteAssetURL(
+          `music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}.webp`,
+          setMusicJacket,
+          window.isChinaMainland
+        );
+      }
     }
-  }, [music]);
+  }, [music, musicVocalTypes, selectedPreviewVocalType]);
 
   const getCharaIcon: (characterId: number) => JSX.Element = useCallback(
     (characterId) => {
