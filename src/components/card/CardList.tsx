@@ -86,6 +86,7 @@ import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 import { ContentTrans } from "../subs/ContentTrans";
 import { useCurrentEvent } from "../../utils/apiClient";
+import { useAssetI18n } from "../../utils/i18n";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -139,6 +140,7 @@ const CardList: React.FC<{}> = () => {
   const { contentTransMode } = useContext(SettingContext)!;
   const getCharaName = useCharaName(contentTransMode);
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
+  const { getTranslated } = useAssetI18n();
 
   const [cardsCache] = useCachedData<ICardInfo>("cards");
   const [charas] = useCachedData<IGameChara>("gameCharacters");
@@ -535,76 +537,77 @@ const CardList: React.FC<{}> = () => {
                   </Grid>
                 </Grid>
               </Grid>
-              <Grid
-                item
-                container
-                xs={12}
-                alignItems="center"
-                justify="space-between"
-                spacing={1}
-              >
-                <Grid item xs={12} md={1}>
-                  <Typography classes={{ root: interactiveClasses.caption }}>
-                    {t("common:support_unit")}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12} md={11}>
-                  <Grid container spacing={1}>
-                    {unitProfiles &&
-                      [
-                        "theme_park",
-                        "street",
-                        "idol",
-                        "school_refusal",
-                        "light_sound",
-                      ].map((supportUnit) => (
-                        <Grid key={"supportUnit-filter-" + supportUnit} item>
-                          <Chip
-                            clickable
-                            color={
-                              supportUnitSelected.includes(supportUnit)
-                                ? "primary"
-                                : "default"
-                            }
-                            avatar={
-                              <Avatar
-                                alt={supportUnit}
-                                src={UnitLogoMiniMap[supportUnit as "idol"]}
-                              />
-                            }
-                            label={
-                              <ContentTrans
-                                original={
-                                  unitProfiles.find(
-                                    (up) => up.unit === supportUnit
-                                  )!.unitName
-                                }
-                                contentKey={`unit_profile:${supportUnit}.name`}
-                                originalProps={{ variant: "body2" }}
-                                translatedProps={{ variant: "body2" }}
-                              />
-                            }
-                            onClick={() => {
-                              if (supportUnitSelected.includes(supportUnit)) {
-                                dispatchSupportUnitSelected({
-                                  type: "remove",
-                                  payload: supportUnit,
-                                  storeName: "card-list-filter-support-units",
-                                });
-                              } else {
-                                dispatchSupportUnitSelected({
-                                  type: "add",
-                                  payload: supportUnit,
-                                  storeName: "card-list-filter-support-units",
-                                });
+              {characterSelected.some((cId) => cId >= 21) && (
+                <Grid
+                  item
+                  container
+                  xs={12}
+                  alignItems="center"
+                  justify="space-between"
+                  spacing={1}
+                >
+                  <Grid item xs={12} md={1}>
+                    <Typography classes={{ root: interactiveClasses.caption }}>
+                      {t("common:support_unit")}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} md={11}>
+                    <Grid container spacing={1}>
+                      {unitProfiles &&
+                        [
+                          "theme_park",
+                          "street",
+                          "idol",
+                          "school_refusal",
+                          "light_sound",
+                        ].map((supportUnit) => (
+                          <Grid key={"supportUnit-filter-" + supportUnit} item>
+                            <Chip
+                              clickable
+                              color={
+                                supportUnitSelected.includes(supportUnit)
+                                  ? "primary"
+                                  : "default"
                               }
-                            }}
-                          />
-                        </Grid>
-                      ))}
+                              avatar={
+                                <Avatar
+                                  alt={supportUnit}
+                                  src={UnitLogoMiniMap[supportUnit as "idol"]}
+                                />
+                              }
+                              label={
+                                <Typography variant="body2">
+                                  {getTranslated(
+                                    contentTransMode,
+                                    `unit_profile:${supportUnit}.name`,
+                                    unitProfiles.find(
+                                      (up) => up.unit === supportUnit
+                                    )!.unitName
+                                  )}
+                                </Typography>
+                              }
+                              onClick={() => {
+                                if (supportUnitSelected.includes(supportUnit)) {
+                                  dispatchSupportUnitSelected({
+                                    type: "remove",
+                                    payload: supportUnit,
+                                    storeName: "card-list-filter-support-units",
+                                  });
+                                } else {
+                                  dispatchSupportUnitSelected({
+                                    type: "add",
+                                    payload: supportUnit,
+                                    storeName: "card-list-filter-support-units",
+                                  });
+                                }
+                              }}
+                            />
+                          </Grid>
+                        ))}
+                    </Grid>
                   </Grid>
                 </Grid>
-              </Grid>
+              )}
               <Grid
                 item
                 container
