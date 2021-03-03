@@ -6,7 +6,7 @@ import {
   FormGroup,
   // Divider,
   Grid,
-  LinearProgress,
+  // LinearProgress,
   makeStyles,
   Paper,
   Slider,
@@ -33,7 +33,7 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { SettingContext } from "../../context";
+import { SettingContext, UserContext } from "../../context";
 import { useLayoutStyles } from "../../styles/layout";
 import {
   EventPrediction,
@@ -52,6 +52,7 @@ import { HistoryMobileRow, LiveMobileRow } from "./EventTrackerMobileRow";
 // import DegreeImage from "../subs/DegreeImage";
 import { HistoryRow, LiveRow } from "./EventTrackerTableRow";
 import { useDebouncedCallback } from "use-debounce";
+import SekaiEventRecord from "./SekaiEventRecord";
 
 const useStyles = makeStyles(() => ({
   eventSelect: {
@@ -74,6 +75,7 @@ const EventTracker: React.FC<{}> = () => {
     getEventRankingsByTimestamp,
   } = useEventTrackerAPI();
   const { contentTransMode } = useContext(SettingContext)!;
+  const { sekaiProfile } = useContext(UserContext)!;
   const [refreshData] = useRealtimeEventData();
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
 
@@ -85,7 +87,7 @@ const EventTracker: React.FC<{}> = () => {
     id: number;
   } | null>(null);
   const [selectedEventId, setSelectedEventId] = useState(0);
-  const [fetchProgress, setFetchProgress] = useState(0);
+  // const [fetchProgress, setFetchProgress] = useState(0);
   const [isFetching, setIsFetching] = useState(false);
 
   const [rtRanking, setRtRanking] = useState<EventRankingResponse[]>([]);
@@ -166,9 +168,11 @@ const EventTracker: React.FC<{}> = () => {
   }, [predCron]);
 
   const refreshRealtimeData = useCallback(async () => {
+    setIsFetching(true);
     const data = await getLive();
     setRtRanking(data);
     setRtTime(new Date(data[0].timestamp));
+    setIsFetching(false);
   }, [getLive]);
 
   const refreshPrediction = useCallback(async () => {
@@ -209,11 +213,10 @@ const EventTracker: React.FC<{}> = () => {
       setSliderDefaultTime(undefined);
       setSliderTimeRanking([]);
 
-      setFetchProgress(0);
-      setIsFetching(true);
+      // setFetchProgress(0);
+      // setIsFetching(true);
       if (!eventId) {
-        setIsFetching(false);
-        setFetchProgress(0);
+        // setIsFetching(false);
         return;
       }
 
@@ -265,7 +268,7 @@ const EventTracker: React.FC<{}> = () => {
       }
 
       setSelectedEventId(eventId);
-      setIsFetching(false);
+      // setIsFetching(false);
     },
     [
       currEvent?.eventId,
@@ -427,92 +430,19 @@ const EventTracker: React.FC<{}> = () => {
             </Button>
           </Grid>
         </Grid>
-        {/* <Grid container spacing={1} alignItems="center">
-          <Grid item xs={12}>
-            <Autocomplete<EventGraphRanking, boolean>
-              multiple
-              disableCloseOnSelect
-              options={[
-                1,
-                2,
-                3,
-                4,
-                5,
-                6,
-                7,
-                8,
-                9,
-                10,
-                20,
-                30,
-                40,
-                50,
-                100,
-                200,
-                300,
-                400,
-                500,
-                1000,
-                2000,
-                3000,
-                4000,
-                5000,
-                10000,
-                20000,
-                30000,
-                40000,
-                50000,
-                100000,
-              ]}
-              getOptionLabel={(opt) => `T${opt}`}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  variant="standard"
-                  label={t("event:tracker.select.rankings")}
-                />
-              )}
-              value={selectedRankings}
-              onChange={(_, values) => {
-                if (typeof values === "number") {
-                  setSelectedRankings([values]);
-                } else if (Array.isArray(values)) {
-                  setSelectedRankings(values);
-                } else {
-                  setSelectedRankings([]);
-                }
-              }}
-              autoComplete
-              disabled={isFetching}
-            />
-          </Grid>
-        </Grid> */}
-        <Grid container spacing={1} alignItems="center">
-          {/* <Grid item xs={12}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() =>
-                !!selectedEvent && handleFetchGraph(selectedEvent.id)
-              }
-              disabled={isFetching}
-            >
-              {t("event:tracker.button.graph")}
-            </Button>
-          </Grid> */}
-          {isFetching && (
-            <Grid item xs={12}>
-              <LinearProgress
-                variant="buffer"
-                value={fetchProgress}
-                valueBuffer={fetchProgress}
-              />
-            </Grid>
-          )}
-        </Grid>
       </Container>
+      {!!sekaiProfile && !!sekaiProfile.sekaiUserProfile && (
+        <Fragment>
+          <Typography variant="h6" className={layoutClasses.header}>
+            {t("user:profile.title.user_event")}
+          </Typography>
+          <Container className={layoutClasses.content}>
+            <SekaiEventRecord eventId={selectedEventId} />
+          </Container>
+        </Fragment>
+      )}
       <Typography variant="h6" className={layoutClasses.header}>
-        {t("event:ranking")}
+        {t("event:ranking")} {isFetching && <CircularProgress size="24px" />}
       </Typography>
       {!!selectedEventId && (!!rtRanking.length || !!historyRanking.length) && (
         <Container className={layoutClasses.content}>
