@@ -1,6 +1,6 @@
 {
   "name": "sekai-viewer",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "private": true,
   "homepage": "https://sekai.best/",
   "dependencies": {
@@ -35,6 +35,7 @@
     "material-ui-image": "^3.3.1",
     "mdi-material-ui": "^6.21.0",
     "p-queue": "^6.6.2",
+    "plotly.js": "^1.58.4",
     "react": "^16.14.0",
     "react-device-detect": "^1.15.0",
     "react-dom": "^16.14.0",
@@ -43,6 +44,7 @@
     "react-jwt": "^1.1.0",
     "react-markdown-editor-lite": "^1.2.4",
     "react-password-strength-bar": "^0.3.2",
+    "react-plotly.js": "^2.5.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.2",
     "react-swipeable-views": "^0.13.9",

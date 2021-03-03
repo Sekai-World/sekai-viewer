@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.8](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.7...v0.4.8) (2021-03-03)
+
+
+### Features
+
+* **card:** only show support unit filter when vs character selected ([bf1bc54](https://github.com/Sekai-World/sekai-viewer/commits/bf1bc5498ee93bbf178c51af105c2c19cbf87667))
+* **event:** add sekai event record to event tracker ([dcdc811](https://github.com/Sekai-World/sekai-viewer/commits/dcdc811b6bc25e4dff03eef5eee770622bf4569d))
+* **music:** jacket for sekai ver of charles ([50b4ad9](https://github.com/Sekai-World/sekai-viewer/commits/50b4ad979b97ff26b6567a10925ee927968e41b8))
+* **user:** allow user check event record in the past ([1406dc8](https://github.com/Sekai-World/sekai-viewer/commits/1406dc89fa69a3e204debd7c40538c12e8950857))
+* **user:** card filter sync to card list ([230c02e](https://github.com/Sekai-World/sekai-viewer/commits/230c02e8ec6d0919be135a64eade794c387caeb0))
+
+
+### Bug Fixes
+
+* **event:** disable time travel slider when fetching data ([5e4c5b5](https://github.com/Sekai-World/sekai-viewer/commits/5e4c5b5ff5c7765dc1770eaf49faef68e62d9597))
+* **event:** event tracker current event button does not fetch data ([3995b78](https://github.com/Sekai-World/sekai-viewer/commits/3995b7880cc2f5129310884a68a67721cd5b0e37))
+* **user:** music statistics full combo count ([9aff556](https://github.com/Sekai-World/sekai-viewer/commits/9aff5561328988e66e1900aad2f378f9892f9f5b))
+
+
+### Refactors
+
+* update service worker cache strategy ([a0d6cc6](https://github.com/Sekai-World/sekai-viewer/commits/a0d6cc6c01a89890580b1fc3922e7e036dca0f99))
+
 ### [0.4.7](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.6...v0.4.7) (2021-02-20)
 
 
