@@ -55,7 +55,7 @@ const SekaiProfile = () => {
                 </Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <SekaiEventRecord profile={sekaiProfile} />
+                <SekaiEventRecord />
               </AccordionDetails>
             </Accordion>
             <Accordion
