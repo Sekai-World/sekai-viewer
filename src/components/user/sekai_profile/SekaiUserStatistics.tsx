@@ -99,7 +99,10 @@ const getFullComboCount = (idx: number, userMusics?: UserMusic[]) => {
   return userMusics.reduce((sum, umusic) => {
     const status = umusic.userMusicDifficultyStatuses[idx];
     const isFullCombo = status.userMusicResults.reduce(
-      (sum, elem) => sum || elem.playResult === "full_combo",
+      (sum, elem) =>
+        sum ||
+        elem.playResult === "full_combo" ||
+        elem.playResult === "full_perfect",
       false
     );
 
