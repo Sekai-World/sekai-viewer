@@ -98,31 +98,35 @@ const MusicRecommend: React.FC<{}> = () => {
     {
       field: "name",
       headerName: t("music_recommend:result.musicName"),
-      width: 500,
+      width: 400,
     },
     {
       field: "level",
       headerName: t("music:difficulty"),
-      width: 65,
+      width: 100,
       cellClassName: (it) => {
         return classes[it.row["difficulty"] as "easy"];
       },
+      align: "center",
     },
     {
       field: "duration",
       headerName: t("music:actualPlaybackTime"),
-      width: 125,
+      width: 150,
+      align: "center",
     },
     {
       field: "combo",
       headerName: t("music:noteCount"),
-      width: 90,
+      width: 110,
+      align: "center",
     },
     {
       field: "result",
       headerName: t("music_recommend:result.label"),
       width: 100,
       sortDirection: "desc",
+      align: "center",
     },
     {
       field: "action",
@@ -402,6 +406,10 @@ const MusicRecommend: React.FC<{}> = () => {
                 autoPageSize
                 rows={recommendResult}
                 columns={columns}
+                disableColumnFilter
+                disableColumnMenu
+                disableSelectionOnClick
+                disableColumnSelector
               />
             </div>
           </StepContent>
