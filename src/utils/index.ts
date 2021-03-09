@@ -269,13 +269,15 @@ export function useCharaName(contentTransMode: ContentTransModeType) {
 export function useMuisicMeta() {
   const fetchCached = useCallback(async (name: string) => {
     const { data }: { data: IMusicMeta[] } = await Axios.get(
-      process.env.PUBLIC_URL + `/${name}.json`
+      (window.isChinaMainland
+        ? process.env.REACT_APP_FRONTEND_ASSET_BASE_CN
+        : process.env.REACT_APP_FRONTEND_ASSET_BASE) + `/${name}.json`
     );
     //console.log(data.length);
     return data;
   }, []);
 
-  const { data } = useSWR("metas", fetchCached);
+  const { data } = useSWR("music_metas", fetchCached);
 
   return [data];
 }
