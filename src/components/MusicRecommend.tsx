@@ -1,5 +1,6 @@
 import {
   Button,
+  Chip,
   FormControl,
   FormControlLabel,
   FormLabel,
@@ -14,15 +15,8 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
-import React, {
-  Fragment,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { SettingContext } from "../context";
 import { useLayoutStyles } from "../styles/layout";
 import {
   ICardInfo,
@@ -32,12 +26,12 @@ import {
   ITeamCardState,
 } from "../types";
 import { useCachedData, useMuisicMeta } from "../utils";
-import { useAssetI18n } from "../utils/i18n";
 import { ColDef, DataGrid, ValueFormatterParams } from "@material-ui/data-grid";
 import { Link } from "react-router-dom";
 import { OpenInNew } from "@material-ui/icons";
 import { useScoreCalc } from "../utils/scoreCalc";
 import TeamBuilder from "./subs/TeamBuilder";
+import { ContentTrans } from "./subs/ContentTrans";
 
 const useStyle = makeStyles((theme) => ({
   easy: {
@@ -61,8 +55,6 @@ const MusicRecommend: React.FC<{}> = () => {
   const classes = useStyle();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
-  const { getTranslated } = useAssetI18n();
-  const { contentTransMode } = useContext(SettingContext)!;
 
   const [cards] = useCachedData<ICardInfo>("cards");
   const [skills] = useCachedData<ISkillInfo>("skills");
@@ -99,15 +91,31 @@ const MusicRecommend: React.FC<{}> = () => {
       field: "name",
       headerName: t("music_recommend:result.musicName"),
       width: 400,
+      renderCell(params) {
+        return (
+          <ContentTrans
+            contentKey={`music_titles:${params.getValue("mid")}`}
+            original={params.value as string}
+          />
+        );
+      },
     },
     {
       field: "level",
       headerName: t("music:difficulty"),
       width: 100,
-      cellClassName: (it) => {
-        return classes[it.row["difficulty"] as "easy"];
+      renderCell(params) {
+        return (
+          <Chip
+            color="primary"
+            size="small"
+            classes={{
+              colorPrimary: classes[params.getValue("difficulty") as "easy"],
+            }}
+            label={params.value}
+          ></Chip>
+        );
       },
-      align: "center",
     },
     {
       field: "duration",
@@ -201,11 +209,8 @@ const MusicRecommend: React.FC<{}> = () => {
 
         return {
           id: ++ii,
-          name: getTranslated(
-            contentTransMode,
-            `music_titles:${meta.music_id}`,
-            music.title
-          ),
+          mid: meta.music_id,
+          name: music.title,
           level: meta.level,
           difficulty: meta.difficulty,
           combo: meta.combo,
@@ -230,8 +235,6 @@ const MusicRecommend: React.FC<{}> = () => {
     musics,
     getScore,
     teamPowerStates,
-    getTranslated,
-    contentTransMode,
     getEventPoint,
     getEventPointPerHour,
   ]);

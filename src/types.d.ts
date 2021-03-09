@@ -528,6 +528,7 @@ export interface IMusicMeta {
 
 export interface IMusicRecommendResult {
   id: number;
+  mid: number;
   name: string;
   difficulty: string;
   level: number;
