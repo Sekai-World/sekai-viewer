@@ -971,7 +971,7 @@ const TeamBuilder: React.FC<{
         }}
       >
         {editingCard && (
-          <Container>
+          <Container style={{ paddingTop: "1em", paddingBottom: "1em" }}>
             <Grid container direction="column" spacing={1}>
               <Grid item>
                 <TextField
