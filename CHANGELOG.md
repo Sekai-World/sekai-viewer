@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.9](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.8...v0.4.9) (2021-03-09)
+
+
+### Features
+
+* **music:** add music meta page ([f85555f](https://github.com/Sekai-World/sekai-viewer/commits/f85555fff9de56499c074a6669cedb2c37b0309a))
+* **subs:** add padding to popover ([818d6f8](https://github.com/Sekai-World/sekai-viewer/commits/818d6f8a6c3cf2c553b15fcd478d7883cc6b1fb4))
+
+
+### Refactors
+
+* **mr:** table columns layout optimization ([bd16beb](https://github.com/Sekai-World/sekai-viewer/commits/bd16bebbb1527e9d993f34bccf1312e92549a829))
+* **mr:** table refine ([1338bce](https://github.com/Sekai-World/sekai-viewer/commits/1338bce724087b58459ecafcabe44235b1f81e15))
+* **utils:** update music meta url ([8fd6e2c](https://github.com/Sekai-World/sekai-viewer/commits/8fd6e2c9584e0ac014f2c97649708abebe2549af))
+
 ### [0.4.8](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.7...v0.4.8) (2021-03-03)
 
 
