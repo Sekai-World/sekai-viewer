@@ -130,6 +130,7 @@ const TranslationPage = lazy(() => import("./translation/TranslationPage"));
 const TranslationEditor = lazy(() => import("./translation/TranslationEditor"));
 const HonorList = lazy(() => import("./honor/HonorList"));
 const EventAnalyzer = lazy(() => import("./event/EventAnalyzer"));
+const MusicMeta = lazy(() => import("./music/MusicMeta"));
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -464,7 +465,7 @@ function App() {
           text: t("common:musicMeta"),
           icon: <QueueMusic />,
           to: "/music_meta",
-          disabled: true,
+          disabled: false,
         },
         {
           text: t("common:musicRecommend"),
@@ -1027,6 +1028,9 @@ function App() {
                 </Route>
                 <Route path="/eventanalyzer">
                   <EventAnalyzer />
+                </Route>
+                <Route path="/music_meta">
+                  <MusicMeta />
                 </Route>
               </Suspense>
             </Switch>
