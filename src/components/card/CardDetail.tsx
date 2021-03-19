@@ -56,6 +56,7 @@ import {
   ReleaseCondTrans,
 } from "../subs/ContentTrans";
 import ResourceBox from "../subs/ResourceBox";
+import { AudioPlayButton } from "../storyreader/StoryReaderSnippet";
 // import AdSense from "../subs/AdSense";
 
 const useStyles = makeStyles((theme) => ({
@@ -126,6 +127,7 @@ const CardDetail: React.FC<{}> = () => {
   const [sideStory2Unlocked, setSideStory2Unlocked] = useState<boolean>(true);
   // const [cardRank, setCardRank] = useState<number | number[]>(0);
   // const [maxCardRank, setMaxCardRank] = useState<number>(0);
+  const [gachaPhraseUrl, setGachaPhraseUrl] = useState("");
 
   const getSkillDesc = useCallback(
     (skill: ISkillInfo, skillLevel: number | number[]) => {
@@ -256,6 +258,13 @@ const CardDetail: React.FC<{}> = () => {
         ].level
       );
       setCardEpisode(episodes.filter((epi) => epi.cardId === Number(cardId)));
+      if (_card.gachaPhrase !== "-")
+        getRemoteAssetURL(
+          `sound/gacha/get_voice/${_card.assetbundleName}_rip/${_card.assetbundleName}.mp3`,
+          setGachaPhraseUrl,
+          window.isChinaMainland,
+          true
+        );
     }
   }, [
     setCard,
@@ -466,6 +475,39 @@ const CardDetail: React.FC<{}> = () => {
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
+          {card.gachaPhrase !== "-" && (
+            <Fragment>
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Grid item>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("card:gachaPhrase")}
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Grid container>
+                    <Grid item>
+                      <ContentTrans
+                        contentKey={`card_gacha_phrase:${card.id}`}
+                        original={card.gachaPhrase}
+                        originalProps={{ align: "right" }}
+                        translatedProps={{ align: "right" }}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <AudioPlayButton url={gachaPhraseUrl} />
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
+            </Fragment>
+          )}
           <Grid
             container
             direction="row"
