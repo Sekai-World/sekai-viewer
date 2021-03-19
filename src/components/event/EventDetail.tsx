@@ -25,10 +25,12 @@ import { Link, useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
 import {
+  ICardInfo,
   IEventCard,
   IEventDeckBonus,
   IEventInfo,
   IGameCharaUnit,
+  IVirtualLiveInfo,
 } from "../../types";
 import { getRemoteAssetURL, useCachedData } from "../../utils";
 import { attrIconMap, charaIcons } from "../../utils/resources";
@@ -42,6 +44,7 @@ import ResourceBox from "../subs/ResourceBox";
 import { OpenInNew } from "@material-ui/icons";
 import { useInteractiveStyles } from "../../styles/interactive";
 import AudioPlayer from "../music/AudioPlayer";
+import AgendaView from "../virtual_live/AgendaView";
 // import AdSense from "../subs/AdSense";
 
 const useStyle = makeStyles((theme) => ({
@@ -76,10 +79,16 @@ const EventDetail: React.FC<{}> = () => {
     "gameCharacterUnits"
   );
   const [eventCardsCache] = useCachedData<IEventCard>("eventCards");
+  const [cards] = useCachedData<ICardInfo>("cards");
+  const [virtualLives] = useCachedData<IVirtualLiveInfo>("virtualLives");
 
   const [event, setEvent] = useState<IEventInfo>();
   const [eventCards, setEventCards] = useState<IEventCard[]>([]);
+  const [boostCards, setBoostCards] = useState<ICardInfo[]>([]);
   const [eventDeckBonus, setEventDeckBonus] = useState<IEventDeckBonus[]>([]);
+  const [eventBonusCharas, setEventBonusCharas] = useState<IGameCharaUnit[]>(
+    []
+  );
   const [imgTabVal, setImgTabVal] = useState<string>("0");
   // const [intervalId, setIntervalId] = useState<number>();
   // const [nextRefreshTime, setNextRefreshTime] = useState<moment.Moment>();
@@ -88,6 +97,10 @@ const EventDetail: React.FC<{}> = () => {
   const [visible, setVisible] = useState<boolean>(false);
   const [activeIdx, setActiveIdx] = useState<number>(0);
   const [eventBgm, setEventBgm] = useState<string>("");
+  const [
+    linkedVirtualLive,
+    setLinkedVirtualLive,
+  ] = useState<IVirtualLiveInfo>();
 
   useEffect(() => {
     if (event) {
@@ -109,21 +122,59 @@ const EventDetail: React.FC<{}> = () => {
   useEffect(() => {
     if (
       events &&
-      events.length &&
       eventDeckBonuses &&
-      eventDeckBonuses.length &&
       eventCardsCache &&
-      eventCardsCache.length
+      cards &&
+      gameCharacterUnits &&
+      virtualLives
     ) {
-      setEvent(events.find((elem) => elem.id === Number(eventId)));
-      setEventDeckBonus(
-        eventDeckBonuses.filter((elem) => elem.eventId === Number(eventId))
+      const ev = events.find((elem) => elem.id === Number(eventId));
+      setEvent(ev);
+      const edb = eventDeckBonuses.filter(
+        (elem) => elem.eventId === Number(eventId)
       );
+      setEventDeckBonus(edb);
       setEventCards(
         eventCardsCache.filter((elem) => elem.eventId === Number(eventId))
       );
+      const ebc = edb
+        .slice(0, 5)
+        .map(
+          (elem) =>
+            gameCharacterUnits.find(
+              (gcu) => gcu.id === elem.gameCharacterUnitId
+            )!
+        );
+      setEventBonusCharas(ebc);
+      setBoostCards(
+        cards
+          .filter((elem) =>
+            ebc.some((chara) => {
+              let ret =
+                chara.gameCharacterId === elem.characterId &&
+                elem.attr === edb[0].cardAttr;
+              if (elem.characterId >= 21) {
+                ret = ret && chara.unit === elem.supportUnit;
+              }
+
+              return ret;
+            })
+          )
+          .sort((a, b) => b.rarity - a.rarity)
+      );
+      setLinkedVirtualLive(
+        virtualLives.find((elem) => elem.id === ev?.virtualLiveId)
+      );
     }
-  }, [events, eventId, eventDeckBonuses, eventCardsCache]);
+  }, [
+    events,
+    eventId,
+    eventDeckBonuses,
+    eventCardsCache,
+    cards,
+    gameCharacterUnits,
+    virtualLives,
+  ]);
 
   useEffect(() => {
     if (!event) {
@@ -231,7 +282,8 @@ const EventDetail: React.FC<{}> = () => {
     eventDeckBonus.length &&
     gameCharacterUnits &&
     gameCharacterUnits.length &&
-    eventCards.length ? (
+    eventCards.length &&
+    linkedVirtualLive ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
         {getTranslated(contentTransMode, `event_name:${eventId}`, event.name)}
@@ -364,55 +416,35 @@ const EventDetail: React.FC<{}> = () => {
             <Typography>{t(`event:type.${event.eventType}`)}</Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
-          <Grid
-            item
-            container
-            direction="row"
-            wrap="nowrap"
-            justify="space-between"
-            alignItems="center"
-          >
-            <Grid item xs={3}>
-              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                {t("event:eventCards")}
-              </Typography>
-            </Grid>
-            <Grid item xs={7} container justify="flex-end" spacing={2}>
-              {eventCards.map((card) => (
-                <Grid key={card.cardId} item xs={6} md={4}>
-                  <Link to={`/card/${card.cardId}`}>
-                    <CardThumb cardId={card.cardId} />
+          {Date.now() >= event.startAt && (
+            <Fragment>
+              <Grid
+                item
+                container
+                direction="row"
+                wrap="nowrap"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Grid item xs={4}>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("common:eventTracker")}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6} container justify="flex-end">
+                  <Link
+                    to={`/eventtracker?id=${eventId}`}
+                    className={interactiveClasses.noDecoration}
+                  >
+                    <Grid container alignItems="center">
+                      <OpenInNew />
+                    </Grid>
                   </Link>
                 </Grid>
-              ))}
-            </Grid>
-          </Grid>
-          <Divider style={{ margin: "1% 0" }} />
-          <Grid
-            item
-            container
-            direction="row"
-            wrap="nowrap"
-            justify="space-between"
-            alignItems="center"
-          >
-            <Grid item xs={4}>
-              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                {t("common:eventTracker")}
-              </Typography>
-            </Grid>
-            <Grid item xs={6} container justify="flex-end">
-              <Link
-                to={`/eventtracker?id=${eventId}`}
-                className={interactiveClasses.noDecoration}
-              >
-                <Grid container alignItems="center">
-                  <OpenInNew />
-                </Grid>
-              </Link>
-            </Grid>
-          </Grid>
-          <Divider style={{ margin: "1% 0" }} />
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
+            </Fragment>
+          )}
         </Grid>
       </Container>
       <Typography variant="h6" className={layoutClasses.header}>
@@ -486,24 +518,12 @@ const EventDetail: React.FC<{}> = () => {
               justify="space-between"
             >
               <Grid item container spacing={1} xs={6} sm={10}>
-                {eventDeckBonus.slice(0, 5).map((elem, idx) => (
+                {eventBonusCharas.slice(0, 5).map((chara, idx) => (
                   <Grid key={`chara-${idx}`} item>
                     <img
                       style={{ maxHeight: "36px" }}
-                      src={
-                        charaIcons[
-                          `CharaIcon${
-                            gameCharacterUnits.find(
-                              (gcu) => gcu.id === elem.gameCharacterUnitId
-                            )!.gameCharacterId
-                          }`
-                        ]
-                      }
-                      alt={`character ${
-                        gameCharacterUnits.find(
-                          (gcu) => gcu.id === elem.gameCharacterUnitId
-                        )!.gameCharacterId
-                      }`}
+                      src={charaIcons[`CharaIcon${chara.gameCharacterId}`]}
+                      alt={`character ${chara.gameCharacterId}`}
                     ></img>
                   </Grid>
                 ))}
@@ -526,6 +546,61 @@ const EventDetail: React.FC<{}> = () => {
               {t("event:maxBoost")}
             </Typography>
             <Typography>+50%</Typography>
+          </Grid>
+          <Divider style={{ margin: "1% 0" }} />
+          <Grid
+            item
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Grid item xs={3}>
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                {t("event:boostCards")}
+              </Typography>
+            </Grid>
+            <Grid item xs={7} container justify="flex-end" spacing={2}>
+              {boostCards.map((card) => (
+                <Grid key={card.id} item xs={6} md={4} xl={3}>
+                  <Link to={`/card/${card.id}`}>
+                    <CardThumb cardId={card.id} />
+                  </Link>
+                </Grid>
+              ))}
+            </Grid>
+          </Grid>
+          <Divider style={{ margin: "1% 0" }} />
+        </Grid>
+      </Container>
+      <Typography variant="h6" className={layoutClasses.header}>
+        {t("common:card")}
+      </Typography>
+      <Container className={layoutClasses.content} maxWidth="sm">
+        <Grid className={classes["grid-out"]} container direction="column">
+          <Grid
+            item
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Grid item xs={3}>
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                {t("event:eventCards")}
+              </Typography>
+            </Grid>
+            <Grid item xs={7} container justify="flex-end" spacing={2}>
+              {eventCards.map((card) => (
+                <Grid key={card.cardId} item xs={6} md={4} xl={3}>
+                  <Link to={`/card/${card.cardId}`}>
+                    <CardThumb cardId={card.cardId} />
+                  </Link>
+                </Grid>
+              ))}
+            </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
         </Grid>
@@ -634,12 +709,18 @@ const EventDetail: React.FC<{}> = () => {
         </Grid>
       </Container>
       <Typography variant="h6" className={layoutClasses.header}>
+        {t("common:virtualLive")}
+      </Typography>
+      <Container className={layoutClasses.content} maxWidth="md">
+        <AgendaView data={linkedVirtualLive} />
+      </Container>
+      <Typography variant="h6" className={layoutClasses.header}>
         {t("event:title.rankingRewards")}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="sm">
         <Grid className={classes["grid-out"]} container direction="column">
           {event.eventRankingRewardRanges.map((rankingReward) => (
-            <Fragment>
+            <Fragment key={rankingReward.id}>
               <Grid
                 item
                 container

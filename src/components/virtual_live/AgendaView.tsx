@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const GridView: React.FC<{ data?: IVirtualLiveInfo }> = ({ data }) => {
+const AgendaView: React.FC<{ data?: IVirtualLiveInfo }> = ({ data }) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
@@ -171,4 +171,4 @@ const GridView: React.FC<{ data?: IVirtualLiveInfo }> = ({ data }) => {
   );
 };
 
-export default GridView;
+export default AgendaView;
