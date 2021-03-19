@@ -23,10 +23,12 @@ export const SettingContext = createContext<
       displayMode: DisplayModeType;
       contentTransMode: ContentTransModeType;
       languages: LanguageModel[];
+      isShowSpoiler: boolean;
       updateLang(newLang: string): void;
       updateDisplayMode(newMode: DisplayModeType): void;
       updateContentTransMode(newMode: ContentTransModeType): void;
       updateLanguages(newLangs: LanguageModel[]): void;
+      updateIsShowSpoiler(mode: boolean): void;
     }
   | undefined
 >(undefined);
@@ -53,6 +55,10 @@ export const SettingProvider: React.FC<PropsWithChildren<{}>> = ({
     "content-translation-mode",
     "translated"
   );
+  const [isShowSpoiler, setIsShowSpoiler] = useLocalStorage<boolean>(
+    "is-show-spoiler",
+    true
+  );
 
   return (
     <SettingContext.Provider
@@ -74,6 +80,10 @@ export const SettingProvider: React.FC<PropsWithChildren<{}>> = ({
         languages,
         updateLanguages(newLangs: LanguageModel[]) {
           setLanguages(newLangs);
+        },
+        isShowSpoiler,
+        updateIsShowSpoiler(mode: boolean) {
+          setIsShowSpoiler(mode);
         },
       }}
     >

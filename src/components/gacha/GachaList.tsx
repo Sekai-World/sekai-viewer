@@ -1,6 +1,12 @@
 import { Typography, Container, Grid } from "@material-ui/core";
 import { useLayoutStyles } from "../../styles/layout";
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useCachedData, useLocalStorage } from "../../utils";
 import InfiniteScroll from "../subs/InfiniteScroll";
 
@@ -16,6 +22,7 @@ import {
 } from "@material-ui/icons";
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 import { Pound } from "mdi-material-ui";
+import { SettingContext } from "../../context";
 
 function getPaginatedGachas(gachas: IGachaInfo[], page: number, limit: number) {
   return gachas.slice(limit * (page - 1), limit * page);
@@ -26,6 +33,7 @@ const ListCard: React.FC<{ data?: IGachaInfo }> = GridView;
 const GachaList: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
+  const { isShowSpoiler } = useContext(SettingContext)!;
 
   const [gachas, setGachas] = useState<IGachaInfo[]>([]);
   const [gachasCache] = useCachedData<IGachaInfo>("gachas");
@@ -59,6 +67,11 @@ const GachaList: React.FC<{}> = () => {
   useEffect(() => {
     if (!gachasCache || !gachasCache.length) return;
     let sortedCache = [...gachasCache];
+    if (!isShowSpoiler) {
+      sortedCache = sortedCache.filter(
+        (g) => g.startAt <= new Date().getTime()
+      );
+    }
     if (sortType === "desc") {
       sortedCache = sortedCache.sort(
         (a, b) => b[sortBy as "startAt"] - a[sortBy as "startAt"]
@@ -71,7 +84,7 @@ const GachaList: React.FC<{}> = () => {
     setSortedCache(sortedCache);
     setGachas([]);
     setPage(0);
-  }, [gachasCache, setPage, sortType, sortBy]);
+  }, [gachasCache, setPage, sortType, sortBy, isShowSpoiler]);
 
   useEffect(() => {
     setIsReady(Boolean(gachasCache && gachasCache.length));

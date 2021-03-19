@@ -53,7 +53,7 @@ const MusicList: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
-  const { contentTransMode } = useContext(SettingContext)!;
+  const { contentTransMode, isShowSpoiler } = useContext(SettingContext)!;
   const musicTagToName = useMusicTagName(contentTransMode);
 
   const [musicsCache] = useCachedData<IMusicInfo>("musics");
@@ -100,15 +100,18 @@ const MusicList: React.FC<{}> = () => {
     if (musicsCache && musicTags) {
       let result = [...musicsCache];
       // do filter
+      if (!isShowSpoiler) {
+        result = result.filter((m) => m.publishedAt <= new Date().getTime());
+      }
       if (musicTag) {
-        result = result.filter((c) =>
+        result = result.filter((m) =>
           musicTags
-            .filter((mt) => mt.musicId === c.id)!
+            .filter((mt) => mt.musicId === m.id)!
             .some((mt) => musicTag === mt.musicTag)
         );
       }
       if (musicMVType) {
-        result = result.filter((c) => c.categories.includes(musicMVType));
+        result = result.filter((m) => m.categories.includes(musicMVType));
       }
       // sort musics cache
       switch (sortBy) {
@@ -132,6 +135,7 @@ const MusicList: React.FC<{}> = () => {
     musicTags,
     musicTag,
     musicMVType,
+    isShowSpoiler,
   ]);
 
   useEffect(() => {

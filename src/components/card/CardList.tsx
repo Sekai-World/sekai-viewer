@@ -137,7 +137,7 @@ const CardList: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
-  const { contentTransMode } = useContext(SettingContext)!;
+  const { contentTransMode, isShowSpoiler } = useContext(SettingContext)!;
   const getCharaName = useCharaName(contentTransMode);
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
   const { getTranslated } = useAssetI18n();
@@ -275,6 +275,9 @@ const CardList: React.FC<{}> = () => {
     ) {
       let result = [...cardsCache];
       // do filter
+      if (!isShowSpoiler) {
+        result = result.filter((c) => c.releaseAt <= new Date().getTime());
+      }
       if (characterSelected.length) {
         result = result.filter((c) =>
           characterSelected.includes(c.characterId)
@@ -342,6 +345,7 @@ const CardList: React.FC<{}> = () => {
     raritySelected,
     skillSelected,
     supportUnitSelected,
+    isShowSpoiler,
   ]);
 
   useEffect(() => {
