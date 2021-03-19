@@ -686,8 +686,8 @@ const CardList: React.FC<{}> = () => {
                           }
                           label={
                             <Grid container>
-                              {Array.from({ length: rarity }).map(() => (
-                                <Grid item>
+                              {Array.from({ length: rarity }).map((_, idx) => (
+                                <Grid item key={`rarity-${idx}`}>
                                   <img
                                     src={
                                       rarity >= 3
