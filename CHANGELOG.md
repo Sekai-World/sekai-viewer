@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.10](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.9...v0.4.10) (2021-03-19)
+
+
+### Features
+
+* **event:** add boost cards and virtual live section ([b30806f](https://github.com/Sekai-World/sekai-viewer/commits/b30806fb62d7289fb85a9b49d6c1e335d2a85a3c))
+* user can control whether to display spoiler content ([3f22a94](https://github.com/Sekai-World/sekai-viewer/commits/3f22a940d2c463d16d49fe3ea0b17544f2256175))
+* **card:** add gacha phrase with audio ([ad10d34](https://github.com/Sekai-World/sekai-viewer/commits/ad10d34af27774815c2f0a5c6292031d451b55d7))
+
+
+### Bug Fixes
+
+* **event:** handle event without virtual live ([e74c95e](https://github.com/Sekai-World/sekai-viewer/commits/e74c95efb0ae767c136f6887cdd73aa3842c62fb))
+* card list filter dispatch function name ([124bd21](https://github.com/Sekai-World/sekai-viewer/commits/124bd21d2f06ed42aee2afe372bc0e5aee3fdea1))
+* **card:** card list repeat no key warning ([a14fa2c](https://github.com/Sekai-World/sekai-viewer/commits/a14fa2c4d1fbe0072ff1156320c9187dcfed1646))
+* **misc:** audio play button unload howl on unmount ([5d0a328](https://github.com/Sekai-World/sekai-viewer/commits/5d0a3286c649d6d7dc4f71a75a54dc3d43167628))
+* **utils:** useLocalStorage reset value upon error ([503bdd0](https://github.com/Sekai-World/sekai-viewer/commits/503bdd0c044fa6da857811792d27265e590cd7df))
+
+
+### Refactors
+
+* index check sekai profile update as well ([1856756](https://github.com/Sekai-World/sekai-viewer/commits/18567563842cd5eec716c564621b4f5f2687d398))
+
 ### [0.4.9](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.8...v0.4.9) (2021-03-09)
 
 
