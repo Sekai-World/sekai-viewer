@@ -1105,9 +1105,9 @@ const SekaiUserCardList = () => {
                       );
                       // console.log(bonuses, eventId, eventDeckBonuses);
                       const attr = bonuses[0].cardAttr;
-                      dispatchAttrSelected({
+                      dispatchRaritySelected({
                         type: "reset",
-                        payload: "",
+                        payload: 0,
                         storeName: "user-profile-sekai-cards-filter-rarities",
                       });
                       dispatchAttrSelected({

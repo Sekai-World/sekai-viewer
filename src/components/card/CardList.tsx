@@ -902,9 +902,9 @@ const CardList: React.FC<{}> = () => {
                       );
                       // console.log(bonuses, eventId, eventDeckBonuses);
                       const attr = bonuses[0].cardAttr;
-                      dispatchAttrSelected({
+                      dispatchRaritySelected({
                         type: "reset",
-                        payload: "",
+                        payload: 0,
                         storeName: "card-list-filter-rarities",
                       });
                       dispatchAttrSelected({
