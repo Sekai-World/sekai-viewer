@@ -11,7 +11,11 @@ import "./index.css";
 import { SettingProvider } from "./context";
 import Axios from "axios";
 import localforage from "localforage";
-import { UserMetadatumModel, UserModel } from "./strapi-model";
+import {
+  SekaiProfileModel,
+  UserMetadatumModel,
+  UserModel,
+} from "./strapi-model";
 import AppSkeleton from "./components/AppSkeleton";
 
 TagManager.initialize({
@@ -79,6 +83,15 @@ window.isChinaMainland = false;
         }
       );
       localStorage.setItem("userMetaDatum", JSON.stringify(userMetaDatum));
+      let { data: sekaiProfile } = await axios.get<SekaiProfileModel>(
+        `/sekai-profiles/me`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      localStorage.setItem("sekaiProfile", JSON.stringify(sekaiProfile));
 
       localStorage.setItem("lastUserCheck", String(new Date().getTime()));
     }
