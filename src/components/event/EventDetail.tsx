@@ -282,8 +282,7 @@ const EventDetail: React.FC<{}> = () => {
     eventDeckBonus.length &&
     gameCharacterUnits &&
     gameCharacterUnits.length &&
-    eventCards.length &&
-    linkedVirtualLive ? (
+    eventCards.length ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
         {getTranslated(contentTransMode, `event_name:${eventId}`, event.name)}
@@ -708,12 +707,16 @@ const EventDetail: React.FC<{}> = () => {
           <Divider style={{ margin: "1% 0" }} />
         </Grid>
       </Container>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:virtualLive")}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
-        <AgendaView data={linkedVirtualLive} />
-      </Container>
+      {!!linkedVirtualLive && (
+        <Fragment>
+          <Typography variant="h6" className={layoutClasses.header}>
+            {t("common:virtualLive")}
+          </Typography>
+          <Container className={layoutClasses.content} maxWidth="md">
+            <AgendaView data={linkedVirtualLive} />
+          </Container>
+        </Fragment>
+      )}
       <Typography variant="h6" className={layoutClasses.header}>
         {t("event:title.rankingRewards")}
       </Typography>
