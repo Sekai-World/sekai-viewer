@@ -33,7 +33,7 @@ import { IUserInformationInfo } from "../types";
 import { getJPTime, useCachedData } from "../utils";
 import AnnouncementWidget from "./announcement/AnnouncementWidget";
 import CurrentEventWidget from "./event/CurrentEventWidget";
-// import AdSense from "./subs/AdSense";
+import AdSense from "./subs/AdSense";
 
 interface IDetectResult {
   webp: number;
@@ -351,12 +351,12 @@ function Home() {
           </Alert>
         )}
       </Container>
-      {/* <AdSense
+      <AdSense
         client="ca-pub-7767752375383260"
         slot="7908750736"
         format="auto"
         responsive="true"
-      /> */}
+      />
       <Grid container spacing={1}>
         <Grid item xs={12} md={6}>
           <AnnouncementWidget />
