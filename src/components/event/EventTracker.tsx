@@ -53,6 +53,7 @@ import { HistoryMobileRow, LiveMobileRow } from "./EventTrackerMobileRow";
 import { HistoryRow, LiveRow } from "./EventTrackerTableRow";
 import { useDebouncedCallback } from "use-debounce";
 import SekaiEventRecord from "./SekaiEventRecord";
+import AdSense from "../subs/AdSense";
 
 const useStyles = makeStyles(() => ({
   eventSelect: {
@@ -681,6 +682,12 @@ const EventTracker: React.FC<{}> = () => {
             ))}
         </Container>
       )}
+      <AdSense
+        client="ca-pub-7767752375383260"
+        slot="8221864477"
+        format="auto"
+        responsive="true"
+      />
     </Fragment>
   );
 };

@@ -15,6 +15,7 @@ import { useInteractiveStyles } from "../../styles/interactive";
 import { useLayoutStyles } from "../../styles/layout";
 import { IMusicInfo } from "../../types";
 import { useCachedData, useMuisicMeta } from "../../utils";
+import AdSense from "../subs/AdSense";
 import { ContentTrans } from "../subs/ContentTrans";
 
 const useStyles = makeStyles((theme) => ({
@@ -149,7 +150,7 @@ const MusicMeta = () => {
   return (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:music")}
+        {t("common:musicMeta")}
       </Typography>
       <Container className={layoutClasses.content}>
         {data ? (
@@ -166,6 +167,12 @@ const MusicMeta = () => {
           <CircularProgress size="30px" />
         )}
       </Container>
+      <AdSense
+        client="ca-pub-7767752375383260"
+        slot="8221864477"
+        format="auto"
+        responsive="true"
+      />
     </Fragment>
   );
 };

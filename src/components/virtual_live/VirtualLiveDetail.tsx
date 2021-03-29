@@ -20,7 +20,7 @@ import { ContentTrans } from "../subs/ContentTrans";
 import { charaIcons } from "../../utils/resources";
 import ResourceBox from "../subs/ResourceBox";
 import VirtualLiveStep from "./VirtualLiveStep";
-// import AdSense from "../subs/AdSense";
+import AdSense from "../subs/AdSense";
 
 const VirtualLiveDetail: React.FC<{}> = () => {
   const { t } = useTranslation();
@@ -285,6 +285,12 @@ const VirtualLiveDetail: React.FC<{}> = () => {
           ))}
         </Grid>
       </Container>
+      <AdSense
+        client="ca-pub-7767752375383260"
+        slot="8221864477"
+        format="auto"
+        responsive="true"
+      />
       <Typography variant="h6" className={layoutClasses.header}>
         {t("virtual_live:title.setlist")}
       </Typography>
@@ -293,12 +299,6 @@ const VirtualLiveDetail: React.FC<{}> = () => {
           <VirtualLiveStep key={setlist.id} data={setlist} />
         ))}
       </Container>
-      {/* <AdSense
-        client="ca-pub-7767752375383260"
-        slot="5596436251"
-        format="auto"
-        responsive="true"
-      /> */}
     </Fragment>
   ) : (
     <div>
