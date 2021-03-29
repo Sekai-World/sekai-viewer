@@ -58,7 +58,7 @@ import ResourceBox from "../subs/ResourceBox";
 import AudioPlayer from "./AudioPlayer";
 import { Howl } from "howler";
 import { saveAs } from "file-saver";
-// import AdSense from "../subs/AdSense";
+import AdSense from "../subs/AdSense";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -974,6 +974,12 @@ const MusicDetail: React.FC<{}> = () => {
           </TabContext>
         </Container>
       )}
+      <AdSense
+        client="ca-pub-7767752375383260"
+        slot="8221864477"
+        format="auto"
+        responsive="true"
+      />
       <Typography variant="h6" className={layoutClasses.header}>
         {t("music:achievement")}
       </Typography>
@@ -1107,12 +1113,6 @@ const MusicDetail: React.FC<{}> = () => {
             </Grid>
           </Container>
         )}
-      {/* <AdSense
-        client="ca-pub-7767752375383260"
-        slot="5596436251"
-        format="auto"
-        responsive="true"
-      /> */}
       <Viewer
         visible={visible}
         onClose={() => setVisible(false)}

@@ -57,7 +57,7 @@ import {
 } from "../subs/ContentTrans";
 import ResourceBox from "../subs/ResourceBox";
 import { AudioPlayButton } from "../storyreader/StoryReaderSnippet";
-// import AdSense from "../subs/AdSense";
+import AdSense from "../subs/AdSense";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -1039,6 +1039,12 @@ const CardDetail: React.FC<{}> = () => {
           <Divider style={{ margin: "1% 0" }} />
         </Grid>
       </Container>
+      <AdSense
+        client="ca-pub-7767752375383260"
+        slot="8221864477"
+        format="auto"
+        responsive="true"
+      />
       <Typography variant="h6" className={layoutClasses.header}>
         {t("card:sideStory", { count: cardEpisode.length })}
       </Typography>
@@ -1221,12 +1227,6 @@ const CardDetail: React.FC<{}> = () => {
           </TabPanel>
         </TabContext>
       </Container>
-      {/* <AdSense
-        client="ca-pub-7767752375383260"
-        slot="5596436251"
-        format="auto"
-        responsive="true"
-      /> */}
       <Viewer
         visible={visible}
         onClose={() => setVisible(false)}

@@ -45,7 +45,7 @@ import { OpenInNew } from "@material-ui/icons";
 import { useInteractiveStyles } from "../../styles/interactive";
 import AudioPlayer from "../music/AudioPlayer";
 import AgendaView from "../virtual_live/AgendaView";
-// import AdSense from "../subs/AdSense";
+import AdSense from "../subs/AdSense";
 
 const useStyle = makeStyles((theme) => ({
   bannerImg: {
@@ -707,6 +707,12 @@ const EventDetail: React.FC<{}> = () => {
           <Divider style={{ margin: "1% 0" }} />
         </Grid>
       </Container>
+      <AdSense
+        client="ca-pub-7767752375383260"
+        slot="8221864477"
+        format="auto"
+        responsive="true"
+      />
       {!!linkedVirtualLive && (
         <Fragment>
           <Typography variant="h6" className={layoutClasses.header}>
@@ -778,12 +784,6 @@ const EventDetail: React.FC<{}> = () => {
           ))}
         </Grid>
       </Container>
-      {/* <AdSense
-        client="ca-pub-7767752375383260"
-        slot="5596436251"
-        format="auto"
-        responsive="true"
-      /> */}
       <Viewer
         visible={visible}
         onClose={() => setVisible(false)}
