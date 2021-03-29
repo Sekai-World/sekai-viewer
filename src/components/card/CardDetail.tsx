@@ -490,7 +490,12 @@ const CardDetail: React.FC<{}> = () => {
                   </Typography>
                 </Grid>
                 <Grid item>
-                  <Grid container>
+                  <Grid
+                    container
+                    spacing={1}
+                    alignItems="center"
+                    justify="flex-end"
+                  >
                     <Grid item>
                       <ContentTrans
                         contentKey={`card_gacha_phrase:${card.id}`}
@@ -1111,12 +1116,12 @@ const CardDetail: React.FC<{}> = () => {
                 justify="space-between"
                 alignItems="center"
               >
-                <Grid item xs={2}>
+                <Grid item xs={3}>
                   <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                     {t("common:releaseCosts")}
                   </Typography>
                 </Grid>
-                <Grid item container spacing={1} xs={10} justify="flex-end">
+                <Grid item container spacing={1} xs={9} justify="flex-end">
                   {cardEpisode[0].costs.map((c, idx) => (
                     <Grid key={`episode-cost-${idx}`} item>
                       <MaterialIcon
@@ -1183,12 +1188,12 @@ const CardDetail: React.FC<{}> = () => {
                 justify="space-between"
                 alignItems="center"
               >
-                <Grid item xs={2}>
+                <Grid item xs={3}>
                   <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                     {t("common:releaseCosts")}
                   </Typography>
                 </Grid>
-                <Grid item container spacing={1} xs={10} justify="flex-end">
+                <Grid item container spacing={1} xs={9} justify="flex-end">
                   {cardEpisode[1].costs.map((c, idx) => (
                     <Grid key={`episode-cost-${idx}`} item>
                       <MaterialIcon
