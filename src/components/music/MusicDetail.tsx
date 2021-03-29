@@ -140,7 +140,7 @@ const MusicDetail: React.FC<{}> = () => {
   const [diffiInfoTabVal, setDiffiInfoTabVal] = useState<string>("4");
   const [actualPlaybackTime, setActualPlaybackTime] = useState<string>("");
   const [trimSilence, setTrimSilence] = useState<boolean>(false);
-  const [trimLoading, setTrimLoading] = useState<boolean>(true);
+  const [trimLoading, setTrimLoading] = useState<boolean>(false);
   const [longMusicPlaybackURL, setLongMusicPlaybackURL] = useState<
     string | undefined
   >();
@@ -233,7 +233,9 @@ const MusicDetail: React.FC<{}> = () => {
       musicVocal &&
       musicVocal[selectedPreviewVocalType] &&
       music &&
-      longMusicPlaybackURL
+      longMusicPlaybackURL &&
+      trimSilence &&
+      !trimmedMP3URL
     ) {
       setTrimOptions({
         sourceURL: longMusicPlaybackURL,
@@ -241,9 +243,6 @@ const MusicDetail: React.FC<{}> = () => {
         inclusive: false,
       });
       setTrimLoading(true);
-    } else {
-      setTrimOptions(undefined);
-      setTrimLoading(false);
     }
   }, [
     music,
@@ -253,6 +252,8 @@ const MusicDetail: React.FC<{}> = () => {
     setTrimOptions,
     setTrimLoading,
     longMusicPlaybackURL,
+    trimSilence,
+    trimmedMP3URL,
   ]);
 
   useEffect(() => {
@@ -263,6 +264,7 @@ const MusicDetail: React.FC<{}> = () => {
       trimmedMP3URL
     ) {
       setTrimmedLongMusicPlaybackURL(trimmedMP3URL);
+      setTrimLoading(false);
     } else {
       setTrimmedLongMusicPlaybackURL(undefined);
     }
@@ -537,7 +539,7 @@ const MusicDetail: React.FC<{}> = () => {
                       <Switch
                         checked={trimSilence}
                         onChange={() => setTrimSilence((v) => !v)}
-                        disabled={!trimmedMP3URL || trimFailed}
+                        disabled={trimFailed || trimLoading}
                       />
                     }
                     label={
