@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.11](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.10...v0.4.11) (2021-03-29)
+
+
+### Features
+
+* **music:** add link to chart image ([7c2c02b](https://github.com/Sekai-World/sekai-viewer/commits/7c2c02b0d0ac94992496fad3aa03734cb223b422))
+
+
+### Bug Fixes
+
+* avoid ToggleButtonGroup becomes null value ([46b75c8](https://github.com/Sekai-World/sekai-viewer/commits/46b75c8f6ad2414dc243b10622f4cf27315c5226))
+
+
+### Refactors
+
+* **card:** card detail page layout optimize ([23f637f](https://github.com/Sekai-World/sekai-viewer/commits/23f637f0ffa00b2d098fd8ab673d41e7bd798795))
+* **music:** make mp3 trim only when toggle is turned on ([17a8715](https://github.com/Sekai-World/sekai-viewer/commits/17a87158feeda1daa9a6bb77e45f4f0d7893b86f))
+
 ### [0.4.10](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.9...v0.4.10) (2021-03-19)
 
 
