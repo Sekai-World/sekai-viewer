@@ -58,7 +58,7 @@ export function useTrimMP3() {
     TrimOptions | undefined
   >(undefined);
   const [trimmedMP3URL, setTrimmedMP3URL] = useState<string | undefined>();
-  const [trimFailed, setTrimFailed] = useState<boolean | undefined>();
+  const [trimFailed, setTrimFailed] = useState<boolean>(false);
 
   // revoke old blob URLs
   {
@@ -77,7 +77,7 @@ export function useTrimMP3() {
     //console.log("trim start", options, optionsRef);
 
     setTrimmedMP3URL(undefined);
-    setTrimFailed(undefined);
+    setTrimFailed(false);
 
     if (!options) {
       return;
