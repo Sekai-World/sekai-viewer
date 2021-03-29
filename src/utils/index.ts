@@ -574,7 +574,7 @@ export function useLocalStorage<T>(
       // Get from local storage by key
       const item = window.localStorage.getItem(key);
       // Parse stored json or if none return initialValue
-      return item ? JSON.parse(item) : initialValue;
+      return item ? JSON.parse(item) || initialValue : initialValue;
     } catch (error) {
       // If error also return initialValue
       console.log(key, error);
@@ -591,9 +591,12 @@ export function useLocalStorage<T>(
       const valueToStore =
         value instanceof Function ? value(storedValue) : value;
       // Save state
-      setStoredValue(valueToStore);
+      setStoredValue(valueToStore || initialValue);
       // Save to local storage
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
+      window.localStorage.setItem(
+        key,
+        JSON.stringify(valueToStore || initialValue)
+      );
     } catch (error) {
       // A more advanced implementation would handle the error case
       console.log(error);

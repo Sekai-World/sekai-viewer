@@ -379,7 +379,7 @@ const CardList: React.FC<{}> = () => {
               color="primary"
               exclusive
               onChange={(_, gridType) => {
-                setViewGridType(gridType as "grid");
+                setViewGridType((gridType || "grid") as "grid");
               }}
             >
               <ToggleButton value="grid">
