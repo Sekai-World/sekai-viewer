@@ -94,6 +94,10 @@ const About: React.FC<{}> = () => {
                 xfl03
               </Link>
             </li>
+            <li>
+              <GitHub fontSize="inherit"></GitHub>
+              vvvvv
+            </li>
           </ul>
         </Alert>
         <Alert className={classes.alert} severity="info">
