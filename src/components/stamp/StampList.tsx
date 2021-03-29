@@ -140,7 +140,7 @@ const StampList: React.FC<{}> = () => {
   const handleUpdateSortType = useCallback(
     (_, sort: string) => {
       if (!sort) return;
-      setSortType(sort);
+      setSortType(sort || "asc");
     },
     [setSortType]
   );
@@ -148,7 +148,7 @@ const StampList: React.FC<{}> = () => {
   const handleUpdateSortBy = useCallback(
     (_, sort: string) => {
       if (!sort) return;
-      setSortBy(sort);
+      setSortBy(sort || "id");
     },
     [setSortBy]
   );

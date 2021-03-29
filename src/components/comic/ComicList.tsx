@@ -139,7 +139,7 @@ const ComicList: React.FC<{}> = () => {
           <ToggleButtonGroup
             value={resourceLang}
             exclusive
-            onChange={(ev, lang) => setResourceLang(lang as "ja")}
+            onChange={(ev, lang) => setResourceLang((lang || "ja") as "ja")}
             style={{ marginBottom: "1%" }}
             aria-label="resource language"
           >

@@ -120,14 +120,14 @@ const EventList: React.FC<{}> = () => {
 
   const handleUpdateSortType = useCallback(
     (_, sort: string) => {
-      setSortType(sort);
+      setSortType(sort || "asc");
     },
     [setSortType]
   );
 
   const handleUpdateSortBy = useCallback(
     (_, sort: string) => {
-      setSortBy(sort);
+      setSortBy(sort || "id");
     },
     [setSortBy]
   );
