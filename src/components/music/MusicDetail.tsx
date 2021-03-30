@@ -104,6 +104,7 @@ const MusicDetail: React.FC<{}> = () => {
   const [, humanizeDurationShort] = useDurationI18n();
   const [trimmedMP3URL, trimFailed, setTrimOptions] = useTrimMP3();
   const getCharaName = useCharaName(contentTransMode);
+  const getOriginalCharaName = useCharaName("original");
   const musicTagToName = useMusicTagName(contentTransMode);
 
   const [musics] = useCachedData<IMusicInfo>("musics");
@@ -140,7 +141,7 @@ const MusicDetail: React.FC<{}> = () => {
   const [vocalDisabled, setVocalDisabled] = useState<boolean>(false);
   const [diffiInfoTabVal, setDiffiInfoTabVal] = useState<string>("4");
   const [actualPlaybackTime, setActualPlaybackTime] = useState<string>("");
-  const [trimSilence, setTrimSilence] = useState<boolean>(false);
+  const [trimSilence, setTrimSilence] = useState<boolean>(true);
   const [trimLoading, setTrimLoading] = useState<boolean>(false);
   const [longMusicPlaybackURL, setLongMusicPlaybackURL] = useState<
     string | undefined
@@ -311,7 +312,7 @@ const MusicDetail: React.FC<{}> = () => {
         musicVocalTypes.length &&
         musicVocalTypes[selectedPreviewVocalType].includes("original")
       ) {
-        console.log(musicVocalTypes[selectedPreviewVocalType]);
+        // console.log(musicVocalTypes[selectedPreviewVocalType]);
         getRemoteAssetURL(
           `music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}_org.webp`,
           setMusicJacket,
@@ -384,15 +385,31 @@ const MusicDetail: React.FC<{}> = () => {
 
   const onSave = useCallback(
     (src: string) => {
-      console.log(src);
+      // console.log(src);
+      const vocals = musicVocal[
+        selectedPreviewVocalType
+      ].characters.map((chara) =>
+        chara.characterType === "game_character"
+          ? getOriginalCharaName(chara.characterId)
+          : outCharas && outCharas.length
+          ? outCharas.find((elem) => elem.id === chara.characterId)!.name
+          : chara.characterId
+      );
       saveAs(
         src,
         `${music?.title}-${
-          selectedPreviewVocalType === 0 ? "full" : "preview"
-        }.mp3`
+          vocalPreviewVal === "1" ? "full" : "preview"
+        }-${vocals.join("+")}.mp3`
       );
     },
-    [music, selectedPreviewVocalType]
+    [
+      getOriginalCharaName,
+      music?.title,
+      musicVocal,
+      outCharas,
+      selectedPreviewVocalType,
+      vocalPreviewVal,
+    ]
   );
 
   const VocalTypeSelector: React.FC<{
@@ -519,7 +536,10 @@ const MusicDetail: React.FC<{}> = () => {
             </Grid>
             <VocalTypeSelector
               vocalType={selectedPreviewVocalType}
-              onSelect={(v) => setSelectedPreviewVocalType(v)}
+              onSelect={(v) => {
+                setSelectedPreviewVocalType(v);
+                setTrimOptions(undefined);
+              }}
             />
             {vocalPreviewVal === "1" ? (
               <Grid
