@@ -63,7 +63,8 @@ const MusicList: React.FC<{}> = () => {
   const [sortedCache, setSortedCache] = useState<IMusicInfo[]>([]);
   const [viewGridType, setViewGridType] = useLocalStorage<ViewGridType>(
     "music-list-grid-view-type",
-    "grid"
+    "grid",
+    false
   );
   const [page, setPage] = useState<number>(0);
   const [limit] = useState<number>(12);

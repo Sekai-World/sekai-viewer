@@ -565,7 +565,8 @@ export function getColorArray(num: number) {
 
 export function useLocalStorage<T>(
   key: string,
-  initialValue: T
+  initialValue: T,
+  allowNull: boolean = true
 ): [T, (value: T | ((val: T) => T)) => void] {
   // State to store our value
   // Pass initial state function to useState so logic is only executed once
@@ -574,7 +575,16 @@ export function useLocalStorage<T>(
       // Get from local storage by key
       const item = window.localStorage.getItem(key);
       // Parse stored json or if none return initialValue
-      return item ? JSON.parse(item) || initialValue : initialValue;
+      // return item ? JSON.parse(item) : initialValue;
+      if (item) {
+        const parsed = JSON.parse(item);
+        if (!allowNull && !parsed) {
+          window.localStorage.setItem(key, JSON.stringify(initialValue));
+          return initialValue;
+        }
+        return parsed;
+      }
+      return initialValue;
     } catch (error) {
       // If error also return initialValue
       console.log(key, error);
@@ -591,11 +601,13 @@ export function useLocalStorage<T>(
       const valueToStore =
         value instanceof Function ? value(storedValue) : value;
       // Save state
-      setStoredValue(valueToStore || initialValue);
+      setStoredValue(!allowNull && !valueToStore ? initialValue : valueToStore);
       // Save to local storage
       window.localStorage.setItem(
         key,
-        JSON.stringify(valueToStore || initialValue)
+        JSON.stringify(
+          !allowNull && !valueToStore ? initialValue : valueToStore
+        )
       );
     } catch (error) {
       // A more advanced implementation would handle the error case

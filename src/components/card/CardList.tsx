@@ -156,7 +156,8 @@ const CardList: React.FC<{}> = () => {
   const [sortedCache, setSortedCache] = useState<ICardInfo[]>([]);
   const [viewGridType, setViewGridType] = useLocalStorage<ViewGridType>(
     "card-list-grid-view-type",
-    "grid"
+    "grid",
+    false
   );
   const [page, setPage] = useState<number>(0);
   const [limit] = useState<number>(12);
@@ -165,11 +166,13 @@ const CardList: React.FC<{}> = () => {
   const [filterOpen, togglefilterOpen] = useToggle(false);
   const [sortType, setSortType] = useLocalStorage<string>(
     "card-list-filter-sort-type",
-    "asc"
+    "asc",
+    false
   );
   const [sortBy, setSortBy] = useLocalStorage<string>(
     "card-list-filter-sort-by",
-    "id"
+    "id",
+    false
   );
   const [characterSelected, dispatchCharacterSelected] = useReducer(
     characterSelectReducer,
