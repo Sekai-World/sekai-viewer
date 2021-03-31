@@ -380,6 +380,7 @@ const EventTracker: React.FC<{}> = () => {
               options={(events || [])
                 .slice()
                 .reverse()
+                .filter((ev) => ev.startAt <= new Date().getTime())
                 .map((ev) => ({
                   name: getTranslated(
                     contentTransMode,
@@ -399,8 +400,8 @@ const EventTracker: React.FC<{}> = () => {
               value={selectedEvent}
               autoComplete
               onChange={(_, value) => {
-                setSelectedEvent(value);
                 if (!!value) {
+                  setSelectedEvent(value);
                   setRefreshCron(undefined);
                   setPredCron(undefined);
                   handleFetchGraph(value.id);
