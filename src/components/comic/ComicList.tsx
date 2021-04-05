@@ -45,7 +45,7 @@ const ComicList: React.FC<{}> = () => {
   const [visible, setVisible] = useState<boolean>(false);
   const [activeIdx, setActiveIdx] = useState<number>(0);
   const [resourceLang, setResourceLang] = useState<
-    "ja" | "fr" | "ru" | "zhs" | "zht"
+    "ja" | "fr" | "ru" | "zhs" | "zht" | "en"
   >("ja");
   const [comicImages, setComicImages] = useState<ImageDecorator[]>([]);
 
@@ -65,12 +65,20 @@ const ComicList: React.FC<{}> = () => {
           case "ja":
             url = `comic/one_frame_rip/${comic.assetbundleName}.webp`;
             break;
+          case "en":
+            url = `comic_${resourceLang}/${comic.assetbundleName}.jpg`;
+            break;
           default:
             url = `comic_${resourceLang}/${comic.assetbundleName}.png`;
             break;
         }
         images.push({
-          src: await getRemoteAssetURL(url),
+          src: await getRemoteAssetURL(
+            url,
+            undefined,
+            window.isChinaMainland,
+            resourceLang === "en"
+          ),
           alt: getTranslated(
             contentTransMode,
             `comic_title:${comic.id}`,
@@ -158,6 +166,9 @@ const ComicList: React.FC<{}> = () => {
             <ToggleButton size="medium" value="zht">
               <Typography>繁</Typography>
             </ToggleButton>
+            <ToggleButton size="medium" value="en">
+              <Typography>EN</Typography>
+            </ToggleButton>
           </ToggleButtonGroup>
         </Grid>
         {resourceLang === "fr" ? (
@@ -200,6 +211,18 @@ const ComicList: React.FC<{}> = () => {
         ) : resourceLang === "zht" ? (
           <Alert severity="info">
             <Typography>Credit: CHKO</Typography>
+          </Alert>
+        ) : resourceLang === "en" ? (
+          <Alert severity="info">
+            <Typography>
+              Credit:{" "}
+              <Link
+                href="https://twitter.com/pjsekai_eng"
+                style={{ textDecorationLine: "none" }}
+              >
+                <Twitter fontSize="inherit" /> @pjsekai_eng
+              </Link>
+            </Typography>
           </Alert>
         ) : null}
         <InfiniteScroll<ITipInfoComic>
