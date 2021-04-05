@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.14](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.13...v0.4.14) (2021-04-05)
+
+
+### Features
+
+* **comic:** add en translation ([3bdd2c0](https://github.com/Sekai-World/sekai-viewer/commits/3bdd2c02b67de3f95d1ce61651c0bf2619853f5c))
+* **stamp:** add filter for text ([1675e5b](https://github.com/Sekai-World/sekai-viewer/commits/1675e5b7162943bb8737109c1aa91e74afd17f11))
+* **support:** patron list from strapi ([c099ac3](https://github.com/Sekai-World/sekai-viewer/commits/c099ac3281689c90e59229f9fe73aa49dacfba87))
+
 ### [0.4.13](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.12...v0.4.13) (2021-03-31)
 
 
