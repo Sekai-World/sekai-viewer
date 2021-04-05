@@ -289,7 +289,7 @@ const StampList: React.FC<{}> = () => {
                         <Chip
                           clickable
                           color={stampType === type ? "primary" : "default"}
-                          label={t(`filter.stampType.${type}`)}
+                          label={t(`filter:stampType.${type}`)}
                           onClick={() => {
                             if (stampType === type) setStampType("");
                             else setStampType(type);
