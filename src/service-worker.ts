@@ -88,7 +88,11 @@ registerRoute(
   ({ url }) =>
     (url.origin === "https://sekai-res.dnaroma.eu" ||
       url.origin === "https://sekai-assets-1258184166.file.myqcloud.com") &&
-    (url.pathname.endsWith(".png") || url.pathname.endsWith(".webp")),
+    (url.pathname.endsWith(".png") ||
+      url.pathname.endsWith(".webp") ||
+      url.pathname.endsWith(".moc3.bytes") ||
+      url.pathname.endsWith(".model3.json") ||
+      url.pathname.endsWith(".physics3.json")),
   // Customize this strategy as needed, e.g., by changing to CacheFirst.
   new CacheFirst({
     cacheName: "sekaiResImages",
@@ -106,7 +110,11 @@ registerRoute(
     (url.origin === "https://minio.dnaroma.eu" ||
       url.origin ===
         "https://sekai-best-assets-1258184166.file.myqcloud.com") &&
-    (url.pathname.endsWith(".png") || url.pathname.endsWith(".webp")),
+    (url.pathname.endsWith(".png") ||
+      url.pathname.endsWith(".webp") ||
+      url.pathname.endsWith(".moc3.bytes") ||
+      url.pathname.endsWith(".model3.json") ||
+      url.pathname.endsWith(".physics3.json")),
   // Customize this strategy as needed, e.g., by changing to CacheFirst.
   new CacheFirst({
     cacheName: "minioImages",
@@ -114,6 +122,26 @@ registerRoute(
       // Ensure that once this runtime cache reaches a maximum size the
       // least-recently used images are removed.
       new ExpirationPlugin({ maxEntries: 500 }),
+    ],
+  })
+);
+
+registerRoute(
+  // Add in any other file extensions or routing criteria as needed.
+  ({ url }) =>
+    (url.origin === "https://sekai-res.dnaroma.eu" ||
+      url.origin === "https://sekai-assets-1258184166.file.myqcloud.com" ||
+      url.origin === "https://minio.dnaroma.eu" ||
+      url.origin ===
+        "https://sekai-best-assets-1258184166.file.myqcloud.com") &&
+    (url.pathname.endsWith(".mp3") || url.pathname.endsWith(".flac")),
+  // Customize this strategy as needed, e.g., by changing to CacheFirst.
+  new CacheFirst({
+    cacheName: "sekaiAudioFiles",
+    plugins: [
+      // Ensure that once this runtime cache reaches a maximum size the
+      // least-recently used images are removed.
+      new ExpirationPlugin({ maxEntries: 300 }),
     ],
   })
 );
