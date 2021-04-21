@@ -39,22 +39,23 @@ import { useDurationI18n } from "../../utils/i18nDuration";
 import { SettingContext } from "../../context";
 import { ContentTrans } from "../subs/ContentTrans";
 import { CardThumb } from "../subs/CardThumb";
-import DegreeImage from "../subs/DegreeImage";
+// import DegreeImage from "../subs/DegreeImage";
 import ResourceBox from "../subs/ResourceBox";
 import { OpenInNew } from "@material-ui/icons";
 import { useInteractiveStyles } from "../../styles/interactive";
 import AudioPlayer from "../music/AudioPlayer";
 import AgendaView from "../virtual_live/AgendaView";
 import AdSense from "../subs/AdSense";
+import Image from "material-ui-image";
 
 const useStyle = makeStyles((theme) => ({
-  bannerImg: {
-    maxWidth: "100%",
-  },
-  eventImg: {
-    maxWidth: "100%",
-    cursor: "pointer",
-  },
+  // bannerImg: {
+  //   maxWidth: "100%",
+  // },
+  // eventImg: {
+  //   maxWidth: "100%",
+  //   cursor: "pointer",
+  // },
   tabpanel: {
     padding: theme.spacing("1%", 0, 0, 0),
   },
@@ -304,42 +305,48 @@ const EventDetail: React.FC<{}> = () => {
             <TabPanel value="0" classes={{ root: classes.tabpanel }}>
               <Grid container direction="row">
                 <Grid item xs={12} md={6}>
-                  <img
-                    className={classes.bannerImg}
+                  <Image
+                    // className={classes.bannerImg}
                     src={eventLogo}
                     alt="logo"
-                  ></img>
+                    aspectRatio={16 / 7}
+                    color=""
+                  ></Image>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <img
-                    className={classes.bannerImg}
+                  <Image
+                    // className={classes.bannerImg}
                     src={eventBanner}
                     alt="banner"
-                  ></img>
+                    aspectRatio={16 / 7}
+                    color=""
+                  ></Image>
                 </Grid>
               </Grid>
             </TabPanel>
             <TabPanel value="1" classes={{ root: classes.tabpanel }}>
-              <img
+              <Image
                 onClick={() => {
                   setActiveIdx(0);
                   setVisible(true);
                 }}
-                className={classes.eventImg}
+                className={interactiveClasses.pointer}
                 src={eventBackground}
+                aspectRatio={1.625}
                 alt="background"
-              ></img>
+              ></Image>
             </TabPanel>
             <TabPanel value="2" classes={{ root: classes.tabpanel }}>
-              <img
+              <Image
                 onClick={() => {
                   setActiveIdx(1);
                   setVisible(true);
                 }}
-                className={classes.eventImg}
+                className={interactiveClasses.pointer}
                 src={eventCharacter}
+                aspectRatio={1.625}
                 alt="character"
-              ></img>
+              ></Image>
             </TabPanel>
           </Paper>
         </TabContext>
