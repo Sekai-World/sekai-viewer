@@ -129,7 +129,7 @@ const About: React.FC<{}> = () => {
               ReiZenKai, Tlayoli, Vlxx, fivian_clark, kevinthojedat
             </li>
             <li>It: SeaPu, RayFirefist, Kyon86, MattiVocaloidLover, Aki06</li>
-            <li>Pl: sousie, Wheatley, Kimochi</li>
+            <li>Pl: sousie, Wheatley, Kimochi, Kimoyo</li>
             <li>En: watatomo, Wandering Spirit</li>
             <li>Fr: Yasito, ManyBees, しょうゆ</li>
             <li>Ind: Rizkiawan (Fueeru), CrystL, Muko Mitsune</li>
