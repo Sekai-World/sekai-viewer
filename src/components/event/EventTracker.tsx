@@ -519,7 +519,15 @@ const EventTracker: React.FC<{}> = () => {
                     <Grid key={rank} item xs={12}>
                       <LiveMobileRow
                         rankingData={
-                          rtRanking.find((elem) => elem.rank === rank)!
+                          rtRanking.find((elem) => elem.rank === rank) || {
+                            id: -1,
+                            eventId: selectedEventId,
+                            timestamp: "0",
+                            rank,
+                            score: 0,
+                            userId: "0",
+                            userName: "N/A",
+                          }
                         }
                         rankingPred={predData?.data[String(rank) as "100"]}
                       />
@@ -558,7 +566,15 @@ const EventTracker: React.FC<{}> = () => {
                               (r) => r.toRank === rank
                             )}
                           rankingData={
-                            rtRanking.find((elem) => elem.rank === rank)!
+                            rtRanking.find((elem) => elem.rank === rank) || {
+                              id: -1,
+                              eventId: selectedEventId,
+                              timestamp: "0",
+                              rank,
+                              score: 0,
+                              userId: "0",
+                              userName: "N/A",
+                            }
                           }
                           eventDuration={eventDuration}
                           rankingPred={predData?.data[String(rank) as "100"]}
@@ -633,7 +649,17 @@ const EventTracker: React.FC<{}> = () => {
                     <Grid key={rank} item xs={12}>
                       <LiveMobileRow
                         rankingData={
-                          sliderTimeRanking.find((elem) => elem.rank === rank)!
+                          sliderTimeRanking.find(
+                            (elem) => elem.rank === rank
+                          ) || {
+                            id: -1,
+                            eventId: selectedEventId,
+                            timestamp: "0",
+                            rank,
+                            score: 0,
+                            userId: "0",
+                            userName: "N/A",
+                          }
                         }
                         noPred={true}
                       />
@@ -671,7 +697,15 @@ const EventTracker: React.FC<{}> = () => {
                           rankingData={
                             sliderTimeRanking.find(
                               (elem) => elem.rank === rank
-                            )!
+                            ) || {
+                              id: -1,
+                              eventId: selectedEventId,
+                              timestamp: "0",
+                              rank,
+                              score: 0,
+                              userId: "0",
+                              userName: "N/A",
+                            }
                           }
                           eventDuration={eventDuration}
                           noPred={true}
