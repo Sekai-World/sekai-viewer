@@ -162,29 +162,6 @@ const SekaiUserCardList = () => {
           card: cards.find((c) => c.id === elem.cardId)!,
         })
       );
-      if (characterSelected.length) {
-        _cardList = _cardList.filter((elem) =>
-          characterSelected.includes(elem.card.characterId)
-        );
-      }
-      if (attrSelected.length) {
-        _cardList = _cardList.filter((elem) =>
-          attrSelected.includes(elem.card.attr)
-        );
-      }
-      if (raritySelected.length) {
-        _cardList = _cardList.filter((elem) =>
-          raritySelected.includes(elem.card.rarity)
-        );
-      }
-      if (supportUnitSelected.length) {
-        _cardList = _cardList.filter(
-          (elem) =>
-            elem.card.supportUnit === "none" ||
-            supportUnitSelected.includes(elem.card.supportUnit)
-        );
-      }
-      // console.log(_cardList, deleteCardIds, editList, addCardIds);
       // apply modifications
       _cardList = _cardList.filter(
         (card) => !deleteCardIds.includes(card.cardId)
@@ -208,21 +185,28 @@ const SekaiUserCardList = () => {
           )
         ),
       ];
-      // setDisplayCardList(
-      //   _cardList
-      //     .sort((a, b) =>
-      //       sortBy === "level"
-      //         ? sortType === "asc"
-      //           ? a.level - b.level
-      //           : b.level - a.level
-      //         : sortType === "asc"
-      //         ? a.card[sortBy as "id"] - b.card[sortBy as "id"]
-      //         : b.card[sortBy as "id"] - a.card[sortBy as "id"]
-      //     )
-      //     .map((card, idx) =>
-      //       Object.assign({}, card, { id: idx + 1, card: undefined })
-      //     )
-      // );
+      if (characterSelected.length) {
+        _cardList = _cardList.filter((elem) =>
+          characterSelected.includes(elem.card.characterId)
+        );
+      }
+      if (attrSelected.length) {
+        _cardList = _cardList.filter((elem) =>
+          attrSelected.includes(elem.card.attr)
+        );
+      }
+      if (raritySelected.length) {
+        _cardList = _cardList.filter((elem) =>
+          raritySelected.includes(elem.card.rarity)
+        );
+      }
+      if (supportUnitSelected.length) {
+        _cardList = _cardList.filter(
+          (elem) =>
+            elem.card.supportUnit === "none" ||
+            supportUnitSelected.includes(elem.card.supportUnit)
+        );
+      }
       setCardList(
         _cardList
           .sort((a, b) =>
