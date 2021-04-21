@@ -243,7 +243,7 @@ const VirtualLiveDetail: React.FC<{}> = () => {
                 {t("virtual_live:rewards")}
               </Typography>
             </Grid>
-            <Grid item xs={6} md={4}>
+            <Grid item>
               <ResourceBox
                 resourceBoxId={virtualLive.virtualLiveReward.resourceBoxId}
                 resourceBoxPurpose="virtual_live_reward"

@@ -5,6 +5,7 @@ import { IResourceBoxInfo } from "../../types";
 import { useCachedData } from "../../utils";
 import CommonMaterialIcon from "./CommonMaterialIcon";
 import MaterialIcon from "./MaterialIcon";
+import DegreeImage from "./DegreeImage";
 
 const ResourceBox: React.FC<{
   resourceBoxId: number;
@@ -29,7 +30,7 @@ const ResourceBox: React.FC<{
 
   return resource ? (
     <Fragment>
-      <Grid container spacing={1} justify={justify}>
+      <Grid container spacing={1} justify={justify} alignItems="center">
         {resource.details.map((detail) => (
           <Grid item key={`${detail.resourceType}-${detail.resourceBoxId}`}>
             {detail.resourceType === "material" ? (
@@ -51,6 +52,11 @@ const ResourceBox: React.FC<{
                 aspectRatio={1}
                 style={{ height: "64px", width: "64px" }}
                 color=""
+              />
+            ) : detail.resourceType === "honor" ? (
+              <DegreeImage
+                style={{ width: "160px" }}
+                honorId={detail.resourceId}
               />
             ) : detail.resourceType !== "honor" ? (
               <CommonMaterialIcon
