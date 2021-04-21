@@ -25,6 +25,9 @@ const useInteractiveStyles = makeStyles((theme) => ({
     },
     color: theme.palette.text.primary,
   },
+  pointer: {
+    cursor: "pointer",
+  },
 }));
 
 export { useInteractiveStyles };
