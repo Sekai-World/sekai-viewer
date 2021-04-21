@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.15](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.14...v0.4.15) (2021-04-21)
+
+
+### Features
+
+* **style:** add pointer interactive style ([857eef9](https://github.com/Sekai-World/sekai-viewer/commits/857eef907ed84804c5316eddb880539c204e9ce4))
+
+
+### Bug Fixes
+
+* **event:** event tracker crash when specific rank is not available ([8542f99](https://github.com/Sekai-World/sekai-viewer/commits/8542f99dda986e9c5ad1055ed6328c96bbc9ad94))
+* **event:** show boost cards only before event starts ([6a55f84](https://github.com/Sekai-World/sekai-viewer/commits/6a55f846156a8a54cfc888e9ebb94725d16c4971))
+* **stamp:** typo ([bf89975](https://github.com/Sekai-World/sekai-viewer/commits/bf89975738c8e5468ecf9653a2a3a431cd2070a2))
+* **user:** added sekai card are not filtered out properly ([d82f418](https://github.com/Sekai-World/sekai-viewer/commits/d82f418859bd5f70d8c011554c589360be77f4c3))
+* **virtual_live:** birthday live honor reward ([58426cf](https://github.com/Sekai-World/sekai-viewer/commits/58426cfad0eb92e6d40f9d6670653f6b8c171b2a))
+
+
+### Refactors
+
+* **event:** event image show using image component ([d2d3f11](https://github.com/Sekai-World/sekai-viewer/commits/d2d3f11de76c0daa6361d0a8df009c5c6410b724))
+* **home:** move links to shortcuts ([ebff4ae](https://github.com/Sekai-World/sekai-viewer/commits/ebff4ae4ec0eaff2dc2670b33a12e39e86114956))
+
 ### [0.4.14](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.13...v0.4.14) (2021-04-05)
 
 
