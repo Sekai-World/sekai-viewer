@@ -152,7 +152,8 @@ const EventDetail: React.FC<{}> = () => {
             ebc.some((chara) => {
               let ret =
                 chara.gameCharacterId === elem.characterId &&
-                elem.attr === edb[0].cardAttr;
+                elem.attr === edb[0].cardAttr &&
+                elem.releaseAt <= ev!.startAt;
               if (elem.characterId >= 21) {
                 ret = ret && chara.unit === elem.supportUnit;
               }
@@ -593,7 +594,7 @@ const EventDetail: React.FC<{}> = () => {
             </Grid>
             <Grid item xs={7} container justify="flex-end" spacing={2}>
               {eventCards.map((card) => (
-                <Grid key={card.cardId} item xs={6} md={4} xl={3}>
+                <Grid key={card.cardId} item xs={5} md={4}>
                   <Link to={`/card/${card.cardId}`}>
                     <CardThumb cardId={card.cardId} />
                   </Link>
@@ -726,7 +727,11 @@ const EventDetail: React.FC<{}> = () => {
       <Typography variant="h6" className={layoutClasses.header}>
         {t("event:title.rankingRewards")}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
+      <Container
+        className={layoutClasses.content}
+        maxWidth="sm"
+        style={{ maxHeight: 400, overflow: "auto" }}
+      >
         <Grid className={classes["grid-out"]} container direction="column">
           {event.eventRankingRewardRanges.map((rankingReward) => (
             <Fragment key={rankingReward.id}>
@@ -747,36 +752,14 @@ const EventDetail: React.FC<{}> = () => {
                   </Typography>
                 </Grid>
                 <Grid item xs={8} container spacing={1} alignItems="center">
-                  {rankingReward.toRank <= 100000 ? (
-                    <Fragment>
-                      <Grid item xs={6}>
-                        <DegreeImage
-                          style={{ minHeight: "30px", maxHeight: "40px" }}
-                          resourceBoxId={
-                            rankingReward.eventRankingRewards[0].resourceBoxId
-                          }
-                          type="event_ranking_reward"
-                        />
-                      </Grid>
-                      <Grid item xs={6}>
-                        <ResourceBox
-                          resourceBoxId={
-                            rankingReward.eventRankingRewards[0].resourceBoxId
-                          }
-                          resourceBoxPurpose="event_ranking_reward"
-                        />
-                      </Grid>
-                    </Fragment>
-                  ) : (
-                    <Grid item xs={12}>
-                      <ResourceBox
-                        resourceBoxId={
-                          rankingReward.eventRankingRewards[0].resourceBoxId
-                        }
-                        resourceBoxPurpose="event_ranking_reward"
-                      />
-                    </Grid>
-                  )}
+                  <Grid item xs={12}>
+                    <ResourceBox
+                      resourceBoxId={
+                        rankingReward.eventRankingRewards[0].resourceBoxId
+                      }
+                      resourceBoxPurpose="event_ranking_reward"
+                    />
+                  </Grid>
                 </Grid>
               </Grid>
               <Divider style={{ margin: "1% 0" }} />
