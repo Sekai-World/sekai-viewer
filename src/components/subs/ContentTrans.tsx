@@ -89,7 +89,7 @@ export const CharaNameTrans: React.FC<{
             )}
           </Typography>
         ) : (
-          <Typography>
+          <Typography {...translatedProps} color="textPrimary">
             {assetT(
               `character_name:${characterId}.givenName`,
               chara.givenName,
