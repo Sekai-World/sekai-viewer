@@ -1,7 +1,6 @@
 import {
   makeStyles,
   Typography,
-  CardMedia,
   Grid,
   Container,
   Paper,
@@ -16,6 +15,7 @@ import { getRemoteAssetURL } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
 import { ContentTrans } from "../subs/ContentTrans";
 import SpoilerTag from "../subs/SpoilerTag";
+import Image from "material-ui-image";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -95,16 +95,17 @@ const AgendaView: React.FC<{ data?: IVirtualLiveInfo }> = ({ data }) => {
           component={Paper}
           className={classes["grid-out"]}
         >
-          <Grid item xs={12} md={4} container alignItems="center">
-            <CardMedia
-              className={classes.media}
-              image={virtualLiveLogo}
-              title={getTranslated(
+          <Grid item xs={12} md={4}>
+            <Image
+              src={virtualLiveLogo}
+              alt={getTranslated(
                 contentTransMode,
                 `virtualLive_name:${data.id}`,
                 data.name
               )}
-            ></CardMedia>
+              aspectRatio={3.2562}
+              color=""
+            ></Image>
           </Grid>
           <Grid item xs={12} md={8}>
             <Grid container direction="column" spacing={1}>
