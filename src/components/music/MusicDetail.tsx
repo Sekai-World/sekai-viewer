@@ -1,5 +1,4 @@
 import {
-  CardMedia,
   CircularProgress,
   Divider,
   FormControl,
