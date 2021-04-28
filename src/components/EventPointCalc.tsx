@@ -368,7 +368,7 @@ const MusicRecommend: React.FC<{}> = () => {
             >
               {t("common:back")}
             </Button>
-            <Container maxWidth="sm" className={layoutClasses.content}>
+            <Container maxWidth="md" className={layoutClasses.content}>
               <Paper variant="outlined">
                 <Grid container>
                   <Grid item xs={12}>

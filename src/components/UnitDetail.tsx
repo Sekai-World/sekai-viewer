@@ -113,7 +113,7 @@ const UnitDetail: React.FC<{}> = () => {
           unit.unitName
         )}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
+      <Container className={layoutClasses.content} maxWidth="md">
         <div style={{ textAlign: "center" }}>
           <img
             src={UnitLogoMap[unit.unit]}

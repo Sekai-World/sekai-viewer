@@ -367,7 +367,7 @@ const CardDetail: React.FC<{}> = () => {
       <Typography variant="h6" className={layoutClasses.header}>
         {cardTitle}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
+      <Container className={layoutClasses.content} maxWidth="md">
         <TabContext value={tabVal}>
           <Paper>
             <Tabs
@@ -539,7 +539,7 @@ const CardDetail: React.FC<{}> = () => {
                   <Grid item>
                     <CharaNameTrans
                       characterId={card.characterId}
-                      originalProps={{ align: "right", color: "textPrimary" }}
+                      originalProps={{ align: "right" }}
                       translatedProps={{ align: "right" }}
                     />
                   </Grid>
@@ -588,7 +588,7 @@ const CardDetail: React.FC<{}> = () => {
                           (up) => up.unit === getCharaUnitName(card.characterId)
                         )!.unitName
                       }
-                      originalProps={{ align: "right", color: "textPrimary" }}
+                      originalProps={{ align: "right" }}
                       translatedProps={{ align: "right" }}
                     />
                   </Grid>
@@ -774,7 +774,7 @@ const CardDetail: React.FC<{}> = () => {
       <Typography variant="h6" className={layoutClasses.header}>
         {t("common:skill")}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
+      <Container className={layoutClasses.content} maxWidth="md">
         <Paper className={interactiveClasses.container}>
           <Grid container direction="column" spacing={1}>
             <Grid
@@ -853,7 +853,7 @@ const CardDetail: React.FC<{}> = () => {
       <Typography variant="h6" className={layoutClasses.header}>
         {t("card:stats")}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
+      <Container className={layoutClasses.content} maxWidth="md">
         <Paper className={interactiveClasses.container}>
           <Grid container direction="column" spacing={1}>
             <Grid
@@ -1053,7 +1053,7 @@ const CardDetail: React.FC<{}> = () => {
       <Typography variant="h6" className={layoutClasses.header}>
         {t("card:sideStory", { count: cardEpisode.length })}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
+      <Container className={layoutClasses.content} maxWidth="md">
         <TabContext value={episodeTabVal}>
           <Paper className={interactiveClasses.container}>
             <Tabs

@@ -289,7 +289,7 @@ const EventDetail: React.FC<{}> = () => {
       <Typography variant="h6" className={layoutClasses.header}>
         {getTranslated(contentTransMode, `event_name:${eventId}`, event.name)}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
+      <Container className={layoutClasses.content} maxWidth="md">
         <TabContext value={imgTabVal}>
           <Paper>
             <Tabs
@@ -457,7 +457,7 @@ const EventDetail: React.FC<{}> = () => {
       <Typography variant="h6" className={layoutClasses.header}>
         {t("event:title.boost")}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
+      <Container className={layoutClasses.content} maxWidth="md">
         <Grid className={classes["grid-out"]} container direction="column">
           <Grid
             item
@@ -472,32 +472,27 @@ const EventDetail: React.FC<{}> = () => {
                 {t("event:boostAttribute")}
               </Typography>
             </Grid>
-            <Grid
-              item
-              container
-              xs={6}
-              spacing={1}
-              alignItems="center"
-              justify="space-between"
-            >
+            <Grid item xs={6}>
               <Grid
-                item
-                xs={6}
-                sm={10}
-                container
                 spacing={1}
-                justify="flex-end"
+                container
+                alignItems="center"
+                justify="space-between"
               >
-                <Grid item>
-                  <img
-                    style={{ maxHeight: "36px" }}
-                    src={attrIconMap[eventDeckBonus[0].cardAttr]}
-                    alt={eventDeckBonus[0].cardAttr}
-                  ></img>
+                <Grid item xs={6} sm={10}>
+                  <Grid container spacing={1} justify="flex-end">
+                    <Grid item>
+                      <img
+                        style={{ maxHeight: "36px" }}
+                        src={attrIconMap[eventDeckBonus[0].cardAttr]}
+                        alt={eventDeckBonus[0].cardAttr}
+                      ></img>
+                    </Grid>
+                  </Grid>
                 </Grid>
-              </Grid>
-              <Grid item xs={4} sm={2}>
-                <Typography>+{eventDeckBonus[6].bonusRate}%</Typography>
+                <Grid item xs={4} sm={2}>
+                  <Typography>+{eventDeckBonus[10].bonusRate}%</Typography>
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
@@ -515,28 +510,29 @@ const EventDetail: React.FC<{}> = () => {
                 {t("event:boostCharacters")}
               </Typography>
             </Grid>
-            <Grid
-              item
-              container
-              spacing={1}
-              xs={5}
-              sm={6}
-              alignItems="center"
-              justify="space-between"
-            >
-              <Grid item container spacing={1} xs={6} sm={10}>
-                {eventBonusCharas.slice(0, 5).map((chara, idx) => (
-                  <Grid key={`chara-${idx}`} item>
-                    <img
-                      style={{ maxHeight: "36px" }}
-                      src={charaIcons[`CharaIcon${chara.gameCharacterId}`]}
-                      alt={`character ${chara.gameCharacterId}`}
-                    ></img>
+            <Grid item xs={5} sm={6}>
+              <Grid
+                container
+                spacing={1}
+                alignItems="center"
+                justify="space-between"
+              >
+                <Grid item xs={6} sm={10}>
+                  <Grid container spacing={1} justify="flex-end">
+                    {eventBonusCharas.slice(0, 5).map((chara, idx) => (
+                      <Grid key={`chara-${idx}`} item>
+                        <img
+                          style={{ maxHeight: "36px" }}
+                          src={charaIcons[`CharaIcon${chara.gameCharacterId}`]}
+                          alt={`character ${chara.gameCharacterId}`}
+                        ></img>
+                      </Grid>
+                    ))}
                   </Grid>
-                ))}
-              </Grid>
-              <Grid item xs={5} sm={2}>
-                <Typography>+{eventDeckBonus[6].bonusRate}%</Typography>
+                </Grid>
+                <Grid item xs={5} sm={2}>
+                  <Typography>+{eventDeckBonus[6].bonusRate}%</Typography>
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
@@ -552,7 +548,19 @@ const EventDetail: React.FC<{}> = () => {
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
               {t("event:maxBoost")}
             </Typography>
-            <Typography>+50%</Typography>
+            <Grid item xs={5} sm={6}>
+              <Grid
+                container
+                spacing={1}
+                alignItems="center"
+                justify="space-between"
+              >
+                <Grid item xs={6} sm={10}></Grid>
+                <Grid item xs={5} sm={2}>
+                  <Typography>+{eventDeckBonus[0].bonusRate}%</Typography>
+                </Grid>
+              </Grid>
+            </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
           <Grid
@@ -568,9 +576,17 @@ const EventDetail: React.FC<{}> = () => {
                 {t("event:boostCards")}
               </Typography>
             </Grid>
-            <Grid item xs={7} container justify="flex-end" spacing={2}>
+            <Grid
+              item
+              xs={8}
+              sm={7}
+              md={6}
+              container
+              justify="flex-end"
+              spacing={2}
+            >
               {boostCards.map((card) => (
-                <Grid key={card.id} item xs={6} md={4} xl={3}>
+                <Grid key={card.id} item xs={6} md={4} lg={3}>
                   <Link to={`/card/${card.id}`}>
                     <CardThumb cardId={card.id} />
                   </Link>
@@ -584,7 +600,7 @@ const EventDetail: React.FC<{}> = () => {
       <Typography variant="h6" className={layoutClasses.header}>
         {t("common:card")}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
+      <Container className={layoutClasses.content} maxWidth="md">
         <Grid className={classes["grid-out"]} container direction="column">
           <Grid
             item
@@ -599,9 +615,17 @@ const EventDetail: React.FC<{}> = () => {
                 {t("event:eventCards")}
               </Typography>
             </Grid>
-            <Grid item xs={7} container justify="flex-end" spacing={2}>
+            <Grid
+              item
+              xs={8}
+              sm={7}
+              md={6}
+              container
+              justify="flex-end"
+              spacing={2}
+            >
               {eventCards.map((card) => (
-                <Grid key={card.cardId} item xs={5} md={4}>
+                <Grid key={card.cardId} item xs={5} md={4} lg={3}>
                   <Link to={`/card/${card.cardId}`}>
                     <CardThumb cardId={card.cardId} />
                   </Link>
@@ -615,7 +639,7 @@ const EventDetail: React.FC<{}> = () => {
       <Typography variant="h6" className={layoutClasses.header}>
         {t("event:title.timepoint")}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
+      <Container className={layoutClasses.content} maxWidth="md">
         <Grid className={classes["grid-out"]} container direction="column">
           <Grid
             item
@@ -736,7 +760,7 @@ const EventDetail: React.FC<{}> = () => {
       </Typography>
       <Container
         className={layoutClasses.content}
-        maxWidth="sm"
+        maxWidth="md"
         style={{ maxHeight: 400, overflow: "auto" }}
       >
         <Grid className={classes["grid-out"]} container direction="column">
