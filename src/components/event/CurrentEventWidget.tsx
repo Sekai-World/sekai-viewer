@@ -48,7 +48,7 @@ const CurrentEventWidget: React.FC<{}> = () => {
       <Container className={layoutClasses.content}>
         <Grid container spacing={2} justify="center">
           {eventBanner ? (
-            <Grid item xs={7}>
+            <Grid item xs={12} sm={7}>
               <Link to={`/event/${currEvent?.eventId}`}>
                 <Image
                   src={eventBanner}
