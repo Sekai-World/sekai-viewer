@@ -60,6 +60,7 @@ import AudioPlayer from "./AudioPlayer";
 import { Howl } from "howler";
 import { saveAs } from "file-saver";
 import AdSense from "../subs/AdSense";
+import Image from "material-ui-image";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -73,17 +74,6 @@ const useStyles = makeStyles((theme) => ({
   "unit-logo-img": {
     maxWidth: "128px",
     // margin: theme.spacing(0, 1),
-  },
-  "media-contain": {
-    [theme.breakpoints.up("md")]: {
-      paddingTop: "60%",
-    },
-    [theme.breakpoints.down("sm")]: {
-      paddingTop: "100%",
-    },
-    backgroundSize: "contain",
-    cursor: "pointer",
-    margin: theme.spacing(1, 0),
   },
   tabpanel: {
     padding: 0,
@@ -288,12 +278,12 @@ const MusicDetail: React.FC<{}> = () => {
               </Grid>
             ) : (
               <Grid item key={`outchara-${chara.characterId}`}>
-                <span>
+                <Typography>
                   {outCharas && outCharas.length
                     ? outCharas.find((elem) => elem.id === chara.characterId)!
                         .name
                     : `Outside Character ${chara.characterId}`}
-                </span>
+                </Typography>
               </Grid>
             )
           )}
@@ -328,22 +318,22 @@ const MusicDetail: React.FC<{}> = () => {
     }
   }, [music, musicVocalTypes, selectedPreviewVocalType]);
 
-  const getCharaIcon: (characterId: number) => JSX.Element = useCallback(
-    (characterId) => {
-      if (!characterId) return <span></span>;
-      return (
-        <Grid item key={`chara-${characterId}`}>
-          <img
-            key={characterId}
-            height="42"
-            src={charaIcons[`CharaIcon${characterId}`]}
-            alt={`character ${characterId}`}
-          ></img>
-        </Grid>
-      );
-    },
-    []
-  );
+  const getCharaIcon: (
+    characterId: number,
+    height?: number
+  ) => JSX.Element = useCallback((characterId, height = 42) => {
+    if (!characterId) return <span></span>;
+    return (
+      <Grid item key={`chara-${characterId}`}>
+        <img
+          key={characterId}
+          height={height}
+          src={charaIcons[`CharaIcon${characterId}`]}
+          alt={`character ${characterId}`}
+        ></img>
+      </Grid>
+    );
+  }, []);
 
   const onPlay = useCallback(() => {
     if ("mediaSession" in window.navigator) {
@@ -472,18 +462,23 @@ const MusicDetail: React.FC<{}> = () => {
           music.title
         )}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
+      <Container className={layoutClasses.content} maxWidth="md">
         <Alert severity="warning">
           <Trans i18nKey="music:alert[0]" components={{ b: <b /> }} />
         </Alert>
-        <CardMedia
-          onClick={() => {
-            setActiveIdx(0);
-            setVisible(true);
-          }}
-          classes={{ root: classes["media-contain"] }}
-          image={musicJacket}
-        ></CardMedia>
+        <Grid container justify="center">
+          <Grid item xs={12} sm={6}>
+            <Image
+              onClick={() => {
+                setActiveIdx(0);
+                setVisible(true);
+              }}
+              className={interactiveClasses.pointer}
+              src={musicJacket}
+              color=""
+            ></Image>
+          </Grid>
+        </Grid>
         <Paper className={interactiveClasses.container}>
           <Grid container direction="column" spacing={1}>
             <Grid
@@ -529,6 +524,7 @@ const MusicDetail: React.FC<{}> = () => {
                         control={<Radio color="primary"></Radio>}
                         label={t(`music:categoryType.${cat}`)}
                         labelPlacement="end"
+                        key={cat}
                       />
                     ))}
                 </RadioGroup>
@@ -757,38 +753,44 @@ const MusicDetail: React.FC<{}> = () => {
             </Typography>
             <Typography>{music.lyricist}</Typography>
           </Grid>
-          <Divider style={{ margin: "1% 0" }} />
-          <Grid
-            container
-            direction="row"
-            wrap="nowrap"
-            justify="space-between"
-            alignItems="center"
-          >
-            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {musicDanceMember
-                ? t("music:danceMember", { count: music.dancerCount })
-                : t("music:dancerCount")}
-            </Typography>
-            <Grid item>
-              <Grid container spacing={1}>
-                {musicDanceMember
-                  ? Array.from({ length: music.dancerCount }).map((_, idx) =>
-                      getCharaIcon(
-                        musicDanceMember[
-                          `characterId${idx + 1}` as
-                            | "characterId1"
-                            | "characterId2"
-                            | "characterId3"
-                            | "characterId4"
-                            | "characterId5"
-                        ]!
-                      )
-                    )
-                  : music.dancerCount}
+          {musicDanceMember && (
+            <Fragment>
+              <Divider style={{ margin: "1% 0" }} />
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                  {t("music:danceMember", {
+                    count: Object.keys(musicDanceMember).filter((key) =>
+                      key.startsWith("characterId")
+                    ).length,
+                  })}
+                </Typography>
+                <Grid item>
+                  <Grid container spacing={1}>
+                    {Object.keys(musicDanceMember)
+                      .filter((key) => key.startsWith("characterId"))
+                      .map((key) =>
+                        getCharaIcon(
+                          musicDanceMember[
+                            key as
+                              | "characterId1"
+                              | "characterId2"
+                              | "characterId3"
+                              | "characterId4"
+                              | "characterId5"
+                          ]!
+                        )
+                      )}
+                  </Grid>
+                </Grid>
               </Grid>
-            </Grid>
-          </Grid>
+            </Fragment>
+          )}
           <Divider style={{ margin: "1% 0" }} />
           <Grid
             container
@@ -810,7 +812,7 @@ const MusicDetail: React.FC<{}> = () => {
       <Typography variant="h6" className={layoutClasses.header}>
         {t("music:vocal", { count: musicVocal.length })}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
+      <Container className={layoutClasses.content} maxWidth="md">
         <Paper className={interactiveClasses.container}>
           <Grid container direction="column" spacing={1}>
             <VocalTypeSelector
@@ -919,7 +921,7 @@ const MusicDetail: React.FC<{}> = () => {
         {t("music:achievement")}
       </Typography>
       {musicAchievements && !!musicAchievements.length && (
-        <Container className={layoutClasses.content} maxWidth="sm">
+        <Container className={layoutClasses.content} maxWidth="md">
           <Grid container direction="column">
             <Grid item container justify="space-between" alignItems="center">
               <Grid item xs={2}>
@@ -995,7 +997,7 @@ const MusicDetail: React.FC<{}> = () => {
         })}
       </Typography>
       {musicDiffis && musicAchievements && (
-        <Container className={layoutClasses.content} maxWidth="sm">
+        <Container className={layoutClasses.content} maxWidth="md">
           <Alert severity="info">
             <Trans i18nKey="music:chartCredit" />
           </Alert>
