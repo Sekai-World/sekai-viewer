@@ -2,6 +2,7 @@ import React, {
   createContext,
   PropsWithChildren,
   useCallback,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -57,8 +58,15 @@ export const SettingProvider: React.FC<PropsWithChildren<{}>> = ({
   );
   const [isShowSpoiler, setIsShowSpoiler] = useLocalStorage<boolean>(
     "is-show-spoiler",
-    true
+    false
   );
+
+  useEffect(() => {
+    if (!localStorage.getItem("is-show-spoiler-force-false")) {
+      setIsShowSpoiler(false);
+      localStorage.setItem("is-show-spoiler-force-false", "true");
+    }
+  }, [setIsShowSpoiler]);
 
   return (
     <SettingContext.Provider
