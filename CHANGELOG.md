@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.5.0](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.15...v0.5.0) (2021-04-29)
+
+
+### Features
+
+* **event:** cheerful carnival information ([fd010a7](https://github.com/Sekai-World/sekai-viewer/commits/fd010a706998aea45031afcf1d520100b357035e))
+* **music:** music list filter enrichment ([0292b37](https://github.com/Sekai-World/sekai-viewer/commits/0292b37e578214d3a8b1c1da051f38e99eef3e23))
+* **setting:** make spoiler switch opt-in ([032439c](https://github.com/Sekai-World/sekai-viewer/commits/032439c29eef31d4af6f0546c72a7b6c382b9135))
+* **user:** user page sectioning ([81cf0e5](https://github.com/Sekai-World/sekai-viewer/commits/81cf0e5dc0ece4af1028f8d70005a4e6d9a6bd6c))
+
+
+### Bug Fixes
+
+* charaNameTrans component text color ([916db4e](https://github.com/Sekai-World/sekai-viewer/commits/916db4e4234979c214eda20a23637dbb0cf0810c))
+* **music:** wrong number of dancer memebers ([62bcc21](https://github.com/Sekai-World/sekai-viewer/commits/62bcc21475ffdd1daf1d35eacf8825569d5afdb2))
+
+
+### Refactors
+
+* **vlive:** use image in list instead of CardMedia ([9993c3c](https://github.com/Sekai-World/sekai-viewer/commits/9993c3cf4f04eb68c6f2c742258bec8d249d429d))
+* enlarge container to md ([33398d1](https://github.com/Sekai-World/sekai-viewer/commits/33398d1db44945e43d3195003822c5b9976a3913))
+* **music:** make agenda view more compat ([dc94b42](https://github.com/Sekai-World/sekai-viewer/commits/dc94b42acd549f05152f4e33286eb3a69da384bb))
+* **widget:** current event widget banner enlarge on mobile ([c22ba6d](https://github.com/Sekai-World/sekai-viewer/commits/c22ba6dc6f302ef83886074ca88550df6603f2fb))
+
 ### [0.4.15](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.14...v0.4.15) (2021-04-21)
 
 
