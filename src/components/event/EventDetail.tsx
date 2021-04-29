@@ -26,6 +26,8 @@ import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
 import {
   ICardInfo,
+  ICheerfulCarnivalSummary,
+  ICheerfulCarnivalTeam,
   IEventCard,
   IEventDeckBonus,
   IEventInfo,
@@ -57,7 +59,7 @@ const useStyle = makeStyles((theme) => ({
   //   cursor: "pointer",
   // },
   tabpanel: {
-    padding: theme.spacing("1%", 0, 0, 0),
+    padding: theme.spacing("0.1rem", 0, 0, 0),
   },
   "grid-out": {
     padding: theme.spacing("1%", "0"),
@@ -82,6 +84,12 @@ const EventDetail: React.FC<{}> = () => {
   const [eventCardsCache] = useCachedData<IEventCard>("eventCards");
   const [cards] = useCachedData<ICardInfo>("cards");
   const [virtualLives] = useCachedData<IVirtualLiveInfo>("virtualLives");
+  const [cheerfulCarnivalSummaries] = useCachedData<ICheerfulCarnivalSummary>(
+    "cheerfulCarnivalSummaries"
+  );
+  const [cheerfulCarnivalTeams] = useCachedData<ICheerfulCarnivalTeam>(
+    "cheerfulCarnivalTeams"
+  );
 
   const [event, setEvent] = useState<IEventInfo>();
   const [eventCards, setEventCards] = useState<IEventCard[]>([]);
@@ -102,6 +110,8 @@ const EventDetail: React.FC<{}> = () => {
     linkedVirtualLive,
     setLinkedVirtualLive,
   ] = useState<IVirtualLiveInfo>();
+  const [ccTeams, setCcTeams] = useState<ICheerfulCarnivalTeam[]>([]);
+  const [ccSummary, setCcSummary] = useState<ICheerfulCarnivalSummary>();
 
   useEffect(() => {
     if (event) {
@@ -179,6 +189,22 @@ const EventDetail: React.FC<{}> = () => {
   ]);
 
   useEffect(() => {
+    if (
+      event &&
+      event.eventType === "cheerful_carnival" &&
+      cheerfulCarnivalSummaries &&
+      cheerfulCarnivalTeams
+    ) {
+      setCcTeams(
+        cheerfulCarnivalTeams.filter((cct) => cct.eventId === event.id)
+      );
+      setCcSummary(
+        cheerfulCarnivalSummaries.find((ccs) => ccs.eventId === event.id)
+      );
+    }
+  }, [cheerfulCarnivalSummaries, cheerfulCarnivalTeams, event]);
+
+  useEffect(() => {
     if (!event) {
       return;
     }
@@ -239,6 +265,8 @@ const EventDetail: React.FC<{}> = () => {
   const [eventBanner, setEventBanner] = useState<string>("");
   const [eventBackground, setEventBackground] = useState<string>("");
   const [eventCharacter, setEventCharacter] = useState<string>("");
+  const [ccTeam1Logo, setCcTeam1Logo] = useState<string>("");
+  const [ccTeam2Logo, setCcTeam2Logo] = useState<string>("");
 
   useEffect(() => {
     if (event) {
@@ -260,6 +288,19 @@ const EventDetail: React.FC<{}> = () => {
       );
     }
   }, [event]);
+
+  useEffect(() => {
+    if (event && ccTeams.length) {
+      getRemoteAssetURL(
+        `event/${event.assetbundleName}/team_image_rip/${ccTeams[0].assetbundleName}.webp`,
+        setCcTeam1Logo
+      );
+      getRemoteAssetURL(
+        `event/${event.assetbundleName}/team_image_rip/${ccTeams[1].assetbundleName}.webp`,
+        setCcTeam2Logo
+      );
+    }
+  }, [ccTeams, cheerfulCarnivalSummaries, cheerfulCarnivalTeams, event]);
 
   const getEventImages: () => ImageDecorator[] = useCallback(
     () =>
@@ -334,6 +375,7 @@ const EventDetail: React.FC<{}> = () => {
                 src={eventBackground}
                 aspectRatio={1.625}
                 alt="background"
+                color=""
               ></Image>
             </TabPanel>
             <TabPanel value="2" classes={{ root: classes.tabpanel }}>
@@ -346,6 +388,7 @@ const EventDetail: React.FC<{}> = () => {
                 src={eventCharacter}
                 aspectRatio={1.625}
                 alt="character"
+                color=""
               ></Image>
             </TabPanel>
           </Paper>
@@ -636,6 +679,86 @@ const EventDetail: React.FC<{}> = () => {
           <Divider style={{ margin: "1% 0" }} />
         </Grid>
       </Container>
+      {event.eventType === "cheerful_carnival" &&
+        !!ccTeams.length &&
+        ccSummary && (
+          <Fragment>
+            <Typography variant="h6" className={layoutClasses.header}>
+              {t("event:title.cheerful_carnival")}
+            </Typography>
+            <Container className={layoutClasses.content} maxWidth="md">
+              <ContentTrans
+                contentKey={`cheerful_carnival_themes:${ccSummary.id}`}
+                original={ccSummary.theme}
+                originalProps={{ align: "center", variant: "h6" }}
+                translatedProps={{ align: "center", variant: "h6" }}
+              />
+              <Grid
+                className={classes["grid-out"]}
+                container
+                spacing={1}
+                justify="space-around"
+              >
+                <Grid item xs={5} md={3} lg={2}>
+                  <Image src={ccTeam1Logo} color="" />
+                  <ContentTrans
+                    contentKey={`cheerful_carnival_teams:${ccTeams[0].id}`}
+                    original={ccTeams[0].teamName}
+                    originalProps={{ align: "center" }}
+                    translatedProps={{ align: "center" }}
+                  />
+                </Grid>
+                <Grid item xs={5} md={3} lg={2}>
+                  <Image src={ccTeam2Logo} color="" />
+                  <ContentTrans
+                    contentKey={`cheerful_carnival_teams:${ccTeams[1].id}`}
+                    original={ccTeams[1].teamName}
+                    originalProps={{ align: "center" }}
+                    translatedProps={{ align: "center" }}
+                  />
+                </Grid>
+              </Grid>
+              <Grid
+                className={classes["grid-out"]}
+                container
+                direction="column"
+              >
+                <Grid
+                  item
+                  container
+                  direction="row"
+                  wrap="nowrap"
+                  justify="space-between"
+                  alignItems="center"
+                >
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("event:cheerful_carnival_midterm_1")}
+                  </Typography>
+                  <Typography align="right">
+                    {new Date(ccSummary.midtermAnnounce1At).toLocaleString()}
+                  </Typography>
+                </Grid>
+                <Divider style={{ margin: "1% 0" }} />
+                <Grid
+                  item
+                  container
+                  direction="row"
+                  wrap="nowrap"
+                  justify="space-between"
+                  alignItems="center"
+                >
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("event:cheerful_carnival_midterm_2")}
+                  </Typography>
+                  <Typography align="right">
+                    {new Date(ccSummary.midtermAnnounce2At).toLocaleString()}
+                  </Typography>
+                </Grid>
+                <Divider style={{ margin: "1% 0" }} />
+              </Grid>
+            </Container>
+          </Fragment>
+        )}
       <Typography variant="h6" className={layoutClasses.header}>
         {t("event:title.timepoint")}
       </Typography>
@@ -718,22 +841,6 @@ const EventDetail: React.FC<{}> = () => {
             </Typography>
             <Typography align="right">
               {new Date(event.distributionStartAt).toLocaleString()}
-            </Typography>
-          </Grid>
-          <Divider style={{ margin: "1% 0" }} />
-          <Grid
-            item
-            container
-            direction="row"
-            wrap="nowrap"
-            justify="space-between"
-            alignItems="center"
-          >
-            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t("event:distributionEndAt")}
-            </Typography>
-            <Typography align="right">
-              {new Date(event.distributionEndAt).toLocaleString()}
             </Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />

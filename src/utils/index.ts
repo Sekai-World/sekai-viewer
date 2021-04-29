@@ -57,6 +57,8 @@ import {
   ICostume3DModel,
   IAreaItemLevel,
   IAreaItem,
+  ICheerfulCarnivalSummary,
+  ICheerfulCarnivalTeam,
 } from "./../types.d";
 import { useAssetI18n } from "./i18n";
 import { useLocation } from "react-router-dom";
@@ -116,6 +118,8 @@ export function useCachedData<
     | ICostume3DModel
     | IAreaItemLevel
     | IAreaItem
+    | ICheerfulCarnivalSummary
+    | ICheerfulCarnivalTeam
 >(name: string): [T[] | undefined, boolean, any] {
   // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
 

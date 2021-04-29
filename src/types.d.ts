@@ -1200,3 +1200,20 @@ export interface EventPrediction {
     "100000": number;
   };
 }
+
+export interface ICheerfulCarnivalSummary {
+  id: number;
+  eventId: number;
+  theme: string;
+  midtermAnnounce1At: number;
+  midtermAnnounce2At: number;
+  assetbundleName: string;
+}
+
+export interface ICheerfulCarnivalTeam {
+  id: number;
+  eventId: number;
+  seq: number;
+  teamName: string;
+  assetbundleName: string;
+}
