@@ -28,9 +28,9 @@ const SekaiProfile = () => {
 
   const { sekaiProfile } = useContext(UserContext)!;
 
-  const [isUserDeckOpen, setIsUserDeckOpen] = useState(false);
-  const [isUserEventOpen, setIsUserEventOpen] = useState(false);
-  const [isUserStatisticsOpen, setIsUserStatisticsOpen] = useState(false);
+  // const [isUserDeckOpen, setIsUserDeckOpen] = useState(false);
+  // const [isUserEventOpen, setIsUserEventOpen] = useState(false);
+  // const [isUserStatisticsOpen, setIsUserStatisticsOpen] = useState(false);
   const [isUserMemberOpen, setIsUserMemberOpen] = useState(false);
   const [isUserImportMemberOpen, setIsUserImportMemberOpen] = useState(false);
   const [isUserTeamsOpen, setIsUserTeamsOpen] = useState(false);
@@ -45,48 +45,20 @@ const SekaiProfile = () => {
         <br />
         {sekaiProfile && sekaiProfile.sekaiUserProfile && (
           <Fragment>
-            <Accordion
-              expanded={isUserEventOpen}
-              onChange={(e, state) => setIsUserEventOpen(state)}
-            >
-              <AccordionSummary expandIcon={<ExpandMore />}>
-                <Typography className={layoutClasses.header}>
-                  {t("user:profile.title.user_event")}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <SekaiEventRecord />
-              </AccordionDetails>
-            </Accordion>
-            <Accordion
-              expanded={isUserDeckOpen}
-              onChange={(e, state) => setIsUserDeckOpen(state)}
-            >
-              <AccordionSummary expandIcon={<ExpandMore />}>
-                <Typography className={layoutClasses.header}>
-                  {t("user:profile.title.user_deck")}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <SekaiUserDeck
-                  userDecks={sekaiProfile.sekaiUserProfile.userDecks}
-                  userCards={sekaiProfile.sekaiUserProfile.userCards}
-                />
-              </AccordionDetails>
-            </Accordion>
-            <Accordion
-              expanded={isUserStatisticsOpen}
-              onChange={(e, state) => setIsUserStatisticsOpen(state)}
-            >
-              <AccordionSummary expandIcon={<ExpandMore />}>
-                <Typography className={layoutClasses.header}>
-                  {t("user:profile.title.user_statistics")}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <SekaiUserStatistics />
-              </AccordionDetails>
-            </Accordion>
+            <SekaiUserDeck
+              userDecks={sekaiProfile.sekaiUserProfile.userDecks}
+              userCards={sekaiProfile.sekaiUserProfile.userCards}
+            />
+            <SekaiUserStatistics />
+          </Fragment>
+        )}
+      </Container>
+      <Typography variant="h6" className={layoutClasses.header}>
+        {t("user:profile.title.sekai_cards_teams")}
+      </Typography>
+      <Container className={layoutClasses.content} maxWidth="md">
+        {
+          <Fragment>
             <Accordion
               expanded={isUserMemberOpen}
               onChange={(e, state) => setIsUserMemberOpen(state)}
@@ -127,7 +99,13 @@ const SekaiProfile = () => {
               </AccordionDetails>
             </Accordion>
           </Fragment>
-        )}
+        }
+      </Container>
+      <Typography variant="h6" className={layoutClasses.header}>
+        {t("user:profile.title.user_event")}
+      </Typography>
+      <Container className={layoutClasses.content} maxWidth="md">
+        <SekaiEventRecord />
       </Container>
     </Fragment>
   );

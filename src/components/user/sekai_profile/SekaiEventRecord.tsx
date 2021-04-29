@@ -52,7 +52,7 @@ const SekaiEventRecord = (props: Props) => {
 
   useEffect(() => {
     (async () => {
-      console.log(currEvent);
+      // console.log(currEvent);
       if (currEvent && events) {
         const ev = events.find((elem) => elem.id === Number(currEvent.eventId));
         if (ev) {
@@ -78,25 +78,6 @@ const SekaiEventRecord = (props: Props) => {
 
   return (
     <Grid container direction="column" spacing={1}>
-      {/* <Grid item container spacing={2} alignItems="center">
-        <Grid item>
-          <Typography>{t("user:profile.event.current_name")} </Typography>
-        </Grid>
-        <Grid item>
-          <Button
-            endIcon={<OpenInNew />}
-            component={Link}
-            to={`/event/${currentEvent?.eventId}`}
-            className={interactiveClasses.noDecoration}
-            target="_blank"
-          >
-            <ContentTrans
-              contentKey={`event_name:${currentEvent?.eventId}`}
-              original={currentEvent?.eventJson.name || ""}
-            />
-          </Button>
-        </Grid>
-      </Grid> */}
       <Grid item container spacing={1} alignItems="center">
         <Grid item>
           <Autocomplete

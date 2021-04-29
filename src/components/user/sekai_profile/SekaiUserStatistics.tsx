@@ -1,6 +1,12 @@
 import {
+  Avatar,
   Button,
+  Chip,
+  FormControl,
   Grid,
+  InputLabel,
+  MenuItem,
+  Select,
   Table,
   TableBody,
   TableCell,
@@ -10,7 +16,7 @@ import {
   Tooltip,
   Typography,
 } from "@material-ui/core";
-import React, { useContext, useEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Image from "material-ui-image";
 import { SettingContext, UserContext } from "../../../context";
@@ -43,12 +49,11 @@ const ProfileMusicImage: React.FC<{
   const [img, setImg] = useState<string>("");
 
   useEffect(() => {
-    if (!img)
-      getRemoteAssetURL(
-        `music/jacket/${assetbundleName}_rip/${assetbundleName}.webp`,
-        setImg
-      );
-  }, [assetbundleName, img]);
+    getRemoteAssetURL(
+      `music/jacket/${assetbundleName}_rip/${assetbundleName}.webp`,
+      setImg
+    );
+  }, [assetbundleName]);
 
   return <Image src={img} alt={title} aspectRatio={1} color=""></Image>;
 };
@@ -123,57 +128,204 @@ const getAllPerfectCount = (idx: number, userMusics?: UserMusic[]) => {
   }, 0);
 };
 
+const MusicSingleData: React.FC<{ umusic?: UserMusic; music: IMusicInfo }> = ({
+  umusic,
+  music,
+}) => {
+  const { t } = useTranslation();
+  const { getTranslated } = useAssetI18n();
+  const { contentTransMode } = useContext(SettingContext)!;
+
+  return umusic ? (
+    <Fragment>
+      <Grid item xs={12}>
+        <Grid container justify="center" alignItems="center" spacing={1}>
+          <Grid item xs={8} md={3}>
+            <ProfileMusicImage
+              assetbundleName={music.assetbundleName}
+              title={getTranslated(
+                contentTransMode,
+                `music_titles:${umusic.musicId}`,
+                music.title
+              )}
+            />
+          </Grid>
+          <Grid item xs={12} md={9}>
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>{t("music:difficulty")}</TableCell>
+                    <TableCell>
+                      <Image
+                        src={BtnDifficultyEasy}
+                        alt="difficulty easy"
+                        color=""
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Image
+                        src={BtnDifficultyNormal}
+                        alt="difficulty normal"
+                        color=""
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Image
+                        src={BtnDifficultyHard}
+                        alt="difficulty hard"
+                        color=""
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Image
+                        src={BtnDifficultyExpert}
+                        alt="difficulty expert"
+                        color=""
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Image
+                        src={BtnDifficultyMaster}
+                        alt="difficulty master"
+                        color=""
+                      />
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>{t("music:clear_status")}</TableCell>
+                    {umusic.userMusicDifficultyStatuses.map((status) => (
+                      <TableCell key={status.musicDifficulty} align="center">
+                        <div style={{ minWidth: "64px" }}>
+                          <img
+                            src={getMusicClearIcon(status)}
+                            alt="clear icon"
+                          />
+                        </div>
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>{t("music:hi_score")}</TableCell>
+                    {umusic.userMusicDifficultyStatuses.map((status) => (
+                      <TableCell key={status.musicDifficulty} align="center">
+                        {status.userMusicResults.length &&
+                        status.userMusicResults.find(
+                          (umr) => umr.playType === "multi"
+                        )
+                          ? status.userMusicResults.find(
+                              (umr) => umr.playType === "multi"
+                            )!.highScore
+                          : "N/A"}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>{t("music:mvp_count")}</TableCell>
+                    {umusic.userMusicDifficultyStatuses.map((status) => (
+                      <TableCell key={status.musicDifficulty} align="center">
+                        {status.userMusicResults.length &&
+                        status.userMusicResults.find(
+                          (umr) => umr.playType === "multi"
+                        )
+                          ? status.userMusicResults.find(
+                              (umr) => umr.playType === "multi"
+                            )!.mvpCount
+                          : "N/A"}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>{t("music:super_star_count")}</TableCell>
+                    {umusic.userMusicDifficultyStatuses.map((status) => (
+                      <TableCell key={status.musicDifficulty} align="center">
+                        {status.userMusicResults.length &&
+                        status.userMusicResults.find(
+                          (umr) => umr.playType === "multi"
+                        )
+                          ? status.userMusicResults.find(
+                              (umr) => umr.playType === "multi"
+                            )!.superStarCount
+                          : "N/A"}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
+        </Grid>
+      </Grid>
+    </Fragment>
+  ) : (
+    <Fragment>
+      <Grid item xs={12}>
+        <Typography>
+          {t("user:profile.label.sekai_user_music_not_found")}
+        </Typography>
+      </Grid>
+    </Fragment>
+  );
+};
+
 const SekaiUserStatistics = () => {
   // const layoutClasses = useLayoutStyles();
   // const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
-  const { sekaiProfile } = useContext(UserContext)!;
   const { getTranslated } = useAssetI18n();
+  const { sekaiProfile } = useContext(UserContext)!;
   const { contentTransMode } = useContext(SettingContext)!;
 
   const [areaItems] = useCachedData<IAreaItem>("areaItems");
   const [musics] = useCachedData<IMusicInfo>("musics");
 
-  const [characterRankOpen, toggleCharacterRankOpen] = useToggle(false);
+  // const [characterRankOpen, toggleCharacterRankOpen] = useToggle(false);
   const [honorOpen, toggleHonorOpen] = useToggle(false);
   const [areaItemOpen, toggleAreaItemOpen] = useToggle(false);
   const [musicOpen, toggleMusicOpen] = useToggle(false);
+  const [selectedMusic, setSelectedMusic] = useState(1);
 
   return (
     <Grid container spacing={1}>
       <Grid item xs={12}>
         <Typography>{t("mission:type.character_rank")}</Typography>
-        <Button
+        {/* <Button
           variant="contained"
           color="primary"
           onClick={() => toggleCharacterRankOpen()}
         >
           {characterRankOpen ? t("common:hide") : t("common:show")}
-        </Button>
-        {characterRankOpen && (
-          <Grid container spacing={1}>
-            {sekaiProfile?.sekaiUserProfile?.userCharacters.map((chara) => (
-              <Grid key={chara.characterId} item xs={3} md={2} lg={1}>
-                <Grid container spacing={1}>
-                  <Grid item xs={12}>
-                    <Image
-                      src={charaIcons[`CharaIcon${chara.characterId}`]}
-                      alt={`cahra ${chara.characterId}`}
-                      aspectRatio={1}
-                      // style={{ height: "64px", width: "64px" }}
-                      color=""
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography align="center">
-                      {chara.characterRank}
-                    </Typography>
-                  </Grid>
+        </Button> */}
+        {/* {characterRankOpen && ( */}
+        <Grid container spacing={1}>
+          {sekaiProfile?.sekaiUserProfile?.userCharacters.map((chara) => (
+            <Grid key={chara.characterId} item xs={3} md={2} lg={1}>
+              <Chip
+                avatar={
+                  <Avatar src={charaIcons[`CharaIcon${chara.characterId}`]} />
+                }
+                label={chara.characterRank}
+              />
+              {/* <Grid container spacing={1}>
+                <Grid item xs={12}>
+                  <Image
+                    src={charaIcons[`CharaIcon${chara.characterId}`]}
+                    alt={`cahra ${chara.characterId}`}
+                    aspectRatio={1}
+                    // style={{ height: "64px", width: "64px" }}
+                    color=""
+                  />
                 </Grid>
-              </Grid>
-            ))}
-          </Grid>
-        )}
+                <Grid item xs={12}>
+                  <Typography align="center">{chara.characterRank}</Typography>
+                </Grid>
+              </Grid> */}
+            </Grid>
+          ))}
+        </Grid>
+        {/* )} */}
       </Grid>
       <Grid item xs={12}>
         <Typography>{t("common:mission.honor")}</Typography>
@@ -213,7 +365,7 @@ const SekaiUserStatistics = () => {
         {areaItemOpen && !!areaItems && (
           <Grid container spacing={2}>
             {sekaiProfile?.sekaiUserProfile?.userAreaItems.map((areaItem) => (
-              <Grid key={areaItem.areaItemId} item xs={4} md={2}>
+              <Grid key={areaItem.areaItemId} item xs={4} md={2} lg={1}>
                 <Tooltip
                   title={
                     areaItems.find((ai) => ai.id === areaItem.areaItemId)!.name
@@ -350,156 +502,34 @@ const SekaiUserStatistics = () => {
                 </Table>
               </TableContainer>
             </Grid>
-            {sekaiProfile?.sekaiUserProfile?.userMusics.map((umusic) => (
-              <Grid key={umusic.musicId} item xs={12}>
-                <Grid
-                  container
-                  justify="center"
-                  alignItems="center"
-                  spacing={1}
+            <Grid item xs={12}>
+              <FormControl>
+                <Select
+                  labelId="sekai-profile-music-select-label"
+                  id="sekai-profile-music-select"
+                  value={selectedMusic}
+                  onChange={(e) => setSelectedMusic(e.target.value as number)}
                 >
-                  <Grid item xs={8} md={3}>
-                    <ProfileMusicImage
-                      assetbundleName={
-                        musics.find((m) => m.id === umusic.musicId)!
-                          .assetbundleName
-                      }
-                      title={getTranslated(
+                  {musics.map((m) => (
+                    <MenuItem key={m.id} value={m.id}>
+                      {getTranslated(
                         contentTransMode,
-                        `music_titles:${umusic.musicId}`,
-                        musics.find((m) => m.id === umusic.musicId)!.title
+                        `music_titles:${m.id}`,
+                        m.title
                       )}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={9}>
-                    <TableContainer>
-                      <Table>
-                        <TableHead>
-                          <TableRow>
-                            <TableCell>{t("music:difficulty")}</TableCell>
-                            <TableCell>
-                              <Image
-                                src={BtnDifficultyEasy}
-                                alt="difficulty easy"
-                                color=""
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <Image
-                                src={BtnDifficultyNormal}
-                                alt="difficulty normal"
-                                color=""
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <Image
-                                src={BtnDifficultyHard}
-                                alt="difficulty hard"
-                                color=""
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <Image
-                                src={BtnDifficultyExpert}
-                                alt="difficulty expert"
-                                color=""
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <Image
-                                src={BtnDifficultyMaster}
-                                alt="difficulty master"
-                                color=""
-                              />
-                            </TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell>{t("music:clear_status")}</TableCell>
-                            {umusic.userMusicDifficultyStatuses.map(
-                              (status) => (
-                                <TableCell
-                                  key={status.musicDifficulty}
-                                  align="center"
-                                >
-                                  <div style={{ minWidth: "64px" }}>
-                                    <img
-                                      src={getMusicClearIcon(status)}
-                                      alt="clear icon"
-                                    />
-                                  </div>
-                                </TableCell>
-                              )
-                            )}
-                          </TableRow>
-                          <TableRow>
-                            <TableCell>{t("music:hi_score")}</TableCell>
-                            {umusic.userMusicDifficultyStatuses.map(
-                              (status) => (
-                                <TableCell
-                                  key={status.musicDifficulty}
-                                  align="center"
-                                >
-                                  {status.userMusicResults.length &&
-                                  status.userMusicResults.find(
-                                    (umr) => umr.playType === "multi"
-                                  )
-                                    ? status.userMusicResults.find(
-                                        (umr) => umr.playType === "multi"
-                                      )!.highScore
-                                    : "N/A"}
-                                </TableCell>
-                              )
-                            )}
-                          </TableRow>
-                          <TableRow>
-                            <TableCell>{t("music:mvp_count")}</TableCell>
-                            {umusic.userMusicDifficultyStatuses.map(
-                              (status) => (
-                                <TableCell
-                                  key={status.musicDifficulty}
-                                  align="center"
-                                >
-                                  {status.userMusicResults.length &&
-                                  status.userMusicResults.find(
-                                    (umr) => umr.playType === "multi"
-                                  )
-                                    ? status.userMusicResults.find(
-                                        (umr) => umr.playType === "multi"
-                                      )!.mvpCount
-                                    : "N/A"}
-                                </TableCell>
-                              )
-                            )}
-                          </TableRow>
-                          <TableRow>
-                            <TableCell>{t("music:super_star_count")}</TableCell>
-                            {umusic.userMusicDifficultyStatuses.map(
-                              (status) => (
-                                <TableCell
-                                  key={status.musicDifficulty}
-                                  align="center"
-                                >
-                                  {status.userMusicResults.length &&
-                                  status.userMusicResults.find(
-                                    (umr) => umr.playType === "multi"
-                                  )
-                                    ? status.userMusicResults.find(
-                                        (umr) => umr.playType === "multi"
-                                      )!.superStarCount
-                                    : "N/A"}
-                                </TableCell>
-                              )
-                            )}
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
-                  </Grid>
-                </Grid>
-              </Grid>
-            ))}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            {!!sekaiProfile && (
+              <MusicSingleData
+                umusic={sekaiProfile?.sekaiUserProfile?.userMusics.find(
+                  (um) => um.musicId === selectedMusic
+                )}
+                music={musics.find((m) => m.id === selectedMusic)!}
+              />
+            )}
           </Grid>
         )}
       </Grid>
