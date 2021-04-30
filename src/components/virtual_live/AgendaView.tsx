@@ -8,7 +8,7 @@ import {
 import { Skeleton } from "@material-ui/lab";
 import React, { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useRouteMatch } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { SettingContext } from "../../context";
 import { IVirtualLiveInfo } from "../../types";
 import { getRemoteAssetURL } from "../../utils";
@@ -45,7 +45,7 @@ const AgendaView: React.FC<{ data?: IVirtualLiveInfo }> = ({ data }) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
-  const { path } = useRouteMatch();
+  // const { path } = useRouteMatch();
   const { contentTransMode } = useContext(SettingContext)!;
 
   const [virtualLiveLogo, setVirtualLiveLogo] = useState<string>("");
@@ -87,7 +87,7 @@ const AgendaView: React.FC<{ data?: IVirtualLiveInfo }> = ({ data }) => {
     );
   }
   return (
-    <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
+    <Link to={"/virtual_live/" + data.id} style={{ textDecoration: "none" }}>
       <Container maxWidth="md" className={classes.card}>
         <Grid
           container
