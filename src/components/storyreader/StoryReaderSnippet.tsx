@@ -60,7 +60,10 @@ export const AudioPlayButton: React.FC<{ url: string }> = ({ url }) => {
 
   useEffect(() => {
     return () => {
-      if (audioSource) audioSource.stop();
+      if (audioSource) {
+        audioSource.stop();
+        audioSource.unload();
+      }
     };
   }, [audioSource]);
 

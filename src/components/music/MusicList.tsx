@@ -10,6 +10,7 @@ import {
   Select,
   Chip,
   Badge,
+  Avatar,
 } from "@material-ui/core";
 import { useLayoutStyles } from "../../styles/layout";
 import { ViewAgenda, Sort, SortOutlined, RotateLeft } from "@material-ui/icons";
@@ -20,16 +21,40 @@ import {
   ViewGrid,
   ViewGridOutline,
 } from "mdi-material-ui";
-import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { musicTagToName, useCachedData, useLocalStorage } from "../../utils";
+import React, {
+  Fragment,
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
+import {
+  useCachedData,
+  useCharaName,
+  useLocalStorage,
+  useMusicTagName,
+} from "../../utils";
 import InfiniteScroll from "../subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
 import { useInteractiveStyles } from "../../styles/interactive";
 import GridView from "./GridView";
 import AgendaView from "./AgendaView";
-import { IMusicInfo, IMusicTagInfo } from "../../types";
+import {
+  IMusicDifficultyInfo,
+  IMusicInfo,
+  IMusicTagInfo,
+  IMusicVocalInfo,
+  IOutCharaProfile,
+} from "../../types";
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
+import { SettingContext } from "../../context";
+import {
+  attrSelectReducer,
+  characterSelectReducer,
+} from "../../stores/reducers";
+import { charaIcons } from "../../utils/resources";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -46,15 +71,24 @@ const MusicList: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
+  const { contentTransMode, isShowSpoiler } = useContext(SettingContext)!;
+  const musicTagToName = useMusicTagName(contentTransMode);
+  const getCharaName = useCharaName(contentTransMode);
 
   const [musicsCache] = useCachedData<IMusicInfo>("musics");
   const [musicTags] = useCachedData<IMusicTagInfo>("musicTags");
+  const [musicVocals] = useCachedData<IMusicVocalInfo>("musicVocals");
+  const [outCharas] = useCachedData<IOutCharaProfile>("outsideCharacters");
+  const [musicDiffis] = useCachedData<IMusicDifficultyInfo>(
+    "musicDifficulties"
+  );
 
   const [musics, setMusics] = useState<IMusicInfo[]>([]);
   const [sortedCache, setSortedCache] = useState<IMusicInfo[]>([]);
-  const [viewGridType, setViewGridType] = useState<ViewGridType>(
-    (localStorage.getItem("music-list-grid-view-type") ||
-      "grid") as ViewGridType
+  const [viewGridType, setViewGridType] = useLocalStorage<ViewGridType>(
+    "music-list-grid-view-type",
+    "grid",
+    false
   );
   const [page, setPage] = useState<number>(0);
   const [limit] = useState<number>(12);
@@ -74,9 +108,32 @@ const MusicList: React.FC<{}> = () => {
     "music-list-filter-tag",
     "all"
   );
-  const [musicMVType, setMusicMVType] = useLocalStorage<string>(
-    "music-list-filter-mv-type",
+  const [composer, setComposer] = useLocalStorage<string>(
+    "music-list-filter-composer",
     ""
+  );
+  const [musicMVTypes, dispatchMusicMVTypes] = useReducer(
+    attrSelectReducer,
+    JSON.parse(localStorage.getItem("music-list-filter-mv-types") || "[]")
+  );
+  const [arranger, setArranger] = useLocalStorage<string>(
+    "music-list-filter-arranger",
+    ""
+  );
+  const [lyricist, setLyricist] = useLocalStorage<string>(
+    "music-list-filter-lyricist",
+    ""
+  );
+  const [characterSelected, dispatchCharacterSelected] = useReducer(
+    characterSelectReducer,
+    JSON.parse(localStorage.getItem("music-list-filter-charas") || "[]")
+  );
+  const [
+    outsideCharacterSelected,
+    dispatchOutsideCharacterSelected,
+  ] = useReducer(
+    characterSelectReducer,
+    JSON.parse(localStorage.getItem("music-list-filter-outside-charas") || "[]")
   );
 
   useEffect(() => {
@@ -88,18 +145,53 @@ const MusicList: React.FC<{}> = () => {
   }, [setIsReady, musicsCache]);
 
   useEffect(() => {
-    if (musicsCache && musicTags) {
+    if (musicsCache && musicTags && musicVocals && musicDiffis) {
       let result = [...musicsCache];
       // do filter
+      if (!isShowSpoiler) {
+        result = result.filter((m) => m.publishedAt <= new Date().getTime());
+      }
       if (musicTag) {
-        result = result.filter((c) =>
+        result = result.filter((m) =>
           musicTags
-            .filter((mt) => mt.musicId === c.id)!
+            .filter((mt) => mt.musicId === m.id)!
             .some((mt) => musicTag === mt.musicTag)
         );
       }
-      if (musicMVType) {
-        result = result.filter((c) => c.categories.includes(musicMVType));
+      if (musicMVTypes.length) {
+        result = result.filter(
+          (m) => m.categories.sort().join(" ") === musicMVTypes.sort().join(" ")
+        );
+      }
+      if (characterSelected.length || outsideCharacterSelected.length) {
+        result = result.filter((m) =>
+          musicVocals
+            .filter((mv) => mv.musicId === m.id)
+            .some(
+              (mv) =>
+                characterSelected.every((chara) =>
+                  mv.characters
+                    .filter((c) => c.characterType === "game_character")
+                    .map((c) => c.characterId)
+                    .includes(chara)
+                ) &&
+                outsideCharacterSelected.every((chara) =>
+                  mv.characters
+                    .filter((c) => c.characterType === "outside_character")
+                    .map((c) => c.characterId)
+                    .includes(chara)
+                )
+            )
+        );
+      }
+      if (composer) {
+        result = result.filter((m) => m.composer === composer);
+      }
+      if (arranger) {
+        result = result.filter((m) => m.arranger === arranger);
+      }
+      if (lyricist) {
+        result = result.filter((m) => m.lyricist === lyricist);
       }
       // sort musics cache
       switch (sortBy) {
@@ -108,6 +200,28 @@ const MusicList: React.FC<{}> = () => {
           result = result.sort((a, b) =>
             sortType === "asc" ? a[sortBy] - b[sortBy] : b[sortBy] - a[sortBy]
           );
+          break;
+        case "difficultyMaster":
+          result = result.sort((a, b) => {
+            const levelA = musicDiffis.find(
+              (md) => md.musicId === a.id && md.musicDifficulty === "master"
+            )!.playLevel;
+            const levelB = musicDiffis.find(
+              (md) => md.musicId === b.id && md.musicDifficulty === "master"
+            )!.playLevel;
+            return sortType === "asc" ? levelA - levelB : levelB - levelA;
+          });
+          break;
+        case "difficultyExpert":
+          result = result.sort((a, b) => {
+            const levelA = musicDiffis.find(
+              (md) => md.musicId === a.id && md.musicDifficulty === "expert"
+            )!.playLevel;
+            const levelB = musicDiffis.find(
+              (md) => md.musicId === b.id && md.musicDifficulty === "expert"
+            )!.playLevel;
+            return sortType === "asc" ? levelA - levelB : levelB - levelA;
+          });
           break;
       }
       setSortedCache(result);
@@ -122,7 +236,15 @@ const MusicList: React.FC<{}> = () => {
     setSortedCache,
     musicTags,
     musicTag,
-    musicMVType,
+    musicMVTypes,
+    isShowSpoiler,
+    composer,
+    arranger,
+    lyricist,
+    musicVocals,
+    characterSelected,
+    outsideCharacterSelected,
+    musicDiffis,
   ]);
 
   useEffect(() => {
@@ -172,8 +294,7 @@ const MusicList: React.FC<{}> = () => {
               color="primary"
               exclusive
               onChange={(_, gridType) => {
-                setViewGridType(gridType as "grid");
-                localStorage.setItem("music-list-grid-view-type", "grid");
+                setViewGridType((gridType || "grid") as "grid");
               }}
             >
               <ToggleButton value="grid">
@@ -195,7 +316,7 @@ const MusicList: React.FC<{}> = () => {
           <Badge
             color="secondary"
             variant="dot"
-            invisible={musicTag === "all" && !musicMVType}
+            invisible={musicTag === "all" && !musicMVTypes.length}
           >
             <Button
               variant="outlined"
@@ -238,7 +359,7 @@ const MusicList: React.FC<{}> = () => {
                         <Chip
                           clickable
                           color={musicTag === tag ? "primary" : "default"}
-                          label={musicTagToName[tag]}
+                          label={musicTagToName[tag as "all"]}
                           onClick={() => {
                             if (musicTag === tag) setMusicTag("all");
                             else setMusicTag(tag);
@@ -268,16 +389,237 @@ const MusicList: React.FC<{}> = () => {
                       <Grid key={cat} item>
                         <Chip
                           clickable
-                          color={musicMVType === cat ? "primary" : "default"}
+                          color={
+                            musicMVTypes.includes(cat) ? "primary" : "default"
+                          }
                           label={t(`music:categoryType.${cat}`)}
                           onClick={() => {
-                            musicMVType === cat
-                              ? setMusicMVType("")
-                              : setMusicMVType(cat);
+                            musicMVTypes.includes(cat)
+                              ? dispatchMusicMVTypes({
+                                  type: "remove",
+                                  payload: cat,
+                                  storeName: "music-list-filter-mv-types",
+                                })
+                              : dispatchMusicMVTypes({
+                                  type: "add",
+                                  payload: cat,
+                                  storeName: "music-list-filter-mv-types",
+                                });
                           }}
                         />
                       </Grid>
                     ))}
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justify="space-between"
+                spacing={1}
+              >
+                <Grid item xs={12} md={1}>
+                  <Typography classes={{ root: interactiveClasses.caption }}>
+                    {t("filter:character.caption")}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={11}>
+                  <Grid container spacing={1}>
+                    {Array.from({ length: 26 }).map((_, idx) => (
+                      <Grid key={"chara-filter-" + idx} item>
+                        <Chip
+                          clickable
+                          color={
+                            characterSelected.includes(idx + 1)
+                              ? "primary"
+                              : "default"
+                          }
+                          avatar={
+                            <Avatar
+                              alt={getCharaName(idx + 1)}
+                              src={
+                                charaIcons[
+                                  `CharaIcon${idx + 1}` as "CharaIcon1"
+                                ]
+                              }
+                            />
+                          }
+                          label={getCharaName(idx + 1)}
+                          onClick={() => {
+                            if (characterSelected.includes(idx + 1)) {
+                              dispatchCharacterSelected({
+                                type: "remove",
+                                payload: idx + 1,
+                                storeName: "music-list-filter-charas",
+                              });
+                            } else {
+                              dispatchCharacterSelected({
+                                type: "add",
+                                payload: idx + 1,
+                                storeName: "music-list-filter-charas",
+                              });
+                            }
+                          }}
+                        />
+                      </Grid>
+                    ))}
+                    {outCharas &&
+                      outCharas.map((outChara, idx) => (
+                        <Grid key={"outside-chara-filter-" + idx} item>
+                          <Chip
+                            clickable
+                            color={
+                              outsideCharacterSelected.includes(idx + 1)
+                                ? "primary"
+                                : "default"
+                            }
+                            label={outChara.name}
+                            onClick={() => {
+                              if (outsideCharacterSelected.includes(idx + 1)) {
+                                dispatchOutsideCharacterSelected({
+                                  type: "remove",
+                                  payload: idx + 1,
+                                  storeName: "music-list-filter-outside-charas",
+                                });
+                              } else {
+                                dispatchOutsideCharacterSelected({
+                                  type: "add",
+                                  payload: idx + 1,
+                                  storeName: "music-list-filter-outside-charas",
+                                });
+                              }
+                            }}
+                          />
+                        </Grid>
+                      ))}
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justify="space-between"
+                spacing={1}
+              >
+                <Grid item xs={12} md={1}>
+                  <Typography classes={{ root: interactiveClasses.caption }}>
+                    {t("music:composer")}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={11}>
+                  <Grid container spacing={1}>
+                    <Grid item>
+                      <FormControl>
+                        <Select
+                          value={composer}
+                          onChange={(e) => {
+                            setComposer(e.target.value as string);
+                          }}
+                          style={{ minWidth: "200px" }}
+                        >
+                          <MenuItem value="">
+                            {t("filter:not-selected")}
+                          </MenuItem>
+                          {Array.from(
+                            new Set(sortedCache.map((m) => m.composer))
+                          )
+                            .sort()
+                            .map((name) => (
+                              <MenuItem value={name} key={name}>
+                                {name}
+                              </MenuItem>
+                            ))}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justify="space-between"
+                spacing={1}
+              >
+                <Grid item xs={12} md={1}>
+                  <Typography classes={{ root: interactiveClasses.caption }}>
+                    {t("music:arranger")}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={11}>
+                  <Grid container spacing={1}>
+                    <Grid item>
+                      <FormControl>
+                        <Select
+                          value={arranger}
+                          onChange={(e) => {
+                            setArranger(e.target.value as string);
+                          }}
+                          style={{ minWidth: "200px" }}
+                        >
+                          <MenuItem value="">
+                            {t("filter:not-selected")}
+                          </MenuItem>
+                          {Array.from(
+                            new Set(sortedCache.map((m) => m.arranger))
+                          )
+                            .sort()
+                            .map((name) => (
+                              <MenuItem value={name} key={name}>
+                                {name}
+                              </MenuItem>
+                            ))}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justify="space-between"
+                spacing={1}
+              >
+                <Grid item xs={12} md={1}>
+                  <Typography classes={{ root: interactiveClasses.caption }}>
+                    {t("music:lyricist")}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={11}>
+                  <Grid container spacing={1}>
+                    <Grid item>
+                      <FormControl>
+                        <Select
+                          value={lyricist}
+                          onChange={(e) => {
+                            setLyricist(e.target.value as string);
+                          }}
+                          style={{ minWidth: "200px" }}
+                        >
+                          <MenuItem value="">
+                            {t("filter:not-selected")}
+                          </MenuItem>
+                          {Array.from(
+                            new Set(sortedCache.map((m) => m.lyricist))
+                          )
+                            .sort()
+                            .map((name) => (
+                              <MenuItem value={name} key={name}>
+                                {name}
+                              </MenuItem>
+                            ))}
+                        </Select>
+                      </FormControl>
+                    </Grid>
                   </Grid>
                 </Grid>
               </Grid>
@@ -302,10 +644,6 @@ const MusicList: React.FC<{}> = () => {
                           value={sortType}
                           onChange={(e) => {
                             setSortType(e.target.value as string);
-                            localStorage.setItem(
-                              "music-list-filter-sort-type",
-                              e.target.value as string
-                            );
                           }}
                           style={{ minWidth: "100px" }}
                         >
@@ -324,16 +662,18 @@ const MusicList: React.FC<{}> = () => {
                           value={sortBy}
                           onChange={(e) => {
                             setSortBy(e.target.value as string);
-                            localStorage.setItem(
-                              "music-list-filter-sort-by",
-                              e.target.value as string
-                            );
                           }}
                           style={{ minWidth: "100px" }}
                         >
                           <MenuItem value="id">{t("common:id")}</MenuItem>
                           <MenuItem value="publishedAt">
                             {t("common:startAt")}
+                          </MenuItem>
+                          <MenuItem value="difficultyMaster">
+                            {t("music:difficulty")} (Master)
+                          </MenuItem>
+                          <MenuItem value="difficultyExpert">
+                            {t("music:difficulty")} (Expert)
                           </MenuItem>
                         </Select>
                       </FormControl>
@@ -354,10 +694,35 @@ const MusicList: React.FC<{}> = () => {
                   <Button
                     variant="contained"
                     color="primary"
-                    disabled={musicTag === "all" && !musicMVType}
+                    disabled={
+                      musicTag === "all" &&
+                      !musicMVTypes.length &&
+                      !characterSelected.length &&
+                      !outsideCharacterSelected.length &&
+                      !composer &&
+                      !arranger &&
+                      !lyricist
+                    }
                     onClick={() => {
                       setMusicTag("all");
-                      setMusicMVType("");
+                      dispatchMusicMVTypes({
+                        type: "reset",
+                        payload: "",
+                        storeName: "music-list-filter-mv-types",
+                      });
+                      setArranger("");
+                      setComposer("");
+                      setLyricist("");
+                      dispatchCharacterSelected({
+                        type: "reset",
+                        payload: 0,
+                        storeName: "music-list-filter-charas",
+                      });
+                      dispatchOutsideCharacterSelected({
+                        type: "reset",
+                        payload: 0,
+                        storeName: "music-list-filter-outside-charas",
+                      });
                     }}
                     startIcon={<RotateLeft />}
                   >

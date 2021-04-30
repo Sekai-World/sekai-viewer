@@ -1,7 +1,6 @@
 import {
   makeStyles,
   Typography,
-  CardMedia,
   Grid,
   Container,
   Paper,
@@ -9,13 +8,14 @@ import {
 import { Skeleton } from "@material-ui/lab";
 import React, { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useRouteMatch } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { SettingContext } from "../../context";
 import { IVirtualLiveInfo } from "../../types";
 import { getRemoteAssetURL } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
 import { ContentTrans } from "../subs/ContentTrans";
 import SpoilerTag from "../subs/SpoilerTag";
+import Image from "material-ui-image";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -41,11 +41,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const GridView: React.FC<{ data?: IVirtualLiveInfo }> = ({ data }) => {
+const AgendaView: React.FC<{ data?: IVirtualLiveInfo }> = ({ data }) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
-  const { path } = useRouteMatch();
+  // const { path } = useRouteMatch();
   const { contentTransMode } = useContext(SettingContext)!;
 
   const [virtualLiveLogo, setVirtualLiveLogo] = useState<string>("");
@@ -87,24 +87,26 @@ const GridView: React.FC<{ data?: IVirtualLiveInfo }> = ({ data }) => {
     );
   }
   return (
-    <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
+    <Link to={"/virtual_live/" + data.id} style={{ textDecoration: "none" }}>
       <Container maxWidth="md" className={classes.card}>
         <Grid
           container
           spacing={2}
           component={Paper}
           className={classes["grid-out"]}
+          alignItems="center"
         >
-          <Grid item xs={12} md={4} container alignItems="center">
-            <CardMedia
-              className={classes.media}
-              image={virtualLiveLogo}
-              title={getTranslated(
+          <Grid item xs={12} md={4}>
+            <Image
+              src={virtualLiveLogo}
+              alt={getTranslated(
                 contentTransMode,
                 `virtualLive_name:${data.id}`,
                 data.name
               )}
-            ></CardMedia>
+              aspectRatio={3.2562}
+              color=""
+            ></Image>
           </Grid>
           <Grid item xs={12} md={8}>
             <Grid container direction="column" spacing={1}>
@@ -171,4 +173,4 @@ const GridView: React.FC<{ data?: IVirtualLiveInfo }> = ({ data }) => {
   );
 };
 
-export default GridView;
+export default AgendaView;

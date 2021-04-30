@@ -9,6 +9,7 @@ import {
   FormLabel,
   Radio,
   RadioGroup,
+  Switch,
 } from "@material-ui/core";
 import { Brightness4, Brightness7, BrightnessAuto } from "@material-ui/icons";
 import React, { useContext, useEffect } from "react";
@@ -33,6 +34,8 @@ const Settings: React.FC<{
     updateContentTransMode,
     languages,
     updateLanguages,
+    isShowSpoiler,
+    updateIsShowSpoiler,
   } = useContext(SettingContext)!;
   const { languages: remoteLanguages, isLoading, error } = useRemoteLanguages();
 
@@ -138,6 +141,20 @@ const Settings: React.FC<{
               label={t("common:contentTranslationMode.both")}
             ></FormControlLabel>
           </RadioGroup>
+        </FormControl>
+        <br />
+        <FormControl component="fieldset" style={{ margin: "1% 0" }}>
+          <FormLabel component="legend">{t("common:spoilerContent")}</FormLabel>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={isShowSpoiler}
+                onChange={(e, v) => updateIsShowSpoiler(v)}
+                name="checkedA"
+              />
+            }
+            label={t("common:show")}
+          />
         </FormControl>
       </DialogContent>
       <DialogActions>

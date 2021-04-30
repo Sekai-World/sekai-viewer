@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Badge,
   Button,
   Chip,
   CircularProgress,
@@ -11,6 +12,8 @@ import {
   FormControl,
   FormControlLabel,
   Grid,
+  IconButton,
+  InputAdornment,
   InputLabel,
   MenuItem,
   Popover,
@@ -22,6 +25,8 @@ import {
 } from "@material-ui/core";
 import {
   Add,
+  Check,
+  // Clear,
   RotateLeft,
   Save as SaveIcon,
   Sort,
@@ -41,18 +46,34 @@ import React, {
 import { useTranslation } from "react-i18next";
 import { SettingContext, UserContext } from "../../../context";
 import { useInteractiveStyles } from "../../../styles/interactive";
-import { useStrapi } from "../../../utils/apiClient";
+import { useCurrentEvent, useStrapi } from "../../../utils/apiClient";
 import { CardThumb } from "../../subs/CardThumb";
 // import { useInteractiveStyles } from "../../../styles/interactive";
 import rarityNormal from "../../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../../assets/rarity_star_afterTraining.png";
 import {
   attrSelectReducer,
+  characterSelectReducer,
   raritySelectReducer,
+  supportUnitSelectReducer,
 } from "../../../stores/reducers";
-import { attrIconMap } from "../../../utils/resources";
-import { ICardInfo, IGameChara, ITeamCardState } from "../../../types";
-import { useCachedData, useCharaName } from "../../../utils";
+import {
+  attrIconMap,
+  charaIcons,
+  UnitLogoMiniMap,
+} from "../../../utils/resources";
+import {
+  ICardInfo,
+  IEventDeckBonus,
+  IEventInfo,
+  IGameChara,
+  IGameCharaUnit,
+  ITeamCardState,
+  IUnitProfile,
+} from "../../../types";
+import { useCachedData, useCharaName, useLocalStorage } from "../../../utils";
+import { ContentTrans } from "../../subs/ContentTrans";
+import { useAssetI18n } from "../../../utils/i18n";
 
 const SekaiUserCardList = () => {
   // const layoutClasses = useLayoutStyles();
@@ -64,9 +85,15 @@ const SekaiUserCardList = () => {
   const { putSekaiCardList, deleteSekaiCardList } = useStrapi(jwtToken);
   const { contentTransMode } = useContext(SettingContext)!;
   const getCharaName = useCharaName(contentTransMode);
+  const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
+  const { getTranslated } = useAssetI18n();
 
   const [cards] = useCachedData<ICardInfo>("cards");
   const [charas] = useCachedData<IGameChara>("gameCharacters");
+  const [events] = useCachedData<IEventInfo>("events");
+  const [eventDeckBonuses] = useCachedData<IEventDeckBonus>("eventDeckBonuses");
+  const [charaUnits] = useCachedData<IGameCharaUnit>("gameCharacterUnits");
+  const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
 
   const [characterId, setCharacterId] = useState<number>(0);
   const [rarity, setRarity] = useState<number>(4);
@@ -84,24 +111,49 @@ const SekaiUserCardList = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
   const [filterOpened, setFilterOpened] = useState(false);
+  const [characterSelected, dispatchCharacterSelected] = useReducer(
+    characterSelectReducer,
+    JSON.parse(
+      localStorage.getItem("user-profile-sekai-cards-filter-charas") || "[]"
+    )
+  );
   const [attrSelected, dispatchAttrSelected] = useReducer(
     attrSelectReducer,
-    []
+    JSON.parse(
+      localStorage.getItem("user-profile-sekai-cards-filter-attrs") || "[]"
+    )
   );
   const [raritySelected, dispatchRaritySelected] = useReducer(
     raritySelectReducer,
-    []
+    JSON.parse(
+      localStorage.getItem("user-profile-sekai-cards-filter-rarities") || "[]"
+    )
   );
-  const [sortType, setSortType] = useState<string>(
-    localStorage.getItem("user-profile-sekai-cards-sort-type") || "asc"
+  const [supportUnitSelected, dispatchSupportUnitSelected] = useReducer(
+    supportUnitSelectReducer,
+    JSON.parse(
+      localStorage.getItem("user-profile-sekai-cards-filter-support-units") ||
+        "[]"
+    )
   );
-  const [sortBy, setSortBy] = useState<string>(
-    localStorage.getItem("user-profile-sekai-cards-sort-by") || "id"
+  const [sortType, setSortType] = useLocalStorage<string>(
+    "user-profile-sekai-cards-sort-type",
+    "asc"
+  );
+  const [sortBy, setSortBy] = useLocalStorage<string>(
+    "user-profile-sekai-cards-sort-by",
+    "id"
   );
   const [addCardDialogVisible, setAddCardDialogVisible] = useState(false);
 
   const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
   const open = useMemo(() => Boolean(anchorEl), [anchorEl]);
+
+  const [anchorElEvent, setAnchorElEvent] = useState<HTMLButtonElement | null>(
+    null
+  );
+  const eventOpen = useMemo(() => Boolean(anchorElEvent), [anchorElEvent]);
+  const [eventId, setEventId] = useState(1);
 
   useEffect(() => {
     if (cards && cards.length && sekaiProfile) {
@@ -110,17 +162,6 @@ const SekaiUserCardList = () => {
           card: cards.find((c) => c.id === elem.cardId)!,
         })
       );
-      if (attrSelected.length) {
-        _cardList = _cardList.filter((elem) =>
-          attrSelected.includes(elem.card.attr)
-        );
-      }
-      if (raritySelected.length) {
-        _cardList = _cardList.filter((elem) =>
-          raritySelected.includes(elem.card.rarity)
-        );
-      }
-      console.log(_cardList, deleteCardIds, editList, addCardIds);
       // apply modifications
       _cardList = _cardList.filter(
         (card) => !deleteCardIds.includes(card.cardId)
@@ -144,21 +185,28 @@ const SekaiUserCardList = () => {
           )
         ),
       ];
-      // setDisplayCardList(
-      //   _cardList
-      //     .sort((a, b) =>
-      //       sortBy === "level"
-      //         ? sortType === "asc"
-      //           ? a.level - b.level
-      //           : b.level - a.level
-      //         : sortType === "asc"
-      //         ? a.card[sortBy as "id"] - b.card[sortBy as "id"]
-      //         : b.card[sortBy as "id"] - a.card[sortBy as "id"]
-      //     )
-      //     .map((card, idx) =>
-      //       Object.assign({}, card, { id: idx + 1, card: undefined })
-      //     )
-      // );
+      if (characterSelected.length) {
+        _cardList = _cardList.filter((elem) =>
+          characterSelected.includes(elem.card.characterId)
+        );
+      }
+      if (attrSelected.length) {
+        _cardList = _cardList.filter((elem) =>
+          attrSelected.includes(elem.card.attr)
+        );
+      }
+      if (raritySelected.length) {
+        _cardList = _cardList.filter((elem) =>
+          raritySelected.includes(elem.card.rarity)
+        );
+      }
+      if (supportUnitSelected.length) {
+        _cardList = _cardList.filter(
+          (elem) =>
+            elem.card.supportUnit === "none" ||
+            supportUnitSelected.includes(elem.card.supportUnit)
+        );
+      }
       setCardList(
         _cardList
           .sort((a, b) =>
@@ -180,13 +228,21 @@ const SekaiUserCardList = () => {
     addCardIds,
     attrSelected,
     cards,
+    characterSelected,
     deleteCardIds,
     editList,
     raritySelected,
     sekaiProfile,
     sortBy,
     sortType,
+    supportUnitSelected,
   ]);
+
+  useEffect(() => {
+    if (!isCurrEventLoading) {
+      setEventId(currEvent.eventId);
+    }
+  }, [currEvent, isCurrEventLoading]);
 
   const handleClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement>, card: ITeamCardState) => {
@@ -199,6 +255,10 @@ const SekaiUserCardList = () => {
   const handleClose = useCallback(() => {
     setAnchorEl(null);
     setCard(undefined);
+  }, []);
+
+  const handleEventClose = useCallback(() => {
+    setAnchorElEvent(null);
   }, []);
 
   const handleChange = useCallback(
@@ -380,15 +440,24 @@ const SekaiUserCardList = () => {
           <Grid item>
             <Grid container spacing={1}>
               <Grid item>
-                <Button
-                  size="medium"
-                  onClick={() => setFilterOpened((v) => !v)}
-                  variant="outlined"
-                  color="primary"
+                <Badge
+                  color="secondary"
+                  variant="dot"
+                  invisible={
+                    !characterSelected.length &&
+                    !attrSelected.length &&
+                    !raritySelected.length
+                  }
                 >
-                  {filterOpened ? <Filter /> : <FilterOutline />}
-                  {filterOpened ? <Sort /> : <SortOutlined />}
-                </Button>
+                  <Button
+                    size="medium"
+                    onClick={() => setFilterOpened((v) => !v)}
+                    variant="outlined"
+                  >
+                    {filterOpened ? <Filter /> : <FilterOutline />}
+                    {filterOpened ? <Sort /> : <SortOutlined />}
+                  </Button>
+                </Badge>
               </Grid>
             </Grid>
           </Grid>
@@ -397,19 +466,62 @@ const SekaiUserCardList = () => {
       <Grid item xs={12}>
         <Collapse in={filterOpened}>
           <Grid container direction="column" spacing={2}>
-            <Grid
-              item
-              container
-              xs={12}
-              alignItems="center"
-              justify="space-between"
-            >
+            <Grid item container xs={12} alignItems="center" spacing={1}>
+              <Grid item xs={12} md={1}>
+                <Typography classes={{ root: interactiveClasses.caption }}>
+                  {t("filter:character.caption")}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} md={11}>
+                <Grid container spacing={1}>
+                  {Array.from({ length: 26 }).map((_, idx) => (
+                    <Grid key={"chara-filter-" + idx} item>
+                      <Chip
+                        clickable
+                        color={
+                          characterSelected.includes(idx + 1)
+                            ? "primary"
+                            : "default"
+                        }
+                        avatar={
+                          <Avatar
+                            alt={getCharaName(idx + 1)}
+                            src={
+                              charaIcons[`CharaIcon${idx + 1}` as "CharaIcon1"]
+                            }
+                          />
+                        }
+                        label={getCharaName(idx + 1)}
+                        onClick={() => {
+                          if (characterSelected.includes(idx + 1)) {
+                            dispatchCharacterSelected({
+                              type: "remove",
+                              payload: idx + 1,
+                              storeName:
+                                "user-profile-sekai-cards-filter-charas",
+                            });
+                          } else {
+                            dispatchCharacterSelected({
+                              type: "add",
+                              payload: idx + 1,
+                              storeName:
+                                "user-profile-sekai-cards-filter-charas",
+                            });
+                          }
+                        }}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item container xs={12} alignItems="center" spacing={1}>
               <Grid item xs={12} md={1}>
                 <Typography classes={{ root: interactiveClasses.caption }}>
                   {t("common:attribute")}
                 </Typography>
               </Grid>
-              <Grid item xs={12} md={10}>
+              <Grid item xs={12} md={11}>
                 <Grid container spacing={1}>
                   {["cute", "mysterious", "cool", "happy", "pure"].map(
                     (attr) => (
@@ -438,11 +550,15 @@ const SekaiUserCardList = () => {
                               dispatchAttrSelected({
                                 type: "remove",
                                 payload: attr,
+                                storeName:
+                                  "user-profile-sekai-cards-filter-attrs",
                               });
                             } else {
                               dispatchAttrSelected({
                                 type: "add",
                                 payload: attr,
+                                storeName:
+                                  "user-profile-sekai-cards-filter-attrs",
                               });
                             }
                           }}
@@ -453,19 +569,86 @@ const SekaiUserCardList = () => {
                 </Grid>
               </Grid>
             </Grid>
-            <Grid
-              item
-              container
-              xs={12}
-              alignItems="center"
-              justify="space-between"
-            >
+            {characterSelected.some((cId) => cId >= 21) && (
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justify="space-between"
+                spacing={1}
+              >
+                <Grid item xs={12} md={1}>
+                  <Typography classes={{ root: interactiveClasses.caption }}>
+                    {t("common:support_unit")}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={11}>
+                  <Grid container spacing={1}>
+                    {unitProfiles &&
+                      [
+                        "theme_park",
+                        "street",
+                        "idol",
+                        "school_refusal",
+                        "light_sound",
+                      ].map((supportUnit) => (
+                        <Grid key={"supportUnit-filter-" + supportUnit} item>
+                          <Chip
+                            clickable
+                            color={
+                              supportUnitSelected.includes(supportUnit)
+                                ? "primary"
+                                : "default"
+                            }
+                            avatar={
+                              <Avatar
+                                alt={supportUnit}
+                                src={UnitLogoMiniMap[supportUnit as "idol"]}
+                              />
+                            }
+                            label={
+                              <Typography variant="body2">
+                                {getTranslated(
+                                  contentTransMode,
+                                  `unit_profile:${supportUnit}.name`,
+                                  unitProfiles.find(
+                                    (up) => up.unit === supportUnit
+                                  )!.unitName
+                                )}
+                              </Typography>
+                            }
+                            onClick={() => {
+                              if (supportUnitSelected.includes(supportUnit)) {
+                                dispatchSupportUnitSelected({
+                                  type: "remove",
+                                  payload: supportUnit,
+                                  storeName:
+                                    "user-profile-sekai-cards-filter-support-units",
+                                });
+                              } else {
+                                dispatchSupportUnitSelected({
+                                  type: "add",
+                                  payload: supportUnit,
+                                  storeName:
+                                    "user-profile-sekai-cards-filter-support-units",
+                                });
+                              }
+                            }}
+                          />
+                        </Grid>
+                      ))}
+                  </Grid>
+                </Grid>
+              </Grid>
+            )}
+            <Grid item container xs={12} alignItems="center" spacing={1}>
               <Grid item xs={12} md={1}>
                 <Typography classes={{ root: interactiveClasses.caption }}>
                   {t("card:rarity")}
                 </Typography>
               </Grid>
-              <Grid item xs={12} md={10}>
+              <Grid item xs={12} md={11}>
                 <Grid container spacing={1}>
                   {[1, 2, 3, 4].map((rarity) => (
                     <Grid key={`rarity-${rarity}`} item>
@@ -498,11 +681,15 @@ const SekaiUserCardList = () => {
                             dispatchRaritySelected({
                               type: "remove",
                               payload: rarity,
+                              storeName:
+                                "user-profile-sekai-cards-filter-rarities",
                             });
                           } else {
                             dispatchRaritySelected({
                               type: "add",
                               payload: rarity,
+                              storeName:
+                                "user-profile-sekai-cards-filter-rarities",
                             });
                           }
                         }}
@@ -512,19 +699,13 @@ const SekaiUserCardList = () => {
                 </Grid>
               </Grid>
             </Grid>
-            <Grid
-              item
-              container
-              xs={12}
-              alignItems="center"
-              justify="space-between"
-            >
+            <Grid item container xs={12} alignItems="center" spacing={1}>
               <Grid item xs={12} md={1}>
                 <Typography classes={{ root: interactiveClasses.caption }}>
                   {t("filter:sort.caption")}
                 </Typography>
               </Grid>
-              <Grid item xs={12} md={10}>
+              <Grid item xs={12} md={11}>
                 <Grid container spacing={1}>
                   <Grid item>
                     <FormControl>
@@ -532,10 +713,6 @@ const SekaiUserCardList = () => {
                         value={sortType}
                         onChange={(e) => {
                           setSortType(e.target.value as string);
-                          localStorage.setItem(
-                            "user-profile-sekai-cards-sort-type",
-                            e.target.value as string
-                          );
                         }}
                         style={{ minWidth: "100px" }}
                       >
@@ -554,10 +731,6 @@ const SekaiUserCardList = () => {
                         value={sortBy}
                         onChange={(e) => {
                           setSortBy(e.target.value as string);
-                          localStorage.setItem(
-                            "user-profile-sekai-cards-sort-by",
-                            e.target.value as string
-                          );
                         }}
                         style={{ minWidth: "100px" }}
                       >
@@ -574,6 +747,70 @@ const SekaiUserCardList = () => {
                     </FormControl>
                   </Grid>
                 </Grid>
+              </Grid>
+            </Grid>
+            <Grid
+              item
+              container
+              xs={12}
+              alignItems="center"
+              // justify="space-between"
+              spacing={1}
+            >
+              <Grid item xs={false} md={1}></Grid>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  disabled={
+                    !characterSelected.length &&
+                    !attrSelected.length &&
+                    // !skillSelected.length &&
+                    !raritySelected.length
+                  }
+                  onClick={() => {
+                    dispatchCharacterSelected({
+                      type: "reset",
+                      payload: 0,
+                      storeName: "user-profile-sekai-cards-filter-charas",
+                    });
+                    dispatchAttrSelected({
+                      type: "reset",
+                      payload: "",
+                      storeName: "user-profile-sekai-cards-filter-attrs",
+                    });
+                    dispatchRaritySelected({
+                      type: "reset",
+                      payload: 0,
+                      storeName: "user-profile-sekai-cards-filter-rarities",
+                    });
+                    // dispatchSkillSelected({
+                    //   type: "reset",
+                    //   payload: "",
+                    // });
+                    dispatchSupportUnitSelected({
+                      type: "reset",
+                      payload: "",
+                      storeName:
+                        "user-profile-sekai-cards-filter-support-units",
+                    });
+                  }}
+                  startIcon={<RotateLeft />}
+                >
+                  {t("common:reset")}
+                </Button>
+              </Grid>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  disabled={!events || !eventDeckBonuses || !charaUnits}
+                  onClick={(e) => {
+                    setAnchorElEvent(e.currentTarget);
+                  }}
+                >
+                  {t("card:apply_event_filter")}
+                </Button>
               </Grid>
             </Grid>
           </Grid>
@@ -822,6 +1059,102 @@ const SekaiUserCardList = () => {
         </DialogContent>
         {/* <DialogActions></DialogActions> */}
       </Dialog>
+      <Popover
+        open={eventOpen}
+        anchorEl={anchorElEvent}
+        onClose={handleEventClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        transformOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+      >
+        <Container style={{ paddingTop: "1em", paddingBottom: "1em" }}>
+          <TextField
+            select
+            label={t("common:event")}
+            value={eventId}
+            onChange={(e) => setEventId(Number(e.target.value))}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="start">
+                  <IconButton
+                    size="small"
+                    onClick={() => {
+                      const bonuses = eventDeckBonuses!.filter(
+                        (edb) => edb.eventId === eventId && edb.bonusRate === 50
+                      );
+                      // console.log(bonuses, eventId, eventDeckBonuses);
+                      const attr = bonuses[0].cardAttr;
+                      dispatchRaritySelected({
+                        type: "reset",
+                        payload: 0,
+                        storeName: "user-profile-sekai-cards-filter-rarities",
+                      });
+                      dispatchAttrSelected({
+                        type: "add",
+                        payload: attr,
+                        storeName: "user-profile-sekai-cards-filter-attrs",
+                      });
+                      const charas = bonuses.map(
+                        (bonus) =>
+                          charaUnits!.find(
+                            (cu) => cu.id === bonus.gameCharacterUnitId
+                          )!
+                      );
+                      dispatchCharacterSelected({
+                        type: "reset",
+                        payload: 0,
+                        storeName: "user-profile-sekai-cards-filter-charas",
+                      });
+                      charas.forEach((chara) =>
+                        dispatchCharacterSelected({
+                          type: "add",
+                          payload: chara.gameCharacterId,
+                          storeName: "user-profile-sekai-cards-filter-charas",
+                        })
+                      );
+                      dispatchSupportUnitSelected({
+                        type: "reset",
+                        payload: "",
+                        storeName:
+                          "user-profile-sekai-cards-filter-support-units",
+                      });
+                      charas
+                        .filter((chara) => chara.gameCharacterId >= 21)
+                        .forEach((chara) => {
+                          dispatchSupportUnitSelected({
+                            type: "add",
+                            payload: chara.unit,
+                            storeName:
+                              "user-profile-sekai-cards-filter-support-units",
+                          });
+                        });
+                      handleEventClose();
+                    }}
+                    disabled={eventId === 0}
+                  >
+                    <Check />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          >
+            {events &&
+              events.map((ev) => (
+                <MenuItem key={ev.id} value={ev.id}>
+                  <ContentTrans
+                    original={ev.name}
+                    contentKey={`event_name:${ev.id}`}
+                  />
+                </MenuItem>
+              ))}
+          </TextField>
+        </Container>
+      </Popover>
     </Grid>
   );
 };

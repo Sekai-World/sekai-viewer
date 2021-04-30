@@ -30,7 +30,7 @@ import { characterSelectReducer } from "../../stores/reducers";
 import { useInteractiveStyles } from "../../styles/interactive";
 import { useLayoutStyles } from "../../styles/layout";
 import { IStampInfo } from "../../types";
-import { useCachedData, useCharaName } from "../../utils";
+import { useCachedData, useCharaName, useLocalStorage } from "../../utils";
 import { charaIcons } from "../../utils/resources";
 import GridView from "./GridView";
 import InfiniteScroll from "../subs/InfiniteScroll";
@@ -50,21 +50,24 @@ const StampList: React.FC<{}> = () => {
   const [stamps, setStamps] = useState<IStampInfo[]>([]);
   const [filteredCache, setFilteredCache] = useState<IStampInfo[]>([]);
   const [filterOpened, setFilterOpened] = useState<boolean>(false);
-  const [sortType, setSortType] = useState<string>(
-    (localStorage.getItem("stamp-list-update-sort") || "desc") as "desc"
+  const [sortType, setSortType] = useLocalStorage<string>(
+    "stamp-list-update-sort",
+    "desc"
   );
-  const [sortBy, setSortBy] = useState<string>(
-    localStorage.getItem("stamp-list-filter-sort-by") || "id"
+  const [sortBy, setSortBy] = useLocalStorage<string>(
+    "stamp-list-filter-sort-by",
+    "id"
   );
   const [characterSelected, dispatchCharacterSelected] = useReducer(
     characterSelectReducer,
-    []
+    JSON.parse(localStorage.getItem("stamp-list-filter-charas") || "[]")
   );
 
   const [page, setPage] = useState<number>(0);
   const [limit] = useState<number>(12);
   const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
   const [isReady, setIsReady] = useState<boolean>(false);
+  const [stampType, setStampType] = useState("");
 
   const getPaginatedStamps = useCallback(
     (page: number, limit: number) => {
@@ -104,8 +107,12 @@ const StampList: React.FC<{}> = () => {
         cache = stampsCache.filter((s) =>
           characterSelected.includes(s.characterId1)
         );
-      } else {
-        cache = stampsCache;
+      }
+      if (stampType) {
+        const compareTypes = [stampType];
+        if (stampType === "text")
+          compareTypes.push("cheerful_carnival_message");
+        cache = stampsCache.filter((s) => compareTypes.includes(s.stampType));
       }
       if (sortType === "desc") {
         cache = cache.sort((a, b) => b[sortBy as "id"] - a[sortBy as "id"]);
@@ -124,28 +131,33 @@ const StampList: React.FC<{}> = () => {
     setFilteredCache,
     sortType,
     sortBy,
+    stampType,
   ]);
 
   useEffect(() => {
     setStamps((stamps) => [...stamps, ...getPaginatedStamps(page, limit)]);
     setLastQueryFin(true);
-  }, [page, limit, setLastQueryFin, stampsCache, getPaginatedStamps]);
+  }, [page, limit, setLastQueryFin, getPaginatedStamps]);
 
   useEffect(() => {
     setIsReady(Boolean(stampsCache && stampsCache.length));
   }, [setIsReady, stampsCache]);
 
-  const handleUpdateSortType = useCallback((_, sort: string) => {
-    if (!sort) return;
-    setSortType(sort);
-    localStorage.setItem("gacha-list-filter-sort-type", sort);
-  }, []);
+  const handleUpdateSortType = useCallback(
+    (_, sort: string) => {
+      if (!sort) return;
+      setSortType(sort || "asc");
+    },
+    [setSortType]
+  );
 
-  const handleUpdateSortBy = useCallback((_, sort: string) => {
-    if (!sort) return;
-    setSortBy(sort);
-    localStorage.setItem("gacha-list-filter-sort-by", sort);
-  }, []);
+  const handleUpdateSortBy = useCallback(
+    (_, sort: string) => {
+      if (!sort) return;
+      setSortBy(sort || "id");
+    },
+    [setSortBy]
+  );
 
   return (
     <Fragment>
@@ -241,13 +253,46 @@ const StampList: React.FC<{}> = () => {
                               dispatchCharacterSelected({
                                 type: "remove",
                                 payload: idx + 1,
+                                storeName: "stamp-list-filter-charas",
                               });
                             } else {
                               dispatchCharacterSelected({
                                 type: "add",
                                 payload: idx + 1,
+                                storeName: "stamp-list-filter-charas",
                               });
                             }
+                          }}
+                        />
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justify="space-between"
+                spacing={1}
+              >
+                <Grid item xs={12} md={1}>
+                  <Typography classes={{ root: interactiveClasses.caption }}>
+                    {t("filter:stampType.caption")}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={11}>
+                  <Grid container spacing={1}>
+                    {["text", "illustration"].map((type) => (
+                      <Grid key={"stamp-type-filter-" + type} item>
+                        <Chip
+                          clickable
+                          color={stampType === type ? "primary" : "default"}
+                          label={t(`filter:stampType.${type}`)}
+                          onClick={() => {
+                            if (stampType === type) setStampType("");
+                            else setStampType(type);
                           }}
                         />
                       </Grid>
@@ -258,17 +303,17 @@ const StampList: React.FC<{}> = () => {
             </Grid>
           </Paper>
         </Collapse>
-        {InfiniteScroll<IStampInfo>({
-          ViewComponent: ListCard,
-          callback,
-          data: stamps,
-          gridSize: {
+        <InfiniteScroll<IStampInfo>
+          ViewComponent={ListCard}
+          callback={callback}
+          data={stamps}
+          gridSize={{
             xs: 6,
             sm: 4,
             md: 3,
             lg: 2,
-          },
-        })}
+          }}
+        />
       </Container>
     </Fragment>
   );

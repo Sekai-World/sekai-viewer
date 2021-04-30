@@ -161,7 +161,7 @@ const AnnouncementDetail: React.FC<{}> = () => {
       </Container>
       <AdSense
         client="ca-pub-7767752375383260"
-        slot="5596436251"
+        slot="2771743585"
         format="auto"
         responsive="true"
       />

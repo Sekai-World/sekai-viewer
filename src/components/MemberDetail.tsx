@@ -171,7 +171,7 @@ const MemberDetail: React.FC<{}> = () => {
       <Typography variant="h6" className={layoutClasses.header}>
         {getCharaName(Number(charaId))}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
+      <Container className={layoutClasses.content} maxWidth="md">
         <TabContext value={tabVal}>
           <Paper>
             <Tabs
@@ -337,7 +337,7 @@ const MemberDetail: React.FC<{}> = () => {
       <Typography variant="h6" className={layoutClasses.header}>
         {t("common:profile")}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
+      <Container className={layoutClasses.content} maxWidth="md">
         <Grid className={classes["grid-out"]} container direction="column">
           {Object.keys(charaProfile)
             .filter((key) => !["characterId", "scenarioId"].includes(key))

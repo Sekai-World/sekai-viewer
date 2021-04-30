@@ -5,6 +5,7 @@ import { IResourceBoxInfo } from "../../types";
 import { useCachedData } from "../../utils";
 import CommonMaterialIcon from "./CommonMaterialIcon";
 import MaterialIcon from "./MaterialIcon";
+import DegreeImage from "./DegreeImage";
 
 const ResourceBox: React.FC<{
   resourceBoxId: number;
@@ -29,7 +30,7 @@ const ResourceBox: React.FC<{
 
   return resource ? (
     <Fragment>
-      <Grid container spacing={1} justify={justify}>
+      <Grid container spacing={1} justify={justify} alignItems="center">
         {resource.details.map((detail) => (
           <Grid item key={`${detail.resourceType}-${detail.resourceBoxId}`}>
             {detail.resourceType === "material" ? (
@@ -41,17 +42,21 @@ const ResourceBox: React.FC<{
               <Image
                 src={`${
                   process.env.REACT_APP_ASSET_DOMAIN_WW
-                }/file/sekai-assets/stamp/stamp${String(
-                  detail.resourceId
-                ).padStart(4, "0")}_rip/stamp${String(
-                  detail.resourceId
-                ).padStart(4, "0")}/stamp${String(detail.resourceId).padStart(
+                }/sekai-assets/stamp/stamp${String(detail.resourceId).padStart(
                   4,
                   "0"
-                )}.png`}
+                )}_rip/stamp${String(detail.resourceId).padStart(
+                  4,
+                  "0"
+                )}/stamp${String(detail.resourceId).padStart(4, "0")}.png`}
                 aspectRatio={1}
                 style={{ height: "64px", width: "64px" }}
                 color=""
+              />
+            ) : detail.resourceType === "honor" ? (
+              <DegreeImage
+                style={{ width: "160px" }}
+                honorId={detail.resourceId}
               />
             ) : detail.resourceType !== "honor" ? (
               <CommonMaterialIcon

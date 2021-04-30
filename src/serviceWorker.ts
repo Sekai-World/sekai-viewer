@@ -25,8 +25,24 @@ type Config = {
   onUpdate?: (registration: ServiceWorkerRegistration) => void;
 };
 
+export function unregister() {
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.ready
+      .then((registration) => {
+        registration.unregister();
+      })
+      .catch((error) => {
+        console.error(error.message);
+      });
+  }
+}
+
 export function register(config?: Config) {
-  if (process.env.NODE_ENV === "production" && "serviceWorker" in navigator) {
+  if (
+    process.env.NODE_ENV === "production" &&
+    "serviceWorker" in navigator &&
+    window.location.hostname === "sekai.best" // restrict service worker hostname
+  ) {
     // The URL constructor is available in all browsers that support SW.
     const publicUrl = new URL(process.env.PUBLIC_URL, window.location.href);
     if (publicUrl.origin !== window.location.origin) {
@@ -56,6 +72,8 @@ export function register(config?: Config) {
       registerValidSW(swUrl, config);
     }
     // });
+  } else {
+    unregister();
   }
 }
 
@@ -168,16 +186,4 @@ function checkValidServiceWorker(swUrl: string, config?: Config) {
         "No internet connection found. App is running in offline mode."
       );
     });
-}
-
-export function unregister() {
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.ready
-      .then((registration) => {
-        registration.unregister();
-      })
-      .catch((error) => {
-        console.error(error.message);
-      });
-  }
 }

@@ -2,9 +2,10 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 
 module.exports = function (app) {
   app.use(
-    "/file/sekai-assets",
+    "/sekai-assets",
     createProxyMiddleware({
-      target: "https://sekai-res.dnaroma.eu/",
+      target: "https://sekai-res.dnaroma.eu/file",
+      // target: "https://minio.dnaroma.eu",
       changeOrigin: true,
     })
   );
@@ -22,6 +23,7 @@ module.exports = function (app) {
     "/api",
     createProxyMiddleware({
       target: "https://api.sekai.best",
+      // target: "http://localhost:9999",
       changeOrigin: true,
       pathRewrite: {
         "^/api": "/",
@@ -31,8 +33,8 @@ module.exports = function (app) {
   app.use(
     "/strapi",
     createProxyMiddleware({
-      target: "https://strapi-staging.sekai.best",
-      // target: "http://localhost:1337",
+      // target: "https://strapi-staging.sekai.best",
+      target: "http://localhost:1447",
       changeOrigin: true,
       pathRewrite: {
         "^/strapi": "/",

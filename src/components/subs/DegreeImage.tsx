@@ -4,6 +4,7 @@ import { useSvgStyles } from "../../styles/svg";
 import { IResourceBoxInfo, IHonorInfo } from "../../types";
 import { getRemoteAssetURL, useCachedData } from "../../utils";
 import { degreeFrameMap } from "../../utils/resources";
+import degreeLevelIcon from "../../assets/frame/icon_degreeLv.png";
 
 const DegreeImage: React.FC<
   {
@@ -12,13 +13,14 @@ const DegreeImage: React.FC<
     type?: string;
     honorLevel?: number;
   } & React.HTMLProps<HTMLDivElement>
-> = ({ resourceBoxId, type, honorId, style }) => {
+> = ({ resourceBoxId, type, honorId, style, honorLevel: _honorLevel }) => {
   const classes = useSvgStyles();
 
   const [resourceBoxes] = useCachedData<IResourceBoxInfo>("resourceBoxes");
   const [honors] = useCachedData<IHonorInfo>("honors");
 
   const [honor, setHonor] = useState<IHonorInfo>();
+  const [honorLevel, setHonorLevel] = useState(_honorLevel);
   const [degreeImage, setDegreeImage] = useState<string>("");
   const [degreeRankImage, setDegreeRankImage] = useState<string>("");
 
@@ -38,9 +40,21 @@ const DegreeImage: React.FC<
                 .resourceId
             : honorId
             ? honor.id === honorId
-            : undefined
+            : false
         )!
       );
+      if (resourceBoxId) {
+        setHonorLevel(
+          resourceBoxes
+            .find(
+              (resBox) =>
+                resBox.resourceBoxPurpose === type! &&
+                resBox.id === resourceBoxId
+            )!
+            .details.find((detail) => detail.resourceType === "honor")!
+            .resourceLevel
+        );
+      }
     }
   }, [honors, resourceBoxes, resourceBoxId, type, honorId]);
 
@@ -79,6 +93,19 @@ const DegreeImage: React.FC<
           height="80"
           width="380"
         />
+        {/* degree level */}
+        {!!honorLevel &&
+          honor.levels.length > 1 &&
+          Array.from({ length: honorLevel }).map((_, idx) => (
+            <image
+              key={idx}
+              href={degreeLevelIcon}
+              x={54 + idx * 16}
+              y="64"
+              height="16"
+              width="16"
+            />
+          ))}
         {/* rank */}
         {degreeRankImage && (
           <image href={degreeRankImage} x="190" y="0" width="150" height="78" />

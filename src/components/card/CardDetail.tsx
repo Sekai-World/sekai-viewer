@@ -56,6 +56,7 @@ import {
   ReleaseCondTrans,
 } from "../subs/ContentTrans";
 import ResourceBox from "../subs/ResourceBox";
+import { AudioPlayButton } from "../storyreader/StoryReaderSnippet";
 import AdSense from "../subs/AdSense";
 
 const useStyles = makeStyles((theme) => ({
@@ -126,6 +127,7 @@ const CardDetail: React.FC<{}> = () => {
   const [sideStory2Unlocked, setSideStory2Unlocked] = useState<boolean>(true);
   // const [cardRank, setCardRank] = useState<number | number[]>(0);
   // const [maxCardRank, setMaxCardRank] = useState<number>(0);
+  const [gachaPhraseUrl, setGachaPhraseUrl] = useState("");
 
   const getSkillDesc = useCallback(
     (skill: ISkillInfo, skillLevel: number | number[]) => {
@@ -256,6 +258,13 @@ const CardDetail: React.FC<{}> = () => {
         ].level
       );
       setCardEpisode(episodes.filter((epi) => epi.cardId === Number(cardId)));
+      if (_card.gachaPhrase !== "-")
+        getRemoteAssetURL(
+          `sound/gacha/get_voice/${_card.assetbundleName}_rip/${_card.assetbundleName}.mp3`,
+          setGachaPhraseUrl,
+          window.isChinaMainland,
+          true
+        );
     }
   }, [
     setCard,
@@ -358,7 +367,7 @@ const CardDetail: React.FC<{}> = () => {
       <Typography variant="h6" className={layoutClasses.header}>
         {cardTitle}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
+      <Container className={layoutClasses.content} maxWidth="md">
         <TabContext value={tabVal}>
           <Paper>
             <Tabs
@@ -466,6 +475,44 @@ const CardDetail: React.FC<{}> = () => {
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
+          {card.gachaPhrase !== "-" && (
+            <Fragment>
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Grid item>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("card:gachaPhrase")}
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Grid
+                    container
+                    spacing={1}
+                    alignItems="center"
+                    justify="flex-end"
+                  >
+                    <Grid item>
+                      <ContentTrans
+                        contentKey={`card_gacha_phrase:${card.id}`}
+                        original={card.gachaPhrase}
+                        originalProps={{ align: "right" }}
+                        translatedProps={{ align: "right" }}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <AudioPlayButton url={gachaPhraseUrl} />
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
+            </Fragment>
+          )}
           <Grid
             container
             direction="row"
@@ -492,7 +539,7 @@ const CardDetail: React.FC<{}> = () => {
                   <Grid item>
                     <CharaNameTrans
                       characterId={card.characterId}
-                      originalProps={{ align: "right", color: "textPrimary" }}
+                      originalProps={{ align: "right" }}
                       translatedProps={{ align: "right" }}
                     />
                   </Grid>
@@ -541,7 +588,7 @@ const CardDetail: React.FC<{}> = () => {
                           (up) => up.unit === getCharaUnitName(card.characterId)
                         )!.unitName
                       }
-                      originalProps={{ align: "right", color: "textPrimary" }}
+                      originalProps={{ align: "right" }}
                       translatedProps={{ align: "right" }}
                     />
                   </Grid>
@@ -727,7 +774,7 @@ const CardDetail: React.FC<{}> = () => {
       <Typography variant="h6" className={layoutClasses.header}>
         {t("common:skill")}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
+      <Container className={layoutClasses.content} maxWidth="md">
         <Paper className={interactiveClasses.container}>
           <Grid container direction="column" spacing={1}>
             <Grid
@@ -806,7 +853,7 @@ const CardDetail: React.FC<{}> = () => {
       <Typography variant="h6" className={layoutClasses.header}>
         {t("card:stats")}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
+      <Container className={layoutClasses.content} maxWidth="md">
         <Paper className={interactiveClasses.container}>
           <Grid container direction="column" spacing={1}>
             <Grid
@@ -997,10 +1044,16 @@ const CardDetail: React.FC<{}> = () => {
           <Divider style={{ margin: "1% 0" }} />
         </Grid>
       </Container>
+      <AdSense
+        client="ca-pub-7767752375383260"
+        slot="8221864477"
+        format="auto"
+        responsive="true"
+      />
       <Typography variant="h6" className={layoutClasses.header}>
         {t("card:sideStory", { count: cardEpisode.length })}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
+      <Container className={layoutClasses.content} maxWidth="md">
         <TabContext value={episodeTabVal}>
           <Paper className={interactiveClasses.container}>
             <Tabs
@@ -1063,12 +1116,12 @@ const CardDetail: React.FC<{}> = () => {
                 justify="space-between"
                 alignItems="center"
               >
-                <Grid item xs={2}>
+                <Grid item xs={3}>
                   <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                     {t("common:releaseCosts")}
                   </Typography>
                 </Grid>
-                <Grid item container spacing={1} xs={10} justify="flex-end">
+                <Grid item container spacing={1} xs={9} justify="flex-end">
                   {cardEpisode[0].costs.map((c, idx) => (
                     <Grid key={`episode-cost-${idx}`} item>
                       <MaterialIcon
@@ -1135,12 +1188,12 @@ const CardDetail: React.FC<{}> = () => {
                 justify="space-between"
                 alignItems="center"
               >
-                <Grid item xs={2}>
+                <Grid item xs={3}>
                   <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                     {t("common:releaseCosts")}
                   </Typography>
                 </Grid>
-                <Grid item container spacing={1} xs={10} justify="flex-end">
+                <Grid item container spacing={1} xs={9} justify="flex-end">
                   {cardEpisode[1].costs.map((c, idx) => (
                     <Grid key={`episode-cost-${idx}`} item>
                       <MaterialIcon
@@ -1179,12 +1232,6 @@ const CardDetail: React.FC<{}> = () => {
           </TabPanel>
         </TabContext>
       </Container>
-      <AdSense
-        client="ca-pub-7767752375383260"
-        slot="5596436251"
-        format="auto"
-        responsive="true"
-      />
       <Viewer
         visible={visible}
         onClose={() => setVisible(false)}

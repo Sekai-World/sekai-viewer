@@ -12,7 +12,11 @@ import { clientsClaim } from "workbox-core";
 import { ExpirationPlugin } from "workbox-expiration";
 import { precacheAndRoute, createHandlerBoundToURL } from "workbox-precaching";
 import { registerRoute } from "workbox-routing";
-import { CacheFirst, StaleWhileRevalidate } from "workbox-strategies";
+import {
+  CacheFirst,
+  NetworkFirst,
+  StaleWhileRevalidate,
+} from "workbox-strategies";
 
 declare const self: ServiceWorkerGlobalScope;
 
@@ -82,8 +86,13 @@ self.addEventListener("message", (event) => {
 registerRoute(
   // Add in any other file extensions or routing criteria as needed.
   ({ url }) =>
-    url.origin === "https://sekai-res.dnaroma.eu" &&
-    (url.pathname.endsWith(".png") || url.pathname.endsWith(".webp")),
+    (url.origin === "https://sekai-res.dnaroma.eu" ||
+      url.origin === "https://sekai-assets-1258184166.file.myqcloud.com") &&
+    (url.pathname.endsWith(".png") ||
+      url.pathname.endsWith(".webp") ||
+      url.pathname.endsWith(".moc3.bytes") ||
+      url.pathname.endsWith(".model3.json") ||
+      url.pathname.endsWith(".physics3.json")),
   // Customize this strategy as needed, e.g., by changing to CacheFirst.
   new CacheFirst({
     cacheName: "sekaiResImages",
@@ -98,8 +107,14 @@ registerRoute(
 registerRoute(
   // Add in any other file extensions or routing criteria as needed.
   ({ url }) =>
-    url.origin === "https://minio.dnaroma.eu" &&
-    (url.pathname.endsWith(".png") || url.pathname.endsWith(".webp")),
+    (url.origin === "https://minio.dnaroma.eu" ||
+      url.origin ===
+        "https://sekai-best-assets-1258184166.file.myqcloud.com") &&
+    (url.pathname.endsWith(".png") ||
+      url.pathname.endsWith(".webp") ||
+      url.pathname.endsWith(".moc3.bytes") ||
+      url.pathname.endsWith(".model3.json") ||
+      url.pathname.endsWith(".physics3.json")),
   // Customize this strategy as needed, e.g., by changing to CacheFirst.
   new CacheFirst({
     cacheName: "minioImages",
@@ -114,11 +129,31 @@ registerRoute(
 registerRoute(
   // Add in any other file extensions or routing criteria as needed.
   ({ url }) =>
+    (url.origin === "https://sekai-res.dnaroma.eu" ||
+      url.origin === "https://sekai-assets-1258184166.file.myqcloud.com" ||
+      url.origin === "https://minio.dnaroma.eu" ||
+      url.origin ===
+        "https://sekai-best-assets-1258184166.file.myqcloud.com") &&
+    (url.pathname.endsWith(".mp3") || url.pathname.endsWith(".flac")),
+  // Customize this strategy as needed, e.g., by changing to CacheFirst.
+  new CacheFirst({
+    cacheName: "sekaiAudioFiles",
+    plugins: [
+      // Ensure that once this runtime cache reaches a maximum size the
+      // least-recently used images are removed.
+      new ExpirationPlugin({ maxEntries: 300 }),
+    ],
+  })
+);
+
+registerRoute(
+  // Add in any other file extensions or routing criteria as needed.
+  ({ url }) =>
     url.origin === "https://i18n-json.sekai.best" ||
     (url.origin === "https://sekai-json-1258184166.file.myqcloud.com" &&
       url.pathname.startsWith("/locales")),
   // Customize this strategy as needed, e.g., by changing to CacheFirst.
-  new StaleWhileRevalidate({
+  new NetworkFirst({
     cacheName: "i18next",
     plugins: [
       // Ensure that once this runtime cache reaches a maximum size the
@@ -136,7 +171,7 @@ registerRoute(
     (url.origin === "https://sekai-json-1258184166.file.myqcloud.com" &&
       url.pathname.startsWith("/master")),
   // Customize this strategy as needed, e.g., by changing to CacheFirst.
-  new StaleWhileRevalidate({
+  new NetworkFirst({
     cacheName: "sekaiMaster",
     plugins: [
       // Ensure that once this runtime cache reaches a maximum size the

@@ -1,7 +1,13 @@
 import { Typography, Container, Grid } from "@material-ui/core";
 import { useLayoutStyles } from "../../styles/layout";
-import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { useCachedData } from "../../utils";
+import React, {
+  Fragment,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { useCachedData, useLocalStorage } from "../../utils";
 import InfiniteScroll from "../subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
@@ -16,6 +22,7 @@ import {
 } from "@material-ui/icons";
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 import { Pound } from "mdi-material-ui";
+import { SettingContext } from "../../context";
 
 function getPaginatedGachas(gachas: IGachaInfo[], page: number, limit: number) {
   return gachas.slice(limit * (page - 1), limit * page);
@@ -26,6 +33,7 @@ const ListCard: React.FC<{ data?: IGachaInfo }> = GridView;
 const GachaList: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
+  const { isShowSpoiler } = useContext(SettingContext)!;
 
   const [gachas, setGachas] = useState<IGachaInfo[]>([]);
   const [gachasCache] = useCachedData<IGachaInfo>("gachas");
@@ -34,11 +42,13 @@ const GachaList: React.FC<{}> = () => {
   const [limit] = useState<number>(12);
   const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
   const [isReady, setIsReady] = useState<boolean>(false);
-  const [sortType, setSortType] = useState<string>(
-    (localStorage.getItem("gacha-list-update-sort") || "desc") as "desc"
+  const [sortType, setSortType] = useLocalStorage<string>(
+    "gacha-list-update-sort",
+    "desc"
   );
-  const [sortBy, setSortBy] = useState<string>(
-    localStorage.getItem("gacha-list-filter-sort-by") || "startAt"
+  const [sortBy, setSortBy] = useLocalStorage<string>(
+    "gacha-list-filter-sort-by",
+    "startAt"
   );
   const [sortedCache, setSortedCache] = useState<IGachaInfo[]>([]);
 
@@ -57,6 +67,11 @@ const GachaList: React.FC<{}> = () => {
   useEffect(() => {
     if (!gachasCache || !gachasCache.length) return;
     let sortedCache = [...gachasCache];
+    if (!isShowSpoiler) {
+      sortedCache = sortedCache.filter(
+        (g) => g.startAt <= new Date().getTime()
+      );
+    }
     if (sortType === "desc") {
       sortedCache = sortedCache.sort(
         (a, b) => b[sortBy as "startAt"] - a[sortBy as "startAt"]
@@ -69,7 +84,7 @@ const GachaList: React.FC<{}> = () => {
     setSortedCache(sortedCache);
     setGachas([]);
     setPage(0);
-  }, [gachasCache, setPage, sortType, sortBy]);
+  }, [gachasCache, setPage, sortType, sortBy, isShowSpoiler]);
 
   useEffect(() => {
     setIsReady(Boolean(gachasCache && gachasCache.length));
@@ -95,15 +110,19 @@ const GachaList: React.FC<{}> = () => {
     [isReady, lastQueryFin, limit, page, sortedCache.length]
   );
 
-  const handleUpdateSortType = useCallback((_, sort: string) => {
-    setSortType(sort);
-    localStorage.setItem("gacha-list-filter-sort-type", sort);
-  }, []);
+  const handleUpdateSortType = useCallback(
+    (_, sort: string) => {
+      setSortType(sort || "asc");
+    },
+    [setSortType]
+  );
 
-  const handleUpdateSortBy = useCallback((_, sort: string) => {
-    setSortBy(sort);
-    localStorage.setItem("gacha-list-filter-sort-by", sort);
-  }, []);
+  const handleUpdateSortBy = useCallback(
+    (_, sort: string) => {
+      setSortBy(sort || "id");
+    },
+    [setSortBy]
+  );
 
   return (
     <Fragment>

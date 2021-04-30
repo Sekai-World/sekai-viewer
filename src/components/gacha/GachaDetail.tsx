@@ -490,7 +490,7 @@ const GachaDetailPage: React.FC<{}> = () => {
         <Typography variant="h6" className={layoutClasses.header}>
           {getTranslated(contentTransMode, `gacha_name:${gachaId}`, gacha.name)}
         </Typography>
-        <Container className={layoutClasses.content} maxWidth="sm">
+        <Container className={layoutClasses.content} maxWidth="md">
           <TabContext value={picTabVal}>
             <Paper>
               <Tabs
@@ -555,7 +555,7 @@ const GachaDetailPage: React.FC<{}> = () => {
               </TabPanel>
             </Paper>
           </TabContext>
-          {/* <Container style={{marginTop: '2%'}} maxWidth="sm"> */}
+          {/* <Container style={{marginTop: '2%'}} maxWidth="md"> */}
           <Grid container direction="column">
             <Grid
               item
@@ -686,7 +686,7 @@ const GachaDetailPage: React.FC<{}> = () => {
         <Typography variant="h6" className={layoutClasses.header}>
           {t("gacha:gacha_rate")}
         </Typography>
-        <Container className={layoutClasses.content} maxWidth="sm">
+        <Container className={layoutClasses.content} maxWidth="md">
           <Grid container direction="column">
             {gacha.gachaBehaviors.find(
               (gb) => gb.gachaBehaviorType === "normal"
@@ -791,7 +791,7 @@ const GachaDetailPage: React.FC<{}> = () => {
         <Typography variant="h6" className={layoutClasses.header}>
           {t("gacha:gacha_cards")}
         </Typography>
-        <Container className={layoutClasses.content} maxWidth="sm">
+        <Container className={layoutClasses.content} maxWidth="md">
           <Grid container direction="column">
             <Grid
               container
@@ -855,7 +855,7 @@ const GachaDetailPage: React.FC<{}> = () => {
         <Typography variant="h6" className={layoutClasses.header}>
           {t("gacha:gacha_behaviors")}
         </Typography>
-        <Container className={layoutClasses.content} maxWidth="sm">
+        <Container className={layoutClasses.content} maxWidth="md">
           <Grid container direction="column">
             {gacha.gachaBehaviors.map((behavior) => (
               <Fragment key={behavior.id}>
@@ -882,10 +882,16 @@ const GachaDetailPage: React.FC<{}> = () => {
             ))}
           </Grid>
         </Container>
+        <AdSense
+          client="ca-pub-7767752375383260"
+          slot="8221864477"
+          format="auto"
+          responsive="true"
+        />
         <Typography variant="h6" className={layoutClasses.header}>
           {t("gacha:gacha_simulator")}
         </Typography>
-        <Container className={layoutClasses.content} maxWidth="sm">
+        <Container className={layoutClasses.content} maxWidth="md">
           <Grid container spacing={1} justify="center">
             <Grid item>
               <Button
@@ -968,12 +974,6 @@ const GachaDetailPage: React.FC<{}> = () => {
           </Grid>
           <CardThumbs cardIds={currentGachaResult.map((elem) => elem.cardId)} />
         </Container>
-        <AdSense
-          client="ca-pub-7767752375383260"
-          slot="5596436251"
-          format="auto"
-          responsive="true"
-        />
         <Viewer
           visible={visible}
           onClose={() => setVisible(false)}

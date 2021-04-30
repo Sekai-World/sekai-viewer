@@ -2,6 +2,234 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.5.0](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.15...v0.5.0) (2021-04-29)
+
+
+### Features
+
+* **event:** cheerful carnival information ([fd010a7](https://github.com/Sekai-World/sekai-viewer/commits/fd010a706998aea45031afcf1d520100b357035e))
+* **music:** music list filter enrichment ([0292b37](https://github.com/Sekai-World/sekai-viewer/commits/0292b37e578214d3a8b1c1da051f38e99eef3e23))
+* **setting:** make spoiler switch opt-in ([032439c](https://github.com/Sekai-World/sekai-viewer/commits/032439c29eef31d4af6f0546c72a7b6c382b9135))
+* **user:** user page sectioning ([81cf0e5](https://github.com/Sekai-World/sekai-viewer/commits/81cf0e5dc0ece4af1028f8d70005a4e6d9a6bd6c))
+
+
+### Bug Fixes
+
+* charaNameTrans component text color ([916db4e](https://github.com/Sekai-World/sekai-viewer/commits/916db4e4234979c214eda20a23637dbb0cf0810c))
+* **music:** wrong number of dancer memebers ([62bcc21](https://github.com/Sekai-World/sekai-viewer/commits/62bcc21475ffdd1daf1d35eacf8825569d5afdb2))
+
+
+### Refactors
+
+* **vlive:** use image in list instead of CardMedia ([9993c3c](https://github.com/Sekai-World/sekai-viewer/commits/9993c3cf4f04eb68c6f2c742258bec8d249d429d))
+* enlarge container to md ([33398d1](https://github.com/Sekai-World/sekai-viewer/commits/33398d1db44945e43d3195003822c5b9976a3913))
+* **music:** make agenda view more compat ([dc94b42](https://github.com/Sekai-World/sekai-viewer/commits/dc94b42acd549f05152f4e33286eb3a69da384bb))
+* **widget:** current event widget banner enlarge on mobile ([c22ba6d](https://github.com/Sekai-World/sekai-viewer/commits/c22ba6dc6f302ef83886074ca88550df6603f2fb))
+
+### [0.4.15](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.14...v0.4.15) (2021-04-21)
+
+
+### Features
+
+* **style:** add pointer interactive style ([857eef9](https://github.com/Sekai-World/sekai-viewer/commits/857eef907ed84804c5316eddb880539c204e9ce4))
+
+
+### Bug Fixes
+
+* **event:** event tracker crash when specific rank is not available ([8542f99](https://github.com/Sekai-World/sekai-viewer/commits/8542f99dda986e9c5ad1055ed6328c96bbc9ad94))
+* **event:** show boost cards only before event starts ([6a55f84](https://github.com/Sekai-World/sekai-viewer/commits/6a55f846156a8a54cfc888e9ebb94725d16c4971))
+* **stamp:** typo ([bf89975](https://github.com/Sekai-World/sekai-viewer/commits/bf89975738c8e5468ecf9653a2a3a431cd2070a2))
+* **user:** added sekai card are not filtered out properly ([d82f418](https://github.com/Sekai-World/sekai-viewer/commits/d82f418859bd5f70d8c011554c589360be77f4c3))
+* **virtual_live:** birthday live honor reward ([58426cf](https://github.com/Sekai-World/sekai-viewer/commits/58426cfad0eb92e6d40f9d6670653f6b8c171b2a))
+
+
+### Refactors
+
+* **event:** event image show using image component ([d2d3f11](https://github.com/Sekai-World/sekai-viewer/commits/d2d3f11de76c0daa6361d0a8df009c5c6410b724))
+* **home:** move links to shortcuts ([ebff4ae](https://github.com/Sekai-World/sekai-viewer/commits/ebff4ae4ec0eaff2dc2670b33a12e39e86114956))
+
+### [0.4.14](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.13...v0.4.14) (2021-04-05)
+
+
+### Features
+
+* **comic:** add en translation ([3bdd2c0](https://github.com/Sekai-World/sekai-viewer/commits/3bdd2c02b67de3f95d1ce61651c0bf2619853f5c))
+* **stamp:** add filter for text ([1675e5b](https://github.com/Sekai-World/sekai-viewer/commits/1675e5b7162943bb8737109c1aa91e74afd17f11))
+* **support:** patron list from strapi ([c099ac3](https://github.com/Sekai-World/sekai-viewer/commits/c099ac3281689c90e59229f9fe73aa49dacfba87))
+
+### [0.4.13](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.12...v0.4.13) (2021-03-31)
+
+
+### Bug Fixes
+
+* **event:** eventTracker blank page ([c39cea9](https://github.com/Sekai-World/sekai-viewer/commits/c39cea95312818187d4198ecfeaec76a04d82914))
+* useLocalStorage allow false value to be set ([a09b9fe](https://github.com/Sekai-World/sekai-viewer/commits/a09b9fe8ffe32bbb4225f9b7e07a79664c073d63))
+
+### [0.4.12](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.10...v0.4.12) (2021-03-30)
+
+
+### Features
+
+* **music:** add link to chart image ([891076f](https://github.com/Sekai-World/sekai-viewer/commits/891076fdb53835dff3365a1b86022574668e4624))
+
+
+### Bug Fixes
+
+* **music:** trim music following vocal type ([da1b09c](https://github.com/Sekai-World/sekai-viewer/commits/da1b09c4983f27fdc21c4b566df65dd1fba8c98b))
+* avoid ToggleButtonGroup becomes null value ([3a773eb](https://github.com/Sekai-World/sekai-viewer/commits/3a773ebfa767bf21e8586d2d1c566f8ff4f18448))
+
+
+### Refactors
+
+* **card:** card detail page layout optimize ([01c8f68](https://github.com/Sekai-World/sekai-viewer/commits/01c8f682fc3e3ed27fbbe3e57964af04ecf264b6))
+* **music:** make mp3 trim only when toggle is turned on ([47b325d](https://github.com/Sekai-World/sekai-viewer/commits/47b325dfdddacf549a08f3ad437e84766c7f06f2))
+
+### [0.4.11](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.10...v0.4.11) (2021-03-29)
+
+
+### Features
+
+* **music:** add link to chart image ([7c2c02b](https://github.com/Sekai-World/sekai-viewer/commits/7c2c02b0d0ac94992496fad3aa03734cb223b422))
+
+
+### Bug Fixes
+
+* avoid ToggleButtonGroup becomes null value ([46b75c8](https://github.com/Sekai-World/sekai-viewer/commits/46b75c8f6ad2414dc243b10622f4cf27315c5226))
+
+
+### Refactors
+
+* **card:** card detail page layout optimize ([23f637f](https://github.com/Sekai-World/sekai-viewer/commits/23f637f0ffa00b2d098fd8ab673d41e7bd798795))
+* **music:** make mp3 trim only when toggle is turned on ([17a8715](https://github.com/Sekai-World/sekai-viewer/commits/17a87158feeda1daa9a6bb77e45f4f0d7893b86f))
+
+### [0.4.10](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.9...v0.4.10) (2021-03-19)
+
+
+### Features
+
+* **event:** add boost cards and virtual live section ([b30806f](https://github.com/Sekai-World/sekai-viewer/commits/b30806fb62d7289fb85a9b49d6c1e335d2a85a3c))
+* user can control whether to display spoiler content ([3f22a94](https://github.com/Sekai-World/sekai-viewer/commits/3f22a940d2c463d16d49fe3ea0b17544f2256175))
+* **card:** add gacha phrase with audio ([ad10d34](https://github.com/Sekai-World/sekai-viewer/commits/ad10d34af27774815c2f0a5c6292031d451b55d7))
+
+
+### Bug Fixes
+
+* **event:** handle event without virtual live ([e74c95e](https://github.com/Sekai-World/sekai-viewer/commits/e74c95efb0ae767c136f6887cdd73aa3842c62fb))
+* card list filter dispatch function name ([124bd21](https://github.com/Sekai-World/sekai-viewer/commits/124bd21d2f06ed42aee2afe372bc0e5aee3fdea1))
+* **card:** card list repeat no key warning ([a14fa2c](https://github.com/Sekai-World/sekai-viewer/commits/a14fa2c4d1fbe0072ff1156320c9187dcfed1646))
+* **misc:** audio play button unload howl on unmount ([5d0a328](https://github.com/Sekai-World/sekai-viewer/commits/5d0a3286c649d6d7dc4f71a75a54dc3d43167628))
+* **utils:** useLocalStorage reset value upon error ([503bdd0](https://github.com/Sekai-World/sekai-viewer/commits/503bdd0c044fa6da857811792d27265e590cd7df))
+
+
+### Refactors
+
+* index check sekai profile update as well ([1856756](https://github.com/Sekai-World/sekai-viewer/commits/18567563842cd5eec716c564621b4f5f2687d398))
+
+### [0.4.9](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.8...v0.4.9) (2021-03-09)
+
+
+### Features
+
+* **music:** add music meta page ([f85555f](https://github.com/Sekai-World/sekai-viewer/commits/f85555fff9de56499c074a6669cedb2c37b0309a))
+* **subs:** add padding to popover ([818d6f8](https://github.com/Sekai-World/sekai-viewer/commits/818d6f8a6c3cf2c553b15fcd478d7883cc6b1fb4))
+
+
+### Refactors
+
+* **mr:** table columns layout optimization ([bd16beb](https://github.com/Sekai-World/sekai-viewer/commits/bd16bebbb1527e9d993f34bccf1312e92549a829))
+* **mr:** table refine ([1338bce](https://github.com/Sekai-World/sekai-viewer/commits/1338bce724087b58459ecafcabe44235b1f81e15))
+* **utils:** update music meta url ([8fd6e2c](https://github.com/Sekai-World/sekai-viewer/commits/8fd6e2c9584e0ac014f2c97649708abebe2549af))
+
+### [0.4.8](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.7...v0.4.8) (2021-03-03)
+
+
+### Features
+
+* **card:** only show support unit filter when vs character selected ([bf1bc54](https://github.com/Sekai-World/sekai-viewer/commits/bf1bc5498ee93bbf178c51af105c2c19cbf87667))
+* **event:** add sekai event record to event tracker ([dcdc811](https://github.com/Sekai-World/sekai-viewer/commits/dcdc811b6bc25e4dff03eef5eee770622bf4569d))
+* **music:** jacket for sekai ver of charles ([50b4ad9](https://github.com/Sekai-World/sekai-viewer/commits/50b4ad979b97ff26b6567a10925ee927968e41b8))
+* **user:** allow user check event record in the past ([1406dc8](https://github.com/Sekai-World/sekai-viewer/commits/1406dc89fa69a3e204debd7c40538c12e8950857))
+* **user:** card filter sync to card list ([230c02e](https://github.com/Sekai-World/sekai-viewer/commits/230c02e8ec6d0919be135a64eade794c387caeb0))
+
+
+### Bug Fixes
+
+* **event:** disable time travel slider when fetching data ([5e4c5b5](https://github.com/Sekai-World/sekai-viewer/commits/5e4c5b5ff5c7765dc1770eaf49faef68e62d9597))
+* **event:** event tracker current event button does not fetch data ([3995b78](https://github.com/Sekai-World/sekai-viewer/commits/3995b7880cc2f5129310884a68a67721cd5b0e37))
+* **user:** music statistics full combo count ([9aff556](https://github.com/Sekai-World/sekai-viewer/commits/9aff5561328988e66e1900aad2f378f9892f9f5b))
+
+
+### Refactors
+
+* update service worker cache strategy ([a0d6cc6](https://github.com/Sekai-World/sekai-viewer/commits/a0d6cc6c01a89890580b1fc3922e7e036dca0f99))
+
+### [0.4.7](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.6...v0.4.7) (2021-02-20)
+
+
+### Features
+
+* add placeholder for event analyzer ([48f3221](https://github.com/Sekai-World/sekai-viewer/commits/48f3221d7f3fc3183a0f0e43f3b79086e1bb07f6))
+* **event:** event tracker time travel ([ea49c1a](https://github.com/Sekai-World/sekai-viewer/commits/ea49c1a8875a9885bff162dd8b16f021ba0f2e72))
+
+
+### Bug Fixes
+
+* **event:** add missing prediction to event tracker mobile view ([05b4da1](https://github.com/Sekai-World/sekai-viewer/commits/05b4da1a0ffdcc45ee39372a08b23938f44185e5))
+* **event:** add show full rank switch to event tracker ([bd55669](https://github.com/Sekai-World/sekai-viewer/commits/bd556696977b5919048353db26e12c562fe7b011))
+
+
+### Refactors
+
+* **event:** event tracker better mobile view, remove unnecessary buttons ([da19859](https://github.com/Sekai-World/sekai-viewer/commits/da19859defdae25ed7d071a30641893e06c93767))
+
+### [0.4.6](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.5...v0.4.6) (2021-02-18)
+
+
+### Features
+
+* **degree:** show degree level icons ([ba6a13f](https://github.com/Sekai-World/sekai-viewer/commits/ba6a13f924724fb15d777f5430b4eb645b859e46))
+* **user:** sekai profile music statistics ([aaa77bc](https://github.com/Sekai-World/sekai-viewer/commits/aaa77bcca11846f60e267a5c80ab53404bf9147d))
+
+
+### Bug Fixes
+
+* **unit-detail:** music name use translation ([4b2b7b0](https://github.com/Sekai-World/sekai-viewer/commits/4b2b7b0034b3467903ad134f80fe94e0146dd8f4))
+* **widget:** event banner no jump ([36d8c5e](https://github.com/Sekai-World/sekai-viewer/commits/36d8c5ead6ce6a3a0f510601404c674ca1f192be))
+
+
+### Refactors
+
+* **event:** event tracker layout refine ([2b8de3c](https://github.com/Sekai-World/sekai-viewer/commits/2b8de3c8aadb57f45cfb8faec99c4ef25e4b019f))
+* change adsense behaviour ([3d95319](https://github.com/Sekai-World/sekai-viewer/commits/3d95319bad44fb1279714840fc977340772f91fd))
+* unregister service worker if hostname not match ([6f3ace6](https://github.com/Sekai-World/sekai-viewer/commits/6f3ace6cfe00ea3a0a17a945759b69a6f6c713b0))
+
+### [0.4.5](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.4...v0.4.5) (2021-02-12)
+
+
+### Features
+
+* **filter:** stamp list character filter local storage ([2d93902](https://github.com/Sekai-World/sekai-viewer/commits/2d93902f968f9c55087dc4055b46a93ce9e9f102))
+* card filter of event bonuses ([73d3c73](https://github.com/Sekai-World/sekai-viewer/commits/73d3c73bc7170e1c52c63c5cdf908ab4d748aee7))
+* **user:** better card importer ([ccc6829](https://github.com/Sekai-World/sekai-viewer/commits/ccc6829a97d0371d7cf53422e54fa2aa55c39aa9))
+
+
+### Bug Fixes
+
+* **music:** music tag translation empty ([463f1dd](https://github.com/Sekai-World/sekai-viewer/commits/463f1dd6b2490f8dde77ebb1df22a99bebea3be8))
+
+### [0.4.4](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.3...v0.4.4) (2021-02-11)
+
+
+### Bug Fixes
+
+* **live2d:** small screen size error, avoid loading interruption ([a271938](https://github.com/Sekai-World/sekai-viewer/commits/a27193893ad90ee325cb16cf96becb3f737b6e02))
+
+
+### Refactors
+
+* **card:** agenda view fit large screen ([8e3723c](https://github.com/Sekai-World/sekai-viewer/commits/8e3723c5d824cfc467da9053237a68b558c32b1e))
+* use useLocalStorage hooks instead of setItem ([633d8fe](https://github.com/Sekai-World/sekai-viewer/commits/633d8fe02372f521cecb4b06c11a3d691ad03de0))
+
 ### [0.4.3](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.2...v0.4.3) (2021-02-08)
 
 

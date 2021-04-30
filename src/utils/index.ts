@@ -57,8 +57,10 @@ import {
   ICostume3DModel,
   IAreaItemLevel,
   IAreaItem,
+  ICheerfulCarnivalSummary,
+  ICheerfulCarnivalTeam,
 } from "./../types.d";
-import { assetI18n, useAssetI18n } from "./i18n";
+import { useAssetI18n } from "./i18n";
 import { useLocation } from "react-router-dom";
 import useSWR from "swr";
 
@@ -116,6 +118,8 @@ export function useCachedData<
     | ICostume3DModel
     | IAreaItemLevel
     | IAreaItem
+    | ICheerfulCarnivalSummary
+    | ICheerfulCarnivalTeam
 >(name: string): [T[] | undefined, boolean, any] {
   // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
 
@@ -143,16 +147,72 @@ export const musicCategoryToName: { [key: string]: string } = {
   mv_2d: "2D MV",
 };
 
-export const musicTagToName: { [key: string]: string } = {
-  all: "All",
-  vocaloid: assetI18n.t(`unit_profile:piapro.name`),
-  light_music_club: assetI18n.t(`unit_profile:light_sound.name`),
-  idol: assetI18n.t(`unit_profile:idol.name`),
-  school_refusal: assetI18n.t(`unit_profile:school_refusal.name`),
-  theme_park: assetI18n.t(`unit_profile:theme_park.name`),
-  street: assetI18n.t(`unit_profile:street.name`),
-  other: "Other",
-};
+export function useMusicTagName(contentTransMode: ContentTransModeType) {
+  const { assetT } = useAssetI18n();
+
+  switch (contentTransMode) {
+    case "both": {
+      return {
+        all: "All",
+        vocaloid: `バーチャル・シンガー | ${assetT(
+          `unit_profile:piapro.name`,
+          "バーチャル・シンガー"
+        )}`,
+        light_music_club: `Leo/need | ${assetT(
+          `unit_profile:light_sound.name`,
+          "Leo/need"
+        )}`,
+        idol: `MORE MORE JUMP! | ${assetT(
+          `unit_profile:idol.name`,
+          "MORE MORE JUMP!"
+        )}`,
+        school_refusal: `25時、ナイトコードで。 | ${assetT(
+          `unit_profile:school_refusal.name`,
+          "25時、ナイトコードで。"
+        )}`,
+        theme_park: `ワンダーランズ×ショウタイム | ${assetT(
+          `unit_profile:theme_park.name`,
+          "ワンダーランズ×ショウタイム"
+        )}`,
+        street: `Vivid BAD SQUAD | ${assetT(
+          `unit_profile:street.name`,
+          "Vivid BAD SQUAD"
+        )}`,
+        other: "Other",
+      };
+    }
+    case "original": {
+      return {
+        all: "All",
+        vocaloid: `バーチャル・シンガー`,
+        light_music_club: `Leo/need`,
+        idol: `MORE MORE JUMP!`,
+        school_refusal: `25時、ナイトコードで。`,
+        theme_park: `ワンダーランズ×ショウタイム`,
+        street: `Vivid BAD SQUAD`,
+        other: "Other",
+      };
+    }
+    case "translated": {
+      return {
+        all: "All",
+        vocaloid: assetT(`unit_profile:piapro.name`, "バーチャル・シンガー"),
+        light_music_club: assetT(`unit_profile:light_sound.name`, "Leo/need"),
+        idol: assetT(`unit_profile:idol.name`, "MORE MORE JUMP!"),
+        school_refusal: assetT(
+          `unit_profile:school_refusal.name`,
+          "25時、ナイトコードで。"
+        ),
+        theme_park: assetT(
+          `unit_profile:theme_park.name`,
+          "ワンダーランズ×ショウタイム"
+        ),
+        street: assetT(`unit_profile:street.name`, "Vivid BAD SQUAD"),
+        other: "Other",
+      };
+    }
+  }
+}
 
 export function useCharaName(contentTransMode: ContentTransModeType) {
   const [charas] = useCachedData<IGameChara>("gameCharacters");
@@ -213,13 +273,15 @@ export function useCharaName(contentTransMode: ContentTransModeType) {
 export function useMuisicMeta() {
   const fetchCached = useCallback(async (name: string) => {
     const { data }: { data: IMusicMeta[] } = await Axios.get(
-      process.env.PUBLIC_URL + `/${name}.json`
+      (window.isChinaMainland
+        ? process.env.REACT_APP_FRONTEND_ASSET_BASE_CN
+        : process.env.REACT_APP_FRONTEND_ASSET_BASE) + `/${name}.json`
     );
     //console.log(data.length);
     return data;
   }, []);
 
-  const { data } = useSWR("metas", fetchCached);
+  const { data } = useSWR("music_metas", fetchCached);
 
   return [data];
 }
@@ -237,7 +299,7 @@ export async function getRemoteAssetURL(
     ? `${process.env.REACT_APP_ASSET_DOMAIN_CN}/${endpoint}`
     : minioDomain
     ? `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets/${endpoint}`
-    : `${process.env.REACT_APP_ASSET_DOMAIN_WW}/file/sekai-assets/${endpoint}`;
+    : `${process.env.REACT_APP_ASSET_DOMAIN_WW}/sekai-assets/${endpoint}`;
 
   if (endpoint.endsWith(".webp") && !isWebpSupported) {
     let dataUrl = await localforage.getItem<string>(url);
@@ -507,7 +569,8 @@ export function getColorArray(num: number) {
 
 export function useLocalStorage<T>(
   key: string,
-  initialValue: T
+  initialValue: T,
+  allowNull: boolean = true
 ): [T, (value: T | ((val: T) => T)) => void] {
   // State to store our value
   // Pass initial state function to useState so logic is only executed once
@@ -516,10 +579,20 @@ export function useLocalStorage<T>(
       // Get from local storage by key
       const item = window.localStorage.getItem(key);
       // Parse stored json or if none return initialValue
-      return item ? JSON.parse(item) : initialValue;
+      // return item ? JSON.parse(item) : initialValue;
+      if (item) {
+        const parsed = JSON.parse(item);
+        if (!allowNull && !parsed) {
+          window.localStorage.setItem(key, JSON.stringify(initialValue));
+          return initialValue;
+        }
+        return parsed;
+      }
+      return initialValue;
     } catch (error) {
       // If error also return initialValue
-      console.log(error);
+      console.log(key, error);
+      window.localStorage.setItem(key, JSON.stringify(initialValue));
       return initialValue;
     }
   });
@@ -532,9 +605,14 @@ export function useLocalStorage<T>(
       const valueToStore =
         value instanceof Function ? value(storedValue) : value;
       // Save state
-      setStoredValue(valueToStore);
+      setStoredValue(!allowNull && !valueToStore ? initialValue : valueToStore);
       // Save to local storage
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
+      window.localStorage.setItem(
+        key,
+        JSON.stringify(
+          !allowNull && !valueToStore ? initialValue : valueToStore
+        )
+      );
     } catch (error) {
       // A more advanced implementation would handle the error case
       console.log(error);

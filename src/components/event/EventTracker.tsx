@@ -1,11 +1,16 @@
 import {
   Button,
+  CircularProgress,
   Container,
+  FormControlLabel,
+  FormGroup,
   // Divider,
   Grid,
-  LinearProgress,
+  // LinearProgress,
   makeStyles,
   Paper,
+  Slider,
+  Switch,
   Table,
   TableBody,
   TableCell,
@@ -14,46 +19,41 @@ import {
   TableRow,
   TextField,
   Typography,
+  useMediaQuery,
   useTheme,
 } from "@material-ui/core";
-import { Autocomplete } from "@material-ui/lab";
+import { Alert, Autocomplete } from "@material-ui/lab";
 import { CronJob } from "cron";
 import React, {
   Fragment,
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  LineChart,
-  Line,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Brush,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
-import { SettingContext } from "../../context";
+import { SettingContext, UserContext } from "../../context";
 import { useLayoutStyles } from "../../styles/layout";
 import {
-  EventGraphRanking,
+  EventPrediction,
   EventRankingResponse,
   IEventInfo,
   UserRanking,
 } from "../../types";
-import { getColorArray, useCachedData, useQuery } from "../../utils";
+import { useCachedData, useQuery, useToggle } from "../../utils";
 import { useCurrentEvent } from "../../utils/apiClient";
 import {
   useEventTrackerAPI,
   useRealtimeEventData,
 } from "../../utils/eventTracker";
 import { useAssetI18n } from "../../utils/i18n";
+import { HistoryMobileRow, LiveMobileRow } from "./EventTrackerMobileRow";
 // import DegreeImage from "../subs/DegreeImage";
 import { HistoryRow, LiveRow } from "./EventTrackerTableRow";
+import { useDebouncedCallback } from "use-debounce";
+import SekaiEventRecord from "./SekaiEventRecord";
+import AdSense from "../subs/AdSense";
 
 const useStyles = makeStyles(() => ({
   eventSelect: {
@@ -63,215 +63,123 @@ const useStyles = makeStyles(() => ({
 }));
 
 const EventTracker: React.FC<{}> = () => {
-  const theme = useTheme();
   const layoutClasses = useLayoutStyles();
   const classes = useStyles();
   const query = useQuery();
+  const theme = useTheme();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
-  const { getGraph, getLive } = useEventTrackerAPI();
+  const {
+    getLive,
+    getEventPred,
+    getEventTimePoints,
+    getEventRankingsByTimestamp,
+  } = useEventTrackerAPI();
   const { contentTransMode } = useContext(SettingContext)!;
+  const { sekaiProfile } = useContext(UserContext)!;
   const [refreshData] = useRealtimeEventData();
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
+
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [events] = useCachedData<IEventInfo>("events");
   const [selectedEvent, setSelectedEvent] = useState<{
     name: string;
     id: number;
   } | null>(null);
-  const [selectedRankings, setSelectedRankings] = useState<EventGraphRanking[]>(
-    [1000, 10000, 100000]
-  );
-  const [graphEvent, setGraphEvent] = useState<{
-    name: string;
-    id: number;
-  } | null>(null);
-  const [graphRankings, setGraphRankings] = useState<EventGraphRanking[]>([]);
-  const [speedAllTime, setSpeedAllTime] = useState<
-    {
-      [key in Partial<EventGraphRanking>]?: string;
-    }
-  >({});
-  const [speedLast24h, setSpeedLast24h] = useState<
-    {
-      [key in Partial<EventGraphRanking>]?: string;
-    }
-  >({});
-  const [speedLast1h, setSpeedLast1h] = useState<
-    {
-      [key in Partial<EventGraphRanking>]?: string;
-    }
-  >({});
-  const [fetchProgress, setFetchProgress] = useState(0);
+  const [selectedEventId, setSelectedEventId] = useState(0);
+  // const [fetchProgress, setFetchProgress] = useState(0);
   const [isFetching, setIsFetching] = useState(false);
-  const [isShowChart, setIsShowChart] = useState(false);
-  const [colorArray, setColorArray] = useState<string[]>([]);
-  const [lineProps, setLineProps] = useState<
-    {
-      hover: string;
-    } & { [key: string]: string }
-  >({ hover: "" });
 
-  const [chartData, setChartData] = useState<
-    {
-      [key: string]: any;
-    }[]
-  >([]);
   const [rtRanking, setRtRanking] = useState<EventRankingResponse[]>([]);
   const [rtTime, setRtTime] = useState<Date>();
   const [historyRanking, setHistoryRanking] = useState<UserRanking[]>([]);
   const [historyTime, setHistoryTime] = useState<Date>();
   const [nextRefreshTime, setNextRefreshTime] = useState<moment.Moment>();
   const [refreshCron, setRefreshCron] = useState<CronJob>();
+  const [isFullRank, toggleIsFullRank] = useToggle(false);
+  const [isTimeTravel, toggleIsTimeTravel] = useToggle(false);
+  // const [isGetPred, toggleIsGetPred] = useToggle(false);
+  const [eventDuration, setEventDuration] = useState(0);
+  const [predCron, setPredCron] = useState<CronJob>();
+  const [predData, setPredData] = useState<EventPrediction>();
+  const [timePoints, setTimePoints] = useState<Date[]>([]);
+  const [sliderTime, setSliderTime] = useState<Date>();
+  const [sliderDefaultTime, setSliderDefaultTime] = useState<Date>();
+  const [sliderTimeRanking, setSliderTimeRanking] = useState<
+    EventRankingResponse[]
+  >([]);
+  const [fetchingTimePoints, toggleFetchingTimePoints] = useToggle(false);
+
+  const fullRank = useMemo(
+    () => [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      20,
+      30,
+      40,
+      50,
+      100,
+      200,
+      300,
+      400,
+      500,
+      1000,
+      2000,
+      3000,
+      4000,
+      5000,
+      10000,
+      20000,
+      30000,
+      40000,
+      50000,
+      100000,
+    ],
+    []
+  );
+
+  const critialRank = useMemo(
+    () => [1, 2, 3, 10, 100, 1000, 5000, 10000, 50000, 100000],
+    []
+  );
 
   useEffect(() => {
     document.title = t("title:eventTracker");
   }, [t]);
 
   useEffect(() => {
-    if (currEvent && events) {
-      if (query.get("id") && !Number.isNaN(Number(query.get("id")))) {
-        if (events.length) {
-          const ev = events.find((elem) => elem.id === Number(query.get("id")));
-          if (ev)
-            setSelectedEvent({
-              name: getTranslated(
-                contentTransMode,
-                `event_name:${query.get("id")}`,
-                ev.name
-              ),
-              id: ev.id,
-            });
-        }
-      } else {
-        setSelectedEvent({
-          name: getTranslated(
-            contentTransMode,
-            `event_name:${currEvent.eventId}`,
-            currEvent.eventJson.name
-          ),
-          id: currEvent.eventId,
-        });
-      }
-    }
-  }, [contentTransMode, currEvent, events, getTranslated, query]);
-
-  useEffect(() => {
     return () => {
       if (refreshCron) refreshCron.stop();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [refreshCron]);
+
+  useEffect(() => {
+    return () => {
+      if (predCron) predCron.stop();
+    };
+  }, [predCron]);
 
   const refreshRealtimeData = useCallback(async () => {
+    setIsFetching(true);
     const data = await getLive();
     setRtRanking(data);
     setRtTime(new Date(data[0].timestamp));
+    setIsFetching(false);
   }, [getLive]);
 
-  useEffect(() => {
-    if (graphRankings.length && rtRanking.length) {
-      setChartData((chartData) => [
-        ...chartData,
-        Object.assign(
-          {
-            time: new Date(rtRanking[0].timestamp).getTime(),
-          },
-          graphRankings.reduce((sum, ranking) => {
-            const _data = rtRanking.find((elem) => elem.rank === ranking);
-            if (_data) {
-              sum[`T${ranking}`] = _data.score;
-              sum[`T${ranking}_name`] = _data.userName;
-            }
-            return sum;
-          }, {} as { [key: string]: any })
-        ),
-      ]);
-    }
-  }, [graphRankings, rtRanking]);
-
-  useEffect(() => {
-    if (chartData.length) {
-      setSpeedAllTime(
-        graphRankings.reduce(
-          (sum, ranking) => {
-            const last = chartData[chartData.length - 1];
-            const first = chartData.find((cd) => cd[`T${ranking}`]);
-            if (!first) {
-              sum[ranking] = t("event:no_enough_data");
-              return sum;
-            }
-            sum[ranking] = (
-              (last[`T${ranking}`] - first[`T${ranking}`]) /
-              ((last.time - first.time) / 1000 / 3600)
-            ).toFixed(2);
-            return sum;
-          },
-          {} as {
-            [key in Partial<EventGraphRanking>]?: string;
-          }
-        )
-      );
-      setSpeedLast24h(
-        graphRankings.reduce(
-          (sum, ranking) => {
-            const last = chartData[chartData.length - 1];
-            let first;
-            if (last.time - chartData[0].time <= 24 * 3600 * 1000) {
-              // no enough 24h data
-              first = chartData.find((cd) => cd[`T${ranking}`]);
-            } else {
-              first = chartData
-                .slice()
-                .reverse()
-                .find((cd) => cd.time <= last.time - 24 * 3600 * 1000)!;
-            }
-            if (!first) {
-              sum[ranking] = t("event:no_enough_data");
-              return sum;
-            }
-            sum[ranking] = (
-              (last[`T${ranking}`] - first[`T${ranking}`]) /
-              ((last.time - first.time) / 1000 / 3600)
-            ).toFixed(2);
-            return sum;
-          },
-          {} as {
-            [key in Partial<EventGraphRanking>]?: string;
-          }
-        )
-      );
-      setSpeedLast1h(
-        graphRankings.reduce(
-          (sum, ranking) => {
-            const last = chartData[chartData.length - 1];
-            let first;
-            if (last.time - chartData[0].time <= 1 * 3600 * 1000) {
-              // no enough 1h data
-              first = chartData.find((cd) => cd[`T${ranking}`]);
-            } else {
-              first = chartData
-                .slice()
-                .reverse()
-                .find((cd) => cd.time <= last.time - 1 * 3600 * 1000)!;
-            }
-            if (!first) {
-              sum[ranking] = t("event:no_enough_data");
-              return sum;
-            }
-            sum[ranking] = (
-              (last[`T${ranking}`] - first[`T${ranking}`]) /
-              ((last.time - first.time) / 1000 / 3600)
-            ).toFixed(2);
-            return sum;
-          },
-          {} as {
-            [key in Partial<EventGraphRanking>]?: string;
-          }
-        )
-      );
-    }
-  }, [chartData, chartData.length, graphRankings, t]);
+  const refreshPrediction = useCallback(async () => {
+    const data = await getEventPred();
+    setPredData(data);
+  }, [getEventPred]);
 
   const getHistoryData = useCallback(
     async (eventId: number) => {
@@ -280,7 +188,7 @@ const EventTracker: React.FC<{}> = () => {
       const rankingData = Object.values(data).filter((elem) =>
         Array.isArray(elem)
       ) as UserRanking[][];
-      console.log(Object.values(data), rankingData);
+      // console.log(Object.values(data), rankingData);
       setHistoryRanking(
         rankingData.reduce(
           (sum, elem) => [...sum, ...elem],
@@ -291,155 +199,196 @@ const EventTracker: React.FC<{}> = () => {
     [refreshData]
   );
 
-  const handleFetchGraph = useCallback(async () => {
-    if (!events || !events.length) return;
-    setGraphRankings([]);
-    setGraphEvent(null);
-    setRtRanking([]);
-    setRtTime(undefined);
-    setHistoryRanking([]);
-    setHistoryTime(undefined);
+  const handleFetchGraph = useCallback(
+    async (eventId: number) => {
+      if (!events || !events.length) return;
+      setSelectedEventId(0);
+      setRtRanking([]);
+      setRtTime(undefined);
+      setHistoryRanking([]);
+      setHistoryTime(undefined);
+      setPredData(undefined);
+      setNextRefreshTime(undefined);
+      setTimePoints([]);
+      setSliderTime(undefined);
+      setSliderDefaultTime(undefined);
+      setSliderTimeRanking([]);
 
-    setFetchProgress(0);
-    setIsFetching(true);
-    setIsShowChart(false);
-    setLineProps({ hover: "" });
-    if (refreshCron) refreshCron.stop();
-    if (!selectedRankings.length || !selectedEvent) {
-      setIsFetching(false);
-      setFetchProgress(0);
-      setIsShowChart(false);
-      return;
-    }
-
-    // real time data
-    const event = events.find((elem) => elem.id === selectedEvent.id)!;
-    if (currEvent?.eventId === selectedEvent?.id) {
-      // get realtime data from live endpoint
-      const currentTime = Date.now();
-      if (
-        event &&
-        currentTime >= event.startAt &&
-        currentTime <= event.rankingAnnounceAt + 5 * 60 * 1000
-      ) {
-        const cron = new CronJob("10 * * * * *", () => {
-          const currentTime = Date.now();
-          if (currentTime > event.rankingAnnounceAt + 5 * 60 * 1000)
-            cron.stop();
-          else {
-            refreshRealtimeData();
-            setNextRefreshTime(cron.nextDate());
-          }
-        });
-        cron.start();
-        setRefreshCron(cron);
-        refreshRealtimeData();
-        setNextRefreshTime(cron.nextDate());
-      } else if (event && currentTime >= event.rankingAnnounceAt) {
-        getHistoryData(event.id);
+      // setFetchProgress(0);
+      // setIsFetching(true);
+      if (!eventId) {
+        // setIsFetching(false);
+        return;
       }
-    } else {
-      getHistoryData(event.id);
-    }
-    setGraphEvent({ ...selectedEvent });
 
-    const total = selectedRankings.length;
-    let fetched = 0;
-    const datas: EventRankingResponse[][] = [];
-    for (let ranking of selectedRankings) {
-      datas.push(await getGraph(selectedEvent.id, ranking));
-      fetched += 1;
-      setFetchProgress(Math.floor((fetched / total) * 100));
-    }
-    let baseData: typeof chartData = datas[0].map((data) => ({
-      time: new Date(data.timestamp).getTime(),
-    }));
-    selectedRankings.forEach((ranking, idx) => {
-      datas[idx].forEach((data) => {
-        const _idx = baseData.findIndex(
-          (bd) => bd.time === new Date(data.timestamp).getTime()
-        );
-        if (_idx !== -1) {
-          baseData[_idx][`T${ranking}`] = data.score;
-          baseData[_idx][`T${ranking}_name`] = data.userName;
-        } else {
-          baseData.push({
-            time: new Date(data.timestamp).getTime(),
-            [`T${ranking}`]: data.score,
-            [`T${ranking}_name`]: data.userName,
-          });
-        }
-      });
-    });
-    baseData = baseData
-      .sort((a, b) => a.time - b.time)
-      .map((data, idx, arr) => {
-        for (let ranking of selectedRankings) {
-          if (!data[`T${ranking}`]) {
-            if (idx === 0) {
-              data[`T${ranking}`] = 0;
-              data[`T${ranking}_name`] = "";
-            } else if (idx === arr.length - 1) {
-              data[`T${ranking}`] = arr[idx - 1][`T${ranking}`];
-              data[`T${ranking}_name`] = "";
-            } else if (
-              arr[idx - 1][`T${ranking}`] &&
-              arr[idx + 1][`T${ranking}`]
-            ) {
-              data[`T${ranking}`] =
-                arr[idx - 1][`T${ranking}`] +
-                ((arr[idx + 1][`T${ranking}`] - arr[idx - 1][`T${ranking}`]) /
-                  (arr[idx + 1].time - arr[idx - 1].time)) *
-                  (data.time - arr[idx - 1].time);
-              data[`T${ranking}_name`] = "";
+      // real time data
+      const event = events.find((elem) => elem.id === eventId)!;
+      if (currEvent?.eventId === eventId) {
+        // get realtime data from live endpoint
+        const currentTime = Date.now();
+        if (
+          event &&
+          currentTime >= event.startAt &&
+          currentTime < event.aggregateAt
+        ) {
+          const cron = new CronJob("10 * * * * *", () => {
+            const currentTime = Date.now();
+            if (currentTime >= event.aggregateAt) cron.stop();
+            else {
+              refreshRealtimeData();
+              setEventDuration(currentTime - event.startAt);
+              setNextRefreshTime(cron.nextDate());
             }
+          });
+          cron.start();
+          setRefreshCron(cron);
+          refreshRealtimeData();
+          setEventDuration(currentTime - event.startAt);
+          setNextRefreshTime(cron.nextDate());
+
+          if (currentTime >= event.startAt + 24 * 3600 * 1000) {
+            const predcron = new CronJob("30 * * * *", () => {
+              const currentTime = Date.now();
+              if (currentTime >= event.rankingAnnounceAt) predcron.stop();
+              else {
+                refreshPrediction();
+                // setNextRefreshTime(cron.nextDate());
+              }
+            });
+            predcron.start();
+            setPredCron(predcron);
+            refreshPrediction();
+          }
+        } else if (event && currentTime >= event.aggregateAt) {
+          getHistoryData(event.id);
+          setEventDuration(event.aggregateAt - event.startAt);
+        }
+      } else {
+        getHistoryData(event.id);
+        setEventDuration(event.aggregateAt - event.startAt);
+      }
+
+      setSelectedEventId(eventId);
+      // setIsFetching(false);
+    },
+    [
+      currEvent?.eventId,
+      events,
+      getHistoryData,
+      refreshPrediction,
+      refreshRealtimeData,
+    ]
+  );
+
+  useEffect(() => {
+    if (currEvent && events) {
+      if (query.get("id") && !Number.isNaN(Number(query.get("id")))) {
+        if (events.length) {
+          const ev = events.find((elem) => elem.id === Number(query.get("id")));
+          if (ev) {
+            setSelectedEvent({
+              name: getTranslated(
+                contentTransMode,
+                `event_name:${query.get("id")}`,
+                ev.name
+              ),
+              id: ev.id,
+            });
+            handleFetchGraph(ev.id);
           }
         }
-
-        return data;
-      });
-    setChartData(baseData);
-    setColorArray(getColorArray(selectedRankings.length));
-    setLineProps(
-      selectedRankings.reduce(
-        (sum, ranking) =>
-          Object.assign({}, sum, {
-            [`T${ranking}`]: "enabled",
-          }),
-        { hover: "" }
-      )
-    );
-    setGraphRankings([...selectedRankings]);
-    setIsFetching(false);
-    setIsShowChart(true);
+      } else {
+        setSelectedEvent({
+          name: getTranslated(
+            contentTransMode,
+            `event_name:${currEvent.eventId}`,
+            currEvent.eventJson.name
+          ),
+          id: currEvent.eventId,
+        });
+        handleFetchGraph(currEvent.eventId);
+      }
+    }
   }, [
+    contentTransMode,
     currEvent,
     events,
-    getGraph,
-    getHistoryData,
-    refreshCron,
-    refreshRealtimeData,
-    selectedEvent,
-    selectedRankings,
+    getTranslated,
+    handleFetchGraph,
+    query,
   ]);
+
+  const handleSliderChange = useDebouncedCallback(
+    async (_, value: number | number[]) => {
+      // setSliderTimeRanking([]);
+      toggleFetchingTimePoints();
+      setSliderTime(new Date(value as number));
+      setSliderTimeRanking(
+        (
+          await getEventRankingsByTimestamp(
+            selectedEventId,
+            new Date(value as number)
+          )
+        ).data.eventRankings
+      );
+      toggleFetchingTimePoints();
+    },
+    200
+  );
+
+  const handleTimeTravelChange = useCallback(
+    async (_, checked) => {
+      if (checked && !timePoints.length) {
+        toggleFetchingTimePoints();
+        const tps = (await getEventTimePoints(selectedEventId)).data.map(
+          (dateString) => new Date(dateString)
+        );
+        setTimePoints(tps);
+        setSliderTime(tps[tps.length - 1]);
+        setSliderDefaultTime(tps[tps.length - 1]);
+        setSliderTimeRanking(
+          (
+            await getEventRankingsByTimestamp(
+              selectedEventId,
+              tps[tps.length - 1]
+            )
+          ).data.eventRankings
+        );
+        toggleFetchingTimePoints();
+      }
+      toggleIsTimeTravel();
+    },
+    [
+      getEventRankingsByTimestamp,
+      getEventTimePoints,
+      selectedEventId,
+      timePoints.length,
+      toggleFetchingTimePoints,
+      toggleIsTimeTravel,
+    ]
+  );
 
   return (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
         {t("common:eventTracker")}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      <Container className={layoutClasses.content}>
         <Grid container spacing={1} alignItems="center">
           <Grid item className={classes.eventSelect}>
             <Autocomplete
-              options={(events || []).map((ev) => ({
-                name: getTranslated(
-                  contentTransMode,
-                  `event_name:${ev.id}`,
-                  ev.name
-                ),
-                id: ev.id,
-              }))}
+              options={(events || [])
+                .slice()
+                .reverse()
+                .filter((ev) => ev.startAt <= new Date().getTime())
+                .map((ev) => ({
+                  name: getTranslated(
+                    contentTransMode,
+                    `event_name:${ev.id}`,
+                    ev.name
+                  ),
+                  id: ev.id,
+                }))}
               getOptionLabel={(option) => option.name}
               getOptionSelected={(option, value) => option.id === value.id}
               renderInput={(params) => (
@@ -451,7 +400,12 @@ const EventTracker: React.FC<{}> = () => {
               value={selectedEvent}
               autoComplete
               onChange={(_, value) => {
-                setSelectedEvent(value);
+                if (!!value) {
+                  setSelectedEvent(value);
+                  setRefreshCron(undefined);
+                  setPredCron(undefined);
+                  handleFetchGraph(value.id);
+                }
               }}
               disabled={isCurrEventLoading || isFetching}
             />
@@ -459,7 +413,7 @@ const EventTracker: React.FC<{}> = () => {
           <Grid item>
             <Button
               variant="contained"
-              onClick={() =>
+              onClick={() => {
                 setSelectedEvent({
                   name: getTranslated(
                     contentTransMode,
@@ -467,335 +421,308 @@ const EventTracker: React.FC<{}> = () => {
                     currEvent.eventJson.name
                   ),
                   id: currEvent.eventId,
-                })
-              }
+                });
+                setRefreshCron(undefined);
+                setPredCron(undefined);
+                handleFetchGraph(currEvent.eventId);
+              }}
               disabled={isCurrEventLoading || isFetching}
             >
               {t("event:tracker.button.curr_event")}
             </Button>
           </Grid>
         </Grid>
-        <Grid container spacing={1} alignItems="center">
-          <Grid item xs={12}>
-            <Autocomplete<EventGraphRanking, boolean>
-              multiple
-              disableCloseOnSelect
-              options={[
-                1,
-                2,
-                3,
-                4,
-                5,
-                6,
-                7,
-                8,
-                9,
-                10,
-                20,
-                30,
-                40,
-                50,
-                100,
-                200,
-                300,
-                400,
-                500,
-                1000,
-                2000,
-                3000,
-                4000,
-                5000,
-                10000,
-                20000,
-                30000,
-                40000,
-                50000,
-                100000,
-              ]}
-              getOptionLabel={(opt) => `T${opt}`}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  variant="standard"
-                  label={t("event:tracker.select.rankings")}
-                />
-              )}
-              value={selectedRankings}
-              onChange={(_, values) => {
-                if (typeof values === "number") {
-                  setSelectedRankings([values]);
-                } else if (Array.isArray(values)) {
-                  setSelectedRankings(values);
-                } else {
-                  setSelectedRankings([]);
-                }
-              }}
-              autoComplete
-              disabled={isFetching}
-            />
-          </Grid>
-        </Grid>
-        <Grid container spacing={1} alignItems="center">
-          <Grid item xs={12}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleFetchGraph}
-              disabled={isFetching}
-            >
-              {t("event:tracker.button.graph")}
-            </Button>
-          </Grid>
-          {isFetching && (
-            <Grid item xs={12}>
-              <LinearProgress
-                variant="buffer"
-                value={fetchProgress}
-                valueBuffer={fetchProgress}
-              />
-            </Grid>
-          )}
-        </Grid>
       </Container>
-      {!!graphEvent && isShowChart && (
+      {!!sekaiProfile && !!sekaiProfile.sekaiUserProfile && (
         <Fragment>
           <Typography variant="h6" className={layoutClasses.header}>
-            {t("event:tracker.title.data_graph")}
+            {t("user:profile.title.user_event")}
           </Typography>
           <Container className={layoutClasses.content}>
-            <Grid container>
-              <Grid item xs={12}>
-                <Button
-                  variant="contained"
-                  onClick={() =>
-                    setColorArray(getColorArray(selectedRankings.length))
-                  }
-                >
-                  {t("event:tracker.button.random-palette")}
-                </Button>
-              </Grid>
-              <Grid item xs={12}>
-                <Paper>
-                  <ResponsiveContainer height={500}>
-                    <LineChart data={chartData}>
-                      <CartesianGrid
-                        stroke={theme.palette.divider}
-                        strokeDasharray="10 10"
-                      />
-                      <XAxis
-                        dataKey="time"
-                        scale="time"
-                        type="number"
-                        domain={["auto", "auto"]}
-                        tickFormatter={(tick) =>
-                          new Date(tick).toLocaleString()
-                        }
-                      />
-                      <YAxis type="number" domain={["auto", "auto"]} />
-                      <Brush
-                        dataKey="time"
-                        tickFormatter={(tick) =>
-                          new Date(tick).toLocaleString()
-                        }
-                      />
-                      <Tooltip
-                        labelFormatter={(label) =>
-                          new Date(Number(label)).toLocaleString()
-                        }
-                        contentStyle={{
-                          backgroundColor: theme.palette.background.default,
-                        }}
-                        formatter={(value, name, props) => {
-                          return [
-                            `${value} - ${props.payload[`${name}_name`]}`,
-                            name,
-                          ];
-                        }}
-                      />
-                      <Legend
-                        onClick={(e) => {
-                          setLineProps((props) =>
-                            Object.assign({}, props, {
-                              [e.dataKey]:
-                                props[e.dataKey] === "enabled"
-                                  ? "disabled"
-                                  : "enabled",
-                            })
-                          );
-                        }}
-                        onMouseEnter={(e) =>
-                          lineProps[e.dataKey] !== "disabled" &&
-                          setLineProps({ ...lineProps, hover: e.dataKey })
-                        }
-                        onMouseLeave={() =>
-                          setLineProps({ ...lineProps, hover: "" })
-                        }
-                      />
-                      {graphRankings.map((ranking, idx) => (
-                        <Line
-                          // type="natural"
-                          dataKey={`T${ranking}`}
-                          dot={false}
-                          stroke={colorArray[idx]}
-                          hide={lineProps[`T${ranking}`] === "disabled"}
-                          strokeWidth={4}
-                          strokeOpacity={
-                            !lineProps.hover ||
-                            lineProps.hover === `T${ranking}`
-                              ? 1
-                              : 0.4
-                          }
-                        />
-                      ))}
-                    </LineChart>
-                  </ResponsiveContainer>
-                </Paper>
-              </Grid>
-            </Grid>
+            <SekaiEventRecord eventId={selectedEventId} />
           </Container>
-          <Typography variant="h6" className={layoutClasses.header}>
-            {t("event:tracker.title.average_speed")}
+        </Fragment>
+      )}
+      <Typography variant="h6" className={layoutClasses.header}>
+        {t("event:ranking")} {isFetching && <CircularProgress size="24px" />}
+      </Typography>
+      {!!selectedEventId && (!!rtRanking.length || !!historyRanking.length) && (
+        <Container className={layoutClasses.content}>
+          <Typography variant="h6">
+            {t("event:realtime")}{" "}
+            {isTimeTravel
+              ? sliderTime?.toLocaleString()
+              : (rtTime || historyTime || new Date(0)).toLocaleString()}
           </Typography>
-          <Container className={layoutClasses.content}>
-            <TableContainer component={Paper}>
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>{t("event:ranking")}</TableCell>
-                    <TableCell align="center">
-                      {t("event:speedTable.head.all_time")}
-                    </TableCell>
-                    <TableCell align="center">
-                      {t("event:speedTable.head.last_24h")}
-                    </TableCell>
-                    <TableCell align="center">
-                      {t("event:speedTable.head.last_1h")}
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {graphRankings.map((ranking) => (
+          {!!nextRefreshTime && (
+            <Typography variant="body2" color="textSecondary">
+              {t("event:nextfetch")}: {nextRefreshTime.fromNow()}
+            </Typography>
+          )}
+          {!!predData && (
+            <Typography variant="body2" color="textSecondary">
+              {t("event:tracker.pred_at")}:{" "}
+              {new Date(predData.data.ts).toLocaleString()}
+            </Typography>
+          )}
+          <FormGroup row>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={isFullRank}
+                  onChange={() => toggleIsFullRank()}
+                />
+              }
+              label={t("event:tracker.show_all_rank")}
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={isTimeTravel}
+                  onChange={handleTimeTravelChange}
+                  disabled={fetchingTimePoints}
+                />
+              }
+              label={
+                <Typography>
+                  {t("event:tracker.time_travel_enabled")}{" "}
+                  {fetchingTimePoints && <CircularProgress size="12px" />}
+                </Typography>
+              }
+            />
+          </FormGroup>
+          {isTimeTravel && (
+            <Slider
+              step={null}
+              min={timePoints[0].getTime()}
+              max={timePoints[timePoints.length - 1].getTime()}
+              marks={timePoints.map((tp) => ({ value: tp.getTime() }))}
+              disabled={fetchingTimePoints}
+              defaultValue={sliderDefaultTime?.getTime()}
+              onChange={handleSliderChange.callback}
+            />
+          )}
+          {!isTimeTravel && !!rtRanking.length && !!rtTime && (
+            <Alert severity="info" className={layoutClasses.alert}>
+              <Typography>
+                {t("event:tracker.tooltip.get_prediction")}
+              </Typography>
+            </Alert>
+          )}
+          {!isTimeTravel &&
+            !!rtRanking.length &&
+            !!rtTime &&
+            (isMobile ? (
+              <Grid container spacing={1}>
+                {events &&
+                  (isFullRank ? fullRank : critialRank).map((rank) => (
+                    <Grid key={rank} item xs={12}>
+                      <LiveMobileRow
+                        rankingData={
+                          rtRanking.find((elem) => elem.rank === rank) || {
+                            id: -1,
+                            eventId: selectedEventId,
+                            timestamp: "0",
+                            rank,
+                            score: 0,
+                            userId: "0",
+                            userName: "N/A",
+                          }
+                        }
+                        rankingPred={predData?.data[String(rank) as "100"]}
+                      />
+                    </Grid>
+                  ))}
+              </Grid>
+            ) : (
+              <TableContainer component={Paper}>
+                <Table size="small">
+                  <TableHead>
                     <TableRow>
-                      <TableCell>T{ranking}</TableCell>
+                      <TableCell />
+                      <TableCell align="center">{t("event:ranking")}</TableCell>
                       <TableCell align="center">
-                        {speedAllTime[ranking]}
+                        {t("event:rankingTable.head.userProfile")}
                       </TableCell>
-                      <TableCell align="center">
-                        {speedLast24h[ranking]}
+                      <TableCell align="right">
+                        {t("event:rankingTable.head.score")}
                       </TableCell>
-                      <TableCell align="center">
-                        {speedLast1h[ranking]}
+                      <TableCell align="right">
+                        {t("event:rankingTable.head.speed_per_hour")}
+                      </TableCell>
+                      <TableCell align="right">
+                        {t("event:rankingTable.head.prediction")}
                       </TableCell>
                     </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {events &&
+                      (isFullRank ? fullRank : critialRank).map((rank) => (
+                        <LiveRow
+                          key={rank}
+                          rankingReward={events
+                            .find((ev) => ev.id === selectedEventId)!
+                            .eventRankingRewardRanges.find(
+                              (r) => r.toRank === rank
+                            )}
+                          rankingData={
+                            rtRanking.find((elem) => elem.rank === rank) || {
+                              id: -1,
+                              eventId: selectedEventId,
+                              timestamp: "0",
+                              rank,
+                              score: 0,
+                              userId: "0",
+                              userName: "N/A",
+                            }
+                          }
+                          eventDuration={eventDuration}
+                          rankingPred={predData?.data[String(rank) as "100"]}
+                        />
+                      ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            ))}
+          {!isTimeTravel &&
+            !!historyRanking.length &&
+            !!historyTime &&
+            (isMobile ? (
+              <Grid container spacing={1}>
+                {events &&
+                  (isFullRank ? fullRank : critialRank).map((rank) => (
+                    <Grid key={rank} item xs={12}>
+                      <HistoryMobileRow
+                        rankingData={
+                          historyRanking.find((elem) => elem.rank === rank)!
+                        }
+                        eventId={selectedEvent!.id}
+                      />
+                    </Grid>
                   ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Container>
-        </Fragment>
+              </Grid>
+            ) : (
+              <TableContainer component={Paper}>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell />
+                      <TableCell align="center">{t("event:ranking")}</TableCell>
+                      <TableCell align="center">
+                        {t("event:rankingTable.head.userProfile")}
+                      </TableCell>
+                      <TableCell align="right">
+                        {t("event:rankingTable.head.score")}
+                      </TableCell>
+                      <TableCell align="right">
+                        {t("event:rankingTable.head.speed_per_hour")}
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {events &&
+                      (isFullRank ? fullRank : critialRank).map((rank) => (
+                        <HistoryRow
+                          key={rank}
+                          rankingReward={events
+                            .find((ev) => ev.id === selectedEventId)!
+                            .eventRankingRewardRanges.find(
+                              (r) => r.toRank === rank
+                            )}
+                          rankingData={
+                            historyRanking.find((elem) => elem.rank === rank)!
+                          }
+                          eventDuration={eventDuration}
+                          eventId={selectedEvent!.id}
+                        />
+                      ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            ))}
+          {isTimeTravel &&
+            !!sliderTimeRanking.length &&
+            (isMobile ? (
+              <Grid container spacing={1}>
+                {events &&
+                  (isFullRank ? fullRank : critialRank).map((rank) => (
+                    <Grid key={rank} item xs={12}>
+                      <LiveMobileRow
+                        rankingData={
+                          sliderTimeRanking.find(
+                            (elem) => elem.rank === rank
+                          ) || {
+                            id: -1,
+                            eventId: selectedEventId,
+                            timestamp: "0",
+                            rank,
+                            score: 0,
+                            userId: "0",
+                            userName: "N/A",
+                          }
+                        }
+                        noPred={true}
+                      />
+                    </Grid>
+                  ))}
+              </Grid>
+            ) : (
+              <TableContainer component={Paper}>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell />
+                      <TableCell align="center">{t("event:ranking")}</TableCell>
+                      <TableCell align="center">
+                        {t("event:rankingTable.head.userProfile")}
+                      </TableCell>
+                      <TableCell align="right">
+                        {t("event:rankingTable.head.score")}
+                      </TableCell>
+                      <TableCell align="right">
+                        {t("event:rankingTable.head.speed_per_hour")}
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {events &&
+                      (isFullRank ? fullRank : critialRank).map((rank) => (
+                        <LiveRow
+                          key={rank}
+                          rankingReward={events
+                            .find((ev) => ev.id === selectedEventId)!
+                            .eventRankingRewardRanges.find(
+                              (r) => r.toRank === rank
+                            )}
+                          rankingData={
+                            sliderTimeRanking.find(
+                              (elem) => elem.rank === rank
+                            ) || {
+                              id: -1,
+                              eventId: selectedEventId,
+                              timestamp: "0",
+                              rank,
+                              score: 0,
+                              userId: "0",
+                              userName: "N/A",
+                            }
+                          }
+                          eventDuration={eventDuration}
+                          noPred={true}
+                        />
+                      ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            ))}
+        </Container>
       )}
-      {!!graphEvent && !!rtRanking.length && !!rtTime && (
-        <Fragment>
-          <Typography variant="h6" className={layoutClasses.header}>
-            {t("event:ranking")}
-          </Typography>
-          <Container className={layoutClasses.content}>
-            <Typography variant="h6">
-              {t("event:realtime")} {rtTime.toLocaleString()}
-            </Typography>
-            {!!nextRefreshTime && (
-              <Typography variant="body2" color="textSecondary">
-                {t("event:nextfetch")}: {nextRefreshTime.fromNow()}
-              </Typography>
-            )}
-            {/* <Divider style={{ margin: "1% 0" }} /> */}
-            <TableContainer component={Paper}>
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    <TableCell />
-                    <TableCell align="center">{t("event:ranking")}</TableCell>
-                    <TableCell align="center">
-                      {t("event:rankingTable.head.userProfile")}
-                    </TableCell>
-                    <TableCell align="right">
-                      {t("event:rankingTable.head.score")}
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {events &&
-                    events
-                      .find((ev) => ev.id === graphEvent.id)!
-                      .eventRankingRewardRanges.map(
-                        (rankingReward) =>
-                          rankingReward.fromRank <= 100000 &&
-                          rtRanking.find(
-                            (elem) => elem.rank === rankingReward.toRank
-                          ) && (
-                            <LiveRow
-                              rankingReward={rankingReward}
-                              rankingData={
-                                rtRanking.find(
-                                  (elem) => elem.rank === rankingReward.toRank
-                                )!
-                              }
-                            />
-                          )
-                      )}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Container>
-        </Fragment>
-      )}
-      {!!graphEvent && !!historyRanking.length && !!historyTime && (
-        <Fragment>
-          <Typography variant="h6" className={layoutClasses.header}>
-            {t("event:ranking")}
-          </Typography>
-          <Container className={layoutClasses.content}>
-            <Typography variant="h6">
-              {t("event:realtime")} {historyTime.toLocaleString()}
-            </Typography>
-            {/* <Divider style={{ margin: "1% 0" }} /> */}
-            <TableContainer component={Paper}>
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    <TableCell />
-                    <TableCell>{t("event:ranking")}</TableCell>
-                    <TableCell align="center">
-                      {t("event:rankingTable.head.userProfile")}
-                    </TableCell>
-                    <TableCell align="right">
-                      {t("event:rankingTable.head.score")}
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {events &&
-                    events
-                      .find((ev) => ev.id === graphEvent.id)!
-                      .eventRankingRewardRanges.map(
-                        (rankingReward) =>
-                          rankingReward.fromRank <= 100000 && (
-                            <HistoryRow
-                              rankingReward={rankingReward}
-                              rankingData={
-                                historyRanking.find(
-                                  (elem) => elem.rank === rankingReward.toRank
-                                )!
-                              }
-                            />
-                          )
-                      )}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Container>
-        </Fragment>
-      )}
+      <AdSense
+        client="ca-pub-7767752375383260"
+        slot="8221864477"
+        format="auto"
+        responsive="true"
+      />
     </Fragment>
   );
 };

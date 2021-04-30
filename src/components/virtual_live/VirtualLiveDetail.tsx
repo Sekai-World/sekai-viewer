@@ -85,7 +85,7 @@ const VirtualLiveDetail: React.FC<{}> = () => {
           virtualLive.name
         )}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
+      <Container className={layoutClasses.content} maxWidth="md">
         <Grid container direction="row" spacing={1} alignItems="center">
           <Grid item xs={12} md={6}>
             <Image
@@ -212,7 +212,7 @@ const VirtualLiveDetail: React.FC<{}> = () => {
             <Grid item xs={6} md={4}>
               <Grid container spacing={1} justify="flex-end">
                 {virtualLive.virtualLiveCharacters.map((chara) => (
-                  <Grid item xs={4} md={3}>
+                  <Grid item xs={4} md={3} lg={2}>
                     <Avatar
                       src={
                         charaIcons[
@@ -243,7 +243,7 @@ const VirtualLiveDetail: React.FC<{}> = () => {
                 {t("virtual_live:rewards")}
               </Typography>
             </Grid>
-            <Grid item xs={6} md={4}>
+            <Grid item>
               <ResourceBox
                 resourceBoxId={virtualLive.virtualLiveReward.resourceBoxId}
                 resourceBoxPurpose="virtual_live_reward"
@@ -285,6 +285,12 @@ const VirtualLiveDetail: React.FC<{}> = () => {
           ))}
         </Grid>
       </Container>
+      <AdSense
+        client="ca-pub-7767752375383260"
+        slot="8221864477"
+        format="auto"
+        responsive="true"
+      />
       <Typography variant="h6" className={layoutClasses.header}>
         {t("virtual_live:title.setlist")}
       </Typography>
@@ -293,12 +299,6 @@ const VirtualLiveDetail: React.FC<{}> = () => {
           <VirtualLiveStep key={setlist.id} data={setlist} />
         ))}
       </Container>
-      <AdSense
-        client="ca-pub-7767752375383260"
-        slot="5596436251"
-        format="auto"
-        responsive="true"
-      />
     </Fragment>
   ) : (
     <div>

@@ -44,13 +44,23 @@ const GridView: React.FC<{
         case "ja":
           getRemoteAssetURL(
             `comic/one_frame_rip/${data.assetbundleName}.webp`,
-            setImageURL
+            setImageURL,
+            window.isChinaMainland
+          );
+          break;
+        case "en":
+          getRemoteAssetURL(
+            `comic_${lang}/${data.assetbundleName}.jpg`,
+            setImageURL,
+            window.isChinaMainland,
+            true
           );
           break;
         default:
           getRemoteAssetURL(
             `comic_${lang}/${data.assetbundleName}.png`,
-            setImageURL
+            setImageURL,
+            window.isChinaMainland
           );
           break;
       }

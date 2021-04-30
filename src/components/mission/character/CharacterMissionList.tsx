@@ -166,7 +166,7 @@ const CharacterMissionList: React.FC<{}> = () => {
           ) : null}
         </Grid>
       </Container>
-      <Container className={layoutClasses.content} maxWidth="sm">
+      <Container className={layoutClasses.content} maxWidth="md">
         <InfiniteScroll<ICharacterMission>
           ViewComponent={ListCard[viewGridType]}
           callback={callback}

@@ -2,6 +2,7 @@ import {
   AvatarModel,
   CommentAbuseReason,
   CommentModel,
+  PatronModel,
   TranslationModel,
 } from "./../strapi-model.d";
 import Axios from "axios";
@@ -598,6 +599,25 @@ export function useLive2dModelList() {
 
   return {
     modelList: data as string[] | undefined,
+    isLoading: !error && !data,
+    error,
+  };
+}
+
+export function usePatronList(tier?: string) {
+  const _params = useMemo(
+    () => ({
+      tier,
+    }),
+    [tier]
+  );
+  const { data, error } = useSWR(
+    [`${process.env.REACT_APP_STRAPI_BASE}/patrons`, _params],
+    axiosFetcher
+  );
+
+  return {
+    patrons: data as PatronModel[],
     isLoading: !error && !data,
     error,
   };

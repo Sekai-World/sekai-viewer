@@ -25,10 +25,14 @@ import { Link, useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
 import {
+  ICardInfo,
+  ICheerfulCarnivalSummary,
+  ICheerfulCarnivalTeam,
   IEventCard,
   IEventDeckBonus,
   IEventInfo,
   IGameCharaUnit,
+  IVirtualLiveInfo,
 } from "../../types";
 import { getRemoteAssetURL, useCachedData } from "../../utils";
 import { attrIconMap, charaIcons } from "../../utils/resources";
@@ -37,23 +41,25 @@ import { useDurationI18n } from "../../utils/i18nDuration";
 import { SettingContext } from "../../context";
 import { ContentTrans } from "../subs/ContentTrans";
 import { CardThumb } from "../subs/CardThumb";
-import DegreeImage from "../subs/DegreeImage";
+// import DegreeImage from "../subs/DegreeImage";
 import ResourceBox from "../subs/ResourceBox";
 import { OpenInNew } from "@material-ui/icons";
 import { useInteractiveStyles } from "../../styles/interactive";
 import AudioPlayer from "../music/AudioPlayer";
+import AgendaView from "../virtual_live/AgendaView";
 import AdSense from "../subs/AdSense";
+import Image from "material-ui-image";
 
 const useStyle = makeStyles((theme) => ({
-  bannerImg: {
-    maxWidth: "100%",
-  },
-  eventImg: {
-    maxWidth: "100%",
-    cursor: "pointer",
-  },
+  // bannerImg: {
+  //   maxWidth: "100%",
+  // },
+  // eventImg: {
+  //   maxWidth: "100%",
+  //   cursor: "pointer",
+  // },
   tabpanel: {
-    padding: theme.spacing("1%", 0, 0, 0),
+    padding: theme.spacing("0.1rem", 0, 0, 0),
   },
   "grid-out": {
     padding: theme.spacing("1%", "0"),
@@ -76,10 +82,22 @@ const EventDetail: React.FC<{}> = () => {
     "gameCharacterUnits"
   );
   const [eventCardsCache] = useCachedData<IEventCard>("eventCards");
+  const [cards] = useCachedData<ICardInfo>("cards");
+  const [virtualLives] = useCachedData<IVirtualLiveInfo>("virtualLives");
+  const [cheerfulCarnivalSummaries] = useCachedData<ICheerfulCarnivalSummary>(
+    "cheerfulCarnivalSummaries"
+  );
+  const [cheerfulCarnivalTeams] = useCachedData<ICheerfulCarnivalTeam>(
+    "cheerfulCarnivalTeams"
+  );
 
   const [event, setEvent] = useState<IEventInfo>();
   const [eventCards, setEventCards] = useState<IEventCard[]>([]);
+  const [boostCards, setBoostCards] = useState<ICardInfo[]>([]);
   const [eventDeckBonus, setEventDeckBonus] = useState<IEventDeckBonus[]>([]);
+  const [eventBonusCharas, setEventBonusCharas] = useState<IGameCharaUnit[]>(
+    []
+  );
   const [imgTabVal, setImgTabVal] = useState<string>("0");
   // const [intervalId, setIntervalId] = useState<number>();
   // const [nextRefreshTime, setNextRefreshTime] = useState<moment.Moment>();
@@ -88,6 +106,12 @@ const EventDetail: React.FC<{}> = () => {
   const [visible, setVisible] = useState<boolean>(false);
   const [activeIdx, setActiveIdx] = useState<number>(0);
   const [eventBgm, setEventBgm] = useState<string>("");
+  const [
+    linkedVirtualLive,
+    setLinkedVirtualLive,
+  ] = useState<IVirtualLiveInfo>();
+  const [ccTeams, setCcTeams] = useState<ICheerfulCarnivalTeam[]>([]);
+  const [ccSummary, setCcSummary] = useState<ICheerfulCarnivalSummary>();
 
   useEffect(() => {
     if (event) {
@@ -109,21 +133,76 @@ const EventDetail: React.FC<{}> = () => {
   useEffect(() => {
     if (
       events &&
-      events.length &&
       eventDeckBonuses &&
-      eventDeckBonuses.length &&
       eventCardsCache &&
-      eventCardsCache.length
+      cards &&
+      gameCharacterUnits &&
+      virtualLives
     ) {
-      setEvent(events.find((elem) => elem.id === Number(eventId)));
-      setEventDeckBonus(
-        eventDeckBonuses.filter((elem) => elem.eventId === Number(eventId))
+      const ev = events.find((elem) => elem.id === Number(eventId));
+      setEvent(ev);
+      const edb = eventDeckBonuses.filter(
+        (elem) => elem.eventId === Number(eventId)
       );
+      setEventDeckBonus(edb);
       setEventCards(
         eventCardsCache.filter((elem) => elem.eventId === Number(eventId))
       );
+      const ebc = edb
+        .slice(0, 5)
+        .map(
+          (elem) =>
+            gameCharacterUnits.find(
+              (gcu) => gcu.id === elem.gameCharacterUnitId
+            )!
+        );
+      setEventBonusCharas(ebc);
+      setBoostCards(
+        cards
+          .filter((elem) =>
+            ebc.some((chara) => {
+              let ret =
+                chara.gameCharacterId === elem.characterId &&
+                elem.attr === edb[0].cardAttr &&
+                elem.releaseAt <= ev!.startAt;
+              if (elem.characterId >= 21) {
+                ret = ret && chara.unit === elem.supportUnit;
+              }
+
+              return ret;
+            })
+          )
+          .sort((a, b) => b.rarity - a.rarity)
+      );
+      setLinkedVirtualLive(
+        virtualLives.find((elem) => elem.id === ev?.virtualLiveId)
+      );
     }
-  }, [events, eventId, eventDeckBonuses, eventCardsCache]);
+  }, [
+    events,
+    eventId,
+    eventDeckBonuses,
+    eventCardsCache,
+    cards,
+    gameCharacterUnits,
+    virtualLives,
+  ]);
+
+  useEffect(() => {
+    if (
+      event &&
+      event.eventType === "cheerful_carnival" &&
+      cheerfulCarnivalSummaries &&
+      cheerfulCarnivalTeams
+    ) {
+      setCcTeams(
+        cheerfulCarnivalTeams.filter((cct) => cct.eventId === event.id)
+      );
+      setCcSummary(
+        cheerfulCarnivalSummaries.find((ccs) => ccs.eventId === event.id)
+      );
+    }
+  }, [cheerfulCarnivalSummaries, cheerfulCarnivalTeams, event]);
 
   useEffect(() => {
     if (!event) {
@@ -186,6 +265,8 @@ const EventDetail: React.FC<{}> = () => {
   const [eventBanner, setEventBanner] = useState<string>("");
   const [eventBackground, setEventBackground] = useState<string>("");
   const [eventCharacter, setEventCharacter] = useState<string>("");
+  const [ccTeam1Logo, setCcTeam1Logo] = useState<string>("");
+  const [ccTeam2Logo, setCcTeam2Logo] = useState<string>("");
 
   useEffect(() => {
     if (event) {
@@ -207,6 +288,19 @@ const EventDetail: React.FC<{}> = () => {
       );
     }
   }, [event]);
+
+  useEffect(() => {
+    if (event && ccTeams.length) {
+      getRemoteAssetURL(
+        `event/${event.assetbundleName}/team_image_rip/${ccTeams[0].assetbundleName}.webp`,
+        setCcTeam1Logo
+      );
+      getRemoteAssetURL(
+        `event/${event.assetbundleName}/team_image_rip/${ccTeams[1].assetbundleName}.webp`,
+        setCcTeam2Logo
+      );
+    }
+  }, [ccTeams, cheerfulCarnivalSummaries, cheerfulCarnivalTeams, event]);
 
   const getEventImages: () => ImageDecorator[] = useCallback(
     () =>
@@ -236,7 +330,7 @@ const EventDetail: React.FC<{}> = () => {
       <Typography variant="h6" className={layoutClasses.header}>
         {getTranslated(contentTransMode, `event_name:${eventId}`, event.name)}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
+      <Container className={layoutClasses.content} maxWidth="md">
         <TabContext value={imgTabVal}>
           <Paper>
             <Tabs
@@ -252,42 +346,50 @@ const EventDetail: React.FC<{}> = () => {
             <TabPanel value="0" classes={{ root: classes.tabpanel }}>
               <Grid container direction="row">
                 <Grid item xs={12} md={6}>
-                  <img
-                    className={classes.bannerImg}
+                  <Image
+                    // className={classes.bannerImg}
                     src={eventLogo}
                     alt="logo"
-                  ></img>
+                    aspectRatio={16 / 7}
+                    color=""
+                  ></Image>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <img
-                    className={classes.bannerImg}
+                  <Image
+                    // className={classes.bannerImg}
                     src={eventBanner}
                     alt="banner"
-                  ></img>
+                    aspectRatio={16 / 7}
+                    color=""
+                  ></Image>
                 </Grid>
               </Grid>
             </TabPanel>
             <TabPanel value="1" classes={{ root: classes.tabpanel }}>
-              <img
+              <Image
                 onClick={() => {
                   setActiveIdx(0);
                   setVisible(true);
                 }}
-                className={classes.eventImg}
+                className={interactiveClasses.pointer}
                 src={eventBackground}
+                aspectRatio={1.625}
                 alt="background"
-              ></img>
+                color=""
+              ></Image>
             </TabPanel>
             <TabPanel value="2" classes={{ root: classes.tabpanel }}>
-              <img
+              <Image
                 onClick={() => {
                   setActiveIdx(1);
                   setVisible(true);
                 }}
-                className={classes.eventImg}
+                className={interactiveClasses.pointer}
                 src={eventCharacter}
+                aspectRatio={1.625}
                 alt="character"
-              ></img>
+                color=""
+              ></Image>
             </TabPanel>
           </Paper>
         </TabContext>
@@ -364,61 +466,41 @@ const EventDetail: React.FC<{}> = () => {
             <Typography>{t(`event:type.${event.eventType}`)}</Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
-          <Grid
-            item
-            container
-            direction="row"
-            wrap="nowrap"
-            justify="space-between"
-            alignItems="center"
-          >
-            <Grid item xs={3}>
-              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                {t("event:eventCards")}
-              </Typography>
-            </Grid>
-            <Grid item xs={7} container justify="flex-end" spacing={2}>
-              {eventCards.map((card) => (
-                <Grid key={card.cardId} item xs={6} md={4}>
-                  <Link to={`/card/${card.cardId}`}>
-                    <CardThumb cardId={card.cardId} />
+          {Date.now() >= event.startAt && (
+            <Fragment>
+              <Grid
+                item
+                container
+                direction="row"
+                wrap="nowrap"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Grid item xs={4}>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("common:eventTracker")}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6} container justify="flex-end">
+                  <Link
+                    to={`/eventtracker?id=${eventId}`}
+                    className={interactiveClasses.noDecoration}
+                  >
+                    <Grid container alignItems="center">
+                      <OpenInNew />
+                    </Grid>
                   </Link>
                 </Grid>
-              ))}
-            </Grid>
-          </Grid>
-          <Divider style={{ margin: "1% 0" }} />
-          <Grid
-            item
-            container
-            direction="row"
-            wrap="nowrap"
-            justify="space-between"
-            alignItems="center"
-          >
-            <Grid item xs={4}>
-              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                {t("common:eventTracker")}
-              </Typography>
-            </Grid>
-            <Grid item xs={6} container justify="flex-end">
-              <Link
-                to={`/eventtracker?id=${eventId}`}
-                className={interactiveClasses.noDecoration}
-              >
-                <Grid container alignItems="center">
-                  <OpenInNew />
-                </Grid>
-              </Link>
-            </Grid>
-          </Grid>
-          <Divider style={{ margin: "1% 0" }} />
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
+            </Fragment>
+          )}
         </Grid>
       </Container>
       <Typography variant="h6" className={layoutClasses.header}>
         {t("event:title.boost")}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
+      <Container className={layoutClasses.content} maxWidth="md">
         <Grid className={classes["grid-out"]} container direction="column">
           <Grid
             item
@@ -433,32 +515,27 @@ const EventDetail: React.FC<{}> = () => {
                 {t("event:boostAttribute")}
               </Typography>
             </Grid>
-            <Grid
-              item
-              container
-              xs={6}
-              spacing={1}
-              alignItems="center"
-              justify="space-between"
-            >
+            <Grid item xs={6}>
               <Grid
-                item
-                xs={6}
-                sm={10}
-                container
                 spacing={1}
-                justify="flex-end"
+                container
+                alignItems="center"
+                justify="space-between"
               >
-                <Grid item>
-                  <img
-                    style={{ maxHeight: "36px" }}
-                    src={attrIconMap[eventDeckBonus[0].cardAttr]}
-                    alt={eventDeckBonus[0].cardAttr}
-                  ></img>
+                <Grid item xs={6} sm={10}>
+                  <Grid container spacing={1} justify="flex-end">
+                    <Grid item>
+                      <img
+                        style={{ maxHeight: "36px" }}
+                        src={attrIconMap[eventDeckBonus[0].cardAttr]}
+                        alt={eventDeckBonus[0].cardAttr}
+                      ></img>
+                    </Grid>
+                  </Grid>
                 </Grid>
-              </Grid>
-              <Grid item xs={4} sm={2}>
-                <Typography>+{eventDeckBonus[6].bonusRate}%</Typography>
+                <Grid item xs={4} sm={2}>
+                  <Typography>+{eventDeckBonus[10].bonusRate}%</Typography>
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
@@ -476,40 +553,29 @@ const EventDetail: React.FC<{}> = () => {
                 {t("event:boostCharacters")}
               </Typography>
             </Grid>
-            <Grid
-              item
-              container
-              spacing={1}
-              xs={5}
-              sm={6}
-              alignItems="center"
-              justify="space-between"
-            >
-              <Grid item container spacing={1} xs={6} sm={10}>
-                {eventDeckBonus.slice(0, 5).map((elem, idx) => (
-                  <Grid key={`chara-${idx}`} item>
-                    <img
-                      style={{ maxHeight: "36px" }}
-                      src={
-                        charaIcons[
-                          `CharaIcon${
-                            gameCharacterUnits.find(
-                              (gcu) => gcu.id === elem.gameCharacterUnitId
-                            )!.gameCharacterId
-                          }`
-                        ]
-                      }
-                      alt={`character ${
-                        gameCharacterUnits.find(
-                          (gcu) => gcu.id === elem.gameCharacterUnitId
-                        )!.gameCharacterId
-                      }`}
-                    ></img>
+            <Grid item xs={5} sm={6}>
+              <Grid
+                container
+                spacing={1}
+                alignItems="center"
+                justify="space-between"
+              >
+                <Grid item xs={6} sm={10}>
+                  <Grid container spacing={1} justify="flex-end">
+                    {eventBonusCharas.slice(0, 5).map((chara, idx) => (
+                      <Grid key={`chara-${idx}`} item>
+                        <img
+                          style={{ maxHeight: "36px" }}
+                          src={charaIcons[`CharaIcon${chara.gameCharacterId}`]}
+                          alt={`character ${chara.gameCharacterId}`}
+                        ></img>
+                      </Grid>
+                    ))}
                   </Grid>
-                ))}
-              </Grid>
-              <Grid item xs={5} sm={2}>
-                <Typography>+{eventDeckBonus[6].bonusRate}%</Typography>
+                </Grid>
+                <Grid item xs={5} sm={2}>
+                  <Typography>+{eventDeckBonus[6].bonusRate}%</Typography>
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
@@ -525,15 +591,178 @@ const EventDetail: React.FC<{}> = () => {
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
               {t("event:maxBoost")}
             </Typography>
-            <Typography>+50%</Typography>
+            <Grid item xs={5} sm={6}>
+              <Grid
+                container
+                spacing={1}
+                alignItems="center"
+                justify="space-between"
+              >
+                <Grid item xs={6} sm={10}></Grid>
+                <Grid item xs={5} sm={2}>
+                  <Typography>+{eventDeckBonus[0].bonusRate}%</Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Divider style={{ margin: "1% 0" }} />
+          <Grid
+            item
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Grid item xs={3}>
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                {t("event:boostCards")}
+              </Typography>
+            </Grid>
+            <Grid
+              item
+              xs={8}
+              sm={7}
+              md={6}
+              container
+              justify="flex-end"
+              spacing={2}
+            >
+              {boostCards.map((card) => (
+                <Grid key={card.id} item xs={6} md={4} lg={3}>
+                  <Link to={`/card/${card.id}`}>
+                    <CardThumb cardId={card.id} />
+                  </Link>
+                </Grid>
+              ))}
+            </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
         </Grid>
       </Container>
       <Typography variant="h6" className={layoutClasses.header}>
+        {t("common:card")}
+      </Typography>
+      <Container className={layoutClasses.content} maxWidth="md">
+        <Grid className={classes["grid-out"]} container direction="column">
+          <Grid
+            item
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Grid item xs={3}>
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                {t("event:eventCards")}
+              </Typography>
+            </Grid>
+            <Grid
+              item
+              xs={8}
+              sm={7}
+              md={6}
+              container
+              justify="flex-end"
+              spacing={2}
+            >
+              {eventCards.map((card) => (
+                <Grid key={card.cardId} item xs={5} md={4} lg={3}>
+                  <Link to={`/card/${card.cardId}`}>
+                    <CardThumb cardId={card.cardId} />
+                  </Link>
+                </Grid>
+              ))}
+            </Grid>
+          </Grid>
+          <Divider style={{ margin: "1% 0" }} />
+        </Grid>
+      </Container>
+      {event.eventType === "cheerful_carnival" &&
+        !!ccTeams.length &&
+        ccSummary && (
+          <Fragment>
+            <Typography variant="h6" className={layoutClasses.header}>
+              {t("event:title.cheerful_carnival")}
+            </Typography>
+            <Container className={layoutClasses.content} maxWidth="md">
+              <ContentTrans
+                contentKey={`cheerful_carnival_themes:${ccSummary.id}`}
+                original={ccSummary.theme}
+                originalProps={{ align: "center", variant: "h6" }}
+                translatedProps={{ align: "center", variant: "h6" }}
+              />
+              <Grid
+                className={classes["grid-out"]}
+                container
+                spacing={1}
+                justify="space-around"
+              >
+                <Grid item xs={5} md={3} lg={2}>
+                  <Image src={ccTeam1Logo} color="" />
+                  <ContentTrans
+                    contentKey={`cheerful_carnival_teams:${ccTeams[0].id}`}
+                    original={ccTeams[0].teamName}
+                    originalProps={{ align: "center" }}
+                    translatedProps={{ align: "center" }}
+                  />
+                </Grid>
+                <Grid item xs={5} md={3} lg={2}>
+                  <Image src={ccTeam2Logo} color="" />
+                  <ContentTrans
+                    contentKey={`cheerful_carnival_teams:${ccTeams[1].id}`}
+                    original={ccTeams[1].teamName}
+                    originalProps={{ align: "center" }}
+                    translatedProps={{ align: "center" }}
+                  />
+                </Grid>
+              </Grid>
+              <Grid
+                className={classes["grid-out"]}
+                container
+                direction="column"
+              >
+                <Grid
+                  item
+                  container
+                  direction="row"
+                  wrap="nowrap"
+                  justify="space-between"
+                  alignItems="center"
+                >
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("event:cheerful_carnival_midterm_1")}
+                  </Typography>
+                  <Typography align="right">
+                    {new Date(ccSummary.midtermAnnounce1At).toLocaleString()}
+                  </Typography>
+                </Grid>
+                <Divider style={{ margin: "1% 0" }} />
+                <Grid
+                  item
+                  container
+                  direction="row"
+                  wrap="nowrap"
+                  justify="space-between"
+                  alignItems="center"
+                >
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("event:cheerful_carnival_midterm_2")}
+                  </Typography>
+                  <Typography align="right">
+                    {new Date(ccSummary.midtermAnnounce2At).toLocaleString()}
+                  </Typography>
+                </Grid>
+                <Divider style={{ margin: "1% 0" }} />
+              </Grid>
+            </Container>
+          </Fragment>
+        )}
+      <Typography variant="h6" className={layoutClasses.header}>
         {t("event:title.timepoint")}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
+      <Container className={layoutClasses.content} maxWidth="md">
         <Grid className={classes["grid-out"]} container direction="column">
           <Grid
             item
@@ -615,31 +844,35 @@ const EventDetail: React.FC<{}> = () => {
             </Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
-          <Grid
-            item
-            container
-            direction="row"
-            wrap="nowrap"
-            justify="space-between"
-            alignItems="center"
-          >
-            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t("event:distributionEndAt")}
-            </Typography>
-            <Typography align="right">
-              {new Date(event.distributionEndAt).toLocaleString()}
-            </Typography>
-          </Grid>
-          <Divider style={{ margin: "1% 0" }} />
         </Grid>
       </Container>
+      <AdSense
+        client="ca-pub-7767752375383260"
+        slot="8221864477"
+        format="auto"
+        responsive="true"
+      />
+      {!!linkedVirtualLive && (
+        <Fragment>
+          <Typography variant="h6" className={layoutClasses.header}>
+            {t("common:virtualLive")}
+          </Typography>
+          <Container className={layoutClasses.content} maxWidth="md">
+            <AgendaView data={linkedVirtualLive} />
+          </Container>
+        </Fragment>
+      )}
       <Typography variant="h6" className={layoutClasses.header}>
         {t("event:title.rankingRewards")}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
+      <Container
+        className={layoutClasses.content}
+        maxWidth="md"
+        style={{ maxHeight: 400, overflow: "auto" }}
+      >
         <Grid className={classes["grid-out"]} container direction="column">
           {event.eventRankingRewardRanges.map((rankingReward) => (
-            <Fragment>
+            <Fragment key={rankingReward.id}>
               <Grid
                 item
                 container
@@ -657,36 +890,14 @@ const EventDetail: React.FC<{}> = () => {
                   </Typography>
                 </Grid>
                 <Grid item xs={8} container spacing={1} alignItems="center">
-                  {rankingReward.toRank <= 100000 ? (
-                    <Fragment>
-                      <Grid item xs={6}>
-                        <DegreeImage
-                          style={{ minHeight: "30px", maxHeight: "40px" }}
-                          resourceBoxId={
-                            rankingReward.eventRankingRewards[0].resourceBoxId
-                          }
-                          type="event_ranking_reward"
-                        />
-                      </Grid>
-                      <Grid item xs={6}>
-                        <ResourceBox
-                          resourceBoxId={
-                            rankingReward.eventRankingRewards[0].resourceBoxId
-                          }
-                          resourceBoxPurpose="event_ranking_reward"
-                        />
-                      </Grid>
-                    </Fragment>
-                  ) : (
-                    <Grid item xs={12}>
-                      <ResourceBox
-                        resourceBoxId={
-                          rankingReward.eventRankingRewards[0].resourceBoxId
-                        }
-                        resourceBoxPurpose="event_ranking_reward"
-                      />
-                    </Grid>
-                  )}
+                  <Grid item xs={12}>
+                    <ResourceBox
+                      resourceBoxId={
+                        rankingReward.eventRankingRewards[0].resourceBoxId
+                      }
+                      resourceBoxPurpose="event_ranking_reward"
+                    />
+                  </Grid>
                 </Grid>
               </Grid>
               <Divider style={{ margin: "1% 0" }} />
@@ -694,12 +905,6 @@ const EventDetail: React.FC<{}> = () => {
           ))}
         </Grid>
       </Container>
-      <AdSense
-        client="ca-pub-7767752375383260"
-        slot="5596436251"
-        format="auto"
-        responsive="true"
-      />
       <Viewer
         visible={visible}
         onClose={() => setVisible(false)}

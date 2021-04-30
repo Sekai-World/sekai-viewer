@@ -47,7 +47,6 @@ export async function initGlobalI18n() {
       defaultNS: "common",
       fallbackLng: {
         default: ["en"],
-        pt: ["pt-BR", "en"],
       },
       fallbackNS: "common",
       load: "currentOnly",
@@ -89,10 +88,12 @@ export async function initGlobalI18n() {
         "unit_story_episode_title",
         "event_story_episode_title",
         "character_mission",
+        "card_gacha_phrase",
+        "cheerful_carnival_teams",
+        "cheerful_carnival_themes",
       ],
       fallbackLng: {
         default: ["ja"],
-        pt: ["pt-BR", "ja"],
       },
       load: "currentOnly",
       backend: {

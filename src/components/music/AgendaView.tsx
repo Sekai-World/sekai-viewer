@@ -1,6 +1,5 @@
 import {
   Typography,
-  CardMedia,
   Grid,
   makeStyles,
   Paper,
@@ -8,15 +7,22 @@ import {
   Chip,
 } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
 import { SettingContext } from "../../context";
-import { IMusicDifficultyInfo, IMusicInfo } from "../../types";
+import {
+  IMusicDifficultyInfo,
+  IMusicInfo,
+  IMusicVocalInfo,
+  IOutCharaProfile,
+} from "../../types";
 import { getRemoteAssetURL, useCachedData } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
 import { ContentTrans } from "../subs/ContentTrans";
 import SpoilerTag from "../subs/SpoilerTag";
+import Image from "material-ui-image";
+import { charaIcons } from "../../utils/resources";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -33,29 +39,18 @@ const useStyles = makeStyles((theme) => ({
   },
   agendaWrapper: {
     display: "block",
-    [theme.breakpoints.down("sm")]: {
-      maxWidth: "300px",
-    },
+    // [theme.breakpoints.down("sm")]: {
+    //   maxWidth: "300px",
+    // },
     // [theme.breakpoints.only("md")]: {
     //   maxWidth: "600px",
     // },
-    maxWidth: "70%",
+    // maxWidth: "70%",
     margin: "auto",
     cursor: "pointer",
   },
   agenda: {
-    padding: "2% 0",
-  },
-  agendaMedia: {
-    paddingTop: "75%",
-    backgroundSize: "contain",
-  },
-  agendaMediaSkeleton: {
-    position: "absolute",
-    top: "0",
-    left: "12.5%",
-    width: "75%",
-    height: "100%",
+    padding: "0.3rem 0.5rem",
   },
   "diffi-easy": {
     backgroundColor: "#66DD11",
@@ -84,9 +79,12 @@ const AgendaView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
   const [musicDiffis] = useCachedData<IMusicDifficultyInfo>(
     "musicDifficulties"
   );
+  const [musicVocals] = useCachedData<IMusicVocalInfo>("musicVocals");
+  const [outCharas] = useCachedData<IOutCharaProfile>("outsideCharacters");
 
   const [jacket, setJacket] = useState<string>("");
   const [diffis, setDiffis] = useState<IMusicDifficultyInfo[]>([]);
+  const [musicVocal, setMusicVocal] = useState<IMusicVocalInfo[]>([]);
 
   useEffect(() => {
     if (data)
@@ -103,40 +101,68 @@ const AgendaView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
     }
   }, [musicDiffis, data]);
 
+  useEffect(() => {
+    if (data && musicVocals && musicVocals.length) {
+      setMusicVocal(
+        musicVocals.filter((elem) => elem.musicId === Number(data.id))
+      );
+    }
+  }, [musicVocals, data]);
+
+  const getVocalCharaIcons: (index: number) => JSX.Element = useCallback(
+    (index: number) => {
+      return (
+        <Grid container alignItems="center">
+          {musicVocal[index].characters.map((chara) =>
+            chara.characterType === "game_character" ? (
+              <Grid item key={`chara-${chara.characterId}`}>
+                <img
+                  key={chara.characterId}
+                  height="36"
+                  src={charaIcons[`CharaIcon${chara.characterId}`]}
+                  alt={`character ${chara.characterId}`}
+                ></img>
+              </Grid>
+            ) : (
+              <Grid item key={`outchara-${chara.characterId}`}>
+                <Typography>
+                  {outCharas && outCharas.length
+                    ? outCharas.find((elem) => elem.id === chara.characterId)!
+                        .name
+                    : `Outside Character ${chara.characterId}`}
+                </Typography>
+              </Grid>
+            )
+          )}
+        </Grid>
+      );
+    },
+    [musicVocal, outCharas]
+  );
+
   if (!data) {
     // loading
     return (
       <Box className={classes.agendaWrapper}>
         <Paper className={classes.agenda}>
-          <Grid
-            container
-            alignItems="center"
-            spacing={2}
-            justify="space-between"
-          >
-            <Grid item xs={5} md={4}>
-              <Box
-                className={classes.agendaMedia}
-                style={{ position: "relative" }}
-              >
-                <Skeleton
-                  variant="rect"
-                  className={classes.agendaMediaSkeleton}
-                ></Skeleton>
-              </Box>
+          <Grid container alignItems="center" spacing={1}>
+            <Grid item xs={3} sm={2} md={1}>
+              <Skeleton variant="rect" width="96px" height="96px"></Skeleton>
             </Grid>
-            <Grid item xs={6} md={7} container direction="column">
-              <Grid item>
-                <Typography variant="body1">
-                  <Skeleton variant="text" width="60%"></Skeleton>
-                </Typography>
-                <Typography color="textSecondary">
-                  <Skeleton variant="text" width="30%"></Skeleton>
-                </Typography>
-              </Grid>
-              <Grid item container direction="row" style={{ marginTop: "5%" }}>
-                <Skeleton variant="rect" width="75%" height="24px"></Skeleton>
-              </Grid>
+            <Grid item xs={3} sm={2}>
+              <Typography variant="body1">
+                <Skeleton variant="text" width="60%"></Skeleton>
+              </Typography>
+            </Grid>
+            <Grid item xs={4} sm={3}>
+              <Typography variant="body1">
+                <Skeleton variant="text" width="60%"></Skeleton>
+              </Typography>
+            </Grid>
+            <Grid item xs={3} sm={2}>
+              <Typography variant="body1">
+                <Skeleton variant="text" width="60%"></Skeleton>
+              </Typography>
             </Grid>
           </Grid>
         </Paper>
@@ -150,19 +176,20 @@ const AgendaView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
       style={{ textDecoration: "none" }}
     >
       <Paper className={classes.agenda}>
-        <Grid container alignItems="center" spacing={2} justify="space-between">
-          <Grid item xs={5} md={4}>
-            <CardMedia
-              className={classes.agendaMedia}
-              image={jacket}
-              title={getTranslated(
+        <Grid container alignItems="center" spacing={1}>
+          <Grid item xs={3} sm={2} md={1}>
+            <Image
+              src={jacket}
+              alt={getTranslated(
                 contentTransMode,
                 `music_titles:${data.id}`,
                 data.title
               )}
-            ></CardMedia>
+              aspectRatio={1}
+              color=""
+            ></Image>
           </Grid>
-          <Grid item xs={6} md={7}>
+          <Grid item xs={9} sm={2}>
             <Grid container direction="column" spacing={1}>
               <Grid item>
                 <SpoilerTag releaseTime={new Date(data.publishedAt)} />
@@ -181,16 +208,13 @@ const AgendaView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
                   }}
                 />
               </Grid>
-              <Grid item>
-                <Typography variant="body2" color="textSecondary">
-                  {data.categories
-                    .map((cat) => t(`music:categoryType.${cat}`))
-                    .join(", ")}
-                </Typography>
-              </Grid>
-              <Grid item container direction="row" style={{ marginTop: "5%" }}>
+            </Grid>
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <Grid item>
+              <Grid container direction="row" spacing={1}>
                 {diffis.map((elem) => (
-                  <Grid item xs={4} md={2} key={`diff-${elem.id}`}>
+                  <Grid item xs={2} key={`diff-${elem.id}`}>
                     <Chip
                       color="primary"
                       size="small"
@@ -212,6 +236,24 @@ const AgendaView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
               </Grid>
             </Grid>
           </Grid>
+          <Grid item xs={12} sm={2}>
+            <Typography variant="body2" color="textSecondary">
+              {data.categories
+                .map((cat) => t(`music:categoryType.${cat}`))
+                .join(", ")}
+            </Typography>
+          </Grid>
+          {musicVocal && (
+            <Grid item xs={12} sm={3}>
+              <Grid container spacing={2} alignItems="center">
+                {musicVocal.map((_, idx) => (
+                  <Grid item key={idx}>
+                    {getVocalCharaIcons(idx)}
+                  </Grid>
+                ))}
+              </Grid>
+            </Grid>
+          )}
         </Grid>
       </Paper>
     </Link>

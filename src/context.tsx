@@ -2,6 +2,7 @@ import React, {
   createContext,
   PropsWithChildren,
   useCallback,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -13,6 +14,7 @@ import {
   UserModel,
 } from "./strapi-model";
 import { ContentTransModeType, DisplayModeType } from "./types";
+import { useLocalStorage } from "./utils";
 import { useAssetI18n } from "./utils/i18n";
 import useJwtAuth from "./utils/jwt";
 
@@ -22,10 +24,12 @@ export const SettingContext = createContext<
       displayMode: DisplayModeType;
       contentTransMode: ContentTransModeType;
       languages: LanguageModel[];
+      isShowSpoiler: boolean;
       updateLang(newLang: string): void;
       updateDisplayMode(newMode: DisplayModeType): void;
       updateContentTransMode(newMode: ContentTransModeType): void;
       updateLanguages(newLangs: LanguageModel[]): void;
+      updateIsShowSpoiler(mode: boolean): void;
     }
   | undefined
 >(undefined);
@@ -37,22 +41,32 @@ export const SettingProvider: React.FC<PropsWithChildren<{}>> = ({
   const { assetI18n } = useAssetI18n();
 
   const [lang, setLang] = useState(i18n.language);
-  const [displayMode, setDisplayMode] = useState<DisplayModeType>(
-    (localStorage.getItem("display-mode") as DisplayModeType) || "auto"
+  const [displayMode, setDisplayMode] = useLocalStorage<DisplayModeType>(
+    "display-mode",
+    "auto"
   );
-  const [languages, setLanguages] = useState<LanguageModel[]>(
-    JSON.parse(
-      localStorage.getItem("languages-cache") || "[]"
-    ) as LanguageModel[]
+  const [languages, setLanguages] = useLocalStorage<LanguageModel[]>(
+    "languages-cache",
+    []
   );
   const [
     contentTransMode,
     setContentTransMode,
-  ] = useState<ContentTransModeType>(
-    (localStorage.getItem(
-      "content-translation-mode"
-    ) as ContentTransModeType) || "translated"
+  ] = useLocalStorage<ContentTransModeType>(
+    "content-translation-mode",
+    "translated"
   );
+  const [isShowSpoiler, setIsShowSpoiler] = useLocalStorage<boolean>(
+    "is-show-spoiler",
+    false
+  );
+
+  useEffect(() => {
+    if (!localStorage.getItem("is-show-spoiler-force-false")) {
+      setIsShowSpoiler(false);
+      localStorage.setItem("is-show-spoiler-force-false", "true");
+    }
+  }, [setIsShowSpoiler]);
 
   return (
     <SettingContext.Provider
@@ -66,17 +80,18 @@ export const SettingProvider: React.FC<PropsWithChildren<{}>> = ({
         displayMode,
         updateDisplayMode(newMode: DisplayModeType) {
           setDisplayMode(newMode);
-          localStorage.setItem("display-mode", newMode);
         },
         contentTransMode,
         updateContentTransMode(newMode: ContentTransModeType) {
           setContentTransMode(newMode);
-          localStorage.setItem("content-translation-mode", newMode);
         },
         languages,
         updateLanguages(newLangs: LanguageModel[]) {
           setLanguages(newLangs);
-          localStorage.setItem("languages-cache", JSON.stringify(newLangs));
+        },
+        isShowSpoiler,
+        updateIsShowSpoiler(mode: boolean) {
+          setIsShowSpoiler(mode);
         },
       }}
     >

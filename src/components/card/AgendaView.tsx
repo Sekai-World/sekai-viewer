@@ -35,7 +35,8 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer",
   },
   agenda: {
-    padding: "4% 4%",
+    [theme.breakpoints.down("lg")]: { padding: "4% 4%" },
+    [theme.breakpoints.up("md")]: { padding: "2% 2%" },
   },
 }));
 
@@ -102,11 +103,11 @@ const AgendaView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
             spacing={1}
             justify="center"
           >
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6} lg={4}>
               <CardThumb cardId={data.id} />
             </Grid>
             {data.rarity >= 3 ? (
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={6} lg={4}>
                 <CardThumb cardId={data.id} trained />
               </Grid>
             ) : null}

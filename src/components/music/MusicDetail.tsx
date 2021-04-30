@@ -1,5 +1,4 @@
 import {
-  CardMedia,
   CircularProgress,
   Divider,
   FormControl,
@@ -15,11 +14,12 @@ import {
   Container,
   Switch,
   useTheme,
+  Link,
 } from "@material-ui/core";
 import { useLayoutStyles } from "../../styles/layout";
 import { useInteractiveStyles } from "../../styles/interactive";
 import { Alert, TabContext, TabPanel } from "@material-ui/lab";
-import { Close, Done } from "@material-ui/icons";
+import { Close, Done, OpenInNew } from "@material-ui/icons";
 import React, {
   Fragment,
   useCallback,
@@ -42,9 +42,9 @@ import {
 } from "../../types";
 import {
   getRemoteAssetURL,
-  musicTagToName,
   useCachedData,
   useCharaName,
+  useMusicTagName,
 } from "../../utils";
 import { charaIcons } from "../../utils/resources";
 import { Trans, useTranslation } from "react-i18next";
@@ -59,6 +59,7 @@ import AudioPlayer from "./AudioPlayer";
 import { Howl } from "howler";
 import { saveAs } from "file-saver";
 import AdSense from "../subs/AdSense";
+import Image from "material-ui-image";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -72,17 +73,6 @@ const useStyles = makeStyles((theme) => ({
   "unit-logo-img": {
     maxWidth: "128px",
     // margin: theme.spacing(0, 1),
-  },
-  "media-contain": {
-    [theme.breakpoints.up("md")]: {
-      paddingTop: "60%",
-    },
-    [theme.breakpoints.down("sm")]: {
-      paddingTop: "100%",
-    },
-    backgroundSize: "contain",
-    cursor: "pointer",
-    margin: theme.spacing(1, 0),
   },
   tabpanel: {
     padding: 0,
@@ -103,6 +93,8 @@ const MusicDetail: React.FC<{}> = () => {
   const [, humanizeDurationShort] = useDurationI18n();
   const [trimmedMP3URL, trimFailed, setTrimOptions] = useTrimMP3();
   const getCharaName = useCharaName(contentTransMode);
+  const getOriginalCharaName = useCharaName("original");
+  const musicTagToName = useMusicTagName(contentTransMode);
 
   const [musics] = useCachedData<IMusicInfo>("musics");
   const [musicVocals] = useCachedData<IMusicVocalInfo>("musicVocals");
@@ -138,8 +130,8 @@ const MusicDetail: React.FC<{}> = () => {
   const [vocalDisabled, setVocalDisabled] = useState<boolean>(false);
   const [diffiInfoTabVal, setDiffiInfoTabVal] = useState<string>("4");
   const [actualPlaybackTime, setActualPlaybackTime] = useState<string>("");
-  const [trimSilence, setTrimSilence] = useState<boolean>(false);
-  const [trimLoading, setTrimLoading] = useState<boolean>(true);
+  const [trimSilence, setTrimSilence] = useState<boolean>(true);
+  const [trimLoading, setTrimLoading] = useState<boolean>(false);
   const [longMusicPlaybackURL, setLongMusicPlaybackURL] = useState<
     string | undefined
   >();
@@ -232,7 +224,9 @@ const MusicDetail: React.FC<{}> = () => {
       musicVocal &&
       musicVocal[selectedPreviewVocalType] &&
       music &&
-      longMusicPlaybackURL
+      longMusicPlaybackURL &&
+      trimSilence &&
+      !trimmedMP3URL
     ) {
       setTrimOptions({
         sourceURL: longMusicPlaybackURL,
@@ -240,9 +234,6 @@ const MusicDetail: React.FC<{}> = () => {
         inclusive: false,
       });
       setTrimLoading(true);
-    } else {
-      setTrimOptions(undefined);
-      setTrimLoading(false);
     }
   }, [
     music,
@@ -252,6 +243,8 @@ const MusicDetail: React.FC<{}> = () => {
     setTrimOptions,
     setTrimLoading,
     longMusicPlaybackURL,
+    trimSilence,
+    trimmedMP3URL,
   ]);
 
   useEffect(() => {
@@ -262,6 +255,7 @@ const MusicDetail: React.FC<{}> = () => {
       trimmedMP3URL
     ) {
       setTrimmedLongMusicPlaybackURL(trimmedMP3URL);
+      setTrimLoading(false);
     } else {
       setTrimmedLongMusicPlaybackURL(undefined);
     }
@@ -283,12 +277,12 @@ const MusicDetail: React.FC<{}> = () => {
               </Grid>
             ) : (
               <Grid item key={`outchara-${chara.characterId}`}>
-                <span>
+                <Typography>
                   {outCharas && outCharas.length
                     ? outCharas.find((elem) => elem.id === chara.characterId)!
                         .name
                     : `Outside Character ${chara.characterId}`}
-                </span>
+                </Typography>
               </Grid>
             )
           )}
@@ -302,30 +296,43 @@ const MusicDetail: React.FC<{}> = () => {
 
   useEffect(() => {
     if (music) {
-      getRemoteAssetURL(
-        `music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}.webp`,
-        setMusicJacket,
-        window.isChinaMainland
-      );
+      if (
+        music.id === 19 &&
+        musicVocalTypes.length &&
+        musicVocalTypes[selectedPreviewVocalType].includes("original")
+      ) {
+        // console.log(musicVocalTypes[selectedPreviewVocalType]);
+        getRemoteAssetURL(
+          `music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}_org.webp`,
+          setMusicJacket,
+          window.isChinaMainland
+        );
+      } else {
+        getRemoteAssetURL(
+          `music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}.webp`,
+          setMusicJacket,
+          window.isChinaMainland
+        );
+      }
     }
-  }, [music]);
+  }, [music, musicVocalTypes, selectedPreviewVocalType]);
 
-  const getCharaIcon: (characterId: number) => JSX.Element = useCallback(
-    (characterId) => {
-      if (!characterId) return <span></span>;
-      return (
-        <Grid item key={`chara-${characterId}`}>
-          <img
-            key={characterId}
-            height="42"
-            src={charaIcons[`CharaIcon${characterId}`]}
-            alt={`character ${characterId}`}
-          ></img>
-        </Grid>
-      );
-    },
-    []
-  );
+  const getCharaIcon: (
+    characterId: number,
+    height?: number
+  ) => JSX.Element = useCallback((characterId, height = 42) => {
+    if (!characterId) return <span></span>;
+    return (
+      <Grid item key={`chara-${characterId}`}>
+        <img
+          key={characterId}
+          height={height}
+          src={charaIcons[`CharaIcon${characterId}`]}
+          alt={`character ${characterId}`}
+        ></img>
+      </Grid>
+    );
+  }, []);
 
   const onPlay = useCallback(() => {
     if ("mediaSession" in window.navigator) {
@@ -367,15 +374,31 @@ const MusicDetail: React.FC<{}> = () => {
 
   const onSave = useCallback(
     (src: string) => {
-      console.log(src);
+      // console.log(src);
+      const vocals = musicVocal[
+        selectedPreviewVocalType
+      ].characters.map((chara) =>
+        chara.characterType === "game_character"
+          ? getOriginalCharaName(chara.characterId)
+          : outCharas && outCharas.length
+          ? outCharas.find((elem) => elem.id === chara.characterId)!.name
+          : chara.characterId
+      );
       saveAs(
         src,
         `${music?.title}-${
-          selectedPreviewVocalType === 0 ? "full" : "preview"
-        }.mp3`
+          vocalPreviewVal === "1" ? "full" : "preview"
+        }-${vocals.join("+")}.mp3`
       );
     },
-    [music, selectedPreviewVocalType]
+    [
+      getOriginalCharaName,
+      music?.title,
+      musicVocal,
+      outCharas,
+      selectedPreviewVocalType,
+      vocalPreviewVal,
+    ]
   );
 
   const VocalTypeSelector: React.FC<{
@@ -438,18 +461,23 @@ const MusicDetail: React.FC<{}> = () => {
           music.title
         )}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
+      <Container className={layoutClasses.content} maxWidth="md">
         <Alert severity="warning">
           <Trans i18nKey="music:alert[0]" components={{ b: <b /> }} />
         </Alert>
-        <CardMedia
-          onClick={() => {
-            setActiveIdx(0);
-            setVisible(true);
-          }}
-          classes={{ root: classes["media-contain"] }}
-          image={musicJacket}
-        ></CardMedia>
+        <Grid container justify="center">
+          <Grid item xs={12} sm={6}>
+            <Image
+              onClick={() => {
+                setActiveIdx(0);
+                setVisible(true);
+              }}
+              className={interactiveClasses.pointer}
+              src={musicJacket}
+              color=""
+            ></Image>
+          </Grid>
+        </Grid>
         <Paper className={interactiveClasses.container}>
           <Grid container direction="column" spacing={1}>
             <Grid
@@ -495,6 +523,7 @@ const MusicDetail: React.FC<{}> = () => {
                         control={<Radio color="primary"></Radio>}
                         label={t(`music:categoryType.${cat}`)}
                         labelPlacement="end"
+                        key={cat}
                       />
                     ))}
                 </RadioGroup>
@@ -502,7 +531,10 @@ const MusicDetail: React.FC<{}> = () => {
             </Grid>
             <VocalTypeSelector
               vocalType={selectedPreviewVocalType}
-              onSelect={(v) => setSelectedPreviewVocalType(v)}
+              onSelect={(v) => {
+                setSelectedPreviewVocalType(v);
+                setTrimOptions(undefined);
+              }}
             />
             {vocalPreviewVal === "1" ? (
               <Grid
@@ -523,7 +555,7 @@ const MusicDetail: React.FC<{}> = () => {
                       <Switch
                         checked={trimSilence}
                         onChange={() => setTrimSilence((v) => !v)}
-                        disabled={!trimmedMP3URL || trimFailed}
+                        disabled={trimFailed || trimLoading}
                       />
                     }
                     label={
@@ -644,7 +676,7 @@ const MusicDetail: React.FC<{}> = () => {
                       align="right"
                       key={`music-tag-${elem.musicTag}`}
                     >
-                      {musicTagToName[elem.musicTag] || elem.musicTag}
+                      {musicTagToName[elem.musicTag as "all"] || elem.musicTag}
                     </Typography>
                   ))}
             </Grid>
@@ -720,38 +752,44 @@ const MusicDetail: React.FC<{}> = () => {
             </Typography>
             <Typography>{music.lyricist}</Typography>
           </Grid>
-          <Divider style={{ margin: "1% 0" }} />
-          <Grid
-            container
-            direction="row"
-            wrap="nowrap"
-            justify="space-between"
-            alignItems="center"
-          >
-            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {musicDanceMember
-                ? t("music:danceMember", { count: music.dancerCount })
-                : t("music:dancerCount")}
-            </Typography>
-            <Grid item>
-              <Grid container spacing={1}>
-                {musicDanceMember
-                  ? Array.from({ length: music.dancerCount }).map((_, idx) =>
-                      getCharaIcon(
-                        musicDanceMember[
-                          `characterId${idx + 1}` as
-                            | "characterId1"
-                            | "characterId2"
-                            | "characterId3"
-                            | "characterId4"
-                            | "characterId5"
-                        ]!
-                      )
-                    )
-                  : music.dancerCount}
+          {musicDanceMember && (
+            <Fragment>
+              <Divider style={{ margin: "1% 0" }} />
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                  {t("music:danceMember", {
+                    count: Object.keys(musicDanceMember).filter((key) =>
+                      key.startsWith("characterId")
+                    ).length,
+                  })}
+                </Typography>
+                <Grid item>
+                  <Grid container spacing={1}>
+                    {Object.keys(musicDanceMember)
+                      .filter((key) => key.startsWith("characterId"))
+                      .map((key) =>
+                        getCharaIcon(
+                          musicDanceMember[
+                            key as
+                              | "characterId1"
+                              | "characterId2"
+                              | "characterId3"
+                              | "characterId4"
+                              | "characterId5"
+                          ]!
+                        )
+                      )}
+                  </Grid>
+                </Grid>
               </Grid>
-            </Grid>
-          </Grid>
+            </Fragment>
+          )}
           <Divider style={{ margin: "1% 0" }} />
           <Grid
             container
@@ -773,7 +811,7 @@ const MusicDetail: React.FC<{}> = () => {
       <Typography variant="h6" className={layoutClasses.header}>
         {t("music:vocal", { count: musicVocal.length })}
       </Typography>
-      <Container className={layoutClasses.content} maxWidth="sm">
+      <Container className={layoutClasses.content} maxWidth="md">
         <Paper className={interactiveClasses.container}>
           <Grid container direction="column" spacing={1}>
             <VocalTypeSelector
@@ -846,19 +884,109 @@ const MusicDetail: React.FC<{}> = () => {
               </Grid>
             </Grid>
             <Divider style={{ margin: "1% 0" }} />
-            <Grid item container direction="row" justify="space-between">
-              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                {t("music:vocalType")}
-              </Typography>
-              <ContentTrans
-                contentKey={`music_vocal:${musicVocal[selectedVocalType].musicVocalType}`}
-                original={musicVocal[selectedVocalType].musicVocalType}
-              />
+            <Grid item>
+              <Grid
+                container
+                direction="row"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Grid item>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("music:vocalType")}
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <ContentTrans
+                    contentKey={`music_vocal:${musicVocal[selectedVocalType].musicVocalType}`}
+                    original={musicVocal[selectedVocalType].musicVocalType}
+                    originalProps={{ align: "right" }}
+                    translatedProps={{ align: "right" }}
+                  />
+                </Grid>
+              </Grid>
             </Grid>
             <Divider style={{ margin: "1% 0" }} />
           </Grid>
         ) : null}
       </Container>
+      <AdSense
+        client="ca-pub-7767752375383260"
+        slot="8221864477"
+        format="auto"
+        responsive="true"
+      />
+      <Typography variant="h6" className={layoutClasses.header}>
+        {t("music:achievement")}
+      </Typography>
+      {musicAchievements && !!musicAchievements.length && (
+        <Container className={layoutClasses.content} maxWidth="md">
+          <Grid container direction="column">
+            <Grid item container justify="space-between" alignItems="center">
+              <Grid item xs={2}>
+                <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                  {t("music:scoreRankAchievement.title")}
+                </Typography>
+              </Grid>
+              <Grid item xs={9} container spacing={1}>
+                <Grid item xs={6} md={3} container direction="column">
+                  <Grid item>
+                    <Typography align="center">
+                      {t("music:scoreRankAchievement.rankC")}
+                    </Typography>
+                  </Grid>
+                  <Grid item>
+                    <ResourceBox
+                      resourceBoxId={musicAchievements[0].resourceBoxId}
+                      resourceBoxPurpose="music_achievement"
+                    />
+                  </Grid>
+                </Grid>
+                <Grid item xs={6} md={3} container direction="column">
+                  <Grid item>
+                    <Typography align="center">
+                      {t("music:scoreRankAchievement.rankB")}
+                    </Typography>
+                  </Grid>
+                  <Grid item>
+                    <ResourceBox
+                      resourceBoxId={musicAchievements[1].resourceBoxId}
+                      resourceBoxPurpose="music_achievement"
+                    />
+                  </Grid>
+                </Grid>
+                <Grid item xs={6} md={3} container direction="column">
+                  <Grid item>
+                    <Typography align="center">
+                      {t("music:scoreRankAchievement.rankA")}
+                    </Typography>
+                  </Grid>
+                  <Grid item>
+                    <ResourceBox
+                      resourceBoxId={musicAchievements[2].resourceBoxId}
+                      resourceBoxPurpose="music_achievement"
+                    />
+                  </Grid>
+                </Grid>
+                <Grid item xs={6} md={3} container direction="column">
+                  <Grid item>
+                    <Typography align="center">
+                      {t("music:scoreRankAchievement.rankS")}
+                    </Typography>
+                  </Grid>
+                  <Grid item>
+                    <ResourceBox
+                      resourceBoxId={musicAchievements[3].resourceBoxId}
+                      resourceBoxPurpose="music_achievement"
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+            <Divider style={{ margin: "1% 0" }} />
+          </Grid>
+        </Container>
+      )}
       <Typography variant="h6" className={layoutClasses.header}>
         {t("music:difficulty", {
           count:
@@ -867,8 +995,11 @@ const MusicDetail: React.FC<{}> = () => {
               .length,
         })}
       </Typography>
-      {musicDiffis && !!musicDiffis.length && (
-        <Container className={layoutClasses.content} maxWidth="sm">
+      {musicDiffis && musicAchievements && (
+        <Container className={layoutClasses.content} maxWidth="md">
+          <Alert severity="info">
+            <Trans i18nKey="music:chartCredit" />
+          </Alert>
           <TabContext value={diffiInfoTabVal}>
             <Paper className={interactiveClasses.container}>
               <Tabs
@@ -954,151 +1085,128 @@ const MusicDetail: React.FC<{}> = () => {
                       </Grid>
                     </Grid>
                     <Divider style={{ margin: "1% 0" }} />
+                    <Grid item>
+                      <Grid
+                        container
+                        direction="row"
+                        justify="space-between"
+                        alignItems="center"
+                      >
+                        <Grid item xs={2}>
+                          <Typography
+                            variant="subtitle1"
+                            style={{ fontWeight: 600 }}
+                          >
+                            {t("music:comboRewards")}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={9} container spacing={1}>
+                          {musicAchievements
+                            .filter(
+                              (ma) =>
+                                ma.musicDifficultyType === elem.musicDifficulty
+                            )
+                            .map((achieve) => (
+                              <Grid
+                                key={achieve.id}
+                                item
+                                xs={6}
+                                md={3}
+                                container
+                                direction="column"
+                              >
+                                <Grid item>
+                                  <Typography align="center">
+                                    {Math.floor(
+                                      elem.noteCount *
+                                        Number(
+                                          achieve.musicAchievementTypeValue
+                                        )
+                                    )}
+                                  </Typography>
+                                </Grid>
+                                <Grid item>
+                                  <ResourceBox
+                                    resourceBoxId={achieve.resourceBoxId}
+                                    resourceBoxPurpose="music_achievement"
+                                  />
+                                </Grid>
+                              </Grid>
+                            ))}
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                    <Divider style={{ margin: "1% 0" }} />
+                    <Grid item>
+                      <Grid
+                        container
+                        direction="row"
+                        justify="space-between"
+                        alignItems="center"
+                      >
+                        <Grid item>
+                          <Typography
+                            variant="subtitle1"
+                            style={{ fontWeight: 600 }}
+                          >
+                            {t("music:chartImage")}
+                          </Typography>
+                        </Grid>
+                        <Grid item>
+                          <Grid container alignItems="center" spacing={2}>
+                            <Grid item>
+                              <Link
+                                href={`${
+                                  window.isChinaMainland
+                                    ? process.env.REACT_APP_ASSET_DOMAIN_CN
+                                    : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+                                }/music/charts/${musicId.padStart(4, "0")}/${
+                                  elem.musicDifficulty
+                                }.svg`}
+                                target="_blank"
+                              >
+                                <Grid container justify="flex-end">
+                                  <Grid item>
+                                    <Typography>SVG</Typography>
+                                  </Grid>
+                                  <Grid item>
+                                    <OpenInNew />
+                                  </Grid>
+                                </Grid>
+                              </Link>
+                            </Grid>
+                            <Grid item>
+                              <Link
+                                href={`${
+                                  window.isChinaMainland
+                                    ? process.env.REACT_APP_ASSET_DOMAIN_CN
+                                    : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+                                }/music/charts/${musicId.padStart(4, "0")}/${
+                                  elem.musicDifficulty
+                                }.png`}
+                                target="_blank"
+                              >
+                                <Grid container justify="flex-end">
+                                  <Grid item>
+                                    <Typography>PNG</Typography>
+                                  </Grid>
+                                  <Grid item>
+                                    <OpenInNew />
+                                  </Grid>
+                                </Grid>
+                              </Link>
+                            </Grid>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                    <Divider style={{ margin: "1% 0" }} />
                   </Grid>
                 </TabPanel>
               ))}
           </TabContext>
         </Container>
       )}
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("music:achievement")}
-      </Typography>
-      {musicAchievements &&
-        !!musicAchievements.length &&
-        musicDiffis &&
-        !!musicDiffis.length && (
-          <Container className={layoutClasses.content} maxWidth="sm">
-            <Grid container direction="column">
-              <Grid item container justify="space-between" alignItems="center">
-                <Grid item xs={2}>
-                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                    {t("music:scoreRankAchievement.title")}
-                  </Typography>
-                </Grid>
-                <Grid item xs={9} container spacing={1}>
-                  <Grid item xs={6} md={3} container direction="column">
-                    <Grid item>
-                      <Typography align="center">
-                        {t("music:scoreRankAchievement.rankC")}
-                      </Typography>
-                    </Grid>
-                    <Grid item>
-                      <ResourceBox
-                        resourceBoxId={musicAchievements[0].resourceBoxId}
-                        resourceBoxPurpose="music_achievement"
-                      />
-                    </Grid>
-                  </Grid>
-                  <Grid item xs={6} md={3} container direction="column">
-                    <Grid item>
-                      <Typography align="center">
-                        {t("music:scoreRankAchievement.rankB")}
-                      </Typography>
-                    </Grid>
-                    <Grid item>
-                      <ResourceBox
-                        resourceBoxId={musicAchievements[1].resourceBoxId}
-                        resourceBoxPurpose="music_achievement"
-                      />
-                    </Grid>
-                  </Grid>
-                  <Grid item xs={6} md={3} container direction="column">
-                    <Grid item>
-                      <Typography align="center">
-                        {t("music:scoreRankAchievement.rankA")}
-                      </Typography>
-                    </Grid>
-                    <Grid item>
-                      <ResourceBox
-                        resourceBoxId={musicAchievements[2].resourceBoxId}
-                        resourceBoxPurpose="music_achievement"
-                      />
-                    </Grid>
-                  </Grid>
-                  <Grid item xs={6} md={3} container direction="column">
-                    <Grid item>
-                      <Typography align="center">
-                        {t("music:scoreRankAchievement.rankS")}
-                      </Typography>
-                    </Grid>
-                    <Grid item>
-                      <ResourceBox
-                        resourceBoxId={musicAchievements[3].resourceBoxId}
-                        resourceBoxPurpose="music_achievement"
-                      />
-                    </Grid>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Divider style={{ margin: "1% 0" }} />
-              {["easy", "normal", "hard", "expert", "master"].map((diffi) => {
-                const achieves = musicAchievements.filter(
-                  (ma) => ma.musicDifficultyType === diffi
-                );
-                return (
-                  <Fragment key={diffi}>
-                    <Grid
-                      item
-                      container
-                      justify="space-between"
-                      alignItems="center"
-                    >
-                      <Grid item xs={2}>
-                        <Typography
-                          variant="subtitle1"
-                          style={{
-                            fontWeight: 600,
-                            textTransform: "capitalize",
-                          }}
-                        >
-                          {diffi}
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={9} container spacing={1}>
-                        {achieves.map((achieve) => (
-                          <Grid
-                            key={achieve.id}
-                            item
-                            xs={6}
-                            md={3}
-                            container
-                            direction="column"
-                          >
-                            <Grid item>
-                              <Typography align="center">
-                                {Math.floor(
-                                  musicDiffis.find(
-                                    (elem) =>
-                                      elem.musicId === Number(musicId) &&
-                                      elem.musicDifficulty === diffi
-                                  )!.noteCount *
-                                    Number(achieve.musicAchievementTypeValue)
-                                )}
-                              </Typography>
-                            </Grid>
-                            <Grid item>
-                              <ResourceBox
-                                resourceBoxId={achieve.resourceBoxId}
-                                resourceBoxPurpose="music_achievement"
-                              />
-                            </Grid>
-                          </Grid>
-                        ))}
-                      </Grid>
-                    </Grid>
-                    <Divider style={{ margin: "1% 0" }} />
-                  </Fragment>
-                );
-              })}
-            </Grid>
-          </Container>
-        )}
-      <AdSense
-        client="ca-pub-7767752375383260"
-        slot="5596436251"
-        format="auto"
-        responsive="true"
-      />
       <Viewer
         visible={visible}
         onClose={() => setVisible(false)}

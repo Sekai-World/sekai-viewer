@@ -94,6 +94,10 @@ const About: React.FC<{}> = () => {
                 xfl03
               </Link>
             </li>
+            <li>
+              <GitHub fontSize="inherit"></GitHub>
+              vvvvv
+            </li>
           </ul>
         </Alert>
         <Alert className={classes.alert} severity="info">
@@ -110,25 +114,31 @@ const About: React.FC<{}> = () => {
             <li>
               日：Passion, Cee, k0tayan, Natsuzawa, Build774, あいうえお菓子,
               ikareo, Karuta, MoeDev, watatomo, yumisky0236, aceticke, Harlia,
-              おにぶるお
+              おにぶるお, 夢見ねこ
             </li>
             <li>
               한：hodubidu3095, omitooshi, EleMas39, PJSEKAI, 아점, 쿠인/いずく,
               ioeyeong842, Sn_Kinos, kemono, switchP, A Kim
             </li>
             <li>Pt-BR: Kuyaterai, LariBee, ayunjapan</li>
-            <li>русский: Spyrohat, Yukina Minato</li>
+            <li>
+              русский: Spyrohat, Yukina Minato, massu_u, kanonchan, Sudi_Avsky
+            </li>
             <li>
               Es: ruiemu, maravillas, Jackiore, Mochitachi70, Nachuki, NeoKM,
               ReiZenKai, Tlayoli, Vlxx, fivian_clark, kevinthojedat
             </li>
             <li>It: SeaPu, RayFirefist, Kyon86, MattiVocaloidLover, Aki06</li>
-            <li>Pl: sousie, Wheatley, Kimochi</li>
+            <li>Pl: sousie, Wheatley, Kimochi, Kimoyo</li>
             <li>En: watatomo, Wandering Spirit</li>
-            <li>Fr: Yasito</li>
+            <li>Fr: Yasito, ManyBees, しょうゆ</li>
             <li>Ind: Rizkiawan (Fueeru), CrystL, Muko Mitsune</li>
-            <li>ไทย: Revel</li>
-            <li>Ms: mnh48</li>
+            <li>
+              ไทย: Revelz, Hydden, Opal_, Shibalnwzaa007, XrossfireX,
+              fumikatu.yusa
+            </li>
+            <li>Ms: mnh48, sayako</li>
+            <li>Ca: use, AidenM12</li>
           </ul>
         </Alert>
       </Container>

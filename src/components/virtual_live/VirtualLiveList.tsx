@@ -8,11 +8,18 @@ import {
 } from "@material-ui/icons";
 import { ToggleButtonGroup, ToggleButton } from "@material-ui/lab";
 import { Pound } from "mdi-material-ui";
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
+import { SettingContext } from "../../context";
 import { useLayoutStyles } from "../../styles/layout";
 import { IVirtualLiveInfo } from "../../types";
-import { useCachedData } from "../../utils";
+import { useCachedData, useLocalStorage } from "../../utils";
 import InfiniteScroll from "../subs/InfiniteScroll";
 import AgendaView from "./AgendaView";
 
@@ -33,6 +40,7 @@ const ListCard: { [key: string]: React.FC<{ data?: IVirtualLiveInfo }> } = {
 const VirtualLiveList: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
+  const { isShowSpoiler } = useContext(SettingContext)!;
 
   const [virtualLives, setVirtualLives] = useState<IVirtualLiveInfo[]>([]);
   const [virtualLivesCache] = useCachedData<IVirtualLiveInfo>("virtualLives");
@@ -45,11 +53,13 @@ const VirtualLiveList: React.FC<{}> = () => {
   const [limit] = useState<number>(12);
   const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
   const [isReady, setIsReady] = useState<boolean>(false);
-  const [sortType, setSortType] = useState<string>(
-    (localStorage.getItem("gacha-list-update-sort") || "desc") as "desc"
+  const [sortType, setSortType] = useLocalStorage<string>(
+    "gacha-list-update-sort",
+    "desc"
   );
-  const [sortBy, setSortBy] = useState<string>(
-    localStorage.getItem("gacha-list-filter-sort-by") || "startAt"
+  const [sortBy, setSortBy] = useLocalStorage<string>(
+    "gacha-list-filter-sort-by",
+    "startAt"
   );
   const [sortedCache, setSortedCache] = useState<IVirtualLiveInfo[]>([]);
 
@@ -68,6 +78,14 @@ const VirtualLiveList: React.FC<{}> = () => {
   useEffect(() => {
     if (!virtualLivesCache) return;
     let sortedCache = [...virtualLivesCache];
+    if (!isShowSpoiler) {
+      sortedCache = sortedCache.filter(
+        (vl) =>
+          (vl.virtualLiveSchedules[0]
+            ? vl.virtualLiveSchedules[0].startAt
+            : vl.startAt) <= new Date().getTime()
+      );
+    }
     if (sortType === "desc") {
       sortedCache = sortedCache.sort(
         (a, b) => b[sortBy as "startAt"] - a[sortBy as "startAt"]
@@ -80,7 +98,7 @@ const VirtualLiveList: React.FC<{}> = () => {
     setSortedCache(sortedCache);
     setVirtualLives([]);
     setPage(0);
-  }, [setPage, sortBy, sortType, virtualLivesCache]);
+  }, [isShowSpoiler, setPage, sortBy, sortType, virtualLivesCache]);
 
   useEffect(() => {
     setIsReady(Boolean(virtualLivesCache));
@@ -106,15 +124,19 @@ const VirtualLiveList: React.FC<{}> = () => {
     [isReady, lastQueryFin, limit, page, sortedCache.length]
   );
 
-  const handleUpdateSortType = useCallback((_, sort: string) => {
-    setSortType(sort);
-    localStorage.setItem("gacha-list-filter-sort-type", sort);
-  }, []);
+  const handleUpdateSortType = useCallback(
+    (_, sort: string) => {
+      setSortType(sort || "asc");
+    },
+    [setSortType]
+  );
 
-  const handleUpdateSortBy = useCallback((_, sort: string) => {
-    setSortBy(sort);
-    localStorage.setItem("gacha-list-filter-sort-by", sort);
-  }, []);
+  const handleUpdateSortBy = useCallback(
+    (_, sort: string) => {
+      setSortBy(sort || "id");
+    },
+    [setSortBy]
+  );
 
   return (
     <Fragment>

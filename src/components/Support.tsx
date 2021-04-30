@@ -1,4 +1,11 @@
-import { Avatar, Container, Grid, Link, Typography } from "@material-ui/core";
+import {
+  Avatar,
+  CircularProgress,
+  Container,
+  Grid,
+  Link,
+  Typography,
+} from "@material-ui/core";
 import {
   GitHub,
   MonetizationOn,
@@ -10,10 +17,13 @@ import React, { Fragment } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { useLayoutStyles } from "../styles/layout";
 // import AifadianQRCode from "../assets/aifadian-qrcode.png";
+import { usePatronList } from "../utils/apiClient";
 
 const Support: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
+
+  const { patrons, isLoading, error } = usePatronList();
 
   return (
     <Fragment>
@@ -62,51 +72,52 @@ const Support: React.FC<{}> = () => {
               </Typography>
             </Link>
             <br />
-            <Container>
-              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                Tier Happy
-              </Typography>
-              <Grid container spacing={1}>
-                <Grid item xs={12} md={4} lg={3}>
-                  <Grid container alignItems="center" spacing={1}>
-                    <Grid item>
-                      <Avatar>NA</Avatar>
+            {isLoading ? (
+              <CircularProgress size="24" />
+            ) : error ? (
+              <Container>
+                <Typography>Failed loading patron list!</Typography>
+              </Container>
+            ) : (
+              <Container>
+                {["Happy", "Lucky", "Smile", "Yay"].map((tier) => (
+                  <Fragment>
+                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                      Tier {tier}
+                    </Typography>
+                    <Grid container spacing={1}>
+                      {patrons
+                        .filter((elem) => elem.tier === tier)
+                        .map((patron) => (
+                          <Grid container alignItems="center" spacing={1}>
+                            <Grid item>
+                              <Avatar
+                                src={patron.avatarUrl}
+                                alt={patron.name}
+                              ></Avatar>
+                            </Grid>
+                            <Grid item>
+                              <Typography>{patron.name}</Typography>
+                            </Grid>
+                          </Grid>
+                        ))}
+                      {!patrons.filter((elem) => elem.tier === tier).length && (
+                        <Grid item xs={12} md={4} lg={3}>
+                          <Grid container alignItems="center" spacing={1}>
+                            <Grid item>
+                              <Avatar>NA</Avatar>
+                            </Grid>
+                            <Grid item>
+                              <Typography>N/A</Typography>
+                            </Grid>
+                          </Grid>
+                        </Grid>
+                      )}
                     </Grid>
-                    <Grid item>
-                      <Typography>N/A</Typography>
-                    </Grid>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                Tier Lucky
-              </Typography>
-              <Grid container spacing={1}>
-                {/* <Grid item xs={12} md={4} lg={3}>
-                  <Grid container alignItems="center" spacing={1}>
-                    <Grid item>
-                      <Avatar
-                        src="https://c8.patreon.com/2/200/45497536"
-                        alt="zaurus"
-                      ></Avatar>
-                    </Grid>
-                    <Grid item>
-                      <Typography>zaurus</Typography>
-                    </Grid>
-                  </Grid>
-                </Grid> */}
-                <Grid item xs={12} md={4} lg={3}>
-                  <Grid container alignItems="center" spacing={1}>
-                    <Grid item>
-                      <Avatar>NA</Avatar>
-                    </Grid>
-                    <Grid item>
-                      <Typography>N/A</Typography>
-                    </Grid>
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Container>
+                  </Fragment>
+                ))}
+              </Container>
+            )}
             <br />
           </Fragment>
         )}
