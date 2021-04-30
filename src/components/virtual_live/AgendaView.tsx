@@ -94,6 +94,7 @@ const AgendaView: React.FC<{ data?: IVirtualLiveInfo }> = ({ data }) => {
           spacing={2}
           component={Paper}
           className={classes["grid-out"]}
+          alignItems="center"
         >
           <Grid item xs={12} md={4}>
             <Image
