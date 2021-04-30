@@ -64,6 +64,7 @@ import {
 import { useAssetI18n } from "./i18n";
 import { useLocation } from "react-router-dom";
 import useSWR from "swr";
+import { useSnackbar } from "material-ui-snackbar-provider";
 
 const webpMachine = new WebpMachine();
 
@@ -629,4 +630,35 @@ export function useToggle(initialValue = false) {
   // Normally with useReducer you pass a value to dispatch to indicate what action to
   // take on the state, but in this case there's only one action.
   return useReducer((state) => !state, initialValue);
+}
+
+export function useAlertSnackbar() {
+  const snackbar = useSnackbar();
+  return useMemo(() => {
+    const showMessage: (
+      type: string
+    ) => (
+      message: string,
+      action?: string | undefined,
+      handleAction?: (() => void) | undefined,
+      customParameters?: any
+    ) => any = (type: string) => (
+      message,
+      action,
+      handleAction,
+      customParameters
+    ) =>
+      snackbar.showMessage(message, action, handleAction, {
+        ...customParameters,
+        type,
+      });
+    return {
+      ...snackbar,
+      showMessage: showMessage("info"),
+      showInfo: showMessage("info"),
+      showWarning: showMessage("warning"),
+      showError: showMessage("error"),
+      showSuccess: showMessage("success"),
+    };
+  }, [snackbar]);
 }

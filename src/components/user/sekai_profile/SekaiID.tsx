@@ -7,7 +7,6 @@ import {
   Chip,
   Grid,
   useTheme,
-  Snackbar,
   CardMedia,
   makeStyles,
   Tooltip,
@@ -20,12 +19,10 @@ import { useTranslation } from "react-i18next";
 // @ts-ignore
 import { AutoRotatingCarousel, Slide } from "material-auto-rotating-carousel";
 import { isMobile } from "react-device-detect";
-// import { SekaiProfileModel } from "../../../strapi-model";
 import { useStrapi } from "../../../utils/apiClient";
-// import useJwtAuth from "../../../utils/jwt";
-import { Alert } from "@material-ui/lab";
 import { UserContext } from "../../../context";
 import DegreeImage from "../../subs/DegreeImage";
+import { useAlertSnackbar } from "../../../utils";
 // import useJwtAuth from "../../../utils/jwt";
 
 const useStyles = makeStyles((theme) => ({
@@ -55,14 +52,13 @@ const SekaiID: React.FC<{}> = () => {
     postSekaiProfileConfirm,
     putSekaiProfileUpdate,
   } = useStrapi(jwtToken);
+  const { showError } = useAlertSnackbar();
 
   // const [sekaiProfile, setSekaiProfile] = useState<SekaiProfileModel>();
   const [isEditingSekaiID, setIsEditingSekaiID] = useState(false);
   const [isVerifyCarouselOpen, setIsVerifyCarouselOpen] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
-  const [isError, setIsError] = useState(false);
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
-  const [errMsg, setErrMsg] = useState("");
 
   useEffect(() => {
     getSekaiProfileMe()
@@ -132,12 +128,15 @@ const SekaiID: React.FC<{}> = () => {
                             size="small"
                             onClick={() => {
                               setIsUpdatingProfile(true);
-                              putSekaiProfileUpdate(sekaiProfile.id).then(
-                                async (data) => {
+                              putSekaiProfileUpdate(sekaiProfile.id)
+                                .then(async (data) => {
                                   updateSekaiProfile(await getSekaiProfileMe());
                                   setIsUpdatingProfile(false);
-                                }
-                              );
+                                })
+                                .catch((err) => {
+                                  showError(err.message);
+                                  setIsUpdatingProfile(false);
+                                });
                             }}
                             disabled={
                               isUpdatingProfile ||
@@ -186,8 +185,7 @@ const SekaiID: React.FC<{}> = () => {
                     // jwtAuth.user = await getUserMe();
                   } catch (error) {
                     console.log(error);
-                    setIsError(true);
-                    setErrMsg(t("user:profile.error.sekai_id_already_bind"));
+                    showError(t("user:profile.error.sekai_id_already_bind"));
                   }
                 }}
               >
@@ -348,8 +346,7 @@ const SekaiID: React.FC<{}> = () => {
               setIsVerifying(false);
             })
             .catch(() => {
-              setIsError(true);
-              setErrMsg(t("user:profile.error.sekai_id_verify_failed"));
+              showError(t("user:profile.error.sekai_id_verify_failed"));
               setIsVerifying(false);
             });
           setIsVerifyCarouselOpen(false);
@@ -395,22 +392,6 @@ const SekaiID: React.FC<{}> = () => {
           })}
         ></Slide>
       </AutoRotatingCarousel>
-      <Snackbar
-        open={isError}
-        autoHideDuration={3000}
-        onClose={() => {
-          setIsError(false);
-        }}
-      >
-        <Alert
-          onClose={() => {
-            setIsError(false);
-          }}
-          severity="error"
-        >
-          {errMsg}
-        </Alert>
-      </Snackbar>
     </Grid>
   );
 };

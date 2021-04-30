@@ -12,7 +12,6 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Snackbar,
   TextField,
   Typography,
 } from "@material-ui/core";
@@ -30,7 +29,7 @@ import { CommentAbuseReason, CommentModel } from "../../strapi-model";
 import { useStrapi } from "../../utils/apiClient";
 import CommentBlock from "./CommentBlock";
 import { UserContext } from "../../context";
-import { Alert } from "@material-ui/lab";
+import { useAlertSnackbar } from "../../utils";
 
 const Comment: React.FC<{
   comments: CommentModel[];
@@ -40,6 +39,7 @@ const Comment: React.FC<{
   const { t } = useTranslation();
   const { jwtToken, usermeta } = useContext(UserContext)!;
   const { postComment, postCommentAbuse } = useStrapi(jwtToken);
+  const { showSuccess } = useAlertSnackbar();
 
   const mdParser = useMemo(
     () => new MarkdownIt({ linkify: true, typographer: true }),
@@ -63,7 +63,6 @@ const Comment: React.FC<{
   const [reportContent, setReportContent] = useState("");
   const [reportId, setReportId] = useState(0);
   const [reportReason, setReportReason] = useState<CommentAbuseReason>("OTHER");
-  const [isReportSuccess, setIsReportSuccess] = useState(false);
 
   return (
     <Grid container spacing={1}>
@@ -193,7 +192,8 @@ const Comment: React.FC<{
               //   ...tmpComments.slice(0, idx),
               //   ...tmpComments.slice(idx + 1),
               // ]);
-              setIsReportSuccess(true);
+              // setIsReportSuccess(true);
+              showSuccess(t("comment:report-abuse.success"));
               setIsReportOpen(false);
             }}
             color="primary"
@@ -202,22 +202,6 @@ const Comment: React.FC<{
           </Button>
         </DialogActions>
       </Dialog>
-      <Snackbar
-        open={isReportSuccess}
-        autoHideDuration={3000}
-        onClose={() => {
-          setIsReportSuccess(false);
-        }}
-      >
-        <Alert
-          onClose={() => {
-            setIsReportSuccess(false);
-          }}
-          severity="success"
-        >
-          {t("comment:report-abuse.success")}
-        </Alert>
-      </Snackbar>
     </Grid>
   );
 };

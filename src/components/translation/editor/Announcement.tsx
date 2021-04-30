@@ -12,7 +12,6 @@ import {
   Grid,
   MenuItem,
   Select,
-  Snackbar,
   TextField,
   Typography,
 } from "@material-ui/core";
@@ -37,9 +36,7 @@ import {
 import { UserContext } from "../../../context";
 import { useStrapi } from "../../../utils/apiClient";
 import { useLayoutStyles } from "../../../styles/layout";
-import { useQuery } from "../../../utils";
-import { Alert } from "@material-ui/lab";
-// import { useHistory } from "react-router-dom";
+import { useAlertSnackbar, useQuery } from "../../../utils";
 
 const Announcement: React.FC<{
   slug: string;
@@ -55,6 +52,7 @@ const Announcement: React.FC<{
     putTranslationId,
   } = useStrapi(jwtToken);
   const query = useQuery();
+  const { showSuccess, showError } = useAlertSnackbar();
 
   const [sourceData, setSourceData] = useState<AnnouncementModel>();
   const [sourceLoading, setSourceLoading] = useState(false);
@@ -72,8 +70,6 @@ const Announcement: React.FC<{
   >([]);
   const [copySourceOpen, setCopySourceOpen] = useState(false);
   const [translationId, setTranslationId] = useState<number>();
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [isFailed, setIsFailed] = useState(false);
   const [isFin, setIsFin] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -303,9 +299,9 @@ const Announcement: React.FC<{
               try {
                 await putTranslationId(translationId!, { isFin: !isFin });
                 setIsFin(!isFin);
-                setIsSuccess(true);
+                showSuccess(t("translate:editor.submit-status.success"));
               } catch (error) {
-                setIsFailed(true);
+                showError(t("translate:editor.submit-status.failed"));
               }
               setIsSubmitting(false);
             }}
@@ -358,11 +354,11 @@ const Announcement: React.FC<{
                 if (!isTartgetExisted) setIsTartgetExisted(true);
                 if (!targetContributors.find((elem) => elem.id === usermeta.id))
                   setTargetContributors([...targetContributors, usermeta]);
-                setIsSuccess(true);
+                showSuccess(t("translate:editor.submit-status.success"));
                 setIsSubmitting(false);
               } catch (error) {
                 setIsSubmitting(false);
-                setIsFailed(true);
+                showError(t("translate:editor.submit-status.failed"));
               }
             }}
           >
@@ -396,24 +392,6 @@ const Announcement: React.FC<{
           </Button>
         </DialogActions>
       </Dialog>
-      <Snackbar
-        open={isSuccess}
-        autoHideDuration={3000}
-        onClose={() => setIsSuccess(false)}
-      >
-        <Alert variant="filled" severity="success">
-          {t("translate:editor.submit-status.success")}
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        open={isFailed}
-        autoHideDuration={3000}
-        onClose={() => setIsFailed(false)}
-      >
-        <Alert variant="filled" severity="error">
-          {t("translate:editor.submit-status.failed")}
-        </Alert>
-      </Snackbar>
     </Fragment>
   ) : (
     <Typography variant="h6" className={layoutClasses.header}>

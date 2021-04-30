@@ -12,7 +12,6 @@ import {
   MenuItem,
   DialogContentText,
   DialogActions,
-  Snackbar,
   makeStyles,
   Typography,
   Popover,
@@ -36,6 +35,7 @@ import { useTranslation } from "react-i18next";
 import { SettingContext, UserContext } from "../../context";
 import { ICardInfo, IGameChara, ITeamCardState } from "../../types";
 import {
+  useAlertSnackbar,
   useCachedData,
   useCharaName,
   useLocalStorage,
@@ -44,7 +44,6 @@ import {
 import { CardThumb, CardThumbMedium } from "./CardThumb";
 import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
-import { Alert } from "@material-ui/lab";
 import { teamBuildReducer } from "../../stores/reducers";
 import { useStrapi } from "../../utils/apiClient";
 import { useTeamCalc } from "../../utils/teamCalc";
@@ -91,6 +90,7 @@ const TeamBuilder: React.FC<{
     UserContext
   )!;
   const { putSekaiDeckList, deleteSekaiDeckList } = useStrapi(jwtToken);
+  const { showError } = useAlertSnackbar();
 
   const [cards] = useCachedData<ICardInfo>("cards");
   const [charas] = useCachedData<IGameChara>("gameCharacters");
@@ -105,13 +105,6 @@ const TeamBuilder: React.FC<{
   const [characterId, setCharacterId] = useState<number>(0);
   const [rarity, setRarity] = useState<number>(4);
   const [filteredCards, setFilteredCards] = useState<ICardInfo[]>([]);
-  const [
-    duplicatedCardErrorOpen,
-    setDuplicatedCardErrorOpen,
-  ] = useState<boolean>(false);
-  const [cardMaxErrorOpen, setCardMaxErrorOpen] = useState<boolean>(false);
-  const [teamTextCopiedOpen, setTeamTextCopiedOpen] = useState<boolean>(false);
-  const [loadTeamErrorOpen, setLoadTeamErrorOpen] = useState<boolean>(false);
   const [saveTeamDialogVisible, setSaveTeamDialogVisible] = useState<boolean>(
     false
   );
@@ -121,7 +114,6 @@ const TeamBuilder: React.FC<{
   const [addCardDialogVisible, setAddCardDialogVisible] = useState<boolean>(
     false
   );
-  const [teamTextSavedOpen, setTeamTextSavedOpen] = useState<boolean>(false);
   const [editingCard, setEditingCard] = useState<ITeamCardState>();
   const [isSyncCardState, setIsSyncCardState] = useLocalStorage(
     "team-build-use-sekai-card-state",
@@ -131,7 +123,6 @@ const TeamBuilder: React.FC<{
     "local"
   );
   const [isSavingEntry, toggleIsSaveingEntry] = useToggle(false);
-  const [saveTeamErrorOpen, setSaveTeamErrorOpen] = useState(false);
   const [isAutoCalcBonus, toggleIsAutoCalcBonus] = useToggle(false);
 
   const [teamBuildArray, dispatchTeamBuildArray] = useReducer(
@@ -173,10 +164,10 @@ const TeamBuilder: React.FC<{
   const handleCardThumbClick = useCallback(
     (card: ICardInfo) => {
       if (teamCards.some((tc) => tc === card.id)) {
-        setDuplicatedCardErrorOpen(true);
+        showError(t("music_recommend:buildTeam.duplicatedCardError"));
         return;
       } else if (teamCards.length === 5) {
-        setCardMaxErrorOpen(true);
+        showError(t("music_recommend:buildTeam.cardMaxError"));
         return;
       }
       const maxLevel = [0, 20, 30, 50, 60];
@@ -200,7 +191,15 @@ const TeamBuilder: React.FC<{
       ]);
       // setAddCardDialogVisible(false);
     },
-    [teamCards, setTeamCards, setTeamCardsStates, isSyncCardState, sekaiProfile]
+    [
+      teamCards,
+      setTeamCards,
+      sekaiProfile?.cardList,
+      setTeamCardsStates,
+      showError,
+      t,
+      isSyncCardState,
+    ]
   );
 
   const handleClick = useCallback(
@@ -269,7 +268,7 @@ const TeamBuilder: React.FC<{
           toggleIsSaveingEntry();
         })
         .catch(() => {
-          setSaveTeamErrorOpen(true);
+          showError(t("team_build:error.save_team_failed"));
           toggleIsSaveingEntry();
         });
     } else if (storageLocation === "local") {
@@ -282,7 +281,9 @@ const TeamBuilder: React.FC<{
   }, [
     putSekaiDeckList,
     sekaiProfile,
+    showError,
     storageLocation,
+    t,
     teamCards,
     teamCardsStates,
     teamPowerStates,
@@ -324,7 +325,7 @@ const TeamBuilder: React.FC<{
             toggleIsSaveingEntry();
           })
           .catch(() => {
-            setSaveTeamErrorOpen(true);
+            showError(t("team_build:error.save_team_failed"));
             toggleIsSaveingEntry();
           });
       } else if (storageLocation === "local") {
@@ -341,7 +342,9 @@ const TeamBuilder: React.FC<{
     [
       putSekaiDeckList,
       sekaiProfile,
+      showError,
       storageLocation,
+      t,
       teamCards,
       teamCardsStates,
       teamPowerStates,
@@ -371,7 +374,7 @@ const TeamBuilder: React.FC<{
             toggleIsSaveingEntry();
           })
           .catch(() => {
-            setSaveTeamErrorOpen(true);
+            showError(t("team_build:error.save_team_failed"));
             toggleIsSaveingEntry();
           });
       } else if (storageLocation === "local") {
@@ -385,7 +388,9 @@ const TeamBuilder: React.FC<{
     [
       deleteSekaiDeckList,
       sekaiProfile,
+      showError,
       storageLocation,
+      t,
       toggleIsSaveingEntry,
       updateSekaiProfile,
     ]
@@ -1057,60 +1062,6 @@ const TeamBuilder: React.FC<{
           </Container>
         )}
       </Popover>
-      <Snackbar
-        open={duplicatedCardErrorOpen}
-        autoHideDuration={3000}
-        onClose={() => setDuplicatedCardErrorOpen(false)}
-      >
-        <Alert variant="filled" severity="error">
-          {t("music_recommend:buildTeam.duplicatedCardError")}
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        open={cardMaxErrorOpen}
-        autoHideDuration={3000}
-        onClose={() => setCardMaxErrorOpen(false)}
-      >
-        <Alert variant="filled" severity="error">
-          {t("music_recommend:buildTeam.cardMaxError")}
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        open={loadTeamErrorOpen}
-        autoHideDuration={3000}
-        onClose={() => setLoadTeamErrorOpen(false)}
-      >
-        <Alert variant="filled" severity="error">
-          {t("music_recommend:buildTeam.loadTeamError")}
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        open={teamTextCopiedOpen}
-        autoHideDuration={3000}
-        onClose={() => setTeamTextCopiedOpen(false)}
-      >
-        <Alert variant="filled" severity="success">
-          {t("music_recommend:buildTeam.teamTextCopied")}
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        open={teamTextSavedOpen}
-        autoHideDuration={3000}
-        onClose={() => setTeamTextSavedOpen(false)}
-      >
-        <Alert variant="filled" severity="success">
-          {t("music_recommend:buildTeam.teamTextSaved")}
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        open={saveTeamErrorOpen}
-        autoHideDuration={3000}
-        onClose={() => setSaveTeamErrorOpen(false)}
-      >
-        <Alert variant="filled" severity="error">
-          {t("team_build:error.save_team_failed")}
-        </Alert>
-      </Snackbar>
     </Grid>
   );
 };

@@ -39,9 +39,12 @@ export function useStrapi(token?: string) {
     axios.interceptors.response.use(
       (res) => res,
       (err) => {
-        if (err.response.data.message)
+        if (err.response.data.message && err.response.status !== 500)
           err.id = err.response.data.message[0].messages[0].id;
-        else err.id = err.message;
+        else if (err.response.status === 500) {
+          err.id = err.response.data.error;
+          err.message = err.response.data.message;
+        } else err.id = err.message;
         throw err;
       }
     );

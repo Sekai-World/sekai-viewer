@@ -4,7 +4,6 @@ import {
   Container,
   Grid,
   InputAdornment,
-  Snackbar,
   Typography,
 } from "@material-ui/core";
 // import { Email } from "@material-ui/icons";
@@ -14,7 +13,7 @@ import { TextField } from "formik-material-ui";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLayoutStyles } from "../../styles/layout";
-import { useQuery } from "../../utils";
+import { useAlertSnackbar, useQuery } from "../../utils";
 import { useStrapi } from "../../utils/apiClient";
 import PasswordStrengthBar from "react-password-strength-bar";
 import { VpnKey } from "@material-ui/icons";
@@ -26,9 +25,8 @@ const ResetPassword: React.FC<{}> = () => {
   const { postResetPassword } = useStrapi();
   const query = useQuery();
   const history = useHistory();
+  const { showError } = useAlertSnackbar();
 
-  const [isError, setIsError] = useState(false);
-  const [errMsg, setErrMsg] = useState("");
   // const [isSucceed, setIsSucceed] = useState(false);
   const [passwordScore, setPasswordScore] = useState(0);
 
@@ -83,8 +81,7 @@ const ResetPassword: React.FC<{}> = () => {
               // setIsSucceed(true);
               history.replace("/user/login");
             } catch (error) {
-              setIsError(true);
-              setErrMsg(t("auth:reset_password_wrong_email"));
+              showError(t("auth:reset_password_wrong_email"));
             }
           }}
         >
@@ -159,22 +156,6 @@ const ResetPassword: React.FC<{}> = () => {
           )}
         </Formik>
       </Container>
-      <Snackbar
-        open={isError}
-        autoHideDuration={3000}
-        onClose={() => {
-          setIsError(false);
-        }}
-      >
-        <Alert
-          onClose={() => {
-            setIsError(false);
-          }}
-          severity="error"
-        >
-          {errMsg}
-        </Alert>
-      </Snackbar>
     </Fragment>
   );
 };
