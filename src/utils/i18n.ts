@@ -89,6 +89,8 @@ export async function initGlobalI18n() {
         "event_story_episode_title",
         "character_mission",
         "card_gacha_phrase",
+        "cheerful_carnival_teams",
+        "cheerful_carnival_themes",
       ],
       fallbackLng: {
         default: ["ja"],
