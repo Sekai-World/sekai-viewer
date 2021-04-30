@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.1](https://github.com/Sekai-World/sekai-viewer/compare/v0.5.0...v0.5.1) (2021-04-30)
+
+
+### Features
+
+* use global snackbar provider ([2117c9a](https://github.com/Sekai-World/sekai-viewer/commits/2117c9ab43af52898a39617ba1ba1126300784ae))
+
+
+### Bug Fixes
+
+* **context:** updateSekaiProfile set wrong localstorage content ([1a2d71c](https://github.com/Sekai-World/sekai-viewer/commits/1a2d71c8049b0838dcd88d0cb7a465505576ef56))
+* **i18n:** namespace missing ([4aa1ed9](https://github.com/Sekai-World/sekai-viewer/commits/4aa1ed9eece1c521546b814984fd3dec35245142))
+* **vlive:** agenda view image wrong place ([3ac9233](https://github.com/Sekai-World/sekai-viewer/commits/3ac9233c872eb30f62809612730b9e18a43a0e63))
+* **vlive:** agenda view route endpoint ([d31176d](https://github.com/Sekai-World/sekai-viewer/commits/d31176d3870ed2b30fd98afe80139888c27ae7fa))
+
+
+### Refactors
+
+* **music:** if trim mp3 failed, try clean cache ([8ef453c](https://github.com/Sekai-World/sekai-viewer/commits/8ef453c259698cbb3453947ae345495e532e225f))
+* **user:** sekai profile user statistics use accordion ([26f2e45](https://github.com/Sekai-World/sekai-viewer/commits/26f2e45c3efaaba5327eb41d6d706900b50cf3e4))
+* **user:** user area items shown by areas ([05a01a0](https://github.com/Sekai-World/sekai-viewer/commits/05a01a00a21995051468e221c5570009775bdcb6))
+
 ## [0.5.0](https://github.com/Sekai-World/sekai-viewer/compare/v0.4.15...v0.5.0) (2021-04-29)
 
 
