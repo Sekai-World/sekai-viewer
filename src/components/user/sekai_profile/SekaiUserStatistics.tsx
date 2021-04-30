@@ -1,4 +1,7 @@
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Avatar,
   Button,
   Chip,
@@ -41,6 +44,8 @@ import IconNotClear from "../../../assets/music/icon_notClear.png";
 import IconClear from "../../../assets/music/icon_clear.png";
 import IconFullCombo from "../../../assets/music/icon_fullCombo.png";
 import IconAllPerfect from "../../../assets/music/icon_allPerfect.png";
+import { ExpandMore } from "@material-ui/icons";
+import { useLayoutStyles } from "../../../styles/layout";
 
 const ProfileMusicImage: React.FC<{
   assetbundleName: string;
@@ -271,7 +276,7 @@ const MusicSingleData: React.FC<{ umusic?: UserMusic; music: IMusicInfo }> = ({
 };
 
 const SekaiUserStatistics = () => {
-  // const layoutClasses = useLayoutStyles();
+  const layoutClasses = useLayoutStyles();
   // const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
@@ -290,7 +295,7 @@ const SekaiUserStatistics = () => {
   return (
     <Grid container spacing={1}>
       <Grid item xs={12}>
-        <Typography>{t("mission:type.character_rank")}</Typography>
+        {/* <Typography>{t("mission:type.character_rank")}</Typography> */}
         {/* <Button
           variant="contained"
           color="primary"
@@ -328,210 +333,218 @@ const SekaiUserStatistics = () => {
         {/* )} */}
       </Grid>
       <Grid item xs={12}>
-        <Typography>{t("common:mission.honor")}</Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => toggleHonorOpen()}
-        >
-          {honorOpen ? t("common:hide") : t("common:show")}
-        </Button>
-        {honorOpen && (
-          <Grid container spacing={1}>
-            {sekaiProfile?.sekaiUserProfile?.userHonors.map((honor) => (
-              <Grid key={honor.honorId} item xs={12} sm={6} md={3}>
-                <Tooltip title={new Date(honor.obtainedAt).toLocaleString()}>
-                  <div>
-                    <DegreeImage
-                      honorId={honor.honorId}
-                      honorLevel={honor.level}
-                    />
-                  </div>
-                </Tooltip>
-              </Grid>
-            ))}
-          </Grid>
-        )}
-      </Grid>
-      <Grid item xs={12}>
-        <Typography>{t("common:area_item")}</Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => toggleAreaItemOpen()}
-        >
-          {areaItemOpen ? t("common:hide") : t("common:show")}
-        </Button>
-        {areaItemOpen && !!areaItems && (
-          <Grid container spacing={2}>
-            {sekaiProfile?.sekaiUserProfile?.userAreaItems.map((areaItem) => (
-              <Grid key={areaItem.areaItemId} item xs={4} md={2} lg={1}>
-                <Tooltip
-                  title={
-                    areaItems.find((ai) => ai.id === areaItem.areaItemId)!.name
-                  }
-                >
-                  <Grid container>
-                    <Grid item xs={12}>
-                      <Image
-                        src={`${
-                          window.isChinaMainland
-                            ? `${process.env.REACT_APP_ASSET_DOMAIN_CN}`
-                            : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
-                        }/thumbnail/areaitem_rip/${
-                          areaItems.find((ai) => ai.id === areaItem.areaItemId)!
-                            .assetbundleName
-                        }.png`}
-                        alt={`area item ${areaItem.areaItemId}`}
-                        aspectRatio={1}
-                        // style={{ height: "64px", width: "64px" }}
-                        color=""
+        <Accordion expanded={honorOpen} onChange={() => toggleHonorOpen()}>
+          <AccordionSummary expandIcon={<ExpandMore />}>
+            <Typography className={layoutClasses.header}>
+              {t("common:mission.honor")}
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Grid container spacing={1}>
+              {sekaiProfile?.sekaiUserProfile?.userHonors.map((honor) => (
+                <Grid key={honor.honorId} item xs={12} sm={6} md={3}>
+                  <Tooltip title={new Date(honor.obtainedAt).toLocaleString()}>
+                    <div>
+                      <DegreeImage
+                        honorId={honor.honorId}
+                        honorLevel={honor.level}
                       />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Typography align="center">{areaItem.level}</Typography>
-                    </Grid>
-                  </Grid>
-                </Tooltip>
-              </Grid>
-            ))}
-          </Grid>
-        )}
-      </Grid>
-      <Grid item xs={12}>
-        <Typography>{t("common:music")}</Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => toggleMusicOpen()}
+                    </div>
+                  </Tooltip>
+                </Grid>
+              ))}
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion
+          expanded={areaItemOpen}
+          onChange={() => toggleAreaItemOpen()}
         >
-          {musicOpen ? t("common:hide") : t("common:show")}
-        </Button>
-        {musicOpen && musics && (
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TableContainer>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>{t("music:difficulty")}</TableCell>
-                      <TableCell>
-                        <Image
-                          src={BtnDifficultyEasy}
-                          alt="difficulty easy"
-                          color=""
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Image
-                          src={BtnDifficultyNormal}
-                          alt="difficulty normal"
-                          color=""
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Image
-                          src={BtnDifficultyHard}
-                          alt="difficulty hard"
-                          color=""
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Image
-                          src={BtnDifficultyExpert}
-                          alt="difficulty expert"
-                          color=""
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Image
-                          src={BtnDifficultyMaster}
-                          alt="difficulty master"
-                          color=""
-                        />
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>
-                        {t("user:profile.statistics.clear_count")}
-                      </TableCell>
-                      {Array.from({ length: 5 }).map((_, idx) => (
-                        <TableCell key={idx} align="center">
-                          <div style={{ minWidth: "64px" }}>
-                            {getClearCount(
-                              idx,
-                              sekaiProfile?.sekaiUserProfile?.userMusics
-                            )}
-                          </div>
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>
-                        {t("user:profile.statistics.full_combo_count")}
-                      </TableCell>
-                      {Array.from({ length: 5 }).map((_, idx) => (
-                        <TableCell key={idx} align="center">
-                          <div style={{ minWidth: "64px" }}>
-                            {getFullComboCount(
-                              idx,
-                              sekaiProfile?.sekaiUserProfile?.userMusics
-                            )}
-                          </div>
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>
-                        {t("user:profile.statistics.all_perfect_count")}
-                      </TableCell>
-                      {Array.from({ length: 5 }).map((_, idx) => (
-                        <TableCell key={idx} align="center">
-                          <div style={{ minWidth: "64px" }}>
-                            {getAllPerfectCount(
-                              idx,
-                              sekaiProfile?.sekaiUserProfile?.userMusics
-                            )}
-                          </div>
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Grid>
-            <Grid item xs={12}>
-              <FormControl>
-                <Select
-                  labelId="sekai-profile-music-select-label"
-                  id="sekai-profile-music-select"
-                  value={selectedMusic}
-                  onChange={(e) => setSelectedMusic(e.target.value as number)}
-                >
-                  {musics.map((m) => (
-                    <MenuItem key={m.id} value={m.id}>
-                      {getTranslated(
-                        contentTransMode,
-                        `music_titles:${m.id}`,
-                        m.title
-                      )}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            {!!sekaiProfile && (
-              <MusicSingleData
-                umusic={sekaiProfile?.sekaiUserProfile?.userMusics.find(
-                  (um) => um.musicId === selectedMusic
+          <AccordionSummary expandIcon={<ExpandMore />}>
+            <Typography className={layoutClasses.header}>
+              {t("common:area_item")}
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            {areaItemOpen && !!areaItems && (
+              <Grid container spacing={2}>
+                {sekaiProfile?.sekaiUserProfile?.userAreaItems.map(
+                  (areaItem) => (
+                    <Grid key={areaItem.areaItemId} item xs={4} md={2} lg={1}>
+                      <Tooltip
+                        title={
+                          areaItems.find((ai) => ai.id === areaItem.areaItemId)!
+                            .name
+                        }
+                      >
+                        <Grid container>
+                          <Grid item xs={12}>
+                            <Image
+                              src={`${
+                                window.isChinaMainland
+                                  ? `${process.env.REACT_APP_ASSET_DOMAIN_CN}`
+                                  : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+                              }/thumbnail/areaitem_rip/${
+                                areaItems.find(
+                                  (ai) => ai.id === areaItem.areaItemId
+                                )!.assetbundleName
+                              }.png`}
+                              alt={`area item ${areaItem.areaItemId}`}
+                              aspectRatio={1}
+                              // style={{ height: "64px", width: "64px" }}
+                              color=""
+                            />
+                          </Grid>
+                          <Grid item xs={12}>
+                            <Typography align="center">
+                              {areaItem.level}
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                      </Tooltip>
+                    </Grid>
+                  )
                 )}
-                music={musics.find((m) => m.id === selectedMusic)!}
-              />
+              </Grid>
             )}
-          </Grid>
-        )}
+          </AccordionDetails>
+        </Accordion>
+        <Accordion expanded={musicOpen} onChange={() => toggleMusicOpen()}>
+          <AccordionSummary expandIcon={<ExpandMore />}>
+            <Typography className={layoutClasses.header}>
+              {t("common:music")}
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            {musicOpen && musics && (
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TableContainer>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>{t("music:difficulty")}</TableCell>
+                          <TableCell>
+                            <Image
+                              src={BtnDifficultyEasy}
+                              alt="difficulty easy"
+                              color=""
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Image
+                              src={BtnDifficultyNormal}
+                              alt="difficulty normal"
+                              color=""
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Image
+                              src={BtnDifficultyHard}
+                              alt="difficulty hard"
+                              color=""
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Image
+                              src={BtnDifficultyExpert}
+                              alt="difficulty expert"
+                              color=""
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Image
+                              src={BtnDifficultyMaster}
+                              alt="difficulty master"
+                              color=""
+                            />
+                          </TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell>
+                            {t("user:profile.statistics.clear_count")}
+                          </TableCell>
+                          {Array.from({ length: 5 }).map((_, idx) => (
+                            <TableCell key={idx} align="center">
+                              <div style={{ minWidth: "64px" }}>
+                                {getClearCount(
+                                  idx,
+                                  sekaiProfile?.sekaiUserProfile?.userMusics
+                                )}
+                              </div>
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>
+                            {t("user:profile.statistics.full_combo_count")}
+                          </TableCell>
+                          {Array.from({ length: 5 }).map((_, idx) => (
+                            <TableCell key={idx} align="center">
+                              <div style={{ minWidth: "64px" }}>
+                                {getFullComboCount(
+                                  idx,
+                                  sekaiProfile?.sekaiUserProfile?.userMusics
+                                )}
+                              </div>
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>
+                            {t("user:profile.statistics.all_perfect_count")}
+                          </TableCell>
+                          {Array.from({ length: 5 }).map((_, idx) => (
+                            <TableCell key={idx} align="center">
+                              <div style={{ minWidth: "64px" }}>
+                                {getAllPerfectCount(
+                                  idx,
+                                  sekaiProfile?.sekaiUserProfile?.userMusics
+                                )}
+                              </div>
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Grid>
+                <Grid item xs={12}>
+                  <FormControl>
+                    <Select
+                      labelId="sekai-profile-music-select-label"
+                      id="sekai-profile-music-select"
+                      value={selectedMusic}
+                      onChange={(e) =>
+                        setSelectedMusic(e.target.value as number)
+                      }
+                    >
+                      {musics.map((m) => (
+                        <MenuItem key={m.id} value={m.id}>
+                          {getTranslated(
+                            contentTransMode,
+                            `music_titles:${m.id}`,
+                            m.title
+                          )}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                {!!sekaiProfile && (
+                  <MusicSingleData
+                    umusic={sekaiProfile?.sekaiUserProfile?.userMusics.find(
+                      (um) => um.musicId === selectedMusic
+                    )}
+                    music={musics.find((m) => m.id === selectedMusic)!}
+                  />
+                )}
+              </Grid>
+            )}
+          </AccordionDetails>
+        </Accordion>
       </Grid>
     </Grid>
   );

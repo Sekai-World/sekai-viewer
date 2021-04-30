@@ -57,49 +57,45 @@ const SekaiProfile = () => {
         {t("user:profile.title.sekai_cards_teams")}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="md">
-        {
-          <Fragment>
-            <Accordion
-              expanded={isUserMemberOpen}
-              onChange={(e, state) => setIsUserMemberOpen(state)}
-            >
-              <AccordionSummary expandIcon={<ExpandMore />}>
-                <Typography className={layoutClasses.header}>
-                  {t("user:profile.title.card_list")}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <SekaiUserCardList />
-              </AccordionDetails>
-            </Accordion>
-            <Accordion
-              expanded={isUserImportMemberOpen}
-              onChange={(e, state) => setIsUserImportMemberOpen(state)}
-            >
-              <AccordionSummary expandIcon={<ExpandMore />}>
-                <Typography className={layoutClasses.header}>
-                  {t("user:profile.title.import_card")}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <SekaiUserImportMember />
-              </AccordionDetails>
-            </Accordion>
-            <Accordion
-              expanded={isUserTeamsOpen}
-              onChange={(e, state) => setIsUserTeamsOpen(state)}
-            >
-              <AccordionSummary expandIcon={<ExpandMore />}>
-                <Typography className={layoutClasses.header}>
-                  {t("user:profile.title.manage_teams")}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <SekaiUserTeams />
-              </AccordionDetails>
-            </Accordion>
-          </Fragment>
-        }
+        <Accordion
+          expanded={isUserMemberOpen}
+          onChange={(e, state) => setIsUserMemberOpen(state)}
+        >
+          <AccordionSummary expandIcon={<ExpandMore />}>
+            <Typography className={layoutClasses.header}>
+              {t("user:profile.title.card_list")}
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <SekaiUserCardList />
+          </AccordionDetails>
+        </Accordion>
+        <Accordion
+          expanded={isUserImportMemberOpen}
+          onChange={(e, state) => setIsUserImportMemberOpen(state)}
+        >
+          <AccordionSummary expandIcon={<ExpandMore />}>
+            <Typography className={layoutClasses.header}>
+              {t("user:profile.title.import_card")}
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <SekaiUserImportMember />
+          </AccordionDetails>
+        </Accordion>
+        <Accordion
+          expanded={isUserTeamsOpen}
+          onChange={(e, state) => setIsUserTeamsOpen(state)}
+        >
+          <AccordionSummary expandIcon={<ExpandMore />}>
+            <Typography className={layoutClasses.header}>
+              {t("user:profile.title.manage_teams")}
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <SekaiUserTeams />
+          </AccordionDetails>
+        </Accordion>
       </Container>
       <Typography variant="h6" className={layoutClasses.header}>
         {t("user:profile.title.user_event")}
