@@ -1217,3 +1217,12 @@ export interface ICheerfulCarnivalTeam {
   teamName: string;
   assetbundleName: string;
 }
+
+export interface IArea {
+  id: number;
+  assetbundleName: string;
+  areaType: string;
+  viewType: string;
+  name: string;
+  releaseConditionId: number;
+}

@@ -59,6 +59,7 @@ import {
   IAreaItem,
   ICheerfulCarnivalSummary,
   ICheerfulCarnivalTeam,
+  IArea,
 } from "./../types.d";
 import { useAssetI18n } from "./i18n";
 import { useLocation } from "react-router-dom";
@@ -120,6 +121,7 @@ export function useCachedData<
     | IAreaItem
     | ICheerfulCarnivalSummary
     | ICheerfulCarnivalTeam
+    | IArea
 >(name: string): [T[] | undefined, boolean, any] {
   // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
 

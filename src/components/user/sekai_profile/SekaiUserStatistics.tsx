@@ -5,6 +5,7 @@ import {
   Avatar,
   Button,
   Chip,
+  Divider,
   FormControl,
   Grid,
   InputLabel,
@@ -27,6 +28,7 @@ import { charaIcons } from "../../../utils/resources";
 import DegreeImage from "../../subs/DegreeImage";
 import { getRemoteAssetURL, useCachedData, useToggle } from "../../../utils";
 import {
+  IArea,
   IAreaItem,
   IMusicInfo,
   UserMusic,
@@ -283,6 +285,7 @@ const SekaiUserStatistics = () => {
   const { sekaiProfile } = useContext(UserContext)!;
   const { contentTransMode } = useContext(SettingContext)!;
 
+  const [areas] = useCachedData<IArea>("areas");
   const [areaItems] = useCachedData<IAreaItem>("areaItems");
   const [musics] = useCachedData<IMusicInfo>("musics");
 
@@ -366,45 +369,112 @@ const SekaiUserStatistics = () => {
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            {areaItemOpen && !!areaItems && (
+            {!!areaItems && !!areas && (
               <Grid container spacing={2}>
-                {sekaiProfile?.sekaiUserProfile?.userAreaItems.map(
-                  (areaItem) => (
-                    <Grid key={areaItem.areaItemId} item xs={4} md={2} lg={1}>
-                      <Tooltip
-                        title={
-                          areaItems.find((ai) => ai.id === areaItem.areaItemId)!
-                            .name
-                        }
-                      >
-                        <Grid container>
-                          <Grid item xs={12}>
+                {areas
+                  .filter((area) => area.areaType === "spirit_world")
+                  .concat([
+                    {
+                      id: 2,
+                      assetbundleName: "area11",
+                      areaType: "reality_world",
+                      viewType: "side_view",
+                      name: "神山高校",
+                      releaseConditionId: 1,
+                    },
+                    {
+                      id: 6,
+                      assetbundleName: "area13",
+                      areaType: "reality_world",
+                      viewType: "side_view",
+                      name: "宮益坂女子学園",
+                      releaseConditionId: 1,
+                    },
+                  ])
+                  .map((area) => (
+                    <Grid key={area.id} item xs={12}>
+                      <Grid container spacing={1} alignItems="center">
+                        <Grid item xs={4} md={2}>
+                          <Tooltip title={area.name}>
                             <Image
                               src={`${
                                 window.isChinaMainland
                                   ? `${process.env.REACT_APP_ASSET_DOMAIN_CN}`
                                   : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
-                              }/thumbnail/areaitem_rip/${
-                                areaItems.find(
-                                  (ai) => ai.id === areaItem.areaItemId
-                                )!.assetbundleName
+                              }/worldmap/contents/normal_rip/${
+                                area.areaType === "reality_world"
+                                  ? `worldmap_area${String(area.id).padStart(
+                                      2,
+                                      "0"
+                                    )}`
+                                  : `img_worldmap_areas${String(
+                                      area.id
+                                    ).padStart(2, "0")}`
                               }.png`}
-                              alt={`area item ${areaItem.areaItemId}`}
-                              aspectRatio={1}
+                              alt={`area ${area.id}`}
+                              aspectRatio={1.27}
                               // style={{ height: "64px", width: "64px" }}
                               color=""
                             />
-                          </Grid>
-                          <Grid item xs={12}>
-                            <Typography align="center">
-                              {areaItem.level}
-                            </Typography>
+                          </Tooltip>
+                        </Grid>
+                        <Grid item xs={8} md={10}>
+                          <Grid container>
+                            {areaItems
+                              .filter((ai) =>
+                                area.id === 2
+                                  ? ai.areaId === 11
+                                  : area.id === 6
+                                  ? ai.areaId === 13
+                                  : ai.areaId === area.id
+                              )
+                              .map((areaItem) => (
+                                <Grid
+                                  item
+                                  key={areaItem.id}
+                                  xs={4}
+                                  md={2}
+                                  lg={1}
+                                >
+                                  <Tooltip title={areaItem.name}>
+                                    <Grid container>
+                                      <Grid item xs={12}>
+                                        <Image
+                                          src={`${
+                                            window.isChinaMainland
+                                              ? `${process.env.REACT_APP_ASSET_DOMAIN_CN}`
+                                              : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+                                          }/thumbnail/areaitem_rip/${
+                                            areaItem.assetbundleName
+                                          }.png`}
+                                          alt={`area item ${areaItem.id}`}
+                                          aspectRatio={1}
+                                          // style={{ height: "64px", width: "64px" }}
+                                          color=""
+                                        />
+                                      </Grid>
+                                      <Grid item xs={12}>
+                                        <Typography align="center">
+                                          {!!sekaiProfile &&
+                                            !!sekaiProfile.sekaiUserProfile &&
+                                            sekaiProfile.sekaiUserProfile.userAreaItems.find(
+                                              (uai) =>
+                                                uai.areaItemId === areaItem.id
+                                            )?.level}
+                                        </Typography>
+                                      </Grid>
+                                    </Grid>
+                                  </Tooltip>
+                                </Grid>
+                              ))}
                           </Grid>
                         </Grid>
-                      </Tooltip>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Divider style={{ marginTop: "1em" }} />
+                      </Grid>
                     </Grid>
-                  )
-                )}
+                  ))}
               </Grid>
             )}
           </AccordionDetails>
@@ -416,7 +486,7 @@ const SekaiUserStatistics = () => {
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            {musicOpen && musics && (
+            {musics && (
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <TableContainer>
