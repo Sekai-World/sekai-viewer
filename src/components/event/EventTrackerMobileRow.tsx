@@ -2,17 +2,27 @@ import {
   Collapse,
   Grid,
   IconButton,
+  makeStyles,
   Paper,
   Typography,
 } from "@material-ui/core";
 import { KeyboardArrowUp, KeyboardArrowDown } from "@material-ui/icons";
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLayoutStyles } from "../../styles/layout";
 import { EventRankingResponse, UserRanking } from "../../types";
 import { CardThumb } from "../subs/CardThumb";
 import DegreeImage from "../subs/DegreeImage";
 import EventTrackerGraph from "./EventTrackerGraph";
+
+const useRowStyles = makeStyles((theme) => ({
+  updated: {
+    backgroundColor: theme.palette.info.main,
+    WebkitTransition: "background-color 850ms linear",
+    msTransition: "background-color 850ms linear",
+    transition: "background-color 850ms linear",
+  },
+}));
 
 export const HistoryMobileRow: React.FC<{
   rankingData: UserRanking;
@@ -119,15 +129,32 @@ export const LiveMobileRow: React.FC<{
   noPred?: boolean;
 }> = ({ rankingData, rankingPred, noPred = false }) => {
   const { t } = useTranslation();
-  // const classes = useRowStyles();
+  const classes = useRowStyles();
   const layoutClasses = useLayoutStyles();
 
   const [open, setOpen] = useState(false);
-  // const [isShowGraph, toggleIsShowGraph] = useToggle(false);
+  const [customClass, setCustomClass] = useState("");
+  const [lastScore, setLastScore] = useState(0);
+
+  useEffect(() => {
+    if (!lastScore && rankingData.score) {
+      setLastScore(rankingData.score);
+      setCustomClass("");
+    } else if (lastScore && lastScore !== rankingData.score) {
+      setLastScore(rankingData.score);
+      setCustomClass(classes.updated);
+      setTimeout(() => setCustomClass(""), 850);
+    }
+  }, [classes.updated, lastScore, rankingData.score]);
 
   return (
     <Fragment>
-      <Grid container onClick={() => setOpen(!open)} component={Paper}>
+      <Grid
+        className={customClass}
+        container
+        onClick={() => setOpen(!open)}
+        component={Paper}
+      >
         <Grid item xs={2}>
           <IconButton
             aria-label="expand row"
