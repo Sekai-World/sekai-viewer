@@ -20,8 +20,8 @@ export function useScoreCalc() {
     (cards: ICardInfo[], skills: ISkillInfo[], teamCard: ITeamCardState) => {
       let skillId = cards.filter((it) => it.id === teamCard.cardId)[0].skillId;
       let skill = skills.filter((it) => it.id === skillId)[0];
-      let scoreSkill = skill.skillEffects.filter(
-        (it) => it.skillEffectType === "score_up"
+      let scoreSkill = skill.skillEffects.filter((it) =>
+        it.skillEffectType.includes("score_up")
       )[0];
       return (
         scoreSkill.skillEffectDetails[teamCard.skillLevel - 1]
