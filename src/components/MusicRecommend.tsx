@@ -94,7 +94,7 @@ const MusicRecommend: React.FC<{}> = () => {
       renderCell(params) {
         return (
           <ContentTrans
-            contentKey={`music_titles:${params.getValue("mid")}`}
+            contentKey={`music_titles:${params.row.mid}`}
             original={params.value as string}
           />
         );
