@@ -556,7 +556,7 @@ const TeamBuilder: React.FC<{
       <Grid item xs={12}>
         <Grid container spacing={1} justify="center">
           {teamCards.map((cardId, index) => (
-            <Grid key={`team-card-${cardId}`} item xs={2}>
+            <Grid key={`team-card-${cardId}`} item xs={4} md={2}>
               <CardThumbMedium
                 cardId={cardId}
                 trained={teamCardsStates[index].trained}
