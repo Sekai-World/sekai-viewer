@@ -113,7 +113,7 @@ const DegreeImage: React.FC<
       </svg>
     </div>
   ) : (
-    <Skeleton variant="rect" className={classes.skeleton}></Skeleton>
+    <Skeleton variant="rect" width="256" height="64"></Skeleton>
   );
 };
 
