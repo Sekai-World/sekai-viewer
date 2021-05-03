@@ -486,6 +486,18 @@ function App() {
           icon: <Textsms></Textsms>,
           to: "/storyreader",
           disabled: false,
+          children: [
+            {
+              text: t("common:text"),
+              to: "/storyreader",
+              disabled: false,
+            },
+            {
+              text: "Live2D",
+              to: "/storyreader-live2d",
+              disabled: true,
+            },
+          ],
         },
         {
           text: t("common:eventTracker"),
