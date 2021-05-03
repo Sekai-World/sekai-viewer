@@ -151,7 +151,7 @@ export const UserProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
             const _data = Object.assign({}, profile, data);
 
             if (data)
-              localStorage.setItem("sekaiProfile", JSON.stringify(data));
+              localStorage.setItem("sekaiProfile", JSON.stringify(_data));
             else localStorage.removeItem("sekaiProfile");
 
             return _data;
