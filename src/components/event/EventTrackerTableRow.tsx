@@ -26,7 +26,7 @@ const useRowStyles = makeStyles((theme) => ({
     },
   },
   updated: {
-    backgroundColor: theme.palette.info.main,
+    backgroundColor: theme.palette.warning.main,
     WebkitTransition: "background-color 850ms linear",
     msTransition: "background-color 850ms linear",
     transition: "background-color 850ms linear",
