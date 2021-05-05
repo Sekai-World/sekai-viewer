@@ -178,6 +178,10 @@ const SekaiID: React.FC<{}> = () => {
               <Formik
                 initialValues={{ userid: sekaiProfile?.sekaiUserId || "" }}
                 onSubmit={async (values, { setErrors }) => {
+                  if (!/^\d{16}$/.test(values.userid)) {
+                    showError(t("user:profile.error.sekai_id_malformed"));
+                    return;
+                  }
                   try {
                     await postSekaiProfileVerify(values.userid);
                     updateSekaiProfile(await getSekaiProfileMe());
