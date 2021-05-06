@@ -40,15 +40,10 @@ import {
   IMusicVocalInfo,
   IOutCharaProfile,
 } from "../../types";
-import {
-  getRemoteAssetURL,
-  useCachedData,
-  useCharaName,
-  useMusicTagName,
-} from "../../utils";
+import { getRemoteAssetURL, useCachedData, useMusicTagName } from "../../utils";
 import { charaIcons } from "../../utils/resources";
 import { Trans, useTranslation } from "react-i18next";
-import { useAssetI18n } from "../../utils/i18n";
+import { useAssetI18n, useCharaName } from "../../utils/i18n";
 import { useDurationI18n } from "../../utils/i18nDuration";
 import { useTrimMP3 } from "../../utils/trimMP3";
 import MusicVideoPlayer from "../subs/MusicVideoPlayer";
@@ -92,7 +87,7 @@ const MusicDetail: React.FC<{}> = () => {
   const { contentTransMode } = useContext(SettingContext)!;
   const [, humanizeDurationShort] = useDurationI18n();
   const [trimmedMP3URL, trimFailed, setTrimOptions] = useTrimMP3();
-  const getCharaName = useCharaName(contentTransMode);
+  const getCharaName = useCharaName();
   const getOriginalCharaName = useCharaName("original");
   const musicTagToName = useMusicTagName(contentTransMode);
 

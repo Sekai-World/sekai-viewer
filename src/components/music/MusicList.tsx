@@ -29,12 +29,7 @@ import React, {
   useReducer,
   useState,
 } from "react";
-import {
-  useCachedData,
-  useCharaName,
-  useLocalStorage,
-  useMusicTagName,
-} from "../../utils";
+import { useCachedData, useLocalStorage, useMusicTagName } from "../../utils";
 import InfiniteScroll from "../subs/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
@@ -55,6 +50,7 @@ import {
   characterSelectReducer,
 } from "../../stores/reducers";
 import { charaIcons } from "../../utils/resources";
+import { useCharaName } from "../../utils/i18n";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -73,7 +69,7 @@ const MusicList: React.FC<{}> = () => {
   const { t } = useTranslation();
   const { contentTransMode, isShowSpoiler } = useContext(SettingContext)!;
   const musicTagToName = useMusicTagName(contentTransMode);
-  const getCharaName = useCharaName(contentTransMode);
+  const getCharaName = useCharaName();
 
   const [musicsCache] = useCachedData<IMusicInfo>("musics");
   const [musicTags] = useCachedData<IMusicTagInfo>("musicTags");

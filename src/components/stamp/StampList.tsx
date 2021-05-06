@@ -19,22 +19,21 @@ import { FilterOutline, Filter, Pound } from "mdi-material-ui";
 import React, {
   Fragment,
   useCallback,
-  useContext,
   useEffect,
   useReducer,
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { SettingContext } from "../../context";
 import { characterSelectReducer } from "../../stores/reducers";
 import { useInteractiveStyles } from "../../styles/interactive";
 import { useLayoutStyles } from "../../styles/layout";
 import { IStampInfo } from "../../types";
-import { useCachedData, useCharaName, useLocalStorage } from "../../utils";
+import { useCachedData, useLocalStorage } from "../../utils";
 import { charaIcons } from "../../utils/resources";
 import GridView from "./GridView";
 import InfiniteScroll from "../subs/InfiniteScroll";
 import { ToggleButtonGroup, ToggleButton } from "@material-ui/lab";
+import { useCharaName } from "../../utils/i18n";
 
 const ListCard: React.FC<{ data?: IStampInfo }> = GridView;
 
@@ -42,8 +41,7 @@ const StampList: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
-  const { contentTransMode } = useContext(SettingContext)!;
-  const getCharaName = useCharaName(contentTransMode);
+  const getCharaName = useCharaName();
 
   const [stampsCache] = useCachedData<IStampInfo>("stamps");
 

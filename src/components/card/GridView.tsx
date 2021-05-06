@@ -7,12 +7,10 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
-import React, { useContext } from "react";
+import React from "react";
 import { Link, useRouteMatch } from "react-router-dom";
-import { SettingContext } from "../../context";
 import { ICardInfo } from "../../types";
-import { useCharaName } from "../../utils";
-import { useAssetI18n } from "../../utils/i18n";
+import { useAssetI18n, useCharaName } from "../../utils/i18n";
 import { CardSmallImage } from "../subs/CardImage";
 import { ContentTrans } from "../subs/ContentTrans";
 import SpoilerTag from "../subs/SpoilerTag";
@@ -33,11 +31,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const GridView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
-  const { contentTransMode } = useContext(SettingContext)!;
   const classes = useStyles();
   const { path } = useRouteMatch();
   const { getTranslated } = useAssetI18n();
-  const getCharaName = useCharaName(contentTransMode);
+  const getCharaName = useCharaName();
 
   if (!data) {
     // loading

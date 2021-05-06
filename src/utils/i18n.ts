@@ -5,6 +5,8 @@ import fetchBackend from "i18next-fetch-backend";
 import detector from "i18next-browser-languagedetector";
 import { useCallback, useContext } from "react";
 import { SettingContext } from "../context";
+import { useCachedData } from ".";
+import { ContentTransModeType, IGameChara } from "../types";
 
 export const assetI18n: typeof i18n = i18n.createInstance();
 // export const announcementI18n: typeof i18n = i18n.createInstance();
@@ -150,6 +152,66 @@ export function useAssetI18n() {
     [assetT, contentTransMode]
   );
   return { assetT, assetI18n, getTranslated };
+}
+
+export function useCharaName(forceTransMode?: ContentTransModeType) {
+  let { contentTransMode } = useContext(SettingContext) || {
+    contentTransMode: "original",
+  };
+  if (forceTransMode) contentTransMode = forceTransMode;
+  const [charas] = useCachedData<IGameChara>("gameCharacters");
+  const { assetT, assetI18n } = useAssetI18n();
+
+  return useCallback(
+    (charaId: number): string | undefined => {
+      if (!charas || !charas.length) return;
+      const chara = charas.find((chara) => chara.id === charaId);
+      const jpOrderCodes = ["zh-CN", "zh-TW", "ko", "ja", "id", "ms"];
+      if (chara?.firstName) {
+        switch (contentTransMode) {
+          case "original":
+            return `${chara.firstName} ${chara.givenName}`;
+          case "translated":
+            return jpOrderCodes.includes(assetI18n.language)
+              ? `${assetT(
+                  `character_name:${charaId}.firstName`,
+                  chara.firstName
+                )} ${assetT(
+                  `character_name:${charaId}.givenName`,
+                  chara.givenName
+                )}`
+              : `${assetT(
+                  `character_name:${charaId}.givenName`,
+                  chara.givenName
+                )} ${assetT(
+                  `character_name:${charaId}.firstName`,
+                  chara.firstName
+                )}`;
+          case "both":
+            return (
+              `${chara.firstName} ${chara.givenName} | ` +
+              (jpOrderCodes.includes(assetI18n.language)
+                ? `${assetT(
+                    `character_name:${charaId}.firstName`,
+                    chara.firstName
+                  )} ${assetT(
+                    `character_name:${charaId}.givenName`,
+                    chara.givenName
+                  )}`
+                : `${assetT(
+                    `character_name:${charaId}.givenName`,
+                    chara.givenName
+                  )} ${assetT(
+                    `character_name:${charaId}.firstName`,
+                    chara.firstName
+                  )}`)
+            );
+        }
+      }
+      return chara?.givenName;
+    },
+    [assetI18n.language, assetT, charas, contentTransMode]
+  );
 }
 
 // export function useAnnouncementI18n() {

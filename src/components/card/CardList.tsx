@@ -54,12 +54,7 @@ import {
   ISkillInfo,
   IUnitProfile,
 } from "../../types";
-import {
-  useCachedData,
-  useCharaName,
-  useLocalStorage,
-  useToggle,
-} from "../../utils";
+import { useCachedData, useLocalStorage, useToggle } from "../../utils";
 import InfiniteScroll from "../subs/InfiniteScroll";
 // import InfiniteScroll from "react-infinite-scroll-component";
 
@@ -86,7 +81,7 @@ import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 import { ContentTrans } from "../subs/ContentTrans";
 import { useCurrentEvent } from "../../utils/apiClient";
-import { useAssetI18n } from "../../utils/i18n";
+import { useAssetI18n, useCharaName } from "../../utils/i18n";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -137,8 +132,8 @@ const CardList: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
-  const { contentTransMode, isShowSpoiler } = useContext(SettingContext)!;
-  const getCharaName = useCharaName(contentTransMode);
+  const { isShowSpoiler } = useContext(SettingContext)!;
+  const getCharaName = useCharaName();
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
   const { getTranslated } = useAssetI18n();
 

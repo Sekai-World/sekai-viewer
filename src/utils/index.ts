@@ -61,7 +61,7 @@ import {
   ICheerfulCarnivalTeam,
   IArea,
 } from "./../types.d";
-import { useAssetI18n } from "./i18n";
+import { useAssetI18n, useCharaName } from "./i18n";
 import { useLocation } from "react-router-dom";
 import useSWR from "swr";
 import { useSnackbar } from "material-ui-snackbar-provider";
@@ -217,62 +217,6 @@ export function useMusicTagName(contentTransMode: ContentTransModeType) {
   }
 }
 
-export function useCharaName(contentTransMode: ContentTransModeType) {
-  const [charas] = useCachedData<IGameChara>("gameCharacters");
-  const { assetT, assetI18n } = useAssetI18n();
-
-  return useCallback(
-    (charaId: number): string | undefined => {
-      if (!charas || !charas.length) return;
-      const chara = charas.find((chara) => chara.id === charaId);
-      const jpOrderCodes = ["zh-CN", "zh-TW", "ko", "ja", "id", "ms"];
-      if (chara?.firstName) {
-        switch (contentTransMode) {
-          case "original":
-            return `${chara.firstName} ${chara.givenName}`;
-          case "translated":
-            return jpOrderCodes.includes(assetI18n.language)
-              ? `${assetT(
-                  `character_name:${charaId}.firstName`,
-                  chara.firstName
-                )} ${assetT(
-                  `character_name:${charaId}.givenName`,
-                  chara.givenName
-                )}`
-              : `${assetT(
-                  `character_name:${charaId}.givenName`,
-                  chara.givenName
-                )} ${assetT(
-                  `character_name:${charaId}.firstName`,
-                  chara.firstName
-                )}`;
-          case "both":
-            return (
-              `${chara.firstName} ${chara.givenName} | ` +
-              (jpOrderCodes.includes(assetI18n.language)
-                ? `${assetT(
-                    `character_name:${charaId}.firstName`,
-                    chara.firstName
-                  )} ${assetT(
-                    `character_name:${charaId}.givenName`,
-                    chara.givenName
-                  )}`
-                : `${assetT(
-                    `character_name:${charaId}.givenName`,
-                    chara.givenName
-                  )} ${assetT(
-                    `character_name:${charaId}.firstName`,
-                    chara.firstName
-                  )}`)
-            );
-        }
-      }
-      return chara?.givenName;
-    },
-    [assetI18n.language, assetT, charas, contentTransMode]
-  );
-}
-
 export function useMuisicMeta() {
   const fetchCached = useCallback(async (name: string) => {
     const { data }: { data: IMusicMeta[] } = await Axios.get(
@@ -326,13 +270,11 @@ export async function getRemoteAssetURL(
   }
 }
 
-export function useProcessedScenarioData(
-  contentTransMode: ContentTransModeType
-) {
+export function useProcessedScenarioData() {
   const [mobCharas] = useCachedData<IMobCharacter>("mobCharacters");
   const [chara2Ds] = useCachedData<ICharacter2D>("character2ds");
 
-  const getCharaName = useCharaName(contentTransMode);
+  const getCharaName = useCharaName();
 
   return useCallback(
     async (scenarioPath: string, isCardStory: boolean) => {

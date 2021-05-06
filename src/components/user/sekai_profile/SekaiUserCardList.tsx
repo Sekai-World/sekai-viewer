@@ -42,7 +42,7 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { SettingContext, UserContext } from "../../../context";
+import { UserContext } from "../../../context";
 import { useInteractiveStyles } from "../../../styles/interactive";
 import { useCurrentEvent, useStrapi } from "../../../utils/apiClient";
 import { CardThumb } from "../../subs/CardThumb";
@@ -72,11 +72,10 @@ import {
 import {
   useAlertSnackbar,
   useCachedData,
-  useCharaName,
   useLocalStorage,
 } from "../../../utils";
 import { ContentTrans } from "../../subs/ContentTrans";
-import { useAssetI18n } from "../../../utils/i18n";
+import { useAssetI18n, useCharaName } from "../../../utils/i18n";
 
 const SekaiUserCardList = () => {
   // const layoutClasses = useLayoutStyles();
@@ -86,8 +85,7 @@ const SekaiUserCardList = () => {
     UserContext
   )!;
   const { putSekaiCardList, deleteSekaiCardList } = useStrapi(jwtToken);
-  const { contentTransMode } = useContext(SettingContext)!;
-  const getCharaName = useCharaName(contentTransMode);
+  const getCharaName = useCharaName();
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
   const { getTranslated } = useAssetI18n();
   const { showError, showSuccess } = useAlertSnackbar();

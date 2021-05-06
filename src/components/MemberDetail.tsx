@@ -12,7 +12,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { TabContext, TabPanel } from "@material-ui/lab";
-import React, { Fragment, useContext, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory, useParams } from "react-router-dom";
 import Viewer from "react-viewer";
@@ -24,13 +24,13 @@ import {
   ICardInfo,
   IUnitProfile,
 } from "../types";
-import { getRemoteAssetURL, useCachedData, useCharaName } from "../utils";
+import { getRemoteAssetURL, useCachedData } from "../utils";
 import { UnitLogoMap } from "../utils/resources";
 import { CardThumb } from "./subs/CardThumb";
 import ColorPreview from "./subs/ColorPreview";
-import { SettingContext } from "../context";
 import { CharaNameTrans, ContentTrans } from "./subs/ContentTrans";
 import { OpenInNew } from "@material-ui/icons";
+import { useCharaName } from "../utils/i18n";
 
 const useStyle = makeStyles((theme) => ({
   tabpanel: {
@@ -65,8 +65,7 @@ const MemberDetail: React.FC<{}> = () => {
   const classes = useStyle();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
-  const { contentTransMode } = useContext(SettingContext)!;
-  const getCharaName = useCharaName(contentTransMode);
+  const getCharaName = useCharaName();
   const history = useHistory();
 
   const [cards] = useCachedData<ICardInfo>("cards");

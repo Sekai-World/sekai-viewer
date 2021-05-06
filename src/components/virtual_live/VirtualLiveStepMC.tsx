@@ -7,13 +7,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import axios from "axios";
-import React, {
-  Fragment,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from "react";
+import React, { Fragment, useEffect, useLayoutEffect, useState } from "react";
 import Image from "material-ui-image";
 import {
   CharacterSpawnEvent,
@@ -25,12 +19,12 @@ import {
   IMasterOfCermonyData,
   VirtualLiveSetlist,
 } from "../../types";
-import { getRemoteAssetURL, useCachedData, useCharaName } from "../../utils";
+import { getRemoteAssetURL, useCachedData } from "../../utils";
 import { charaIcons } from "../../utils/resources";
-import { SettingContext } from "../../context";
 import { useTranslation } from "react-i18next";
 import { AudioPlayButton } from "../storyreader/StoryReaderSnippet";
 import { useLayoutStyles } from "../../styles/layout";
+import { useCharaName } from "../../utils/i18n";
 
 type MCSerialData =
   | {
@@ -49,8 +43,7 @@ type MCSerialData =
 const MCCharacterSpawn: React.FC<{ data: CharacterSpawnEvent }> = ({
   data,
 }) => {
-  const { contentTransMode } = useContext(SettingContext)!;
-  const getCharaName = useCharaName(contentTransMode);
+  const getCharaName = useCharaName();
 
   const [character3ds] = useCachedData<ICharacter3D>("character3ds");
   const [characters] = useCachedData<IGameChara>("gameCharacters");
@@ -135,8 +128,7 @@ const MCCharacterSpawn: React.FC<{ data: CharacterSpawnEvent }> = ({
 const MCCharacterUnspawn: React.FC<{ data: CharacterUnspawnEvent }> = ({
   data,
 }) => {
-  const { contentTransMode } = useContext(SettingContext)!;
-  const getCharaName = useCharaName(contentTransMode);
+  const getCharaName = useCharaName();
   const { t } = useTranslation();
 
   const [character3ds] = useCachedData<ICharacter3D>("character3ds");
@@ -180,8 +172,7 @@ const MCCharacterTalk: React.FC<{ data: CharacterTalkEvent; mcId: string }> = ({
   data,
   mcId,
 }) => {
-  const { contentTransMode } = useContext(SettingContext)!;
-  const getCharaName = useCharaName(contentTransMode);
+  const getCharaName = useCharaName();
 
   const [character3ds] = useCachedData<ICharacter3D>("character3ds");
   const [characters] = useCachedData<IGameChara>("gameCharacters");

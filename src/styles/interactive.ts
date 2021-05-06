@@ -18,12 +18,19 @@ const useInteractiveStyles = makeStyles((theme) => ({
   inputHidden: {
     display: "none",
   },
+  noDecorationAlsoOnHover: {
+    textDecoration: "none",
+    "&:hover": {
+      textDecoration: "none",
+    },
+    color: "inherit",
+  },
   noDecoration: {
     textDecoration: "none",
     "&:hover": {
       textDecoration: "underline",
     },
-    color: theme.palette.text.primary,
+    color: "inherit",
   },
   pointer: {
     cursor: "pointer",

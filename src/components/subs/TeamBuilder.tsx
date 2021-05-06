@@ -32,12 +32,11 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { SettingContext, UserContext } from "../../context";
+import { UserContext } from "../../context";
 import { ICardInfo, IGameChara, ITeamCardState } from "../../types";
 import {
   useAlertSnackbar,
   useCachedData,
-  useCharaName,
   useLocalStorage,
   useToggle,
 } from "../../utils";
@@ -47,6 +46,7 @@ import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
 import { teamBuildReducer } from "../../stores/reducers";
 import { useStrapi } from "../../utils/apiClient";
 import { useTeamCalc } from "../../utils/teamCalc";
+import { useCharaName } from "../../utils/i18n";
 
 const useStyle = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -84,8 +84,7 @@ const TeamBuilder: React.FC<{
 }) => {
   const classes = useStyle();
   const { t } = useTranslation();
-  const { contentTransMode } = useContext(SettingContext)!;
-  const getCharaName = useCharaName(contentTransMode);
+  const getCharaName = useCharaName();
   const { jwtToken, sekaiProfile, updateSekaiProfile } = useContext(
     UserContext
   )!;

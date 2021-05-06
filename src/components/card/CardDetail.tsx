@@ -36,7 +36,7 @@ import {
   ISkillInfo,
   IUnitProfile,
 } from "../../types";
-import { getRemoteAssetURL, useCachedData, useCharaName } from "../../utils";
+import { getRemoteAssetURL, useCachedData } from "../../utils";
 import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
 
@@ -48,7 +48,7 @@ import {
 } from "../../utils/resources";
 import { useTranslation } from "react-i18next";
 import MaterialIcon from "../subs/MaterialIcon";
-import { useAssetI18n } from "../../utils/i18n";
+import { useAssetI18n, useCharaName } from "../../utils/i18n";
 import { SettingContext } from "../../context";
 import {
   CharaNameTrans,
@@ -101,7 +101,7 @@ const CardDetail: React.FC<{}> = () => {
   const { t } = useTranslation();
   const { assetT, getTranslated } = useAssetI18n();
   const { contentTransMode } = useContext(SettingContext)!;
-  const getCharaName = useCharaName(contentTransMode);
+  const getCharaName = useCharaName();
 
   const [charas] = useCachedData<IGameChara>("gameCharacters");
   const [cards] = useCachedData<ICardInfo>("cards");

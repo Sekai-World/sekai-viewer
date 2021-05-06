@@ -6,15 +6,14 @@ import {
   Paper,
   Typography,
 } from "@material-ui/core";
-import React, { Fragment, useContext, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import Image from "material-ui-image";
-import { SettingContext } from "../context";
 import { useLayoutStyles } from "../styles/layout";
 import { IGameChara, IMusicInfo, IMusicTagInfo, IUnitProfile } from "../types";
-import { getRemoteAssetURL, useCachedData, useCharaName } from "../utils";
-import { useAssetI18n } from "../utils/i18n";
+import { getRemoteAssetURL, useCachedData } from "../utils";
+import { useAssetI18n, useCharaName } from "../utils/i18n";
 import { charaIcons, UnitLogoMap } from "../utils/resources";
 import ColorPreview from "./subs/ColorPreview";
 import { CharaNameTrans, ContentTrans } from "./subs/ContentTrans";
@@ -71,8 +70,7 @@ const UnitDetail: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
-  const { contentTransMode } = useContext(SettingContext)!;
-  const getCharaName = useCharaName(contentTransMode);
+  const getCharaName = useCharaName();
 
   const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
   const [gameCharas] = useCachedData<IGameChara>("gameCharacters");
