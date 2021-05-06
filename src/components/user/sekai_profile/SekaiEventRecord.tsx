@@ -57,15 +57,17 @@ const SekaiEventRecord = (props: Props) => {
         const ev = events.find((elem) => elem.id === Number(currEvent.eventId));
         if (ev) {
           setSelectedEvent({
-            name: getTranslated(
-              contentTransMode,
-              `event_name:${currEvent.eventId}`,
-              ev.name
-            ),
+            name: getTranslated(`event_name:${currEvent.eventId}`, ev.name),
             id: ev.id,
           });
         }
-        setEventRecords(await getSekaiProfileEventRecordMe(currEvent.eventId));
+        try {
+          setEventRecords(
+            await getSekaiProfileEventRecordMe(currEvent.eventId)
+          );
+        } catch (error) {
+          setEventRecords([]);
+        }
       }
     })();
   }, [
@@ -85,11 +87,7 @@ const SekaiEventRecord = (props: Props) => {
               .slice()
               .reverse()
               .map((ev) => ({
-                name: getTranslated(
-                  contentTransMode,
-                  `event_name:${ev.id}`,
-                  ev.name
-                ),
+                name: getTranslated(`event_name:${ev.id}`, ev.name),
                 id: ev.id,
               }))}
             getOptionLabel={(option) => option.name}
@@ -120,7 +118,6 @@ const SekaiEventRecord = (props: Props) => {
             onClick={async () => {
               setSelectedEvent({
                 name: getTranslated(
-                  contentTransMode,
                   `event_name:${currEvent.eventId}`,
                   currEvent.eventJson.name
                 ),
@@ -141,51 +138,53 @@ const SekaiEventRecord = (props: Props) => {
         <Grid item>
           <Typography>{t("user:profile.event.current_record_info")}</Typography>
         </Grid>
-        {selectedEvent && selectedEvent.id === currEvent.eventId && (
-          <Grid item>
-            <Tooltip
-              title={
-                t("user:profile.label.update_left", {
-                  allowed: sekaiProfile!.eventGetAvailable,
-                  used: sekaiProfile!.eventGetUsed,
-                }) as string
-              }
-              disableFocusListener
-              arrow
-              interactive
-            >
-              <span>
-                <IconButton
-                  size="small"
-                  onClick={() => {
-                    setIsEventRecording(true);
-                    postSekaiProfileEventRecord(currEvent!.eventId).then(
-                      async (data) => {
-                        setEventRecords(await getSekaiProfileEventRecordMe());
-                        updateSekaiProfile({
-                          eventGetUsed: sekaiProfile!.eventGetUsed + 1,
-                        });
-                        setIsEventRecording(false);
-                      }
-                    );
-                  }}
-                  disabled={
-                    isCurrEventLoading ||
-                    isEventRecording ||
-                    sekaiProfile!.eventGetAvailable <=
-                      sekaiProfile!.eventGetUsed
-                  }
-                >
-                  {isEventRecording ? (
-                    <CircularProgress size={24} />
-                  ) : (
-                    <Update />
-                  )}
-                </IconButton>
-              </span>
-            </Tooltip>
-          </Grid>
-        )}
+        {!!selectedEvent &&
+          selectedEvent.id === currEvent.eventId &&
+          !!sekaiProfile && (
+            <Grid item>
+              <Tooltip
+                title={
+                  t("user:profile.label.update_left", {
+                    allowed: sekaiProfile.eventGetAvailable,
+                    used: sekaiProfile.eventGetUsed,
+                  }) as string
+                }
+                disableFocusListener
+                arrow
+                interactive
+              >
+                <span>
+                  <IconButton
+                    size="small"
+                    onClick={() => {
+                      setIsEventRecording(true);
+                      postSekaiProfileEventRecord(currEvent!.eventId).then(
+                        async (data) => {
+                          setEventRecords(await getSekaiProfileEventRecordMe());
+                          updateSekaiProfile({
+                            eventGetUsed: sekaiProfile.eventGetUsed + 1,
+                          });
+                          setIsEventRecording(false);
+                        }
+                      );
+                    }}
+                    disabled={
+                      isCurrEventLoading ||
+                      isEventRecording ||
+                      sekaiProfile.eventGetAvailable <=
+                        sekaiProfile.eventGetUsed
+                    }
+                  >
+                    {isEventRecording ? (
+                      <CircularProgress size={24} />
+                    ) : (
+                      <Update />
+                    )}
+                  </IconButton>
+                </span>
+              </Tooltip>
+            </Grid>
+          )}
         {eventRecords[0] && (
           <Fragment>
             <Grid item>

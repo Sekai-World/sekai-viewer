@@ -240,8 +240,8 @@ const SekaiID: React.FC<{}> = () => {
               {sekaiProfile.sekaiUserToken}
             </Typography>
           </Grid>
-          <Grid item xs={12} alignItems="center" spacing={1}>
-            <Grid container>
+          <Grid item xs={12}>
+            <Grid container alignItems="center" spacing={1}>
               <Grid item>
                 <Button
                   variant="contained"
