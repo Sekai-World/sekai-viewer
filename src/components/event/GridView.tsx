@@ -81,11 +81,7 @@ const GridView: React.FC<{ data?: IEventInfo }> = ({ data }) => {
         <CardMedia
           className={classes.media}
           image={eventLogo}
-          title={getTranslated(
-            contentTransMode,
-            `event_name:${data.id}`,
-            data.name
-          )}
+          title={getTranslated(`event_name:${data.id}`, data.name)}
         >
           <SpoilerTag
             style={{

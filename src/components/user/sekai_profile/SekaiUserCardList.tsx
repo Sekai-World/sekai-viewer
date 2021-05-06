@@ -608,7 +608,6 @@ const SekaiUserCardList = () => {
                             label={
                               <Typography variant="body2">
                                 {getTranslated(
-                                  contentTransMode,
                                   `unit_profile:${supportUnit}.name`,
                                   unitProfiles.find(
                                     (up) => up.unit === supportUnit

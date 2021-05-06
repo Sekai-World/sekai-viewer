@@ -58,11 +58,7 @@ const GridView: React.FC<{ data?: IHonorMission }> = ({ data }) => {
       <Card className={classes.card}>
         <CardMedia
           className={classes.media}
-          title={getTranslated(
-            contentTransMode,
-            `honor_mission:${data.id}`,
-            data.sentence
-          )}
+          title={getTranslated(`honor_mission:${data.id}`, data.sentence)}
         >
           <DegreeImage
             resourceBoxId={data.rewards[0].resourceBoxId}

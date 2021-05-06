@@ -180,11 +180,7 @@ const AgendaView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
           <Grid item xs={3} sm={2} md={1}>
             <Image
               src={jacket}
-              alt={getTranslated(
-                contentTransMode,
-                `music_titles:${data.id}`,
-                data.title
-              )}
+              alt={getTranslated(`music_titles:${data.id}`, data.title)}
               aspectRatio={1}
               color=""
             ></Image>

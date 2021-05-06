@@ -147,11 +147,7 @@ const MusicDetail: React.FC<{}> = () => {
   useEffect(() => {
     if (music) {
       document.title = t("title:musicDetail", {
-        title: getTranslated(
-          contentTransMode,
-          `music_titles:${musicId}`,
-          music.title
-        ),
+        title: getTranslated(`music_titles:${musicId}`, music.title),
       });
     }
   }, [music, musicId, contentTransMode, getTranslated, t]);
@@ -455,11 +451,7 @@ const MusicDetail: React.FC<{}> = () => {
   return music && musicVocals && musicVocals.length ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
-        {getTranslated(
-          contentTransMode,
-          `music_titles:${musicId}`,
-          music.title
-        )}
+        {getTranslated(`music_titles:${musicId}`, music.title)}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="md">
         <Alert severity="warning">

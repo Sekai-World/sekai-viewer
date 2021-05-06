@@ -337,11 +337,7 @@ const GachaDetailPage: React.FC<{}> = () => {
 
   useEffect(() => {
     if (gacha) {
-      const name = getTranslated(
-        contentTransMode,
-        `gacha_name:${gachaId}`,
-        gacha.name
-      );
+      const name = getTranslated(`gacha_name:${gachaId}`, gacha.name);
       document.title = t("title:gachaDetail", {
         name,
       });
@@ -488,7 +484,7 @@ const GachaDetailPage: React.FC<{}> = () => {
     return (
       <Fragment>
         <Typography variant="h6" className={layoutClasses.header}>
-          {getTranslated(contentTransMode, `gacha_name:${gachaId}`, gacha.name)}
+          {getTranslated(`gacha_name:${gachaId}`, gacha.name)}
         </Typography>
         <Container className={layoutClasses.content} maxWidth="md">
           <TabContext value={picTabVal}>

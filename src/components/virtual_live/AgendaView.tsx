@@ -99,11 +99,7 @@ const AgendaView: React.FC<{ data?: IVirtualLiveInfo }> = ({ data }) => {
           <Grid item xs={12} md={4}>
             <Image
               src={virtualLiveLogo}
-              alt={getTranslated(
-                contentTransMode,
-                `virtualLive_name:${data.id}`,
-                data.name
-              )}
+              alt={getTranslated(`virtualLive_name:${data.id}`, data.name)}
               aspectRatio={3.2562}
               color=""
             ></Image>

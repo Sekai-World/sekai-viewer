@@ -73,11 +73,7 @@ const GridView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
         <CardMedia
           className={classes.media}
           image={jacket}
-          title={getTranslated(
-            contentTransMode,
-            `music_titles:${data.id}`,
-            data.title
-          )}
+          title={getTranslated(`music_titles:${data.id}`, data.title)}
         >
           <SpoilerTag
             style={{

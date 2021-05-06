@@ -40,7 +40,6 @@ const VirtualLiveDetail: React.FC<{}> = () => {
   useEffect(() => {
     if (virtualLive) {
       const name = getTranslated(
-        contentTransMode,
         `virtualLive_name:${virtualLiveId}`,
         virtualLive.name
       );
@@ -79,11 +78,7 @@ const VirtualLiveDetail: React.FC<{}> = () => {
   return virtualLive && gameCharacterUnits ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
-        {getTranslated(
-          contentTransMode,
-          `virtualLive_name:${virtualLiveId}`,
-          virtualLive.name
-        )}
+        {getTranslated(`virtualLive_name:${virtualLiveId}`, virtualLive.name)}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="md">
         <Grid container direction="row" spacing={1} alignItems="center">

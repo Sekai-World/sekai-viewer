@@ -23,7 +23,7 @@ import {
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Image from "material-ui-image";
-import { SettingContext, UserContext } from "../../../context";
+import { UserContext } from "../../../context";
 import { charaIcons } from "../../../utils/resources";
 import DegreeImage from "../../subs/DegreeImage";
 import { getRemoteAssetURL, useCachedData, useToggle } from "../../../utils";
@@ -141,7 +141,7 @@ const MusicSingleData: React.FC<{ umusic?: UserMusic; music: IMusicInfo }> = ({
 }) => {
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
-  const { contentTransMode } = useContext(SettingContext)!;
+  // const { contentTransMode } = useContext(SettingContext)!;
 
   return umusic ? (
     <Fragment>
@@ -151,7 +151,6 @@ const MusicSingleData: React.FC<{ umusic?: UserMusic; music: IMusicInfo }> = ({
             <ProfileMusicImage
               assetbundleName={music.assetbundleName}
               title={getTranslated(
-                contentTransMode,
                 `music_titles:${umusic.musicId}`,
                 music.title
               )}
@@ -283,7 +282,7 @@ const SekaiUserStatistics = () => {
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
   const { sekaiProfile } = useContext(UserContext)!;
-  const { contentTransMode } = useContext(SettingContext)!;
+  // const { contentTransMode } = useContext(SettingContext)!;
 
   const [areas] = useCachedData<IArea>("areas");
   const [areaItems] = useCachedData<IAreaItem>("areaItems");
@@ -593,11 +592,7 @@ const SekaiUserStatistics = () => {
                     >
                       {musics.map((m) => (
                         <MenuItem key={m.id} value={m.id}>
-                          {getTranslated(
-                            contentTransMode,
-                            `music_titles:${m.id}`,
-                            m.title
-                          )}
+                          {getTranslated(`music_titles:${m.id}`, m.title)}
                         </MenuItem>
                       ))}
                     </Select>

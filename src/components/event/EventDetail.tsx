@@ -115,11 +115,7 @@ const EventDetail: React.FC<{}> = () => {
 
   useEffect(() => {
     if (event) {
-      const name = getTranslated(
-        contentTransMode,
-        `event_name:${eventId}`,
-        event.name
-      );
+      const name = getTranslated(`event_name:${eventId}`, event.name);
       document.title = t("title:eventDetail", {
         name,
       });
@@ -328,7 +324,7 @@ const EventDetail: React.FC<{}> = () => {
     eventCards.length ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
-        {getTranslated(contentTransMode, `event_name:${eventId}`, event.name)}
+        {getTranslated(`event_name:${eventId}`, event.name)}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="md">
         <TabContext value={imgTabVal}>

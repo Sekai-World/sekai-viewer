@@ -205,11 +205,7 @@ const CardDetail: React.FC<{}> = () => {
     if (!cards || !cards.length) return;
     const _card = cards.find((elem) => elem.id === Number(cardId))!;
     if (_card) {
-      const prefix = getTranslated(
-        contentTransMode,
-        `card_prefix:${_card.id}`,
-        _card.prefix
-      );
+      const prefix = getTranslated(`card_prefix:${_card.id}`, _card.prefix);
       document.title = t("title:cardDetail", {
         prefix,
         character: getCharaName(_card.characterId),
@@ -239,7 +235,6 @@ const CardDetail: React.FC<{}> = () => {
       );
       setCardTitle(
         `${getTranslated(
-          contentTransMode,
           `card_prefix:${_card.id}`,
           _card.prefix
         )} - ${getCharaName(_card.characterId)}`
@@ -528,7 +523,7 @@ const CardDetail: React.FC<{}> = () => {
             <Grid item xs={8}>
               <Link
                 to={"/chara/" + card.characterId}
-                style={{ textDecoration: "none" }}
+                className={interactiveClasses.noDecoration}
               >
                 <Grid
                   container

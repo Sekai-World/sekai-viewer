@@ -107,11 +107,7 @@ const UnitDetail: React.FC<{}> = () => {
   return unit ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
-        {getTranslated(
-          contentTransMode,
-          `unit_profile:${unit.unit}.name`,
-          unit.unitName
-        )}
+        {getTranslated(`unit_profile:${unit.unit}.name`, unit.unitName)}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="md">
         <div style={{ textAlign: "center" }}>
@@ -259,7 +255,6 @@ const UnitDetail: React.FC<{}> = () => {
                         <UnitMusicImage
                           assetbundleName={um.assetbundleName}
                           title={getTranslated(
-                            contentTransMode,
                             `music_titles:${um.id}`,
                             um.title
                           )}

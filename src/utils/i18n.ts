@@ -1,9 +1,10 @@
-import { ContentTransModeType } from "./../types.d";
+// import { ContentTransModeType } from "./../types.d";
 import i18n, { TOptions } from "i18next";
 import { initReactI18next } from "react-i18next";
 import fetchBackend from "i18next-fetch-backend";
 import detector from "i18next-browser-languagedetector";
-import { useCallback } from "react";
+import { useCallback, useContext } from "react";
+import { SettingContext } from "../context";
 
 export const assetI18n: typeof i18n = i18n.createInstance();
 // export const announcementI18n: typeof i18n = i18n.createInstance();
@@ -124,6 +125,10 @@ export async function initGlobalI18n() {
 }
 
 export function useAssetI18n() {
+  // console.log(useContext(SettingContext));
+  const { contentTransMode } = useContext(SettingContext) || {
+    contentTransMode: "original",
+  };
   const assetT = useCallback(
     (key: string, original: string, options?: string | TOptions): string => {
       const translated = assetI18n.t(key, options);
@@ -132,13 +137,8 @@ export function useAssetI18n() {
     []
   );
   const getTranslated = useCallback(
-    (
-      mode: ContentTransModeType,
-      key: string,
-      original: string,
-      options?: string | TOptions
-    ) => {
-      switch (mode) {
+    (key: string, original: string, options?: string | TOptions) => {
+      switch (contentTransMode) {
         case "original":
           return original;
         case "translated":
@@ -147,7 +147,7 @@ export function useAssetI18n() {
           return `${original} | ${assetT(key, original, options)}`;
       }
     },
-    [assetT]
+    [assetT, contentTransMode]
   );
   return { assetT, assetI18n, getTranslated };
 }

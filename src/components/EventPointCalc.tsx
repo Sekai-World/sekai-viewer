@@ -223,7 +223,6 @@ const MusicRecommend: React.FC<{}> = () => {
                       musics.map((music) => (
                         <MenuItem key={`music-${music.id}`} value={music.id}>
                           {getTranslated(
-                            contentTransMode,
                             `music_titles:${music.id}`,
                             music!.title
                           )}

@@ -59,11 +59,7 @@ const GridView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
     <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
       <Card className={classes.card}>
         <CardMedia
-          title={getTranslated(
-            contentTransMode,
-            `card_prefix:${data.id}`,
-            data.prefix
-          )}
+          title={getTranslated(`card_prefix:${data.id}`, data.prefix)}
           style={{
             position: "relative",
           }}
