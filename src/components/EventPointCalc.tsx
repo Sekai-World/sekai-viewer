@@ -17,15 +17,8 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
-import React, {
-  Fragment,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { SettingContext } from "../context";
 import { useLayoutStyles } from "../styles/layout";
 import { ICardInfo, IMusicInfo, ISkillInfo, ITeamCardState } from "../types";
 import { useCachedData, useMuisicMeta } from "../utils";
@@ -46,7 +39,6 @@ const MusicRecommend: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
-  const { contentTransMode } = useContext(SettingContext)!;
 
   const [cards] = useCachedData<ICardInfo>("cards");
   const [skills] = useCachedData<ISkillInfo>("skills");

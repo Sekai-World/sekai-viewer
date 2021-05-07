@@ -7,10 +7,9 @@ import {
   Chip,
 } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
-import { SettingContext } from "../../context";
 import {
   IMusicDifficultyInfo,
   IMusicInfo,
@@ -74,7 +73,6 @@ const AgendaView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
   const { path } = useRouteMatch();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
-  const { contentTransMode } = useContext(SettingContext)!;
 
   const [musicDiffis] = useCachedData<IMusicDifficultyInfo>(
     "musicDifficulties"

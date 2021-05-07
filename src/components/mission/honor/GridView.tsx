@@ -7,10 +7,9 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
-import React, { Fragment, useContext } from "react";
+import React, { Fragment } from "react";
 // import { useTranslation } from "react-i18next";
 // import { Link, useRouteMatch } from "react-router-dom";
-import { SettingContext } from "../../../context";
 import { IHonorMission } from "../../../types";
 import { useAssetI18n } from "../../../utils/i18n";
 import { ContentTrans } from "../../subs/ContentTrans";
@@ -35,7 +34,6 @@ const GridView: React.FC<{ data?: IHonorMission }> = ({ data }) => {
   // const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
   // const { path } = useRouteMatch();
-  const { contentTransMode } = useContext(SettingContext)!;
 
   if (!data) {
     // loading
