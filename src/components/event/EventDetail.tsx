@@ -268,19 +268,23 @@ const EventDetail: React.FC<{}> = () => {
     if (event) {
       getRemoteAssetURL(
         `event/${event.assetbundleName}/logo_rip/logo.webp`,
-        setEventLogo
+        setEventLogo,
+        window.isChinaMainland
       );
       getRemoteAssetURL(
         `home/banner/${event.assetbundleName}_rip/${event.assetbundleName}.webp`,
-        setEventBanner
+        setEventBanner,
+        window.isChinaMainland
       );
       getRemoteAssetURL(
         `event/${event.assetbundleName}/screen_rip/bg.webp`,
-        setEventBackground
+        setEventBackground,
+        window.isChinaMainland
       );
       getRemoteAssetURL(
         `event/${event.assetbundleName}/screen_rip/character.webp`,
-        setEventCharacter
+        setEventCharacter,
+        window.isChinaMainland
       );
     }
   }, [event]);
@@ -289,11 +293,13 @@ const EventDetail: React.FC<{}> = () => {
     if (event && ccTeams.length) {
       getRemoteAssetURL(
         `event/${event.assetbundleName}/team_image_rip/${ccTeams[0].assetbundleName}.webp`,
-        setCcTeam1Logo
+        setCcTeam1Logo,
+        window.isChinaMainland
       );
       getRemoteAssetURL(
         `event/${event.assetbundleName}/team_image_rip/${ccTeams[1].assetbundleName}.webp`,
-        setCcTeam2Logo
+        setCcTeam2Logo,
+        window.isChinaMainland
       );
     }
   }, [ccTeams, cheerfulCarnivalSummaries, cheerfulCarnivalTeams, event]);

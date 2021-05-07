@@ -2,7 +2,6 @@ import {
   Avatar,
   Button,
   Card,
-  CardMedia,
   Chip,
   CircularProgress,
   Fab,
@@ -16,6 +15,7 @@ import { useTranslation } from "react-i18next";
 import { Howl } from "howler";
 import { charaIcons } from "../../utils/resources";
 import { useEffect } from "react";
+import Image from "material-ui-image";
 
 const useStyle = makeStyles((theme) => ({
   card: {
@@ -183,10 +183,12 @@ export const SpecialEffect: React.FC<{
                 </Grid>
                 {isBGOpen ? (
                   <Grid item xs={12}>
-                    <CardMedia
+                    <Image
                       onClick={() => window.open(resource, "_blank")}
-                      image={resource}
-                      style={{ paddingTop: "56.25%", cursor: "pointer" }}
+                      src={resource}
+                      style={{ cursor: "pointer" }}
+                      color=""
+                      aspectRatio={1.624}
                     />
                   </Grid>
                 ) : (

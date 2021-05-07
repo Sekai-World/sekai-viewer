@@ -270,6 +270,24 @@ export async function getRemoteAssetURL(
   }
 }
 
+export async function getMovieUrl(stringVal: string) {
+  const buildDataUrl = await getRemoteAssetURL(
+    `scenario/movie/${stringVal}_rip/moviebundlebuilddata.asset`,
+    undefined,
+    window.isChinaMainland
+  );
+  const buildData = (await Axios.get(buildDataUrl, { responseType: "json" }))
+    .data;
+  const fileName = buildData.movieBundleDatas[0].usmFileName
+    .replace(/(-\d{3})?\.usm\.bytes/, "")
+    .toLowerCase();
+  return getRemoteAssetURL(
+    `scenario/movie/${stringVal}_rip/${fileName}.mp4`,
+    undefined,
+    window.isChinaMainland
+  );
+}
+
 export function useProcessedScenarioData() {
   const [mobCharas] = useCachedData<IMobCharacter>("mobCharacters");
   const [chara2Ds] = useCachedData<ICharacter2D>("character2ds");
@@ -296,7 +314,11 @@ export function useProcessedScenarioData() {
         return ret;
 
       const { data }: { data: IScenarioData } = await Axios.get(
-        await getRemoteAssetURL(scenarioPath),
+        await getRemoteAssetURL(
+          scenarioPath,
+          undefined,
+          window.isChinaMainland
+        ),
         {
           responseType: "json",
         }
@@ -321,7 +343,9 @@ export function useProcessedScenarioData() {
           seType: "ChangeBackground",
           body: FirstBgm,
           resource: await getRemoteAssetURL(
-            `scenario/background/${FirstBackground}_rip/${FirstBackground}.webp`
+            `scenario/background/${FirstBackground}_rip/${FirstBackground}.webp`,
+            undefined,
+            window.isChinaMainland
           ),
         });
       }
@@ -334,7 +358,9 @@ export function useProcessedScenarioData() {
           hasBgm: true,
           hasSe: false,
           bgm: await getRemoteAssetURL(
-            `sound/scenario/bgm/${FirstBgm}_rip/${FirstBgm}.mp3`
+            `sound/scenario/bgm/${FirstBgm}_rip/${FirstBgm}.mp3`,
+            undefined,
+            window.isChinaMainland
           ),
           se: "",
         });
@@ -401,7 +427,11 @@ export function useProcessedScenarioData() {
                 chara,
                 body: talkData.Body,
                 voice: talkData.Voices.length
-                  ? await getRemoteAssetURL(voiceUrl)
+                  ? await getRemoteAssetURL(
+                      voiceUrl,
+                      undefined,
+                      window.isChinaMainland
+                    )
                   : "",
               };
             }
@@ -423,18 +453,18 @@ export function useProcessedScenarioData() {
                 resource:
                   specialEffectType === "FullScreenText"
                     ? await getRemoteAssetURL(
-                        `sound/scenario/voice/${ScenarioId}_rip/${specialEffect.StringValSub}.mp3`
+                        `sound/scenario/voice/${ScenarioId}_rip/${specialEffect.StringValSub}.mp3`,
+                        undefined,
+                        window.isChinaMainland
                       )
                     : specialEffectType === "ChangeBackground"
                     ? await getRemoteAssetURL(
-                        `scenario/background/${specialEffect.StringValSub}_rip/${specialEffect.StringValSub}.webp`
+                        `scenario/background/${specialEffect.StringValSub}_rip/${specialEffect.StringValSub}.webp`,
+                        undefined,
+                        window.isChinaMainland
                       )
                     : specialEffectType === "Movie"
-                    ? await getRemoteAssetURL(
-                        `scenario/movie/${specialEffect.StringVal}_rip/${
-                          specialEffect.StringVal.split("_")[0]
-                        }.mp4`
-                      )
+                    ? await getMovieUrl(specialEffect.StringVal)
                     : "",
               };
             }
@@ -454,12 +484,16 @@ export function useProcessedScenarioData() {
                 hasSe: !!soundData.Se,
                 bgm: soundData.Bgm
                   ? await getRemoteAssetURL(
-                      `sound/scenario/bgm/${soundData.Bgm}_rip/${soundData.Bgm}.mp3`
+                      `sound/scenario/bgm/${soundData.Bgm}_rip/${soundData.Bgm}.mp3`,
+                      undefined,
+                      window.isChinaMainland
                     )
                   : "",
                 se: soundData.Se
                   ? await getRemoteAssetURL(
-                      `sound/scenario/se/se_pack00001_rip/${soundData.Se}.mp3`
+                      `sound/scenario/se/se_pack00001_rip/${soundData.Se}.mp3`,
+                      undefined,
+                      window.isChinaMainland
                     )
                   : "",
               };
