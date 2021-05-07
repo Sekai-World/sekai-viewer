@@ -345,7 +345,10 @@ const MusicDetail: React.FC<{}> = () => {
   const getActalPlaybackTime = useCallback(
     (howl: Howl) => {
       if (!music || !!actualPlaybackTime) return;
-      const durationMsec = (howl.duration() - music.fillerSec) * 1000;
+      let durationMsec;
+      if (trimmedLongMusicPlaybackURL && trimSilence)
+        durationMsec = howl.duration() * 1000;
+      else durationMsec = (howl.duration() - music.fillerSec) * 1000;
       setActualPlaybackTime(
         `${humanizeDurationShort(durationMsec, {
           units: ["s"],
@@ -360,7 +363,13 @@ const MusicDetail: React.FC<{}> = () => {
         })})`
       );
     },
-    [actualPlaybackTime, humanizeDurationShort, music]
+    [
+      actualPlaybackTime,
+      humanizeDurationShort,
+      music,
+      trimSilence,
+      trimmedLongMusicPlaybackURL,
+    ]
   );
 
   const onSave = useCallback(
