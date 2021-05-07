@@ -94,6 +94,7 @@ export async function initGlobalI18n() {
         "card_gacha_phrase",
         "cheerful_carnival_teams",
         "cheerful_carnival_themes",
+        "area_name",
       ],
       fallbackLng: {
         default: ["ja"],

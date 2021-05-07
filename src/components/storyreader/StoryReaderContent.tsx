@@ -16,6 +16,7 @@ import {
   SnippetAction,
   ICharaProfile,
   ICardEpisode,
+  IActionSet,
 } from "../../types.d";
 import {
   getRemoteAssetURL,
@@ -50,6 +51,7 @@ const StoryReaderContent: React.FC<{ storyType: string; storyId: string }> = ({
   const [eventStories] = useCachedData<IEventStory>("eventStories");
   const [characterProfiles] = useCachedData<ICharaProfile>("characterProfiles");
   const [cardEpisodes] = useCachedData<ICardEpisode>("cardEpisodes");
+  const [actionSets] = useCachedData<IActionSet>("actionSets");
 
   const [bannerUrl, setBannerUrl] = useState<string>("");
   const [chapterTitle, setChapterTitle] = useState<string>("");
@@ -192,6 +194,32 @@ const StoryReaderContent: React.FC<{ storyType: string; storyId: string }> = ({
             setReleaseConditionId(episode.releaseConditionId);
           }
           break;
+        case "areaTalk":
+          if (actionSets) {
+            const [, , , , actionSetId] = storyId.split("/");
+
+            const episode = actionSets.find(
+              (as) => as.id === Number(actionSetId)
+            )!;
+
+            // getRemoteAssetURL(
+            //   `character/member_small/${episode.assetbundleName}_rip/card_normal.webp`,
+            //   setBannerUrl,
+            //   window.isChinaMainland
+            // );
+            getProcessedScenarioData(
+              `scenario/actionset/group${Math.floor(episode.id / 100)}_rip/${
+                episode.scenarioId
+              }.asset`,
+              false,
+              true
+            ).then((data) => setScenarioData(data));
+
+            setChapterTitle("");
+            setEpisodeTitle("");
+            // setReleaseConditionId(episode.releaseConditionId);
+          }
+          break;
       }
     } catch (error) {
       showError("failed to load episode");
@@ -207,71 +235,74 @@ const StoryReaderContent: React.FC<{ storyType: string; storyId: string }> = ({
     t,
     getTranslated,
     showError,
+    actionSets,
   ]);
 
   return (
     <Container className={layoutClasses.content}>
-      <Paper className={classes.episodeBanner}>
-        <Grid container spacing={1} justify="space-around">
-          <Grid
-            item
-            xs={storyType === "charaStory" ? 6 : 8}
-            sm={storyType === "charaStory" ? 3 : 4}
-            lg={storyType === "charaStory" ? 2 : 3}
-          >
-            <Image
-              src={bannerUrl}
-              color=""
-              aspectRatio={
-                storyType === "charaStory"
-                  ? 1
-                  : storyType === "cardStory"
-                  ? 1.774
-                  : 1.944
-              }
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
+      {storyType !== "areaTalk" && (
+        <Paper className={classes.episodeBanner}>
+          <Grid container spacing={1} justify="space-around">
             <Grid
-              container
-              spacing={1}
-              alignItems="center"
-              justify="center"
-              style={{ height: "100%" }}
+              item
+              xs={storyType === "charaStory" ? 6 : 8}
+              sm={storyType === "charaStory" ? 3 : 4}
+              lg={storyType === "charaStory" ? 2 : 3}
             >
-              {chapterTitle ? (
+              <Image
+                src={bannerUrl}
+                color=""
+                aspectRatio={
+                  storyType === "charaStory"
+                    ? 1
+                    : storyType === "cardStory"
+                    ? 1.774
+                    : 1.944
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Grid
+                container
+                spacing={1}
+                alignItems="center"
+                justify="center"
+                style={{ height: "100%" }}
+              >
+                {chapterTitle ? (
+                  <Grid item xs={12}>
+                    <Typography align="center">{chapterTitle}</Typography>
+                  </Grid>
+                ) : null}
                 <Grid item xs={12}>
-                  <Typography align="center">{chapterTitle}</Typography>
+                  <Typography align="center">{episodeTitle}</Typography>
                 </Grid>
-              ) : null}
-              <Grid item xs={12}>
-                <Typography align="center">{episodeTitle}</Typography>
-              </Grid>
-              {releaseConditionId ? (
-                <Grid item xs={12}>
-                  <Grid
-                    container
-                    alignItems="center"
-                    justify="center"
-                    spacing={1}
-                  >
-                    <Grid item>
-                      <Chip label={t("common:releaseCondition")} />
-                    </Grid>
-                    <Grid item>
-                      <ReleaseCondTrans
-                        releaseCondId={releaseConditionId}
-                        originalProps={{ align: "center" }}
-                        translatedProps={{ align: "center" }}
-                      />
+                {releaseConditionId ? (
+                  <Grid item xs={12}>
+                    <Grid
+                      container
+                      alignItems="center"
+                      justify="center"
+                      spacing={1}
+                    >
+                      <Grid item>
+                        <Chip label={t("common:releaseCondition")} />
+                      </Grid>
+                      <Grid item>
+                        <ReleaseCondTrans
+                          releaseCondId={releaseConditionId}
+                          originalProps={{ align: "center" }}
+                          translatedProps={{ align: "center" }}
+                        />
+                      </Grid>
                     </Grid>
                   </Grid>
-                </Grid>
-              ) : null}
+                ) : null}
+              </Grid>
             </Grid>
           </Grid>
-        </Grid>
-      </Paper>
+        </Paper>
+      )}
       {!scenarioData.actions.length && (
         <LinearProgress variant="indeterminate" />
       )}

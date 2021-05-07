@@ -5,6 +5,7 @@ import {
   Card,
   CardContent,
   makeStyles,
+  Avatar,
 } from "@material-ui/core";
 import React, { Fragment, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -12,15 +13,18 @@ import { Link, Route, Switch, useRouteMatch } from "react-router-dom";
 import { useInteractiveStyles } from "../../styles/interactive";
 import { useLayoutStyles } from "../../styles/layout";
 import {
+  IActionSet,
+  IArea,
   ICardEpisode,
   ICardInfo,
+  ICharacter2D,
   ICharaProfile,
   IEventInfo,
   IEventStory,
   IUnitProfile,
   IUnitStory,
 } from "../../types";
-import { useCachedData } from "../../utils";
+import { realityAreaWorldmap, useCachedData } from "../../utils";
 import { useAssetI18n, useCharaName } from "../../utils/i18n";
 import { charaIcons, UnitLogoMap } from "../../utils/resources";
 // import { useAssetI18n } from "../../utils/i18n";
@@ -56,6 +60,9 @@ const StoryReader: React.FC<{}> = () => {
   const [characterProfiles] = useCachedData<ICharaProfile>("characterProfiles");
   const [cardEpisodes] = useCachedData<ICardEpisode>("cardEpisodes");
   const [cards] = useCachedData<ICardInfo>("cards");
+  const [areas] = useCachedData<IArea>("areas");
+  const [actionSets] = useCachedData<IActionSet>("actionSets");
+  const [chara2Ds] = useCachedData<ICharacter2D>("character2ds");
 
   const breadcrumbNameMap: { [key: string]: string } = useMemo(
     () => ({
@@ -64,6 +71,8 @@ const StoryReader: React.FC<{}> = () => {
       unitStory: t("story_reader:selectValue.unitStory"),
       charaStory: t("story_reader:selectValue.charaStory"),
       cardStory: t("story_reader:selectValue.cardStory"),
+      areaTalk: t("story_reader:selectValue.areaTalk"),
+      liveTalk: t("story_reader:selectValue.liveTalk"),
     }),
     [t]
   );
@@ -203,6 +212,22 @@ const StoryReader: React.FC<{}> = () => {
                         }
                       }
                       break;
+                    case "areaTalk":
+                      if (areas && idx === 2) {
+                        const area = areas.find(
+                          (area) => area.id === Number(pathname)
+                        );
+                        if (area) {
+                          name = getTranslated(
+                            `area_name:${area.id}`,
+                            area.name
+                          );
+                        }
+                      }
+                      if (idx === 3) {
+                        name = pathname;
+                      }
+                      break;
                   }
                 }
 
@@ -303,6 +328,15 @@ const StoryReader: React.FC<{}> = () => {
                 </Card>
               </Link>
             </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <Card>
+                <CardContent>
+                  <Typography color="textSecondary">
+                    {t("story_reader:selectValue.liveTalk")}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
           </Grid>
         </Route>
         <Route path={`${path}/eventStory`} exact>
@@ -342,7 +376,6 @@ const StoryReader: React.FC<{}> = () => {
         </Route>
         <Route path={`${path}/eventStory/:eventId`} exact>
           {({ match }) => {
-            // console.log(match);
             const { eventId } = match?.params;
             if (eventId && eventStories) {
               const chapter = eventStories.find(
@@ -719,6 +752,142 @@ const StoryReader: React.FC<{}> = () => {
           {({ match }) =>
             !!match && (
               <StoryReaderContent storyType="cardStory" storyId={match.url} />
+            )
+          }
+        </Route>
+        <Route path={`${path}/areaTalk`} exact>
+          <Grid container spacing={1}>
+            {!!areas &&
+              areas
+                .filter((area) => area.areaType === "spirit_world")
+                .map((area) => (
+                  <Grid item xs={12} sm={6} md={3} key={area.id}>
+                    <Link
+                      className={interactiveClasses.noDecorationAlsoOnHover}
+                      color="inherit"
+                      to={`/storyreader/areaTalk/${area.id}`}
+                    >
+                      <Card className={classes.selectCard}>
+                        <CardContent>
+                          <ImageWrapper
+                            src={`worldmap/contents/normal_rip/img_worldmap_areas${String(
+                              area.id
+                            ).padStart(2, "0")}.webp`}
+                            color=""
+                            aspectRatio={1.272}
+                          />
+                        </CardContent>
+                        <CardContent>
+                          <ContentTrans
+                            contentKey={`area_name:${area.id}`}
+                            original={area.name}
+                            originalProps={{ style: { overflow: "hidden" } }}
+                            translatedProps={{ style: { overflow: "hidden" } }}
+                          />
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  </Grid>
+                ))}
+            {!!areas &&
+              areas
+                .filter((area) => area.areaType === "reality_world")
+                .map((area, idx) => (
+                  <Grid item xs={12} sm={6} md={3} key={area.id}>
+                    <Link
+                      className={interactiveClasses.noDecorationAlsoOnHover}
+                      color="inherit"
+                      to={`/storyreader/areaTalk/${area.id}`}
+                    >
+                      <Card className={classes.selectCard}>
+                        <CardContent>
+                          <ImageWrapper
+                            src={`worldmap/contents/normal_rip/worldmap_area${String(
+                              realityAreaWorldmap[String(idx + 1)]
+                            ).padStart(2, "0")}.webp`}
+                            color=""
+                            aspectRatio={1.3}
+                          />
+                        </CardContent>
+                        <CardContent>
+                          <ContentTrans
+                            contentKey={`area_name:${area.id}`}
+                            original={area.name}
+                            originalProps={{ style: { overflow: "hidden" } }}
+                            translatedProps={{ style: { overflow: "hidden" } }}
+                          />
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  </Grid>
+                ))}
+          </Grid>
+        </Route>
+        <Route path={`${path}/areaTalk/:areaId`} exact>
+          {({ match }) => {
+            const { areaId } = match?.params;
+            if (areaId && areas) {
+              const area = areas.find((area) => area.id === Number(areaId));
+              if (area && actionSets && chara2Ds) {
+                return (
+                  <Grid container spacing={1}>
+                    {actionSets
+                      .filter(
+                        (as) =>
+                          as.areaId === Number(areaId) &&
+                          as.actionSetType === "normal"
+                      )
+                      .map((actionSet) => (
+                        <Grid
+                          item
+                          xs={6}
+                          sm={4}
+                          md={3}
+                          lg={2}
+                          key={actionSet.id}
+                        >
+                          <Link
+                            className={
+                              interactiveClasses.noDecorationAlsoOnHover
+                            }
+                            color="inherit"
+                            to={`${match?.url}/${actionSet.id}`}
+                          >
+                            <Card className={classes.selectCard}>
+                              <CardContent>
+                                <Grid container spacing={1}>
+                                  {actionSet.characterIds.map((charaId) => {
+                                    const characterId = chara2Ds.find(
+                                      (c2d) => c2d.id === charaId
+                                    )!.characterId;
+                                    return (
+                                      <Grid item key={charaId}>
+                                        <Avatar
+                                          src={
+                                            charaIcons[
+                                              `CharaIcon${characterId}` as "CharaIcon1"
+                                            ]
+                                          }
+                                        />
+                                      </Grid>
+                                    );
+                                  })}
+                                </Grid>
+                              </CardContent>
+                            </Card>
+                          </Link>
+                        </Grid>
+                      ))}
+                  </Grid>
+                );
+              }
+            }
+          }}
+        </Route>
+        <Route path={`${path}/areaTalk/:areaId/:actionSetId`} exact>
+          {({ match }) =>
+            !!match && (
+              <StoryReaderContent storyType="areaTalk" storyId={match.url} />
             )
           }
         </Route>

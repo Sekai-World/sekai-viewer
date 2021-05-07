@@ -60,6 +60,7 @@ import {
   ICheerfulCarnivalSummary,
   ICheerfulCarnivalTeam,
   IArea,
+  IActionSet,
 } from "./../types.d";
 import { useAssetI18n, useCharaName } from "./i18n";
 import { useLocation } from "react-router-dom";
@@ -123,6 +124,7 @@ export function useCachedData<
     | ICheerfulCarnivalSummary
     | ICheerfulCarnivalTeam
     | IArea
+    | IActionSet
 >(name: string): [T[] | undefined, boolean, any] {
   // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
 
@@ -295,7 +297,11 @@ export function useProcessedScenarioData() {
   const getCharaName = useCharaName();
 
   return useCallback(
-    async (scenarioPath: string, isCardStory: boolean) => {
+    async (
+      scenarioPath: string,
+      isCardStory: boolean = false,
+      isActionSet: boolean = false
+    ) => {
       const ret: {
         characters: { id: number; name: string }[];
         actions: { [key: string]: any }[];
@@ -401,11 +407,9 @@ export function useProcessedScenarioData() {
               }
               chara.name = talkData.WindowDisplayName;
               let voiceUrl = talkData.Voices.length
-                ? `sound/${
-                    isCardStory ? "card_" : ""
-                  }scenario/voice/${ScenarioId}_rip/${
-                    talkData.Voices[0].VoiceId
-                  }.mp3`
+                ? `sound/${isCardStory ? "card_" : ""}${
+                    isActionSet ? "actionset" : "scenario"
+                  }/voice/${ScenarioId}_rip/${talkData.Voices[0].VoiceId}.mp3`
                 : "";
 
               if (
@@ -638,3 +642,13 @@ export function useAlertSnackbar() {
     };
   }, [snackbar]);
 }
+
+export const realityAreaWorldmap: { [key: string]: number } = {
+  1: 3,
+  2: 1,
+  3: 4,
+  4: 5,
+  5: 2,
+  6: 7,
+  7: 6,
+};

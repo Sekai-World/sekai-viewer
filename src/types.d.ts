@@ -1226,3 +1226,12 @@ export interface IArea {
   name: string;
   releaseConditionId: number;
 }
+
+export interface IActionSet {
+  id: number;
+  areaId: number;
+  scriptId: string;
+  characterIds: number[];
+  scenarioId: string;
+  actionSetType: string;
+}
