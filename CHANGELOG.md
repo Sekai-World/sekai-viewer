@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.2](https://github.com/Sekai-World/sekai-viewer/compare/v0.5.1...v0.5.2) (2021-05-07)
+
+
+### Features
+
+* **event:** event tracker live row background change upon update ([d410ec1](https://github.com/Sekai-World/sekai-viewer/commits/d410ec1413f12538e096565a8f66d362d99b39c6))
+* **storyreader:** support map talk ([9909cc2](https://github.com/Sekai-World/sekai-viewer/commits/9909cc2b69a613e6de9d9acddc24cc57abf55b45))
+
+
+### Bug Fixes
+
+* **context:** sekai profile local storage update with wrong content ([de0d891](https://github.com/Sekai-World/sekai-viewer/commits/de0d891eeab03b7cde5e096469b9bd7779649b64))
+* **event:** sekai event record error message ([c5fcee8](https://github.com/Sekai-World/sekai-viewer/commits/c5fcee82e53b1e4fe59cc750f7ba54501e90a810))
+* **music:** actual playback time varies ([e67bd40](https://github.com/Sekai-World/sekai-viewer/commits/e67bd40b1f6ab623c35bff77465e0320790893a9))
+* **team:** medium thumb xs column 4 instead of 2 ([6b66371](https://github.com/Sekai-World/sekai-viewer/commits/6b66371291ee44a27896c908c8ffd76ccdcfc245))
+* **tools:** score calc skill effect type crash ([bd4cb5d](https://github.com/Sekai-World/sekai-viewer/commits/bd4cb5db4510501b10d2800e8739ea68450e2ea3))
+* **tools:** table row warning ([7496225](https://github.com/Sekai-World/sekai-viewer/commits/7496225a1c3db2324317c140dd4332d4edb6e537))
+* **user:** check if sekai id is malformed before verification ([bdf965b](https://github.com/Sekai-World/sekai-viewer/commits/bdf965b246184d14d8f748406745ee804b94287d))
+* **user:** new registered user login but blank screen ([c05b44b](https://github.com/Sekai-World/sekai-viewer/commits/c05b44b1225b475652293e18de09e7e0dce58419))
+
+
+### Refactors
+
+* **event:** event tracker update color use warning color ([ba8fee3](https://github.com/Sekai-World/sekai-viewer/commits/ba8fee35d297384bba81d1dd92da277a07c80ddb))
+* **music:** agenda view type use chip ([a44c586](https://github.com/Sekai-World/sekai-viewer/commits/a44c5869fd23ac54e8660ac1b4b3d3699822919b))
+* **storyreader:** change story reader entry layout ([76c3feb](https://github.com/Sekai-World/sekai-viewer/commits/76c3feb40262e742c8c51bf02475fe15b2cb43b7))
+* **utils:** remove contentTransMode argument of getTranslated ([1ce1548](https://github.com/Sekai-World/sekai-viewer/commits/1ce1548f0296e29f15931baa1eff4131407762a3))
+* **utils:** remove contentTransMode for useCharaName ([ae31c56](https://github.com/Sekai-World/sekai-viewer/commits/ae31c568e81afdff375682900e27322af5add250))
+
 ### [0.5.1](https://github.com/Sekai-World/sekai-viewer/compare/v0.5.0...v0.5.1) (2021-04-30)
 
 
