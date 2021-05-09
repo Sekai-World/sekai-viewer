@@ -497,6 +497,31 @@ const EventDetail: React.FC<{}> = () => {
               <Divider style={{ margin: "1% 0" }} />
             </Fragment>
           )}
+          <Grid
+            item
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Grid item xs={4}>
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                {t("common:storyReader")}
+              </Typography>
+            </Grid>
+            <Grid item xs={6} container justify="flex-end">
+              <Link
+                to={`/storyreader/eventStory/${eventId}`}
+                className={interactiveClasses.noDecoration}
+              >
+                <Grid container alignItems="center">
+                  <OpenInNew />
+                </Grid>
+              </Link>
+            </Grid>
+          </Grid>
+          <Divider style={{ margin: "1% 0" }} />
         </Grid>
       </Container>
       <Typography variant="h6" className={layoutClasses.header}>
