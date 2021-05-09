@@ -4,6 +4,7 @@ import {
   CardMedia,
   Divider,
   Grid,
+  IconButton,
   makeStyles,
   Paper,
   Slider,
@@ -23,7 +24,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
 
@@ -58,6 +59,8 @@ import {
 import ResourceBox from "../subs/ResourceBox";
 import { AudioPlayButton } from "../storyreader/StoryReaderSnippet";
 import AdSense from "../subs/AdSense";
+
+import { OpenInNew } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -102,6 +105,7 @@ const CardDetail: React.FC<{}> = () => {
   const { assetT, getTranslated } = useAssetI18n();
   const { contentTransMode } = useContext(SettingContext)!;
   const getCharaName = useCharaName();
+  const history = useHistory();
 
   const [charas] = useCachedData<IGameChara>("gameCharacters");
   const [cards] = useCachedData<ICardInfo>("cards");
@@ -1151,6 +1155,31 @@ const CardDetail: React.FC<{}> = () => {
                 </Grid>
               </Grid>
               <Divider style={{ margin: "1% 0" }} />
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Grid item xs={2}>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("common:storyReader")}
+                  </Typography>
+                </Grid>
+                <Grid item justify="flex-end">
+                  <IconButton
+                    onClick={() =>
+                      history.push(
+                        `/storyreader/cardStory/${card.characterId}/${card.id}/${cardEpisode[0].id}`
+                      )
+                    }
+                  >
+                    <OpenInNew />
+                  </IconButton>
+                </Grid>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
             </Grid>
           </TabPanel>
           <TabPanel value="2" classes={{ root: classes.tabpanel }}>
@@ -1220,6 +1249,31 @@ const CardDetail: React.FC<{}> = () => {
                       justify="flex-end"
                     />
                   ))}
+                </Grid>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Grid item xs={2}>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("common:storyReader")}
+                  </Typography>
+                </Grid>
+                <Grid item justify="flex-end">
+                  <IconButton
+                    onClick={() =>
+                      history.push(
+                        `/storyreader/cardStory/${card.characterId}/${card.id}/${cardEpisode[1].id}`
+                      )
+                    }
+                  >
+                    <OpenInNew />
+                  </IconButton>
                 </Grid>
               </Grid>
               <Divider style={{ margin: "1% 0" }} />
