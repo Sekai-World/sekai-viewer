@@ -358,6 +358,7 @@ const StoryReader: React.FC<{}> = () => {
                             src={`home/banner/${ev.assetbundleName}_rip/${ev.assetbundleName}.webp`}
                             color=""
                             aspectRatio={16 / 7}
+                            disableTransition
                           />
                         </CardContent>
                         <CardContent>
@@ -397,6 +398,7 @@ const StoryReader: React.FC<{}> = () => {
                                 src={`event_story/${chapter.assetbundleName}/episode_image_rip/${episode.assetbundleName}.webp`}
                                 color=""
                                 aspectRatio={1.944}
+                                disableTransition
                               />
                             </CardContent>
                             <CardContent>
@@ -445,6 +447,7 @@ const StoryReader: React.FC<{}> = () => {
                           color=""
                           aspectRatio={2.591}
                           directSrc
+                          disableTransition
                         />
                       </CardContent>
                       <CardContent>
@@ -528,6 +531,7 @@ const StoryReader: React.FC<{}> = () => {
                                   src={`story/episode_image/${chapter.assetbundleName}_rip/${episode.assetbundleName}.webp`}
                                   color=""
                                   aspectRatio={1.944}
+                                  disableTransition
                                 />
                               </CardContent>
                               <CardContent>
@@ -583,6 +587,7 @@ const StoryReader: React.FC<{}> = () => {
                               color=""
                               aspectRatio={1}
                               directSrc
+                              disableTransition
                             />
                           </Grid>
                         </Grid>
@@ -636,6 +641,7 @@ const StoryReader: React.FC<{}> = () => {
                               color=""
                               aspectRatio={1}
                               directSrc
+                              disableTransition
                             />
                           </Grid>
                         </Grid>
@@ -683,6 +689,7 @@ const StoryReader: React.FC<{}> = () => {
                                 src={`character/member_small/${card.assetbundleName}_rip/card_normal.webp`}
                                 color=""
                                 aspectRatio={1.774}
+                                disableTransition
                               />
                             </CardContent>
                             <CardContent>
@@ -775,6 +782,7 @@ const StoryReader: React.FC<{}> = () => {
                             ).padStart(2, "0")}.webp`}
                             color=""
                             aspectRatio={1.272}
+                            disableTransition
                           />
                         </CardContent>
                         <CardContent>
@@ -807,6 +815,7 @@ const StoryReader: React.FC<{}> = () => {
                             ).padStart(2, "0")}.webp`}
                             color=""
                             aspectRatio={1.3}
+                            disableTransition
                           />
                         </CardContent>
                         <CardContent>
