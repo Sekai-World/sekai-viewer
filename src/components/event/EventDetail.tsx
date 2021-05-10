@@ -631,7 +631,7 @@ const EventDetail: React.FC<{}> = () => {
               spacing={2}
             >
               {boostCards.map((card) => (
-                <Grid key={card.id} item xs={6} md={4} lg={3}>
+                <Grid key={card.id} item xs={5} md={4} lg={3}>
                   <Link to={`/card/${card.id}`}>
                     <CardThumb cardId={card.id} />
                   </Link>
