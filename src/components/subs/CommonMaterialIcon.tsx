@@ -52,6 +52,7 @@ const CommonMaterialIcon: React.FC<{
         alt={`material ${materialName} ${materialId}`}
         style={{ height: "64px", width: "64px" }}
         color=""
+        disableTransition
       ></Image>
     </Grid>
     <Grid item container justify="center">
