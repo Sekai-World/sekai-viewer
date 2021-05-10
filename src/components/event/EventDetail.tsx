@@ -512,12 +512,12 @@ const EventDetail: React.FC<{}> = () => {
             justify="space-between"
             alignItems="center"
           >
-            <Grid item>
+            <Grid item xs={5}>
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                 {t("event:boostAttribute")}
               </Typography>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={5} sm={6}>
               <Grid
                 spacing={1}
                 container
@@ -535,7 +535,7 @@ const EventDetail: React.FC<{}> = () => {
                     </Grid>
                   </Grid>
                 </Grid>
-                <Grid item xs={4} sm={2}>
+                <Grid item xs={5} sm={2}>
                   <Typography>+{eventDeckBonus[10].bonusRate}%</Typography>
                 </Grid>
               </Grid>
@@ -550,7 +550,7 @@ const EventDetail: React.FC<{}> = () => {
             justify="space-between"
             alignItems="center"
           >
-            <Grid item xs={4}>
+            <Grid item xs={5}>
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                 {t("event:boostCharacters")}
               </Typography>
