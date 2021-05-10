@@ -4,7 +4,6 @@ import {
   Container,
   Divider,
   Grid,
-  IconButton,
   makeStyles,
   Paper,
   Tab,
@@ -14,7 +13,7 @@ import {
 import { TabContext, TabPanel } from "@material-ui/lab";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import { useLayoutStyles } from "../styles/layout";
 import {
@@ -31,6 +30,7 @@ import ColorPreview from "./subs/ColorPreview";
 import { CharaNameTrans, ContentTrans } from "./subs/ContentTrans";
 import { OpenInNew } from "@material-ui/icons";
 import { useCharaName } from "../utils/i18n";
+import { useInteractiveStyles } from "../styles/interactive";
 
 const useStyle = makeStyles((theme) => ({
   tabpanel: {
@@ -64,9 +64,9 @@ const MemberDetail: React.FC<{}> = () => {
   const { charaId } = useParams<{ charaId: string }>();
   const classes = useStyle();
   const layoutClasses = useLayoutStyles();
+  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const getCharaName = useCharaName();
-  const history = useHistory();
 
   const [cards] = useCachedData<ICardInfo>("cards");
   const [charas] = useCachedData<IGameChara>("gameCharacters");
@@ -383,18 +383,21 @@ const MemberDetail: React.FC<{}> = () => {
             justify="space-between"
             alignItems="center"
           >
-            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t("member:scenario")}
-            </Typography>
-            <IconButton
-              onClick={() =>
-                history.push(
-                  `/storyreader/charaStory/${charaProfile.characterId}`
-                )
-              }
-            >
-              <OpenInNew />
-            </IconButton>
+            <Grid item xs={8}>
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                {t("member:scenario")}
+              </Typography>
+            </Grid>
+            <Grid item container justify="flex-end">
+              <Link
+                to={`/storyreader/charaStory/${charaProfile.characterId}`}
+                className={interactiveClasses.noDecoration}
+              >
+                <Grid container alignItems="center">
+                  <OpenInNew />
+                </Grid>
+              </Link>
+            </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
         </Grid>

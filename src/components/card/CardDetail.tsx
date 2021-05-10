@@ -58,6 +58,7 @@ import {
 import ResourceBox from "../subs/ResourceBox";
 import { AudioPlayButton } from "../storyreader/StoryReaderSnippet";
 import AdSense from "../subs/AdSense";
+import { OpenInNew } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -752,11 +753,11 @@ const CardDetail: React.FC<{}> = () => {
             </Grid>
             <Grid item xs={4}>
               <Grid container direction="row" justify="flex-end" spacing={2}>
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} sm={6} md={5} lg={4}>
                   <CardThumb cardId={Number(cardId)} />
                 </Grid>
                 {card.rarity >= 3 ? (
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} sm={6} md={5} lg={4}>
                     <CardThumb cardId={Number(cardId)} trained />
                   </Grid>
                 ) : null}
@@ -1140,7 +1141,7 @@ const CardDetail: React.FC<{}> = () => {
                     {t("common:rewards")}
                   </Typography>
                 </Grid>
-                <Grid item xs={10}>
+                <Grid item container spacing={1} xs={10} justify="flex-end">
                   {cardEpisode[0].rewardResourceBoxIds.map((id) => (
                     <ResourceBox
                       resourceBoxId={id}
@@ -1148,6 +1149,30 @@ const CardDetail: React.FC<{}> = () => {
                       justify="flex-end"
                     />
                   ))}
+                </Grid>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Grid item xs={8}>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("common:storyReader")}
+                  </Typography>
+                </Grid>
+                <Grid item container justify="flex-end">
+                  <Link
+                    to={`/storyreader/cardStory/${card.characterId}/${card.id}/${cardEpisode[0].id}`}
+                    className={interactiveClasses.noDecoration}
+                  >
+                    <Grid container alignItems="center">
+                      <OpenInNew />
+                    </Grid>
+                  </Link>
                 </Grid>
               </Grid>
               <Divider style={{ margin: "1% 0" }} />
@@ -1220,6 +1245,30 @@ const CardDetail: React.FC<{}> = () => {
                       justify="flex-end"
                     />
                   ))}
+                </Grid>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Grid item xs={8}>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("common:storyReader")}
+                  </Typography>
+                </Grid>
+                <Grid item container justify="flex-end">
+                  <Link
+                    to={`/storyreader/cardStory/${card.characterId}/${card.id}/${cardEpisode[1].id}`}
+                    className={interactiveClasses.noDecoration}
+                  >
+                    <Grid container alignItems="center">
+                      <OpenInNew />
+                    </Grid>
+                  </Link>
                 </Grid>
               </Grid>
               <Divider style={{ margin: "1% 0" }} />

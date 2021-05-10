@@ -17,6 +17,8 @@ import { useAssetI18n, useCharaName } from "../utils/i18n";
 import { charaIcons, UnitLogoMap } from "../utils/resources";
 import ColorPreview from "./subs/ColorPreview";
 import { CharaNameTrans, ContentTrans } from "./subs/ContentTrans";
+import { OpenInNew } from "@material-ui/icons";
+import { useInteractiveStyles } from "../styles/interactive";
 
 const useStyle = makeStyles((theme) => ({
   tabpanel: {
@@ -68,6 +70,7 @@ const UnitDetail: React.FC<{}> = () => {
   const { unitId } = useParams<{ unitId: string }>();
   const classes = useStyle();
   const layoutClasses = useLayoutStyles();
+  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
   const getCharaName = useCharaName();
@@ -172,6 +175,30 @@ const UnitDetail: React.FC<{}> = () => {
                   <ColorPreview colorCode={unit.colorCode} />
                 </Grid>
               </Grid>
+            </Grid>
+          </Grid>
+          <Divider style={{ margin: "1% 0" }} />
+          <Grid
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Grid item xs={8}>
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                {t("member:scenario")}
+              </Typography>
+            </Grid>
+            <Grid item container justify="flex-end">
+              <Link
+                to={`/storyreader/unitStory/${unit.unit}`}
+                className={interactiveClasses.noDecoration}
+              >
+                <Grid container alignItems="center">
+                  <OpenInNew />
+                </Grid>
+              </Link>
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
