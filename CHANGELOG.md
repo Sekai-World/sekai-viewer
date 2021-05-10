@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.3](https://github.com/Sekai-World/sekai-viewer/compare/v0.5.2...v0.5.3) (2021-05-10)
+
+
+### Features
+
+* add story reader link to detail pages ([838e7ba](https://github.com/Sekai-World/sekai-viewer/commits/838e7ba03a98babfb8760c0074e8a25e19d4bbe4))
+
+
+### Bug Fixes
+
+* **event:** boost cards align with event cards on sm screen ([ab2c20f](https://github.com/Sekai-World/sekai-viewer/commits/ab2c20f3b7946500ef9cf5e3553af3b2e17903cf))
+* **event:** detail page boost attribute align with boost characters ([2286ab4](https://github.com/Sekai-World/sekai-viewer/commits/2286ab4c2fe4a0d8dd53388f820a32497c147f79))
+* **subs:** audio player volume reset after change source ([07e00fa](https://github.com/Sekai-World/sekai-viewer/commits/07e00fa3ad501fc7cbf856224fe0d746fceb8bf2))
+* **user:** allow 17-digit sekai id ([e8a0acc](https://github.com/Sekai-World/sekai-viewer/commits/e8a0acc40348ef36847bff47d1ccad926fb58386))
+
+
+### Refactors
+
+* **storyreader:** disable transition of images ([02eae15](https://github.com/Sekai-World/sekai-viewer/commits/02eae152e17321f159a966f152b0dd29a8a55f7a))
+* **subs:** material icon disable transition ([54ad9b7](https://github.com/Sekai-World/sekai-viewer/commits/54ad9b7ef6d3cdcd2d28ecfd955b4670995a63a5))
+
 ### [0.5.2](https://github.com/Sekai-World/sekai-viewer/compare/v0.5.1...v0.5.2) (2021-05-07)
 
 
