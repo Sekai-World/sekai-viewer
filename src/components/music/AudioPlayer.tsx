@@ -38,7 +38,7 @@ const AudioPlayer: React.FC<{
       src: [src],
       html5: true,
       format: ["mp3"],
-      volume: 1,
+      volume: volume / 100,
     });
     _sound.on("load", () => {
       setTotalTime(_sound.duration());
@@ -67,6 +67,7 @@ const AudioPlayer: React.FC<{
       _sound.stop();
       _sound.unload();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onLoad, onPlay, src]);
 
   const seekHandler = useCallback(
