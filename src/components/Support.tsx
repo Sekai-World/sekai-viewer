@@ -89,15 +89,17 @@ const Support: React.FC<{}> = () => {
                       {patrons
                         .filter((elem) => elem.tier === tier)
                         .map((patron) => (
-                          <Grid container alignItems="center" spacing={1}>
-                            <Grid item>
-                              <Avatar
-                                src={patron.avatarUrl}
-                                alt={patron.name}
-                              ></Avatar>
-                            </Grid>
-                            <Grid item>
-                              <Typography>{patron.name}</Typography>
+                          <Grid item xs={12} md={4} lg={3}>
+                            <Grid container alignItems="center" spacing={1}>
+                              <Grid item>
+                                <Avatar
+                                  src={patron.avatarUrl}
+                                  alt={patron.name}
+                                ></Avatar>
+                              </Grid>
+                              <Grid item>
+                                <Typography>{patron.name}</Typography>
+                              </Grid>
                             </Grid>
                           </Grid>
                         ))}
