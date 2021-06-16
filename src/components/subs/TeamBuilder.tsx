@@ -70,17 +70,17 @@ const useStyle = makeStyles((theme) => ({
 const TeamBuilder: React.FC<{
   teamCards: number[];
   teamCardsStates: ITeamCardState[];
-  teamPowerStates: number;
+  teamTotalPower: number;
   setTeamCards: React.Dispatch<React.SetStateAction<number[]>>;
   setTeamCardsStates: React.Dispatch<React.SetStateAction<ITeamCardState[]>>;
-  setTeamPowerStates: React.Dispatch<React.SetStateAction<number>>;
+  setTeamTotalPower: React.Dispatch<React.SetStateAction<number>>;
 }> = ({
   teamCards,
   teamCardsStates,
-  teamPowerStates,
+  teamTotalPower,
   setTeamCards,
   setTeamCardsStates,
-  setTeamPowerStates,
+  setTeamTotalPower,
 }) => {
   const classes = useStyle();
   const { t } = useTranslation();
@@ -89,7 +89,7 @@ const TeamBuilder: React.FC<{
     UserContext
   )!;
   const { putSekaiDeckList, deleteSekaiDeckList } = useStrapi(jwtToken);
-  const { showError } = useAlertSnackbar();
+  const { showError, showSuccess } = useAlertSnackbar();
 
   const [cards] = useCachedData<ICardInfo>("cards");
   const [charas] = useCachedData<IGameChara>("gameCharacters");
@@ -122,7 +122,9 @@ const TeamBuilder: React.FC<{
     "local"
   );
   const [isSavingEntry, toggleIsSaveingEntry] = useToggle(false);
-  const [isAutoCalcBonus, toggleIsAutoCalcBonus] = useToggle(false);
+  const [isAutoCalcBonus, toggleIsAutoCalcBonus] = useToggle(
+    !!sekaiProfile?.sekaiUserProfile
+  );
 
   const [teamBuildArray, dispatchTeamBuildArray] = useReducer(
     teamBuildReducer,
@@ -248,7 +250,7 @@ const TeamBuilder: React.FC<{
       // id: teamBuildArray.teams.length + 1,
       teamCards: teamCards,
       teamCardsStates: teamCardsStates,
-      teamPowerStates: teamPowerStates,
+      teamTotalPower: teamTotalPower,
     };
 
     toggleIsSaveingEntry();
@@ -285,7 +287,7 @@ const TeamBuilder: React.FC<{
     t,
     teamCards,
     teamCardsStates,
-    teamPowerStates,
+    teamTotalPower,
     toggleIsSaveingEntry,
     updateSekaiProfile,
   ]);
@@ -296,7 +298,7 @@ const TeamBuilder: React.FC<{
         // id: id + 1,
         teamCards: teamCards,
         teamCardsStates: teamCardsStates,
-        teamPowerStates: teamPowerStates,
+        teamTotalPower: teamTotalPower,
       };
 
       toggleIsSaveingEntry();
@@ -321,6 +323,7 @@ const TeamBuilder: React.FC<{
                 ...sekaiProfile!.deckList!.slice(id + 1),
               ],
             });
+            showSuccess(t("team_build:save_team_succeed"));
             toggleIsSaveingEntry();
           })
           .catch(() => {
@@ -335,6 +338,7 @@ const TeamBuilder: React.FC<{
             data: currentEntry,
           },
         });
+        showSuccess(t("team_build:save_team_succeed"));
         toggleIsSaveingEntry();
       }
     },
@@ -346,7 +350,7 @@ const TeamBuilder: React.FC<{
       t,
       teamCards,
       teamCardsStates,
-      teamPowerStates,
+      teamTotalPower,
       toggleIsSaveingEntry,
       updateSekaiProfile,
     ]
@@ -421,54 +425,59 @@ const TeamBuilder: React.FC<{
 
       setTeamCards(currentEntry.teamCards);
       setTeamCardsStates(currentEntry.teamCardsStates);
-      setTeamPowerStates(currentEntry.teamPowerStates);
+      setTeamTotalPower(currentEntry.teamTotalPower);
 
       setLoadTeamDialogVisible(false);
     },
-    [
-      cards,
-      setTeamCards,
-      setTeamCardsStates,
-      setTeamPowerStates,
-      teamBuildArray,
-    ]
+    [cards, setTeamCards, setTeamCardsStates, setTeamTotalPower, teamBuildArray]
   );
 
-  const calcTotalPower = useCallback(() => {
-    const pureDeckPower = getPureTeamPowers(teamCardsStates);
+  const calcTotalPower = useCallback(
+    (cardStates?) => {
+      const pureDeckPower = getPureTeamPowers(cardStates || teamCardsStates);
 
-    if (isAutoCalcBonus && sekaiProfile && sekaiProfile.sekaiUserProfile) {
-      const areaItemBonus = getAreaItemBonus(
-        teamCardsStates,
-        sekaiProfile.sekaiUserProfile.userAreaItems
-      );
+      // console.log(
+      //   isAutoCalcBonus && !!sekaiProfile && !!sekaiProfile.sekaiUserProfile
+      // );
+      if (isAutoCalcBonus && sekaiProfile && sekaiProfile.sekaiUserProfile) {
+        const areaItemBonus = getAreaItemBonus(
+          cardStates || teamCardsStates,
+          sekaiProfile.sekaiUserProfile.userAreaItems
+        );
 
-      console.log(areaItemBonus);
+        // console.log(areaItemBonus);
 
-      const characterRankBonus = getCharacterRankBonus(
-        sekaiProfile.sekaiUserProfile.userCharacters,
-        teamCardsStates
-      );
+        const characterRankBonus = getCharacterRankBonus(
+          sekaiProfile.sekaiUserProfile.userCharacters,
+          cardStates || teamCardsStates
+        );
 
-      const honorBonus = getHonorBonus(
-        sekaiProfile.sekaiUserProfile.userHonors
-      );
+        const honorBonus = getHonorBonus(
+          sekaiProfile.sekaiUserProfile.userHonors
+        );
 
-      // console.log(pureDeckPower, areaItemBonus, characterRankBonus, honorBonus);
+        // console.log(
+        //   pureDeckPower,
+        //   areaItemBonus,
+        //   characterRankBonus,
+        //   honorBonus
+        // );
 
-      return pureDeckPower + areaItemBonus + characterRankBonus + honorBonus;
-    }
+        return pureDeckPower + areaItemBonus + characterRankBonus + honorBonus;
+      }
 
-    return pureDeckPower;
-  }, [
-    getAreaItemBonus,
-    getCharacterRankBonus,
-    getHonorBonus,
-    getPureTeamPowers,
-    isAutoCalcBonus,
-    sekaiProfile,
-    teamCardsStates,
-  ]);
+      return pureDeckPower;
+    },
+    [
+      getAreaItemBonus,
+      getCharacterRankBonus,
+      getHonorBonus,
+      getPureTeamPowers,
+      isAutoCalcBonus,
+      sekaiProfile,
+      teamCardsStates,
+    ]
+  );
 
   const handleLoadSekaiTeamEntry = useCallback(() => {
     if (!sekaiProfile || !sekaiProfile.sekaiUserProfile) return;
@@ -498,10 +507,17 @@ const TeamBuilder: React.FC<{
 
     setTeamCards(cardIds);
     setTeamCardsStates(cardStates);
-    setTeamPowerStates(0);
+    // setTeamTotalPower(0);
+    setTeamTotalPower(calcTotalPower(cardStates));
 
     setLoadTeamDialogVisible(false);
-  }, [sekaiProfile, setTeamCards, setTeamCardsStates, setTeamPowerStates]);
+  }, [
+    calcTotalPower,
+    sekaiProfile,
+    setTeamCards,
+    setTeamCardsStates,
+    setTeamTotalPower,
+  ]);
 
   return (
     <Grid container spacing={2}>
@@ -578,15 +594,15 @@ const TeamBuilder: React.FC<{
                 InputLabelProps={{
                   shrink: true,
                 }}
-                value={teamPowerStates}
-                onChange={(e) => setTeamPowerStates(Number(e.target.value))}
+                value={teamTotalPower}
+                onChange={(e) => setTeamTotalPower(Number(e.target.value))}
               />
             </Grid>
             <Grid item>
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => setTeamPowerStates(calcTotalPower())}
+                onClick={() => setTeamTotalPower(calcTotalPower())}
               >
                 {t("team_build:button.calc_total_power")}
               </Button>
