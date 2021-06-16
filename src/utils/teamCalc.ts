@@ -226,7 +226,7 @@ export const useTeamCalc = () => {
           cardUnitBonusRates[idx]
       );
 
-      console.log(sumBonusRates);
+      // console.log(sumBonusRates);
 
       return sumBonusRates.reduce(
         (sum, bonusRate, idx) =>
