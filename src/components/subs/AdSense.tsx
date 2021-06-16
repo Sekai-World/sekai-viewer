@@ -22,7 +22,7 @@ const AdSense = (props: Props) => {
   const { t } = useTranslation();
   const { user } = useContext(UserContext)!;
 
-  const noAdRoles = useMemo(() => ["translator", "patreon", "developer"], []);
+  const noAdRoles = useMemo(() => ["translator", "patron", "developer"], []);
 
   return user && noAdRoles.includes(user.role.type) ? null : (
     <Fragment>
