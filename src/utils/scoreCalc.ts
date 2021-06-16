@@ -1,5 +1,11 @@
 import { useCallback } from "react";
-import { ICardInfo, IMusicMeta, ISkillInfo, ITeamCardState } from "../types";
+import {
+  EventType,
+  ICardInfo,
+  IMusicMeta,
+  ISkillInfo,
+  ITeamCardState,
+} from "../types";
 
 const boostRate: Record<number, number> = {
   0: 1,
@@ -99,14 +105,29 @@ export function useScoreCalc() {
       otherScore: number,
       musicRate: number,
       unitRate: number,
-      boostCost: number
-    ) => {
-      let basePoint =
-        100 +
-        Math.floor(selfScore / 20000) +
-        Math.min(7, Math.floor(otherScore / 400000));
-      let eventPoint = Math.floor(basePoint * musicRate * unitRate);
-      return eventPoint * boostRate[boostCost];
+      boostCost: number,
+      mode: EventType,
+      leftLife?: number
+    ): number => {
+      switch (mode) {
+        case "marathon": {
+          const basePoint =
+            100 +
+            Math.floor(selfScore / 20000) +
+            Math.floor(Math.min(otherScore, 700000) / 100000);
+          const eventPoint = Math.floor(basePoint * musicRate * unitRate);
+          return eventPoint * boostRate[boostCost];
+        }
+        case "cheerful_carnival": {
+          const basePoint =
+            125 +
+            Math.floor(selfScore / 20000) +
+            Math.floor(Math.min(otherScore, 700000) / 100000) +
+            (leftLife || 1000) / 20;
+          const eventPoint = Math.floor(basePoint * musicRate * unitRate);
+          return eventPoint * boostRate[boostCost];
+        }
+      }
     },
     []
   );
@@ -117,14 +138,18 @@ export function useScoreCalc() {
       musicRate: number,
       unitRate: number,
       boostCost: number,
-      musicTime: number
-    ) => {
+      musicTime: number,
+      mode: EventType,
+      leftLife?: number
+    ): number => {
       let point = getEventPoint(
         selfScore,
         otherScore,
         musicRate,
         unitRate,
-        boostCost
+        boostCost,
+        mode,
+        leftLife
       );
       let fullTime = musicTime + 30;
       let pointPerSecond = point / fullTime;
