@@ -346,6 +346,7 @@ const TeamBuilder: React.FC<{
       putSekaiDeckList,
       sekaiProfile,
       showError,
+      showSuccess,
       storageLocation,
       t,
       teamCards,
