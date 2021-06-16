@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.4](https://github.com/Sekai-World/sekai-viewer/compare/v0.5.3...v0.5.4) (2021-06-16)
+
+
+### Features
+
+* **storyreader:** add music and voice download button ([2231eec](https://github.com/Sekai-World/sekai-viewer/commits/2231eec27b34d2a87c089f48fd7235e4b761cd2f))
+* update type definition ([44a21a1](https://github.com/Sekai-World/sekai-viewer/commits/44a21a16bfbbd6d3fd9201f1f76b07f0d119e68d))
+* **utils:** add cheerful carnival event point calc ([dbb0fc4](https://github.com/Sekai-World/sekai-viewer/commits/dbb0fc4640cd7d4877c8bfce5b913d797ac219b2))
+
+
+### Bug Fixes
+
+* **ad:** typo of noAdRoles ([02a0b04](https://github.com/Sekai-World/sekai-viewer/commits/02a0b042c7262c2292c775c21a2b4f308de487d3))
+* support page patreon list ([36b6841](https://github.com/Sekai-World/sekai-viewer/commits/36b68411b3e5513bbb50d59011baa6d1a7e0460d))
+
+
+### Refactors
+
+* **event_calc:** great functionality enrichment ([08b4001](https://github.com/Sekai-World/sekai-viewer/commits/08b400133c2f4dfbb255c3109bc44d1fa4a136e2))
+* **muisc_recomm:** remove event point calc ([abb217a](https://github.com/Sekai-World/sekai-viewer/commits/abb217a37c9fde951d047b5c6c2bbd72a0c779dc))
+* **music:** audio player download link add download attribute ([eb96147](https://github.com/Sekai-World/sekai-viewer/commits/eb96147d6e0f2b118ce86945afd65f9952588444))
+* **subs:** add cardStates param to calcTotalPower function ([8147f9a](https://github.com/Sekai-World/sekai-viewer/commits/8147f9a25ce30562ed78dbe980d79581490b5404))
+* **user:** avoid loading too much assets once ([b313607](https://github.com/Sekai-World/sekai-viewer/commits/b3136074dc7bc1e372f46426cb51b90ce7e2f5bd))
+* **user:** rename teamPowerStates to teamTotalPower ([e25243d](https://github.com/Sekai-World/sekai-viewer/commits/e25243d5c3250666b93f601139161b1c15a66fe8))
+
 ### [0.5.3](https://github.com/Sekai-World/sekai-viewer/compare/v0.5.2...v0.5.3) (2021-05-10)
 
 
