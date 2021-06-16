@@ -289,9 +289,11 @@ export interface EventRankingRewardRange {
   eventRankingRewards: EventRankingReward[];
 }
 
+export type EventType = "marathon" | "cheerful_carnival";
+
 export interface IEventInfo {
   id: number;
-  eventType: string;
+  eventType: EventType;
   name: string;
   assetbundleName: string;
   bgmAssetbundleName: string;
@@ -510,7 +512,7 @@ export interface ITeamBuild {
   id?: number;
   teamCards: number[];
   teamCardsStates: ITeamCardState[];
-  teamPowerStates: number;
+  teamTotalPower: number;
 }
 
 export interface IMusicMeta {
@@ -535,6 +537,14 @@ export interface IMusicRecommendResult {
   combo: number;
   result: number;
   link: string;
+}
+
+export interface IEventCalcAllSongsResult {
+  id: number;
+  mid: number;
+  name: string;
+  result: number;
+  resultPerHour: number;
 }
 
 export interface IUnitStoryEpisode {
