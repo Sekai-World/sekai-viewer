@@ -31,6 +31,7 @@ const AudioPlayer: React.FC<{
   const [isPlay, setIsPlay] = useState(false);
   const [isMute, setIsMute] = useState(false);
   const [volume, setVolume] = useState(100);
+  // const [loop, setLoop] = useState(false);
 
   useEffect(() => {
     // console.log(src);
@@ -39,6 +40,7 @@ const AudioPlayer: React.FC<{
       html5: true,
       format: ["mp3"],
       volume: volume / 100,
+      // loop: loop,
     });
     _sound.on("load", () => {
       setTotalTime(_sound.duration());
@@ -134,7 +136,7 @@ const AudioPlayer: React.FC<{
               }}
             >
               {!onSave ? (
-                <Link href={src} target="_blank">
+                <Link href={src} download>
                   <CloudDownload />
                 </Link>
               ) : (
