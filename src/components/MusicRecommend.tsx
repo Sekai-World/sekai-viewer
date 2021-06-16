@@ -3,7 +3,6 @@ import {
   Chip,
   FormControl,
   FormControlLabel,
-  FormLabel,
   IconButton,
   makeStyles,
   Radio,
@@ -33,7 +32,7 @@ import { useScoreCalc } from "../utils/scoreCalc";
 import TeamBuilder from "./subs/TeamBuilder";
 import { ContentTrans } from "./subs/ContentTrans";
 
-const useStyle = makeStyles((theme) => ({
+const useStyle = makeStyles(() => ({
   easy: {
     backgroundColor: "#86DA45",
   },
@@ -65,7 +64,7 @@ const MusicRecommend: React.FC<{}> = () => {
 
   const [teamCards, setTeamCards] = useState<number[]>([]);
   const [teamCardsStates, setTeamCardsStates] = useState<ITeamCardState[]>([]);
-  const [teamPowerStates, setTeamPowerStates] = useState<number>(0);
+  const [teamTotalPower, setTeamTotalPower] = useState<number>(0);
   const [activeStep, setActiveStep] = useState<number>(0);
   // const [selectedSongIds, setSelectedSongIds] = useState<number[]>([]);
   const [selectedMode, setSelectedMode] = useState<string>("event_pt_per_hour");
@@ -78,8 +77,6 @@ const MusicRecommend: React.FC<{}> = () => {
     getMultiAverageSkillRates,
     getSoloAverageSkillRates,
     getScore,
-    getEventPoint,
-    getEventPointPerHour,
   } = useScoreCalc();
 
   useEffect(() => {
@@ -178,7 +175,7 @@ const MusicRecommend: React.FC<{}> = () => {
         let music0 = musics.filter((it) => it.id === meta.music_id);
         if (music0.length === 0) return {} as IMusicRecommendResult;
         let music = music0[0];
-        let score = getScore(meta, teamPowerStates, skillRates, isSolo);
+        let score = getScore(meta, teamTotalPower, skillRates, isSolo);
 
         let result = 0;
         switch (selectedMode) {
@@ -186,24 +183,26 @@ const MusicRecommend: React.FC<{}> = () => {
           case "multi":
             result = score;
             break;
-          case "event_pt":
-            result = getEventPoint(
-              score,
-              score * 4,
-              meta.event_rate / 100,
-              1,
-              0
-            );
-            break;
-          case "event_pt_per_hour":
-            result = getEventPointPerHour(
-              score,
-              score * 4,
-              meta.event_rate / 100,
-              1,
-              0,
-              meta.music_time
-            );
+          // case "event_pt":
+          //   result = getEventPoint(
+          //     score,
+          //     score * 4,
+          //     meta.event_rate / 100,
+          //     1,
+          //     0,
+          //     eventType
+          //   );
+          //   break;
+          // case "event_pt_per_hour":
+          //   result = getEventPointPerHour(
+          //     score,
+          //     score * 4,
+          //     meta.event_rate / 100,
+          //     1,
+          //     0,
+          //     meta.music_time,
+          //     eventType
+          //   );
         }
         result = Math.floor(result);
 
@@ -224,19 +223,17 @@ const MusicRecommend: React.FC<{}> = () => {
     setRecommandResult(result);
     setActiveStep(maxStep - 1);
   }, [
-    selectedMode,
-    getCardSkillRates,
     cards,
     skills,
+    musics,
+    metas,
+    selectedMode,
+    getCardSkillRates,
     teamCardsStates,
     getSoloAverageSkillRates,
     getMultiAverageSkillRates,
-    metas,
-    musics,
     getScore,
-    teamPowerStates,
-    getEventPoint,
-    getEventPointPerHour,
+    teamTotalPower,
   ]);
 
   const StepButtons: React.FC<{ nextDisabled?: boolean }> = ({
@@ -292,10 +289,10 @@ const MusicRecommend: React.FC<{}> = () => {
             <TeamBuilder
               teamCards={teamCards}
               teamCardsStates={teamCardsStates}
-              teamPowerStates={teamPowerStates}
+              teamTotalPower={teamTotalPower}
               setTeamCards={setTeamCards}
               setTeamCardsStates={setTeamCardsStates}
-              setTeamPowerStates={setTeamPowerStates}
+              setTeamTotalPower={setTeamTotalPower}
             />
             <br />
             <StepButtons nextDisabled={!teamCards.length} />
@@ -359,7 +356,7 @@ const MusicRecommend: React.FC<{}> = () => {
             <Typography>{t("music_recommend:modeSelect.desc")}</Typography>
             <div>
               <FormControl component="fieldset">
-                <FormLabel component="legend">Select Mode</FormLabel>
+                {/* <FormLabel component="legend">Select Mode</FormLabel> */}
                 <RadioGroup
                   value={selectedMode}
                   onChange={(e) => setSelectedMode(e.target.value)}
@@ -367,22 +364,12 @@ const MusicRecommend: React.FC<{}> = () => {
                   <FormControlLabel
                     value="solo"
                     control={<Radio />}
-                    label="Solo"
+                    label={t("music_recommend:modeSelect.solo")}
                   />
                   <FormControlLabel
                     value="multi"
                     control={<Radio />}
-                    label="Multiplayer"
-                  />
-                  <FormControlLabel
-                    value="event_pt"
-                    control={<Radio />}
-                    label="Event Point (per play count)"
-                  />
-                  <FormControlLabel
-                    value="event_pt_per_hour"
-                    control={<Radio />}
-                    label="Event Point (per hour)"
+                    label={t("music_recommend:modeSelect.multi")}
                   />
                 </RadioGroup>
               </FormControl>
