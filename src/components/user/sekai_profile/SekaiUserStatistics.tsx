@@ -335,7 +335,11 @@ const SekaiUserStatistics = () => {
         {/* )} */}
       </Grid>
       <Grid item xs={12}>
-        <Accordion expanded={honorOpen} onChange={() => toggleHonorOpen()}>
+        <Accordion
+          expanded={honorOpen}
+          onChange={() => toggleHonorOpen()}
+          TransitionProps={{ unmountOnExit: true }}
+        >
           <AccordionSummary expandIcon={<ExpandMore />}>
             <Typography className={layoutClasses.header}>
               {t("common:mission.honor")}
@@ -361,6 +365,7 @@ const SekaiUserStatistics = () => {
         <Accordion
           expanded={areaItemOpen}
           onChange={() => toggleAreaItemOpen()}
+          TransitionProps={{ unmountOnExit: true }}
         >
           <AccordionSummary expandIcon={<ExpandMore />}>
             <Typography className={layoutClasses.header}>
@@ -478,7 +483,11 @@ const SekaiUserStatistics = () => {
             )}
           </AccordionDetails>
         </Accordion>
-        <Accordion expanded={musicOpen} onChange={() => toggleMusicOpen()}>
+        <Accordion
+          expanded={musicOpen}
+          onChange={() => toggleMusicOpen()}
+          TransitionProps={{ unmountOnExit: true }}
+        >
           <AccordionSummary expandIcon={<ExpandMore />}>
             <Typography className={layoutClasses.header}>
               {t("common:music")}
