@@ -6,10 +6,11 @@ import {
   CircularProgress,
   Fab,
   Grid,
+  Link,
   makeStyles,
   Typography,
 } from "@material-ui/core";
-import { PlayArrow, Stop } from "@material-ui/icons";
+import { CloudDownload, PlayArrow, Stop } from "@material-ui/icons";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Howl } from "howler";
@@ -68,15 +69,28 @@ export const AudioPlayButton: React.FC<{ url: string }> = ({ url }) => {
   }, [audioSource]);
 
   return (
-    <Fab onClick={PlayAudio} size="small">
-      {isPlay ? (
-        <Stop />
-      ) : isAudioLoading ? (
-        <CircularProgress variant="indeterminate" size="1rem" color="inherit" />
-      ) : (
-        <PlayArrow />
-      )}
-    </Fab>
+    <Grid container spacing={1}>
+      <Grid item>
+        <Fab onClick={PlayAudio} size="small">
+          {isPlay ? (
+            <Stop />
+          ) : isAudioLoading ? (
+            <CircularProgress
+              variant="indeterminate"
+              size="1rem"
+              color="inherit"
+            />
+          ) : (
+            <PlayArrow />
+          )}
+        </Fab>
+      </Grid>
+      <Grid item>
+        <Fab size="small" component={Link} href={url} download>
+          <CloudDownload />
+        </Fab>
+      </Grid>
+    </Grid>
   );
 };
 
@@ -90,15 +104,15 @@ export const Talk: React.FC<{
 
   return (
     <Card className={classes.card}>
-      <Grid container alignItems="center">
-        <Grid item xs={3} md={2}>
+      <Grid container alignItems="center" spacing={1}>
+        <Grid item xs={3} md={2} lg={1}>
           <Grid container justify="center">
             <Avatar
               src={charaIcons[`CharaIcon${characterId}` as "CharaIcon1"]}
             />
           </Grid>
         </Grid>
-        <Grid item xs={7} md={9}>
+        <Grid item xs={7} md={9} lg={10}>
           <Grid container spacing={1}>
             <Grid item xs={12}>
               <Chip label={characterName} />
@@ -133,9 +147,9 @@ export const SpecialEffect: React.FC<{
     case "FullScreenText":
       return (
         <Card className={classes.card}>
-          <Grid container alignItems="center">
-            <Grid item xs={3} md={2}></Grid>
-            <Grid item xs={7} md={9}>
+          <Grid container alignItems="center" spacing={1}>
+            <Grid item xs={3} md={2} lg={1}></Grid>
+            <Grid item xs={7} md={9} lg={10}>
               <Grid container spacing={1}>
                 <Grid item xs={12}>
                   <Chip label={t("story_reader:snippet.FullScreenText")} />
@@ -156,9 +170,9 @@ export const SpecialEffect: React.FC<{
     case "Telop":
       return (
         <Card className={classes.card}>
-          <Grid container alignItems="center">
-            <Grid item xs={3} md={2}></Grid>
-            <Grid item xs={8} md={9}>
+          <Grid container alignItems="center" spacing={1}>
+            <Grid item xs={3} md={2} lg={1}></Grid>
+            <Grid item xs={8} md={9} lg={10}>
               <Grid container spacing={1}>
                 <Grid item xs={12}>
                   <Chip label={t("story_reader:snippet.Telop")} />
@@ -174,9 +188,9 @@ export const SpecialEffect: React.FC<{
     case "ChangeBackground":
       return (
         <Card className={classes.card}>
-          <Grid container alignItems="center">
-            <Grid item xs={3} md={2}></Grid>
-            <Grid item xs={8} md={9}>
+          <Grid container alignItems="center" spacing={1}>
+            <Grid item xs={3} md={2} lg={1}></Grid>
+            <Grid item xs={8} md={9} lg={10}>
               <Grid container spacing={1}>
                 <Grid item xs={12}>
                   <Chip label={t("story_reader:snippet.ChangeBackground")} />
@@ -209,9 +223,9 @@ export const SpecialEffect: React.FC<{
     case "Movie":
       return (
         <Card className={classes.card}>
-          <Grid container alignItems="center">
-            <Grid item xs={3} md={2}></Grid>
-            <Grid item xs={8} md={9}>
+          <Grid container alignItems="center" spacing={1}>
+            <Grid item xs={3} md={2} lg={1}></Grid>
+            <Grid item xs={8} md={9} lg={10}>
               <Grid container spacing={1}>
                 <Grid item xs={12}>
                   <Chip label={t("story_reader:snippet.Movie")} />
@@ -252,9 +266,9 @@ export const Sound: React.FC<{
 
   return (
     <Card className={classes.card}>
-      <Grid container alignItems="center">
-        <Grid item xs={3} md={2}></Grid>
-        <Grid item xs={7} md={9}>
+      <Grid container alignItems="center" spacing={1}>
+        <Grid item xs={3} md={2} lg={1}></Grid>
+        <Grid item xs={7} md={9} lg={10}>
           <Grid container spacing={1}>
             <Grid item xs={12}>
               <Chip
