@@ -809,6 +809,7 @@ export interface IHonorGroup {
   id: number;
   honorType: string;
   name: string;
+  backgroundAssetbundleName?: string;
 }
 
 export enum CharacterMissionType {

@@ -1,7 +1,7 @@
 import { Skeleton } from "@material-ui/lab";
 import React, { useEffect, useState } from "react";
 import { useSvgStyles } from "../../styles/svg";
-import { IResourceBoxInfo, IHonorInfo } from "../../types";
+import { IResourceBoxInfo, IHonorInfo, IHonorGroup } from "../../types";
 import { getRemoteAssetURL, useCachedData } from "../../utils";
 import { degreeFrameMap } from "../../utils/resources";
 import degreeLevelIcon from "../../assets/frame/icon_degreeLv.png";
@@ -18,8 +18,10 @@ const DegreeImage: React.FC<
 
   const [resourceBoxes] = useCachedData<IResourceBoxInfo>("resourceBoxes");
   const [honors] = useCachedData<IHonorInfo>("honors");
+  const [honorGroups] = useCachedData<IHonorGroup>("honorGroups");
 
   const [honor, setHonor] = useState<IHonorInfo>();
+  const [honorGroup, setHonorGroup] = useState<IHonorGroup>();
   const [honorLevel, setHonorLevel] = useState(_honorLevel);
   const [degreeImage, setDegreeImage] = useState<string>("");
   const [degreeRankImage, setDegreeRankImage] = useState<string>("");
@@ -41,7 +43,7 @@ const DegreeImage: React.FC<
             : honorId
             ? honor.id === honorId
             : false
-        )!
+        )
       );
       if (resourceBoxId) {
         setHonorLevel(
@@ -59,11 +61,23 @@ const DegreeImage: React.FC<
   }, [honors, resourceBoxes, resourceBoxId, type, honorId]);
 
   useEffect(() => {
+    if (honor && honorGroups) {
+      setHonorGroup(honorGroups.find((hg) => hg.id === honor.groupId));
+    }
+  }, [honor, honorGroups]);
+
+  useEffect(() => {
     if (honor) {
-      getRemoteAssetURL(
-        `honor/${honor.assetbundleName}_rip/degree_main.webp`,
-        setDegreeImage
-      );
+      if (honorGroup && honorGroup.backgroundAssetbundleName) {
+        getRemoteAssetURL(
+          `honor/${honorGroup.backgroundAssetbundleName}_rip/degree_main.webp`,
+          setDegreeImage
+        );
+      } else
+        getRemoteAssetURL(
+          `honor/${honor.assetbundleName}_rip/degree_main.webp`,
+          setDegreeImage
+        );
       if (type === "event_ranking_reward")
         getRemoteAssetURL(
           `honor/${honor.assetbundleName}_rip/rank_main.webp`,
@@ -75,7 +89,7 @@ const DegreeImage: React.FC<
           setDegreeRankImage
         );
     }
-  }, [honor, type]);
+  }, [honor, honorGroup, type]);
 
   return honor ? (
     <div className={classes.svg}>
