@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.6](https://github.com/Sekai-World/sekai-viewer/compare/v0.5.5...v0.5.6) (2021-06-21)
+
+
+### Bug Fixes
+
+* movie player, story reader blank screen ([9d4c98c](https://github.com/Sekai-World/sekai-viewer/commits/9d4c98c03dd50a427cd425119d0231a50867c8a0))
+
 ### [0.5.5](https://github.com/Sekai-World/sekai-viewer/compare/v0.5.4...v0.5.5) (2021-06-21)
 
 
