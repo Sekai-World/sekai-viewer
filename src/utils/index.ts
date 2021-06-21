@@ -272,23 +272,23 @@ export async function getRemoteAssetURL(
   }
 }
 
-export async function getMovieUrl(stringVal: string) {
-  const buildDataUrl = await getRemoteAssetURL(
-    `scenario/movie/${stringVal}_rip/moviebundlebuilddata.asset`,
-    undefined,
-    window.isChinaMainland
-  );
-  const buildData = (await Axios.get(buildDataUrl, { responseType: "json" }))
-    .data;
-  const fileName = buildData.movieBundleDatas[0].usmFileName
-    .replace(/(-\d{3})?\.usm\.bytes/, "")
-    .toLowerCase();
-  return getRemoteAssetURL(
-    `scenario/movie/${stringVal}_rip/${fileName}.mp4`,
-    undefined,
-    window.isChinaMainland
-  );
-}
+// export async function getMovieUrl(stringVal: string) {
+//   const buildDataUrl = await getRemoteAssetURL(
+//     `scenario/movie/${stringVal}_rip/moviebundlebuilddata.asset`,
+//     undefined,
+//     window.isChinaMainland
+//   );
+//   const buildData = (await Axios.get(buildDataUrl, { responseType: "json" }))
+//     .data;
+//   const fileName = buildData.movieBundleDatas[0].usmFileName
+//     .replace(/(-\d{3})?\.usm\.bytes/, "")
+//     .toLowerCase();
+//   return getRemoteAssetURL(
+//     `scenario/movie/${stringVal}_rip/${fileName}.mp4`,
+//     undefined,
+//     window.isChinaMainland
+//   );
+// }
 
 export function useProcessedScenarioData() {
   const [mobCharas] = useCachedData<IMobCharacter>("mobCharacters");
@@ -418,8 +418,12 @@ export function useProcessedScenarioData() {
               ) {
                 const chara2d = chara2Ds.find(
                   (ch) => ch.id === talkData.TalkCharacters[0].Character2dId
-                )!;
-                voiceUrl = `sound/scenario/part_voice/${chara2d.assetName}_${chara2d.unit}_rip/${talkData.Voices[0].VoiceId}.mp3`;
+                );
+                if (chara2d) {
+                  voiceUrl = `sound/scenario/part_voice/${chara2d.assetName}_${chara2d.unit}_rip/${talkData.Voices[0].VoiceId}.mp3`;
+                } else {
+                  voiceUrl = "";
+                }
               }
 
               action = {
@@ -468,7 +472,7 @@ export function useProcessedScenarioData() {
                         window.isChinaMainland
                       )
                     : specialEffectType === "Movie"
-                    ? await getMovieUrl(specialEffect.StringVal)
+                    ? `scenario/movie/${specialEffect.StringVal}_rip`
                     : "",
               };
             }

@@ -17,6 +17,7 @@ import { Howl } from "howler";
 import { charaIcons } from "../../utils/resources";
 import { useEffect } from "react";
 import Image from "material-ui-image";
+import MoviePlayer from "../subs/MoviePlayer";
 
 const useStyle = makeStyles((theme) => ({
   card: {
@@ -232,9 +233,11 @@ export const SpecialEffect: React.FC<{
                 </Grid>
                 {isMovieOpen ? (
                   <Grid item xs={12}>
-                    <video style={{ maxWidth: "100%" }} controls>
-                      <source src={resource}></source>
-                    </video>
+                    <MoviePlayer
+                      path={resource}
+                      style={{ maxWidth: "100%" }}
+                      controls
+                    />
                   </Grid>
                 ) : (
                   <Grid item xs={12}>

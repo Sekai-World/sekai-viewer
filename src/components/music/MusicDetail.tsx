@@ -191,20 +191,20 @@ const MusicDetail: React.FC<{}> = () => {
   }, [music, musicVocal, selectedPreviewVocalType]);
 
   useEffect(() => {
-    if (music && musicVocal && musicVocal[selectedPreviewVocalType]) {
-      getRemoteAssetURL(
+    if (
+      music &&
+      musicVocal &&
+      musicVocal[selectedPreviewVocalType] &&
+      (vocalPreviewVal === "original" || vocalPreviewVal === "mv_2d")
+    ) {
+      setMusicVideoURL(
         `live/2dmode/${
           vocalPreviewVal === "original"
             ? "original_mv"
             : vocalPreviewVal === "mv_2d"
             ? "sekai_mv"
             : ""
-        }/${String(music.id).padStart(4, "0")}_rip/${String(music.id).padStart(
-          4,
-          "0"
-        )}.mp4`,
-        setMusicVideoURL,
-        window.isChinaMainland
+        }/${String(music.id).padStart(4, "0")}_rip/`
       );
     }
   }, [music, musicVocal, selectedPreviewVocalType, vocalPreviewVal]);
