@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.5](https://github.com/Sekai-World/sekai-viewer/compare/v0.5.4...v0.5.5) (2021-06-21)
+
+
+### Bug Fixes
+
+* **subs:** degree image set background ([0d3b796](https://github.com/Sekai-World/sekai-viewer/commits/0d3b796709fc824f02eac86435b2d5abd5e8f4ec))
+
 ### [0.5.4](https://github.com/Sekai-World/sekai-viewer/compare/v0.5.3...v0.5.4) (2021-06-16)
 
 
