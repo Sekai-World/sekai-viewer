@@ -204,7 +204,7 @@ const MusicDetail: React.FC<{}> = () => {
             : vocalPreviewVal === "mv_2d"
             ? "sekai_mv"
             : ""
-        }/${String(music.id).padStart(4, "0")}_rip/`
+        }/${String(music.id).padStart(4, "0")}_rip`
       );
     }
   }, [music, musicVocal, selectedPreviewVocalType, vocalPreviewVal]);
