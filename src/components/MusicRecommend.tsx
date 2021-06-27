@@ -172,9 +172,9 @@ const MusicRecommend: React.FC<{}> = () => {
     let ii = 0;
     let result: IMusicRecommendResult[] = metas
       .map((meta) => {
-        let music0 = musics.filter((it) => it.id === meta.music_id);
-        if (music0.length === 0) return {} as IMusicRecommendResult;
-        let music = music0[0];
+        let music = musics.find((it) => it.id === meta.music_id);
+        if (!music) return {} as IMusicRecommendResult;
+        // let music = music0[0];
         let score = getScore(meta, teamTotalPower, skillRates, isSolo);
 
         let result = 0;
