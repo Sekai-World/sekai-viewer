@@ -59,6 +59,9 @@ import ResourceBox from "../subs/ResourceBox";
 import { AudioPlayButton } from "../storyreader/StoryReaderSnippet";
 import AdSense from "../subs/AdSense";
 import { OpenInNew } from "@material-ui/icons";
+import { CommentTextMultiple } from "mdi-material-ui";
+import Comment from "../comment/Comment";
+import { useStrapi } from "../../utils/apiClient";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -103,6 +106,7 @@ const CardDetail: React.FC<{}> = () => {
   const { assetT, getTranslated } = useAssetI18n();
   const { contentTransMode } = useContext(SettingContext)!;
   const getCharaName = useCharaName();
+  const { getCard } = useStrapi();
 
   const [charas] = useCachedData<IGameChara>("gameCharacters");
   const [cards] = useCachedData<ICardInfo>("cards");
@@ -129,6 +133,7 @@ const CardDetail: React.FC<{}> = () => {
   // const [cardRank, setCardRank] = useState<number | number[]>(0);
   // const [maxCardRank, setMaxCardRank] = useState<number>(0);
   const [gachaPhraseUrl, setGachaPhraseUrl] = useState("");
+  const [cardCommentId, setCardCommentId] = useState<number>(0);
 
   const getSkillDesc = useCallback(
     (skill: ISkillInfo, skillLevel: number | number[]) => {
@@ -275,6 +280,19 @@ const CardDetail: React.FC<{}> = () => {
     getTranslated,
     t,
   ]);
+
+  useEffect(() => {
+    if (card) {
+      const job = async () => {
+        const cardStrapi = await getCard(card.id);
+        if (cardStrapi) {
+          setCardCommentId(cardStrapi.id);
+        }
+      };
+
+      job();
+    }
+  }, [card, getCard]);
 
   const [normalImg, setNormalImg] = useState<string>("");
   const [trainedImg, setTrainedImg] = useState<string>("");
@@ -1276,6 +1294,16 @@ const CardDetail: React.FC<{}> = () => {
           </TabPanel>
         </TabContext>
       </Container>
+      {!!cardCommentId && (
+        <Fragment>
+          <Typography variant="h6" className={layoutClasses.header}>
+            {t("common:comment")} <CommentTextMultiple />
+          </Typography>
+          <Container className={layoutClasses.content} maxWidth="md">
+            <Comment contentType="cards" contentId={cardCommentId} />
+          </Container>
+        </Fragment>
+      )}
       <Viewer
         visible={visible}
         onClose={() => setVisible(false)}

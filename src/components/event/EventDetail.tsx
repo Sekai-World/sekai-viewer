@@ -49,6 +49,9 @@ import AudioPlayer from "../music/AudioPlayer";
 import AgendaView from "../virtual_live/AgendaView";
 import AdSense from "../subs/AdSense";
 import Image from "material-ui-image";
+import { useStrapi } from "../../utils/apiClient";
+import { CommentTextMultiple } from "mdi-material-ui";
+import Comment from "../comment/Comment";
 
 const useStyle = makeStyles((theme) => ({
   // bannerImg: {
@@ -75,6 +78,7 @@ const EventDetail: React.FC<{}> = () => {
   const { getTranslated } = useAssetI18n();
   const { contentTransMode } = useContext(SettingContext)!;
   const [humanizeDuration] = useDurationI18n();
+  const { getEvent } = useStrapi();
 
   const [events] = useCachedData<IEventInfo>("events");
   const [eventDeckBonuses] = useCachedData<IEventDeckBonus>("eventDeckBonuses");
@@ -112,6 +116,7 @@ const EventDetail: React.FC<{}> = () => {
   ] = useState<IVirtualLiveInfo>();
   const [ccTeams, setCcTeams] = useState<ICheerfulCarnivalTeam[]>([]);
   const [ccSummary, setCcSummary] = useState<ICheerfulCarnivalSummary>();
+  const [eventCommentId, setEventCommentId] = useState<number>(0);
 
   useEffect(() => {
     if (event) {
@@ -183,6 +188,19 @@ const EventDetail: React.FC<{}> = () => {
     gameCharacterUnits,
     virtualLives,
   ]);
+
+  useEffect(() => {
+    if (event) {
+      const job = async () => {
+        const eventStrapi = await getEvent(event.id);
+        if (eventStrapi) {
+          setEventCommentId(eventStrapi.id);
+        }
+      };
+
+      job();
+    }
+  }, [event, getEvent]);
 
   useEffect(() => {
     if (
@@ -931,6 +949,16 @@ const EventDetail: React.FC<{}> = () => {
           ))}
         </Grid>
       </Container>
+      {!!eventCommentId && (
+        <Fragment>
+          <Typography variant="h6" className={layoutClasses.header}>
+            {t("common:comment")} <CommentTextMultiple />
+          </Typography>
+          <Container className={layoutClasses.content} maxWidth="md">
+            <Comment contentType="event" contentId={eventCommentId} />
+          </Container>
+        </Fragment>
+      )}
       <Viewer
         visible={visible}
         onClose={() => setVisible(false)}

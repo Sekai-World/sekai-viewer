@@ -55,6 +55,9 @@ import { Howl } from "howler";
 import { saveAs } from "file-saver";
 import AdSense from "../subs/AdSense";
 import Image from "material-ui-image";
+import { useStrapi } from "../../utils/apiClient";
+import { CommentTextMultiple } from "mdi-material-ui";
+import Comment from "../comment/Comment";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -90,6 +93,7 @@ const MusicDetail: React.FC<{}> = () => {
   const getCharaName = useCharaName();
   const getOriginalCharaName = useCharaName("original");
   const musicTagToName = useMusicTagName(contentTransMode);
+  const { getMusic } = useStrapi();
 
   const [musics] = useCachedData<IMusicInfo>("musics");
   const [musicVocals] = useCachedData<IMusicVocalInfo>("musicVocals");
@@ -138,6 +142,7 @@ const MusicDetail: React.FC<{}> = () => {
     string | undefined
   >();
   const [musicVideoURL, setMusicVideoURL] = useState<string>("");
+  const [musicCommentId, setMusicCommentId] = useState<number>(0);
 
   useEffect(() => {
     if (music) {
@@ -189,6 +194,19 @@ const MusicDetail: React.FC<{}> = () => {
       );
     }
   }, [music, musicVocal, selectedPreviewVocalType]);
+
+  useEffect(() => {
+    if (music) {
+      const job = async () => {
+        const musicStrapi = await getMusic(music.id);
+        if (musicStrapi) {
+          setMusicCommentId(musicStrapi.id);
+        }
+      };
+
+      job();
+    }
+  }, [getMusic, music]);
 
   useEffect(() => {
     if (
@@ -1202,6 +1220,16 @@ const MusicDetail: React.FC<{}> = () => {
               ))}
           </TabContext>
         </Container>
+      )}
+      {!!musicCommentId && (
+        <Fragment>
+          <Typography variant="h6" className={layoutClasses.header}>
+            {t("common:comment")} <CommentTextMultiple />
+          </Typography>
+          <Container className={layoutClasses.content} maxWidth="md">
+            <Comment contentType="musics" contentId={musicCommentId} />
+          </Container>
+        </Fragment>
       )}
       <Viewer
         visible={visible}

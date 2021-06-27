@@ -21,6 +21,9 @@ import { charaIcons } from "../../utils/resources";
 import ResourceBox from "../subs/ResourceBox";
 import VirtualLiveStep from "./VirtualLiveStep";
 import AdSense from "../subs/AdSense";
+import { CommentTextMultiple } from "mdi-material-ui";
+import Comment from "../comment/Comment";
+import { useStrapi } from "../../utils/apiClient";
 
 const VirtualLiveDetail: React.FC<{}> = () => {
   const { t } = useTranslation();
@@ -29,6 +32,7 @@ const VirtualLiveDetail: React.FC<{}> = () => {
   // const interactiveClasses = useInteractiveStyles();
   const { getTranslated } = useAssetI18n();
   const { contentTransMode } = useContext(SettingContext)!;
+  const { getVirtualLive } = useStrapi();
 
   const [virtualLives] = useCachedData<IVirtualLiveInfo>("virtualLives");
   const [gameCharacterUnits] = useCachedData<IGameCharaUnit>(
@@ -36,6 +40,7 @@ const VirtualLiveDetail: React.FC<{}> = () => {
   );
 
   const [virtualLive, setVirtualLive] = useState<IVirtualLiveInfo>();
+  const [virtualLiveCommentId, setVirtualLiveCommentId] = useState<number>(0);
 
   useEffect(() => {
     if (virtualLive) {
@@ -56,6 +61,19 @@ const VirtualLiveDetail: React.FC<{}> = () => {
       );
     }
   }, [virtualLives, virtualLiveId]);
+
+  useEffect(() => {
+    if (virtualLive) {
+      const job = async () => {
+        const virtualLiveStrapi = await getVirtualLive(virtualLive.id);
+        if (virtualLiveStrapi) {
+          setVirtualLiveCommentId(virtualLiveStrapi.id);
+        }
+      };
+
+      job();
+    }
+  }, [getVirtualLive, virtualLive]);
 
   const [vrLiveLogo, setVrLiveLogo] = useState<string>("");
   const [vrLiveBanner, setVrLiveBanner] = useState<string>("");
@@ -294,6 +312,19 @@ const VirtualLiveDetail: React.FC<{}> = () => {
           <VirtualLiveStep key={setlist.id} data={setlist} />
         ))}
       </Container>
+      {!!virtualLiveCommentId && (
+        <Fragment>
+          <Typography variant="h6" className={layoutClasses.header}>
+            {t("common:comment")} <CommentTextMultiple />
+          </Typography>
+          <Container className={layoutClasses.content} maxWidth="md">
+            <Comment
+              contentType="virtual-live"
+              contentId={virtualLiveCommentId}
+            />
+          </Container>
+        </Fragment>
+      )}
     </Fragment>
   ) : (
     <div>
