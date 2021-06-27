@@ -543,6 +543,8 @@ export interface IEventCalcAllSongsResult {
   id: number;
   mid: number;
   name: string;
+  difficulty: string;
+  level: number;
   result: number;
   resultPerHour: number;
 }

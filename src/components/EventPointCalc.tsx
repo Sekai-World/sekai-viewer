@@ -1,5 +1,6 @@
 import {
   Button,
+  Chip,
   Container,
   Divider,
   FormControl,
@@ -8,6 +9,7 @@ import {
   Grid,
   Input,
   InputLabel,
+  makeStyles,
   MenuItem,
   Paper,
   Radio,
@@ -51,7 +53,26 @@ const difficulties: Record<number, string> = {
   4: "master",
 };
 
-const MusicRecommend: React.FC<{}> = () => {
+const useStyle = makeStyles(() => ({
+  easy: {
+    backgroundColor: "#86DA45",
+  },
+  normal: {
+    backgroundColor: "#5FB8E6",
+  },
+  hard: {
+    backgroundColor: "#F3AE3C",
+  },
+  expert: {
+    backgroundColor: "#DC5268",
+  },
+  master: {
+    backgroundColor: "#AC3EE6",
+  },
+}));
+
+const EventPointCalc: React.FC<{}> = () => {
+  const classes = useStyle();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
@@ -207,6 +228,23 @@ const MusicRecommend: React.FC<{}> = () => {
       },
     },
     {
+      field: "level",
+      headerName: t("music:difficulty"),
+      width: 100,
+      renderCell(params) {
+        return (
+          <Chip
+            color="primary"
+            size="small"
+            classes={{
+              colorPrimary: classes[params.getValue("difficulty") as "easy"],
+            }}
+            label={params.value}
+          ></Chip>
+        );
+      },
+    },
+    {
       field: "duration",
       headerName: t("music:actualPlaybackTime"),
       width: 150,
@@ -239,7 +277,9 @@ const MusicRecommend: React.FC<{}> = () => {
     const averageSkills = getMultiAverageSkillRates(teamSkills);
     if (selectedMusicMode === "only_one") {
       const meta = metas.find(
-        (it) => it.music_id === selectedSongId && it.difficulty === "master"
+        (it) =>
+          it.music_id === selectedSongId &&
+          it.difficulty === difficulties[selectedSongDifficulty]
       );
       if (!meta) return;
       // console.log(averageSkills);
@@ -275,19 +315,17 @@ const MusicRecommend: React.FC<{}> = () => {
       const boost = count * energyDrinkCount;
       setNeedBoost(boost);
     } else {
-      const result: IEventCalcAllSongsResult[] = musics
-        .map((music, i) => {
-          const meta = metas.find(
-            (it) =>
-              it.music_id === music.id &&
-              it.difficulty === difficulties[selectedSongDifficulty]
-          );
-          if (!meta)
+      const result: IEventCalcAllSongsResult[] = metas
+        .map((meta, i) => {
+          let music = musics.find((it) => it.id === meta.music_id);
+          if (!music)
             return {
               id: i,
-              mid: music.id,
-              name: music.title,
-              duration: 0,
+              mid: meta.music_id,
+              name: "",
+              difficulty: meta.difficulty,
+              level: 0,
+              duration: meta.music_time,
               result: 0,
               resultPerHour: 0,
             };
@@ -321,6 +359,8 @@ const MusicRecommend: React.FC<{}> = () => {
             id: i,
             mid: music.id,
             name: music.title,
+            difficulty: meta.difficulty,
+            level: meta.level,
             duration: meta.music_time,
             result: result,
             resultPerHour: Math.floor((result / (meta.music_time + 30)) * 3600),
@@ -888,4 +928,4 @@ const MusicRecommend: React.FC<{}> = () => {
   );
 };
 
-export default MusicRecommend;
+export default EventPointCalc;
