@@ -183,3 +183,27 @@ export interface PatronModel {
   tier: string;
   avatarUrl: string;
 }
+
+export interface CardModel {
+  id: number;
+  cardId: number;
+  comments: CommentModel[];
+}
+
+export interface MusicModel {
+  id: number;
+  musicId: number;
+  comments: CommentModel[];
+}
+
+export interface EventModel {
+  id: number;
+  eventId: number;
+  comments: CommentModel[];
+}
+
+export interface VirtualLiveModel {
+  id: number;
+  virtualLiveId: number;
+  comments: CommentModel[];
+}

@@ -1,9 +1,13 @@
 import {
   AvatarModel,
+  CardModel,
   CommentAbuseReason,
   CommentModel,
+  EventModel,
+  MusicModel,
   PatronModel,
   TranslationModel,
+  VirtualLiveModel,
 } from "./../strapi-model.d";
 import Axios from "axios";
 import { useCallback, useMemo } from "react";
@@ -495,6 +499,42 @@ export function useStrapi(token?: string) {
             params: {
               sourceSlug,
             },
+          })
+        ).data[0],
+      [axios]
+    ),
+    getMusic: useCallback(
+      async (musicId: number) =>
+        (
+          await axios.get<MusicModel[]>("/musics", {
+            params: { musicId, _limit: 1 },
+          })
+        ).data[0],
+      [axios]
+    ),
+    getCard: useCallback(
+      async (cardId: number) =>
+        (
+          await axios.get<CardModel[]>("/cards", {
+            params: { cardId, _limit: 1 },
+          })
+        ).data[0],
+      [axios]
+    ),
+    getEvent: useCallback(
+      async (eventId: number) =>
+        (
+          await axios.get<EventModel[]>("/events", {
+            params: { eventId, _limit: 1 },
+          })
+        ).data[0],
+      [axios]
+    ),
+    getVirtualLive: useCallback(
+      async (virtualLiveId: number) =>
+        (
+          await axios.get<VirtualLiveModel[]>("/virtual-lives", {
+            params: { virtualLiveId, _limit: 1 },
           })
         ).data[0],
       [axios]
