@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.7](https://github.com/Sekai-World/sekai-viewer/compare/v0.5.6...v0.5.7) (2021-06-27)
+
+
+### Features
+
+* add comments for card, event, music and vlive ([4107baa](https://github.com/Sekai-World/sekai-viewer/commits/4107baa72c55c9d7aa75ed4c9cdfd1b0b385d1d2))
+* **utils:** add api for proseka data ([cfa8915](https://github.com/Sekai-World/sekai-viewer/commits/cfa89150bc565aa33db4c9f48aea7c8d8719d5f2))
+
+
+### Bug Fixes
+
+* **comment:** missing style file, fetch comments on load ([995163b](https://github.com/Sekai-World/sekai-viewer/commits/995163b76a7beaa4812df826a59db744a74c677e))
+* **music:** music video path ([b4f283c](https://github.com/Sekai-World/sekai-viewer/commits/b4f283c477934788e7f3e3fd6ec669b471ed296d))
+
+
+### Refactors
+
+* **announcement:** adaption for comment component  change ([fcd76be](https://github.com/Sekai-World/sekai-viewer/commits/fcd76beb58297d28e32ed1c060b7412b10ad22ac))
+* **calc:** add difficulties back to event point calc ([93be7b0](https://github.com/Sekai-World/sekai-viewer/commits/93be7b0c00e5859f05350dd3edf77edf4b142827))
+* **calc:** code cleanup ([f43ea36](https://github.com/Sekai-World/sekai-viewer/commits/f43ea361b160edddb58e689dbfd8f145b68561c6))
+
 ### [0.5.6](https://github.com/Sekai-World/sekai-viewer/compare/v0.5.5...v0.5.6) (2021-06-21)
 
 
