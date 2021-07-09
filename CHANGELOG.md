@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.8](https://github.com/Sekai-World/sekai-viewer/compare/v0.5.7...v0.5.8) (2021-07-09)
+
+
+### Bug Fixes
+
+* **music:** mv type filter becomes true "AND" filter ([224e5ed](https://github.com/Sekai-World/sekai-viewer/commits/224e5ed06098f3d51b019d4ba5b1c1a274bd9fd2))
+
 ### [0.5.7](https://github.com/Sekai-World/sekai-viewer/compare/v0.5.6...v0.5.7) (2021-06-27)
 
 
