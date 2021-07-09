@@ -155,8 +155,8 @@ const MusicList: React.FC<{}> = () => {
         );
       }
       if (musicMVTypes.length) {
-        result = result.filter(
-          (m) => m.categories.sort().join(" ") === musicMVTypes.sort().join(" ")
+        result = result.filter((m) =>
+          musicMVTypes.every((type) => m.categories.includes(type))
         );
       }
       if (characterSelected.length || outsideCharacterSelected.length) {
