@@ -23,7 +23,8 @@ const AudioPlayer: React.FC<{
   onLoad?: (howl: Howl) => void;
   onSave?: (src: string) => void;
   style?: React.CSSProperties;
-}> = ({ src, onPlay, onLoad, onSave, style }) => {
+  offset?: number;
+}> = ({ src, onPlay, onLoad, onSave, style, offset }) => {
   const [sound, setSound] = useState<Howl>();
   const [playbackTime, setPlaybackTime] = useState(0);
   const [totalTime, setTotalTime] = useState(0);
@@ -31,6 +32,7 @@ const AudioPlayer: React.FC<{
   const [isPlay, setIsPlay] = useState(false);
   const [isMute, setIsMute] = useState(false);
   const [volume, setVolume] = useState(100);
+  const [totalOffset, setTotalOffset] = useState(offset || 0);
   // const [loop, setLoop] = useState(false);
 
   useEffect(() => {
@@ -43,7 +45,9 @@ const AudioPlayer: React.FC<{
       // loop: loop,
     });
     _sound.on("load", () => {
-      setTotalTime(_sound.duration());
+      setTotalTime(_sound.duration() - totalOffset);
+      setPlaybackTime(0);
+      _sound.seek(totalOffset);
       if (onLoad) onLoad(_sound);
     });
     _sound.on("play", () => {
@@ -51,17 +55,19 @@ const AudioPlayer: React.FC<{
       requestAnimationFrame(function update() {
         if (!_sound.playing()) return;
         const currentTime = _sound.seek() as number;
-        setPlaybackTime(currentTime);
+        setPlaybackTime(currentTime - totalOffset);
 
         requestAnimationFrame(update);
       });
     });
     _sound.on("stop", () => {
       setPlaybackTime(0);
+      _sound.seek(totalOffset);
       setIsPlay(false);
     });
     _sound.on("end", () => {
       setPlaybackTime(0);
+      _sound.seek(totalOffset);
       setIsPlay(false);
     });
     setSound(_sound);
@@ -70,7 +76,11 @@ const AudioPlayer: React.FC<{
       _sound.unload();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onLoad, onPlay, src]);
+  }, [onLoad, onPlay, src, totalOffset]);
+
+  useEffect(() => {
+    if (offset !== undefined) setTotalOffset(offset);
+  }, [offset]);
 
   const seekHandler = useCallback(
     (_, v: number | number[]) => {
@@ -78,14 +88,14 @@ const AudioPlayer: React.FC<{
         setPlaybackTime(v as number);
         if (sound.playing()) {
           sound.pause();
-          sound.seek(v as number);
+          sound.seek(totalOffset + (v as number));
           sound.play();
         } else {
-          sound.seek(v as number);
+          sound.seek(totalOffset + (v as number));
         }
       }
     },
-    [sound]
+    [sound, totalOffset]
   );
 
   const formatTime = useCallback((time) => {

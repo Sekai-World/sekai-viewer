@@ -45,7 +45,7 @@ import { charaIcons } from "../../utils/resources";
 import { Trans, useTranslation } from "react-i18next";
 import { useAssetI18n, useCharaName } from "../../utils/i18n";
 import { useDurationI18n } from "../../utils/i18nDuration";
-import { useTrimMP3 } from "../../utils/trimMP3";
+// import { useTrimMP3 } from "../../utils/trimMP3";
 import MusicVideoPlayer from "../subs/MusicVideoPlayer";
 import { SettingContext } from "../../context";
 import { ContentTrans, ReleaseCondTrans } from "../subs/ContentTrans";
@@ -81,7 +81,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const MusicDetail: React.FC<{}> = () => {
-  const theme = useTheme();
+  // const theme = useTheme();
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
@@ -89,7 +89,7 @@ const MusicDetail: React.FC<{}> = () => {
   const { getTranslated } = useAssetI18n();
   const { contentTransMode } = useContext(SettingContext)!;
   const [, humanizeDurationShort] = useDurationI18n();
-  const [trimmedMP3URL, trimFailed, setTrimOptions] = useTrimMP3();
+  // const [trimmedMP3URL, trimFailed, setTrimOptions] = useTrimMP3();
   const getCharaName = useCharaName();
   const getOriginalCharaName = useCharaName("original");
   const musicTagToName = useMusicTagName(contentTransMode);
@@ -130,19 +130,20 @@ const MusicDetail: React.FC<{}> = () => {
   const [diffiInfoTabVal, setDiffiInfoTabVal] = useState<string>("4");
   const [actualPlaybackTime, setActualPlaybackTime] = useState<string>("");
   const [trimSilence, setTrimSilence] = useState<boolean>(true);
-  const [trimLoading, setTrimLoading] = useState<boolean>(false);
+  // const [trimLoading, setTrimLoading] = useState<boolean>(false);
   const [longMusicPlaybackURL, setLongMusicPlaybackURL] = useState<
     string | undefined
   >();
-  const [
-    trimmedLongMusicPlaybackURL,
-    setTrimmedLongMusicPlaybackURL,
-  ] = useState<string | undefined>();
+  // const [
+  //   trimmedLongMusicPlaybackURL,
+  //   setTrimmedLongMusicPlaybackURL,
+  // ] = useState<string | undefined>();
   const [shortMusicPlaybackURL, setShortMusicPlaybackURL] = useState<
     string | undefined
   >();
   const [musicVideoURL, setMusicVideoURL] = useState<string>("");
   const [musicCommentId, setMusicCommentId] = useState<number>(0);
+  const [format, setFormat] = useState<"mp3" | "flac">("mp3");
 
   useEffect(() => {
     if (music) {
@@ -183,17 +184,17 @@ const MusicDetail: React.FC<{}> = () => {
   useEffect(() => {
     if (music && musicVocal && musicVocal[selectedPreviewVocalType]) {
       getRemoteAssetURL(
-        `music/long/${musicVocal[selectedPreviewVocalType].assetbundleName}_rip/${musicVocal[selectedPreviewVocalType].assetbundleName}.mp3`,
+        `music/long/${musicVocal[selectedPreviewVocalType].assetbundleName}_rip/${musicVocal[selectedPreviewVocalType].assetbundleName}.${format}`,
         setLongMusicPlaybackURL,
         window.isChinaMainland
       );
       getRemoteAssetURL(
-        `music/short/${musicVocal[selectedPreviewVocalType].assetbundleName}_rip/${musicVocal[selectedPreviewVocalType].assetbundleName}_short.mp3`,
+        `music/short/${musicVocal[selectedPreviewVocalType].assetbundleName}_rip/${musicVocal[selectedPreviewVocalType].assetbundleName}_short.${format}`,
         setShortMusicPlaybackURL,
         window.isChinaMainland
       );
     }
-  }, [music, musicVocal, selectedPreviewVocalType]);
+  }, [format, music, musicVocal, selectedPreviewVocalType]);
 
   useEffect(() => {
     if (music) {
@@ -227,48 +228,48 @@ const MusicDetail: React.FC<{}> = () => {
     }
   }, [music, musicVocal, selectedPreviewVocalType, vocalPreviewVal]);
 
-  useEffect(() => {
-    if (
-      vocalPreviewVal === "1" &&
-      musicVocal &&
-      musicVocal[selectedPreviewVocalType] &&
-      music &&
-      longMusicPlaybackURL &&
-      trimSilence &&
-      !trimmedMP3URL
-    ) {
-      setTrimOptions({
-        sourceURL: longMusicPlaybackURL,
-        trimDuration: music.fillerSec,
-        inclusive: false,
-      });
-      setTrimLoading(true);
-    }
-  }, [
-    music,
-    musicVocal,
-    selectedPreviewVocalType,
-    vocalPreviewVal,
-    setTrimOptions,
-    setTrimLoading,
-    longMusicPlaybackURL,
-    trimSilence,
-    trimmedMP3URL,
-  ]);
+  // useEffect(() => {
+  //   if (
+  //     vocalPreviewVal === "1" &&
+  //     musicVocal &&
+  //     musicVocal[selectedPreviewVocalType] &&
+  //     music &&
+  //     longMusicPlaybackURL &&
+  //     trimSilence &&
+  //     !trimmedMP3URL
+  //   ) {
+  //     setTrimOptions({
+  //       sourceURL: longMusicPlaybackURL,
+  //       trimDuration: music.fillerSec,
+  //       inclusive: false,
+  //     });
+  //     setTrimLoading(true);
+  //   }
+  // }, [
+  //   music,
+  //   musicVocal,
+  //   selectedPreviewVocalType,
+  //   vocalPreviewVal,
+  //   setTrimOptions,
+  //   setTrimLoading,
+  //   longMusicPlaybackURL,
+  //   trimSilence,
+  //   trimmedMP3URL,
+  // ]);
 
-  useEffect(() => {
-    if (
-      musicVocal &&
-      musicVocal[selectedPreviewVocalType] &&
-      music &&
-      trimmedMP3URL
-    ) {
-      setTrimmedLongMusicPlaybackURL(trimmedMP3URL);
-      setTrimLoading(false);
-    } else {
-      setTrimmedLongMusicPlaybackURL(undefined);
-    }
-  }, [music, musicVocal, selectedPreviewVocalType, trimmedMP3URL]);
+  // useEffect(() => {
+  //   if (
+  //     musicVocal &&
+  //     musicVocal[selectedPreviewVocalType] &&
+  //     music &&
+  //     trimmedMP3URL
+  //   ) {
+  //     setTrimmedLongMusicPlaybackURL(trimmedMP3URL);
+  //     setTrimLoading(false);
+  //   } else {
+  //     setTrimmedLongMusicPlaybackURL(undefined);
+  //   }
+  // }, [music, musicVocal, selectedPreviewVocalType, trimmedMP3URL]);
 
   const getVocalCharaIcons: (index: number) => JSX.Element = useCallback(
     (index: number) => {
@@ -363,10 +364,10 @@ const MusicDetail: React.FC<{}> = () => {
   const getActalPlaybackTime = useCallback(
     (howl: Howl) => {
       if (!music || !!actualPlaybackTime) return;
-      let durationMsec;
-      if (trimmedLongMusicPlaybackURL && trimSilence)
-        durationMsec = howl.duration() * 1000;
-      else durationMsec = (howl.duration() - music.fillerSec) * 1000;
+      const durationMsec = (howl.duration() - music.fillerSec) * 1000;
+      // if (trimmedLongMusicPlaybackURL && trimSilence)
+      //   durationMsec = howl.duration() * 1000;
+      // else durationMsec = (howl.duration() - music.fillerSec) * 1000;
       setActualPlaybackTime(
         `${humanizeDurationShort(durationMsec, {
           units: ["s"],
@@ -381,13 +382,7 @@ const MusicDetail: React.FC<{}> = () => {
         })})`
       );
     },
-    [
-      actualPlaybackTime,
-      humanizeDurationShort,
-      music,
-      trimSilence,
-      trimmedLongMusicPlaybackURL,
-    ]
+    [actualPlaybackTime, humanizeDurationShort, music]
   );
 
   const onSave = useCallback(
@@ -406,10 +401,11 @@ const MusicDetail: React.FC<{}> = () => {
         src,
         `${music?.title}-${
           vocalPreviewVal === "1" ? "full" : "preview"
-        }-${vocals.join("+")}.mp3`
+        }-${vocals.join("+")}.${format}`
       );
     },
     [
+      format,
       getOriginalCharaName,
       music?.title,
       musicVocal,
@@ -547,9 +543,46 @@ const MusicDetail: React.FC<{}> = () => {
               vocalType={selectedPreviewVocalType}
               onSelect={(v) => {
                 setSelectedPreviewVocalType(v);
-                setTrimOptions(undefined);
+                // setTrimOptions(undefined);
               }}
             />
+            <Grid
+              item
+              container
+              xs={12}
+              alignItems="center"
+              justify="space-between"
+            >
+              <Grid item xs={12} md={2}>
+                <Typography classes={{ root: interactiveClasses.caption }}>
+                  {t("music:fileFormat.caption")}
+                </Typography>
+              </Grid>
+              <Grid item container xs={12} md={9} spacing={1}>
+                <RadioGroup
+                  row
+                  aria-label="music file format"
+                  name="file-format"
+                  value={format}
+                  onChange={(e, v) => {
+                    setFormat(v as "mp3");
+                  }}
+                >
+                  <FormControlLabel
+                    value="mp3"
+                    control={<Radio color="primary"></Radio>}
+                    label={t("music:fileFormat.mp3")}
+                    labelPlacement="end"
+                  />
+                  <FormControlLabel
+                    value="flac"
+                    control={<Radio color="primary"></Radio>}
+                    label={t("music:fileFormat.flac")}
+                    labelPlacement="end"
+                  />
+                </RadioGroup>
+              </Grid>
+            </Grid>
             {vocalPreviewVal === "1" ? (
               <Grid
                 item
@@ -569,24 +602,25 @@ const MusicDetail: React.FC<{}> = () => {
                       <Switch
                         checked={trimSilence}
                         onChange={() => setTrimSilence((v) => !v)}
-                        disabled={trimFailed || trimLoading}
+                        // disabled={trimFailed || trimLoading}
                       />
                     }
-                    label={
-                      trimFailed ? (
-                        // failed
-                        <Close style={{ color: theme.palette.error.main }} />
-                      ) : trimmedMP3URL ? (
-                        // success
-                        <Done style={{ color: theme.palette.success.main }} />
-                      ) : trimLoading ? (
-                        // loading
-                        <CircularProgress
-                          size="1em"
-                          style={{ marginLeft: "0.2em" }}
-                        />
-                      ) : null
-                    }
+                    label={null}
+                    // label={
+                    //   trimFailed ? (
+                    //     // failed
+                    //     <Close style={{ color: theme.palette.error.main }} />
+                    //   ) : trimmedMP3URL ? (
+                    //     // success
+                    //     <Done style={{ color: theme.palette.success.main }} />
+                    //   ) : trimLoading ? (
+                    //     // loading
+                    //     <CircularProgress
+                    //       size="1em"
+                    //       style={{ marginLeft: "0.2em" }}
+                    //     />
+                    //   ) : null
+                    // }
                   />
                 </Grid>
               </Grid>
@@ -608,14 +642,11 @@ const MusicDetail: React.FC<{}> = () => {
           musicVocal.length &&
           longMusicPlaybackURL && (
             <AudioPlayer
-              src={
-                trimSilence && trimmedLongMusicPlaybackURL
-                  ? trimmedLongMusicPlaybackURL
-                  : longMusicPlaybackURL
-              }
+              src={longMusicPlaybackURL}
               onPlay={onPlay}
               onLoad={getActalPlaybackTime}
               onSave={onSave}
+              offset={trimSilence ? music.fillerSec : 0}
             />
           )}
         {["original", "mv_2d"].includes(vocalPreviewVal) &&
