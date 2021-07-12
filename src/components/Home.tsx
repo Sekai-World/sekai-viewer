@@ -231,6 +231,22 @@ function Home() {
                 width="1500"
                 height="500"
               />
+            ) : jpTime === "7/20" ? (
+              <img
+                src={`${process.env.PUBLIC_URL}/images/banner-nene.jpg`}
+                alt="banner"
+                style={{ width: "100%", height: "auto" }}
+                width="1500"
+                height="500"
+              />
+            ) : jpTime === "7/26" ? (
+              <img
+                src={`${process.env.PUBLIC_URL}/images/banner-an.jpg`}
+                alt="banner"
+                style={{ width: "100%", height: "auto" }}
+                width="1500"
+                height="500"
+              />
             ) : (
               <img
                 src={`${process.env.PUBLIC_URL}/images/banner.png`}
