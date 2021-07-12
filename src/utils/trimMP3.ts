@@ -12,7 +12,7 @@ import { parseMP3 } from "./mp3";
  *   if `false`, the actual duration removed will be slightly longer than `trimDuration`
  * @returns trimmed MP3
  */
-function trimMP3(
+export function trimMP3(
   source: ArrayBuffer,
   trimDuration: number,
   inclusive = false

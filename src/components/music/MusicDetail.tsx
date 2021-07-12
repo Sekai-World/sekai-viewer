@@ -1,5 +1,5 @@
 import {
-  CircularProgress,
+  // CircularProgress,
   Divider,
   FormControl,
   FormControlLabel,
@@ -13,13 +13,13 @@ import {
   Typography,
   Container,
   Switch,
-  useTheme,
+  // useTheme,
   Link,
 } from "@material-ui/core";
 import { useLayoutStyles } from "../../styles/layout";
 import { useInteractiveStyles } from "../../styles/interactive";
 import { Alert, TabContext, TabPanel } from "@material-ui/lab";
-import { Close, Done, OpenInNew } from "@material-ui/icons";
+import { OpenInNew } from "@material-ui/icons";
 import React, {
   Fragment,
   useCallback,
@@ -58,6 +58,8 @@ import Image from "material-ui-image";
 import { useStrapi } from "../../utils/apiClient";
 import { CommentTextMultiple } from "mdi-material-ui";
 import Comment from "../comment/Comment";
+import axios from "axios";
+import { trimMP3 } from "../../utils/trimMP3";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -386,7 +388,8 @@ const MusicDetail: React.FC<{}> = () => {
   );
 
   const onSave = useCallback(
-    (src: string) => {
+    async (src: string) => {
+      if (!music) return;
       // console.log(src);
       const vocals = musicVocal[
         selectedPreviewVocalType
@@ -397,20 +400,36 @@ const MusicDetail: React.FC<{}> = () => {
           ? outCharas.find((elem) => elem.id === chara.characterId)!.name
           : chara.characterId
       );
-      saveAs(
-        src,
-        `${music?.title}-${
-          vocalPreviewVal === "1" ? "full" : "preview"
-        }-${vocals.join("+")}.${format}`
-      );
+      if (trimSilence && format === "mp3") {
+        const buf = (await axios.get(src, { responseType: "arraybuffer" }))
+          .data as ArrayBuffer;
+        const trimmed = trimMP3(buf, music.fillerSec);
+        if (trimmed)
+          saveAs(
+            new Blob([trimmed], {
+              type: "audio/mp3",
+            }),
+            `${music.title}-${
+              vocalPreviewVal === "1" ? "full" : "preview"
+            }-${vocals.join("+")}.${format}`
+          );
+      } else {
+        saveAs(
+          src,
+          `${music.title}-${
+            vocalPreviewVal === "1" ? "full" : "preview"
+          }-${vocals.join("+")}.${format}`
+        );
+      }
     },
     [
       format,
       getOriginalCharaName,
-      music?.title,
+      music,
       musicVocal,
       outCharas,
       selectedPreviewVocalType,
+      trimSilence,
       vocalPreviewVal,
     ]
   );
