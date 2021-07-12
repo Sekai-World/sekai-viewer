@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.9](https://github.com/Sekai-World/sekai-viewer/compare/v0.5.8...v0.5.9) (2021-07-12)
+
+
+### Features
+
+* **home:** add banner for nene and an's birthday ([1d73088](https://github.com/Sekai-World/sekai-viewer/commits/1d73088c8c3234240a1ceb016d35e9dceb43bf13))
+* **music:** simplify trim slience, add flac support ([fc3bc1b](https://github.com/Sekai-World/sekai-viewer/commits/fc3bc1b81d1bb76719c9dbec4965ab49e274b771))
+* **music:** tooltip for downloading flac ([ccb1cec](https://github.com/Sekai-World/sekai-viewer/commits/ccb1cecd0da7ed038c111c84013c8e02ba0f4294))
+
+
+### Refactors
+
+* **music:** only trim mp3 file for now ([da676ec](https://github.com/Sekai-World/sekai-viewer/commits/da676ecd234fd5e8b9ceede107230e94da2cb56d))
+
 ### [0.5.8](https://github.com/Sekai-World/sekai-viewer/compare/v0.5.7...v0.5.8) (2021-07-09)
 
 

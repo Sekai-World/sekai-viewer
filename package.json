@@ -1,6 +1,6 @@
 {
   "name": "sekai-viewer",
-  "version": "0.5.8",
+  "version": "0.5.9",
   "private": true,
   "homepage": "https://sekai.best/",
   "dependencies": {
