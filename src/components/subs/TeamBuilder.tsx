@@ -33,11 +33,12 @@ import React, {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { UserContext } from "../../context";
-import { ICardInfo, IGameChara, ITeamCardState } from "../../types";
+import { ICardInfo, IGameChara, ISkillInfo, ITeamCardState } from "../../types";
 import {
   useAlertSnackbar,
   useCachedData,
   useLocalStorage,
+  useSkillMapping,
   useToggle,
 } from "../../utils";
 import { CardThumb, CardThumbMedium } from "./CardThumb";
@@ -90,9 +91,11 @@ const TeamBuilder: React.FC<{
   )!;
   const { putSekaiDeckList, deleteSekaiDeckList } = useStrapi(jwtToken);
   const { showError, showSuccess } = useAlertSnackbar();
+  const skillMapping = useSkillMapping();
 
   const [cards] = useCachedData<ICardInfo>("cards");
   const [charas] = useCachedData<IGameChara>("gameCharacters");
+  const [skills] = useCachedData<ISkillInfo>("skills");
 
   const {
     getAreaItemBonus,
@@ -125,6 +128,7 @@ const TeamBuilder: React.FC<{
   const [isAutoCalcBonus, toggleIsAutoCalcBonus] = useToggle(
     !!sekaiProfile?.sekaiUserProfile
   );
+  const [skillSpriteName, setSkillSpriteName] = useState("any");
 
   const [teamBuildArray, dispatchTeamBuildArray] = useReducer(
     teamBuildReducer,
@@ -152,15 +156,27 @@ const TeamBuilder: React.FC<{
   const open = useMemo(() => Boolean(anchorEl), [anchorEl]);
 
   const filterCards = useCallback(() => {
-    if (!cards || !cards.length) return;
+    if (!cards || !cards.length || !skills || !skills.length) return;
+    const skillIds = skills
+      .filter((skill) => {
+        if (skillSpriteName === "perfect_score_up")
+          return skill.skillEffects[0].activateNotesJudgmentType === "perfect";
+        else if (skillSpriteName === "life_score_up")
+          return (
+            skill.skillEffects[0].skillEffectType === "score_up_condition_life"
+          );
+        else return skill.descriptionSpriteName === skillSpriteName;
+      })
+      .map((skill) => skill.id);
     setFilteredCards(
-      cards.filter((card) =>
-        characterId
-          ? card.characterId === characterId && card.rarity === rarity
-          : card.rarity === rarity
+      cards.filter(
+        (card) =>
+          card.rarity === rarity &&
+          (skillIds.length ? skillIds.includes(card.skillId) : true) &&
+          (characterId ? card.characterId === characterId : true)
       )
     );
-  }, [cards, characterId, rarity]);
+  }, [cards, characterId, rarity, skillSpriteName, skills]);
 
   const handleCardThumbClick = useCallback(
     (card: ICardInfo) => {
@@ -629,7 +645,7 @@ const TeamBuilder: React.FC<{
             <Grid item>
               <FormControl style={{ minWidth: 200 }}>
                 <InputLabel id="add-card-dialog-select-chara-label">
-                  {t("music_recommend:addCardDialog.selectChara")}
+                  {t("common:character")}
                 </InputLabel>
                 <Select
                   labelId="add-card-dialog-select-chara-label"
@@ -652,7 +668,7 @@ const TeamBuilder: React.FC<{
             <Grid item>
               <FormControl style={{ minWidth: 120 }}>
                 <InputLabel id="add-card-dialog-select-rarity-label">
-                  {t("music_recommend:addCardDialog.selectRarity")}
+                  {t("common:rarity")}
                 </InputLabel>
                 <Select
                   labelId="add-card-dialog-select-rarity-label"
@@ -683,6 +699,30 @@ const TeamBuilder: React.FC<{
                           ))}
                     </MenuItem>
                   ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControl style={{ minWidth: 200 }}>
+                <InputLabel id="add-card-dialog-select-skill-label">
+                  {t("card:skillName")}
+                </InputLabel>
+                <Select
+                  labelId="add-card-dialog-select-skill-label"
+                  value={skillSpriteName}
+                  onChange={(e) => setSkillSpriteName(e.target.value as string)}
+                >
+                  <MenuItem value={"any"}>{t("common:all")}</MenuItem>
+                  {skillMapping.map(
+                    ({ name, descriptionSpriteName }, index) => (
+                      <MenuItem
+                        key={`skill-select-item-${index + 1}`}
+                        value={descriptionSpriteName}
+                      >
+                        {name}
+                      </MenuItem>
+                    )
+                  )}
                 </Select>
               </FormControl>
             </Grid>
