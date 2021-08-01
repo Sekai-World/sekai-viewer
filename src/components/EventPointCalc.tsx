@@ -90,6 +90,7 @@ const EventPointCalc: React.FC<{}> = () => {
   const {
     getCardSkillRates,
     getMultiAverageSkillRates,
+    getSoloAverageSkillRates,
     getScore,
     getEventPoint,
   } = useScoreCalc();
@@ -272,9 +273,13 @@ const EventPointCalc: React.FC<{}> = () => {
       return;
     }
     // console.log(musicMeta);
-    const teamSkills = getCardSkillRates(cards, skills, teamCardsStates);
+    const cardSkills = getCardSkillRates(cards, skills, teamCardsStates);
     // console.log(teamSkills);
-    const averageSkills = getMultiAverageSkillRates(teamSkills);
+    let isSolo = playMode === "solo";
+    let averageSkills = isSolo
+      ? getSoloAverageSkillRates(cardSkills)
+      : getMultiAverageSkillRates(cardSkills);
+
     if (selectedMusicMode === "only_one") {
       const meta = metas.find(
         (it) =>
@@ -379,11 +384,12 @@ const EventPointCalc: React.FC<{}> = () => {
     musics,
     getCardSkillRates,
     teamCardsStates,
+    playMode,
+    getSoloAverageSkillRates,
     getMultiAverageSkillRates,
     selectedMusicMode,
     getScore,
     teamTotalPower,
-    playMode,
     teamAvgPower,
     getEventPoint,
     eventBonusRate,
@@ -393,8 +399,8 @@ const EventPointCalc: React.FC<{}> = () => {
     targetPoint,
     currentPoint,
     selectedSongId,
-    selectedEventId,
     selectedSongDifficulty,
+    selectedEventId,
   ]);
 
   const StepButtons: React.FC<{ nextDisabled?: boolean }> = ({
