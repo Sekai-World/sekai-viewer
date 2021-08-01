@@ -288,16 +288,10 @@ const EventPointCalc: React.FC<{}> = () => {
       );
       if (!meta) return;
       // console.log(averageSkills);
-      const score = getScore(
-        meta,
-        teamTotalPower,
-        averageSkills,
-        playMode === "solo"
-      );
-      const otherScore =
-        playMode === "solo"
-          ? 0
-          : getScore(meta, teamAvgPower, averageSkills, false);
+      const score = getScore(meta, teamTotalPower, averageSkills, isSolo);
+      const otherScore = isSolo
+        ? 0
+        : getScore(meta, teamAvgPower, averageSkills, false);
       // console.log("Score: " + score);
       const event = events.find((event) => event.id === selectedEventId)!;
       const eventPoint = getEventPoint(
