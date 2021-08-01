@@ -66,6 +66,7 @@ import { useAssetI18n, useCharaName } from "./i18n";
 import { useLocation } from "react-router-dom";
 import useSWR from "swr";
 import { useSnackbar } from "material-ui-snackbar-provider";
+import { useTranslation } from "react-i18next";
 
 const webpMachine = new WebpMachine();
 
@@ -656,3 +657,38 @@ export const realityAreaWorldmap: { [key: string]: number } = {
   6: 7,
   7: 6,
 };
+
+export function useSkillMapping() {
+  const { t } = useTranslation();
+  return useMemo(
+    () => [
+      //skills.json
+      {
+        // name: "スコアＵＰ",
+        name: t("filter:skill.score_up"),
+        descriptionSpriteName: "score_up",
+      },
+      {
+        // name: "判定強化＆スコアＵＰ",
+        name: t("filter:skill.judgment_up"),
+        descriptionSpriteName: "judgment_up",
+      },
+      {
+        // name: "ライフ回復＆スコアＵＰ",
+        name: t("filter:skill.life_recovery"),
+        descriptionSpriteName: "life_recovery",
+      },
+      {
+        // name: "PERFECTのときのみスコアＵＰ",
+        name: t("filter:skill.perfect_score_up"),
+        descriptionSpriteName: "perfect_score_up",
+      },
+      {
+        // name: "発動時ライフがOO未満ならスコアUP",
+        name: t("filter:skill.life_score_up"),
+        descriptionSpriteName: "life_score_up",
+      },
+    ],
+    [t]
+  );
+}

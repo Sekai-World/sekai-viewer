@@ -54,7 +54,12 @@ import {
   ISkillInfo,
   IUnitProfile,
 } from "../../types";
-import { useCachedData, useLocalStorage, useToggle } from "../../utils";
+import {
+  useCachedData,
+  useLocalStorage,
+  useSkillMapping,
+  useToggle,
+} from "../../utils";
 import InfiniteScroll from "../subs/InfiniteScroll";
 // import InfiniteScroll from "react-infinite-scroll-component";
 
@@ -136,6 +141,7 @@ const CardList: React.FC<{}> = () => {
   const getCharaName = useCharaName();
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
   const { getTranslated } = useAssetI18n();
+  const skillMapping = useSkillMapping();
 
   const [cardsCache] = useCachedData<ICardInfo>("cards");
   const [charas] = useCachedData<IGameChara>("gameCharacters");
@@ -195,33 +201,6 @@ const CardList: React.FC<{}> = () => {
   );
   const eventOpen = useMemo(() => Boolean(anchorElEvent), [anchorElEvent]);
   const [eventId, setEventId] = useState(1);
-
-  const skillMapping = useMemo(
-    () => [
-      //skills.json
-      {
-        // name: "スコアＵＰ",
-        name: t("filter:skill.score_up"),
-        descriptionSpriteName: "score_up",
-      },
-      {
-        // name: "判定強化＆スコアＵＰ",
-        name: t("filter:skill.judgment_up"),
-        descriptionSpriteName: "judgment_up",
-      },
-      {
-        // name: "ライフ回復＆スコアＵＰ",
-        name: t("filter:skill.life_recovery"),
-        descriptionSpriteName: "life_recovery",
-      },
-      {
-        // name: "PERFECTのときのみスコアＵＰ",
-        name: t("filter:skill.perfect_score_up"),
-        descriptionSpriteName: "perfect_score_up",
-      },
-    ],
-    [t]
-  );
 
   const callback = useCallback(
     (
@@ -301,6 +280,11 @@ const CardList: React.FC<{}> = () => {
             let descriptionSpriteName = skill.descriptionSpriteName;
             if (skill.skillEffects[0].activateNotesJudgmentType === "perfect")
               descriptionSpriteName = "perfect_score_up";
+            if (
+              skill.skillEffects[0].skillEffectType ===
+              "score_up_condition_life"
+            )
+              descriptionSpriteName = "life_score_up";
             return skillSelected.includes(descriptionSpriteName);
           }
           return true;
