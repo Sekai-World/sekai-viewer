@@ -220,7 +220,7 @@ export function useMusicTagName(contentTransMode: ContentTransModeType) {
   }
 }
 
-export function useMuisicMeta() {
+export function useMusicMeta() {
   const fetchCached = useCallback(async (name: string) => {
     const { data }: { data: IMusicMeta[] } = await Axios.get(
       (window.isChinaMainland
@@ -234,6 +234,12 @@ export function useMuisicMeta() {
   const { data } = useSWR("music_metas", fetchCached);
 
   return [data];
+}
+
+export function filterMusicMeta(metas: IMusicMeta[], musics: IMusicInfo[]) {
+  const validIds = musics.map((music) => music.id);
+
+  return metas.filter((meta) => validIds.includes(meta.music_id));
 }
 
 const queue = new PQueue({ concurrency: 1 });
