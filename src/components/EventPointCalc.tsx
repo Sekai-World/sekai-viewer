@@ -25,6 +25,7 @@ import {
 import { ColDef, DataGrid } from "@material-ui/data-grid";
 import { Alert } from "@material-ui/lab";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useLayoutStyles } from "../styles/layout";
 import {
@@ -35,10 +36,11 @@ import {
   IEventInfo,
   IGameCharaUnit,
   IMusicInfo,
+  IMusicMeta,
   ISkillInfo,
   ITeamCardState,
 } from "../types";
-import { useCachedData, useMuisicMeta } from "../utils";
+import { filterMusicMeta, useCachedData, useMusicMeta } from "../utils";
 import { useAssetI18n } from "../utils/i18n";
 import { useDurationI18n } from "../utils/i18nDuration";
 import { useScoreCalc } from "../utils/scoreCalc";
@@ -85,7 +87,7 @@ const EventPointCalc: React.FC<{}> = () => {
   const [gameCharacterUnits] = useCachedData<IGameCharaUnit>(
     "gameCharacterUnits"
   );
-  const [metas] = useMuisicMeta();
+  const [metas] = useMusicMeta();
 
   const {
     getCardSkillRates,
@@ -126,6 +128,7 @@ const EventPointCalc: React.FC<{}> = () => {
   const [customEventType, setCustomEventType] = useState<EventType>("marathon");
   const [playMode, setPlayMode] = useState("solo");
   const [teamAvgPower, setTeamAvgPower] = useState(0);
+  const [validMetas, setValidMetas] = useState<IMusicMeta[]>([]);
 
   useEffect(() => {
     document.title = t("title:musicRecommend");
@@ -134,6 +137,10 @@ const EventPointCalc: React.FC<{}> = () => {
   useEffect(() => {
     setTeamAvgPower(teamTotalPower);
   }, [teamTotalPower]);
+
+  useEffect(() => {
+    if (metas && musics) setValidMetas(filterMusicMeta(metas, musics));
+  }, [metas, musics]);
 
   useEffect(() => {
     if (
@@ -214,74 +221,87 @@ const EventPointCalc: React.FC<{}> = () => {
     teamCardsStates,
   ]);
 
-  const columns: ColDef[] = [
-    {
-      field: "name",
-      headerName: t("music_recommend:result.musicName"),
-      width: 400,
-      renderCell(params) {
-        return (
-          <ContentTrans
-            contentKey={`music_titles:${params.row.mid}`}
-            original={params.value as string}
-          />
-        );
+  const columns: ColDef[] = useMemo(
+    () => [
+      {
+        field: "name",
+        headerName: t("music_recommend:result.musicName"),
+        width: 400,
+        renderCell(params) {
+          return (
+            <ContentTrans
+              contentKey={`music_titles:${params.row.mid}`}
+              original={params.value as string}
+            />
+          );
+        },
       },
-    },
-    {
-      field: "level",
-      headerName: t("music:difficulty"),
-      width: 100,
-      renderCell(params) {
-        return (
-          <Chip
-            color="primary"
-            size="small"
-            classes={{
-              colorPrimary: classes[params.getValue("difficulty") as "easy"],
-            }}
-            label={params.value}
-          ></Chip>
-        );
+      {
+        field: "level",
+        headerName: t("music:difficulty"),
+        width: 100,
+        renderCell(params) {
+          return (
+            <Chip
+              color="primary"
+              size="small"
+              classes={{
+                colorPrimary: classes[params.getValue("difficulty") as "easy"],
+              }}
+              label={params.value}
+            ></Chip>
+          );
+        },
       },
-    },
-    {
-      field: "duration",
-      headerName: t("music:actualPlaybackTime"),
-      width: 150,
-      align: "center",
-    },
-    {
-      field: "result",
-      headerName: t("music_recommend:result.label"),
-      width: 100,
-      sortDirection: "desc",
-      align: "center",
-    },
-    {
-      field: "resultPerHour",
-      headerName: t("event_calc:result.perHour"),
-      width: 100,
-      // sortDirection: "desc",
-      align: "center",
-    },
-  ];
+      {
+        field: "duration",
+        headerName: t("music:actualPlaybackTime"),
+        width: 150,
+        align: "center",
+      },
+      {
+        field: "result",
+        headerName: t("music_recommend:result.label"),
+        width: 100,
+        sortDirection: "desc",
+        align: "center",
+      },
+      {
+        field: "resultPerHour",
+        headerName: t("event_calc:result.perHour"),
+        width: 100,
+        // sortDirection: "desc",
+        align: "center",
+        hide: playMode === "challenge_live",
+      },
+    ],
+    [classes, playMode, t]
+  );
 
   const calcResult = useCallback(() => {
-    if (!metas || !metas.length || !cards || !skills || !events || !musics) {
+    if (!validMetas.length || !cards || !skills || !events || !musics) {
       console.log("Essential data not load");
       return;
     }
     // console.log(musicMeta);
     const cardSkills = getCardSkillRates(cards, skills, teamCardsStates);
     // console.log(teamSkills);
-    let isSolo = playMode === "solo";
-    let averageSkills = isSolo
+    const isSolo = playMode === "solo";
+    const averageSkills = isSolo
       ? getSoloAverageSkillRates(cardSkills)
       : getMultiAverageSkillRates(cardSkills);
+    const event = events.find((event) => event.id === selectedEventId)!;
+    const mode =
+      playMode === "challenge_live"
+        ? "challenge_live"
+        : selectedEventMode === "existed"
+        ? event.eventType
+        : playMode === "solo"
+        ? "marathon"
+        : customEventType;
 
     if (selectedMusicMode === "only_one") {
-      const meta = metas.find(
+      const meta = validMetas.find(
         (it) =>
           it.music_id === selectedSongId &&
           it.difficulty === difficulties[selectedSongDifficulty]
@@ -293,18 +313,13 @@ const EventPointCalc: React.FC<{}> = () => {
         ? 0
         : getScore(meta, teamAvgPower, averageSkills, false);
       // console.log("Score: " + score);
-      const event = events.find((event) => event.id === selectedEventId)!;
       const eventPoint = getEventPoint(
         score,
         otherScore,
         meta.event_rate / 100,
         1 + eventBonusRate / 100,
         energyDrinkCount,
-        selectedEventMode === "existed"
-          ? event.eventType
-          : playMode === "solo"
-          ? "marathon"
-          : customEventType
+        mode
       );
       setEventPoint(eventPoint);
       const count = Math.ceil((targetPoint - currentPoint) / eventPoint);
@@ -314,7 +329,7 @@ const EventPointCalc: React.FC<{}> = () => {
       const boost = count * energyDrinkCount;
       setNeedBoost(boost);
     } else {
-      const result: IEventCalcAllSongsResult[] = metas
+      const result: IEventCalcAllSongsResult[] = validMetas
         .map((meta, i) => {
           let music = musics.find((it) => it.id === meta.music_id);
           if (!music)
@@ -339,18 +354,13 @@ const EventPointCalc: React.FC<{}> = () => {
               ? 0
               : getScore(meta, teamAvgPower, averageSkills, false);
           // console.log("Score: " + score);
-          const event = events.find((event) => event.id === selectedEventId)!;
           const eventPoint = getEventPoint(
             score,
             otherScore,
             meta.event_rate / 100,
             1 + eventBonusRate / 100,
             energyDrinkCount,
-            selectedEventMode === "existed"
-              ? event.eventType
-              : playMode === "solo"
-              ? "marathon"
-              : customEventType
+            mode
           );
           const result = eventPoint;
 
@@ -371,7 +381,7 @@ const EventPointCalc: React.FC<{}> = () => {
     }
     setActiveStep(maxStep - 1);
   }, [
-    metas,
+    validMetas,
     cards,
     skills,
     events,
@@ -381,20 +391,20 @@ const EventPointCalc: React.FC<{}> = () => {
     playMode,
     getSoloAverageSkillRates,
     getMultiAverageSkillRates,
+    selectedEventMode,
+    customEventType,
     selectedMusicMode,
+    selectedEventId,
     getScore,
     teamTotalPower,
     teamAvgPower,
     getEventPoint,
     eventBonusRate,
     energyDrinkCount,
-    selectedEventMode,
-    customEventType,
     targetPoint,
     currentPoint,
     selectedSongId,
     selectedSongDifficulty,
-    selectedEventId,
   ]);
 
   const StepButtons: React.FC<{ nextDisabled?: boolean }> = ({
@@ -620,6 +630,11 @@ const EventPointCalc: React.FC<{}> = () => {
                       value="multi"
                       control={<Radio />}
                       label={t("music_recommend:modeSelect.multi")}
+                    />
+                    <FormControlLabel
+                      value="challenge_live"
+                      control={<Radio />}
+                      label={t("common:challengeLive")}
                     />
                   </RadioGroup>
                 </FormControl>

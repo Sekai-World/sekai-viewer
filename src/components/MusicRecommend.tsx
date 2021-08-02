@@ -20,11 +20,12 @@ import { useLayoutStyles } from "../styles/layout";
 import {
   ICardInfo,
   IMusicInfo,
+  IMusicMeta,
   IMusicRecommendResult,
   ISkillInfo,
   ITeamCardState,
 } from "../types";
-import { useCachedData, useMuisicMeta } from "../utils";
+import { filterMusicMeta, useCachedData, useMusicMeta } from "../utils";
 import { ColDef, DataGrid, ValueFormatterParams } from "@material-ui/data-grid";
 import { Link } from "react-router-dom";
 import { OpenInNew } from "@material-ui/icons";
@@ -59,7 +60,7 @@ const MusicRecommend: React.FC<{}> = () => {
   const [cards] = useCachedData<ICardInfo>("cards");
   const [skills] = useCachedData<ISkillInfo>("skills");
   const [musics] = useCachedData<IMusicInfo>("musics");
-  const [metas] = useMuisicMeta();
+  const [metas] = useMusicMeta();
 
   const maxStep = 3;
 
@@ -72,6 +73,7 @@ const MusicRecommend: React.FC<{}> = () => {
   const [recommendResult, setRecommandResult] = useState<
     IMusicRecommendResult[]
   >([]);
+  const [validMetas, setValidMetas] = useState<IMusicMeta[]>([]);
 
   const {
     getCardSkillRates,
@@ -85,6 +87,10 @@ const MusicRecommend: React.FC<{}> = () => {
   useEffect(() => {
     document.title = t("title:musicRecommend");
   }, [t]);
+
+  useEffect(() => {
+    if (metas && musics) setValidMetas(filterMusicMeta(metas, musics));
+  }, [metas, musics]);
 
   const columns: ColDef[] = useMemo(
     () => [
@@ -191,7 +197,7 @@ const MusicRecommend: React.FC<{}> = () => {
       !skills.length ||
       !musics ||
       !musics.length ||
-      !metas
+      !validMetas.length
     )
       return;
     let isSolo = selectedMode === "solo";
@@ -202,7 +208,7 @@ const MusicRecommend: React.FC<{}> = () => {
     if (!isSolo) {
       const skillRates = getMultiAverageSkillRates(cardSkills);
 
-      result = metas
+      result = validMetas
         .map((meta, idx) => {
           const music = musics.find((it) => it.id === meta.music_id);
           if (!music) return {} as IMusicRecommendResult;
@@ -224,7 +230,7 @@ const MusicRecommend: React.FC<{}> = () => {
         })
         .filter((result) => result.result);
     } else {
-      result = metas
+      result = validMetas
         .map((meta, idx) => {
           const music = musics.find((it) => it.id === meta.music_id);
           if (!music) return {} as IMusicRecommendResult;
@@ -271,7 +277,7 @@ const MusicRecommend: React.FC<{}> = () => {
     cards,
     skills,
     musics,
-    metas,
+    validMetas,
     selectedMode,
     getCardSkillRates,
     teamCardsStates,
