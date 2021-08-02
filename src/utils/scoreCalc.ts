@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { sortWithIndices } from ".";
 import {
   EventType,
   ICardInfo,
@@ -75,15 +76,67 @@ export function useScoreCalc() {
   }, []);
   const getSoloAverageSkillRates = useCallback(
     (skillRates: number[]) => {
-      let averageSkillRates: number[] = [];
-      let rate = getSoloAverageSkillRate(skillRates);
-      for (let i = 0; i < 5; ++i) {
+      const averageSkillRates: number[] = [];
+      const rate = getSoloAverageSkillRate(skillRates);
+      for (let i = 0; i < 5; i += 1) {
         averageSkillRates.push(i < skillRates.length ? rate : 0);
       }
       averageSkillRates.push(skillRates[0]);
       return averageSkillRates;
     },
     [getSoloAverageSkillRate]
+  );
+
+  const getSoloWorstSkillOrderAndRates = useCallback(
+    (skillRates: number[], meta: IMusicMeta) => {
+      const worstSkillRates: number[] = [];
+      const skillScoreIndices = sortWithIndices(
+        meta.skill_score_solo.slice(0, 5)
+      );
+      for (let i = 0; i < 5; i += 1) {
+        worstSkillRates.push(i < skillRates.length ? skillRates[i] : 0);
+      }
+      worstSkillRates.sort().reverse();
+      const _copy = worstSkillRates.slice();
+      const memberIndices: number[] = [];
+      for (let i = 0; i < 5; i += 1) {
+        worstSkillRates[skillScoreIndices[i]] = _copy[i];
+        memberIndices.push(
+          skillRates.findIndex(
+            (elem) => elem === worstSkillRates[skillScoreIndices[i]]
+          )
+        );
+      }
+      worstSkillRates.push(skillRates[0]);
+      return [worstSkillRates, memberIndices];
+    },
+    []
+  );
+
+  const getSoloBestSkillOrderAndRates = useCallback(
+    (skillRates: number[], meta: IMusicMeta) => {
+      const bestSkillRates: number[] = [];
+      const skillScoreIndices = sortWithIndices(
+        meta.skill_score_solo.slice(0, 5)
+      );
+      for (let i = 0; i < 5; i += 1) {
+        bestSkillRates.push(i < skillRates.length ? skillRates[i] : 0);
+      }
+      bestSkillRates.sort();
+      const _copy = bestSkillRates.slice();
+      const memberIndices: number[] = [];
+      for (let i = 0; i < 5; i += 1) {
+        bestSkillRates[skillScoreIndices[i]] = _copy[i];
+        memberIndices.push(
+          skillRates.findIndex(
+            (elem) => elem === bestSkillRates[skillScoreIndices[i]]
+          )
+        );
+      }
+      bestSkillRates.push(skillRates[0]);
+      return [bestSkillRates, memberIndices];
+    },
+    []
   );
 
   const getScore = useCallback(
@@ -168,5 +221,7 @@ export function useScoreCalc() {
     getScore,
     getEventPoint,
     getEventPointPerHour,
+    getSoloWorstSkillOrderAndRates,
+    getSoloBestSkillOrderAndRates,
   };
 }

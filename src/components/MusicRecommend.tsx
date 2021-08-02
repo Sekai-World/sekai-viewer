@@ -31,6 +31,7 @@ import { OpenInNew } from "@material-ui/icons";
 import { useScoreCalc } from "../utils/scoreCalc";
 import TeamBuilder from "./subs/TeamBuilder";
 import { ContentTrans } from "./subs/ContentTrans";
+import { useMemo } from "react";
 
 const useStyle = makeStyles(() => ({
   easy: {
@@ -67,7 +68,7 @@ const MusicRecommend: React.FC<{}> = () => {
   const [teamTotalPower, setTeamTotalPower] = useState<number>(0);
   const [activeStep, setActiveStep] = useState<number>(0);
   // const [selectedSongIds, setSelectedSongIds] = useState<number[]>([]);
-  const [selectedMode, setSelectedMode] = useState<string>("event_pt_per_hour");
+  const [selectedMode, setSelectedMode] = useState<string>("solo");
   const [recommendResult, setRecommandResult] = useState<
     IMusicRecommendResult[]
   >([]);
@@ -75,81 +76,112 @@ const MusicRecommend: React.FC<{}> = () => {
   const {
     getCardSkillRates,
     getMultiAverageSkillRates,
-    getSoloAverageSkillRates,
+    // getSoloAverageSkillRates,
     getScore,
+    getSoloBestSkillOrderAndRates,
+    getSoloWorstSkillOrderAndRates,
   } = useScoreCalc();
 
   useEffect(() => {
     document.title = t("title:musicRecommend");
   }, [t]);
 
-  const columns: ColDef[] = [
-    {
-      field: "name",
-      headerName: t("music_recommend:result.musicName"),
-      width: 400,
-      renderCell(params) {
-        return (
-          <ContentTrans
-            contentKey={`music_titles:${params.row.mid}`}
-            original={params.value as string}
-          />
-        );
+  const columns: ColDef[] = useMemo(
+    () => [
+      {
+        field: "name",
+        headerName: t("music_recommend:result.musicName"),
+        width: 400,
+        renderCell(params) {
+          return (
+            <ContentTrans
+              contentKey={`music_titles:${params.row.mid}`}
+              original={params.value as string}
+            />
+          );
+        },
       },
-    },
-    {
-      field: "level",
-      headerName: t("music:difficulty"),
-      width: 100,
-      renderCell(params) {
-        return (
-          <Chip
-            color="primary"
-            size="small"
-            classes={{
-              colorPrimary: classes[params.getValue("difficulty") as "easy"],
-            }}
-            label={params.value}
-          ></Chip>
-        );
+      {
+        field: "level",
+        headerName: t("music:difficulty"),
+        width: 100,
+        renderCell(params) {
+          return (
+            <Chip
+              color="primary"
+              size="small"
+              classes={{
+                colorPrimary: classes[params.row.difficulty as "easy"],
+              }}
+              label={params.value}
+            ></Chip>
+          );
+        },
       },
-    },
-    {
-      field: "duration",
-      headerName: t("music:actualPlaybackTime"),
-      width: 150,
-      align: "center",
-    },
-    {
-      field: "combo",
-      headerName: t("music:noteCount"),
-      width: 110,
-      align: "center",
-    },
-    {
-      field: "result",
-      headerName: t("music_recommend:result.label"),
-      width: 100,
-      sortDirection: "desc",
-      align: "center",
-    },
-    {
-      field: "action",
-      headerName: t("home:game-news.action"),
-      width: 80,
-      renderCell: (params: ValueFormatterParams) => {
-        const info = params.row as IMusicRecommendResult;
-        return (
-          <Link to={info.link} target="_blank">
-            <IconButton color="primary">
-              <OpenInNew></OpenInNew>
-            </IconButton>
-          </Link>
-        );
+      {
+        field: "duration",
+        headerName: t("music:actualPlaybackTime"),
+        width: 150,
+        align: "center",
       },
-      sortable: false,
-    },
-  ];
+      {
+        field: "combo",
+        headerName: t("music:noteCount"),
+        width: 110,
+        align: "center",
+      },
+      {
+        field: "lowScore",
+        headerName: t("music_recommend:table.column.low"),
+        width: 150,
+        // sortDirection: "desc",
+        align: "center",
+        hide: selectedMode === "multi",
+        renderCell: (params: ValueFormatterParams) => params.row.result[0],
+        sortComparator: (v1, v2, param1, param2) =>
+          param1.row.result[0] - param2.row.result[0],
+      },
+      {
+        field: "highScore",
+        headerName: t("music_recommend:table.column.high"),
+        width: 150,
+        sortDirection: selectedMode === "solo" ? "desc" : null,
+        align: "center",
+        hide: selectedMode === "multi",
+        renderCell: (params: ValueFormatterParams) => params.row.result[1],
+        sortComparator: (v1, v2, param1, param2) =>
+          param1.row.result[1] - param2.row.result[1],
+      },
+      {
+        field: "avgScore",
+        headerName: t("music_recommend:result.label"),
+        width: 100,
+        sortDirection: selectedMode === "multi" ? "desc" : null,
+        align: "center",
+        hide: selectedMode === "solo",
+        valueFormatter: (params: ValueFormatterParams) => params.row.result,
+        sortComparator: (v1, v2, param1, param2) =>
+          param1.row.result - param2.row.result,
+      },
+      {
+        field: "action",
+        headerName: t("home:game-news.action"),
+        width: 80,
+        renderCell: (params: ValueFormatterParams) => {
+          const info = params.row as IMusicRecommendResult;
+          return (
+            <Link to={info.link} target="_blank">
+              <IconButton color="primary">
+                <OpenInNew></OpenInNew>
+              </IconButton>
+            </Link>
+          );
+        },
+        sortable: false,
+      },
+    ],
+    [classes, selectedMode, t]
+  );
 
   const calcResult = useCallback(() => {
     if (
@@ -165,61 +197,74 @@ const MusicRecommend: React.FC<{}> = () => {
     let isSolo = selectedMode === "solo";
 
     let cardSkills = getCardSkillRates(cards, skills, teamCardsStates);
-    let skillRates = isSolo
-      ? getSoloAverageSkillRates(cardSkills)
-      : getMultiAverageSkillRates(cardSkills);
+    let result: IMusicRecommendResult[] = [];
 
-    let ii = 0;
-    let result: IMusicRecommendResult[] = metas
-      .map((meta) => {
-        let music = musics.find((it) => it.id === meta.music_id);
-        if (!music) return {} as IMusicRecommendResult;
-        // let music = music0[0];
-        let score = getScore(meta, teamTotalPower, skillRates, isSolo);
+    if (!isSolo) {
+      const skillRates = getMultiAverageSkillRates(cardSkills);
 
-        let result = 0;
-        switch (selectedMode) {
-          case "solo":
-          case "multi":
-            result = score;
-            break;
-          // case "event_pt":
-          //   result = getEventPoint(
-          //     score,
-          //     score * 4,
-          //     meta.event_rate / 100,
-          //     1,
-          //     0,
-          //     eventType
-          //   );
-          //   break;
-          // case "event_pt_per_hour":
-          //   result = getEventPointPerHour(
-          //     score,
-          //     score * 4,
-          //     meta.event_rate / 100,
-          //     1,
-          //     0,
-          //     meta.music_time,
-          //     eventType
-          //   );
-        }
-        result = Math.floor(result);
+      result = metas
+        .map((meta, idx) => {
+          const music = musics.find((it) => it.id === meta.music_id);
+          if (!music) return {} as IMusicRecommendResult;
+          const score = Math.floor(
+            getScore(meta, teamTotalPower, skillRates, isSolo)
+          );
 
-        return {
-          id: ++ii,
-          mid: meta.music_id,
-          name: music.title,
-          level: meta.level,
-          difficulty: meta.difficulty,
-          combo: meta.combo,
-          duration: meta.music_time,
-          result: result,
-          link: `/music/${music.id}`,
-        } as IMusicRecommendResult;
-      })
-      .filter((result) => result.result);
-    //console.log(result.length);
+          return {
+            id: idx,
+            mid: meta.music_id,
+            name: music.title,
+            level: meta.level,
+            difficulty: meta.difficulty,
+            combo: meta.combo,
+            duration: meta.music_time,
+            result: score,
+            link: `/music/${music.id}`,
+          } as IMusicRecommendResult;
+        })
+        .filter((result) => result.result);
+    } else {
+      result = metas
+        .map((meta, idx) => {
+          const music = musics.find((it) => it.id === meta.music_id);
+          if (!music) return {} as IMusicRecommendResult;
+          const [
+            worstSkillRates,
+            // worstMemberOrder,
+          ] = getSoloWorstSkillOrderAndRates(cardSkills, meta);
+          const [
+            bestSkillRates,
+            // bestMemberOrder,
+          ] = getSoloBestSkillOrderAndRates(cardSkills, meta);
+          const worstScore = Math.floor(
+            getScore(meta, teamTotalPower, worstSkillRates, isSolo)
+          );
+          const bestScore = Math.floor(
+            getScore(meta, teamTotalPower, bestSkillRates, isSolo)
+          );
+          console.log(
+            worstSkillRates,
+            worstScore,
+            bestSkillRates,
+            bestScore,
+            meta.skill_score_solo
+          );
+
+          return {
+            id: idx,
+            mid: meta.music_id,
+            name: music.title,
+            level: meta.level,
+            difficulty: meta.difficulty,
+            combo: meta.combo,
+            duration: meta.music_time,
+            result: [worstScore, bestScore],
+            link: `/music/${music.id}`,
+          } as IMusicRecommendResult;
+        })
+        .filter((result) => result.result);
+    }
+
     setRecommandResult(result);
     setActiveStep(maxStep - 1);
   }, [
@@ -230,10 +275,11 @@ const MusicRecommend: React.FC<{}> = () => {
     selectedMode,
     getCardSkillRates,
     teamCardsStates,
-    getSoloAverageSkillRates,
     getMultiAverageSkillRates,
     getScore,
     teamTotalPower,
+    getSoloWorstSkillOrderAndRates,
+    getSoloBestSkillOrderAndRates,
   ]);
 
   const StepButtons: React.FC<{ nextDisabled?: boolean }> = ({

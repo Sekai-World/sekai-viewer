@@ -692,3 +692,18 @@ export function useSkillMapping() {
     [t]
   );
 }
+
+export function sortWithIndices(toSort: (string | number)[]) {
+  const tmp: [string | number, number][] = [];
+  for (let i = 0; i < toSort.length; i++) {
+    tmp.push([toSort[i], i]);
+  }
+  tmp.sort(function (left, right) {
+    return left[0] < right[0] ? -1 : 1;
+  });
+  const sortIndices: number[] = [];
+  for (let j = 0; j < toSort.length; j++) {
+    sortIndices.push(tmp[j][1]);
+  }
+  return sortIndices;
+}

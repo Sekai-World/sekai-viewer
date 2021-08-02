@@ -535,7 +535,7 @@ export interface IMusicRecommendResult {
   difficulty: string;
   level: number;
   combo: number;
-  result: number;
+  result: number | number[];
   link: string;
 }
 
