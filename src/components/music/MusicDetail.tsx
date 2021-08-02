@@ -53,7 +53,7 @@ import ResourceBox from "../subs/ResourceBox";
 import AudioPlayer from "./AudioPlayer";
 import { Howl } from "howler";
 import { saveAs } from "file-saver";
-import AdSense from "../subs/AdSense";
+// import AdSense from "../subs/AdSense";
 import Image from "material-ui-image";
 import { useStrapi } from "../../utils/apiClient";
 import { CommentTextMultiple } from "mdi-material-ui";
@@ -974,12 +974,12 @@ const MusicDetail: React.FC<{}> = () => {
           </Grid>
         ) : null}
       </Container>
-      <AdSense
+      {/* <AdSense
         client="ca-pub-7767752375383260"
         slot="8221864477"
         format="auto"
         responsive="true"
-      />
+      /> */}
       <Typography variant="h6" className={layoutClasses.header}>
         {t("music:achievement")}
       </Typography>

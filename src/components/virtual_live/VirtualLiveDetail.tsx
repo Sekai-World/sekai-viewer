@@ -20,7 +20,7 @@ import { ContentTrans } from "../subs/ContentTrans";
 import { charaIcons } from "../../utils/resources";
 import ResourceBox from "../subs/ResourceBox";
 import VirtualLiveStep from "./VirtualLiveStep";
-import AdSense from "../subs/AdSense";
+// import AdSense from "../subs/AdSense";
 import { CommentTextMultiple } from "mdi-material-ui";
 import Comment from "../comment/Comment";
 import { useStrapi } from "../../utils/apiClient";
@@ -298,12 +298,12 @@ const VirtualLiveDetail: React.FC<{}> = () => {
           ))}
         </Grid>
       </Container>
-      <AdSense
+      {/* <AdSense
         client="ca-pub-7767752375383260"
         slot="8221864477"
         format="auto"
         responsive="true"
-      />
+      /> */}
       <Typography variant="h6" className={layoutClasses.header}>
         {t("virtual_live:title.setlist")}
       </Typography>

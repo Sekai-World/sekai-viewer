@@ -28,7 +28,7 @@ import Comment from "../comment/Comment";
 import { CommentTextMultiple } from "mdi-material-ui";
 import { useQuery } from "../../utils";
 import { UserContext } from "../../context";
-import AdSense from "../subs/AdSense";
+// import AdSense from "../subs/AdSense";
 
 const AnnouncementDetail: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
@@ -142,12 +142,12 @@ const AnnouncementDetail: React.FC<{}> = () => {
           readOnly
         />
       </Container>
-      <AdSense
+      {/* <AdSense
         client="ca-pub-7767752375383260"
         slot="2771743585"
         format="auto"
         responsive="true"
-      />
+      /> */}
       {!query.get("preview") && (
         <Fragment>
           <Typography variant="h6" className={layoutClasses.header}>

@@ -49,7 +49,7 @@ import { SettingContext } from "../../context";
 import { ContentTrans } from "../subs/ContentTrans";
 import { useInteractiveStyles } from "../../styles/interactive";
 import CommonMaterialIcon from "../subs/CommonMaterialIcon";
-import AdSense from "../subs/AdSense";
+// import AdSense from "../subs/AdSense";
 
 const gachaImageNameMap: {
   [key: number]: {
@@ -878,12 +878,12 @@ const GachaDetailPage: React.FC<{}> = () => {
             ))}
           </Grid>
         </Container>
-        <AdSense
+        {/* <AdSense
           client="ca-pub-7767752375383260"
           slot="8221864477"
           format="auto"
           responsive="true"
-        />
+        /> */}
         <Typography variant="h6" className={layoutClasses.header}>
           {t("gacha:gacha_simulator")}
         </Typography>

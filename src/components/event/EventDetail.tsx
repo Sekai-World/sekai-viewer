@@ -47,7 +47,7 @@ import { OpenInNew } from "@material-ui/icons";
 import { useInteractiveStyles } from "../../styles/interactive";
 import AudioPlayer from "../music/AudioPlayer";
 import AgendaView from "../virtual_live/AgendaView";
-import AdSense from "../subs/AdSense";
+// import AdSense from "../subs/AdSense";
 import Image from "material-ui-image";
 import { useStrapi } from "../../utils/apiClient";
 import { CommentTextMultiple } from "mdi-material-ui";
@@ -890,12 +890,12 @@ const EventDetail: React.FC<{}> = () => {
           <Divider style={{ margin: "1% 0" }} />
         </Grid>
       </Container>
-      <AdSense
+      {/* <AdSense
         client="ca-pub-7767752375383260"
         slot="8221864477"
         format="auto"
         responsive="true"
-      />
+      /> */}
       {!!linkedVirtualLive && (
         <Fragment>
           <Typography variant="h6" className={layoutClasses.header}>
