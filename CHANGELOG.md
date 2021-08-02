@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.6.0](https://github.com/Sekai-World/sekai-viewer/compare/v0.5.9...v0.6.0) (2021-08-02)
+
+
+### Features
+
+* **calc:** give worst and best score for songs in song recommender ([45b312e](https://github.com/Sekai-World/sekai-viewer/commits/45b312eda7e7888bed208550f18c81f72c934d71))
+* **music:** filter only valid (released) music meta ([da58fd7](https://github.com/Sekai-World/sekai-viewer/commits/da58fd72ad8874b1074f9aa79ffe67205bb78d28))
+* **utils:** team builder allows filtering by skills ([4e514f9](https://github.com/Sekai-World/sekai-viewer/commits/4e514f905058c83924f7935bd218ab31feaffebe))
+
+
+### Bug Fixes
+
+* **calc:** wrong average skill rate for event point calc ([4b37840](https://github.com/Sekai-World/sekai-viewer/commits/4b378406ef803c68de4714283ddd71bfa63b810e))
+* **user:** allow 18 digit sekai id ([c49dd7d](https://github.com/Sekai-World/sekai-viewer/commits/c49dd7d92319e30369bfd9e632d1feac7c9c3392)), closes [#333](https://github.com/Sekai-World/sekai-viewer/issues/333)
+
+
+### Refactors
+
+* **ad:** remove most ads ([c2b76ac](https://github.com/Sekai-World/sekai-viewer/commits/c2b76ace89e91f0ef55a65628ed818ba74fb8046))
+* **calc:** add challenge live mode for event point calc, use filtered music meta ([4428733](https://github.com/Sekai-World/sekai-viewer/commits/4428733a51544179696e0cd034e6c0994c172305))
+* **calc:** update event point formular, add challenge live point ([fedb984](https://github.com/Sekai-World/sekai-viewer/commits/fedb9845e566b9bfd3aeba8c1046bbe7a0618d6f))
+* **skill:** adpot new skill type score_up_condition_life ([32d2d39](https://github.com/Sekai-World/sekai-viewer/commits/32d2d39823bb1f9761c574c79867a9fcc52b1fba))
+
 ### [0.5.9](https://github.com/Sekai-World/sekai-viewer/compare/v0.5.8...v0.5.9) (2021-07-12)
 
 
