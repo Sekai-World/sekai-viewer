@@ -162,23 +162,28 @@ export function useScoreCalc() {
       mode: EventType,
       leftLife?: number
     ): number => {
+      console.log(mode);
       switch (mode) {
         case "marathon": {
           const basePoint =
             100 +
-            Math.floor(selfScore / 20000) +
-            Math.floor(Math.min(otherScore, 700000) / 100000);
+            Math.floor(Math.min(selfScore, 4200000) / 20000) +
+            Math.floor(Math.min(otherScore, 1100000) / 100000);
           const eventPoint = Math.floor(basePoint * musicRate * unitRate);
           return eventPoint * boostRate[boostCost];
         }
         case "cheerful_carnival": {
           const basePoint =
-            125 +
-            Math.floor(selfScore / 20000) +
-            Math.floor(Math.min(otherScore, 700000) / 100000) +
-            (leftLife || 1000) / 20;
+            100 +
+            Math.floor(Math.min(selfScore, 4200000) / 20000) +
+            Math.floor(Math.min(otherScore, 1100000) / 100000) +
+            Math.min(leftLife || 1000, 1000) / 20;
           const eventPoint = Math.floor(basePoint * musicRate * unitRate);
           return eventPoint * boostRate[boostCost];
+        }
+        case "challenge_live": {
+          const eventPoint = (100 + Math.floor(selfScore / 20000)) * 120;
+          return eventPoint;
         }
       }
     },
