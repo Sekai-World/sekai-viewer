@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
+import MoviePlayer from "./MoviePlayer";
 
 const MusicVideoPlayer: React.FC<{
   videoPath: string;
@@ -45,8 +46,8 @@ const MusicVideoPlayer: React.FC<{
 
   return (
     <Fragment>
-      <video
-        src={props.videoPath}
+      <MoviePlayer
+        path={props.videoPath}
         controls={isPlayable}
         autoPlay={false}
         onPlay={handleOnPlay}
@@ -54,7 +55,7 @@ const MusicVideoPlayer: React.FC<{
         onEnded={handleOnEnded}
         onSeeked={handleOnSeeked}
         style={{ width: "100%" }}
-      ></video>
+      ></MoviePlayer>
       <audio src={props.audioPath} ref={audioRef}></audio>
     </Fragment>
   );

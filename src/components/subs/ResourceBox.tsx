@@ -52,6 +52,7 @@ const ResourceBox: React.FC<{
                 aspectRatio={1}
                 style={{ height: "64px", width: "64px" }}
                 color=""
+                disableTransition
               />
             ) : detail.resourceType === "honor" ? (
               <DegreeImage

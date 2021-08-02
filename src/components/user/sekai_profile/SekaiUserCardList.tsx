@@ -18,7 +18,6 @@ import {
   MenuItem,
   Popover,
   Select,
-  Snackbar,
   Switch,
   TextField,
   Typography,
@@ -32,7 +31,6 @@ import {
   Sort,
   SortOutlined,
 } from "@material-ui/icons";
-import { Alert } from "@material-ui/lab";
 import { Filter, FilterOutline } from "mdi-material-ui";
 import React, {
   // Fragment,
@@ -44,7 +42,7 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { SettingContext, UserContext } from "../../../context";
+import { UserContext } from "../../../context";
 import { useInteractiveStyles } from "../../../styles/interactive";
 import { useCurrentEvent, useStrapi } from "../../../utils/apiClient";
 import { CardThumb } from "../../subs/CardThumb";
@@ -71,9 +69,13 @@ import {
   ITeamCardState,
   IUnitProfile,
 } from "../../../types";
-import { useCachedData, useCharaName, useLocalStorage } from "../../../utils";
+import {
+  useAlertSnackbar,
+  useCachedData,
+  useLocalStorage,
+} from "../../../utils";
 import { ContentTrans } from "../../subs/ContentTrans";
-import { useAssetI18n } from "../../../utils/i18n";
+import { useAssetI18n, useCharaName } from "../../../utils/i18n";
 
 const SekaiUserCardList = () => {
   // const layoutClasses = useLayoutStyles();
@@ -83,10 +85,10 @@ const SekaiUserCardList = () => {
     UserContext
   )!;
   const { putSekaiCardList, deleteSekaiCardList } = useStrapi(jwtToken);
-  const { contentTransMode } = useContext(SettingContext)!;
-  const getCharaName = useCharaName(contentTransMode);
+  const getCharaName = useCharaName();
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
   const { getTranslated } = useAssetI18n();
+  const { showError, showSuccess } = useAlertSnackbar();
 
   const [cards] = useCachedData<ICardInfo>("cards");
   const [charas] = useCachedData<IGameChara>("gameCharacters");
@@ -104,12 +106,8 @@ const SekaiUserCardList = () => {
   const [card, setCard] = useState<ITeamCardState>();
   const [editList, setEditList] = useState<ITeamCardState[]>([]);
   const [isSaving, setIsSaving] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const [errMsg, setErrMsg] = useState("");
   const [deleteCardIds, setDeleteCardIds] = useState<number[]>([]);
   const [addCardIds, setAddCardIds] = useState<number[]>([]);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [successMsg, setSuccessMsg] = useState("");
   const [filterOpened, setFilterOpened] = useState(false);
   const [characterSelected, dispatchCharacterSelected] = useReducer(
     characterSelectReducer,
@@ -388,11 +386,9 @@ const SekaiUserCardList = () => {
                       updateSekaiProfile({
                         cardList: cardList,
                       });
-                      setIsSuccess(true);
-                      setSuccessMsg(t("user:profile.card_list.submit_success"));
+                      showSuccess(t("user:profile.card_list.submit_success"));
                     } catch (error) {
-                      setErrMsg(t("user:profile.card_list.submit_error"));
-                      setIsError(true);
+                      showError(t("user:profile.card_list.submit_error"));
                     }
                     setIsSaving(false);
                   }}
@@ -610,7 +606,6 @@ const SekaiUserCardList = () => {
                             label={
                               <Typography variant="body2">
                                 {getTranslated(
-                                  contentTransMode,
                                   `unit_profile:${supportUnit}.name`,
                                   unitProfiles.find(
                                     (up) => up.unit === supportUnit
@@ -933,38 +928,6 @@ const SekaiUserCardList = () => {
           </Container>
         )}
       </Popover>
-      <Snackbar
-        open={isError}
-        autoHideDuration={3000}
-        onClose={() => {
-          setIsError(false);
-        }}
-      >
-        <Alert
-          onClose={() => {
-            setIsError(false);
-          }}
-          severity="error"
-        >
-          {errMsg}
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        open={isSuccess}
-        autoHideDuration={3000}
-        onClose={() => {
-          setIsSuccess(false);
-        }}
-      >
-        <Alert
-          onClose={() => {
-            setIsSuccess(false);
-          }}
-          severity="success"
-        >
-          {successMsg}
-        </Alert>
-      </Snackbar>
       <Dialog
         open={addCardDialogVisible}
         onClose={() => {

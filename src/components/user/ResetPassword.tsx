@@ -4,26 +4,23 @@ import {
   Container,
   Grid,
   InputAdornment,
-  Snackbar,
   Typography,
 } from "@material-ui/core";
 import { Email } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-material-ui";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useLayoutStyles } from "../../styles/layout";
+import { useAlertSnackbar } from "../../utils";
 import { useStrapi } from "../../utils/apiClient";
 
 const ResetPassword: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const { postForgotPassword } = useStrapi();
-
-  const [isError, setIsError] = useState(false);
-  const [errMsg, setErrMsg] = useState("");
-  const [isSucceed, setIsSucceed] = useState(false);
+  const { showError, showSuccess } = useAlertSnackbar();
 
   useEffect(() => {
     document.title = t("title:reset_password");
@@ -56,10 +53,9 @@ const ResetPassword: React.FC<{}> = () => {
           onSubmit={async (values, { setErrors }) => {
             try {
               await postForgotPassword(values.email);
-              setIsSucceed(true);
+              showSuccess(t("auth:reset_password_email_sent"));
             } catch (error) {
-              setIsError(true);
-              setErrMsg(t("auth:reset_password_wrong_email"));
+              showError(t("auth:reset_password_wrong_email"));
             }
           }}
         >
@@ -106,38 +102,6 @@ const ResetPassword: React.FC<{}> = () => {
           )}
         </Formik>
       </Container>
-      <Snackbar
-        open={isError}
-        autoHideDuration={3000}
-        onClose={() => {
-          setIsError(false);
-        }}
-      >
-        <Alert
-          onClose={() => {
-            setIsError(false);
-          }}
-          severity="error"
-        >
-          {errMsg}
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        open={isSucceed}
-        // autoHideDuration={3000}
-        onClose={() => {
-          setIsSucceed(false);
-        }}
-      >
-        <Alert
-          onClose={() => {
-            setIsSucceed(false);
-          }}
-          severity="success"
-        >
-          {t("auth:reset_password_email_sent")}
-        </Alert>
-      </Snackbar>
     </Fragment>
   );
 };

@@ -231,6 +231,22 @@ function Home() {
                 width="1500"
                 height="500"
               />
+            ) : jpTime === "7/20" ? (
+              <img
+                src={`${process.env.PUBLIC_URL}/images/banner-nene.jpg`}
+                alt="banner"
+                style={{ width: "100%", height: "auto" }}
+                width="1500"
+                height="500"
+              />
+            ) : jpTime === "7/26" ? (
+              <img
+                src={`${process.env.PUBLIC_URL}/images/banner-an.jpg`}
+                alt="banner"
+                style={{ width: "100%", height: "auto" }}
+                width="1500"
+                height="500"
+              />
             ) : (
               <img
                 src={`${process.env.PUBLIC_URL}/images/banner.png`}
@@ -407,6 +423,18 @@ function Home() {
               </Grid>
             </Link>
           </Grid>
+          {window.isChinaMainland && (
+            <Grid item>
+              <Link href="https://b23.tv/AIjzvc" target="_blank">
+                <Grid container direction="row" alignItems="center">
+                  <Grid item>
+                    <OpenInNew fontSize="small"></OpenInNew>
+                  </Grid>
+                  <Grid item>攻略合集（by @xfl33）</Grid>
+                </Grid>
+              </Link>
+            </Grid>
+          )}
           {!window.isChinaMainland && (
             <Grid item>
               <Link
@@ -418,6 +446,18 @@ function Home() {
                     <Patreon fontSize="small" />
                   </Grid>
                   <Grid item>Patreon</Grid>
+                </Grid>
+              </Link>
+            </Grid>
+          )}
+          {window.isChinaMainland && (
+            <Grid item>
+              <Link href="https://afdian.net/@sekaiviewer" target="_blank">
+                <Grid container direction="row" alignItems="center">
+                  <Grid item>
+                    <OpenInNew fontSize="small" />
+                  </Grid>
+                  <Grid item>爱发电</Grid>
                 </Grid>
               </Link>
             </Grid>

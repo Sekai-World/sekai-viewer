@@ -6,24 +6,22 @@ import {
   Grid,
   InputAdornment,
   Link,
-  Snackbar,
   Typography,
   useMediaQuery,
   useTheme,
 } from "@material-ui/core";
 import { AccountCircle, Twitter, VpnKey } from "@material-ui/icons";
-import { Alert } from "@material-ui/lab";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-material-ui";
 import { Discord } from "mdi-material-ui";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, Link as RouteLink } from "react-router-dom";
 import { useInteractiveStyles } from "../../styles/interactive";
 // import { useInteractiveStyles } from "../../styles/interactive";
 import { useLayoutStyles } from "../../styles/layout";
 import { LoginValues } from "../../strapi-model";
-import { useQuery } from "../../utils";
+import { useAlertSnackbar, useQuery } from "../../utils";
 import { useStrapi } from "../../utils/apiClient";
 import useJwtAuth from "../../utils/jwt";
 
@@ -41,10 +39,13 @@ const Login: React.FC<{}> = () => {
     getRedirectConnectLoginUrl,
     getUserMetadataMe,
   } = useStrapi();
+  const { showError } = useAlertSnackbar();
+
+  useEffect(() => {
+    if (query.get("error")) showError(query.get("error")!);
+  }, [query, showError]);
 
   const matchMdUp = useMediaQuery(theme.breakpoints.up("md"));
-  const [isError, setIsError] = useState(!!query.get("error"));
-  const [errMsg] = useState(query.get("error"));
 
   useEffect(() => {
     document.title = t("title:login");
@@ -224,22 +225,6 @@ const Login: React.FC<{}> = () => {
           )}
         </Formik>
       </Container>
-      <Snackbar
-        open={isError}
-        autoHideDuration={3000}
-        onClose={() => {
-          setIsError(false);
-        }}
-      >
-        <Alert
-          onClose={() => {
-            setIsError(false);
-          }}
-          severity="error"
-        >
-          {errMsg}
-        </Alert>
-      </Snackbar>
     </Fragment>
   );
 };

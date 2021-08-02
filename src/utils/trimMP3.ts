@@ -12,7 +12,7 @@ import { parseMP3 } from "./mp3";
  *   if `false`, the actual duration removed will be slightly longer than `trimDuration`
  * @returns trimmed MP3
  */
-function trimMP3(
+export function trimMP3(
   source: ArrayBuffer,
   trimDuration: number,
   inclusive = false
@@ -119,6 +119,15 @@ export function useTrimMP3() {
       .catch((error) => {
         console.error("trim failed", error);
         setTrimFailed(true);
+
+        // try clean cache
+        if (window.navigator.serviceWorker.controller) {
+          window.navigator.serviceWorker.controller.postMessage({
+            type: "cleanSingleCache",
+            cacheName: "sekaiAudioFiles",
+            endpoint: options.sourceURL,
+          });
+        }
       });
 
     return () => {

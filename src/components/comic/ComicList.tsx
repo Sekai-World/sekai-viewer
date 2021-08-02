@@ -79,11 +79,7 @@ const ComicList: React.FC<{}> = () => {
             window.isChinaMainland,
             resourceLang === "en"
           ),
-          alt: getTranslated(
-            contentTransMode,
-            `comic_title:${comic.id}`,
-            comic.title
-          ),
+          alt: getTranslated(`comic_title:${comic.id}`, comic.title),
           downloadUrl: await getRemoteAssetURL(url.replace(".webp", ".png")),
         });
       }

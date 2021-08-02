@@ -7,10 +7,9 @@ import {
   Grid,
 } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
-import { SettingContext } from "../../context";
 import { IEventInfo } from "../../types";
 import { getRemoteAssetURL } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
@@ -46,7 +45,6 @@ const GridView: React.FC<{ data?: IEventInfo }> = ({ data }) => {
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
   const { path } = useRouteMatch();
-  const { contentTransMode } = useContext(SettingContext)!;
 
   const [eventLogo, setEventLogo] = useState<string>("");
 
@@ -81,11 +79,7 @@ const GridView: React.FC<{ data?: IEventInfo }> = ({ data }) => {
         <CardMedia
           className={classes.media}
           image={eventLogo}
-          title={getTranslated(
-            contentTransMode,
-            `event_name:${data.id}`,
-            data.name
-          )}
+          title={getTranslated(`event_name:${data.id}`, data.name)}
         >
           <SpoilerTag
             style={{

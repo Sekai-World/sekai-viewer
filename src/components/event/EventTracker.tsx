@@ -287,11 +287,7 @@ const EventTracker: React.FC<{}> = () => {
           const ev = events.find((elem) => elem.id === Number(query.get("id")));
           if (ev) {
             setSelectedEvent({
-              name: getTranslated(
-                contentTransMode,
-                `event_name:${query.get("id")}`,
-                ev.name
-              ),
+              name: getTranslated(`event_name:${query.get("id")}`, ev.name),
               id: ev.id,
             });
             handleFetchGraph(ev.id);
@@ -300,7 +296,6 @@ const EventTracker: React.FC<{}> = () => {
       } else {
         setSelectedEvent({
           name: getTranslated(
-            contentTransMode,
             `event_name:${currEvent.eventId}`,
             currEvent.eventJson.name
           ),
@@ -382,11 +377,7 @@ const EventTracker: React.FC<{}> = () => {
                 .reverse()
                 .filter((ev) => ev.startAt <= new Date().getTime())
                 .map((ev) => ({
-                  name: getTranslated(
-                    contentTransMode,
-                    `event_name:${ev.id}`,
-                    ev.name
-                  ),
+                  name: getTranslated(`event_name:${ev.id}`, ev.name),
                   id: ev.id,
                 }))}
               getOptionLabel={(option) => option.name}
@@ -416,7 +407,6 @@ const EventTracker: React.FC<{}> = () => {
               onClick={() => {
                 setSelectedEvent({
                   name: getTranslated(
-                    contentTransMode,
                     `event_name:${currEvent.eventId}`,
                     currEvent.eventJson.name
                   ),

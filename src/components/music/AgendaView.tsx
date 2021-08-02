@@ -7,10 +7,9 @@ import {
   Chip,
 } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
-import { SettingContext } from "../../context";
 import {
   IMusicDifficultyInfo,
   IMusicInfo,
@@ -74,7 +73,6 @@ const AgendaView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
   const { path } = useRouteMatch();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
-  const { contentTransMode } = useContext(SettingContext)!;
 
   const [musicDiffis] = useCachedData<IMusicDifficultyInfo>(
     "musicDifficulties"
@@ -115,7 +113,11 @@ const AgendaView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
         <Grid container alignItems="center">
           {musicVocal[index].characters.map((chara) =>
             chara.characterType === "game_character" ? (
-              <Grid item key={`chara-${chara.characterId}`}>
+              <Grid
+                item
+                key={`chara-${chara.characterId}`}
+                style={{ marginLeft: "0.1em", marginRight: "0.1em" }}
+              >
                 <img
                   key={chara.characterId}
                   height="36"
@@ -124,7 +126,11 @@ const AgendaView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
                 ></img>
               </Grid>
             ) : (
-              <Grid item key={`outchara-${chara.characterId}`}>
+              <Grid
+                item
+                key={`outchara-${chara.characterId}`}
+                style={{ marginLeft: "0.1em", marginRight: "0.1em" }}
+              >
                 <Typography>
                   {outCharas && outCharas.length
                     ? outCharas.find((elem) => elem.id === chara.characterId)!
@@ -180,11 +186,7 @@ const AgendaView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
           <Grid item xs={3} sm={2} md={1}>
             <Image
               src={jacket}
-              alt={getTranslated(
-                contentTransMode,
-                `music_titles:${data.id}`,
-                data.title
-              )}
+              alt={getTranslated(`music_titles:${data.id}`, data.title)}
               aspectRatio={1}
               color=""
             ></Image>
@@ -210,7 +212,7 @@ const AgendaView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={12} sm={3}>
+          <Grid item xs={12} sm={3} md={4}>
             <Grid item>
               <Grid container direction="row" spacing={1}>
                 {diffis.map((elem) => (
@@ -237,14 +239,12 @@ const AgendaView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
             </Grid>
           </Grid>
           <Grid item xs={12} sm={2}>
-            <Typography variant="body2" color="textSecondary">
-              {data.categories
-                .map((cat) => t(`music:categoryType.${cat}`))
-                .join(", ")}
-            </Typography>
+            {data.categories.map((cat) => (
+              <Chip label={t(`music:categoryType.${cat}`)}></Chip>
+            ))}
           </Grid>
           {musicVocal && (
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={3} md={3}>
               <Grid container spacing={2} alignItems="center">
                 {musicVocal.map((_, idx) => (
                   <Grid item key={idx}>

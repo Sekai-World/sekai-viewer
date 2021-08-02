@@ -59,10 +59,14 @@ import {
   IAreaItem,
   ICheerfulCarnivalSummary,
   ICheerfulCarnivalTeam,
+  IArea,
+  IActionSet,
 } from "./../types.d";
-import { useAssetI18n } from "./i18n";
+import { useAssetI18n, useCharaName } from "./i18n";
 import { useLocation } from "react-router-dom";
 import useSWR from "swr";
+import { useSnackbar } from "material-ui-snackbar-provider";
+import { useTranslation } from "react-i18next";
 
 const webpMachine = new WebpMachine();
 
@@ -120,6 +124,8 @@ export function useCachedData<
     | IAreaItem
     | ICheerfulCarnivalSummary
     | ICheerfulCarnivalTeam
+    | IArea
+    | IActionSet
 >(name: string): [T[] | undefined, boolean, any] {
   // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
 
@@ -214,63 +220,7 @@ export function useMusicTagName(contentTransMode: ContentTransModeType) {
   }
 }
 
-export function useCharaName(contentTransMode: ContentTransModeType) {
-  const [charas] = useCachedData<IGameChara>("gameCharacters");
-  const { assetT, assetI18n } = useAssetI18n();
-
-  return useCallback(
-    (charaId: number): string | undefined => {
-      if (!charas || !charas.length) return;
-      const chara = charas.find((chara) => chara.id === charaId);
-      const jpOrderCodes = ["zh-CN", "zh-TW", "ko", "ja", "id", "ms"];
-      if (chara?.firstName) {
-        switch (contentTransMode) {
-          case "original":
-            return `${chara.firstName} ${chara.givenName}`;
-          case "translated":
-            return jpOrderCodes.includes(assetI18n.language)
-              ? `${assetT(
-                  `character_name:${charaId}.firstName`,
-                  chara.firstName
-                )} ${assetT(
-                  `character_name:${charaId}.givenName`,
-                  chara.givenName
-                )}`
-              : `${assetT(
-                  `character_name:${charaId}.givenName`,
-                  chara.givenName
-                )} ${assetT(
-                  `character_name:${charaId}.firstName`,
-                  chara.firstName
-                )}`;
-          case "both":
-            return (
-              `${chara.firstName} ${chara.givenName} | ` +
-              (jpOrderCodes.includes(assetI18n.language)
-                ? `${assetT(
-                    `character_name:${charaId}.firstName`,
-                    chara.firstName
-                  )} ${assetT(
-                    `character_name:${charaId}.givenName`,
-                    chara.givenName
-                  )}`
-                : `${assetT(
-                    `character_name:${charaId}.givenName`,
-                    chara.givenName
-                  )} ${assetT(
-                    `character_name:${charaId}.firstName`,
-                    chara.firstName
-                  )}`)
-            );
-        }
-      }
-      return chara?.givenName;
-    },
-    [assetI18n.language, assetT, charas, contentTransMode]
-  );
-}
-
-export function useMuisicMeta() {
+export function useMusicMeta() {
   const fetchCached = useCallback(async (name: string) => {
     const { data }: { data: IMusicMeta[] } = await Axios.get(
       (window.isChinaMainland
@@ -284,6 +234,12 @@ export function useMuisicMeta() {
   const { data } = useSWR("music_metas", fetchCached);
 
   return [data];
+}
+
+export function filterMusicMeta(metas: IMusicMeta[], musics: IMusicInfo[]) {
+  const validIds = musics.map((music) => music.id);
+
+  return metas.filter((meta) => validIds.includes(meta.music_id));
 }
 
 const queue = new PQueue({ concurrency: 1 });
@@ -323,16 +279,36 @@ export async function getRemoteAssetURL(
   }
 }
 
-export function useProcessedScenarioData(
-  contentTransMode: ContentTransModeType
-) {
+// export async function getMovieUrl(stringVal: string) {
+//   const buildDataUrl = await getRemoteAssetURL(
+//     `scenario/movie/${stringVal}_rip/moviebundlebuilddata.asset`,
+//     undefined,
+//     window.isChinaMainland
+//   );
+//   const buildData = (await Axios.get(buildDataUrl, { responseType: "json" }))
+//     .data;
+//   const fileName = buildData.movieBundleDatas[0].usmFileName
+//     .replace(/(-\d{3})?\.usm\.bytes/, "")
+//     .toLowerCase();
+//   return getRemoteAssetURL(
+//     `scenario/movie/${stringVal}_rip/${fileName}.mp4`,
+//     undefined,
+//     window.isChinaMainland
+//   );
+// }
+
+export function useProcessedScenarioData() {
   const [mobCharas] = useCachedData<IMobCharacter>("mobCharacters");
   const [chara2Ds] = useCachedData<ICharacter2D>("character2ds");
 
-  const getCharaName = useCharaName(contentTransMode);
+  const getCharaName = useCharaName();
 
   return useCallback(
-    async (scenarioPath: string, isCardStory: boolean) => {
+    async (
+      scenarioPath: string,
+      isCardStory: boolean = false,
+      isActionSet: boolean = false
+    ) => {
       const ret: {
         characters: { id: number; name: string }[];
         actions: { [key: string]: any }[];
@@ -351,7 +327,11 @@ export function useProcessedScenarioData(
         return ret;
 
       const { data }: { data: IScenarioData } = await Axios.get(
-        await getRemoteAssetURL(scenarioPath),
+        await getRemoteAssetURL(
+          scenarioPath,
+          undefined,
+          window.isChinaMainland
+        ),
         {
           responseType: "json",
         }
@@ -376,7 +356,9 @@ export function useProcessedScenarioData(
           seType: "ChangeBackground",
           body: FirstBgm,
           resource: await getRemoteAssetURL(
-            `scenario/background/${FirstBackground}_rip/${FirstBackground}.webp`
+            `scenario/background/${FirstBackground}_rip/${FirstBackground}.webp`,
+            undefined,
+            window.isChinaMainland
           ),
         });
       }
@@ -389,7 +371,9 @@ export function useProcessedScenarioData(
           hasBgm: true,
           hasSe: false,
           bgm: await getRemoteAssetURL(
-            `sound/scenario/bgm/${FirstBgm}_rip/${FirstBgm}.mp3`
+            `sound/scenario/bgm/${FirstBgm}_rip/${FirstBgm}.mp3`,
+            undefined,
+            window.isChinaMainland
           ),
           se: "",
         });
@@ -430,11 +414,9 @@ export function useProcessedScenarioData(
               }
               chara.name = talkData.WindowDisplayName;
               let voiceUrl = talkData.Voices.length
-                ? `sound/${
-                    isCardStory ? "card_" : ""
-                  }scenario/voice/${ScenarioId}_rip/${
-                    talkData.Voices[0].VoiceId
-                  }.mp3`
+                ? `sound/${isCardStory ? "card_" : ""}${
+                    isActionSet ? "actionset" : "scenario"
+                  }/voice/${ScenarioId}_rip/${talkData.Voices[0].VoiceId}.mp3`
                 : "";
 
               if (
@@ -443,8 +425,12 @@ export function useProcessedScenarioData(
               ) {
                 const chara2d = chara2Ds.find(
                   (ch) => ch.id === talkData.TalkCharacters[0].Character2dId
-                )!;
-                voiceUrl = `sound/scenario/part_voice/${chara2d.assetName}_${chara2d.unit}_rip/${talkData.Voices[0].VoiceId}.mp3`;
+                );
+                if (chara2d) {
+                  voiceUrl = `sound/scenario/part_voice/${chara2d.assetName}_${chara2d.unit}_rip/${talkData.Voices[0].VoiceId}.mp3`;
+                } else {
+                  voiceUrl = "";
+                }
               }
 
               action = {
@@ -456,7 +442,11 @@ export function useProcessedScenarioData(
                 chara,
                 body: talkData.Body,
                 voice: talkData.Voices.length
-                  ? await getRemoteAssetURL(voiceUrl)
+                  ? await getRemoteAssetURL(
+                      voiceUrl,
+                      undefined,
+                      window.isChinaMainland
+                    )
                   : "",
               };
             }
@@ -478,18 +468,18 @@ export function useProcessedScenarioData(
                 resource:
                   specialEffectType === "FullScreenText"
                     ? await getRemoteAssetURL(
-                        `sound/scenario/voice/${ScenarioId}_rip/${specialEffect.StringValSub}.mp3`
+                        `sound/scenario/voice/${ScenarioId}_rip/${specialEffect.StringValSub}.mp3`,
+                        undefined,
+                        window.isChinaMainland
                       )
                     : specialEffectType === "ChangeBackground"
                     ? await getRemoteAssetURL(
-                        `scenario/background/${specialEffect.StringValSub}_rip/${specialEffect.StringValSub}.webp`
+                        `scenario/background/${specialEffect.StringValSub}_rip/${specialEffect.StringValSub}.webp`,
+                        undefined,
+                        window.isChinaMainland
                       )
                     : specialEffectType === "Movie"
-                    ? await getRemoteAssetURL(
-                        `scenario/movie/${specialEffect.StringVal}_rip/${
-                          specialEffect.StringVal.split("_")[0]
-                        }.mp4`
-                      )
+                    ? `scenario/movie/${specialEffect.StringVal}_rip`
                     : "",
               };
             }
@@ -509,12 +499,16 @@ export function useProcessedScenarioData(
                 hasSe: !!soundData.Se,
                 bgm: soundData.Bgm
                   ? await getRemoteAssetURL(
-                      `sound/scenario/bgm/${soundData.Bgm}_rip/${soundData.Bgm}.mp3`
+                      `sound/scenario/bgm/${soundData.Bgm}_rip/${soundData.Bgm}.mp3`,
+                      undefined,
+                      window.isChinaMainland
                     )
                   : "",
                 se: soundData.Se
                   ? await getRemoteAssetURL(
-                      `sound/scenario/se/se_pack00001_rip/${soundData.Se}.mp3`
+                      `sound/scenario/se/se_pack00001_rip/${soundData.Se}.mp3`,
+                      undefined,
+                      window.isChinaMainland
                     )
                   : "",
               };
@@ -627,4 +621,95 @@ export function useToggle(initialValue = false) {
   // Normally with useReducer you pass a value to dispatch to indicate what action to
   // take on the state, but in this case there's only one action.
   return useReducer((state) => !state, initialValue);
+}
+
+export function useAlertSnackbar() {
+  const snackbar = useSnackbar();
+  return useMemo(() => {
+    const showMessage: (
+      type: string
+    ) => (
+      message: string,
+      action?: string | undefined,
+      handleAction?: (() => void) | undefined,
+      customParameters?: any
+    ) => any = (type: string) => (
+      message,
+      action,
+      handleAction,
+      customParameters
+    ) =>
+      snackbar.showMessage(message, action, handleAction, {
+        ...customParameters,
+        type,
+      });
+    return {
+      ...snackbar,
+      showMessage: showMessage("info"),
+      showInfo: showMessage("info"),
+      showWarning: showMessage("warning"),
+      showError: showMessage("error"),
+      showSuccess: showMessage("success"),
+    };
+  }, [snackbar]);
+}
+
+export const realityAreaWorldmap: { [key: string]: number } = {
+  1: 3,
+  2: 1,
+  3: 4,
+  4: 5,
+  5: 2,
+  6: 7,
+  7: 6,
+};
+
+export function useSkillMapping() {
+  const { t } = useTranslation();
+  return useMemo(
+    () => [
+      //skills.json
+      {
+        // name: "スコアＵＰ",
+        name: t("filter:skill.score_up"),
+        descriptionSpriteName: "score_up",
+      },
+      {
+        // name: "判定強化＆スコアＵＰ",
+        name: t("filter:skill.judgment_up"),
+        descriptionSpriteName: "judgment_up",
+      },
+      {
+        // name: "ライフ回復＆スコアＵＰ",
+        name: t("filter:skill.life_recovery"),
+        descriptionSpriteName: "life_recovery",
+      },
+      {
+        // name: "PERFECTのときのみスコアＵＰ",
+        name: t("filter:skill.perfect_score_up"),
+        descriptionSpriteName: "perfect_score_up",
+      },
+      {
+        // name: "発動時ライフがOO未満ならスコアUP",
+        name: t("filter:skill.life_score_up"),
+        descriptionSpriteName: "life_score_up",
+      },
+    ],
+    [t]
+  );
+}
+
+export function sortWithIndices(toSort: (string | number)[]) {
+  const tmp: [string | number, number][] = [];
+  for (let i = 0; i < toSort.length; i++) {
+    tmp.push([toSort[i], i]);
+  }
+  tmp.sort(function (left, right) {
+    return left[0] < right[0] ? -1 : 1;
+  });
+  const sortIndices: number[] = [];
+  for (let j = 0; j < toSort.length; j++) {
+    sortIndices.push(tmp[j][1]);
+  }
+  return sortIndices;
 }

@@ -12,7 +12,6 @@ import {
   MenuItem,
   DialogContentText,
   DialogActions,
-  Snackbar,
   makeStyles,
   Typography,
   Popover,
@@ -33,21 +32,22 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { SettingContext, UserContext } from "../../context";
-import { ICardInfo, IGameChara, ITeamCardState } from "../../types";
+import { UserContext } from "../../context";
+import { ICardInfo, IGameChara, ISkillInfo, ITeamCardState } from "../../types";
 import {
+  useAlertSnackbar,
   useCachedData,
-  useCharaName,
   useLocalStorage,
+  useSkillMapping,
   useToggle,
 } from "../../utils";
 import { CardThumb, CardThumbMedium } from "./CardThumb";
 import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
-import { Alert } from "@material-ui/lab";
 import { teamBuildReducer } from "../../stores/reducers";
 import { useStrapi } from "../../utils/apiClient";
 import { useTeamCalc } from "../../utils/teamCalc";
+import { useCharaName } from "../../utils/i18n";
 
 const useStyle = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -71,29 +71,31 @@ const useStyle = makeStyles((theme) => ({
 const TeamBuilder: React.FC<{
   teamCards: number[];
   teamCardsStates: ITeamCardState[];
-  teamPowerStates: number;
+  teamTotalPower: number;
   setTeamCards: React.Dispatch<React.SetStateAction<number[]>>;
   setTeamCardsStates: React.Dispatch<React.SetStateAction<ITeamCardState[]>>;
-  setTeamPowerStates: React.Dispatch<React.SetStateAction<number>>;
+  setTeamTotalPower: React.Dispatch<React.SetStateAction<number>>;
 }> = ({
   teamCards,
   teamCardsStates,
-  teamPowerStates,
+  teamTotalPower,
   setTeamCards,
   setTeamCardsStates,
-  setTeamPowerStates,
+  setTeamTotalPower,
 }) => {
   const classes = useStyle();
   const { t } = useTranslation();
-  const { contentTransMode } = useContext(SettingContext)!;
-  const getCharaName = useCharaName(contentTransMode);
+  const getCharaName = useCharaName();
   const { jwtToken, sekaiProfile, updateSekaiProfile } = useContext(
     UserContext
   )!;
   const { putSekaiDeckList, deleteSekaiDeckList } = useStrapi(jwtToken);
+  const { showError, showSuccess } = useAlertSnackbar();
+  const skillMapping = useSkillMapping();
 
   const [cards] = useCachedData<ICardInfo>("cards");
   const [charas] = useCachedData<IGameChara>("gameCharacters");
+  const [skills] = useCachedData<ISkillInfo>("skills");
 
   const {
     getAreaItemBonus,
@@ -105,13 +107,6 @@ const TeamBuilder: React.FC<{
   const [characterId, setCharacterId] = useState<number>(0);
   const [rarity, setRarity] = useState<number>(4);
   const [filteredCards, setFilteredCards] = useState<ICardInfo[]>([]);
-  const [
-    duplicatedCardErrorOpen,
-    setDuplicatedCardErrorOpen,
-  ] = useState<boolean>(false);
-  const [cardMaxErrorOpen, setCardMaxErrorOpen] = useState<boolean>(false);
-  const [teamTextCopiedOpen, setTeamTextCopiedOpen] = useState<boolean>(false);
-  const [loadTeamErrorOpen, setLoadTeamErrorOpen] = useState<boolean>(false);
   const [saveTeamDialogVisible, setSaveTeamDialogVisible] = useState<boolean>(
     false
   );
@@ -121,7 +116,6 @@ const TeamBuilder: React.FC<{
   const [addCardDialogVisible, setAddCardDialogVisible] = useState<boolean>(
     false
   );
-  const [teamTextSavedOpen, setTeamTextSavedOpen] = useState<boolean>(false);
   const [editingCard, setEditingCard] = useState<ITeamCardState>();
   const [isSyncCardState, setIsSyncCardState] = useLocalStorage(
     "team-build-use-sekai-card-state",
@@ -131,8 +125,10 @@ const TeamBuilder: React.FC<{
     "local"
   );
   const [isSavingEntry, toggleIsSaveingEntry] = useToggle(false);
-  const [saveTeamErrorOpen, setSaveTeamErrorOpen] = useState(false);
-  const [isAutoCalcBonus, toggleIsAutoCalcBonus] = useToggle(false);
+  const [isAutoCalcBonus, toggleIsAutoCalcBonus] = useToggle(
+    !!sekaiProfile?.sekaiUserProfile
+  );
+  const [skillSpriteName, setSkillSpriteName] = useState("any");
 
   const [teamBuildArray, dispatchTeamBuildArray] = useReducer(
     teamBuildReducer,
@@ -160,23 +156,35 @@ const TeamBuilder: React.FC<{
   const open = useMemo(() => Boolean(anchorEl), [anchorEl]);
 
   const filterCards = useCallback(() => {
-    if (!cards || !cards.length) return;
+    if (!cards || !cards.length || !skills || !skills.length) return;
+    const skillIds = skills
+      .filter((skill) => {
+        if (skillSpriteName === "perfect_score_up")
+          return skill.skillEffects[0].activateNotesJudgmentType === "perfect";
+        else if (skillSpriteName === "life_score_up")
+          return (
+            skill.skillEffects[0].skillEffectType === "score_up_condition_life"
+          );
+        else return skill.descriptionSpriteName === skillSpriteName;
+      })
+      .map((skill) => skill.id);
     setFilteredCards(
-      cards.filter((card) =>
-        characterId
-          ? card.characterId === characterId && card.rarity === rarity
-          : card.rarity === rarity
+      cards.filter(
+        (card) =>
+          card.rarity === rarity &&
+          (skillIds.length ? skillIds.includes(card.skillId) : true) &&
+          (characterId ? card.characterId === characterId : true)
       )
     );
-  }, [cards, characterId, rarity]);
+  }, [cards, characterId, rarity, skillSpriteName, skills]);
 
   const handleCardThumbClick = useCallback(
     (card: ICardInfo) => {
       if (teamCards.some((tc) => tc === card.id)) {
-        setDuplicatedCardErrorOpen(true);
+        showError(t("music_recommend:buildTeam.duplicatedCardError"));
         return;
       } else if (teamCards.length === 5) {
-        setCardMaxErrorOpen(true);
+        showError(t("music_recommend:buildTeam.cardMaxError"));
         return;
       }
       const maxLevel = [0, 20, 30, 50, 60];
@@ -200,7 +208,15 @@ const TeamBuilder: React.FC<{
       ]);
       // setAddCardDialogVisible(false);
     },
-    [teamCards, setTeamCards, setTeamCardsStates, isSyncCardState, sekaiProfile]
+    [
+      teamCards,
+      setTeamCards,
+      sekaiProfile?.cardList,
+      setTeamCardsStates,
+      showError,
+      t,
+      isSyncCardState,
+    ]
   );
 
   const handleClick = useCallback(
@@ -250,7 +266,7 @@ const TeamBuilder: React.FC<{
       // id: teamBuildArray.teams.length + 1,
       teamCards: teamCards,
       teamCardsStates: teamCardsStates,
-      teamPowerStates: teamPowerStates,
+      teamTotalPower: teamTotalPower,
     };
 
     toggleIsSaveingEntry();
@@ -269,7 +285,7 @@ const TeamBuilder: React.FC<{
           toggleIsSaveingEntry();
         })
         .catch(() => {
-          setSaveTeamErrorOpen(true);
+          showError(t("team_build:error.save_team_failed"));
           toggleIsSaveingEntry();
         });
     } else if (storageLocation === "local") {
@@ -282,10 +298,12 @@ const TeamBuilder: React.FC<{
   }, [
     putSekaiDeckList,
     sekaiProfile,
+    showError,
     storageLocation,
+    t,
     teamCards,
     teamCardsStates,
-    teamPowerStates,
+    teamTotalPower,
     toggleIsSaveingEntry,
     updateSekaiProfile,
   ]);
@@ -296,7 +314,7 @@ const TeamBuilder: React.FC<{
         // id: id + 1,
         teamCards: teamCards,
         teamCardsStates: teamCardsStates,
-        teamPowerStates: teamPowerStates,
+        teamTotalPower: teamTotalPower,
       };
 
       toggleIsSaveingEntry();
@@ -321,10 +339,11 @@ const TeamBuilder: React.FC<{
                 ...sekaiProfile!.deckList!.slice(id + 1),
               ],
             });
+            showSuccess(t("team_build:save_team_succeed"));
             toggleIsSaveingEntry();
           })
           .catch(() => {
-            setSaveTeamErrorOpen(true);
+            showError(t("team_build:error.save_team_failed"));
             toggleIsSaveingEntry();
           });
       } else if (storageLocation === "local") {
@@ -335,16 +354,20 @@ const TeamBuilder: React.FC<{
             data: currentEntry,
           },
         });
+        showSuccess(t("team_build:save_team_succeed"));
         toggleIsSaveingEntry();
       }
     },
     [
       putSekaiDeckList,
       sekaiProfile,
+      showError,
+      showSuccess,
       storageLocation,
+      t,
       teamCards,
       teamCardsStates,
-      teamPowerStates,
+      teamTotalPower,
       toggleIsSaveingEntry,
       updateSekaiProfile,
     ]
@@ -371,7 +394,7 @@ const TeamBuilder: React.FC<{
             toggleIsSaveingEntry();
           })
           .catch(() => {
-            setSaveTeamErrorOpen(true);
+            showError(t("team_build:error.save_team_failed"));
             toggleIsSaveingEntry();
           });
       } else if (storageLocation === "local") {
@@ -385,7 +408,9 @@ const TeamBuilder: React.FC<{
     [
       deleteSekaiDeckList,
       sekaiProfile,
+      showError,
       storageLocation,
+      t,
       toggleIsSaveingEntry,
       updateSekaiProfile,
     ]
@@ -417,54 +442,59 @@ const TeamBuilder: React.FC<{
 
       setTeamCards(currentEntry.teamCards);
       setTeamCardsStates(currentEntry.teamCardsStates);
-      setTeamPowerStates(currentEntry.teamPowerStates);
+      setTeamTotalPower(currentEntry.teamTotalPower);
 
       setLoadTeamDialogVisible(false);
     },
-    [
-      cards,
-      setTeamCards,
-      setTeamCardsStates,
-      setTeamPowerStates,
-      teamBuildArray,
-    ]
+    [cards, setTeamCards, setTeamCardsStates, setTeamTotalPower, teamBuildArray]
   );
 
-  const calcTotalPower = useCallback(() => {
-    const pureDeckPower = getPureTeamPowers(teamCardsStates);
+  const calcTotalPower = useCallback(
+    (cardStates?) => {
+      const pureDeckPower = getPureTeamPowers(cardStates || teamCardsStates);
 
-    if (isAutoCalcBonus && sekaiProfile && sekaiProfile.sekaiUserProfile) {
-      const areaItemBonus = getAreaItemBonus(
-        teamCardsStates,
-        sekaiProfile.sekaiUserProfile.userAreaItems
-      );
+      // console.log(
+      //   isAutoCalcBonus && !!sekaiProfile && !!sekaiProfile.sekaiUserProfile
+      // );
+      if (isAutoCalcBonus && sekaiProfile && sekaiProfile.sekaiUserProfile) {
+        const areaItemBonus = getAreaItemBonus(
+          cardStates || teamCardsStates,
+          sekaiProfile.sekaiUserProfile.userAreaItems
+        );
 
-      console.log(areaItemBonus);
+        // console.log(areaItemBonus);
 
-      const characterRankBonus = getCharacterRankBonus(
-        sekaiProfile.sekaiUserProfile.userCharacters,
-        teamCardsStates
-      );
+        const characterRankBonus = getCharacterRankBonus(
+          sekaiProfile.sekaiUserProfile.userCharacters,
+          cardStates || teamCardsStates
+        );
 
-      const honorBonus = getHonorBonus(
-        sekaiProfile.sekaiUserProfile.userHonors
-      );
+        const honorBonus = getHonorBonus(
+          sekaiProfile.sekaiUserProfile.userHonors
+        );
 
-      // console.log(pureDeckPower, areaItemBonus, characterRankBonus, honorBonus);
+        // console.log(
+        //   pureDeckPower,
+        //   areaItemBonus,
+        //   characterRankBonus,
+        //   honorBonus
+        // );
 
-      return pureDeckPower + areaItemBonus + characterRankBonus + honorBonus;
-    }
+        return pureDeckPower + areaItemBonus + characterRankBonus + honorBonus;
+      }
 
-    return pureDeckPower;
-  }, [
-    getAreaItemBonus,
-    getCharacterRankBonus,
-    getHonorBonus,
-    getPureTeamPowers,
-    isAutoCalcBonus,
-    sekaiProfile,
-    teamCardsStates,
-  ]);
+      return pureDeckPower;
+    },
+    [
+      getAreaItemBonus,
+      getCharacterRankBonus,
+      getHonorBonus,
+      getPureTeamPowers,
+      isAutoCalcBonus,
+      sekaiProfile,
+      teamCardsStates,
+    ]
+  );
 
   const handleLoadSekaiTeamEntry = useCallback(() => {
     if (!sekaiProfile || !sekaiProfile.sekaiUserProfile) return;
@@ -494,10 +524,17 @@ const TeamBuilder: React.FC<{
 
     setTeamCards(cardIds);
     setTeamCardsStates(cardStates);
-    setTeamPowerStates(0);
+    // setTeamTotalPower(0);
+    setTeamTotalPower(calcTotalPower(cardStates));
 
     setLoadTeamDialogVisible(false);
-  }, [sekaiProfile, setTeamCards, setTeamCardsStates, setTeamPowerStates]);
+  }, [
+    calcTotalPower,
+    sekaiProfile,
+    setTeamCards,
+    setTeamCardsStates,
+    setTeamTotalPower,
+  ]);
 
   return (
     <Grid container spacing={2}>
@@ -551,7 +588,7 @@ const TeamBuilder: React.FC<{
       <Grid item xs={12}>
         <Grid container spacing={1} justify="center">
           {teamCards.map((cardId, index) => (
-            <Grid key={`team-card-${cardId}`} item xs={2}>
+            <Grid key={`team-card-${cardId}`} item xs={4} md={2}>
               <CardThumbMedium
                 cardId={cardId}
                 trained={teamCardsStates[index].trained}
@@ -574,15 +611,15 @@ const TeamBuilder: React.FC<{
                 InputLabelProps={{
                   shrink: true,
                 }}
-                value={teamPowerStates}
-                onChange={(e) => setTeamPowerStates(Number(e.target.value))}
+                value={teamTotalPower}
+                onChange={(e) => setTeamTotalPower(Number(e.target.value))}
               />
             </Grid>
             <Grid item>
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => setTeamPowerStates(calcTotalPower())}
+                onClick={() => setTeamTotalPower(calcTotalPower())}
               >
                 {t("team_build:button.calc_total_power")}
               </Button>
@@ -608,7 +645,7 @@ const TeamBuilder: React.FC<{
             <Grid item>
               <FormControl style={{ minWidth: 200 }}>
                 <InputLabel id="add-card-dialog-select-chara-label">
-                  {t("music_recommend:addCardDialog.selectChara")}
+                  {t("common:character")}
                 </InputLabel>
                 <Select
                   labelId="add-card-dialog-select-chara-label"
@@ -631,7 +668,7 @@ const TeamBuilder: React.FC<{
             <Grid item>
               <FormControl style={{ minWidth: 120 }}>
                 <InputLabel id="add-card-dialog-select-rarity-label">
-                  {t("music_recommend:addCardDialog.selectRarity")}
+                  {t("common:rarity")}
                 </InputLabel>
                 <Select
                   labelId="add-card-dialog-select-rarity-label"
@@ -662,6 +699,30 @@ const TeamBuilder: React.FC<{
                           ))}
                     </MenuItem>
                   ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControl style={{ minWidth: 200 }}>
+                <InputLabel id="add-card-dialog-select-skill-label">
+                  {t("card:skillName")}
+                </InputLabel>
+                <Select
+                  labelId="add-card-dialog-select-skill-label"
+                  value={skillSpriteName}
+                  onChange={(e) => setSkillSpriteName(e.target.value as string)}
+                >
+                  <MenuItem value={"any"}>{t("common:all")}</MenuItem>
+                  {skillMapping.map(
+                    ({ name, descriptionSpriteName }, index) => (
+                      <MenuItem
+                        key={`skill-select-item-${index + 1}`}
+                        value={descriptionSpriteName}
+                      >
+                        {name}
+                      </MenuItem>
+                    )
+                  )}
                 </Select>
               </FormControl>
             </Grid>
@@ -1057,60 +1118,6 @@ const TeamBuilder: React.FC<{
           </Container>
         )}
       </Popover>
-      <Snackbar
-        open={duplicatedCardErrorOpen}
-        autoHideDuration={3000}
-        onClose={() => setDuplicatedCardErrorOpen(false)}
-      >
-        <Alert variant="filled" severity="error">
-          {t("music_recommend:buildTeam.duplicatedCardError")}
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        open={cardMaxErrorOpen}
-        autoHideDuration={3000}
-        onClose={() => setCardMaxErrorOpen(false)}
-      >
-        <Alert variant="filled" severity="error">
-          {t("music_recommend:buildTeam.cardMaxError")}
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        open={loadTeamErrorOpen}
-        autoHideDuration={3000}
-        onClose={() => setLoadTeamErrorOpen(false)}
-      >
-        <Alert variant="filled" severity="error">
-          {t("music_recommend:buildTeam.loadTeamError")}
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        open={teamTextCopiedOpen}
-        autoHideDuration={3000}
-        onClose={() => setTeamTextCopiedOpen(false)}
-      >
-        <Alert variant="filled" severity="success">
-          {t("music_recommend:buildTeam.teamTextCopied")}
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        open={teamTextSavedOpen}
-        autoHideDuration={3000}
-        onClose={() => setTeamTextSavedOpen(false)}
-      >
-        <Alert variant="filled" severity="success">
-          {t("music_recommend:buildTeam.teamTextSaved")}
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        open={saveTeamErrorOpen}
-        autoHideDuration={3000}
-        onClose={() => setSaveTeamErrorOpen(false)}
-      >
-        <Alert variant="filled" severity="error">
-          {t("team_build:error.save_team_failed")}
-        </Alert>
-      </Snackbar>
     </Grid>
   );
 };

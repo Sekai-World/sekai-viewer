@@ -47,8 +47,11 @@ import { OpenInNew } from "@material-ui/icons";
 import { useInteractiveStyles } from "../../styles/interactive";
 import AudioPlayer from "../music/AudioPlayer";
 import AgendaView from "../virtual_live/AgendaView";
-import AdSense from "../subs/AdSense";
+// import AdSense from "../subs/AdSense";
 import Image from "material-ui-image";
+import { useStrapi } from "../../utils/apiClient";
+import { CommentTextMultiple } from "mdi-material-ui";
+import Comment from "../comment/Comment";
 
 const useStyle = makeStyles((theme) => ({
   // bannerImg: {
@@ -75,6 +78,7 @@ const EventDetail: React.FC<{}> = () => {
   const { getTranslated } = useAssetI18n();
   const { contentTransMode } = useContext(SettingContext)!;
   const [humanizeDuration] = useDurationI18n();
+  const { getEvent } = useStrapi();
 
   const [events] = useCachedData<IEventInfo>("events");
   const [eventDeckBonuses] = useCachedData<IEventDeckBonus>("eventDeckBonuses");
@@ -112,14 +116,11 @@ const EventDetail: React.FC<{}> = () => {
   ] = useState<IVirtualLiveInfo>();
   const [ccTeams, setCcTeams] = useState<ICheerfulCarnivalTeam[]>([]);
   const [ccSummary, setCcSummary] = useState<ICheerfulCarnivalSummary>();
+  const [eventCommentId, setEventCommentId] = useState<number>(0);
 
   useEffect(() => {
     if (event) {
-      const name = getTranslated(
-        contentTransMode,
-        `event_name:${eventId}`,
-        event.name
-      );
+      const name = getTranslated(`event_name:${eventId}`, event.name);
       document.title = t("title:eventDetail", {
         name,
       });
@@ -187,6 +188,19 @@ const EventDetail: React.FC<{}> = () => {
     gameCharacterUnits,
     virtualLives,
   ]);
+
+  useEffect(() => {
+    if (event) {
+      const job = async () => {
+        const eventStrapi = await getEvent(event.id);
+        if (eventStrapi) {
+          setEventCommentId(eventStrapi.id);
+        }
+      };
+
+      job();
+    }
+  }, [event, getEvent]);
 
   useEffect(() => {
     if (
@@ -272,19 +286,23 @@ const EventDetail: React.FC<{}> = () => {
     if (event) {
       getRemoteAssetURL(
         `event/${event.assetbundleName}/logo_rip/logo.webp`,
-        setEventLogo
+        setEventLogo,
+        window.isChinaMainland
       );
       getRemoteAssetURL(
         `home/banner/${event.assetbundleName}_rip/${event.assetbundleName}.webp`,
-        setEventBanner
+        setEventBanner,
+        window.isChinaMainland
       );
       getRemoteAssetURL(
         `event/${event.assetbundleName}/screen_rip/bg.webp`,
-        setEventBackground
+        setEventBackground,
+        window.isChinaMainland
       );
       getRemoteAssetURL(
         `event/${event.assetbundleName}/screen_rip/character.webp`,
-        setEventCharacter
+        setEventCharacter,
+        window.isChinaMainland
       );
     }
   }, [event]);
@@ -293,11 +311,13 @@ const EventDetail: React.FC<{}> = () => {
     if (event && ccTeams.length) {
       getRemoteAssetURL(
         `event/${event.assetbundleName}/team_image_rip/${ccTeams[0].assetbundleName}.webp`,
-        setCcTeam1Logo
+        setCcTeam1Logo,
+        window.isChinaMainland
       );
       getRemoteAssetURL(
         `event/${event.assetbundleName}/team_image_rip/${ccTeams[1].assetbundleName}.webp`,
-        setCcTeam2Logo
+        setCcTeam2Logo,
+        window.isChinaMainland
       );
     }
   }, [ccTeams, cheerfulCarnivalSummaries, cheerfulCarnivalTeams, event]);
@@ -328,7 +348,7 @@ const EventDetail: React.FC<{}> = () => {
     eventCards.length ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
-        {getTranslated(contentTransMode, `event_name:${eventId}`, event.name)}
+        {getTranslated(`event_name:${eventId}`, event.name)}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="md">
         <TabContext value={imgTabVal}>
@@ -476,12 +496,12 @@ const EventDetail: React.FC<{}> = () => {
                 justify="space-between"
                 alignItems="center"
               >
-                <Grid item xs={4}>
+                <Grid item xs={8}>
                   <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                     {t("common:eventTracker")}
                   </Typography>
                 </Grid>
-                <Grid item xs={6} container justify="flex-end">
+                <Grid item container justify="flex-end">
                   <Link
                     to={`/eventtracker?id=${eventId}`}
                     className={interactiveClasses.noDecoration}
@@ -495,6 +515,30 @@ const EventDetail: React.FC<{}> = () => {
               <Divider style={{ margin: "1% 0" }} />
             </Fragment>
           )}
+          <Grid
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Grid item xs={8}>
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                {t("common:storyReader")}
+              </Typography>
+            </Grid>
+            <Grid item container justify="flex-end">
+              <Link
+                to={`/storyreader/eventStory/${event.id}`}
+                className={interactiveClasses.noDecoration}
+              >
+                <Grid container alignItems="center">
+                  <OpenInNew />
+                </Grid>
+              </Link>
+            </Grid>
+          </Grid>
+          <Divider style={{ margin: "1% 0" }} />
         </Grid>
       </Container>
       <Typography variant="h6" className={layoutClasses.header}>
@@ -510,12 +554,12 @@ const EventDetail: React.FC<{}> = () => {
             justify="space-between"
             alignItems="center"
           >
-            <Grid item>
+            <Grid item xs={5}>
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                 {t("event:boostAttribute")}
               </Typography>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={5} sm={6}>
               <Grid
                 spacing={1}
                 container
@@ -533,7 +577,7 @@ const EventDetail: React.FC<{}> = () => {
                     </Grid>
                   </Grid>
                 </Grid>
-                <Grid item xs={4} sm={2}>
+                <Grid item xs={5} sm={2}>
                   <Typography>+{eventDeckBonus[10].bonusRate}%</Typography>
                 </Grid>
               </Grid>
@@ -548,7 +592,7 @@ const EventDetail: React.FC<{}> = () => {
             justify="space-between"
             alignItems="center"
           >
-            <Grid item xs={4}>
+            <Grid item xs={5}>
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                 {t("event:boostCharacters")}
               </Typography>
@@ -629,7 +673,7 @@ const EventDetail: React.FC<{}> = () => {
               spacing={2}
             >
               {boostCards.map((card) => (
-                <Grid key={card.id} item xs={6} md={4} lg={3}>
+                <Grid key={card.id} item xs={5} md={4} lg={3}>
                   <Link to={`/card/${card.id}`}>
                     <CardThumb cardId={card.id} />
                   </Link>
@@ -846,12 +890,12 @@ const EventDetail: React.FC<{}> = () => {
           <Divider style={{ margin: "1% 0" }} />
         </Grid>
       </Container>
-      <AdSense
+      {/* <AdSense
         client="ca-pub-7767752375383260"
         slot="8221864477"
         format="auto"
         responsive="true"
-      />
+      /> */}
       {!!linkedVirtualLive && (
         <Fragment>
           <Typography variant="h6" className={layoutClasses.header}>
@@ -905,6 +949,16 @@ const EventDetail: React.FC<{}> = () => {
           ))}
         </Grid>
       </Container>
+      {!!eventCommentId && (
+        <Fragment>
+          <Typography variant="h6" className={layoutClasses.header}>
+            {t("common:comment")} <CommentTextMultiple />
+          </Typography>
+          <Container className={layoutClasses.content} maxWidth="md">
+            <Comment contentType="event" contentId={eventCommentId} />
+          </Container>
+        </Fragment>
+      )}
       <Viewer
         visible={visible}
         onClose={() => setVisible(false)}

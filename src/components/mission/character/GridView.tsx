@@ -7,10 +7,9 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
-import React, { Fragment, useContext } from "react";
-import { SettingContext } from "../../../context";
+import React, { Fragment } from "react";
 import { ICharacterMission } from "../../../types";
-import { useCharaName } from "../../../utils";
+import { useCharaName } from "../../../utils/i18n";
 import { ContentTrans } from "../../subs/ContentTrans";
 
 const useStyles = makeStyles((theme) => ({
@@ -29,8 +28,7 @@ const useStyles = makeStyles((theme) => ({
 
 const GridView: React.FC<{ data?: ICharacterMission }> = ({ data }) => {
   const classes = useStyles();
-  const { contentTransMode } = useContext(SettingContext)!;
-  const getCharaName = useCharaName(contentTransMode);
+  const getCharaName = useCharaName();
 
   if (!data) {
     // loading

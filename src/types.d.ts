@@ -289,9 +289,11 @@ export interface EventRankingRewardRange {
   eventRankingRewards: EventRankingReward[];
 }
 
+export type EventType = "marathon" | "cheerful_carnival" | "challenge_live";
+
 export interface IEventInfo {
   id: number;
-  eventType: string;
+  eventType: EventType;
   name: string;
   assetbundleName: string;
   bgmAssetbundleName: string;
@@ -510,7 +512,7 @@ export interface ITeamBuild {
   id?: number;
   teamCards: number[];
   teamCardsStates: ITeamCardState[];
-  teamPowerStates: number;
+  teamTotalPower: number;
 }
 
 export interface IMusicMeta {
@@ -533,8 +535,18 @@ export interface IMusicRecommendResult {
   difficulty: string;
   level: number;
   combo: number;
-  result: number;
+  result: number | number[];
   link: string;
+}
+
+export interface IEventCalcAllSongsResult {
+  id: number;
+  mid: number;
+  name: string;
+  difficulty: string;
+  level: number;
+  result: number;
+  resultPerHour: number;
 }
 
 export interface IUnitStoryEpisode {
@@ -799,6 +811,7 @@ export interface IHonorGroup {
   id: number;
   honorType: string;
   name: string;
+  backgroundAssetbundleName?: string;
 }
 
 export enum CharacterMissionType {
@@ -1216,4 +1229,22 @@ export interface ICheerfulCarnivalTeam {
   seq: number;
   teamName: string;
   assetbundleName: string;
+}
+
+export interface IArea {
+  id: number;
+  assetbundleName: string;
+  areaType: string;
+  viewType: string;
+  name: string;
+  releaseConditionId: number;
+}
+
+export interface IActionSet {
+  id: number;
+  areaId: number;
+  scriptId: string;
+  characterIds: number[];
+  scenarioId: string;
+  actionSetType: string;
 }

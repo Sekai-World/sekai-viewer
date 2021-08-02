@@ -6,10 +6,9 @@ import {
   Paper,
 } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { SettingContext } from "../../context";
 import { IVirtualLiveInfo } from "../../types";
 import { getRemoteAssetURL } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
@@ -46,7 +45,6 @@ const AgendaView: React.FC<{ data?: IVirtualLiveInfo }> = ({ data }) => {
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
   // const { path } = useRouteMatch();
-  const { contentTransMode } = useContext(SettingContext)!;
 
   const [virtualLiveLogo, setVirtualLiveLogo] = useState<string>("");
 
@@ -99,11 +97,7 @@ const AgendaView: React.FC<{ data?: IVirtualLiveInfo }> = ({ data }) => {
           <Grid item xs={12} md={4}>
             <Image
               src={virtualLiveLogo}
-              alt={getTranslated(
-                contentTransMode,
-                `virtualLive_name:${data.id}`,
-                data.name
-              )}
+              alt={getTranslated(`virtualLive_name:${data.id}`, data.name)}
               aspectRatio={3.2562}
               color=""
             ></Image>

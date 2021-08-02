@@ -21,29 +21,21 @@ import MarkdownIt from "markdown-it";
 import MarkdownItCollapsible from "markdown-it-collapsible";
 import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
-import {
-  AnnouncementModel,
-  CommentModel,
-  UserMetadatumModel,
-} from "../../strapi-model";
+import { AnnouncementModel, UserMetadatumModel } from "../../strapi-model";
 import { useLayoutStyles } from "../../styles/layout";
 import { useStrapi } from "../../utils/apiClient";
 import Comment from "../comment/Comment";
 import { CommentTextMultiple } from "mdi-material-ui";
 import { useQuery } from "../../utils";
 import { UserContext } from "../../context";
-import AdSense from "../subs/AdSense";
+// import AdSense from "../subs/AdSense";
 
 const AnnouncementDetail: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const { id } = useParams<{ id: string }>();
   const query = useQuery();
   const { usermeta } = useContext(UserContext)!;
-  const {
-    getAnnouncementById,
-    getComments,
-    getTranslationBySlug,
-  } = useStrapi();
+  const { getAnnouncementById, getTranslationBySlug } = useStrapi();
   const { t } = useTranslation();
 
   const mdParser = useMemo(
@@ -55,7 +47,6 @@ const AnnouncementDetail: React.FC<{}> = () => {
   );
 
   const [announcement, setAnnouncement] = useState<AnnouncementModel>();
-  const [comments, setComments] = useState<CommentModel[]>([]);
   const [contributors, setContributors] = useState<UserMetadatumModel[]>([]);
 
   useLayoutEffect(() => {
@@ -73,7 +64,6 @@ const AnnouncementDetail: React.FC<{}> = () => {
           }
         : {}
     ).then(setAnnouncement);
-    getComments("announcement", id).then(setComments);
     getTranslationBySlug(`announcement:${id}`, "target").then(
       (data) =>
         data[0] &&
@@ -81,14 +71,7 @@ const AnnouncementDetail: React.FC<{}> = () => {
           data[0].users.filter((meta) => meta.id !== (usermeta || { id: 0 }).id)
         )
     );
-  }, [
-    getAnnouncementById,
-    getComments,
-    getTranslationBySlug,
-    id,
-    query,
-    usermeta,
-  ]);
+  }, [getAnnouncementById, getTranslationBySlug, id, query, usermeta]);
 
   return !!announcement ? (
     <Fragment>
@@ -159,23 +142,19 @@ const AnnouncementDetail: React.FC<{}> = () => {
           readOnly
         />
       </Container>
-      <AdSense
+      {/* <AdSense
         client="ca-pub-7767752375383260"
         slot="2771743585"
         format="auto"
         responsive="true"
-      />
+      /> */}
       {!query.get("preview") && (
         <Fragment>
           <Typography variant="h6" className={layoutClasses.header}>
             {t("common:comment")} <CommentTextMultiple />
           </Typography>
           <Container className={layoutClasses.content} maxWidth="md">
-            <Comment
-              comments={comments.filter((comm) => !comm.blocked)}
-              contentType="announcement"
-              contentId={Number(id)}
-            />
+            <Comment contentType="announcement" contentId={Number(id)} />
           </Container>
         </Fragment>
       )}

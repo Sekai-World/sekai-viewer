@@ -1,10 +1,9 @@
 import { Typography, Grid, makeStyles, Paper } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
-import React, { useContext } from "react";
+import React from "react";
 import { Link, useRouteMatch } from "react-router-dom";
-import { SettingContext } from "../../context";
 import { ICardInfo } from "../../types";
-import { useCharaName } from "../../utils";
+import { useCharaName } from "../../utils/i18n";
 import { CardThumbSkeleton, CardThumb } from "../subs/CardThumb";
 import { ContentTrans } from "../subs/ContentTrans";
 import SpoilerTag from "../subs/SpoilerTag";
@@ -29,10 +28,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ComfyView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
-  const { contentTransMode } = useContext(SettingContext)!;
   const classes = useStyles();
   const { path } = useRouteMatch();
-  const getCharaName = useCharaName(contentTransMode);
+  const getCharaName = useCharaName();
 
   if (!data) {
     // loading

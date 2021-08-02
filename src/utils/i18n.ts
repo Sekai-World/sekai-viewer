@@ -1,9 +1,12 @@
-import { ContentTransModeType } from "./../types.d";
+// import { ContentTransModeType } from "./../types.d";
 import i18n, { TOptions } from "i18next";
 import { initReactI18next } from "react-i18next";
 import fetchBackend from "i18next-fetch-backend";
 import detector from "i18next-browser-languagedetector";
-import { useCallback } from "react";
+import { useCallback, useContext } from "react";
+import { SettingContext } from "../context";
+import { useCachedData } from ".";
+import { ContentTransModeType, IGameChara } from "../types";
 
 export const assetI18n: typeof i18n = i18n.createInstance();
 // export const announcementI18n: typeof i18n = i18n.createInstance();
@@ -91,6 +94,7 @@ export async function initGlobalI18n() {
         "card_gacha_phrase",
         "cheerful_carnival_teams",
         "cheerful_carnival_themes",
+        "area_name",
       ],
       fallbackLng: {
         default: ["ja"],
@@ -124,6 +128,10 @@ export async function initGlobalI18n() {
 }
 
 export function useAssetI18n() {
+  // console.log(useContext(SettingContext));
+  const { contentTransMode } = useContext(SettingContext) || {
+    contentTransMode: "original",
+  };
   const assetT = useCallback(
     (key: string, original: string, options?: string | TOptions): string => {
       const translated = assetI18n.t(key, options);
@@ -132,13 +140,8 @@ export function useAssetI18n() {
     []
   );
   const getTranslated = useCallback(
-    (
-      mode: ContentTransModeType,
-      key: string,
-      original: string,
-      options?: string | TOptions
-    ) => {
-      switch (mode) {
+    (key: string, original: string, options?: string | TOptions) => {
+      switch (contentTransMode) {
         case "original":
           return original;
         case "translated":
@@ -147,9 +150,69 @@ export function useAssetI18n() {
           return `${original} | ${assetT(key, original, options)}`;
       }
     },
-    [assetT]
+    [assetT, contentTransMode]
   );
   return { assetT, assetI18n, getTranslated };
+}
+
+export function useCharaName(forceTransMode?: ContentTransModeType) {
+  let { contentTransMode } = useContext(SettingContext) || {
+    contentTransMode: "original",
+  };
+  if (forceTransMode) contentTransMode = forceTransMode;
+  const [charas] = useCachedData<IGameChara>("gameCharacters");
+  const { assetT, assetI18n } = useAssetI18n();
+
+  return useCallback(
+    (charaId: number): string | undefined => {
+      if (!charas || !charas.length) return;
+      const chara = charas.find((chara) => chara.id === charaId);
+      const jpOrderCodes = ["zh-CN", "zh-TW", "ko", "ja", "id", "ms"];
+      if (chara?.firstName) {
+        switch (contentTransMode) {
+          case "original":
+            return `${chara.firstName} ${chara.givenName}`;
+          case "translated":
+            return jpOrderCodes.includes(assetI18n.language)
+              ? `${assetT(
+                  `character_name:${charaId}.firstName`,
+                  chara.firstName
+                )} ${assetT(
+                  `character_name:${charaId}.givenName`,
+                  chara.givenName
+                )}`
+              : `${assetT(
+                  `character_name:${charaId}.givenName`,
+                  chara.givenName
+                )} ${assetT(
+                  `character_name:${charaId}.firstName`,
+                  chara.firstName
+                )}`;
+          case "both":
+            return (
+              `${chara.firstName} ${chara.givenName} | ` +
+              (jpOrderCodes.includes(assetI18n.language)
+                ? `${assetT(
+                    `character_name:${charaId}.firstName`,
+                    chara.firstName
+                  )} ${assetT(
+                    `character_name:${charaId}.givenName`,
+                    chara.givenName
+                  )}`
+                : `${assetT(
+                    `character_name:${charaId}.givenName`,
+                    chara.givenName
+                  )} ${assetT(
+                    `character_name:${charaId}.firstName`,
+                    chara.firstName
+                  )}`)
+            );
+        }
+      }
+      return chara?.givenName;
+    },
+    [assetI18n.language, assetT, charas, contentTransMode]
+  );
 }
 
 // export function useAnnouncementI18n() {

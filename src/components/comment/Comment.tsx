@@ -12,7 +12,6 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Snackbar,
   TextField,
   Typography,
 } from "@material-ui/core";
@@ -25,26 +24,29 @@ import React, {
   useState,
 } from "react";
 import MdEditor, { Plugins } from "react-markdown-editor-lite";
+import "react-markdown-editor-lite/lib/index.css";
 import { useTranslation } from "react-i18next";
 import { CommentAbuseReason, CommentModel } from "../../strapi-model";
 import { useStrapi } from "../../utils/apiClient";
 import CommentBlock from "./CommentBlock";
 import { UserContext } from "../../context";
-import { Alert } from "@material-ui/lab";
+import { useAlertSnackbar } from "../../utils";
 
 const Comment: React.FC<{
-  comments: CommentModel[];
+  // comments: CommentModel[];
   contentType: string;
   contentId: string | number;
-}> = ({ comments, contentId, contentType }) => {
+}> = ({ contentId, contentType }) => {
   const { t } = useTranslation();
   const { jwtToken, usermeta } = useContext(UserContext)!;
-  const { postComment, postCommentAbuse } = useStrapi(jwtToken);
+  const { postComment, postCommentAbuse, getComments } = useStrapi(jwtToken);
+  const { showSuccess } = useAlertSnackbar();
 
   const mdParser = useMemo(
     () => new MarkdownIt({ linkify: true, typographer: true }),
     []
   );
+  const [comments, setComments] = useState<CommentModel[]>([]);
 
   useEffect(() => {
     MdEditor.use(Plugins.AutoResize, {
@@ -56,14 +58,20 @@ const Comment: React.FC<{
     };
   }, []);
 
+  useEffect(() => {
+    const job = async () =>
+      setComments(await getComments(contentType, contentId));
+
+    job();
+  }, [contentId, contentType, getComments]);
+
   const [isCompose, setIsCompose] = useState(false);
   const [content, setContent] = useState("");
-  const [tmpComments, setTmpComments] = useState<CommentModel[]>(comments);
+  // const [tmpComments, setTmpComments] = useState<CommentModel[]>(comments);
   const [isReportOpen, setIsReportOpen] = useState(false);
   const [reportContent, setReportContent] = useState("");
   const [reportId, setReportId] = useState(0);
   const [reportReason, setReportReason] = useState<CommentAbuseReason>("OTHER");
-  const [isReportSuccess, setIsReportSuccess] = useState(false);
 
   return (
     <Grid container spacing={1}>
@@ -93,8 +101,9 @@ const Comment: React.FC<{
                       usermeta.avatar,
                       content
                     );
-                    setTmpComments([...tmpComments, data]);
+                    setComments((comments) => [...comments, data]);
                     setIsCompose(false);
+                    setContent("");
                   }}
                 >
                   {t("comment:send")}
@@ -111,8 +120,8 @@ const Comment: React.FC<{
       <Grid item xs={12}>
         <Box margin="2% 0" />
       </Grid>
-      {tmpComments.length ? (
-        tmpComments.map((comm) => (
+      {comments.length ? (
+        comments.map((comm) => (
           <Fragment>
             <Grid item xs={12}>
               <CommentBlock
@@ -193,7 +202,8 @@ const Comment: React.FC<{
               //   ...tmpComments.slice(0, idx),
               //   ...tmpComments.slice(idx + 1),
               // ]);
-              setIsReportSuccess(true);
+              // setIsReportSuccess(true);
+              showSuccess(t("comment:report-abuse.success"));
               setIsReportOpen(false);
             }}
             color="primary"
@@ -202,22 +212,6 @@ const Comment: React.FC<{
           </Button>
         </DialogActions>
       </Dialog>
-      <Snackbar
-        open={isReportSuccess}
-        autoHideDuration={3000}
-        onClose={() => {
-          setIsReportSuccess(false);
-        }}
-      >
-        <Alert
-          onClose={() => {
-            setIsReportSuccess(false);
-          }}
-          severity="success"
-        >
-          {t("comment:report-abuse.success")}
-        </Alert>
-      </Snackbar>
     </Grid>
   );
 };

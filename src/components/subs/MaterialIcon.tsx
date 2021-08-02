@@ -107,6 +107,7 @@ const MaterialIcon: React.FC<{ materialId: number; quantity: number }> = ({
         aspectRatio={1}
         style={{ height: "64px", width: "64px" }}
         color=""
+        disableTransition
       ></Image>
     </Grid>
     <Grid item container justify="center">

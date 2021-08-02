@@ -180,3 +180,18 @@ registerRoute(
     ],
   })
 );
+
+addEventListener("message", (event) => {
+  switch (event.data.type) {
+    case "cleanSingleCache":
+      const af = async () => {
+        const cache = await caches.open(event.data.cacheName);
+        const keys = await cache.keys();
+        const found = keys.find((ck) => ck.url === event.data.endpoint);
+
+        if (found) cache.delete(found);
+      };
+      af();
+      break;
+  }
+});

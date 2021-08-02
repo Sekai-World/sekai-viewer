@@ -6,18 +6,19 @@ import {
   Paper,
   Typography,
 } from "@material-ui/core";
-import React, { Fragment, useContext, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import Image from "material-ui-image";
-import { SettingContext } from "../context";
 import { useLayoutStyles } from "../styles/layout";
 import { IGameChara, IMusicInfo, IMusicTagInfo, IUnitProfile } from "../types";
-import { getRemoteAssetURL, useCachedData, useCharaName } from "../utils";
-import { useAssetI18n } from "../utils/i18n";
+import { getRemoteAssetURL, useCachedData } from "../utils";
+import { useAssetI18n, useCharaName } from "../utils/i18n";
 import { charaIcons, UnitLogoMap } from "../utils/resources";
 import ColorPreview from "./subs/ColorPreview";
 import { CharaNameTrans, ContentTrans } from "./subs/ContentTrans";
+import { OpenInNew } from "@material-ui/icons";
+import { useInteractiveStyles } from "../styles/interactive";
 
 const useStyle = makeStyles((theme) => ({
   tabpanel: {
@@ -69,10 +70,10 @@ const UnitDetail: React.FC<{}> = () => {
   const { unitId } = useParams<{ unitId: string }>();
   const classes = useStyle();
   const layoutClasses = useLayoutStyles();
+  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
-  const { contentTransMode } = useContext(SettingContext)!;
-  const getCharaName = useCharaName(contentTransMode);
+  const getCharaName = useCharaName();
 
   const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
   const [gameCharas] = useCachedData<IGameChara>("gameCharacters");
@@ -107,11 +108,7 @@ const UnitDetail: React.FC<{}> = () => {
   return unit ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
-        {getTranslated(
-          contentTransMode,
-          `unit_profile:${unit.unit}.name`,
-          unit.unitName
-        )}
+        {getTranslated(`unit_profile:${unit.unit}.name`, unit.unitName)}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="md">
         <div style={{ textAlign: "center" }}>
@@ -178,6 +175,30 @@ const UnitDetail: React.FC<{}> = () => {
                   <ColorPreview colorCode={unit.colorCode} />
                 </Grid>
               </Grid>
+            </Grid>
+          </Grid>
+          <Divider style={{ margin: "1% 0" }} />
+          <Grid
+            container
+            direction="row"
+            wrap="nowrap"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Grid item xs={8}>
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                {t("member:scenario")}
+              </Typography>
+            </Grid>
+            <Grid item container justify="flex-end">
+              <Link
+                to={`/storyreader/unitStory/${unit.unit}`}
+                className={interactiveClasses.noDecoration}
+              >
+                <Grid container alignItems="center">
+                  <OpenInNew />
+                </Grid>
+              </Link>
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
@@ -259,7 +280,6 @@ const UnitDetail: React.FC<{}> = () => {
                         <UnitMusicImage
                           assetbundleName={um.assetbundleName}
                           title={getTranslated(
-                            contentTransMode,
                             `music_titles:${um.id}`,
                             um.title
                           )}

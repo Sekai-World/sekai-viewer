@@ -56,8 +56,8 @@ import {
 } from "../../types";
 import {
   useCachedData,
-  useCharaName,
   useLocalStorage,
+  useSkillMapping,
   useToggle,
 } from "../../utils";
 import InfiniteScroll from "../subs/InfiniteScroll";
@@ -86,7 +86,7 @@ import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 import { ContentTrans } from "../subs/ContentTrans";
 import { useCurrentEvent } from "../../utils/apiClient";
-import { useAssetI18n } from "../../utils/i18n";
+import { useAssetI18n, useCharaName } from "../../utils/i18n";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -137,10 +137,11 @@ const CardList: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
-  const { contentTransMode, isShowSpoiler } = useContext(SettingContext)!;
-  const getCharaName = useCharaName(contentTransMode);
+  const { isShowSpoiler } = useContext(SettingContext)!;
+  const getCharaName = useCharaName();
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
   const { getTranslated } = useAssetI18n();
+  const skillMapping = useSkillMapping();
 
   const [cardsCache] = useCachedData<ICardInfo>("cards");
   const [charas] = useCachedData<IGameChara>("gameCharacters");
@@ -200,33 +201,6 @@ const CardList: React.FC<{}> = () => {
   );
   const eventOpen = useMemo(() => Boolean(anchorElEvent), [anchorElEvent]);
   const [eventId, setEventId] = useState(1);
-
-  const skillMapping = useMemo(
-    () => [
-      //skills.json
-      {
-        // name: "スコアＵＰ",
-        name: t("filter:skill.score_up"),
-        descriptionSpriteName: "score_up",
-      },
-      {
-        // name: "判定強化＆スコアＵＰ",
-        name: t("filter:skill.judgment_up"),
-        descriptionSpriteName: "judgment_up",
-      },
-      {
-        // name: "ライフ回復＆スコアＵＰ",
-        name: t("filter:skill.life_recovery"),
-        descriptionSpriteName: "life_recovery",
-      },
-      {
-        // name: "PERFECTのときのみスコアＵＰ",
-        name: t("filter:skill.perfect_score_up"),
-        descriptionSpriteName: "perfect_score_up",
-      },
-    ],
-    [t]
-  );
 
   const callback = useCallback(
     (
@@ -306,6 +280,11 @@ const CardList: React.FC<{}> = () => {
             let descriptionSpriteName = skill.descriptionSpriteName;
             if (skill.skillEffects[0].activateNotesJudgmentType === "perfect")
               descriptionSpriteName = "perfect_score_up";
+            if (
+              skill.skillEffects[0].skillEffectType ===
+              "score_up_condition_life"
+            )
+              descriptionSpriteName = "life_score_up";
             return skillSelected.includes(descriptionSpriteName);
           }
           return true;
@@ -585,7 +564,6 @@ const CardList: React.FC<{}> = () => {
                               label={
                                 <Typography variant="body2">
                                   {getTranslated(
-                                    contentTransMode,
                                     `unit_profile:${supportUnit}.name`,
                                     unitProfiles.find(
                                       (up) => up.unit === supportUnit

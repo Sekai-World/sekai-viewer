@@ -8,14 +8,15 @@ import {
 } from "@material-ui/core";
 import { ColDef, DataGrid } from "@material-ui/data-grid";
 import { OpenInNew } from "@material-ui/icons";
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { useInteractiveStyles } from "../../styles/interactive";
 import { useLayoutStyles } from "../../styles/layout";
-import { IMusicInfo } from "../../types";
-import { useCachedData, useMuisicMeta } from "../../utils";
-import AdSense from "../subs/AdSense";
+import { IMusicInfo, IMusicMeta } from "../../types";
+import { filterMusicMeta, useCachedData, useMusicMeta } from "../../utils";
+// import AdSense from "../subs/AdSense";
 import { ContentTrans } from "../subs/ContentTrans";
 
 const useStyles = makeStyles((theme) => ({
@@ -42,8 +43,10 @@ const MusicMeta = () => {
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
 
-  const [data] = useMuisicMeta();
+  const [metas] = useMusicMeta();
   const [musics] = useCachedData<IMusicInfo>("musics");
+
+  const [validMetas, setValidMetas] = useState<IMusicMeta[]>([]);
 
   const columns: ColDef[] = [
     {
@@ -147,16 +150,20 @@ const MusicMeta = () => {
     },
   ];
 
+  useEffect(() => {
+    if (metas && musics) setValidMetas(filterMusicMeta(metas, musics));
+  }, [metas, musics]);
+
   return (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
         {t("common:musicMeta")}
       </Typography>
       <Container className={layoutClasses.content}>
-        {data ? (
+        {validMetas ? (
           <div style={{ height: 750 }}>
             <DataGrid
-              rows={data.map((elem, idx) =>
+              rows={validMetas.map((elem, idx) =>
                 Object.assign({}, elem, { id: idx })
               )}
               columns={columns}
@@ -167,12 +174,12 @@ const MusicMeta = () => {
           <CircularProgress size="30px" />
         )}
       </Container>
-      <AdSense
+      {/* <AdSense
         client="ca-pub-7767752375383260"
         slot="8221864477"
         format="auto"
         responsive="true"
-      />
+      /> */}
     </Fragment>
   );
 };

@@ -36,7 +36,7 @@ import {
   ISkillInfo,
   IUnitProfile,
 } from "../../types";
-import { getRemoteAssetURL, useCachedData, useCharaName } from "../../utils";
+import { getRemoteAssetURL, useCachedData } from "../../utils";
 import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
 
@@ -48,7 +48,7 @@ import {
 } from "../../utils/resources";
 import { useTranslation } from "react-i18next";
 import MaterialIcon from "../subs/MaterialIcon";
-import { useAssetI18n } from "../../utils/i18n";
+import { useAssetI18n, useCharaName } from "../../utils/i18n";
 import { SettingContext } from "../../context";
 import {
   CharaNameTrans,
@@ -57,7 +57,11 @@ import {
 } from "../subs/ContentTrans";
 import ResourceBox from "../subs/ResourceBox";
 import { AudioPlayButton } from "../storyreader/StoryReaderSnippet";
-import AdSense from "../subs/AdSense";
+// import AdSense from "../subs/AdSense";
+import { OpenInNew } from "@material-ui/icons";
+import { CommentTextMultiple } from "mdi-material-ui";
+import Comment from "../comment/Comment";
+import { useStrapi } from "../../utils/apiClient";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -101,7 +105,8 @@ const CardDetail: React.FC<{}> = () => {
   const { t } = useTranslation();
   const { assetT, getTranslated } = useAssetI18n();
   const { contentTransMode } = useContext(SettingContext)!;
-  const getCharaName = useCharaName(contentTransMode);
+  const getCharaName = useCharaName();
+  const { getCard } = useStrapi();
 
   const [charas] = useCachedData<IGameChara>("gameCharacters");
   const [cards] = useCachedData<ICardInfo>("cards");
@@ -128,6 +133,7 @@ const CardDetail: React.FC<{}> = () => {
   // const [cardRank, setCardRank] = useState<number | number[]>(0);
   // const [maxCardRank, setMaxCardRank] = useState<number>(0);
   const [gachaPhraseUrl, setGachaPhraseUrl] = useState("");
+  const [cardCommentId, setCardCommentId] = useState<number>(0);
 
   const getSkillDesc = useCallback(
     (skill: ISkillInfo, skillLevel: number | number[]) => {
@@ -205,11 +211,7 @@ const CardDetail: React.FC<{}> = () => {
     if (!cards || !cards.length) return;
     const _card = cards.find((elem) => elem.id === Number(cardId))!;
     if (_card) {
-      const prefix = getTranslated(
-        contentTransMode,
-        `card_prefix:${_card.id}`,
-        _card.prefix
-      );
+      const prefix = getTranslated(`card_prefix:${_card.id}`, _card.prefix);
       document.title = t("title:cardDetail", {
         prefix,
         character: getCharaName(_card.characterId),
@@ -239,7 +241,6 @@ const CardDetail: React.FC<{}> = () => {
       );
       setCardTitle(
         `${getTranslated(
-          contentTransMode,
           `card_prefix:${_card.id}`,
           _card.prefix
         )} - ${getCharaName(_card.characterId)}`
@@ -279,6 +280,19 @@ const CardDetail: React.FC<{}> = () => {
     getTranslated,
     t,
   ]);
+
+  useEffect(() => {
+    if (card) {
+      const job = async () => {
+        const cardStrapi = await getCard(card.id);
+        if (cardStrapi) {
+          setCardCommentId(cardStrapi.id);
+        }
+      };
+
+      job();
+    }
+  }, [card, getCard]);
 
   const [normalImg, setNormalImg] = useState<string>("");
   const [trainedImg, setTrainedImg] = useState<string>("");
@@ -528,7 +542,7 @@ const CardDetail: React.FC<{}> = () => {
             <Grid item xs={8}>
               <Link
                 to={"/chara/" + card.characterId}
-                style={{ textDecoration: "none" }}
+                className={interactiveClasses.noDecoration}
               >
                 <Grid
                   container
@@ -757,11 +771,11 @@ const CardDetail: React.FC<{}> = () => {
             </Grid>
             <Grid item xs={4}>
               <Grid container direction="row" justify="flex-end" spacing={2}>
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} sm={6} md={5} lg={4}>
                   <CardThumb cardId={Number(cardId)} />
                 </Grid>
                 {card.rarity >= 3 ? (
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} sm={6} md={5} lg={4}>
                     <CardThumb cardId={Number(cardId)} trained />
                   </Grid>
                 ) : null}
@@ -1044,12 +1058,12 @@ const CardDetail: React.FC<{}> = () => {
           <Divider style={{ margin: "1% 0" }} />
         </Grid>
       </Container>
-      <AdSense
+      {/* <AdSense
         client="ca-pub-7767752375383260"
         slot="8221864477"
         format="auto"
         responsive="true"
-      />
+      /> */}
       <Typography variant="h6" className={layoutClasses.header}>
         {t("card:sideStory", { count: cardEpisode.length })}
       </Typography>
@@ -1145,7 +1159,7 @@ const CardDetail: React.FC<{}> = () => {
                     {t("common:rewards")}
                   </Typography>
                 </Grid>
-                <Grid item xs={10}>
+                <Grid item container spacing={1} xs={10} justify="flex-end">
                   {cardEpisode[0].rewardResourceBoxIds.map((id) => (
                     <ResourceBox
                       resourceBoxId={id}
@@ -1153,6 +1167,30 @@ const CardDetail: React.FC<{}> = () => {
                       justify="flex-end"
                     />
                   ))}
+                </Grid>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Grid item xs={8}>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("common:storyReader")}
+                  </Typography>
+                </Grid>
+                <Grid item container justify="flex-end">
+                  <Link
+                    to={`/storyreader/cardStory/${card.characterId}/${card.id}/${cardEpisode[0].id}`}
+                    className={interactiveClasses.noDecoration}
+                  >
+                    <Grid container alignItems="center">
+                      <OpenInNew />
+                    </Grid>
+                  </Link>
                 </Grid>
               </Grid>
               <Divider style={{ margin: "1% 0" }} />
@@ -1228,10 +1266,44 @@ const CardDetail: React.FC<{}> = () => {
                 </Grid>
               </Grid>
               <Divider style={{ margin: "1% 0" }} />
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Grid item xs={8}>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("common:storyReader")}
+                  </Typography>
+                </Grid>
+                <Grid item container justify="flex-end">
+                  <Link
+                    to={`/storyreader/cardStory/${card.characterId}/${card.id}/${cardEpisode[1].id}`}
+                    className={interactiveClasses.noDecoration}
+                  >
+                    <Grid container alignItems="center">
+                      <OpenInNew />
+                    </Grid>
+                  </Link>
+                </Grid>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
             </Grid>
           </TabPanel>
         </TabContext>
       </Container>
+      {!!cardCommentId && (
+        <Fragment>
+          <Typography variant="h6" className={layoutClasses.header}>
+            {t("common:comment")} <CommentTextMultiple />
+          </Typography>
+          <Container className={layoutClasses.content} maxWidth="md">
+            <Comment contentType="cards" contentId={cardCommentId} />
+          </Container>
+        </Fragment>
+      )}
       <Viewer
         visible={visible}
         onClose={() => setVisible(false)}

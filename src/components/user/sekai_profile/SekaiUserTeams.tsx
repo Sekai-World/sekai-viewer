@@ -5,16 +5,16 @@ import TeamBuilder from "../../subs/TeamBuilder";
 const SekaiUserTeams = () => {
   const [teamCards, setTeamCards] = useState<number[]>([]);
   const [teamCardsStates, setTeamCardsStates] = useState<ITeamCardState[]>([]);
-  const [teamPowerStates, setTeamPowerStates] = useState<number>(0);
+  const [teamTotalPower, setTeamTotalPower] = useState<number>(0);
 
   return (
     <TeamBuilder
       teamCards={teamCards}
       teamCardsStates={teamCardsStates}
-      teamPowerStates={teamPowerStates}
+      teamTotalPower={teamTotalPower}
       setTeamCards={setTeamCards}
       setTeamCardsStates={setTeamCardsStates}
-      setTeamPowerStates={setTeamPowerStates}
+      setTeamTotalPower={setTeamTotalPower}
     ></TeamBuilder>
   );
 };

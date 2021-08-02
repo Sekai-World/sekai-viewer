@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { KeyboardArrowUp, KeyboardArrowDown } from "@material-ui/icons";
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useLayoutStyles } from "../../styles/layout";
 import {
   EventRankingResponse,
@@ -19,13 +19,19 @@ import { CardThumb } from "../subs/CardThumb";
 import DegreeImage from "../subs/DegreeImage";
 import EventTrackerGraph from "./EventTrackerGraph";
 
-const useRowStyles = makeStyles({
+const useRowStyles = makeStyles((theme) => ({
   root: {
     "& > *": {
       borderBottom: "unset",
     },
   },
-});
+  updated: {
+    backgroundColor: theme.palette.warning.main,
+    WebkitTransition: "background-color 850ms linear",
+    msTransition: "background-color 850ms linear",
+    transition: "background-color 850ms linear",
+  },
+}));
 
 export const HistoryRow: React.FC<{
   rankingReward?: EventRankingRewardRange;
@@ -175,12 +181,25 @@ export const LiveRow: React.FC<{
 
   const [open, setOpen] = useState(false);
   // const [isShowGraph, toggleIsShowGraph] = useToggle(false);
+  const [customClass, setCustomClass] = useState("");
+  const [lastScore, setLastScore] = useState(0);
+
+  useEffect(() => {
+    if (!lastScore && rankingData.score) {
+      setLastScore(rankingData.score);
+      setCustomClass(classes.root);
+    } else if (lastScore && lastScore !== rankingData.score) {
+      setLastScore(rankingData.score);
+      setCustomClass(`${classes.root} ${classes.updated}`);
+      setTimeout(() => setCustomClass(classes.root), 850);
+    }
+  }, [classes.root, classes.updated, lastScore, rankingData.score]);
 
   return (
     <Fragment>
       <TableRow
         key={rankingData.userId}
-        className={classes.root}
+        className={customClass}
         onClick={() => setOpen(!open)}
       >
         <TableCell>

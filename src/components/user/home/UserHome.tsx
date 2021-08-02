@@ -7,7 +7,6 @@ import {
   CircularProgress,
   Divider,
   IconButton,
-  Snackbar,
   useTheme,
   InputAdornment,
   Tooltip,
@@ -17,7 +16,6 @@ import {
   InputLabel,
 } from "@material-ui/core";
 import { Check, Clear, Create } from "@material-ui/icons";
-import { Alert } from "@material-ui/lab";
 import { Field, Form, Formik } from "formik";
 import { Select, TextField } from "formik-material-ui";
 import { Upload, Logout } from "mdi-material-ui";
@@ -27,6 +25,7 @@ import { useHistory } from "react-router-dom";
 import { SettingContext, UserContext } from "../../../context";
 import { useInteractiveStyles } from "../../../styles/interactive";
 import { useLayoutStyles } from "../../../styles/layout";
+import { useAlertSnackbar } from "../../../utils";
 import { useStrapi } from "../../../utils/apiClient";
 import SekaiProfile from "../sekai_profile/SekaiProfile";
 
@@ -57,7 +56,8 @@ const UserHome: React.FC<{}> = () => {
   const { postUpload, putUserMetadataMe, getUserMetadataMe } = useStrapi(
     jwtToken
   );
-  const [isUploadAvatarError, setIsUploadAvatarError] = useState(false);
+  const { showError } = useAlertSnackbar();
+
   const [avatarUrl, setAvatarUrl] = useState(
     usermeta ? (usermeta.avatar || { url: "" }).url : ""
   );
@@ -121,7 +121,7 @@ const UserHome: React.FC<{}> = () => {
                         setIsUploading(false);
                       })
                       .catch(() => {
-                        setIsUploadAvatarError(true);
+                        showError(t("user:profile.upload_avatar_error"));
                         setIsUploading(false);
                         setAvatarUrl(oldUrl);
                       });
@@ -413,15 +413,6 @@ const UserHome: React.FC<{}> = () => {
         {/* {JSON.stringify(user)} */}
       </Container>
       <SekaiProfile />
-      <Snackbar
-        open={isUploadAvatarError}
-        autoHideDuration={3000}
-        onClose={() => setIsUploadAvatarError(false)}
-      >
-        <Alert onClose={() => setIsUploadAvatarError(false)} severity="error">
-          {t("user:profile.upload_avatar_error")}
-        </Alert>
-      </Snackbar>
     </Fragment>
   );
 };

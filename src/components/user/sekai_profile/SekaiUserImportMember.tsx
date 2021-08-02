@@ -22,7 +22,6 @@ import {
   Input,
   makeStyles,
   Paper,
-  Snackbar,
   Switch,
   TextField,
   Tooltip,
@@ -35,16 +34,16 @@ import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { ColDef, DataGrid, RowModel } from "@material-ui/data-grid";
 import { createWorker, createScheduler } from "tesseract.js";
-import { useCachedData, useToggle } from "../../../utils";
+import { useAlertSnackbar, useCachedData, useToggle } from "../../../utils";
 import { ICardInfo } from "../../../types";
 // import { Link } from "react-router-dom";
 import { UserContext } from "../../../context";
 import { useStrapi } from "../../../utils/apiClient";
-import { Alert } from "@material-ui/lab";
 import { useLayoutStyles } from "../../../styles/layout";
 // @ts-ignore
 import { AutoRotatingCarousel, Slide } from "material-auto-rotating-carousel";
 import { isMobile } from "react-device-detect";
+import { Alert } from "@material-ui/lab";
 
 function initCOS(N: number = 64) {
   const entries = 2 * N * (N - 1);
@@ -144,6 +143,7 @@ const SekaiUserImportMember = () => {
     UserContext
   )!;
   const { putSekaiCardList } = useStrapi(jwtToken);
+  const { showError, showSuccess } = useAlertSnackbar();
 
   const [cards] = useCachedData<ICardInfo>("cards");
 
@@ -166,10 +166,6 @@ const SekaiUserImportMember = () => {
   >([]);
   const [ocrEnable, setOcrEnabled] = useState(false);
   const [postingCardList, setPostingCardList] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const [errMsg, setErrMsg] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [successMsg, setSuccessMsg] = useState("");
   const [isCardSelectionOpen, toggleIsCardSelectionOpen] = useToggle(false);
   const [editId, setEditId] = useState(-1);
   const [helpOpen, toggleHelpOpen] = useToggle(false);
@@ -989,14 +985,20 @@ const SekaiUserImportMember = () => {
         cardList,
       });
 
-      setSuccessMsg(t("user:profile.import_card.submit_success"));
-      setIsSuccess(true);
+      showSuccess(t("user:profile.import_card.submit_success"));
     } catch (error) {
-      setErrMsg(t("user:profile.import_card.submit_error"));
-      setIsError(true);
+      showError(t("user:profile.import_card.submit_error"));
     }
     setPostingCardList(false);
-  }, [putSekaiCardList, rows, sekaiProfile, t, updateSekaiProfile]);
+  }, [
+    putSekaiCardList,
+    rows,
+    sekaiProfile,
+    showError,
+    showSuccess,
+    t,
+    updateSekaiProfile,
+  ]);
 
   return (
     <Grid container direction="column">
@@ -1289,38 +1291,6 @@ const SekaiUserImportMember = () => {
           </Button>
         </Grid>
       </Grid>
-      <Snackbar
-        open={isError}
-        autoHideDuration={3000}
-        onClose={() => {
-          setIsError(false);
-        }}
-      >
-        <Alert
-          onClose={() => {
-            setIsError(false);
-          }}
-          severity="error"
-        >
-          {errMsg}
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        open={isSuccess}
-        autoHideDuration={3000}
-        onClose={() => {
-          setIsSuccess(false);
-        }}
-      >
-        <Alert
-          onClose={() => {
-            setIsSuccess(false);
-          }}
-          severity="success"
-        >
-          {successMsg}
-        </Alert>
-      </Snackbar>
       <Dialog
         open={isCardSelectionOpen}
         onClose={() => toggleIsCardSelectionOpen()}

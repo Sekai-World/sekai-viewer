@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 // import { Link } from "react-router-dom";
 import { UserContext } from "../../context";
 import { SekaiProfileEventRecordModel } from "../../strapi-model";
+import { useAlertSnackbar } from "../../utils";
 // import { useInteractiveStyles } from "../../styles/interactive";
 // import { useLayoutStyles } from "../../styles/layout";
 import { useCurrentEvent, useStrapi } from "../../utils/apiClient";
@@ -26,6 +27,7 @@ const SekaiEventRecord = (props: Props) => {
   // const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
+  const { showError } = useAlertSnackbar();
 
   const { jwtToken, sekaiProfile, updateSekaiProfile } = useContext(
     UserContext
@@ -78,15 +80,18 @@ const SekaiEventRecord = (props: Props) => {
                     size="small"
                     onClick={() => {
                       setIsEventRecording(true);
-                      postSekaiProfileEventRecord(props.eventId).then(
-                        async (data) => {
+                      postSekaiProfileEventRecord(props.eventId)
+                        .then(async (data) => {
                           setEventRecords(await getSekaiProfileEventRecordMe());
                           updateSekaiProfile({
                             eventGetUsed: sekaiProfile!.eventGetUsed + 1,
                           });
                           setIsEventRecording(false);
-                        }
-                      );
+                        })
+                        .catch((err) => {
+                          showError(err.message);
+                          setIsEventRecording(false);
+                        });
                     }}
                     disabled={
                       isEventRecording ||

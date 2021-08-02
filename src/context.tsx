@@ -147,9 +147,15 @@ export const UserProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
           [auth]
         ),
         updateSekaiProfile: useCallback((data) => {
-          setSekaiProfile((profile) => Object.assign({}, profile, data));
-          if (data) localStorage.setItem("sekaiProfile", JSON.stringify(data));
-          else localStorage.removeItem("sekaiProfile");
+          setSekaiProfile((profile) => {
+            const _data = Object.assign({}, profile, data);
+
+            if (data)
+              localStorage.setItem("sekaiProfile", JSON.stringify(_data));
+            else localStorage.removeItem("sekaiProfile");
+
+            return _data;
+          });
         }, []),
         logout: useCallback(() => {
           auth.user = null;

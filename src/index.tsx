@@ -83,15 +83,17 @@ window.isChinaMainland = false;
         }
       );
       localStorage.setItem("userMetaDatum", JSON.stringify(userMetaDatum));
-      let { data: sekaiProfile } = await axios.get<SekaiProfileModel>(
-        `/sekai-profiles/me`,
-        {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      localStorage.setItem("sekaiProfile", JSON.stringify(sekaiProfile));
+      try {
+        let { data: sekaiProfile } = await axios.get<SekaiProfileModel>(
+          `/sekai-profiles/me`,
+          {
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        localStorage.setItem("sekaiProfile", JSON.stringify(sekaiProfile));
+      } catch (error) {}
 
       localStorage.setItem("lastUserCheck", String(new Date().getTime()));
     }
