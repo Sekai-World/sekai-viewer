@@ -10,7 +10,7 @@ import {
   VirtualLiveModel,
 } from "./../strapi-model.d";
 import Axios from "axios";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import {
   AnnouncementModel,
   LanguageModel,
@@ -30,20 +30,24 @@ import useSWR from "swr";
  * Access Strapi endpoints.
  */
 export function useStrapi(token?: string) {
+  const _token = useRef(token);
   const axios = useMemo(() => {
     const axios = Axios.create({
       baseURL: process.env.REACT_APP_STRAPI_BASE,
     });
 
     axios.interceptors.request.use((req) => {
-      token && (req.headers.authorization = `Bearer ${token}`);
+      _token.current &&
+        (req.headers.authorization = `Bearer ${_token.current}`);
       return req;
     });
 
     axios.interceptors.response.use(
       (res) => res,
       (err) => {
-        if (err.response.data.message && err.response.status !== 500)
+        if (err.response.status === 401) {
+          _token.current = "";
+        } else if (err.response.data.message && err.response.status !== 500)
           err.id = err.response.data.message[0].messages[0].id;
         else if (err.response.status === 500) {
           err.id = err.response.data.error;
@@ -54,7 +58,7 @@ export function useStrapi(token?: string) {
     );
 
     return axios;
-  }, [token]);
+  }, [_token]);
 
   return {
     postLoginLocal: useCallback(
