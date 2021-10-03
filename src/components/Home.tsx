@@ -31,7 +31,7 @@ import {
 } from "@material-ui/icons";
 import { Alert, AlertTitle } from "@material-ui/lab";
 import { Calculator, CalendarText, Discord, Patreon } from "mdi-material-ui";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Link as RouteLink } from "react-router-dom";
 import { IUserInformationInfo } from "../types";
@@ -114,6 +114,8 @@ function Home() {
   const [open, setOpen] = useState<boolean>(false);
   const [info, setInfo] = useState<IUserInformationInfo>();
   const [jpTime] = useState<string>(getJPTime());
+
+  const splitJPTime = useMemo(() => jpTime.split("/"), [jpTime]);
 
   useEffect(() => {
     document.title = t("title:home");
@@ -242,6 +244,23 @@ function Home() {
             ) : jpTime === "7/26" ? (
               <img
                 src={`${process.env.PUBLIC_URL}/images/banner-an.jpg`}
+                alt="banner"
+                style={{ width: "100%", height: "auto" }}
+                width="1500"
+                height="500"
+              />
+            ) : jpTime === "10/05" ? (
+              <img
+                src={`${process.env.PUBLIC_URL}/images/banner-haruka.jpg`}
+                alt="banner"
+                style={{ width: "100%", height: "auto" }}
+                width="1500"
+                height="500"
+              />
+            ) : jpTime === "9/30" ||
+              (splitJPTime[0] === "10" && Number(splitJPTime[1]) < 16) ? (
+              <img
+                src={`${process.env.PUBLIC_URL}/images/banner-anni.jpg`}
                 alt="banner"
                 style={{ width: "100%", height: "auto" }}
                 width="1500"
