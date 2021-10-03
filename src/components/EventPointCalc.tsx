@@ -32,6 +32,7 @@ import {
   EventType,
   ICardInfo,
   IEventCalcAllSongsResult,
+  IEventCard,
   IEventDeckBonus,
   IEventInfo,
   IGameCharaUnit,
@@ -83,6 +84,7 @@ const EventPointCalc: React.FC<{}> = () => {
   const [skills] = useCachedData<ISkillInfo>("skills");
   const [musics] = useCachedData<IMusicInfo>("musics");
   const [events] = useCachedData<IEventInfo>("events");
+  const [eventCards] = useCachedData<IEventCard>("eventCards");
   const [eventDeckBonuses] = useCachedData<IEventDeckBonus>("eventDeckBonuses");
   const [gameCharacterUnits] = useCachedData<IGameCharaUnit>(
     "gameCharacterUnits"
@@ -146,6 +148,7 @@ const EventPointCalc: React.FC<{}> = () => {
     if (
       events &&
       cards &&
+      eventCards &&
       eventDeckBonuses &&
       gameCharacterUnits &&
       selectedEventMode === "existed"
@@ -179,6 +182,9 @@ const EventPointCalc: React.FC<{}> = () => {
             };
           }
         });
+      const eventCardBonuses = eventCards.filter(
+        (ec) => ec.eventId === selectedEventId
+      );
       setEventBonusRate(
         teamCardsStates.reduce((sum, teamCard) => {
           const card = cards.find((c) => c.id === teamCard.cardId)!;
@@ -205,14 +211,20 @@ const EventPointCalc: React.FC<{}> = () => {
                   eb.cardAttr === card.attr)
             );
           }
-          console.log(bonus);
+          const cardBonus = eventCardBonuses.find(
+            (ecb) => ecb.cardId === card.id
+          );
+          // console.log(cardBonus);
           if (!bonus) return sum;
+          else if (cardBonus)
+            return sum + bonus.bonusRate + cardBonus.bonusRate;
           else return sum + bonus.bonusRate;
         }, 0)
       );
     }
   }, [
     cards,
+    eventCards,
     eventDeckBonuses,
     events,
     gameCharacterUnits,

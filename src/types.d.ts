@@ -1015,6 +1015,7 @@ export interface IEventCard {
   id: number;
   cardId: number;
   eventId: number;
+  bonusRate: number;
 }
 
 export interface IGachaCeilItem {
