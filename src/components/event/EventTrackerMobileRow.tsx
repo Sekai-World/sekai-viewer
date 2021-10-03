@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { useLayoutStyles } from "../../styles/layout";
 import { EventRankingResponse, UserRanking } from "../../types";
 import { CardThumb } from "../subs/CardThumb";
+import CheerfulCarnivalTeamIcon from "../subs/CheerfulCarnivalTeamIcon";
 import DegreeImage from "../subs/DegreeImage";
 import EventTrackerGraph from "./EventTrackerGraph";
 
@@ -54,6 +55,15 @@ export const HistoryMobileRow: React.FC<{
           <Grid container alignItems="center" spacing={1}>
             {rankingData.userCard && (
               <Grid item xs={3}>
+                {rankingData.userCheerfulCarnival &&
+                  rankingData.userCheerfulCarnival.eventId && (
+                    <CheerfulCarnivalTeamIcon
+                      eventId={rankingData.userCheerfulCarnival.eventId}
+                      teamId={
+                        rankingData.userCheerfulCarnival.cheerfulCarnivalTeamId
+                      }
+                    />
+                  )}
                 <CardThumb
                   cardId={rankingData.userCard.cardId}
                   trained={
@@ -185,6 +195,15 @@ export const LiveMobileRow: React.FC<{
           <Grid container alignItems="center" spacing={1}>
             {rankingData.userCard && (
               <Grid item xs={3}>
+                {rankingData.userCheerfulCarnival &&
+                  rankingData.userCheerfulCarnival.eventId && (
+                    <CheerfulCarnivalTeamIcon
+                      eventId={rankingData.eventId}
+                      teamId={
+                        rankingData.userCheerfulCarnival.cheerfulCarnivalTeamId
+                      }
+                    />
+                  )}
                 <CardThumb
                   cardId={rankingData.userCard.cardId}
                   trained={

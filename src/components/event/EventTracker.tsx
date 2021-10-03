@@ -247,7 +247,7 @@ const EventTracker: React.FC<{}> = () => {
           setNextRefreshTime(cron.nextDate());
 
           if (currentTime >= event.startAt + 24 * 3600 * 1000) {
-            const predcron = new CronJob("30 * * * *", () => {
+            const predcron = new CronJob("1,16,31,46 * * * *", () => {
               const currentTime = Date.now();
               if (currentTime >= event.rankingAnnounceAt) predcron.stop();
               else {
