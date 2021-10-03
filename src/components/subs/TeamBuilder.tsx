@@ -48,6 +48,7 @@ import { teamBuildReducer } from "../../stores/reducers";
 import { useStrapi } from "../../utils/apiClient";
 import { useTeamCalc } from "../../utils/teamCalc";
 import { useCharaName } from "../../utils/i18n";
+import { attrIconMap } from "../../utils/resources";
 
 const useStyle = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -105,7 +106,8 @@ const TeamBuilder: React.FC<{
   } = useTeamCalc();
 
   const [characterId, setCharacterId] = useState<number>(0);
-  const [rarity, setRarity] = useState<number>(4);
+  const [rarity, setRarity] = useState<number>(0);
+  const [attr, setAttr] = useState<string>("all");
   const [filteredCards, setFilteredCards] = useState<ICardInfo[]>([]);
   const [saveTeamDialogVisible, setSaveTeamDialogVisible] = useState<boolean>(
     false
@@ -171,17 +173,24 @@ const TeamBuilder: React.FC<{
     setFilteredCards(
       cards.filter(
         (card) =>
-          card.rarity === rarity &&
+          (rarity > 0 ? card.rarity === rarity : true) &&
+          (attr !== "all" ? card.attr === attr : true) &&
           (skillIds.length ? skillIds.includes(card.skillId) : true) &&
           (characterId ? card.characterId === characterId : true)
       )
     );
-  }, [cards, characterId, rarity, skillSpriteName, skills]);
+  }, [attr, cards, characterId, rarity, skillSpriteName, skills]);
 
   const handleCardThumbClick = useCallback(
     (card: ICardInfo) => {
       if (teamCards.some((tc) => tc === card.id)) {
-        showError(t("music_recommend:buildTeam.duplicatedCardError"));
+        // showError(t("music_recommend:buildTeam.duplicatedCardError"));
+        const index = teamCards.indexOf(card.id);
+        setTeamCards((tc) => [...tc.slice(0, index), ...tc.slice(index + 1)]);
+        setTeamCardsStates((tcs) => [
+          ...tcs.slice(0, index),
+          ...tcs.slice(index + 1),
+        ]);
         return;
       } else if (teamCards.length === 5) {
         showError(t("music_recommend:buildTeam.cardMaxError"));
@@ -675,6 +684,9 @@ const TeamBuilder: React.FC<{
                   value={rarity}
                   onChange={(e) => setRarity(e.target.value as number)}
                 >
+                  <MenuItem key={`rarity-select-item-0`} value={0}>
+                    {t("common:all")}
+                  </MenuItem>
                   {Array.from({ length: 4 }).map((_, index) => (
                     <MenuItem
                       key={`rarity-select-item-${index + 1}`}
@@ -699,6 +711,34 @@ const TeamBuilder: React.FC<{
                           ))}
                     </MenuItem>
                   ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControl style={{ minWidth: 60 }}>
+                <InputLabel id="add-card-dialog-select-attr-label">
+                  {t("common:attribute")}
+                </InputLabel>
+                <Select
+                  labelId="add-card-dialog-select-attr-label"
+                  value={attr}
+                  onChange={(e) => setAttr(e.target.value as string)}
+                >
+                  <MenuItem key={`attr-select-item-0`} value={"all"}>
+                    {t("common:all")}
+                  </MenuItem>
+                  {["cute", "mysterious", "cool", "happy", "pure"].map(
+                    (name) => (
+                      <MenuItem key={`attr-select-item-${name}`} value={name}>
+                        <img
+                          className={classes["rarity-star-img"]}
+                          src={attrIconMap[name as "cool"]}
+                          alt={`attr-${name}`}
+                          key={`attr-${name}`}
+                        />
+                      </MenuItem>
+                    )
+                  )}
                 </Select>
               </FormControl>
             </Grid>
