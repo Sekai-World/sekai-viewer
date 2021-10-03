@@ -651,6 +651,46 @@ const EventDetail: React.FC<{}> = () => {
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
+          {!!eventCards.filter((ec) => ec.bonusRate !== 0).length && (
+            <Fragment>
+              <Grid
+                item
+                container
+                direction="row"
+                wrap="nowrap"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Grid item xs={5}>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("event:boostSpecificCards")}
+                  </Typography>
+                </Grid>
+                <Grid item xs={5} sm={6}>
+                  <Grid container spacing={2} justify="flex-end">
+                    {eventCards
+                      .filter((ec) => ec.bonusRate !== 0)
+                      .slice(0, 5)
+                      .map(({ cardId, bonusRate }) => (
+                        <Grid key={cardId} item xs={5} md={4} lg={3}>
+                          <Grid container justify="center">
+                            <Grid item xs={12}>
+                              <Link to={`/card/${cardId}`}>
+                                <CardThumb cardId={cardId} />
+                              </Link>
+                            </Grid>
+                            <Grid item>
+                              <Typography>+{bonusRate}%</Typography>
+                            </Grid>
+                          </Grid>
+                        </Grid>
+                      ))}
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
+            </Fragment>
+          )}
           <Grid
             item
             container
