@@ -88,8 +88,10 @@ const DegreeImage: React.FC<
           `honor/${honor.assetbundleName}_rip/rank_main.webp`,
           setDegreeRankImage
         );
-      else setDegreeRankImage("");
     }
+    return () => {
+      setDegreeRankImage("");
+    };
   }, [honor, honorGroup, type]);
 
   return honor ? (
