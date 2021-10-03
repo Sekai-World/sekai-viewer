@@ -10,6 +10,14 @@ module.exports = function (app) {
     })
   );
   app.use(
+    "/sekai-tc-assets",
+    createProxyMiddleware({
+      target: "https://sekai-res.dnaroma.eu/file",
+      // target: "https://minio.dnaroma.eu",
+      changeOrigin: true,
+    })
+  );
+  app.use(
     "/minio/",
     createProxyMiddleware({
       target: "https://minio.dnaroma.eu",

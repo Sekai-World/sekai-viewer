@@ -355,6 +355,7 @@ export interface UserRanking {
   name: string;
   userCard: UserCard;
   userProfile: UserProfile;
+  userCheerfulCarnival: UserCheerfulCarnival;
 }
 
 export interface IEventRealtimeRank {
@@ -989,6 +990,14 @@ export type EventGraphRanking =
   | 40000
   | 50000
   | 100000;
+
+export interface UserCheerfulCarnival {
+  cheerfulCarnivalTeamId: number;
+  eventId: number;
+  registerAt: number;
+  teamChangeCount: number;
+}
+
 export interface EventRankingResponse {
   id: number;
   eventId: number;
@@ -999,12 +1008,14 @@ export interface EventRankingResponse {
   userName: string;
   userCard?: UserCard;
   userProfile?: UserProfile;
+  userCheerfulCarnival?: UserCheerfulCarnival;
 }
 
 export interface IEventCard {
   id: number;
   cardId: number;
   eventId: number;
+  bonusRate: number;
 }
 
 export interface IGachaCeilItem {

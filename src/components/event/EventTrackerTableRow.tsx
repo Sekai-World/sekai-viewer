@@ -16,6 +16,7 @@ import {
   UserRanking,
 } from "../../types";
 import { CardThumb } from "../subs/CardThumb";
+import CheerfulCarnivalTeamIcon from "../subs/CheerfulCarnivalTeamIcon";
 import DegreeImage from "../subs/DegreeImage";
 import EventTrackerGraph from "./EventTrackerGraph";
 
@@ -76,9 +77,24 @@ export const HistoryRow: React.FC<{
           )}
         </TableCell>
         <TableCell>
-          <Typography style={{ minWidth: "100px" }}>
-            {rankingData.name}
-          </Typography>
+          <Grid container alignItems="center">
+            {rankingData.userCheerfulCarnival &&
+              rankingData.userCheerfulCarnival.eventId && (
+                <Grid item md={6} lg={4} xl={3}>
+                  <CheerfulCarnivalTeamIcon
+                    eventId={rankingData.userCheerfulCarnival.eventId}
+                    teamId={
+                      rankingData.userCheerfulCarnival.cheerfulCarnivalTeamId
+                    }
+                  />
+                </Grid>
+              )}
+            <Grid item>
+              <Typography style={{ minWidth: "100px" }}>
+                {rankingData.name}
+              </Typography>
+            </Grid>
+          </Grid>
         </TableCell>
         <TableCell>
           <Typography align="right" style={{ minWidth: "80px" }}>
@@ -227,9 +243,24 @@ export const LiveRow: React.FC<{
           )}
         </TableCell>
         <TableCell>
-          <Typography style={{ minWidth: "100px" }}>
-            {rankingData.userName}
-          </Typography>
+          <Grid container alignItems="center" spacing={1}>
+            {rankingData.userCheerfulCarnival &&
+              rankingData.userCheerfulCarnival.eventId && (
+                <Grid item md={6} lg={4} xl={3}>
+                  <CheerfulCarnivalTeamIcon
+                    eventId={rankingData.eventId}
+                    teamId={
+                      rankingData.userCheerfulCarnival.cheerfulCarnivalTeamId
+                    }
+                  />
+                </Grid>
+              )}
+            <Grid item md={6} lg={8} xl={9}>
+              <Typography style={{ minWidth: "100px" }}>
+                {rankingData.userName}
+              </Typography>
+            </Grid>
+          </Grid>
         </TableCell>
         <TableCell>
           <Typography align="right" style={{ minWidth: "80px" }}>

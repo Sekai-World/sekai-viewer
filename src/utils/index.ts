@@ -134,7 +134,7 @@ export function useCachedData<
       `${
         window.isChinaMainland
           ? process.env.REACT_APP_JSON_DOMAIN_CN + "/master"
-          : "https://sekai-world.github.io/sekai-master-db-diff"
+          : process.env.REACT_APP_JSON_DOMAIN_MASTER
       }/${name}.json`
     );
     return data;

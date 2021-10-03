@@ -89,6 +89,9 @@ const DegreeImage: React.FC<
           setDegreeRankImage
         );
     }
+    return () => {
+      setDegreeRankImage("");
+    };
   }, [honor, honorGroup, type]);
 
   return honor ? (

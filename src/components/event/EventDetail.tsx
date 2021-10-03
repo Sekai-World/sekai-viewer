@@ -52,6 +52,7 @@ import Image from "material-ui-image";
 import { useStrapi } from "../../utils/apiClient";
 import { CommentTextMultiple } from "mdi-material-ui";
 import Comment from "../comment/Comment";
+import CheerfulCarnivalTeamIcon from "../subs/CheerfulCarnivalTeamIcon";
 
 const useStyle = makeStyles((theme) => ({
   // bannerImg: {
@@ -279,8 +280,8 @@ const EventDetail: React.FC<{}> = () => {
   const [eventBanner, setEventBanner] = useState<string>("");
   const [eventBackground, setEventBackground] = useState<string>("");
   const [eventCharacter, setEventCharacter] = useState<string>("");
-  const [ccTeam1Logo, setCcTeam1Logo] = useState<string>("");
-  const [ccTeam2Logo, setCcTeam2Logo] = useState<string>("");
+  // const [ccTeam1Logo, setCcTeam1Logo] = useState<string>("");
+  // const [ccTeam2Logo, setCcTeam2Logo] = useState<string>("");
 
   useEffect(() => {
     if (event) {
@@ -307,20 +308,20 @@ const EventDetail: React.FC<{}> = () => {
     }
   }, [event]);
 
-  useEffect(() => {
-    if (event && ccTeams.length) {
-      getRemoteAssetURL(
-        `event/${event.assetbundleName}/team_image_rip/${ccTeams[0].assetbundleName}.webp`,
-        setCcTeam1Logo,
-        window.isChinaMainland
-      );
-      getRemoteAssetURL(
-        `event/${event.assetbundleName}/team_image_rip/${ccTeams[1].assetbundleName}.webp`,
-        setCcTeam2Logo,
-        window.isChinaMainland
-      );
-    }
-  }, [ccTeams, cheerfulCarnivalSummaries, cheerfulCarnivalTeams, event]);
+  // useEffect(() => {
+  //   if (event && ccTeams.length) {
+  //     getRemoteAssetURL(
+  //       `event/${event.assetbundleName}/team_image_rip/${ccTeams[0].assetbundleName}.webp`,
+  //       setCcTeam1Logo,
+  //       window.isChinaMainland
+  //     );
+  //     getRemoteAssetURL(
+  //       `event/${event.assetbundleName}/team_image_rip/${ccTeams[1].assetbundleName}.webp`,
+  //       setCcTeam2Logo,
+  //       window.isChinaMainland
+  //     );
+  //   }
+  // }, [ccTeams, cheerfulCarnivalSummaries, cheerfulCarnivalTeams, event]);
 
   const getEventImages: () => ImageDecorator[] = useCallback(
     () =>
@@ -650,6 +651,46 @@ const EventDetail: React.FC<{}> = () => {
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
+          {!!eventCards.filter((ec) => ec.bonusRate !== 0).length && (
+            <Fragment>
+              <Grid
+                item
+                container
+                direction="row"
+                wrap="nowrap"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Grid item xs={5}>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("event:boostSpecificCards")}
+                  </Typography>
+                </Grid>
+                <Grid item xs={5} sm={6}>
+                  <Grid container spacing={2} justify="flex-end">
+                    {eventCards
+                      .filter((ec) => ec.bonusRate !== 0)
+                      .slice(0, 5)
+                      .map(({ cardId, bonusRate }) => (
+                        <Grid key={cardId} item xs={5} md={4} lg={3}>
+                          <Grid container justify="center">
+                            <Grid item xs={12}>
+                              <Link to={`/card/${cardId}`}>
+                                <CardThumb cardId={cardId} />
+                              </Link>
+                            </Grid>
+                            <Grid item>
+                              <Typography>+{bonusRate}%</Typography>
+                            </Grid>
+                          </Grid>
+                        </Grid>
+                      ))}
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
+            </Fragment>
+          )}
           <Grid
             item
             container
@@ -744,7 +785,10 @@ const EventDetail: React.FC<{}> = () => {
                 justify="space-around"
               >
                 <Grid item xs={5} md={3} lg={2}>
-                  <Image src={ccTeam1Logo} color="" />
+                  <CheerfulCarnivalTeamIcon
+                    eventId={event.id}
+                    teamId={ccTeams[0].id}
+                  />
                   <ContentTrans
                     contentKey={`cheerful_carnival_teams:${ccTeams[0].id}`}
                     original={ccTeams[0].teamName}
@@ -753,7 +797,10 @@ const EventDetail: React.FC<{}> = () => {
                   />
                 </Grid>
                 <Grid item xs={5} md={3} lg={2}>
-                  <Image src={ccTeam2Logo} color="" />
+                  <CheerfulCarnivalTeamIcon
+                    eventId={event.id}
+                    teamId={ccTeams[1].id}
+                  />
                   <ContentTrans
                     contentKey={`cheerful_carnival_teams:${ccTeams[1].id}`}
                     original={ccTeams[1].teamName}

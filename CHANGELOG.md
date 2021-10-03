@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.7.0](https://github.com/Sekai-World/sekai-viewer/compare/v0.6.0...v0.7.0) (2021-10-03)
+
+
+### Features
+
+* **calc:** support event card related bonus ([18270b3](https://github.com/Sekai-World/sekai-viewer/commits/18270b35f5dfe765a5be3241ce0c19ec11a88895))
+* **event-tracker:** add cheerful carnival team info ([85d1f11](https://github.com/Sekai-World/sekai-viewer/commits/85d1f11af7013379a8201d5c08d94293677770fb))
+* **event:** add bonus rate for special cards ([7e05961](https://github.com/Sekai-World/sekai-viewer/commits/7e05961a25e9a38ade1c21a211feff85bf5b405a))
+* **home:** add birthday banner of haruka and anniversary banner ([e46454f](https://github.com/Sekai-World/sekai-viewer/commits/e46454f88c7359b470cd2d6ebc610ab41fbdd593))
+* **subs:** add cards diaglog improve ([65f2e37](https://github.com/Sekai-World/sekai-viewer/commits/65f2e374c3bfa355cf65a796722b55662c9fa2ff))
+
+
+### Bug Fixes
+
+* **gacha:** now able to sample the last element in card-list of each rarity ([f01ad9f](https://github.com/Sekai-World/sekai-viewer/commits/f01ad9f3936d5c410e46de878565b46c9791e19e))
+* **subs:** degree image rank indicator not cleared ([e8758f0](https://github.com/Sekai-World/sekai-viewer/commits/e8758f0dd0a0cb55463dd64a1cd954f93b0d8983))
+
+
+### Refactors
+
+* make every externel url changable ([5cea1dd](https://github.com/Sekai-World/sekai-viewer/commits/5cea1dd9d915c7eac93abceade74e48083398929))
+* **subs:** better clear degree rank indicator ([39179fe](https://github.com/Sekai-World/sekai-viewer/commits/39179fe15ba3eb0d27fb240f37c8158587bfe82e))
+
 ## [0.6.0](https://github.com/Sekai-World/sekai-viewer/compare/v0.5.9...v0.6.0) (2021-08-02)
 
 
