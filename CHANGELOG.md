@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.2](https://github.com/Sekai-World/sekai-viewer/compare/v0.7.1...v0.7.2) (2021-10-04)
+
+
+### Bug Fixes
+
+* **card:** card birthday frame ([9064146](https://github.com/Sekai-World/sekai-viewer/commits/9064146aefae5a342fba8138b5efc2a9d45e81c6))
+* **card:** card detail birthday card thumb ([b581e6a](https://github.com/Sekai-World/sekai-viewer/commits/b581e6a8eeb548a5ce902c1ef63ab42a9e1d5637))
+* **subs:** birthday card, trainable state ([e88a2e9](https://github.com/Sekai-World/sekai-viewer/commits/e88a2e981831042077f3801c3956e6e53b01f74a))
+* **subs:** correctly handle thumb training status ([f3bbcf6](https://github.com/Sekai-World/sekai-viewer/commits/f3bbcf648c51d231a1ba27dec1633b894ddf45bb))
+* **subs:** loadTeamDialog show card training status ([cbd69d8](https://github.com/Sekai-World/sekai-viewer/commits/cbd69d8c5227249faa7b8dfac5946f7181dfe289))
+
 ### [0.7.1](https://github.com/Sekai-World/sekai-viewer/compare/v0.7.0...v0.7.1) (2021-10-04)
 
 
