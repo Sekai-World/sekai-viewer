@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.1](https://github.com/Sekai-World/sekai-viewer/compare/v0.7.0...v0.7.1) (2021-10-04)
+
+
+### Features
+
+* **card:** support birthday card ([f190891](https://github.com/Sekai-World/sekai-viewer/commits/f190891e40beceaa5cdf758df37e0141633f2af2))
+
+
+### Bug Fixes
+
+* **home:** haruka birthday banner date check ([e10db33](https://github.com/Sekai-World/sekai-viewer/commits/e10db33fe44dae6bf09f09a541d709a72c96b170))
+
 ## [0.7.0](https://github.com/Sekai-World/sekai-viewer/compare/v0.6.0...v0.7.0) (2021-10-03)
 
 
