@@ -210,7 +210,10 @@ const TeamBuilder: React.FC<{
               skillLevel: 1,
               masterRank: 0,
               level: maxLevel[card.rarity],
-              trained: card.rarity >= 3,
+              trained:
+                card.cardRarityType !== "rarity_birthday" && card.rarity >= 3,
+              trainable:
+                card.cardRarityType !== "rarity_birthday" && card.rarity >= 3,
               story1Unlock: true,
               story2Unlock: true,
             },
@@ -506,7 +509,7 @@ const TeamBuilder: React.FC<{
   );
 
   const handleLoadSekaiTeamEntry = useCallback(() => {
-    if (!sekaiProfile || !sekaiProfile.sekaiUserProfile) return;
+    if (!sekaiProfile || !sekaiProfile.sekaiUserProfile || !cards) return;
 
     const cardIds = Array.from({ length: 5 }).map(
       (_, idx) =>
@@ -520,11 +523,16 @@ const TeamBuilder: React.FC<{
         (state) => state.cardId === cardId
       )!;
 
+      const cardInfo = cards.find((card) => card.id === cardId)!;
+      const trainable =
+        cardInfo.cardRarityType !== "rarity_birthday" && cardInfo.rarity >= 3;
+
       return {
         cardId,
         level: userCard.level,
         masterRank: userCard.masterRank,
-        trained: userCard.specialTrainingStatus === "done",
+        trained: trainable && userCard.specialTrainingStatus === "done",
+        trainable,
         skillLevel: 1,
         story1Unlock: userCard.episodes[0].scenarioStatus !== "unreleased",
         story2Unlock: userCard.episodes[1].scenarioStatus !== "unreleased",
@@ -539,6 +547,7 @@ const TeamBuilder: React.FC<{
     setLoadTeamDialogVisible(false);
   }, [
     calcTotalPower,
+    cards,
     sekaiProfile,
     setTeamCards,
     setTeamCardsStates,
@@ -1120,13 +1129,15 @@ const TeamBuilder: React.FC<{
                   fullWidth
                 />
               </Grid>
-              <Grid item>
-                <FormControlLabel
-                  control={<Switch checked={editingCard.trained} />}
-                  label={t("card:trained")}
-                  onChange={(e, checked) => handleChange(checked, "trained")}
-                />
-              </Grid>
+              {editingCard.trainable && (
+                <Grid item>
+                  <FormControlLabel
+                    control={<Switch checked={editingCard.trained} />}
+                    label={t("card:trained")}
+                    onChange={(e, checked) => handleChange(checked, "trained")}
+                  />
+                </Grid>
+              )}
               <Grid item>
                 <FormControlLabel
                   control={<Switch checked={editingCard.story1Unlock} />}

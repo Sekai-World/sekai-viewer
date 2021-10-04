@@ -952,18 +952,24 @@ const SekaiUserImportMember = () => {
   );
 
   const handleSubmitCardList = useCallback(async () => {
-    if (!sekaiProfile) return;
+    if (!sekaiProfile || !cards) return;
     setPostingCardList(true);
     try {
       const cardList = rows
         .map((row) => {
           const cardId = row.cardIds[row.useIndex];
+          const cardInfo = cards.find((card) => card.id === cardId)!;
+          const trainable =
+            cardInfo.cardRarityType !== "rarity_birthday" &&
+            cardInfo.rarity >= 3;
+
           return {
             cardId,
             level: row.level,
             masterRank: row.masterRank,
             skillLevel: row.skillLevel,
-            trained: row.trained,
+            trained: trainable && row.trained,
+            trainable,
             story1Unlock: row.story1Unlock,
             story2Unlock: row.story2Unlock,
           };
@@ -991,6 +997,7 @@ const SekaiUserImportMember = () => {
     }
     setPostingCardList(false);
   }, [
+    cards,
     putSekaiCardList,
     rows,
     sekaiProfile,

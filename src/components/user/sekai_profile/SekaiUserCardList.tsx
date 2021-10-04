@@ -333,7 +333,9 @@ const SekaiUserCardList = () => {
         masterRank: 0,
         skillLevel: 1,
         level: maxLevel[card.rarity],
-        trained: card.rarity >= 3,
+        trained: card.cardRarityType !== "rarity_birthday" && card.rarity >= 3,
+        trainable:
+          card.cardRarityType !== "rarity_birthday" && card.rarity >= 3,
         story1Unlock: true,
         story2Unlock: true,
       },

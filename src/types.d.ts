@@ -504,6 +504,7 @@ export interface ITeamCardState {
   level: number;
   skillLevel: number;
   trained: boolean;
+  trainable: boolean;
   // power: number;
   masterRank: number;
   story1Unlock: boolean;
