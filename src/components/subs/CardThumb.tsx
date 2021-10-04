@@ -33,6 +33,16 @@ export const CardThumb: React.FC<
     () => card?.cardRarityType === "rarity_birthday",
     [card?.cardRarityType]
   );
+  const _trained = useMemo(() => {
+    const maxNormalLevel = [0, 20, 30, 50, 60];
+
+    return (
+      card &&
+      card.rarity >= 3 &&
+      card.cardRarityType !== "rarity_birthday" &&
+      (trained || (level && level > maxNormalLevel[card.rarity]))
+    );
+  }, [card, level, trained]);
 
   useEffect(() => {
     if (cards) setCard(cards.find((elem) => elem.id === cardId));
@@ -43,22 +53,22 @@ export const CardThumb: React.FC<
     if (card) {
       getRemoteAssetURL(
         `thumbnail/chara_rip/${card.assetbundleName}_${
-          trained ? "after_training" : "normal"
+          _trained ? "after_training" : "normal"
         }.webp`,
         setCardThumbImg,
         window.isChinaMainland
       );
     }
-  }, [card, trained]);
+  }, [card, _trained]);
 
   const rarityIcon = useMemo(
     () =>
       isBirthdayCard
         ? rarityBirthday
-        : trained
+        : _trained
         ? rarityAfterTraining
         : rarityNormal,
-    [isBirthdayCard, trained]
+    [isBirthdayCard, _trained]
   );
 
   return card ? (
@@ -219,6 +229,16 @@ export const CardThumbMedium: React.FC<
     () => card?.cardRarityType === "rarity_birthday",
     [card?.cardRarityType]
   );
+  const _trained = useMemo(() => {
+    const maxNormalLevel = [0, 20, 30, 50, 60];
+
+    return (
+      card &&
+      card.rarity >= 3 &&
+      card.cardRarityType !== "rarity_birthday" &&
+      (trained || (level && level > maxNormalLevel[card.rarity]))
+    );
+  }, [card, level, trained]);
 
   useEffect(() => {
     if (cards) setCard(cards.find((elem) => elem.id === cardId));
@@ -235,23 +255,23 @@ export const CardThumbMedium: React.FC<
             ? defaultImage === "special_training"
               ? "after_training"
               : "normal"
-            : trained
+            : _trained
             ? "after_training"
             : "normal"
         }.webp`,
         setCardThumbImg
       );
     }
-  }, [card, defaultImage, isBirthdayCard, trained]);
+  }, [card, defaultImage, isBirthdayCard, _trained]);
 
   const rarityIcon = useMemo(
     () =>
       isBirthdayCard
         ? rarityBirthday
-        : trained
+        : _trained
         ? rarityAfterTraining
         : rarityNormal,
-    [isBirthdayCard, trained]
+    [isBirthdayCard, _trained]
   );
   const randomNum = useMemo(() => Math.floor(100 * Math.random()), []);
 
