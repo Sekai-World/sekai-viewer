@@ -45,16 +45,19 @@ import cardThumbFrameS1 from "../assets/frame/cardFrame_S_1.png";
 import cardThumbFrameS2 from "../assets/frame/cardFrame_S_2.png";
 import cardThumbFrameS3 from "../assets/frame/cardFrame_S_3.png";
 import cardThumbFrameS4 from "../assets/frame/cardFrame_S_4.png";
+import cardThumbFrameSBD from "../assets/frame/cardFrame_S_bd.png";
 
 import cardThumbFrameM1 from "../assets/frame/cardFrame_M_1.png";
 import cardThumbFrameM2 from "../assets/frame/cardFrame_M_2.png";
 import cardThumbFrameM3 from "../assets/frame/cardFrame_M_3.png";
 import cardThumbFrameM4 from "../assets/frame/cardFrame_M_4.png";
+import cardThumbFrameMBD from "../assets/frame/cardFrame_M_bd.png";
 
-import cardImageFrameS1 from "../assets/frame/cardFrame_L_1.png";
-import cardImageFrameS2 from "../assets/frame/cardFrame_L_2.png";
-import cardImageFrameS3 from "../assets/frame/cardFrame_L_3.png";
-import cardImageFrameS4 from "../assets/frame/cardFrame_L_4.png";
+import cardImageFrameL1 from "../assets/frame/cardFrame_L_1.png";
+import cardImageFrameL2 from "../assets/frame/cardFrame_L_2.png";
+import cardImageFrameL3 from "../assets/frame/cardFrame_L_3.png";
+import cardImageFrameL4 from "../assets/frame/cardFrame_L_4.png";
+import cardImageFrameLBD from "../assets/frame/cardFrame_L_bd.png";
 
 import cardMasterRankS0 from "../assets/common/master_rank/masterRank_S_0.png";
 import cardMasterRankS1 from "../assets/common/master_rank/masterRank_S_1.png";
@@ -133,6 +136,7 @@ export const cardThumbFrameMap: { [key: string]: string } = {
   2: cardThumbFrameS2,
   3: cardThumbFrameS3,
   4: cardThumbFrameS4,
+  bd: cardThumbFrameSBD,
 };
 
 export const cardThumbMediumFrameMap: { [key: string]: string } = {
@@ -140,13 +144,15 @@ export const cardThumbMediumFrameMap: { [key: string]: string } = {
   2: cardThumbFrameM2,
   3: cardThumbFrameM3,
   4: cardThumbFrameM4,
+  bd: cardThumbFrameMBD,
 };
 
 export const cardImageFrameMap: { [key: string]: string } = {
-  1: cardImageFrameS1,
-  2: cardImageFrameS2,
-  3: cardImageFrameS3,
-  4: cardImageFrameS4,
+  1: cardImageFrameL1,
+  2: cardImageFrameL2,
+  3: cardImageFrameL3,
+  4: cardImageFrameL4,
+  bd: cardImageFrameLBD,
 };
 
 export const cardMasterRankSmallMap: { [key: string]: string } = {

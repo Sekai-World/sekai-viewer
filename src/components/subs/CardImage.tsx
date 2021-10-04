@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -13,6 +14,7 @@ import { getRemoteAssetURL, useCachedData, useRefState } from "../../utils";
 
 import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
+import rarityBirthday from "../../assets/rarity_birthday.png";
 import { attrIconMap, cardImageFrameMap } from "../../utils/resources";
 
 export const CardImage: React.FC<{ id: number; trained?: boolean }> = ({
@@ -26,7 +28,20 @@ export const CardImage: React.FC<{ id: number; trained?: boolean }> = ({
   const [card, setCard] = useState<ICardInfo>();
   const [cardImg, setCardImg] = useState<string>("");
 
-  const rarityIcon = trained ? rarityAfterTraining : rarityNormal;
+  const isBirthdayCard = useMemo(
+    () => card?.cardRarityType === "rarity_birthday",
+    [card?.cardRarityType]
+  );
+
+  const rarityIcon = useMemo(
+    () =>
+      isBirthdayCard
+        ? rarityBirthday
+        : trained
+        ? rarityAfterTraining
+        : rarityNormal,
+    [isBirthdayCard, trained]
+  );
 
   useEffect(() => {
     if (cards) setCard(cards.find((elem) => elem.id === id));
@@ -73,7 +88,7 @@ export const CardImage: React.FC<{ id: number; trained?: boolean }> = ({
         height="88"
       />
       {/* rarity */}
-      {Array.from({ length: card.rarity }).map((_, i) => (
+      {Array.from({ length: isBirthdayCard ? 1 : card.rarity }).map((_, i) => (
         <image
           key={`card-rarity-${i}`}
           href={rarityIcon}
@@ -111,11 +126,22 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
       refImgRightWidth,
       setImgRightWidth,
     ] = useRefState<number>(768);
+    const isBirthdayCard = useMemo(
+      () => card?.cardRarityType === "rarity_birthday",
+      [card?.cardRarityType]
+    );
 
     const svgElement = useRef<SVGSVGElement>(null);
 
-    const rarityIcon =
-      card && card.rarity >= 3 ? rarityAfterTraining : rarityNormal;
+    const rarityIcon = useMemo(
+      () =>
+        isBirthdayCard
+          ? rarityBirthday
+          : card.rarity >= 3
+          ? rarityAfterTraining
+          : rarityNormal,
+      [card.rarity, isBirthdayCard]
+    );
     const animationDuration = 500;
 
     // useEffect(() => {
@@ -241,7 +267,7 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
 
     const handleMoseOver = useCallback(
       (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
-        if (!svgElement.current) {
+        if (!svgElement.current || isBirthdayCard) {
           return;
         }
         const rect = svgElement.current.getBoundingClientRect();
@@ -251,7 +277,7 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
           setHoveredArea(1);
         }
       },
-      []
+      [isBirthdayCard]
     );
 
     return card ? (
@@ -263,7 +289,7 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
         onMouseMove={handleMoseOver}
         onMouseLeave={() => setHoveredArea(0)}
       >
-        {card.rarity >= 3 ? (
+        {card.rarity >= 3 && !isBirthdayCard ? (
           <Fragment>
             <svg
               x={imgLeftX}
@@ -315,16 +341,18 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
           height="88"
         />
         {/* rarity */}
-        {Array.from({ length: card.rarity }).map((_, i) => (
-          <image
-            key={`card-rarity-${i}`}
-            href={rarityIcon}
-            x="16"
-            y={490 - i * 62}
-            width="72"
-            height="70"
-          />
-        ))}
+        {Array.from({ length: isBirthdayCard ? 1 : card.rarity }).map(
+          (_, i) => (
+            <image
+              key={`card-rarity-${i}`}
+              href={rarityIcon}
+              x="16"
+              y={490 - i * 62}
+              width="72"
+              height="70"
+            />
+          )
+        )}
       </svg>
     ) : (
       skeleton

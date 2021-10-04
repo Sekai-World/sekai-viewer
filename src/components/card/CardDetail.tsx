@@ -21,6 +21,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -134,6 +135,11 @@ const CardDetail: React.FC<{}> = () => {
   // const [maxCardRank, setMaxCardRank] = useState<number>(0);
   const [gachaPhraseUrl, setGachaPhraseUrl] = useState("");
   const [cardCommentId, setCardCommentId] = useState<number>(0);
+
+  const isBirthdayCard = useMemo(
+    () => card?.cardRarityType === "rarity_birthday",
+    [card?.cardRarityType]
+  );
 
   const getSkillDesc = useCallback(
     (skill: ISkillInfo, skillLevel: number | number[]) => {
@@ -392,10 +398,10 @@ const CardDetail: React.FC<{}> = () => {
             >
               <Tab label={t("card:tab.title[0]")} value="0"></Tab>
               <Tab label={t("card:tab.title[1]")} value="2"></Tab>
-              {card.rarity >= 3 ? (
+              {card.rarity >= 3 && !isBirthdayCard ? (
                 <Tab label={t("card:tab.title[2]")} value="1"></Tab>
               ) : null}
-              {card.rarity >= 3 ? (
+              {card.rarity >= 3 && !isBirthdayCard ? (
                 <Tab label={t("card:tab.title[3]")} value="3"></Tab>
               ) : null}
             </Tabs>

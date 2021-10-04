@@ -6,6 +6,7 @@ import { getRemoteAssetURL, useCachedData } from "../../utils";
 
 import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
+import rarityBirthday from "../../assets/rarity_birthday.png";
 import { useSvgStyles } from "../../styles/svg";
 import {
   attrIconMap,
@@ -28,6 +29,10 @@ export const CardThumb: React.FC<
   const classes = useSvgStyles();
   const [cards] = useCachedData<ICardInfo>("cards");
   const [card, setCard] = useState<ICardInfo>();
+  const isBirthdayCard = useMemo(
+    () => card?.cardRarityType === "rarity_birthday",
+    [card?.cardRarityType]
+  );
 
   useEffect(() => {
     if (cards) setCard(cards.find((elem) => elem.id === cardId));
@@ -46,7 +51,15 @@ export const CardThumb: React.FC<
     }
   }, [card, trained]);
 
-  const rarityIcon = trained ? rarityAfterTraining : rarityNormal;
+  const rarityIcon = useMemo(
+    () =>
+      isBirthdayCard
+        ? rarityBirthday
+        : trained
+        ? rarityAfterTraining
+        : rarityNormal,
+    [isBirthdayCard, trained]
+  );
 
   return card ? (
     <div className={classes.svg} onClick={onClick} style={style}>
@@ -105,16 +118,18 @@ export const CardThumb: React.FC<
           height="35"
         />
         {/* rarity */}
-        {Array.from({ length: card.rarity }).map((_, i) => (
-          <image
-            key={`card-rarity-${i}`}
-            href={rarityIcon}
-            x={i * 26 + 10}
-            y={level || power ? "87" : "118"}
-            width="28"
-            height="28"
-          />
-        ))}
+        {Array.from({ length: isBirthdayCard ? 1 : card.rarity }).map(
+          (_, i) => (
+            <image
+              key={`card-rarity-${i}`}
+              href={rarityIcon}
+              x={i * 26 + 10}
+              y={level || power ? "87" : "118"}
+              width="28"
+              height="28"
+            />
+          )
+        )}
         {/* masterRank */}
         {masterRank && (
           <image
@@ -197,8 +212,13 @@ export const CardThumbMedium: React.FC<
 }) => {
   const skeleton = CardThumbSkeleton({});
   const classes = useSvgStyles();
+
   const [cards] = useCachedData<ICardInfo>("cards");
   const [card, setCard] = useState<ICardInfo>();
+  const isBirthdayCard = useMemo(
+    () => card?.cardRarityType === "rarity_birthday",
+    [card?.cardRarityType]
+  );
 
   useEffect(() => {
     if (cards) setCard(cards.find((elem) => elem.id === cardId));
@@ -222,7 +242,15 @@ export const CardThumbMedium: React.FC<
     }
   }, [card, defaultImage, trained]);
 
-  const rarityIcon = trained ? rarityAfterTraining : rarityNormal;
+  const rarityIcon = useMemo(
+    () =>
+      isBirthdayCard
+        ? rarityBirthday
+        : trained
+        ? rarityAfterTraining
+        : rarityNormal,
+    [isBirthdayCard, trained]
+  );
   const randomNum = useMemo(() => Math.floor(100 * Math.random()), []);
 
   return card ? (
@@ -281,16 +309,18 @@ export const CardThumbMedium: React.FC<
                 height="50"
               />
               {/* rarity */}
-              {Array.from({ length: card.rarity }).map((_, i) => (
-                <image
-                  key={`card-rarity-${i}`}
-                  href={rarityIcon}
-                  x={i * 50 + 16}
-                  y="395"
-                  width="50"
-                  height="50"
-                />
-              ))}
+              {Array.from({ length: isBirthdayCard ? 1 : card.rarity }).map(
+                (_, i) => (
+                  <image
+                    key={`card-rarity-${i}`}
+                    href={rarityIcon}
+                    x={i * 50 + 16}
+                    y="395"
+                    width="50"
+                    height="50"
+                  />
+                )
+              )}
               {/* masterRank */}
               {masterRank && (
                 <image

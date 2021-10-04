@@ -63,6 +63,7 @@ export interface ICardInfo {
   seq: number;
   characterId: number;
   rarity: number;
+  cardRarityType: string;
   specialTrainingPower1BonusFixed: number;
   specialTrainingPower2BonusFixed: number;
   specialTrainingPower3BonusFixed: number;
