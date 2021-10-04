@@ -780,7 +780,7 @@ const CardDetail: React.FC<{}> = () => {
                 <Grid item xs={12} sm={6} md={5} lg={4}>
                   <CardThumb cardId={Number(cardId)} />
                 </Grid>
-                {card.rarity >= 3 ? (
+                {card.rarity >= 3 && !isBirthdayCard ? (
                   <Grid item xs={12} sm={6} md={5} lg={4}>
                     <CardThumb cardId={Number(cardId)} trained />
                   </Grid>
