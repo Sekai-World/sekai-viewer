@@ -73,7 +73,7 @@ export const CardImage: React.FC<{ id: number; trained?: boolean }> = ({
       ></image>
       {/* frame */}
       <image
-        href={cardImageFrameMap[card.rarity]}
+        href={cardImageFrameMap[isBirthdayCard ? "bd" : card.rarity]}
         x="0"
         y="0"
         width="1024"
@@ -326,7 +326,7 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
         )}
         {/* frame */}
         <image
-          href={cardImageFrameMap[card.rarity]}
+          href={cardImageFrameMap[isBirthdayCard ? "bd" : card.rarity]}
           x="0"
           y="0"
           width="1024"

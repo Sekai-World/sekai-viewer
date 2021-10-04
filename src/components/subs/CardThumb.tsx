@@ -103,7 +103,7 @@ export const CardThumb: React.FC<
         )}
         {/* frame */}
         <image
-          href={cardThumbFrameMap[String(card.rarity)]}
+          href={cardThumbFrameMap[String(isBirthdayCard ? "bd" : card.rarity)]}
           x="0"
           y="0"
           height="156"
@@ -229,7 +229,9 @@ export const CardThumbMedium: React.FC<
     if (card) {
       getRemoteAssetURL(
         `character/member_cutout/${card.assetbundleName}_rip/${
-          defaultImage
+          isBirthdayCard
+            ? "normal"
+            : defaultImage
             ? defaultImage === "special_training"
               ? "after_training"
               : "normal"
@@ -240,7 +242,7 @@ export const CardThumbMedium: React.FC<
         setCardThumbImg
       );
     }
-  }, [card, defaultImage, trained]);
+  }, [card, defaultImage, isBirthdayCard, trained]);
 
   const rarityIcon = useMemo(
     () =>
@@ -294,7 +296,11 @@ export const CardThumbMedium: React.FC<
               </text>
               {/* frame */}
               <image
-                href={cardThumbMediumFrameMap[String(card.rarity)]}
+                href={
+                  cardThumbMediumFrameMap[
+                    String(isBirthdayCard ? "bd" : card.rarity)
+                  ]
+                }
                 x="0"
                 y="0"
                 height="520"
