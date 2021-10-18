@@ -81,7 +81,7 @@ import {
 } from "react-router-dom";
 import { SettingContext, UserContext, UserProvider } from "../context";
 import ScrollTop from "./subs/ScrollTop";
-import Settings from "./subs/Settings";
+// import Settings from "./subs/Settings";
 import * as serviceWorker from "../serviceWorker";
 import { SnackbarProvider } from "material-ui-snackbar-provider";
 import AlertSnackbar from "./subs/AlertSnackbar";
@@ -103,6 +103,7 @@ const StampList = lazy(() => import("./stamp/StampList"));
 const UnitDetail = lazy(() => import("./UnitDetail"));
 const About = lazy(() => import("./About"));
 const Support = lazy(() => import("./Support"));
+const Settings = lazy(() => import("./Settings"));
 const MusicRecommend = lazy(() => import("./MusicRecommend"));
 const EventPointCalc = lazy(() => import("./EventPointCalc"));
 const StoryReader = lazy(() => import("./storyreader/StoryReader"));
@@ -514,6 +515,12 @@ function App() {
       ],
       [
         {
+          text: t("common:settings.title"),
+          icon: <SettingsIcon />,
+          to: "/settings",
+          disabled: false,
+        },
+        {
           text: t("common:support"),
           icon: <MonetizationOn />,
           to: "/support",
@@ -533,7 +540,7 @@ function App() {
   const classes = useStyles();
 
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  // const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [sidebarExpansionStates, setSidebarExpansionStates] = useState<
     boolean[]
   >(leftBtns.map(() => true));
@@ -825,14 +832,18 @@ function App() {
                 <ArrowBackIosIcon fontSize="inherit" />
               </IconButton>
               <Hidden smDown implementation="css">
-                <IconButton
-                  color="inherit"
-                  onClick={() => setIsSettingsOpen(true)}
-                  style={{ padding: ".6rem" }}
-                  size="medium"
+                <Link
+                  to="/settings"
+                  style={{ color: theme.palette.common.white }}
                 >
-                  <SettingsIcon fontSize="inherit" />
-                </IconButton>
+                  <IconButton
+                    color="inherit"
+                    style={{ padding: ".6rem" }}
+                    size="medium"
+                  >
+                    <SettingsIcon fontSize="inherit" />
+                  </IconButton>
+                </Link>
                 <Link to="/user" style={{ color: theme.palette.common.white }}>
                   <IconButton
                     color="inherit"
@@ -867,7 +878,8 @@ function App() {
           >
             <MenuItem
               onClick={() => {
-                setIsSettingsOpen(true);
+                // setIsSettingsOpen(true);
+                history.push("/settings");
                 setMobileMenuOpen(false);
                 setMobileMenuAnchorEl(null);
               }}
@@ -1047,6 +1059,9 @@ function App() {
                   <Route path="/music_meta">
                     <MusicMeta />
                   </Route>
+                  <Route path="/settings">
+                    <Settings />
+                  </Route>
                 </Suspense>
               </Switch>
             </UserProvider>
@@ -1056,10 +1071,10 @@ function App() {
               <KeyboardArrowUp />
             </Fab>
           </ScrollTop>
-          <Settings
+          {/* <Settings
             open={isSettingsOpen}
             onClose={() => setIsSettingsOpen(false)}
-          />
+          /> */}
         </div>
         <Snackbar open={updateBarOpen}>
           <Alert
