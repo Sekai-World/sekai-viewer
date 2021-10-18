@@ -122,7 +122,7 @@ const Comment: React.FC<{
       </Grid>
       {comments.length ? (
         comments.map((comm) => (
-          <Fragment>
+          <Fragment key={comm.id}>
             <Grid item xs={12}>
               <CommentBlock
                 comment={comm}
