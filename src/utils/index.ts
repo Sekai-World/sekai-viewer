@@ -61,12 +61,15 @@ import {
   ICheerfulCarnivalTeam,
   IArea,
   IActionSet,
+  ServerRegion,
+  AssetDomainKey,
 } from "./../types.d";
 import { useAssetI18n, useCharaName } from "./i18n";
 import { useLocation } from "react-router-dom";
 import useSWR from "swr";
 import { useSnackbar } from "material-ui-snackbar-provider";
 import { useTranslation } from "react-i18next";
+import { assetUrl, masterUrl } from "./urls";
 
 const webpMachine = new WebpMachine();
 
@@ -128,17 +131,20 @@ export function useCachedData<
     | IActionSet
 >(name: string): [T[] | undefined, boolean, any] {
   // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
+  const [_region] = useServerRegion();
 
-  const fetchCached = useCallback(async (name: string) => {
-    const { data }: { data: T[] } = await Axios.get(
-      `${
-        window.isChinaMainland
-          ? process.env.REACT_APP_JSON_DOMAIN_CN + "/master"
-          : process.env.REACT_APP_JSON_DOMAIN_MASTER
-      }/${name}.json`
-    );
-    return data;
-  }, []);
+  const fetchCached = useCallback(
+    async (name: string, region: ServerRegion = _region) => {
+      const urlBase = window.isChinaMainland
+        ? masterUrl["cn"][region]
+        : masterUrl["ww"][region];
+      const { data }: { data: T[] } = await Axios.get(
+        `${urlBase}/${name}.json`
+      );
+      return data;
+    },
+    [_region]
+  );
 
   const { data, error } = useSWR(name, fetchCached);
 
@@ -247,15 +253,11 @@ const queue = new PQueue({ concurrency: 1 });
 export async function getRemoteAssetURL(
   endpoint: string,
   setFunc?: CallableFunction,
-  cnDomain: boolean = false,
-  minioDomain: boolean = false
+  domainKey: AssetDomainKey = "ww",
+  server: ServerRegion = "jp"
 ): Promise<string> {
   const isWebpSupported = Modernizr.webplossless;
-  const url = cnDomain
-    ? `${process.env.REACT_APP_ASSET_DOMAIN_CN}/${endpoint}`
-    : minioDomain
-    ? `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets/${endpoint}`
-    : `${process.env.REACT_APP_ASSET_DOMAIN_WW}/sekai-assets/${endpoint}`;
+  const url = `${assetUrl[domainKey][server]}/${endpoint}`;
 
   if (endpoint.endsWith(".webp") && !isWebpSupported) {
     let dataUrl = await localforage.getItem<string>(url);
@@ -302,6 +304,7 @@ export function useProcessedScenarioData() {
   const [chara2Ds] = useCachedData<ICharacter2D>("character2ds");
 
   const getCharaName = useCharaName();
+  const [region] = useServerRegion();
 
   return useCallback(
     async (
@@ -330,7 +333,8 @@ export function useProcessedScenarioData() {
         await getRemoteAssetURL(
           scenarioPath,
           undefined,
-          window.isChinaMainland
+          window.isChinaMainland ? "cn" : "ww",
+          region
         ),
         {
           responseType: "json",
@@ -358,7 +362,7 @@ export function useProcessedScenarioData() {
           resource: await getRemoteAssetURL(
             `scenario/background/${FirstBackground}_rip/${FirstBackground}.webp`,
             undefined,
-            window.isChinaMainland
+            window.isChinaMainland ? "cn" : "ww"
           ),
         });
       }
@@ -373,7 +377,7 @@ export function useProcessedScenarioData() {
           bgm: await getRemoteAssetURL(
             `sound/scenario/bgm/${FirstBgm}_rip/${FirstBgm}.mp3`,
             undefined,
-            window.isChinaMainland
+            window.isChinaMainland ? "cn" : "ww"
           ),
           se: "",
         });
@@ -445,7 +449,7 @@ export function useProcessedScenarioData() {
                   ? await getRemoteAssetURL(
                       voiceUrl,
                       undefined,
-                      window.isChinaMainland
+                      window.isChinaMainland ? "cn" : "ww"
                     )
                   : "",
               };
@@ -470,13 +474,13 @@ export function useProcessedScenarioData() {
                     ? await getRemoteAssetURL(
                         `sound/scenario/voice/${ScenarioId}_rip/${specialEffect.StringValSub}.mp3`,
                         undefined,
-                        window.isChinaMainland
+                        window.isChinaMainland ? "cn" : "ww"
                       )
                     : specialEffectType === "ChangeBackground"
                     ? await getRemoteAssetURL(
                         `scenario/background/${specialEffect.StringValSub}_rip/${specialEffect.StringValSub}.webp`,
                         undefined,
-                        window.isChinaMainland
+                        window.isChinaMainland ? "cn" : "ww"
                       )
                     : specialEffectType === "Movie"
                     ? `scenario/movie/${specialEffect.StringVal}_rip`
@@ -501,14 +505,14 @@ export function useProcessedScenarioData() {
                   ? await getRemoteAssetURL(
                       `sound/scenario/bgm/${soundData.Bgm}_rip/${soundData.Bgm}.mp3`,
                       undefined,
-                      window.isChinaMainland
+                      window.isChinaMainland ? "cn" : "ww"
                     )
                   : "",
                 se: soundData.Se
                   ? await getRemoteAssetURL(
                       `sound/scenario/se/se_pack00001_rip/${soundData.Se}.mp3`,
                       undefined,
-                      window.isChinaMainland
+                      window.isChinaMainland ? "cn" : "ww"
                     )
                   : "",
               };
@@ -530,7 +534,7 @@ export function useProcessedScenarioData() {
 
       return ret;
     },
-    [chara2Ds, getCharaName, mobCharas]
+    [chara2Ds, getCharaName, mobCharas, region]
   );
 }
 
@@ -712,4 +716,8 @@ export function sortWithIndices(toSort: (string | number)[]) {
     sortIndices.push(tmp[j][1]);
   }
   return sortIndices;
+}
+
+export function useServerRegion() {
+  return useLocalStorage<ServerRegion>("server-region", "jp", false);
 }

@@ -1,5 +1,7 @@
 export type ContentTransModeType = "original" | "translated" | "both";
 export type DisplayModeType = "dark" | "light" | "auto";
+export type ServerRegion = "jp" | "tw" | "en";
+export type AssetDomainKey = "ww" | "cn" | "minio";
 
 export interface GachaDetail {
   id: number;

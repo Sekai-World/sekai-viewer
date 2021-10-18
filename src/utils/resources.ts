@@ -66,12 +66,12 @@ import cardMasterRankS3 from "../assets/common/master_rank/masterRank_S_3.png";
 import cardMasterRankS4 from "../assets/common/master_rank/masterRank_S_4.png";
 import cardMasterRankS5 from "../assets/common/master_rank/masterRank_S_5.png";
 
-import LogoLightSound from "../assets/common/logol_outline/logo_light_sound.png";
-import LogoIdol from "../assets/common/logol_outline/logo_idol.png";
-import LogoPiapro from "../assets/common/logol_outline/logo_piapro.png";
-import LogoSchoolRefusal from "../assets/common/logol_outline/logo_school_refusal.png";
-import LogoStreet from "../assets/common/logol_outline/logo_street.png";
-import LogoThemePark from "../assets/common/logol_outline/logo_theme_park.png";
+// import LogoLightSound from "../assets/common/logol_outline/logo_light_sound.png";
+// import LogoIdol from "../assets/common/logol_outline/logo_idol.png";
+// import LogoPiapro from "../assets/common/logol_outline/logo_piapro.png";
+// import LogoSchoolRefusal from "../assets/common/logol_outline/logo_school_refusal.png";
+// import LogoStreet from "../assets/common/logol_outline/logo_street.png";
+// import LogoThemePark from "../assets/common/logol_outline/logo_theme_park.png";
 
 import LogoMiniLightSound from "../assets/common/logo_mini/unit_ts_1_penlight.png";
 import LogoMiniIdol from "../assets/common/logo_mini/unit_ts_2_penlight.png";
@@ -79,6 +79,7 @@ import LogoMiniStreet from "../assets/common/logo_mini/unit_ts_3_penlight.png";
 import LogoMiniThemePark from "../assets/common/logo_mini/unit_ts_4_penlight.png";
 import LogoMiniSchoolRefusal from "../assets/common/logo_mini/unit_ts_5_penlight.png";
 import LogoMiniPiapro from "../assets/common/logo_mini/unit_ts_6_penlight.png";
+import { ServerRegion } from "../types";
 
 export const charaIcons: { [key: string]: string } = {
   CharaIcon1,
@@ -164,13 +165,33 @@ export const cardMasterRankSmallMap: { [key: string]: string } = {
   5: cardMasterRankS5,
 };
 
-export const UnitLogoMap: { [key: string]: string } = {
-  idol: LogoIdol,
-  light_sound: LogoLightSound,
-  piapro: LogoPiapro,
-  school_refusal: LogoSchoolRefusal,
-  street: LogoStreet,
-  theme_park: LogoThemePark,
+export const UnitLogoMap: {
+  [region in ServerRegion]: { [key: string]: string };
+} = {
+  jp: {
+    idol: `${process.env.PUBLIC_URL}/images/jp/logol_outline/logo_idol.png`,
+    light_sound: `${process.env.PUBLIC_URL}/images/jp/logol_outline/logo_light_sound.png`,
+    piapro: `${process.env.PUBLIC_URL}/images/jp/logol_outline/logo_piapro.png`,
+    school_refusal: `${process.env.PUBLIC_URL}/images/jp/logol_outline/logo_school_refusal.png`,
+    street: `${process.env.PUBLIC_URL}/images/jp/logol_outline/logo_street.png`,
+    theme_park: `${process.env.PUBLIC_URL}/images/jp/logol_outline/logo_theme_park.png`,
+  },
+  tw: {
+    idol: `${process.env.PUBLIC_URL}/images/tw/logol_outline/logo_idol.png`,
+    light_sound: `${process.env.PUBLIC_URL}/images/tw/logol_outline/logo_light_sound.png`,
+    piapro: `${process.env.PUBLIC_URL}/images/tw/logol_outline/logo_piapro.png`,
+    school_refusal: `${process.env.PUBLIC_URL}/images/tw/logol_outline/logo_school_refusal.png`,
+    street: `${process.env.PUBLIC_URL}/images/tw/logol_outline/logo_street.png`,
+    theme_park: `${process.env.PUBLIC_URL}/images/tw/logol_outline/logo_theme_park.png`,
+  },
+  en: {
+    idol: `${process.env.PUBLIC_URL}/images/en/logol_outline/logo_idol.png`,
+    light_sound: `${process.env.PUBLIC_URL}/images/en/logol_outline/logo_light_sound.png`,
+    piapro: `${process.env.PUBLIC_URL}/images/en/logol_outline/logo_piapro.png`,
+    school_refusal: `${process.env.PUBLIC_URL}/images/en/logol_outline/logo_school_refusal.png`,
+    street: `${process.env.PUBLIC_URL}/images/en/logol_outline/logo_street.png`,
+    theme_park: `${process.env.PUBLIC_URL}/images/en/logol_outline/logo_theme_park.png`,
+  },
 };
 
 export const UnitLogoMiniMap: { [key: string]: string } = {
