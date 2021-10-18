@@ -656,7 +656,7 @@ const EventDetail: React.FC<{}> = () => {
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
-          {!!eventCards.filter((ec) => ec.bonusRate !== 0).length && (
+          {!!eventCards.filter((ec) => ec.bonusRate).length && (
             <Fragment>
               <Grid
                 item
