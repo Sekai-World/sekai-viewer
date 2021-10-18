@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.1](https://github.com/Sekai-World/sekai-viewer/compare/v0.8.0...v0.8.1) (2021-10-18)
+
+
+### Bug Fixes
+
+* **card:** birthday card rarity on detail page ([e5ccc4b](https://github.com/Sekai-World/sekai-viewer/commits/e5ccc4b10f53d98c1b52139c6a75912a7fe3d463))
+* **comment:** list key warning ([582bd1f](https://github.com/Sekai-World/sekai-viewer/commits/582bd1f3320722c2bd51fd2fe0186c6a45435fe6))
+* **event-tracker:** fetch correct regional graph ([c9cff47](https://github.com/Sekai-World/sekai-viewer/commits/c9cff47bdf937d74fce92af01c53851a0f536c7b))
+* **event:** cards specific boost check condition ([b314b1f](https://github.com/Sekai-World/sekai-viewer/commits/b314b1f5798b06f6a36b9271cc2f7ca4fe773826))
+* **settings:** warning ([05b4b9a](https://github.com/Sekai-World/sekai-viewer/commits/05b4b9a6ff734ea5e1ad3ce266465b850907a1c8))
+* **subs:** avoid degree image find error ([4301179](https://github.com/Sekai-World/sekai-viewer/commits/43011796ae0fe9e282baea8d88e5cd7b08c8f0eb))
+* **utils:** distinguish data cache key for fetched data ([3388f5e](https://github.com/Sekai-World/sekai-viewer/commits/3388f5e7f1a91204b9bffdc87a56b65f0723d7e3))
+
 ## [0.8.0](https://github.com/Sekai-World/sekai-viewer/compare/v0.7.2...v0.8.0) (2021-10-18)
 
 
