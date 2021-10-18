@@ -26,6 +26,7 @@ import {
 } from "recharts";
 import { useLayoutStyles } from "../../styles/layout";
 import { EventGraphRanking, EventRankingResponse } from "../../types";
+import { useServerRegion } from "../../utils";
 import { useEventTrackerAPI } from "../../utils/eventTracker";
 
 const EventTrackerGraph: React.FC<{
@@ -37,7 +38,9 @@ const EventTrackerGraph: React.FC<{
   const theme = useTheme();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
-  const { getGraph } = useEventTrackerAPI();
+  const [region] = useServerRegion();
+
+  const { getGraph } = useEventTrackerAPI(region);
 
   const [speedAllTime, setSpeedAllTime] = useState("N/A");
   const [speedLast24h, setSpeedLast24h] = useState("N/A");

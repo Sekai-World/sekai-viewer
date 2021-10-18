@@ -502,7 +502,7 @@ const EventTracker: React.FC<{}> = () => {
               onChange={handleSliderChange.callback}
             />
           )}
-          {!isTimeTravel && !!rtRanking.length && !!rtTime && (
+          {region === "jp" && !isTimeTravel && !!rtRanking.length && !!rtTime && (
             <Alert severity="info" className={layoutClasses.alert}>
               <Typography>
                 {t("event:tracker.tooltip.get_prediction")}
