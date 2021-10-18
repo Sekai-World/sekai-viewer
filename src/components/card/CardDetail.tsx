@@ -40,6 +40,7 @@ import {
 import { getRemoteAssetURL, useCachedData } from "../../utils";
 import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
+import rarityBirthday from "../../assets/rarity_birthday.png";
 
 import { CardThumb } from "../subs/CardThumb";
 import {
@@ -589,7 +590,7 @@ const CardDetail: React.FC<{}> = () => {
             <Grid item xs={8}>
               <Link
                 to={"/unit/" + getCharaUnitName(card.characterId)}
-                style={{ textDecoration: "none" }}
+                className={interactiveClasses.noDecoration}
               >
                 <Grid
                   container
@@ -747,18 +748,22 @@ const CardDetail: React.FC<{}> = () => {
               {t("common:rarity")}
             </Typography>
             <Typography>
-              {Array.from({ length: card.rarity }).map((_, id) => (
-                <img
-                  className={classes["rarity-star-img"]}
-                  src={
-                    cardLevel > card.maxNormalLevel
-                      ? rarityAfterTraining
-                      : rarityNormal
-                  }
-                  alt={`star-${id}`}
-                  key={`star-${id}`}
-                ></img>
-              ))}
+              {Array.from({ length: isBirthdayCard ? 1 : card.rarity }).map(
+                (_, id) => (
+                  <img
+                    className={classes["rarity-star-img"]}
+                    src={
+                      isBirthdayCard
+                        ? rarityBirthday
+                        : cardLevel > card.maxNormalLevel
+                        ? rarityAfterTraining
+                        : rarityNormal
+                    }
+                    alt={`star-${id}`}
+                    key={`star-${id}`}
+                  ></img>
+                )
+              )}
             </Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
