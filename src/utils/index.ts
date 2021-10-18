@@ -131,22 +131,20 @@ export function useCachedData<
     | IActionSet
 >(name: string): [T[] | undefined, boolean, any] {
   // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
-  const [_region] = useServerRegion();
+  const [region] = useServerRegion();
 
-  const fetchCached = useCallback(
-    async (name: string, region: ServerRegion = _region) => {
-      const urlBase = window.isChinaMainland
-        ? masterUrl["cn"][region]
-        : masterUrl["ww"][region];
-      const { data }: { data: T[] } = await Axios.get(
-        `${urlBase}/${name}.json`
-      );
-      return data;
-    },
-    [_region]
-  );
+  const fetchCached = useCallback(async (name: string) => {
+    const [region, filename] = name.split("|");
+    const urlBase = window.isChinaMainland
+      ? masterUrl["cn"][region as ServerRegion]
+      : masterUrl["ww"][region as ServerRegion];
+    const { data }: { data: T[] } = await Axios.get(
+      `${urlBase}/${filename}.json`
+    );
+    return data;
+  }, []);
 
-  const { data, error } = useSWR(name, fetchCached);
+  const { data, error } = useSWR(`${region}|${name}`, fetchCached);
 
   return [data, !error && !data, error];
 }
