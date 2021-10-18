@@ -36,12 +36,14 @@ const DegreeImage: React.FC<
     if (resourceBoxes && honors) {
       let honorDetail: ResourceBoxDetail | undefined;
       if (resourceBoxId) {
-        honorDetail = resourceBoxes
-          .find(
-            (resBox) =>
-              resBox.resourceBoxPurpose === type! && resBox.id === resourceBoxId
-          )!
-          .details.find((detail) => detail.resourceType === "honor");
+        const honorBox = resourceBoxes.find(
+          (resBox) =>
+            resBox.resourceBoxPurpose === type! && resBox.id === resourceBoxId
+        );
+        if (honorBox)
+          honorDetail = honorBox.details.find(
+            (detail) => detail.resourceType === "honor"
+          );
       }
       setHonor(
         honors.find((honor) =>
@@ -73,7 +75,7 @@ const DegreeImage: React.FC<
           window.isChinaMainland ? "cn" : "ww",
           region
         );
-      } else
+      } else if (honor.assetbundleName)
         getRemoteAssetURL(
           `honor/${honor.assetbundleName}_rip/degree_main.webp`,
           setDegreeImage,
@@ -87,7 +89,11 @@ const DegreeImage: React.FC<
           window.isChinaMainland ? "cn" : "ww",
           region
         );
-      else if (honor.name.startsWith("TOP") || honor.name.includes("位"))
+      else if (
+        honor.name.startsWith("TOP") ||
+        honor.name.includes("位") ||
+        honor.name.includes("名")
+      )
         getRemoteAssetURL(
           `honor/${honor.assetbundleName}_rip/rank_main.webp`,
           setDegreeRankImage,
