@@ -9,7 +9,7 @@ import {
 import { Skeleton } from "@material-ui/lab";
 import React, { useEffect, useState } from "react";
 import { IStampInfo } from "../../types";
-import { getRemoteAssetURL } from "../../utils";
+import { getRemoteAssetURL, useServerRegion } from "../../utils";
 import { ContentTrans } from "../subs/ContentTrans";
 
 const useStyles = makeStyles((theme) => ({
@@ -32,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
 
 const GridView: React.FC<{ data?: IStampInfo }> = ({ data }) => {
   const classes = useStyles();
+  const [region] = useServerRegion();
 
   const [url, setUrl] = useState<string>("");
 
@@ -39,10 +40,12 @@ const GridView: React.FC<{ data?: IStampInfo }> = ({ data }) => {
     if (data) {
       getRemoteAssetURL(
         `stamp/${data.assetbundleName}_rip/${data.assetbundleName}/${data.assetbundleName}.webp`,
-        setUrl
+        setUrl,
+        window.isChinaMainland ? "cn" : "ww",
+        region
       );
     }
-  }, [data]);
+  }, [data, region]);
 
   if (!data) {
     // loading

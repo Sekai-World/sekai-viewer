@@ -1,10 +1,14 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { ServerRegion } from "../../types";
 import { getRemoteAssetURL } from "../../utils";
 
 const MoviePlayer: React.FC<
-  { path: string } & React.VideoHTMLAttributes<HTMLVideoElement>
-> = ({ path, ...videoProps }) => {
+  {
+    path: string;
+    region?: ServerRegion;
+  } & React.VideoHTMLAttributes<HTMLVideoElement>
+> = ({ path, region = "jp", ...videoProps }) => {
   const [src, setSrc] = useState("");
 
   useEffect(() => {
@@ -12,7 +16,7 @@ const MoviePlayer: React.FC<
       const buildDataUrl = await getRemoteAssetURL(
         `${path}/moviebundlebuilddata.asset`,
         undefined,
-        window.isChinaMainland
+        window.isChinaMainland ? "cn" : "ww"
       );
       const buildData = (
         await axios.get(buildDataUrl, { responseType: "json" })
@@ -23,7 +27,8 @@ const MoviePlayer: React.FC<
       return getRemoteAssetURL(
         `${path}/${fileName}.mp4`,
         setSrc,
-        window.isChinaMainland
+        window.isChinaMainland ? "cn" : "ww",
+        region
       );
     };
 
@@ -31,7 +36,7 @@ const MoviePlayer: React.FC<
     return () => {
       setSrc("");
     };
-  }, [path]);
+  }, [path, region]);
 
   return src ? (
     <video {...videoProps}>

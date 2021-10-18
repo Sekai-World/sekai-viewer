@@ -16,7 +16,7 @@ import {
   IMusicVocalInfo,
   IOutCharaProfile,
 } from "../../types";
-import { getRemoteAssetURL, useCachedData } from "../../utils";
+import { getRemoteAssetURL, useCachedData, useServerRegion } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
 import { ContentTrans } from "../subs/ContentTrans";
 import SpoilerTag from "../subs/SpoilerTag";
@@ -73,6 +73,7 @@ const AgendaView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
   const { path } = useRouteMatch();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
+  const [region] = useServerRegion();
 
   const [musicDiffis] = useCachedData<IMusicDifficultyInfo>(
     "musicDifficulties"
@@ -89,9 +90,10 @@ const AgendaView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
       getRemoteAssetURL(
         `music/jacket/${data.assetbundleName}_rip/${data.assetbundleName}.webp`,
         setJacket,
-        window.isChinaMainland
+        window.isChinaMainland ? "cn" : "ww",
+        region
       );
-  }, [data]);
+  }, [data, region]);
 
   useEffect(() => {
     if (data && musicDiffis && musicDiffis.length) {

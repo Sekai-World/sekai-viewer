@@ -38,7 +38,7 @@ const VirtualLiveStepMusic: React.FC<{
       getRemoteAssetURL(
         `music/long/${musicVocal.assetbundleName}_rip/${musicVocal.assetbundleName}.mp3`,
         setMusicVocalURL,
-        window.isChinaMainland
+        window.isChinaMainland ? "cn" : "ww"
       );
     }
   }, [music, musicVocal]);

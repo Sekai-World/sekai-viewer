@@ -25,6 +25,7 @@ import {
 } from "../strapi-model";
 import { ITeamBuild, ITeamCardState, IUserProfile } from "../types";
 import useSWR from "swr";
+import { useServerRegion } from ".";
 
 /**
  * Access Strapi endpoints.
@@ -622,8 +623,11 @@ export function useAnnouncementsByLanguages(
 }
 
 export function useCurrentEvent() {
+  const [region] = useServerRegion();
   const { data, error } = useSWR(
-    `${process.env.REACT_APP_STRAPI_BASE}/sekai-current-event`,
+    `${process.env.REACT_APP_STRAPI_BASE}/sekai-current-event${
+      region === "tw" ? "-tw" : ""
+    }`,
     axiosFetcher
   );
 

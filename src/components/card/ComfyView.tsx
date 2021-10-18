@@ -87,7 +87,7 @@ const ComfyView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
             <Grid item xs={4}>
               <CardThumb cardId={data.id} />
             </Grid>
-            {data.rarity >= 3 ? (
+            {data.rarity >= 3 && data.cardRarityType !== "rarity_birthday" ? (
               <Grid item xs={4}>
                 <CardThumb cardId={data.id} trained />
               </Grid>

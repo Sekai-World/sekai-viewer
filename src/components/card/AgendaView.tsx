@@ -104,7 +104,7 @@ const AgendaView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
             <Grid item xs={12} md={6} lg={4}>
               <CardThumb cardId={data.id} />
             </Grid>
-            {data.rarity >= 3 ? (
+            {data.rarity >= 3 && data.cardRarityType !== "rarity_birthday" ? (
               <Grid item xs={12} md={6} lg={4}>
                 <CardThumb cardId={data.id} trained />
               </Grid>

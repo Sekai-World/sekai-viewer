@@ -1,5 +1,7 @@
 export type ContentTransModeType = "original" | "translated" | "both";
 export type DisplayModeType = "dark" | "light" | "auto";
+export type ServerRegion = "jp" | "tw" | "en";
+export type AssetDomainKey = "ww" | "cn" | "minio";
 
 export interface GachaDetail {
   id: number;
@@ -63,6 +65,7 @@ export interface ICardInfo {
   seq: number;
   characterId: number;
   rarity: number;
+  cardRarityType: string;
   specialTrainingPower1BonusFixed: number;
   specialTrainingPower2BonusFixed: number;
   specialTrainingPower3BonusFixed: number;
@@ -503,6 +506,7 @@ export interface ITeamCardState {
   level: number;
   skillLevel: number;
   trained: boolean;
+  trainable: boolean;
   // power: number;
   masterRank: number;
   story1Unlock: boolean;

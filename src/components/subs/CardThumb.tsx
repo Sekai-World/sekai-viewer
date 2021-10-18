@@ -6,6 +6,7 @@ import { getRemoteAssetURL, useCachedData } from "../../utils";
 
 import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
+import rarityBirthday from "../../assets/rarity_birthday.png";
 import { useSvgStyles } from "../../styles/svg";
 import {
   attrIconMap,
@@ -28,6 +29,20 @@ export const CardThumb: React.FC<
   const classes = useSvgStyles();
   const [cards] = useCachedData<ICardInfo>("cards");
   const [card, setCard] = useState<ICardInfo>();
+  const isBirthdayCard = useMemo(
+    () => card?.cardRarityType === "rarity_birthday",
+    [card?.cardRarityType]
+  );
+  const _trained = useMemo(() => {
+    const maxNormalLevel = [0, 20, 30, 50, 60];
+
+    return (
+      card &&
+      card.rarity >= 3 &&
+      card.cardRarityType !== "rarity_birthday" &&
+      (trained || (level && level > maxNormalLevel[card.rarity]))
+    );
+  }, [card, level, trained]);
 
   useEffect(() => {
     if (cards) setCard(cards.find((elem) => elem.id === cardId));
@@ -38,15 +53,23 @@ export const CardThumb: React.FC<
     if (card) {
       getRemoteAssetURL(
         `thumbnail/chara_rip/${card.assetbundleName}_${
-          trained ? "after_training" : "normal"
+          _trained ? "after_training" : "normal"
         }.webp`,
         setCardThumbImg,
-        window.isChinaMainland
+        window.isChinaMainland ? "cn" : "ww"
       );
     }
-  }, [card, trained]);
+  }, [card, _trained]);
 
-  const rarityIcon = trained ? rarityAfterTraining : rarityNormal;
+  const rarityIcon = useMemo(
+    () =>
+      isBirthdayCard
+        ? rarityBirthday
+        : _trained
+        ? rarityAfterTraining
+        : rarityNormal,
+    [isBirthdayCard, _trained]
+  );
 
   return card ? (
     <div className={classes.svg} onClick={onClick} style={style}>
@@ -90,7 +113,7 @@ export const CardThumb: React.FC<
         )}
         {/* frame */}
         <image
-          href={cardThumbFrameMap[String(card.rarity)]}
+          href={cardThumbFrameMap[String(isBirthdayCard ? "bd" : card.rarity)]}
           x="0"
           y="0"
           height="156"
@@ -105,16 +128,18 @@ export const CardThumb: React.FC<
           height="35"
         />
         {/* rarity */}
-        {Array.from({ length: card.rarity }).map((_, i) => (
-          <image
-            key={`card-rarity-${i}`}
-            href={rarityIcon}
-            x={i * 26 + 10}
-            y={level || power ? "87" : "118"}
-            width="28"
-            height="28"
-          />
-        ))}
+        {Array.from({ length: isBirthdayCard ? 1 : card.rarity }).map(
+          (_, i) => (
+            <image
+              key={`card-rarity-${i}`}
+              href={rarityIcon}
+              x={i * 26 + 10}
+              y={level || power ? "87" : "118"}
+              width="28"
+              height="28"
+            />
+          )
+        )}
         {/* masterRank */}
         {masterRank && (
           <image
@@ -197,8 +222,23 @@ export const CardThumbMedium: React.FC<
 }) => {
   const skeleton = CardThumbSkeleton({});
   const classes = useSvgStyles();
+
   const [cards] = useCachedData<ICardInfo>("cards");
   const [card, setCard] = useState<ICardInfo>();
+  const isBirthdayCard = useMemo(
+    () => card?.cardRarityType === "rarity_birthday",
+    [card?.cardRarityType]
+  );
+  const _trained = useMemo(() => {
+    const maxNormalLevel = [0, 20, 30, 50, 60];
+
+    return (
+      card &&
+      card.rarity >= 3 &&
+      card.cardRarityType !== "rarity_birthday" &&
+      (trained || (level && level > maxNormalLevel[card.rarity]))
+    );
+  }, [card, level, trained]);
 
   useEffect(() => {
     if (cards) setCard(cards.find((elem) => elem.id === cardId));
@@ -209,20 +249,30 @@ export const CardThumbMedium: React.FC<
     if (card) {
       getRemoteAssetURL(
         `character/member_cutout/${card.assetbundleName}_rip/${
-          defaultImage
+          isBirthdayCard
+            ? "normal"
+            : defaultImage
             ? defaultImage === "special_training"
               ? "after_training"
               : "normal"
-            : trained
+            : _trained
             ? "after_training"
             : "normal"
         }.webp`,
         setCardThumbImg
       );
     }
-  }, [card, defaultImage, trained]);
+  }, [card, defaultImage, isBirthdayCard, _trained]);
 
-  const rarityIcon = trained ? rarityAfterTraining : rarityNormal;
+  const rarityIcon = useMemo(
+    () =>
+      isBirthdayCard
+        ? rarityBirthday
+        : _trained
+        ? rarityAfterTraining
+        : rarityNormal,
+    [isBirthdayCard, _trained]
+  );
   const randomNum = useMemo(() => Math.floor(100 * Math.random()), []);
 
   return card ? (
@@ -266,7 +316,11 @@ export const CardThumbMedium: React.FC<
               </text>
               {/* frame */}
               <image
-                href={cardThumbMediumFrameMap[String(card.rarity)]}
+                href={
+                  cardThumbMediumFrameMap[
+                    String(isBirthdayCard ? "bd" : card.rarity)
+                  ]
+                }
                 x="0"
                 y="0"
                 height="520"
@@ -281,16 +335,18 @@ export const CardThumbMedium: React.FC<
                 height="50"
               />
               {/* rarity */}
-              {Array.from({ length: card.rarity }).map((_, i) => (
-                <image
-                  key={`card-rarity-${i}`}
-                  href={rarityIcon}
-                  x={i * 50 + 16}
-                  y="395"
-                  width="50"
-                  height="50"
-                />
-              ))}
+              {Array.from({ length: isBirthdayCard ? 1 : card.rarity }).map(
+                (_, i) => (
+                  <image
+                    key={`card-rarity-${i}`}
+                    href={rarityIcon}
+                    x={i * 50 + 16}
+                    y="395"
+                    width="50"
+                    height="50"
+                  />
+                )
+              )}
               {/* masterRank */}
               {masterRank && (
                 <image

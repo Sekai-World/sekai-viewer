@@ -249,7 +249,7 @@ function Home() {
                 width="1500"
                 height="500"
               />
-            ) : jpTime === "10/05" ? (
+            ) : jpTime === "10/5" ? (
               <img
                 src={`${process.env.PUBLIC_URL}/images/banner-haruka.jpg`}
                 alt="banner"

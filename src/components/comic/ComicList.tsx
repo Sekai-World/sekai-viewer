@@ -23,7 +23,7 @@ import GridView from "./GridView";
 const ListCard: React.FC<{
   data?: ITipInfoComic;
   index?: number;
-  lang?: string;
+  lang?: "ja" | "fr" | "ru" | "zhs" | "zht" | "en";
   handleCardClick?: (index: number) => void;
 }> = GridView;
 
@@ -63,6 +63,7 @@ const ComicList: React.FC<{}> = () => {
         let url;
         switch (resourceLang) {
           case "ja":
+          case "zht":
             url = `comic/one_frame_rip/${comic.assetbundleName}.webp`;
             break;
           case "en":
@@ -76,11 +77,16 @@ const ComicList: React.FC<{}> = () => {
           src: await getRemoteAssetURL(
             url,
             undefined,
-            window.isChinaMainland,
-            resourceLang === "en"
+            window.isChinaMainland ? "cn" : "minio",
+            resourceLang === "zht" ? "tw" : "jp"
           ),
           alt: getTranslated(`comic_title:${comic.id}`, comic.title),
-          downloadUrl: await getRemoteAssetURL(url.replace(".webp", ".png")),
+          downloadUrl: await getRemoteAssetURL(
+            url.replace(".webp", ".png"),
+            undefined,
+            window.isChinaMainland ? "cn" : "minio",
+            resourceLang === "zht" ? "tw" : "jp"
+          ),
         });
       }
       setComicImages(images);

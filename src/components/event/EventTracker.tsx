@@ -41,7 +41,12 @@ import {
   IEventInfo,
   UserRanking,
 } from "../../types";
-import { useCachedData, useQuery, useToggle } from "../../utils";
+import {
+  useCachedData,
+  useQuery,
+  useServerRegion,
+  useToggle,
+} from "../../utils";
 import { useCurrentEvent } from "../../utils/apiClient";
 import {
   useEventTrackerAPI,
@@ -69,15 +74,16 @@ const EventTracker: React.FC<{}> = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
+  const [region] = useServerRegion();
   const {
     getLive,
     getEventPred,
     getEventTimePoints,
     getEventRankingsByTimestamp,
-  } = useEventTrackerAPI();
+  } = useEventTrackerAPI(region);
   const { contentTransMode } = useContext(SettingContext)!;
   const { sekaiProfile } = useContext(UserContext)!;
-  const [refreshData] = useRealtimeEventData();
+  const refreshData = useRealtimeEventData();
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -183,7 +189,7 @@ const EventTracker: React.FC<{}> = () => {
 
   const getHistoryData = useCallback(
     async (eventId: number) => {
-      const data = await refreshData(eventId);
+      const data = await refreshData(eventId, region);
       setHistoryTime(new Date(data.time));
       const rankingData = Object.values(data).filter((elem) =>
         Array.isArray(elem)
@@ -196,7 +202,7 @@ const EventTracker: React.FC<{}> = () => {
         ) as UserRanking[]
       );
     },
-    [refreshData]
+    [refreshData, region]
   );
 
   const handleFetchGraph = useCallback(
@@ -246,7 +252,10 @@ const EventTracker: React.FC<{}> = () => {
           setEventDuration(currentTime - event.startAt);
           setNextRefreshTime(cron.nextDate());
 
-          if (currentTime >= event.startAt + 24 * 3600 * 1000) {
+          if (
+            region === "jp" &&
+            currentTime >= event.startAt + 24 * 3600 * 1000
+          ) {
             const predcron = new CronJob("1,16,31,46 * * * *", () => {
               const currentTime = Date.now();
               if (currentTime >= event.rankingAnnounceAt) predcron.stop();
@@ -277,6 +286,7 @@ const EventTracker: React.FC<{}> = () => {
       getHistoryData,
       refreshPrediction,
       refreshRealtimeData,
+      region,
     ]
   );
 
@@ -423,7 +433,7 @@ const EventTracker: React.FC<{}> = () => {
           </Grid>
         </Grid>
       </Container>
-      {!!sekaiProfile && !!sekaiProfile.sekaiUserProfile && (
+      {region === "jp" && !!sekaiProfile && !!sekaiProfile.sekaiUserProfile && (
         <Fragment>
           <Typography variant="h6" className={layoutClasses.header}>
             {t("user:profile.title.user_event")}

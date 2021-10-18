@@ -21,6 +21,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -134,6 +135,11 @@ const CardDetail: React.FC<{}> = () => {
   // const [maxCardRank, setMaxCardRank] = useState<number>(0);
   const [gachaPhraseUrl, setGachaPhraseUrl] = useState("");
   const [cardCommentId, setCardCommentId] = useState<number>(0);
+
+  const isBirthdayCard = useMemo(
+    () => card?.cardRarityType === "rarity_birthday",
+    [card?.cardRarityType]
+  );
 
   const getSkillDesc = useCallback(
     (skill: ISkillInfo, skillLevel: number | number[]) => {
@@ -263,8 +269,7 @@ const CardDetail: React.FC<{}> = () => {
         getRemoteAssetURL(
           `sound/gacha/get_voice/${_card.assetbundleName}_rip/${_card.assetbundleName}.mp3`,
           setGachaPhraseUrl,
-          window.isChinaMainland,
-          true
+          window.isChinaMainland ? "cn" : "minio"
         );
     }
   }, [
@@ -304,23 +309,23 @@ const CardDetail: React.FC<{}> = () => {
       getRemoteAssetURL(
         `character/member/${card.assetbundleName}_rip/card_normal.webp`,
         setNormalImg,
-        window.isChinaMainland
+        window.isChinaMainland ? "cn" : "ww"
       );
       getRemoteAssetURL(
         `character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`,
         setNormalTrimImg,
-        window.isChinaMainland
+        window.isChinaMainland ? "cn" : "ww"
       );
       if (card.rarity >= 3) {
         getRemoteAssetURL(
           `character/member/${card.assetbundleName}_rip/card_after_training.webp`,
           setTrainedImg,
-          window.isChinaMainland
+          window.isChinaMainland ? "cn" : "ww"
         );
         getRemoteAssetURL(
           `character/member_cutout_trm/${card.assetbundleName}_rip/after_training.webp`,
           setTrainedTrimImg,
-          window.isChinaMainland
+          window.isChinaMainland ? "cn" : "ww"
         );
       }
     }
@@ -392,10 +397,10 @@ const CardDetail: React.FC<{}> = () => {
             >
               <Tab label={t("card:tab.title[0]")} value="0"></Tab>
               <Tab label={t("card:tab.title[1]")} value="2"></Tab>
-              {card.rarity >= 3 ? (
+              {card.rarity >= 3 && !isBirthdayCard ? (
                 <Tab label={t("card:tab.title[2]")} value="1"></Tab>
               ) : null}
-              {card.rarity >= 3 ? (
+              {card.rarity >= 3 && !isBirthdayCard ? (
                 <Tab label={t("card:tab.title[3]")} value="3"></Tab>
               ) : null}
             </Tabs>
@@ -774,7 +779,7 @@ const CardDetail: React.FC<{}> = () => {
                 <Grid item xs={12} sm={6} md={5} lg={4}>
                   <CardThumb cardId={Number(cardId)} />
                 </Grid>
-                {card.rarity >= 3 ? (
+                {card.rarity >= 3 && !isBirthdayCard ? (
                   <Grid item xs={12} sm={6} md={5} lg={4}>
                     <CardThumb cardId={Number(cardId)} trained />
                   </Grid>

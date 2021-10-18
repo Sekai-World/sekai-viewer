@@ -5,16 +5,20 @@ import {
   EventPrediction,
   EventRankingResponse,
   IEventRealtimeRank,
+  ServerRegion,
 } from "../types";
 
-export function useEventTrackerAPI() {
+export function useEventTrackerAPI(region: ServerRegion = "jp") {
   const axios = useMemo(() => {
     const axios = Axios.create({
       baseURL: process.env.REACT_APP_API_BACKEND_BASE,
+      params: {
+        region,
+      },
     });
 
     return axios;
-  }, []);
+  }, [region]);
 
   return {
     getGraph: useCallback(
@@ -67,15 +71,13 @@ export function useEventTrackerAPI() {
   };
 }
 
-export function useRealtimeEventData(): [
-  (eventId: number) => Promise<IEventRealtimeRank>
-] {
-  const refreshData = useCallback(async (eventId: number) => {
+export function useRealtimeEventData() {
+  return useCallback(async (eventId: number, region: ServerRegion = "jp") => {
     const { data }: { data: IEventRealtimeRank } = await Axios.get(
-      `https://bitbucket.org/sekai-world/sekai-event-track/raw/main/event${eventId}.json?t=${Date.now()}`
+      `https://bitbucket.org/sekai-world/sekai-event-track${
+        region === "tw" ? "-tw" : ""
+      }/raw/main/event${eventId}.json?t=${Date.now()}`
     );
     return data;
   }, []);
-
-  return [refreshData];
 }

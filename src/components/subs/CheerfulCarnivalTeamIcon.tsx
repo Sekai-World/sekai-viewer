@@ -1,6 +1,6 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import Image from "material-ui-image";
-import { getRemoteAssetURL, useCachedData } from "../../utils";
+import { getRemoteAssetURL, useCachedData, useServerRegion } from "../../utils";
 import { ICheerfulCarnivalTeam, IEventInfo } from "../../types";
 
 interface ImageProps
@@ -33,6 +33,7 @@ const CheerfulCarnivalTeamIcon: React.FC<
     "cheerfulCarnivalTeams"
   );
   const [events] = useCachedData<IEventInfo>("events");
+  const [region] = useServerRegion();
 
   const [ccTeam, setCcTeam] = useState<ICheerfulCarnivalTeam>();
   const [ccTeamLogo, setCcTeamLogo] = useState<string>("");
@@ -61,13 +62,14 @@ const CheerfulCarnivalTeamIcon: React.FC<
       getRemoteAssetURL(
         `event/${event.assetbundleName}/team_image_rip/${ccTeam.assetbundleName}.webp`,
         setCcTeamLogo,
-        window.isChinaMainland
+        window.isChinaMainland ? "cn" : "ww",
+        region
       );
     }
     return () => {
       setCcTeamLogo("");
     };
-  }, [ccTeam, cheerfulCarnivalTeams, event]);
+  }, [ccTeam, cheerfulCarnivalTeams, event, region]);
 
   return <Image src={ccTeamLogo} color="" disableTransition {...props} />;
 };

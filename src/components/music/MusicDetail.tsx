@@ -40,7 +40,12 @@ import {
   IMusicVocalInfo,
   IOutCharaProfile,
 } from "../../types";
-import { getRemoteAssetURL, useCachedData, useMusicTagName } from "../../utils";
+import {
+  getRemoteAssetURL,
+  useCachedData,
+  useMusicTagName,
+  useServerRegion,
+} from "../../utils";
 import { charaIcons } from "../../utils/resources";
 import { Trans, useTranslation } from "react-i18next";
 import { useAssetI18n, useCharaName } from "../../utils/i18n";
@@ -110,6 +115,7 @@ const MusicDetail: React.FC<{}> = () => {
   const [musicAchievements] = useCachedData<IMusicAchievement>(
     "musicAchievements"
   );
+  const [region] = useServerRegion();
 
   const { musicId } = useParams<{ musicId: string }>();
 
@@ -188,12 +194,12 @@ const MusicDetail: React.FC<{}> = () => {
       getRemoteAssetURL(
         `music/long/${musicVocal[selectedPreviewVocalType].assetbundleName}_rip/${musicVocal[selectedPreviewVocalType].assetbundleName}.${format}`,
         setLongMusicPlaybackURL,
-        window.isChinaMainland
+        window.isChinaMainland ? "cn" : "ww"
       );
       getRemoteAssetURL(
         `music/short/${musicVocal[selectedPreviewVocalType].assetbundleName}_rip/${musicVocal[selectedPreviewVocalType].assetbundleName}_short.${format}`,
         setShortMusicPlaybackURL,
-        window.isChinaMainland
+        window.isChinaMainland ? "cn" : "ww"
       );
     }
   }, [format, music, musicVocal, selectedPreviewVocalType]);
@@ -317,17 +323,19 @@ const MusicDetail: React.FC<{}> = () => {
         getRemoteAssetURL(
           `music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}_org.webp`,
           setMusicJacket,
-          window.isChinaMainland
+          window.isChinaMainland ? "cn" : "ww",
+          region
         );
       } else {
         getRemoteAssetURL(
           `music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}.webp`,
           setMusicJacket,
-          window.isChinaMainland
+          window.isChinaMainland ? "cn" : "ww",
+          region
         );
       }
     }
-  }, [music, musicVocalTypes, selectedPreviewVocalType]);
+  }, [music, musicVocalTypes, region, selectedPreviewVocalType]);
 
   const getCharaIcon: (
     characterId: number,

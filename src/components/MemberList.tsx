@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
 import { useLayoutStyles } from "../styles/layout";
 import { IGameChara, IUnitProfile } from "../types";
-import { getRemoteAssetURL, useCachedData } from "../utils";
+import { getRemoteAssetURL, useCachedData, useServerRegion } from "../utils";
 import { UnitLogoMap } from "../utils/resources";
 
 const useStyle = makeStyles((theme) => ({
@@ -23,15 +23,18 @@ const useStyle = makeStyles((theme) => ({
 const MemberImage: React.FC<{ id: number }> = ({ id }) => {
   const classes = useStyle();
   const { path } = useRouteMatch();
+  const [region] = useServerRegion();
 
   const [url, setUrl] = useState<string>("");
 
   useEffect(() => {
     getRemoteAssetURL(
       `character/character_select_rip/chr_tl_${id}.webp`,
-      setUrl
+      setUrl,
+      window.isChinaMainland ? "cn" : "ww",
+      region
     );
-  }, [id]);
+  }, [id, region]);
 
   return (
     <Grid item xs={3} md={2} key={`chara-${id}`}>
@@ -50,6 +53,7 @@ const MemberList: React.FC<{}> = () => {
   const classes = useStyle();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
+  const [region] = useServerRegion();
 
   const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
   const [gameCharas] = useCachedData<IGameChara>("gameCharacters");
@@ -93,7 +97,7 @@ const MemberList: React.FC<{}> = () => {
               <Link to={"/unit/" + unit}>
                 <img
                   className={classes.unitIcon}
-                  src={UnitLogoMap[unit]}
+                  src={UnitLogoMap[region][unit]}
                   alt={unit}
                 ></img>
               </Link>

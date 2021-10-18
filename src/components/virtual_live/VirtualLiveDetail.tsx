@@ -14,7 +14,7 @@ import { SettingContext } from "../../context";
 // import { useInteractiveStyles } from "../../styles/interactive";
 import { useLayoutStyles } from "../../styles/layout";
 import { IGameCharaUnit, IVirtualLiveInfo } from "../../types";
-import { getRemoteAssetURL, useCachedData } from "../../utils";
+import { getRemoteAssetURL, useCachedData, useServerRegion } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
 import { ContentTrans } from "../subs/ContentTrans";
 import { charaIcons } from "../../utils/resources";
@@ -33,6 +33,7 @@ const VirtualLiveDetail: React.FC<{}> = () => {
   const { getTranslated } = useAssetI18n();
   const { contentTransMode } = useContext(SettingContext)!;
   const { getVirtualLive } = useStrapi();
+  const [region] = useServerRegion();
 
   const [virtualLives] = useCachedData<IVirtualLiveInfo>("virtualLives");
   const [gameCharacterUnits] = useCachedData<IGameCharaUnit>(
@@ -84,14 +85,18 @@ const VirtualLiveDetail: React.FC<{}> = () => {
     if (virtualLive) {
       getRemoteAssetURL(
         `virtual_live/select/banner/${virtualLive.assetbundleName}_rip/${virtualLive.assetbundleName}.webp`,
-        setVrLiveLogo
+        setVrLiveLogo,
+        window.isChinaMainland ? "cn" : "ww",
+        region
       );
       getRemoteAssetURL(
         `home/banner/banner_virtuallive${virtualLiveId}_rip/banner_virtuallive${virtualLiveId}.webp`,
-        setVrLiveBanner
+        setVrLiveBanner,
+        window.isChinaMainland ? "cn" : "ww",
+        region
       );
     }
-  }, [virtualLive, virtualLiveId]);
+  }, [region, virtualLive, virtualLiveId]);
 
   return virtualLive && gameCharacterUnits ? (
     <Fragment>

@@ -5,4 +5,5 @@ build/
 node_modules/
 public/locales/
 .env.development
-.env.production*
+# .env.production*
+.env.production.local

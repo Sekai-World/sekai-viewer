@@ -45,16 +45,19 @@ import cardThumbFrameS1 from "../assets/frame/cardFrame_S_1.png";
 import cardThumbFrameS2 from "../assets/frame/cardFrame_S_2.png";
 import cardThumbFrameS3 from "../assets/frame/cardFrame_S_3.png";
 import cardThumbFrameS4 from "../assets/frame/cardFrame_S_4.png";
+import cardThumbFrameSBD from "../assets/frame/cardFrame_S_bd.png";
 
 import cardThumbFrameM1 from "../assets/frame/cardFrame_M_1.png";
 import cardThumbFrameM2 from "../assets/frame/cardFrame_M_2.png";
 import cardThumbFrameM3 from "../assets/frame/cardFrame_M_3.png";
 import cardThumbFrameM4 from "../assets/frame/cardFrame_M_4.png";
+import cardThumbFrameMBD from "../assets/frame/cardFrame_M_bd.png";
 
-import cardImageFrameS1 from "../assets/frame/cardFrame_L_1.png";
-import cardImageFrameS2 from "../assets/frame/cardFrame_L_2.png";
-import cardImageFrameS3 from "../assets/frame/cardFrame_L_3.png";
-import cardImageFrameS4 from "../assets/frame/cardFrame_L_4.png";
+import cardImageFrameL1 from "../assets/frame/cardFrame_L_1.png";
+import cardImageFrameL2 from "../assets/frame/cardFrame_L_2.png";
+import cardImageFrameL3 from "../assets/frame/cardFrame_L_3.png";
+import cardImageFrameL4 from "../assets/frame/cardFrame_L_4.png";
+import cardImageFrameLBD from "../assets/frame/cardFrame_L_bd.png";
 
 import cardMasterRankS0 from "../assets/common/master_rank/masterRank_S_0.png";
 import cardMasterRankS1 from "../assets/common/master_rank/masterRank_S_1.png";
@@ -63,12 +66,12 @@ import cardMasterRankS3 from "../assets/common/master_rank/masterRank_S_3.png";
 import cardMasterRankS4 from "../assets/common/master_rank/masterRank_S_4.png";
 import cardMasterRankS5 from "../assets/common/master_rank/masterRank_S_5.png";
 
-import LogoLightSound from "../assets/common/logol_outline/logo_light_sound.png";
-import LogoIdol from "../assets/common/logol_outline/logo_idol.png";
-import LogoPiapro from "../assets/common/logol_outline/logo_piapro.png";
-import LogoSchoolRefusal from "../assets/common/logol_outline/logo_school_refusal.png";
-import LogoStreet from "../assets/common/logol_outline/logo_street.png";
-import LogoThemePark from "../assets/common/logol_outline/logo_theme_park.png";
+// import LogoLightSound from "../assets/common/logol_outline/logo_light_sound.png";
+// import LogoIdol from "../assets/common/logol_outline/logo_idol.png";
+// import LogoPiapro from "../assets/common/logol_outline/logo_piapro.png";
+// import LogoSchoolRefusal from "../assets/common/logol_outline/logo_school_refusal.png";
+// import LogoStreet from "../assets/common/logol_outline/logo_street.png";
+// import LogoThemePark from "../assets/common/logol_outline/logo_theme_park.png";
 
 import LogoMiniLightSound from "../assets/common/logo_mini/unit_ts_1_penlight.png";
 import LogoMiniIdol from "../assets/common/logo_mini/unit_ts_2_penlight.png";
@@ -76,6 +79,7 @@ import LogoMiniStreet from "../assets/common/logo_mini/unit_ts_3_penlight.png";
 import LogoMiniThemePark from "../assets/common/logo_mini/unit_ts_4_penlight.png";
 import LogoMiniSchoolRefusal from "../assets/common/logo_mini/unit_ts_5_penlight.png";
 import LogoMiniPiapro from "../assets/common/logo_mini/unit_ts_6_penlight.png";
+import { ServerRegion } from "../types";
 
 export const charaIcons: { [key: string]: string } = {
   CharaIcon1,
@@ -133,6 +137,7 @@ export const cardThumbFrameMap: { [key: string]: string } = {
   2: cardThumbFrameS2,
   3: cardThumbFrameS3,
   4: cardThumbFrameS4,
+  bd: cardThumbFrameSBD,
 };
 
 export const cardThumbMediumFrameMap: { [key: string]: string } = {
@@ -140,13 +145,15 @@ export const cardThumbMediumFrameMap: { [key: string]: string } = {
   2: cardThumbFrameM2,
   3: cardThumbFrameM3,
   4: cardThumbFrameM4,
+  bd: cardThumbFrameMBD,
 };
 
 export const cardImageFrameMap: { [key: string]: string } = {
-  1: cardImageFrameS1,
-  2: cardImageFrameS2,
-  3: cardImageFrameS3,
-  4: cardImageFrameS4,
+  1: cardImageFrameL1,
+  2: cardImageFrameL2,
+  3: cardImageFrameL3,
+  4: cardImageFrameL4,
+  bd: cardImageFrameLBD,
 };
 
 export const cardMasterRankSmallMap: { [key: string]: string } = {
@@ -158,13 +165,33 @@ export const cardMasterRankSmallMap: { [key: string]: string } = {
   5: cardMasterRankS5,
 };
 
-export const UnitLogoMap: { [key: string]: string } = {
-  idol: LogoIdol,
-  light_sound: LogoLightSound,
-  piapro: LogoPiapro,
-  school_refusal: LogoSchoolRefusal,
-  street: LogoStreet,
-  theme_park: LogoThemePark,
+export const UnitLogoMap: {
+  [region in ServerRegion]: { [key: string]: string };
+} = {
+  jp: {
+    idol: `${process.env.PUBLIC_URL}/images/jp/logol_outline/logo_idol.png`,
+    light_sound: `${process.env.PUBLIC_URL}/images/jp/logol_outline/logo_light_sound.png`,
+    piapro: `${process.env.PUBLIC_URL}/images/jp/logol_outline/logo_piapro.png`,
+    school_refusal: `${process.env.PUBLIC_URL}/images/jp/logol_outline/logo_school_refusal.png`,
+    street: `${process.env.PUBLIC_URL}/images/jp/logol_outline/logo_street.png`,
+    theme_park: `${process.env.PUBLIC_URL}/images/jp/logol_outline/logo_theme_park.png`,
+  },
+  tw: {
+    idol: `${process.env.PUBLIC_URL}/images/tw/logol_outline/logo_idol.png`,
+    light_sound: `${process.env.PUBLIC_URL}/images/tw/logol_outline/logo_light_sound.png`,
+    piapro: `${process.env.PUBLIC_URL}/images/tw/logol_outline/logo_piapro.png`,
+    school_refusal: `${process.env.PUBLIC_URL}/images/tw/logol_outline/logo_school_refusal.png`,
+    street: `${process.env.PUBLIC_URL}/images/tw/logol_outline/logo_street.png`,
+    theme_park: `${process.env.PUBLIC_URL}/images/tw/logol_outline/logo_theme_park.png`,
+  },
+  en: {
+    idol: `${process.env.PUBLIC_URL}/images/en/logol_outline/logo_idol.png`,
+    light_sound: `${process.env.PUBLIC_URL}/images/en/logol_outline/logo_light_sound.png`,
+    piapro: `${process.env.PUBLIC_URL}/images/en/logol_outline/logo_piapro.png`,
+    school_refusal: `${process.env.PUBLIC_URL}/images/en/logol_outline/logo_school_refusal.png`,
+    street: `${process.env.PUBLIC_URL}/images/en/logol_outline/logo_street.png`,
+    theme_park: `${process.env.PUBLIC_URL}/images/en/logol_outline/logo_theme_park.png`,
+  },
 };
 
 export const UnitLogoMiniMap: { [key: string]: string } = {

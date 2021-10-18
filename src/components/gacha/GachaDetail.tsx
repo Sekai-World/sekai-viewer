@@ -40,7 +40,7 @@ import {
   IGachaCeilItem,
   IGachaInfo,
 } from "../../types";
-import { getRemoteAssetURL, useCachedData } from "../../utils";
+import { getRemoteAssetURL, useCachedData, useServerRegion } from "../../utils";
 import { CardThumb, CardThumbs } from "../subs/CardThumb";
 import rarityNormal from "../../assets/rarity_star_normal.png";
 import { useTranslation } from "react-i18next";
@@ -117,6 +117,7 @@ const GachaDetailPage: React.FC<{}> = () => {
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
   const { contentTransMode } = useContext(SettingContext)!;
+  const [region] = useServerRegion();
 
   const [gachas] = useCachedData<IGachaInfo>("gachas");
   const [gachaCeilItems] = useCachedData<IGachaCeilItem>("gachaCeilItems");
@@ -375,25 +376,33 @@ const GachaDetailPage: React.FC<{}> = () => {
         `gacha/${gacha.assetbundleName}/screen_rip/texture/${
           (gachaImageNameMap[gacha.id] || { bg: `bg_gacha${gacha.id}` }).bg
         }.webp`,
-        setGachaBackground
+        setGachaBackground,
+        window.isChinaMainland ? "cn" : "ww",
+        region
       );
       getRemoteAssetURL(
         `gacha/${gacha.assetbundleName}/screen_rip/texture/${
           (gachaImageNameMap[gacha.id] || { feature: `img_gacha${gacha.id}` })
             .feature
         }.webp`,
-        setGachaImage
+        setGachaImage,
+        window.isChinaMainland ? "cn" : "ww",
+        region
       );
       getRemoteAssetURL(
         `gacha/${gacha.assetbundleName}/logo_rip/logo.webp`,
-        setGachaIcon
+        setGachaIcon,
+        window.isChinaMainland ? "cn" : "ww",
+        region
       );
       getRemoteAssetURL(
         `home/banner/banner_gacha${gacha.id}_rip/banner_gacha${gacha.id}.webp`,
-        setGachaBanner
+        setGachaBanner,
+        window.isChinaMainland ? "cn" : "ww",
+        region
       );
     }
-  }, [gacha]);
+  }, [gacha, region]);
 
   useLayoutEffect(() => {
     if (gachaCeilItem) {
