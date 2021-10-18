@@ -65,7 +65,7 @@ const Settings = () => {
         {t("common:settings.title")}
       </Typography>
       <br />
-      <Grid direction="column">
+      <Grid container direction="column">
         <Grid item>
           <FormControl component="fieldset" style={{ margin: "1% 0" }}>
             <FormLabel component="legend">
