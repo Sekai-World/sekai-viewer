@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.8.0](https://github.com/Sekai-World/sekai-viewer/compare/v0.7.2...v0.8.0) (2021-10-18)
+
+
+### Features
+
+* add separate settings page ([e0b7f72](https://github.com/Sekai-World/sekai-viewer/commits/e0b7f727ed6c8cc9411e6dd74b26dcec26f4912c))
+* **event-tracker:** support multiple server region ([59d45c9](https://github.com/Sekai-World/sekai-viewer/commits/59d45c946b1d2e938e6d9d40657e3b7a23fd9d31))
+* support multiple server region ([64c307d](https://github.com/Sekai-World/sekai-viewer/commits/64c307dcc6e6e52707c23816cda4c48bbe51d49d))
+* **utils:** support multiple server regions ([38ceec3](https://github.com/Sekai-World/sekai-viewer/commits/38ceec3cd121f8cf2dee6fdd29d6c003b10bf9ca))
+
+
+### Refactors
+
+* **support:** remove container ([86cf630](https://github.com/Sekai-World/sekai-viewer/commits/86cf6303d2f4b6eece09b4b443495e5bee8f9783))
+
 ### [0.7.2](https://github.com/Sekai-World/sekai-viewer/compare/v0.7.1...v0.7.2) (2021-10-04)
 
 
