@@ -24,7 +24,11 @@ import {
   IUnitProfile,
   IUnitStory,
 } from "../../types";
-import { realityAreaWorldmap, useCachedData } from "../../utils";
+import {
+  realityAreaWorldmap,
+  useCachedData,
+  useServerRegion,
+} from "../../utils";
 import { useAssetI18n, useCharaName } from "../../utils/i18n";
 import { charaIcons, UnitLogoMap } from "../../utils/resources";
 // import { useAssetI18n } from "../../utils/i18n";
@@ -49,6 +53,7 @@ const StoryReader: React.FC<{}> = () => {
   const { getTranslated } = useAssetI18n();
   const getCharaName = useCharaName();
   const { path } = useRouteMatch();
+  const [region] = useServerRegion();
   // const match = useRouteMatch<{
   //   storyType: storyType;
   //   storyId: string;
@@ -443,7 +448,7 @@ const StoryReader: React.FC<{}> = () => {
                     <Card className={classes.selectCard}>
                       <CardContent>
                         <ImageWrapper
-                          src={UnitLogoMap[unit.unit]}
+                          src={UnitLogoMap[region][unit.unit]}
                           color=""
                           aspectRatio={2.591}
                           directSrc

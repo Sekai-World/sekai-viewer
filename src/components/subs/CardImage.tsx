@@ -155,12 +155,12 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
       getRemoteAssetURL(
         `character/member_small/${card.assetbundleName}_rip/card_normal.webp`,
         setNormalImg,
-        window.isChinaMainland
+        window.isChinaMainland ? "cn" : "ww"
       );
       getRemoteAssetURL(
         `character/member_small/${card.assetbundleName}_rip/card_after_training.webp`,
         setTrainedImg,
-        window.isChinaMainland
+        window.isChinaMainland ? "cn" : "ww"
       );
     }, [card]);
 

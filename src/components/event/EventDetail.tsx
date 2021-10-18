@@ -34,7 +34,7 @@ import {
   IGameCharaUnit,
   IVirtualLiveInfo,
 } from "../../types";
-import { getRemoteAssetURL, useCachedData } from "../../utils";
+import { getRemoteAssetURL, useCachedData, useServerRegion } from "../../utils";
 import { attrIconMap, charaIcons } from "../../utils/resources";
 import { useAssetI18n } from "../../utils/i18n";
 import { useDurationI18n } from "../../utils/i18nDuration";
@@ -80,6 +80,7 @@ const EventDetail: React.FC<{}> = () => {
   const { contentTransMode } = useContext(SettingContext)!;
   const [humanizeDuration] = useDurationI18n();
   const { getEvent } = useStrapi();
+  const [region] = useServerRegion();
 
   const [events] = useCachedData<IEventInfo>("events");
   const [eventDeckBonuses] = useCachedData<IEventDeckBonus>("eventDeckBonuses");
@@ -288,25 +289,29 @@ const EventDetail: React.FC<{}> = () => {
       getRemoteAssetURL(
         `event/${event.assetbundleName}/logo_rip/logo.webp`,
         setEventLogo,
-        window.isChinaMainland
+        window.isChinaMainland ? "cn" : "ww",
+        region
       );
       getRemoteAssetURL(
         `home/banner/${event.assetbundleName}_rip/${event.assetbundleName}.webp`,
         setEventBanner,
-        window.isChinaMainland
+        window.isChinaMainland ? "cn" : "ww",
+        region
       );
       getRemoteAssetURL(
         `event/${event.assetbundleName}/screen_rip/bg.webp`,
         setEventBackground,
-        window.isChinaMainland
+        window.isChinaMainland ? "cn" : "ww",
+        region
       );
       getRemoteAssetURL(
         `event/${event.assetbundleName}/screen_rip/character.webp`,
         setEventCharacter,
-        window.isChinaMainland
+        window.isChinaMainland ? "cn" : "ww",
+        region
       );
     }
-  }, [event]);
+  }, [event, region]);
 
   // useEffect(() => {
   //   if (event && ccTeams.length) {

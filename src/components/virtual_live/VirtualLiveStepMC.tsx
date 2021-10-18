@@ -19,7 +19,7 @@ import {
   IMasterOfCermonyData,
   VirtualLiveSetlist,
 } from "../../types";
-import { getRemoteAssetURL, useCachedData } from "../../utils";
+import { getRemoteAssetURL, useCachedData, useServerRegion } from "../../utils";
 import { charaIcons } from "../../utils/resources";
 import { useTranslation } from "react-i18next";
 import { AudioPlayButton } from "../storyreader/StoryReaderSnippet";
@@ -92,7 +92,7 @@ const MCCharacterSpawn: React.FC<{ data: CharacterSpawnEvent }> = ({
       getRemoteAssetURL(
         `thumbnail/costume_rip/${headCostume.thumbnailAssetbundleName}.webp`,
         setHeadThumbnail,
-        window.isChinaMainland
+        window.isChinaMainland ? "cn" : "ww"
       );
     }
   }, [headCostume]);
@@ -102,7 +102,7 @@ const MCCharacterSpawn: React.FC<{ data: CharacterSpawnEvent }> = ({
       getRemoteAssetURL(
         `thumbnail/costume_rip/${bodyCostume.thumbnailAssetbundleName}.webp`,
         setBodyThumbnail,
-        window.isChinaMainland
+        window.isChinaMainland ? "cn" : "ww"
       );
     }
   }, [bodyCostume]);
@@ -201,8 +201,7 @@ const MCCharacterTalk: React.FC<{ data: CharacterTalkEvent; mcId: string }> = ({
     getRemoteAssetURL(
       `virtual_live/mc/voice/${mcId}_rip/${data.VoiceKey}.mp3`,
       setVoiceUrl,
-      window.isChinaMainland,
-      true
+      window.isChinaMainland ? "cn" : "ww"
     );
   }, [data.VoiceKey, mcId]);
 
@@ -232,6 +231,7 @@ const VirtualLiveStepMC: React.FC<{
   data: VirtualLiveSetlist;
 }> = ({ data }) => {
   const layoutClasses = useLayoutStyles();
+  const [region] = useServerRegion();
 
   const [assetBundleURL, setAssetBundleURL] = useState("");
   const [mcSerialData, setMcSerialData] = useState<MCSerialData[]>([]);
@@ -241,10 +241,10 @@ const VirtualLiveStepMC: React.FC<{
     getRemoteAssetURL(
       `virtual_live/mc/scenario/${data.assetbundleName}_rip/${data.assetbundleName}.asset`,
       setAssetBundleURL,
-      window.isChinaMainland,
-      true
+      window.isChinaMainland ? "cn" : "ww",
+      region
     );
-  }, [data.assetbundleName]);
+  }, [data.assetbundleName, region]);
 
   useLayoutEffect(() => {
     if (!assetBundleURL) return;

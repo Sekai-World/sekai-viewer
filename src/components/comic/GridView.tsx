@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
 const GridView: React.FC<{
   data?: ITipInfoComic;
   index?: number;
-  lang?: string;
+  lang?: "ja" | "fr" | "ru" | "zhs" | "zht" | "en";
   handleCardClick?: (index: number) => void;
 }> = ({ data, index, lang, handleCardClick }) => {
   const classes = useStyles();
@@ -42,25 +42,26 @@ const GridView: React.FC<{
     if (data) {
       switch (lang) {
         case "ja":
+        case "zht":
           getRemoteAssetURL(
             `comic/one_frame_rip/${data.assetbundleName}.webp`,
             setImageURL,
-            window.isChinaMainland
+            window.isChinaMainland ? "cn" : "ww",
+            lang === "zht" ? "tw" : "jp"
           );
           break;
         case "en":
           getRemoteAssetURL(
             `comic_${lang}/${data.assetbundleName}.jpg`,
             setImageURL,
-            window.isChinaMainland,
-            true
+            window.isChinaMainland ? "cn" : "minio"
           );
           break;
         default:
           getRemoteAssetURL(
             `comic_${lang}/${data.assetbundleName}.png`,
             setImageURL,
-            window.isChinaMainland
+            window.isChinaMainland ? "cn" : "minio"
           );
           break;
       }

@@ -11,7 +11,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
 import { IMusicInfo } from "../../types";
-import { getRemoteAssetURL } from "../../utils";
+import { getRemoteAssetURL, useServerRegion } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
 import { ContentTrans } from "../subs/ContentTrans";
 import SpoilerTag from "../subs/SpoilerTag";
@@ -37,6 +37,7 @@ const GridView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
   const { path } = useRouteMatch();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
+  const [region] = useServerRegion();
 
   const [jacket, setJacket] = useState<string>("");
 
@@ -45,9 +46,10 @@ const GridView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
       getRemoteAssetURL(
         `music/jacket/${data.assetbundleName}_rip/${data.assetbundleName}.webp`,
         setJacket,
-        window.isChinaMainland
+        window.isChinaMainland ? "cn" : "ww",
+        region
       );
-  }, [data]);
+  }, [data, region]);
 
   if (!data) {
     // loading

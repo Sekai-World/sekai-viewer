@@ -269,8 +269,7 @@ const CardDetail: React.FC<{}> = () => {
         getRemoteAssetURL(
           `sound/gacha/get_voice/${_card.assetbundleName}_rip/${_card.assetbundleName}.mp3`,
           setGachaPhraseUrl,
-          window.isChinaMainland,
-          true
+          window.isChinaMainland ? "cn" : "minio"
         );
     }
   }, [
@@ -310,23 +309,23 @@ const CardDetail: React.FC<{}> = () => {
       getRemoteAssetURL(
         `character/member/${card.assetbundleName}_rip/card_normal.webp`,
         setNormalImg,
-        window.isChinaMainland
+        window.isChinaMainland ? "cn" : "ww"
       );
       getRemoteAssetURL(
         `character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`,
         setNormalTrimImg,
-        window.isChinaMainland
+        window.isChinaMainland ? "cn" : "ww"
       );
       if (card.rarity >= 3) {
         getRemoteAssetURL(
           `character/member/${card.assetbundleName}_rip/card_after_training.webp`,
           setTrainedImg,
-          window.isChinaMainland
+          window.isChinaMainland ? "cn" : "ww"
         );
         getRemoteAssetURL(
           `character/member_cutout_trm/${card.assetbundleName}_rip/after_training.webp`,
           setTrainedTrimImg,
-          window.isChinaMainland
+          window.isChinaMainland ? "cn" : "ww"
         );
       }
     }

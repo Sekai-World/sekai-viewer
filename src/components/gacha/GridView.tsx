@@ -9,7 +9,7 @@ import { Skeleton } from "@material-ui/lab";
 import React, { useEffect, useState } from "react";
 import { Link, useRouteMatch } from "react-router-dom";
 import { IGachaInfo } from "../../types";
-import { getRemoteAssetURL } from "../../utils";
+import { getRemoteAssetURL, useServerRegion } from "../../utils";
 import { ContentTrans } from "../subs/ContentTrans";
 import SpoilerTag from "../subs/SpoilerTag";
 
@@ -34,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
 const GridView: React.FC<{ data?: IGachaInfo }> = ({ data }) => {
   const classes = useStyles();
   const { path } = useRouteMatch();
+  const [region] = useServerRegion();
 
   const [url, setUrl] = useState<string>("");
 
@@ -41,10 +42,12 @@ const GridView: React.FC<{ data?: IGachaInfo }> = ({ data }) => {
     if (data) {
       getRemoteAssetURL(
         `gacha/${data.assetbundleName}/logo_rip/logo.webp`,
-        setUrl
+        setUrl,
+        window.isChinaMainland ? "cn" : "ww",
+        region
       );
     }
-  }, [data]);
+  }, [data, region]);
 
   if (!data) {
     // loading

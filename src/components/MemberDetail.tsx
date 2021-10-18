@@ -23,7 +23,7 @@ import {
   ICardInfo,
   IUnitProfile,
 } from "../types";
-import { getRemoteAssetURL, useCachedData } from "../utils";
+import { getRemoteAssetURL, useCachedData, useServerRegion } from "../utils";
 import { UnitLogoMap } from "../utils/resources";
 import { CardThumb } from "./subs/CardThumb";
 import ColorPreview from "./subs/ColorPreview";
@@ -67,6 +67,7 @@ const MemberDetail: React.FC<{}> = () => {
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const getCharaName = useCharaName();
+  const [region] = useServerRegion();
 
   const [cards] = useCachedData<ICardInfo>("cards");
   const [charas] = useCachedData<IGameChara>("gameCharacters");
@@ -149,17 +150,23 @@ const MemberDetail: React.FC<{}> = () => {
   useEffect(() => {
     getRemoteAssetURL(
       `character/trim_rip/chr_trim_${charaId}.webp`,
-      setCharaTrimImg
+      setCharaTrimImg,
+      window.isChinaMainland ? "cn" : "ww",
+      region
     );
     getRemoteAssetURL(
       `character/label_rip/chr_h_lb_${charaId}.webp`,
-      setCharaLabelHImg
+      setCharaLabelHImg,
+      window.isChinaMainland ? "cn" : "ww",
+      region
     );
     getRemoteAssetURL(
       `character/label_vertical_rip/chr_v_lb_${charaId}.webp`,
-      setCharaLabelVImg
+      setCharaLabelVImg,
+      window.isChinaMainland ? "cn" : "ww",
+      region
     );
-  }, [charaId]);
+  }, [charaId, region]);
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
     setTabVal(newValue);
@@ -290,7 +297,7 @@ const MemberDetail: React.FC<{}> = () => {
             <Link to={"/unit/" + chara.unit}>
               <img
                 className={classes["unit-logo-img"]}
-                src={UnitLogoMap[chara.unit]}
+                src={UnitLogoMap[region][chara.unit]}
                 alt={chara.unit}
               ></img>
             </Link>
@@ -431,7 +438,7 @@ const MemberDetail: React.FC<{}> = () => {
                         >
                           <img
                             className={classes["unit-logo-large"]}
-                            src={UnitLogoMap[csu.unit]}
+                            src={UnitLogoMap[region][csu.unit]}
                             alt={csu.unit}
                           ></img>
                           <Typography

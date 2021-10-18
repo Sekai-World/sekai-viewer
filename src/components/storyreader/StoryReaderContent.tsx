@@ -92,7 +92,7 @@ const StoryReaderContent: React.FC<{ storyType: string; storyId: string }> = ({
             getRemoteAssetURL(
               `story/episode_image/${chapter.assetbundleName}_rip/${episode.assetbundleName}.webp`,
               setBannerUrl,
-              window.isChinaMainland
+              window.isChinaMainland ? "cn" : "ww"
             );
             getProcessedScenarioData(
               `scenario/unitstory/${chapter.assetbundleName}_rip/${episode.scenarioId}.asset`,
@@ -129,7 +129,7 @@ const StoryReaderContent: React.FC<{ storyType: string; storyId: string }> = ({
             getRemoteAssetURL(
               `event_story/${chapter.assetbundleName}/episode_image_rip/${episode.assetbundleName}.webp`,
               setBannerUrl,
-              window.isChinaMainland
+              window.isChinaMainland ? "cn" : "ww"
             );
             getProcessedScenarioData(
               `event_story/${chapter.assetbundleName}/scenario_rip/${episode.scenarioId}.asset`,
@@ -177,7 +177,7 @@ const StoryReaderContent: React.FC<{ storyType: string; storyId: string }> = ({
             getRemoteAssetURL(
               `character/member_small/${episode.assetbundleName}_rip/card_normal.webp`,
               setBannerUrl,
-              window.isChinaMainland
+              window.isChinaMainland ? "cn" : "ww"
             );
             getProcessedScenarioData(
               `character/member/${episode.assetbundleName}_rip/${episode.scenarioId}.asset`,

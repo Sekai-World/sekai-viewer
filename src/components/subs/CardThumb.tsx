@@ -56,7 +56,7 @@ export const CardThumb: React.FC<
           _trained ? "after_training" : "normal"
         }.webp`,
         setCardThumbImg,
-        window.isChinaMainland
+        window.isChinaMainland ? "cn" : "ww"
       );
     }
   }, [card, _trained]);

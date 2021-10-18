@@ -12,7 +12,7 @@ import { Link, useParams } from "react-router-dom";
 import Image from "material-ui-image";
 import { useLayoutStyles } from "../styles/layout";
 import { IGameChara, IMusicInfo, IMusicTagInfo, IUnitProfile } from "../types";
-import { getRemoteAssetURL, useCachedData } from "../utils";
+import { getRemoteAssetURL, useCachedData, useServerRegion } from "../utils";
 import { useAssetI18n, useCharaName } from "../utils/i18n";
 import { charaIcons, UnitLogoMap } from "../utils/resources";
 import ColorPreview from "./subs/ColorPreview";
@@ -74,6 +74,7 @@ const UnitDetail: React.FC<{}> = () => {
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
   const getCharaName = useCharaName();
+  const [region] = useServerRegion();
 
   const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
   const [gameCharas] = useCachedData<IGameChara>("gameCharacters");
@@ -113,7 +114,7 @@ const UnitDetail: React.FC<{}> = () => {
       <Container className={layoutClasses.content} maxWidth="md">
         <div style={{ textAlign: "center" }}>
           <img
-            src={UnitLogoMap[unit.unit]}
+            src={UnitLogoMap[region][unit.unit]}
             alt={unit.unitName}
             style={{ maxWidth: "100%" }}
           ></img>

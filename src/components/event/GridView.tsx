@@ -11,7 +11,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
 import { IEventInfo } from "../../types";
-import { getRemoteAssetURL } from "../../utils";
+import { getRemoteAssetURL, useServerRegion } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
 import { ContentTrans } from "../subs/ContentTrans";
 import SpoilerTag from "../subs/SpoilerTag";
@@ -45,6 +45,7 @@ const GridView: React.FC<{ data?: IEventInfo }> = ({ data }) => {
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
   const { path } = useRouteMatch();
+  const [region] = useServerRegion();
 
   const [eventLogo, setEventLogo] = useState<string>("");
 
@@ -52,10 +53,12 @@ const GridView: React.FC<{ data?: IEventInfo }> = ({ data }) => {
     if (data) {
       getRemoteAssetURL(
         `event/${data.assetbundleName}/logo_rip/logo.webp`,
-        setEventLogo
+        setEventLogo,
+        window.isChinaMainland ? "cn" : "ww",
+        region
       );
     }
-  }, [data]);
+  }, [data, region]);
 
   if (!data) {
     // loading

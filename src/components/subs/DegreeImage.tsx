@@ -1,8 +1,13 @@
 import { Skeleton } from "@material-ui/lab";
 import React, { useEffect, useState } from "react";
 import { useSvgStyles } from "../../styles/svg";
-import { IResourceBoxInfo, IHonorInfo, IHonorGroup } from "../../types";
-import { getRemoteAssetURL, useCachedData } from "../../utils";
+import {
+  IResourceBoxInfo,
+  IHonorInfo,
+  IHonorGroup,
+  ResourceBoxDetail,
+} from "../../types";
+import { getRemoteAssetURL, useCachedData, useServerRegion } from "../../utils";
 import { degreeFrameMap } from "../../utils/resources";
 import degreeLevelIcon from "../../assets/frame/icon_degreeLv.png";
 
@@ -15,6 +20,7 @@ const DegreeImage: React.FC<
   } & React.HTMLProps<HTMLDivElement>
 > = ({ resourceBoxId, type, honorId, style, honorLevel: _honorLevel }) => {
   const classes = useSvgStyles();
+  const [region] = useServerRegion();
 
   const [resourceBoxes] = useCachedData<IResourceBoxInfo>("resourceBoxes");
   const [honors] = useCachedData<IHonorInfo>("honors");
@@ -28,34 +34,26 @@ const DegreeImage: React.FC<
 
   useEffect(() => {
     if (resourceBoxes && honors) {
+      let honorDetail: ResourceBoxDetail | undefined;
+      if (resourceBoxId) {
+        honorDetail = resourceBoxes
+          .find(
+            (resBox) =>
+              resBox.resourceBoxPurpose === type! && resBox.id === resourceBoxId
+          )!
+          .details.find((detail) => detail.resourceType === "honor");
+      }
       setHonor(
         honors.find((honor) =>
-          resourceBoxId
-            ? honor.id ===
-              resourceBoxes
-                .find(
-                  (resBox) =>
-                    resBox.resourceBoxPurpose === type! &&
-                    resBox.id === resourceBoxId
-                )!
-                .details.find((detail) => detail.resourceType === "honor")!
-                .resourceId
+          resourceBoxId && honorDetail
+            ? honor.id === honorDetail.resourceId
             : honorId
             ? honor.id === honorId
             : false
         )
       );
-      if (resourceBoxId) {
-        setHonorLevel(
-          resourceBoxes
-            .find(
-              (resBox) =>
-                resBox.resourceBoxPurpose === type! &&
-                resBox.id === resourceBoxId
-            )!
-            .details.find((detail) => detail.resourceType === "honor")!
-            .resourceLevel
-        );
+      if (honorDetail) {
+        setHonorLevel(honorDetail.resourceLevel);
       }
     }
   }, [honors, resourceBoxes, resourceBoxId, type, honorId]);
@@ -71,30 +69,38 @@ const DegreeImage: React.FC<
       if (honorGroup && honorGroup.backgroundAssetbundleName) {
         getRemoteAssetURL(
           `honor/${honorGroup.backgroundAssetbundleName}_rip/degree_main.webp`,
-          setDegreeImage
+          setDegreeImage,
+          window.isChinaMainland ? "cn" : "ww",
+          region
         );
       } else
         getRemoteAssetURL(
           `honor/${honor.assetbundleName}_rip/degree_main.webp`,
-          setDegreeImage
+          setDegreeImage,
+          window.isChinaMainland ? "cn" : "ww",
+          region
         );
       if (type === "event_ranking_reward")
         getRemoteAssetURL(
           `honor/${honor.assetbundleName}_rip/rank_main.webp`,
-          setDegreeRankImage
+          setDegreeRankImage,
+          window.isChinaMainland ? "cn" : "ww",
+          region
         );
       else if (honor.name.startsWith("TOP") || honor.name.includes("位"))
         getRemoteAssetURL(
           `honor/${honor.assetbundleName}_rip/rank_main.webp`,
-          setDegreeRankImage
+          setDegreeRankImage,
+          window.isChinaMainland ? "cn" : "ww",
+          region
         );
     }
     return () => {
       setDegreeRankImage("");
     };
-  }, [honor, honorGroup, type]);
+  }, [honor, honorGroup, region, type]);
 
-  return honor ? (
+  return honor === undefined ? null : !!honor ? (
     <div className={classes.svg}>
       <svg
         style={style}

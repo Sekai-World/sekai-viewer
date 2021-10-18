@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import Image from "material-ui-image";
 import { useLayoutStyles } from "../../styles/layout";
-import { getRemoteAssetURL } from "../../utils";
+import { getRemoteAssetURL, useServerRegion } from "../../utils";
 import { useCurrentEvent } from "../../utils/apiClient";
 import Countdown from "../subs/Countdown";
 
@@ -28,6 +28,7 @@ const CurrentEventWidget: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const { currEvent } = useCurrentEvent();
+  const [region] = useServerRegion();
 
   const [eventBanner, setEventBanner] = useState("");
 
@@ -35,10 +36,12 @@ const CurrentEventWidget: React.FC<{}> = () => {
     if (currEvent) {
       getRemoteAssetURL(
         `home/banner/${currEvent.eventJson.assetbundleName}_rip/${currEvent.eventJson.assetbundleName}.webp`,
-        setEventBanner
+        setEventBanner,
+        window.isChinaMainland ? "cn" : "ww",
+        region
       );
     }
-  }, [currEvent]);
+  }, [currEvent, region]);
 
   return (
     <Grid container>

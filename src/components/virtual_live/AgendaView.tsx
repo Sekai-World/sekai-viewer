@@ -10,7 +10,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { IVirtualLiveInfo } from "../../types";
-import { getRemoteAssetURL } from "../../utils";
+import { getRemoteAssetURL, useServerRegion } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
 import { ContentTrans } from "../subs/ContentTrans";
 import SpoilerTag from "../subs/SpoilerTag";
@@ -45,6 +45,7 @@ const AgendaView: React.FC<{ data?: IVirtualLiveInfo }> = ({ data }) => {
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
   // const { path } = useRouteMatch();
+  const [region] = useServerRegion();
 
   const [virtualLiveLogo, setVirtualLiveLogo] = useState<string>("");
 
@@ -52,10 +53,12 @@ const AgendaView: React.FC<{ data?: IVirtualLiveInfo }> = ({ data }) => {
     if (data) {
       getRemoteAssetURL(
         `virtual_live/select/banner/${data.assetbundleName}_rip/${data.assetbundleName}.png`,
-        setVirtualLiveLogo
+        setVirtualLiveLogo,
+        window.isChinaMainland ? "cn" : "ww",
+        region
       );
     }
-  }, [data]);
+  }, [data, region]);
 
   if (!data) {
     // loading

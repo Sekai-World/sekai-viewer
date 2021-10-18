@@ -1,6 +1,7 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import Image from "material-ui-image";
 import { getRemoteAssetURL } from "../../utils";
+import { ServerRegion } from "../../types";
 
 interface ImageProps
   extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, "loading"> {
@@ -22,11 +23,9 @@ interface ImageProps
   style?: object;
 }
 
-const ImageWrapper: React.FC<ImageProps & { directSrc?: boolean }> = ({
-  src,
-  directSrc = false,
-  ...props
-}) => {
+const ImageWrapper: React.FC<
+  ImageProps & { directSrc?: boolean; region?: ServerRegion }
+> = ({ src, directSrc = false, region = "jp", ...props }) => {
   const [isReady, setIsReady] = useState(false);
   const [realSrc, setRealSrc] = useState(src);
 
@@ -38,12 +37,13 @@ const ImageWrapper: React.FC<ImageProps & { directSrc?: boolean }> = ({
           setRealSrc(value);
           setIsReady(true);
         },
-        window.isChinaMainland
+        window.isChinaMainland ? "cn" : "ww",
+        region
       );
     } else {
       setIsReady(true);
     }
-  }, [directSrc, src]);
+  }, [directSrc, region, src]);
   return isReady ? <Image src={realSrc} {...props} /> : null;
 };
 
