@@ -1,13 +1,13 @@
-import { Container, Grid, Typography } from "@material-ui/core";
+import { Container, Grid, Typography } from "@mui/material";
 import {
   GetApp,
   GetAppOutlined,
   Publish,
   PublishOutlined,
   Update,
-} from "@material-ui/icons";
-import { ToggleButtonGroup, ToggleButton } from "@material-ui/lab";
-import { Pound } from "mdi-material-ui";
+} from "@mui/icons-material";
+import { ToggleButtonGroup, ToggleButton } from "@mui/material";
+import Pound from "~icons/mdi/pound";
 import React, {
   Fragment,
   useCallback,
@@ -183,11 +183,13 @@ const VirtualLiveList: React.FC<{}> = () => {
           callback={callback}
           data={virtualLives}
           gridSize={
-            ({
-              agenda: {
-                xs: 12,
-              },
-            } as const)[viewGridType]
+            (
+              {
+                agenda: {
+                  xs: 12,
+                },
+              } as const
+            )[viewGridType]
           }
         />
       </Container>

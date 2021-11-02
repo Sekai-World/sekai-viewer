@@ -9,11 +9,11 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-} from "@material-ui/core";
-import { AccountCircle, Twitter, VpnKey } from "@material-ui/icons";
+} from "@mui/material";
+import { AccountCircle, Twitter, VpnKey } from "@mui/icons-material";
 import { Field, Form, Formik } from "formik";
-import { TextField } from "formik-material-ui";
-import { Discord } from "mdi-material-ui";
+import { TextField } from "formik-mui";
+import Discord from "~icons/mdi/discord";
 import React, { Fragment, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, Link as RouteLink } from "react-router-dom";
@@ -34,11 +34,8 @@ const Login: React.FC<{}> = () => {
   const history = useHistory();
   const jwtAuth = useJwtAuth();
   const { decodedToken } = useJwtAuth();
-  const {
-    postLoginLocal,
-    getRedirectConnectLoginUrl,
-    getUserMetadataMe,
-  } = useStrapi();
+  const { postLoginLocal, getRedirectConnectLoginUrl, getUserMetadataMe } =
+    useStrapi();
   const { showError } = useAlertSnackbar();
 
   useEffect(() => {
@@ -99,8 +96,8 @@ const Login: React.FC<{}> = () => {
           }}
         >
           {({ submitForm, isSubmitting, errors, dirty, isValid }) => (
-            <Grid container justify="center">
-              <Grid item xs={12} md={6} container justify="center">
+            <Grid container justifyContent="center">
+              <Grid item xs={12} md={6} container justifyContent="center">
                 <Form>
                   <Field
                     component={TextField}

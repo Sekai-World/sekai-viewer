@@ -3,7 +3,6 @@ import {
   AppBar,
   Collapse,
   Container,
-  unstable_createMuiStrictModeTheme as createMuiTheme,
   CssBaseline,
   Divider,
   Drawer,
@@ -14,18 +13,24 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  makeStyles,
   Menu,
   MenuItem,
-  Theme,
-  ThemeProvider,
   Toolbar,
   Typography,
   useMediaQuery,
   Grid,
   Snackbar,
   Button,
-} from "@material-ui/core";
+  Alert,
+  Skeleton,
+} from "@mui/material";
+import {
+  StyledEngineProvider,
+  ThemeProvider,
+  Theme,
+  createTheme,
+} from "@mui/material/styles";
+import { makeStyles } from "@mui/styles";
 import {
   Menu as MenuIcon,
   Home as HomeIcon,
@@ -50,15 +55,12 @@ import {
   LiveTv,
   Translate,
   Dns,
-} from "@material-ui/icons";
-import { Alert, Skeleton } from "@material-ui/lab";
-import {
-  AccountGroup,
-  Bullhorn,
-  Calculator,
-  CalendarText,
-  StickerEmoji,
-} from "mdi-material-ui";
+} from "@mui/icons-material";
+import AccountGroup from "~icons/mdi/account-group";
+import Bullhorn from "~icons/mdi/bullhorn";
+import Calculator from "~icons/mdi/calculator";
+import CalendarText from "~icons/mdi/calendar-text";
+import StickerEmoji from "~icons/mdi/sticker-emoji";
 import React, {
   // forwardRef,
   useMemo,
@@ -83,8 +85,13 @@ import { SettingContext, UserContext, UserProvider } from "../context";
 import ScrollTop from "./subs/ScrollTop";
 // import Settings from "./subs/Settings";
 import * as serviceWorker from "../serviceWorker";
-import { SnackbarProvider } from "material-ui-snackbar-provider";
-import AlertSnackbar from "./subs/AlertSnackbar";
+import { SnackbarProvider } from "notistack";
+// import AlertSnackbar from "./subs/AlertSnackbar";
+
+declare module "@mui/styles/defaultTheme" {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface DefaultTheme extends Theme {}
+}
 
 const drawerWidth = 240;
 const CardList = lazy(() => import("./card/CardList"));
@@ -184,7 +191,7 @@ const useStyles = makeStyles((theme) => ({
   listItemInner: {
     "padding-top": "4px",
     "padding-bottom": "4px",
-    [theme.breakpoints.down("md")]: {
+    [theme.breakpoints.down("lg")]: {
       "padding-top": "12px",
       "padding-bottom": "12px",
     },
@@ -338,12 +345,10 @@ function ListItemWithChildren(props: {
   );
 }
 
-function App() {
+const AppInner = (props: { theme: Theme }) => {
   const { t } = useTranslation();
-  const { displayMode } = useContext(SettingContext)!;
   const history = useHistory();
   const { goBack } = useHistory();
-  const preferDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
 
   const leftBtns: IListItemLinkProps[][] = React.useMemo(
     () => [
@@ -538,6 +543,7 @@ function App() {
   );
 
   const classes = useStyles();
+  const { theme } = props;
 
   const [mobileOpen, setMobileOpen] = useState(false);
   // const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -545,38 +551,11 @@ function App() {
     boolean[]
   >(leftBtns.map(() => true));
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [
-    mobileMenuAnchorEl,
-    setMobileMenuAnchorEl,
-  ] = useState<HTMLElement | null>(null);
+  const [mobileMenuAnchorEl, setMobileMenuAnchorEl] =
+    useState<HTMLElement | null>(null);
   const [updateBarOpen, setUpdateBarOpen] = useState(false);
   const [waitingWorker, setWaitingWorker] = useState<ServiceWorker | null>(
     null
-  );
-
-  const theme = React.useMemo(
-    () =>
-      createMuiTheme({
-        palette: {
-          type:
-            displayMode === "auto"
-              ? preferDarkMode
-                ? "dark"
-                : "light"
-              : displayMode,
-          primary: {
-            main:
-              displayMode === "auto"
-                ? preferDarkMode
-                  ? "#7986cb"
-                  : "#3f51b5"
-                : displayMode === "dark"
-                ? "#7986cb"
-                : "#3f51b5",
-          },
-        },
-      }),
-    [displayMode, preferDarkMode]
   );
 
   const handleDrawerToggle = () => {
@@ -805,295 +784,350 @@ function App() {
   }, [waitingWorker]);
 
   return (
-    <ThemeProvider theme={theme}>
-      <SnackbarProvider SnackbarComponent={AlertSnackbar}>
-        <div className={classes.root}>
-          <CssBaseline />
-          <AppBar position="fixed" className={classes.appBar}>
-            <Toolbar>
-              <IconButton
-                color="inherit"
-                edge="start"
-                onClick={handleDrawerToggle}
-                className={classes.menuButton}
+    <SnackbarProvider>
+      <div className={classes.root}>
+        <CssBaseline />
+        <AppBar position="fixed" className={classes.appBar}>
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              edge="start"
+              onClick={handleDrawerToggle}
+              className={classes.menuButton}
+              size="large"
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap classes={{ root: classes.title }}>
+              Sekai Viewer <small>{import.meta.env.PACKAGE_VERSION}</small>
+            </Typography>
+            <IconButton
+              color="inherit"
+              onClick={() => goBack()}
+              disableRipple
+              style={{ padding: ".6rem" }}
+              size="medium"
+            >
+              <ArrowBackIosIcon fontSize="inherit" />
+            </IconButton>
+            <Hidden mdDown implementation="css">
+              <Link
+                to="/settings"
+                style={{ color: theme.palette.common.white }}
               >
-                <MenuIcon />
-              </IconButton>
-              <Typography variant="h6" noWrap classes={{ root: classes.title }}>
-                Sekai Viewer <small>{process.env.REACT_APP_VERSION}</small>
-              </Typography>
-              <IconButton
-                color="inherit"
-                onClick={() => goBack()}
-                disableRipple
-                style={{ padding: ".6rem" }}
-                size="medium"
-              >
-                <ArrowBackIosIcon fontSize="inherit" />
-              </IconButton>
-              <Hidden smDown implementation="css">
-                <Link
-                  to="/settings"
-                  style={{ color: theme.palette.common.white }}
-                >
-                  <IconButton
-                    color="inherit"
-                    style={{ padding: ".6rem" }}
-                    size="medium"
-                  >
-                    <SettingsIcon fontSize="inherit" />
-                  </IconButton>
-                </Link>
-                <Link to="/user" style={{ color: theme.palette.common.white }}>
-                  <IconButton
-                    color="inherit"
-                    style={{ padding: ".6rem" }}
-                    size="medium"
-                  >
-                    <AccountCircle fontSize="inherit" />
-                  </IconButton>
-                </Link>
-              </Hidden>
-              <Hidden mdUp implementation="css">
                 <IconButton
-                  onClick={(ev) => {
-                    setMobileMenuOpen(true);
-                    setMobileMenuAnchorEl(ev.currentTarget);
-                  }}
                   color="inherit"
+                  style={{ padding: ".6rem" }}
+                  size="medium"
                 >
-                  <MoreVert />
+                  <SettingsIcon fontSize="inherit" />
                 </IconButton>
-              </Hidden>
-            </Toolbar>
-          </AppBar>
-          <Menu
-            anchorEl={mobileMenuAnchorEl}
-            keepMounted
-            open={mobileMenuOpen}
-            onClose={() => {
+              </Link>
+              <Link to="/user" style={{ color: theme.palette.common.white }}>
+                <IconButton
+                  color="inherit"
+                  style={{ padding: ".6rem" }}
+                  size="medium"
+                >
+                  <AccountCircle fontSize="inherit" />
+                </IconButton>
+              </Link>
+            </Hidden>
+            <Hidden mdUp implementation="css">
+              <IconButton
+                onClick={(ev) => {
+                  setMobileMenuOpen(true);
+                  setMobileMenuAnchorEl(ev.currentTarget);
+                }}
+                color="inherit"
+                size="large"
+              >
+                <MoreVert />
+              </IconButton>
+            </Hidden>
+          </Toolbar>
+        </AppBar>
+        <Menu
+          anchorEl={mobileMenuAnchorEl}
+          keepMounted
+          open={mobileMenuOpen}
+          onClose={() => {
+            setMobileMenuOpen(false);
+            setMobileMenuAnchorEl(null);
+          }}
+        >
+          <MenuItem
+            onClick={() => {
+              // setIsSettingsOpen(true);
+              history.push("/settings");
               setMobileMenuOpen(false);
               setMobileMenuAnchorEl(null);
             }}
           >
-            <MenuItem
-              onClick={() => {
-                // setIsSettingsOpen(true);
-                history.push("/settings");
-                setMobileMenuOpen(false);
-                setMobileMenuAnchorEl(null);
-              }}
-            >
-              <IconButton color="inherit" size="medium">
-                <SettingsIcon fontSize="inherit" />
-              </IconButton>
-              <Typography>{t("common:settings.title")}</Typography>
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                history.push("/user");
-                setMobileMenuOpen(false);
-                setMobileMenuAnchorEl(null);
-              }}
-            >
-              <IconButton color="inherit" size="medium">
-                <AccountCircle fontSize="inherit" />
-              </IconButton>
-              <Typography>{t("common:user")}</Typography>
-            </MenuItem>
-          </Menu>
-          <nav className={classes.drawer}>
-            <Hidden mdUp implementation="css">
-              <Drawer
-                container={container}
-                variant="temporary"
-                anchor={theme.direction === "rtl" ? "right" : "left"}
-                open={mobileOpen}
-                onClose={handleDrawerToggle}
-                classes={{
-                  paper: classes.drawerPaper,
-                }}
-                ModalProps={{
-                  keepMounted: true,
-                }}
-              >
-                {drawer}
-              </Drawer>
-            </Hidden>
-            <Hidden smDown implementation="css">
-              <Drawer
-                variant="permanent"
-                open
-                classes={{
-                  paper: classes.drawerPaper,
-                }}
-              >
-                {drawer}
-              </Drawer>
-            </Hidden>
-          </nav>
-          <Container className={classes.content}>
-            <div className={classes.toolbar} id="back-to-top-anchor"></div>
-            <UserProvider>
-              <Switch>
-                <Suspense
-                  fallback={
-                    <Grid container direction="column" spacing={3}>
-                      <Grid item>
-                        <Skeleton variant="rect" width="30%" height={30} />
-                      </Grid>
-                      <Grid item>
-                        <Skeleton variant="rect" width="90%" height={200} />
-                      </Grid>
-                      <Grid item>
-                        <Skeleton variant="rect" width="90%" height={200} />
-                      </Grid>
-                    </Grid>
-                  }
-                >
-                  <Route path="/" exact>
-                    <HomeView />
-                  </Route>
-                  <Route path="/card" exact>
-                    <CardList />
-                  </Route>
-                  <Route path="/card/:cardId(\d+)">
-                    <CardDetail />
-                  </Route>
-                  <Route path="/music" exact>
-                    <MusicList />
-                  </Route>
-                  <Route path="/music/:musicId(\d+)">
-                    <MusicDetail />
-                  </Route>
-                  <Route path="/gacha" exact>
-                    <GachaList />
-                  </Route>
-                  <Route path="/gacha/:gachaId">
-                    <GachaDetail />
-                  </Route>
-                  <Route path="/event" exact>
-                    <EventList />
-                  </Route>
-                  <Route path="/event/:eventId">
-                    <EventDetail />
-                  </Route>
-                  <Route path="/stamp">
-                    <StampList />
-                  </Route>
-                  <Route path="/comic">
-                    <ComicList />
-                  </Route>
-                  <Route path="/chara" exact>
-                    <MemberList />
-                  </Route>
-                  <Route path="/chara/:charaId">
-                    <MemberDetail />
-                  </Route>
-                  <Route path="/unit/:unitId">
-                    <UnitDetail />
-                  </Route>
-                  <Route path="/about" exact>
-                    <About />
-                  </Route>
-                  <Route path="/support" exact>
-                    <Support />
-                  </Route>
-                  <Route path="/music_recommend" exact>
-                    <MusicRecommend />
-                  </Route>
-                  <Route path="/event_calc" exact>
-                    <EventPointCalc />
-                  </Route>
-                  <Route path="/storyreader">
-                    <StoryReader />
-                  </Route>
-                  <Route path="/mission/title">
-                    <TitleMissionList />
-                  </Route>
-                  <Route path="/mission/normal">
-                    <NormalMissionList />
-                  </Route>
-                  <Route path="/mission/beginner">
-                    <BeginnerMissionList />
-                  </Route>
-                  <Route path="/mission/character">
-                    <CharacterMissionList />
-                  </Route>
-                  <Route path="/user">
-                    <User />
-                  </Route>
-                  <Route path="/connect/:provider/redirect">
-                    <Connect />
-                  </Route>
-                  <Route path="/eventtracker">
-                    <EventTracker />
-                  </Route>
-                  <Route path="/announcement" exact>
-                    <AnnouncementList />
-                  </Route>
-                  <Route path="/announcement/:id">
-                    <AnnouncementDetail />
-                  </Route>
-                  <Route path="/l2d">
-                    <Live2D />
-                  </Route>
-                  <Route path="/virtual_live" exact>
-                    <VirtualLiveList />
-                  </Route>
-                  <Route path="/virtual_live/:id">
-                    <VirtualLiveDetail />
-                  </Route>
-                  <Route path="/translation" exact>
-                    <TranslationPage />
-                  </Route>
-                  <Route path="/translation/:slug">
-                    <TranslationEditor />
-                  </Route>
-                  <Route path="/honor">
-                    <HonorList />
-                  </Route>
-                  <Route path="/eventanalyzer">
-                    <EventAnalyzer />
-                  </Route>
-                  <Route path="/music_meta">
-                    <MusicMeta />
-                  </Route>
-                  <Route path="/settings">
-                    <Settings />
-                  </Route>
-                </Suspense>
-              </Switch>
-            </UserProvider>
-          </Container>
-          <ScrollTop>
-            <Fab color="secondary" size="small" aria-label="scroll back to top">
-              <KeyboardArrowUp />
-            </Fab>
-          </ScrollTop>
-          {/* <Settings
-            open={isSettingsOpen}
-            onClose={() => setIsSettingsOpen(false)}
-          /> */}
-        </div>
-        <Snackbar open={updateBarOpen}>
-          <Alert
-            severity="info"
-            action={
-              <Button
-                color="inherit"
-                size="small"
-                onClick={() => updateServiceWorker()}
-              >
-                {t("common:update")}
-              </Button>
-            }
+            <IconButton color="inherit" size="medium">
+              <SettingsIcon fontSize="inherit" />
+            </IconButton>
+            <Typography>{t("common:settings.title")}</Typography>
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              history.push("/user");
+              setMobileMenuOpen(false);
+              setMobileMenuAnchorEl(null);
+            }}
           >
-            {t("common:update-available")}
-          </Alert>
-        </Snackbar>
-      </SnackbarProvider>
-    </ThemeProvider>
+            <IconButton color="inherit" size="medium">
+              <AccountCircle fontSize="inherit" />
+            </IconButton>
+            <Typography>{t("common:user")}</Typography>
+          </MenuItem>
+        </Menu>
+        <nav className={classes.drawer}>
+          <Hidden mdUp implementation="css">
+            <Drawer
+              container={container}
+              variant="temporary"
+              anchor={theme.direction === "rtl" ? "right" : "left"}
+              open={mobileOpen}
+              onClose={handleDrawerToggle}
+              classes={{
+                paper: classes.drawerPaper,
+              }}
+              ModalProps={{
+                keepMounted: true,
+              }}
+            >
+              {drawer}
+            </Drawer>
+          </Hidden>
+          <Hidden mdDown implementation="css">
+            <Drawer
+              variant="permanent"
+              open
+              classes={{
+                paper: classes.drawerPaper,
+              }}
+            >
+              {drawer}
+            </Drawer>
+          </Hidden>
+        </nav>
+        <Container className={classes.content}>
+          <div className={classes.toolbar} id="back-to-top-anchor"></div>
+          <UserProvider>
+            <Switch>
+              <Suspense
+                fallback={
+                  <Grid container direction="column" spacing={3}>
+                    <Grid item>
+                      <Skeleton variant="rectangular" width="30%" height={30} />
+                    </Grid>
+                    <Grid item>
+                      <Skeleton
+                        variant="rectangular"
+                        width="90%"
+                        height={200}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Skeleton
+                        variant="rectangular"
+                        width="90%"
+                        height={200}
+                      />
+                    </Grid>
+                  </Grid>
+                }
+              >
+                <Route path="/" exact>
+                  <HomeView />
+                </Route>
+                <Route path="/card" exact>
+                  <CardList />
+                </Route>
+                <Route path="/card/:cardId(\d+)">
+                  <CardDetail />
+                </Route>
+                <Route path="/music" exact>
+                  <MusicList />
+                </Route>
+                <Route path="/music/:musicId(\d+)">
+                  <MusicDetail />
+                </Route>
+                <Route path="/gacha" exact>
+                  <GachaList />
+                </Route>
+                <Route path="/gacha/:gachaId">
+                  <GachaDetail />
+                </Route>
+                <Route path="/event" exact>
+                  <EventList />
+                </Route>
+                <Route path="/event/:eventId">
+                  <EventDetail />
+                </Route>
+                <Route path="/stamp">
+                  <StampList />
+                </Route>
+                <Route path="/comic">
+                  <ComicList />
+                </Route>
+                <Route path="/chara" exact>
+                  <MemberList />
+                </Route>
+                <Route path="/chara/:charaId">
+                  <MemberDetail />
+                </Route>
+                <Route path="/unit/:unitId">
+                  <UnitDetail />
+                </Route>
+                <Route path="/about" exact>
+                  <About />
+                </Route>
+                <Route path="/support" exact>
+                  <Support />
+                </Route>
+                <Route path="/music_recommend" exact>
+                  <MusicRecommend />
+                </Route>
+                <Route path="/event_calc" exact>
+                  <EventPointCalc />
+                </Route>
+                <Route path="/storyreader">
+                  <StoryReader />
+                </Route>
+                <Route path="/mission/title">
+                  <TitleMissionList />
+                </Route>
+                <Route path="/mission/normal">
+                  <NormalMissionList />
+                </Route>
+                <Route path="/mission/beginner">
+                  <BeginnerMissionList />
+                </Route>
+                <Route path="/mission/character">
+                  <CharacterMissionList />
+                </Route>
+                <Route path="/user">
+                  <User />
+                </Route>
+                <Route path="/connect/:provider/redirect">
+                  <Connect />
+                </Route>
+                <Route path="/eventtracker">
+                  <EventTracker />
+                </Route>
+                <Route path="/announcement" exact>
+                  <AnnouncementList />
+                </Route>
+                <Route path="/announcement/:id">
+                  <AnnouncementDetail />
+                </Route>
+                <Route path="/l2d">
+                  <Live2D />
+                </Route>
+                <Route path="/virtual_live" exact>
+                  <VirtualLiveList />
+                </Route>
+                <Route path="/virtual_live/:id">
+                  <VirtualLiveDetail />
+                </Route>
+                <Route path="/translation" exact>
+                  <TranslationPage />
+                </Route>
+                <Route path="/translation/:slug">
+                  <TranslationEditor />
+                </Route>
+                <Route path="/honor">
+                  <HonorList />
+                </Route>
+                <Route path="/eventanalyzer">
+                  <EventAnalyzer />
+                </Route>
+                <Route path="/music_meta">
+                  <MusicMeta />
+                </Route>
+                <Route path="/settings">
+                  <Settings />
+                </Route>
+              </Suspense>
+            </Switch>
+          </UserProvider>
+        </Container>
+        <ScrollTop>
+          <Fab color="secondary" size="small" aria-label="scroll back to top">
+            <KeyboardArrowUp />
+          </Fab>
+        </ScrollTop>
+        {/* <Settings
+        open={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+      /> */}
+      </div>
+      <Snackbar open={updateBarOpen}>
+        <Alert
+          severity="info"
+          action={
+            <Button
+              color="inherit"
+              size="small"
+              onClick={() => updateServiceWorker()}
+            >
+              {t("common:update")}
+            </Button>
+          }
+        >
+          {t("common:update-available")}
+        </Alert>
+      </Snackbar>
+    </SnackbarProvider>
+  );
+};
+
+function App() {
+  const { displayMode } = useContext(SettingContext)!;
+  const preferDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+
+  const theme = React.useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode:
+            displayMode === "auto"
+              ? preferDarkMode
+                ? "dark"
+                : "light"
+              : displayMode,
+          // primary: {
+          //   main:
+          //     displayMode === "auto"
+          //       ? preferDarkMode
+          //         ? "#7986cb"
+          //         : "#3f51b5"
+          //       : displayMode === "dark"
+          //       ? "#7986cb"
+          //       : "#3f51b5",
+          // },
+          primary: {
+            main: "#298a7b",
+          },
+          secondary: {
+            main: "#f50057",
+          },
+          success: {
+            main: "#1a8e1f",
+          },
+        },
+      }),
+    [displayMode, preferDarkMode]
+  );
+
+  return (
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <AppInner theme={theme} />
+      </ThemeProvider>
+    </StyledEngineProvider>
   );
 }
 

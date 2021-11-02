@@ -3,10 +3,10 @@ import {
   Container,
   Grid,
   LinearProgress,
-  makeStyles,
   Paper,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLayoutStyles } from "../../styles/layout";
@@ -27,7 +27,7 @@ import {
 import { charaIcons } from "../../utils/resources";
 import { ReleaseCondTrans } from "../subs/ContentTrans";
 import { Sound, SpecialEffect, Talk } from "./StoryReaderSnippet";
-import Image from "material-ui-image";
+import Image from "mui-image";
 import { useAssetI18n } from "../../utils/i18n";
 
 const useStyle = makeStyles((theme) => ({
@@ -242,31 +242,21 @@ const StoryReaderContent: React.FC<{ storyType: string; storyId: string }> = ({
     <Container className={layoutClasses.content}>
       {storyType !== "areaTalk" && (
         <Paper className={classes.episodeBanner}>
-          <Grid container spacing={1} justify="space-around">
+          <Grid container spacing={1} justifyContent="space-around">
             <Grid
               item
               xs={storyType === "charaStory" ? 6 : 8}
               sm={storyType === "charaStory" ? 3 : 4}
               lg={storyType === "charaStory" ? 2 : 3}
             >
-              <Image
-                src={bannerUrl}
-                color=""
-                aspectRatio={
-                  storyType === "charaStory"
-                    ? 1
-                    : storyType === "cardStory"
-                    ? 1.774
-                    : 1.944
-                }
-              />
+              <Image src={bannerUrl} bgColor="" />
             </Grid>
             <Grid item xs={12} sm={6}>
               <Grid
                 container
                 spacing={1}
                 alignItems="center"
-                justify="center"
+                justifyContent="center"
                 style={{ height: "100%" }}
               >
                 {chapterTitle ? (
@@ -282,7 +272,7 @@ const StoryReaderContent: React.FC<{ storyType: string; storyId: string }> = ({
                     <Grid
                       container
                       alignItems="center"
-                      justify="center"
+                      justifyContent="center"
                       spacing={1}
                     >
                       <Grid item>

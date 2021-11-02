@@ -1,4 +1,5 @@
-import { Grid, makeStyles, Typography } from "@material-ui/core";
+import { Grid, Typography } from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
@@ -9,7 +10,7 @@ import { UnitLogoMap } from "../utils/resources";
 
 const useStyle = makeStyles((theme) => ({
   unitIcon: {
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down("md")]: {
       height: "48px",
     },
     height: "96px",
@@ -93,7 +94,12 @@ const MemberList: React.FC<{}> = () => {
       <Grid container spacing={1} direction="column">
         {Object.keys(charaUnitMap).map((unit) => (
           <Fragment key={`unit-${unit}`}>
-            <Grid item container justify="center" style={{ margin: "0.3em 0" }}>
+            <Grid
+              item
+              container
+              justifyContent="center"
+              style={{ margin: "0.3em 0" }}
+            >
               <Link to={"/unit/" + unit}>
                 <img
                   className={classes.unitIcon}
@@ -105,7 +111,7 @@ const MemberList: React.FC<{}> = () => {
             <Grid
               item
               container
-              justify="center"
+              justifyContent="center"
               spacing={2}
               style={{ marginBottom: "1em" }}
             >

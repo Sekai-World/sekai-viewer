@@ -1,12 +1,6 @@
-import {
-  Typography,
-  Grid,
-  makeStyles,
-  Paper,
-  Box,
-  Chip,
-} from "@material-ui/core";
-import { Skeleton } from "@material-ui/lab";
+import { Typography, Grid, Paper, Box, Chip } from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import { Skeleton } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
@@ -20,7 +14,7 @@ import { getRemoteAssetURL, useCachedData, useServerRegion } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
 import { ContentTrans } from "../subs/ContentTrans";
 import SpoilerTag from "../subs/SpoilerTag";
-import Image from "material-ui-image";
+import Image from "mui-image";
 import { charaIcons } from "../../utils/resources";
 
 const useStyles = makeStyles((theme) => ({
@@ -75,9 +69,8 @@ const AgendaView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
   const { getTranslated } = useAssetI18n();
   const [region] = useServerRegion();
 
-  const [musicDiffis] = useCachedData<IMusicDifficultyInfo>(
-    "musicDifficulties"
-  );
+  const [musicDiffis] =
+    useCachedData<IMusicDifficultyInfo>("musicDifficulties");
   const [musicVocals] = useCachedData<IMusicVocalInfo>("musicVocals");
   const [outCharas] = useCachedData<IOutCharaProfile>("outsideCharacters");
 
@@ -155,7 +148,11 @@ const AgendaView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
         <Paper className={classes.agenda}>
           <Grid container alignItems="center" spacing={1}>
             <Grid item xs={3} sm={2} md={1}>
-              <Skeleton variant="rect" width="96px" height="96px"></Skeleton>
+              <Skeleton
+                variant="rectangular"
+                width="96px"
+                height="96px"
+              ></Skeleton>
             </Grid>
             <Grid item xs={3} sm={2}>
               <Typography variant="body1">
@@ -189,8 +186,8 @@ const AgendaView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
             <Image
               src={jacket}
               alt={getTranslated(`music_titles:${data.id}`, data.title)}
-              aspectRatio={1}
-              color=""
+              // aspectRatio={1}
+              bgColor=""
             ></Image>
           </Grid>
           <Grid item xs={9} sm={2}>

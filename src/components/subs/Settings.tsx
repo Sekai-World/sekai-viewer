@@ -10,8 +10,8 @@ import {
   Radio,
   RadioGroup,
   Switch,
-} from "@material-ui/core";
-import { Brightness4, Brightness7, BrightnessAuto } from "@material-ui/icons";
+} from "@mui/material";
+import { Brightness4, Brightness7, BrightnessAuto } from "@mui/icons-material";
 import React, { useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { SettingContext } from "../../context";

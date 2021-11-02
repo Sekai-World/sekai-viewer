@@ -7,16 +7,16 @@ import {
   Fab,
   Grid,
   Link,
-  makeStyles,
   Typography,
-} from "@material-ui/core";
-import { CloudDownload, PlayArrow, Stop } from "@material-ui/icons";
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import { CloudDownload, PlayArrow, Stop } from "@mui/icons-material";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Howl } from "howler";
 import { charaIcons } from "../../utils/resources";
 import { useEffect } from "react";
-import Image from "material-ui-image";
+import Image from "mui-image";
 import MoviePlayer from "../subs/MoviePlayer";
 
 const useStyle = makeStyles((theme) => ({
@@ -107,7 +107,7 @@ export const Talk: React.FC<{
     <Card className={classes.card}>
       <Grid container alignItems="center" spacing={1}>
         <Grid item xs={3} md={2} lg={1}>
-          <Grid container justify="center">
+          <Grid container justifyContent="center">
             <Avatar
               src={charaIcons[`CharaIcon${characterId}` as "CharaIcon1"]}
             />
@@ -198,13 +198,14 @@ export const SpecialEffect: React.FC<{
                 </Grid>
                 {isBGOpen ? (
                   <Grid item xs={12}>
-                    <Image
-                      onClick={() => window.open(resource, "_blank")}
-                      src={resource}
-                      style={{ cursor: "pointer" }}
-                      color=""
-                      aspectRatio={1.624}
-                    />
+                    <div onClick={() => window.open(resource, "_blank")}>
+                      <Image
+                        src={resource}
+                        style={{ cursor: "pointer" }}
+                        bgColor=""
+                        // aspectRatio={1.624}
+                      />
+                    </div>
                   </Grid>
                 ) : (
                   <Grid item xs={12}>

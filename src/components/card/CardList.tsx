@@ -15,25 +15,22 @@ import {
   InputAdornment,
   IconButton,
   Popover,
-} from "@material-ui/core";
+} from "@mui/material";
 import { useLayoutStyles } from "../../styles/layout";
 import {
   Check,
-  // Clear,
+  FilterAlt as Filter,
+  FilterAltOutlined as FilterOutline,
   RotateLeft,
   Sort,
   SortOutlined,
   ViewAgenda,
+  ViewAgendaOutlined,
   ViewComfy,
-} from "@material-ui/icons";
-import {
-  Filter,
-  FilterOutline,
-  ViewAgendaOutline,
-  ViewComfyOutline,
-  ViewGrid,
-  ViewGridOutline,
-} from "mdi-material-ui";
+  ViewComfyOutlined,
+  GridView as ViewGrid,
+  GridViewOutlined as ViewGridOutlined,
+} from "@mui/icons-material";
 import React, {
   Fragment,
   useCallback,
@@ -83,7 +80,7 @@ import AgendaView from "./AgendaView";
 import ComfyView from "./ComfyView";
 import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
-import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { ContentTrans } from "../subs/ContentTrans";
 import { useCurrentEvent } from "../../utils/apiClient";
 import { useAssetI18n, useCharaName } from "../../utils/i18n";
@@ -352,7 +349,7 @@ const CardList: React.FC<{}> = () => {
       <Container className={layoutClasses.content}>
         <Grid
           container
-          justify="space-between"
+          justifyContent="space-between"
           style={{ marginBottom: "0.5rem" }}
         >
           <Grid item>
@@ -368,21 +365,21 @@ const CardList: React.FC<{}> = () => {
                 {viewGridType === "grid" ? (
                   <ViewGrid></ViewGrid>
                 ) : (
-                  <ViewGridOutline></ViewGridOutline>
+                  <ViewGridOutlined></ViewGridOutlined>
                 )}
               </ToggleButton>
               <ToggleButton value="agenda">
                 {viewGridType === "agenda" ? (
                   <ViewAgenda></ViewAgenda>
                 ) : (
-                  <ViewAgendaOutline></ViewAgendaOutline>
+                  <ViewAgendaOutlined></ViewAgendaOutlined>
                 )}
               </ToggleButton>
               <ToggleButton value="comfy">
                 {viewGridType === "comfy" ? (
                   <ViewComfy></ViewComfy>
                 ) : (
-                  <ViewComfyOutline></ViewComfyOutline>
+                  <ViewComfyOutlined></ViewComfyOutlined>
                 )}
               </ToggleButton>
             </ToggleButtonGroup>
@@ -411,7 +408,7 @@ const CardList: React.FC<{}> = () => {
                 container
                 xs={12}
                 alignItems="center"
-                justify="space-between"
+                justifyContent="space-between"
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
@@ -467,7 +464,7 @@ const CardList: React.FC<{}> = () => {
                 container
                 xs={12}
                 alignItems="center"
-                justify="space-between"
+                justifyContent="space-between"
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
@@ -529,7 +526,7 @@ const CardList: React.FC<{}> = () => {
                   container
                   xs={12}
                   alignItems="center"
-                  justify="space-between"
+                  justifyContent="space-between"
                   spacing={1}
                 >
                   <Grid item xs={12} md={1}>
@@ -598,7 +595,7 @@ const CardList: React.FC<{}> = () => {
                 container
                 xs={12}
                 alignItems="center"
-                justify="space-between"
+                justifyContent="space-between"
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
@@ -650,7 +647,7 @@ const CardList: React.FC<{}> = () => {
                 container
                 xs={12}
                 alignItems="center"
-                justify="space-between"
+                justifyContent="space-between"
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
@@ -712,7 +709,7 @@ const CardList: React.FC<{}> = () => {
                 container
                 xs={12}
                 alignItems="center"
-                justify="space-between"
+                justifyContent="space-between"
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
@@ -834,22 +831,24 @@ const CardList: React.FC<{}> = () => {
           callback={callback}
           data={cards}
           gridSize={
-            ({
-              grid: {
-                xs: 12,
-                sm: 6,
-                md: 4,
-                lg: 3,
-              },
-              agenda: {
-                xs: 12,
-              },
-              comfy: {
-                xs: 12,
-                sm: 6,
-                md: 3,
-              },
-            } as const)[viewGridType]
+            (
+              {
+                grid: {
+                  xs: 12,
+                  sm: 6,
+                  md: 4,
+                  lg: 3,
+                },
+                agenda: {
+                  xs: 12,
+                },
+                comfy: {
+                  xs: 12,
+                  sm: 6,
+                  md: 3,
+                },
+              } as const
+            )[viewGridType]
           }
         />
       </Container>

@@ -11,7 +11,7 @@ import Live2D from "@sekai-world/find-live2d-v3";
 import Axios from "axios";
 import { LAppLive2DManager } from "@sekai-world/find-live2d-v3/dist/types/lapplive2dmanager";
 import { LAppModel } from "@sekai-world/find-live2d-v3/dist/types/lappmodel";
-import { Alert, Autocomplete } from "@material-ui/lab";
+import { Alert, Autocomplete } from "@mui/material";
 import {
   Button,
   Container,
@@ -26,7 +26,7 @@ import {
   Tooltip,
   Typography,
   useTheme,
-} from "@material-ui/core";
+} from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useLayoutStyles } from "../../styles/layout";
 import {
@@ -36,7 +36,7 @@ import {
   FullscreenExit,
   Videocam,
   VideocamOff,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import fscreen from "fscreen";
@@ -172,8 +172,8 @@ const Live2DView: React.FC<{}> = () => {
         }>(
           `${
             window.isChinaMainland
-              ? process.env.REACT_APP_ASSET_DOMAIN_CN
-              : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+              ? import.meta.env.VITE_ASSET_DOMAIN_CN
+              : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
           }/live2d/model/${modelName}_rip/buildmodeldata.asset`,
           { responseType: "json" }
         );
@@ -183,8 +183,8 @@ const Live2DView: React.FC<{}> = () => {
         await Axios.get(
           `${
             window.isChinaMainland
-              ? process.env.REACT_APP_ASSET_DOMAIN_CN
-              : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+              ? import.meta.env.VITE_ASSET_DOMAIN_CN
+              : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
           }/live2d/model/${modelName}_rip/${modelData.TextureNames[0]}`
         );
 
@@ -193,8 +193,8 @@ const Live2DView: React.FC<{}> = () => {
         await Axios.get(
           `${
             window.isChinaMainland
-              ? process.env.REACT_APP_ASSET_DOMAIN_CN
-              : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+              ? import.meta.env.VITE_ASSET_DOMAIN_CN
+              : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
           }/live2d/model/${modelName}_rip/${modelData.Moc3FileName}`
         );
 
@@ -203,8 +203,8 @@ const Live2DView: React.FC<{}> = () => {
         await Axios.get(
           `${
             window.isChinaMainland
-              ? process.env.REACT_APP_ASSET_DOMAIN_CN
-              : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+              ? import.meta.env.VITE_ASSET_DOMAIN_CN
+              : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
           }/live2d/model/${modelName}_rip/${modelData.PhysicsFileName}`
         );
 
@@ -218,8 +218,8 @@ const Live2DView: React.FC<{}> = () => {
           }>(
             `${
               window.isChinaMainland
-                ? process.env.REACT_APP_ASSET_DOMAIN_CN
-                : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+                ? import.meta.env.VITE_ASSET_DOMAIN_CN
+                : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
             }/live2d/motion/${motionName}_rip/BuildMotionData.json`,
             { responseType: "json" }
           );
@@ -238,8 +238,8 @@ const Live2DView: React.FC<{}> = () => {
           {
             path: `${
               window.isChinaMainland
-                ? process.env.REACT_APP_ASSET_DOMAIN_CN
-                : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+                ? import.meta.env.VITE_ASSET_DOMAIN_CN
+                : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
             }/live2d/model/${modelName}_rip/`,
             fileName: filename,
             modelName,
@@ -250,16 +250,16 @@ const Live2DView: React.FC<{}> = () => {
                 name,
                 url: `${
                   window.isChinaMainland
-                    ? process.env.REACT_APP_ASSET_DOMAIN_CN
-                    : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+                    ? import.meta.env.VITE_ASSET_DOMAIN_CN
+                    : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
                 }/live2d/motion/${motionName}_rip/${name}.motion3.json`,
               })),
               ...motionData.expressions.map((name) => ({
                 name,
                 url: `${
                   window.isChinaMainland
-                    ? process.env.REACT_APP_ASSET_DOMAIN_CN
-                    : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+                    ? import.meta.env.VITE_ASSET_DOMAIN_CN
+                    : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
                 }/live2d/motion/${motionName}_rip/${name}.motion3.json`,
               })),
             ],
@@ -298,8 +298,8 @@ const Live2DView: React.FC<{}> = () => {
     }>(
       `${
         window.isChinaMainland
-          ? process.env.REACT_APP_ASSET_DOMAIN_CN
-          : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+          ? import.meta.env.VITE_ASSET_DOMAIN_CN
+          : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
       }/live2d/model/${modelName}_rip/buildmodeldata.asset`,
       { responseType: "json" }
     );
@@ -353,8 +353,8 @@ const Live2DView: React.FC<{}> = () => {
     const { data: texture } = await Axios.get(
       `${
         window.isChinaMainland
-          ? process.env.REACT_APP_ASSET_DOMAIN_CN
-          : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+          ? import.meta.env.VITE_ASSET_DOMAIN_CN
+          : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
       }/live2d/model/${modelName}_rip/${modelData.TextureNames[0]}`,
       { responseType: "blob" }
     );
@@ -366,8 +366,8 @@ const Live2DView: React.FC<{}> = () => {
     const { data: moc3 } = await Axios.get(
       `${
         window.isChinaMainland
-          ? process.env.REACT_APP_ASSET_DOMAIN_CN
-          : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+          ? import.meta.env.VITE_ASSET_DOMAIN_CN
+          : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
       }/live2d/model/${modelName}_rip/${modelData.Moc3FileName}`,
       { responseType: "blob" }
     );
@@ -379,8 +379,8 @@ const Live2DView: React.FC<{}> = () => {
     const { data: physics } = await Axios.get(
       `${
         window.isChinaMainland
-          ? process.env.REACT_APP_ASSET_DOMAIN_CN
-          : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+          ? import.meta.env.VITE_ASSET_DOMAIN_CN
+          : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
       }/live2d/model/${modelName}_rip/${modelData.PhysicsFileName}`,
       { responseType: "blob" }
     );
@@ -408,8 +408,8 @@ const Live2DView: React.FC<{}> = () => {
         Axios.get<Blob>(
           `${
             window.isChinaMainland
-              ? process.env.REACT_APP_ASSET_DOMAIN_CN
-              : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+              ? import.meta.env.VITE_ASSET_DOMAIN_CN
+              : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
           }/live2d/motion/${motionName}_rip/${name}.motion3.json`,
           { responseType: "blob" }
         ).then(({ data }) => {
@@ -454,10 +454,12 @@ const Live2DView: React.FC<{}> = () => {
         const canvasRecorder = await CanvasRecorder.createAsync(
           canvas.current!,
           {
+            // @ts-ignore
             mimeType,
           }
         );
         setRecorder(canvasRecorder);
+        // @ts-ignore
         canvasRecorder.start();
         setAnchorEl(undefined);
         setIsRecording(true);
@@ -515,7 +517,11 @@ const Live2DView: React.FC<{}> = () => {
             <Grid container spacing={1} alignItems="center">
               <Grid item>
                 <Tooltip title={t("live2d:tooltip.download") as string}>
-                  <IconButton disabled={!model} onClick={handleDownload}>
+                  <IconButton
+                    disabled={!model}
+                    onClick={handleDownload}
+                    size="large"
+                  >
                     <CloudDownload fontSize="inherit" />
                   </IconButton>
                 </Tooltip>
@@ -526,6 +532,7 @@ const Live2DView: React.FC<{}> = () => {
                       onClick={() => {
                         fscreen.exitFullscreen();
                       }}
+                      size="large"
                     >
                       <FullscreenExit fontSize="inherit" />
                     </IconButton>
@@ -535,13 +542,18 @@ const Live2DView: React.FC<{}> = () => {
                       onClick={() => {
                         fscreen.requestFullscreen(wrap.current!);
                       }}
+                      size="large"
                     >
                       <Fullscreen fontSize="inherit" />
                     </IconButton>
                   )}
                 </Tooltip>
                 <Tooltip title={t("live2d:tooltip.shot") as string}>
-                  <IconButton disabled={!model} onClick={handleScreenshot}>
+                  <IconButton
+                    disabled={!model}
+                    onClick={handleScreenshot}
+                    size="large"
+                  >
                     <Camera fontSize="inherit" />
                   </IconButton>
                 </Tooltip>
@@ -563,6 +575,7 @@ const Live2DView: React.FC<{}> = () => {
                             setAnchorEl(e.currentTarget);
                           }
                         }}
+                        size="large"
                       >
                         {isRecording ? (
                           <Videocam fontSize="inherit" />
@@ -701,7 +714,7 @@ const Live2DView: React.FC<{}> = () => {
                 </Grid>
               </Grid>
               {/* <Grid item>
-                {theme.breakpoints.width("md")} {window.screen.width}{" "}
+                {theme.breakpoints.values.md} {window.screen.width}{" "}
                 {currentStyleWidth}
               </Grid> */}
             </Grid>

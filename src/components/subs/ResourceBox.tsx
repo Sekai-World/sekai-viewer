@@ -1,6 +1,6 @@
-import { Grid, GridJustification } from "@material-ui/core";
+import { Grid } from "@mui/material";
 import React, { Fragment, useEffect, useState } from "react";
-import Image from "material-ui-image";
+import Image from "mui-image";
 import { IResourceBoxInfo } from "../../types";
 import { useCachedData } from "../../utils";
 import CommonMaterialIcon from "./CommonMaterialIcon";
@@ -10,8 +10,12 @@ import DegreeImage from "./DegreeImage";
 const ResourceBox: React.FC<{
   resourceBoxId: number;
   resourceBoxPurpose: string;
-  justify?: GridJustification;
-}> = ({ resourceBoxId, resourceBoxPurpose, justify = "space-around" }) => {
+  justifyContent?: string;
+}> = ({
+  resourceBoxId,
+  resourceBoxPurpose,
+  justifyContent = "space-around",
+}) => {
   const [resourceBoxes] = useCachedData<IResourceBoxInfo>("resourceBoxes");
 
   const [resource, setResource] = useState<IResourceBoxInfo>();
@@ -30,7 +34,12 @@ const ResourceBox: React.FC<{
 
   return resource ? (
     <Fragment>
-      <Grid container spacing={1} justify={justify} alignItems="center">
+      <Grid
+        container
+        spacing={1}
+        justifyContent={justifyContent}
+        alignItems="center"
+      >
         {resource.details.map((detail) => (
           <Grid item key={`${detail.resourceType}-${detail.resourceBoxId}`}>
             {detail.resourceType === "material" ? (
@@ -41,7 +50,7 @@ const ResourceBox: React.FC<{
             ) : detail.resourceType === "stamp" ? (
               <Image
                 src={`${
-                  process.env.REACT_APP_ASSET_DOMAIN_WW
+                  import.meta.env.VITE_ASSET_DOMAIN_WW
                 }/sekai-assets/stamp/stamp${String(detail.resourceId).padStart(
                   4,
                   "0"
@@ -49,10 +58,10 @@ const ResourceBox: React.FC<{
                   4,
                   "0"
                 )}/stamp${String(detail.resourceId).padStart(4, "0")}.png`}
-                aspectRatio={1}
+                // aspectRatio={1}
                 style={{ height: "64px", width: "64px" }}
-                color=""
-                disableTransition
+                bgColor=""
+                duration={0}
               />
             ) : detail.resourceType === "honor" ? (
               <DegreeImage

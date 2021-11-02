@@ -1,4 +1,4 @@
-import { Grid, Typography, TypographyProps } from "@material-ui/core";
+import { Grid, Typography, TypographyProps } from "@mui/material";
 import { StringMap, TOptions } from "i18next";
 import React, { useContext, useEffect, useState } from "react";
 import { SettingContext } from "../../context";

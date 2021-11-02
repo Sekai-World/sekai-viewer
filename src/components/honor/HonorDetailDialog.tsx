@@ -4,7 +4,7 @@ import {
   Grid,
   Typography,
   Divider,
-} from "@material-ui/core";
+} from "@mui/material";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IHonorGroup, IHonorInfo } from "../../types";
@@ -35,7 +35,7 @@ const DetailDialog: React.FC<{
     <Dialog open={open} onClose={onClose} fullWidth>
       <DialogContent>
         <Grid container spacing={2}>
-          <Grid item container justify="center">
+          <Grid item container justifyContent="center">
             <DegreeImage honorId={data.id} type="mission_reward" />
           </Grid>
         </Grid>
@@ -43,7 +43,7 @@ const DetailDialog: React.FC<{
           container
           direction="row"
           wrap="nowrap"
-          justify="space-between"
+          justifyContent="space-between"
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -56,7 +56,7 @@ const DetailDialog: React.FC<{
           container
           direction="row"
           wrap="nowrap"
-          justify="space-between"
+          justifyContent="space-between"
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -78,7 +78,7 @@ const DetailDialog: React.FC<{
           container
           direction="row"
           wrap="nowrap"
-          justify="space-between"
+          justifyContent="space-between"
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -100,7 +100,7 @@ const DetailDialog: React.FC<{
           container
           direction="row"
           wrap="nowrap"
-          justify="space-between"
+          justifyContent="space-between"
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -115,7 +115,7 @@ const DetailDialog: React.FC<{
               container
               direction="row"
               wrap="nowrap"
-              justify="space-between"
+              justifyContent="space-between"
               alignItems="center"
             >
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -128,7 +128,7 @@ const DetailDialog: React.FC<{
               container
               direction="row"
               wrap="nowrap"
-              justify="space-between"
+              justifyContent="space-between"
               alignItems="center"
             >
               <Grid item xs={3} md={2}>

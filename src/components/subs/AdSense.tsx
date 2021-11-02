@@ -1,5 +1,5 @@
 import { Adsense } from "@ctrl/react-adsense";
-import { Container, Typography } from "@material-ui/core";
+import { Container, Typography } from "@mui/material";
 import React, { Fragment, useContext, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { UserContext } from "../../context";

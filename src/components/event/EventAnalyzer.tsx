@@ -4,7 +4,7 @@ import {
   FormLabel,
   Grid,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { useLayoutStyles } from "../../styles/layout";

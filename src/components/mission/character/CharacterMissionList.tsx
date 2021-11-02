@@ -6,7 +6,7 @@ import {
   Select,
   Typography,
   MenuItem,
-} from "@material-ui/core";
+} from "@mui/material";
 import React, { useState, useEffect, Fragment, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useLayoutStyles } from "../../../styles/layout";
@@ -38,9 +38,8 @@ const CharacterMissionList: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
 
-  const [characterMissionsCache] = useCachedData<ICharacterMission>(
-    "characterMissions"
-  );
+  const [characterMissionsCache] =
+    useCachedData<ICharacterMission>("characterMissions");
   const [characterProfiles] = useCachedData<ICharaProfile>("characterProfiles");
 
   const [characterMissions, setNormalMissions] = useState<ICharacterMission[]>(
@@ -115,7 +114,7 @@ const CharacterMissionList: React.FC<{}> = () => {
         {t("common:mission.main")} - {t("common:character")}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="md">
-        <Grid container spacing={1} justify="center">
+        <Grid container spacing={1} justifyContent="center">
           {characterProfiles && characterProfiles.length ? (
             <Fragment>
               <Grid item xs={12} md={4}>
@@ -172,17 +171,19 @@ const CharacterMissionList: React.FC<{}> = () => {
           callback={callback}
           data={characterMissions}
           gridSize={
-            ({
-              grid: {
-                xs: 12,
-              },
-              agenda: {
-                xs: 12,
-              },
-              comfy: {
-                xs: 12,
-              },
-            } as const)[viewGridType]
+            (
+              {
+                grid: {
+                  xs: 12,
+                },
+                agenda: {
+                  xs: 12,
+                },
+                comfy: {
+                  xs: 12,
+                },
+              } as const
+            )[viewGridType]
           }
         />
       </Container>

@@ -1,4 +1,4 @@
-import { useMediaQuery } from "@material-ui/core";
+import { useMediaQuery } from "@mui/material";
 import React from "react";
 
 const ColorPreview: React.FC<{ colorCode: string }> = ({ colorCode }) => {

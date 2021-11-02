@@ -5,8 +5,8 @@ import {
   Chip,
   Grid,
   Typography,
-} from "@material-ui/core";
-import { Report, ThumbUp } from "@material-ui/icons";
+} from "@mui/material";
+import { Report, ThumbUp } from "@mui/icons-material";
 import MarkdownIt from "markdown-it";
 import React, { useMemo, useState } from "react";
 // import { useTranslation } from "react-i18next";
@@ -27,7 +27,13 @@ const CommentBlock: React.FC<{
 
   return (
     <Grid container spacing={1}>
-      <Grid item xs={12} container justify="space-between" alignItems="center">
+      <Grid
+        item
+        xs={12}
+        container
+        justifyContent="space-between"
+        alignItems="center"
+      >
         <Grid item>
           <Grid container spacing={1} alignItems="center">
             <Grid item>

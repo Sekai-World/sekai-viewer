@@ -5,7 +5,7 @@ import {
   Divider,
   Grid,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import React, {
   Fragment,
   useContext,
@@ -25,7 +25,7 @@ import { AnnouncementModel, UserMetadatumModel } from "../../strapi-model";
 import { useLayoutStyles } from "../../styles/layout";
 import { useStrapi } from "../../utils/apiClient";
 import Comment from "../comment/Comment";
-import { CommentTextMultiple } from "mdi-material-ui";
+import CommentTextMultiple from "~icons/mdi/comment-text-multiple";
 import { useQuery } from "../../utils";
 import { UserContext } from "../../context";
 // import AdSense from "../subs/AdSense";

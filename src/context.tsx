@@ -49,13 +49,11 @@ export const SettingProvider: React.FC<PropsWithChildren<{}>> = ({
     "languages-cache",
     []
   );
-  const [
-    contentTransMode,
-    setContentTransMode,
-  ] = useLocalStorage<ContentTransModeType>(
-    "content-translation-mode",
-    "translated"
-  );
+  const [contentTransMode, setContentTransMode] =
+    useLocalStorage<ContentTransModeType>(
+      "content-translation-mode",
+      "translated"
+    );
   const [isShowSpoiler, setIsShowSpoiler] = useLocalStorage<boolean>(
     "is-show-spoiler",
     false

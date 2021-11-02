@@ -1,11 +1,6 @@
-import {
-  makeStyles,
-  Typography,
-  Grid,
-  Container,
-  Paper,
-} from "@material-ui/core";
-import { Skeleton } from "@material-ui/lab";
+import { Typography, Grid, Container, Paper } from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import { Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -14,7 +9,7 @@ import { getRemoteAssetURL, useServerRegion } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
 import { ContentTrans } from "../subs/ContentTrans";
 import SpoilerTag from "../subs/SpoilerTag";
-import Image from "material-ui-image";
+import Image from "mui-image";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -71,7 +66,10 @@ const AgendaView: React.FC<{ data?: IVirtualLiveInfo }> = ({ data }) => {
           className={classes["grid-out"]}
         >
           <Grid item xs={12} md={4} container alignItems="center">
-            <Skeleton variant="rect" className={classes.media}></Skeleton>
+            <Skeleton
+              variant="rectangular"
+              className={classes.media}
+            ></Skeleton>
           </Grid>
           <Grid item xs={12} md={8}>
             <Grid container direction="column" spacing={1}>
@@ -101,8 +99,8 @@ const AgendaView: React.FC<{ data?: IVirtualLiveInfo }> = ({ data }) => {
             <Image
               src={virtualLiveLogo}
               alt={getTranslated(`virtualLive_name:${data.id}`, data.name)}
-              aspectRatio={3.2562}
-              color=""
+              // aspectRatio={3.2562}
+              bgColor=""
             ></Image>
           </Grid>
           <Grid item xs={12} md={8}>

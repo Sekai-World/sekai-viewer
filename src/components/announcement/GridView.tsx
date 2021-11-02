@@ -1,4 +1,4 @@
-import { Pin } from "mdi-material-ui";
+import Pin from "~icons/mdi/pin";
 import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
 import { useInteractiveStyles } from "../../styles/interactive";
@@ -10,8 +10,8 @@ import {
   // Chip,
   Grid,
   Typography,
-} from "@material-ui/core";
-import { Skeleton } from "@material-ui/lab";
+} from "@mui/material";
+import { Skeleton } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
 const GridView: React.FC<{ data?: AnnouncementModel }> = ({ data }) => {

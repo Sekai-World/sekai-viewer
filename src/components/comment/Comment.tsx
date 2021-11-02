@@ -14,7 +14,7 @@ import {
   Select,
   TextField,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import MarkdownIt from "markdown-it";
 import React, {
   Fragment,

@@ -1,11 +1,6 @@
-import {
-  Card,
-  CardContent,
-  Grid,
-  makeStyles,
-  Typography,
-} from "@material-ui/core";
-import { Skeleton } from "@material-ui/lab";
+import { Card, CardContent, Grid, Typography } from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import { Skeleton } from "@mui/material";
 import React, { Fragment, useEffect, useState } from "react";
 import {
   INormalMission,
@@ -65,8 +60,12 @@ const GridView: React.FC<{ data?: INormalMission }> = ({ data }) => {
               </Typography>
             </CardContent>
           </Grid>
-          <Grid item xs={4} container justify="center">
-            <Skeleton variant="rect" height="48px" width="48px"></Skeleton>
+          <Grid item xs={4} container justifyContent="center">
+            <Skeleton
+              variant="rectangular"
+              height="48px"
+              width="48px"
+            ></Skeleton>
           </Grid>
         </Grid>
       </Card>
@@ -92,7 +91,14 @@ const GridView: React.FC<{ data?: INormalMission }> = ({ data }) => {
               </Grid>
             </CardContent>
           </Grid>
-          <Grid item xs={4} md={3} container spacing={1} justify="flex-end">
+          <Grid
+            item
+            xs={4}
+            md={3}
+            container
+            spacing={1}
+            justifyContent="flex-end"
+          >
             {rewards.map((reward) =>
               reward.resourceType === "material" ? (
                 <Grid item key={reward.resourceBoxId}>

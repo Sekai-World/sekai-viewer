@@ -4,9 +4,9 @@ import {
   Typography,
   Card,
   CardContent,
-  makeStyles,
   Avatar,
-} from "@material-ui/core";
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import React, { Fragment, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Route, Switch, useRouteMatch } from "react-router-dom";
@@ -581,7 +581,7 @@ const StoryReader: React.FC<{}> = () => {
                   >
                     <Card className={classes.selectCard}>
                       <CardContent>
-                        <Grid container justify="center">
+                        <Grid container justifyContent="center">
                           <Grid item xs={4}>
                             <ImageWrapper
                               src={
@@ -635,7 +635,7 @@ const StoryReader: React.FC<{}> = () => {
                   >
                     <Card className={classes.selectCard}>
                       <CardContent>
-                        <Grid container justify="center">
+                        <Grid container justifyContent="center">
                           <Grid item xs={4}>
                             <ImageWrapper
                               src={

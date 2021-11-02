@@ -19,10 +19,10 @@ import {
   TableRow,
   Tooltip,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import Image from "material-ui-image";
+import Image from "mui-image";
 import { UserContext } from "../../../context";
 import { charaIcons } from "../../../utils/resources";
 import DegreeImage from "../../subs/DegreeImage";
@@ -46,7 +46,7 @@ import IconNotClear from "../../../assets/music/icon_notClear.png";
 import IconClear from "../../../assets/music/icon_clear.png";
 import IconFullCombo from "../../../assets/music/icon_fullCombo.png";
 import IconAllPerfect from "../../../assets/music/icon_allPerfect.png";
-import { ExpandMore } from "@material-ui/icons";
+import { ExpandMore } from "@mui/icons-material";
 import { useLayoutStyles } from "../../../styles/layout";
 
 const ProfileMusicImage: React.FC<{
@@ -62,7 +62,7 @@ const ProfileMusicImage: React.FC<{
     );
   }, [assetbundleName]);
 
-  return <Image src={img} alt={title} aspectRatio={1} color=""></Image>;
+  return <Image src={img} alt={title} bgColor=""></Image>;
 };
 
 const getMusicClearIcon = (status: UserMusicDifficultyStatus) => {
@@ -146,7 +146,7 @@ const MusicSingleData: React.FC<{ umusic?: UserMusic; music: IMusicInfo }> = ({
   return umusic ? (
     <Fragment>
       <Grid item xs={12}>
-        <Grid container justify="center" alignItems="center" spacing={1}>
+        <Grid container justifyContent="center" alignItems="center" spacing={1}>
           <Grid item xs={8} md={3}>
             <ProfileMusicImage
               assetbundleName={music.assetbundleName}
@@ -166,35 +166,35 @@ const MusicSingleData: React.FC<{ umusic?: UserMusic; music: IMusicInfo }> = ({
                       <Image
                         src={BtnDifficultyEasy}
                         alt="difficulty easy"
-                        color=""
+                        bgColor=""
                       />
                     </TableCell>
                     <TableCell>
                       <Image
                         src={BtnDifficultyNormal}
                         alt="difficulty normal"
-                        color=""
+                        bgColor=""
                       />
                     </TableCell>
                     <TableCell>
                       <Image
                         src={BtnDifficultyHard}
                         alt="difficulty hard"
-                        color=""
+                        bgColor=""
                       />
                     </TableCell>
                     <TableCell>
                       <Image
                         src={BtnDifficultyExpert}
                         alt="difficulty expert"
-                        color=""
+                        bgColor=""
                       />
                     </TableCell>
                     <TableCell>
                       <Image
                         src={BtnDifficultyMaster}
                         alt="difficulty master"
-                        color=""
+                        bgColor=""
                       />
                     </TableCell>
                   </TableRow>
@@ -403,8 +403,10 @@ const SekaiUserStatistics = () => {
                             <Image
                               src={`${
                                 window.isChinaMainland
-                                  ? `${process.env.REACT_APP_ASSET_DOMAIN_CN}`
-                                  : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+                                  ? `${import.meta.env.VITE_ASSET_DOMAIN_CN}`
+                                  : `${
+                                      import.meta.env.VITE_ASSET_DOMAIN_MINIO
+                                    }/sekai-assets`
                               }/worldmap/contents/normal_rip/${
                                 area.areaType === "reality_world"
                                   ? `worldmap_area${String(area.id).padStart(
@@ -416,9 +418,8 @@ const SekaiUserStatistics = () => {
                                     ).padStart(2, "0")}`
                               }.png`}
                               alt={`area ${area.id}`}
-                              aspectRatio={1.27}
-                              // style={{ height: "64px", width: "64px" }}
-                              color=""
+                              style={{ height: "64px", width: "64px" }}
+                              bgColor=""
                             />
                           </Tooltip>
                         </Grid>
@@ -446,15 +447,23 @@ const SekaiUserStatistics = () => {
                                         <Image
                                           src={`${
                                             window.isChinaMainland
-                                              ? `${process.env.REACT_APP_ASSET_DOMAIN_CN}`
-                                              : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+                                              ? `${
+                                                  import.meta.env
+                                                    .VITE_ASSET_DOMAIN_CN
+                                                }`
+                                              : `${
+                                                  import.meta.env
+                                                    .VITE_ASSET_DOMAIN_MINIO
+                                                }/sekai-assets`
                                           }/thumbnail/areaitem_rip/${
                                             areaItem.assetbundleName
                                           }.png`}
                                           alt={`area item ${areaItem.id}`}
-                                          aspectRatio={1}
-                                          // style={{ height: "64px", width: "64px" }}
-                                          color=""
+                                          style={{
+                                            height: "64px",
+                                            width: "64px",
+                                          }}
+                                          bgColor=""
                                         />
                                       </Grid>
                                       <Grid item xs={12}>
@@ -506,35 +515,35 @@ const SekaiUserStatistics = () => {
                             <Image
                               src={BtnDifficultyEasy}
                               alt="difficulty easy"
-                              color=""
+                              bgColor=""
                             />
                           </TableCell>
                           <TableCell>
                             <Image
                               src={BtnDifficultyNormal}
                               alt="difficulty normal"
-                              color=""
+                              bgColor=""
                             />
                           </TableCell>
                           <TableCell>
                             <Image
                               src={BtnDifficultyHard}
                               alt="difficulty hard"
-                              color=""
+                              bgColor=""
                             />
                           </TableCell>
                           <TableCell>
                             <Image
                               src={BtnDifficultyExpert}
                               alt="difficulty expert"
-                              color=""
+                              bgColor=""
                             />
                           </TableCell>
                           <TableCell>
                             <Image
                               src={BtnDifficultyMaster}
                               alt="difficulty master"
-                              color=""
+                              bgColor=""
                             />
                           </TableCell>
                         </TableRow>

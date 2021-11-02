@@ -1,4 +1,4 @@
-import { Typography, Container, Grid } from "@material-ui/core";
+import { Typography, Container, Grid } from "@mui/material";
 import { useLayoutStyles } from "../../styles/layout";
 import React, {
   Fragment,
@@ -19,9 +19,9 @@ import {
   PublishOutlined,
   GetApp,
   GetAppOutlined,
-} from "@material-ui/icons";
-import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
-import { Pound } from "mdi-material-ui";
+} from "@mui/icons-material";
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
+import Pound from "~icons/mdi/pound";
 import { SettingContext } from "../../context";
 
 function getPaginatedGachas(gachas: IGachaInfo[], page: number, limit: number) {

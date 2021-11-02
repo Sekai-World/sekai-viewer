@@ -5,10 +5,10 @@ import {
   Grid,
   Paper,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import axios from "axios";
 import React, { Fragment, useEffect, useLayoutEffect, useState } from "react";
-import Image from "material-ui-image";
+import Image from "mui-image";
 import {
   CharacterSpawnEvent,
   CharacterTalkEvent,
@@ -116,10 +116,10 @@ const MCCharacterSpawn: React.FC<{ data: CharacterSpawnEvent }> = ({
         />
       </Grid>
       <Grid item xs={6} md={1}>
-        <Image src={headThumbnail} aspectRatio={1} color="" />
+        <Image src={headThumbnail} bgColor="" />
       </Grid>
       <Grid item xs={6} md={1}>
-        <Image src={bodyThumbnail} aspectRatio={1} color="" />
+        <Image src={bodyThumbnail} bgColor="" />
       </Grid>
     </Fragment>
   ) : null;

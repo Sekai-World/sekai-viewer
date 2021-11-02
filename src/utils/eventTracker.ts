@@ -11,7 +11,7 @@ import {
 export function useEventTrackerAPI(region: ServerRegion = "jp") {
   const axios = useMemo(() => {
     const axios = Axios.create({
-      baseURL: process.env.REACT_APP_API_BACKEND_BASE,
+      baseURL: import.meta.env.VITE_API_BACKEND_BASE,
       params: {
         region,
       },

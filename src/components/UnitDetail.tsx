@@ -1,15 +1,9 @@
-import {
-  Container,
-  Divider,
-  Grid,
-  makeStyles,
-  Paper,
-  Typography,
-} from "@material-ui/core";
+import { Container, Divider, Grid, Paper, Typography } from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
-import Image from "material-ui-image";
+import Image from "mui-image";
 import { useLayoutStyles } from "../styles/layout";
 import { IGameChara, IMusicInfo, IMusicTagInfo, IUnitProfile } from "../types";
 import { getRemoteAssetURL, useCachedData, useServerRegion } from "../utils";
@@ -17,7 +11,7 @@ import { useAssetI18n, useCharaName } from "../utils/i18n";
 import { charaIcons, UnitLogoMap } from "../utils/resources";
 import ColorPreview from "./subs/ColorPreview";
 import { CharaNameTrans, ContentTrans } from "./subs/ContentTrans";
-import { OpenInNew } from "@material-ui/icons";
+import { OpenInNew } from "@mui/icons-material";
 import { useInteractiveStyles } from "../styles/interactive";
 
 const useStyle = makeStyles((theme) => ({
@@ -63,7 +57,7 @@ const UnitMusicImage: React.FC<{
       );
   }, [assetbundleName, img]);
 
-  return <Image src={img} alt={title} aspectRatio={1} color="" />;
+  return <Image src={img} alt={title} bgColor="" />;
 };
 
 const UnitDetail: React.FC<{}> = () => {
@@ -124,7 +118,7 @@ const UnitDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -137,7 +131,7 @@ const UnitDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Grid item xs={2}>
@@ -146,7 +140,7 @@ const UnitDetail: React.FC<{}> = () => {
               </Typography>
             </Grid>
             <Grid item xs={6} md={8}>
-              <Grid container justify="flex-end">
+              <Grid container justifyContent="flex-end">
                 <ContentTrans
                   contentKey={`unit_profile:${unit.unit}.profileSentence`}
                   original={unit.profileSentence}
@@ -159,7 +153,7 @@ const UnitDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Grid item>
@@ -183,7 +177,7 @@ const UnitDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Grid item xs={8}>
@@ -191,7 +185,7 @@ const UnitDetail: React.FC<{}> = () => {
                 {t("member:scenario")}
               </Typography>
             </Grid>
-            <Grid item container justify="flex-end">
+            <Grid item container justifyContent="flex-end">
               <Link
                 to={`/storyreader/unitStory/${unit.unit}`}
                 className={interactiveClasses.noDecoration}
@@ -216,7 +210,7 @@ const UnitDetail: React.FC<{}> = () => {
           container
           direction="row"
           spacing={2}
-          justify="center"
+          justifyContent="center"
         >
           {unitCharas.map((uc) => (
             <Fragment key={`chara-${uc.id}`}>
@@ -227,7 +221,7 @@ const UnitDetail: React.FC<{}> = () => {
                       <Grid item>
                         <Grid
                           container
-                          justify="flex-end"
+                          justifyContent="flex-end"
                           alignItems="flex-start"
                         >
                           <img
@@ -269,7 +263,7 @@ const UnitDetail: React.FC<{}> = () => {
           container
           direction="row"
           spacing={2}
-          justify="center"
+          justifyContent="center"
         >
           {unitMusics.map((um) => (
             <Fragment key={`music-${um.id}`}>

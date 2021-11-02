@@ -8,8 +8,10 @@ import {
   RadioGroup,
   Switch,
   Typography,
-} from "@material-ui/core";
-import { Brightness4, Brightness7, BrightnessAuto } from "mdi-material-ui";
+} from "@mui/material";
+import Brightness4 from '~icons/mdi/brightness-4';
+import Brightness7 from '~icons/mdi/brightness-7';
+import BrightnessAuto from '~icons/mdi/brightness-auto';
 import React, { Fragment, useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { SettingContext } from "../context";

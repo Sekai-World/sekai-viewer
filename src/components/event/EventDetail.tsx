@@ -2,15 +2,15 @@ import {
   Divider,
   Grid,
   LinearProgress,
-  makeStyles,
   Paper,
   Tab,
   Tabs,
   Typography,
   Container,
-} from "@material-ui/core";
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import { useLayoutStyles } from "../../styles/layout";
-import { TabContext, TabPanel } from "@material-ui/lab";
+import { TabContext, TabPanel } from "@mui/lab";
 // import { CronJob } from "cron";
 // import moment from "moment";
 import React, {
@@ -43,14 +43,14 @@ import { ContentTrans } from "../subs/ContentTrans";
 import { CardThumb } from "../subs/CardThumb";
 // import DegreeImage from "../subs/DegreeImage";
 import ResourceBox from "../subs/ResourceBox";
-import { OpenInNew } from "@material-ui/icons";
+import { OpenInNew } from "@mui/icons-material";
 import { useInteractiveStyles } from "../../styles/interactive";
 import AudioPlayer from "../music/AudioPlayer";
 import AgendaView from "../virtual_live/AgendaView";
 // import AdSense from "../subs/AdSense";
-import Image from "material-ui-image";
+import Image from "mui-image";
 import { useStrapi } from "../../utils/apiClient";
-import { CommentTextMultiple } from "mdi-material-ui";
+import CommentTextMultiple from "~icons/mdi/comment-text-multiple";
 import Comment from "../comment/Comment";
 import CheerfulCarnivalTeamIcon from "../subs/CheerfulCarnivalTeamIcon";
 
@@ -84,9 +84,8 @@ const EventDetail: React.FC<{}> = () => {
 
   const [events] = useCachedData<IEventInfo>("events");
   const [eventDeckBonuses] = useCachedData<IEventDeckBonus>("eventDeckBonuses");
-  const [gameCharacterUnits] = useCachedData<IGameCharaUnit>(
-    "gameCharacterUnits"
-  );
+  const [gameCharacterUnits] =
+    useCachedData<IGameCharaUnit>("gameCharacterUnits");
   const [eventCardsCache] = useCachedData<IEventCard>("eventCards");
   const [cards] = useCachedData<ICardInfo>("cards");
   const [virtualLives] = useCachedData<IVirtualLiveInfo>("virtualLives");
@@ -112,10 +111,8 @@ const EventDetail: React.FC<{}> = () => {
   const [visible, setVisible] = useState<boolean>(false);
   const [activeIdx, setActiveIdx] = useState<number>(0);
   const [eventBgm, setEventBgm] = useState<string>("");
-  const [
-    linkedVirtualLive,
-    setLinkedVirtualLive,
-  ] = useState<IVirtualLiveInfo>();
+  const [linkedVirtualLive, setLinkedVirtualLive] =
+    useState<IVirtualLiveInfo>();
   const [ccTeams, setCcTeams] = useState<ICheerfulCarnivalTeam[]>([]);
   const [ccSummary, setCcSummary] = useState<ICheerfulCarnivalSummary>();
   const [eventCommentId, setEventCommentId] = useState<number>(0);
@@ -363,7 +360,7 @@ const EventDetail: React.FC<{}> = () => {
               value={imgTabVal}
               onChange={(_, v) => setImgTabVal(v)}
               variant="scrollable"
-              scrollButtons="desktop"
+              scrollButtons
             >
               <Tab value="0" label={t("event:tab.title[0]")}></Tab>
               <Tab value="1" label={t("event:tab.title[1]")}></Tab>
@@ -376,8 +373,8 @@ const EventDetail: React.FC<{}> = () => {
                     // className={classes.bannerImg}
                     src={eventLogo}
                     alt="logo"
-                    aspectRatio={16 / 7}
-                    color=""
+                    // aspectRatio={16 / 7}
+                    bgColor=""
                   ></Image>
                 </Grid>
                 <Grid item xs={12} md={6}>
@@ -385,37 +382,43 @@ const EventDetail: React.FC<{}> = () => {
                     // className={classes.bannerImg}
                     src={eventBanner}
                     alt="banner"
-                    aspectRatio={16 / 7}
-                    color=""
+                    // aspectRatio={16 / 7}
+                    bgColor=""
                   ></Image>
                 </Grid>
               </Grid>
             </TabPanel>
             <TabPanel value="1" classes={{ root: classes.tabpanel }}>
-              <Image
+              <div
                 onClick={() => {
                   setActiveIdx(0);
                   setVisible(true);
                 }}
-                className={interactiveClasses.pointer}
-                src={eventBackground}
-                aspectRatio={1.625}
-                alt="background"
-                color=""
-              ></Image>
+              >
+                <Image
+                  className={interactiveClasses.pointer}
+                  src={eventBackground}
+                  // aspectRatio={1.625}
+                  alt="background"
+                  bgColor=""
+                ></Image>
+              </div>
             </TabPanel>
             <TabPanel value="2" classes={{ root: classes.tabpanel }}>
-              <Image
+              <div
                 onClick={() => {
                   setActiveIdx(1);
                   setVisible(true);
                 }}
-                className={interactiveClasses.pointer}
-                src={eventCharacter}
-                aspectRatio={1.625}
-                alt="character"
-                color=""
-              ></Image>
+              >
+                <Image
+                  className={interactiveClasses.pointer}
+                  src={eventCharacter}
+                  // aspectRatio={1.625}
+                  alt="character"
+                  bgColor=""
+                ></Image>
+              </div>
             </TabPanel>
           </Paper>
         </TabContext>
@@ -429,7 +432,7 @@ const EventDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -444,7 +447,7 @@ const EventDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -458,7 +461,7 @@ const EventDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Grid item>
@@ -483,7 +486,7 @@ const EventDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -499,7 +502,7 @@ const EventDetail: React.FC<{}> = () => {
                 container
                 direction="row"
                 wrap="nowrap"
-                justify="space-between"
+                justifyContent="space-between"
                 alignItems="center"
               >
                 <Grid item xs={8}>
@@ -507,7 +510,7 @@ const EventDetail: React.FC<{}> = () => {
                     {t("common:eventTracker")}
                   </Typography>
                 </Grid>
-                <Grid item container justify="flex-end">
+                <Grid item container justifyContent="flex-end">
                   <Link
                     to={`/eventtracker?id=${eventId}`}
                     className={interactiveClasses.noDecoration}
@@ -525,7 +528,7 @@ const EventDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Grid item xs={8}>
@@ -533,7 +536,7 @@ const EventDetail: React.FC<{}> = () => {
                 {t("common:storyReader")}
               </Typography>
             </Grid>
-            <Grid item container justify="flex-end">
+            <Grid item container justifyContent="flex-end">
               <Link
                 to={`/storyreader/eventStory/${event.id}`}
                 className={interactiveClasses.noDecoration}
@@ -557,7 +560,7 @@ const EventDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Grid item xs={5}>
@@ -570,10 +573,10 @@ const EventDetail: React.FC<{}> = () => {
                 spacing={1}
                 container
                 alignItems="center"
-                justify="space-between"
+                justifyContent="space-between"
               >
                 <Grid item xs={6} sm={10}>
-                  <Grid container spacing={1} justify="flex-end">
+                  <Grid container spacing={1} justifyContent="flex-end">
                     <Grid item>
                       <img
                         style={{ maxHeight: "36px" }}
@@ -595,7 +598,7 @@ const EventDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Grid item xs={5}>
@@ -608,10 +611,10 @@ const EventDetail: React.FC<{}> = () => {
                 container
                 spacing={1}
                 alignItems="center"
-                justify="space-between"
+                justifyContent="space-between"
               >
                 <Grid item xs={6} sm={10}>
-                  <Grid container spacing={1} justify="flex-end">
+                  <Grid container spacing={1} justifyContent="flex-end">
                     {eventBonusCharas.slice(0, 5).map((chara, idx) => (
                       <Grid key={`chara-${idx}`} item>
                         <img
@@ -635,7 +638,7 @@ const EventDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -646,7 +649,7 @@ const EventDetail: React.FC<{}> = () => {
                 container
                 spacing={1}
                 alignItems="center"
-                justify="space-between"
+                justifyContent="space-between"
               >
                 <Grid item xs={6} sm={10}></Grid>
                 <Grid item xs={5} sm={2}>
@@ -663,7 +666,7 @@ const EventDetail: React.FC<{}> = () => {
                 container
                 direction="row"
                 wrap="nowrap"
-                justify="space-between"
+                justifyContent="space-between"
                 alignItems="center"
               >
                 <Grid item xs={5}>
@@ -672,13 +675,13 @@ const EventDetail: React.FC<{}> = () => {
                   </Typography>
                 </Grid>
                 <Grid item xs={5} sm={6}>
-                  <Grid container spacing={2} justify="flex-end">
+                  <Grid container spacing={2} justifyContent="flex-end">
                     {eventCards
                       .filter((ec) => ec.bonusRate !== 0)
                       .slice(0, 5)
                       .map(({ cardId, bonusRate }) => (
                         <Grid key={cardId} item xs={5} md={4} lg={3}>
-                          <Grid container justify="center">
+                          <Grid container justifyContent="center">
                             <Grid item xs={12}>
                               <Link to={`/card/${cardId}`}>
                                 <CardThumb cardId={cardId} />
@@ -701,7 +704,7 @@ const EventDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Grid item xs={3}>
@@ -715,7 +718,7 @@ const EventDetail: React.FC<{}> = () => {
               sm={7}
               md={6}
               container
-              justify="flex-end"
+              justifyContent="flex-end"
               spacing={2}
             >
               {boostCards.map((card) => (
@@ -740,7 +743,7 @@ const EventDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Grid item xs={3}>
@@ -754,7 +757,7 @@ const EventDetail: React.FC<{}> = () => {
               sm={7}
               md={6}
               container
-              justify="flex-end"
+              justifyContent="flex-end"
               spacing={2}
             >
               {eventCards.map((card) => (
@@ -787,7 +790,7 @@ const EventDetail: React.FC<{}> = () => {
                 className={classes["grid-out"]}
                 container
                 spacing={1}
-                justify="space-around"
+                justifyContent="space-around"
               >
                 <Grid item xs={5} md={3} lg={2}>
                   <CheerfulCarnivalTeamIcon
@@ -824,7 +827,7 @@ const EventDetail: React.FC<{}> = () => {
                   container
                   direction="row"
                   wrap="nowrap"
-                  justify="space-between"
+                  justifyContent="space-between"
                   alignItems="center"
                 >
                   <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -840,7 +843,7 @@ const EventDetail: React.FC<{}> = () => {
                   container
                   direction="row"
                   wrap="nowrap"
-                  justify="space-between"
+                  justifyContent="space-between"
                   alignItems="center"
                 >
                   <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -865,7 +868,7 @@ const EventDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -881,7 +884,7 @@ const EventDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -897,7 +900,7 @@ const EventDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -913,7 +916,7 @@ const EventDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -929,7 +932,7 @@ const EventDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -974,7 +977,7 @@ const EventDetail: React.FC<{}> = () => {
                 container
                 direction="row"
                 wrap="nowrap"
-                justify="space-between"
+                justifyContent="space-between"
                 alignItems="center"
               >
                 <Grid item xs={4}>

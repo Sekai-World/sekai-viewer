@@ -1,4 +1,4 @@
-import { Container, Typography } from "@material-ui/core";
+import { Container, Typography } from "@mui/material";
 import React, {
   Fragment,
   useCallback,
@@ -21,10 +21,8 @@ const AnnouncementList: React.FC<{}> = () => {
   const { t } = useTranslation();
   const { usermeta } = useContext(UserContext)!;
   const { languages, lang } = useContext(SettingContext)!;
-  const {
-    getAnnouncementByLanguagesPage,
-    getAnnouncementByLanguagesCount,
-  } = useStrapi();
+  const { getAnnouncementByLanguagesPage, getAnnouncementByLanguagesCount } =
+    useStrapi();
 
   const [announcements, setAnnouncements] = useState<AnnouncementModel[]>([]);
   const [totalCount, setTotalCount] = useState(0);

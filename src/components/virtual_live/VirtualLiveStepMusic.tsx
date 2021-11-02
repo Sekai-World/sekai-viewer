@@ -1,4 +1,4 @@
-import { Grid, Typography } from "@material-ui/core";
+import { Grid, Typography } from "@mui/material";
 import React, { Fragment, useLayoutEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -51,7 +51,7 @@ const VirtualLiveStepMusic: React.FC<{
             container
             alignItems="center"
             spacing={1}
-            justify="space-around"
+            justifyContent="space-around"
           >
             <Grid item>
               <Grid container alignItems="center" spacing={1}>

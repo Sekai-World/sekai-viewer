@@ -67,7 +67,7 @@ import {
 import { useAssetI18n, useCharaName } from "./i18n";
 import { useLocation } from "react-router-dom";
 import useSWR from "swr";
-import { useSnackbar } from "material-ui-snackbar-provider";
+import { useSnackbar, VariantType } from "notistack";
 import { useTranslation } from "react-i18next";
 import { assetUrl, masterUrl } from "./urls";
 
@@ -228,8 +228,8 @@ export function useMusicMeta() {
   const fetchCached = useCallback(async (name: string) => {
     const { data }: { data: IMusicMeta[] } = await Axios.get(
       (window.isChinaMainland
-        ? process.env.REACT_APP_FRONTEND_ASSET_BASE_CN
-        : process.env.REACT_APP_FRONTEND_ASSET_BASE) + `/${name}.json`
+        ? import.meta.env.VITE_FRONTEND_ASSET_BASE_CN
+        : import.meta.env.VITE_FRONTEND_ASSET_BASE) + `/${name}.json`
     );
     //console.log(data.length);
     return data;
@@ -628,26 +628,17 @@ export function useToggle(initialValue = false) {
 export function useAlertSnackbar() {
   const snackbar = useSnackbar();
   return useMemo(() => {
-    const showMessage: (
-      type: string
-    ) => (
-      message: string,
-      action?: string | undefined,
-      handleAction?: (() => void) | undefined,
-      customParameters?: any
-    ) => any = (type: string) => (
-      message,
-      action,
-      handleAction,
-      customParameters
-    ) =>
-      snackbar.showMessage(message, action, handleAction, {
-        ...customParameters,
-        type,
-      });
+    const showMessage: (type: VariantType) => typeof snackbar.enqueueSnackbar =
+      (type: VariantType) => (message, options) =>
+        snackbar.enqueueSnackbar(
+          message,
+          Object.assign({}, options, {
+            variant: type,
+          })
+        );
     return {
       ...snackbar,
-      showMessage: showMessage("info"),
+      showMessage: showMessage("default"),
       showInfo: showMessage("info"),
       showWarning: showMessage("warning"),
       showError: showMessage("error"),

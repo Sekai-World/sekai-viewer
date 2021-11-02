@@ -4,7 +4,6 @@ import {
   FormControl,
   FormControlLabel,
   IconButton,
-  makeStyles,
   Radio,
   RadioGroup,
   Step,
@@ -12,8 +11,9 @@ import {
   StepLabel,
   Stepper,
   Typography,
-} from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import { Alert } from "@mui/material";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLayoutStyles } from "../styles/layout";
@@ -26,9 +26,14 @@ import {
   ITeamCardState,
 } from "../types";
 import { filterMusicMeta, useCachedData, useMusicMeta } from "../utils";
-import { ColDef, DataGrid, ValueFormatterParams } from "@material-ui/data-grid";
+import {
+  GridColDef,
+  DataGrid,
+  GridRenderCellParams,
+  GridValueFormatterParams,
+} from "@mui/x-data-grid";
 import { Link } from "react-router-dom";
-import { OpenInNew } from "@material-ui/icons";
+import { OpenInNew } from "@mui/icons-material";
 import { useScoreCalc } from "../utils/scoreCalc";
 import TeamBuilder from "./subs/TeamBuilder";
 import { ContentTrans } from "./subs/ContentTrans";
@@ -92,7 +97,7 @@ const MusicRecommend: React.FC<{}> = () => {
     if (metas && musics) setValidMetas(filterMusicMeta(metas, musics));
   }, [metas, musics]);
 
-  const columns: ColDef[] = useMemo(
+  const columns: GridColDef[] = useMemo(
     () => [
       {
         field: "name",
@@ -143,9 +148,11 @@ const MusicRecommend: React.FC<{}> = () => {
         // sortDirection: "desc",
         align: "center",
         hide: selectedMode === "multi",
-        renderCell: (params: ValueFormatterParams) => params.row.result[0],
+        valueFormatter: (params: GridValueFormatterParams) =>
+          params.api.getCellValue(params.id, "result")[0],
         sortComparator: (v1, v2, param1, param2) =>
-          param1.row.result[0] - param2.row.result[0],
+          param1.api.getCellValue(param1.id, "result")[0] -
+          param2.api.getCellValue(param2.id, "result")[0],
       },
       {
         field: "highScore",
@@ -154,9 +161,11 @@ const MusicRecommend: React.FC<{}> = () => {
         sortDirection: selectedMode === "solo" ? "desc" : null,
         align: "center",
         hide: selectedMode === "multi",
-        renderCell: (params: ValueFormatterParams) => params.row.result[1],
+        valueFormatter: (params: GridValueFormatterParams) =>
+          params.api.getCellValue(params.id, "result")[1],
         sortComparator: (v1, v2, param1, param2) =>
-          param1.row.result[1] - param2.row.result[1],
+          param1.api.getCellValue(param1.id, "result")[1] -
+          param2.api.getCellValue(param2.id, "result")[1],
       },
       {
         field: "avgScore",
@@ -165,19 +174,21 @@ const MusicRecommend: React.FC<{}> = () => {
         sortDirection: selectedMode === "multi" ? "desc" : null,
         align: "center",
         hide: selectedMode === "solo",
-        valueFormatter: (params: ValueFormatterParams) => params.row.result,
+        valueFormatter: (params: GridValueFormatterParams) =>
+          params.api.getCellParams(params.id).row.result,
         sortComparator: (v1, v2, param1, param2) =>
-          param1.row.result - param2.row.result,
+          param1.api.getCellValue(param1.id, "result") -
+          param2.api.getCellValue(param2.id, "result"),
       },
       {
         field: "action",
         headerName: t("home:game-news.action"),
         width: 80,
-        renderCell: (params: ValueFormatterParams) => {
+        renderCell: (params: GridRenderCellParams) => {
           const info = params.row as IMusicRecommendResult;
           return (
             <Link to={info.link} target="_blank">
-              <IconButton color="primary">
+              <IconButton color="primary" size="large">
                 <OpenInNew></OpenInNew>
               </IconButton>
             </Link>
@@ -248,13 +259,13 @@ const MusicRecommend: React.FC<{}> = () => {
           const bestScore = Math.floor(
             getScore(meta, teamTotalPower, bestSkillRates, isSolo)
           );
-          console.log(
-            worstSkillRates,
-            worstScore,
-            bestSkillRates,
-            bestScore,
-            meta.skill_score_solo
-          );
+          // console.log(
+          //   worstSkillRates,
+          //   worstScore,
+          //   bestSkillRates,
+          //   bestScore,
+          //   meta.skill_score_solo
+          // );
 
           return {
             id: idx,

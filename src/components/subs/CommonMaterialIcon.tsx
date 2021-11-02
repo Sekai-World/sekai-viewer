@@ -1,6 +1,6 @@
-import { Grid, Typography } from "@material-ui/core";
+import { Grid, Typography } from "@mui/material";
 import React from "react";
-import Image from "material-ui-image";
+import Image from "mui-image";
 
 import coinIcon from "../../assets/common/material/coin.png";
 import honor1Icon from "../../assets/common/material/honor_1.png";
@@ -16,7 +16,6 @@ import skillPracticeTicket2 from "../../assets/common/material/ticket2.png";
 import skillPracticeTicket3 from "../../assets/common/material/ticket3.png";
 // import gachaTicket from "../../assets/common/material/gacha_ticket.png";
 import overThe3Ticket from "../../assets/common/material/over_the_3_ticket.png";
-import { isNumber } from "@material-ui/data-grid";
 
 const materialMap = {
   coin: coinIcon,
@@ -42,7 +41,7 @@ const CommonMaterialIcon: React.FC<{
   quantity?: number;
 }> = ({ materialName, materialId, quantity }) => (
   <Grid container direction="column">
-    <Grid item container justify="center">
+    <Grid item container justifyContent="center">
       <Image
         src={
           materialId
@@ -51,12 +50,12 @@ const CommonMaterialIcon: React.FC<{
         }
         alt={`material ${materialName} ${materialId}`}
         style={{ height: "64px", width: "64px" }}
-        color=""
-        disableTransition
+        bgColor=""
+        duration={0}
       ></Image>
     </Grid>
-    <Grid item container justify="center">
-      {isNumber(quantity) ? (
+    <Grid item container justifyContent="center">
+      {!Number.isNaN(Number(quantity)) ? (
         <Typography variant="body2" align="center">
           x {quantity}
         </Typography>

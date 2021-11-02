@@ -1,12 +1,6 @@
-import {
-  makeStyles,
-  Card,
-  CardContent,
-  Typography,
-  CardMedia,
-  Grid,
-} from "@material-ui/core";
-import { Skeleton } from "@material-ui/lab";
+import { Card, CardContent, Typography, CardMedia, Grid } from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import { Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
@@ -64,7 +58,7 @@ const GridView: React.FC<{ data?: IEventInfo }> = ({ data }) => {
     // loading
     return (
       <Card className={classes.card}>
-        <Skeleton variant="rect" className={classes.media}></Skeleton>
+        <Skeleton variant="rectangular" className={classes.media}></Skeleton>
         <CardContent>
           <Typography variant="subtitle1" className={classes.header}>
             <Skeleton variant="text" width="90%"></Skeleton>

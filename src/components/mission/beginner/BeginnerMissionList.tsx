@@ -7,9 +7,14 @@ import {
   Grid,
   Paper,
   Typography,
-} from "@material-ui/core";
-import { RotateLeft, Sort, SortOutlined } from "@material-ui/icons";
-import { Filter, FilterOutline } from "mdi-material-ui";
+} from "@mui/material";
+import {
+  RotateLeft,
+  Sort,
+  SortOutlined,
+  FilterAlt as Filter,
+  FilterAltOutlined as FilterOutline,
+} from "@mui/icons-material";
 import React, {
   useState,
   useEffect,
@@ -45,9 +50,8 @@ const BeginnerMissionList: React.FC<{}> = () => {
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
 
-  const [beginnerMissionsCache] = useCachedData<IBeginnerMission>(
-    "beginnerMissions"
-  );
+  const [beginnerMissionsCache] =
+    useCachedData<IBeginnerMission>("beginnerMissions");
 
   const [beginnerMissions, setBeginnerMissions] = useState<IBeginnerMission[]>(
     []
@@ -125,7 +129,11 @@ const BeginnerMissionList: React.FC<{}> = () => {
         {t("common:mission.main")} - {t("common:mission.beginner")}
       </Typography>
       <Container className={layoutClasses.content}>
-        <Grid container justify="flex-end" style={{ marginBottom: "0.5rem" }}>
+        <Grid
+          container
+          justifyContent="flex-end"
+          style={{ marginBottom: "0.5rem" }}
+        >
           <Badge
             color="secondary"
             variant="dot"
@@ -148,7 +156,7 @@ const BeginnerMissionList: React.FC<{}> = () => {
                 container
                 xs={12}
                 alignItems="center"
-                justify="space-between"
+                justifyContent="space-between"
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
@@ -224,18 +232,20 @@ const BeginnerMissionList: React.FC<{}> = () => {
           callback={callback}
           data={beginnerMissions}
           gridSize={
-            ({
-              grid: {
-                xs: 12,
-                md: 6,
-              },
-              agenda: {
-                xs: 12,
-              },
-              comfy: {
-                xs: 12,
-              },
-            } as const)[viewGridType]
+            (
+              {
+                grid: {
+                  xs: 12,
+                  md: 6,
+                },
+                agenda: {
+                  xs: 12,
+                },
+                comfy: {
+                  xs: 12,
+                },
+              } as const
+            )[viewGridType]
           }
         />
       </Container>

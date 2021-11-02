@@ -1,7 +1,7 @@
-import { Container, Grid, Link, Typography } from "@material-ui/core";
-import { Twitter } from "@material-ui/icons";
-import { Alert, ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
-import { Vk } from "mdi-material-ui";
+import { Container, Grid, Link, Typography } from "@mui/material";
+import { Twitter } from "@mui/icons-material";
+import { Alert, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import Vk from "~icons/entypo-social/vk";
 import React, {
   Fragment,
   useCallback,
@@ -145,7 +145,7 @@ const ComicList: React.FC<{}> = () => {
         {t("common:comic")}
       </Typography>
       <Container className={layoutClasses.content}>
-        <Grid container justify="space-between">
+        <Grid container justifyContent="space-between">
           <ToggleButtonGroup
             value={resourceLang}
             exclusive
@@ -180,6 +180,7 @@ const ComicList: React.FC<{}> = () => {
               <Link
                 href="https://twitter.com/pjsekai_fra"
                 style={{ textDecorationLine: "none" }}
+                underline="hover"
               >
                 <Twitter fontSize="inherit" /> @pjsekai_fra
               </Link>
@@ -193,6 +194,7 @@ const ComicList: React.FC<{}> = () => {
               <Link
                 href="https://vk.com/pjsekai_ru"
                 style={{ textDecorationLine: "none" }}
+                underline="hover"
               >
                 <Vk fontSize="inherit" /> Project SEKAI Russian Group
               </Link>
@@ -205,6 +207,7 @@ const ComicList: React.FC<{}> = () => {
               <Link
                 href="https://space.bilibili.com/13148307/"
                 style={{ textDecorationLine: "none" }}
+                underline="hover"
               >
                 Project_SEKAI资讯站@bilibili
               </Link>
@@ -221,6 +224,7 @@ const ComicList: React.FC<{}> = () => {
               <Link
                 href="https://twitter.com/pjsekai_eng"
                 style={{ textDecorationLine: "none" }}
+                underline="hover"
               >
                 <Twitter fontSize="inherit" /> @pjsekai_eng
               </Link>

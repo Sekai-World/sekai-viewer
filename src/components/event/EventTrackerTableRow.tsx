@@ -2,12 +2,12 @@ import {
   Collapse,
   Grid,
   IconButton,
-  makeStyles,
   TableCell,
   TableRow,
   Typography,
-} from "@material-ui/core";
-import { KeyboardArrowUp, KeyboardArrowDown } from "@material-ui/icons";
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import { KeyboardArrowUp, KeyboardArrowDown } from "@mui/icons-material";
 import React, { Fragment, useEffect, useState } from "react";
 import { useLayoutStyles } from "../../styles/layout";
 import {

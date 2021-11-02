@@ -1,5 +1,5 @@
-import { Box, Card, CardContent, Grid, Typography } from "@material-ui/core";
-import { Pin } from "mdi-material-ui";
+import { Box, Card, CardContent, Grid, Typography } from "@mui/material";
+import Pin from "~icons/mdi/pin";
 import React, { Fragment, useContext, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";

@@ -5,11 +5,11 @@ import {
   Grid,
   Paper,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import Image from "material-ui-image";
+import Image from "mui-image";
 import { SettingContext } from "../../context";
 // import { useInteractiveStyles } from "../../styles/interactive";
 import { useLayoutStyles } from "../../styles/layout";
@@ -21,7 +21,7 @@ import { charaIcons } from "../../utils/resources";
 import ResourceBox from "../subs/ResourceBox";
 import VirtualLiveStep from "./VirtualLiveStep";
 // import AdSense from "../subs/AdSense";
-import { CommentTextMultiple } from "mdi-material-ui";
+import CommentTextMultiple from "~icons/mdi/comment-text-multiple";
 import Comment from "../comment/Comment";
 import { useStrapi } from "../../utils/apiClient";
 
@@ -36,9 +36,8 @@ const VirtualLiveDetail: React.FC<{}> = () => {
   const [region] = useServerRegion();
 
   const [virtualLives] = useCachedData<IVirtualLiveInfo>("virtualLives");
-  const [gameCharacterUnits] = useCachedData<IGameCharaUnit>(
-    "gameCharacterUnits"
-  );
+  const [gameCharacterUnits] =
+    useCachedData<IGameCharaUnit>("gameCharacterUnits");
 
   const [virtualLive, setVirtualLive] = useState<IVirtualLiveInfo>();
   const [virtualLiveCommentId, setVirtualLiveCommentId] = useState<number>(0);
@@ -109,16 +108,16 @@ const VirtualLiveDetail: React.FC<{}> = () => {
             <Image
               src={vrLiveLogo}
               alt="logo"
-              aspectRatio={7 / 2}
-              color=""
+              // aspectRatio={7 / 2}
+              bgColor=""
             ></Image>
           </Grid>
           <Grid item xs={12} md={6}>
             <Image
               src={vrLiveBanner}
               alt="banner"
-              aspectRatio={7 / 3}
-              color=""
+              // aspectRatio={7 / 3}
+              bgColor=""
             ></Image>
           </Grid>
         </Grid>
@@ -132,7 +131,7 @@ const VirtualLiveDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -146,7 +145,7 @@ const VirtualLiveDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Grid item>
@@ -171,7 +170,7 @@ const VirtualLiveDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -187,7 +186,7 @@ const VirtualLiveDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -203,7 +202,7 @@ const VirtualLiveDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -219,7 +218,7 @@ const VirtualLiveDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Grid item xs={2}>
@@ -228,7 +227,7 @@ const VirtualLiveDetail: React.FC<{}> = () => {
               </Typography>
             </Grid>
             <Grid item xs={6} md={4}>
-              <Grid container spacing={1} justify="flex-end">
+              <Grid container spacing={1} justifyContent="flex-end">
                 {virtualLive.virtualLiveCharacters.map((chara) => (
                   <Grid item xs={4} md={3} lg={2}>
                     <Avatar
@@ -253,7 +252,7 @@ const VirtualLiveDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Grid item xs={2}>
@@ -265,7 +264,7 @@ const VirtualLiveDetail: React.FC<{}> = () => {
               <ResourceBox
                 resourceBoxId={virtualLive.virtualLiveReward.resourceBoxId}
                 resourceBoxPurpose="virtual_live_reward"
-                justify="flex-end"
+                justifyContent="flex-end"
               />
             </Grid>
           </Grid>

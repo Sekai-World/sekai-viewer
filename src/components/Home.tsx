@@ -2,7 +2,6 @@ import {
   Dialog,
   IconButton,
   Link,
-  makeStyles,
   Paper,
   Tab,
   Tabs,
@@ -12,10 +11,16 @@ import {
   useTheme,
   Grid,
   Box,
-} from "@material-ui/core";
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import { useLayoutStyles } from "../styles/layout";
 import { useInteractiveStyles } from "../styles/interactive";
-import { ColDef, DataGrid, ValueFormatterParams } from "@material-ui/data-grid";
+import {
+  GridColDef,
+  DataGrid,
+  GridRenderCellParams,
+  GridValueFormatterParams,
+} from "@mui/x-data-grid";
 import {
   Album,
   AspectRatio,
@@ -28,9 +33,12 @@ import {
   Timeline,
   Translate,
   Twitter,
-} from "@material-ui/icons";
-import { Alert, AlertTitle } from "@material-ui/lab";
-import { Calculator, CalendarText, Discord, Patreon } from "mdi-material-ui";
+} from "@mui/icons-material";
+import { Alert, AlertTitle } from "@mui/material";
+import Calculator from "~icons/mdi/calculator";
+import CalendarText from "~icons/mdi/calendar-text";
+import Discord from "~icons/mdi/discord";
+import Patreon from "~icons/mdi/patreon";
 import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Link as RouteLink } from "react-router-dom";
@@ -62,7 +70,7 @@ function getWebpDetectSeverity(detected: IDetectResult) {
 
 const useIframeStyle = makeStyles((theme) => ({
   iframe: {
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down("md")]: {
       width: "300px",
       height: "480px",
     },
@@ -94,7 +102,7 @@ function InfoInternalDialog(props: {
 
 function InfoInternal(props: { onClick: () => void }) {
   return (
-    <IconButton color="primary" onClick={props.onClick}>
+    <IconButton color="primary" onClick={props.onClick} size="large">
       <OpenInNew></OpenInNew>
     </IconButton>
   );
@@ -106,9 +114,8 @@ function Home() {
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
 
-  const [informations] = useCachedData<IUserInformationInfo>(
-    "userInformations"
-  );
+  const [informations] =
+    useCachedData<IUserInformationInfo>("userInformations");
 
   const [gameNewsTag, setGameNewsTag] = useState<string>("information");
   const [open, setOpen] = useState<boolean>(false);
@@ -137,12 +144,12 @@ function Home() {
 
   const isUpMd = useMediaQuery(theme.breakpoints.up("md"));
 
-  const columns: ColDef[] = [
+  const columns: GridColDef[] = [
     {
       field: "action",
       headerName: t("home:game-news.action"),
       width: 100,
-      renderCell: (params: ValueFormatterParams) => {
+      renderCell: (params: GridRenderCellParams) => {
         const info = params.row as IUserInformationInfo;
         return info.browseType === "internal" ? (
           <InfoInternal
@@ -152,8 +159,8 @@ function Home() {
             }}
           />
         ) : (
-          <Link target="_blank" href={info.path}>
-            <IconButton color="primary">
+          <Link target="_blank" href={info.path} underline="hover">
+            <IconButton color="primary" size="large">
               <OpenInNew></OpenInNew>
             </IconButton>
           </Link>
@@ -166,9 +173,11 @@ function Home() {
       field: "startAt",
       headerName: t("home:game-news.show-from"),
       width: 200,
-      valueFormatter: (params: ValueFormatterParams) =>
-        new Date(params.getValue("startAt") as number).toLocaleString(),
-      sortDirection: "desc",
+      valueFormatter: (params: GridValueFormatterParams) =>
+        new Date(
+          params.api.getCellValue(params.id, "startAt") as number
+        ).toLocaleString(),
+      sortModel: "desc",
     },
     {
       field: "title",
@@ -180,8 +189,10 @@ function Home() {
       field: "endAt",
       headerName: t("home:game-news.show-until"),
       width: 200,
-      valueFormatter: (params: ValueFormatterParams) =>
-        new Date(params.getValue("startAt") as number).toLocaleString(),
+      valueFormatter: (params: GridValueFormatterParams) =>
+        new Date(
+          params.api.getCellValue(params.id, "startAt") as number
+        ).toLocaleString(),
     },
   ];
 
@@ -207,11 +218,11 @@ function Home() {
             )
           )}
         </Box>
-        <Grid container justify="center">
+        <Grid container justifyContent="center">
           <Grid item xs={12} md={8} lg={6}>
             {jpTime === "12/6" ? (
               <img
-                src={`${process.env.PUBLIC_URL}/images/banner-shizuku.png`}
+                src={`/images/banner-shizuku.png`}
                 alt="banner"
                 style={{ width: "100%", height: "auto" }}
                 width="1500"
@@ -219,7 +230,7 @@ function Home() {
               />
             ) : jpTime === "12/27" ? (
               <img
-                src={`${process.env.PUBLIC_URL}/images/banner-rin-ren.png`}
+                src={`/images/banner-rin-ren.png`}
                 alt="banner"
                 style={{ width: "100%", height: "auto" }}
                 width="1500"
@@ -227,7 +238,7 @@ function Home() {
               />
             ) : jpTime === "1/8" ? (
               <img
-                src={`${process.env.PUBLIC_URL}/images/banner-shiho.png`}
+                src={`/images/banner-shiho.png`}
                 alt="banner"
                 style={{ width: "100%", height: "auto" }}
                 width="1500"
@@ -235,7 +246,7 @@ function Home() {
               />
             ) : jpTime === "7/20" ? (
               <img
-                src={`${process.env.PUBLIC_URL}/images/banner-nene.jpg`}
+                src={`/images/banner-nene.jpg`}
                 alt="banner"
                 style={{ width: "100%", height: "auto" }}
                 width="1500"
@@ -243,7 +254,7 @@ function Home() {
               />
             ) : jpTime === "7/26" ? (
               <img
-                src={`${process.env.PUBLIC_URL}/images/banner-an.jpg`}
+                src={`/images/banner-an.jpg`}
                 alt="banner"
                 style={{ width: "100%", height: "auto" }}
                 width="1500"
@@ -251,7 +262,7 @@ function Home() {
               />
             ) : jpTime === "10/5" ? (
               <img
-                src={`${process.env.PUBLIC_URL}/images/banner-haruka.jpg`}
+                src={`/images/banner-haruka.jpg`}
                 alt="banner"
                 style={{ width: "100%", height: "auto" }}
                 width="1500"
@@ -260,7 +271,7 @@ function Home() {
             ) : jpTime === "9/30" ||
               (splitJPTime[0] === "10" && Number(splitJPTime[1]) < 16) ? (
               <img
-                src={`${process.env.PUBLIC_URL}/images/banner-anni.jpg`}
+                src={`/images/banner-anni.jpg`}
                 alt="banner"
                 style={{ width: "100%", height: "auto" }}
                 width="1500"
@@ -268,7 +279,7 @@ function Home() {
               />
             ) : (
               <img
-                src={`${process.env.PUBLIC_URL}/images/banner.png`}
+                src={`/images/banner.png`}
                 alt="banner"
                 style={{ width: "100%", height: "auto" }}
                 width="1500"
@@ -289,7 +300,11 @@ function Home() {
         {window.isChinaMainland && (
           <Alert className={layoutClasses.alert} severity="info">
             本站已启用腾讯云CDN加速数据加载，并计划迁移更多数据加速本站访问，但是费用相对高昂，你可以通过
-            <Link href="https://afdian.net/@sekaiviewer" target="_blank">
+            <Link
+              href="https://afdian.net/@sekaiviewer"
+              target="_blank"
+              underline="hover"
+            >
               <MonetizationOn fontSize="inherit" />
               爱发电
             </Link>
@@ -305,7 +320,12 @@ function Home() {
             <Trans
               i18nKey="home:detect.warning"
               components={{
-                l: <Link href="https://caniuse.com/webp"></Link>,
+                l: (
+                  <Link
+                    href="https://caniuse.com/webp"
+                    underline="hover"
+                  ></Link>
+                ),
               }}
             />
           </Alert>
@@ -420,6 +440,7 @@ function Home() {
             <Link
               href="https://www.transifex.com/dnaroma/sekai-viewer"
               target="_blank"
+              underline="hover"
             >
               <Grid container direction="row" alignItems="center">
                 <Grid item>
@@ -433,6 +454,7 @@ function Home() {
             <Link
               href="https://github.com/Sekai-World/sekai-viewer"
               target="_blank"
+              underline="hover"
             >
               <Grid container direction="row" alignItems="center">
                 <Grid item>
@@ -444,7 +466,11 @@ function Home() {
           </Grid>
           {window.isChinaMainland && (
             <Grid item>
-              <Link href="https://b23.tv/AIjzvc" target="_blank">
+              <Link
+                href="https://b23.tv/AIjzvc"
+                target="_blank"
+                underline="hover"
+              >
                 <Grid container direction="row" alignItems="center">
                   <Grid item>
                     <OpenInNew fontSize="small"></OpenInNew>
@@ -459,6 +485,7 @@ function Home() {
               <Link
                 href="https://www.patreon.com/bePatron?u=6503151"
                 target="_blank"
+                underline="hover"
               >
                 <Grid container direction="row" alignItems="center">
                   <Grid item>
@@ -471,7 +498,11 @@ function Home() {
           )}
           {window.isChinaMainland && (
             <Grid item>
-              <Link href="https://afdian.net/@sekaiviewer" target="_blank">
+              <Link
+                href="https://afdian.net/@sekaiviewer"
+                target="_blank"
+                underline="hover"
+              >
                 <Grid container direction="row" alignItems="center">
                   <Grid item>
                     <OpenInNew fontSize="small" />
@@ -496,7 +527,11 @@ function Home() {
             </RouteLink>
           </Grid>
           <Grid item>
-            <Link href="https://www.twitter.com/SekaiViewer" target="_blank">
+            <Link
+              href="https://www.twitter.com/SekaiViewer"
+              target="_blank"
+              underline="hover"
+            >
               <Grid container direction="row" alignItems="center">
                 <Grid item>
                   <Twitter fontSize="small"></Twitter>
@@ -506,7 +541,11 @@ function Home() {
             </Link>
           </Grid>
           <Grid item>
-            <Link href="https://discord.gg/xcDBRMd" target="_blank">
+            <Link
+              href="https://discord.gg/xcDBRMd"
+              target="_blank"
+              underline="hover"
+            >
               <Grid container direction="row" alignItems="center">
                 <Grid item>
                   <Discord fontSize="small"></Discord>
@@ -541,7 +580,7 @@ function Home() {
               value={gameNewsTag}
               onChange={(e, v) => setGameNewsTag(v)}
               variant="scrollable"
-              scrollButtons="desktop"
+              scrollButtons
             >
               <Tab label={t("common:information")} value="information"></Tab>
               <Tab label={t("common:event")} value="event"></Tab>

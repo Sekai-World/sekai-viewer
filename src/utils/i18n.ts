@@ -56,8 +56,8 @@ export async function initGlobalI18n() {
       backend: {
         loadPath:
           (window.isChinaMainland
-            ? process.env.REACT_APP_JSON_DOMAIN_CN + "/locales"
-            : process.env.REACT_APP_JSON_DOMAIN_WW) + "/{{lng}}/{{ns}}.json",
+            ? import.meta.env.VITE_JSON_DOMAIN_CN + "/locales"
+            : import.meta.env.VITE_JSON_DOMAIN_WW) + "/{{lng}}/{{ns}}.json",
       },
       returnEmptyString: false,
     });
@@ -103,8 +103,8 @@ export async function initGlobalI18n() {
       backend: {
         loadPath:
           (window.isChinaMainland
-            ? process.env.REACT_APP_JSON_DOMAIN_CN + "/locales"
-            : process.env.REACT_APP_JSON_DOMAIN_WW) + "/{{lng}}/{{ns}}.json",
+            ? import.meta.env.VITE_JSON_DOMAIN_CN + "/locales"
+            : import.meta.env.VITE_JSON_DOMAIN_WW) + "/{{lng}}/{{ns}}.json",
       },
       returnEmptyString: false,
     });
@@ -120,7 +120,7 @@ export async function initGlobalI18n() {
   //     },
   //     backend: {
   //       loadPath:
-  //         process.env.REACT_APP_STRAPI_BASE +
+  //         import.meta.env.VITE_STRAPI_BASE +
   //         "/announcement/{{ns}}/translation/{{lng}}",
   //     },
   //     returnEmptyString: false,

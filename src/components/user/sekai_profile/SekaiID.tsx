@@ -8,16 +8,16 @@ import {
   Grid,
   useTheme,
   CardMedia,
-  makeStyles,
   Tooltip,
-} from "@material-ui/core";
-import { Check, Clear, Create, Update } from "@material-ui/icons";
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import { Check, Clear, Create, Update } from "@mui/icons-material";
 import { Field, Form, Formik } from "formik";
-import { TextField } from "formik-material-ui";
+import { TextField } from "formik-mui";
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 // @ts-ignore
-import { AutoRotatingCarousel, Slide } from "material-auto-rotating-carousel";
+// import { AutoRotatingCarousel, Slide } from "material-auto-rotating-carousel";
 import { isMobile } from "react-device-detect";
 import { useStrapi } from "../../../utils/apiClient";
 import { UserContext } from "../../../context";
@@ -27,7 +27,7 @@ import { useAlertSnackbar } from "../../../utils";
 
 const useStyles = makeStyles((theme) => ({
   media: {
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down("md")]: {
       paddingTop: "75%",
     },
     [theme.breakpoints.up("md")]: {
@@ -43,9 +43,8 @@ const SekaiID: React.FC<{}> = () => {
   // const { token } = useJwtAuth();
   const theme = useTheme();
   const classes = useStyles();
-  const { jwtToken, sekaiProfile, updateSekaiProfile } = useContext(
-    UserContext
-  )!;
+  const { jwtToken, sekaiProfile, updateSekaiProfile } =
+    useContext(UserContext)!;
   const {
     getSekaiProfileMe,
     postSekaiProfileVerify,
@@ -121,7 +120,6 @@ const SekaiID: React.FC<{}> = () => {
                         }
                         disableFocusListener
                         arrow
-                        interactive
                       >
                         <span>
                           <Button
@@ -338,7 +336,7 @@ const SekaiID: React.FC<{}> = () => {
           </Grid>
         </Grid>
       )}
-      <AutoRotatingCarousel
+      {/* <AutoRotatingCarousel
         label={t("user:profile.label.sekai_id_verify")}
         open={isVerifyCarouselOpen}
         onClose={() => setIsVerifyCarouselOpen(false)}
@@ -364,8 +362,10 @@ const SekaiID: React.FC<{}> = () => {
             <CardMedia
               image={`${
                 window.isChinaMainland
-                  ? process.env.REACT_APP_FRONTEND_ASSET_BASE
-                  : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-best-assets`
+                  ? import.meta.env.VITE_FRONTEND_ASSET_BASE
+                  : `${
+                      import.meta.env.VITE_ASSET_DOMAIN_MINIO
+                    }/sekai-best-assets`
               }/verify/step_1.png`}
               title="sekai id verify step 1"
               className={classes.media}
@@ -381,8 +381,10 @@ const SekaiID: React.FC<{}> = () => {
             <CardMedia
               image={`${
                 window.isChinaMainland
-                  ? process.env.REACT_APP_FRONTEND_ASSET_BASE
-                  : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-best-assets`
+                  ? import.meta.env.VITE_FRONTEND_ASSET_BASE
+                  : `${
+                      import.meta.env.VITE_ASSET_DOMAIN_MINIO
+                    }/sekai-best-assets`
               }/verify/step_2.png`}
               title="sekai id verify step 2"
               className={classes.media}
@@ -395,7 +397,7 @@ const SekaiID: React.FC<{}> = () => {
             verify_token: sekaiProfile?.sekaiUserToken,
           })}
         ></Slide>
-      </AutoRotatingCarousel>
+      </AutoRotatingCarousel> */}
     </Grid>
   );
 };

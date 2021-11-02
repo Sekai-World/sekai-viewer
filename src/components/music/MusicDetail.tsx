@@ -4,7 +4,6 @@ import {
   FormControl,
   FormControlLabel,
   Grid,
-  makeStyles,
   Paper,
   Radio,
   RadioGroup,
@@ -12,14 +11,15 @@ import {
   Tabs,
   Typography,
   Container,
-  Switch,
-  // useTheme,
+  Switch, // useTheme,
   Link,
-} from "@material-ui/core";
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import { useLayoutStyles } from "../../styles/layout";
 import { useInteractiveStyles } from "../../styles/interactive";
-import { Alert, TabContext, TabPanel } from "@material-ui/lab";
-import { OpenInNew } from "@material-ui/icons";
+import { Alert } from "@mui/material";
+import { TabContext, TabPanel } from "@mui/lab";
+import { OpenInNew } from "@mui/icons-material";
 import React, {
   Fragment,
   useCallback,
@@ -59,9 +59,9 @@ import AudioPlayer from "./AudioPlayer";
 import { Howl } from "howler";
 import { saveAs } from "file-saver";
 // import AdSense from "../subs/AdSense";
-import Image from "material-ui-image";
+import Image from "mui-image";
 import { useStrapi } from "../../utils/apiClient";
-import { CommentTextMultiple } from "mdi-material-ui";
+import CommentTextMultiple from "~icons/mdi/comment-text-multiple";
 import Comment from "../comment/Comment";
 import axios from "axios";
 import { trimMP3 } from "../../utils/trimMP3";
@@ -104,17 +104,15 @@ const MusicDetail: React.FC<{}> = () => {
 
   const [musics] = useCachedData<IMusicInfo>("musics");
   const [musicVocals] = useCachedData<IMusicVocalInfo>("musicVocals");
-  const [musicDiffis] = useCachedData<IMusicDifficultyInfo>(
-    "musicDifficulties"
-  );
+  const [musicDiffis] =
+    useCachedData<IMusicDifficultyInfo>("musicDifficulties");
   const [musicTags] = useCachedData<IMusicTagInfo>("musicTags");
   // const [gameCharas] = useCachedData<IGameChara>('gameCharacters');
   const [outCharas] = useCachedData<IOutCharaProfile>("outsideCharacters");
   // const [releaseConds] = useCachedData<IReleaseCondition>("releaseConditions");
   const [danceMembers] = useCachedData<IMusicDanceMembers>("musicDanceMembers");
-  const [musicAchievements] = useCachedData<IMusicAchievement>(
-    "musicAchievements"
-  );
+  const [musicAchievements] =
+    useCachedData<IMusicAchievement>("musicAchievements");
   const [region] = useServerRegion();
 
   const { musicId } = useParams<{ musicId: string }>();
@@ -124,14 +122,10 @@ const MusicDetail: React.FC<{}> = () => {
   const [music, setMusic] = useState<IMusicInfo>();
   const [musicVocal, setMusicVocal] = useState<IMusicVocalInfo[]>([]);
   const [musicVocalTypes, setMusicVocalTypes] = useState<string[]>([]);
-  const [
-    musicDanceMember,
-    setMusicDanceMember,
-  ] = useState<IMusicDanceMembers>();
-  const [
-    selectedPreviewVocalType,
-    setSelectedPreviewVocalType,
-  ] = useState<number>(0);
+  const [musicDanceMember, setMusicDanceMember] =
+    useState<IMusicDanceMembers>();
+  const [selectedPreviewVocalType, setSelectedPreviewVocalType] =
+    useState<number>(0);
   const [selectedVocalType, setSelectedVocalType] = useState<number>(0);
   const [vocalPreviewVal, setVocalPreviewVal] = useState<string>("1");
   const [vocalDisabled, setVocalDisabled] = useState<boolean>(false);
@@ -337,22 +331,20 @@ const MusicDetail: React.FC<{}> = () => {
     }
   }, [music, musicVocalTypes, region, selectedPreviewVocalType]);
 
-  const getCharaIcon: (
-    characterId: number,
-    height?: number
-  ) => JSX.Element = useCallback((characterId, height = 42) => {
-    if (!characterId) return <span></span>;
-    return (
-      <Grid item key={`chara-${characterId}`}>
-        <img
-          key={characterId}
-          height={height}
-          src={charaIcons[`CharaIcon${characterId}`]}
-          alt={`character ${characterId}`}
-        ></img>
-      </Grid>
-    );
-  }, []);
+  const getCharaIcon: (characterId: number, height?: number) => JSX.Element =
+    useCallback((characterId, height = 42) => {
+      if (!characterId) return <span></span>;
+      return (
+        <Grid item key={`chara-${characterId}`}>
+          <img
+            key={characterId}
+            height={height}
+            src={charaIcons[`CharaIcon${characterId}`]}
+            alt={`character ${characterId}`}
+          ></img>
+        </Grid>
+      );
+    }, []);
 
   const onPlay = useCallback(() => {
     if ("mediaSession" in window.navigator) {
@@ -399,14 +391,13 @@ const MusicDetail: React.FC<{}> = () => {
     async (src: string) => {
       if (!music) return;
       // console.log(src);
-      const vocals = musicVocal[
-        selectedPreviewVocalType
-      ].characters.map((chara) =>
-        chara.characterType === "game_character"
-          ? getOriginalCharaName(chara.characterId)
-          : outCharas && outCharas.length
-          ? outCharas.find((elem) => elem.id === chara.characterId)!.name
-          : chara.characterId
+      const vocals = musicVocal[selectedPreviewVocalType].characters.map(
+        (chara) =>
+          chara.characterType === "game_character"
+            ? getOriginalCharaName(chara.characterId)
+            : outCharas && outCharas.length
+            ? outCharas.find((elem) => elem.id === chara.characterId)!.name
+            : chara.characterId
       );
       if (trimSilence && format === "mp3") {
         const buf = (await axios.get(src, { responseType: "arraybuffer" }))
@@ -453,7 +444,7 @@ const MusicDetail: React.FC<{}> = () => {
           container
           xs={12}
           alignItems="center"
-          justify="space-between"
+          justifyContent="space-between"
         >
           <Grid item xs={12} md={2}>
             <Typography classes={{ root: interactiveClasses.caption }}>
@@ -502,17 +493,20 @@ const MusicDetail: React.FC<{}> = () => {
         <Alert severity="warning">
           <Trans i18nKey="music:alert[0]" components={{ b: <b /> }} />
         </Alert>
-        <Grid container justify="center">
+        <Grid container justifyContent="center">
           <Grid item xs={12} sm={6}>
-            <Image
+            <div
               onClick={() => {
                 setActiveIdx(0);
                 setVisible(true);
               }}
-              className={interactiveClasses.pointer}
-              src={musicJacket}
-              color=""
-            ></Image>
+            >
+              <Image
+                className={interactiveClasses.pointer}
+                src={musicJacket}
+                bgColor=""
+              ></Image>
+            </div>
           </Grid>
         </Grid>
         <Paper className={interactiveClasses.container}>
@@ -522,7 +516,7 @@ const MusicDetail: React.FC<{}> = () => {
               container
               xs={12}
               alignItems="center"
-              justify="space-between"
+              justifyContent="space-between"
             >
               <Grid item xs={12} md={2}>
                 <Typography classes={{ root: interactiveClasses.caption }}>
@@ -578,7 +572,7 @@ const MusicDetail: React.FC<{}> = () => {
               container
               xs={12}
               alignItems="center"
-              justify="space-between"
+              justifyContent="space-between"
             >
               <Grid item xs={12} md={2}>
                 <Typography classes={{ root: interactiveClasses.caption }}>
@@ -616,7 +610,7 @@ const MusicDetail: React.FC<{}> = () => {
                 container
                 xs={12}
                 alignItems="center"
-                justify="space-between"
+                justifyContent="space-between"
               >
                 <Grid item xs={12} md={2}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
@@ -694,7 +688,7 @@ const MusicDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -707,7 +701,7 @@ const MusicDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Grid item>
@@ -729,7 +723,7 @@ const MusicDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -758,7 +752,7 @@ const MusicDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -777,7 +771,7 @@ const MusicDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -790,7 +784,7 @@ const MusicDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -803,7 +797,7 @@ const MusicDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -816,7 +810,7 @@ const MusicDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -831,7 +825,7 @@ const MusicDetail: React.FC<{}> = () => {
                 container
                 direction="row"
                 wrap="nowrap"
-                justify="space-between"
+                justifyContent="space-between"
                 alignItems="center"
               >
                 <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -867,7 +861,7 @@ const MusicDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -898,7 +892,7 @@ const MusicDetail: React.FC<{}> = () => {
               item
               container
               direction="row"
-              justify="space-between"
+              justifyContent="space-between"
               alignItems="center"
             >
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -936,7 +930,7 @@ const MusicDetail: React.FC<{}> = () => {
               <Grid
                 container
                 direction="row"
-                justify="space-between"
+                justifyContent="space-between"
                 alignItems="center"
               >
                 <Grid item>
@@ -960,7 +954,7 @@ const MusicDetail: React.FC<{}> = () => {
               <Grid
                 container
                 direction="row"
-                justify="space-between"
+                justifyContent="space-between"
                 alignItems="center"
               >
                 <Grid item>
@@ -994,7 +988,12 @@ const MusicDetail: React.FC<{}> = () => {
       {musicAchievements && !!musicAchievements.length && (
         <Container className={layoutClasses.content} maxWidth="md">
           <Grid container direction="column">
-            <Grid item container justify="space-between" alignItems="center">
+            <Grid
+              item
+              container
+              justifyContent="space-between"
+              alignItems="center"
+            >
               <Grid item xs={2}>
                 <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                   {t("music:scoreRankAchievement.title")}
@@ -1080,7 +1079,7 @@ const MusicDetail: React.FC<{}> = () => {
                   setDiffiInfoTabVal(v);
                 }}
                 variant="scrollable"
-                scrollButtons="desktop"
+                scrollButtons
               >
                 {musicDiffis
                   .filter((elem) => elem.musicId === Number(musicId))
@@ -1106,7 +1105,7 @@ const MusicDetail: React.FC<{}> = () => {
                       item
                       container
                       direction="row"
-                      justify="space-between"
+                      justifyContent="space-between"
                     >
                       <Typography
                         variant="subtitle1"
@@ -1121,7 +1120,7 @@ const MusicDetail: React.FC<{}> = () => {
                       item
                       container
                       direction="row"
-                      justify="space-between"
+                      justifyContent="space-between"
                     >
                       <Typography
                         variant="subtitle1"
@@ -1136,7 +1135,7 @@ const MusicDetail: React.FC<{}> = () => {
                       <Grid
                         container
                         direction="row"
-                        justify="space-between"
+                        justifyContent="space-between"
                         alignItems="center"
                       >
                         <Grid item>
@@ -1161,7 +1160,7 @@ const MusicDetail: React.FC<{}> = () => {
                       <Grid
                         container
                         direction="row"
-                        justify="space-between"
+                        justifyContent="space-between"
                         alignItems="center"
                       >
                         <Grid item xs={2}>
@@ -1213,7 +1212,7 @@ const MusicDetail: React.FC<{}> = () => {
                       <Grid
                         container
                         direction="row"
-                        justify="space-between"
+                        justifyContent="space-between"
                         alignItems="center"
                       >
                         <Grid item>
@@ -1230,14 +1229,17 @@ const MusicDetail: React.FC<{}> = () => {
                               <Link
                                 href={`${
                                   window.isChinaMainland
-                                    ? process.env.REACT_APP_ASSET_DOMAIN_CN
-                                    : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+                                    ? import.meta.env.VITE_ASSET_DOMAIN_CN
+                                    : `${
+                                        import.meta.env.VITE_ASSET_DOMAIN_MINIO
+                                      }/sekai-assets`
                                 }/music/charts/${musicId.padStart(4, "0")}/${
                                   elem.musicDifficulty
                                 }.svg`}
                                 target="_blank"
+                                underline="hover"
                               >
-                                <Grid container justify="flex-end">
+                                <Grid container justifyContent="flex-end">
                                   <Grid item>
                                     <Typography>SVG</Typography>
                                   </Grid>
@@ -1251,14 +1253,17 @@ const MusicDetail: React.FC<{}> = () => {
                               <Link
                                 href={`${
                                   window.isChinaMainland
-                                    ? process.env.REACT_APP_ASSET_DOMAIN_CN
-                                    : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets`
+                                    ? import.meta.env.VITE_ASSET_DOMAIN_CN
+                                    : `${
+                                        import.meta.env.VITE_ASSET_DOMAIN_MINIO
+                                      }/sekai-assets`
                                 }/music/charts/${musicId.padStart(4, "0")}/${
                                   elem.musicDifficulty
                                 }.png`}
                                 target="_blank"
+                                underline="hover"
                               >
-                                <Grid container justify="flex-end">
+                                <Grid container justifyContent="flex-end">
                                   <Grid item>
                                     <Typography>PNG</Typography>
                                   </Grid>

@@ -3,11 +3,11 @@ import {
   CircularProgress,
   Container,
   IconButton,
-  makeStyles,
   Typography,
-} from "@material-ui/core";
-import { ColDef, DataGrid } from "@material-ui/data-grid";
-import { OpenInNew } from "@material-ui/icons";
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import { GridColDef, DataGrid } from "@mui/x-data-grid";
+import { OpenInNew } from "@mui/icons-material";
 import React, { Fragment, useEffect } from "react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -48,7 +48,7 @@ const MusicMeta = () => {
 
   const [validMetas, setValidMetas] = useState<IMusicMeta[]>([]);
 
-  const columns: ColDef[] = [
+  const columns: GridColDef[] = [
     {
       field: "music_id",
       headerName: t("common:id"),
@@ -61,7 +61,7 @@ const MusicMeta = () => {
             className={interactiveClasses.noDecoration}
           >
             {params.value}
-            <IconButton color="primary">
+            <IconButton color="primary" size="large">
               <OpenInNew></OpenInNew>
             </IconButton>
           </Link>
@@ -75,13 +75,17 @@ const MusicMeta = () => {
       renderCell(params) {
         return (
           <ContentTrans
-            contentKey={`music_titles:${params.getValue("music_id")}`}
+            contentKey={`music_titles:${params.getValue(
+              params.id,
+              "music_id"
+            )}`}
             original={
               musics
                 ? musics.find(
-                    (music) => music.id === params.getValue("music_id")
+                    (music) =>
+                      music.id === params.getValue(params.id, "music_id")
                   )!.title
-                : String(params.getValue("music_id"))
+                : String(params.getValue(params.id, "music_id"))
             }
           />
         );
@@ -99,7 +103,7 @@ const MusicMeta = () => {
             classes={{
               colorPrimary:
                 classes[
-                  `diffi-${params.getValue("difficulty")}` as
+                  `diffi-${params.getValue(params.id, "difficulty")}` as
                     | "diffi-easy"
                     | "diffi-normal"
                     | "diffi-hard"

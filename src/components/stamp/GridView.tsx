@@ -1,12 +1,6 @@
-import {
-  Card,
-  CardContent,
-  Typography,
-  Link,
-  CardMedia,
-  makeStyles,
-} from "@material-ui/core";
-import { Skeleton } from "@material-ui/lab";
+import { Card, CardContent, Typography, Link, CardMedia } from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import { Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { IStampInfo } from "../../types";
 import { getRemoteAssetURL, useServerRegion } from "../../utils";
@@ -51,7 +45,7 @@ const GridView: React.FC<{ data?: IStampInfo }> = ({ data }) => {
     // loading
     return (
       <Card className={classes.card}>
-        <Skeleton variant="rect" className={classes.media}></Skeleton>
+        <Skeleton variant="rectangular" className={classes.media}></Skeleton>
         <CardContent>
           <Typography variant="subtitle1" className={classes.subheader}>
             <Skeleton variant="text" width="90%"></Skeleton>
@@ -65,6 +59,7 @@ const GridView: React.FC<{ data?: IStampInfo }> = ({ data }) => {
       href={url.replace(".webp", ".png")}
       target="_blank"
       style={{ textDecoration: "none" }}
+      underline="hover"
     >
       <Card className={classes.card}>
         <CardMedia

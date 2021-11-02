@@ -6,8 +6,8 @@ import {
   InputLabel,
   MenuItem,
   Select,
-} from "@material-ui/core";
-import { ColDef, DataGrid } from "@material-ui/data-grid";
+} from "@mui/material";
+import { GridColDef, DataGrid } from "@mui/x-data-grid";
 import React, {
   Fragment,
   useCallback,
@@ -36,9 +36,8 @@ const TableMe: React.FC<Props> = (props: Props) => {
   const interactiveClasses = useInteractiveStyles();
   const { jwtToken, usermeta } = useContext(UserContext)!;
   const { languages } = useContext(SettingContext)!;
-  const { getTranslations, getTranslationCount, putTranslationId } = useStrapi(
-    jwtToken
-  );
+  const { getTranslations, getTranslationCount, putTranslationId } =
+    useStrapi(jwtToken);
 
   const [translations, setTranslations] = useState<TranslationModel[]>([]);
   const [rowCount, setRowCount] = useState(0);
@@ -85,7 +84,7 @@ const TableMe: React.FC<Props> = (props: Props) => {
   }, [getTranslations, page, pageSize, updateData]);
 
   const columns = useMemo(
-    (): ColDef[] => [
+    (): GridColDef[] => [
       { field: "id", headerName: t("common:id"), width: 80 },
       {
         field: "isFin",
@@ -137,7 +136,7 @@ const TableMe: React.FC<Props> = (props: Props) => {
             <Link
               className={interactiveClasses.noDecoration}
               to={`/${(params.value as string).replace(":", "/")}${
-                params.getValue("isFin") ? "" : "?preview=true"
+                params.getValue(params.id, "isFin") ? "" : "?preview=true"
               }`}
               target="_blank"
             >
@@ -211,12 +210,14 @@ const TableMe: React.FC<Props> = (props: Props) => {
           pageSize={pageSize}
           rowCount={rowCount}
           paginationMode="server"
-          onPageChange={({ page }) => setPage(page)}
-          onPageSizeChange={({ pageSize }) => setPageSize(pageSize)}
+          onPageChange={(page) => setPage(page)}
+          onPageSizeChange={(pageSize) => setPageSize(pageSize)}
           loading={loading}
           rowHeight={45}
-          onRowSelected={(param) =>
-            setSelectedWork(param.data as TranslationModel)
+          onSelectionModelChange={(param, { api }) =>
+            setSelectedWork(
+              api!.getCellValue(param[0], "data") as TranslationModel
+            )
           }
           disableColumnFilter
         />

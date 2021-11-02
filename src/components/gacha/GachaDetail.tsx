@@ -4,7 +4,6 @@ import {
   CardMedia,
   Divider,
   Grid,
-  makeStyles,
   Paper,
   Tab,
   Tabs,
@@ -19,9 +18,10 @@ import {
   TableRow,
   TableBody,
   TableCell,
-} from "@material-ui/core";
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import { useLayoutStyles } from "../../styles/layout";
-import { TabContext, TabPanel } from "@material-ui/lab";
+import { TabContext, TabPanel } from "@mui/lab";
 import React, {
   Fragment,
   useCallback,
@@ -502,7 +502,7 @@ const GachaDetailPage: React.FC<{}> = () => {
                 value={picTabVal}
                 onChange={handleChange}
                 variant="scrollable"
-                scrollButtons="desktop"
+                scrollButtons
               >
                 <Tab label={t("gacha:tab.title.banner_logo")} value="2"></Tab>
                 {gachaBackground && (
@@ -566,7 +566,7 @@ const GachaDetailPage: React.FC<{}> = () => {
               item
               container
               direction="row"
-              justify="space-between"
+              justifyContent="space-between"
               alignItems="center"
             >
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -579,7 +579,7 @@ const GachaDetailPage: React.FC<{}> = () => {
               item
               container
               direction="row"
-              justify="space-between"
+              justifyContent="space-between"
               alignItems="center"
             >
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -597,7 +597,7 @@ const GachaDetailPage: React.FC<{}> = () => {
               item
               container
               direction="row"
-              justify="space-between"
+              justifyContent="space-between"
               alignItems="center"
             >
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -612,7 +612,7 @@ const GachaDetailPage: React.FC<{}> = () => {
               item
               container
               direction="row"
-              justify="space-between"
+              justifyContent="space-between"
               alignItems="center"
             >
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -625,7 +625,7 @@ const GachaDetailPage: React.FC<{}> = () => {
               item
               container
               direction="row"
-              justify="space-between"
+              justifyContent="space-between"
               alignItems="center"
             >
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -642,7 +642,7 @@ const GachaDetailPage: React.FC<{}> = () => {
                   item
                   container
                   direction="row"
-                  justify="space-between"
+                  justifyContent="space-between"
                   alignItems="center"
                 >
                   <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -657,7 +657,7 @@ const GachaDetailPage: React.FC<{}> = () => {
               item
               container
               direction="row"
-              justify="space-between"
+              justifyContent="space-between"
               alignItems="center"
             >
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -675,7 +675,7 @@ const GachaDetailPage: React.FC<{}> = () => {
               item
               container
               direction="row"
-              justify="space-between"
+              justifyContent="space-between"
               alignItems="center"
             >
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -701,7 +701,7 @@ const GachaDetailPage: React.FC<{}> = () => {
                   item
                   container
                   direction="row"
-                  justify="space-between"
+                  justifyContent="space-between"
                   alignItems="center"
                 >
                   <Grid item xs={2} md={4}>
@@ -754,7 +754,7 @@ const GachaDetailPage: React.FC<{}> = () => {
                   item
                   container
                   direction="row"
-                  justify="space-between"
+                  justifyContent="space-between"
                   alignItems="center"
                 >
                   <Grid item xs={2} md={4}>
@@ -801,7 +801,7 @@ const GachaDetailPage: React.FC<{}> = () => {
             <Grid
               container
               wrap="nowrap"
-              justify="space-between"
+              justifyContent="space-between"
               alignItems="center"
             >
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -827,7 +827,7 @@ const GachaDetailPage: React.FC<{}> = () => {
                 <Grid
                   container
                   wrap="nowrap"
-                  justify="space-between"
+                  justifyContent="space-between"
                   alignItems="center"
                 >
                   <Grid item>
@@ -867,7 +867,7 @@ const GachaDetailPage: React.FC<{}> = () => {
                 <Grid
                   container
                   wrap="nowrap"
-                  justify="space-between"
+                  justifyContent="space-between"
                   alignItems="center"
                 >
                   <Grid item>
@@ -897,7 +897,7 @@ const GachaDetailPage: React.FC<{}> = () => {
           {t("gacha:gacha_simulator")}
         </Typography>
         <Container className={layoutClasses.content} maxWidth="md">
-          <Grid container spacing={1} justify="center">
+          <Grid container spacing={1} justifyContent="center">
             <Grid item>
               <Button
                 variant="contained"
@@ -929,7 +929,7 @@ const GachaDetailPage: React.FC<{}> = () => {
               </Button>
             </Grid>
           </Grid>
-          <Grid container spacing={1} justify="center">
+          <Grid container spacing={1} justifyContent="center">
             <Grid item>
               <Typography>
                 {t("gacha:simulator.total")}: {statistic.total}
@@ -940,7 +940,7 @@ const GachaDetailPage: React.FC<{}> = () => {
                 {t("gacha:simulator.cost")}: {statistic.total * 300}
               </Typography>
             </Grid>
-            <Grid item xs={12} container justify="center">
+            <Grid item xs={12} container justifyContent="center">
               <TableContainer component={Paper}>
                 <Table size="small">
                   <TableHead>

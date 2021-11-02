@@ -1,5 +1,5 @@
-import { Card, CardContent, Typography, Grid } from "@material-ui/core";
-import { Skeleton } from "@material-ui/lab";
+import { Card, CardContent, Typography, Grid } from "@mui/material";
+import { Skeleton } from "@mui/material";
 import React, { Fragment } from "react";
 import { IHonorInfo } from "../../types";
 import { ContentTrans } from "../subs/ContentTrans";
@@ -14,7 +14,7 @@ const GridView = ({ data }: Props) => {
     // loading
     return (
       <Card>
-        <Skeleton variant="rect"></Skeleton>
+        <Skeleton variant="rectangular"></Skeleton>
         <CardContent>
           <Typography variant="subtitle1">
             <Skeleton variant="text" width="90%"></Skeleton>

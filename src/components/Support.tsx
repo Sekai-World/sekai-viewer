@@ -5,14 +5,14 @@ import {
   Grid,
   Link,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import {
   GitHub,
   MonetizationOn,
   OpenInNew,
   Translate,
-} from "@material-ui/icons";
-import { Patreon } from "mdi-material-ui";
+} from "@mui/icons-material";
+import Patreon from "~icons/mdi/patreon";
 import React, { Fragment } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { useLayoutStyles } from "../styles/layout";
@@ -45,13 +45,17 @@ const Support: React.FC<{}> = () => {
             {/* <Trans i18nKey="support:patreon.desc" /> */}
             如果你喜欢本站，欢迎赞助支持！你的支持可以进一步提高本站在大陆地区的访问速度。
           </Typography>
-          <Link href="https://afdian.net/@sekaiviewer" target="_blank">
+          <Link
+            href="https://afdian.net/@sekaiviewer"
+            target="_blank"
+            underline="hover"
+          >
             <Typography>
               通过爱发电支持我！ <OpenInNew fontSize="inherit" />
             </Typography>
             <img
               style={{ maxWidth: "100%" }}
-              src={`${process.env.PUBLIC_URL}/images/afdian-SekaiViewer.jpg`}
+              src={`/images/afdian-SekaiViewer.jpg`}
               // width="320"
               alt="爱发电二维码"
             ></img>
@@ -66,7 +70,11 @@ const Support: React.FC<{}> = () => {
           <Typography>
             <Trans i18nKey="support:patreon.desc" />
           </Typography>
-          <Link href="https://www.patreon.com/SekaiViewer" target="_blank">
+          <Link
+            href="https://www.patreon.com/SekaiViewer"
+            target="_blank"
+            underline="hover"
+          >
             <Typography>
               Become a Patron! <OpenInNew fontSize="inherit" />
             </Typography>
@@ -132,6 +140,7 @@ const Support: React.FC<{}> = () => {
       <Link
         href="https://www.transifex.com/dnaroma/sekai-viewer/dashboard/"
         target="_blank"
+        underline="hover"
       >
         <Typography>
           Transifex <OpenInNew fontSize="inherit" />
@@ -144,7 +153,11 @@ const Support: React.FC<{}> = () => {
       <Typography>
         <Trans i18nKey="support:development.desc" />
       </Typography>
-      <Link href="https://github.com/Sekai-World/sekai-viewer" target="_blank">
+      <Link
+        href="https://github.com/Sekai-World/sekai-viewer"
+        target="_blank"
+        underline="hover"
+      >
         <Typography>
           Sekai-World/sekai-viewer <OpenInNew fontSize="inherit" />
         </Typography>

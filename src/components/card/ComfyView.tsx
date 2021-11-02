@@ -1,5 +1,6 @@
-import { Typography, Grid, makeStyles, Paper } from "@material-ui/core";
-import { Skeleton } from "@material-ui/lab";
+import { Typography, Grid, Paper } from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import { Skeleton } from "@mui/material";
 import React from "react";
 import { Link, useRouteMatch } from "react-router-dom";
 import { ICardInfo } from "../../types";
@@ -41,9 +42,15 @@ const ComfyView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
           direction="column"
           alignItems="center"
           spacing={2}
-          justify="space-between"
+          justifyContent="space-between"
         >
-          <Grid item container direction="row" spacing={1} justify="center">
+          <Grid
+            item
+            container
+            direction="row"
+            spacing={1}
+            justifyContent="center"
+          >
             <Grid item xs={4}>
               <CardThumbSkeleton></CardThumbSkeleton>
             </Grid>
@@ -81,9 +88,15 @@ const ComfyView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
           direction="column"
           alignItems="center"
           spacing={2}
-          justify="space-between"
+          justifyContent="space-between"
         >
-          <Grid item container direction="row" spacing={1} justify="center">
+          <Grid
+            item
+            container
+            direction="row"
+            spacing={1}
+            justifyContent="center"
+          >
             <Grid item xs={4}>
               <CardThumb cardId={data.id} />
             </Grid>
@@ -96,7 +109,7 @@ const ComfyView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
           <Grid item style={{ width: "100%" }}>
             <Grid container direction="column" spacing={1}>
               <Grid item>
-                <Grid container justify="center">
+                <Grid container justifyContent="center">
                   <SpoilerTag releaseTime={new Date(data.releaseAt)} />
                 </Grid>
               </Grid>

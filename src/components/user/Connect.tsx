@@ -1,4 +1,4 @@
-import { Grid, LinearProgress, Typography } from "@material-ui/core";
+import { Grid, LinearProgress, Typography } from "@mui/material";
 import Axios from "axios";
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -13,9 +13,8 @@ const Connect: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const { provider } = useParams<{ provider: string }>();
-  const { updateUser, updateJwtToken, updateUserMeta } = useContext(
-    UserContext
-  )!;
+  const { updateUser, updateJwtToken, updateUserMeta } =
+    useContext(UserContext)!;
   // const query = useQuery();
   const location = useLocation();
   const history = useHistory();

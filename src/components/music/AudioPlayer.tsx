@@ -6,7 +6,7 @@ import {
   Paper,
   Slider,
   Tooltip,
-} from "@material-ui/core";
+} from "@mui/material";
 import {
   CloudDownload,
   // Loop,
@@ -14,7 +14,7 @@ import {
   PlayArrow,
   VolumeOff,
   VolumeUp,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import { Howl } from "howler";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -115,7 +115,7 @@ const AudioPlayer: React.FC<{
   return (
     <Paper style={style}>
       <Container>
-        <Grid container justify="space-between" alignItems="center">
+        <Grid container justifyContent="space-between" alignItems="center">
           <Grid item xs={2} md={1}>
             {formatTime(playbackTime)}
           </Grid>
@@ -132,7 +132,7 @@ const AudioPlayer: React.FC<{
             {formatTime(totalTime)}
           </Grid>
         </Grid>
-        <Grid container justify="space-between" alignItems="center">
+        <Grid container justifyContent="space-between" alignItems="center">
           {/* <Grid item xs={2} md={1}>
             <IconButton
               onClick={() => {
@@ -155,9 +155,10 @@ const AudioPlayer: React.FC<{
                 onClick={() => {
                   if (onSave) onSave(src);
                 }}
+                size="large"
               >
                 {!onSave ? (
-                  <Link href={src} download>
+                  <Link href={src} download underline="hover">
                     <CloudDownload />
                   </Link>
                 ) : (
@@ -173,6 +174,7 @@ const AudioPlayer: React.FC<{
                 if (!isPlay) sound?.play();
                 else sound?.pause();
               }}
+              size="large"
             >
               {isPlay ? <Pause /> : <PlayArrow />}
             </IconButton>
@@ -182,7 +184,7 @@ const AudioPlayer: React.FC<{
             xs={4}
             md={3}
             container
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Grid item xs={2}>
@@ -191,6 +193,7 @@ const AudioPlayer: React.FC<{
                   setIsMute(!isMute);
                   sound?.mute(!isMute);
                 }}
+                size="large"
               >
                 {isMute ? <VolumeOff /> : <VolumeUp />}
               </IconButton>

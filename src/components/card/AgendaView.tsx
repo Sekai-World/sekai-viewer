@@ -1,5 +1,6 @@
-import { Typography, Grid, makeStyles, Box, Paper } from "@material-ui/core";
-import { Skeleton } from "@material-ui/lab";
+import { Typography, Grid, Box, Paper } from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import { Skeleton } from "@mui/material";
 import React from "react";
 import { Link, useRouteMatch } from "react-router-dom";
 import { ICardInfo } from "../../types";
@@ -23,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
   },
   agendaWrapper: {
     display: "block",
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down("md")]: {
       maxWidth: "100%",
     },
     // [theme.breakpoints.only("md")]: {
@@ -34,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer",
   },
   agenda: {
-    [theme.breakpoints.down("lg")]: { padding: "4% 4%" },
+    [theme.breakpoints.down("xl")]: { padding: "4% 4%" },
     [theme.breakpoints.up("md")]: { padding: "2% 2%" },
   },
 }));
@@ -53,7 +54,7 @@ const AgendaView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
             container
             alignItems="center"
             spacing={2}
-            justify="space-between"
+            justifyContent="space-between"
           >
             <Grid
               item
@@ -62,7 +63,7 @@ const AgendaView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
               container
               direction="row"
               spacing={1}
-              justify="center"
+              justifyContent="center"
             >
               <Grid item xs={12} md={6}>
                 <CardThumbSkeleton></CardThumbSkeleton>
@@ -91,7 +92,12 @@ const AgendaView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
       style={{ textDecoration: "none" }}
     >
       <Paper className={classes.agenda}>
-        <Grid container alignItems="center" spacing={2} justify="space-between">
+        <Grid
+          container
+          alignItems="center"
+          spacing={2}
+          justifyContent="space-between"
+        >
           <Grid
             item
             xs={5}
@@ -99,7 +105,7 @@ const AgendaView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
             container
             direction="row"
             spacing={1}
-            justify="center"
+            justifyContent="center"
           >
             <Grid item xs={12} md={6} lg={4}>
               <CardThumb cardId={data.id} />

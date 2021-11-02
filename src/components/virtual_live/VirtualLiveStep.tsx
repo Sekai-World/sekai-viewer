@@ -3,8 +3,8 @@ import {
   AccordionDetails,
   AccordionSummary,
   Typography,
-} from "@material-ui/core";
-import { ExpandMore } from "@material-ui/icons";
+} from "@mui/material";
+import { ExpandMore } from "@mui/icons-material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { VirtualLiveSetlist } from "../../types";

@@ -1,6 +1,7 @@
-import { Container, Link, makeStyles, Typography } from "@material-ui/core";
-import { GitHub } from "@material-ui/icons";
-import { Alert, AlertTitle } from "@material-ui/lab";
+import { Container, Link, Typography } from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import { GitHub } from "@mui/icons-material";
+import { Alert, AlertTitle } from "@mui/material";
 import React, { Fragment, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useLayoutStyles } from "../styles/layout";
@@ -34,6 +35,7 @@ const About: React.FC<{}> = () => {
                 href="https://blog.dnaroma.eu/"
                 target="_blanl"
                 rel="noopener"
+                underline="hover"
               >
                 Blog
               </Link>
@@ -43,6 +45,7 @@ const About: React.FC<{}> = () => {
                 href="https://www.github.com/dnaroma"
                 target="_blanl"
                 rel="noopener"
+                underline="hover"
               >
                 <GitHub fontSize="inherit"></GitHub>
                 GitHub
@@ -59,6 +62,7 @@ const About: React.FC<{}> = () => {
                 href="https://github.com/NonSpicyBurrito"
                 target="_blank"
                 rel="noopener noreferrer"
+                underline="hover"
               >
                 <GitHub fontSize="inherit"></GitHub>
                 Burrito
@@ -69,6 +73,7 @@ const About: React.FC<{}> = () => {
                 href="https://github.com/iSwanGit"
                 target="_blank"
                 rel="noopener noreferrer"
+                underline="hover"
               >
                 <GitHub fontSize="inherit"></GitHub>
                 iSwanGit (EleMas*)
@@ -79,6 +84,7 @@ const About: React.FC<{}> = () => {
                 href="https://github.com/Build774"
                 target="_blank"
                 rel="noopener noreferrer"
+                underline="hover"
               >
                 <GitHub fontSize="inherit"></GitHub>
                 Build774
@@ -89,6 +95,7 @@ const About: React.FC<{}> = () => {
                 href="https://github.com/xfl03"
                 target="_blank"
                 rel="noopener noreferrer"
+                underline="hover"
               >
                 <GitHub fontSize="inherit"></GitHub>
                 xfl03

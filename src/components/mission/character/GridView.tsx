@@ -1,12 +1,6 @@
-import {
-  Card,
-  CardContent,
-  Chip,
-  Grid,
-  makeStyles,
-  Typography,
-} from "@material-ui/core";
-import { Skeleton } from "@material-ui/lab";
+import { Card, CardContent, Chip, Grid, Typography } from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import { Skeleton } from "@mui/material";
 import React, { Fragment } from "react";
 import { ICharacterMission } from "../../../types";
 import { useCharaName } from "../../../utils/i18n";
@@ -50,7 +44,7 @@ const GridView: React.FC<{ data?: ICharacterMission }> = ({ data }) => {
           <Grid item xs={12}>
             <CardContent style={{ paddingBottom: "16px" }}>
               <Grid container spacing={1} alignItems="center">
-                <Grid item xs={2} container justify="center">
+                <Grid item xs={2} container justifyContent="center">
                   <Chip label={data.seq} />
                 </Grid>
                 <Grid item xs={10}>

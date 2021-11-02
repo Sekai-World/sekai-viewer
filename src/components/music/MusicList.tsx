@@ -11,16 +11,19 @@ import {
   Chip,
   Badge,
   Avatar,
-} from "@material-ui/core";
+} from "@mui/material";
 import { useLayoutStyles } from "../../styles/layout";
-import { ViewAgenda, Sort, SortOutlined, RotateLeft } from "@material-ui/icons";
 import {
-  Filter,
-  FilterOutline,
-  ViewAgendaOutline,
-  ViewGrid,
-  ViewGridOutline,
-} from "mdi-material-ui";
+  ViewAgenda,
+  ViewAgendaOutlined,
+  Sort,
+  SortOutlined,
+  RotateLeft,
+  GridView as ViewGrid,
+  GridViewOutlined as ViewGridOutline,
+  FilterAlt as Filter,
+  FilterAltOutlined as FilterOutline,
+} from "@mui/icons-material";
 import React, {
   Fragment,
   useCallback,
@@ -43,7 +46,7 @@ import {
   IMusicVocalInfo,
   IOutCharaProfile,
 } from "../../types";
-import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { SettingContext } from "../../context";
 import {
   attrSelectReducer,
@@ -75,9 +78,8 @@ const MusicList: React.FC<{}> = () => {
   const [musicTags] = useCachedData<IMusicTagInfo>("musicTags");
   const [musicVocals] = useCachedData<IMusicVocalInfo>("musicVocals");
   const [outCharas] = useCachedData<IOutCharaProfile>("outsideCharacters");
-  const [musicDiffis] = useCachedData<IMusicDifficultyInfo>(
-    "musicDifficulties"
-  );
+  const [musicDiffis] =
+    useCachedData<IMusicDifficultyInfo>("musicDifficulties");
 
   const [musics, setMusics] = useState<IMusicInfo[]>([]);
   const [sortedCache, setSortedCache] = useState<IMusicInfo[]>([]);
@@ -124,13 +126,13 @@ const MusicList: React.FC<{}> = () => {
     characterSelectReducer,
     JSON.parse(localStorage.getItem("music-list-filter-charas") || "[]")
   );
-  const [
-    outsideCharacterSelected,
-    dispatchOutsideCharacterSelected,
-  ] = useReducer(
-    characterSelectReducer,
-    JSON.parse(localStorage.getItem("music-list-filter-outside-charas") || "[]")
-  );
+  const [outsideCharacterSelected, dispatchOutsideCharacterSelected] =
+    useReducer(
+      characterSelectReducer,
+      JSON.parse(
+        localStorage.getItem("music-list-filter-outside-charas") || "[]"
+      )
+    );
 
   useEffect(() => {
     document.title = t("title:musicList");
@@ -281,7 +283,7 @@ const MusicList: React.FC<{}> = () => {
       <Container className={layoutClasses.content}>
         <Grid
           container
-          justify="space-between"
+          justifyContent="space-between"
           style={{ marginBottom: "0.5rem" }}
         >
           <Grid item>
@@ -304,7 +306,7 @@ const MusicList: React.FC<{}> = () => {
                 {viewGridType === "agenda" ? (
                   <ViewAgenda></ViewAgenda>
                 ) : (
-                  <ViewAgendaOutline></ViewAgendaOutline>
+                  <ViewAgendaOutlined></ViewAgendaOutlined>
                 )}
               </ToggleButton>
             </ToggleButtonGroup>
@@ -331,7 +333,7 @@ const MusicList: React.FC<{}> = () => {
                 container
                 xs={12}
                 alignItems="center"
-                justify="space-between"
+                justifyContent="space-between"
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
@@ -371,7 +373,7 @@ const MusicList: React.FC<{}> = () => {
                 container
                 xs={12}
                 alignItems="center"
-                justify="space-between"
+                justifyContent="space-between"
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
@@ -413,7 +415,7 @@ const MusicList: React.FC<{}> = () => {
                 container
                 xs={12}
                 alignItems="center"
-                justify="space-between"
+                justifyContent="space-between"
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
@@ -498,7 +500,7 @@ const MusicList: React.FC<{}> = () => {
                 container
                 xs={12}
                 alignItems="center"
-                justify="space-between"
+                justifyContent="space-between"
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
@@ -540,7 +542,7 @@ const MusicList: React.FC<{}> = () => {
                 container
                 xs={12}
                 alignItems="center"
-                justify="space-between"
+                justifyContent="space-between"
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
@@ -582,7 +584,7 @@ const MusicList: React.FC<{}> = () => {
                 container
                 xs={12}
                 alignItems="center"
-                justify="space-between"
+                justifyContent="space-between"
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
@@ -624,7 +626,7 @@ const MusicList: React.FC<{}> = () => {
                 container
                 xs={12}
                 alignItems="center"
-                justify="space-between"
+                justifyContent="space-between"
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
@@ -734,20 +736,22 @@ const MusicList: React.FC<{}> = () => {
           callback={callback}
           data={musics}
           gridSize={
-            ({
-              grid: {
-                xs: 12,
-                sm: 6,
-                md: 4,
-                lg: 3,
-              },
-              agenda: {
-                xs: 12,
-              },
-              comfy: {
-                xs: 12,
-              },
-            } as const)[viewGridType]
+            (
+              {
+                grid: {
+                  xs: 12,
+                  sm: 6,
+                  md: 4,
+                  lg: 3,
+                },
+                agenda: {
+                  xs: 12,
+                },
+                comfy: {
+                  xs: 12,
+                },
+              } as const
+            )[viewGridType]
           }
         />
       </Container>

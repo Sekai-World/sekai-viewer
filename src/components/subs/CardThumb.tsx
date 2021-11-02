@@ -1,5 +1,5 @@
-import { Grid } from "@material-ui/core";
-import { Skeleton } from "@material-ui/lab";
+import { Grid } from "@mui/material";
+import { Skeleton } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import { ICardInfo } from "../../types";
 import { getRemoteAssetURL, useCachedData } from "../../utils";
@@ -160,7 +160,9 @@ export const CardThumb: React.FC<
 export const CardThumbSkeleton: React.FC<{}> = () => {
   const classes = useSvgStyles();
 
-  return <Skeleton variant="rect" className={classes.skeleton}></Skeleton>;
+  return (
+    <Skeleton variant="rectangular" className={classes.skeleton}></Skeleton>
+  );
 };
 
 export const CardThumbs: React.FC<{ cardIds: number[] }> = ({ cardIds }) => {
@@ -169,7 +171,7 @@ export const CardThumbs: React.FC<{ cardIds: number[] }> = ({ cardIds }) => {
       container
       direction="row"
       spacing={2}
-      justify="center"
+      justifyContent="center"
       alignItems="center"
     >
       {cardIds.map((cardId, id) => (
@@ -189,7 +191,7 @@ export const CardThumbsSkeleton: React.FC<{ length: number }> = ({
       container
       direction="row"
       spacing={2}
-      justify="center"
+      justifyContent="center"
       alignItems="center"
     >
       {Array.from({ length }).map((_, id) => (

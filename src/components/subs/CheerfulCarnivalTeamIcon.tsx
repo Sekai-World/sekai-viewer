@@ -1,27 +1,7 @@
-import React, { ReactNode, useEffect, useState } from "react";
-import Image from "material-ui-image";
+import React, { useEffect, useState, useMemo } from "react";
+import Image, { ImageProps } from "mui-image";
 import { getRemoteAssetURL, useCachedData, useServerRegion } from "../../utils";
 import { ICheerfulCarnivalTeam, IEventInfo } from "../../types";
-
-interface ImageProps
-  extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, "loading"> {
-  animationDuration?: number;
-  aspectRatio?: number;
-  cover?: boolean;
-  color?: string;
-  disableError?: boolean;
-  disableSpinner?: boolean;
-  // disableTransition?: boolean;
-  errorIcon?: ReactNode;
-  iconContainerStyle?: object;
-  imageStyle?: object;
-  loading?: ReactNode;
-  onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
-  onLoad?: (event?: React.SyntheticEvent<HTMLImageElement>) => void;
-  onError?: (event?: React.SyntheticEvent<HTMLImageElement>) => void;
-  // src: string;
-  style?: object;
-}
 
 const CheerfulCarnivalTeamIcon: React.FC<
   ImageProps & {
@@ -71,7 +51,12 @@ const CheerfulCarnivalTeamIcon: React.FC<
     };
   }, [ccTeam, cheerfulCarnivalTeams, event, region]);
 
-  return <Image src={ccTeamLogo} color="" disableTransition {...props} />;
+  const imageProps = useMemo(
+    () => Object.assign({}, props, { src: ccTeamLogo }),
+    [ccTeamLogo, props]
+  );
+
+  return <Image bgColor="" duration={0} {...imageProps} />;
 };
 
 export default CheerfulCarnivalTeamIcon;

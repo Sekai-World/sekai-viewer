@@ -4,7 +4,7 @@ import {
   // makeStyles,
   useMediaQuery,
   useTheme,
-} from "@material-ui/core";
+} from "@mui/material";
 import React, {
   Fragment,
   useCallback,

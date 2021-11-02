@@ -4,13 +4,13 @@ import {
   Container,
   Divider,
   Grid,
-  makeStyles,
   Paper,
   Tab,
   Tabs,
   Typography,
-} from "@material-ui/core";
-import { TabContext, TabPanel } from "@material-ui/lab";
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import { TabContext, TabPanel } from "@mui/lab";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
@@ -28,7 +28,7 @@ import { UnitLogoMap } from "../utils/resources";
 import { CardThumb } from "./subs/CardThumb";
 import ColorPreview from "./subs/ColorPreview";
 import { CharaNameTrans, ContentTrans } from "./subs/ContentTrans";
-import { OpenInNew } from "@material-ui/icons";
+import { OpenInNew } from "@mui/icons-material";
 import { useCharaName } from "../utils/i18n";
 import { useInteractiveStyles } from "../styles/interactive";
 
@@ -184,7 +184,7 @@ const MemberDetail: React.FC<{}> = () => {
               value={tabVal}
               onChange={handleChange}
               variant="scrollable"
-              scrollButtons="desktop"
+              scrollButtons
             >
               <Tab label={t("member:tab.title[0]")} value="0"></Tab>
               <Tab label={t("member:tab.title[1]")} value="1"></Tab>
@@ -226,7 +226,7 @@ const MemberDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -239,7 +239,7 @@ const MemberDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Grid item>
@@ -260,7 +260,7 @@ const MemberDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -275,7 +275,7 @@ const MemberDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -288,7 +288,7 @@ const MemberDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -314,7 +314,7 @@ const MemberDetail: React.FC<{}> = () => {
                 container
                 direction="row"
                 wrap="nowrap"
-                justify="space-between"
+                justifyContent="space-between"
                 alignItems="center"
               >
                 <Grid item xs={3}>
@@ -323,7 +323,7 @@ const MemberDetail: React.FC<{}> = () => {
                   </Typography>
                 </Grid>
                 <Grid item xs={8}>
-                  <Grid container spacing={1} justify="flex-end">
+                  <Grid container spacing={1} justifyContent="flex-end">
                     <Grid item>
                       <Typography style={{ textTransform: "uppercase" }}>
                         {charaUnit[key as "colorCode"]}
@@ -353,7 +353,7 @@ const MemberDetail: React.FC<{}> = () => {
                   container
                   direction="row"
                   wrap="nowrap"
-                  justify="space-between"
+                  justifyContent="space-between"
                   alignItems="center"
                 >
                   <Grid item xs={2}>
@@ -362,7 +362,7 @@ const MemberDetail: React.FC<{}> = () => {
                     </Typography>
                   </Grid>
                   <Grid item xs={6} md={8}>
-                    <Grid container justify="flex-end">
+                    <Grid container justifyContent="flex-end">
                       <Grid item>
                         <ContentTrans
                           contentKey={`character_profile:${charaId}.${key}`}
@@ -387,7 +387,7 @@ const MemberDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Grid item xs={8}>
@@ -395,7 +395,7 @@ const MemberDetail: React.FC<{}> = () => {
                 {t("member:scenario")}
               </Typography>
             </Grid>
-            <Grid item container justify="flex-end">
+            <Grid item container justifyContent="flex-end">
               <Link
                 to={`/storyreader/charaStory/${charaProfile.characterId}`}
                 className={interactiveClasses.noDecoration}
@@ -419,7 +419,7 @@ const MemberDetail: React.FC<{}> = () => {
               className={classes["grid-out"]}
               container
               direction="row"
-              justify="center"
+              justifyContent="center"
               spacing={2}
             >
               {charaSupportUnits.map((csu) => (

@@ -1,4 +1,4 @@
-import { Skeleton } from "@material-ui/lab";
+import { Skeleton } from "@mui/material";
 import React, {
   Fragment,
   useCallback,
@@ -116,16 +116,10 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
     const [imgLeftX, refImgLeftX, setImgLeftX] = useRefState<number>(-256);
     const [imgRightX, refImgRightX, setImgRightX] = useRefState<number>(512);
     // const [requestId, refRequestId, setRequestId] = useRefState<number>(0);
-    const [
-      imgLeftWidth,
-      refImgLeftWidth,
-      setImgLeftWidth,
-    ] = useRefState<number>(768);
-    const [
-      imgRightWidth,
-      refImgRightWidth,
-      setImgRightWidth,
-    ] = useRefState<number>(768);
+    const [imgLeftWidth, refImgLeftWidth, setImgLeftWidth] =
+      useRefState<number>(768);
+    const [imgRightWidth, refImgRightWidth, setImgRightWidth] =
+      useRefState<number>(768);
     const isBirthdayCard = useMemo(
       () => card?.cardRarityType === "rarity_birthday",
       [card?.cardRarityType]
@@ -363,5 +357,7 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
 export const CardImageSkeleton: React.FC<{}> = () => {
   const classes = useSvgStyles();
 
-  return <Skeleton variant="rect" className={classes.skeleton}></Skeleton>;
+  return (
+    <Skeleton variant="rectangular" className={classes.skeleton}></Skeleton>
+  );
 };

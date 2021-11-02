@@ -12,7 +12,6 @@ import {
   MenuItem,
   DialogContentText,
   DialogActions,
-  makeStyles,
   Typography,
   Popover,
   Container,
@@ -22,7 +21,8 @@ import {
   FormLabel,
   Radio,
   CircularProgress,
-} from "@material-ui/core";
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import React, {
   useCallback,
   useContext,
@@ -87,9 +87,8 @@ const TeamBuilder: React.FC<{
   const classes = useStyle();
   const { t } = useTranslation();
   const getCharaName = useCharaName();
-  const { jwtToken, sekaiProfile, updateSekaiProfile } = useContext(
-    UserContext
-  )!;
+  const { jwtToken, sekaiProfile, updateSekaiProfile } =
+    useContext(UserContext)!;
   const { putSekaiDeckList, deleteSekaiDeckList } = useStrapi(jwtToken);
   const { showError, showSuccess } = useAlertSnackbar();
   const skillMapping = useSkillMapping();
@@ -109,15 +108,12 @@ const TeamBuilder: React.FC<{
   const [rarity, setRarity] = useState<number>(0);
   const [attr, setAttr] = useState<string>("all");
   const [filteredCards, setFilteredCards] = useState<ICardInfo[]>([]);
-  const [saveTeamDialogVisible, setSaveTeamDialogVisible] = useState<boolean>(
-    false
-  );
-  const [loadTeamDialogVisible, setLoadTeamDialogVisible] = useState<boolean>(
-    false
-  );
-  const [addCardDialogVisible, setAddCardDialogVisible] = useState<boolean>(
-    false
-  );
+  const [saveTeamDialogVisible, setSaveTeamDialogVisible] =
+    useState<boolean>(false);
+  const [loadTeamDialogVisible, setLoadTeamDialogVisible] =
+    useState<boolean>(false);
+  const [addCardDialogVisible, setAddCardDialogVisible] =
+    useState<boolean>(false);
   const [editingCard, setEditingCard] = useState<ITeamCardState>();
   const [isSyncCardState, setIsSyncCardState] = useLocalStorage(
     "team-build-use-sekai-card-state",
@@ -624,7 +620,7 @@ const TeamBuilder: React.FC<{
         </Grid>
       </Grid>
       <Grid item xs={12}>
-        <Grid container spacing={1} justify="center">
+        <Grid container spacing={1} justifyContent="center">
           {teamCards.map((cardId, index) => (
             <Grid key={`team-card-${cardId}`} item xs={4} md={2}>
               <CardThumbMedium
@@ -902,7 +898,7 @@ const TeamBuilder: React.FC<{
                       </Grid>
                     </Grid>
                     <Grid item xs={12} md={4}>
-                      <Grid container spacing={1} justify="flex-end">
+                      <Grid container spacing={1} justifyContent="flex-end">
                         <Grid item>
                           <Button
                             variant="outlined"
@@ -997,7 +993,7 @@ const TeamBuilder: React.FC<{
                       </Grid>
                     </Grid>
                     <Grid item xs={12} md={3}>
-                      <Grid container spacing={1} justify="flex-end">
+                      <Grid container spacing={1} justifyContent="flex-end">
                         <Grid item>
                           <Button
                             variant="outlined"
@@ -1064,7 +1060,7 @@ const TeamBuilder: React.FC<{
                       </Grid>
                     </Grid>
                     <Grid item xs={12} md={3}>
-                      <Grid container spacing={1} justify="flex-end">
+                      <Grid container spacing={1} justifyContent="flex-end">
                         <Grid item>
                           <Button
                             variant="outlined"

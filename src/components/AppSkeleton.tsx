@@ -1,9 +1,6 @@
 import {
   useMediaQuery,
-  createMuiTheme,
-  makeStyles,
   CssBaseline,
-  ThemeProvider,
   AppBar,
   Hidden,
   IconButton,
@@ -15,19 +12,29 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-} from "@material-ui/core";
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import {
+  createTheme,
+  StyledEngineProvider,
+  Theme,
+  ThemeProvider,
+} from "@mui/material/styles";
 import {
   AccountCircle,
   ArrowBackIos,
   MoreVert,
   Menu as MenuIcon,
   Settings as SettingsIcon,
-} from "@material-ui/icons";
-import { Skeleton } from "@material-ui/lab";
-import React, { useMemo } from "react";
+} from "@mui/icons-material";
+import { Skeleton } from "@mui/material";
+import React, { Fragment, useMemo } from "react";
 import { Link } from "react-router-dom";
 
-interface Props {}
+declare module "@mui/styles/defaultTheme" {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface DefaultTheme extends Theme {}
+}
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
@@ -74,23 +81,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AppSkeleton = (props: Props) => {
+const AppSkeletonInner = (props: { theme: Theme }) => {
   const classes = useStyles();
-  const preferDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
 
-  const theme = useMemo(
-    () =>
-      createMuiTheme({
-        palette: {
-          type: preferDarkMode ? "dark" : "light",
-          primary: {
-            main: preferDarkMode ? "#7986cb" : "#3f51b5",
-          },
-        },
-      }),
-    [preferDarkMode]
-  );
-
+  const { theme } = props;
   const drawer = useMemo(
     () => (
       <div>
@@ -102,10 +96,10 @@ const AppSkeleton = (props: Props) => {
           {Array.from({ length: 20 }).map((_, id) => (
             <ListItem key={id}>
               <ListItemIcon>
-                <Skeleton variant="circle" width={24} height={24} />
+                <Skeleton variant="circular" width={24} height={24} />
               </ListItemIcon>
               <ListItemText>
-                <Skeleton variant="rect" width="100%" height={24} />
+                <Skeleton variant="rectangular" width="100%" height={24} />
               </ListItemText>
             </ListItem>
           ))}
@@ -119,7 +113,7 @@ const AppSkeleton = (props: Props) => {
     window !== undefined ? () => window.document.body : undefined;
 
   return (
-    <ThemeProvider theme={theme}>
+    <Fragment>
       <div className={classes.root}>
         <CssBaseline />
         <AppBar position="fixed" className={classes.appBar}>
@@ -128,11 +122,12 @@ const AppSkeleton = (props: Props) => {
               color="inherit"
               edge="start"
               className={classes.menuButton}
+              size="large"
             >
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" noWrap classes={{ root: classes.title }}>
-              Sekai Viewer <small>{process.env.REACT_APP_VERSION}</small>
+              Sekai Viewer <small>{import.meta.env.VITE_VERSION}</small>
             </Typography>
             <IconButton
               color="inherit"
@@ -142,7 +137,7 @@ const AppSkeleton = (props: Props) => {
             >
               <ArrowBackIos fontSize="inherit" />
             </IconButton>
-            <Hidden smDown implementation="css">
+            <Hidden mdDown implementation="css">
               <IconButton
                 color="inherit"
                 style={{ padding: ".6rem" }}
@@ -161,7 +156,7 @@ const AppSkeleton = (props: Props) => {
               </Link>
             </Hidden>
             <Hidden mdUp implementation="css">
-              <IconButton color="inherit">
+              <IconButton color="inherit" size="large">
                 <MoreVert />
               </IconButton>
             </Hidden>
@@ -184,7 +179,7 @@ const AppSkeleton = (props: Props) => {
               {drawer}
             </Drawer>
           </Hidden>
-          <Hidden smDown implementation="css">
+          <Hidden mdDown implementation="css">
             <Drawer
               variant="permanent"
               open
@@ -197,7 +192,32 @@ const AppSkeleton = (props: Props) => {
           </Hidden>
         </nav>
       </div>
-    </ThemeProvider>
+    </Fragment>
+  );
+};
+
+const AppSkeleton = () => {
+  const preferDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+
+  const theme = useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode: preferDarkMode ? "dark" : "light",
+          primary: {
+            main: preferDarkMode ? "#7986cb" : "#3f51b5",
+          },
+        },
+      }),
+    [preferDarkMode]
+  );
+
+  return (
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <AppSkeletonInner theme={theme} />
+      </ThemeProvider>
+    </StyledEngineProvider>
   );
 };
 

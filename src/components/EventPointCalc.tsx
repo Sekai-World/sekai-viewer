@@ -9,7 +9,6 @@ import {
   Grid,
   Input,
   InputLabel,
-  makeStyles,
   MenuItem,
   Paper,
   Radio,
@@ -21,9 +20,10 @@ import {
   Stepper,
   TextField,
   Typography,
-} from "@material-ui/core";
-import { ColDef, DataGrid } from "@material-ui/data-grid";
-import { Alert } from "@material-ui/lab";
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import { GridColDef, DataGrid } from "@mui/x-data-grid";
+import { Alert } from "@mui/material";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -86,9 +86,8 @@ const EventPointCalc: React.FC<{}> = () => {
   const [events] = useCachedData<IEventInfo>("events");
   const [eventCards] = useCachedData<IEventCard>("eventCards");
   const [eventDeckBonuses] = useCachedData<IEventDeckBonus>("eventDeckBonuses");
-  const [gameCharacterUnits] = useCachedData<IGameCharaUnit>(
-    "gameCharacterUnits"
-  );
+  const [gameCharacterUnits] =
+    useCachedData<IGameCharaUnit>("gameCharacterUnits");
   const [metas] = useMusicMeta();
 
   const {
@@ -107,13 +106,11 @@ const EventPointCalc: React.FC<{}> = () => {
   const [teamCardsStates, setTeamCardsStates] = useState<ITeamCardState[]>([]);
   const [teamTotalPower, setTeamTotalPower] = useState<number>(0);
   const [selectedSongId, setSelectedSongId] = useState<number>(1);
-  const [selectedSongDifficulty, setSelectedSongDifficulty] = useState<number>(
-    4
-  );
+  const [selectedSongDifficulty, setSelectedSongDifficulty] =
+    useState<number>(4);
   const [selectedEventId, setSelectedEventId] = useState<number>(1);
-  const [selectedMusicMode, setSelectedMusicMode] = useState<string>(
-    "all_songs"
-  );
+  const [selectedMusicMode, setSelectedMusicMode] =
+    useState<string>("all_songs");
   const [energyDrinkCount, setEnergyDrinkCount] = useState<number>(0);
   const [currentPoint, setCurrentPoint] = useState<number>(10000);
   const [targetPoint, setTargetPoint] = useState<number>(1000000);
@@ -233,7 +230,7 @@ const EventPointCalc: React.FC<{}> = () => {
     teamCardsStates,
   ]);
 
-  const columns: ColDef[] = useMemo(
+  const columns: GridColDef[] = useMemo(
     () => [
       {
         field: "name",
@@ -258,7 +255,8 @@ const EventPointCalc: React.FC<{}> = () => {
               color="primary"
               size="small"
               classes={{
-                colorPrimary: classes[params.getValue("difficulty") as "easy"],
+                colorPrimary:
+                  classes[params.getValue(params.id, "difficulty") as "easy"],
               }}
               label={params.value}
             ></Chip>
@@ -826,7 +824,7 @@ const EventPointCalc: React.FC<{}> = () => {
                     <Grid item xs={12}>
                       <Grid
                         container
-                        justify="space-between"
+                        justifyContent="space-between"
                         className={layoutClasses.alert}
                       >
                         <Grid item xs={4}>
@@ -846,7 +844,7 @@ const EventPointCalc: React.FC<{}> = () => {
                     <Grid item xs={12}>
                       <Grid
                         container
-                        justify="space-between"
+                        justifyContent="space-between"
                         className={layoutClasses.alert}
                       >
                         <Grid item xs={4}>
@@ -866,7 +864,7 @@ const EventPointCalc: React.FC<{}> = () => {
                     <Grid item xs={12}>
                       <Grid
                         container
-                        justify="space-between"
+                        justifyContent="space-between"
                         className={layoutClasses.alert}
                       >
                         <Grid item xs={4}>
@@ -890,7 +888,7 @@ const EventPointCalc: React.FC<{}> = () => {
                     <Grid item xs={12}>
                       <Grid
                         container
-                        justify="space-between"
+                        justifyContent="space-between"
                         className={layoutClasses.alert}
                       >
                         <Grid item xs={4}>
@@ -910,7 +908,7 @@ const EventPointCalc: React.FC<{}> = () => {
                     <Grid item xs={12}>
                       <Grid
                         container
-                        justify="space-between"
+                        justifyContent="space-between"
                         className={layoutClasses.alert}
                       >
                         <Grid item xs={4}>

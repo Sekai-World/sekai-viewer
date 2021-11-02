@@ -1,27 +1,7 @@
-import React, { ReactNode, useEffect, useState } from "react";
-import Image from "material-ui-image";
+import React, { useEffect, useState, useMemo } from "react";
+import Image, { ImageProps } from "mui-image";
 import { getRemoteAssetURL } from "../../utils";
 import { ServerRegion } from "../../types";
-
-interface ImageProps
-  extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, "loading"> {
-  animationDuration?: number;
-  aspectRatio?: number;
-  cover?: boolean;
-  color?: string;
-  disableError?: boolean;
-  disableSpinner?: boolean;
-  disableTransition?: boolean;
-  errorIcon?: ReactNode;
-  iconContainerStyle?: object;
-  imageStyle?: object;
-  loading?: ReactNode;
-  onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
-  onLoad?: (event?: React.SyntheticEvent<HTMLImageElement>) => void;
-  onError?: (event?: React.SyntheticEvent<HTMLImageElement>) => void;
-  src: string;
-  style?: object;
-}
 
 const ImageWrapper: React.FC<
   ImageProps & { directSrc?: boolean; region?: ServerRegion }
@@ -44,7 +24,13 @@ const ImageWrapper: React.FC<
       setIsReady(true);
     }
   }, [directSrc, region, src]);
-  return isReady ? <Image src={realSrc} {...props} /> : null;
+
+  const imageProps = useMemo(
+    () => Object.assign({}, props, { src: realSrc }),
+    [props, realSrc]
+  );
+
+  return isReady ? <Image {...imageProps} /> : null;
 };
 
 export default ImageWrapper;

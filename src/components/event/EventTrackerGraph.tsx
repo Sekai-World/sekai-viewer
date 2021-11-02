@@ -10,7 +10,7 @@ import {
   TableRow,
   // Typography,
   useTheme,
-} from "@material-ui/core";
+} from "@mui/material";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {

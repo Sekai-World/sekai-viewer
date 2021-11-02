@@ -1,4 +1,4 @@
-import { Skeleton } from "@material-ui/lab";
+import { Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useSvgStyles } from "../../styles/svg";
 import {
@@ -142,7 +142,7 @@ const DegreeImage: React.FC<
       </svg>
     </div>
   ) : (
-    <Skeleton variant="rect" width="256" height="64"></Skeleton>
+    <Skeleton variant="rectangular" width="256" height="64"></Skeleton>
   );
 };
 

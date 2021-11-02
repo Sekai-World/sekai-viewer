@@ -5,18 +5,17 @@ import {
   Grid,
   InputAdornment,
   Typography,
-} from "@material-ui/core";
-// import { Email } from "@material-ui/icons";
-import { Alert } from "@material-ui/lab";
+} from "@mui/material";
+import { Alert } from "@mui/material";
 import { Field, Form, Formik } from "formik";
-import { TextField } from "formik-material-ui";
+import { TextField } from "formik-mui";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLayoutStyles } from "../../styles/layout";
 import { useAlertSnackbar, useQuery } from "../../utils";
 import { useStrapi } from "../../utils/apiClient";
 import PasswordStrengthBar from "react-password-strength-bar";
-import { VpnKey } from "@material-ui/icons";
+import { VpnKey } from "@mui/icons-material";
 import { useHistory } from "react-router-dom";
 
 const ResetPassword: React.FC<{}> = () => {
@@ -86,7 +85,7 @@ const ResetPassword: React.FC<{}> = () => {
           }}
         >
           {({ submitForm, isSubmitting, values, dirty, isValid }) => (
-            <Grid container justify="center">
+            <Grid container justifyContent="center">
               <Form>
                 <Field
                   component={TextField}

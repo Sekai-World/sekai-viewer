@@ -6,7 +6,7 @@ import {
   Grid,
   Typography,
   Paper,
-} from "@material-ui/core";
+} from "@mui/material";
 import {
   GetApp,
   GetAppOutlined,
@@ -14,8 +14,10 @@ import {
   PublishOutlined,
   Sort,
   SortOutlined,
-} from "@material-ui/icons";
-import { FilterOutline, Filter, Pound } from "mdi-material-ui";
+  FilterAlt as Filter,
+  FilterAltOutlined as FilterOutline,
+} from "@mui/icons-material";
+import Pound from "~icons/mdi/pound";
 import React, {
   Fragment,
   useCallback,
@@ -32,7 +34,7 @@ import { useCachedData, useLocalStorage } from "../../utils";
 import { charaIcons } from "../../utils/resources";
 import GridView from "./GridView";
 import InfiniteScroll from "../subs/InfiniteScroll";
-import { ToggleButtonGroup, ToggleButton } from "@material-ui/lab";
+import { ToggleButtonGroup, ToggleButton } from "@mui/material";
 import { useCharaName } from "../../utils/i18n";
 
 const ListCard: React.FC<{ data?: IStampInfo }> = GridView;
@@ -163,7 +165,7 @@ const StampList: React.FC<{}> = () => {
         {t("common:stamp")}
       </Typography>
       <Container className={layoutClasses.content}>
-        <Grid container justify="space-between">
+        <Grid container justifyContent="space-between">
           <Grid item>
             <Grid container spacing={1}>
               <Grid item>
@@ -216,7 +218,7 @@ const StampList: React.FC<{}> = () => {
                 container
                 xs={12}
                 alignItems="center"
-                justify="space-between"
+                justifyContent="space-between"
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
@@ -272,7 +274,7 @@ const StampList: React.FC<{}> = () => {
                 container
                 xs={12}
                 alignItems="center"
-                justify="space-between"
+                justifyContent="space-between"
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>

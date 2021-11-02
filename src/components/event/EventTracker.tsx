@@ -6,8 +6,6 @@ import {
   FormGroup,
   // Divider,
   Grid,
-  // LinearProgress,
-  makeStyles,
   Paper,
   Slider,
   Switch,
@@ -21,8 +19,9 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-} from "@material-ui/core";
-import { Alert, Autocomplete } from "@material-ui/lab";
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import { Alert, Autocomplete } from "@mui/material";
 import { CronJob } from "cron";
 import React, {
   Fragment,
@@ -86,7 +85,7 @@ const EventTracker: React.FC<{}> = () => {
   const refreshData = useRealtimeEventData();
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
 
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const [events] = useCachedData<IEventInfo>("events");
   const [selectedEvent, setSelectedEvent] = useState<{
@@ -119,36 +118,8 @@ const EventTracker: React.FC<{}> = () => {
 
   const fullRank = useMemo(
     () => [
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10,
-      20,
-      30,
-      40,
-      50,
-      100,
-      200,
-      300,
-      400,
-      500,
-      1000,
-      2000,
-      3000,
-      4000,
-      5000,
-      10000,
-      20000,
-      30000,
-      40000,
-      50000,
-      100000,
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50, 100, 200, 300, 400, 500,
+      1000, 2000, 3000, 4000, 5000, 10000, 20000, 30000, 40000, 50000, 100000,
     ],
     []
   );
@@ -391,7 +362,7 @@ const EventTracker: React.FC<{}> = () => {
                   id: ev.id,
                 }))}
               getOptionLabel={(option) => option.name}
-              getOptionSelected={(option, value) => option.id === value.id}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
               renderInput={(params) => (
                 <TextField
                   {...params}

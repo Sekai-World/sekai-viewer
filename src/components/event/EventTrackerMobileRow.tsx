@@ -1,12 +1,6 @@
-import {
-  Collapse,
-  Grid,
-  IconButton,
-  makeStyles,
-  Paper,
-  Typography,
-} from "@material-ui/core";
-import { KeyboardArrowUp, KeyboardArrowDown } from "@material-ui/icons";
+import { Collapse, Grid, IconButton, Paper, Typography } from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import { KeyboardArrowUp, KeyboardArrowDown } from "@mui/icons-material";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLayoutStyles } from "../../styles/layout";

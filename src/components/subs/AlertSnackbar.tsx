@@ -1,10 +1,5 @@
-import {
-  Button,
-  ButtonProps,
-  Snackbar,
-  SnackbarProps,
-} from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
+import { Button, ButtonProps, Snackbar, SnackbarProps } from "@mui/material";
+import { Alert } from "@mui/material";
 import React from "react";
 
 const AlertSnackbar: React.FC<

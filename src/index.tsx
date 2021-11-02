@@ -28,7 +28,7 @@ window.isChinaMainland = false;
   if (!country) {
     country = (
       await Axios.get<{ data: { country: string } }>(
-        `${process.env.REACT_APP_API_BACKEND_BASE}/country`
+        `${import.meta.env.VITE_API_BACKEND_BASE}/country`
       )
     ).data.data.country;
     localforage.setItem<string>("country", country);
@@ -55,10 +55,7 @@ window.isChinaMainland = false;
 (async () => {
   const lastCheck = Number(localStorage.getItem("lastUserCheck") || "0");
 
-  if (
-    process.env.NODE_ENV === "development" ||
-    new Date().getTime() - lastCheck > 3600 * 1000
-  ) {
+  if (import.meta.env.DEV || new Date().getTime() - lastCheck > 3600 * 1000) {
     // recheck user info
     const userData = JSON.parse(
       localStorage.getItem("userData") || "null"
@@ -66,7 +63,7 @@ window.isChinaMainland = false;
     const token = localStorage.getItem("authToken") || "";
     if (userData && token) {
       const axios = Axios.create({
-        baseURL: process.env.REACT_APP_STRAPI_BASE,
+        baseURL: import.meta.env.VITE_STRAPI_BASE,
       });
       let { data: userData } = await axios.get<UserModel>(`/users/me`, {
         headers: {

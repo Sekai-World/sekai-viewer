@@ -4,10 +4,15 @@ import {
   InputLabel,
   MenuItem,
   Select,
-} from "@material-ui/core";
-import { Avatar, Chip } from "@material-ui/core";
-import { ColDef, DataGrid, RowSelectedParams } from "@material-ui/data-grid";
-import { OpenInNew } from "@material-ui/icons";
+} from "@mui/material";
+import { Avatar, Chip } from "@mui/material";
+import {
+  GridColDef,
+  DataGrid,
+  GridSelectionModel,
+  GridCallbackDetails,
+} from "@mui/x-data-grid";
+import { OpenInNew } from "@mui/icons-material";
 import React, {
   Fragment,
   useContext,
@@ -28,7 +33,10 @@ import { useStrapi } from "../../../utils/apiClient";
 
 interface Props {
   languages: LanguageModel[];
-  onSelected?: (param: RowSelectedParams) => void;
+  onSelected?: (
+    selectionModel: GridSelectionModel,
+    details: GridCallbackDetails
+  ) => void;
 }
 
 const TableMe: React.FC<Props> = (props: Props) => {
@@ -88,16 +96,16 @@ const TableMe: React.FC<Props> = (props: Props) => {
   }, [getAnnouncementPage, page, pageSize, selectedLanguage]);
 
   const columns = useMemo(
-    (): ColDef[] => [
+    (): GridColDef[] => [
       {
         field: "action",
         headerName: t("home:game-news.action"),
         width: 100,
         renderCell(params) {
-          const id = params.getValue("id") as number;
+          const id = params.getValue(params.id, "id") as number;
           return (
             <Link target="_blank" to={`/announcement/${id}`}>
-              <IconButton color="primary" disableRipple>
+              <IconButton color="primary" disableRipple size="large">
                 <OpenInNew></OpenInNew>
               </IconButton>
             </Link>
@@ -173,11 +181,11 @@ const TableMe: React.FC<Props> = (props: Props) => {
           pageSize={pageSize}
           rowCount={rowCount}
           paginationMode="server"
-          onPageChange={({ page }) => setPage(page)}
-          onPageSizeChange={({ pageSize }) => setPageSize(pageSize)}
+          onPageChange={(page) => setPage(page)}
+          onPageSizeChange={(pageSize) => setPageSize(pageSize)}
           loading={loading}
           rowHeight={45}
-          onRowSelected={props.onSelected}
+          onSelectionModelChange={props.onSelected}
           disableColumnFilter
         />
       </div>

@@ -9,11 +9,11 @@ import {
   InputLabel,
   MenuItem,
   Typography,
-} from "@material-ui/core";
-import { AccountCircle, Email, VpnKey } from "@material-ui/icons";
+} from "@mui/material";
+import { AccountCircle, Email, VpnKey } from "@mui/icons-material";
 import { Field } from "formik";
 import { Form, Formik } from "formik";
-import { Select, TextField } from "formik-material-ui";
+import { Select, TextField } from "formik-mui";
 import React, {
   Fragment,
   useCallback,
@@ -117,7 +117,7 @@ const Signup: React.FC<{}> = () => {
           }}
         >
           {({ submitForm, isSubmitting, dirty, isValid, values }) => (
-            <Grid container justify="center">
+            <Grid container justifyContent="center">
               <Grid item>
                 <Form>
                   <Field

@@ -4,8 +4,8 @@ import {
   AccordionSummary,
   Container,
   Typography,
-} from "@material-ui/core";
-import { ExpandMore } from "@material-ui/icons";
+} from "@mui/material";
+import { ExpandMore } from "@mui/icons-material";
 import React, { Fragment, useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { UserContext } from "../../../context";

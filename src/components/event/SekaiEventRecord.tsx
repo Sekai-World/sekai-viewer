@@ -5,8 +5,8 @@ import {
   Tooltip,
   IconButton,
   CircularProgress,
-} from "@material-ui/core";
-import { Update } from "@material-ui/icons";
+} from "@mui/material";
+import { Update } from "@mui/icons-material";
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 // import { Link } from "react-router-dom";
@@ -29,13 +29,10 @@ const SekaiEventRecord = (props: Props) => {
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
   const { showError } = useAlertSnackbar();
 
-  const { jwtToken, sekaiProfile, updateSekaiProfile } = useContext(
-    UserContext
-  )!;
-  const {
-    getSekaiProfileEventRecordMe,
-    postSekaiProfileEventRecord,
-  } = useStrapi(jwtToken);
+  const { jwtToken, sekaiProfile, updateSekaiProfile } =
+    useContext(UserContext)!;
+  const { getSekaiProfileEventRecordMe, postSekaiProfileEventRecord } =
+    useStrapi(jwtToken);
 
   const [eventRecords, setEventRecords] = useState<
     SekaiProfileEventRecordModel[]

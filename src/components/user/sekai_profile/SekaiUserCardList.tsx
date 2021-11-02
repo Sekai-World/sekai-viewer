@@ -21,7 +21,7 @@ import {
   Switch,
   TextField,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import {
   Add,
   Check,
@@ -30,8 +30,9 @@ import {
   Save as SaveIcon,
   Sort,
   SortOutlined,
-} from "@material-ui/icons";
-import { Filter, FilterOutline } from "mdi-material-ui";
+  FilterAlt as Filter,
+  FilterAltOutlined as FilterOutline
+} from "@mui/icons-material";
 import React, {
   // Fragment,
   useCallback,
@@ -81,9 +82,8 @@ const SekaiUserCardList = () => {
   // const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
-  const { jwtToken, sekaiProfile, updateSekaiProfile } = useContext(
-    UserContext
-  )!;
+  const { jwtToken, sekaiProfile, updateSekaiProfile } =
+    useContext(UserContext)!;
   const { putSekaiCardList, deleteSekaiCardList } = useStrapi(jwtToken);
   const getCharaName = useCharaName();
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
@@ -359,7 +359,7 @@ const SekaiUserCardList = () => {
   return (
     <Grid container spacing={1}>
       <Grid item xs={12}>
-        <Grid container justify="space-between">
+        <Grid container justifyContent="space-between">
           <Grid item>
             <Grid container spacing={1}>
               <Grid item>
@@ -573,7 +573,7 @@ const SekaiUserCardList = () => {
                 container
                 xs={12}
                 alignItems="center"
-                justify="space-between"
+                justifyContent="space-between"
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>

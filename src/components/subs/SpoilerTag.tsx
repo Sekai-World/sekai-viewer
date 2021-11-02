@@ -1,5 +1,5 @@
-import { Chip } from "@material-ui/core";
-import { Error } from "@material-ui/icons";
+import { Chip } from "@mui/material";
+import { Error } from "@mui/icons-material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 

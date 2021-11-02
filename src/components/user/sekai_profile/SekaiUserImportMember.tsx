@@ -10,7 +10,7 @@ import { Marvin, MarvinImage, MarvinSegment } from "marvinj-ts";
 import { useInteractiveStyles } from "../../../styles/interactive";
 import {
   Button,
-  CardMedia,
+  // CardMedia,
   Checkbox,
   CircularProgress,
   Dialog,
@@ -20,7 +20,6 @@ import {
   FormControlLabel,
   Grid,
   Input,
-  makeStyles,
   Paper,
   Switch,
   TextField,
@@ -28,11 +27,13 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-} from "@material-ui/core";
-import { Information, Upload } from "mdi-material-ui";
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import { Upload } from "@mui/icons-material";
+// import Information from "~icons/mdi/information";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
-import { ColDef, DataGrid, RowModel } from "@material-ui/data-grid";
+import { GridColDef, DataGrid, GridRowModel } from "@mui/x-data-grid";
 import { createWorker, createScheduler } from "tesseract.js";
 import { useAlertSnackbar, useCachedData, useToggle } from "../../../utils";
 import { ICardInfo } from "../../../types";
@@ -41,9 +42,9 @@ import { UserContext } from "../../../context";
 import { useStrapi } from "../../../utils/apiClient";
 import { useLayoutStyles } from "../../../styles/layout";
 // @ts-ignore
-import { AutoRotatingCarousel, Slide } from "material-auto-rotating-carousel";
+// import { AutoRotatingCarousel, Slide } from "material-auto-rotating-carousel";
 import { isMobile } from "react-device-detect";
-import { Alert } from "@material-ui/lab";
+import { Alert } from "@mui/material";
 
 function initCOS(N: number = 64) {
   const entries = 2 * N * (N - 1);
@@ -115,7 +116,7 @@ function distance(a: string, b: string) {
 
 const useStyles = makeStyles((theme) => ({
   media: {
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down("md")]: {
       paddingTop: "75%",
     },
     [theme.breakpoints.up("md")]: {
@@ -137,11 +138,10 @@ const SekaiUserImportMember = () => {
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const theme = useTheme();
-  const classes = useStyles();
+  // const classes = useStyles();
   const { t } = useTranslation();
-  const { jwtToken, sekaiProfile, updateSekaiProfile } = useContext(
-    UserContext
-  )!;
+  const { jwtToken, sekaiProfile, updateSekaiProfile } =
+    useContext(UserContext)!;
   const { putSekaiCardList } = useStrapi(jwtToken);
   const { showError, showSuccess } = useAlertSnackbar();
 
@@ -149,7 +149,7 @@ const SekaiUserImportMember = () => {
 
   const [isUploading, setIsUploading] = useState(false);
   const [rows, setRows] = useState<
-    (RowModel & {
+    (GridRowModel & {
       crop: string;
       full: string[];
       hashResults: [string, number][];
@@ -168,7 +168,7 @@ const SekaiUserImportMember = () => {
   const [postingCardList, setPostingCardList] = useState(false);
   const [isCardSelectionOpen, toggleIsCardSelectionOpen] = useToggle(false);
   const [editId, setEditId] = useState(-1);
-  const [helpOpen, toggleHelpOpen] = useToggle(false);
+  // const [helpOpen, toggleHelpOpen] = useToggle(false);
 
   // const canvasRef = useRef<HTMLCanvasElement>(null);
   const maxLevels = useMemo(() => [0, 20, 30, 50, 60], []);
@@ -555,8 +555,8 @@ const SekaiUserImportMember = () => {
           const { data: charaHash } = await axios.get<[string, string][]>(
             `${
               window.isChinaMainland
-                ? process.env.REACT_APP_FRONTEND_ASSET_BASE
-                : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-best-assets`
+                ? import.meta.env.VITE_FRONTEND_ASSET_BASE
+                : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-best-assets`
             }/chara_hash.json`
           );
 
@@ -589,7 +589,7 @@ const SekaiUserImportMember = () => {
               createWorker({
                 corePath: window.isChinaMainland
                   ? `${
-                      process.env.REACT_APP_FRONTEND_ASSET_BASE_CN
+                      import.meta.env.VITE_FRONTEND_ASSET_BASE_CN
                     }/tesseract-core.${
                       typeof WebAssembly === "object" ? "wasm" : "asm"
                     }.js`
@@ -597,10 +597,12 @@ const SekaiUserImportMember = () => {
                       typeof WebAssembly === "object" ? "wasm" : "asm"
                     }.js`,
                 workerPath: window.isChinaMainland
-                  ? `${process.env.REACT_APP_FRONTEND_ASSET_BASE_CN}/worker.min.js`
+                  ? `${
+                      import.meta.env.VITE_FRONTEND_ASSET_BASE_CN
+                    }/worker.min.js`
                   : `https://unpkg.com/tesseract.js@2.1.4/dist/worker.min.js`,
                 langPath: window.isChinaMainland
-                  ? process.env.REACT_APP_FRONTEND_ASSET_BASE_CN
+                  ? import.meta.env.VITE_FRONTEND_ASSET_BASE_CN
                   : "https://tessdata.projectnaptha.com/4.0.0",
               })
             );
@@ -664,7 +666,9 @@ const SekaiUserImportMember = () => {
               full: hashResults[idx].length
                 ? hashResults[idx].map(
                     (result) =>
-                      `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-assets/thumbnail/chara_rip/${result[0]}`
+                      `${
+                        import.meta.env.VITE_ASSET_DOMAIN_MINIO
+                      }/sekai-assets/thumbnail/chara_rip/${result[0]}`
                   )
                 : [""],
               hashResults: hashResults[idx],
@@ -708,7 +712,7 @@ const SekaiUserImportMember = () => {
   );
 
   const handleValueChange = useCallback(
-    (value: any, field: string, row: RowModel) => {
+    (value: any, field: string, row: GridRowModel) => {
       const { id } = row;
       const idx = rows.findIndex((row) => row.id === id);
       const elem = rows[idx];
@@ -720,7 +724,7 @@ const SekaiUserImportMember = () => {
   );
 
   const columns = useMemo(
-    (): ColDef[] => [
+    (): GridColDef[] => [
       { field: "id", headerName: t("common:id"), width: 60 },
       {
         field: "crop",
@@ -742,9 +746,11 @@ const SekaiUserImportMember = () => {
         headerName: t("user:profile.import_card.table.row.best_match"),
         width: 100,
         renderCell(params) {
-          const idx = params.getValue("useIndex") as number;
+          const idx = params.getValue(params.id, "useIndex") as number;
           const card = cards?.find(
-            (card) => card.id === (params.getValue("cardIds") as number[])[idx]
+            (card) =>
+              card.id ===
+              (params.getValue(params.id, "cardIds") as number[])[idx]
           )!;
           return card ? (
             <Grid
@@ -757,15 +763,19 @@ const SekaiUserImportMember = () => {
               }}
             >
               <img
-                src={(params.getValue("full") as string[])[idx]}
+                src={(params.getValue(params.id, "full") as string[])[idx]}
                 style={{ height: "64px", width: "64px", cursor: "pointer" }}
                 alt={`${(
-                  (1 - (params.getValue("distances") as number[])[idx] / 64) *
+                  (1 -
+                    (params.getValue(params.id, "distances") as number[])[idx] /
+                      64) *
                   100
                 ).toFixed(1)}%`}
               />
               <Typography>{`${(
-                (1 - (params.getValue("distances") as number[])[idx] / 64) *
+                (1 -
+                  (params.getValue(params.id, "distances") as number[])[idx] /
+                    64) *
                 100
               ).toFixed(1)}%`}</Typography>
             </Grid>
@@ -901,7 +911,7 @@ const SekaiUserImportMember = () => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={params.getValue("trained") as boolean}
+                    checked={params.getValue(params.id, "trained") as boolean}
                     onChange={(e, checked) =>
                       handleValueChange(checked, "trained", params.row)
                     }
@@ -916,7 +926,9 @@ const SekaiUserImportMember = () => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={params.getValue("story1Unlock") as boolean}
+                    checked={
+                      params.getValue(params.id, "story1Unlock") as boolean
+                    }
                     onChange={(e, checked) =>
                       handleValueChange(checked, "story1Unlock", params.row)
                     }
@@ -931,7 +943,9 @@ const SekaiUserImportMember = () => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={params.getValue("story2Unlock") as boolean}
+                    checked={
+                      params.getValue(params.id, "story2Unlock") as boolean
+                    }
                     onChange={(e, checked) =>
                       handleValueChange(checked, "story2Unlock", params.row)
                     }
@@ -1049,7 +1063,7 @@ const SekaiUserImportMember = () => {
                 </Button>
               </label>
             </Grid>
-            <Grid item>
+            {/* <Grid item>
               <Button
                 variant="outlined"
                 startIcon={<Information />}
@@ -1057,7 +1071,7 @@ const SekaiUserImportMember = () => {
               >
                 {t("common:help")}
               </Button>
-            </Grid>
+            </Grid> */}
           </Grid>
         </Grid>
         {/* <Grid item container>
@@ -1100,7 +1114,6 @@ const SekaiUserImportMember = () => {
               columns={columns}
               rows={rows}
               disableColumnFilter
-              disableColumnReorder
               disableColumnMenu
               disableSelectionOnClick
               rowHeight={100}
@@ -1118,7 +1131,7 @@ const SekaiUserImportMember = () => {
                       <Grid item xs={12}>
                         <Grid
                           container
-                          justify="space-around"
+                          justifyContent="space-around"
                           alignItems="center"
                           spacing={1}
                         >
@@ -1377,7 +1390,7 @@ const SekaiUserImportMember = () => {
           </Button>
         </DialogContent>
       </Dialog>
-      <AutoRotatingCarousel
+      {/* <AutoRotatingCarousel
         label={t("common:close")}
         autoplay={false}
         mobile={isMobile}
@@ -1389,7 +1402,9 @@ const SekaiUserImportMember = () => {
           className={classes.slideSubtitle}
           media={
             <CardMedia
-              image={`${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/strapi-upload/IMG_0128_a70218cb12.png`}
+              image={`${
+                import.meta.env.VITE_ASSET_DOMAIN_MINIO
+              }/strapi-upload/IMG_0128_a70218cb12.png`}
               title="import card step 1"
               className={classes.media}
             />
@@ -1403,7 +1418,9 @@ const SekaiUserImportMember = () => {
           className={classes.slideSubtitle}
           media={
             <CardMedia
-              image={`${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-best-assets/import_cards/step2.png`}
+              image={`${
+                import.meta.env.VITE_ASSET_DOMAIN_MINIO
+              }/sekai-best-assets/import_cards/step2.png`}
               title="import card step 2"
               className={classes.media}
             />
@@ -1417,7 +1434,9 @@ const SekaiUserImportMember = () => {
           className={classes.slideSubtitle}
           media={
             <CardMedia
-              image={`${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-best-assets/import_cards/step3.png`}
+              image={`${
+                import.meta.env.VITE_ASSET_DOMAIN_MINIO
+              }/sekai-best-assets/import_cards/step3.png`}
               title="import card step 3"
               className={classes.media}
             />
@@ -1431,7 +1450,9 @@ const SekaiUserImportMember = () => {
           className={classes.slideSubtitle}
           media={
             <CardMedia
-              image={`${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-best-assets/import_cards/step4.png`}
+              image={`${
+                import.meta.env.VITE_ASSET_DOMAIN_MINIO
+              }/sekai-best-assets/import_cards/step4.png`}
               title="import card step 4"
               className={classes.media}
             />
@@ -1441,7 +1462,7 @@ const SekaiUserImportMember = () => {
           title={t("user:profile.import_card.help.step4.title")}
           subtitle={t("user:profile.import_card.help.step4.subtitle")}
         ></Slide>
-      </AutoRotatingCarousel>
+      </AutoRotatingCarousel> */}
     </Grid>
   );
 };

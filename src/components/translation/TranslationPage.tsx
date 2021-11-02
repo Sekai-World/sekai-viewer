@@ -7,9 +7,9 @@ import {
   InputLabel,
   MenuItem,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import { Field, Formik } from "formik";
-import { Select } from "formik-material-ui";
+import { Select } from "formik-mui";
 import React, { Fragment, useContext, useLayoutEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";

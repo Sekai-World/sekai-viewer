@@ -4,7 +4,6 @@ import {
   CardMedia,
   Divider,
   Grid,
-  makeStyles,
   Paper,
   Slider,
   Tab,
@@ -12,10 +11,11 @@ import {
   Typography,
   Container,
   Chip,
-} from "@material-ui/core";
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import { useLayoutStyles } from "../../styles/layout";
 import { useInteractiveStyles } from "../../styles/interactive";
-import { TabContext, TabPanel } from "@material-ui/lab";
+import { TabContext, TabPanel } from "@mui/lab";
 import React, {
   Fragment,
   useCallback,
@@ -60,8 +60,8 @@ import {
 import ResourceBox from "../subs/ResourceBox";
 import { AudioPlayButton } from "../storyreader/StoryReaderSnippet";
 // import AdSense from "../subs/AdSense";
-import { OpenInNew } from "@material-ui/icons";
-import { CommentTextMultiple } from "mdi-material-ui";
+import { OpenInNew } from "@mui/icons-material";
+import CommentTextMultiple from "~icons/mdi/comment-text-multiple";
 import Comment from "../comment/Comment";
 import { useStrapi } from "../../utils/apiClient";
 
@@ -394,7 +394,7 @@ const CardDetail: React.FC<{}> = () => {
               value={tabVal}
               onChange={handleChange}
               variant="scrollable"
-              scrollButtons="desktop"
+              scrollButtons
             >
               <Tab label={t("card:tab.title[0]")} value="0"></Tab>
               <Tab label={t("card:tab.title[1]")} value="2"></Tab>
@@ -464,7 +464,7 @@ const CardDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -477,7 +477,7 @@ const CardDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Grid item>
@@ -501,7 +501,7 @@ const CardDetail: React.FC<{}> = () => {
                 container
                 direction="row"
                 wrap="nowrap"
-                justify="space-between"
+                justifyContent="space-between"
                 alignItems="center"
               >
                 <Grid item>
@@ -514,7 +514,7 @@ const CardDetail: React.FC<{}> = () => {
                     container
                     spacing={1}
                     alignItems="center"
-                    justify="flex-end"
+                    justifyContent="flex-end"
                   >
                     <Grid item>
                       <ContentTrans
@@ -537,7 +537,7 @@ const CardDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Grid item xs={3}>
@@ -554,7 +554,7 @@ const CardDetail: React.FC<{}> = () => {
                   container
                   spacing={1}
                   alignItems="center"
-                  justify="flex-end"
+                  justifyContent="flex-end"
                 >
                   <Grid item>
                     <CharaNameTrans
@@ -579,7 +579,7 @@ const CardDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Grid item xs={3}>
@@ -596,7 +596,7 @@ const CardDetail: React.FC<{}> = () => {
                   container
                   spacing={1}
                   alignItems="center"
-                  justify="flex-end"
+                  justifyContent="flex-end"
                 >
                   <Grid item>
                     <ContentTrans
@@ -630,7 +630,7 @@ const CardDetail: React.FC<{}> = () => {
                 container
                 direction="row"
                 wrap="nowrap"
-                justify="space-between"
+                justifyContent="space-between"
                 alignItems="center"
               >
                 <Grid item xs={3}>
@@ -647,7 +647,7 @@ const CardDetail: React.FC<{}> = () => {
                       container
                       spacing={1}
                       alignItems="center"
-                      justify="flex-end"
+                      justifyContent="flex-end"
                     >
                       <Grid item>
                         <ContentTrans
@@ -682,7 +682,7 @@ const CardDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Grid item xs={3}>
@@ -695,7 +695,7 @@ const CardDetail: React.FC<{}> = () => {
                 container
                 spacing={1}
                 alignItems="center"
-                justify="flex-end"
+                justifyContent="flex-end"
               >
                 <Grid item>
                   <Typography style={{ textTransform: "capitalize" }}>
@@ -728,7 +728,7 @@ const CardDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -741,7 +741,7 @@ const CardDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -771,7 +771,7 @@ const CardDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Grid item xs={8}>
@@ -780,7 +780,12 @@ const CardDetail: React.FC<{}> = () => {
               </Typography>
             </Grid>
             <Grid item xs={4}>
-              <Grid container direction="row" justify="flex-end" spacing={2}>
+              <Grid
+                container
+                direction="row"
+                justifyContent="flex-end"
+                spacing={2}
+              >
                 <Grid item xs={12} sm={6} md={5} lg={4}>
                   <CardThumb cardId={Number(cardId)} />
                 </Grid>
@@ -806,7 +811,7 @@ const CardDetail: React.FC<{}> = () => {
               container
               xs={12}
               alignItems="center"
-              justify="space-between"
+              justifyContent="space-between"
             >
               <Grid item xs={12} md={2}>
                 <Typography classes={{ root: interactiveClasses.caption }}>
@@ -837,7 +842,7 @@ const CardDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Grid item xs={2}>
@@ -859,7 +864,7 @@ const CardDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Grid item xs={2}>
@@ -885,7 +890,7 @@ const CardDetail: React.FC<{}> = () => {
               container
               xs={12}
               alignItems="center"
-              justify="space-between"
+              justifyContent="space-between"
             >
               <Grid item xs={12} md={2}>
                 <Typography classes={{ root: interactiveClasses.caption }}>
@@ -933,7 +938,7 @@ const CardDetail: React.FC<{}> = () => {
               container
               xs={12}
               alignItems="center"
-              justify="space-between"
+              justifyContent="space-between"
             >
               <Grid item xs={12} md={2}>
                 <Typography classes={{ root: interactiveClasses.caption }}>
@@ -966,7 +971,7 @@ const CardDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -990,7 +995,7 @@ const CardDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -1014,7 +1019,7 @@ const CardDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -1038,7 +1043,7 @@ const CardDetail: React.FC<{}> = () => {
             container
             direction="row"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -1084,7 +1089,7 @@ const CardDetail: React.FC<{}> = () => {
               value={episodeTabVal}
               onChange={(e, v) => setEpisodeTabVal(v)}
               variant="scrollable"
-              scrollButtons="desktop"
+              scrollButtons
             >
               <Tab
                 label={
@@ -1116,7 +1121,7 @@ const CardDetail: React.FC<{}> = () => {
                 container
                 direction="row"
                 wrap="nowrap"
-                justify="space-between"
+                justifyContent="space-between"
                 alignItems="center"
               >
                 <Grid item xs={2}>
@@ -1124,7 +1129,7 @@ const CardDetail: React.FC<{}> = () => {
                     {t("common:releaseCondition")}
                   </Typography>
                 </Grid>
-                <Grid item xs={8} container justify="flex-end">
+                <Grid item xs={8} container justifyContent="flex-end">
                   <ReleaseCondTrans
                     releaseCondId={cardEpisode[0].releaseConditionId}
                     originalProps={{ align: "right" }}
@@ -1137,7 +1142,7 @@ const CardDetail: React.FC<{}> = () => {
                 container
                 direction="row"
                 wrap="nowrap"
-                justify="space-between"
+                justifyContent="space-between"
                 alignItems="center"
               >
                 <Grid item xs={3}>
@@ -1145,7 +1150,13 @@ const CardDetail: React.FC<{}> = () => {
                     {t("common:releaseCosts")}
                   </Typography>
                 </Grid>
-                <Grid item container spacing={1} xs={9} justify="flex-end">
+                <Grid
+                  item
+                  container
+                  spacing={1}
+                  xs={9}
+                  justifyContent="flex-end"
+                >
                   {cardEpisode[0].costs.map((c, idx) => (
                     <Grid key={`episode-cost-${idx}`} item>
                       <MaterialIcon
@@ -1161,7 +1172,7 @@ const CardDetail: React.FC<{}> = () => {
                 container
                 direction="row"
                 wrap="nowrap"
-                justify="space-between"
+                justifyContent="space-between"
                 alignItems="center"
               >
                 <Grid item xs={2}>
@@ -1169,7 +1180,13 @@ const CardDetail: React.FC<{}> = () => {
                     {t("common:rewards")}
                   </Typography>
                 </Grid>
-                <Grid item container spacing={1} xs={10} justify="flex-end">
+                <Grid
+                  item
+                  container
+                  spacing={1}
+                  xs={10}
+                  justifyContent="flex-end"
+                >
                   {cardEpisode[0].rewardResourceBoxIds.map((id) => (
                     <ResourceBox
                       resourceBoxId={id}
@@ -1184,7 +1201,7 @@ const CardDetail: React.FC<{}> = () => {
                 container
                 direction="row"
                 wrap="nowrap"
-                justify="space-between"
+                justifyContent="space-between"
                 alignItems="center"
               >
                 <Grid item xs={8}>
@@ -1192,7 +1209,7 @@ const CardDetail: React.FC<{}> = () => {
                     {t("common:storyReader")}
                   </Typography>
                 </Grid>
-                <Grid item container justify="flex-end">
+                <Grid item container justifyContent="flex-end">
                   <Link
                     to={`/storyreader/cardStory/${card.characterId}/${card.id}/${cardEpisode[0].id}`}
                     className={interactiveClasses.noDecoration}
@@ -1212,7 +1229,7 @@ const CardDetail: React.FC<{}> = () => {
                 container
                 direction="row"
                 wrap="nowrap"
-                justify="space-between"
+                justifyContent="space-between"
                 alignItems="center"
               >
                 <Grid item xs={2}>
@@ -1220,7 +1237,7 @@ const CardDetail: React.FC<{}> = () => {
                     {t("common:releaseCondition")}
                   </Typography>
                 </Grid>
-                <Grid item xs={8} container justify="flex-end">
+                <Grid item xs={8} container justifyContent="flex-end">
                   <ReleaseCondTrans
                     releaseCondId={cardEpisode[1].releaseConditionId}
                     originalProps={{ align: "right" }}
@@ -1233,7 +1250,7 @@ const CardDetail: React.FC<{}> = () => {
                 container
                 direction="row"
                 wrap="nowrap"
-                justify="space-between"
+                justifyContent="space-between"
                 alignItems="center"
               >
                 <Grid item xs={3}>
@@ -1241,7 +1258,13 @@ const CardDetail: React.FC<{}> = () => {
                     {t("common:releaseCosts")}
                   </Typography>
                 </Grid>
-                <Grid item container spacing={1} xs={9} justify="flex-end">
+                <Grid
+                  item
+                  container
+                  spacing={1}
+                  xs={9}
+                  justifyContent="flex-end"
+                >
                   {cardEpisode[1].costs.map((c, idx) => (
                     <Grid key={`episode-cost-${idx}`} item>
                       <MaterialIcon
@@ -1257,7 +1280,7 @@ const CardDetail: React.FC<{}> = () => {
                 container
                 direction="row"
                 wrap="nowrap"
-                justify="space-between"
+                justifyContent="space-between"
                 alignItems="center"
               >
                 <Grid item xs={2}>
@@ -1265,7 +1288,13 @@ const CardDetail: React.FC<{}> = () => {
                     {t("common:rewards")}
                   </Typography>
                 </Grid>
-                <Grid item container spacing={1} xs={10} justify="flex-end">
+                <Grid
+                  item
+                  container
+                  spacing={1}
+                  xs={10}
+                  justifyContent="flex-end"
+                >
                   {cardEpisode[1].rewardResourceBoxIds.map((id) => (
                     <ResourceBox
                       resourceBoxId={id}
@@ -1280,7 +1309,7 @@ const CardDetail: React.FC<{}> = () => {
                 container
                 direction="row"
                 wrap="nowrap"
-                justify="space-between"
+                justifyContent="space-between"
                 alignItems="center"
               >
                 <Grid item xs={8}>
@@ -1288,7 +1317,7 @@ const CardDetail: React.FC<{}> = () => {
                     {t("common:storyReader")}
                   </Typography>
                 </Grid>
-                <Grid item container justify="flex-end">
+                <Grid item container justifyContent="flex-end">
                   <Link
                     to={`/storyreader/cardStory/${card.characterId}/${card.id}/${cardEpisode[1].id}`}
                     className={interactiveClasses.noDecoration}

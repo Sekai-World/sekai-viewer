@@ -1,5 +1,5 @@
 import React from "react";
-import Image from "material-ui-image";
+import Image from "mui-image";
 
 import material1Icon from "../../assets/common/material/material1.png";
 import material2Icon from "../../assets/common/material/material2.png";
@@ -45,7 +45,7 @@ import material41Icon from "../../assets/common/material/material41.png";
 import material42Icon from "../../assets/common/material/material42.png";
 import material43Icon from "../../assets/common/material/material43.png";
 import material44Icon from "../../assets/common/material/material44.png";
-import { Grid, Typography } from "@material-ui/core";
+import { Grid, Typography } from "@mui/material";
 
 const materialMap = [
   "",
@@ -100,17 +100,17 @@ const MaterialIcon: React.FC<{ materialId: number; quantity: number }> = ({
   quantity,
 }) => (
   <Grid container direction="column">
-    <Grid item container justify="center">
+    <Grid item container justifyContent="center">
       <Image
         src={materialMap[materialId]}
         alt={`material ${materialId}`}
-        aspectRatio={1}
+        // aspectRatio={1}
         style={{ height: "64px", width: "64px" }}
-        color=""
-        disableTransition
+        bgColor=""
+        duration={0}
       ></Image>
     </Grid>
-    <Grid item container justify="center">
+    <Grid item container justifyContent="center">
       <Typography variant="body2" align="center">
         x {quantity}
       </Typography>

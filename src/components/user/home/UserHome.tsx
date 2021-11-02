@@ -10,15 +10,14 @@ import {
   useTheme,
   InputAdornment,
   Tooltip,
-  makeStyles,
   MenuItem,
   FormControl,
   InputLabel,
-} from "@material-ui/core";
-import { Check, Clear, Create } from "@material-ui/icons";
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import { Check, Clear, Create, Upload, Logout } from "@mui/icons-material";
 import { Field, Form, Formik } from "formik";
-import { Select, TextField } from "formik-material-ui";
-import { Upload, Logout } from "mdi-material-ui";
+import { Select, TextField } from "formik-mui";
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -31,7 +30,7 @@ import SekaiProfile from "../sekai_profile/SekaiProfile";
 
 const useStyles = makeStyles((theme) => ({
   avatarProfile: {
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down("md")]: {
       height: theme.spacing(10),
       width: theme.spacing(10),
     },
@@ -49,13 +48,11 @@ const UserHome: React.FC<{}> = () => {
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const history = useHistory();
-  const { user, jwtToken, logout, usermeta, updateUserMeta } = useContext(
-    UserContext
-  )!;
+  const { user, jwtToken, logout, usermeta, updateUserMeta } =
+    useContext(UserContext)!;
   const { languages } = useContext(SettingContext)!;
-  const { postUpload, putUserMetadataMe, getUserMetadataMe } = useStrapi(
-    jwtToken
-  );
+  const { postUpload, putUserMetadataMe, getUserMetadataMe } =
+    useStrapi(jwtToken);
   const { showError } = useAlertSnackbar();
 
   const [avatarUrl, setAvatarUrl] = useState(
@@ -84,12 +81,12 @@ const UserHome: React.FC<{}> = () => {
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
             <Grid container spacing={2}>
-              <Grid item xs={12} container justify="center">
+              <Grid item xs={12} container justifyContent="center">
                 <Avatar src={avatarUrl || ""} className={classes.avatarProfile}>
                   {(nickname || "").substr(0, 2).toUpperCase()}
                 </Avatar>
               </Grid>
-              <Grid item xs={12} container justify="center">
+              <Grid item xs={12} container justifyContent="center">
                 <input
                   accept="image/png,image/jpeg"
                   className={interactiveClasses.inputHidden}
@@ -150,7 +147,7 @@ const UserHome: React.FC<{}> = () => {
                   </Grid>
                 </label>
               </Grid>
-              <Grid item xs={12} container justify="center">
+              <Grid item xs={12} container justifyContent="center">
                 <Button
                   onClick={() => {
                     logout();
@@ -168,7 +165,7 @@ const UserHome: React.FC<{}> = () => {
           <Grid item xs={12} md={8}>
             <Grid container spacing={1}>
               <Grid item xs={12}>
-                <Grid container justify="space-between">
+                <Grid container justifyContent="space-between">
                   <Typography className={layoutClasses.bold}>
                     {t("user:profile.username")}
                   </Typography>
@@ -179,7 +176,11 @@ const UserHome: React.FC<{}> = () => {
                 <Divider />
               </Grid>
               <Grid item xs={12}>
-                <Grid container justify="space-between" alignItems="center">
+                <Grid
+                  container
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
                   <Typography className={layoutClasses.bold}>
                     {t("user:profile.nickname")}
                     {!isEditingNickname && (
@@ -257,7 +258,7 @@ const UserHome: React.FC<{}> = () => {
                 <Divider />
               </Grid>
               <Grid item xs={12}>
-                <Grid container justify="space-between">
+                <Grid container justifyContent="space-between">
                   <Typography className={layoutClasses.bold}>
                     {t("user:profile.role")}
                   </Typography>
@@ -270,7 +271,11 @@ const UserHome: React.FC<{}> = () => {
                 <Divider />
               </Grid>
               <Grid item xs={12}>
-                <Grid container justify="space-between" alignItems="center">
+                <Grid
+                  container
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
                   <Typography className={layoutClasses.bold}>
                     {t("user:profile.email")}
                   </Typography>
@@ -290,7 +295,7 @@ const UserHome: React.FC<{}> = () => {
                 <Divider />
               </Grid>
               <Grid item xs={12}>
-                <Grid container justify="space-between">
+                <Grid container justifyContent="space-between">
                   <Typography className={layoutClasses.bold}>
                     {t("user:profile.email_confirmed")}
                   </Typography>
@@ -311,7 +316,11 @@ const UserHome: React.FC<{}> = () => {
                 <Divider />
               </Grid>
               <Grid item xs={12}>
-                <Grid container justify="space-between" alignItems="center">
+                <Grid
+                  container
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
                   <Typography className={layoutClasses.bold}>
                     {t("auth:signup.label.prefer_langs")}
                     {!isEditingPreferLangs && (

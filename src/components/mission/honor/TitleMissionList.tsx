@@ -10,9 +10,14 @@ import {
   Grid,
   Paper,
   Typography,
-} from "@material-ui/core";
-import { RotateLeft, Sort, SortOutlined } from "@material-ui/icons";
-import { Filter, FilterOutline } from "mdi-material-ui";
+} from "@mui/material";
+import {
+  RotateLeft,
+  Sort,
+  SortOutlined,
+  FilterAlt as Filter,
+  FilterAltOutlined as FilterOutline,
+} from "@mui/icons-material";
 import React, {
   useState,
   useEffect,
@@ -89,7 +94,7 @@ const DetailDialog: React.FC<{
     <Dialog open={open} onClose={onClose} fullWidth>
       <DialogContent>
         <Grid container spacing={2}>
-          <Grid item container justify="center">
+          <Grid item container justifyContent="center">
             <DegreeImage resourceBoxId={resourceBoxId} type="mission_reward" />
           </Grid>
         </Grid>
@@ -97,7 +102,7 @@ const DetailDialog: React.FC<{
           container
           direction="row"
           wrap="nowrap"
-          justify="space-between"
+          justifyContent="space-between"
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -110,7 +115,7 @@ const DetailDialog: React.FC<{
           container
           direction="row"
           wrap="nowrap"
-          justify="space-between"
+          justifyContent="space-between"
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -132,7 +137,7 @@ const DetailDialog: React.FC<{
           container
           direction="row"
           wrap="nowrap"
-          justify="space-between"
+          justifyContent="space-between"
           alignItems="center"
         >
           <Grid item xs={3} md={2}>
@@ -158,7 +163,7 @@ const DetailDialog: React.FC<{
           container
           direction="row"
           wrap="nowrap"
-          justify="space-between"
+          justifyContent="space-between"
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -173,7 +178,7 @@ const DetailDialog: React.FC<{
           container
           direction="row"
           wrap="nowrap"
-          justify="space-between"
+          justifyContent="space-between"
           alignItems="center"
         >
           <Grid item xs={3}>
@@ -190,7 +195,7 @@ const DetailDialog: React.FC<{
           container
           direction="row"
           wrap="nowrap"
-          justify="space-between"
+          justifyContent="space-between"
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -212,7 +217,7 @@ const DetailDialog: React.FC<{
           container
           direction="row"
           wrap="nowrap"
-          justify="space-between"
+          justifyContent="space-between"
           alignItems="center"
         >
           <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -227,7 +232,7 @@ const DetailDialog: React.FC<{
               container
               direction="row"
               wrap="nowrap"
-              justify="space-between"
+              justifyContent="space-between"
               alignItems="center"
             >
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -240,7 +245,7 @@ const DetailDialog: React.FC<{
               container
               direction="row"
               wrap="nowrap"
-              justify="space-between"
+              justifyContent="space-between"
               alignItems="center"
             >
               <Grid item xs={3} md={2}>
@@ -341,7 +346,11 @@ const TitleMissionList: React.FC<{}> = () => {
         {t("common:mission.main")} - {t("common:mission.honor")}
       </Typography>
       <Container className={layoutClasses.content}>
-        <Grid container justify="flex-end" style={{ marginBottom: "0.5rem" }}>
+        <Grid
+          container
+          justifyContent="flex-end"
+          style={{ marginBottom: "0.5rem" }}
+        >
           <Badge
             color="secondary"
             variant="dot"
@@ -364,7 +373,7 @@ const TitleMissionList: React.FC<{}> = () => {
                 container
                 xs={12}
                 alignItems="center"
-                justify="space-between"
+                justifyContent="space-between"
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
@@ -455,21 +464,23 @@ const TitleMissionList: React.FC<{}> = () => {
           callback={callback}
           data={honorMissions}
           gridSize={
-            ({
-              grid: {
-                xs: 12,
-                sm: 6,
-                md: 4,
-                lg: 3,
-                xl: 2,
-              },
-              agenda: {
-                xs: 12,
-              },
-              comfy: {
-                xs: 12,
-              },
-            } as const)[viewGridType]
+            (
+              {
+                grid: {
+                  xs: 12,
+                  sm: 6,
+                  md: 4,
+                  lg: 3,
+                  xl: 2,
+                },
+                agenda: {
+                  xs: 12,
+                },
+                comfy: {
+                  xs: 12,
+                },
+              } as const
+            )[viewGridType]
           }
           onComponentClick={(data) => {
             setHonorMission(data);

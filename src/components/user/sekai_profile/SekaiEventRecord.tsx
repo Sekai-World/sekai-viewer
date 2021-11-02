@@ -6,9 +6,9 @@ import {
   IconButton,
   CircularProgress,
   TextField,
-} from "@material-ui/core";
-import { Update } from "@material-ui/icons";
-import { Autocomplete } from "@material-ui/lab";
+} from "@mui/material";
+import { Update } from "@mui/icons-material";
+import { Autocomplete } from "@mui/material";
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SettingContext, UserContext } from "../../../context";
@@ -27,13 +27,10 @@ const SekaiEventRecord = (props: Props) => {
   // const layoutClasses = useLayoutStyles();
   // const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
-  const { jwtToken, sekaiProfile, updateSekaiProfile } = useContext(
-    UserContext
-  )!;
-  const {
-    getSekaiProfileEventRecordMe,
-    postSekaiProfileEventRecord,
-  } = useStrapi(jwtToken);
+  const { jwtToken, sekaiProfile, updateSekaiProfile } =
+    useContext(UserContext)!;
+  const { getSekaiProfileEventRecordMe, postSekaiProfileEventRecord } =
+    useStrapi(jwtToken);
   const { getTranslated } = useAssetI18n();
   const { contentTransMode } = useContext(SettingContext)!;
 
@@ -91,7 +88,7 @@ const SekaiEventRecord = (props: Props) => {
                 id: ev.id,
               }))}
             getOptionLabel={(option) => option.name}
-            getOptionSelected={(option, value) => option.id === value.id}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
             renderInput={(params) => (
               <TextField
                 {...params}

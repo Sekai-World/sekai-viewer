@@ -1,4 +1,4 @@
-import { Grid } from "@material-ui/core";
+import { Grid } from "@mui/material";
 import React from "react";
 import { UserCard, UserDeck } from "../../../types";
 import { CardThumbMedium } from "../../subs/CardThumb";
@@ -10,7 +10,7 @@ interface Props {
 
 const SekaiUserDeck = (props: Props) => {
   return (
-    <Grid container spacing={2} justify="center">
+    <Grid container spacing={2} justifyContent="center">
       {Array.from({ length: 5 }).map((_, idx) => (
         <Grid item xs={4} md={2} key={`user-deck-${idx}`}>
           <CardThumbMedium

@@ -8,9 +8,13 @@ import {
   Paper,
   Switch,
   Typography,
-} from "@material-ui/core";
-import { Sort, SortOutlined } from "@material-ui/icons";
-import { Filter, FilterOutline } from "mdi-material-ui";
+} from "@mui/material";
+import {
+  Sort,
+  SortOutlined,
+  FilterAlt as Filter,
+  FilterAltOutlined as FilterOutline,
+} from "@mui/icons-material";
 import React, {
   Fragment,
   useCallback,
@@ -133,7 +137,11 @@ const HonorList = () => {
         {t("honor:page_title")}
       </Typography>
       <Container className={layoutClasses.content}>
-        <Grid container justify="flex-end" style={{ marginBottom: "0.5rem" }}>
+        <Grid
+          container
+          justifyContent="flex-end"
+          style={{ marginBottom: "0.5rem" }}
+        >
           <Badge color="secondary" variant="dot" invisible={!honorType}>
             <Button
               variant="outlined"
@@ -152,7 +160,7 @@ const HonorList = () => {
                 container
                 xs={12}
                 alignItems="center"
-                justify="space-between"
+                justifyContent="space-between"
                 spacing={1}
               >
                 <Grid item xs={12} md={2}>
@@ -196,7 +204,7 @@ const HonorList = () => {
                 container
                 xs={12}
                 alignItems="center"
-                justify="space-between"
+                justifyContent="space-between"
                 spacing={1}
               >
                 <Grid item xs={12} md={2}>
@@ -223,14 +231,16 @@ const HonorList = () => {
           data={honors}
           callback={callback}
           gridSize={
-            ({
-              grid: {
-                xs: 12,
-                sm: 6,
-                md: 4,
-                lg: 3,
-              },
-            } as const)[viewGridType]
+            (
+              {
+                grid: {
+                  xs: 12,
+                  sm: 6,
+                  md: 4,
+                  lg: 3,
+                },
+              } as const
+            )[viewGridType]
           }
           onComponentClick={(data) => {
             setSelectedHonor(data);

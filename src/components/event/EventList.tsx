@@ -1,4 +1,4 @@
-import { Typography, Container, Grid } from "@material-ui/core";
+import { Typography, Container, Grid } from "@mui/material";
 import { useLayoutStyles } from "../../styles/layout";
 import React, {
   Fragment,
@@ -19,9 +19,9 @@ import {
   Publish,
   PublishOutlined,
   Update,
-} from "@material-ui/icons";
-import { ToggleButtonGroup, ToggleButton } from "@material-ui/lab";
-import { Pound } from "mdi-material-ui";
+} from "@mui/icons-material";
+import { ToggleButtonGroup, ToggleButton } from "@mui/material";
+import Pound from "~icons/mdi/pound";
 import { SettingContext } from "../../context";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
@@ -177,20 +177,22 @@ const EventList: React.FC<{}> = () => {
           callback={callback}
           data={events}
           gridSize={
-            ({
-              grid: {
-                xs: 12,
-                sm: 6,
-                md: 4,
-                lg: 3,
-              },
-              agenda: {
-                xs: 12,
-              },
-              comfy: {
-                xs: 12,
-              },
-            } as const)[viewGridType]
+            (
+              {
+                grid: {
+                  xs: 12,
+                  sm: 6,
+                  md: 4,
+                  lg: 3,
+                },
+                agenda: {
+                  xs: 12,
+                },
+                comfy: {
+                  xs: 12,
+                },
+              } as const
+            )[viewGridType]
           }
         />
       </Container>
