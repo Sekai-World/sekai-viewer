@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import ReactDOM from "react-dom";
 import TagManager from "react-gtm-module";
 
-import App from "./components/App";
+import App from "./pages/App";
 // import * as serviceWorker from "./serviceWorker";
 import { BrowserRouter as Router } from "react-router-dom";
 import "./modernizr-custom";
@@ -16,7 +16,7 @@ import {
   UserMetadatumModel,
   UserModel,
 } from "./strapi-model";
-import AppSkeleton from "./components/AppSkeleton";
+import AppSkeleton from "./pages/AppSkeleton";
 
 TagManager.initialize({
   gtmId: "GTM-NFC6SW2",

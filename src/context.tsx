@@ -13,7 +13,7 @@ import {
   UserMetadatumModel,
   UserModel,
 } from "./strapi-model";
-import { ContentTransModeType, DisplayModeType } from "./types";
+import { ContentTransModeType, DisplayModeType } from "./types.d";
 import { useLocalStorage } from "./utils";
 import { useAssetI18n } from "./utils/i18n";
 import useJwtAuth from "./utils/jwt";
