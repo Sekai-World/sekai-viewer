@@ -46,7 +46,7 @@ import { IUserInformationInfo } from "../types.d";
 import { getJPTime, useCachedData } from "../utils";
 import AnnouncementWidget from "../components/widgets/AnnouncementWidget";
 import CurrentEventWidget from "../components/widgets/CurrentEventWidget";
-import AdSense from "../components/blocks/AdSense";
+import AdSense from "../components/blocks/AdSenseBlock";
 
 interface IDetectResult {
   webp: number;

@@ -57,7 +57,7 @@ import { HistoryMobileRow, LiveMobileRow } from "./EventTrackerMobileRow";
 import { HistoryRow, LiveRow } from "./EventTrackerTableRow";
 import { useDebouncedCallback } from "use-debounce";
 import SekaiEventRecord from "./SekaiEventRecord";
-import AdSense from "../../components/blocks/AdSense";
+import AdSense from "../../components/blocks/AdSenseBlock";
 
 const useStyles = makeStyles(() => ({
   eventSelect: {
