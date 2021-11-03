@@ -26,11 +26,12 @@ window.isChinaMainland = false;
 (async () => {
   let country = await localforage.getItem<string>("country");
   if (!country) {
-    country = (
-      await Axios.get<{ data: { country: string } }>(
-        `${import.meta.env.VITE_API_BACKEND_BASE}/country`
-      )
-    ).data.data.country;
+    country =
+      (
+        await Axios.get<{ data: { country: string } }>(
+          `${import.meta.env.VITE_API_BACKEND_BASE}/country`
+        )
+      ).data.data.country || "unknown";
     localforage.setItem<string>("country", country);
   }
 
