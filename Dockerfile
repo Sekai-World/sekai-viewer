@@ -1,12 +1,13 @@
 # Build Environment
-FROM node:14.15.0-alpine as build
+FROM node:16.13.0-alpine as build
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci --silent
+RUN npm i -g pnpm
+COPY package.json ./
+COPY pnpm-lock.yaml ./
+RUN pnpm install
 # Have a .dockerignore file ignoring node_modules and build
 COPY . ./
-ENV GENERATE_SOURCEMAP false
-RUN npm run build
+RUN pnpm build
 
 # Production
 FROM nginx:stable-alpine
