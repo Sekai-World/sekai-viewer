@@ -1,11 +1,12 @@
 import "./App.css";
 import {
-  AppBar,
+  AppBar as MuiAppBar,
+  AppBarProps as MuiAppBarProps,
   Collapse,
   Container,
   CssBaseline,
   Divider,
-  Drawer,
+  Drawer as MuiDrawer,
   Fab,
   Hidden,
   IconButton,
@@ -20,6 +21,10 @@ import {
   useMediaQuery,
   Grid,
   Skeleton,
+  SwipeableDrawer,
+  CSSObject,
+  styled,
+  Box,
 } from "@mui/material";
 import {
   StyledEngineProvider,
@@ -60,7 +65,7 @@ import CalendarText from "~icons/mdi/calendar-text";
 import StickerEmoji from "~icons/mdi/sticker-emoji";
 import React, {
   // forwardRef,
-  useMemo,
+  // useMemo,
   lazy,
   Suspense,
   useContext,
@@ -81,14 +86,13 @@ import ScrollTop from "../components/widgets/ScrollTop";
 // import Settings from "../components/Settings";
 import { SnackbarProvider } from "notistack";
 import ReloadPrompt from "../components/helpers/ReloadPrompt";
+import { useToggle } from "../utils";
 // import AlertSnackbar from "../components/AlertSnackbar";
 
 declare module "@mui/styles/defaultTheme" {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface DefaultTheme extends Theme {}
 }
-
-const drawerWidth = 240;
 const CardList = lazy(() => import("./card/CardList"));
 const HomeView = lazy(() => import("./Home"));
 const MusicList = lazy(() => import("./music/MusicList"));
@@ -137,6 +141,8 @@ const HonorList = lazy(() => import("./honor/HonorList"));
 const EventAnalyzer = lazy(() => import("./event/EventAnalyzer"));
 const MusicMeta = lazy(() => import("./music/MusicMeta"));
 
+const drawerWidth = 240;
+
 const useStyles = makeStyles((theme) => ({
   toolbar: {
     ...theme.mixins.toolbar,
@@ -162,9 +168,6 @@ const useStyles = makeStyles((theme) => ({
   },
   menuButton: {
     marginRight: theme.spacing(2),
-    [theme.breakpoints.up("md")]: {
-      display: "none",
-    },
   },
   title: {
     flexGrow: 1,
@@ -180,15 +183,14 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   listItem: {
-    "padding-top": "0px",
-    "padding-bottom": "0px",
+    padding: theme.spacing(0, 1),
   },
   listItemInner: {
-    "padding-top": "4px",
-    "padding-bottom": "4px",
+    paddingTop: "2px",
+    paddingBottom: "2px",
     [theme.breakpoints.down("lg")]: {
-      "padding-top": "12px",
-      "padding-bottom": "12px",
+      paddingTop: "8px",
+      paddingBottom: "8px",
     },
   },
 }));
@@ -250,12 +252,12 @@ function ListItemLink(
 
 function ListItemWithChildren(props: {
   item: IListItemLinkProps;
-  theme: Theme;
+  // theme: Theme;
 }): React.ReactElement<{
   item: IListItemLinkProps;
-  theme: Theme;
+  // theme: Theme;
 }> {
-  const { item, theme } = props;
+  const { item } = props;
   const { user } = useContext(UserContext)!;
 
   const match = useRouteMatch({
@@ -315,14 +317,13 @@ function ListItemWithChildren(props: {
             }}
           >
             {elem.children ? (
-              <ListItemWithChildren item={elem} theme={theme} />
+              <ListItemWithChildren item={elem} />
             ) : (
               <ListItemLink
                 to={elem.to}
                 text={elem.text}
                 icon={elem.icon}
                 disabled={elem.disabled}
-                theme={theme}
               />
             )}
           </ListItem>
@@ -332,10 +333,72 @@ function ListItemWithChildren(props: {
   );
 }
 
-const AppInner = (props: { theme: Theme }) => {
+const openedMixin = (theme: Theme): CSSObject => ({
+  width: drawerWidth,
+  transition: theme.transitions.create("width", {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.enteringScreen,
+  }),
+  overflowX: "hidden",
+});
+
+const closedMixin = (theme: Theme): CSSObject => ({
+  transition: theme.transitions.create("width", {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  overflowX: "hidden",
+  width: `calc(${theme.spacing(7)} + 1px)`,
+  [theme.breakpoints.up("sm")]: {
+    width: `calc(${theme.spacing(9)} + 1px)`,
+  },
+});
+
+interface AppBarProps extends MuiAppBarProps {
+  open?: boolean;
+}
+
+const DesktopAppBar = styled(MuiAppBar, {
+  shouldForwardProp: (prop) => prop !== "open",
+})<AppBarProps>(({ theme, open }) => ({
+  zIndex: theme.zIndex.drawer + 1,
+  transition: theme.transitions.create(["width", "margin"], {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  ...(open && {
+    marginLeft: drawerWidth,
+    width: `calc(100% - ${drawerWidth}px)`,
+    transition: theme.transitions.create(["width", "margin"], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  }),
+}));
+
+const Drawer = styled(MuiDrawer, {
+  shouldForwardProp: (prop) => prop !== "open",
+})(({ theme, open }) => ({
+  width: drawerWidth,
+  flexShrink: 0,
+  whiteSpace: "nowrap",
+  boxSizing: "border-box",
+  ...(open && {
+    ...openedMixin(theme),
+    "& .MuiDrawer-paper": openedMixin(theme),
+  }),
+  ...(!open && {
+    ...closedMixin(theme),
+    "& .MuiDrawer-paper": closedMixin(theme),
+  }),
+}));
+
+const DrawerContent: React.FC<{
+  open: boolean;
+  onFoldButtonClick?: React.MouseEventHandler<HTMLButtonElement>;
+}> = ({ open, onFoldButtonClick }) => {
+  const classes = useStyles();
   const { t } = useTranslation();
-  const history = useHistory();
-  const { goBack } = useHistory();
 
   const leftBtns: IListItemLinkProps[][] = React.useMemo(
     () => [
@@ -529,248 +592,248 @@ const AppInner = (props: { theme: Theme }) => {
     [t]
   );
 
-  const classes = useStyles();
-  const { theme } = props;
-
-  const [mobileOpen, setMobileOpen] = useState(false);
-  // const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [sidebarExpansionStates, setSidebarExpansionStates] = useState<
     boolean[]
   >(leftBtns.map(() => true));
+
+  return (
+    <UserProvider>
+      <div>
+        <div className={classes.toolbar}>
+          <Typography variant="h6">{t("common:toolbar.title")}</Typography>
+          <Box sx={{ marginLeft: "auto" }}>
+            <Hidden mdDown implementation="css">
+              <IconButton onClick={onFoldButtonClick}>
+                <ArrowBackIosIcon />
+              </IconButton>
+            </Hidden>
+          </Box>
+        </div>
+        <Divider></Divider>
+        <List>
+          <ListItem
+            button
+            onClick={() =>
+              setSidebarExpansionStates((s) => [!s[0], ...s.slice(1)])
+            }
+          >
+            <Typography
+              color="textSecondary"
+              sx={{ ...(!open && { display: "none" }) }}
+            >
+              {t("common:community")}
+            </Typography>
+            {sidebarExpansionStates[0] ? <ExpandLess /> : <ExpandMore />}
+          </ListItem>
+          <Collapse
+            in={sidebarExpansionStates[0]}
+            // timeout="auto"
+            // unmountOnExit
+          >
+            {leftBtns[0].map((elem) =>
+              elem.children ? (
+                <ListItemWithChildren key={elem.to} item={elem} />
+              ) : (
+                <ListItem
+                  disabled={elem.disabled}
+                  button
+                  key={elem.to}
+                  classes={{
+                    root: classes.listItem,
+                  }}
+                >
+                  <ListItemLink {...elem} />
+                </ListItem>
+              )
+            )}
+          </Collapse>
+          <ListItem
+            button
+            onClick={() =>
+              setSidebarExpansionStates((s) => [s[0], !s[1], ...s.slice(2)])
+            }
+          >
+            <Typography
+              color="textSecondary"
+              sx={{ ...(!open && { display: "none" }) }}
+            >
+              {t("common:information")}
+            </Typography>
+            {sidebarExpansionStates[1] ? <ExpandLess /> : <ExpandMore />}
+          </ListItem>
+          <Collapse
+            in={sidebarExpansionStates[1]}
+            // timeout="auto"
+            // unmountOnExit
+          >
+            {leftBtns[1].map((elem) =>
+              elem.children ? (
+                <ListItemWithChildren key={elem.to} item={elem} />
+              ) : (
+                <ListItem
+                  disabled={elem.disabled}
+                  button
+                  key={elem.to}
+                  classes={{
+                    root: classes.listItem,
+                  }}
+                >
+                  <ListItemLink
+                    to={elem.to}
+                    text={elem.text}
+                    icon={elem.icon}
+                    disabled={elem.disabled}
+                  />
+                </ListItem>
+              )
+            )}
+          </Collapse>
+          <ListItem
+            button
+            onClick={() =>
+              setSidebarExpansionStates((s) => [
+                s[0],
+                s[1],
+                !s[2],
+                ...s.slice(3),
+              ])
+            }
+          >
+            <Typography
+              color="textSecondary"
+              sx={{ ...(!open && { display: "none" }) }}
+            >
+              {t("common:tools")}
+            </Typography>
+            {sidebarExpansionStates[2] ? <ExpandLess /> : <ExpandMore />}
+          </ListItem>
+          <Collapse in={sidebarExpansionStates[2]} timeout="auto" unmountOnExit>
+            {leftBtns[2].map((elem) =>
+              elem.children ? (
+                <ListItemWithChildren key={elem.to} item={elem} />
+              ) : (
+                <ListItem
+                  disabled={elem.disabled}
+                  button
+                  key={elem.to}
+                  classes={{
+                    root: classes.listItem,
+                  }}
+                >
+                  <ListItemLink
+                    to={elem.to}
+                    text={elem.text}
+                    icon={elem.icon}
+                    disabled={elem.disabled}
+                  />
+                </ListItem>
+              )
+            )}
+          </Collapse>
+          <ListItem
+            button
+            onClick={() =>
+              setSidebarExpansionStates((s) => [
+                ...s.slice(0, 3),
+                !s[3],
+                ...s.slice(4),
+              ])
+            }
+          >
+            <Typography
+              color="textSecondary"
+              sx={{ ...(!open && { display: "none" }) }}
+            >
+              {t("common:about")}
+            </Typography>
+            {sidebarExpansionStates[3] ? <ExpandLess /> : <ExpandMore />}
+          </ListItem>
+          <Collapse in={sidebarExpansionStates[3]} timeout="auto" unmountOnExit>
+            {leftBtns[3].map((elem) =>
+              elem.children ? (
+                <ListItemWithChildren key={elem.to} item={elem} />
+              ) : (
+                <ListItem
+                  disabled={elem.disabled}
+                  button
+                  key={elem.to}
+                  classes={{
+                    root: classes.listItem,
+                  }}
+                >
+                  <ListItemLink
+                    to={elem.to}
+                    text={elem.text}
+                    icon={elem.icon}
+                    disabled={elem.disabled}
+                  />
+                </ListItem>
+              )
+            )}
+          </Collapse>
+        </List>
+        <ReloadPrompt />
+      </div>
+    </UserProvider>
+  );
+};
+
+const AppInner = (props: { theme: Theme }) => {
+  const { t } = useTranslation();
+  const history = useHistory();
+  const { goBack } = useHistory();
+
+  const classes = useStyles();
+  const { theme } = props;
+
+  const [mobileOpen, toggleMobileOpen] = useToggle(false);
+  const [desktopOpen, toggleDesktopOpen] = useToggle(false);
+  // const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileMenuAnchorEl, setMobileMenuAnchorEl] =
     useState<HTMLElement | null>(null);
 
   const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
+    toggleMobileOpen();
   };
-
-  const drawer = useMemo(
-    () => (
-      <UserProvider>
-        <div>
-          <div className={classes.toolbar}>
-            <Typography variant="h6">{t("common:toolbar.title")}</Typography>
-          </div>
-          <Divider></Divider>
-          <List>
-            <ListItem
-              button
-              onClick={() =>
-                setSidebarExpansionStates((s) => [!s[0], ...s.slice(1)])
-              }
-            >
-              <Typography color="textSecondary">
-                {t("common:community")}
-              </Typography>
-              {sidebarExpansionStates[0] ? <ExpandLess /> : <ExpandMore />}
-            </ListItem>
-            <Collapse
-              in={sidebarExpansionStates[0]}
-              timeout="auto"
-              unmountOnExit
-            >
-              {leftBtns[0].map((elem) =>
-                elem.children ? (
-                  <ListItemWithChildren
-                    key={elem.to}
-                    item={elem}
-                    theme={theme}
-                  />
-                ) : (
-                  <ListItem
-                    disabled={elem.disabled}
-                    button
-                    key={elem.to}
-                    classes={{
-                      root: classes.listItem,
-                    }}
-                  >
-                    <ListItemLink {...elem} theme={theme} />
-                  </ListItem>
-                )
-              )}
-            </Collapse>
-            <ListItem
-              button
-              onClick={() =>
-                setSidebarExpansionStates((s) => [s[0], !s[1], ...s.slice(2)])
-              }
-            >
-              <Typography color="textSecondary">
-                {t("common:information")}
-              </Typography>
-              {sidebarExpansionStates[1] ? <ExpandLess /> : <ExpandMore />}
-            </ListItem>
-            <Collapse
-              in={sidebarExpansionStates[1]}
-              timeout="auto"
-              unmountOnExit
-            >
-              {leftBtns[1].map((elem) =>
-                elem.children ? (
-                  <ListItemWithChildren
-                    key={elem.to}
-                    item={elem}
-                    theme={theme}
-                  />
-                ) : (
-                  <ListItem
-                    disabled={elem.disabled}
-                    button
-                    key={elem.to}
-                    classes={{
-                      root: classes.listItem,
-                    }}
-                  >
-                    <ListItemLink
-                      to={elem.to}
-                      text={elem.text}
-                      icon={elem.icon}
-                      disabled={elem.disabled}
-                      theme={theme}
-                    />
-                  </ListItem>
-                )
-              )}
-            </Collapse>
-            <ListItem
-              button
-              onClick={() =>
-                setSidebarExpansionStates((s) => [
-                  s[0],
-                  s[1],
-                  !s[2],
-                  ...s.slice(3),
-                ])
-              }
-            >
-              <Typography color="textSecondary">{t("common:tools")}</Typography>
-              {sidebarExpansionStates[2] ? <ExpandLess /> : <ExpandMore />}
-            </ListItem>
-            <Collapse
-              in={sidebarExpansionStates[2]}
-              timeout="auto"
-              unmountOnExit
-            >
-              {leftBtns[2].map((elem) =>
-                elem.children ? (
-                  <ListItemWithChildren
-                    key={elem.to}
-                    item={elem}
-                    theme={theme}
-                  />
-                ) : (
-                  <ListItem
-                    disabled={elem.disabled}
-                    button
-                    key={elem.to}
-                    classes={{
-                      root: classes.listItem,
-                    }}
-                  >
-                    <ListItemLink
-                      to={elem.to}
-                      text={elem.text}
-                      icon={elem.icon}
-                      disabled={elem.disabled}
-                      theme={theme}
-                    />
-                  </ListItem>
-                )
-              )}
-            </Collapse>
-            <ListItem
-              button
-              onClick={() =>
-                setSidebarExpansionStates((s) => [
-                  ...s.slice(0, 3),
-                  !s[3],
-                  ...s.slice(4),
-                ])
-              }
-            >
-              <Typography color="textSecondary">{t("common:about")}</Typography>
-              {sidebarExpansionStates[3] ? <ExpandLess /> : <ExpandMore />}
-            </ListItem>
-            <Collapse
-              in={sidebarExpansionStates[3]}
-              timeout="auto"
-              unmountOnExit
-            >
-              {leftBtns[3].map((elem) =>
-                elem.children ? (
-                  <ListItemWithChildren
-                    key={elem.to}
-                    item={elem}
-                    theme={theme}
-                  />
-                ) : (
-                  <ListItem
-                    disabled={elem.disabled}
-                    button
-                    key={elem.to}
-                    classes={{
-                      root: classes.listItem,
-                    }}
-                  >
-                    <ListItemLink
-                      to={elem.to}
-                      text={elem.text}
-                      icon={elem.icon}
-                      disabled={elem.disabled}
-                      theme={theme}
-                    />
-                  </ListItem>
-                )
-              )}
-            </Collapse>
-          </List>
-          <ReloadPrompt />
-        </div>
-      </UserProvider>
-    ),
-    [
-      classes.listItem,
-      classes.toolbar,
-      leftBtns,
-      sidebarExpansionStates,
-      t,
-      theme,
-    ]
-  );
 
   const container =
     window !== undefined ? () => window.document.body : undefined;
+  const iOS =
+    typeof navigator !== "undefined" &&
+    /iPad|iPhone|iPod/.test(navigator.userAgent);
 
   return (
     <SnackbarProvider>
       <div className={classes.root}>
         <CssBaseline />
-        <AppBar position="fixed" className={classes.appBar}>
-          <Toolbar>
-            <IconButton
-              color="inherit"
-              edge="start"
-              onClick={handleDrawerToggle}
-              className={classes.menuButton}
-              size="large"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" noWrap classes={{ root: classes.title }}>
-              Sekai Viewer <small>{import.meta.env.PACKAGE_VERSION}</small>
-            </Typography>
-            <IconButton
-              color="inherit"
-              onClick={() => goBack()}
-              disableRipple
-              style={{ padding: ".6rem" }}
-              size="medium"
-            >
-              <ArrowBackIosIcon fontSize="inherit" />
-            </IconButton>
-            <Hidden mdDown implementation="css">
+        <Hidden mdDown implementation="css">
+          <DesktopAppBar position="fixed" open={desktopOpen}>
+            <Toolbar>
+              <IconButton
+                color="inherit"
+                edge="start"
+                onClick={() => toggleDesktopOpen()}
+                className={classes.menuButton}
+                size="large"
+                sx={{
+                  ...(desktopOpen && { display: "none" }),
+                }}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Typography variant="h6" noWrap classes={{ root: classes.title }}>
+                Sekai Viewer <small>{import.meta.env.PACKAGE_VERSION}</small>
+              </Typography>
+              <IconButton
+                color="inherit"
+                onClick={() => goBack()}
+                disableRipple
+                style={{ padding: ".6rem" }}
+                size="medium"
+              >
+                <ArrowBackIosIcon fontSize="inherit" />
+              </IconButton>
               <Link
                 to="/settings"
                 style={{ color: theme.palette.common.white }}
@@ -792,8 +855,33 @@ const AppInner = (props: { theme: Theme }) => {
                   <AccountCircle fontSize="inherit" />
                 </IconButton>
               </Link>
-            </Hidden>
-            <Hidden mdUp implementation="css">
+            </Toolbar>
+          </DesktopAppBar>
+        </Hidden>
+        <Hidden mdUp implementation="css">
+          <MuiAppBar position="fixed">
+            <Toolbar>
+              <IconButton
+                color="inherit"
+                edge="start"
+                onClick={handleDrawerToggle}
+                className={classes.menuButton}
+                size="large"
+              >
+                <MenuIcon />
+              </IconButton>
+              <Typography variant="h6" noWrap classes={{ root: classes.title }}>
+                Sekai Viewer <small>{import.meta.env.PACKAGE_VERSION}</small>
+              </Typography>
+              <IconButton
+                color="inherit"
+                onClick={() => goBack()}
+                disableRipple
+                style={{ padding: ".6rem" }}
+                size="medium"
+              >
+                <ArrowBackIosIcon fontSize="inherit" />
+              </IconButton>
               <IconButton
                 onClick={(ev) => {
                   setMobileMenuOpen(true);
@@ -804,9 +892,9 @@ const AppInner = (props: { theme: Theme }) => {
               >
                 <MoreVert />
               </IconButton>
-            </Hidden>
-          </Toolbar>
-        </AppBar>
+            </Toolbar>
+          </MuiAppBar>
+        </Hidden>
         <Menu
           anchorEl={mobileMenuAnchorEl}
           keepMounted
@@ -844,31 +932,37 @@ const AppInner = (props: { theme: Theme }) => {
         </Menu>
         <nav className={classes.drawer}>
           <Hidden mdUp implementation="css">
-            <Drawer
+            <SwipeableDrawer
               container={container}
               variant="temporary"
               anchor={theme.direction === "rtl" ? "right" : "left"}
               open={mobileOpen}
               onClose={handleDrawerToggle}
+              onOpen={handleDrawerToggle}
               classes={{
                 paper: classes.drawerPaper,
               }}
               ModalProps={{
                 keepMounted: true,
               }}
+              disableBackdropTransition={!iOS}
+              disableDiscovery={iOS}
             >
-              {drawer}
-            </Drawer>
+              <DrawerContent open={mobileOpen} />
+            </SwipeableDrawer>
           </Hidden>
           <Hidden mdDown implementation="css">
             <Drawer
               variant="permanent"
-              open
+              open={desktopOpen}
               classes={{
                 paper: classes.drawerPaper,
               }}
             >
-              {drawer}
+              <DrawerContent
+                open={desktopOpen}
+                onFoldButtonClick={() => toggleDesktopOpen()}
+              />
             </Drawer>
           </Hidden>
         </nav>
