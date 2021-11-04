@@ -13,7 +13,7 @@ import {
   UserMetadatumModel,
   UserModel,
 } from "./strapi-model";
-import { ContentTransModeType, DisplayModeType } from "./types";
+import { ContentTransModeType, DisplayModeType } from "./types.d";
 import { useLocalStorage } from "./utils";
 import { useAssetI18n } from "./utils/i18n";
 import useJwtAuth from "./utils/jwt";
@@ -49,13 +49,11 @@ export const SettingProvider: React.FC<PropsWithChildren<{}>> = ({
     "languages-cache",
     []
   );
-  const [
-    contentTransMode,
-    setContentTransMode,
-  ] = useLocalStorage<ContentTransModeType>(
-    "content-translation-mode",
-    "translated"
-  );
+  const [contentTransMode, setContentTransMode] =
+    useLocalStorage<ContentTransModeType>(
+      "content-translation-mode",
+      "translated"
+    );
   const [isShowSpoiler, setIsShowSpoiler] = useLocalStorage<boolean>(
     "is-show-spoiler",
     false

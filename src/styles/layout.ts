@@ -1,14 +1,14 @@
-import { makeStyles } from "@material-ui/core";
+import makeStyles from "@mui/styles/makeStyles";
 
 const useLayoutStyles = makeStyles((theme) => ({
   header: {
     fontWeight: "bold",
   },
   content: {
-    marginTop: theme.spacing(3),
-    marginBottom: theme.spacing(3),
-    marginLeft: "auto",
-    marginRight: "auto",
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+    // marginLeft: "auto",
+    // marginRight: "auto",
   },
   alert: {
     margin: theme.spacing(1, 0),

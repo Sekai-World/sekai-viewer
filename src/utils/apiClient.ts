@@ -34,7 +34,7 @@ export function useStrapi(token?: string) {
   const _token = useRef(token);
   const axios = useMemo(() => {
     const axios = Axios.create({
-      baseURL: process.env.REACT_APP_STRAPI_BASE,
+      baseURL: import.meta.env.VITE_STRAPI_BASE,
     });
 
     axios.interceptors.request.use((req) => {
@@ -76,7 +76,7 @@ export function useStrapi(token?: string) {
     getRedirectConnectLoginUrl: useCallback(
       (service: string) =>
         `${axios.getUri({
-          url: `${process.env.REACT_APP_STRAPI_BASE}/connect/${service}`,
+          url: `${import.meta.env.VITE_STRAPI_BASE}/connect/${service}`,
         })}`,
       [axios]
     ),
@@ -550,7 +550,7 @@ export function useStrapi(token?: string) {
 export async function getLanguages() {
   return (
     await Axios.get<LanguageModel[]>(
-      `${process.env.REACT_APP_STRAPI_BASE}/languages?_sort=id:ASC`
+      `${import.meta.env.VITE_STRAPI_BASE}/languages?_sort=id:ASC`
     )
   ).data;
 }
@@ -561,7 +561,7 @@ const axiosFetcher = async (url: string, params?: any) =>
 export function useRemoteLanguages() {
   const params = useMemo(() => ({ _sort: "id:ASC" }), []);
   const { data, error } = useSWR(
-    [`${process.env.REACT_APP_STRAPI_BASE}/languages`, params],
+    [`${import.meta.env.VITE_STRAPI_BASE}/languages`, params],
     axiosFetcher
   );
 
@@ -583,7 +583,7 @@ export function useAnnouncements(page = 0, limit = 0, params?: any) {
     [limit, page, params]
   );
   const { data, error } = useSWR(
-    [`${process.env.REACT_APP_STRAPI_BASE}/announcements`, _params],
+    [`${import.meta.env.VITE_STRAPI_BASE}/announcements`, _params],
     axiosFetcher
   );
 
@@ -611,7 +611,7 @@ export function useAnnouncementsByLanguages(
     [languages, limit, page, params]
   );
   const { data, error } = useSWR(
-    [`${process.env.REACT_APP_STRAPI_BASE}/announcements/language`, _params],
+    [`${import.meta.env.VITE_STRAPI_BASE}/announcements/language`, _params],
     axiosFetcher
   );
 
@@ -625,7 +625,7 @@ export function useAnnouncementsByLanguages(
 export function useCurrentEvent() {
   const [region] = useServerRegion();
   const { data, error } = useSWR(
-    `${process.env.REACT_APP_STRAPI_BASE}/sekai-current-event${
+    `${import.meta.env.VITE_STRAPI_BASE}/sekai-current-event${
       region === "tw" ? "-tw" : ""
     }`,
     axiosFetcher
@@ -642,8 +642,8 @@ export function useLive2dModelList() {
   const { data, error } = useSWR(
     `${
       window.isChinaMainland
-        ? process.env.REACT_APP_FRONTEND_ASSET_BASE
-        : `${process.env.REACT_APP_ASSET_DOMAIN_MINIO}/sekai-best-assets`
+        ? import.meta.env.VITE_FRONTEND_ASSET_BASE
+        : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-best-assets`
     }/models.json`,
     axiosFetcher
   );
@@ -663,7 +663,7 @@ export function usePatronList(tier?: string) {
     [tier]
   );
   const { data, error } = useSWR(
-    [`${process.env.REACT_APP_STRAPI_BASE}/patrons`, _params],
+    [`${import.meta.env.VITE_STRAPI_BASE}/patrons`, _params],
     axiosFetcher
   );
 
@@ -679,6 +679,6 @@ export function usePatronList(tier?: string) {
  */
 // export function useApi() {
 //   const axios = Axios.create({
-//     baseURL: process.env.REACT_APP_API_BACKEND_BASE,
+//     baseURL: import.meta.env.VITE_API_BACKEND_BASE,
 //   });
 // }
