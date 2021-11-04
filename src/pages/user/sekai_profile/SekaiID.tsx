@@ -10,7 +10,10 @@ import {
   CardMedia,
   Tooltip,
   Dialog,
-  Paper,
+  // Paper,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import { Check, Clear, Create, Update } from "@mui/icons-material";
@@ -340,14 +343,10 @@ const SekaiID: React.FC<{}> = () => {
       <Dialog
         open={isVerifyCarouselOpen}
         onClose={() => toggleIsVerifyCarouselOpen()}
+        fullWidth
       >
         <Carousel swipe autoPlay={false}>
-          <Paper
-            elevation={10}
-            sx={{
-              backgroundColor: "primary",
-            }}
-          >
+          <DialogContent>
             <CardMedia
               image={`${
                 window.isChinaMainland
@@ -359,20 +358,17 @@ const SekaiID: React.FC<{}> = () => {
               title="sekai id verify step 1"
               className={classes.media}
             />
-            <Typography>
-              {t("user:profile.label.sekai_id_verify_step_1_title")}
-            </Typography>
-            <br />
-            <Typography>
-              {t("user:profile.label.sekai_id_verify_step_1_subtitle")}
-            </Typography>
-          </Paper>
-          <Paper
-            elevation={10}
-            sx={{
-              backgroundColor: "primary",
-            }}
-          >
+            <DialogContentText>
+              <Typography>
+                {t("user:profile.label.sekai_id_verify_step_1_title")}
+              </Typography>
+              <br />
+              <Typography>
+                {t("user:profile.label.sekai_id_verify_step_1_subtitle")}
+              </Typography>
+            </DialogContentText>
+          </DialogContent>
+          <DialogContent>
             <CardMedia
               image={`${
                 window.isChinaMainland
@@ -384,37 +380,41 @@ const SekaiID: React.FC<{}> = () => {
               title="sekai id verify step 2"
               className={classes.media}
             />
-            <Typography>
-              {t("user:profile.label.sekai_id_verify_step_2_title")}
-            </Typography>
-            <br />
-            <Typography>
-              {t("user:profile.label.sekai_id_verify_step_2_subtitle", {
-                verify_token: sekaiProfile?.sekaiUserToken,
-              })}
-            </Typography>
-            <Button
-              onClick={() => {
-                toggleIsVerifying();
-                postSekaiProfileConfirm(
-                  sekaiProfile!.id,
-                  sekaiProfile!.sekaiUserId!
-                )
-                  .then(async () => {
-                    updateSekaiProfile(await getSekaiProfileMe());
-                    toggleIsVerifying();
-                  })
-                  .catch(() => {
-                    showError(t("user:profile.error.sekai_id_verify_failed"));
-                    toggleIsVerifying();
-                  });
-                toggleIsVerifyCarouselOpen();
-              }}
-            >
-              {t("user:profile.label.sekai_id_verify")}
-            </Button>
-          </Paper>
+            <DialogContentText>
+              <Typography>
+                {t("user:profile.label.sekai_id_verify_step_2_title")}
+              </Typography>
+              <br />
+              <Typography>
+                {t("user:profile.label.sekai_id_verify_step_2_subtitle", {
+                  verify_token: sekaiProfile?.sekaiUserToken,
+                })}
+              </Typography>
+            </DialogContentText>
+          </DialogContent>
         </Carousel>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              toggleIsVerifying();
+              postSekaiProfileConfirm(
+                sekaiProfile!.id,
+                sekaiProfile!.sekaiUserId!
+              )
+                .then(async () => {
+                  updateSekaiProfile(await getSekaiProfileMe());
+                  toggleIsVerifying();
+                })
+                .catch(() => {
+                  showError(t("user:profile.error.sekai_id_verify_failed"));
+                  toggleIsVerifying();
+                });
+              toggleIsVerifyCarouselOpen();
+            }}
+          >
+            {t("user:profile.label.sekai_id_verify")}
+          </Button>
+        </DialogActions>
       </Dialog>
     </Grid>
   );
