@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.9.0](https://github.com/Sekai-World/sekai-viewer/compare/v0.8.1...v0.9.0) (2021-11-04)
+
+
+### Features
+
+* **home:** :sparkles: make drawer swipeable on mobile device ([5dd5179](https://github.com/Sekai-World/sekai-viewer/commits/5dd51798f0868568fd8fe93c9d9a5b536107fc37))
+* **home:** :sparkles: show game version info ([6807256](https://github.com/Sekai-World/sekai-viewer/commits/68072566635e3f9dd99a2513316a2193bf9af403))
+* **layout:** :sparkles: store drawer open state on desktop ([9f4ffcb](https://github.com/Sekai-World/sekai-viewer/commits/9f4ffcb162102fdfd8fc45d62bfabf112ef2766b))
+* **settings:** :sparkles: show detected client region ([679a1f4](https://github.com/Sekai-World/sekai-viewer/commits/679a1f4bdeecb392e350d52fad4d3122a1cc7a2e))
+* **user:** :sparkles: show more sekai profile data ([b0c7694](https://github.com/Sekai-World/sekai-viewer/commits/b0c7694785db49509e2be4efb9b6afe3a1d49c8b))
+
+
+### Bug Fixes
+
+* :adhesive_bandage: rename AdSense to avoid wrong adblock rules ([b1ec37e](https://github.com/Sekai-World/sekai-viewer/commits/b1ec37e68280eae9690c7e6a94572e550a45f776))
+* :rotating_light: missing `key` prop warning in AgendaView ([eff5d0c](https://github.com/Sekai-World/sekai-viewer/commits/eff5d0c9bebd67f3abf75b71316ec1e0a023192a))
+* **music:** no `null` label for FormControlLabel ([ea62f1e](https://github.com/Sekai-World/sekai-viewer/commits/ea62f1e76c706540f04c033e20064a6478c69be0))
+* **pwa:** :bug: use `manifest.webmanifest` in `index.html` ([1385ba1](https://github.com/Sekai-World/sekai-viewer/commits/1385ba11cdbc5a259baa7010ff91a2f99eda555e))
+
+
+### Refactors
+
+* :arrow_up: upgrade material-ui@4 to mui@5 alongwith dependencies ([c1dd350](https://github.com/Sekai-World/sekai-viewer/commits/c1dd350cf19e33313cee29bbcb52c8e040f90c1f))
+* :building_construction: change folder structure ([a896a32](https://github.com/Sekai-World/sekai-viewer/commits/a896a326f9748081fc769dd2ba550a8a0ea43436))
+* :hammer: migration to pnpm, vite ([5e66bd8](https://github.com/Sekai-World/sekai-viewer/commits/5e66bd83c2183a04edbf2956888a06f0e5d3edb7))
+* :lipstick: dialog style fix ([5f3e0bd](https://github.com/Sekai-World/sekai-viewer/commits/5f3e0bd4070cc0f4f5382df6ed3c8a1545b36977))
+* :recycle: remove useToggle for mobile drawer ([ea08f10](https://github.com/Sekai-World/sekai-viewer/commits/ea08f10fd3947eda59bc514fcbeab7cfdf57a12e))
+* :recycle: save country as "unknown" instead of `undefined` ([1c7d56e](https://github.com/Sekai-World/sekai-viewer/commits/1c7d56ea91c771ae1983fb28a37259c28181eab6))
+* **home:** :lipstick: shortcut section spacing adjustment ([0962140](https://github.com/Sekai-World/sekai-viewer/commits/09621409b26c5f08d02aec7865307b57840aa241))
+* **pwa:** :recycle: use vite pwa plugin ([8827de0](https://github.com/Sekai-World/sekai-viewer/commits/8827de0b52f4ba34db8678312632458d820002fb))
+* **user:** :lipstick: dialog with crousel style fix ([027ea11](https://github.com/Sekai-World/sekai-viewer/commits/027ea11e4ffd92a27894bef2ad8f0a18633e2842))
+
 ### [0.8.1](https://github.com/Sekai-World/sekai-viewer/compare/v0.8.0...v0.8.1) (2021-10-18)
 
 
