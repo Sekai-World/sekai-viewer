@@ -621,30 +621,10 @@ const MusicDetail: React.FC<{}> = () => {
                   </Typography>
                 </Grid>
                 <Grid item container xs={12} md={9} spacing={1}>
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={trimSilence}
-                        onChange={() => setTrimSilence((v) => !v)}
-                        // disabled={trimFailed || trimLoading}
-                      />
-                    }
-                    label={null}
-                    // label={
-                    //   trimFailed ? (
-                    //     // failed
-                    //     <Close style={{ color: theme.palette.error.main }} />
-                    //   ) : trimmedMP3URL ? (
-                    //     // success
-                    //     <Done style={{ color: theme.palette.success.main }} />
-                    //   ) : trimLoading ? (
-                    //     // loading
-                    //     <CircularProgress
-                    //       size="1em"
-                    //       style={{ marginLeft: "0.2em" }}
-                    //     />
-                    //   ) : null
-                    // }
+                  <Switch
+                    checked={trimSilence}
+                    onChange={() => setTrimSilence((v) => !v)}
+                    // disabled={trimFailed || trimLoading}
                   />
                 </Grid>
               </Grid>
