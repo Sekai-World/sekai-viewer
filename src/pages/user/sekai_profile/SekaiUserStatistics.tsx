@@ -20,7 +20,13 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import React, { Fragment, useContext, useEffect, useState } from "react";
+import React, {
+  Fragment,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import Image from "mui-image";
 import { UserContext } from "../../../context";
@@ -132,6 +138,30 @@ const getAllPerfectCount = (idx: number, userMusics?: UserMusic[]) => {
     );
 
     return sum + Number(isAllPerfect);
+  }, 0);
+};
+
+const getMVPCount = (userMusics?: UserMusic[]) => {
+  if (!userMusics) return 0;
+  return userMusics.reduce((sum, umusic) => {
+    umusic.userMusicDifficultyStatuses.forEach((status) => {
+      status.userMusicResults.forEach((result) => {
+        sum += result.mvpCount;
+      });
+    });
+    return sum;
+  }, 0);
+};
+
+const getSuperStarCount = (userMusics?: UserMusic[]) => {
+  if (!userMusics) return 0;
+  return userMusics.reduce((sum, umusic) => {
+    umusic.userMusicDifficultyStatuses.forEach((status) => {
+      status.userMusicResults.forEach((result) => {
+        sum += result.superStarCount;
+      });
+    });
+    return sum;
   }, 0);
 };
 
@@ -288,53 +318,111 @@ const SekaiUserStatistics = () => {
   const [areaItems] = useCachedData<IAreaItem>("areaItems");
   const [musics] = useCachedData<IMusicInfo>("musics");
 
-  // const [characterRankOpen, toggleCharacterRankOpen] = useToggle(false);
+  const [characterRankOpen, toggleCharacterRankOpen] = useToggle(false);
+  const [challengeLiveOpen, toggleChallengeLiveOpen] = useToggle(false);
   const [honorOpen, toggleHonorOpen] = useToggle(false);
   const [areaItemOpen, toggleAreaItemOpen] = useToggle(false);
   const [musicOpen, toggleMusicOpen] = useToggle(false);
   const [selectedMusic, setSelectedMusic] = useState(1);
 
+  const challengeLiveRanks = useMemo(
+    () =>
+      sekaiProfile?.sekaiUserProfile?.userChallengeLiveSoloStages.reduce(
+        (res, curr) => {
+          if (res[curr.characterId] && curr.rank > res[curr.characterId]) {
+            res[curr.characterId] = curr.rank;
+          } else {
+            res[curr.characterId] = curr.rank;
+          }
+          return res;
+        },
+        {} as { [key: number]: number }
+      ),
+    [sekaiProfile?.sekaiUserProfile?.userChallengeLiveSoloStages]
+  );
+
   return (
     <Grid container spacing={1}>
       <Grid item xs={12}>
-        {/* <Typography>{t("mission:type.character_rank")}</Typography> */}
-        {/* <Button
-          variant="contained"
-          color="primary"
-          onClick={() => toggleCharacterRankOpen()}
+        <Accordion
+          expanded={characterRankOpen}
+          onChange={() => toggleCharacterRankOpen()}
+          TransitionProps={{ unmountOnExit: true }}
         >
-          {characterRankOpen ? t("common:hide") : t("common:show")}
-        </Button> */}
-        {/* {characterRankOpen && ( */}
-        <Grid container spacing={1}>
-          {sekaiProfile?.sekaiUserProfile?.userCharacters.map((chara) => (
-            <Grid key={chara.characterId} item xs={3} md={2} lg={1}>
-              <Chip
-                avatar={
-                  <Avatar src={charaIcons[`CharaIcon${chara.characterId}`]} />
-                }
-                label={chara.characterRank}
-              />
-              {/* <Grid container spacing={1}>
-                <Grid item xs={12}>
-                  <Image
-                    src={charaIcons[`CharaIcon${chara.characterId}`]}
-                    alt={`cahra ${chara.characterId}`}
-                    aspectRatio={1}
-                    // style={{ height: "64px", width: "64px" }}
-                    color=""
+          <AccordionSummary expandIcon={<ExpandMore />}>
+            <Typography className={layoutClasses.header}>
+              {t("mission:type.character_rank")}
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Grid container spacing={1}>
+              {sekaiProfile?.sekaiUserProfile?.userCharacters.map((chara) => (
+                <Grid key={chara.characterId} item xs={3} md={2} lg={1}>
+                  <Chip
+                    avatar={
+                      <Avatar
+                        src={charaIcons[`CharaIcon${chara.characterId}`]}
+                      />
+                    }
+                    label={chara.characterRank}
                   />
                 </Grid>
-                <Grid item xs={12}>
-                  <Typography align="center">{chara.characterRank}</Typography>
-                </Grid>
-              </Grid> */}
+              ))}
             </Grid>
-          ))}
-        </Grid>
-        {/* )} */}
-      </Grid>
-      <Grid item xs={12}>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion
+          expanded={challengeLiveOpen}
+          onChange={() => toggleChallengeLiveOpen()}
+          TransitionProps={{ unmountOnExit: true }}
+        >
+          <AccordionSummary expandIcon={<ExpandMore />}>
+            <Typography className={layoutClasses.header}>
+              {t("common:challengeLive")}
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Grid container spacing={1}>
+              {sekaiProfile?.sekaiUserProfile?.userCharacters.map((chara) => (
+                <Grid key={chara.characterId} item xs={3} md={2} lg={1}>
+                  <Chip
+                    avatar={
+                      <Avatar
+                        src={charaIcons[`CharaIcon${chara.characterId}`]}
+                      />
+                    }
+                    label={
+                      (!!challengeLiveRanks &&
+                        challengeLiveRanks[chara.characterId]) ||
+                      0
+                    }
+                  />
+                </Grid>
+              ))}
+            </Grid>
+            <br />
+            <Grid container spacing={1} alignItems="center">
+              <Grid item>
+                <Typography>{t("music:hi_score")}</Typography>
+              </Grid>
+              <Grid item>
+                <Avatar
+                  src={
+                    charaIcons[
+                      `CharaIcon${sekaiProfile?.sekaiUserProfile?.userChallengeLiveSoloResults[0].characterId}`
+                    ]
+                  }
+                />
+              </Grid>
+              <Grid item>
+                {
+                  sekaiProfile?.sekaiUserProfile
+                    ?.userChallengeLiveSoloResults[0].highScore
+                }
+              </Grid>
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
         <Accordion
           expanded={honorOpen}
           onChange={() => toggleHonorOpen()}
@@ -505,6 +593,20 @@ const SekaiUserStatistics = () => {
           <AccordionDetails>
             {musics && (
               <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <Grid container spacing={1}>
+                    <Grid item>
+                      <Chip label={t("music:mvp_count")}></Chip>
+                      {getMVPCount(sekaiProfile?.sekaiUserProfile?.userMusics)}
+                    </Grid>
+                    <Grid item>
+                      <Chip label={t("music:super_star_count")}></Chip>
+                      {getSuperStarCount(
+                        sekaiProfile?.sekaiUserProfile?.userMusics
+                      )}
+                    </Grid>
+                  </Grid>
+                </Grid>
                 <Grid item xs={12}>
                   <TableContainer>
                     <Table>
