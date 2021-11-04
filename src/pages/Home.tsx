@@ -336,244 +336,246 @@ function Home() {
         {t("home:directLink.caption")}
       </Typography>
       <Container className={layoutClasses.content}>
-        <Grid container spacing={2}>
-          <Grid item>
-            <RouteLink
-              to="/card"
-              className={interactiveClasses.noDecoration}
-              style={{ color: theme.palette.primary.main }}
-            >
-              <Grid container direction="row" alignItems="center">
-                <Grid item>
-                  <AspectRatio fontSize="small"></AspectRatio>
+        <Grid container rowSpacing={1}>
+          <Grid item container columnSpacing={1}>
+            <Grid item>
+              <RouteLink
+                to="/card"
+                className={interactiveClasses.noDecoration}
+                style={{ color: theme.palette.primary.main }}
+              >
+                <Grid container direction="row" alignContent="center">
+                  <Grid item>
+                    <AspectRatio fontSize="small"></AspectRatio>
+                  </Grid>
+                  <Grid item>{t("common:card")}</Grid>
                 </Grid>
-                <Grid item>{t("common:card")}</Grid>
-              </Grid>
-            </RouteLink>
-          </Grid>
-          <Grid item>
-            <RouteLink
-              to="/music"
-              className={interactiveClasses.noDecoration}
-              style={{ color: theme.palette.primary.main }}
-            >
-              <Grid container direction="row" alignItems="center">
-                <Grid item>
-                  <Album fontSize="small"></Album>
+              </RouteLink>
+            </Grid>
+            <Grid item>
+              <RouteLink
+                to="/music"
+                className={interactiveClasses.noDecoration}
+                style={{ color: theme.palette.primary.main }}
+              >
+                <Grid container direction="row" alignContent="center">
+                  <Grid item>
+                    <Album fontSize="small"></Album>
+                  </Grid>
+                  <Grid item>{t("common:music")}</Grid>
                 </Grid>
-                <Grid item>{t("common:music")}</Grid>
-              </Grid>
-            </RouteLink>
-          </Grid>
-          <Grid item>
-            <RouteLink
-              to="/gacha"
-              className={interactiveClasses.noDecoration}
-              style={{ color: theme.palette.primary.main }}
-            >
-              <Grid container direction="row" alignItems="center">
-                <Grid item>
-                  <MoveToInbox fontSize="small"></MoveToInbox>
+              </RouteLink>
+            </Grid>
+            <Grid item>
+              <RouteLink
+                to="/gacha"
+                className={interactiveClasses.noDecoration}
+                style={{ color: theme.palette.primary.main }}
+              >
+                <Grid container direction="row" alignContent="center">
+                  <Grid item>
+                    <MoveToInbox fontSize="small"></MoveToInbox>
+                  </Grid>
+                  <Grid item>{t("common:gacha")}</Grid>
                 </Grid>
-                <Grid item>{t("common:gacha")}</Grid>
-              </Grid>
-            </RouteLink>
-          </Grid>
-          <Grid item>
-            <RouteLink
-              to="/event"
-              className={interactiveClasses.noDecoration}
-              style={{ color: theme.palette.primary.main }}
-            >
-              <Grid container direction="row" alignItems="center">
-                <Grid item>
-                  <CalendarText fontSize="small"></CalendarText>
+              </RouteLink>
+            </Grid>
+            <Grid item>
+              <RouteLink
+                to="/event"
+                className={interactiveClasses.noDecoration}
+                style={{ color: theme.palette.primary.main }}
+              >
+                <Grid container direction="row" alignContent="center">
+                  <Grid item>
+                    <CalendarText fontSize="small"></CalendarText>
+                  </Grid>
+                  <Grid item>{t("common:event")}</Grid>
                 </Grid>
-                <Grid item>{t("common:event")}</Grid>
-              </Grid>
-            </RouteLink>
-          </Grid>
-          <Grid item>
-            <RouteLink
-              to="/music_recommend"
-              className={interactiveClasses.noDecoration}
-              style={{ color: theme.palette.primary.main }}
-            >
-              <Grid container direction="row" alignItems="center">
-                <Grid item>
-                  <Calculator fontSize="small"></Calculator>
+              </RouteLink>
+            </Grid>
+            <Grid item>
+              <RouteLink
+                to="/music_recommend"
+                className={interactiveClasses.noDecoration}
+                style={{ color: theme.palette.primary.main }}
+              >
+                <Grid container direction="row" alignContent="center">
+                  <Grid item>
+                    <Calculator fontSize="small"></Calculator>
+                  </Grid>
+                  <Grid item>{t("common:musicRecommend")}</Grid>
                 </Grid>
-                <Grid item>{t("common:musicRecommend")}</Grid>
-              </Grid>
-            </RouteLink>
-          </Grid>
-          <Grid item>
-            <RouteLink
-              to="/eventtracker"
-              className={interactiveClasses.noDecoration}
-              style={{ color: theme.palette.primary.main }}
-            >
-              <Grid container direction="row" alignItems="center">
-                <Grid item>
-                  <Timeline fontSize="small"></Timeline>
+              </RouteLink>
+            </Grid>
+            <Grid item>
+              <RouteLink
+                to="/eventtracker"
+                className={interactiveClasses.noDecoration}
+                style={{ color: theme.palette.primary.main }}
+              >
+                <Grid container direction="row" alignContent="center">
+                  <Grid item>
+                    <Timeline fontSize="small"></Timeline>
+                  </Grid>
+                  <Grid item>{t("common:eventTracker")}</Grid>
                 </Grid>
-                <Grid item>{t("common:eventTracker")}</Grid>
-              </Grid>
-            </RouteLink>
-          </Grid>
-          <Grid item>
-            <RouteLink
-              to="/storyreader"
-              className={interactiveClasses.noDecoration}
-              style={{ color: theme.palette.primary.main }}
-            >
-              <Grid container direction="row" alignItems="center">
-                <Grid item>
-                  <Textsms fontSize="small"></Textsms>
+              </RouteLink>
+            </Grid>
+            <Grid item>
+              <RouteLink
+                to="/storyreader"
+                className={interactiveClasses.noDecoration}
+                style={{ color: theme.palette.primary.main }}
+              >
+                <Grid container direction="row" alignContent="center">
+                  <Grid item>
+                    <Textsms fontSize="small"></Textsms>
+                  </Grid>
+                  <Grid item>{t("common:storyReader")}</Grid>
                 </Grid>
-                <Grid item>{t("common:storyReader")}</Grid>
-              </Grid>
-            </RouteLink>
+              </RouteLink>
+            </Grid>
           </Grid>
-        </Grid>
-        <Grid container spacing={2}>
-          <Grid item>
-            <RouteLink
-              to="/settings"
-              className={interactiveClasses.noDecoration}
-              style={{ color: theme.palette.primary.main }}
-            >
-              <Grid container direction="row" alignItems="center">
-                <Grid item>
-                  <SettingsIcon fontSize="small"></SettingsIcon>
+          <Grid item container columnSpacing={1}>
+            <Grid item>
+              <RouteLink
+                to="/settings"
+                className={interactiveClasses.noDecoration}
+                style={{ color: theme.palette.primary.main }}
+              >
+                <Grid container direction="row" alignContent="center">
+                  <Grid item>
+                    <SettingsIcon fontSize="small"></SettingsIcon>
+                  </Grid>
+                  <Grid item>{t("common:settings.title")}</Grid>
                 </Grid>
-                <Grid item>{t("common:settings.title")}</Grid>
-              </Grid>
-            </RouteLink>
-          </Grid>
-          <Grid item>
-            <Link
-              href="https://www.transifex.com/dnaroma/sekai-viewer"
-              target="_blank"
-              underline="hover"
-            >
-              <Grid container direction="row" alignItems="center">
-                <Grid item>
-                  <Translate fontSize="small"></Translate>
-                </Grid>
-                <Grid item>{t("home:alert1.translation")}</Grid>
-              </Grid>
-            </Link>
-          </Grid>
-          <Grid item>
-            <Link
-              href="https://github.com/Sekai-World/sekai-viewer"
-              target="_blank"
-              underline="hover"
-            >
-              <Grid container direction="row" alignItems="center">
-                <Grid item>
-                  <GitHub fontSize="small"></GitHub>
-                </Grid>
-                <Grid item>{t("home:alert1.development")}</Grid>
-              </Grid>
-            </Link>
-          </Grid>
-          {window.isChinaMainland && (
+              </RouteLink>
+            </Grid>
             <Grid item>
               <Link
-                href="https://b23.tv/AIjzvc"
+                href="https://www.transifex.com/dnaroma/sekai-viewer"
                 target="_blank"
                 underline="hover"
               >
-                <Grid container direction="row" alignItems="center">
+                <Grid container direction="row" alignContent="center">
                   <Grid item>
-                    <OpenInNew fontSize="small"></OpenInNew>
+                    <Translate fontSize="small"></Translate>
                   </Grid>
-                  <Grid item>攻略合集（by @xfl33）</Grid>
+                  <Grid item>{t("home:alert1.translation")}</Grid>
                 </Grid>
               </Link>
             </Grid>
-          )}
-          {!window.isChinaMainland && (
             <Grid item>
               <Link
-                href="https://www.patreon.com/bePatron?u=6503151"
+                href="https://github.com/Sekai-World/sekai-viewer"
                 target="_blank"
                 underline="hover"
               >
-                <Grid container direction="row" alignItems="center">
+                <Grid container direction="row" alignContent="center">
                   <Grid item>
-                    <Patreon fontSize="small" />
+                    <GitHub fontSize="small"></GitHub>
                   </Grid>
-                  <Grid item>Patreon</Grid>
+                  <Grid item>{t("home:alert1.development")}</Grid>
                 </Grid>
               </Link>
             </Grid>
-          )}
-          {window.isChinaMainland && (
+            {window.isChinaMainland && (
+              <Grid item>
+                <Link
+                  href="https://b23.tv/AIjzvc"
+                  target="_blank"
+                  underline="hover"
+                >
+                  <Grid container direction="row" alignContent="center">
+                    <Grid item>
+                      <OpenInNew fontSize="small"></OpenInNew>
+                    </Grid>
+                    <Grid item>攻略合集（by @xfl33）</Grid>
+                  </Grid>
+                </Link>
+              </Grid>
+            )}
+            {!window.isChinaMainland && (
+              <Grid item>
+                <Link
+                  href="https://www.patreon.com/bePatron?u=6503151"
+                  target="_blank"
+                  underline="hover"
+                >
+                  <Grid container direction="row" alignContent="center">
+                    <Grid item>
+                      <Patreon fontSize="small" />
+                    </Grid>
+                    <Grid item>Patreon</Grid>
+                  </Grid>
+                </Link>
+              </Grid>
+            )}
+            {window.isChinaMainland && (
+              <Grid item>
+                <Link
+                  href="https://afdian.net/@sekaiviewer"
+                  target="_blank"
+                  underline="hover"
+                >
+                  <Grid container direction="row" alignContent="center">
+                    <Grid item>
+                      <OpenInNew fontSize="small" />
+                    </Grid>
+                    <Grid item>爱发电</Grid>
+                  </Grid>
+                </Link>
+              </Grid>
+            )}
             <Grid item>
-              <Link
-                href="https://afdian.net/@sekaiviewer"
-                target="_blank"
-                underline="hover"
+              <RouteLink
+                to="/about"
+                className={interactiveClasses.noDecoration}
+                style={{ color: theme.palette.primary.main }}
               >
-                <Grid container direction="row" alignItems="center">
+                <Grid container direction="row" alignContent="center">
                   <Grid item>
                     <OpenInNew fontSize="small" />
                   </Grid>
-                  <Grid item>爱发电</Grid>
+                  <Grid item>{t("home:directLink.contribList")}</Grid>
                 </Grid>
-              </Link>
+              </RouteLink>
+            </Grid>
+          </Grid>
+          {!window.isChinaMainland && (
+            <Grid item container columnSpacing={1}>
+              <Grid item>
+                <Link
+                  href="https://www.twitter.com/SekaiViewer"
+                  target="_blank"
+                  underline="hover"
+                >
+                  <Grid container direction="row" alignContent="center">
+                    <Grid item>
+                      <Twitter fontSize="small"></Twitter>
+                    </Grid>
+                    <Grid item>@SekaiViewer</Grid>
+                  </Grid>
+                </Link>
+              </Grid>
+              <Grid item>
+                <Link
+                  href="https://discord.gg/xcDBRMd"
+                  target="_blank"
+                  underline="hover"
+                >
+                  <Grid container direction="row" alignContent="center">
+                    <Grid item>
+                      <Discord fontSize="small"></Discord>
+                    </Grid>
+                    <Grid item>Sekai Viewer</Grid>
+                  </Grid>
+                </Link>
+              </Grid>
             </Grid>
           )}
-          <Grid item>
-            <RouteLink
-              to="/about"
-              className={interactiveClasses.noDecoration}
-              style={{ color: theme.palette.primary.main }}
-            >
-              <Grid container direction="row" alignItems="center">
-                <Grid item>
-                  <OpenInNew fontSize="small" />
-                </Grid>
-                <Grid item>{t("home:directLink.contribList")}</Grid>
-              </Grid>
-            </RouteLink>
-          </Grid>
         </Grid>
-        {!window.isChinaMainland && (
-          <Grid container spacing={2}>
-            <Grid item>
-              <Link
-                href="https://www.twitter.com/SekaiViewer"
-                target="_blank"
-                underline="hover"
-              >
-                <Grid container direction="row" alignItems="center">
-                  <Grid item>
-                    <Twitter fontSize="small"></Twitter>
-                  </Grid>
-                  <Grid item>@SekaiViewer</Grid>
-                </Grid>
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link
-                href="https://discord.gg/xcDBRMd"
-                target="_blank"
-                underline="hover"
-              >
-                <Grid container direction="row" alignItems="center">
-                  <Grid item>
-                    <Discord fontSize="small"></Discord>
-                  </Grid>
-                  <Grid item>Sekai Viewer</Grid>
-                </Grid>
-              </Link>
-            </Grid>
-          </Grid>
-        )}
       </Container>
       <AdSense
         client="ca-pub-7767752375383260"
