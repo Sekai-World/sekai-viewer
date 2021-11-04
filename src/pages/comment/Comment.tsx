@@ -154,8 +154,9 @@ const Comment: React.FC<{
         <DialogTitle>{t("comment:report-abuse.title")}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            {t("comment:report-abuse.description")}
+            <Typography>{t("comment:report-abuse.description")}</Typography>
           </DialogContentText>
+          <br />
           <FormControl>
             <InputLabel>{t("comment:report-abuse.reason.label")}</InputLabel>
             <Select

@@ -621,13 +621,18 @@ function Home() {
               )}
               columns={columns}
               disableColumnMenu
+              disableSelectionOnClick
             ></DataGrid>
           </div>
         </Container>
       )}
       {info && (
         <InfoInternalDialog
-          url={`https://production-web.sekai.colorfulpalette.org/${info.path}`}
+          url={
+            info.path.match(/^http/)
+              ? info.path
+              : `https://production-web.sekai.colorfulpalette.org/${info.path}`
+          }
           open={open}
           onClose={() => setOpen(false)}
           title={info.title}
