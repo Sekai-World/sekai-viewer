@@ -18,14 +18,14 @@ function renderChunks(deps: Record<string, string>) {
 export default defineConfig({
   build: {
     outDir: "build",
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ["react", "react-router-dom", "react-dom"],
-          ...renderChunks(dependencies),
-        },
-      },
-    },
+    // rollupOptions: {
+    //   output: {
+    //     manualChunks: {
+    //       vendor: ["react", "react-router-dom", "react-dom"],
+    //       ...renderChunks(dependencies),
+    //     },
+    //   },
+    // },
   },
   plugins: [
     reactRefresh(),
