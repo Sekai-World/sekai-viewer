@@ -11,6 +11,7 @@ import {
   useTheme,
   Grid,
   Box,
+  Chip,
 } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import { useLayoutStyles } from "../styles/layout";
@@ -43,7 +44,7 @@ import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Link as RouteLink } from "react-router-dom";
 import { IUserInformationInfo } from "../types.d";
-import { getJPTime, useCachedData } from "../utils";
+import { getJPTime, useCachedData, useVersionInfo } from "../utils";
 import AnnouncementWidget from "../components/widgets/AnnouncementWidget";
 import CurrentEventWidget from "../components/widgets/CurrentEventWidget";
 import AdSense from "../components/blocks/AdSenseBlock";
@@ -107,6 +108,60 @@ function InfoInternal(props: { onClick: () => void }) {
     </IconButton>
   );
 }
+
+const VersionInfo = () => {
+  const layoutClasses = useLayoutStyles();
+  const { t } = useTranslation();
+
+  const [version] = useVersionInfo();
+
+  return (
+    (!!version && (
+      <Fragment>
+        <Typography variant="h6" className={layoutClasses.header}>
+          {t("home:versionInfo.caption")}
+        </Typography>
+        <Container className={layoutClasses.content}>
+          <Grid container spacing={2}>
+            <Grid item>
+              <Grid container alignItems="center">
+                <Grid item>{t("home:versionInfo.gameClientVer")}</Grid>
+                <Grid item>
+                  <Chip label={version.appVersion} />
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item>
+              <Grid container alignItems="center">
+                <Grid item>{t("home:versionInfo.dataVer")}</Grid>
+                <Grid item>
+                  <Chip label={version.dataVersion} />
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item>
+              <Grid container alignItems="center">
+                <Grid item>{t("home:versionInfo.assetVer")}</Grid>
+                <Grid item>
+                  <Chip label={version.assetVersion} />
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item>
+              <Grid container alignItems="center">
+                <Grid item>{t("home:versionInfo.multiPlayerVer")}</Grid>
+                <Grid item>
+                  <Chip label={version.multiPlayVersion} />
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Container>
+      </Fragment>
+    )) ||
+    null
+  );
+};
 
 function Home() {
   const theme = useTheme();
@@ -336,8 +391,8 @@ function Home() {
         {t("home:directLink.caption")}
       </Typography>
       <Container className={layoutClasses.content}>
-        <Grid container rowSpacing={1}>
-          <Grid item container columnSpacing={1}>
+        <Grid container rowSpacing={2}>
+          <Grid item container columnSpacing={2} rowSpacing={1}>
             <Grid item>
               <RouteLink
                 to="/card"
@@ -437,7 +492,7 @@ function Home() {
               </RouteLink>
             </Grid>
           </Grid>
-          <Grid item container columnSpacing={1}>
+          <Grid item container columnSpacing={2} rowSpacing={1}>
             <Grid item>
               <RouteLink
                 to="/settings"
@@ -542,9 +597,23 @@ function Home() {
                 </Grid>
               </RouteLink>
             </Grid>
+            <Grid item>
+              <Link
+                href="https://github.com/Sekai-World/sekai-viewer/blob/main/CHANGELOG.md"
+                target="_blank"
+                underline="hover"
+              >
+                <Grid container direction="row" alignContent="center">
+                  <Grid item>
+                    <OpenInNew fontSize="small" />
+                  </Grid>
+                  <Grid item>{t("home:changelog")}</Grid>
+                </Grid>
+              </Link>
+            </Grid>
           </Grid>
           {!window.isChinaMainland && (
-            <Grid item container columnSpacing={1}>
+            <Grid item container columnSpacing={2} rowSpacing={1}>
               <Grid item>
                 <Link
                   href="https://www.twitter.com/SekaiViewer"
@@ -577,6 +646,7 @@ function Home() {
           )}
         </Grid>
       </Container>
+      <VersionInfo />
       <AdSense
         client="ca-pub-7767752375383260"
         slot="7908750736"
