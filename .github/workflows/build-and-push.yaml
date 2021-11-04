@@ -3,11 +3,12 @@ on:
   push:
     branches:
       - master
-      - actions-docker # only for testing purpose
+      - dev
+      # - actions-docker # only for testing purpose
     tags:
       - "v*"
     paths:
-      - ".github/workflows/build-and-push.yaml"
+      # - ".github/workflows/build-and-push.yaml"
       - "src/**"
       - "public/**"
       - ".env.production"
