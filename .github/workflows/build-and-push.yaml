@@ -7,6 +7,7 @@ on:
     tags:
       - "v*"
     paths:
+      - ".github/workflows/build-and-push.yaml"
       - "src/**"
       - "public/**"
       - ".env.production"
