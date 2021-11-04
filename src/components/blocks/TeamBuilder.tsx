@@ -677,6 +677,7 @@ const TeamBuilder: React.FC<{
       <Dialog
         open={addCardDialogVisible}
         onClose={() => setAddCardDialogVisible(false)}
+        fullWidth
       >
         <DialogTitle>{t("music_recommend:addCardDialog.title")}</DialogTitle>
         <DialogContent>
@@ -844,6 +845,7 @@ const TeamBuilder: React.FC<{
         open={saveTeamDialogVisible}
         onClose={() => setSaveTeamDialogVisible(false)}
         maxWidth="md"
+        fullWidth
       >
         <DialogTitle>{t("team_build:saveTeamDialog.title")}</DialogTitle>
         <DialogContent>
@@ -883,7 +885,7 @@ const TeamBuilder: React.FC<{
           <Grid container spacing={1}>
             {teamBuildArray.teams.map((team, idx) => (
               <Grid key={`save-team-${idx}`} item xs={12}>
-                <Paper variant="outlined" className={classes["dialog-paper"]}>
+                <Paper variant="outlined" sx={{ p: 1 }}>
                   <Grid container spacing={1} alignItems="center">
                     <Grid item xs={12} md={2}>
                       <Typography># {idx + 1}</Typography>
@@ -929,10 +931,10 @@ const TeamBuilder: React.FC<{
                 </Paper>
               </Grid>
             ))}
-            {teamBuildArray.teams.length === 0 ? (
-              <Typography>{t("team_build:noTeams")}</Typography>
-            ) : null}
           </Grid>
+          {teamBuildArray.teams.length === 0 ? (
+            <DialogContentText>{t("team_build:noTeams")}</DialogContentText>
+          ) : null}
         </DialogContent>
         <DialogActions>
           {isSavingEntry && <CircularProgress size={24} />}
@@ -954,6 +956,7 @@ const TeamBuilder: React.FC<{
         open={loadTeamDialogVisible}
         onClose={() => setLoadTeamDialogVisible(false)}
         maxWidth="md"
+        fullWidth
       >
         <DialogTitle>{t("team_build:loadTeamDialog.title")}</DialogTitle>
         <DialogContent>
@@ -966,7 +969,7 @@ const TeamBuilder: React.FC<{
           {(!!sekaiProfile && !!sekaiProfile.sekaiUserProfile && (
             <Grid container spacing={1}>
               <Grid item xs={12}>
-                <Paper variant="outlined" className={classes["dialog-paper"]}>
+                <Paper variant="outlined" sx={{ p: 1 }}>
                   <Grid container spacing={1} alignItems="center">
                     <Grid item xs={12} md={3}>
                       <Typography>
@@ -1042,7 +1045,7 @@ const TeamBuilder: React.FC<{
           <Grid container spacing={1}>
             {teamBuildArray.teams.map((team, idx) => (
               <Grid key={`load-team-${idx}`} item xs={12}>
-                <Paper variant="outlined" className={classes["dialog-paper"]}>
+                <Paper variant="outlined" sx={{ p: 1 }}>
                   <Grid container spacing={1} alignItems="center">
                     <Grid item xs={12} md={3}>
                       <Typography># {idx + 1}</Typography>
@@ -1089,10 +1092,10 @@ const TeamBuilder: React.FC<{
                 </Paper>
               </Grid>
             ))}
-            {!teamBuildArray.teams.length && (
-              <Typography>{t("team_build:noTeams")}</Typography>
-            )}
           </Grid>
+          {!teamBuildArray.teams.length && (
+            <DialogContentText>{t("team_build:noTeams")}</DialogContentText>
+          )}
         </DialogContent>
       </Dialog>
       <Popover

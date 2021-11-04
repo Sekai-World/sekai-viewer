@@ -1,5 +1,5 @@
 module.exports = {
-  input: "src/components/**/*.tsx",
+  input: "src/*(components|pages)/**/*.tsx",
   output: "public/locales/$LOCALE/$NAMESPACE.json",
   verbose: true,
   locales: ["en"],

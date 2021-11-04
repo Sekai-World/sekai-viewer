@@ -14,6 +14,7 @@ import {
   Checkbox,
   CircularProgress,
   Dialog,
+  DialogActions,
   DialogContent,
   DialogContentText,
   FormControl,
@@ -125,11 +126,10 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
   },
   slideSubtitle: {
-    "& > div:nth-child(2) > p:nth-child(2)": {
+    "&": {
       whiteSpace: "pre-line",
       textAlign: "left",
     },
-    height: "100%",
   },
 }));
 
@@ -143,6 +143,8 @@ const SekaiUserImportMember = () => {
     useContext(UserContext)!;
   const { putSekaiCardList } = useStrapi(jwtToken);
   const { showError, showSuccess } = useAlertSnackbar();
+
+  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   const [cards] = useCachedData<ICardInfo>("cards");
 
@@ -1313,6 +1315,7 @@ const SekaiUserImportMember = () => {
       <Dialog
         open={isCardSelectionOpen}
         onClose={() => toggleIsCardSelectionOpen()}
+        fullWidth
       >
         <DialogContent>
           <DialogContentText>
@@ -1372,6 +1375,8 @@ const SekaiUserImportMember = () => {
                   </Grid>
                 ))}
           </Grid>
+        </DialogContent>
+        <DialogContent>
           <DialogContentText>
             {t("user:profile.import_card.wrong_result")}
           </DialogContentText>
@@ -1389,35 +1394,32 @@ const SekaiUserImportMember = () => {
           </Button>
         </DialogContent>
       </Dialog>
-      <Dialog open={helpOpen} onClose={() => toggleHelpOpen()}>
+      <Dialog
+        open={helpOpen}
+        onClose={() => toggleHelpOpen()}
+        fullWidth
+        fullScreen={fullScreen}
+      >
         <Carousel swipe autoPlay={false}>
-          <Paper
-            className={classes.slideSubtitle}
-            sx={{
-              backgroundColor: "primary",
-            }}
-          >
+          <DialogContent>
             <CardMedia
               image={`${
                 import.meta.env.VITE_ASSET_DOMAIN_MINIO
-              }/strapi-upload/IMG_0128_a70218cb12.png`}
+              }/sekai-best-assets/import_cards/Screenshot_20210130-184257.jpg`}
               title="import card step 1"
               className={classes.media}
             />
-            <Typography>
-              {t("user:profile.import_card.help.step1.title")}
-            </Typography>
-            <br />
-            <Typography>
-              {t("user:profile.import_card.help.step1.subtitle")}
-            </Typography>
-          </Paper>
-          <Paper
-            className={classes.slideSubtitle}
-            sx={{
-              backgroundColor: "primary",
-            }}
-          >
+            <DialogContentText>
+              <Typography>
+                {t("user:profile.import_card.help.step1.title")}
+              </Typography>
+              <br />
+              <Typography className={classes.slideSubtitle}>
+                {t("user:profile.import_card.help.step1.subtitle")}
+              </Typography>
+            </DialogContentText>
+          </DialogContent>
+          <DialogContent>
             <CardMedia
               image={`${
                 import.meta.env.VITE_ASSET_DOMAIN_MINIO
@@ -1425,20 +1427,17 @@ const SekaiUserImportMember = () => {
               title="import card step 2"
               className={classes.media}
             />
-            <Typography>
-              {t("user:profile.import_card.help.step2.title")}
-            </Typography>
-            <br />
-            <Typography>
-              {t("user:profile.import_card.help.step2.subtitle")}
-            </Typography>
-          </Paper>
-          <Paper
-            className={classes.slideSubtitle}
-            sx={{
-              backgroundColor: "primary",
-            }}
-          >
+            <DialogContentText>
+              <Typography>
+                {t("user:profile.import_card.help.step2.title")}
+              </Typography>
+              <br />
+              <Typography className={classes.slideSubtitle}>
+                {t("user:profile.import_card.help.step2.subtitle")}
+              </Typography>
+            </DialogContentText>
+          </DialogContent>
+          <DialogContent>
             <CardMedia
               image={`${
                 import.meta.env.VITE_ASSET_DOMAIN_MINIO
@@ -1446,20 +1445,17 @@ const SekaiUserImportMember = () => {
               title="import card step 3"
               className={classes.media}
             />
-            <Typography>
-              {t("user:profile.import_card.help.step3.title")}
-            </Typography>
-            <br />
-            <Typography>
-              {t("user:profile.import_card.help.step3.subtitle")}
-            </Typography>
-          </Paper>
-          <Paper
-            className={classes.slideSubtitle}
-            sx={{
-              backgroundColor: "primary",
-            }}
-          >
+            <DialogContentText>
+              <Typography>
+                {t("user:profile.import_card.help.step3.title")}
+              </Typography>
+              <br />
+              <Typography className={classes.slideSubtitle}>
+                {t("user:profile.import_card.help.step3.subtitle")}
+              </Typography>
+            </DialogContentText>
+          </DialogContent>
+          <DialogContent>
             <CardMedia
               image={`${
                 import.meta.env.VITE_ASSET_DOMAIN_MINIO
@@ -1467,15 +1463,24 @@ const SekaiUserImportMember = () => {
               title="import card step 4"
               className={classes.media}
             />
-            <Typography>
-              {t("user:profile.import_card.help.step4.title")}
-            </Typography>
-            <br />
-            <Typography>
-              {t("user:profile.import_card.help.step4.subtitle")}
-            </Typography>
-          </Paper>
+            <DialogContentText>
+              <Typography>
+                {t("user:profile.import_card.help.step4.title")}
+              </Typography>
+              <br />
+              <Typography className={classes.slideSubtitle}>
+                {t("user:profile.import_card.help.step4.subtitle")}
+              </Typography>
+            </DialogContentText>
+          </DialogContent>
         </Carousel>
+        {fullScreen && (
+          <DialogActions>
+            <Button onClick={() => toggleHelpOpen()} variant="contained">
+              {t("common:close")}
+            </Button>
+          </DialogActions>
+        )}
       </Dialog>
     </Grid>
   );

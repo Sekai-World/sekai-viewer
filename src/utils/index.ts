@@ -63,6 +63,7 @@ import {
   IActionSet,
   ServerRegion,
   AssetDomainKey,
+  IVersionInfo,
 } from "./../types.d";
 import { useAssetI18n, useCharaName } from "./i18n";
 import { useLocation } from "react-router-dom";
@@ -145,6 +146,25 @@ export function useCachedData<
   }, []);
 
   const { data, error } = useSWR(`${region}|${name}`, fetchCached);
+
+  return [data, !error && !data, error];
+}
+
+export function useVersionInfo(): [IVersionInfo | undefined, boolean, any] {
+  const [region] = useServerRegion();
+
+  const fetchCached = useCallback(async (name: string) => {
+    const [region, filename] = name.split("|");
+    const urlBase = window.isChinaMainland
+      ? masterUrl["cn"][region as ServerRegion]
+      : masterUrl["ww"][region as ServerRegion];
+    const { data }: { data: IVersionInfo } = await Axios.get(
+      `${urlBase}/${filename}.json`
+    );
+    return data;
+  }, []);
+
+  const { data, error } = useSWR(`${region}|versions`, fetchCached);
 
   return [data, !error && !data, error];
 }

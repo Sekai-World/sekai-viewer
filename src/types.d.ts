@@ -1263,3 +1263,14 @@ export interface IActionSet {
   scenarioId: string;
   actionSetType: string;
 }
+
+export interface IVersionInfo {
+  systemProfile: string;
+  appVersion: string;
+  multiPlayVersion: string;
+  dataVersion: string;
+  assetVersion: string;
+  appHash: string;
+  assetHash: string;
+  appVersionStatus: string;
+}
