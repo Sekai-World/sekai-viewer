@@ -48,6 +48,7 @@ jobs:
           name: pages
           path: |
             build/
+            nginx/
             Dockerfile.cloud
   build-docker:
     runs-on: ubuntu-latest
