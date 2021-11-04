@@ -86,7 +86,7 @@ import ScrollTop from "../components/widgets/ScrollTop";
 // import Settings from "../components/Settings";
 import { SnackbarProvider } from "notistack";
 import ReloadPrompt from "../components/helpers/ReloadPrompt";
-import { useLocalStorage, useToggle } from "../utils";
+import { useLocalStorage } from "../utils";
 // import AlertSnackbar from "../components/AlertSnackbar";
 
 declare module "@mui/styles/defaultTheme" {
@@ -786,7 +786,7 @@ const AppInner = (props: { theme: Theme }) => {
   const classes = useStyles();
   const { theme } = props;
 
-  const [mobileOpen, toggleMobileOpen] = useToggle(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [desktopOpen, setDesktopOpen] = useLocalStorage<boolean>(
     "desktop-drawer-open",
     true
@@ -795,10 +795,6 @@ const AppInner = (props: { theme: Theme }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileMenuAnchorEl, setMobileMenuAnchorEl] =
     useState<HTMLElement | null>(null);
-
-  const handleDrawerToggle = () => {
-    toggleMobileOpen();
-  };
 
   const container =
     window !== undefined ? () => window.document.body : undefined;
@@ -867,7 +863,7 @@ const AppInner = (props: { theme: Theme }) => {
               <IconButton
                 color="inherit"
                 edge="start"
-                onClick={handleDrawerToggle}
+                onClick={() => setMobileOpen(true)}
                 className={classes.menuButton}
                 size="large"
               >
@@ -938,10 +934,10 @@ const AppInner = (props: { theme: Theme }) => {
             <SwipeableDrawer
               container={container}
               variant="temporary"
-              anchor={theme.direction === "rtl" ? "right" : "left"}
+              anchor="left"
               open={mobileOpen}
-              onClose={handleDrawerToggle}
-              onOpen={handleDrawerToggle}
+              onClose={() => setMobileOpen(false)}
+              onOpen={() => setMobileOpen(true)}
               classes={{
                 paper: classes.drawerPaper,
               }}
