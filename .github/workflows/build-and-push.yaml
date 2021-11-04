@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - master
-      - dev
+      # - dev
       # - actions-docker # only for testing purpose
     tags:
       - "v*"
