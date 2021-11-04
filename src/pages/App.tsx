@@ -86,7 +86,7 @@ import ScrollTop from "../components/widgets/ScrollTop";
 // import Settings from "../components/Settings";
 import { SnackbarProvider } from "notistack";
 import ReloadPrompt from "../components/helpers/ReloadPrompt";
-import { useToggle } from "../utils";
+import { useLocalStorage, useToggle } from "../utils";
 // import AlertSnackbar from "../components/AlertSnackbar";
 
 declare module "@mui/styles/defaultTheme" {
@@ -787,7 +787,10 @@ const AppInner = (props: { theme: Theme }) => {
   const { theme } = props;
 
   const [mobileOpen, toggleMobileOpen] = useToggle(false);
-  const [desktopOpen, toggleDesktopOpen] = useToggle(false);
+  const [desktopOpen, setDesktopOpen] = useLocalStorage<boolean>(
+    "desktop-drawer-open",
+    true
+  );
   // const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileMenuAnchorEl, setMobileMenuAnchorEl] =
@@ -813,7 +816,7 @@ const AppInner = (props: { theme: Theme }) => {
               <IconButton
                 color="inherit"
                 edge="start"
-                onClick={() => toggleDesktopOpen()}
+                onClick={() => setDesktopOpen(true)}
                 className={classes.menuButton}
                 size="large"
                 sx={{
@@ -961,7 +964,7 @@ const AppInner = (props: { theme: Theme }) => {
             >
               <DrawerContent
                 open={desktopOpen}
-                onFoldButtonClick={() => toggleDesktopOpen()}
+                onFoldButtonClick={() => setDesktopOpen(false)}
               />
             </Drawer>
           </Hidden>
