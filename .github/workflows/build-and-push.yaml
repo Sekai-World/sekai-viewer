@@ -49,6 +49,7 @@ jobs:
             Dockerfile.cloud
   build-docker:
     runs-on: ubuntu-latest
+    needs: build-pages
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v2
