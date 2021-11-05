@@ -43,7 +43,6 @@ import { UserContext } from "../../../context";
 import { useStrapi } from "../../../utils/apiClient";
 import { useLayoutStyles } from "../../../styles/layout";
 import Carousel from "react-material-ui-carousel";
-// import { isMobile } from "react-device-detect";
 import { Alert } from "@mui/material";
 
 function initCOS(N: number = 64) {
