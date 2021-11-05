@@ -22,7 +22,6 @@ import { TextField } from "formik-mui";
 import React, { Fragment, useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Carousel from "react-material-ui-carousel";
-// import { isMobile } from "react-device-detect";
 import { useStrapi } from "../../../utils/apiClient";
 import { UserContext } from "../../../context";
 import DegreeImage from "../../../components/widgets/DegreeImage";
