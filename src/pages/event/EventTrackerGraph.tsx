@@ -187,7 +187,7 @@ const EventTrackerGraph: React.FC<{
                   contentStyle={{
                     backgroundColor: theme.palette.background.default,
                   }}
-                  formatter={(value, name, props) => {
+                  formatter={(value: any, name: any, props: any) => {
                     return [
                       `${value} - ${props.payload[`${name}_name`]}`,
                       name,

@@ -200,7 +200,7 @@ const EventTracker: React.FC<{}> = () => {
 
       // real time data
       const event = events.find((elem) => elem.id === eventId)!;
-      if (currEvent?.eventId === eventId) {
+      if (currEvent && currEvent?.eventId === eventId) {
         // get realtime data from live endpoint
         const currentTime = Date.now();
         if (
@@ -252,7 +252,7 @@ const EventTracker: React.FC<{}> = () => {
       // setIsFetching(false);
     },
     [
-      currEvent?.eventId,
+      currEvent,
       events,
       getHistoryData,
       refreshPrediction,
@@ -470,7 +470,7 @@ const EventTracker: React.FC<{}> = () => {
               marks={timePoints.map((tp) => ({ value: tp.getTime() }))}
               disabled={fetchingTimePoints}
               defaultValue={sliderDefaultTime?.getTime()}
-              onChange={handleSliderChange.callback}
+              onChange={handleSliderChange}
             />
           )}
           {region === "jp" && !isTimeTravel && !!rtRanking.length && !!rtTime && (
