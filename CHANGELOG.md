@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.9.3](https://github.com/Sekai-World/sekai-viewer/compare/v0.9.2...v0.9.3) (2021-11-12)
+
+
+### Features
+
+* **card:** :sparkles: add unit filter ([69b43c4](https://github.com/Sekai-World/sekai-viewer/commits/69b43c494b5dcb3e831c0f7cb9ed3a168212407d))
+* **music:** :sparkles: meta table loading state ([886d985](https://github.com/Sekai-World/sekai-viewer/commits/886d9858518d32a773b846ff92aac6555bfe44a7))
+
+
+### Bug Fixes
+
+* :bug: filter state fix and cleanup ([77e452a](https://github.com/Sekai-World/sekai-viewer/commits/77e452ac70e837e4afcea6d5bc802764cc012ae2))
+* :bug: horizontal scrollbar height ([487502c](https://github.com/Sekai-World/sekai-viewer/commits/487502ce256b5147ba8c0620f4e7a977ac8b26ee))
+* **home:** :bug: table sorting uses new sortModel parameter ([321b68d](https://github.com/Sekai-World/sekai-viewer/commits/321b68d31253fe702baf206c4468fc7f7434c1fa))
+* **tools:** :bug: music recommender crash for multi-live ([6f0e0e8](https://github.com/Sekai-World/sekai-viewer/commits/6f0e0e89f93c3486b29648634c7bc5125fc7d3ba))
+
+
+### Refactors
+
+* **card:** :lipstick: make comfy view more dense ([7c9ecc7](https://github.com/Sekai-World/sekai-viewer/commits/7c9ecc791c90c693c1dde29f570fe945adeac6ab))
+* **home:** :recycle: remove table and dialog conditional rendering ([7e4b63b](https://github.com/Sekai-World/sekai-viewer/commits/7e4b63bc44f0c96b14e7ff251a6a5e00f4b69794))
+* **music:** :lipstick: add icons to music tag ([db11315](https://github.com/Sekai-World/sekai-viewer/commits/db11315d7200711d25e92e9bdb13fbf680258f47))
+* **tools:** :lipstick: event point calc autocomplete style fix ([d47a74a](https://github.com/Sekai-World/sekai-viewer/commits/d47a74acd373fc64eb60e98c2a682b10608205a7))
+
 ### [0.9.2](https://github.com/Sekai-World/sekai-viewer/compare/v0.9.1...v0.9.2) (2021-11-05)
 
 
