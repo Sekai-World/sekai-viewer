@@ -669,52 +669,55 @@ function Home() {
       <Typography variant="h6" className={layoutClasses.header}>
         {t("home:game-news.title")}
       </Typography>
-      {informations && (
-        <Container className={layoutClasses.content}>
-          <Paper className={interactiveClasses.container}>
-            <Tabs
-              value={gameNewsTag}
-              onChange={(e, v) => setGameNewsTag(v)}
-              variant="scrollable"
-              scrollButtons
-            >
-              <Tab label={t("common:information")} value="information"></Tab>
-              <Tab label={t("common:event")} value="event"></Tab>
-              <Tab label={t("common:gacha")} value="gacha"></Tab>
-              <Tab label={t("common:music")} value="music"></Tab>
-              <Tab label={t("common:campaign")} value="campaign"></Tab>
-              <Tab label={t("common:bug")} value="bug"></Tab>
-              <Tab label={t("home:update")} value="update"></Tab>
-            </Tabs>
-          </Paper>
-          <div style={{ height: 650 }}>
-            <DataGrid
-              pagination
-              autoPageSize
-              rows={informations.filter(
-                (info) => info.informationTag === gameNewsTag
-              )}
-              columns={columns}
-              disableColumnMenu
-              disableSelectionOnClick
-              sortModel={sortModel}
-              onSortModelChange={setSortModel}
-            ></DataGrid>
-          </div>
-        </Container>
-      )}
-      {info && (
-        <InfoInternalDialog
-          url={
-            info.path.match(/^http/)
+      <Container className={layoutClasses.content}>
+        <Paper className={interactiveClasses.container}>
+          <Tabs
+            value={gameNewsTag}
+            onChange={(e, v) => setGameNewsTag(v)}
+            variant="scrollable"
+            scrollButtons
+          >
+            <Tab label={t("common:information")} value="information"></Tab>
+            <Tab label={t("common:event")} value="event"></Tab>
+            <Tab label={t("common:gacha")} value="gacha"></Tab>
+            <Tab label={t("common:music")} value="music"></Tab>
+            <Tab label={t("common:campaign")} value="campaign"></Tab>
+            <Tab label={t("common:bug")} value="bug"></Tab>
+            <Tab label={t("home:update")} value="update"></Tab>
+          </Tabs>
+        </Paper>
+        <div style={{ height: 650 }}>
+          <DataGrid
+            pagination
+            autoPageSize
+            rows={
+              informations
+                ? informations.filter(
+                    (info) => info.informationTag === gameNewsTag
+                  )
+                : []
+            }
+            columns={columns}
+            disableColumnMenu
+            disableSelectionOnClick
+            sortModel={sortModel}
+            onSortModelChange={setSortModel}
+            loading={!informations}
+          ></DataGrid>
+        </div>
+      </Container>
+      <InfoInternalDialog
+        url={
+          info
+            ? info.path.match(/^http/)
               ? info.path
               : `https://production-web.sekai.colorfulpalette.org/${info.path}`
-          }
-          open={open}
-          onClose={() => setOpen(false)}
-          title={info.title}
-        />
-      )}
+            : ""
+        }
+        open={open}
+        onClose={() => setOpen(false)}
+        title={info?.title || ""}
+      />
     </Fragment>
   );
 }
