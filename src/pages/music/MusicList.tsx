@@ -52,7 +52,7 @@ import {
   attrSelectReducer,
   characterSelectReducer,
 } from "../../stores/reducers";
-import { charaIcons } from "../../utils/resources";
+import { charaIcons, UnitLogoMiniMap } from "../../utils/resources";
 import { useCharaName } from "../../utils/i18n";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
@@ -362,6 +362,17 @@ const MusicList: React.FC<{}> = () => {
                             if (musicTag === tag) setMusicTag("all");
                             else setMusicTag(tag);
                           }}
+                          avatar={
+                            Object.prototype.hasOwnProperty.call(
+                              UnitLogoMiniMap,
+                              tag
+                            ) ? (
+                              <Avatar
+                                alt={musicTagToName[tag as "all"]}
+                                src={UnitLogoMiniMap[tag as "idol"]}
+                              />
+                            ) : undefined
+                          }
                         />
                       </Grid>
                     ))}
