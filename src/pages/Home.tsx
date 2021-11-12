@@ -21,6 +21,7 @@ import {
   DataGrid,
   GridRenderCellParams,
   GridValueFormatterParams,
+  GridSortModel,
 } from "@mui/x-data-grid";
 import {
   Album,
@@ -176,6 +177,12 @@ function Home() {
   const [open, setOpen] = useState<boolean>(false);
   const [info, setInfo] = useState<IUserInformationInfo>();
   const [jpTime] = useState<string>(getJPTime());
+  const [sortModel, setSortModel] = useState<GridSortModel>([
+    {
+      field: "startAt",
+      sort: "desc",
+    },
+  ]);
 
   const splitJPTime = useMemo(() => jpTime.split("/"), [jpTime]);
 
@@ -232,8 +239,6 @@ function Home() {
         new Date(
           params.api.getCellValue(params.id, "startAt") as number
         ).toLocaleString(),
-      // @ts-ignore
-      sortModel: "desc",
     },
     {
       field: "title",
@@ -692,6 +697,8 @@ function Home() {
               columns={columns}
               disableColumnMenu
               disableSelectionOnClick
+              sortModel={sortModel}
+              onSortModelChange={setSortModel}
             ></DataGrid>
           </div>
         </Container>
