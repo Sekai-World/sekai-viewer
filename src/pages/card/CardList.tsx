@@ -12,7 +12,7 @@ import {
   Avatar,
   Badge,
   TextField,
-  InputAdornment,
+  // InputAdornment,
   IconButton,
   Popover,
 } from "@mui/material";
@@ -241,35 +241,7 @@ const CardList: React.FC<{}> = () => {
     }
   }, [currEvent, isCurrEventLoading]);
 
-  useEffect(() => {
-    if (charas) {
-      if (unitSelected.length) {
-        const filteredCharas = charas.filter((chara) =>
-          unitSelected.includes(chara.unit)
-        );
-        dispatchCharacterSelected({
-          type: "reset",
-          payload: 0,
-          storeName: "card-list-filter-charas",
-        });
-        filteredCharas.forEach((chara) =>
-          dispatchCharacterSelected({
-            type: "add",
-            payload: chara.id,
-            storeName: "card-list-filter-charas",
-          })
-        );
-      } else {
-        dispatchCharacterSelected({
-          type: "reset",
-          payload: 0,
-          storeName: "card-list-filter-charas",
-        });
-      }
-    }
-  }, [charas, unitSelected]);
-
-  useEffect(() => {
+  const doFilter = useCallback(() => {
     if (
       cardsCache &&
       cardsCache.length &&
@@ -359,6 +331,43 @@ const CardList: React.FC<{}> = () => {
     supportUnitSelected,
     isShowSpoiler,
   ]);
+
+  const resetFilter = useCallback(() => {
+    dispatchCharacterSelected({
+      type: "reset",
+      payload: 0,
+      storeName: "card-list-filter-charas",
+    });
+    dispatchUnitSelected({
+      type: "reset",
+      payload: "",
+      storeName: "card-list-filter-units",
+    });
+    dispatchAttrSelected({
+      type: "reset",
+      payload: "",
+      storeName: "card-list-filter-attrs",
+    });
+    dispatchRaritySelected({
+      type: "reset",
+      payload: 0,
+      storeName: "card-list-filter-rarities",
+    });
+    dispatchSkillSelected({
+      type: "reset",
+      payload: "",
+    });
+    dispatchSupportUnitSelected({
+      type: "reset",
+      payload: "",
+      storeName: "card-list-filter-support-units",
+    });
+  }, []);
+
+  useEffect(() => {
+    if (isReady) doFilter();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isReady]);
 
   useEffect(() => {
     if (sortedCache.length) {
@@ -488,18 +497,40 @@ const CardList: React.FC<{}> = () => {
                               </Typography>
                             }
                             onClick={() => {
-                              if (unitSelected.includes(unitProfile.unit)) {
-                                dispatchUnitSelected({
-                                  type: "remove",
-                                  payload: unitProfile.unit,
-                                  storeName: "card-list-filter-units",
-                                });
-                              } else {
-                                dispatchUnitSelected({
-                                  type: "add",
-                                  payload: unitProfile.unit,
-                                  storeName: "card-list-filter-units",
-                                });
+                              if (charas?.length) {
+                                if (unitSelected.includes(unitProfile.unit)) {
+                                  dispatchUnitSelected({
+                                    type: "remove",
+                                    payload: unitProfile.unit,
+                                    storeName: "card-list-filter-units",
+                                  });
+                                  const filteredCharas = charas.filter(
+                                    (chara) => chara.unit === unitProfile.unit
+                                  );
+                                  filteredCharas.forEach((chara) =>
+                                    dispatchCharacterSelected({
+                                      type: "remove",
+                                      payload: chara.id,
+                                      storeName: "card-list-filter-charas",
+                                    })
+                                  );
+                                } else {
+                                  dispatchUnitSelected({
+                                    type: "add",
+                                    payload: unitProfile.unit,
+                                    storeName: "card-list-filter-units",
+                                  });
+                                  const filteredCharas = charas.filter(
+                                    (chara) => chara.unit === unitProfile.unit
+                                  );
+                                  filteredCharas.forEach((chara) =>
+                                    dispatchCharacterSelected({
+                                      type: "add",
+                                      payload: chara.id,
+                                      storeName: "card-list-filter-charas",
+                                    })
+                                  );
+                                }
                               }
                             }}
                           />
@@ -878,38 +909,24 @@ const CardList: React.FC<{}> = () => {
                   <Button
                     variant="contained"
                     color="primary"
+                    onClick={() => doFilter()}
+                    startIcon={<Check />}
+                  >
+                    {t("common:apply")}
+                  </Button>
+                </Grid>
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    color="secondary"
                     disabled={
                       !characterSelected.length &&
+                      !unitSelected.length &&
                       !attrSelected.length &&
                       !skillSelected.length &&
                       !raritySelected.length
                     }
-                    onClick={() => {
-                      dispatchCharacterSelected({
-                        type: "reset",
-                        payload: 0,
-                        storeName: "card-list-filter-charas",
-                      });
-                      dispatchAttrSelected({
-                        type: "reset",
-                        payload: "",
-                        storeName: "card-list-filter-attrs",
-                      });
-                      dispatchRaritySelected({
-                        type: "reset",
-                        payload: 0,
-                        storeName: "card-list-filter-rarities",
-                      });
-                      dispatchSkillSelected({
-                        type: "reset",
-                        payload: "",
-                      });
-                      dispatchSupportUnitSelected({
-                        type: "reset",
-                        payload: "",
-                        storeName: "card-list-filter-support-units",
-                      });
-                    }}
+                    onClick={() => resetFilter()}
                     startIcon={<RotateLeft />}
                   >
                     {t("common:reset")}

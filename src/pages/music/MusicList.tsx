@@ -32,7 +32,12 @@ import React, {
   useReducer,
   useState,
 } from "react";
-import { useCachedData, useLocalStorage, useMusicTagName } from "../../utils";
+import {
+  useCachedData,
+  useLocalStorage,
+  useMusicTagName,
+  useToggle,
+} from "../../utils";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
@@ -93,7 +98,7 @@ const MusicList: React.FC<{}> = () => {
   // const [, totalMusicsRef, setTotalMusics] = useState<number>(0);
   const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
   const [isReady, setIsReady] = useState<boolean>(false);
-  const [filterOpened, setFilterOpened] = useState<boolean>(false);
+  const [filterOpened, toggleFilterOpened] = useToggle(false);
   const [sortType, setSortType] = useLocalStorage<string>(
     "music-list-filter-sort-type",
     "asc"
@@ -311,19 +316,31 @@ const MusicList: React.FC<{}> = () => {
               </ToggleButton>
             </ToggleButtonGroup>
           </Grid>
-          <Badge
-            color="secondary"
-            variant="dot"
-            invisible={musicTag === "all" && !musicMVTypes.length}
-          >
-            <Button
-              variant="outlined"
-              onClick={() => setFilterOpened((v) => !v)}
+          <Grid item>
+            <Badge
+              color="secondary"
+              variant="dot"
+              invisible={
+                musicTag === "all" &&
+                !musicMVTypes.length &&
+                !characterSelected.length &&
+                !outsideCharacterSelected.length &&
+                !composer &&
+                !arranger &&
+                !lyricist
+              }
             >
-              {filterOpened ? <Filter /> : <FilterOutline />}
-              {filterOpened ? <Sort /> : <SortOutlined />}
-            </Button>
-          </Badge>
+              <ToggleButton
+                value=""
+                color="primary"
+                selected={filterOpened}
+                onClick={() => toggleFilterOpened()}
+              >
+                {filterOpened ? <Filter /> : <FilterOutline />}
+                {filterOpened ? <Sort /> : <SortOutlined />}
+              </ToggleButton>
+            </Badge>
+          </Grid>
         </Grid>
         <Collapse in={filterOpened}>
           <Paper className={interactiveClasses.container}>
