@@ -14,7 +14,7 @@ import { AccountCircle, Twitter, VpnKey } from "@mui/icons-material";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-mui";
 import Discord from "~icons/mdi/discord";
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, Link as RouteLink } from "react-router-dom";
 import { useInteractiveStyles } from "../../styles/interactive";
@@ -23,7 +23,9 @@ import { useLayoutStyles } from "../../styles/layout";
 import { LoginValues } from "../../strapi-model";
 import { useAlertSnackbar, useQuery } from "../../utils";
 import { useStrapi } from "../../utils/apiClient";
-import useJwtAuth from "../../utils/jwt";
+// import useJwtAuth from "../../utils/jwt";
+import { UserContext } from "../../context";
+import { useJwt } from "react-jwt";
 
 const Login: React.FC<{}> = () => {
   const theme = useTheme();
@@ -32,11 +34,14 @@ const Login: React.FC<{}> = () => {
   const { t } = useTranslation();
   const query = useQuery();
   const history = useHistory();
-  const jwtAuth = useJwtAuth();
-  const { decodedToken } = useJwtAuth();
+  // const jwtAuth = useJwtAuth();
+  // const { decodedToken } = useJwtAuth();
   const { postLoginLocal, getRedirectConnectLoginUrl, getUserMetadataMe } =
     useStrapi();
   const { showError } = useAlertSnackbar();
+  const { jwtToken, updateJwtToken, updateUser, updateUserMeta } =
+    useContext(UserContext)!;
+  const { decodedToken } = useJwt(jwtToken);
 
   useEffect(() => {
     if (query.get("error")) showError(query.get("error")!);
@@ -56,6 +61,7 @@ const Login: React.FC<{}> = () => {
       <Container className={layoutClasses.content} maxWidth="md">
         <Formik
           initialValues={{
+            // @ts-ignore
             identifier: decodedToken ? decodedToken.identifier : "",
             password: "",
           }}
@@ -72,16 +78,19 @@ const Login: React.FC<{}> = () => {
           onSubmit={async (values, { setErrors }) => {
             try {
               const data = await postLoginLocal(values);
-              jwtAuth.token = data.jwt;
-              jwtAuth.user = data.user;
-              jwtAuth.usermeta = await getUserMetadataMe(data.jwt);
+              // jwtAuth.token = data.jwt;
+              // jwtAuth.user = data.user;
+              // jwtAuth.usermeta = await getUserMetadataMe(data.jwt);
+              updateJwtToken(data.jwt);
+              updateUser(data.user);
+              updateUserMeta(await getUserMetadataMe(data.jwt));
               history.replace("/user");
               // window.location.reload();
               localStorage.setItem(
                 "lastUserCheck",
                 String(new Date().getTime())
               );
-            } catch (error) {
+            } catch (error: any) {
               // console.log(error.response.data);
               if (error.id === "Auth.form.error.invalid")
                 setErrors({
@@ -183,7 +192,7 @@ const Login: React.FC<{}> = () => {
               <Grid item xs={12} md={1}>
                 <Divider
                   orientation={matchMdUp ? "vertical" : "horizontal"}
-                  style={{ margin: matchMdUp ? "0" : "1rem 0" }}
+                  style={{ margin: matchMdUp ? "0 1rem" : "1rem 0" }}
                 />
               </Grid>
               <Grid item xs={12} md={4}>

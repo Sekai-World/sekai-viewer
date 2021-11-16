@@ -26,7 +26,7 @@ import { useInteractiveStyles } from "../../../styles/interactive";
 import { useLayoutStyles } from "../../../styles/layout";
 import { useAlertSnackbar } from "../../../utils";
 import { useStrapi } from "../../../utils/apiClient";
-import SekaiProfile from "../sekai_profile/SekaiProfile";
+const SekaiProfile = React.lazy(() => import("../sekai_profile/SekaiProfile"));
 
 const useStyles = makeStyles((theme) => ({
   avatarProfile: {
