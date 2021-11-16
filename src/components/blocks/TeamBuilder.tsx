@@ -92,9 +92,14 @@ const TeamBuilder: React.FC<{
   const classes = useStyle();
   const { t } = useTranslation();
   const getCharaName = useCharaName();
-  const { jwtToken, sekaiProfile, updateSekaiProfile } =
-    useContext(UserContext)!;
-  const { putSekaiDeckList, deleteSekaiDeckList } = useStrapi(jwtToken);
+  const {
+    jwtToken,
+    sekaiProfile,
+    // updateSekaiProfile,
+    sekaiCardTeam,
+    updateSekaiCardTeam,
+  } = useContext(UserContext)!;
+  const { putSekaiDecks, deleteSekaiDecks } = useStrapi(jwtToken);
   const { showError, showSuccess } = useAlertSnackbar();
   const skillMapping = useSkillMapping();
 
@@ -150,10 +155,10 @@ const TeamBuilder: React.FC<{
         teams:
           storageLocation === "local"
             ? JSON.parse(localStorage.getItem("team-build-array") || "[]")
-            : sekaiProfile?.deckList || [],
+            : sekaiCardTeam?.decks || [],
       },
     });
-  }, [sekaiProfile?.deckList, storageLocation]);
+  }, [sekaiCardTeam?.decks, storageLocation]);
 
   const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
   const open = useMemo(() => Boolean(anchorEl), [anchorEl]);
@@ -199,9 +204,7 @@ const TeamBuilder: React.FC<{
       }
       const maxLevel = [0, 20, 30, 50, 60];
       setTeamCards((tc) => [...tc, card.id]);
-      let stateFrom = sekaiProfile?.cardList?.find(
-        (cl) => cl.cardId === card.id
-      );
+      let stateFrom = sekaiCardTeam?.cards?.find((cl) => cl.cardId === card.id);
       setTeamCardsStates((tcs) => [
         ...tcs,
         isSyncCardState && !!stateFrom
@@ -224,7 +227,7 @@ const TeamBuilder: React.FC<{
     [
       teamCards,
       setTeamCards,
-      sekaiProfile?.cardList,
+      sekaiCardTeam?.cards,
       setTeamCardsStates,
       showError,
       t,
@@ -285,15 +288,15 @@ const TeamBuilder: React.FC<{
     toggleIsSaveingEntry();
 
     if (storageLocation === "cloud") {
-      if (!sekaiProfile) return;
-      putSekaiDeckList(sekaiProfile.id, [toSaveEntry])
+      if (!sekaiCardTeam) return;
+      putSekaiDecks(sekaiCardTeam.id, [toSaveEntry])
         .then(() => {
           dispatchTeamBuildArray({
             type: "add",
             payload: toSaveEntry,
           });
-          updateSekaiProfile({
-            deckList: [...(sekaiProfile.deckList || []), toSaveEntry],
+          updateSekaiCardTeam({
+            decks: [...(sekaiCardTeam.decks || []), toSaveEntry],
           });
           toggleIsSaveingEntry();
         })
@@ -309,8 +312,8 @@ const TeamBuilder: React.FC<{
       toggleIsSaveingEntry();
     }
   }, [
-    putSekaiDeckList,
-    sekaiProfile,
+    putSekaiDecks,
+    sekaiCardTeam,
     showError,
     storageLocation,
     t,
@@ -318,7 +321,7 @@ const TeamBuilder: React.FC<{
     teamCardsStates,
     teamTotalPower,
     toggleIsSaveingEntry,
-    updateSekaiProfile,
+    updateSekaiCardTeam,
   ]);
 
   const handleReplaceTeamEntry = useCallback(
@@ -333,8 +336,8 @@ const TeamBuilder: React.FC<{
       toggleIsSaveingEntry();
 
       if (storageLocation === "cloud") {
-        if (!sekaiProfile) return;
-        putSekaiDeckList(sekaiProfile.id, [
+        if (!sekaiCardTeam) return;
+        putSekaiDecks(sekaiCardTeam.id, [
           Object.assign({}, currentEntry, { id }),
         ])
           .then(() => {
@@ -345,11 +348,11 @@ const TeamBuilder: React.FC<{
                 data: currentEntry,
               },
             });
-            updateSekaiProfile({
-              deckList: [
-                ...sekaiProfile!.deckList!.slice(0, id),
+            updateSekaiCardTeam({
+              decks: [
+                ...sekaiCardTeam.decks!.slice(0, id),
                 currentEntry,
-                ...sekaiProfile!.deckList!.slice(id + 1),
+                ...sekaiCardTeam.decks!.slice(id + 1),
               ],
             });
             showSuccess(t("team_build:save_team_succeed"));
@@ -372,8 +375,8 @@ const TeamBuilder: React.FC<{
       }
     },
     [
-      putSekaiDeckList,
-      sekaiProfile,
+      putSekaiDecks,
+      sekaiCardTeam,
       showError,
       showSuccess,
       storageLocation,
@@ -382,7 +385,7 @@ const TeamBuilder: React.FC<{
       teamCardsStates,
       teamTotalPower,
       toggleIsSaveingEntry,
-      updateSekaiProfile,
+      updateSekaiCardTeam,
     ]
   );
 
@@ -391,17 +394,17 @@ const TeamBuilder: React.FC<{
       toggleIsSaveingEntry();
 
       if (storageLocation === "cloud") {
-        if (!sekaiProfile) return;
-        deleteSekaiDeckList(sekaiProfile.id, [id])
+        if (!sekaiCardTeam) return;
+        deleteSekaiDecks(sekaiCardTeam.id, [id])
           .then(() => {
             dispatchTeamBuildArray({
               type: "remove",
               payload: id,
             });
-            updateSekaiProfile({
-              deckList: [
-                ...sekaiProfile!.deckList!.slice(0, id),
-                ...sekaiProfile!.deckList!.slice(id + 1),
+            updateSekaiCardTeam({
+              decks: [
+                ...sekaiCardTeam.decks!.slice(0, id),
+                ...sekaiCardTeam.decks!.slice(id + 1),
               ],
             });
             toggleIsSaveingEntry();
@@ -419,13 +422,13 @@ const TeamBuilder: React.FC<{
       }
     },
     [
-      deleteSekaiDeckList,
-      sekaiProfile,
+      deleteSekaiDecks,
+      sekaiCardTeam,
       showError,
       storageLocation,
       t,
       toggleIsSaveingEntry,
-      updateSekaiProfile,
+      updateSekaiCardTeam,
     ]
   );
 
@@ -819,9 +822,9 @@ const TeamBuilder: React.FC<{
                   }
                   label={t("team_build:use_sekai_card_state")}
                   disabled={
-                    !sekaiProfile ||
-                    !sekaiProfile.cardList ||
-                    !sekaiProfile.cardList.length
+                    !sekaiCardTeam ||
+                    !sekaiCardTeam.cards ||
+                    !sekaiCardTeam.cards.length
                   }
                 />
               </Grid>
@@ -872,14 +875,14 @@ const TeamBuilder: React.FC<{
                 control={<Radio />}
                 label={t("team_build:storage_location.cloud")}
                 labelPlacement="end"
-                disabled={!sekaiProfile}
+                disabled={!sekaiCardTeam}
               />
             </RadioGroup>
           </FormControl>
-          {storageLocation === "cloud" && (
+          {storageLocation === "cloud" && sekaiCardTeam && (
             <DialogContentText>
               {t("team_build:storage_space")}: {teamBuildArray.teams.length} /{" "}
-              {sekaiProfile!.maxDeckList}
+              {sekaiCardTeam.maxNumOfDecks}
             </DialogContentText>
           )}
           <Grid container spacing={1}>
@@ -945,7 +948,7 @@ const TeamBuilder: React.FC<{
             disabled={
               isSavingEntry ||
               (storageLocation === "cloud" &&
-                teamBuildArray.teams.length >= sekaiProfile!.maxDeckList)
+                teamBuildArray.teams.length >= sekaiCardTeam!.maxNumOfDecks)
             }
           >
             {t("team_build:saveNewEntry")}
@@ -963,11 +966,13 @@ const TeamBuilder: React.FC<{
           <DialogContentText>
             {t("team_build:loadTeamDialog.desc")}
           </DialogContentText>
-          <DialogContentText>
-            {t("user:profile.title.user_deck")}
-          </DialogContentText>
           {(!!sekaiProfile && !!sekaiProfile.sekaiUserProfile && (
             <Grid container spacing={1}>
+              <Grid item xs={12}>
+                <DialogContentText>
+                  {t("user:profile.title.user_deck")}
+                </DialogContentText>
+              </Grid>
               <Grid item xs={12}>
                 <Paper variant="outlined" sx={{ p: 1 }}>
                   <Grid container spacing={1} alignItems="center">

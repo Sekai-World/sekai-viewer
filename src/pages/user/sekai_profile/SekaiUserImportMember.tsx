@@ -138,9 +138,14 @@ const SekaiUserImportMember = () => {
   const theme = useTheme();
   const classes = useStyles();
   const { t } = useTranslation();
-  const { jwtToken, sekaiProfile, updateSekaiProfile } =
-    useContext(UserContext)!;
-  const { putSekaiCardList } = useStrapi(jwtToken);
+  const {
+    jwtToken,
+    sekaiProfile,
+    updateSekaiProfile,
+    sekaiCardTeam,
+    updateSekaiCardTeam,
+  } = useContext(UserContext)!;
+  const { putSekaiCards } = useStrapi(jwtToken);
   const { showError, showSuccess } = useAlertSnackbar();
 
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -966,7 +971,7 @@ const SekaiUserImportMember = () => {
   );
 
   const handleSubmitCardList = useCallback(async () => {
-    if (!sekaiProfile || !cards) return;
+    if (!sekaiCardTeam || !cards) return;
     setPostingCardList(true);
     try {
       const cardList = rows
@@ -990,10 +995,10 @@ const SekaiUserImportMember = () => {
         })
         .sort((a, b) => a.cardId - b.cardId);
 
-      await putSekaiCardList(sekaiProfile.id, cardList);
+      await putSekaiCards(sekaiCardTeam.id, cardList);
 
-      if (sekaiProfile.cardList && sekaiProfile.cardList.length) {
-        sekaiProfile.cardList.forEach((card) => {
+      if (sekaiCardTeam.cards && sekaiCardTeam.cards.length) {
+        sekaiCardTeam.cards.forEach((card) => {
           if (!cardList.some((_card) => _card.cardId === card.cardId)) {
             cardList.push(card);
           }
@@ -1012,9 +1017,9 @@ const SekaiUserImportMember = () => {
     setPostingCardList(false);
   }, [
     cards,
-    putSekaiCardList,
+    putSekaiCards,
     rows,
-    sekaiProfile,
+    sekaiCardTeam,
     showError,
     showSuccess,
     t,

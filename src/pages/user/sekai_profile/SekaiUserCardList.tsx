@@ -82,9 +82,9 @@ const SekaiUserCardList = () => {
   // const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
-  const { jwtToken, sekaiProfile, updateSekaiProfile } =
+  const { jwtToken, sekaiCardTeam, updateSekaiCardTeam } =
     useContext(UserContext)!;
-  const { putSekaiCardList, deleteSekaiCardList } = useStrapi(jwtToken);
+  const { putSekaiCards, deleteSekaiCards } = useStrapi(jwtToken);
   const getCharaName = useCharaName();
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
   const { getTranslated } = useAssetI18n();
@@ -154,8 +154,8 @@ const SekaiUserCardList = () => {
   const [eventId, setEventId] = useState(1);
 
   useEffect(() => {
-    if (cards && cards.length && sekaiProfile) {
-      let _cardList = (sekaiProfile.cardList || []).map((elem) =>
+    if (cards && cards.length && sekaiCardTeam) {
+      let _cardList = (sekaiCardTeam.cards || []).map((elem) =>
         Object.assign({}, elem, {
           card: cards.find((c) => c.id === elem.cardId)!,
         })
@@ -230,7 +230,7 @@ const SekaiUserCardList = () => {
     deleteCardIds,
     editList,
     raritySelected,
-    sekaiProfile,
+    sekaiCardTeam,
     sortBy,
     sortType,
     supportUnitSelected,
@@ -356,7 +356,7 @@ const SekaiUserCardList = () => {
     setFilteredCards((cards) => cards.filter((c) => c.id !== card.id));
   }, []);
 
-  return (
+  return sekaiCardTeam ? (
     <Grid container spacing={1}>
       <Grid item xs={12}>
         <Grid container justifyContent="space-between">
@@ -376,17 +376,14 @@ const SekaiUserCardList = () => {
                     setIsSaving(true);
                     try {
                       if (editList.length)
-                        await putSekaiCardList(sekaiProfile!.id, editList);
+                        await putSekaiCards(sekaiCardTeam.id, editList);
                       if (deleteCardIds.length)
-                        await deleteSekaiCardList(
-                          sekaiProfile!.id,
-                          deleteCardIds
-                        );
+                        await deleteSekaiCards(sekaiCardTeam.id, deleteCardIds);
                       setEditList([]);
                       setDeleteCardIds([]);
                       setAddCardIds([]);
-                      updateSekaiProfile({
-                        cardList: cardList,
+                      updateSekaiCardTeam({
+                        cards: cardList,
                       });
                       showSuccess(t("user:profile.card_list.submit_success"));
                     } catch (error) {
@@ -403,16 +400,14 @@ const SekaiUserCardList = () => {
                   variant="contained"
                   color="primary"
                   disabled={
-                    isSaving ||
-                    !sekaiProfile ||
-                    (!deleteCardIds.length && !editList.length)
+                    isSaving || (!deleteCardIds.length && !editList.length)
                   }
                   onClick={() => {
                     setEditList([]);
                     setDeleteCardIds([]);
                     setAddCardIds([]);
                     setCardList(
-                      sekaiProfile!.cardList ? [...sekaiProfile!.cardList] : []
+                      sekaiCardTeam.cards ? [...sekaiCardTeam.cards] : []
                     );
                   }}
                   startIcon={<RotateLeft />}
@@ -424,7 +419,7 @@ const SekaiUserCardList = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  disabled={isSaving || !sekaiProfile}
+                  disabled={isSaving}
                   onClick={() => {
                     setAddCardDialogVisible(true);
                   }}
@@ -1121,7 +1116,7 @@ const SekaiUserCardList = () => {
         </Container>
       </Popover>
     </Grid>
-  );
+  ) : null;
 };
 
 export default SekaiUserCardList;
