@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.9.4](https://github.com/Sekai-World/sekai-viewer/compare/v0.9.3...v0.9.4) (2021-11-16)
+
+
+### Features
+
+* **backend:** :sparkles: add refresh token, split sekai card and team from sekai profile ([61ec368](https://github.com/Sekai-World/sekai-viewer/commits/61ec368204587595052b3d7295f5ab85f29aa4ab))
+
+
+### Bug Fixes
+
+* **user:** :bug: login undefined user profile ([7814f41](https://github.com/Sekai-World/sekai-viewer/commits/7814f41324e80894752718d5c5f9116da83389f1))
+
+
+### Refactors
+
+* **backend:** :recycle: make changes according to endpoint split ([e0f6d0a](https://github.com/Sekai-World/sekai-viewer/commits/e0f6d0ad1d52bb12917d1afe8d5eba19af9eede6))
+* **user:** :lipstick: sekai components code cleanup ([4def1c4](https://github.com/Sekai-World/sekai-viewer/commits/4def1c4dc9f28cbce2fbceecdb84c5a7fb6d84be))
+
 ### [0.9.3](https://github.com/Sekai-World/sekai-viewer/compare/v0.9.2...v0.9.3) (2021-11-12)
 
 
