@@ -166,7 +166,10 @@ export const UserProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
         logout: useCallback(() => {
           auth.user = null;
           auth.token = "";
+          setUser(null);
+          setUsermeta(null);
           setSekaiProfile(undefined);
+          setSekaiCardTeam(undefined);
           // localStorage.removeItem("authToken");
           localStorage.removeItem("userData");
           localStorage.removeItem("userMetaDatum");

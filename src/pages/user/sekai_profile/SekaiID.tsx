@@ -184,6 +184,8 @@ const TransferConfirmDialog: React.FC<
             SekaiID,
           })}
         </DialogContentText>
+      </DialogContent>
+      <DialogContent>
         <MUITextField
           label={t("user:profile.username")}
           value={username}

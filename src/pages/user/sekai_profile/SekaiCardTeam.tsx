@@ -66,6 +66,7 @@ const SekaiCardTeam: React.FC<{}> = () => {
   }, [
     getSekaiCardTeamMe,
     isSyncingCardTeam,
+    isUpdatedCardTeam,
     postSekaiCardTeamMe,
     sekaiCardTeam,
     sekaiProfile,

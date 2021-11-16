@@ -1044,6 +1044,7 @@ const TeamBuilder: React.FC<{
                 control={<Radio />}
                 label={t("team_build:storage_location.cloud")}
                 labelPlacement="end"
+                disabled={!sekaiCardTeam}
               />
             </RadioGroup>
           </FormControl>
