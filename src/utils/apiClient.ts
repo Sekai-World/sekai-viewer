@@ -38,22 +38,55 @@ export function useStrapi(token?: string) {
     });
 
     axios.interceptors.request.use((req) => {
-      _token.current &&
+      !!_token.current &&
+        !!req.headers &&
         (req.headers.authorization = `Bearer ${_token.current}`);
       return req;
     });
 
     axios.interceptors.response.use(
       (res) => res,
-      (err) => {
+      async (err) => {
         if (err.response.status === 401) {
-          _token.current = "";
+          const originalRequest = err.config;
+          // _token.current = "";
+          const refreshToken = localStorage.getItem("refreshToken") || "";
+          if (refreshToken) {
+            let {
+              data: { jwt, refresh },
+            } = await Axios.post<{
+              jwt: string;
+              refresh: string;
+            }>(
+              "/auth/refresh",
+              { token: refreshToken, renew: true },
+              { baseURL: import.meta.env.VITE_STRAPI_BASE }
+            );
+
+            localStorage.setItem("refreshToken", refresh);
+            localStorage.setItem("authToken", jwt);
+            _token.current = jwt;
+
+            originalRequest.headers.authorization = `Bearer ${jwt}`;
+            return Axios(originalRequest);
+          } else {
+            // delete all token
+            _token.current = "";
+            // localStorage.removeItem("authToken");
+            localStorage.removeItem("userData");
+            localStorage.removeItem("userMetaDatum");
+            localStorage.removeItem("lastUserCheck");
+            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("sekaiProfile");
+            localStorage.removeItem("sekaiCardTeam");
+          }
         } else if (err.response.data.message && err.response.status !== 500)
           err.id = err.response.data.message[0].messages[0].id;
         else if (err.response.status === 500) {
           err.id = err.response.data.error;
           err.message = err.response.data.message;
         } else err.id = err.message;
+
         throw err;
       }
     );
@@ -110,16 +143,10 @@ export function useStrapi(token?: string) {
       async (formData: FormData, token?: string) =>
         (
           await axios.post("/upload", formData, {
-            headers: Object.assign(
-              {
-                "Content-Type": "multipart/form-data",
-              },
-              token
-                ? {
-                    authorization: `Bearer ${token}`,
-                  }
-                : {}
-            ),
+            headers: {
+              "Content-Type": "multipart/form-data",
+              authorization: token ? `Bearer ${token}` : "",
+            },
           })
         ).data,
       [axios]
@@ -247,11 +274,17 @@ export function useStrapi(token?: string) {
           await axios.get<SekaiProfileEventRecordModel[]>(
             "/sekai-profile-event-records/me",
             {
-              params: eventId
-                ? {
-                    eventId,
-                  }
-                : {},
+              params: Object.assign(
+                {
+                  _limit: 1,
+                  _sort: "created_at:DESC",
+                },
+                eventId
+                  ? {
+                      eventId,
+                    }
+                  : {}
+              ),
             }
           )
         ).data,
@@ -263,36 +296,36 @@ export function useStrapi(token?: string) {
           .data,
       [axios]
     ),
-    putSekaiCardList: useCallback(
-      async (id: number, cardList: ITeamCardState[]) =>
-        (await axios.put(`/sekai-profiles/${id}/cardlist`, cardList)).data,
-      [axios]
-    ),
-    deleteSekaiCardList: useCallback(
-      async (id: number, cardIds: number[]) => {
-        await axios.delete(`/sekai-profiles/${id}/cardlist`, {
-          params: {
-            cards: cardIds,
-          },
-        });
-      },
-      [axios]
-    ),
-    putSekaiDeckList: useCallback(
-      async (id: number, deckList: ITeamBuild[]) =>
-        (await axios.put(`/sekai-profiles/${id}/decklist`, deckList)).data,
-      [axios]
-    ),
-    deleteSekaiDeckList: useCallback(
-      async (id: number, deckIds: number[]) => {
-        await axios.delete(`/sekai-profiles/${id}/decklist`, {
-          params: {
-            decks: deckIds,
-          },
-        });
-      },
-      [axios]
-    ),
+    // putSekaiCardList: useCallback(
+    //   async (id: number, cardList: ITeamCardState[]) =>
+    //     (await axios.put(`/sekai-profiles/${id}/cardlist`, cardList)).data,
+    //   [axios]
+    // ),
+    // deleteSekaiCardList: useCallback(
+    //   async (id: number, cardIds: number[]) => {
+    //     await axios.delete(`/sekai-profiles/${id}/cardlist`, {
+    //       params: {
+    //         cards: cardIds,
+    //       },
+    //     });
+    //   },
+    //   [axios]
+    // ),
+    // putSekaiDeckList: useCallback(
+    //   async (id: number, deckList: ITeamBuild[]) =>
+    //     (await axios.put(`/sekai-profiles/${id}/decklist`, deckList)).data,
+    //   [axios]
+    // ),
+    // deleteSekaiDeckList: useCallback(
+    //   async (id: number, deckIds: number[]) => {
+    //     await axios.delete(`/sekai-profiles/${id}/decklist`, {
+    //       params: {
+    //         decks: deckIds,
+    //       },
+    //     });
+    //   },
+    //   [axios]
+    // ),
     getAnnouncements: useCallback(
       async (params?: { [key: string]: any }) =>
         (
@@ -542,6 +575,66 @@ export function useStrapi(token?: string) {
             params: { virtualLiveId, _limit: 1 },
           })
         ).data[0],
+      [axios]
+    ),
+    deleteSekaiProfileById: useCallback(
+      async (profileId: number) =>
+        (await axios.delete<{ status: string }>(`/sekai-profiles/${profileId}`))
+          .data.status,
+      [axios]
+    ),
+    postSekaiProfileTransfer: useCallback(
+      async (sekaiUserId: string, username: string) =>
+        (
+          await axios.post<{ status: string }>(`/sekai-profiles/transfer`, {
+            sekaiUserId,
+            username,
+          })
+        ).data.status,
+      [axios]
+    ),
+    getSekaiCardTeamMe: useCallback(
+      async () => (await axios.get(`/sekai-card-teams/me`)).data,
+      [axios]
+    ),
+    postSekaiCardTeamMe: useCallback(
+      async (cards: ITeamCardState[], decks: ITeamBuild[]) =>
+        (
+          await axios.post(`/sekai-card-teams/me`, {
+            cards,
+            decks,
+          })
+        ).data,
+      [axios]
+    ),
+    putSekaiCards: useCallback(
+      async (id: number, cards: ITeamCardState[]) =>
+        (await axios.put(`/sekai-card-teams/${id}/cards`, cards)).data,
+      [axios]
+    ),
+    deleteSekaiCards: useCallback(
+      async (id: number, cardIds: number[]) => {
+        await axios.delete(`/sekai-card-teams/${id}/cards`, {
+          params: {
+            cards: cardIds,
+          },
+        });
+      },
+      [axios]
+    ),
+    putSekaiDecks: useCallback(
+      async (id: number, decks: ITeamBuild[]) =>
+        (await axios.put(`/sekai-card-teams/${id}/decks`, decks)).data,
+      [axios]
+    ),
+    deleteSekaiDecks: useCallback(
+      async (id: number, deckIds: number[]) => {
+        await axios.delete(`/sekai-card-teams/${id}/decks`, {
+          params: {
+            decks: deckIds,
+          },
+        });
+      },
       [axios]
     ),
   };

@@ -9,6 +9,7 @@ import React, {
 import { useTranslation } from "react-i18next";
 import {
   LanguageModel,
+  SekaiCardTeamModel,
   SekaiProfileModel,
   UserMetadatumModel,
   UserModel,
@@ -109,6 +110,8 @@ export const UserContext = createContext<
       logout(): void;
       usermeta: UserMetadatumModel | null;
       updateUserMeta(data: Partial<UserMetadatumModel> | null): void;
+      sekaiCardTeam?: SekaiCardTeamModel;
+      updateSekaiCardTeam(data?: Partial<SekaiCardTeamModel>): void;
     }
   | undefined
 >(undefined);
@@ -123,6 +126,9 @@ export const UserProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
   const [sekaiProfile, setSekaiProfile] = useState<
     SekaiProfileModel | undefined
   >(JSON.parse(localStorage.getItem("sekaiProfile") || "null") || undefined);
+  const [sekaiCardTeam, setSekaiCardTeam] = useState<
+    SekaiCardTeamModel | undefined
+  >(JSON.parse(localStorage.getItem("sekaiCardTeam") || "null") || undefined);
 
   return (
     <UserContext.Provider
@@ -148,18 +154,26 @@ export const UserProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
           setSekaiProfile((profile) => {
             const _data = Object.assign({}, profile, data);
 
-            if (data)
+            if (data) {
               localStorage.setItem("sekaiProfile", JSON.stringify(_data));
-            else localStorage.removeItem("sekaiProfile");
-
-            return _data;
+              return _data;
+            } else {
+              localStorage.removeItem("sekaiProfile");
+              return data;
+            }
           });
         }, []),
         logout: useCallback(() => {
           auth.user = null;
           auth.token = "";
           setSekaiProfile(undefined);
+          // localStorage.removeItem("authToken");
+          localStorage.removeItem("userData");
+          localStorage.removeItem("userMetaDatum");
+          localStorage.removeItem("lastUserCheck");
+          localStorage.removeItem("refreshToken");
           localStorage.removeItem("sekaiProfile");
+          localStorage.removeItem("sekaiCardTeam");
         }, [auth]),
         usermeta: useMemo(() => usermeta, [usermeta]),
         updateUserMeta: useCallback(
@@ -169,6 +183,20 @@ export const UserProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
           },
           [auth]
         ),
+        sekaiCardTeam,
+        updateSekaiCardTeam: useCallback((data) => {
+          setSekaiCardTeam((profile) => {
+            const _data = Object.assign({}, profile, data);
+
+            if (data) {
+              localStorage.setItem("sekaiCardTeam", JSON.stringify(_data));
+              return _data;
+            } else {
+              localStorage.removeItem("sekaiCardTeam");
+              return data;
+            }
+          });
+        }, []),
       }}
     >
       {children}

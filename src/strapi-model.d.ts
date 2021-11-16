@@ -207,3 +207,10 @@ export interface VirtualLiveModel {
   virtualLiveId: number;
   comments: CommentModel[];
 }
+
+export interface SekaiCardTeamModel {
+  id: number;
+  cards: ITeamCardState[];
+  decks: ITeamBuild[];
+  maxNumOfDecks: number;
+}
