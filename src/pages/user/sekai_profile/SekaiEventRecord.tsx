@@ -3,7 +3,6 @@ import {
   Typography,
   Button,
   Tooltip,
-  IconButton,
   CircularProgress,
   TextField,
 } from "@mui/material";
@@ -14,9 +13,10 @@ import { useTranslation } from "react-i18next";
 import { SettingContext, UserContext } from "../../../context";
 import { SekaiProfileEventRecordModel } from "../../../strapi-model";
 import { IEventInfo } from "../../../types.d";
-import { useCachedData } from "../../../utils";
+import { useAlertSnackbar, useCachedData } from "../../../utils";
 import { useCurrentEvent, useStrapi } from "../../../utils/apiClient";
 import { useAssetI18n } from "../../../utils/i18n";
+import { LoadingButton } from "@mui/lab";
 
 interface Props {}
 
@@ -30,6 +30,7 @@ const SekaiEventRecord = (props: Props) => {
     useStrapi(jwtToken);
   const { getTranslated } = useAssetI18n();
   const { contentTransMode } = useContext(SettingContext)!;
+  const { showError } = useAlertSnackbar();
 
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
 
@@ -39,9 +40,8 @@ const SekaiEventRecord = (props: Props) => {
     id: number;
   } | null>(null);
   // const [currentEvent, setCurrentEvent] = useState<SekaiCurrentEventModel>();
-  const [eventRecords, setEventRecords] = useState<
-    SekaiProfileEventRecordModel[]
-  >([]);
+  const [eventRecords, setEventRecords] =
+    useState<SekaiProfileEventRecordModel[]>();
   const [isEventRecording, setIsEventRecording] = useState(false);
 
   useEffect(() => {
@@ -123,15 +123,13 @@ const SekaiEventRecord = (props: Props) => {
               );
             }}
             disabled={isCurrEventLoading || isEventRecording}
+            size="large"
           >
             {t("event:tracker.button.curr_event")}
           </Button>
         </Grid>
       </Grid>
       <Grid item container spacing={1} alignItems="center">
-        <Grid item>
-          <Typography>{t("user:profile.event.current_record_info")}</Typography>
-        </Grid>
         {!!selectedEvent &&
           selectedEvent.id === currEvent.eventId &&
           !!sekaiProfile && (
@@ -147,19 +145,23 @@ const SekaiEventRecord = (props: Props) => {
                 arrow
               >
                 <span>
-                  <IconButton
+                  <LoadingButton
                     size="small"
-                    onClick={() => {
+                    loading={isEventRecording}
+                    variant="contained"
+                    onClick={async () => {
                       setIsEventRecording(true);
-                      postSekaiProfileEventRecord(currEvent!.eventId).then(
-                        async (data) => {
-                          setEventRecords(await getSekaiProfileEventRecordMe());
-                          updateSekaiProfile({
-                            eventGetUsed: sekaiProfile.eventGetUsed + 1,
-                          });
-                          setIsEventRecording(false);
-                        }
-                      );
+                      try {
+                        await postSekaiProfileEventRecord(currEvent!.eventId);
+                        setEventRecords(await getSekaiProfileEventRecordMe());
+                        updateSekaiProfile({
+                          eventGetUsed: sekaiProfile.eventGetUsed + 1,
+                        });
+                        setIsEventRecording(false);
+                      } catch (error: any) {
+                        showError(error.message);
+                        setIsEventRecording(false);
+                      }
                     }}
                     disabled={
                       isCurrEventLoading ||
@@ -167,18 +169,19 @@ const SekaiEventRecord = (props: Props) => {
                       sekaiProfile.eventGetAvailable <=
                         sekaiProfile.eventGetUsed
                     }
+                    startIcon={<Update />}
                   >
-                    {isEventRecording ? (
-                      <CircularProgress size={24} />
-                    ) : (
-                      <Update />
-                    )}
-                  </IconButton>
+                    {t("common:update")}
+                  </LoadingButton>
                 </span>
               </Tooltip>
             </Grid>
           )}
-        {eventRecords[0] && (
+        <Grid item>
+          <Typography>{t("user:profile.event.current_record_info")}</Typography>
+        </Grid>
+        {!eventRecords && <CircularProgress size={24} />}
+        {!!eventRecords && eventRecords[0] && (
           <Fragment>
             <Grid item>
               <Typography>
