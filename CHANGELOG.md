@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.9.5](https://github.com/Sekai-World/sekai-viewer/compare/v0.9.4...v0.9.5) (2021-11-16)
+
+
+### Bug Fixes
+
+* **user:** :bug: sekai components style and bug ([6ca723f](https://github.com/Sekai-World/sekai-viewer/commits/6ca723fb8e2de1198783732cfe51be4da29e529b))
+
 ### [0.9.4](https://github.com/Sekai-World/sekai-viewer/compare/v0.9.3...v0.9.4) (2021-11-16)
 
 
