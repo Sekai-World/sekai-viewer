@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.9.6](https://github.com/Sekai-World/sekai-viewer/compare/v0.9.5...v0.9.6) (2021-11-24)
+
+
+### Bug Fixes
+
+* :bug: language-cache empty problem causing user home blank ([97b5334](https://github.com/Sekai-World/sekai-viewer/commits/97b5334ba602d32be8e6a927c7896e0f9560b5f1))
+* typo ([16ed29e](https://github.com/Sekai-World/sekai-viewer/commits/16ed29e8a82f7b1537363eec9b8bf33f31e70626))
+
+
+### Refactors
+
+* **user:** :recycle: let connect login fecth more data ([99ee5fc](https://github.com/Sekai-World/sekai-viewer/commits/99ee5fc2c300b3c4980cde62ac0d5168d05e4659))
+
 ### [0.9.5](https://github.com/Sekai-World/sekai-viewer/compare/v0.9.4...v0.9.5) (2021-11-16)
 
 
