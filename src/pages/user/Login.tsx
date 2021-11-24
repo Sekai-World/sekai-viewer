@@ -36,11 +36,22 @@ const Login: React.FC<{}> = () => {
   const history = useHistory();
   // const jwtAuth = useJwtAuth();
   // const { decodedToken } = useJwtAuth();
-  const { postLoginLocal, getRedirectConnectLoginUrl, getUserMetadataMe } =
-    useStrapi();
+  const {
+    postLoginLocal,
+    getRedirectConnectLoginUrl,
+    getUserMetadataMe,
+    getSekaiProfileMe,
+    getSekaiCardTeamMe,
+  } = useStrapi();
   const { showError } = useAlertSnackbar();
-  const { jwtToken, updateJwtToken, updateUser, updateUserMeta } =
-    useContext(UserContext)!;
+  const {
+    jwtToken,
+    updateJwtToken,
+    updateUser,
+    updateUserMeta,
+    updateSekaiProfile,
+    updateSekaiCardTeam,
+  } = useContext(UserContext)!;
   const { decodedToken } = useJwt(jwtToken);
 
   useEffect(() => {
@@ -84,6 +95,8 @@ const Login: React.FC<{}> = () => {
               updateJwtToken(data.jwt);
               updateUser(data.user);
               updateUserMeta(await getUserMetadataMe(data.jwt));
+              updateSekaiProfile(await getSekaiProfileMe(data.jwt));
+              updateSekaiCardTeam(await getSekaiCardTeamMe(data.jwt));
               history.replace("/user");
               // window.location.reload();
               localStorage.setItem(

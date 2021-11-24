@@ -13,13 +13,24 @@ const Connect: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const { provider } = useParams<{ provider: string }>();
-  const { updateUser, updateJwtToken, updateUserMeta } =
-    useContext(UserContext)!;
+  const {
+    updateUser,
+    updateJwtToken,
+    updateUserMeta,
+    updateSekaiProfile,
+    updateSekaiCardTeam,
+  } = useContext(UserContext)!;
   // const query = useQuery();
   const location = useLocation();
   const history = useHistory();
   // const jwtAuth = useJwtAuth();
-  const { getConnectCallback, getUserMetadataMe, postUpload } = useStrapi();
+  const {
+    getConnectCallback,
+    getUserMetadataMe,
+    postUpload,
+    getSekaiProfileMe,
+    getSekaiCardTeamMe,
+  } = useStrapi();
 
   const [progress, setProgress] = useState(0);
   const [step, setStep] = useState("");
@@ -40,7 +51,7 @@ const Connect: React.FC<{}> = () => {
         updateUser(data.user);
         const usermeta = await getUserMetadataMe(data.jwt);
         if (!usermeta.avatar && avatarUrl) {
-          setProgress(50);
+          setProgress(25);
           setStep(t("auth:connect.fetch_user_avatar"));
 
           const avatarBuffer = (
@@ -58,16 +69,21 @@ const Connect: React.FC<{}> = () => {
           form.append("field", "avatar");
 
           await postUpload(form, data.jwt);
-          setProgress(75);
+          setProgress(50);
           updateUserMeta(await getUserMetadataMe(data.jwt));
         } else {
           updateUserMeta(usermeta);
-          setProgress(100);
+          setProgress(50);
         }
+
+        updateSekaiProfile(await getSekaiProfileMe(data.jwt));
+        setProgress(75);
+        updateSekaiCardTeam(await getSekaiCardTeamMe(data.jwt));
+        setProgress(100);
 
         history.push("/user");
         localStorage.setItem("lastUserCheck", String(new Date().getTime()));
-      } catch (error) {
+      } catch (error: any) {
         if (error.id === "Auth.form.error.email.taken") {
           history.replace(`/user/login?error=${t("auth:error.email_taken")}`);
         }

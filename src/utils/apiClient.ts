@@ -594,7 +594,17 @@ export function useStrapi(token?: string) {
       [axios]
     ),
     getSekaiCardTeamMe: useCallback(
-      async () => (await axios.get(`/sekai-card-teams/me`)).data,
+      async (token?: string) =>
+        (
+          await axios.get(
+            `/sekai-card-teams/me`,
+            token
+              ? {
+                  headers: { authorization: `Bearer ${token}` },
+                }
+              : {}
+          )
+        ).data,
       [axios]
     ),
     postSekaiCardTeamMe: useCallback(
