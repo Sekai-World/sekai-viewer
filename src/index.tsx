@@ -135,7 +135,7 @@ window.isChinaMainland = false;
         localStorage.setItem("sekaiProfile", JSON.stringify(sekaiProfile));
 
         let { data: sekaiCardTeam } = await axios.get<SekaiProfileModel>(
-          "/sekai-card-team/me"
+          "/sekai-card-teams/me"
         );
         localStorage.setItem("sekaiCardTeam", JSON.stringify(sekaiCardTeam));
       } catch (error) {}
