@@ -71,6 +71,7 @@ import React, {
   useContext,
   Fragment,
   useState,
+  useEffect,
 } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -87,6 +88,7 @@ import ScrollTop from "../components/widgets/ScrollTop";
 import { SnackbarProvider } from "notistack";
 import ReloadPrompt from "../components/helpers/ReloadPrompt";
 import { useLocalStorage } from "../utils";
+import { useRemoteLanguages } from "../utils/apiClient";
 // import AlertSnackbar from "../components/AlertSnackbar";
 
 declare module "@mui/styles/defaultTheme" {
@@ -1122,8 +1124,14 @@ const AppInner = (props: { theme: Theme }) => {
 };
 
 function App() {
-  const { displayMode } = useContext(SettingContext)!;
+  const { displayMode, updateLanguages, lang, updateLang } =
+    useContext(SettingContext)!;
   const preferDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+  const {
+    languages: remoteLanguages,
+    isLoading: isLanguageLoading,
+    error: languageError,
+  } = useRemoteLanguages();
 
   const theme = React.useMemo(
     () =>
@@ -1158,6 +1166,25 @@ function App() {
       }),
     [displayMode, preferDarkMode]
   );
+
+  useEffect(() => {
+    if (!isLanguageLoading && !languageError) {
+      updateLanguages(remoteLanguages);
+      if (!remoteLanguages.find((rl) => rl.code === lang)) {
+        // try setting correct language code
+        if (remoteLanguages.find((rl) => rl.code === lang.split("-")[0])) {
+          updateLang(lang.split("-")[0]);
+        }
+      }
+    }
+  }, [
+    isLanguageLoading,
+    lang,
+    languageError,
+    remoteLanguages,
+    updateLang,
+    updateLanguages,
+  ]);
 
   return (
     <StyledEngineProvider injectFirst>

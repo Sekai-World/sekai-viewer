@@ -124,16 +124,7 @@ const Settings = () => {
         }
       }
     }
-  }, [
-    assetI18n,
-    error,
-    i18n,
-    isLoading,
-    lang,
-    remoteLanguages,
-    updateLang,
-    updateLanguages,
-  ]);
+  }, [error, isLoading, lang, remoteLanguages, updateLang, updateLanguages]);
 
   return (
     <Fragment>
