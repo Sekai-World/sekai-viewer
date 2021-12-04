@@ -44,6 +44,7 @@ import { useStrapi } from "../../../utils/apiClient";
 import { useLayoutStyles } from "../../../styles/layout";
 import Carousel from "react-material-ui-carousel";
 import { Alert } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
 
 function initCOS(N: number = 64) {
   const entries = 2 * N * (N - 1);
@@ -560,8 +561,8 @@ const SekaiUserImportMember = () => {
           const { data: charaHash } = await axios.get<[string, string][]>(
             `${
               window.isChinaMainland
-                ? import.meta.env.VITE_FRONTEND_ASSET_BASE
-                : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-best-assets`
+                ? import.meta.env.VITE_FRONTEND_ASSET_BASE_CN
+                : import.meta.env.VITE_FRONTEND_ASSET_BASE
             }/chara_hash.json`
           );
 
@@ -1006,8 +1007,11 @@ const SekaiUserImportMember = () => {
         cardList.sort((a, b) => a.cardId - b.cardId);
       }
 
-      updateSekaiProfile({
-        cardList,
+      // updateSekaiProfile({
+      //   cardList,
+      // });
+      updateSekaiCardTeam({
+        cards: cardList,
       });
 
       showSuccess(t("user:profile.import_card.submit_success"));
@@ -1023,7 +1027,7 @@ const SekaiUserImportMember = () => {
     showError,
     showSuccess,
     t,
-    updateSekaiProfile,
+    updateSekaiCardTeam,
   ]);
 
   return (
@@ -1056,16 +1060,15 @@ const SekaiUserImportMember = () => {
           <Grid container alignItems="center" spacing={1}>
             <Grid item>
               <label htmlFor="upload-member-button">
-                <Button
+                <LoadingButton
                   variant="outlined"
                   component="span"
-                  disabled={isUploading || !cards || !cards.length}
-                  startIcon={
-                    isUploading ? <CircularProgress size={24} /> : <Upload />
-                  }
+                  disabled={!cards || !cards.length}
+                  loading={isUploading}
+                  startIcon={<Upload />}
                 >
                   {t("user:profile.import_card.import_button")}
-                </Button>
+                </LoadingButton>
               </label>
             </Grid>
             <Grid item>
@@ -1304,16 +1307,17 @@ const SekaiUserImportMember = () => {
         </Grid>
 
         <Grid item xs={12}>
-          <Button
+          <LoadingButton
             variant="contained"
             color="primary"
-            disabled={!rows.length || postingCardList}
+            disabled={!rows.length}
+            loading={postingCardList}
             onClick={handleSubmitCardList}
             fullWidth
-            startIcon={postingCardList && <CircularProgress size={24} />}
+            // startIcon={postingCardList && <CircularProgress size={24} />}
           >
             {t("common:submit")}
-          </Button>
+          </LoadingButton>
         </Grid>
       </Grid>
       <Dialog
@@ -1408,8 +1412,8 @@ const SekaiUserImportMember = () => {
           <DialogContent>
             <CardMedia
               image={`${
-                import.meta.env.VITE_ASSET_DOMAIN_MINIO
-              }/sekai-best-assets/import_cards/Screenshot_20210130-184257.jpg`}
+                import.meta.env.VITE_FRONTEND_ASSET_BASE
+              }/import_cards/Screenshot_20210130-184257.jpg`}
               title="import card step 1"
               className={classes.media}
             />
@@ -1426,8 +1430,8 @@ const SekaiUserImportMember = () => {
           <DialogContent>
             <CardMedia
               image={`${
-                import.meta.env.VITE_ASSET_DOMAIN_MINIO
-              }/sekai-best-assets/import_cards/step2.png`}
+                import.meta.env.VITE_FRONTEND_ASSET_BASE
+              }/import_cards/step2.png`}
               title="import card step 2"
               className={classes.media}
             />
@@ -1444,8 +1448,8 @@ const SekaiUserImportMember = () => {
           <DialogContent>
             <CardMedia
               image={`${
-                import.meta.env.VITE_ASSET_DOMAIN_MINIO
-              }/sekai-best-assets/import_cards/step3.png`}
+                import.meta.env.VITE_FRONTEND_ASSET_BASE
+              }/import_cards/step3.png`}
               title="import card step 3"
               className={classes.media}
             />
@@ -1462,8 +1466,8 @@ const SekaiUserImportMember = () => {
           <DialogContent>
             <CardMedia
               image={`${
-                import.meta.env.VITE_ASSET_DOMAIN_MINIO
-              }/sekai-best-assets/import_cards/step4.png`}
+                import.meta.env.VITE_FRONTEND_ASSET_BASE
+              }/import_cards/step4.png`}
               title="import card step 4"
               className={classes.media}
             />

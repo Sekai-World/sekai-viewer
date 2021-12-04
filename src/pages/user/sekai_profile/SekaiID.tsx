@@ -67,8 +67,8 @@ const VerifyDialog: React.FC<
           <CardMedia
             image={`${
               window.isChinaMainland
-                ? import.meta.env.VITE_FRONTEND_ASSET_BASE
-                : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-best-assets`
+                ? import.meta.env.VITE_FRONTEND_ASSET_BASE_CN
+                : import.meta.env.VITE_FRONTEND_ASSET_BASE
             }/verify/step_1.png`}
             title="sekai id verify step 1"
             className={classes.media}
@@ -87,8 +87,8 @@ const VerifyDialog: React.FC<
           <CardMedia
             image={`${
               window.isChinaMainland
-                ? import.meta.env.VITE_FRONTEND_ASSET_BASE
-                : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-best-assets`
+                ? import.meta.env.VITE_FRONTEND_ASSET_BASE_CN
+                : import.meta.env.VITE_FRONTEND_ASSET_BASE
             }/verify/step_2.png`}
             title="sekai id verify step 2"
             className={classes.media}

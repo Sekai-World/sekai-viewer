@@ -745,8 +745,8 @@ export function useLive2dModelList() {
   const { data, error } = useSWR(
     `${
       window.isChinaMainland
-        ? import.meta.env.VITE_FRONTEND_ASSET_BASE
-        : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-best-assets`
+        ? import.meta.env.VITE_FRONTEND_ASSET_BASE_CN
+        : import.meta.env.VITE_FRONTEND_ASSET_BASE
     }/models.json`,
     axiosFetcher
   );
