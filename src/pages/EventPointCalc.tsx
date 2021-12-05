@@ -146,7 +146,7 @@ const EventPointCalc: React.FC<{}> = () => {
   ]);
 
   useEffect(() => {
-    document.title = t("title:musicRecommend");
+    document.title = t("title:eventCalc");
   }, [t]);
 
   useEffect(() => {
