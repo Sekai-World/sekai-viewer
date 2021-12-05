@@ -17,7 +17,6 @@ import {
   UserModel,
 } from "./strapi-model";
 import AppSkeleton from "./pages/AppSkeleton";
-import { string } from "prop-types";
 
 TagManager.initialize({
   gtmId: "GTM-NFC6SW2",

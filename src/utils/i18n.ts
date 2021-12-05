@@ -46,6 +46,7 @@ export async function initGlobalI18n() {
         "virtual_live",
         "translate",
         "honor",
+        "asset_viewer",
       ],
       defaultNS: "common",
       fallbackLng: {

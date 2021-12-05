@@ -63,6 +63,7 @@ import Bullhorn from "~icons/mdi/bullhorn";
 import Calculator from "~icons/mdi/calculator";
 import CalendarText from "~icons/mdi/calendar-text";
 import StickerEmoji from "~icons/mdi/sticker-emoji";
+import FileFindOutline from "~icons/mdi/file-find-outline";
 import React, {
   // forwardRef,
   // useMemo,
@@ -142,6 +143,7 @@ const TranslationEditor = lazy(() => import("./translation/TranslationEditor"));
 const HonorList = lazy(() => import("./honor/HonorList"));
 const EventAnalyzer = lazy(() => import("./event/EventAnalyzer"));
 const MusicMeta = lazy(() => import("./music/MusicMeta"));
+const AssetViewer = lazy(() => import("./AssetViewer"));
 
 const drawerWidth = 240;
 
@@ -155,6 +157,7 @@ const useStyles = makeStyles((theme) => ({
   },
   root: {
     display: "flex",
+    minHeight: "100vh",
   },
   drawer: {
     [theme.breakpoints.up("md")]: {
@@ -521,6 +524,12 @@ const DrawerContent: React.FC<{
         },
       ],
       [
+        {
+          text: t("common:assetViewer"),
+          icon: <FileFindOutline />,
+          to: "/asset_viewer",
+          disabled: false,
+        },
         {
           text: t("common:musicMeta"),
           icon: <QueueMusic />,
@@ -1104,6 +1113,9 @@ const AppInner = (props: { theme: Theme }) => {
                 </Route>
                 <Route path="/settings">
                   <Settings />
+                </Route>
+                <Route path="/asset_viewer">
+                  <AssetViewer />
                 </Route>
               </Suspense>
             </Switch>

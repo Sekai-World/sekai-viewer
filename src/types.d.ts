@@ -1274,3 +1274,17 @@ export interface IVersionInfo {
   assetHash: string;
   appVersionStatus: string;
 }
+
+export interface IListBucketResult {
+  Name: string;
+  Prefix: string;
+  NextContinuationToken?: string;
+  CommonPrefixes?: {
+    Prefix: string;
+  }[];
+  Contents?: {
+    Key: string;
+    LastModified: string;
+    Size: number;
+  }[];
+}
