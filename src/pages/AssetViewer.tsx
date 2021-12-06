@@ -3,7 +3,7 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
+  // useRef,
   useState,
 } from "react";
 import axios from "axios";
@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
 import {
   Alert,
   Avatar,
-  List,
+  // List,
   ListItemButton,
   ListItemAvatar,
   ListItemText,
@@ -21,7 +21,7 @@ import {
   Backdrop,
   CircularProgress,
   Breadcrumbs,
-  Link,
+  // Link,
   BreadcrumbsProps,
   Dialog,
   DialogTitle,
@@ -30,21 +30,25 @@ import {
   IconButton,
 } from "@mui/material";
 import { XMLParser } from "fast-xml-parser";
-import { IListBucketResult } from "../types";
+import { IAssetListElement, IListBucketResult } from "../types";
 import { CloudDownload, Folder, OpenInNew } from "@mui/icons-material";
-import ArrowUpLeftBold from "~icons/mdi/arrow-up-left-bold";
+// import ArrowUpLeftBold from "~icons/mdi/arrow-up-left-bold";
 import FileCodeOutline from "~icons/mdi/file-code-outline";
 import FileImage from "~icons/mdi/file-image";
 import FileVideo from "~icons/mdi/file-video";
 import FileMusic from "~icons/mdi/file-music";
+import DotsHorizontal from "~icons/mdi/dots-horizontal";
 import { useLocation, Link as RouterLink } from "react-router-dom";
 import { useToggle } from "../utils";
 import Image from "mui-image";
-import { JsonView } from "react-json-view-lite";
+import { JsonView, defaultStyles, darkStyles } from "react-json-view-lite";
 import "react-json-view-lite/dist/index.css";
 import AudioPlayer from "./music/AudioPlayer";
 import { saveAs } from "file-saver";
 import { useInteractiveStyles } from "../styles/interactive";
+import { FixedSizeList, ListOnItemsRenderedProps } from "react-window";
+import AutoSizer from "react-virtualized-auto-sizer";
+import { useTheme } from "@mui/styles";
 
 const AssetListDirectory: React.FC<{
   prefix: string;
@@ -62,13 +66,9 @@ const AssetListDirectory: React.FC<{
 };
 
 const AssetListFile: React.FC<{
-  fileInfo: {
-    Key: string;
-    LastModified: string;
-    Size: number;
-  };
+  filePath: string;
   onClick: (filePath: string) => void;
-}> = ({ fileInfo, onClick }) => {
+}> = ({ filePath, onClick }) => {
   const fileIconMap: {
     [key: string]: React.ReactElement;
   } = {
@@ -81,98 +81,114 @@ const AssetListFile: React.FC<{
   };
 
   return (
-    <ListItemButton onClick={() => onClick(fileInfo.Key)}>
+    <ListItemButton onClick={() => onClick(filePath)}>
       <ListItemAvatar>
         {fileIconMap[
-          fileInfo.Key.split("/").slice(-1)[0].split(".").slice(-1)[0]
+          filePath.split("/").slice(-1)[0].split(".").slice(-1)[0]
         ] || <FileCodeOutline fontSize="32" color="inherit" />}
       </ListItemAvatar>
-      <ListItemText primary={fileInfo.Key.split("/").slice(-1)[0]} />
+      <ListItemText primary={filePath.split("/").slice(-1)[0]} />
     </ListItemButton>
   );
 };
 
-const AssetListItems: React.FC<{
-  parentPath: string;
-  folders: IListBucketResult["CommonPrefixes"];
-  files: IListBucketResult["Contents"];
-  isRoot: boolean;
-  hasContinue: boolean;
-  // onFolderClick: (prefix: string) => void;
-  onFileClick: (filePath: string) => void;
-  onContinue: (entries: readonly IntersectionObserverEntry[]) => void;
-}> = ({
-  parentPath,
-  folders,
-  files,
-  isRoot,
-  hasContinue,
-  onFileClick,
-  onContinue,
-}) => {
-  const { t } = useTranslation();
-
-  const observerCallback = useCallback(
-    (entries: readonly IntersectionObserverEntry[]) => onContinue(entries),
-    [onContinue]
-  );
-  const listElementRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const currentObserver = new IntersectionObserver(observerCallback, {
-      threshold: 0.5,
-    });
-    const currentElement = listElementRef.current;
-    if (currentElement) currentObserver.observe(currentElement);
-
-    return () => {
-      if (currentElement) {
-        currentObserver.disconnect();
-      }
-    };
-  }, [observerCallback]);
-
+const AssetListMore: React.FC<{}> = () => {
   return (
-    <Fragment>
-      {!isRoot && (
-        <ListItemButton
-          component={RouterLink}
-          to={`/asset_viewer/${parentPath}`}
-        >
-          <ListItemAvatar>
-            <Avatar>
-              <ArrowUpLeftBold />
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText primary={t("asset_viewer:parentFolder")} />
-        </ListItemButton>
-      )}
-      {(folders || []).map((CommonPrefix) => (
-        <AssetListDirectory
-          prefix={CommonPrefix.Prefix}
-          key={CommonPrefix.Prefix}
-        />
-      ))}
-      {(files || []).map((Content) => (
-        <AssetListFile
-          fileInfo={Content}
-          onClick={onFileClick}
-          key={Content.Key}
-        />
-      ))}
-      {hasContinue && (
-        <ListItemButton ref={listElementRef}>
-          <ListItemText primary="Loading More..." />
-        </ListItemButton>
-      )}
-    </Fragment>
+    <ListItemButton>
+      <ListItemAvatar>
+        <Avatar>
+          <DotsHorizontal />
+        </Avatar>
+      </ListItemAvatar>
+      <ListItemText primary="Loading More..." />
+    </ListItemButton>
   );
 };
+
+// const AssetListItems: React.FC<{
+//   parentPath: string;
+//   folders: IListBucketResult["CommonPrefixes"];
+//   files: IListBucketResult["Contents"];
+//   isRoot: boolean;
+//   hasContinue: boolean;
+//   // onFolderClick: (prefix: string) => void;
+//   onFileClick: (filePath: string) => void;
+//   onContinue: (entries: readonly IntersectionObserverEntry[]) => void;
+// }> = ({
+//   parentPath,
+//   folders,
+//   files,
+//   isRoot,
+//   hasContinue,
+//   onFileClick,
+//   onContinue,
+// }) => {
+//   const { t } = useTranslation();
+
+//   const observerCallback = useCallback(
+//     (entries: readonly IntersectionObserverEntry[]) => onContinue(entries),
+//     [onContinue]
+//   );
+//   const listElementRef = useRef<HTMLDivElement>(null);
+
+//   useEffect(() => {
+//     const currentObserver = new IntersectionObserver(observerCallback, {
+//       threshold: 0.5,
+//     });
+//     const currentElement = listElementRef.current;
+//     if (currentElement) currentObserver.observe(currentElement);
+
+//     return () => {
+//       if (currentElement) {
+//         currentObserver.disconnect();
+//       }
+//     };
+//   }, [observerCallback]);
+
+//   return (
+//     <Fragment>
+//       {!isRoot && (
+//         <ListItemButton
+//           component={RouterLink}
+//           to={`/asset_viewer/${parentPath}`}
+//         >
+//           <ListItemAvatar>
+//             <Avatar>
+//               <ArrowUpLeftBold />
+//             </Avatar>
+//           </ListItemAvatar>
+//           <ListItemText primary={t("asset_viewer:parentFolder")} />
+//         </ListItemButton>
+//       )}
+//       {(folders || []).map((CommonPrefix) => (
+//         <AssetListDirectory
+//           prefix={CommonPrefix.Prefix}
+//           key={CommonPrefix.Prefix}
+//         />
+//       ))}
+//       {(files || []).map((Content) => (
+//         <AssetListFile
+//           fileInfo={Content}
+//           onClick={onFileClick}
+//           key={Content.Key}
+//         />
+//       ))}
+//       {hasContinue && (
+//         <ListItemButton ref={listElementRef}>
+//           <ListItemText primary="Loading More..." />
+//         </ListItemButton>
+//       )}
+//     </Fragment>
+//   );
+// };
 
 const AssetPreview: React.FC<{ filePath: string } & DialogProps> = ({
   filePath,
   ...props
 }) => {
+  const {
+    palette: { mode },
+  } = useTheme();
   const url = useMemo(
     () => `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets/${filePath}`,
     [filePath]
@@ -212,7 +228,11 @@ const AssetPreview: React.FC<{ filePath: string } & DialogProps> = ({
           data === null ? (
             <CircularProgress size={32} />
           ) : (
-            <JsonView data={data} shouldInitiallyExpand={() => false} />
+            <JsonView
+              data={data}
+              shouldInitiallyExpand={() => false}
+              style={mode === "dark" ? darkStyles : defaultStyles}
+            />
           )
         ) : filePath.endsWith("mp4") ? (
           <video src={url} controls style={{ width: "100%" }} />
@@ -248,12 +268,15 @@ const Breadcrumb: React.FC<{ paths: string[] } & BreadcrumbsProps> = ({
         .filter((path) => path !== "")
         .map((path, idx, arr) =>
           idx === arr.length - 1 ? (
-            <Typography color="text.primary">{path}</Typography>
+            <Typography color="text.primary" key={path}>
+              {path}
+            </Typography>
           ) : (
             <RouterLink
               className={interactiveClasses.noDecoration}
               color="inherit"
               to={`/asset_viewer/${arr.slice(0, idx + 1).join("/")}`}
+              key={path}
             >
               {path}
             </RouterLink>
@@ -281,16 +304,30 @@ const AssetViewer = () => {
   const [folderPath, setFolderPath] = useState<string[]>(
     pathname.split("/").slice(2)
   );
-  const [commonPrefixes, setCommonPrefixes] = useState<
-    IListBucketResult["CommonPrefixes"]
-  >([]);
-  const [contents, setContents] = useState<IListBucketResult["Contents"]>([]);
+  const [listElements, setListElements] = useState<IAssetListElement[]>([]);
   const [continuationToken, setContinuationToken] = useState<
     string | undefined
   >(undefined);
   const [isFetching, setIsFetching] = useState(false);
+  const [initialFetching, setInitialFetching] = useState(false);
   const [dialogOpen, toggleDialogOpen] = useToggle(false);
   const [previewFilePath, setPreviewFilePath] = useState("");
+  const [resultCache, setResultCache] = useState<{
+    [key: string]: IListBucketResult;
+  }>({});
+
+  const itemCount = useMemo(
+    () =>
+      !!continuationToken ? listElements.length + 1 : listElements.length || 1,
+    [continuationToken, listElements.length]
+  );
+
+  const isItemLoaded = useCallback(
+    (index: number) =>
+      (!continuationToken && !!listElements.length) ||
+      index < listElements.length,
+    [continuationToken, listElements.length]
+  );
 
   useEffect(() => {
     document.title = t("title:assetViewer");
@@ -298,6 +335,10 @@ const AssetViewer = () => {
 
   const fetchStructure = useCallback(
     async (path: string, token?: string): Promise<IListBucketResult> => {
+      console.log(path + token, resultCache[path + token]);
+      if (resultCache[path + token]) {
+        return resultCache[path + token];
+      }
       const baseURL = import.meta.env.VITE_ASSET_DOMAIN_MINIO;
       const result = (
         await axios.get<string>(`/sekai-assets/`, {
@@ -306,34 +347,88 @@ const AssetViewer = () => {
             "list-type": "2",
             delimiter: "/",
             prefix: path,
-            "max-keys": "100",
+            "max-keys": "500",
             "continuation-token": token,
           },
           responseType: "text",
         })
       ).data;
 
-      return parser.parse(result).ListBucketResult;
+      const parsed = parser.parse(result).ListBucketResult;
+      setResultCache((cache) =>
+        Object.assign({}, cache, {
+          [path + token]: parsed,
+        })
+      );
+      return parsed;
     },
-    [parser]
+    [parser, resultCache]
   );
 
+  const loadMoreItems = useCallback(async () => {
+    if (!isFetching) {
+      setIsFetching(true);
+      let url = folderPath.join("/");
+      if (!url.endsWith("/")) url += "/";
+      const data: IListBucketResult = await fetchStructure(
+        url,
+        continuationToken
+      );
+
+      let tmpArr: IAssetListElement[] = [];
+      if (data.CommonPrefixes) {
+        tmpArr = [
+          ...tmpArr,
+          ...data.CommonPrefixes.map((cps) => ({
+            path: cps.Prefix,
+            type: "folder" as "folder",
+          })),
+        ];
+      }
+      if (data.Contents) {
+        tmpArr = [
+          ...tmpArr,
+          ...data.Contents.map((cts) => ({
+            path: cts.Key,
+            type: "file" as "file",
+          })),
+        ];
+      }
+      if (data.NextContinuationToken)
+        setContinuationToken(data.NextContinuationToken);
+      else setContinuationToken(undefined);
+
+      setListElements((listElements) => [...listElements, ...tmpArr]);
+
+      setIsFetching(false);
+    }
+  }, [continuationToken, fetchStructure, folderPath, isFetching]);
+
   useEffect(() => {
-    setIsFetching(true);
     const path = pathname.split("/").slice(2);
     setFolderPath(path);
-    let url = path.join("/");
-    if (!url.endsWith("/")) url += "/";
-    fetchStructure(url).then((data) => {
-      // console.log(data);
-      setCommonPrefixes(data.CommonPrefixes);
-      setContents(data.Contents);
-      if (data.NextContinuationToken) {
-        setContinuationToken(data.NextContinuationToken);
+    setListElements([]);
+    setInitialFetching(true);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (initialFetching) {
+      setInitialFetching(false);
+      loadMoreItems();
+    }
+  }, [initialFetching, loadMoreItems]);
+
+  const onItemsRendered = useCallback(
+    (props: ListOnItemsRenderedProps) => {
+      if (
+        props.overscanStopIndex !== props.overscanStartIndex &&
+        props.overscanStopIndex >= listElements.length
+      ) {
+        loadMoreItems();
       }
-      setIsFetching(false);
-    });
-  }, [fetchStructure, pathname]);
+    },
+    [listElements.length, loadMoreItems]
+  );
 
   return (
     <Fragment>
@@ -356,52 +451,39 @@ const AssetViewer = () => {
         <Backdrop className={layoutClasses.componentBackdrop} open={isFetching}>
           <CircularProgress color="inherit" />
         </Backdrop>
-        <List
-          sx={{
-            width: "100%",
-            maxHeight: "calc(100vh - 248px)",
-            overflowY: "auto",
-          }}
-          component="nav"
-        >
-          {!isFetching && (
-            <AssetListItems
-              parentPath={
-                !folderPath.length
-                  ? "/"
-                  : folderPath.slice(-1)[0] === ""
-                  ? folderPath.slice(0, -2).join("/")
-                  : folderPath.slice(0, -1).join("/")
-              }
-              folders={commonPrefixes}
-              files={contents}
-              isRoot={!folderPath.length || folderPath[0] === ""}
-              // onFolderClick={(prefix) => setFolderPath(prefix.split("/"))}
-              onFileClick={(filePath) => {
-                setPreviewFilePath(filePath);
-                toggleDialogOpen();
-              }}
-              hasContinue={!!continuationToken}
-              onContinue={async (entries) => {
-                if (entries.find((entry) => entry.isIntersecting)) {
-                  // setContinuationToken(undefined);
-                  let url = folderPath.join("/");
-                  if (!url.endsWith("/")) url += "/";
-                  const data = await fetchStructure(url, continuationToken);
-                  setCommonPrefixes((cps) => [
-                    ...(cps || []),
-                    ...(data.CommonPrefixes || []),
-                  ]);
-                  setContents((cts) => [
-                    ...(cts || []),
-                    ...(data.Contents || []),
-                  ]);
-                  setContinuationToken(data.NextContinuationToken);
-                }
-              }}
-            />
+        <AutoSizer>
+          {({ height, width }) => (
+            <FixedSizeList
+              itemCount={itemCount}
+              itemSize={56}
+              width={width}
+              height={height}
+              onItemsRendered={onItemsRendered}
+            >
+              {({ index, style }) => (
+                <div style={style}>
+                  {isItemLoaded(index) ? (
+                    listElements[index].type === "folder" ? (
+                      <AssetListDirectory prefix={listElements[index].path} />
+                    ) : listElements[index].type === "file" ? (
+                      <AssetListFile
+                        filePath={listElements[index].path}
+                        onClick={(filePath) => {
+                          setPreviewFilePath(filePath);
+                          toggleDialogOpen();
+                        }}
+                      />
+                    ) : (
+                      "Unknown Element Type!"
+                    )
+                  ) : (
+                    <AssetListMore />
+                  )}
+                </div>
+              )}
+            </FixedSizeList>
           )}
-        </List>
+        </AutoSizer>
       </Paper>
       <AssetPreview
         filePath={previewFilePath}

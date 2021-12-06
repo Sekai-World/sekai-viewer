@@ -1288,3 +1288,8 @@ export interface IListBucketResult {
     Size: number;
   }[];
 }
+
+export interface IAssetListElement {
+  path: string;
+  type: "folder" | "file" | "parent";
+}
