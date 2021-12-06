@@ -238,40 +238,34 @@ const CardDetail: React.FC<{}> = () => {
       episodes.length
     ) {
       const _card = cards.find((elem) => elem.id === Number(cardId))!;
-      setCard(
-        Object.assign({}, _card, {
-          maxTrainedLevel: rarities.find((elem) => elem.rarity === _card.rarity)
-            ?.trainingMaxLevel,
-          maxNormalLevel: rarities.find((elem) => elem.rarity === _card.rarity)
-            ?.maxLevel!,
-        })
+      const _rarityInfo = rarities.find(
+        (rarity) => rarity.cardRarityType === _card.cardRarityType
       );
-      setCardTitle(
-        `${getTranslated(
-          `card_prefix:${_card.id}`,
-          _card.prefix
-        )} - ${getCharaName(_card.characterId)}`
-      );
-      setCardLevel(
-        _card.rarity >= 3
-          ? rarities.find((elem) => elem.rarity === _card.rarity)
-              ?.trainingMaxLevel!
-          : rarities.find((elem) => elem.rarity === _card.rarity)?.maxLevel!
-      );
-      const _skill = skills.find((elem) => elem.id === _card.skillId)!;
-      setSkill(_skill);
-      setSkillLevel(
-        _skill.skillEffects[0].skillEffectDetails[
-          _skill.skillEffects[0].skillEffectDetails.length - 1
-        ].level
-      );
-      setCardEpisode(episodes.filter((epi) => epi.cardId === Number(cardId)));
-      if (_card.gachaPhrase !== "-")
-        getRemoteAssetURL(
-          `sound/gacha/get_voice/${_card.assetbundleName}_rip/${_card.assetbundleName}.mp3`,
-          setGachaPhraseUrl,
-          window.isChinaMainland ? "cn" : "minio"
+      if (_rarityInfo) {
+        setCard(
+          Object.assign({}, _card, {
+            maxTrainedLevel: _rarityInfo.trainingMaxLevel,
+            maxNormalLevel: _rarityInfo.maxLevel,
+          })
         );
+        setCardLevel(_rarityInfo.trainingMaxLevel || _rarityInfo.maxLevel);
+        setSkillLevel(_rarityInfo.maxSkillLevel);
+        setCardTitle(
+          `${getTranslated(
+            `card_prefix:${_card.id}`,
+            _card.prefix
+          )} - ${getCharaName(_card.characterId)}`
+        );
+        const _skill = skills.find((elem) => elem.id === _card.skillId)!;
+        setSkill(_skill);
+        setCardEpisode(episodes.filter((epi) => epi.cardId === Number(cardId)));
+        if (_card.gachaPhrase !== "-")
+          getRemoteAssetURL(
+            `sound/gacha/get_voice/${_card.assetbundleName}_rip/${_card.assetbundleName}.mp3`,
+            setGachaPhraseUrl,
+            window.isChinaMainland ? "cn" : "minio"
+          );
+      }
     }
   }, [
     setCard,
@@ -906,12 +900,12 @@ const CardDetail: React.FC<{}> = () => {
                     step={1}
                     min={1}
                     max={
-                      card.rarity >= 3
+                      card.rarity >= 3 && !isBirthdayCard
                         ? card.maxTrainedLevel
                         : card.maxNormalLevel
                     }
                     marks={
-                      card.rarity >= 3
+                      card.rarity >= 3 && !isBirthdayCard
                         ? [
                             {
                               value: card.maxNormalLevel,
@@ -1192,6 +1186,7 @@ const CardDetail: React.FC<{}> = () => {
                       resourceBoxId={id}
                       resourceBoxPurpose="episode_reward"
                       justifyContent="flex-end"
+                      key={id}
                     />
                   ))}
                 </Grid>
@@ -1300,6 +1295,7 @@ const CardDetail: React.FC<{}> = () => {
                       resourceBoxId={id}
                       resourceBoxPurpose="episode_reward"
                       justifyContent="flex-end"
+                      key={id}
                     />
                   ))}
                 </Grid>

@@ -178,6 +178,7 @@ export interface ICardRarity {
   maxLevel: number;
   maxSkillLevel: number;
   trainingMaxLevel?: number;
+  cardRarityType: string;
 }
 
 export interface CharacterRankAchieveResource {
