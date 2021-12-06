@@ -12,7 +12,7 @@ import {
   Button,
   CardMedia,
   Checkbox,
-  CircularProgress,
+  // CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -141,8 +141,8 @@ const SekaiUserImportMember = () => {
   const { t } = useTranslation();
   const {
     jwtToken,
-    sekaiProfile,
-    updateSekaiProfile,
+    // sekaiProfile,
+    // updateSekaiProfile,
     sekaiCardTeam,
     updateSekaiCardTeam,
   } = useContext(UserContext)!;
