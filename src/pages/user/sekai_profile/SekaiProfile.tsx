@@ -1,4 +1,4 @@
-import { Container, Typography } from "@mui/material";
+import { Container, Grid, Typography } from "@mui/material";
 import React, { Fragment, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { UserContext } from "../../../context";
@@ -27,19 +27,28 @@ const SekaiProfile = () => {
         {t("user:profile.title.sekai_profile")}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="md">
-        <SekaiID />
-        {/* <br /> */}
-        {!!sekaiProfile &&
-          !sekaiProfile.sekaiUserToken &&
-          !!sekaiProfile.sekaiUserProfile && (
-            <Fragment>
-              <SekaiUserDeck
-                userDecks={sekaiProfile.sekaiUserProfile.userDecks}
-                userCards={sekaiProfile.sekaiUserProfile.userCards}
-              />
-              <SekaiUserStatistics />
-            </Fragment>
-          )}
+        <Grid container spacing={1}>
+          <Grid item xs={12}>
+            <SekaiID />
+          </Grid>
+          <Grid item xs={12}>
+            {!!sekaiProfile &&
+              !sekaiProfile.sekaiUserToken &&
+              !!sekaiProfile.sekaiUserProfile && (
+                <Grid container direction="row" spacing={1}>
+                  <Grid item xs={12}>
+                    <SekaiUserDeck
+                      userDecks={sekaiProfile.sekaiUserProfile.userDecks}
+                      userCards={sekaiProfile.sekaiUserProfile.userCards}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <SekaiUserStatistics />
+                  </Grid>
+                </Grid>
+              )}
+          </Grid>
+        </Grid>
       </Container>
       <Typography variant="h6" className={layoutClasses.header}>
         {t("user:profile.title.sekai_cards_teams")}

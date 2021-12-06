@@ -36,6 +36,7 @@ import { UserContext } from "../../../context";
 import DegreeImage from "../../../components/widgets/DegreeImage";
 import { useAlertSnackbar, useToggle } from "../../../utils";
 import { LoadingButton } from "@mui/lab";
+import { ServerRegion } from "../../../types";
 // import useJwtAuth from "../../../utils/jwt";
 
 const useStyles = makeStyles((theme) => ({
@@ -248,6 +249,7 @@ const SekaiID: React.FC<{}> = () => {
   const [isTransferDiaglogOpen, toggleIsTransferDiaglogOpen] = useToggle(false);
 
   const [sekaiID, setSekaiID] = useState("");
+  const [serverRegion, setServerRegion] = useState<ServerRegion>("jp");
 
   useEffect(() => {
     getSekaiProfileMe()
@@ -324,7 +326,7 @@ const SekaiID: React.FC<{}> = () => {
   );
 
   return (
-    <Grid container direction="column" spacing={1}>
+    <Grid container spacing={1}>
       <Grid item xs={12}>
         <Grid container spacing={1} alignItems="center">
           {sekaiProfile ? (
@@ -500,7 +502,7 @@ const SekaiID: React.FC<{}> = () => {
         </Grid>
       </Grid>
       {sekaiProfile && !!sekaiProfile.sekaiUserToken && (
-        <Fragment>
+        <Grid item xs={12}>
           <br />
           <Grid container alignItems="center" spacing={1}>
             <Grid item>
@@ -524,82 +526,90 @@ const SekaiID: React.FC<{}> = () => {
               </Grid>
             </Grid>
           </Grid>
-        </Fragment>
+        </Grid>
       )}
       {sekaiProfile &&
         !sekaiProfile.sekaiUserToken &&
         sekaiProfile.sekaiUserProfile && (
-          <Grid item container alignItems="center" spacing={1}>
-            <Grid item xs={12} sm={6} lg={4} xl={3}>
-              <Grid container alignItems="center" spacing={1}>
-                <Grid item>
-                  <Chip
-                    size="small"
-                    label={t("user:profile.label.sekai_user_name")}
-                  />
-                </Grid>
-                <Grid item>
-                  <Typography>
-                    {sekaiProfile.sekaiUserProfile.user.userGamedata.name}
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Grid>
-            <Grid item xs={12} sm={6} lg={4} xl={3}>
-              <Grid container alignItems="center" spacing={1}>
-                <Grid item>
-                  <Chip
-                    size="small"
-                    label={t("user:profile.label.sekai_user_rank")}
-                  />
-                </Grid>
-                <Grid item>
-                  <Typography>
-                    {sekaiProfile.sekaiUserProfile.user.userGamedata.rank}
-                  </Typography>
+          <Grid item xs={12}>
+            <Grid container alignItems="center" spacing={1}>
+              <Grid item xs={12} sm={6} lg={4} xl={3}>
+                <Grid container alignItems="center" spacing={1}>
+                  <Grid item>
+                    <Chip
+                      size="small"
+                      label={t("user:profile.label.sekai_user_name")}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Typography>
+                      {sekaiProfile.sekaiUserProfile.user.userGamedata.name}
+                    </Typography>
+                  </Grid>
                 </Grid>
               </Grid>
-            </Grid>
-            <Grid item xs={12}>
-              <Grid container alignItems="center" spacing={1}>
-                <Grid item>
-                  <Chip
-                    size="small"
-                    label={t("user:profile.label.sekai_user_word")}
-                  />
-                </Grid>
-                <Grid item>
-                  <Typography>
-                    {sekaiProfile.sekaiUserProfile.userProfile.word}
-                  </Typography>
+              <Grid item xs={12} sm={6} lg={4} xl={3}>
+                <Grid container alignItems="center" spacing={1}>
+                  <Grid item>
+                    <Chip
+                      size="small"
+                      label={t("user:profile.label.sekai_user_rank")}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Typography>
+                      {sekaiProfile.sekaiUserProfile.user.userGamedata.rank}
+                    </Typography>
+                  </Grid>
                 </Grid>
               </Grid>
-            </Grid>
-            <Grid item xs={12}>
-              <Grid container spacing={1}>
-                <Grid item xs={12} md={4}>
-                  <DegreeImage
-                    honorId={sekaiProfile.sekaiUserProfile.userProfile.honorId1}
-                    honorLevel={
-                      sekaiProfile.sekaiUserProfile.userProfile.honorLevel1
-                    }
-                  />
+              <Grid item xs={12}>
+                <Grid container alignItems="center" spacing={1}>
+                  <Grid item>
+                    <Chip
+                      size="small"
+                      label={t("user:profile.label.sekai_user_word")}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Typography>
+                      {sekaiProfile.sekaiUserProfile.userProfile.word}
+                    </Typography>
+                  </Grid>
                 </Grid>
-                <Grid item xs={12} md={4}>
-                  <DegreeImage
-                    honorId={sekaiProfile.sekaiUserProfile.userProfile.honorId2}
-                    honorLevel={
-                      sekaiProfile.sekaiUserProfile.userProfile.honorLevel2
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <DegreeImage
-                    honorId={sekaiProfile.sekaiUserProfile.userProfile.honorId3}
-                    honorLevel={
-                      sekaiProfile.sekaiUserProfile.userProfile.honorLevel3
-                    }
-                  />
+              </Grid>
+              <Grid item xs={12}>
+                <Grid container spacing={1}>
+                  <Grid item xs={12} md={4}>
+                    <DegreeImage
+                      honorId={
+                        sekaiProfile.sekaiUserProfile.userProfile.honorId1
+                      }
+                      honorLevel={
+                        sekaiProfile.sekaiUserProfile.userProfile.honorLevel1
+                      }
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <DegreeImage
+                      honorId={
+                        sekaiProfile.sekaiUserProfile.userProfile.honorId2
+                      }
+                      honorLevel={
+                        sekaiProfile.sekaiUserProfile.userProfile.honorLevel2
+                      }
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <DegreeImage
+                      honorId={
+                        sekaiProfile.sekaiUserProfile.userProfile.honorId3
+                      }
+                      honorLevel={
+                        sekaiProfile.sekaiUserProfile.userProfile.honorLevel3
+                      }
+                    />
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
