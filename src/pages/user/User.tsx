@@ -1,6 +1,7 @@
 import React, { Fragment, lazy } from "react";
 import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
-import useJwtAuth from "../../utils/jwt";
+import { useRootStore } from "../../stores/root";
+// import useJwtAuth from "../../utils/jwt";
 // import { UserProvider } from "../../context";
 
 const Login = lazy(() => import("./Login"));
@@ -12,28 +13,33 @@ const Confirmation = lazy(() => import("./EmailConfirm"));
 
 const User: React.FC<{}> = () => {
   // const interactiveClasses = useInteractiveStyles();
-  const { user, isExpired, token } = useJwtAuth();
+  // const { user, isExpired, token } = useJwtAuth();
+  const {
+    jwtToken,
+    decodedToken,
+    user: { userinfo },
+  } = useRootStore();
   let { path } = useRouteMatch();
 
   return (
     <Fragment>
       <Switch>
         <Route exact path={path}>
-          {isExpired || !token || !user ? (
+          {!decodedToken || !jwtToken || !userinfo ? (
             <Redirect to={`${path}/login`}></Redirect>
           ) : (
-            user && <UserHome />
+            !!userinfo && <UserHome />
           )}
         </Route>
         <Route path={`${path}/login`}>
-          {!isExpired && user && token ? (
+          {!!decodedToken && !!userinfo && !!jwtToken ? (
             <Redirect to="/user"></Redirect>
           ) : (
             <Login />
           )}
         </Route>
         <Route path={`${path}/signup`}>
-          {!isExpired && user && token ? (
+          {!!decodedToken && !!userinfo && !!jwtToken ? (
             <Redirect to="/user"></Redirect>
           ) : (
             <Signup />
