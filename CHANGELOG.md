@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0](https://github.com/Sekai-World/sekai-viewer/compare/v0.9.6...v1.0.0) (2021-12-07)
+
+
+### Features
+
+* :sparkles: add asset viewer ([ca982c5](https://github.com/Sekai-World/sekai-viewer/commits/ca982c50a5a5b1dbb1e76ae6558b2899cd914d53))
+* :sparkles: transition to mobx ([7c78db7](https://github.com/Sekai-World/sekai-viewer/commits/7c78db7d369e3893ff5b8fc13fc3ec67a5602dbd))
+* **tools:** :sparkles: asset viewer with virtual scrolling ([b1b6800](https://github.com/Sekai-World/sekai-viewer/commits/b1b68009bb9e8bf001b16a9b8c8d00f51a358b38))
+
+
+### Bug Fixes
+
+* :rotating_light: resourceBox no unique key warning ([f63faf8](https://github.com/Sekai-World/sekai-viewer/commits/f63faf842b55a6b2b3faa500fdbecbc8a2c6815e))
+* **card:** :bug: wrong birthday card maximum level ([ccba4fc](https://github.com/Sekai-World/sekai-viewer/commits/ccba4fc904ca32f68b05eea6effdf85f40455e01)), closes [#351](https://github.com/Sekai-World/sekai-viewer/issues/351)
+* **user:** :bug: user login and logout redirection ([dd4993d](https://github.com/Sekai-World/sekai-viewer/commits/dd4993df9c23f580ab6369a05fd49c1d9a6200a2))
+* **user:** :lipstick: sekai profile page layout ([7290d77](https://github.com/Sekai-World/sekai-viewer/commits/7290d778dc9a8373babee6096f555facffe7b556))
+
 ### [0.9.6](https://github.com/Sekai-World/sekai-viewer/compare/v0.9.5...v0.9.6) (2021-11-24)
 
 
