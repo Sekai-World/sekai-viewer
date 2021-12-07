@@ -5,19 +5,26 @@ import {
   Typography,
   AccordionDetails,
 } from "@mui/material";
-import React, { Fragment, useContext, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { UserContext } from "../../../context";
+import { useRootStore } from "../../../stores/root";
+import { ISekaiCardTeam, ISekaiProfile } from "../../../stores/sekai";
 import { useLayoutStyles } from "../../../styles/layout";
 import { useStrapi } from "../../../utils/apiClient";
-import SekaiUserCardList from "./SekaiUserCardList";
-import SekaiUserImportMember from "./SekaiUserImportMember";
-import SekaiUserTeams from "./SekaiUserTeams";
+import { observer } from "mobx-react-lite";
+const SekaiUserCardList = React.lazy(() => import("./SekaiUserCardList"));
+const SekaiUserImportMember = React.lazy(
+  () => import("./SekaiUserImportMember")
+);
+const SekaiUserTeams = React.lazy(() => import("./SekaiUserTeams"));
 
-const SekaiCardTeam: React.FC<{}> = () => {
+const SekaiCardTeam: React.FC<{}> = observer(() => {
   const layoutClasses = useLayoutStyles();
-  const { sekaiProfile, sekaiCardTeam, jwtToken, updateSekaiCardTeam } =
-    useContext(UserContext)!;
+  const {
+    sekai: { getSekaiProfile, getSekaiCardTeam, setSekaiCardTeam },
+    jwtToken,
+    region,
+  } = useRootStore();
   const { t } = useTranslation();
 
   const { getSekaiCardTeamMe, postSekaiCardTeamMe } = useStrapi(jwtToken);
@@ -27,6 +34,13 @@ const SekaiCardTeam: React.FC<{}> = () => {
   const [isUserTeamsOpen, setIsUserTeamsOpen] = useState(false);
   const [isSyncingCardTeam, setIsSyncingCardTeam] = useState(false);
   const [isUpdatedCardTeam, setIsUpdatedCardTeam] = useState(false);
+  const [sekaiProfile, setLocalSekaiProfile] = useState<ISekaiProfile>();
+  const [sekaiCardTeam, setLocalSekaiCardTeam] = useState<ISekaiCardTeam>();
+
+  useEffect(() => {
+    setLocalSekaiProfile(getSekaiProfile(region));
+    setLocalSekaiCardTeam(getSekaiCardTeam(region));
+  }, [getSekaiCardTeam, getSekaiProfile, region, setSekaiCardTeam]);
 
   useEffect(() => {
     let isCancelled = false;
@@ -34,7 +48,7 @@ const SekaiCardTeam: React.FC<{}> = () => {
       if (!isCancelled) {
         try {
           const entry = await getSekaiCardTeamMe();
-          updateSekaiCardTeam(entry);
+          setSekaiCardTeam(entry as ISekaiCardTeam, region);
           setIsUpdatedCardTeam(true);
         } catch (error) {
           if (!isCancelled && !sekaiCardTeam && sekaiProfile) {
@@ -43,7 +57,7 @@ const SekaiCardTeam: React.FC<{}> = () => {
               sekaiProfile.cardList || [],
               sekaiProfile.deckList || []
             );
-            updateSekaiCardTeam(entry);
+            setSekaiCardTeam(entry, region);
             setIsUpdatedCardTeam(true);
             setIsSyncingCardTeam(false);
           } else if (!isCancelled && !sekaiCardTeam) {
@@ -68,9 +82,10 @@ const SekaiCardTeam: React.FC<{}> = () => {
     isSyncingCardTeam,
     isUpdatedCardTeam,
     postSekaiCardTeamMe,
+    region,
     sekaiCardTeam,
     sekaiProfile,
-    updateSekaiCardTeam,
+    setSekaiCardTeam,
   ]);
 
   return isSyncingCardTeam ? (
@@ -118,6 +133,6 @@ const SekaiCardTeam: React.FC<{}> = () => {
       </Accordion>
     </Fragment>
   ) : null;
-};
+});
 
 export default SekaiCardTeam;

@@ -19,12 +19,14 @@ import {
   IMasterOfCermonyData,
   VirtualLiveSetlist,
 } from "../../types.d";
-import { getRemoteAssetURL, useCachedData, useServerRegion } from "../../utils";
+import { getRemoteAssetURL, useCachedData } from "../../utils";
 import { charaIcons } from "../../utils/resources";
 import { useTranslation } from "react-i18next";
 import { AudioPlayButton } from "../storyreader/StoryReaderSnippet";
 import { useLayoutStyles } from "../../styles/layout";
 import { useCharaName } from "../../utils/i18n";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../../stores/root";
 
 type MCSerialData =
   | {
@@ -229,9 +231,9 @@ const MCCharacterTalk: React.FC<{ data: CharacterTalkEvent; mcId: string }> = ({
 
 const VirtualLiveStepMC: React.FC<{
   data: VirtualLiveSetlist;
-}> = ({ data }) => {
+}> = observer(({ data }) => {
   const layoutClasses = useLayoutStyles();
-  const [region] = useServerRegion();
+  const { region } = useRootStore();
 
   const [assetBundleURL, setAssetBundleURL] = useState("");
   const [mcSerialData, setMcSerialData] = useState<MCSerialData[]>([]);
@@ -295,6 +297,6 @@ const VirtualLiveStepMC: React.FC<{
       ))}
     </Grid>
   );
-};
+});
 
 export default VirtualLiveStepMC;

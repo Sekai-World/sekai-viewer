@@ -13,13 +13,7 @@ import { useLayoutStyles } from "../../styles/layout";
 import { TabContext, TabPanel } from "@mui/lab";
 // import { CronJob } from "cron";
 // import moment from "moment";
-import React, {
-  Fragment,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import Viewer from "react-viewer";
@@ -34,11 +28,10 @@ import {
   IGameCharaUnit,
   IVirtualLiveInfo,
 } from "../../types.d";
-import { getRemoteAssetURL, useCachedData, useServerRegion } from "../../utils";
+import { getRemoteAssetURL, useCachedData } from "../../utils";
 import { attrIconMap, charaIcons } from "../../utils/resources";
 import { useAssetI18n } from "../../utils/i18n";
 import { useDurationI18n } from "../../utils/i18nDuration";
-import { SettingContext } from "../../context";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
 import { CardThumb } from "../../components/widgets/CardThumb";
 // import DegreeImage from "../../components/widgets/DegreeImage";
@@ -53,6 +46,8 @@ import { useStrapi } from "../../utils/apiClient";
 import CommentTextMultiple from "~icons/mdi/comment-text-multiple";
 import Comment from "../comment/Comment";
 import CheerfulCarnivalTeamIcon from "../../components/widgets/CheerfulCarnivalTeamIcon";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../../stores/root";
 
 const useStyle = makeStyles((theme) => ({
   // bannerImg: {
@@ -70,17 +65,19 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-const EventDetail: React.FC<{}> = () => {
+const EventDetail: React.FC<{}> = observer(() => {
   const { t } = useTranslation();
   const { eventId } = useParams<{ eventId: string }>();
   const classes = useStyle();
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { getTranslated } = useAssetI18n();
-  const { contentTransMode } = useContext(SettingContext)!;
+  const {
+    settings: { contentTransMode },
+    region,
+  } = useRootStore();
   const [humanizeDuration] = useDurationI18n();
   const { getEvent } = useStrapi();
-  const [region] = useServerRegion();
 
   const [events] = useCachedData<IEventInfo>("events");
   const [eventDeckBonuses] = useCachedData<IEventDeckBonus>("eventDeckBonuses");
@@ -1034,6 +1031,6 @@ const EventDetail: React.FC<{}> = () => {
       Loading... If you saw this for a while, event {eventId} does not exist.
     </div>
   );
-};
+});
 
 export default EventDetail;

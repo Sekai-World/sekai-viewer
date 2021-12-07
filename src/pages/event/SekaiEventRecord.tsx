@@ -7,37 +7,49 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { Update } from "@mui/icons-material";
-import React, { Fragment, useContext, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 // import { Link } from "react-router-dom";
-import { UserContext } from "../../context";
 import { SekaiProfileEventRecordModel } from "../../strapi-model";
 import { useAlertSnackbar } from "../../utils";
 // import { useInteractiveStyles } from "../../styles/interactive";
 // import { useLayoutStyles } from "../../styles/layout";
 import { useCurrentEvent, useStrapi } from "../../utils/apiClient";
+import { useRootStore } from "../../stores/root";
+import { ISekaiProfile } from "../../stores/sekai";
 // import { ContentTrans } from "../../components/helpers/ContentTrans";
+import { observer } from "mobx-react-lite";
 
 interface Props {
   eventId: number;
 }
 
-const SekaiEventRecord = (props: Props) => {
+const SekaiEventRecord = observer((props: Props) => {
   // const layoutClasses = useLayoutStyles();
   // const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
   const { showError } = useAlertSnackbar();
 
-  const { jwtToken, sekaiProfile, updateSekaiProfile } =
-    useContext(UserContext)!;
+  const {
+    jwtToken,
+    sekai: { getSekaiProfile, setSekaiProfile },
+    region,
+  } = useRootStore();
   const { getSekaiProfileEventRecordMe, postSekaiProfileEventRecord } =
-    useStrapi(jwtToken);
+    useStrapi(jwtToken, region);
 
   const [eventRecords, setEventRecords] = useState<
     SekaiProfileEventRecordModel[]
   >([]);
   const [isEventRecording, setIsEventRecording] = useState(false);
+  const [sekaiProfile, setLocalSekaiProfile] = useState<
+    ISekaiProfile | undefined
+  >(undefined);
+
+  useEffect(() => {
+    setLocalSekaiProfile(getSekaiProfile(region));
+  }, [getSekaiProfile, region, setSekaiProfile]);
 
   useEffect(() => {
     (async () => {
@@ -59,13 +71,14 @@ const SekaiEventRecord = (props: Props) => {
         </Grid>
         {!isCurrEventLoading &&
           !!currEvent &&
-          currEvent.eventId === props.eventId && (
+          currEvent.eventId === props.eventId &&
+          sekaiProfile && (
             <Grid item>
               <Tooltip
                 title={
                   t("user:profile.label.update_left", {
-                    allowed: sekaiProfile!.eventGetAvailable,
-                    used: sekaiProfile!.eventGetUsed,
+                    allowed: sekaiProfile.eventGetAvailable,
+                    used: sekaiProfile.eventGetUsed,
                   }) as string
                 }
                 disableFocusListener
@@ -79,9 +92,12 @@ const SekaiEventRecord = (props: Props) => {
                       postSekaiProfileEventRecord(props.eventId)
                         .then(async (data) => {
                           setEventRecords(await getSekaiProfileEventRecordMe());
-                          updateSekaiProfile({
-                            eventGetUsed: sekaiProfile!.eventGetUsed + 1,
-                          });
+                          setSekaiProfile(
+                            Object.assign({}, sekaiProfile, {
+                              eventGetUsed: sekaiProfile.eventGetUsed + 1,
+                            }),
+                            region
+                          );
                           setIsEventRecording(false);
                         })
                         .catch((err) => {
@@ -91,8 +107,8 @@ const SekaiEventRecord = (props: Props) => {
                     }}
                     disabled={
                       isEventRecording ||
-                      sekaiProfile!.eventGetAvailable <=
-                        sekaiProfile!.eventGetUsed
+                      sekaiProfile.eventGetAvailable <=
+                        sekaiProfile.eventGetUsed
                     }
                   >
                     {isEventRecording ? (
@@ -130,6 +146,6 @@ const SekaiEventRecord = (props: Props) => {
       </Grid>
     </Grid>
   );
-};
+});
 
 export default SekaiEventRecord;

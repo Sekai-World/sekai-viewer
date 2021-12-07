@@ -13,16 +13,9 @@ import {
   GridCallbackDetails,
 } from "@mui/x-data-grid";
 import { OpenInNew } from "@mui/icons-material";
-import React, {
-  Fragment,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { SettingContext, UserContext } from "../../../context";
 import {
   AnnouncementModel,
   LanguageModel,
@@ -30,6 +23,8 @@ import {
 } from "../../../strapi-model";
 // import { useLayoutStyles } from "../../styles/layout";
 import { useStrapi } from "../../../utils/apiClient";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../../../stores/root";
 
 interface Props {
   languages: LanguageModel[];
@@ -39,12 +34,14 @@ interface Props {
   ) => void;
 }
 
-const TableMe: React.FC<Props> = (props: Props) => {
+const TableMe: React.FC<Props> = observer((props: Props) => {
   const { t } = useTranslation();
   // const layoutClasses = useLayoutStyles();
   // const interactiveClasses = useInteractiveStyles();
-  const { jwtToken } = useContext(UserContext)!;
-  const { languages } = useContext(SettingContext)!;
+  const {
+    jwtToken,
+    settings: { languages },
+  } = useRootStore();
   const { getAnnouncementCount, getAnnouncementPage } = useStrapi(jwtToken);
 
   const [translations, setTranslations] = useState<AnnouncementModel[]>([]);
@@ -164,6 +161,7 @@ const TableMe: React.FC<Props> = (props: Props) => {
           value={selectedLanguage}
           onChange={(e) => setSelectedLanguage(e.target.value as number)}
           style={{ minWidth: "150px" }}
+          label={t("filter:language.caption")}
         >
           <MenuItem value={0}>{t("filter:not_set")}</MenuItem>
           {languages.map((lang) => (
@@ -191,6 +189,6 @@ const TableMe: React.FC<Props> = (props: Props) => {
       </div>
     </Fragment>
   );
-};
+});
 
 export default TableMe;

@@ -1,12 +1,6 @@
 import { Typography, Container, Grid } from "@mui/material";
 import { useLayoutStyles } from "../../styles/layout";
-import React, {
-  Fragment,
-  useEffect,
-  useState,
-  useCallback,
-  useContext,
-} from "react";
+import React, { Fragment, useEffect, useState, useCallback } from "react";
 import { IEventInfo } from "../../types.d";
 import { useCachedData, useLocalStorage } from "../../utils";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
@@ -22,7 +16,8 @@ import {
 } from "@mui/icons-material";
 import { ToggleButtonGroup, ToggleButton } from "@mui/material";
 import Pound from "~icons/mdi/pound";
-import { SettingContext } from "../../context";
+import { useRootStore } from "../../stores/root";
+import { observer } from "mobx-react-lite";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -34,10 +29,12 @@ const ListCard: { [key: string]: React.FC<{ data?: IEventInfo }> } = {
   grid: GridView,
 };
 
-const EventList: React.FC<{}> = () => {
+const EventList: React.FC<{}> = observer(() => {
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
-  const { isShowSpoiler } = useContext(SettingContext)!;
+  const {
+    settings: { isShowSpoiler },
+  } = useRootStore();
 
   const [eventsCache] = useCachedData<IEventInfo>("events");
   const [events, setEvents] = useState<IEventInfo[]>([]);
@@ -198,6 +195,6 @@ const EventList: React.FC<{}> = () => {
       </Container>
     </Fragment>
   );
-};
+});
 
 export default EventList;

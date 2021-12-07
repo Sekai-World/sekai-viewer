@@ -7,9 +7,7 @@ import {
   CircularProgress,
   Divider,
   IconButton,
-  // useTheme,
   InputAdornment,
-  Tooltip,
   MenuItem,
   FormControl,
   InputLabel,
@@ -18,14 +16,16 @@ import makeStyles from "@mui/styles/makeStyles";
 import { Check, Clear, Create, Upload, Logout } from "@mui/icons-material";
 import { Field, Form, Formik } from "formik";
 import { Select, TextField } from "formik-mui";
-import React, { Fragment, useContext, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import { SettingContext, UserContext } from "../../../context";
 import { useInteractiveStyles } from "../../../styles/interactive";
 import { useLayoutStyles } from "../../../styles/layout";
 import { useAlertSnackbar } from "../../../utils";
 import { useStrapi } from "../../../utils/apiClient";
+import { useRootStore } from "../../../stores/root";
+import { IUserMetadata } from "../../../stores/user";
+import { observer } from "mobx-react-lite";
 const SekaiProfile = React.lazy(() => import("../sekai_profile/SekaiProfile"));
 
 const useStyles = makeStyles((theme) => ({
@@ -41,26 +41,28 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const UserHome: React.FC<{}> = () => {
-  // const theme = useTheme();
+const UserHome: React.FC<{}> = observer(() => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const history = useHistory();
-  const { user, jwtToken, logout, usermeta, updateUserMeta } =
-    useContext(UserContext)!;
-  const { languages } = useContext(SettingContext)!;
+  const {
+    user: { userinfo, metadata, setMetadata },
+    jwtToken,
+    logout,
+    settings: { languages },
+  } = useRootStore();
   const { postUpload, putUserMetadataMe, getUserMetadataMe } =
     useStrapi(jwtToken);
   const { showError } = useAlertSnackbar();
 
   const [avatarUrl, setAvatarUrl] = useState(
-    usermeta ? (usermeta.avatar || { url: "" }).url : ""
+    metadata ? (metadata.avatar || { url: "" }).url : ""
   );
-  const [nickname, setNickname] = useState(usermeta?.nickname || "");
+  const [nickname, setNickname] = useState(metadata?.nickname || "");
   const [preferLangs, setPreferLangs] = useState<number[]>(
-    usermeta?.languages.map((lang) => lang.id) || []
+    metadata?.languages.map((lang) => lang.id) || []
   );
 
   const [isUploading, setIsUploading] = useState(false);
@@ -99,7 +101,7 @@ const UserHome: React.FC<{}> = () => {
 
                     const form = new FormData();
                     form.append("files", file);
-                    form.append("refId", String(usermeta?.id));
+                    form.append("refId", String(metadata?.id));
                     form.append("ref", "user-metadata");
                     form.append("field", "avatar");
 
@@ -113,7 +115,7 @@ const UserHome: React.FC<{}> = () => {
                       })
                       .then((data) => {
                         // jwtAuth.user = data;
-                        updateUserMeta(data);
+                        setMetadata(data as IUserMetadata);
                         setAvatarUrl(data.avatar ? data.avatar.url : "");
                         setIsUploading(false);
                       })
@@ -169,7 +171,7 @@ const UserHome: React.FC<{}> = () => {
                   <Typography className={layoutClasses.bold}>
                     {t("user:profile.username")}
                   </Typography>
-                  <Typography>{user?.username}</Typography>
+                  <Typography>{userinfo?.username}</Typography>
                 </Grid>
               </Grid>
               <Grid item xs={12}>
@@ -203,7 +205,9 @@ const UserHome: React.FC<{}> = () => {
                           setNickname(values.nickname);
                           setIsEditingNickname(false);
                           // updateUser(await getUserMe());
-                          updateUserMeta(await getUserMetadataMe());
+                          setMetadata(
+                            (await getUserMetadataMe()) as IUserMetadata
+                          );
                         } catch (error) {
                           console.log(error);
                         }
@@ -262,9 +266,7 @@ const UserHome: React.FC<{}> = () => {
                   <Typography className={layoutClasses.bold}>
                     {t("user:profile.role")}
                   </Typography>
-                  <Tooltip title={user?.role.description || ""} arrow>
-                    <Typography>{user?.role.name}</Typography>
-                  </Tooltip>
+                  <Typography>{userinfo?.role}</Typography>
                 </Grid>
               </Grid>
               <Grid item xs={12}>
@@ -280,7 +282,7 @@ const UserHome: React.FC<{}> = () => {
                     {t("user:profile.email")}
                   </Typography>
                   {isShowEmail ? (
-                    <Typography>{user?.email}</Typography>
+                    <Typography>{userinfo?.email}</Typography>
                   ) : (
                     <Button
                       variant="contained"
@@ -301,11 +303,13 @@ const UserHome: React.FC<{}> = () => {
                   </Typography>
                   <Typography
                     sx={{
-                      color: user?.confirmed ? "success.main" : "error.main",
+                      color: userinfo?.confirmed
+                        ? "success.main"
+                        : "error.main",
                     }}
                   >
                     {t(
-                      `user:profile.email_confirmed_status.${user?.confirmed}`
+                      `user:profile.email_confirmed_status.${userinfo?.confirmed}`
                     )}
                   </Typography>
                 </Grid>
@@ -345,7 +349,9 @@ const UserHome: React.FC<{}> = () => {
                           });
                           setPreferLangs(values.preferLangs);
                           setIsEditingPreferLangs(false);
-                          updateUserMeta(await getUserMetadataMe());
+                          setMetadata(
+                            (await getUserMetadataMe()) as IUserMetadata
+                          );
                         } catch (error) {
                           console.log(error);
                         }
@@ -422,6 +428,6 @@ const UserHome: React.FC<{}> = () => {
       <SekaiProfile />
     </Fragment>
   );
-};
+});
 
 export default UserHome;

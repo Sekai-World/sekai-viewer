@@ -25,7 +25,6 @@ import { TabContext, TabPanel } from "@mui/lab";
 import React, {
   Fragment,
   useCallback,
-  useContext,
   useEffect,
   useLayoutEffect,
   useState,
@@ -40,16 +39,17 @@ import {
   IGachaCeilItem,
   IGachaInfo,
 } from "../../types.d";
-import { getRemoteAssetURL, useCachedData, useServerRegion } from "../../utils";
+import { getRemoteAssetURL, useCachedData } from "../../utils";
 import { CardThumb, CardThumbs } from "../../components/widgets/CardThumb";
 import rarityNormal from "../../assets/rarity_star_normal.png";
 import { useTranslation } from "react-i18next";
 import { useAssetI18n } from "../../utils/i18n";
-import { SettingContext } from "../../context";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
 import { useInteractiveStyles } from "../../styles/interactive";
 import CommonMaterialIcon from "../../components/widgets/CommonMaterialIcon";
 // import AdSense from "../../components/blocks/AdSense";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../../stores/root";
 
 const gachaImageNameMap: {
   [key: number]: {
@@ -109,15 +109,17 @@ const StarIcon: React.FC<{ num: number }> = ({ num }) => (
   </Fragment>
 );
 
-const GachaDetailPage: React.FC<{}> = () => {
+const GachaDetailPage: React.FC<{}> = observer(() => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { gachaId } = useParams<{ gachaId: string }>();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
-  const { contentTransMode } = useContext(SettingContext)!;
-  const [region] = useServerRegion();
+  const {
+    settings: { contentTransMode },
+    region,
+  } = useRootStore();
 
   const [gachas] = useCachedData<IGachaInfo>("gachas");
   const [gachaCeilItems] = useCachedData<IGachaCeilItem>("gachaCeilItems");
@@ -1052,6 +1054,6 @@ const GachaDetailPage: React.FC<{}> = () => {
       </div>
     );
   }
-};
+});
 
 export default GachaDetailPage;

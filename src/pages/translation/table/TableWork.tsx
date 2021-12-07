@@ -11,31 +11,34 @@ import { GridColDef, DataGrid } from "@mui/x-data-grid";
 import React, {
   Fragment,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { useRootStore } from "../../../stores/root";
 // import { useTranslation } from "react-i18next";
-import { SettingContext, UserContext } from "../../../context";
 import { LanguageModel, TranslationModel } from "../../../strapi-model";
 import { useInteractiveStyles } from "../../../styles/interactive";
 // import { useLayoutStyles } from "../../styles/layout";
 import { useStrapi } from "../../../utils/apiClient";
+import { observer } from "mobx-react-lite";
 
 interface Props {
   languages: LanguageModel[];
   // onSelected?: (param: RowSelectedParams) => void;
 }
 
-const TableMe: React.FC<Props> = (props: Props) => {
+const TableMe: React.FC<Props> = observer((props: Props) => {
   const { t } = useTranslation();
   // const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
-  const { jwtToken, usermeta } = useContext(UserContext)!;
-  const { languages } = useContext(SettingContext)!;
+  const {
+    jwtToken,
+    user: { metadata },
+    settings: { languages },
+  } = useRootStore();
   const { getTranslations, getTranslationCount, putTranslationId } =
     useStrapi(jwtToken);
 
@@ -56,7 +59,7 @@ const TableMe: React.FC<Props> = (props: Props) => {
       {
         targetLang_in: selectedTargetLanguage
           ? [selectedTargetLanguage]
-          : usermeta?.languages.map((lang) => lang.id),
+          : metadata?.languages.map((lang) => lang.id),
       },
       selectedSourceLanguage
         ? {
@@ -72,11 +75,11 @@ const TableMe: React.FC<Props> = (props: Props) => {
   }, [
     getTranslationCount,
     getTranslations,
+    metadata?.languages,
     page,
     pageSize,
     selectedSourceLanguage,
     selectedTargetLanguage,
-    usermeta?.languages,
   ]);
 
   useEffect(() => {
@@ -172,6 +175,7 @@ const TableMe: React.FC<Props> = (props: Props) => {
                 setSelectedSourceLanguage(e.target.value as number)
               }
               style={{ minWidth: "150px" }}
+              label={t("filter:language.source")}
             >
               <MenuItem value={0}>{t("filter:not_set")}</MenuItem>
               {languages.map((lang) => (
@@ -192,9 +196,10 @@ const TableMe: React.FC<Props> = (props: Props) => {
                 setSelectedTargetLanguage(e.target.value as number)
               }
               style={{ minWidth: "150px" }}
+              label={t("filter:language.target")}
             >
               <MenuItem value={0}>{t("filter:not_set")}</MenuItem>
-              {usermeta?.languages.map((lang) => (
+              {metadata?.languages.map((lang) => (
                 <MenuItem value={lang.id}>{lang.name}</MenuItem>
               ))}
             </Select>
@@ -281,6 +286,6 @@ const TableMe: React.FC<Props> = (props: Props) => {
       </Grid>
     </Fragment>
   );
-};
+});
 
 export default TableMe;

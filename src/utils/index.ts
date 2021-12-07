@@ -71,6 +71,9 @@ import useSWR from "swr";
 import { useSnackbar, VariantType } from "notistack";
 import { useTranslation } from "react-i18next";
 import { assetUrl, masterUrl } from "./urls";
+import { UserModel } from "../strapi-model";
+import { IUserInfo } from "../stores/user";
+import { useRootStore } from "../stores/root";
 
 const webpMachine = new WebpMachine();
 
@@ -132,7 +135,7 @@ export function useCachedData<
     | IActionSet
 >(name: string): [T[] | undefined, boolean, any] {
   // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
-  const [region] = useServerRegion();
+  const { region } = useRootStore();
 
   const fetchCached = useCallback(async (name: string) => {
     const [region, filename] = name.split("|");
@@ -151,7 +154,7 @@ export function useCachedData<
 }
 
 export function useVersionInfo(): [IVersionInfo | undefined, boolean, any] {
-  const [region] = useServerRegion();
+  const { region } = useRootStore();
 
   const fetchCached = useCallback(async (name: string) => {
     const [region, filename] = name.split("|");
@@ -322,7 +325,7 @@ export function useProcessedScenarioData() {
   const [chara2Ds] = useCachedData<ICharacter2D>("character2ds");
 
   const getCharaName = useCharaName();
-  const [region] = useServerRegion();
+  const { region } = useRootStore();
 
   return useCallback(
     async (
@@ -727,6 +730,15 @@ export function sortWithIndices(toSort: (string | number)[]) {
   return sortIndices;
 }
 
-export function useServerRegion() {
-  return useLocalStorage<ServerRegion>("server-region", "jp", false);
+export function apiUserInfoToStoreUserInfo(userInfo: UserModel): IUserInfo {
+  return {
+    id: userInfo.id,
+    username: userInfo.username,
+    email: userInfo.email,
+    provider: userInfo.provider,
+    confirmed: userInfo.confirmed,
+    blocked: userInfo.blocked || false,
+    role: userInfo.role.type,
+    avatarUrl: userInfo.avatarUrl,
+  };
 }

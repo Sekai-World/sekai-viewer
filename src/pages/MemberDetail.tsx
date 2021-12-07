@@ -23,7 +23,7 @@ import {
   ICardInfo,
   IUnitProfile,
 } from "../types.d";
-import { getRemoteAssetURL, useCachedData, useServerRegion } from "../utils";
+import { getRemoteAssetURL, useCachedData } from "../utils";
 import { UnitLogoMap } from "../utils/resources";
 import { CardThumb } from "../components/widgets/CardThumb";
 import ColorPreview from "../components/helpers/ColorPreview";
@@ -34,6 +34,8 @@ import {
 import { OpenInNew } from "@mui/icons-material";
 import { useCharaName } from "../utils/i18n";
 import { useInteractiveStyles } from "../styles/interactive";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../stores/root";
 
 const useStyle = makeStyles((theme) => ({
   tabpanel: {
@@ -63,14 +65,14 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-const MemberDetail: React.FC<{}> = () => {
+const MemberDetail: React.FC<{}> = observer(() => {
   const { charaId } = useParams<{ charaId: string }>();
   const classes = useStyle();
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const getCharaName = useCharaName();
-  const [region] = useServerRegion();
+  const { region } = useRootStore();
 
   const [cards] = useCachedData<ICardInfo>("cards");
   const [charas] = useCachedData<IGameChara>("gameCharacters");
@@ -505,6 +507,6 @@ const MemberDetail: React.FC<{}> = () => {
       Loading... If you saw this for a while, member {charaId} does not exist.
     </div>
   );
-};
+});
 
 export default MemberDetail;

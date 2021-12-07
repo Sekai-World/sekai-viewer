@@ -10,9 +10,11 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import Image from "mui-image";
 import { useLayoutStyles } from "../../styles/layout";
-import { getRemoteAssetURL, useServerRegion } from "../../utils";
+import { getRemoteAssetURL } from "../../utils";
 import { useCurrentEvent } from "../../utils/apiClient";
 import Countdown from "./Countdown";
+import { useRootStore } from "../../stores/root";
+import { observer } from "mobx-react-lite";
 
 // const useStyles = makeStyles((theme) => ({
 //   banner: {
@@ -23,12 +25,12 @@ import Countdown from "./Countdown";
 //   },
 // }));
 
-const CurrentEventWidget: React.FC<{}> = () => {
+const CurrentEventWidget: React.FC<{}> = observer(() => {
   // const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const { currEvent } = useCurrentEvent();
-  const [region] = useServerRegion();
+  const { region } = useRootStore();
 
   const [eventBanner, setEventBanner] = useState("");
 
@@ -78,6 +80,6 @@ const CurrentEventWidget: React.FC<{}> = () => {
       </Container>
     </Grid>
   );
-};
+});
 
 export default CurrentEventWidget;

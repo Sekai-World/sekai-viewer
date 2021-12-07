@@ -27,7 +27,6 @@ import {
 import React, {
   Fragment,
   useCallback,
-  useContext,
   useEffect,
   useReducer,
   useState,
@@ -52,13 +51,14 @@ import {
   IOutCharaProfile,
 } from "../../types.d";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
-import { SettingContext } from "../../context";
 import {
   attrSelectReducer,
   characterSelectReducer,
 } from "../../stores/reducers";
 import { charaIcons, UnitLogoMiniMap } from "../../utils/resources";
 import { useCharaName } from "../../utils/i18n";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../../stores/root";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -71,11 +71,13 @@ const ListCard: { [key: string]: React.FC<{ data?: IMusicInfo }> } = {
   agenda: AgendaView,
 };
 
-const MusicList: React.FC<{}> = () => {
+const MusicList: React.FC<{}> = observer(() => {
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
-  const { contentTransMode, isShowSpoiler } = useContext(SettingContext)!;
+  const {
+    settings: { contentTransMode, isShowSpoiler },
+  } = useRootStore();
   const musicTagToName = useMusicTagName(contentTransMode);
   const getCharaName = useCharaName();
 
@@ -785,6 +787,6 @@ const MusicList: React.FC<{}> = () => {
       </Container>
     </Fragment>
   );
-};
+});
 
 export default MusicList;

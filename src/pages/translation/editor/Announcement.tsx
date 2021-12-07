@@ -15,13 +15,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, {
-  Fragment,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import MarkdownIt from "markdown-it";
 // @ts-ignore
@@ -33,18 +27,22 @@ import {
   TranslationModel,
   UserMetadatumModel,
 } from "../../../strapi-model";
-import { UserContext } from "../../../context";
 import { useStrapi } from "../../../utils/apiClient";
 import { useLayoutStyles } from "../../../styles/layout";
 import { useAlertSnackbar, useQuery } from "../../../utils";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../../../stores/root";
 
 const Announcement: React.FC<{
   slug: string;
-}> = ({ slug }) => {
+}> = observer(({ slug }) => {
   const { t } = useTranslation();
   // const history = useHistory();
   const layoutClasses = useLayoutStyles();
-  const { jwtToken, usermeta } = useContext(UserContext)!;
+  const {
+    jwtToken,
+    user: { metadata },
+  } = useRootStore();
   const {
     getAnnouncementById,
     getTranslationBySlug,
@@ -83,27 +81,30 @@ const Announcement: React.FC<{
   );
 
   useEffect(() => {
-    (async () => {
-      setSourceLoading(true);
-      const _source = await getAnnouncementById(contentId);
-      setSourceData(_source);
-      setSourceLoading(false);
-      const _data = await getTranslationBySlug(slug, "source", {
-        targetLang_in: usermeta?.languages.map((lang) => lang.id),
-      });
-      if (!_data.length) return;
-      setTargetData(_data);
-      if (query.get("targetLang")) {
-        setTargetLang(Number(query.get("targetLang")));
+    const func = async () => {
+      if (metadata) {
+        setSourceLoading(true);
+        const _source = await getAnnouncementById(contentId);
+        setSourceData(_source);
+        setSourceLoading(false);
+        const _data = await getTranslationBySlug(slug, "source", {
+          targetLang_in: metadata.languages.map((lang) => lang.id),
+        });
+        if (!_data.length) return;
+        setTargetData(_data);
+        if (query.get("targetLang")) {
+          setTargetLang(Number(query.get("targetLang")));
+        }
       }
-    })();
+    };
+    func();
   }, [
     contentId,
     getAnnouncementById,
     getTranslationBySlug,
+    metadata,
     query,
     slug,
-    usermeta,
   ]);
 
   useEffect(() => {
@@ -137,7 +138,7 @@ const Announcement: React.FC<{
     })(targetLang);
   }, [getAnnouncementById, targetData, targetLang]);
 
-  return sourceModel === "announcement" && sourceData && usermeta ? (
+  return sourceModel === "announcement" && sourceData && metadata ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
         {t("translate:editor.title.source")}
@@ -205,7 +206,7 @@ const Announcement: React.FC<{
               value={targetLang}
               onChange={(e) => setTargetLang(e.target.value as number)}
             >
-              {usermeta.languages
+              {metadata.languages
                 .filter(
                   (lang) =>
                     lang.code !==
@@ -330,7 +331,7 @@ const Announcement: React.FC<{
                 title: targetTitle,
                 description: targetDesc,
                 content: targetContent,
-                user: usermeta.id,
+                user: metadata.id,
                 language: targetLang,
                 category: sourceData.category,
               };
@@ -343,7 +344,7 @@ const Announcement: React.FC<{
                   });
                 else {
                   const { id } = await postTranslation(
-                    usermeta,
+                    metadata,
                     slug,
                     sourceData.language.id,
                     target,
@@ -352,8 +353,8 @@ const Announcement: React.FC<{
                   setTranslationId(id);
                 }
                 if (!isTartgetExisted) setIsTartgetExisted(true);
-                if (!targetContributors.find((elem) => elem.id === usermeta.id))
-                  setTargetContributors([...targetContributors, usermeta]);
+                if (!targetContributors.find((elem) => elem.id === metadata.id))
+                  setTargetContributors([...targetContributors, metadata]);
                 showSuccess(t("translate:editor.submit-status.success"));
                 setIsSubmitting(false);
               } catch (error) {
@@ -398,6 +399,6 @@ const Announcement: React.FC<{
       Loading...
     </Typography>
   );
-};
+});
 
 export default Announcement;

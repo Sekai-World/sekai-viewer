@@ -5,10 +5,12 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
 import { IEventInfo } from "../../types.d";
-import { getRemoteAssetURL, useServerRegion } from "../../utils";
+import { getRemoteAssetURL } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
 import SpoilerTag from "../../components/widgets/SpoilerTag";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../../stores/root";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -34,12 +36,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const GridView: React.FC<{ data?: IEventInfo }> = ({ data }) => {
+const GridView: React.FC<{ data?: IEventInfo }> = observer(({ data }) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
   const { path } = useRouteMatch();
-  const [region] = useServerRegion();
+  const { region } = useRootStore();
 
   const [eventLogo, setEventLogo] = useState<string>("");
 
@@ -115,6 +117,6 @@ const GridView: React.FC<{ data?: IEventInfo }> = ({ data }) => {
       </Card>
     </Link>
   );
-};
+});
 
 export default GridView;

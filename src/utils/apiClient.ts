@@ -6,6 +6,7 @@ import {
   EventModel,
   MusicModel,
   PatronModel,
+  SekaiCardTeamModel,
   TranslationModel,
   VirtualLiveModel,
 } from "./../strapi-model.d";
@@ -23,18 +24,29 @@ import {
   UserMetadatumModel,
   UserModel,
 } from "../strapi-model";
-import { ITeamBuild, ITeamCardState, IUserProfile } from "../types";
+import {
+  ITeamBuild,
+  ITeamCardState,
+  IUserProfile,
+  ServerRegion,
+  // ServerRegion,
+} from "../types";
 import useSWR from "swr";
-import { useServerRegion } from ".";
+import { useRootStore } from "../stores/root";
 
 /**
  * Access Strapi endpoints.
  */
-export function useStrapi(token?: string) {
+export function useStrapi(token?: string, region?: ServerRegion) {
   const _token = useRef(token);
+  const root = useRootStore();
+  region = region || root.region;
   const axios = useMemo(() => {
     const axios = Axios.create({
       baseURL: import.meta.env.VITE_STRAPI_BASE,
+      headers: {
+        region: region || "",
+      },
     });
 
     axios.interceptors.request.use((req) => {
@@ -92,7 +104,7 @@ export function useStrapi(token?: string) {
     );
 
     return axios;
-  }, [_token]);
+  }, [region]);
 
   return {
     postLoginLocal: useCallback(
@@ -193,17 +205,8 @@ export function useStrapi(token?: string) {
       [axios]
     ),
     getSekaiProfileMe: useCallback(
-      async (token?: string): Promise<SekaiProfileModel> =>
-        (
-          await axios.get<SekaiProfileModel>(
-            "/sekai-profiles/me",
-            token
-              ? {
-                  headers: { authorization: `Bearer ${token}` },
-                }
-              : {}
-          )
-        ).data,
+      async (): Promise<SekaiProfileModel> =>
+        (await axios.get<SekaiProfileModel>("/sekai-profiles/me")).data,
       [axios]
     ),
     postSekaiProfileVerify: useCallback(
@@ -594,17 +597,8 @@ export function useStrapi(token?: string) {
       [axios]
     ),
     getSekaiCardTeamMe: useCallback(
-      async (token?: string) =>
-        (
-          await axios.get(
-            `/sekai-card-teams/me`,
-            token
-              ? {
-                  headers: { authorization: `Bearer ${token}` },
-                }
-              : {}
-          )
-        ).data,
+      async (): Promise<SekaiCardTeamModel> =>
+        (await axios.get(`/sekai-card-teams/me`)).data,
       [axios]
     ),
     postSekaiCardTeamMe: useCallback(
@@ -645,6 +639,11 @@ export function useStrapi(token?: string) {
           },
         });
       },
+      [axios]
+    ),
+    getRefreshToken: useCallback(
+      async () =>
+        (await axios.get<{ refresh: string }>("/auth/refreshToken")).data,
       [axios]
     ),
   };
@@ -726,10 +725,10 @@ export function useAnnouncementsByLanguages(
 }
 
 export function useCurrentEvent() {
-  const [region] = useServerRegion();
+  const { region } = useRootStore();
   const { data, error } = useSWR(
     `${import.meta.env.VITE_STRAPI_BASE}/sekai-current-event${
-      region === "tw" ? "-tw" : ""
+      region === "tw" ? "-tw" : region === "en" ? "-en" : ""
     }`,
     axiosFetcher
   );

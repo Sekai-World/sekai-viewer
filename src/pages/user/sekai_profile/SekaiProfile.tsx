@@ -1,25 +1,31 @@
 import { Container, Grid, Typography } from "@mui/material";
-import React, { Fragment, useContext } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { UserContext } from "../../../context";
 // import { useInteractiveStyles } from "../../../styles/interactive";
 import { useLayoutStyles } from "../../../styles/layout";
 import SekaiUserStatistics from "./SekaiUserStatistics";
 import SekaiCardTeam from "./SekaiCardTeam";
+import { useRootStore } from "../../../stores/root";
+import { observer } from "mobx-react-lite";
+import { ISekaiProfile } from "../../../stores/sekai";
 const SekaiEventRecord = React.lazy(() => import("./SekaiEventRecord"));
 const SekaiID = React.lazy(() => import("./SekaiID"));
 const SekaiUserDeck = React.lazy(() => import("./SekaiUserDeck"));
 
-const SekaiProfile = () => {
+const SekaiProfile = observer(() => {
   const layoutClasses = useLayoutStyles();
   // const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
+  const {
+    sekai: { getSekaiProfile },
+    region,
+  } = useRootStore();
 
-  const { sekaiProfile } = useContext(UserContext)!;
+  const [sekaiProfile, setLocalSekaiProfile] = useState<ISekaiProfile>();
 
-  // const [isUserDeckOpen, setIsUserDeckOpen] = useState(false);
-  // const [isUserEventOpen, setIsUserEventOpen] = useState(false);
-  // const [isUserStatisticsOpen, setIsUserStatisticsOpen] = useState(false);
+  useEffect(() => {
+    setLocalSekaiProfile(getSekaiProfile(region));
+  }, [getSekaiProfile, region]);
 
   return (
     <Fragment>
@@ -68,6 +74,6 @@ const SekaiProfile = () => {
       )}
     </Fragment>
   );
-};
+});
 
 export default SekaiProfile;

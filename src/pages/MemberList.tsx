@@ -5,8 +5,10 @@ import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
 import { useLayoutStyles } from "../styles/layout";
 import { IGameChara, IUnitProfile } from "../types.d";
-import { getRemoteAssetURL, useCachedData, useServerRegion } from "../utils";
+import { getRemoteAssetURL, useCachedData } from "../utils";
 import { UnitLogoMap } from "../utils/resources";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../stores/root";
 
 const useStyle = makeStyles((theme) => ({
   unitIcon: {
@@ -24,7 +26,7 @@ const useStyle = makeStyles((theme) => ({
 const MemberImage: React.FC<{ id: number }> = ({ id }) => {
   const classes = useStyle();
   const { path } = useRouteMatch();
-  const [region] = useServerRegion();
+  const { region } = useRootStore();
 
   const [url, setUrl] = useState<string>("");
 
@@ -50,11 +52,11 @@ const MemberImage: React.FC<{ id: number }> = ({ id }) => {
   );
 };
 
-const MemberList: React.FC<{}> = () => {
+const MemberList: React.FC<{}> = observer(() => {
   const classes = useStyle();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
-  const [region] = useServerRegion();
+  const { region } = useRootStore();
 
   const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
   const [gameCharas] = useCachedData<IGameChara>("gameCharacters");
@@ -124,6 +126,6 @@ const MemberList: React.FC<{}> = () => {
       </Grid>
     </Fragment>
   );
-};
+});
 
 export default MemberList;

@@ -19,7 +19,6 @@ import { TabContext, TabPanel } from "@mui/lab";
 import React, {
   Fragment,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useState,
@@ -51,7 +50,6 @@ import {
 import { useTranslation } from "react-i18next";
 import MaterialIcon from "../../components/widgets/MaterialIcon";
 import { useAssetI18n, useCharaName } from "../../utils/i18n";
-import { SettingContext } from "../../context";
 import {
   CharaNameTrans,
   ContentTrans,
@@ -64,6 +62,8 @@ import { OpenInNew } from "@mui/icons-material";
 import CommentTextMultiple from "~icons/mdi/comment-text-multiple";
 import Comment from "../comment/Comment";
 import { useStrapi } from "../../utils/apiClient";
+import { useRootStore } from "../../stores/root";
+import { observer } from "mobx-react-lite";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -100,13 +100,15 @@ interface IExtendCardInfo extends ICardInfo {
   maxNormalLevel: number;
 }
 
-const CardDetail: React.FC<{}> = () => {
+const CardDetail: React.FC<{}> = observer(() => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const { assetT, getTranslated } = useAssetI18n();
-  const { contentTransMode } = useContext(SettingContext)!;
+  const {
+    settings: { contentTransMode },
+  } = useRootStore();
   const getCharaName = useCharaName();
   const { getCard } = useStrapi();
 
@@ -1357,6 +1359,6 @@ const CardDetail: React.FC<{}> = () => {
       Loading... If you saw this for a while, card {cardId} does not exist.
     </div>
   );
-};
+});
 
 export default CardDetail;

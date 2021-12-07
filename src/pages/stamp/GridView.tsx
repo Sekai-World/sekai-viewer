@@ -3,8 +3,10 @@ import makeStyles from "@mui/styles/makeStyles";
 import { Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { IStampInfo } from "../../types.d";
-import { getRemoteAssetURL, useServerRegion } from "../../utils";
+import { getRemoteAssetURL } from "../../utils";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../../stores/root";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -24,9 +26,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const GridView: React.FC<{ data?: IStampInfo }> = ({ data }) => {
+const GridView: React.FC<{ data?: IStampInfo }> = observer(({ data }) => {
   const classes = useStyles();
-  const [region] = useServerRegion();
+  const { region } = useRootStore();
 
   const [url, setUrl] = useState<string>("");
 
@@ -82,6 +84,6 @@ const GridView: React.FC<{ data?: IStampInfo }> = ({ data }) => {
       </Card>
     </Link>
   );
-};
+});
 
 export default GridView;

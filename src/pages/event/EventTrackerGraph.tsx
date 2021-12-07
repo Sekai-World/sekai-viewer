@@ -26,19 +26,20 @@ import {
 } from "recharts";
 import { useLayoutStyles } from "../../styles/layout";
 import { EventGraphRanking, EventRankingResponse } from "../../types.d";
-import { useServerRegion } from "../../utils";
 import { useEventTrackerAPI } from "../../utils/eventTracker";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../../stores/root";
 
 const EventTrackerGraph: React.FC<{
   rtRanking?: EventRankingResponse;
   ranking: EventGraphRanking;
   eventId: number;
   mobileTable?: boolean;
-}> = ({ rtRanking, ranking, eventId, mobileTable = false }) => {
+}> = observer(({ rtRanking, ranking, eventId, mobileTable = false }) => {
   const theme = useTheme();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
-  const [region] = useServerRegion();
+  const { region } = useRootStore();
 
   const { getGraph } = useEventTrackerAPI(region);
 
@@ -272,6 +273,6 @@ const EventTrackerGraph: React.FC<{
   ) : (
     <CircularProgress size={24} />
   );
-};
+});
 
 export default EventTrackerGraph;

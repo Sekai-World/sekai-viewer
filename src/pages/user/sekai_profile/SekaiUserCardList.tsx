@@ -36,14 +36,12 @@ import {
 import React, {
   // Fragment,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useReducer,
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { UserContext } from "../../../context";
 import { useInteractiveStyles } from "../../../styles/interactive";
 import { useCurrentEvent, useStrapi } from "../../../utils/apiClient";
 import { CardThumb } from "../../../components/widgets/CardThumb";
@@ -77,13 +75,19 @@ import {
 } from "../../../utils";
 import { ContentTrans } from "../../../components/helpers/ContentTrans";
 import { useAssetI18n, useCharaName } from "../../../utils/i18n";
+import { useRootStore } from "../../../stores/root";
+import { ISekaiCardTeam } from "../../../stores/sekai";
+import { observer } from "mobx-react-lite";
 
-const SekaiUserCardList = () => {
+const SekaiUserCardList = observer(() => {
   // const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
-  const { jwtToken, sekaiCardTeam, updateSekaiCardTeam } =
-    useContext(UserContext)!;
+  const {
+    jwtToken,
+    sekai: { getSekaiCardTeam, setSekaiCardTeam },
+    region,
+  } = useRootStore();
   const { putSekaiCards, deleteSekaiCards } = useStrapi(jwtToken);
   const getCharaName = useCharaName();
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
@@ -153,8 +157,14 @@ const SekaiUserCardList = () => {
   const eventOpen = useMemo(() => Boolean(anchorElEvent), [anchorElEvent]);
   const [eventId, setEventId] = useState(1);
 
+  const [sekaiCardTeam, setLocalSekaiCardTeam] = useState<ISekaiCardTeam>();
+
   useEffect(() => {
-    if (cards && cards.length && sekaiCardTeam) {
+    setLocalSekaiCardTeam(getSekaiCardTeam(region));
+  }, [getSekaiCardTeam, region]);
+
+  useEffect(() => {
+    if (!!cards && !!cards.length && !!sekaiCardTeam) {
       let _cardList = (sekaiCardTeam.cards || []).map((elem) =>
         Object.assign({}, elem, {
           card: cards.find((c) => c.id === elem.cardId)!,
@@ -230,6 +240,7 @@ const SekaiUserCardList = () => {
     deleteCardIds,
     editList,
     raritySelected,
+    region,
     sekaiCardTeam,
     sortBy,
     sortType,
@@ -356,7 +367,7 @@ const SekaiUserCardList = () => {
     setFilteredCards((cards) => cards.filter((c) => c.id !== card.id));
   }, []);
 
-  return sekaiCardTeam ? (
+  return !!sekaiCardTeam ? (
     <Grid container spacing={1}>
       <Grid item xs={12}>
         <Grid container justifyContent="space-between">
@@ -382,9 +393,12 @@ const SekaiUserCardList = () => {
                       setEditList([]);
                       setDeleteCardIds([]);
                       setAddCardIds([]);
-                      updateSekaiCardTeam({
-                        cards: cardList,
-                      });
+                      setSekaiCardTeam(
+                        Object.assign({}, sekaiCardTeam, {
+                          cards: cardList,
+                        }),
+                        region
+                      );
                       showSuccess(t("user:profile.card_list.submit_success"));
                     } catch (error) {
                       showError(t("user:profile.card_list.submit_error"));
@@ -944,6 +958,7 @@ const SekaiUserCardList = () => {
                   labelId="add-card-dialog-select-chara-label"
                   value={characterId}
                   onChange={(e) => setCharacterId(e.target.value as number)}
+                  label={t("music_recommend:addCardDialog.selectChara")}
                 >
                   <MenuItem value={0}>{t("common:all")}</MenuItem>
                   {charas &&
@@ -967,6 +982,7 @@ const SekaiUserCardList = () => {
                   labelId="add-card-dialog-select-rarity-label"
                   value={rarity}
                   onChange={(e) => setRarity(e.target.value as number)}
+                  label={t("music_recommend:addCardDialog.selectRarity")}
                 >
                   {Array.from({ length: 4 }).map((_, index) => (
                     <MenuItem
@@ -1117,6 +1133,6 @@ const SekaiUserCardList = () => {
       </Popover>
     </Grid>
   ) : null;
-};
+});
 
 export default SekaiUserCardList;

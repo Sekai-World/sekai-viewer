@@ -6,15 +6,14 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import React, { Fragment, useContext, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import Image from "mui-image";
-import { SettingContext } from "../../context";
 // import { useInteractiveStyles } from "../../styles/interactive";
 import { useLayoutStyles } from "../../styles/layout";
 import { IGameCharaUnit, IVirtualLiveInfo } from "../../types.d";
-import { getRemoteAssetURL, useCachedData, useServerRegion } from "../../utils";
+import { getRemoteAssetURL, useCachedData } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
 import { charaIcons } from "../../utils/resources";
@@ -24,16 +23,20 @@ import VirtualLiveStep from "./VirtualLiveStep";
 import CommentTextMultiple from "~icons/mdi/comment-text-multiple";
 import Comment from "../comment/Comment";
 import { useStrapi } from "../../utils/apiClient";
+import { useRootStore } from "../../stores/root";
+import { observer } from "mobx-react-lite";
 
-const VirtualLiveDetail: React.FC<{}> = () => {
+const VirtualLiveDetail: React.FC<{}> = observer(() => {
   const { t } = useTranslation();
   const { id: virtualLiveId } = useParams<{ id: string }>();
   const layoutClasses = useLayoutStyles();
   // const interactiveClasses = useInteractiveStyles();
   const { getTranslated } = useAssetI18n();
-  const { contentTransMode } = useContext(SettingContext)!;
+  const {
+    settings: { contentTransMode },
+    region,
+  } = useRootStore();
   const { getVirtualLive } = useStrapi();
-  const [region] = useServerRegion();
 
   const [virtualLives] = useCachedData<IVirtualLiveInfo>("virtualLives");
   const [gameCharacterUnits] =
@@ -336,6 +339,6 @@ const VirtualLiveDetail: React.FC<{}> = () => {
       not exist.
     </div>
   );
-};
+});
 
 export default VirtualLiveDetail;

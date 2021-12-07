@@ -76,6 +76,10 @@ specifiers:
   markdown-it: ^12.2.0
   markdown-it-collapsible: ^1.0.0
   marvinj-ts: ^0.2.1
+  mobx: ^6.3.8
+  mobx-devtools-mst: ^0.9.30
+  mobx-react-lite: ^3.2.2
+  mobx-state-tree: ^5.1.0
   mui-image: ^0.1.3
   notistack: ^2.0.3
   p-queue: ^7.1.0
@@ -146,6 +150,10 @@ dependencies:
   markdown-it: 12.2.0
   markdown-it-collapsible: 1.0.0_markdown-it@12.2.0
   marvinj-ts: 0.2.1
+  mobx: 6.3.8
+  mobx-devtools-mst: 0.9.30_mobx-state-tree@5.1.0+mobx@6.3.8
+  mobx-react-lite: 3.2.2_02876c366ce89e988b8bf5dff3cf0e00
+  mobx-state-tree: 5.1.0_mobx@6.3.8
   mui-image: 0.1.3_111d7589084b080594576bbc3b752a08
   notistack: 2.0.3_815bb20762b1ea6512f7fb850745ddfb
   p-queue: 7.1.0
@@ -6219,6 +6227,46 @@ packages:
     dependencies:
       import-meta-resolve: 1.1.1
     dev: true
+
+  /mobx-devtools-mst/0.9.30_mobx-state-tree@5.1.0+mobx@6.3.8:
+    resolution: {integrity: sha512-6fIYeFG4xT4syIeKddmK55zQbc3ZZZr/272/cCbfaAAM5YiuFdteGZGUgdsz8wxf/mGxWZbFOM3WmASAnpwrbw==}
+    peerDependencies:
+      mobx: ^2.2.0 || ^3.0.0 || ^4.0.0 || ^5.0.0
+      mobx-state-tree: '*'
+    dependencies:
+      mobx: 6.3.8
+      mobx-state-tree: 5.1.0_mobx@6.3.8
+    dev: false
+
+  /mobx-react-lite/3.2.2_02876c366ce89e988b8bf5dff3cf0e00:
+    resolution: {integrity: sha512-FxJJMqmHcnQYOVVs2DdjNHioGlFsXF5/9VHztS9NAfIT3DYrxNZzVi119Zr/OmlWKkWNkAsssSNzPkqautfL4A==}
+    peerDependencies:
+      mobx: ^6.1.0
+      react: ^16.8.0 || ^17
+      react-dom: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      mobx: 6.3.8
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+    dev: false
+
+  /mobx-state-tree/5.1.0_mobx@6.3.8:
+    resolution: {integrity: sha512-tsKAV2OK4DisP2/SOK8K6d5dnelTR1E0pIHVWqjVxxyZgcCanFIA3GNvcN7k4sjppVmq26d0LEYjiD7AvthOAw==}
+    peerDependencies:
+      mobx: ^6.3.0
+    dependencies:
+      mobx: 6.3.8
+    dev: false
+
+  /mobx/6.3.8:
+    resolution: {integrity: sha512-RfG2y766P1o9u9xrQht/HBXEoUPIr4B3Gjri3reLW/TuHm3I/3TfBBS0OaeMbw19RIF0AymqjDNlJgakN4ZK7g==}
+    dev: false
 
   /modify-values/1.0.1:
     resolution: {integrity: sha512-xV2bxeN6F7oYjZWTe/YPAy6MN2M+sL4u/Rlm2AHCIVGfo2p1yGmBHQ6vHehl4bRTZBdHu3TSkWdYgkwpYzAGSw==}

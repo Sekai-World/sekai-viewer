@@ -10,15 +10,17 @@ import {
 } from "@mui/material";
 import { Field, Formik } from "formik";
 import { Select } from "formik-mui";
-import React, { Fragment, useContext, useLayoutEffect, useState } from "react";
+import React, { Fragment, useLayoutEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { SettingContext, UserContext } from "../../context";
 // import { useInteractiveStyles } from "../../styles/interactive";
 import { useLayoutStyles } from "../../styles/layout";
 import { useStrapi } from "../../utils/apiClient";
 import TableAnnouncements from "./table/TableAnnouncements";
 import TableMe from "./table/TableWork";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../../stores/root";
+import { IUserMetadata } from "../../stores/user";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface preferLangValues {
@@ -29,12 +31,15 @@ interface preferLangErrors {
   languages: string;
 }
 
-const Translation: React.FC<{}> = () => {
+const Translation: React.FC<{}> = observer(() => {
   const { t } = useTranslation();
   const layoutClasses = useLayoutStyles();
   // const interactiveClasses = useInteractiveStyles();
-  const { usermeta, jwtToken, updateUserMeta } = useContext(UserContext)!;
-  const { languages } = useContext(SettingContext)!;
+  const {
+    jwtToken,
+    user: { metadata, setMetadata },
+    settings: { languages },
+  } = useRootStore();
   const { putUserMetadataMe, getUserMetadataMe } = useStrapi(jwtToken);
 
   const [selectedContent, setSelectedContent] = useState("");
@@ -43,7 +48,7 @@ const Translation: React.FC<{}> = () => {
     document.title = t("title:translation");
   }, [t]);
 
-  return !!usermeta && !!jwtToken ? (
+  return !!metadata && !!jwtToken ? (
     <Fragment>
       <Typography variant="h6" className={layoutClasses.header}>
         {t("common:translation")}
@@ -52,7 +57,7 @@ const Translation: React.FC<{}> = () => {
         <Grid container>
           <Formik<preferLangValues>
             initialValues={{
-              languages: usermeta.languages.map((lang) => lang.id),
+              languages: metadata.languages.map((lang) => lang.id),
             }}
             validate={(values) => {
               const errors: Partial<preferLangErrors> = {};
@@ -74,7 +79,7 @@ const Translation: React.FC<{}> = () => {
                   (id) => languages.find((lang) => lang.id === id)!
                 ),
               });
-              updateUserMeta(await getUserMetadataMe());
+              setMetadata((await getUserMetadataMe()) as IUserMetadata);
               setSubmitting(false);
               resetForm({ values });
             }}
@@ -83,15 +88,16 @@ const Translation: React.FC<{}> = () => {
               <Grid container spacing={1}>
                 <Grid item xs={9}>
                   <FormControl style={{ minWidth: 200, maxWidth: "100%" }}>
-                    <InputLabel htmlFor="prefer-lang-select">
+                    {/* <InputLabel htmlFor="prefer-lang-select">
                       {t("auth:signup.label.prefer_langs")}
-                    </InputLabel>
+                    </InputLabel> */}
                     <Field
                       component={Select}
                       inputProps={{
                         multiple: true,
                       }}
                       name="languages"
+                      label={t("auth:signup.label.prefer_langs")}
                     >
                       {languages.map((lang) => (
                         <MenuItem value={lang.id} key={`lang-${lang.code}`}>
@@ -161,6 +167,6 @@ const Translation: React.FC<{}> = () => {
       </Container>
     </Fragment>
   ) : null;
-};
+});
 
 export default Translation;

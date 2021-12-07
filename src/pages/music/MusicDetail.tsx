@@ -20,13 +20,7 @@ import { useInteractiveStyles } from "../../styles/interactive";
 import { Alert } from "@mui/material";
 import { TabContext, TabPanel } from "@mui/lab";
 import { OpenInNew } from "@mui/icons-material";
-import React, {
-  Fragment,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 // import AudioPlayer from "react-h5-audio-player";
@@ -40,19 +34,13 @@ import {
   IMusicVocalInfo,
   IOutCharaProfile,
 } from "../../types.d";
-import {
-  getRemoteAssetURL,
-  useCachedData,
-  useMusicTagName,
-  useServerRegion,
-} from "../../utils";
+import { getRemoteAssetURL, useCachedData, useMusicTagName } from "../../utils";
 import { charaIcons } from "../../utils/resources";
 import { Trans, useTranslation } from "react-i18next";
 import { useAssetI18n, useCharaName } from "../../utils/i18n";
 import { useDurationI18n } from "../../utils/i18nDuration";
 // import { useTrimMP3 } from "../../utils/trimMP3";
 import MusicVideoPlayer from "../../components/blocks/MusicVideoPlayer";
-import { SettingContext } from "../../context";
 import {
   ContentTrans,
   ReleaseCondTrans,
@@ -68,6 +56,8 @@ import CommentTextMultiple from "~icons/mdi/comment-text-multiple";
 import Comment from "../comment/Comment";
 import axios from "axios";
 import { trimMP3 } from "../../utils/trimMP3";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../../stores/root";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -90,14 +80,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const MusicDetail: React.FC<{}> = () => {
+const MusicDetail: React.FC<{}> = observer(() => {
   // const theme = useTheme();
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
-  const { contentTransMode } = useContext(SettingContext)!;
+  const {
+    settings: { contentTransMode },
+    region,
+  } = useRootStore();
   const [, humanizeDurationShort] = useDurationI18n();
   // const [trimmedMP3URL, trimFailed, setTrimOptions] = useTrimMP3();
   const getCharaName = useCharaName();
@@ -116,7 +109,6 @@ const MusicDetail: React.FC<{}> = () => {
   const [danceMembers] = useCachedData<IMusicDanceMembers>("musicDanceMembers");
   const [musicAchievements] =
     useCachedData<IMusicAchievement>("musicAchievements");
-  const [region] = useServerRegion();
 
   const { musicId } = useParams<{ musicId: string }>();
 
@@ -1301,6 +1293,6 @@ const MusicDetail: React.FC<{}> = () => {
       Loading... If you saw this for a while, music {musicId} does not exist.
     </div>
   );
-};
+});
 
 export default MusicDetail;

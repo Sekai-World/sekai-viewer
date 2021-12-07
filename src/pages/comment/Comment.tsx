@@ -16,29 +16,27 @@ import {
   Typography,
 } from "@mui/material";
 import MarkdownIt from "markdown-it";
-import React, {
-  Fragment,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { Fragment, useEffect, useMemo, useState } from "react";
 import MdEditor, { Plugins } from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
 import { useTranslation } from "react-i18next";
 import { CommentAbuseReason, CommentModel } from "../../strapi-model";
 import { useStrapi } from "../../utils/apiClient";
 import CommentBlock from "./CommentBlock";
-import { UserContext } from "../../context";
 import { useAlertSnackbar } from "../../utils";
+import { useRootStore } from "../../stores/root";
+import { observer } from "mobx-react-lite";
 
 const Comment: React.FC<{
   // comments: CommentModel[];
   contentType: string;
   contentId: string | number;
-}> = ({ contentId, contentType }) => {
+}> = observer(({ contentId, contentType }) => {
   const { t } = useTranslation();
-  const { jwtToken, usermeta } = useContext(UserContext)!;
+  const {
+    jwtToken,
+    user: { metadata },
+  } = useRootStore();
   const { postComment, postCommentAbuse, getComments } = useStrapi(jwtToken);
   const { showSuccess } = useAlertSnackbar();
 
@@ -75,7 +73,7 @@ const Comment: React.FC<{
 
   return (
     <Grid container spacing={1}>
-      {usermeta && (
+      {metadata && (
         <Grid item xs={12}>
           {isCompose ? (
             <Grid container direction="column" spacing={1}>
@@ -97,8 +95,8 @@ const Comment: React.FC<{
                     const data = await postComment(
                       contentType,
                       contentId,
-                      usermeta.id,
-                      usermeta.avatar,
+                      metadata.id,
+                      metadata.avatar,
                       content
                     );
                     setComments((comments) => [...comments, data]);
@@ -215,6 +213,6 @@ const Comment: React.FC<{
       </Dialog>
     </Grid>
   );
-};
+});
 
 export default Comment;

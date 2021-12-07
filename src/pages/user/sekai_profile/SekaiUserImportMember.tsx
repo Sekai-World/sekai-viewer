@@ -1,7 +1,7 @@
 import React, {
   Fragment,
   useCallback,
-  useContext,
+  useEffect,
   useMemo,
   // useRef,
   useState,
@@ -39,12 +39,14 @@ import { createWorker, createScheduler } from "tesseract.js";
 import { useAlertSnackbar, useCachedData, useToggle } from "../../../utils";
 import { ICardInfo } from "../../../types.d";
 // import { Link } from "react-router-dom";
-import { UserContext } from "../../../context";
 import { useStrapi } from "../../../utils/apiClient";
 import { useLayoutStyles } from "../../../styles/layout";
 import Carousel from "react-material-ui-carousel";
 import { Alert } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
+import { useRootStore } from "../../../stores/root";
+import { observer } from "mobx-react-lite";
+import { ISekaiCardTeam } from "../../../stores/sekai";
 
 function initCOS(N: number = 64) {
   const entries = 2 * N * (N - 1);
@@ -133,7 +135,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SekaiUserImportMember = () => {
+const SekaiUserImportMember = observer(() => {
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const theme = useTheme();
@@ -141,11 +143,9 @@ const SekaiUserImportMember = () => {
   const { t } = useTranslation();
   const {
     jwtToken,
-    // sekaiProfile,
-    // updateSekaiProfile,
-    sekaiCardTeam,
-    updateSekaiCardTeam,
-  } = useContext(UserContext)!;
+    sekai: { getSekaiCardTeam, setSekaiCardTeam },
+    region,
+  } = useRootStore();
   const { putSekaiCards } = useStrapi(jwtToken);
   const { showError, showSuccess } = useAlertSnackbar();
 
@@ -175,6 +175,11 @@ const SekaiUserImportMember = () => {
   const [isCardSelectionOpen, toggleIsCardSelectionOpen] = useToggle(false);
   const [editId, setEditId] = useState(-1);
   const [helpOpen, toggleHelpOpen] = useToggle(false);
+  const [sekaiCardTeam, setLocalSekaiCardTeam] = useState<ISekaiCardTeam>();
+
+  useEffect(() => {
+    setLocalSekaiCardTeam(getSekaiCardTeam(region));
+  }, [getSekaiCardTeam, region]);
 
   // const canvasRef = useRef<HTMLCanvasElement>(null);
   const maxLevels = useMemo(() => [0, 20, 30, 50, 60], []);
@@ -1010,9 +1015,12 @@ const SekaiUserImportMember = () => {
       // updateSekaiProfile({
       //   cardList,
       // });
-      updateSekaiCardTeam({
-        cards: cardList,
-      });
+      setSekaiCardTeam(
+        Object.assign({}, sekaiCardTeam, {
+          cards: cardList,
+        }),
+        region
+      );
 
       showSuccess(t("user:profile.import_card.submit_success"));
     } catch (error) {
@@ -1022,12 +1030,13 @@ const SekaiUserImportMember = () => {
   }, [
     cards,
     putSekaiCards,
+    region,
     rows,
     sekaiCardTeam,
+    setSekaiCardTeam,
     showError,
     showSuccess,
     t,
-    updateSekaiCardTeam,
   ]);
 
   return (
@@ -1492,6 +1501,6 @@ const SekaiUserImportMember = () => {
       </Dialog>
     </Grid>
   );
-};
+});
 
 export default SekaiUserImportMember;

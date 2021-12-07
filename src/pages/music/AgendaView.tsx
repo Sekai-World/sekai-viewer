@@ -10,12 +10,14 @@ import {
   IMusicVocalInfo,
   IOutCharaProfile,
 } from "../../types.d";
-import { getRemoteAssetURL, useCachedData, useServerRegion } from "../../utils";
+import { getRemoteAssetURL, useCachedData } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
 import SpoilerTag from "../../components/widgets/SpoilerTag";
 import Image from "mui-image";
 import { charaIcons } from "../../utils/resources";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../../stores/root";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -62,12 +64,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AgendaView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
+const AgendaView: React.FC<{ data?: IMusicInfo }> = observer(({ data }) => {
   const classes = useStyles();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
-  const [region] = useServerRegion();
+  const { region } = useRootStore();
 
   const [musicDiffis] =
     useCachedData<IMusicDifficultyInfo>("musicDifficulties");
@@ -257,6 +259,6 @@ const AgendaView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
       </Paper>
     </Link>
   );
-};
+});
 
 export default AgendaView;

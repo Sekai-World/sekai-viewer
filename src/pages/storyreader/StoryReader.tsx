@@ -24,11 +24,7 @@ import {
   IUnitProfile,
   IUnitStory,
 } from "../../types.d";
-import {
-  realityAreaWorldmap,
-  useCachedData,
-  useServerRegion,
-} from "../../utils";
+import { realityAreaWorldmap, useCachedData } from "../../utils";
 import { useAssetI18n, useCharaName } from "../../utils/i18n";
 import { charaIcons, UnitLogoMap } from "../../utils/resources";
 // import { useAssetI18n } from "../../utils/i18n";
@@ -38,6 +34,8 @@ import {
 } from "../../components/helpers/ContentTrans";
 import ImageWrapper from "../../components/helpers/ImageWrapper";
 import StoryReaderContent from "./StoryReaderContent";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../../stores/root";
 
 const useStyle = makeStyles((theme) => ({
   selectCard: {
@@ -48,7 +46,7 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-const StoryReader: React.FC<{}> = () => {
+const StoryReader: React.FC<{}> = observer(() => {
   const classes = useStyle();
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
@@ -56,7 +54,7 @@ const StoryReader: React.FC<{}> = () => {
   const { getTranslated } = useAssetI18n();
   const getCharaName = useCharaName();
   const { path } = useRouteMatch();
-  const [region] = useServerRegion();
+  const { region } = useRootStore();
   // const match = useRouteMatch<{
   //   storyType: storyType;
   //   storyId: string;
@@ -903,6 +901,6 @@ const StoryReader: React.FC<{}> = () => {
       </Switch>
     </Fragment>
   );
-};
+});
 
 export default StoryReader;

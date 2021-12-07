@@ -15,30 +15,24 @@ import {
 import Brightness4 from "~icons/mdi/brightness-4";
 import Brightness7 from "~icons/mdi/brightness-7";
 import BrightnessAuto from "~icons/mdi/brightness-auto";
-import React, {
-  Fragment,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { SettingContext } from "../context";
 import { useLayoutStyles } from "../styles/layout";
 import {
   DisplayModeType,
   ContentTransModeType,
   ServerRegion,
 } from "../types.d";
-import { useAlertSnackbar, useServerRegion } from "../utils";
+import { useAlertSnackbar } from "../utils";
 import { useRemoteLanguages } from "../utils/apiClient";
 import { useAssetI18n } from "../utils/i18n";
 import localforage from "localforage";
 import { LoadingButton } from "@mui/lab";
 import axios from "axios";
-
 import IconRefresh from "~icons/mdi/refresh";
 import IconInformation from "~icons/mdi/information";
+import { useRootStore } from "../stores/root";
+import { observer } from "mobx-react-lite";
 
 const RegionDetect = () => {
   const { t } = useTranslation();
@@ -95,36 +89,39 @@ const RegionDetect = () => {
   );
 };
 
-const Settings = () => {
+const Settings = observer(() => {
   const layoutClasses = useLayoutStyles();
   const { t, i18n } = useTranslation();
   const { assetI18n } = useAssetI18n();
   const {
-    lang,
-    displayMode,
-    contentTransMode,
-    updateLang,
-    updateDisplayMode,
-    updateContentTransMode,
-    languages,
-    updateLanguages,
-    isShowSpoiler,
-    updateIsShowSpoiler,
-  } = useContext(SettingContext)!;
+    settings: {
+      lang,
+      displayMode,
+      contentTransMode,
+      languages,
+      isShowSpoiler,
+      region,
+      setLang,
+      setDisplayMode,
+      setContentTransMode,
+      setLanguages,
+      setIsShowSpoiler,
+      setRegion,
+    },
+  } = useRootStore();
   const { languages: remoteLanguages, isLoading, error } = useRemoteLanguages();
-  const [region, setRegion] = useServerRegion();
 
   useEffect(() => {
     if (!isLoading && !error) {
-      updateLanguages(remoteLanguages);
+      setLanguages(remoteLanguages);
       if (!remoteLanguages.find((rl) => rl.code === lang)) {
         // try setting correct language code
         if (remoteLanguages.find((rl) => rl.code === lang.split("-")[0])) {
-          updateLang(lang.split("-")[0]);
+          setLang(lang.split("-")[0]);
         }
       }
     }
-  }, [error, isLoading, lang, remoteLanguages, updateLang, updateLanguages]);
+  }, [error, isLoading, lang, remoteLanguages, setLang, setLanguages]);
 
   return (
     <Fragment>
@@ -158,7 +155,6 @@ const Settings = () => {
                 value="en"
                 control={<Radio />}
                 label={t("common:serverRegion.en")}
-                disabled
               ></FormControlLabel>
             </RadioGroup>
           </FormControl>
@@ -171,9 +167,11 @@ const Settings = () => {
               aria-label="language"
               value={lang}
               onChange={(e, v) => {
-                i18n.loadLanguages([v]);
-                assetI18n.loadLanguages([v]);
-                updateLang(v);
+                // i18n.loadLanguages([v]);
+                // assetI18n.loadLanguages([v]);
+                i18n.changeLanguage(v);
+                assetI18n.changeLanguage(v);
+                setLang(v);
               }}
             >
               {languages
@@ -196,7 +194,7 @@ const Settings = () => {
               row
               aria-label="dark mode"
               value={displayMode}
-              onChange={(e, v) => updateDisplayMode(v as DisplayModeType)}
+              onChange={(e, v) => setDisplayMode(v as DisplayModeType)}
             >
               <FormControlLabel
                 value="dark"
@@ -226,7 +224,7 @@ const Settings = () => {
               aria-label="show translated"
               value={contentTransMode}
               onChange={(e, v) =>
-                updateContentTransMode(v as ContentTransModeType)
+                setContentTransMode(v as ContentTransModeType)
               }
             >
               <FormControlLabel
@@ -262,7 +260,7 @@ const Settings = () => {
               control={
                 <Switch
                   checked={isShowSpoiler}
-                  onChange={(e, v) => updateIsShowSpoiler(v)}
+                  onChange={(e, v) => setIsShowSpoiler(v)}
                   name="checkedA"
                 />
               }
@@ -288,6 +286,6 @@ const Settings = () => {
       </Grid>
     </Fragment>
   );
-};
+});
 
 export default Settings;

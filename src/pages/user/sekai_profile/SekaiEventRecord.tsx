@@ -8,28 +8,33 @@ import {
 } from "@mui/material";
 import { Update } from "@mui/icons-material";
 import { Autocomplete } from "@mui/material";
-import React, { Fragment, useContext, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { SettingContext, UserContext } from "../../../context";
 import { SekaiProfileEventRecordModel } from "../../../strapi-model";
 import { IEventInfo } from "../../../types.d";
 import { useAlertSnackbar, useCachedData } from "../../../utils";
 import { useCurrentEvent, useStrapi } from "../../../utils/apiClient";
 import { useAssetI18n } from "../../../utils/i18n";
 import { LoadingButton } from "@mui/lab";
+import { useRootStore } from "../../../stores/root";
+import { ISekaiProfile } from "../../../stores/sekai";
+import { observer } from "mobx-react-lite";
 
 interface Props {}
 
-const SekaiEventRecord = (props: Props) => {
+const SekaiEventRecord = observer((props: Props) => {
   // const layoutClasses = useLayoutStyles();
   // const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
-  const { jwtToken, sekaiProfile, updateSekaiProfile } =
-    useContext(UserContext)!;
+  const {
+    jwtToken,
+    sekai: { getSekaiProfile, setSekaiProfile },
+    settings: { contentTransMode },
+    region,
+  } = useRootStore();
   const { getSekaiProfileEventRecordMe, postSekaiProfileEventRecord } =
     useStrapi(jwtToken);
   const { getTranslated } = useAssetI18n();
-  const { contentTransMode } = useContext(SettingContext)!;
   const { showError } = useAlertSnackbar();
 
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
@@ -43,9 +48,14 @@ const SekaiEventRecord = (props: Props) => {
   const [eventRecords, setEventRecords] =
     useState<SekaiProfileEventRecordModel[]>();
   const [isEventRecording, setIsEventRecording] = useState(false);
+  const [sekaiProfile, setLocalSekaiProfile] = useState<ISekaiProfile>();
 
   useEffect(() => {
-    (async () => {
+    setLocalSekaiProfile(getSekaiProfile(region));
+  }, [getSekaiProfile, region]);
+
+  useEffect(() => {
+    const func = async () => {
       // console.log(currEvent);
       if (currEvent && events) {
         const ev = events.find((elem) => elem.id === Number(currEvent.eventId));
@@ -63,7 +73,9 @@ const SekaiEventRecord = (props: Props) => {
           setEventRecords([]);
         }
       }
-    })();
+    };
+
+    func();
   }, [
     contentTransMode,
     currEvent,
@@ -154,9 +166,12 @@ const SekaiEventRecord = (props: Props) => {
                       try {
                         await postSekaiProfileEventRecord(currEvent!.eventId);
                         setEventRecords(await getSekaiProfileEventRecordMe());
-                        updateSekaiProfile({
-                          eventGetUsed: sekaiProfile.eventGetUsed + 1,
-                        });
+                        setSekaiProfile(
+                          Object.assign({}, sekaiProfile, {
+                            eventGetUsed: sekaiProfile.eventGetUsed + 1,
+                          }),
+                          region
+                        );
                         setIsEventRecording(false);
                       } catch (error: any) {
                         showError(error.message);
@@ -206,6 +221,6 @@ const SekaiEventRecord = (props: Props) => {
       </Grid>
     </Grid>
   );
-};
+});
 
 export default SekaiEventRecord;

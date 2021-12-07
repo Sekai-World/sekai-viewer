@@ -11,7 +11,7 @@ import {
   IMusicTagInfo,
   IUnitProfile,
 } from "../types.d";
-import { getRemoteAssetURL, useCachedData, useServerRegion } from "../utils";
+import { getRemoteAssetURL, useCachedData } from "../utils";
 import { useAssetI18n, useCharaName } from "../utils/i18n";
 import { charaIcons, UnitLogoMap } from "../utils/resources";
 import ColorPreview from "../components/helpers/ColorPreview";
@@ -21,6 +21,8 @@ import {
 } from "../components/helpers/ContentTrans";
 import { OpenInNew } from "@mui/icons-material";
 import { useInteractiveStyles } from "../styles/interactive";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../stores/root";
 
 const useStyle = makeStyles((theme) => ({
   tabpanel: {
@@ -68,7 +70,7 @@ const UnitMusicImage: React.FC<{
   return <Image src={img} alt={title} bgColor="" />;
 };
 
-const UnitDetail: React.FC<{}> = () => {
+const UnitDetail: React.FC<{}> = observer(() => {
   const { unitId } = useParams<{ unitId: string }>();
   const classes = useStyle();
   const layoutClasses = useLayoutStyles();
@@ -76,7 +78,7 @@ const UnitDetail: React.FC<{}> = () => {
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
   const getCharaName = useCharaName();
-  const [region] = useServerRegion();
+  const { region } = useRootStore();
 
   const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
   const [gameCharas] = useCachedData<IGameChara>("gameCharacters");
@@ -318,6 +320,6 @@ const UnitDetail: React.FC<{}> = () => {
       Loading... If you saw this for a while, unit {unitId} does not exist.
     </div>
   );
-};
+});
 
 export default UnitDetail;

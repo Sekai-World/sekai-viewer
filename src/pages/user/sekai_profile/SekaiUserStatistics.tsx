@@ -20,16 +20,9 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import React, {
-  Fragment,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Image from "mui-image";
-import { UserContext } from "../../../context";
 import { charaIcons } from "../../../utils/resources";
 import DegreeImage from "../../../components/widgets/DegreeImage";
 import { getRemoteAssetURL, useCachedData, useToggle } from "../../../utils";
@@ -54,6 +47,9 @@ import IconFullCombo from "../../../assets/music/icon_fullCombo.png";
 import IconAllPerfect from "../../../assets/music/icon_allPerfect.png";
 import { ExpandMore } from "@mui/icons-material";
 import { useLayoutStyles } from "../../../styles/layout";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../../../stores/root";
+import { ISekaiProfile } from "../../../stores/sekai";
 
 const ProfileMusicImage: React.FC<{
   assetbundleName: string;
@@ -171,7 +167,6 @@ const MusicSingleData: React.FC<{ umusic?: UserMusic; music: IMusicInfo }> = ({
 }) => {
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
-  // const { contentTransMode } = useContext(SettingContext)!;
 
   return umusic ? (
     <Fragment>
@@ -306,13 +301,15 @@ const MusicSingleData: React.FC<{ umusic?: UserMusic; music: IMusicInfo }> = ({
   );
 };
 
-const SekaiUserStatistics = () => {
+const SekaiUserStatistics = observer(() => {
   const layoutClasses = useLayoutStyles();
   // const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
-  const { sekaiProfile } = useContext(UserContext)!;
-  // const { contentTransMode } = useContext(SettingContext)!;
+  const {
+    sekai: { getSekaiProfile },
+    region,
+  } = useRootStore();
 
   const [areas] = useCachedData<IArea>("areas");
   const [areaItems] = useCachedData<IAreaItem>("areaItems");
@@ -324,6 +321,12 @@ const SekaiUserStatistics = () => {
   const [areaItemOpen, toggleAreaItemOpen] = useToggle(false);
   const [musicOpen, toggleMusicOpen] = useToggle(false);
   const [selectedMusic, setSelectedMusic] = useState(1);
+
+  const [sekaiProfile, setLocalSekaiProfile] = useState<ISekaiProfile>();
+
+  useEffect(() => {
+    setLocalSekaiProfile(getSekaiProfile(region));
+  }, [getSekaiProfile, region]);
 
   const challengeLiveRanks = useMemo(
     () =>
@@ -338,10 +341,10 @@ const SekaiUserStatistics = () => {
         },
         {} as { [key: number]: number }
       ),
-    [sekaiProfile?.sekaiUserProfile?.userChallengeLiveSoloStages]
+    [sekaiProfile]
   );
 
-  return (
+  return !!sekaiProfile && !!sekaiProfile.sekaiUserProfile ? (
     <Grid container spacing={1}>
       <Grid item xs={12}>
         <Accordion
@@ -356,7 +359,7 @@ const SekaiUserStatistics = () => {
           </AccordionSummary>
           <AccordionDetails>
             <Grid container spacing={1}>
-              {sekaiProfile?.sekaiUserProfile?.userCharacters.map((chara) => (
+              {sekaiProfile.sekaiUserProfile?.userCharacters.map((chara) => (
                 <Grid key={chara.characterId} item xs={3} md={2} lg={1}>
                   <Chip
                     avatar={
@@ -383,7 +386,7 @@ const SekaiUserStatistics = () => {
           </AccordionSummary>
           <AccordionDetails>
             <Grid container spacing={1}>
-              {sekaiProfile?.sekaiUserProfile?.userCharacters.map((chara) => (
+              {sekaiProfile.sekaiUserProfile?.userCharacters.map((chara) => (
                 <Grid key={chara.characterId} item xs={3} md={2} lg={1}>
                   <Chip
                     avatar={
@@ -409,15 +412,15 @@ const SekaiUserStatistics = () => {
                 <Avatar
                   src={
                     charaIcons[
-                      `CharaIcon${sekaiProfile?.sekaiUserProfile?.userChallengeLiveSoloResults[0].characterId}`
+                      `CharaIcon${sekaiProfile.sekaiUserProfile.userChallengeLiveSoloResults[0].characterId}`
                     ]
                   }
                 />
               </Grid>
               <Grid item>
                 {
-                  sekaiProfile?.sekaiUserProfile
-                    ?.userChallengeLiveSoloResults[0].highScore
+                  sekaiProfile.sekaiUserProfile.userChallengeLiveSoloResults[0]
+                    .highScore
                 }
               </Grid>
             </Grid>
@@ -435,7 +438,7 @@ const SekaiUserStatistics = () => {
           </AccordionSummary>
           <AccordionDetails>
             <Grid container spacing={1}>
-              {sekaiProfile?.sekaiUserProfile?.userHonors.map((honor) => (
+              {sekaiProfile.sekaiUserProfile.userHonors.map((honor) => (
                 <Grid key={honor.honorId} item xs={12} sm={6} md={3}>
                   <Tooltip title={new Date(honor.obtainedAt).toLocaleString()}>
                     <div>
@@ -556,9 +559,8 @@ const SekaiUserStatistics = () => {
                                       </Grid>
                                       <Grid item xs={12}>
                                         <Typography align="center">
-                                          {!!sekaiProfile &&
-                                            !!sekaiProfile.sekaiUserProfile &&
-                                            sekaiProfile.sekaiUserProfile.userAreaItems.find(
+                                          {!!sekaiProfile.sekaiUserProfile &&
+                                            sekaiProfile.sekaiUserProfile!.userAreaItems.find(
                                               (uai) =>
                                                 uai.areaItemId === areaItem.id
                                             )?.level}
@@ -597,12 +599,12 @@ const SekaiUserStatistics = () => {
                   <Grid container spacing={1}>
                     <Grid item>
                       <Chip label={t("music:mvp_count")}></Chip>
-                      {getMVPCount(sekaiProfile?.sekaiUserProfile?.userMusics)}
+                      {getMVPCount(sekaiProfile.sekaiUserProfile.userMusics)}
                     </Grid>
                     <Grid item>
                       <Chip label={t("music:super_star_count")}></Chip>
                       {getSuperStarCount(
-                        sekaiProfile?.sekaiUserProfile?.userMusics
+                        sekaiProfile.sekaiUserProfile.userMusics
                       )}
                     </Grid>
                   </Grid>
@@ -660,7 +662,7 @@ const SekaiUserStatistics = () => {
                               <div style={{ minWidth: "64px" }}>
                                 {getClearCount(
                                   idx,
-                                  sekaiProfile?.sekaiUserProfile?.userMusics
+                                  sekaiProfile.sekaiUserProfile!.userMusics
                                 )}
                               </div>
                             </TableCell>
@@ -675,7 +677,7 @@ const SekaiUserStatistics = () => {
                               <div style={{ minWidth: "64px" }}>
                                 {getFullComboCount(
                                   idx,
-                                  sekaiProfile?.sekaiUserProfile?.userMusics
+                                  sekaiProfile.sekaiUserProfile!.userMusics
                                 )}
                               </div>
                             </TableCell>
@@ -690,7 +692,7 @@ const SekaiUserStatistics = () => {
                               <div style={{ minWidth: "64px" }}>
                                 {getAllPerfectCount(
                                   idx,
-                                  sekaiProfile?.sekaiUserProfile?.userMusics
+                                  sekaiProfile.sekaiUserProfile!.userMusics
                                 )}
                               </div>
                             </TableCell>
@@ -718,21 +720,19 @@ const SekaiUserStatistics = () => {
                     </Select>
                   </FormControl>
                 </Grid>
-                {!!sekaiProfile && (
-                  <MusicSingleData
-                    umusic={sekaiProfile?.sekaiUserProfile?.userMusics.find(
-                      (um) => um.musicId === selectedMusic
-                    )}
-                    music={musics.find((m) => m.id === selectedMusic)!}
-                  />
-                )}
+                <MusicSingleData
+                  umusic={sekaiProfile.sekaiUserProfile.userMusics.find(
+                    (um) => um.musicId === selectedMusic
+                  )}
+                  music={musics.find((m) => m.id === selectedMusic)!}
+                />
               </Grid>
             )}
           </AccordionDetails>
         </Accordion>
       </Grid>
     </Grid>
-  );
-};
+  ) : null;
+});
 
 export default SekaiUserStatistics;

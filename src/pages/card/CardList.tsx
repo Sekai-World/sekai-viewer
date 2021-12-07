@@ -34,7 +34,6 @@ import {
 import React, {
   Fragment,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useReducer,
@@ -75,7 +74,6 @@ import {
   attrIconMap,
   UnitLogoMiniMap,
 } from "../../utils/resources";
-import { SettingContext } from "../../context";
 import GridView from "./GridView";
 import AgendaView from "./AgendaView";
 import ComfyView from "./ComfyView";
@@ -85,6 +83,8 @@ import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
 import { useCurrentEvent } from "../../utils/apiClient";
 import { useAssetI18n, useCharaName } from "../../utils/i18n";
+import { useRootStore } from "../../stores/root";
+import { observer } from "mobx-react-lite";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -131,11 +131,13 @@ const ListCard: { [key: string]: React.FC<{ data?: ICardInfo }> } = {
   comfy: ComfyView,
 };
 
-const CardList: React.FC<{}> = () => {
+const CardList: React.FC<{}> = observer(() => {
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
-  const { isShowSpoiler } = useContext(SettingContext)!;
+  const {
+    settings: { isShowSpoiler },
+  } = useRootStore();
   const getCharaName = useCharaName();
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
   const { getTranslated } = useAssetI18n();
@@ -1073,6 +1075,6 @@ const CardList: React.FC<{}> = () => {
       </Popover>
     </Fragment>
   );
-};
+});
 
 export default CardList;

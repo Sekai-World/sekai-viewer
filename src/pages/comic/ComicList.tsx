@@ -2,23 +2,18 @@ import { Container, Grid, Link, Typography } from "@mui/material";
 import { Twitter } from "@mui/icons-material";
 import { Alert, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import Vk from "~icons/entypo-social/vk";
-import React, {
-  Fragment,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
-import { SettingContext } from "../../context";
 import { useLayoutStyles } from "../../styles/layout";
 import { ITipInfo, ITipInfoComic } from "../../types.d";
 import { getRemoteAssetURL, useCachedData } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
 import GridView from "./GridView";
+import { useRootStore } from "../../stores/root";
+import { observer } from "mobx-react-lite";
 
 const ListCard: React.FC<{
   data?: ITipInfoComic;
@@ -27,10 +22,12 @@ const ListCard: React.FC<{
   handleCardClick?: (index: number) => void;
 }> = GridView;
 
-const ComicList: React.FC<{}> = () => {
+const ComicList: React.FC<{}> = observer(() => {
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
-  const { contentTransMode } = useContext(SettingContext)!;
+  const {
+    settings: { contentTransMode },
+  } = useRootStore();
   const { getTranslated } = useAssetI18n();
 
   const [tipsCache] = useCachedData<ITipInfo>("tips");
@@ -263,6 +260,6 @@ const ComicList: React.FC<{}> = () => {
       />
     </Fragment>
   );
-};
+});
 
 export default ComicList;

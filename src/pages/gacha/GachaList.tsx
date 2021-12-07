@@ -1,12 +1,6 @@
 import { Typography, Container, Grid } from "@mui/material";
 import { useLayoutStyles } from "../../styles/layout";
-import React, {
-  Fragment,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useCachedData, useLocalStorage } from "../../utils";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
 
@@ -22,7 +16,8 @@ import {
 } from "@mui/icons-material";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import Pound from "~icons/mdi/pound";
-import { SettingContext } from "../../context";
+import { useRootStore } from "../../stores/root";
+import { observer } from "mobx-react-lite";
 
 function getPaginatedGachas(gachas: IGachaInfo[], page: number, limit: number) {
   return gachas.slice(limit * (page - 1), limit * page);
@@ -30,10 +25,12 @@ function getPaginatedGachas(gachas: IGachaInfo[], page: number, limit: number) {
 
 const ListCard: React.FC<{ data?: IGachaInfo }> = GridView;
 
-const GachaList: React.FC<{}> = () => {
+const GachaList: React.FC<{}> = observer(() => {
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
-  const { isShowSpoiler } = useContext(SettingContext)!;
+  const {
+    settings: { isShowSpoiler },
+  } = useRootStore();
 
   const [gachas, setGachas] = useState<IGachaInfo[]>([]);
   const [gachasCache] = useCachedData<IGachaInfo>("gachas");
@@ -178,6 +175,6 @@ const GachaList: React.FC<{}> = () => {
       </Container>
     </Fragment>
   );
-};
+});
 
 export default GachaList;

@@ -14,45 +14,43 @@ import { AccountCircle, Twitter, VpnKey } from "@mui/icons-material";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-mui";
 import Discord from "~icons/mdi/discord";
-import React, { Fragment, useContext, useEffect } from "react";
+import React, { Fragment, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, Link as RouteLink } from "react-router-dom";
 import { useInteractiveStyles } from "../../styles/interactive";
 // import { useInteractiveStyles } from "../../styles/interactive";
 import { useLayoutStyles } from "../../styles/layout";
 import { LoginValues } from "../../strapi-model";
-import { useAlertSnackbar, useQuery } from "../../utils";
+import {
+  apiUserInfoToStoreUserInfo,
+  useAlertSnackbar,
+  useQuery,
+} from "../../utils";
 import { useStrapi } from "../../utils/apiClient";
-// import useJwtAuth from "../../utils/jwt";
-import { UserContext } from "../../context";
-import { useJwt } from "react-jwt";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../../stores/root";
+import { IUserMetadata } from "../../stores/user";
 
-const Login: React.FC<{}> = () => {
+const Login: React.FC<{}> = observer(() => {
   const theme = useTheme();
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const query = useQuery();
   const history = useHistory();
-  // const jwtAuth = useJwtAuth();
-  // const { decodedToken } = useJwtAuth();
   const {
     postLoginLocal,
     getRedirectConnectLoginUrl,
     getUserMetadataMe,
-    getSekaiProfileMe,
-    getSekaiCardTeamMe,
+    // getSekaiProfileMe,
+    // getSekaiCardTeamMe,
   } = useStrapi();
   const { showError } = useAlertSnackbar();
   const {
-    jwtToken,
-    updateJwtToken,
-    updateUser,
-    updateUserMeta,
-    updateSekaiProfile,
-    updateSekaiCardTeam,
-  } = useContext(UserContext)!;
-  const { decodedToken } = useJwt(jwtToken);
+    // jwtToken,
+    decodedToken,
+    user: { setToken, setUserInfo, setMetadata },
+  } = useRootStore();
 
   useEffect(() => {
     if (query.get("error")) showError(query.get("error")!);
@@ -92,11 +90,11 @@ const Login: React.FC<{}> = () => {
               // jwtAuth.token = data.jwt;
               // jwtAuth.user = data.user;
               // jwtAuth.usermeta = await getUserMetadataMe(data.jwt);
-              updateJwtToken(data.jwt);
-              updateUser(data.user);
-              updateUserMeta(await getUserMetadataMe(data.jwt));
-              updateSekaiProfile(await getSekaiProfileMe(data.jwt));
-              updateSekaiCardTeam(await getSekaiCardTeamMe(data.jwt));
+              setToken(data.jwt);
+              setUserInfo(apiUserInfoToStoreUserInfo(data.user));
+              setMetadata((await getUserMetadataMe(data.jwt)) as IUserMetadata);
+              // updateSekaiProfile(await getSekaiProfileMe(data.jwt));
+              // updateSekaiCardTeam(await getSekaiCardTeamMe(data.jwt));
               history.replace("/user");
               // window.location.reload();
               localStorage.setItem(
@@ -246,6 +244,6 @@ const Login: React.FC<{}> = () => {
       </Container>
     </Fragment>
   );
-};
+});
 
 export default Login;

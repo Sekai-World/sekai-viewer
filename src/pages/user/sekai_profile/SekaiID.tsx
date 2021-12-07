@@ -17,27 +17,25 @@ import {
   DialogProps,
   DialogTitle,
   TextField as MUITextField,
+  // FormControl,
+  // InputLabel,
+  // Select,
+  // MenuItem,
 } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import { Check, Clear, Delete, Twitter, Update } from "@mui/icons-material";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-mui";
-import React, {
-  Fragment,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Carousel from "react-material-ui-carousel";
 import { useStrapi } from "../../../utils/apiClient";
-import { UserContext } from "../../../context";
 import DegreeImage from "../../../components/widgets/DegreeImage";
 import { useAlertSnackbar, useToggle } from "../../../utils";
 import { LoadingButton } from "@mui/lab";
-import { ServerRegion } from "../../../types";
-// import useJwtAuth from "../../../utils/jwt";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../../../stores/root";
+import { ISekaiProfile } from "../../../stores/sekai";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -221,13 +219,16 @@ const TransferConfirmDialog: React.FC<
   );
 };
 
-const SekaiID: React.FC<{}> = () => {
+const SekaiID: React.FC<{}> = observer(() => {
   const { t } = useTranslation();
   // const { token } = useJwtAuth();
   // const theme = useTheme();
   // const classes = useStyles();
-  const { jwtToken, sekaiProfile, updateSekaiProfile } =
-    useContext(UserContext)!;
+  const {
+    jwtToken,
+    sekai: { getSekaiProfile, setSekaiProfile, deleteSekaiProfile },
+    region,
+  } = useRootStore();
   const {
     getSekaiProfileMe,
     postSekaiProfileVerify,
@@ -239,6 +240,8 @@ const SekaiID: React.FC<{}> = () => {
   const { showError } = useAlertSnackbar();
 
   // const [sekaiProfile, setSekaiProfile] = useState<SekaiProfileModel>();
+  const [sekaiID, setSekaiID] = useState("");
+  const [sekaiProfile, setLocalSekaiProfile] = useState<ISekaiProfile>();
   const [isEditingSekaiID, toggleIsEditingSekaiID] = useToggle(false);
   const [isVerifyCarouselOpen, toggleIsVerifyCarouselOpen] = useToggle(false);
   const [isVerifying, toggleIsVerifying] = useToggle(false);
@@ -248,26 +251,28 @@ const SekaiID: React.FC<{}> = () => {
     useToggle(false);
   const [isTransferDiaglogOpen, toggleIsTransferDiaglogOpen] = useToggle(false);
 
-  const [sekaiID, setSekaiID] = useState("");
-  const [serverRegion, setServerRegion] = useState<ServerRegion>("jp");
+  useEffect(() => {
+    setLocalSekaiProfile(getSekaiProfile(region));
+  }, [getSekaiProfile, region]);
 
   useEffect(() => {
     getSekaiProfileMe()
       .then((data) => {
-        updateSekaiProfile(data);
+        setSekaiProfile(data as ISekaiProfile, region);
       })
       .catch((err) => {
-        if (err.id === "SekaiProfile.me.error.not-exist") {
-          updateSekaiProfile();
+        if (err.id === "sekaiProfile.me.error.not-exist") {
+          deleteSekaiProfile(region);
         }
       });
-  }, [getSekaiProfileMe, updateSekaiProfile]);
+  }, [deleteSekaiProfile, getSekaiProfileMe, region, setSekaiProfile]);
 
   const doVerify = useCallback(() => {
+    if (!sekaiProfile) return;
     toggleIsVerifying();
-    postSekaiProfileConfirm(sekaiProfile!.id, sekaiProfile!.sekaiUserId!)
+    postSekaiProfileConfirm(sekaiProfile.id, sekaiProfile.sekaiUserId!)
       .then(async () => {
-        updateSekaiProfile(await getSekaiProfileMe());
+        setSekaiProfile((await getSekaiProfileMe()) as ISekaiProfile, region);
         toggleIsVerifying();
       })
       .catch(() => {
@@ -278,33 +283,35 @@ const SekaiID: React.FC<{}> = () => {
   }, [
     getSekaiProfileMe,
     postSekaiProfileConfirm,
+    region,
     sekaiProfile,
+    setSekaiProfile,
     showError,
     t,
     toggleIsVerifyCarouselOpen,
     toggleIsVerifying,
-    updateSekaiProfile,
   ]);
 
   const doDeleteProfile = useCallback(async () => {
     toggleIsDeleteProfileConfirmOpen();
-    if (sekaiProfile) {
+    if (!!sekaiProfile) {
       toggleIsDeletingProfile();
       try {
         await deleteSekaiProfileById(sekaiProfile.id);
-        updateSekaiProfile();
+        deleteSekaiProfile(region);
       } catch (err: any) {
         showError(err.message);
       }
       toggleIsDeletingProfile();
     }
   }, [
+    deleteSekaiProfile,
     deleteSekaiProfileById,
+    region,
     sekaiProfile,
     showError,
     toggleIsDeleteProfileConfirmOpen,
     toggleIsDeletingProfile,
-    updateSekaiProfile,
   ]);
 
   const doTransferProfile = useCallback(
@@ -313,23 +320,41 @@ const SekaiID: React.FC<{}> = () => {
         throw new Error("Username must be filled.");
       }
       await postSekaiProfileTransfer(String(sekaiID), username);
-      updateSekaiProfile(await getSekaiProfileMe());
+      setSekaiProfile((await getSekaiProfileMe()) as ISekaiProfile, region);
       toggleIsEditingSekaiID();
     },
     [
       getSekaiProfileMe,
       postSekaiProfileTransfer,
+      region,
       sekaiID,
+      setSekaiProfile,
       toggleIsEditingSekaiID,
-      updateSekaiProfile,
     ]
   );
 
   return (
     <Grid container spacing={1}>
+      {/* <Grid item xs={12}>
+        <FormControl>
+          <InputLabel id="server-region">{t("common:region")}</InputLabel>
+          <Select
+            labelId="server-region"
+            value={region}
+            label={t("common:region")}
+            onChange={(evt) => {
+              setRegion(evt.target.value as ServerRegion);
+            }}
+          >
+            <MenuItem value="jp">JP</MenuItem>
+            <MenuItem value="tw">TW</MenuItem>
+            <MenuItem value="en">EN</MenuItem>
+          </Select>
+        </FormControl>
+      </Grid> */}
       <Grid item xs={12}>
         <Grid container spacing={1} alignItems="center">
-          {sekaiProfile ? (
+          {!!sekaiProfile ? (
             <Fragment>
               {sekaiProfile.sekaiUserToken && (
                 <Grid item>
@@ -357,8 +382,8 @@ const SekaiID: React.FC<{}> = () => {
                         size="small"
                         onClick={() => toggleIsEditingSekaiID()}
                         disabled={
-                          sekaiProfile.updateAvailable <=
-                          sekaiProfile.updateUsed
+                          sekaiProfile[region].updateAvailable <=
+                          sekaiProfile[region].updateUsed
                         }
                       >
                         <Create />
@@ -400,9 +425,13 @@ const SekaiID: React.FC<{}> = () => {
                                 toggleIsUpdatingProfile();
                                 try {
                                   await putSekaiProfileUpdate(sekaiProfile.id);
-                                  updateSekaiProfile(await getSekaiProfileMe());
+                                  setSekaiProfile(
+                                    (await getSekaiProfileMe()) as ISekaiProfile,
+                                    region
+                                  );
                                   toggleIsUpdatingProfile();
                                 } catch (err: any) {
+                                  console.error(err);
                                   showError(err.message);
                                   toggleIsUpdatingProfile();
                                 }
@@ -441,7 +470,9 @@ const SekaiID: React.FC<{}> = () => {
           {isEditingSekaiID && (
             <Grid item>
               <Formik
-                initialValues={{ userid: sekaiProfile?.sekaiUserId || "" }}
+                initialValues={{
+                  userid: (!!sekaiProfile && sekaiProfile.sekaiUserId) || "",
+                }}
                 onSubmit={async (values, { setErrors }) => {
                   if (!/^\d{16,}$/.test(values.userid)) {
                     showError(t("user:profile.error.sekai_id_malformed"));
@@ -449,12 +480,18 @@ const SekaiID: React.FC<{}> = () => {
                   }
                   try {
                     await postSekaiProfileVerify(values.userid);
-                    updateSekaiProfile(await getSekaiProfileMe());
+                    setSekaiProfile(
+                      (await getSekaiProfileMe()) as ISekaiProfile,
+                      region
+                    );
                     toggleIsEditingSekaiID();
                     // jwtAuth.user = await getUserMe();
                   } catch (error: any) {
                     // console.log(error);
-                    if (error.id === "SekaiProfile.verify.error.duplicated") {
+                    if (
+                      error.id ===
+                      "sekaiProfile[region].verify.error.duplicated"
+                    ) {
                       setSekaiID(values.userid);
                       toggleIsTransferDiaglogOpen();
                     }
@@ -501,7 +538,7 @@ const SekaiID: React.FC<{}> = () => {
           )}
         </Grid>
       </Grid>
-      {sekaiProfile && !!sekaiProfile.sekaiUserToken && (
+      {!!sekaiProfile && !!sekaiProfile.sekaiUserToken && (
         <Grid item xs={12}>
           <br />
           <Grid container alignItems="center" spacing={1}>
@@ -528,9 +565,9 @@ const SekaiID: React.FC<{}> = () => {
           </Grid>
         </Grid>
       )}
-      {sekaiProfile &&
+      {!!sekaiProfile &&
         !sekaiProfile.sekaiUserToken &&
-        sekaiProfile.sekaiUserProfile && (
+        !!sekaiProfile.sekaiUserProfile && (
           <Grid item xs={12}>
             <Grid container alignItems="center" spacing={1}>
               <Grid item xs={12} sm={6} lg={4} xl={3}>
@@ -543,7 +580,7 @@ const SekaiID: React.FC<{}> = () => {
                   </Grid>
                   <Grid item>
                     <Typography>
-                      {sekaiProfile.sekaiUserProfile.user.userGamedata.name}
+                      {sekaiProfile.sekaiUserProfile!.user.userGamedata.name}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -558,7 +595,7 @@ const SekaiID: React.FC<{}> = () => {
                   </Grid>
                   <Grid item>
                     <Typography>
-                      {sekaiProfile.sekaiUserProfile.user.userGamedata.rank}
+                      {sekaiProfile.sekaiUserProfile!.user.userGamedata.rank}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -573,7 +610,7 @@ const SekaiID: React.FC<{}> = () => {
                   </Grid>
                   <Grid item>
                     <Typography>
-                      {sekaiProfile.sekaiUserProfile.userProfile.word}
+                      {sekaiProfile.sekaiUserProfile!.userProfile.word}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -583,30 +620,30 @@ const SekaiID: React.FC<{}> = () => {
                   <Grid item xs={12} md={4}>
                     <DegreeImage
                       honorId={
-                        sekaiProfile.sekaiUserProfile.userProfile.honorId1
+                        sekaiProfile.sekaiUserProfile!.userProfile.honorId1
                       }
                       honorLevel={
-                        sekaiProfile.sekaiUserProfile.userProfile.honorLevel1
+                        sekaiProfile.sekaiUserProfile!.userProfile.honorLevel1
                       }
                     />
                   </Grid>
                   <Grid item xs={12} md={4}>
                     <DegreeImage
                       honorId={
-                        sekaiProfile.sekaiUserProfile.userProfile.honorId2
+                        sekaiProfile.sekaiUserProfile!.userProfile.honorId2
                       }
                       honorLevel={
-                        sekaiProfile.sekaiUserProfile.userProfile.honorLevel2
+                        sekaiProfile.sekaiUserProfile!.userProfile.honorLevel2
                       }
                     />
                   </Grid>
                   <Grid item xs={12} md={4}>
                     <DegreeImage
                       honorId={
-                        sekaiProfile.sekaiUserProfile.userProfile.honorId3
+                        sekaiProfile.sekaiUserProfile!.userProfile.honorId3
                       }
                       honorLevel={
-                        sekaiProfile.sekaiUserProfile.userProfile.honorLevel3
+                        sekaiProfile.sekaiUserProfile!.userProfile.honorLevel3
                       }
                     />
                   </Grid>
@@ -615,12 +652,14 @@ const SekaiID: React.FC<{}> = () => {
             </Grid>
           </Grid>
         )}
-      <VerifyDialog
-        open={isVerifyCarouselOpen}
-        onClose={() => toggleIsVerifyCarouselOpen()}
-        onVerifyClick={doVerify}
-        token={sekaiProfile?.sekaiUserToken || ""}
-      />
+      {!!sekaiProfile && (
+        <VerifyDialog
+          open={isVerifyCarouselOpen}
+          onClose={() => toggleIsVerifyCarouselOpen()}
+          onVerifyClick={doVerify}
+          token={sekaiProfile.sekaiUserToken || ""}
+        />
+      )}
       <DeleteConfirmDiaglog
         open={isDeleteProfileConfirmOpen}
         onClose={() => toggleIsDeleteProfileConfirmOpen()}
@@ -637,6 +676,6 @@ const SekaiID: React.FC<{}> = () => {
       />
     </Grid>
   );
-};
+});
 
 export default SekaiID;

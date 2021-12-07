@@ -335,7 +335,7 @@ const AssetViewer = () => {
 
   const fetchStructure = useCallback(
     async (path: string, token?: string): Promise<IListBucketResult> => {
-      console.log(path + token, resultCache[path + token]);
+      // console.log(path + token, resultCache[path + token]);
       if (resultCache[path + token]) {
         return resultCache[path + token];
       }
