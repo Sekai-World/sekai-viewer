@@ -12,7 +12,6 @@
     "@mui/material": "^5.2.2",
     "@mui/styles": "^5.2.2",
     "@mui/x-data-grid": "^5.1.0",
-    "@reduxjs/toolkit": "^1.6.2",
     "@sekai-world/find-live2d-v3": "^1.6.16",
     "@sekai-world/react-flip-countdown": "^1.2.0",
     "@tawaship/canvas-recorder": "^1.1.1",

@@ -29,7 +29,10 @@ const SekaiCardTeam: React.FC<{}> = observer(() => {
   } = useRootStore();
   const { t } = useTranslation();
 
-  const { getSekaiCardTeamMe, postSekaiCardTeamMe } = useStrapi(jwtToken);
+  const { getSekaiCardTeamMe, postSekaiCardTeamMe } = useStrapi(
+    jwtToken,
+    region
+  );
 
   const [isUserMemberOpen, setIsUserMemberOpen] = useState(false);
   const [isUserImportMemberOpen, setIsUserImportMemberOpen] = useState(false);

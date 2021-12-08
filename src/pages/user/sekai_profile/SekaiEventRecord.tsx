@@ -36,7 +36,7 @@ const SekaiEventRecord = observer((props: Props) => {
     region,
   } = useRootStore();
   const { getSekaiProfileEventRecordMe, postSekaiProfileEventRecord } =
-    useStrapi(jwtToken);
+    useStrapi(jwtToken, region);
   const { getTranslated } = useAssetI18n();
   const { showError } = useAlertSnackbar();
 

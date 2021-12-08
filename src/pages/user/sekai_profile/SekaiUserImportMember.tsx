@@ -147,7 +147,7 @@ const SekaiUserImportMember = observer(() => {
     sekai: { sekaiCardTeamMap, setSekaiCardTeam },
     region,
   } = useRootStore();
-  const { putSekaiCards } = useStrapi(jwtToken);
+  const { putSekaiCards } = useStrapi(jwtToken, region);
   const { showError, showSuccess } = useAlertSnackbar();
 
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -697,7 +697,7 @@ const SekaiUserImportMember = observer(() => {
                   ) || 0
                 : 0,
               cardIds,
-              useIndex: 0,
+              useIndex: cardIds.findIndex((cardId) => cardId !== -1),
               trained:
                 (!!hashResults[idx].length &&
                   hashResults[idx][0][0].includes("after_training")) ||
@@ -983,6 +983,7 @@ const SekaiUserImportMember = observer(() => {
     if (!sekaiCardTeam || !cards) return;
     setPostingCardList(true);
     try {
+      console.log(rows);
       const cardList = rows
         .map((row) => {
           const cardId = row.cardIds[row.useIndex];
@@ -1026,6 +1027,7 @@ const SekaiUserImportMember = observer(() => {
 
       showSuccess(t("user:profile.import_card.submit_success"));
     } catch (error) {
+      console.error(error);
       showError(t("user:profile.import_card.submit_error"));
     }
     setPostingCardList(false);
@@ -1364,6 +1366,14 @@ const SekaiUserImportMember = observer(() => {
                       toggleIsCardSelectionOpen();
                       setEditId(-1);
                     }}
+                    sx={{
+                      display:
+                        rows.find((row) => row.id === editId)?.cardIds[idx] ===
+                        -1
+                          ? "none"
+                          : "inherit",
+                    }}
+                    xs={2}
                   >
                     <Grid container direction="column" alignItems="center">
                       <img

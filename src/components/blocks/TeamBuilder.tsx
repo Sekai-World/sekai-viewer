@@ -100,7 +100,7 @@ const TeamBuilder: React.FC<{
       sekai: { sekaiCardTeamMap, sekaiProfileMap, setSekaiCardTeam },
       region,
     } = useRootStore();
-    const { putSekaiDecks, deleteSekaiDecks } = useStrapi(jwtToken);
+    const { putSekaiDecks, deleteSekaiDecks } = useStrapi(jwtToken, region);
     const { showError, showSuccess } = useAlertSnackbar();
     const skillMapping = useSkillMapping();
 

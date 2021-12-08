@@ -237,7 +237,7 @@ const SekaiID: React.FC<{}> = observer(() => {
     putSekaiProfileUpdate,
     deleteSekaiProfileById,
     postSekaiProfileTransfer,
-  } = useStrapi(jwtToken);
+  } = useStrapi(jwtToken, region);
   const { showError } = useAlertSnackbar();
 
   // const [sekaiProfile, setLocalSekaiProfile] = useState<SekaiProfileModel>();
