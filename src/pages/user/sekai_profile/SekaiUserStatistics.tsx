@@ -64,7 +64,7 @@ const ProfileMusicImage: React.FC<{
     );
   }, [assetbundleName]);
 
-  return <Image src={img} alt={title} bgColor=""></Image>;
+  return <Image src={img} alt={title} bgColor="" showLoading></Image>;
 };
 
 const getMusicClearIcon = (status: UserMusicDifficultyStatus) => {
@@ -511,6 +511,7 @@ const SekaiUserStatistics = observer(() => {
                               alt={`area ${area.id}`}
                               style={{ height: "64px", width: "64px" }}
                               bgColor=""
+                              showLoading
                             />
                           </Tooltip>
                         </Grid>
@@ -555,6 +556,7 @@ const SekaiUserStatistics = observer(() => {
                                             width: "64px",
                                           }}
                                           bgColor=""
+                                          showLoading
                                         />
                                       </Grid>
                                       <Grid item xs={12}>
