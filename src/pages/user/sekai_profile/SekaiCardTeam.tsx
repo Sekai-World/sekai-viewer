@@ -67,6 +67,8 @@ const SekaiCardTeam: React.FC<{}> = observer(() => {
           } else if (!isCancelled && !sekaiCardTeam) {
             setIsSyncingCardTeam(true);
             await postSekaiCardTeamMe([], []);
+            const entry = await getSekaiCardTeamMe();
+            setSekaiCardTeam(entry as ISekaiCardTeam, region);
             setIsUpdatedCardTeam(true);
             setIsSyncingCardTeam(false);
           }
