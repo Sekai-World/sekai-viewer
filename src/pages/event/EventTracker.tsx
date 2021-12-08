@@ -49,11 +49,17 @@ import { HistoryMobileRow, LiveMobileRow } from "./EventTrackerMobileRow";
 // import DegreeImage from "../../components/widgets/DegreeImage";
 import { HistoryRow, LiveRow } from "./EventTrackerTableRow";
 import { useDebouncedCallback } from "use-debounce";
-import SekaiEventRecord from "./SekaiEventRecord";
-import AdSense from "../../components/blocks/AdSenseBlock";
 import { useRootStore } from "../../stores/root";
 import { ISekaiProfile } from "../../stores/sekai";
 import { observer } from "mobx-react-lite";
+import { autorun } from "mobx";
+
+const SekaiEventRecord = React.lazy(
+  () => import("../user/sekai_profile/SekaiEventRecord")
+);
+const AdSense = React.lazy(
+  () => import("../../components/blocks/AdSenseBlock")
+);
 
 const useStyles = makeStyles(() => ({
   eventSelect: {
@@ -80,7 +86,7 @@ const EventTracker: React.FC<{}> = observer(() => {
     getEventRankingsByTimestamp,
   } = useEventTrackerAPI(region);
   const {
-    sekai: { getSekaiProfile },
+    sekai: { sekaiProfileMap },
   } = useRootStore();
   const refreshData = useRealtimeEventData();
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
@@ -115,9 +121,7 @@ const EventTracker: React.FC<{}> = observer(() => {
     EventRankingResponse[]
   >([]);
   const [fetchingTimePoints, toggleFetchingTimePoints] = useToggle(false);
-  const [sekaiProfile, setSekaiProfile] = useState<ISekaiProfile | undefined>(
-    undefined
-  );
+  const [sekaiProfile, setLocalSekaiProfile] = useState<ISekaiProfile>();
 
   const fullRank = useMemo(
     () => [
@@ -137,8 +141,10 @@ const EventTracker: React.FC<{}> = observer(() => {
   }, [t]);
 
   useEffect(() => {
-    setSekaiProfile(getSekaiProfile(region));
-  }, [getSekaiProfile, region]);
+    autorun(() => {
+      setLocalSekaiProfile(sekaiProfileMap.get(region));
+    });
+  }, []);
 
   useEffect(() => {
     return () => {
