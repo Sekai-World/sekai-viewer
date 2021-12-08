@@ -161,7 +161,8 @@ export const SekaiDeck = types.model({
   id: types.optional(types.number, 99999999),
   teamCards: types.array(types.number),
   teamCardsStates: types.array(SekaiCardState),
-  teamTotalPower: types.number,
+  teamTotalPower: types.optional(types.number, 0),
+  teamPowerStates: types.optional(types.number, 0),
 });
 export interface ISekaiDeck extends Instance<typeof SekaiDeck> {}
 
