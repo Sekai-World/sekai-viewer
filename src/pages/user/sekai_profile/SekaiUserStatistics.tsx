@@ -414,21 +414,29 @@ const SekaiUserStatistics = observer(() => {
               <Grid item>
                 <Typography>{t("music:hi_score")}</Typography>
               </Grid>
-              <Grid item>
-                <Avatar
-                  src={
-                    charaIcons[
-                      `CharaIcon${sekaiProfile.sekaiUserProfile.userChallengeLiveSoloResults[0].characterId}`
-                    ]
-                  }
-                />
-              </Grid>
-              <Grid item>
-                {
-                  sekaiProfile.sekaiUserProfile.userChallengeLiveSoloResults[0]
-                    .highScore
-                }
-              </Grid>
+              {sekaiProfile.sekaiUserProfile.userChallengeLiveSoloResults[0] ? (
+                <Fragment>
+                  <Grid item>
+                    <Avatar
+                      src={
+                        charaIcons[
+                          `CharaIcon${sekaiProfile.sekaiUserProfile.userChallengeLiveSoloResults[0].characterId}`
+                        ]
+                      }
+                    />
+                  </Grid>
+                  <Grid item>
+                    {
+                      sekaiProfile.sekaiUserProfile
+                        .userChallengeLiveSoloResults[0].highScore
+                    }
+                  </Grid>
+                </Fragment>
+              ) : (
+                <Grid item>
+                  <Typography>N/A</Typography>
+                </Grid>
+              )}
             </Grid>
           </AccordionDetails>
         </Accordion>

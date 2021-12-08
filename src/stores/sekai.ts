@@ -19,13 +19,13 @@ export interface ISekaiUser extends Instance<typeof SekaiUser> {}
 export const SekaiUserProfile = types.model({
   userId: types.number,
   word: types.string,
-  honorId1: types.number,
-  honorLevel1: types.number,
-  honorId2: types.number,
-  honorLevel2: types.number,
-  honorId3: types.number,
-  honorLevel3: types.number,
-  twitterId: types.string,
+  honorId1: types.maybe(types.number),
+  honorLevel1: types.maybe(types.number),
+  honorId2: types.maybe(types.number),
+  honorLevel2: types.maybe(types.number),
+  honorId3: types.maybe(types.number),
+  honorLevel3: types.maybe(types.number),
+  twitterId: types.optional(types.string, ""),
   profileImageType: types.string,
 });
 export interface ISekaiUserProfile extends Instance<typeof SekaiUserProfile> {}
