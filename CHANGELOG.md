@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.5](https://github.com/Sekai-World/sekai-viewer/compare/v1.0.4...v1.0.5) (2021-12-08)
+
+
+### Bug Fixes
+
+* **user:** :bug: import card not working for EN and TW ([046c456](https://github.com/Sekai-World/sekai-viewer/commits/046c4569f551900d58279a55aeb1ab0566ece6de))
+
 ### [1.0.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.0.3...v1.0.4) (2021-12-08)
 
 
