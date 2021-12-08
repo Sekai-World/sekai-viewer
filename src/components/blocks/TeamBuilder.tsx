@@ -55,6 +55,7 @@ import { attrIconMap } from "../../utils/resources";
 import { useRootStore } from "../../stores/root";
 import { observer } from "mobx-react-lite";
 import { ISekaiProfile, ISekaiCardTeam } from "../../stores/sekai";
+import { autorun } from "mobx";
 
 const useStyle = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -96,12 +97,7 @@ const TeamBuilder: React.FC<{
     const getCharaName = useCharaName();
     const {
       jwtToken,
-      sekai: {
-        getSekaiCardTeam,
-        getSekaiProfile,
-        setSekaiProfile,
-        setSekaiCardTeam,
-      },
+      sekai: { sekaiCardTeamMap, sekaiProfileMap, setSekaiCardTeam },
       region,
     } = useRootStore();
     const { putSekaiDecks, deleteSekaiDecks } = useStrapi(jwtToken);
@@ -120,16 +116,14 @@ const TeamBuilder: React.FC<{
     } = useTeamCalc();
 
     const [sekaiProfile, setLocalSekaiProfile] = useState<ISekaiProfile>();
-
-    useEffect(() => {
-      setLocalSekaiProfile(getSekaiProfile(region));
-    }, [getSekaiProfile, region]);
-
     const [sekaiCardTeam, setLocalSekaiCardTeam] = useState<ISekaiCardTeam>();
 
     useEffect(() => {
-      setLocalSekaiCardTeam(getSekaiCardTeam(region));
-    }, [getSekaiCardTeam, region]);
+      autorun(() => {
+        setLocalSekaiProfile(sekaiProfileMap.get(region));
+        setLocalSekaiCardTeam(sekaiCardTeamMap.get(region));
+      });
+    }, []);
 
     const [characterId, setCharacterId] = useState<number>(0);
     const [rarity, setRarity] = useState<number>(0);
@@ -317,12 +311,11 @@ const TeamBuilder: React.FC<{
               type: "add",
               payload: toSaveEntry,
             });
-            setSekaiCardTeam(
-              Object.assign({}, sekaiCardTeam, {
-                decks: [...(sekaiCardTeam.decks || []), toSaveEntry],
-              }),
-              region
-            );
+            const sct = Object.assign({}, sekaiCardTeam, {
+              decks: [...(sekaiCardTeam.decks || []), toSaveEntry],
+            });
+            setSekaiCardTeam(sct, region);
+            // setSekaiCardTeam(sct);
             toggleIsSaveingEntry();
           })
           .catch(() => {
@@ -374,16 +367,15 @@ const TeamBuilder: React.FC<{
                   data: currentEntry,
                 },
               });
-              setSekaiCardTeam(
-                Object.assign({}, sekaiCardTeam, {
-                  decks: [
-                    ...sekaiCardTeam.decks.slice(0, id),
-                    currentEntry,
-                    ...sekaiCardTeam.decks.slice(id + 1),
-                  ],
-                }),
-                region
-              );
+              const sct = Object.assign({}, sekaiCardTeam, {
+                decks: [
+                  ...sekaiCardTeam.decks.slice(0, id),
+                  currentEntry,
+                  ...sekaiCardTeam.decks.slice(id + 1),
+                ],
+              });
+              setSekaiCardTeam(sct, region);
+              // setSekaiCardTeam(sct);
               showSuccess(t("team_build:save_team_succeed"));
               toggleIsSaveingEntry();
             })
@@ -431,15 +423,14 @@ const TeamBuilder: React.FC<{
                 type: "remove",
                 payload: id,
               });
-              setSekaiCardTeam(
-                Object.assign({}, sekaiCardTeam, {
-                  decks: [
-                    ...sekaiCardTeam.decks.slice(0, id),
-                    ...sekaiCardTeam.decks.slice(id + 1),
-                  ],
-                }),
-                region
-              );
+              const sct = Object.assign({}, sekaiCardTeam, {
+                decks: [
+                  ...sekaiCardTeam.decks.slice(0, id),
+                  ...sekaiCardTeam.decks.slice(id + 1),
+                ],
+              });
+              setSekaiCardTeam(sct, region);
+              // setSekaiCardTeam(sct);
               toggleIsSaveingEntry();
             })
             .catch(() => {
@@ -717,7 +708,7 @@ const TeamBuilder: React.FC<{
                 <FormControlLabel
                   control={<Switch checked={isAutoCalcBonus} />}
                   onChange={() => toggleIsAutoCalcBonus()}
-                  label={t("team_build:auto_calc_bonus")}
+                  label={t("team_build:auto_calc_bonus") as string}
                   disabled={!sekaiProfile || !sekaiProfile.sekaiUserProfile}
                 />
               </Grid>
@@ -873,7 +864,7 @@ const TeamBuilder: React.FC<{
                         onChange={(_, checked) => setIsSyncCardState(checked)}
                       />
                     }
-                    label={t("team_build:use_sekai_card_state")}
+                    label={t("team_build:use_sekai_card_state") as string}
                     disabled={
                       !sekaiCardTeam ||
                       !sekaiCardTeam.cards ||
@@ -926,13 +917,13 @@ const TeamBuilder: React.FC<{
                 <FormControlLabel
                   value="local"
                   control={<Radio />}
-                  label={t("team_build:storage_location.local")}
+                  label={t("team_build:storage_location.local") as string}
                   labelPlacement="end"
                 />
                 <FormControlLabel
                   value="cloud"
                   control={<Radio />}
-                  label={t("team_build:storage_location.cloud")}
+                  label={t("team_build:storage_location.cloud") as string}
                   labelPlacement="end"
                   disabled={!sekaiCardTeam}
                 />
@@ -1096,13 +1087,13 @@ const TeamBuilder: React.FC<{
                 <FormControlLabel
                   value="local"
                   control={<Radio />}
-                  label={t("team_build:storage_location.local")}
+                  label={t("team_build:storage_location.local") as string}
                   labelPlacement="end"
                 />
                 <FormControlLabel
                   value="cloud"
                   control={<Radio />}
-                  label={t("team_build:storage_location.cloud")}
+                  label={t("team_build:storage_location.cloud") as string}
                   labelPlacement="end"
                   disabled={!sekaiCardTeam}
                 />
@@ -1230,7 +1221,7 @@ const TeamBuilder: React.FC<{
                   <Grid item>
                     <FormControlLabel
                       control={<Switch checked={editingCard.trained} />}
-                      label={t("card:trained")}
+                      label={t("card:trained") as string}
                       onChange={(e, checked) =>
                         handleChange(checked, "trained")
                       }
@@ -1240,7 +1231,7 @@ const TeamBuilder: React.FC<{
                 <Grid item>
                   <FormControlLabel
                     control={<Switch checked={editingCard.story1Unlock} />}
-                    label={t("card:sideStory1Unlocked")}
+                    label={t("card:sideStory1Unlocked") as string}
                     onChange={(e, checked) =>
                       handleChange(checked, "story1Unlock")
                     }
@@ -1249,7 +1240,7 @@ const TeamBuilder: React.FC<{
                 <Grid item>
                   <FormControlLabel
                     control={<Switch checked={editingCard.story2Unlock} />}
-                    label={t("card:sideStory2Unlocked")}
+                    label={t("card:sideStory2Unlocked") as string}
                     onChange={(e, checked) =>
                       handleChange(checked, "story2Unlock")
                     }

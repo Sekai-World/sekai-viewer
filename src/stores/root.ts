@@ -25,6 +25,8 @@ const Root = types
   }))
   .actions((self) => ({
     logout() {
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("refreshToken");
       self.user.logout();
       self.sekai.logout();
     },
@@ -76,9 +78,10 @@ const initialState: IRoot = {
 
 //@ts-ignore
 export const rootStore = Root.create(initialState);
-onSnapshot(rootStore.user, (snapshot) =>
-  localStorage.setItem("user", JSON.stringify(snapshot))
-);
+onSnapshot(rootStore.user, (snapshot) => {
+  localStorage.setItem("authToken", snapshot.token);
+  localStorage.setItem("user", JSON.stringify(snapshot));
+});
 onSnapshot(rootStore.sekai, (snapshot) =>
   localStorage.setItem("sekai", JSON.stringify(snapshot))
 );

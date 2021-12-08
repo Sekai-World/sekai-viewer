@@ -199,17 +199,15 @@ export const SekaiProfileMap = types
     sekaiCardTeamMap: types.map(SekaiCardTeam),
     isFetchingSekaiCardTeam: types.optional(types.boolean, false),
   })
-  .views((self) => ({
-    getSekaiProfile(region: string) {
-      return self.sekaiProfileMap.get(region);
-    },
-    getSekaiCardTeam(region: string) {
-      return self.sekaiCardTeamMap.get(region);
-    },
-  }))
   .actions((self) => ({
-    setSekaiProfile(sekaiProfile: ISekaiProfile, region: ServerRegion) {
-      self.sekaiProfileMap.set(region, sekaiProfile);
+    setSekaiProfile(
+      sekaiProfile: Partial<ISekaiProfile>,
+      region: ServerRegion
+    ) {
+      self.sekaiProfileMap.set(
+        region,
+        Object.assign({}, self.sekaiProfileMap.get(region), sekaiProfile)
+      );
     },
     deleteSekaiProfile(region: ServerRegion) {
       self.sekaiProfileMap.delete(region);
@@ -232,8 +230,14 @@ export const SekaiProfileMap = types
         self.isFetchingSekaiProfile = false;
       }
     }),
-    setSekaiCardTeam(sekaiCardTeam: ISekaiCardTeam, region: ServerRegion) {
-      self.sekaiCardTeamMap.set(region, sekaiCardTeam);
+    setSekaiCardTeam(
+      sekaiCardTeam: Partial<ISekaiCardTeam>,
+      region: ServerRegion
+    ) {
+      self.sekaiCardTeamMap.set(
+        region,
+        Object.assign({}, self.sekaiCardTeamMap.get(region), sekaiCardTeam)
+      );
     },
     deleteSekaiCardTeam(region: ServerRegion) {
       self.sekaiCardTeamMap.delete(region);

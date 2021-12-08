@@ -1,3 +1,4 @@
+import { observer } from "mobx-react-lite";
 import React, { Fragment, lazy } from "react";
 import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 import { useRootStore } from "../../stores/root";
@@ -11,7 +12,7 @@ const ResetPasswordCallback = lazy(() => import("./ResetPasswordCallback"));
 const UserHome = lazy(() => import("./home/UserHome"));
 const Confirmation = lazy(() => import("./EmailConfirm"));
 
-const User: React.FC<{}> = () => {
+const User: React.FC<{}> = observer(() => {
   // const interactiveClasses = useInteractiveStyles();
   // const { user, isExpired, token } = useJwtAuth();
   const {
@@ -57,6 +58,6 @@ const User: React.FC<{}> = () => {
       </Switch>
     </Fragment>
   );
-};
+});
 
 export default User;

@@ -19,8 +19,11 @@ import { LoadingButton } from "@mui/lab";
 import { useRootStore } from "../../../stores/root";
 import { ISekaiProfile } from "../../../stores/sekai";
 import { observer } from "mobx-react-lite";
+import { autorun } from "mobx";
 
-interface Props {}
+interface Props {
+  eventId?: number;
+}
 
 const SekaiEventRecord = observer((props: Props) => {
   // const layoutClasses = useLayoutStyles();
@@ -28,7 +31,7 @@ const SekaiEventRecord = observer((props: Props) => {
   const { t } = useTranslation();
   const {
     jwtToken,
-    sekai: { getSekaiProfile, setSekaiProfile },
+    sekai: { sekaiProfileMap, setSekaiProfile },
     settings: { contentTransMode },
     region,
   } = useRootStore();
@@ -51,13 +54,21 @@ const SekaiEventRecord = observer((props: Props) => {
   const [sekaiProfile, setLocalSekaiProfile] = useState<ISekaiProfile>();
 
   useEffect(() => {
-    setLocalSekaiProfile(getSekaiProfile(region));
-  }, [getSekaiProfile, region]);
+    autorun(() => {
+      setLocalSekaiProfile(sekaiProfileMap.get(region));
+    });
+  }, []);
 
   useEffect(() => {
     const func = async () => {
       // console.log(currEvent);
-      if (currEvent && events) {
+      if (props.eventId) {
+        try {
+          setEventRecords(await getSekaiProfileEventRecordMe(props.eventId));
+        } catch (error) {
+          setEventRecords([]);
+        }
+      } else if (currEvent && events) {
         const ev = events.find((elem) => elem.id === Number(currEvent.eventId));
         if (ev) {
           setSelectedEvent({
@@ -82,6 +93,7 @@ const SekaiEventRecord = observer((props: Props) => {
     events,
     getSekaiProfileEventRecordMe,
     getTranslated,
+    props.eventId,
   ]);
 
   return (
@@ -167,11 +179,12 @@ const SekaiEventRecord = observer((props: Props) => {
                         await postSekaiProfileEventRecord(currEvent!.eventId);
                         setEventRecords(await getSekaiProfileEventRecordMe());
                         setSekaiProfile(
-                          Object.assign({}, sekaiProfile, {
+                          {
                             eventGetUsed: sekaiProfile.eventGetUsed + 1,
-                          }),
+                          },
                           region
                         );
+                        // setSekaiProfile(sp);
                         setIsEventRecording(false);
                       } catch (error: any) {
                         showError(error.message);

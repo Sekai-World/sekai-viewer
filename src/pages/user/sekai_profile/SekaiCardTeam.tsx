@@ -12,6 +12,8 @@ import { ISekaiCardTeam, ISekaiProfile } from "../../../stores/sekai";
 import { useLayoutStyles } from "../../../styles/layout";
 import { useStrapi } from "../../../utils/apiClient";
 import { observer } from "mobx-react-lite";
+import { autorun } from "mobx";
+
 const SekaiUserCardList = React.lazy(() => import("./SekaiUserCardList"));
 const SekaiUserImportMember = React.lazy(
   () => import("./SekaiUserImportMember")
@@ -21,7 +23,7 @@ const SekaiUserTeams = React.lazy(() => import("./SekaiUserTeams"));
 const SekaiCardTeam: React.FC<{}> = observer(() => {
   const layoutClasses = useLayoutStyles();
   const {
-    sekai: { getSekaiProfile, getSekaiCardTeam, setSekaiCardTeam },
+    sekai: { sekaiProfileMap, sekaiCardTeamMap, setSekaiCardTeam },
     jwtToken,
     region,
   } = useRootStore();
@@ -38,9 +40,11 @@ const SekaiCardTeam: React.FC<{}> = observer(() => {
   const [sekaiCardTeam, setLocalSekaiCardTeam] = useState<ISekaiCardTeam>();
 
   useEffect(() => {
-    setLocalSekaiProfile(getSekaiProfile(region));
-    setLocalSekaiCardTeam(getSekaiCardTeam(region));
-  }, [getSekaiCardTeam, getSekaiProfile, region, setSekaiCardTeam]);
+    autorun(() => {
+      setLocalSekaiProfile(sekaiProfileMap.get(region));
+      setLocalSekaiCardTeam(sekaiCardTeamMap.get(region));
+    });
+  }, []);
 
   useEffect(() => {
     let isCancelled = false;

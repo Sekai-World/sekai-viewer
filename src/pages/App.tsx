@@ -791,8 +791,8 @@ const AppInner = observer((props: { theme: Theme }) => {
     user: { userinfo, setUserInfo, setMetadata },
     jwtToken,
     sekai: {
-      getSekaiProfile,
-      getSekaiCardTeam,
+      sekaiProfileMap,
+      sekaiCardTeamMap,
       fetchSekaiProfile,
       fetchSekaiCardTeam,
     },
@@ -849,10 +849,10 @@ const AppInner = observer((props: { theme: Theme }) => {
         func();
       }
 
-      if (!getSekaiProfile(region)) {
+      if (!sekaiProfileMap.has(region)) {
         fetchSekaiProfile(region);
       }
-      if (!getSekaiCardTeam(region)) {
+      if (!sekaiCardTeamMap.has(region)) {
         fetchSekaiCardTeam(region);
       }
     }
@@ -860,12 +860,12 @@ const AppInner = observer((props: { theme: Theme }) => {
     fetchSekaiCardTeam,
     fetchSekaiProfile,
     getRefreshToken,
-    getSekaiCardTeam,
-    getSekaiProfile,
     getUserMe,
     getUserMetadataMe,
     jwtToken,
     region,
+    sekaiCardTeamMap,
+    sekaiProfileMap,
     setMetadata,
     setUserInfo,
     userinfo,
@@ -1183,7 +1183,7 @@ const AppInner = observer((props: { theme: Theme }) => {
   );
 });
 
-function App() {
+const App = observer(() => {
   const {
     settings: { displayMode, setLanguages, lang, setLang },
   } = useRootStore();
@@ -1251,6 +1251,6 @@ function App() {
       </ThemeProvider>
     </StyledEngineProvider>
   );
-}
+});
 
 export default App;

@@ -78,6 +78,7 @@ import { useAssetI18n, useCharaName } from "../../../utils/i18n";
 import { useRootStore } from "../../../stores/root";
 import { ISekaiCardTeam } from "../../../stores/sekai";
 import { observer } from "mobx-react-lite";
+import { autorun } from "mobx";
 
 const SekaiUserCardList = observer(() => {
   // const layoutClasses = useLayoutStyles();
@@ -85,7 +86,7 @@ const SekaiUserCardList = observer(() => {
   const { t } = useTranslation();
   const {
     jwtToken,
-    sekai: { getSekaiCardTeam, setSekaiCardTeam },
+    sekai: { sekaiCardTeamMap, setSekaiCardTeam },
     region,
   } = useRootStore();
   const { putSekaiCards, deleteSekaiCards } = useStrapi(jwtToken);
@@ -160,8 +161,10 @@ const SekaiUserCardList = observer(() => {
   const [sekaiCardTeam, setLocalSekaiCardTeam] = useState<ISekaiCardTeam>();
 
   useEffect(() => {
-    setLocalSekaiCardTeam(getSekaiCardTeam(region));
-  }, [getSekaiCardTeam, region]);
+    autorun(() => {
+      setLocalSekaiCardTeam(sekaiCardTeamMap.get(region));
+    });
+  }, []);
 
   useEffect(() => {
     if (!!cards && !!cards.length && !!sekaiCardTeam) {
@@ -393,12 +396,11 @@ const SekaiUserCardList = observer(() => {
                       setEditList([]);
                       setDeleteCardIds([]);
                       setAddCardIds([]);
-                      setSekaiCardTeam(
-                        Object.assign({}, sekaiCardTeam, {
-                          cards: cardList,
-                        }),
-                        region
-                      );
+                      const sct = Object.assign({}, sekaiCardTeam, {
+                        cards: cardList,
+                      });
+                      setSekaiCardTeam(sct, region);
+                      // setSekaiCardTeam(sct);
                       showSuccess(t("user:profile.card_list.submit_success"));
                     } catch (error) {
                       showError(t("user:profile.card_list.submit_error"));
@@ -904,14 +906,14 @@ const SekaiUserCardList = observer(() => {
               <Grid item>
                 <FormControlLabel
                   control={<Switch checked={card.trained} />}
-                  label={t("card:trained")}
+                  label={t("card:trained") as string}
                   onChange={(e, checked) => handleChange(checked, "trained")}
                 />
               </Grid>
               <Grid item>
                 <FormControlLabel
                   control={<Switch checked={card.story1Unlock} />}
-                  label={t("card:sideStory1Unlocked")}
+                  label={t("card:sideStory1Unlocked") as string}
                   onChange={(e, checked) =>
                     handleChange(checked, "story1Unlock")
                   }
@@ -920,7 +922,7 @@ const SekaiUserCardList = observer(() => {
               <Grid item>
                 <FormControlLabel
                   control={<Switch checked={card.story2Unlock} />}
-                  label={t("card:sideStory2Unlocked")}
+                  label={t("card:sideStory2Unlocked") as string}
                   onChange={(e, checked) =>
                     handleChange(checked, "story2Unlock")
                   }

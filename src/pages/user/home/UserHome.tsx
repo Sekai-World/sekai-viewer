@@ -57,13 +57,9 @@ const UserHome: React.FC<{}> = observer(() => {
     useStrapi(jwtToken);
   const { showError } = useAlertSnackbar();
 
-  const [avatarUrl, setAvatarUrl] = useState(
-    metadata ? (metadata.avatar || { url: "" }).url : ""
-  );
-  const [nickname, setNickname] = useState(metadata?.nickname || "");
-  const [preferLangs, setPreferLangs] = useState<number[]>(
-    metadata?.languages.map((lang) => lang.id) || []
-  );
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [nickname, setNickname] = useState("");
+  const [preferLangs, setPreferLangs] = useState<number[]>([]);
 
   const [isUploading, setIsUploading] = useState(false);
   const [isEditingNickname, setIsEditingNickname] = useState(false);
@@ -73,6 +69,19 @@ const UserHome: React.FC<{}> = observer(() => {
   useEffect(() => {
     document.title = t("title:user_home");
   }, [t]);
+
+  useEffect(() => {
+    if (metadata) {
+      setAvatarUrl(metadata.avatar?.url || "");
+      setNickname(metadata.nickname);
+      setPreferLangs(metadata.languages.map((lang) => lang.id));
+    }
+    return () => {
+      setAvatarUrl("");
+      setNickname("");
+      setPreferLangs([]);
+    };
+  }, [metadata]);
 
   return (
     <Fragment>

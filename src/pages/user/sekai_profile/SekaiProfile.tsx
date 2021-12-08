@@ -8,6 +8,8 @@ import SekaiCardTeam from "./SekaiCardTeam";
 import { useRootStore } from "../../../stores/root";
 import { observer } from "mobx-react-lite";
 import { ISekaiProfile } from "../../../stores/sekai";
+import { autorun } from "mobx";
+
 const SekaiEventRecord = React.lazy(() => import("./SekaiEventRecord"));
 const SekaiID = React.lazy(() => import("./SekaiID"));
 const SekaiUserDeck = React.lazy(() => import("./SekaiUserDeck"));
@@ -17,15 +19,17 @@ const SekaiProfile = observer(() => {
   // const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const {
-    sekai: { getSekaiProfile },
+    sekai: { sekaiProfileMap },
     region,
   } = useRootStore();
 
   const [sekaiProfile, setLocalSekaiProfile] = useState<ISekaiProfile>();
 
   useEffect(() => {
-    setLocalSekaiProfile(getSekaiProfile(region));
-  }, [getSekaiProfile, region]);
+    autorun(() => {
+      setLocalSekaiProfile(sekaiProfileMap.get(region));
+    });
+  }, []);
 
   return (
     <Fragment>

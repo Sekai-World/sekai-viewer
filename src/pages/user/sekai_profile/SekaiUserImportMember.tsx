@@ -47,6 +47,7 @@ import { LoadingButton } from "@mui/lab";
 import { useRootStore } from "../../../stores/root";
 import { observer } from "mobx-react-lite";
 import { ISekaiCardTeam } from "../../../stores/sekai";
+import { autorun } from "mobx";
 
 function initCOS(N: number = 64) {
   const entries = 2 * N * (N - 1);
@@ -143,7 +144,7 @@ const SekaiUserImportMember = observer(() => {
   const { t } = useTranslation();
   const {
     jwtToken,
-    sekai: { getSekaiCardTeam, setSekaiCardTeam },
+    sekai: { sekaiCardTeamMap, setSekaiCardTeam },
     region,
   } = useRootStore();
   const { putSekaiCards } = useStrapi(jwtToken);
@@ -178,8 +179,10 @@ const SekaiUserImportMember = observer(() => {
   const [sekaiCardTeam, setLocalSekaiCardTeam] = useState<ISekaiCardTeam>();
 
   useEffect(() => {
-    setLocalSekaiCardTeam(getSekaiCardTeam(region));
-  }, [getSekaiCardTeam, region]);
+    autorun(() => {
+      setLocalSekaiCardTeam(sekaiCardTeamMap.get(region));
+    });
+  }, []);
 
   // const canvasRef = useRef<HTMLCanvasElement>(null);
   const maxLevels = useMemo(() => [0, 20, 30, 50, 60], []);
@@ -932,7 +935,7 @@ const SekaiUserImportMember = observer(() => {
                     }}
                   />
                 }
-                label={t("card:trained")}
+                label={t("card:trained") as string}
               ></FormControlLabel>
               <FormControlLabel
                 control={
@@ -949,7 +952,7 @@ const SekaiUserImportMember = observer(() => {
                     }}
                   />
                 }
-                label={t("card:sideStory1Unlocked")}
+                label={t("card:sideStory1Unlocked") as string}
               ></FormControlLabel>
               <FormControlLabel
                 control={
@@ -966,7 +969,7 @@ const SekaiUserImportMember = observer(() => {
                     }}
                   />
                 }
-                label={t("card:sideStory2Unlocked")}
+                label={t("card:sideStory2Unlocked") as string}
               ></FormControlLabel>
             </Grid>
           );
@@ -1015,12 +1018,11 @@ const SekaiUserImportMember = observer(() => {
       // updateSekaiProfile({
       //   cardList,
       // });
-      setSekaiCardTeam(
-        Object.assign({}, sekaiCardTeam, {
-          cards: cardList,
-        }),
-        region
-      );
+      const sct = Object.assign({}, sekaiCardTeam, {
+        cards: cardList,
+      });
+      setSekaiCardTeam(sct, region);
+      // setSekaiCardTeam(sct);
 
       showSuccess(t("user:profile.import_card.submit_success"));
     } catch (error) {
@@ -1118,7 +1120,7 @@ const SekaiUserImportMember = observer(() => {
                         onChange={(ev) => setOcrEnabled(ev.target.checked)}
                       />
                     }
-                    label={t("user:profile.import_card.enable_ocr")}
+                    label={t("user:profile.import_card.enable_ocr") as string}
                   />
                 </FormControl>
               </Tooltip>
@@ -1266,7 +1268,7 @@ const SekaiUserImportMember = observer(() => {
                                 }}
                               />
                             }
-                            label={t("card:trained")}
+                            label={t("card:trained") as string}
                           ></FormControlLabel>
                           <FormControlLabel
                             control={
@@ -1285,7 +1287,7 @@ const SekaiUserImportMember = observer(() => {
                                 }}
                               />
                             }
-                            label={t("card:sideStory1Unlocked")}
+                            label={t("card:sideStory1Unlocked") as string}
                           ></FormControlLabel>
                           <FormControlLabel
                             control={
@@ -1304,7 +1306,7 @@ const SekaiUserImportMember = observer(() => {
                                 }}
                               />
                             }
-                            label={t("card:sideStory2Unlocked")}
+                            label={t("card:sideStory2Unlocked") as string}
                           ></FormControlLabel>
                         </Grid>
                       </Grid>

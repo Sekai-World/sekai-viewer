@@ -77,6 +77,7 @@ export function useStrapi(token?: string, region?: ServerRegion) {
 
             localStorage.setItem("refreshToken", refresh);
             localStorage.setItem("authToken", jwt);
+            root.user.token = jwt;
             _token.current = jwt;
 
             originalRequest.headers.authorization = `Bearer ${jwt}`;
@@ -85,12 +86,13 @@ export function useStrapi(token?: string, region?: ServerRegion) {
             // delete all token
             _token.current = "";
             // localStorage.removeItem("authToken");
-            localStorage.removeItem("userData");
-            localStorage.removeItem("userMetaDatum");
+            // localStorage.removeItem("userData");
+            // localStorage.removeItem("userMetaDatum");
             localStorage.removeItem("lastUserCheck");
-            localStorage.removeItem("refreshToken");
-            localStorage.removeItem("sekaiProfile");
-            localStorage.removeItem("sekaiCardTeam");
+            // localStorage.removeItem("refreshToken");
+            // localStorage.removeItem("sekaiProfile");
+            // localStorage.removeItem("sekaiCardTeam");
+            root.logout();
           }
         } else if (err.response.data.message && err.response.status !== 500)
           err.id = err.response.data.message[0].messages[0].id;
