@@ -29,7 +29,7 @@ const CurrentEventWidget: React.FC<{}> = observer(() => {
   // const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
-  const { currEvent } = useCurrentEvent();
+  const { currEvent, error } = useCurrentEvent();
   const { region } = useRootStore();
 
   const [eventBanner, setEventBanner] = useState("");
@@ -61,10 +61,11 @@ const CurrentEventWidget: React.FC<{}> = observer(() => {
                   // className={classes.banner}
                   // aspectRatio={5 / 2}
                   bgColor=""
+                  showLoading
                 />
               </Link>
             </Grid>
-          ) : (
+          ) : error ? null : (
             <Grid item xs={12} container justifyContent="center">
               <Skeleton variant="rectangular" height={100} width={250} />
             </Grid>

@@ -248,7 +248,7 @@ const SekaiUserCardList = observer(() => {
   ]);
 
   useEffect(() => {
-    if (!isCurrEventLoading) {
+    if (!isCurrEventLoading && currEvent) {
       setEventId(currEvent.eventId);
     }
   }, [currEvent, isCurrEventLoading]);

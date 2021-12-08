@@ -238,7 +238,7 @@ const CardList: React.FC<{}> = observer(() => {
   }, [setIsReady, cardsCache, charas]);
 
   useEffect(() => {
-    if (!isCurrEventLoading) {
+    if (!isCurrEventLoading && !!currEvent) {
       setEventId(currEvent.eventId);
     }
   }, [currEvent, isCurrEventLoading]);
