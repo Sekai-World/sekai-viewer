@@ -18,6 +18,14 @@ module.exports = function (app) {
     })
   );
   app.use(
+    "/sekai-en-assets",
+    createProxyMiddleware({
+      target: "https://sekai-res.dnaroma.eu/file",
+      // target: "https://minio.dnaroma.eu",
+      changeOrigin: true,
+    })
+  );
+  app.use(
     "/minio/",
     createProxyMiddleware({
       target: "https://minio.dnaroma.eu",

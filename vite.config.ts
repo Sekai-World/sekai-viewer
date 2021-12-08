@@ -105,6 +105,11 @@ export default defineConfig({
         // target: "https://minio.dnaroma.eu",
         changeOrigin: true,
       },
+      "/sekai-en-assets": {
+        target: "https://sekai-res.dnaroma.eu/file",
+        // target: "https://minio.dnaroma.eu",
+        changeOrigin: true,
+      },
       "/minio/": {
         target: "https://minio.dnaroma.eu",
         changeOrigin: true,
