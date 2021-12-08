@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.0.0...v1.0.1) (2021-12-08)
+
+
+### Bug Fixes
+
+* :bug: check currEvent before applying ([c28dc30](https://github.com/Sekai-World/sekai-viewer/commits/c28dc300dd3541064ce783e8f324b4214dc054a2))
+* **user:** :bug: sekai deck back compatibility ([530a897](https://github.com/Sekai-World/sekai-viewer/commits/530a897433769a24da5c0aa4a5668dad5517f8ae))
+
+
+### Refactors
+
+* :lipstick: add loading animation to some images ([add1d2c](https://github.com/Sekai-World/sekai-viewer/commits/add1d2c117b3a458dae7c2edb310a2345b1204d2))
+
 ## [1.0.0](https://github.com/Sekai-World/sekai-viewer/compare/v0.9.6...v1.0.0) (2021-12-07)
 
 
