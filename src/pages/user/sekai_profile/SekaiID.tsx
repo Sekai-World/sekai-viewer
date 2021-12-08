@@ -281,6 +281,7 @@ const SekaiID: React.FC<{}> = observer(() => {
 
   const doVerify = useCallback(async () => {
     if (!sekaiProfile) return;
+    toggleIsVerifyCarouselOpen();
     toggleIsVerifying();
     try {
       await postSekaiProfileConfirm(sekaiProfile.id, sekaiProfile.sekaiUserId!);
@@ -290,7 +291,6 @@ const SekaiID: React.FC<{}> = observer(() => {
       showError(t("user:profile.error.sekai_id_verify_failed"));
     }
     toggleIsVerifying();
-    toggleIsVerifyCarouselOpen();
   }, [
     getSekaiProfileMe,
     postSekaiProfileConfirm,

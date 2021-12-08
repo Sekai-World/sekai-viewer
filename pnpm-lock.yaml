@@ -14,6 +14,7 @@ specifiers:
   '@mui/material': ^5.2.2
   '@mui/styles': ^5.2.2
   '@mui/x-data-grid': ^5.1.0
+  '@reduxjs/toolkit': ^1.6.2
   '@sekai-world/find-live2d-v3': ^1.6.16
   '@sekai-world/react-flip-countdown': ^1.2.0
   '@tawaship/canvas-recorder': ^1.1.1
@@ -128,6 +129,7 @@ dependencies:
   '@mui/material': 5.2.2_e775e23d77fc33f172a6bda0cd692c92
   '@mui/styles': 5.2.2_cfedea9b3ed0faf0dded75c187406c5e
   '@mui/x-data-grid': 5.1.0_@mui+material@5.2.2+react@17.0.2
+  '@reduxjs/toolkit': 1.6.2_react@17.0.2
   '@sekai-world/find-live2d-v3': 1.6.16
   '@sekai-world/react-flip-countdown': 1.2.0_react@17.0.2
   '@tawaship/canvas-recorder': 1.1.1
@@ -2165,6 +2167,24 @@ packages:
 
   /@popperjs/core/2.11.0:
     resolution: {integrity: sha512-zrsUxjLOKAzdewIDRWy9nsV1GQsKBCWaGwsZQlCgr6/q+vjyZhFgqedLfFBuI9anTPEUT4APq9Mu0SZBTzIcGQ==}
+    dev: false
+
+  /@reduxjs/toolkit/1.6.2_react@17.0.2:
+    resolution: {integrity: sha512-HbfI/hOVrAcMGAYsMWxw3UJyIoAS9JTdwddsjlr5w3S50tXhWb+EMyhIw+IAvCVCLETkzdjgH91RjDSYZekVBA==}
+    peerDependencies:
+      react: ^16.14.0 || ^17.0.0
+      react-redux: ^7.2.1
+    peerDependenciesMeta:
+      react:
+        optional: true
+      react-redux:
+        optional: true
+    dependencies:
+      immer: 9.0.7
+      react: 17.0.2
+      redux: 4.1.2
+      redux-thunk: 2.4.1_redux@4.1.2
+      reselect: 4.1.5
     dev: false
 
   /@rollup/plugin-babel/5.3.0_@babel+core@7.16.0+rollup@2.60.2:
@@ -5355,6 +5375,10 @@ packages:
     resolution: {integrity: sha1-nbHb0Pr43m++D13V5Wu2BigN5ps=}
     dev: false
 
+  /immer/9.0.7:
+    resolution: {integrity: sha512-KGllzpbamZDvOIxnmJ0jI840g7Oikx58lBPWV0hUh7dtAyZpFqqrBZdKka5GlTwMTZ1Tjc/bKKW4VSFAt6BqMA==}
+    dev: false
+
   /import-fresh/3.3.0:
     resolution: {integrity: sha512-veYYhQa+D1QBKznvhUHxb8faxlrwUnxseDAbAp457E0wLNio2bOSKnjYDhMj+YiAq61xrMGhQk9iXVk5FzgQMw==}
     engines: {node: '>=6'}
@@ -7208,6 +7232,20 @@ packages:
     dependencies:
       css-unit-converter: 1.1.2
       postcss-value-parser: 3.3.1
+    dev: false
+
+  /redux-thunk/2.4.1_redux@4.1.2:
+    resolution: {integrity: sha512-OOYGNY5Jy2TWvTL1KgAlVy6dcx3siPJ1wTq741EPyUKfn6W6nChdICjZwCd0p8AZBs5kWpZlbkXW2nE/zjUa+Q==}
+    peerDependencies:
+      redux: ^4
+    dependencies:
+      redux: 4.1.2
+    dev: false
+
+  /redux/4.1.2:
+    resolution: {integrity: sha512-SH8PglcebESbd/shgf6mii6EIoRM0zrQyjcuQ+ojmfxjTtE0z9Y8pa62iA/OJ58qjP6j27uyW4kUF4jl/jd6sw==}
+    dependencies:
+      '@babel/runtime': 7.16.3
     dev: false
 
   /regenerate-unicode-properties/9.0.0:
