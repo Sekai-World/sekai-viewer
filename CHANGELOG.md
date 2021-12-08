@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.0.1...v1.0.2) (2021-12-08)
+
+
+### Bug Fixes
+
+* **user:** :bug: sekai id binding and other function are not functioning ([8b38ea8](https://github.com/Sekai-World/sekai-viewer/commits/8b38ea8c959ddba7cfeebe08069a4ba008fd7e35))
+
+
+### Refactors
+
+* **event:** :recycle: use unified sekai event record ([7fe2fe2](https://github.com/Sekai-World/sekai-viewer/commits/7fe2fe2fef1f9b246ba86cfe189782300dd28e0e))
+
 ### [1.0.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.0.0...v1.0.1) (2021-12-08)
 
 
