@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.0.3...v1.0.4) (2021-12-08)
+
+
+### Bug Fixes
+
+* **user:** :bug: sekai profile model definition ([96f20df](https://github.com/Sekai-World/sekai-viewer/commits/96f20dfe89712616b9e67e59cac705c7418fdbbf))
+
+
+### Refactors
+
+* **user:** verify carousel open state ([98560e3](https://github.com/Sekai-World/sekai-viewer/commits/98560e3dd700a20352031b817a27d9f4aad0ee90))
+
 ### [1.0.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.0.2...v1.0.3) (2021-12-08)
 
 
