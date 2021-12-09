@@ -33,9 +33,12 @@ import { Link, useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
 import {
+  GachaBehavior,
+  GachaCardRarityRate,
   GachaDetail,
   GachaStatistic,
   ICardInfo,
+  ICardRarity,
   IGachaCeilItem,
   IGachaInfo,
 } from "../../types.d";
@@ -50,6 +53,7 @@ import CommonMaterialIcon from "../../components/widgets/CommonMaterialIcon";
 // import AdSense from "../../components/blocks/AdSense";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
+import rarityBirthday from "../../assets/rarity_birthday.png";
 
 const gachaImageNameMap: {
   [key: number]: {
@@ -94,19 +98,28 @@ const useStyles = makeStyles((theme) => ({
     "max-width": "260px",
   },
   gachaBtn: {
-    margin: theme.spacing(0, 1),
+    padding: theme.spacing(1, 3.5),
   },
   bannerImg: {
     maxWidth: "100%",
   },
 }));
 
-const StarIcon: React.FC<{ num: number }> = ({ num }) => (
-  <Fragment>
-    {Array.from({ length: num }).map((_, idx) => (
-      <img key={idx} src={rarityNormal} alt="star" height="24px" />
-    ))}
-  </Fragment>
+const StarIcon: React.FC<{ num: number; right?: boolean }> = ({
+  num,
+  right = false,
+}) => (
+  <Grid container justifyContent={right ? "flex-end" : "inherit"}>
+    <Grid item>
+      {Array.from({ length: num }).map((_, idx) => (
+        <img key={idx} src={rarityNormal} alt="star" height="24px" />
+      ))}
+    </Grid>
+  </Grid>
+);
+
+const BirthdayIcon = () => (
+  <img src={rarityBirthday} alt="star" height="24px" />
 );
 
 const GachaDetailPage: React.FC<{}> = observer(() => {
@@ -124,6 +137,7 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
   const [gachas] = useCachedData<IGachaInfo>("gachas");
   const [gachaCeilItems] = useCachedData<IGachaCeilItem>("gachaCeilItems");
   const [cards] = useCachedData<ICardInfo>("cards");
+  const [rarities] = useCachedData<ICardRarity>("cardRarities");
 
   const [gacha, setGacha] = useState<IGachaInfo>();
   const [gachaCeilItem, setGachaCeilItem] = useState<IGachaCeilItem>();
@@ -131,206 +145,153 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
   const [picTabVal, setPicTabVal] = useState<string>("2");
   const [activeIdx, setActiveIdx] = useState<number>(0);
   const [statistic, setStatistic] = useState<GachaStatistic>({
-    total: 0,
-    rarity1: 0,
-    rarity2: 0,
-    rarity3: 0,
-    rarity4: 0,
+    spinCount: 0,
+    cost: {
+      ticket: 0,
+      jewel: 0,
+    },
+    counts: [],
   });
   const [currentGachaResult, setCurrentGachaResult] = useState<GachaDetail[]>(
     []
   );
-  const [weights, setWeights] = useState<number[]>([0, 0, 0, 0]);
-  const [normalRates, setNormalRates] = useState<number[]>([0, 0, 0, 0]);
-  const [guaranteedRate, setGuaranteedRate] = useState<number[]>([0, 0, 0, 0]);
+  const [gachaRarityRates, setGachaRarityRates] = useState<
+    (GachaCardRarityRate & ICardRarity)[]
+  >([]);
+  const [weights, setWeights] = useState<number[]>([]);
+  const [normalRates, setNormalRates] = useState<number[]>([]);
+  const [guaranteedRates, setGuaranteedRates] = useState<number[]>([]);
   const [isSummaryDialog, setIsSummaryDialog] = useState(false);
   const [isDescDialog, setIsDescDialog] = useState(false);
   const [isCardsDialog, setIsCardsDialog] = useState(false);
   const [gachaCards, setGachaCards] = useState<number[]>([]);
 
   const doGacha = useCallback(
-    (times: number) => {
-      if (!gacha || !cards) return;
-      const rollTimes = times;
-      const rollResult = [
-        gacha.rarity1Rate,
-        gacha.rarity1Rate! + gacha.rarity2Rate!,
-        gacha.rarity1Rate! + gacha.rarity2Rate! + gacha.rarity3Rate!,
-        gacha.rarity1Rate! +
-          gacha.rarity2Rate! +
-          gacha.rarity3Rate! +
-          gacha.rarity4Rate!,
-      ];
-      const must3RollResult = [100 - gacha.rarity4Rate!, 100];
-      const rollCards = [
+    (behavior: GachaBehavior) => {
+      if (!gacha || !rarities || !cards) return;
+      const rollTimes = behavior.spinCount;
+      // console.log(rollTimes);
+      const rollResult = gachaRarityRates.map(() => 0);
+      const normalSum = normalRates.reduce(
+        (sum, curr) => [...sum, curr + (sum.slice(-1)[0] || 0)],
+        [] as number[]
+      );
+      const guaranteeSum = guaranteedRates.reduce(
+        (sum, curr) => [...sum, curr + (sum.slice(-1)[0] || 0)],
+        [] as number[]
+      );
+      const rollableCards = gachaRarityRates.map((rate) =>
         gacha.gachaDetails
-          .filter(
-            (elem) =>
-              cards.find((card) => card.id === elem.cardId)?.rarity === 1
-          )!
-          .sort((a, b) => a.weight - b.weight),
-        gacha.gachaDetails
-          .filter(
-            (elem) =>
-              cards.find((card) => card.id === elem.cardId)?.rarity === 2
-          )!
-          .sort((a, b) => a.weight - b.weight),
-        gacha.gachaDetails
-          .filter(
-            (elem) =>
-              cards.find((card) => card.id === elem.cardId)?.rarity === 3
-          )!
-          .sort((a, b) => a.weight - b.weight),
-        gacha.gachaDetails
-          .filter(
-            (elem) =>
-              cards.find((card) => card.id === elem.cardId)?.rarity === 4
-          )!
-          .sort((a, b) => a.weight - b.weight),
-      ];
-      const rollWeights = rollCards.map((elem) =>
+          .filter((gd) =>
+            rate.cardRarityType
+              ? cards.find((card) => card.id === gd.cardId)?.cardRarityType ===
+                rate.cardRarityType
+              : cards.find((card) => card.id === gd.cardId)?.rarity ===
+                rate.rarity
+          )
+          .sort((a, b) => a.weight - b.weight)
+      );
+      const rollWeights = rollableCards.map((elem) =>
         elem?.map((_elem) => _elem.weight)
       );
       const tmpGachaResult: GachaDetail[] = [];
-      let noStar3Count = 0;
+      const isOverRarity = behavior.gachaBehaviorType.startsWith("over_rarity");
+      const overRarity = isOverRarity
+        ? behavior.gachaBehaviorType === "over_rarity_3_once"
+          ? 3
+          : 4
+        : 0;
+      let noOverRarityCount = 0;
       for (let i = 0; i < rollTimes; i++) {
-        if (i % 10 === 9 && noStar3Count === 9) {
+        // console.log(i, rollTimes);
+        if (i % 10 === 9 && isOverRarity && noOverRarityCount === 9) {
           // only roll 3* or 4*
           const roll = Math.random() * 100;
-          if (roll < must3RollResult[0]) {
-            // get 3* card
-            setStatistic((s) =>
-              Object.assign({}, s, {
-                total: s.total + 1,
-                rarity3: s.rarity3 + 1,
-              })
-            );
-            // roll a 3* card
-            let acc = 0;
-            const weightArr = rollWeights[2].map((weight) => (acc += weight));
-            const weightSum = weights[2];
-            const rand = Math.floor(Math.random() * weightSum);
-            tmpGachaResult.push(
-              rollCards[2][weightArr.filter((weight) => weight <= rand).length]
-            );
-          } else if (roll < must3RollResult[1]) {
-            // get 4* card
-            setStatistic((s) =>
-              Object.assign({}, s, {
-                total: s.total + 1,
-                rarity4: s.rarity4 + 1,
-              })
-            );
-            // roll a 4* card
-            let acc = 0;
-            const weightArr = rollWeights[3].map((weight) => (acc += weight));
-            const weightSum = weights[3];
-            const rand = Math.floor(Math.random() * weightSum);
-            tmpGachaResult.push(
-              rollCards[3][weightArr.filter((weight) => weight <= rand).length]
-            );
-          } else {
-            console.log(roll, must3RollResult);
-          }
-          noStar3Count = 0;
+          const idx = guaranteeSum.findIndex((rate) => roll < rate);
+          rollResult[idx] += 1;
+          const weightArr = rollWeights[idx].reduce(
+            (sum, curr) => [...sum, curr + (sum.slice(-1)[0] || 0)],
+            [] as number[]
+          );
+          const weightSum = weights[idx];
+          const rand = Math.floor(Math.random() * weightSum);
+          tmpGachaResult.push(
+            rollableCards[idx][
+              weightArr.filter((weight) => weight <= rand).length
+            ]
+          );
+          noOverRarityCount = 0;
           continue;
         } else if (i % 10 === 0) {
-          noStar3Count = 0;
+          noOverRarityCount = 0;
         }
         const roll = Math.random() * 100;
-        if (roll <= rollResult[0]!) {
-          // get 1* card
-          setStatistic((s) =>
-            Object.assign({}, s, {
-              total: s.total + 1,
-              rarity1: s.rarity1 + 1,
-            })
-          );
-          // roll a 1* card
-          let acc = 0;
-          const weightArr = rollWeights[0].map((weight) => (acc += weight));
-          const weightSum = weights[0];
-          const rand = Math.floor(Math.random() * weightSum);
-          tmpGachaResult.push(
-            rollCards[0][weightArr.filter((weight) => weight <= rand).length]
-          );
-          noStar3Count++;
-        } else if (roll <= rollResult[1]!) {
-          // get 2* card
-          setStatistic((s) =>
-            Object.assign({}, s, {
-              total: s.total + 1,
-              rarity2: s.rarity2 + 1,
-            })
-          );
-          // roll a 2* card
-          let acc = 0;
-          const weightArr = rollWeights[1].map((weight) => (acc += weight));
-          const weightSum = weights[1];
-          const rand = Math.floor(Math.random() * weightSum);
-          tmpGachaResult.push(
-            rollCards[1][weightArr.filter((weight) => weight <= rand).length]
-          );
-          noStar3Count++;
-        } else if (roll <= rollResult[2]!) {
-          // get 3* card
-          setStatistic((s) =>
-            Object.assign({}, s, {
-              total: s.total + 1,
-              rarity3: s.rarity3 + 1,
-            })
-          );
-          // roll a 3* card
-          let acc = 0;
-          const weightArr = rollWeights[2].map((weight) => (acc += weight));
-          const weightSum = weights[2];
-          const rand = Math.floor(Math.random() * weightSum);
-          tmpGachaResult.push(
-            rollCards[2][weightArr.filter((weight) => weight <= rand).length]
-          );
-        } else if (roll <= rollResult[3]!) {
-          // get 4* card
-          setStatistic((s) =>
-            Object.assign({}, s, {
-              total: s.total + 1,
-              rarity4: s.rarity4 + 1,
-            })
-          );
-          // roll a 4* card
-          let acc = 0;
-          const weightArr = rollWeights[3].map((weight) => (acc += weight));
-          const weightSum = weights[3];
-          const rand = Math.floor(Math.random() * weightSum);
-          tmpGachaResult.push(
-            rollCards[3][weightArr.filter((weight) => weight <= rand).length]
-          );
-        } else {
-          console.log(roll, rollResult);
-        }
+        const idx = normalSum.findIndex((rate) => roll < rate);
+        rollResult[idx] += 1;
+        const weightArr = rollWeights[idx].reduce(
+          (sum, curr) => [...sum, curr + (sum.slice(-1)[0] || 0)],
+          [] as number[]
+        );
+        const weightSum = weights[idx];
+        const rand = Math.floor(Math.random() * weightSum);
+        tmpGachaResult.push(
+          rollableCards[idx][
+            weightArr.filter((weight) => weight <= rand).length
+          ]
+        );
+
+        if (isOverRarity && gachaRarityRates[idx].rarity < 3)
+          noOverRarityCount += 1;
       }
+
+      setStatistic((stats) =>
+        Object.assign({}, stats, {
+          spinCount: stats.spinCount + behavior.spinCount,
+          cost: {
+            jewel:
+              behavior.costResourceType === "jewel"
+                ? stats.cost.jewel + behavior.costResourceQuantity
+                : stats.cost.jewel,
+            ticket:
+              behavior.costResourceType === "gacha_ticket"
+                ? stats.cost.ticket + behavior.costResourceQuantity
+                : stats.cost.ticket,
+          },
+          counts: stats.counts.map((count, idx) => rollResult[idx] + count),
+        })
+      );
 
       setCurrentGachaResult(tmpGachaResult.slice(-10));
     },
-    [cards, gacha, weights]
+    [
+      cards,
+      gacha,
+      gachaRarityRates,
+      guaranteedRates,
+      normalRates,
+      rarities,
+      weights,
+    ]
   );
 
   const resetGacha = useCallback(() => {
-    setStatistic({
-      total: 0,
-      rarity1: 0,
-      rarity2: 0,
-      rarity3: 0,
-      rarity4: 0,
-    });
+    setStatistic((stats) => ({
+      spinCount: 0,
+      cost: {
+        jewel: 0,
+        ticket: 0,
+      },
+      counts: stats.counts.map(() => 0),
+    }));
     setCurrentGachaResult([]);
-  }, [setStatistic, setCurrentGachaResult]);
+  }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (gachas && gachas.length)
       setGacha(gachas.find((elem) => elem.id === Number(gachaId)));
   }, [gachaId, gachas]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (gacha && gachaCeilItems && gachaCeilItems.length) {
       setGachaCeilItem(
         gachaCeilItems.find((elem) => elem.id === gacha.gachaCeilItemId)
@@ -338,33 +299,105 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
     }
   }, [gacha, gachaCeilItems]);
 
-  useEffect(() => {
-    if (gacha) {
+  useLayoutEffect(() => {
+    if (gacha && rarities) {
       const name = getTranslated(`gacha_name:${gachaId}`, gacha.name);
       document.title = t("title:gachaDetail", {
         name,
       });
-      setNormalRates([
-        gacha.rarity1Rate,
-        gacha.rarity2Rate,
-        gacha.rarity3Rate,
-        gacha.rarity4Rate,
-      ]);
-      setGuaranteedRate([0, 0, 100 - gacha.rarity4Rate, gacha.rarity4Rate]);
-    }
-  }, [gacha, contentTransMode, gachaId, getTranslated, t]);
+      let rates: (GachaCardRarityRate & ICardRarity)[] = [];
+      if (gacha.gachaCardRarityRates) {
+        rates = [...gacha.gachaCardRarityRates]
+          .sort((a, b) => b.rate - a.rate)
+          .map((rate) =>
+            Object.assign(
+              {},
+              rate,
+              rarities.find(
+                (rarity) => rarity.cardRarityType === rate.cardRarityType
+              )
+            )
+          );
+      } else {
+        rates = rarities.map((rarity) =>
+          Object.assign({}, rarity, {
+            id: 0,
+            groupId: 0,
+            cardRarityType: "",
+            rate: gacha[`rarity${rarity.rarity}Rate` as "rarity1Rate"],
+          })
+        );
+      }
+      rates = rates.filter((rate) => rate.rate);
+      setGachaRarityRates(rates);
+      setNormalRates(rates.map((rate) => rate.rate));
 
-  useEffect(() => {
-    if (gacha && cards && cards.length) {
-      // sum rate for rarity 1~4
-      const weightArr = [0, 0, 0, 0];
+      const sumRates = rates.reduce(
+        (sum, curr) => [...sum, curr.rate + (sum.slice(-1)[0] || 0)],
+        [] as number[]
+      );
+      if (
+        gacha.gachaBehaviors.find(
+          (gb) => gb.gachaBehaviorType === "over_rarity_3_once"
+        )
+      ) {
+        const grs = rates.map((rate) => rate.rate);
+        const rarity3Idx = rates.findIndex((rate) =>
+          rate.cardRarityType
+            ? rate.cardRarityType === "rarity_3"
+            : rate.rarity === 3
+        )!;
+        grs[rarity3Idx] = sumRates[rarity3Idx];
+        rates.forEach((rate, idx) => {
+          if (rate.rarity < 3) {
+            grs[idx] = 0;
+          }
+        });
+        setGuaranteedRates(grs);
+      } else if (
+        gacha.gachaBehaviors.find(
+          (gb) => gb.gachaBehaviorType === "over_rarity_4_once"
+        )
+      ) {
+        const grs = [...sumRates];
+        const rarity4Idx = rates.findIndex((rate) =>
+          rate.cardRarityType
+            ? rate.cardRarityType === "rarity_4"
+            : rate.rarity === 4
+        )!;
+        grs[rarity4Idx] = sumRates[rarity4Idx];
+        rates.forEach((rate, idx) => {
+          if (rate.rarity < 4) {
+            grs[idx] = 0;
+          }
+        });
+        setGuaranteedRates(grs);
+      }
+
+      setStatistic((stats) =>
+        Object.assign({}, stats, {
+          counts: rates.map(() => 0),
+        })
+      );
+    }
+  }, [gacha, contentTransMode, gachaId, getTranslated, t, rarities]);
+
+  useLayoutEffect(() => {
+    if (cards && gacha && gachaRarityRates) {
+      const weightArr = gachaRarityRates.map((rate) => 0);
       gacha.gachaDetails.forEach((detail) => {
         const card = cards.find((elem) => elem.id === detail.cardId)!;
-        weightArr[card.rarity - 1] += detail.weight;
+        weightArr[
+          gachaRarityRates.findIndex((rate) =>
+            rate.cardRarityType
+              ? rate.cardRarityType === card.cardRarityType
+              : rate.rarity === card.rarity
+          )
+        ] += detail.weight;
       });
       setWeights(weightArr);
     }
-  }, [cards, gacha]);
+  }, [cards, gacha, gachaRarityRates]);
 
   const [gachaBackground, setGachaBackground] = useState<string>("");
   const [gachaImage, setGachaImage] = useState<string>("");
@@ -478,7 +511,7 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
             ? "\n" +
               Math.round(
                 (detail.weight / weights[card.rarity - 1]) *
-                  guaranteedRate[card.rarity - 1] *
+                  guaranteedRates[card.rarity - 1] *
                   1000
               ) /
                 1000 +
@@ -488,7 +521,7 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
       }
       return "";
     },
-    [cards, gacha, guaranteedRate, normalRates, weights]
+    [cards, gacha, guaranteedRates, normalRates, weights]
   );
 
   if (gacha) {
@@ -694,103 +727,115 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
           {t("gacha:gacha_rate")}
         </Typography>
         <Container className={layoutClasses.content} maxWidth="md">
-          <Grid container direction="column">
-            {gacha.gachaBehaviors.find(
-              (gb) => gb.gachaBehaviorType === "normal"
-            ) ? (
+          <Grid container direction="row">
+            {!!gachaRarityRates && !!normalRates.length && (
               <Fragment>
-                <Grid
-                  item
-                  container
-                  direction="row"
-                  justifyContent="space-between"
-                  alignItems="center"
-                >
-                  <Grid item xs={2} md={4}>
-                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                      {t("gacha:normalRate")}
-                    </Typography>
-                  </Grid>
+                <Grid item xs={12}>
                   <Grid
-                    item
-                    xs={9}
-                    md={4}
                     container
-                    direction="column"
-                    alignItems="flex-end"
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
                   >
-                    <Grid item container alignItems="center">
-                      <Grid item xs={7} style={{ textAlign: "right" }}>
-                        <StarIcon num={2} />
-                      </Grid>
-                      <Grid item xs={5} style={{ textAlign: "right" }}>
-                        {normalRates[1]} %
-                      </Grid>
+                    <Grid item xs={2} md={4}>
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {t("gacha:normalRate")}
+                      </Typography>
                     </Grid>
-                    <Grid item container alignItems="center">
-                      <Grid item xs={7} style={{ textAlign: "right" }}>
-                        <StarIcon num={3} />
-                      </Grid>
-                      <Grid item xs={5} style={{ textAlign: "right" }}>
-                        {normalRates[2]} %
-                      </Grid>
-                    </Grid>
-                    <Grid item container alignItems="center">
-                      <Grid item xs={7} style={{ textAlign: "right" }}>
-                        <StarIcon num={4} />
-                      </Grid>
-                      <Grid item xs={5} style={{ textAlign: "right" }}>
-                        {normalRates[3]} %
+                    <Grid item xs={9} md={4}>
+                      <Grid
+                        container
+                        direction="row"
+                        alignItems="flex-end"
+                        spacing={1}
+                      >
+                        {gachaRarityRates.map((rate, idx) => (
+                          <Grid item xs={12} key={idx}>
+                            <Grid container alignItems="center">
+                              <Grid item xs={7}>
+                                {rate.cardRarityType === "rarity_birthday" ? (
+                                  <Grid container justifyContent="flex-end">
+                                    <Grid item>
+                                      <BirthdayIcon />
+                                    </Grid>
+                                  </Grid>
+                                ) : (
+                                  <StarIcon num={rate.rarity} right />
+                                )}
+                              </Grid>
+                              <Grid item xs={5}>
+                                <Grid container justifyContent="flex-end">
+                                  <Grid item>{normalRates[idx]} %</Grid>
+                                </Grid>
+                              </Grid>
+                            </Grid>
+                          </Grid>
+                        ))}
                       </Grid>
                     </Grid>
                   </Grid>
                 </Grid>
-                <Divider style={{ margin: "1% 0" }} />
+                <Grid item xs={12}>
+                  <Divider style={{ margin: "1% 0" }} />
+                </Grid>
               </Fragment>
-            ) : null}
-            {gacha.gachaBehaviors.find(
-              (gb) => gb.gachaBehaviorType === "over_rarity_3_once"
-            ) && (
+            )}
+            {!!gachaRarityRates && !!guaranteedRates.length && (
               <Fragment>
-                <Grid
-                  item
-                  container
-                  direction="row"
-                  justifyContent="space-between"
-                  alignItems="center"
-                >
-                  <Grid item xs={2} md={4}>
-                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                      {t("gacha:guaranteedRate")}
-                    </Typography>
-                  </Grid>
+                <Grid item xs={12}>
                   <Grid
-                    item
-                    xs={9}
-                    md={4}
                     container
-                    direction="column"
-                    alignItems="flex-end"
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
                   >
-                    <Grid item container alignItems="center">
-                      <Grid item xs={7} style={{ textAlign: "right" }}>
-                        <StarIcon num={3} />
-                      </Grid>
-                      <Grid item xs={5} style={{ textAlign: "right" }}>
-                        {guaranteedRate[2]} %
-                      </Grid>
+                    <Grid item xs={2} md={4}>
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {t("gacha:guaranteedRate")}
+                      </Typography>
                     </Grid>
-                    <Grid item container alignItems="center">
-                      <Grid item xs={7} style={{ textAlign: "right" }}>
-                        <StarIcon num={4} />
-                      </Grid>
-                      <Grid item xs={5} style={{ textAlign: "right" }}>
-                        {guaranteedRate[3]} %
+                    <Grid item xs={9} md={4}>
+                      <Grid
+                        container
+                        direction="row"
+                        alignItems="flex-end"
+                        spacing={1}
+                      >
+                        {gachaRarityRates.map((rate, idx) => (
+                          <Grid item xs={12} key={idx}>
+                            <Grid container alignItems="center">
+                              <Grid item xs={7}>
+                                {rate.cardRarityType === "rarity_birthday" ? (
+                                  <Grid container justifyContent="flex-end">
+                                    <Grid item>
+                                      <BirthdayIcon />
+                                    </Grid>
+                                  </Grid>
+                                ) : (
+                                  <StarIcon num={rate.rarity} right />
+                                )}
+                              </Grid>
+                              <Grid item xs={5}>
+                                <Grid container justifyContent="flex-end">
+                                  <Grid item>{guaranteedRates[idx]} %</Grid>
+                                </Grid>
+                              </Grid>
+                            </Grid>
+                          </Grid>
+                        ))}
                       </Grid>
                     </Grid>
                   </Grid>
                 </Grid>
-                <Divider style={{ margin: "1% 0" }} />
+                <Grid item xs={12}>
+                  <Divider style={{ margin: "1% 0" }} />
+                </Grid>
               </Fragment>
             )}
           </Grid>
@@ -799,62 +844,80 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
           {t("gacha:gacha_cards")}
         </Typography>
         <Container className={layoutClasses.content} maxWidth="md">
-          <Grid container direction="column">
-            <Grid
-              container
-              wrap="nowrap"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                {t("gacha:pickupMember", {
-                  count: gacha.gachaPickups.length,
-                })}
-              </Typography>
-              <Button
-                onClick={() => {
-                  setGachaCards(
-                    gacha.gachaPickups.map((pickup) => pickup.cardId)
-                  );
-                  setIsCardsDialog(true);
-                }}
-                variant="contained"
+          <Grid container direction="row">
+            <Grid item xs={12}>
+              <Grid
+                container
+                wrap="nowrap"
+                justifyContent="space-between"
+                alignItems="center"
               >
-                {t("common:show")}
-              </Button>
-            </Grid>
-            <Divider style={{ margin: "1% 0" }} />
-            {[4, 3, 2].map((rarity) => (
-              <Fragment key={rarity}>
-                <Grid
-                  container
-                  wrap="nowrap"
-                  justifyContent="space-between"
-                  alignItems="center"
+                <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                  {t("gacha:pickupMember", {
+                    count: gacha.gachaPickups.length,
+                  })}
+                </Typography>
+                <Button
+                  onClick={() => {
+                    setGachaCards(
+                      gacha.gachaPickups.map((pickup) => pickup.cardId)
+                    );
+                    setIsCardsDialog(true);
+                  }}
+                  variant="contained"
                 >
-                  <Grid item>
-                    <StarIcon num={rarity} />
-                  </Grid>
-                  <Button
-                    onClick={() => {
-                      if (!cards || !cards.length) return;
-                      setGachaCards(
-                        gacha.gachaDetails
-                          .map((detail) => detail.cardId)
-                          .filter(
-                            (cardId) =>
-                              cards.find((card) => card.id === cardId)!
-                                .rarity === rarity
-                          )
-                      );
-                      setIsCardsDialog(true);
-                    }}
-                    variant="contained"
+                  {t("common:show")}
+                </Button>
+              </Grid>
+            </Grid>
+            <Grid item xs={12}>
+              <Divider style={{ margin: "1% 0" }} />
+            </Grid>
+            {gachaRarityRates.map((rate, idx) => (
+              <Fragment key={idx}>
+                <Grid item xs={12}>
+                  <Grid
+                    container
+                    wrap="nowrap"
+                    justifyContent="space-between"
+                    alignItems="center"
                   >
-                    {t("common:show")}
-                  </Button>
+                    <Grid item>
+                      {rate.cardRarityType === "rarity_birthday" ? (
+                        <Grid container justifyContent="flex-end">
+                          <Grid item>
+                            <BirthdayIcon />
+                          </Grid>
+                        </Grid>
+                      ) : (
+                        <StarIcon num={rate.rarity} />
+                      )}
+                    </Grid>
+                    <Button
+                      onClick={() => {
+                        if (!cards || !cards.length) return;
+                        setGachaCards(
+                          gacha.gachaDetails
+                            .map((detail) => detail.cardId)
+                            .filter((cardId) =>
+                              rate.cardRarityType
+                                ? cards.find((card) => card.id === cardId)!
+                                    .cardRarityType === rate.cardRarityType
+                                : cards.find((card) => card.id === cardId)!
+                                    .rarity === rate.rarity
+                            )
+                        );
+                        setIsCardsDialog(true);
+                      }}
+                      variant="contained"
+                    >
+                      {t("common:show")}
+                    </Button>
+                  </Grid>
                 </Grid>
-                <Divider style={{ margin: "1% 0" }} />
+                <Grid item xs={12}>
+                  <Divider style={{ margin: "1% 0" }} />
+                </Grid>
               </Fragment>
             ))}
           </Grid>
@@ -863,28 +926,35 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
           {t("gacha:gacha_behaviors")}
         </Typography>
         <Container className={layoutClasses.content} maxWidth="md">
-          <Grid container direction="column">
+          <Grid container direction="row">
             {gacha.gachaBehaviors.map((behavior) => (
               <Fragment key={behavior.id}>
-                <Grid
-                  container
-                  wrap="nowrap"
-                  justifyContent="space-between"
-                  alignItems="center"
-                >
-                  <Grid item>
-                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                      {t("gacha:behavior." + behavior.gachaBehaviorType)}
-                    </Typography>
-                  </Grid>
-                  <Grid item>
-                    <CommonMaterialIcon
-                      materialName={behavior.costResourceType}
-                      quantity={behavior.costResourceQuantity}
-                    />
+                <Grid item xs={12}>
+                  <Grid
+                    container
+                    wrap="nowrap"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    <Grid item>
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {t("gacha:behavior." + behavior.gachaBehaviorType)}
+                      </Typography>
+                    </Grid>
+                    <Grid item>
+                      <CommonMaterialIcon
+                        materialName={behavior.costResourceType}
+                        quantity={behavior.costResourceQuantity}
+                      />
+                    </Grid>
                   </Grid>
                 </Grid>
-                <Divider style={{ margin: "1% 0" }} />
+                <Grid item xs={12}>
+                  <Divider style={{ margin: "1% 0" }} />
+                </Grid>
               </Fragment>
             ))}
           </Grid>
@@ -899,27 +969,37 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
           {t("gacha:gacha_simulator")}
         </Typography>
         <Container className={layoutClasses.content} maxWidth="md">
-          <Grid container spacing={1} justifyContent="center">
-            <Grid item>
-              <Button
-                variant="contained"
-                className={classes.gachaBtn}
-                color="primary"
-                onClick={() => doGacha(1)}
-              >
-                Gacha!
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button
-                variant="contained"
-                className={classes.gachaBtn}
-                color="primary"
-                onClick={() => doGacha(10)}
-              >
-                Gacha * 10
-              </Button>
-            </Grid>
+          <Grid
+            container
+            spacing={1}
+            justifyContent="center"
+            alignItems="center"
+          >
+            {gacha.gachaBehaviors.map((behavior, idx) => (
+              <Grid item key={idx}>
+                <Grid container spacing={1}>
+                  <Grid item xs={12}>
+                    <Grid container justifyContent="center">
+                      <Grid item>
+                        <Button
+                          variant="contained"
+                          className={classes.gachaBtn}
+                          color="primary"
+                          onClick={() => doGacha(behavior)}
+                        >
+                          {/* {t("gacha:behavior." + behavior.gachaBehaviorType)} */}
+                          <CommonMaterialIcon
+                            materialName={behavior.costResourceType}
+                            quantity={behavior.costResourceQuantity}
+                            mini
+                          />
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+            ))}
             <Grid item>
               <Button
                 variant="contained"
@@ -927,58 +1007,80 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
                 color="secondary"
                 onClick={() => resetGacha()}
               >
-                Reset
+                {t("gacha:simulator.reset")}
               </Button>
             </Grid>
           </Grid>
+          <br />
           <Grid container spacing={1} justifyContent="center">
             <Grid item>
               <Typography>
-                {t("gacha:simulator.total")}: {statistic.total}
+                {t("gacha:simulator.total")}: {statistic.spinCount}
               </Typography>
             </Grid>
             <Grid item>
               <Typography>
-                {t("gacha:simulator.cost")}: {statistic.total * 300}
+                {t("gacha:simulator.jewel")}: {statistic.cost.jewel}
               </Typography>
             </Grid>
-            <Grid item xs={12} container justifyContent="center">
-              <TableContainer component={Paper}>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>{t("common:rarity")}</TableCell>
-                      <TableCell>{t("gacha:simulator.count")}</TableCell>
-                      <TableCell>{t("gacha:simulator.percentage")}</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {[2, 3, 4].map((rarity) => (
-                      <Fragment key={rarity}>
-                        <TableRow>
-                          <TableCell>
-                            <StarIcon num={rarity} />
-                          </TableCell>
-                          <TableCell>
-                            {statistic[`rarity${rarity}` as "rarity1"]}
-                          </TableCell>
-                          <TableCell>
-                            {statistic.total
-                              ? (
-                                  (statistic[`rarity${rarity}` as "rarity1"] /
-                                    statistic.total) *
-                                  100
-                                ).toFixed(2)
-                              : 0}
-                          </TableCell>
-                        </TableRow>
-                      </Fragment>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+            <Grid item>
+              <Typography>
+                {t("gacha:simulator.ticket")}: {statistic.cost.ticket}
+              </Typography>
             </Grid>
           </Grid>
+          <br />
+          <Grid container spacing={1}>
+            <Grid item xs={12}>
+              <Grid container>
+                <Grid item xs={12}>
+                  <TableContainer component={Paper}>
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>{t("common:rarity")}</TableCell>
+                          <TableCell>{t("gacha:simulator.count")}</TableCell>
+                          <TableCell>
+                            {t("gacha:simulator.percentage")}
+                          </TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {gachaRarityRates.map((rate, idx) => (
+                          <Fragment key={idx}>
+                            <TableRow>
+                              <TableCell>
+                                {rate.cardRarityType === "rarity_birthday" ? (
+                                  <Grid container>
+                                    <Grid item>
+                                      <BirthdayIcon />
+                                    </Grid>
+                                  </Grid>
+                                ) : (
+                                  <StarIcon num={rate.rarity} />
+                                )}
+                              </TableCell>
+                              <TableCell>{statistic.counts[idx]}</TableCell>
+                              <TableCell>
+                                {statistic.spinCount
+                                  ? (
+                                      (statistic.counts[idx] /
+                                        statistic.spinCount) *
+                                      100
+                                    ).toFixed(2)
+                                  : 0}
+                              </TableCell>
+                            </TableRow>
+                          </Fragment>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+          <br />
           <CardThumbs cardIds={currentGachaResult.map((elem) => elem.cardId)} />
         </Container>
         <Viewer
