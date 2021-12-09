@@ -1,28 +1,14 @@
 import {
-  Dialog,
-  IconButton,
   Link,
-  Paper,
-  Tab,
-  Tabs,
   Typography,
   Container,
-  useMediaQuery,
   useTheme,
   Grid,
   Box,
   Chip,
 } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
 import { useLayoutStyles } from "../styles/layout";
 import { useInteractiveStyles } from "../styles/interactive";
-import {
-  GridColDef,
-  DataGrid,
-  GridRenderCellParams,
-  GridValueFormatterParams,
-  GridSortModel,
-} from "@mui/x-data-grid";
 import {
   Album,
   AspectRatio,
@@ -44,11 +30,11 @@ import Patreon from "~icons/mdi/patreon";
 import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Link as RouteLink } from "react-router-dom";
-import { IUserInformationInfo } from "../types.d";
-import { getJPTime, useCachedData, useVersionInfo } from "../utils";
+import { getJPTime, useVersionInfo } from "../utils";
 import AnnouncementWidget from "../components/widgets/AnnouncementWidget";
 import CurrentEventWidget from "../components/widgets/CurrentEventWidget";
 import AdSense from "../components/blocks/AdSenseBlock";
+import SekaiGameNews from "../components/blocks/SekaiGameNews";
 
 interface IDetectResult {
   webp: number;
@@ -68,46 +54,6 @@ function getWebpDetectSeverity(detected: IDetectResult) {
     default:
       return "warning";
   }
-}
-
-const useIframeStyle = makeStyles((theme) => ({
-  iframe: {
-    [theme.breakpoints.down("md")]: {
-      width: "300px",
-      height: "480px",
-    },
-    [theme.breakpoints.up("md")]: {
-      width: "600px",
-      height: "480px",
-    },
-  },
-}));
-
-function InfoInternalDialog(props: {
-  url: string;
-  open: boolean;
-  onClose: (event: {}, reason: "backdropClick" | "escapeKeyDown") => void;
-  title: string;
-}) {
-  const classes = useIframeStyle();
-  return (
-    <Dialog open={props.open} onClose={props.onClose}>
-      <Typography>{props.title}</Typography>
-      <iframe
-        className={classes.iframe}
-        title={props.title}
-        src={props.url}
-      ></iframe>
-    </Dialog>
-  );
-}
-
-function InfoInternal(props: { onClick: () => void }) {
-  return (
-    <IconButton color="primary" onClick={props.onClick} size="large">
-      <OpenInNew></OpenInNew>
-    </IconButton>
-  );
 }
 
 const VersionInfo = () => {
@@ -170,19 +116,7 @@ function Home() {
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
 
-  const [informations] =
-    useCachedData<IUserInformationInfo>("userInformations");
-
-  const [gameNewsTag, setGameNewsTag] = useState<string>("information");
-  const [open, setOpen] = useState<boolean>(false);
-  const [info, setInfo] = useState<IUserInformationInfo>();
   const [jpTime] = useState<string>(getJPTime());
-  const [sortModel, setSortModel] = useState<GridSortModel>([
-    {
-      field: "startAt",
-      sort: "desc",
-    },
-  ]);
 
   const splitJPTime = useMemo(() => jpTime.split("/"), [jpTime]);
 
@@ -203,59 +137,6 @@ function Home() {
       webpAlpha: Number(Modernizr.webpalpha),
     });
   }, []);
-
-  const isUpMd = useMediaQuery(theme.breakpoints.up("md"));
-
-  const columns: GridColDef[] = [
-    {
-      field: "action",
-      headerName: t("home:game-news.action"),
-      width: 100,
-      renderCell: (params: GridRenderCellParams) => {
-        const info = params.row as IUserInformationInfo;
-        return info.browseType === "internal" ? (
-          <InfoInternal
-            onClick={() => {
-              setInfo(info);
-              setOpen(true);
-            }}
-          />
-        ) : (
-          <Link target="_blank" href={info.path} underline="hover">
-            <IconButton color="primary" size="large">
-              <OpenInNew></OpenInNew>
-            </IconButton>
-          </Link>
-        );
-      },
-      sortable: false,
-    },
-    // { field: "id", headerName: "ID", width: 60 },
-    {
-      field: "startAt",
-      headerName: t("home:game-news.show-from"),
-      width: 200,
-      valueFormatter: (params: GridValueFormatterParams) =>
-        new Date(
-          params.api.getCellValue(params.id, "startAt") as number
-        ).toLocaleString(),
-    },
-    {
-      field: "title",
-      headerName: t("home:game-news.title-column"),
-      width: isUpMd ? 600 : 150,
-      sortable: false,
-    },
-    {
-      field: "endAt",
-      headerName: t("home:game-news.show-until"),
-      width: 200,
-      valueFormatter: (params: GridValueFormatterParams) =>
-        new Date(
-          params.api.getCellValue(params.id, "startAt") as number
-        ).toLocaleString(),
-    },
-  ];
 
   return (
     <Fragment>
@@ -670,54 +551,8 @@ function Home() {
         {t("home:game-news.title")}
       </Typography>
       <Container className={layoutClasses.content}>
-        <Paper className={interactiveClasses.container}>
-          <Tabs
-            value={gameNewsTag}
-            onChange={(e, v) => setGameNewsTag(v)}
-            variant="scrollable"
-            scrollButtons
-          >
-            <Tab label={t("common:information")} value="information"></Tab>
-            <Tab label={t("common:event")} value="event"></Tab>
-            <Tab label={t("common:gacha")} value="gacha"></Tab>
-            <Tab label={t("common:music")} value="music"></Tab>
-            <Tab label={t("common:campaign")} value="campaign"></Tab>
-            <Tab label={t("common:bug")} value="bug"></Tab>
-            <Tab label={t("home:update")} value="update"></Tab>
-          </Tabs>
-        </Paper>
-        <div style={{ height: 650 }}>
-          <DataGrid
-            pagination
-            autoPageSize
-            rows={
-              informations
-                ? informations.filter(
-                    (info) => info.informationTag === gameNewsTag
-                  )
-                : []
-            }
-            columns={columns}
-            disableColumnMenu
-            disableSelectionOnClick
-            sortModel={sortModel}
-            onSortModelChange={setSortModel}
-            loading={!informations}
-          ></DataGrid>
-        </div>
+        <SekaiGameNews />
       </Container>
-      <InfoInternalDialog
-        url={
-          info
-            ? info.path.match(/^http/)
-              ? info.path
-              : `https://production-web.sekai.colorfulpalette.org/${info.path}`
-            : ""
-        }
-        open={open}
-        onClose={() => setOpen(false)}
-        title={info?.title || ""}
-      />
     </Fragment>
   );
 }
