@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.0.5...v1.1.0) (2021-12-09)
+
+
+### Features
+
+* **gacha:** :sparkles: gacha simulator improvement, allow birthday cards ([abd29ab](https://github.com/Sekai-World/sekai-viewer/commits/abd29ab654b274f1a8190ae5d925ce2acb1a9efb))
+* **layout:** :lipstick: allow material icons to have mini variant ([cde5d6c](https://github.com/Sekai-World/sekai-viewer/commits/cde5d6c5248536b6ae3a2c19dac6dc77067000ea))
+
+
+### Bug Fixes
+
+* **card:** :bug: empty card list because of race condition ([baedd13](https://github.com/Sekai-World/sekai-viewer/commits/baedd1332f477ef7744949d65bac8869c2d8adc1))
+* **card:** :bug: optional property cardRarityType ([7dbf5c6](https://github.com/Sekai-World/sekai-viewer/commits/7dbf5c60d2b46b3d139d2076c3e148ce5f4079dc))
+* **user:** :bug: event record filtering event ([e6c5ebc](https://github.com/Sekai-World/sekai-viewer/commits/e6c5ebcb4150de4b9c6462ee686fee2e2bc95e0a))
+
+
+### Refactors
+
+* **home:** :zap: split sekai game news table component from home ([6e82f08](https://github.com/Sekai-World/sekai-viewer/commits/6e82f082fe57d18ab8a169643662e833700310ac))
+
 ### [1.0.5](https://github.com/Sekai-World/sekai-viewer/compare/v1.0.4...v1.0.5) (2021-12-08)
 
 
