@@ -39,27 +39,37 @@ const CommonMaterialIcon: React.FC<{
   materialName: string;
   materialId?: number;
   quantity?: number;
-}> = ({ materialName, materialId, quantity }) => (
-  <Grid container direction="column">
-    <Grid item container justifyContent="center">
-      <Image
-        src={
-          materialId
-            ? materialMap[materialName as "honor"][materialId]
-            : materialMap[materialName as "coin"]
-        }
-        alt={`material ${materialName} ${materialId}`}
-        style={{ height: "64px", width: "64px" }}
-        bgColor=""
-        duration={0}
-      ></Image>
+  mini?: boolean;
+}> = ({ materialName, materialId, quantity, mini = false }) => (
+  <Grid container direction="row" alignItems="center" spacing={1}>
+    <Grid item xs={mini ? 4 : 12}>
+      <Grid container justifyContent="flex-end">
+        <Grid item>
+          <Image
+            src={
+              materialId
+                ? materialMap[materialName as "honor"][materialId]
+                : materialMap[materialName as "coin"]
+            }
+            alt={`material ${materialName} ${materialId}`}
+            style={{
+              height: mini ? "32px" : "64px",
+              width: mini ? "32px" : "64px",
+            }}
+            bgColor=""
+            duration={0}
+          ></Image>
+        </Grid>
+      </Grid>
     </Grid>
-    <Grid item container justifyContent="center">
-      {!Number.isNaN(Number(quantity)) ? (
-        <Typography variant="body2" align="center">
-          x {quantity}
-        </Typography>
-      ) : null}
+    <Grid item xs={mini ? 8 : 12}>
+      <Grid container justifyContent="flex-end">
+        <Grid item>
+          {!Number.isNaN(Number(quantity)) ? (
+            <Typography variant="body2">{quantity}</Typography>
+          ) : null}
+        </Grid>
+      </Grid>
     </Grid>
   </Grid>
 );

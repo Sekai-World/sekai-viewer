@@ -95,25 +95,37 @@ const materialMap = [
   material44Icon,
 ];
 
-const MaterialIcon: React.FC<{ materialId: number; quantity: number }> = ({
-  materialId,
-  quantity,
-}) => (
-  <Grid container direction="column">
-    <Grid item container justifyContent="center">
-      <Image
-        src={materialMap[materialId]}
-        alt={`material ${materialId}`}
-        // aspectRatio={1}
-        style={{ height: "64px", width: "64px" }}
-        bgColor=""
-        duration={0}
-      ></Image>
+const MaterialIcon: React.FC<{
+  materialId: number;
+  quantity: number;
+  mini?: boolean;
+}> = ({ materialId, quantity, mini }) => (
+  <Grid container direction="row" alignItems="center" spacing={1}>
+    <Grid item xs={mini ? 4 : 12}>
+      <Grid container justifyContent="flex-end">
+        <Grid item>
+          <Image
+            src={materialMap[materialId]}
+            alt={`material ${materialId}`}
+            // aspectRatio={1}
+            style={{
+              height: mini ? "32px" : "64px",
+              width: mini ? "32px" : "64px",
+            }}
+            bgColor=""
+            duration={0}
+          ></Image>
+        </Grid>
+      </Grid>
     </Grid>
-    <Grid item container justifyContent="center">
-      <Typography variant="body2" align="center">
-        x {quantity}
-      </Typography>
+    <Grid item xs={mini ? 8 : 12}>
+      <Grid container justifyContent="flex-end">
+        <Grid item>
+          {!Number.isNaN(Number(quantity)) ? (
+            <Typography variant="body2">{quantity}</Typography>
+          ) : null}
+        </Grid>
+      </Grid>
     </Grid>
   </Grid>
 );
