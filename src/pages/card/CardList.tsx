@@ -376,8 +376,7 @@ const CardList: React.FC<{}> = observer(() => {
 
   useEffect(() => {
     if (isReady) doFilter();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isReady]);
+  }, [isReady, doFilter]);
 
   useEffect(() => {
     if (sortedCache.length) {
