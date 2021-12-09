@@ -240,9 +240,11 @@ const CardDetail: React.FC<{}> = observer(() => {
       episodes.length
     ) {
       const _card = cards.find((elem) => elem.id === Number(cardId))!;
-      const _rarityInfo = rarities.find(
-        (rarity) => rarity.cardRarityType === _card.cardRarityType
-      );
+      const _rarityInfo = _card.cardRarityType
+        ? rarities.find(
+            (rarity) => rarity.cardRarityType === _card.cardRarityType
+          )
+        : rarities.find((rarity) => rarity.rarity === _card.rarity);
       if (_rarityInfo) {
         setCard(
           Object.assign({}, _card, {

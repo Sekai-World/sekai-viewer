@@ -33,6 +33,13 @@ export interface GachaInformation {
   description: string;
 }
 
+export interface GachaCardRarityRate {
+  id: number;
+  groupId: number;
+  cardRarityType: string;
+  rate: number;
+}
+
 export interface IGachaInfo {
   id: number;
   gachaType: string;
@@ -46,6 +53,7 @@ export interface IGachaInfo {
   startAt: number;
   endAt: number;
   gachaCeilItemId: number;
+  gachaCardRarityRates?: GachaCardRarityRate[];
   gachaDetails: GachaDetail[];
   gachaBehaviors: GachaBehavior[];
   gachaPickups: GachaPickup[];
@@ -65,7 +73,7 @@ export interface ICardInfo {
   seq: number;
   characterId: number;
   rarity: number;
-  cardRarityType: string;
+  cardRarityType?: string;
   specialTrainingPower1BonusFixed: number;
   specialTrainingPower2BonusFixed: number;
   specialTrainingPower3BonusFixed: number;
@@ -117,11 +125,12 @@ export interface IGameChara {
 }
 
 export interface GachaStatistic {
-  total: number;
-  rarity1: number;
-  rarity2: number;
-  rarity3: number;
-  rarity4: number;
+  spinCount: number;
+  cost: {
+    ticket: number;
+    jewel: number;
+  };
+  counts: number[];
 }
 
 export interface IMusicInfo {
@@ -178,7 +187,7 @@ export interface ICardRarity {
   maxLevel: number;
   maxSkillLevel: number;
   trainingMaxLevel?: number;
-  cardRarityType: string;
+  cardRarityType?: string;
 }
 
 export interface CharacterRankAchieveResource {
