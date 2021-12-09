@@ -35,6 +35,7 @@ import React, {
   Fragment,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useReducer,
   useState,
@@ -97,7 +98,14 @@ function getMaxParam(
   rarities: ICardRarity[],
   episodes: ICardEpisode[]
 ) {
-  const rarity = rarities.find((rarity) => rarity.rarity === card.rarity)!;
+  const rarity = card.cardRarityType
+    ? rarities.find((rarity) => rarity.cardRarityType === card.cardRarityType)
+    : rarities.find((rarity) => rarity.rarity === card.rarity);
+
+  if (!rarity) {
+    console.warn(`failed to find rarity for card ${card.id} ${card.prefix}`);
+    return 0;
+  }
 
   const maxLevel = rarity.trainingMaxLevel || rarity.maxLevel;
 
@@ -226,11 +234,11 @@ const CardList: React.FC<{}> = observer(() => {
     [isReady, lastQueryFin, limit, page, sortedCache.length]
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.title = t("title:cardList");
   }, [t]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setIsReady(
       Boolean(cardsCache && cardsCache.length) &&
         Boolean(charas && charas.length)
