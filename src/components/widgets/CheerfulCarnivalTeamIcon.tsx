@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useMemo } from "react";
 import Image, { ImageProps } from "mui-image";
-import { getRemoteAssetURL, useCachedData, useServerRegion } from "../../utils";
+import { getRemoteAssetURL, useCachedData } from "../../utils";
 import { ICheerfulCarnivalTeam, IEventInfo } from "../../types.d";
+import { useRootStore } from "../../stores/root";
+import { observer } from "mobx-react-lite";
 
 const CheerfulCarnivalTeamIcon: React.FC<
   Omit<ImageProps, "src"> & {
@@ -9,12 +11,12 @@ const CheerfulCarnivalTeamIcon: React.FC<
     eventId: number;
     teamId: number;
   }
-> = ({ eventId, teamId, ...props }) => {
+> = observer(({ eventId, teamId, ...props }) => {
   const [cheerfulCarnivalTeams] = useCachedData<ICheerfulCarnivalTeam>(
     "cheerfulCarnivalTeams"
   );
   const [events] = useCachedData<IEventInfo>("events");
-  const [region] = useServerRegion();
+  const { region } = useRootStore();
 
   const [ccTeam, setCcTeam] = useState<ICheerfulCarnivalTeam>();
   const [ccTeamLogo, setCcTeamLogo] = useState<string>("");
@@ -58,6 +60,6 @@ const CheerfulCarnivalTeamIcon: React.FC<
   );
 
   return <Image bgColor="" duration={0} {...imageProps} />;
-};
+});
 
 export default CheerfulCarnivalTeamIcon;

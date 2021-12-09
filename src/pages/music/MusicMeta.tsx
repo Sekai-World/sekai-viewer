@@ -1,6 +1,6 @@
 import {
   Chip,
-  CircularProgress,
+  // CircularProgress,
   Container,
   IconButton,
   Typography,
@@ -164,19 +164,16 @@ const MusicMeta = () => {
         {t("common:musicMeta")}
       </Typography>
       <Container className={layoutClasses.content}>
-        {validMetas ? (
-          <div style={{ height: 750 }}>
-            <DataGrid
-              rows={validMetas.map((elem, idx) =>
-                Object.assign({}, elem, { id: idx })
-              )}
-              columns={columns}
-              disableColumnMenu
-            />
-          </div>
-        ) : (
-          <CircularProgress size="30px" />
-        )}
+        <div style={{ height: 750 }}>
+          <DataGrid
+            rows={validMetas.map((elem, idx) =>
+              Object.assign({}, elem, { id: idx })
+            )}
+            columns={columns}
+            disableColumnMenu
+            loading={!validMetas.length}
+          />
+        </div>
       </Container>
       {/* <AdSense
         client="ca-pub-7767752375383260"

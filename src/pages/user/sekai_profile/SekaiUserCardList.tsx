@@ -36,14 +36,12 @@ import {
 import React, {
   // Fragment,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useReducer,
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { UserContext } from "../../../context";
 import { useInteractiveStyles } from "../../../styles/interactive";
 import { useCurrentEvent, useStrapi } from "../../../utils/apiClient";
 import { CardThumb } from "../../../components/widgets/CardThumb";
@@ -77,14 +75,21 @@ import {
 } from "../../../utils";
 import { ContentTrans } from "../../../components/helpers/ContentTrans";
 import { useAssetI18n, useCharaName } from "../../../utils/i18n";
+import { useRootStore } from "../../../stores/root";
+import { ISekaiCardTeam } from "../../../stores/sekai";
+import { observer } from "mobx-react-lite";
+import { autorun } from "mobx";
 
-const SekaiUserCardList = () => {
+const SekaiUserCardList = observer(() => {
   // const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
-  const { jwtToken, sekaiProfile, updateSekaiProfile } =
-    useContext(UserContext)!;
-  const { putSekaiCardList, deleteSekaiCardList } = useStrapi(jwtToken);
+  const {
+    jwtToken,
+    sekai: { sekaiCardTeamMap, setSekaiCardTeam },
+    region,
+  } = useRootStore();
+  const { putSekaiCards, deleteSekaiCards } = useStrapi(jwtToken);
   const getCharaName = useCharaName();
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
   const { getTranslated } = useAssetI18n();
@@ -153,9 +158,17 @@ const SekaiUserCardList = () => {
   const eventOpen = useMemo(() => Boolean(anchorElEvent), [anchorElEvent]);
   const [eventId, setEventId] = useState(1);
 
+  const [sekaiCardTeam, setLocalSekaiCardTeam] = useState<ISekaiCardTeam>();
+
   useEffect(() => {
-    if (cards && cards.length && sekaiProfile) {
-      let _cardList = (sekaiProfile.cardList || []).map((elem) =>
+    autorun(() => {
+      setLocalSekaiCardTeam(sekaiCardTeamMap.get(region));
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!!cards && !!cards.length && !!sekaiCardTeam) {
+      let _cardList = (sekaiCardTeam.cards || []).map((elem) =>
         Object.assign({}, elem, {
           card: cards.find((c) => c.id === elem.cardId)!,
         })
@@ -230,14 +243,15 @@ const SekaiUserCardList = () => {
     deleteCardIds,
     editList,
     raritySelected,
-    sekaiProfile,
+    region,
+    sekaiCardTeam,
     sortBy,
     sortType,
     supportUnitSelected,
   ]);
 
   useEffect(() => {
-    if (!isCurrEventLoading) {
+    if (!isCurrEventLoading && currEvent) {
       setEventId(currEvent.eventId);
     }
   }, [currEvent, isCurrEventLoading]);
@@ -356,7 +370,7 @@ const SekaiUserCardList = () => {
     setFilteredCards((cards) => cards.filter((c) => c.id !== card.id));
   }, []);
 
-  return (
+  return !!sekaiCardTeam ? (
     <Grid container spacing={1}>
       <Grid item xs={12}>
         <Grid container justifyContent="space-between">
@@ -376,18 +390,17 @@ const SekaiUserCardList = () => {
                     setIsSaving(true);
                     try {
                       if (editList.length)
-                        await putSekaiCardList(sekaiProfile!.id, editList);
+                        await putSekaiCards(sekaiCardTeam.id, editList);
                       if (deleteCardIds.length)
-                        await deleteSekaiCardList(
-                          sekaiProfile!.id,
-                          deleteCardIds
-                        );
+                        await deleteSekaiCards(sekaiCardTeam.id, deleteCardIds);
                       setEditList([]);
                       setDeleteCardIds([]);
                       setAddCardIds([]);
-                      updateSekaiProfile({
-                        cardList: cardList,
+                      const sct = Object.assign({}, sekaiCardTeam, {
+                        cards: cardList,
                       });
+                      setSekaiCardTeam(sct, region);
+                      // setSekaiCardTeam(sct);
                       showSuccess(t("user:profile.card_list.submit_success"));
                     } catch (error) {
                       showError(t("user:profile.card_list.submit_error"));
@@ -403,16 +416,14 @@ const SekaiUserCardList = () => {
                   variant="contained"
                   color="primary"
                   disabled={
-                    isSaving ||
-                    !sekaiProfile ||
-                    (!deleteCardIds.length && !editList.length)
+                    isSaving || (!deleteCardIds.length && !editList.length)
                   }
                   onClick={() => {
                     setEditList([]);
                     setDeleteCardIds([]);
                     setAddCardIds([]);
                     setCardList(
-                      sekaiProfile!.cardList ? [...sekaiProfile!.cardList] : []
+                      sekaiCardTeam.cards ? [...sekaiCardTeam.cards] : []
                     );
                   }}
                   startIcon={<RotateLeft />}
@@ -424,7 +435,7 @@ const SekaiUserCardList = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  disabled={isSaving || !sekaiProfile}
+                  disabled={isSaving}
                   onClick={() => {
                     setAddCardDialogVisible(true);
                   }}
@@ -895,14 +906,14 @@ const SekaiUserCardList = () => {
               <Grid item>
                 <FormControlLabel
                   control={<Switch checked={card.trained} />}
-                  label={t("card:trained")}
+                  label={t("card:trained") as string}
                   onChange={(e, checked) => handleChange(checked, "trained")}
                 />
               </Grid>
               <Grid item>
                 <FormControlLabel
                   control={<Switch checked={card.story1Unlock} />}
-                  label={t("card:sideStory1Unlocked")}
+                  label={t("card:sideStory1Unlocked") as string}
                   onChange={(e, checked) =>
                     handleChange(checked, "story1Unlock")
                   }
@@ -911,7 +922,7 @@ const SekaiUserCardList = () => {
               <Grid item>
                 <FormControlLabel
                   control={<Switch checked={card.story2Unlock} />}
-                  label={t("card:sideStory2Unlocked")}
+                  label={t("card:sideStory2Unlocked") as string}
                   onChange={(e, checked) =>
                     handleChange(checked, "story2Unlock")
                   }
@@ -949,6 +960,7 @@ const SekaiUserCardList = () => {
                   labelId="add-card-dialog-select-chara-label"
                   value={characterId}
                   onChange={(e) => setCharacterId(e.target.value as number)}
+                  label={t("music_recommend:addCardDialog.selectChara")}
                 >
                   <MenuItem value={0}>{t("common:all")}</MenuItem>
                   {charas &&
@@ -972,6 +984,7 @@ const SekaiUserCardList = () => {
                   labelId="add-card-dialog-select-rarity-label"
                   value={rarity}
                   onChange={(e) => setRarity(e.target.value as number)}
+                  label={t("music_recommend:addCardDialog.selectRarity")}
                 >
                   {Array.from({ length: 4 }).map((_, index) => (
                     <MenuItem
@@ -1121,7 +1134,7 @@ const SekaiUserCardList = () => {
         </Container>
       </Popover>
     </Grid>
-  );
-};
+  ) : null;
+});
 
 export default SekaiUserCardList;

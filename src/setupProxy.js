@@ -18,6 +18,14 @@ module.exports = function (app) {
     })
   );
   app.use(
+    "/sekai-en-assets",
+    createProxyMiddleware({
+      target: "https://sekai-res.dnaroma.eu/file",
+      // target: "https://minio.dnaroma.eu",
+      changeOrigin: true,
+    })
+  );
+  app.use(
     "/minio/",
     createProxyMiddleware({
       target: "https://minio.dnaroma.eu",
@@ -42,7 +50,7 @@ module.exports = function (app) {
     "/strapi",
     createProxyMiddleware({
       // target: "https://strapi-staging.sekai.best",
-      target: "http://localhost:1447",
+      target: "http://localhost:1337",
       changeOrigin: true,
       pathRewrite: {
         "^/strapi": "/",

@@ -3,6 +3,7 @@ import {
   IEventInfo,
   ITeamCardState,
   ITeamBuild,
+  ServerRegion,
 } from "./types.d";
 
 export interface LanguageModel {
@@ -80,7 +81,10 @@ export interface SekaiProfileModel {
   cardList: ITeamCardState[] | null;
   deckList: ITeamBuild[] | null;
   maxDeckList: number;
+  region: string;
 }
+
+export type RegionSekaiProfile = Record<ServerRegion, ?SekaiProfileModel>;
 
 export interface SekaiCurrentEventModel {
   eventId: number;
@@ -96,14 +100,14 @@ export interface SekaiProfileEventRecordModel {
   updated_at: Date;
 }
 
-export interface LanguageModel {
-  id: number;
-  code: string;
-  name: string;
-  enabled: boolean;
-  created_at: Date;
-  updated_at: Date;
-}
+// export interface LanguageModel {
+//   id: number;
+//   code: string;
+//   name: string;
+//   enabled: boolean;
+//   created_at: Date;
+//   updated_at: Date;
+// }
 
 // export interface CommentModel {
 //   id: number;
@@ -207,3 +211,12 @@ export interface VirtualLiveModel {
   virtualLiveId: number;
   comments: CommentModel[];
 }
+
+export interface SekaiCardTeamModel {
+  id: number;
+  cards: ITeamCardState[];
+  decks: ITeamBuild[];
+  maxNumOfDecks: number;
+}
+
+export type RegionSekaiCardTeam = Record<?ServerRegion, ?SekaiCardTeamModel>;

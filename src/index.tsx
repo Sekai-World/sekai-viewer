@@ -8,21 +8,18 @@ import { BrowserRouter as Router } from "react-router-dom";
 import "./modernizr-custom";
 import { initGlobalI18n } from "./utils/i18n";
 import "./index.css";
-import { SettingProvider } from "./context";
 import Axios from "axios";
 import localforage from "localforage";
-import {
-  SekaiProfileModel,
-  UserMetadatumModel,
-  UserModel,
-} from "./strapi-model";
+import { UserMetadatumModel, UserModel } from "./strapi-model";
 import AppSkeleton from "./pages/AppSkeleton";
+import { rootStore, RootStoreProvider } from "./stores/root";
 
 TagManager.initialize({
   gtmId: "GTM-NFC6SW2",
 });
 
 window.isChinaMainland = false;
+
 (async () => {
   let country = await localforage.getItem<string>("country");
   if (!country) {
@@ -42,60 +39,14 @@ window.isChinaMainland = false;
     <React.StrictMode>
       <Router>
         <Suspense fallback={<AppSkeleton />}>
-          <SettingProvider>
+          <RootStoreProvider value={rootStore}>
             <App />
-          </SettingProvider>
+          </RootStoreProvider>
         </Suspense>
       </Router>
     </React.StrictMode>,
     document.getElementById("root")
   );
-})();
-
-// check user info
-(async () => {
-  const lastCheck = Number(localStorage.getItem("lastUserCheck") || "0");
-
-  if (import.meta.env.DEV || new Date().getTime() - lastCheck > 3600 * 1000) {
-    // recheck user info
-    const userData = JSON.parse(
-      localStorage.getItem("userData") || "null"
-    ) as UserModel | null;
-    const token = localStorage.getItem("authToken") || "";
-    if (userData && token) {
-      const axios = Axios.create({
-        baseURL: import.meta.env.VITE_STRAPI_BASE,
-      });
-      let { data: userData } = await axios.get<UserModel>(`/users/me`, {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      });
-      localStorage.setItem("userData", JSON.stringify(userData));
-      let { data: userMetaDatum } = await axios.get<UserMetadatumModel>(
-        `/user-metadata/me`,
-        {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      localStorage.setItem("userMetaDatum", JSON.stringify(userMetaDatum));
-      try {
-        let { data: sekaiProfile } = await axios.get<SekaiProfileModel>(
-          `/sekai-profiles/me`,
-          {
-            headers: {
-              authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        localStorage.setItem("sekaiProfile", JSON.stringify(sekaiProfile));
-      } catch (error) {}
-
-      localStorage.setItem("lastUserCheck", String(new Date().getTime()));
-    }
-  }
 })();
 
 // If you want your app to work offline and load faster, you can change

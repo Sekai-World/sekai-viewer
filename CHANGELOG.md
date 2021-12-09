@@ -2,6 +2,156 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.0.5...v1.1.0) (2021-12-09)
+
+
+### Features
+
+* **gacha:** :sparkles: gacha simulator improvement, allow birthday cards ([abd29ab](https://github.com/Sekai-World/sekai-viewer/commits/abd29ab654b274f1a8190ae5d925ce2acb1a9efb))
+* **layout:** :lipstick: allow material icons to have mini variant ([cde5d6c](https://github.com/Sekai-World/sekai-viewer/commits/cde5d6c5248536b6ae3a2c19dac6dc77067000ea))
+
+
+### Bug Fixes
+
+* **card:** :bug: empty card list because of race condition ([baedd13](https://github.com/Sekai-World/sekai-viewer/commits/baedd1332f477ef7744949d65bac8869c2d8adc1))
+* **card:** :bug: optional property cardRarityType ([7dbf5c6](https://github.com/Sekai-World/sekai-viewer/commits/7dbf5c60d2b46b3d139d2076c3e148ce5f4079dc))
+* **user:** :bug: event record filtering event ([e6c5ebc](https://github.com/Sekai-World/sekai-viewer/commits/e6c5ebcb4150de4b9c6462ee686fee2e2bc95e0a))
+
+
+### Refactors
+
+* **home:** :zap: split sekai game news table component from home ([6e82f08](https://github.com/Sekai-World/sekai-viewer/commits/6e82f082fe57d18ab8a169643662e833700310ac))
+
+### [1.0.5](https://github.com/Sekai-World/sekai-viewer/compare/v1.0.4...v1.0.5) (2021-12-08)
+
+
+### Bug Fixes
+
+* **user:** :bug: import card not working for EN and TW ([046c456](https://github.com/Sekai-World/sekai-viewer/commits/046c4569f551900d58279a55aeb1ab0566ece6de))
+
+### [1.0.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.0.3...v1.0.4) (2021-12-08)
+
+
+### Bug Fixes
+
+* **user:** :bug: sekai profile model definition ([96f20df](https://github.com/Sekai-World/sekai-viewer/commits/96f20dfe89712616b9e67e59cac705c7418fdbbf))
+
+
+### Refactors
+
+* **user:** verify carousel open state ([98560e3](https://github.com/Sekai-World/sekai-viewer/commits/98560e3dd700a20352031b817a27d9f4aad0ee90))
+
+### [1.0.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.0.2...v1.0.3) (2021-12-08)
+
+
+### Bug Fixes
+
+* **user:** :bug: forget to set sekai card team map after creation empty one ([542c310](https://github.com/Sekai-World/sekai-viewer/commits/542c31019d32035cf4135fc2724c9179a8813985))
+
+### [1.0.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.0.1...v1.0.2) (2021-12-08)
+
+
+### Bug Fixes
+
+* **user:** :bug: sekai id binding and other function are not functioning ([8b38ea8](https://github.com/Sekai-World/sekai-viewer/commits/8b38ea8c959ddba7cfeebe08069a4ba008fd7e35))
+
+
+### Refactors
+
+* **event:** :recycle: use unified sekai event record ([7fe2fe2](https://github.com/Sekai-World/sekai-viewer/commits/7fe2fe2fef1f9b246ba86cfe189782300dd28e0e))
+
+### [1.0.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.0.0...v1.0.1) (2021-12-08)
+
+
+### Bug Fixes
+
+* :bug: check currEvent before applying ([c28dc30](https://github.com/Sekai-World/sekai-viewer/commits/c28dc300dd3541064ce783e8f324b4214dc054a2))
+* **user:** :bug: sekai deck back compatibility ([530a897](https://github.com/Sekai-World/sekai-viewer/commits/530a897433769a24da5c0aa4a5668dad5517f8ae))
+
+
+### Refactors
+
+* :lipstick: add loading animation to some images ([add1d2c](https://github.com/Sekai-World/sekai-viewer/commits/add1d2c117b3a458dae7c2edb310a2345b1204d2))
+
+## [1.0.0](https://github.com/Sekai-World/sekai-viewer/compare/v0.9.6...v1.0.0) (2021-12-07)
+
+
+### Features
+
+* :sparkles: add asset viewer ([ca982c5](https://github.com/Sekai-World/sekai-viewer/commits/ca982c50a5a5b1dbb1e76ae6558b2899cd914d53))
+* :sparkles: transition to mobx ([7c78db7](https://github.com/Sekai-World/sekai-viewer/commits/7c78db7d369e3893ff5b8fc13fc3ec67a5602dbd))
+* **tools:** :sparkles: asset viewer with virtual scrolling ([b1b6800](https://github.com/Sekai-World/sekai-viewer/commits/b1b68009bb9e8bf001b16a9b8c8d00f51a358b38))
+
+
+### Bug Fixes
+
+* :rotating_light: resourceBox no unique key warning ([f63faf8](https://github.com/Sekai-World/sekai-viewer/commits/f63faf842b55a6b2b3faa500fdbecbc8a2c6815e))
+* **card:** :bug: wrong birthday card maximum level ([ccba4fc](https://github.com/Sekai-World/sekai-viewer/commits/ccba4fc904ca32f68b05eea6effdf85f40455e01)), closes [#351](https://github.com/Sekai-World/sekai-viewer/issues/351)
+* **user:** :bug: user login and logout redirection ([dd4993d](https://github.com/Sekai-World/sekai-viewer/commits/dd4993df9c23f580ab6369a05fd49c1d9a6200a2))
+* **user:** :lipstick: sekai profile page layout ([7290d77](https://github.com/Sekai-World/sekai-viewer/commits/7290d778dc9a8373babee6096f555facffe7b556))
+
+### [0.9.6](https://github.com/Sekai-World/sekai-viewer/compare/v0.9.5...v0.9.6) (2021-11-24)
+
+
+### Bug Fixes
+
+* :bug: language-cache empty problem causing user home blank ([97b5334](https://github.com/Sekai-World/sekai-viewer/commits/97b5334ba602d32be8e6a927c7896e0f9560b5f1))
+* typo ([16ed29e](https://github.com/Sekai-World/sekai-viewer/commits/16ed29e8a82f7b1537363eec9b8bf33f31e70626))
+
+
+### Refactors
+
+* **user:** :recycle: let connect login fecth more data ([99ee5fc](https://github.com/Sekai-World/sekai-viewer/commits/99ee5fc2c300b3c4980cde62ac0d5168d05e4659))
+
+### [0.9.5](https://github.com/Sekai-World/sekai-viewer/compare/v0.9.4...v0.9.5) (2021-11-16)
+
+
+### Bug Fixes
+
+* **user:** :bug: sekai components style and bug ([6ca723f](https://github.com/Sekai-World/sekai-viewer/commits/6ca723fb8e2de1198783732cfe51be4da29e529b))
+
+### [0.9.4](https://github.com/Sekai-World/sekai-viewer/compare/v0.9.3...v0.9.4) (2021-11-16)
+
+
+### Features
+
+* **backend:** :sparkles: add refresh token, split sekai card and team from sekai profile ([61ec368](https://github.com/Sekai-World/sekai-viewer/commits/61ec368204587595052b3d7295f5ab85f29aa4ab))
+
+
+### Bug Fixes
+
+* **user:** :bug: login undefined user profile ([7814f41](https://github.com/Sekai-World/sekai-viewer/commits/7814f41324e80894752718d5c5f9116da83389f1))
+
+
+### Refactors
+
+* **backend:** :recycle: make changes according to endpoint split ([e0f6d0a](https://github.com/Sekai-World/sekai-viewer/commits/e0f6d0ad1d52bb12917d1afe8d5eba19af9eede6))
+* **user:** :lipstick: sekai components code cleanup ([4def1c4](https://github.com/Sekai-World/sekai-viewer/commits/4def1c4dc9f28cbce2fbceecdb84c5a7fb6d84be))
+
+### [0.9.3](https://github.com/Sekai-World/sekai-viewer/compare/v0.9.2...v0.9.3) (2021-11-12)
+
+
+### Features
+
+* **card:** :sparkles: add unit filter ([69b43c4](https://github.com/Sekai-World/sekai-viewer/commits/69b43c494b5dcb3e831c0f7cb9ed3a168212407d))
+* **music:** :sparkles: meta table loading state ([886d985](https://github.com/Sekai-World/sekai-viewer/commits/886d9858518d32a773b846ff92aac6555bfe44a7))
+
+
+### Bug Fixes
+
+* :bug: filter state fix and cleanup ([77e452a](https://github.com/Sekai-World/sekai-viewer/commits/77e452ac70e837e4afcea6d5bc802764cc012ae2))
+* :bug: horizontal scrollbar height ([487502c](https://github.com/Sekai-World/sekai-viewer/commits/487502ce256b5147ba8c0620f4e7a977ac8b26ee))
+* **home:** :bug: table sorting uses new sortModel parameter ([321b68d](https://github.com/Sekai-World/sekai-viewer/commits/321b68d31253fe702baf206c4468fc7f7434c1fa))
+* **tools:** :bug: music recommender crash for multi-live ([6f0e0e8](https://github.com/Sekai-World/sekai-viewer/commits/6f0e0e89f93c3486b29648634c7bc5125fc7d3ba))
+
+
+### Refactors
+
+* **card:** :lipstick: make comfy view more dense ([7c9ecc7](https://github.com/Sekai-World/sekai-viewer/commits/7c9ecc791c90c693c1dde29f570fe945adeac6ab))
+* **home:** :recycle: remove table and dialog conditional rendering ([7e4b63b](https://github.com/Sekai-World/sekai-viewer/commits/7e4b63bc44f0c96b14e7ff251a6a5e00f4b69794))
+* **music:** :lipstick: add icons to music tag ([db11315](https://github.com/Sekai-World/sekai-viewer/commits/db11315d7200711d25e92e9bdb13fbf680258f47))
+* **tools:** :lipstick: event point calc autocomplete style fix ([d47a74a](https://github.com/Sekai-World/sekai-viewer/commits/d47a74acd373fc64eb60e98c2a682b10608205a7))
+
 ### [0.9.2](https://github.com/Sekai-World/sekai-viewer/compare/v0.9.1...v0.9.2) (2021-11-05)
 
 

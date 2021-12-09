@@ -4,9 +4,11 @@ import { Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Link, useRouteMatch } from "react-router-dom";
 import { IGachaInfo } from "../../types.d";
-import { getRemoteAssetURL, useServerRegion } from "../../utils";
+import { getRemoteAssetURL } from "../../utils";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
 import SpoilerTag from "../../components/widgets/SpoilerTag";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../../stores/root";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -26,10 +28,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const GridView: React.FC<{ data?: IGachaInfo }> = ({ data }) => {
+const GridView: React.FC<{ data?: IGachaInfo }> = observer(({ data }) => {
   const classes = useStyles();
   const { path } = useRouteMatch();
-  const [region] = useServerRegion();
+  const { region } = useRootStore();
 
   const [url, setUrl] = useState<string>("");
 
@@ -93,6 +95,6 @@ const GridView: React.FC<{ data?: IGachaInfo }> = ({ data }) => {
       </Card>
     </Link>
   );
-};
+});
 
 export default GridView;

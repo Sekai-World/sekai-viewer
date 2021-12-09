@@ -196,7 +196,9 @@ export const UnitLogoMap: {
 
 export const UnitLogoMiniMap: { [key: string]: string } = {
   idol: LogoMiniIdol,
+  light_music_club: LogoMiniLightSound,
   light_sound: LogoMiniLightSound,
+  vocaloid: LogoMiniPiapro,
   piapro: LogoMiniPiapro,
   school_refusal: LogoMiniSchoolRefusal,
   street: LogoMiniStreet,

@@ -27,12 +27,16 @@ import {
 import React, {
   Fragment,
   useCallback,
-  useContext,
   useEffect,
   useReducer,
   useState,
 } from "react";
-import { useCachedData, useLocalStorage, useMusicTagName } from "../../utils";
+import {
+  useCachedData,
+  useLocalStorage,
+  useMusicTagName,
+  useToggle,
+} from "../../utils";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
@@ -47,13 +51,14 @@ import {
   IOutCharaProfile,
 } from "../../types.d";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
-import { SettingContext } from "../../context";
 import {
   attrSelectReducer,
   characterSelectReducer,
 } from "../../stores/reducers";
-import { charaIcons } from "../../utils/resources";
+import { charaIcons, UnitLogoMiniMap } from "../../utils/resources";
 import { useCharaName } from "../../utils/i18n";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../../stores/root";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -66,11 +71,13 @@ const ListCard: { [key: string]: React.FC<{ data?: IMusicInfo }> } = {
   agenda: AgendaView,
 };
 
-const MusicList: React.FC<{}> = () => {
+const MusicList: React.FC<{}> = observer(() => {
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
-  const { contentTransMode, isShowSpoiler } = useContext(SettingContext)!;
+  const {
+    settings: { contentTransMode, isShowSpoiler },
+  } = useRootStore();
   const musicTagToName = useMusicTagName(contentTransMode);
   const getCharaName = useCharaName();
 
@@ -93,7 +100,7 @@ const MusicList: React.FC<{}> = () => {
   // const [, totalMusicsRef, setTotalMusics] = useState<number>(0);
   const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
   const [isReady, setIsReady] = useState<boolean>(false);
-  const [filterOpened, setFilterOpened] = useState<boolean>(false);
+  const [filterOpened, toggleFilterOpened] = useToggle(false);
   const [sortType, setSortType] = useLocalStorage<string>(
     "music-list-filter-sort-type",
     "asc"
@@ -311,19 +318,31 @@ const MusicList: React.FC<{}> = () => {
               </ToggleButton>
             </ToggleButtonGroup>
           </Grid>
-          <Badge
-            color="secondary"
-            variant="dot"
-            invisible={musicTag === "all" && !musicMVTypes.length}
-          >
-            <Button
-              variant="outlined"
-              onClick={() => setFilterOpened((v) => !v)}
+          <Grid item>
+            <Badge
+              color="secondary"
+              variant="dot"
+              invisible={
+                musicTag === "all" &&
+                !musicMVTypes.length &&
+                !characterSelected.length &&
+                !outsideCharacterSelected.length &&
+                !composer &&
+                !arranger &&
+                !lyricist
+              }
             >
-              {filterOpened ? <Filter /> : <FilterOutline />}
-              {filterOpened ? <Sort /> : <SortOutlined />}
-            </Button>
-          </Badge>
+              <ToggleButton
+                value=""
+                color="primary"
+                selected={filterOpened}
+                onClick={() => toggleFilterOpened()}
+              >
+                {filterOpened ? <Filter /> : <FilterOutline />}
+                {filterOpened ? <Sort /> : <SortOutlined />}
+              </ToggleButton>
+            </Badge>
+          </Grid>
         </Grid>
         <Collapse in={filterOpened}>
           <Paper className={interactiveClasses.container}>
@@ -362,6 +381,17 @@ const MusicList: React.FC<{}> = () => {
                             if (musicTag === tag) setMusicTag("all");
                             else setMusicTag(tag);
                           }}
+                          avatar={
+                            Object.prototype.hasOwnProperty.call(
+                              UnitLogoMiniMap,
+                              tag
+                            ) ? (
+                              <Avatar
+                                alt={musicTagToName[tag as "all"]}
+                                src={UnitLogoMiniMap[tag as "idol"]}
+                              />
+                            ) : undefined
+                          }
                         />
                       </Grid>
                     ))}
@@ -757,6 +787,6 @@ const MusicList: React.FC<{}> = () => {
       </Container>
     </Fragment>
   );
-};
+});
 
 export default MusicList;

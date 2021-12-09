@@ -5,10 +5,12 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
 import { IMusicInfo } from "../../types.d";
-import { getRemoteAssetURL, useServerRegion } from "../../utils";
+import { getRemoteAssetURL } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
 import SpoilerTag from "../../components/widgets/SpoilerTag";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../../stores/root";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -26,12 +28,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const GridView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
+const GridView: React.FC<{ data?: IMusicInfo }> = observer(({ data }) => {
   const classes = useStyles();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
-  const [region] = useServerRegion();
+  const { region } = useRootStore();
 
   const [jacket, setJacket] = useState<string>("");
 
@@ -106,6 +108,6 @@ const GridView: React.FC<{ data?: IMusicInfo }> = ({ data }) => {
       </Card>
     </Link>
   );
-};
+});
 
 export default GridView;

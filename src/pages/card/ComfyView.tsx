@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     // textOverflow: "ellipsis",
   },
   comfy: {
-    padding: "6% 4%",
+    padding: theme.spacing(1.5),
     cursor: "pointer",
   },
 }));
@@ -44,7 +44,8 @@ const ComfyView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
           container
           direction="column"
           alignItems="center"
-          spacing={2}
+          columnSpacing={2}
+          rowSpacing={1}
           justifyContent="space-between"
         >
           <Grid
@@ -90,7 +91,6 @@ const ComfyView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
           container
           direction="column"
           alignItems="center"
-          spacing={2}
           justifyContent="space-between"
         >
           <Grid
@@ -110,7 +110,7 @@ const ComfyView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
             ) : null}
           </Grid>
           <Grid item style={{ width: "100%" }}>
-            <Grid container direction="column" spacing={1}>
+            <Grid container direction="column" rowSpacing={0.5}>
               <Grid item>
                 <Grid container justifyContent="center">
                   <SpoilerTag releaseTime={new Date(data.releaseAt)} />

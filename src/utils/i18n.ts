@@ -3,10 +3,11 @@ import i18n, { TOptions } from "i18next";
 import { initReactI18next } from "react-i18next";
 import fetchBackend from "i18next-fetch-backend";
 import detector from "i18next-browser-languagedetector";
-import { useCallback, useContext } from "react";
+import { useCallback } from "react";
 import { SettingContext } from "../context";
 import { useCachedData } from ".";
 import { ContentTransModeType, IGameChara } from "../types";
+import { useRootStore } from "../stores/root";
 
 export const assetI18n: typeof i18n = i18n.createInstance();
 // export const announcementI18n: typeof i18n = i18n.createInstance();
@@ -46,6 +47,7 @@ export async function initGlobalI18n() {
         "virtual_live",
         "translate",
         "honor",
+        "asset_viewer",
       ],
       defaultNS: "common",
       fallbackLng: {
@@ -128,10 +130,9 @@ export async function initGlobalI18n() {
 }
 
 export function useAssetI18n() {
-  // console.log(useContext(SettingContext));
-  const { contentTransMode } = useContext(SettingContext) || {
-    contentTransMode: "original",
-  };
+  const {
+    settings: { contentTransMode },
+  } = useRootStore();
   const assetT = useCallback(
     (key: string, original: string, options?: string | TOptions): string => {
       const translated = assetI18n.t(key, options);
@@ -156,9 +157,9 @@ export function useAssetI18n() {
 }
 
 export function useCharaName(forceTransMode?: ContentTransModeType) {
-  let { contentTransMode } = useContext(SettingContext) || {
-    contentTransMode: "original",
-  };
+  let {
+    settings: { contentTransMode },
+  } = useRootStore();
   if (forceTransMode) contentTransMode = forceTransMode;
   const [charas] = useCachedData<IGameChara>("gameCharacters");
   const { assetT, assetI18n } = useAssetI18n();

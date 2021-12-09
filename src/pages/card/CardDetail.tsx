@@ -19,7 +19,6 @@ import { TabContext, TabPanel } from "@mui/lab";
 import React, {
   Fragment,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useState,
@@ -51,7 +50,6 @@ import {
 import { useTranslation } from "react-i18next";
 import MaterialIcon from "../../components/widgets/MaterialIcon";
 import { useAssetI18n, useCharaName } from "../../utils/i18n";
-import { SettingContext } from "../../context";
 import {
   CharaNameTrans,
   ContentTrans,
@@ -64,6 +62,8 @@ import { OpenInNew } from "@mui/icons-material";
 import CommentTextMultiple from "~icons/mdi/comment-text-multiple";
 import Comment from "../comment/Comment";
 import { useStrapi } from "../../utils/apiClient";
+import { useRootStore } from "../../stores/root";
+import { observer } from "mobx-react-lite";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -100,13 +100,15 @@ interface IExtendCardInfo extends ICardInfo {
   maxNormalLevel: number;
 }
 
-const CardDetail: React.FC<{}> = () => {
+const CardDetail: React.FC<{}> = observer(() => {
   const classes = useStyles();
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const { assetT, getTranslated } = useAssetI18n();
-  const { contentTransMode } = useContext(SettingContext)!;
+  const {
+    settings: { contentTransMode },
+  } = useRootStore();
   const getCharaName = useCharaName();
   const { getCard } = useStrapi();
 
@@ -238,40 +240,36 @@ const CardDetail: React.FC<{}> = () => {
       episodes.length
     ) {
       const _card = cards.find((elem) => elem.id === Number(cardId))!;
-      setCard(
-        Object.assign({}, _card, {
-          maxTrainedLevel: rarities.find((elem) => elem.rarity === _card.rarity)
-            ?.trainingMaxLevel,
-          maxNormalLevel: rarities.find((elem) => elem.rarity === _card.rarity)
-            ?.maxLevel!,
-        })
-      );
-      setCardTitle(
-        `${getTranslated(
-          `card_prefix:${_card.id}`,
-          _card.prefix
-        )} - ${getCharaName(_card.characterId)}`
-      );
-      setCardLevel(
-        _card.rarity >= 3
-          ? rarities.find((elem) => elem.rarity === _card.rarity)
-              ?.trainingMaxLevel!
-          : rarities.find((elem) => elem.rarity === _card.rarity)?.maxLevel!
-      );
-      const _skill = skills.find((elem) => elem.id === _card.skillId)!;
-      setSkill(_skill);
-      setSkillLevel(
-        _skill.skillEffects[0].skillEffectDetails[
-          _skill.skillEffects[0].skillEffectDetails.length - 1
-        ].level
-      );
-      setCardEpisode(episodes.filter((epi) => epi.cardId === Number(cardId)));
-      if (_card.gachaPhrase !== "-")
-        getRemoteAssetURL(
-          `sound/gacha/get_voice/${_card.assetbundleName}_rip/${_card.assetbundleName}.mp3`,
-          setGachaPhraseUrl,
-          window.isChinaMainland ? "cn" : "minio"
+      const _rarityInfo = _card.cardRarityType
+        ? rarities.find(
+            (rarity) => rarity.cardRarityType === _card.cardRarityType
+          )
+        : rarities.find((rarity) => rarity.rarity === _card.rarity);
+      if (_rarityInfo) {
+        setCard(
+          Object.assign({}, _card, {
+            maxTrainedLevel: _rarityInfo.trainingMaxLevel,
+            maxNormalLevel: _rarityInfo.maxLevel,
+          })
         );
+        setCardLevel(_rarityInfo.trainingMaxLevel || _rarityInfo.maxLevel);
+        setSkillLevel(_rarityInfo.maxSkillLevel);
+        setCardTitle(
+          `${getTranslated(
+            `card_prefix:${_card.id}`,
+            _card.prefix
+          )} - ${getCharaName(_card.characterId)}`
+        );
+        const _skill = skills.find((elem) => elem.id === _card.skillId)!;
+        setSkill(_skill);
+        setCardEpisode(episodes.filter((epi) => epi.cardId === Number(cardId)));
+        if (_card.gachaPhrase !== "-")
+          getRemoteAssetURL(
+            `sound/gacha/get_voice/${_card.assetbundleName}_rip/${_card.assetbundleName}.mp3`,
+            setGachaPhraseUrl,
+            window.isChinaMainland ? "cn" : "minio"
+          );
+      }
     }
   }, [
     setCard,
@@ -906,12 +904,12 @@ const CardDetail: React.FC<{}> = () => {
                     step={1}
                     min={1}
                     max={
-                      card.rarity >= 3
+                      card.rarity >= 3 && !isBirthdayCard
                         ? card.maxTrainedLevel
                         : card.maxNormalLevel
                     }
                     marks={
-                      card.rarity >= 3
+                      card.rarity >= 3 && !isBirthdayCard
                         ? [
                             {
                               value: card.maxNormalLevel,
@@ -1192,6 +1190,7 @@ const CardDetail: React.FC<{}> = () => {
                       resourceBoxId={id}
                       resourceBoxPurpose="episode_reward"
                       justifyContent="flex-end"
+                      key={id}
                     />
                   ))}
                 </Grid>
@@ -1300,6 +1299,7 @@ const CardDetail: React.FC<{}> = () => {
                       resourceBoxId={id}
                       resourceBoxPurpose="episode_reward"
                       justifyContent="flex-end"
+                      key={id}
                     />
                   ))}
                 </Grid>
@@ -1361,6 +1361,6 @@ const CardDetail: React.FC<{}> = () => {
       Loading... If you saw this for a while, card {cardId} does not exist.
     </div>
   );
-};
+});
 
 export default CardDetail;

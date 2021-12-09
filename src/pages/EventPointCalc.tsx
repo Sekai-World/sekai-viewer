@@ -1,4 +1,5 @@
 import {
+  Autocomplete,
   Button,
   Chip,
   Container,
@@ -22,7 +23,7 @@ import {
   Typography,
 } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
-import { GridColDef, DataGrid } from "@mui/x-data-grid";
+import { GridColDef, DataGrid, GridSortModel } from "@mui/x-data-grid";
 import { Alert } from "@mui/material";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useMemo } from "react";
@@ -49,11 +50,11 @@ import { ContentTrans } from "../components/helpers/ContentTrans";
 import TeamBuilder from "../components/blocks/TeamBuilder";
 
 const difficulties: Record<number, string> = {
-  0: "easy",
-  1: "normal",
-  2: "hard",
-  3: "expert",
-  4: "master",
+  0: "Easy",
+  1: "Normal",
+  2: "Hard",
+  3: "Expert",
+  4: "Master",
 };
 
 const useStyle = makeStyles(() => ({
@@ -105,9 +106,18 @@ const EventPointCalc: React.FC<{}> = () => {
   const [teamCards, setTeamCards] = useState<number[]>([]);
   const [teamCardsStates, setTeamCardsStates] = useState<ITeamCardState[]>([]);
   const [teamTotalPower, setTeamTotalPower] = useState<number>(0);
+  const [selectedSong, setSelectedSong] =
+    useState<{ id: number; name: string }>();
   const [selectedSongId, setSelectedSongId] = useState<number>(1);
-  const [selectedSongDifficulty, setSelectedSongDifficulty] =
-    useState<number>(4);
+  const [selectedSongDifficulty, setSelectedSongDifficulty] = useState<{
+    id: number;
+    name: string;
+  }>({
+    id: 4,
+    name: difficulties[4],
+  });
+  const [selectedEvent, setSelectedEvent] =
+    useState<{ id: number; name: string }>();
   const [selectedEventId, setSelectedEventId] = useState<number>(1);
   const [selectedMusicMode, setSelectedMusicMode] =
     useState<string>("all_songs");
@@ -128,9 +138,15 @@ const EventPointCalc: React.FC<{}> = () => {
   const [playMode, setPlayMode] = useState("solo");
   const [teamAvgPower, setTeamAvgPower] = useState(0);
   const [validMetas, setValidMetas] = useState<IMusicMeta[]>([]);
+  const [sortModel, setSortModel] = useState<GridSortModel>([
+    {
+      field: "result",
+      sort: "desc",
+    },
+  ]);
 
   useEffect(() => {
-    document.title = t("title:musicRecommend");
+    document.title = t("title:eventCalc");
   }, [t]);
 
   useEffect(() => {
@@ -140,6 +156,22 @@ const EventPointCalc: React.FC<{}> = () => {
   useEffect(() => {
     if (metas && musics) setValidMetas(filterMusicMeta(metas, musics));
   }, [metas, musics]);
+
+  useEffect(() => {
+    if (events && !selectedEvent)
+      setSelectedEvent({
+        name: getTranslated(
+          `event_name:${events[events.length - 1].id}`,
+          events[events.length - 1].name
+        ),
+        id: events[events.length - 1].id,
+      });
+    if (musics && !selectedSong)
+      setSelectedSong({
+        name: getTranslated(`music_titles:${musics[0].id}`, musics[0].title),
+        id: musics[0].id,
+      });
+  }, [events, getTranslated, musics, selectedEvent, selectedSong]);
 
   useEffect(() => {
     if (
@@ -314,7 +346,8 @@ const EventPointCalc: React.FC<{}> = () => {
       const meta = validMetas.find(
         (it) =>
           it.music_id === selectedSongId &&
-          it.difficulty === difficulties[selectedSongDifficulty]
+          it.difficulty ===
+            difficulties[selectedSongDifficulty.id].toLowerCase()
       );
       if (!meta) return;
       // console.log(averageSkills);
@@ -509,32 +542,31 @@ const EventPointCalc: React.FC<{}> = () => {
                 <Grid item xs={12}>
                   <Grid container spacing={1}>
                     <Grid item xs={12} md={4} lg={3}>
-                      <FormControl style={{ width: "100%" }}>
-                        <InputLabel id="event-select-label">
-                          {t("common:event")}
-                        </InputLabel>
-                        <Select
-                          labelId="event-select-label"
-                          value={selectedEventId}
-                          onChange={(e, v) =>
-                            setSelectedEventId(e.target.value as number)
+                      <Autocomplete
+                        options={(events || [])
+                          .slice()
+                          .reverse()
+                          // .filter((ev) => ev.startAt <= new Date().getTime())
+                          .map((ev) => ({
+                            name: getTranslated(`event_name:${ev.id}`, ev.name),
+                            id: ev.id,
+                          }))}
+                        getOptionLabel={(option) => option.name}
+                        isOptionEqualToValue={(option, value) =>
+                          option.id === value.id
+                        }
+                        renderInput={(params) => (
+                          <TextField {...params} label={t("common:event")} />
+                        )}
+                        value={selectedEvent}
+                        autoComplete
+                        onChange={(_, value) => {
+                          if (!!value) {
+                            setSelectedEvent(value);
+                            setSelectedEventId(value.id as number);
                           }
-                          input={<Input />}
-                        >
-                          {events &&
-                            events.map((event) => (
-                              <MenuItem
-                                key={`event-${event.id}`}
-                                value={event.id}
-                              >
-                                {getTranslated(
-                                  `event_name:${event.id}`,
-                                  event!.name
-                                )}
-                              </MenuItem>
-                            ))}
-                        </Select>
-                      </FormControl>
+                        }}
+                      />
                     </Grid>
                   </Grid>
                 </Grid>
@@ -709,58 +741,57 @@ const EventPointCalc: React.FC<{}> = () => {
                 <Grid item xs={12}>
                   <Grid container spacing={1}>
                     <Grid item xs={12} md={4} lg={3}>
-                      <FormControl style={{ width: "100%" }}>
-                        <InputLabel id="song-select-label">
-                          {t("common:music")}
-                        </InputLabel>
-                        <Select
-                          labelId="song-select-label"
-                          value={selectedSongId}
-                          onChange={(e, v) =>
-                            setSelectedSongId(e.target.value as number)
+                      <Autocomplete
+                        options={(musics || []).slice().map((music) => ({
+                          name: getTranslated(
+                            `music_titles:${music.id}`,
+                            music.title
+                          ),
+                          id: music.id,
+                        }))}
+                        getOptionLabel={(option) => option.name}
+                        isOptionEqualToValue={(option, value) =>
+                          option.id === value.id
+                        }
+                        renderInput={(params) => (
+                          <TextField {...params} label={t("common:music")} />
+                        )}
+                        value={selectedSong}
+                        autoComplete
+                        onChange={(_, value) => {
+                          if (!!value) {
+                            setSelectedSong(value);
+                            setSelectedSongId(value.id as number);
                           }
-                          input={<Input />}
-                        >
-                          {musics &&
-                            musics.map((music) => (
-                              <MenuItem
-                                key={`music-${music.id}`}
-                                value={music.id}
-                              >
-                                {getTranslated(
-                                  `music_titles:${music.id}`,
-                                  music!.title
-                                )}
-                              </MenuItem>
-                            ))}
-                        </Select>
-                      </FormControl>
+                        }}
+                      />
                     </Grid>
                     <Grid item xs={12} md={4} lg={3}>
-                      <FormControl style={{ width: "100%" }}>
-                        <InputLabel id="song-difficulty-select-label">
-                          {t("event_calc:songSelect.select.difficulty")}
-                        </InputLabel>
-                        <Select
-                          labelId="song-difficulty-select-label"
-                          value={selectedSongDifficulty}
-                          onChange={(e, v) =>
-                            setSelectedSongDifficulty(e.target.value as number)
+                      <Autocomplete
+                        options={Object.entries(difficulties).map(
+                          ([key, value]) => ({
+                            name: value,
+                            id: Number(key),
+                          })
+                        )}
+                        getOptionLabel={(option) => option.name}
+                        isOptionEqualToValue={(option, value) =>
+                          option.id === value.id
+                        }
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label={t("event_calc:songSelect.select.difficulty")}
+                          />
+                        )}
+                        value={selectedSongDifficulty}
+                        autoComplete
+                        onChange={(_, value) => {
+                          if (!!value) {
+                            setSelectedSongDifficulty(value);
                           }
-                          input={<Input />}
-                        >
-                          {["Easy", "Normal", "Hard", "Expert", "Master"].map(
-                            (diffi, idx) => (
-                              <MenuItem
-                                key={`music-diffi-${diffi}`}
-                                value={idx}
-                              >
-                                {diffi}
-                              </MenuItem>
-                            )
-                          )}
-                        </Select>
-                      </FormControl>
+                        }}
+                      />
                     </Grid>
                   </Grid>
                 </Grid>
@@ -942,6 +973,8 @@ const EventPointCalc: React.FC<{}> = () => {
                   disableColumnMenu
                   disableSelectionOnClick
                   disableColumnSelector
+                  sortModel={sortModel}
+                  onSortModelChange={setSortModel}
                 />
               </div>
             )}

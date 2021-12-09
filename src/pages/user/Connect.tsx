@@ -1,25 +1,35 @@
 import { Grid, LinearProgress, Typography } from "@mui/material";
 import Axios from "axios";
-import React, { Fragment, useContext, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useLocation, useParams } from "react-router-dom";
-import { UserContext } from "../../context";
+import { useRootStore } from "../../stores/root";
 import { useLayoutStyles } from "../../styles/layout";
 // import { useQuery } from "../../utils";
 import { useStrapi } from "../../utils/apiClient";
 // import useJwtAuth from "../../utils/jwt";
+import { observer } from "mobx-react-lite";
+import { apiUserInfoToStoreUserInfo } from "../../utils";
+import { IUserMetadata } from "../../stores/user";
 
-const Connect: React.FC<{}> = () => {
+const Connect: React.FC<{}> = observer(() => {
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const { provider } = useParams<{ provider: string }>();
-  const { updateUser, updateJwtToken, updateUserMeta } =
-    useContext(UserContext)!;
+  const {
+    user: { setUserInfo, setToken, setMetadata },
+  } = useRootStore();
   // const query = useQuery();
   const location = useLocation();
   const history = useHistory();
   // const jwtAuth = useJwtAuth();
-  const { getConnectCallback, getUserMetadataMe, postUpload } = useStrapi();
+  const {
+    getConnectCallback,
+    getUserMetadataMe,
+    postUpload,
+    // getSekaiProfileMe,
+    // getSekaiCardTeamMe,
+  } = useStrapi();
 
   const [progress, setProgress] = useState(0);
   const [step, setStep] = useState("");
@@ -34,13 +44,13 @@ const Connect: React.FC<{}> = () => {
         setStep(t("auth:connect.fetch_user_data"));
 
         const data = await getConnectCallback(provider, location.search || "");
-        updateJwtToken(data.jwt);
+        setToken(data.jwt);
         const { avatarUrl } = data.user;
         delete data.user.avatarUrl;
-        updateUser(data.user);
+        setUserInfo(apiUserInfoToStoreUserInfo(data.user));
         const usermeta = await getUserMetadataMe(data.jwt);
         if (!usermeta.avatar && avatarUrl) {
-          setProgress(50);
+          setProgress(25);
           setStep(t("auth:connect.fetch_user_avatar"));
 
           const avatarBuffer = (
@@ -59,15 +69,20 @@ const Connect: React.FC<{}> = () => {
 
           await postUpload(form, data.jwt);
           setProgress(75);
-          updateUserMeta(await getUserMetadataMe(data.jwt));
+          setMetadata((await getUserMetadataMe(data.jwt)) as IUserMetadata);
         } else {
-          updateUserMeta(usermeta);
-          setProgress(100);
+          setMetadata((await getUserMetadataMe(data.jwt)) as IUserMetadata);
+          setProgress(75);
         }
+
+        // updateSekaiProfile(await getSekaiProfileMe(data.jwt));
+        // setProgress(75);
+        // updateSekaiCardTeam(await getSekaiCardTeamMe(data.jwt));
+        setProgress(100);
 
         history.push("/user");
         localStorage.setItem("lastUserCheck", String(new Date().getTime()));
-      } catch (error) {
+      } catch (error: any) {
         if (error.id === "Auth.form.error.email.taken") {
           history.replace(`/user/login?error=${t("auth:error.email_taken")}`);
         }
@@ -93,6 +108,6 @@ const Connect: React.FC<{}> = () => {
       </Grid>
     </Fragment>
   );
-};
+});
 
 export default Connect;

@@ -12,7 +12,7 @@ import {
   Avatar,
   Badge,
   TextField,
-  InputAdornment,
+  // InputAdornment,
   IconButton,
   Popover,
 } from "@mui/material";
@@ -34,8 +34,8 @@ import {
 import React, {
   Fragment,
   useCallback,
-  useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useReducer,
   useState,
@@ -64,6 +64,7 @@ import { useTranslation } from "react-i18next";
 import { useInteractiveStyles } from "../../styles/interactive";
 import {
   characterSelectReducer,
+  unitSelectReducer,
   attrSelectReducer,
   raritySelectReducer,
   skillSelectReducer,
@@ -74,7 +75,6 @@ import {
   attrIconMap,
   UnitLogoMiniMap,
 } from "../../utils/resources";
-import { SettingContext } from "../../context";
 import GridView from "./GridView";
 import AgendaView from "./AgendaView";
 import ComfyView from "./ComfyView";
@@ -84,6 +84,8 @@ import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
 import { useCurrentEvent } from "../../utils/apiClient";
 import { useAssetI18n, useCharaName } from "../../utils/i18n";
+import { useRootStore } from "../../stores/root";
+import { observer } from "mobx-react-lite";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -96,7 +98,14 @@ function getMaxParam(
   rarities: ICardRarity[],
   episodes: ICardEpisode[]
 ) {
-  const rarity = rarities.find((rarity) => rarity.rarity === card.rarity)!;
+  const rarity = card.cardRarityType
+    ? rarities.find((rarity) => rarity.cardRarityType === card.cardRarityType)
+    : rarities.find((rarity) => rarity.rarity === card.rarity);
+
+  if (!rarity) {
+    console.warn(`failed to find rarity for card ${card.id} ${card.prefix}`);
+    return 0;
+  }
 
   const maxLevel = rarity.trainingMaxLevel || rarity.maxLevel;
 
@@ -130,11 +139,13 @@ const ListCard: { [key: string]: React.FC<{ data?: ICardInfo }> } = {
   comfy: ComfyView,
 };
 
-const CardList: React.FC<{}> = () => {
+const CardList: React.FC<{}> = observer(() => {
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
-  const { isShowSpoiler } = useContext(SettingContext)!;
+  const {
+    settings: { isShowSpoiler },
+  } = useRootStore();
   const getCharaName = useCharaName();
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
   const { getTranslated } = useAssetI18n();
@@ -175,6 +186,10 @@ const CardList: React.FC<{}> = () => {
   const [characterSelected, dispatchCharacterSelected] = useReducer(
     characterSelectReducer,
     JSON.parse(localStorage.getItem("card-list-filter-charas") || "[]")
+  );
+  const [unitSelected, dispatchUnitSelected] = useReducer(
+    unitSelectReducer,
+    JSON.parse(localStorage.getItem("card-list-filter-units") || "[]")
   );
   const [attrSelected, dispatchAttrSelected] = useReducer(
     attrSelectReducer,
@@ -219,11 +234,11 @@ const CardList: React.FC<{}> = () => {
     [isReady, lastQueryFin, limit, page, sortedCache.length]
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.title = t("title:cardList");
   }, [t]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setIsReady(
       Boolean(cardsCache && cardsCache.length) &&
         Boolean(charas && charas.length)
@@ -231,12 +246,12 @@ const CardList: React.FC<{}> = () => {
   }, [setIsReady, cardsCache, charas]);
 
   useEffect(() => {
-    if (!isCurrEventLoading) {
+    if (!isCurrEventLoading && !!currEvent) {
       setEventId(currEvent.eventId);
     }
   }, [currEvent, isCurrEventLoading]);
 
-  useEffect(() => {
+  const doFilter = useCallback(() => {
     if (
       cardsCache &&
       cardsCache.length &&
@@ -327,6 +342,43 @@ const CardList: React.FC<{}> = () => {
     isShowSpoiler,
   ]);
 
+  const resetFilter = useCallback(() => {
+    dispatchCharacterSelected({
+      type: "reset",
+      payload: 0,
+      storeName: "card-list-filter-charas",
+    });
+    dispatchUnitSelected({
+      type: "reset",
+      payload: "",
+      storeName: "card-list-filter-units",
+    });
+    dispatchAttrSelected({
+      type: "reset",
+      payload: "",
+      storeName: "card-list-filter-attrs",
+    });
+    dispatchRaritySelected({
+      type: "reset",
+      payload: 0,
+      storeName: "card-list-filter-rarities",
+    });
+    dispatchSkillSelected({
+      type: "reset",
+      payload: "",
+    });
+    dispatchSupportUnitSelected({
+      type: "reset",
+      payload: "",
+      storeName: "card-list-filter-support-units",
+    });
+  }, []);
+
+  useEffect(() => {
+    if (isReady) doFilter();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isReady]);
+
   useEffect(() => {
     if (sortedCache.length) {
       setCards((cards) => [
@@ -389,6 +441,7 @@ const CardList: React.FC<{}> = () => {
             variant="dot"
             invisible={
               !characterSelected.length &&
+              !unitSelected.length &&
               !attrSelected.length &&
               !skillSelected.length &&
               !raritySelected.length
@@ -418,42 +471,130 @@ const CardList: React.FC<{}> = () => {
               >
                 <Grid item xs={12} md={1}>
                   <Typography classes={{ root: interactiveClasses.caption }}>
+                    {t("common:unit")}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={11}>
+                  <Grid container spacing={1}>
+                    {(unitProfiles || [])
+                      .sort((a, b) => a.seq - b.seq)
+                      .map((unitProfile) => (
+                        <Grid
+                          key={"unit-profile-filter-" + unitProfile.unit}
+                          item
+                        >
+                          <Chip
+                            clickable
+                            color={
+                              unitSelected.includes(unitProfile.unit)
+                                ? "primary"
+                                : "default"
+                            }
+                            avatar={
+                              <Avatar
+                                alt={unitProfile.unit}
+                                src={
+                                  UnitLogoMiniMap[unitProfile.unit as "idol"]
+                                }
+                              />
+                            }
+                            label={
+                              <Typography variant="body2">
+                                {getTranslated(
+                                  `unit_profile:${unitProfile.unit}.name`,
+                                  unitProfile.unitName
+                                )}
+                              </Typography>
+                            }
+                            onClick={() => {
+                              if (charas?.length) {
+                                if (unitSelected.includes(unitProfile.unit)) {
+                                  dispatchUnitSelected({
+                                    type: "remove",
+                                    payload: unitProfile.unit,
+                                    storeName: "card-list-filter-units",
+                                  });
+                                  const filteredCharas = charas.filter(
+                                    (chara) => chara.unit === unitProfile.unit
+                                  );
+                                  filteredCharas.forEach((chara) =>
+                                    dispatchCharacterSelected({
+                                      type: "remove",
+                                      payload: chara.id,
+                                      storeName: "card-list-filter-charas",
+                                    })
+                                  );
+                                } else {
+                                  dispatchUnitSelected({
+                                    type: "add",
+                                    payload: unitProfile.unit,
+                                    storeName: "card-list-filter-units",
+                                  });
+                                  const filteredCharas = charas.filter(
+                                    (chara) => chara.unit === unitProfile.unit
+                                  );
+                                  filteredCharas.forEach((chara) =>
+                                    dispatchCharacterSelected({
+                                      type: "add",
+                                      payload: chara.id,
+                                      storeName: "card-list-filter-charas",
+                                    })
+                                  );
+                                }
+                              }
+                            }}
+                          />
+                        </Grid>
+                      ))}
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justifyContent="space-between"
+                spacing={1}
+              >
+                <Grid item xs={12} md={1}>
+                  <Typography classes={{ root: interactiveClasses.caption }}>
                     {t("filter:character.caption")}
                   </Typography>
                 </Grid>
                 <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
-                    {Array.from({ length: 26 }).map((_, idx) => (
-                      <Grid key={"chara-filter-" + idx} item>
+                    {(charas || []).map((chara) => (
+                      <Grid key={"chara-filter-" + chara.id} item>
                         <Chip
                           clickable
                           color={
-                            characterSelected.includes(idx + 1)
+                            characterSelected.includes(chara.id)
                               ? "primary"
                               : "default"
                           }
                           avatar={
                             <Avatar
-                              alt={getCharaName(idx + 1)}
+                              alt={getCharaName(chara.id)}
                               src={
                                 charaIcons[
-                                  `CharaIcon${idx + 1}` as "CharaIcon1"
+                                  `CharaIcon${chara.id}` as "CharaIcon1"
                                 ]
                               }
                             />
                           }
-                          label={getCharaName(idx + 1)}
+                          label={getCharaName(chara.id)}
                           onClick={() => {
-                            if (characterSelected.includes(idx + 1)) {
+                            if (characterSelected.includes(chara.id)) {
                               dispatchCharacterSelected({
                                 type: "remove",
-                                payload: idx + 1,
+                                payload: chara.id,
                                 storeName: "card-list-filter-charas",
                               });
                             } else {
                               dispatchCharacterSelected({
                                 type: "add",
-                                payload: idx + 1,
+                                payload: chara.id,
                                 storeName: "card-list-filter-charas",
                               });
                             }
@@ -778,38 +919,24 @@ const CardList: React.FC<{}> = () => {
                   <Button
                     variant="contained"
                     color="primary"
+                    onClick={() => doFilter()}
+                    startIcon={<Check />}
+                  >
+                    {t("common:apply")}
+                  </Button>
+                </Grid>
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    color="secondary"
                     disabled={
                       !characterSelected.length &&
+                      !unitSelected.length &&
                       !attrSelected.length &&
                       !skillSelected.length &&
                       !raritySelected.length
                     }
-                    onClick={() => {
-                      dispatchCharacterSelected({
-                        type: "reset",
-                        payload: 0,
-                        storeName: "card-list-filter-charas",
-                      });
-                      dispatchAttrSelected({
-                        type: "reset",
-                        payload: "",
-                        storeName: "card-list-filter-attrs",
-                      });
-                      dispatchRaritySelected({
-                        type: "reset",
-                        payload: 0,
-                        storeName: "card-list-filter-rarities",
-                      });
-                      dispatchSkillSelected({
-                        type: "reset",
-                        payload: "",
-                      });
-                      dispatchSupportUnitSelected({
-                        type: "reset",
-                        payload: "",
-                        storeName: "card-list-filter-support-units",
-                      });
-                    }}
+                    onClick={() => resetFilter()}
                     startIcon={<RotateLeft />}
                   >
                     {t("common:reset")}
@@ -871,88 +998,91 @@ const CardList: React.FC<{}> = () => {
         }}
       >
         <Container style={{ paddingTop: "1em", paddingBottom: "1em" }}>
-          <TextField
-            select
-            label={t("common:event")}
-            value={eventId}
-            onChange={(e) => setEventId(Number(e.target.value))}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="start">
-                  <IconButton
-                    size="small"
-                    onClick={() => {
-                      const bonuses = eventDeckBonuses!.filter(
-                        (edb) => edb.eventId === eventId && edb.bonusRate === 50
-                      );
-                      // console.log(bonuses, eventId, eventDeckBonuses);
-                      const attr = bonuses[0].cardAttr;
-                      dispatchRaritySelected({
-                        type: "reset",
-                        payload: 0,
-                        storeName: "card-list-filter-rarities",
-                      });
-                      dispatchAttrSelected({
-                        type: "add",
-                        payload: attr,
-                        storeName: "card-list-filter-attrs",
-                      });
-                      const charas = bonuses.map(
-                        (bonus) =>
-                          charaUnits!.find(
-                            (cu) => cu.id === bonus.gameCharacterUnitId
-                          )!
-                      );
-                      dispatchCharacterSelected({
-                        type: "reset",
-                        payload: 0,
-                        storeName: "card-list-filter-charas",
-                      });
-                      charas.forEach((chara) =>
-                        dispatchCharacterSelected({
-                          type: "add",
-                          payload: chara.gameCharacterId,
-                          storeName: "card-list-filter-charas",
-                        })
-                      );
+          <Grid container alignItems="center">
+            <Grid item>
+              <TextField
+                select
+                label={t("common:event")}
+                value={eventId}
+                onChange={(e) => setEventId(Number(e.target.value))}
+              >
+                {events &&
+                  events
+                    .slice()
+                    .reverse()
+                    .map((ev) => (
+                      <MenuItem key={ev.id} value={ev.id}>
+                        <ContentTrans
+                          original={ev.name}
+                          contentKey={`event_name:${ev.id}`}
+                        />
+                      </MenuItem>
+                    ))}
+              </TextField>
+            </Grid>
+            <Grid item>
+              <IconButton
+                size="small"
+                onClick={() => {
+                  const bonuses = eventDeckBonuses!.filter(
+                    (edb) => edb.eventId === eventId && edb.bonusRate === 50
+                  );
+                  // console.log(bonuses, eventId, eventDeckBonuses);
+                  const attr = bonuses[0].cardAttr;
+                  dispatchRaritySelected({
+                    type: "reset",
+                    payload: 0,
+                    storeName: "card-list-filter-rarities",
+                  });
+                  dispatchAttrSelected({
+                    type: "add",
+                    payload: attr,
+                    storeName: "card-list-filter-attrs",
+                  });
+                  const charas = bonuses.map(
+                    (bonus) =>
+                      charaUnits!.find(
+                        (cu) => cu.id === bonus.gameCharacterUnitId
+                      )!
+                  );
+                  dispatchCharacterSelected({
+                    type: "reset",
+                    payload: 0,
+                    storeName: "card-list-filter-charas",
+                  });
+                  charas.forEach((chara) =>
+                    dispatchCharacterSelected({
+                      type: "add",
+                      payload: chara.gameCharacterId,
+                      storeName: "card-list-filter-charas",
+                    })
+                  );
+                  dispatchSupportUnitSelected({
+                    type: "reset",
+                    payload: "",
+                    storeName: "card-list-filter-support-units",
+                  });
+                  charas
+                    .filter((chara) => chara.gameCharacterId >= 21)
+                    .forEach((chara) => {
                       dispatchSupportUnitSelected({
-                        type: "reset",
-                        payload: "",
+                        type: "add",
+                        payload: chara.unit,
                         storeName: "card-list-filter-support-units",
                       });
-                      charas
-                        .filter((chara) => chara.gameCharacterId >= 21)
-                        .forEach((chara) => {
-                          dispatchSupportUnitSelected({
-                            type: "add",
-                            payload: chara.unit,
-                            storeName: "card-list-filter-support-units",
-                          });
-                        });
-                      handleEventClose();
-                    }}
-                    disabled={eventId === 0}
-                  >
-                    <Check />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          >
-            {events &&
-              events.map((ev) => (
-                <MenuItem key={ev.id} value={ev.id}>
-                  <ContentTrans
-                    original={ev.name}
-                    contentKey={`event_name:${ev.id}`}
-                  />
-                </MenuItem>
-              ))}
-          </TextField>
+                    });
+                  handleEventClose();
+                }}
+                disabled={eventId === 0}
+              >
+                <Check />
+              </IconButton>
+            </Grid>
+          </Grid>
         </Container>
       </Popover>
     </Fragment>
   );
-};
+});
 
 export default CardList;

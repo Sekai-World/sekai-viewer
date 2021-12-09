@@ -63,14 +63,15 @@ import Bullhorn from "~icons/mdi/bullhorn";
 import Calculator from "~icons/mdi/calculator";
 import CalendarText from "~icons/mdi/calendar-text";
 import StickerEmoji from "~icons/mdi/sticker-emoji";
+import FileFindOutline from "~icons/mdi/file-find-outline";
 import React, {
   // forwardRef,
   // useMemo,
   lazy,
   Suspense,
-  useContext,
   Fragment,
   useState,
+  useEffect,
 } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -81,13 +82,16 @@ import {
   useHistory,
   useRouteMatch,
 } from "react-router-dom";
-import { SettingContext, UserContext, UserProvider } from "../context";
 import ScrollTop from "../components/widgets/ScrollTop";
 // import Settings from "../components/Settings";
 import { SnackbarProvider } from "notistack";
 import ReloadPrompt from "../components/helpers/ReloadPrompt";
-import { useLocalStorage } from "../utils";
+import { apiUserInfoToStoreUserInfo, useLocalStorage } from "../utils";
+import { useRemoteLanguages, useStrapi } from "../utils/apiClient";
+import { useRootStore } from "../stores/root";
 // import AlertSnackbar from "../components/AlertSnackbar";
+import { observer } from "mobx-react-lite";
+import { IUserMetadata } from "../stores/user";
 
 declare module "@mui/styles/defaultTheme" {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -140,6 +144,7 @@ const TranslationEditor = lazy(() => import("./translation/TranslationEditor"));
 const HonorList = lazy(() => import("./honor/HonorList"));
 const EventAnalyzer = lazy(() => import("./event/EventAnalyzer"));
 const MusicMeta = lazy(() => import("./music/MusicMeta"));
+const AssetViewer = lazy(() => import("./AssetViewer"));
 
 const drawerWidth = 240;
 
@@ -153,6 +158,7 @@ const useStyles = makeStyles((theme) => ({
   },
   root: {
     display: "flex",
+    minHeight: "100vh",
   },
   drawer: {
     [theme.breakpoints.up("md")]: {
@@ -208,7 +214,7 @@ function ListItemLink(
   props: IListItemLinkProps
 ): React.ReactElement<IListItemLinkProps> {
   const { icon, text, to } = props;
-  const { user } = useContext(UserContext)!;
+  const { user } = useRootStore();
   const match = useRouteMatch({
     path: to,
     exact: to === "/",
@@ -217,7 +223,7 @@ function ListItemLink(
 
   if (
     props.visibleRoles &&
-    (!user || !props.visibleRoles.includes(user!.role.name))
+    (!user.userinfo || !props.visibleRoles.includes(user.userinfo.role))
   )
     return <Fragment></Fragment>;
 
@@ -258,7 +264,7 @@ function ListItemWithChildren(props: {
   // theme: Theme;
 }> {
   const { item } = props;
-  const { user } = useContext(UserContext)!;
+  const { user } = useRootStore();
 
   const match = useRouteMatch({
     path: item.to,
@@ -270,7 +276,7 @@ function ListItemWithChildren(props: {
 
   if (
     item.visibleRoles &&
-    (!user || !item.visibleRoles.includes(user!.role.name))
+    (!user.userinfo || !item.visibleRoles.includes(user.userinfo.role))
   )
     return <Fragment></Fragment>;
 
@@ -420,7 +426,7 @@ const DrawerContent: React.FC<{
           icon: <Translate></Translate>,
           to: "/translation",
           disabled: false,
-          visibleRoles: ["Translator", "Admin"],
+          visibleRoles: ["translator", "admin"],
         },
       ],
       [
@@ -520,6 +526,12 @@ const DrawerContent: React.FC<{
       ],
       [
         {
+          text: t("common:assetViewer"),
+          icon: <FileFindOutline />,
+          to: "/asset_viewer",
+          disabled: false,
+        },
+        {
           text: t("common:musicMeta"),
           icon: <QueueMusic />,
           to: "/music_meta",
@@ -597,191 +609,199 @@ const DrawerContent: React.FC<{
   >(leftBtns.map(() => true));
 
   return (
-    <UserProvider>
-      <div>
-        <div className={classes.toolbar}>
-          <Typography variant="h6">{t("common:toolbar.title")}</Typography>
-          <Box sx={{ marginLeft: "auto" }}>
-            <Hidden mdDown implementation="css">
-              <IconButton onClick={onFoldButtonClick}>
-                <ArrowBackIosIcon />
-              </IconButton>
-            </Hidden>
-          </Box>
-        </div>
-        <Divider></Divider>
-        <List>
-          <ListItem
-            button
-            onClick={() =>
-              setSidebarExpansionStates((s) => [!s[0], ...s.slice(1)])
-            }
-          >
-            <Typography
-              color="textSecondary"
-              sx={{ ...(!open && { display: "none" }) }}
-            >
-              {t("common:community")}
-            </Typography>
-            {sidebarExpansionStates[0] ? <ExpandLess /> : <ExpandMore />}
-          </ListItem>
-          <Collapse
-            in={sidebarExpansionStates[0]}
-            // timeout="auto"
-            // unmountOnExit
-          >
-            {leftBtns[0].map((elem) =>
-              elem.children ? (
-                <ListItemWithChildren key={elem.to} item={elem} />
-              ) : (
-                <ListItem
-                  disabled={elem.disabled}
-                  button
-                  key={elem.to}
-                  classes={{
-                    root: classes.listItem,
-                  }}
-                >
-                  <ListItemLink {...elem} />
-                </ListItem>
-              )
-            )}
-          </Collapse>
-          <ListItem
-            button
-            onClick={() =>
-              setSidebarExpansionStates((s) => [s[0], !s[1], ...s.slice(2)])
-            }
-          >
-            <Typography
-              color="textSecondary"
-              sx={{ ...(!open && { display: "none" }) }}
-            >
-              {t("common:information")}
-            </Typography>
-            {sidebarExpansionStates[1] ? <ExpandLess /> : <ExpandMore />}
-          </ListItem>
-          <Collapse
-            in={sidebarExpansionStates[1]}
-            // timeout="auto"
-            // unmountOnExit
-          >
-            {leftBtns[1].map((elem) =>
-              elem.children ? (
-                <ListItemWithChildren key={elem.to} item={elem} />
-              ) : (
-                <ListItem
-                  disabled={elem.disabled}
-                  button
-                  key={elem.to}
-                  classes={{
-                    root: classes.listItem,
-                  }}
-                >
-                  <ListItemLink
-                    to={elem.to}
-                    text={elem.text}
-                    icon={elem.icon}
-                    disabled={elem.disabled}
-                  />
-                </ListItem>
-              )
-            )}
-          </Collapse>
-          <ListItem
-            button
-            onClick={() =>
-              setSidebarExpansionStates((s) => [
-                s[0],
-                s[1],
-                !s[2],
-                ...s.slice(3),
-              ])
-            }
-          >
-            <Typography
-              color="textSecondary"
-              sx={{ ...(!open && { display: "none" }) }}
-            >
-              {t("common:tools")}
-            </Typography>
-            {sidebarExpansionStates[2] ? <ExpandLess /> : <ExpandMore />}
-          </ListItem>
-          <Collapse in={sidebarExpansionStates[2]} timeout="auto" unmountOnExit>
-            {leftBtns[2].map((elem) =>
-              elem.children ? (
-                <ListItemWithChildren key={elem.to} item={elem} />
-              ) : (
-                <ListItem
-                  disabled={elem.disabled}
-                  button
-                  key={elem.to}
-                  classes={{
-                    root: classes.listItem,
-                  }}
-                >
-                  <ListItemLink
-                    to={elem.to}
-                    text={elem.text}
-                    icon={elem.icon}
-                    disabled={elem.disabled}
-                  />
-                </ListItem>
-              )
-            )}
-          </Collapse>
-          <ListItem
-            button
-            onClick={() =>
-              setSidebarExpansionStates((s) => [
-                ...s.slice(0, 3),
-                !s[3],
-                ...s.slice(4),
-              ])
-            }
-          >
-            <Typography
-              color="textSecondary"
-              sx={{ ...(!open && { display: "none" }) }}
-            >
-              {t("common:about")}
-            </Typography>
-            {sidebarExpansionStates[3] ? <ExpandLess /> : <ExpandMore />}
-          </ListItem>
-          <Collapse in={sidebarExpansionStates[3]} timeout="auto" unmountOnExit>
-            {leftBtns[3].map((elem) =>
-              elem.children ? (
-                <ListItemWithChildren key={elem.to} item={elem} />
-              ) : (
-                <ListItem
-                  disabled={elem.disabled}
-                  button
-                  key={elem.to}
-                  classes={{
-                    root: classes.listItem,
-                  }}
-                >
-                  <ListItemLink
-                    to={elem.to}
-                    text={elem.text}
-                    icon={elem.icon}
-                    disabled={elem.disabled}
-                  />
-                </ListItem>
-              )
-            )}
-          </Collapse>
-        </List>
-        <ReloadPrompt />
+    <div>
+      <div className={classes.toolbar}>
+        <Typography variant="h6">{t("common:toolbar.title")}</Typography>
+        <Box sx={{ marginLeft: "auto" }}>
+          <Hidden mdDown implementation="css">
+            <IconButton onClick={onFoldButtonClick}>
+              <ArrowBackIosIcon />
+            </IconButton>
+          </Hidden>
+        </Box>
       </div>
-    </UserProvider>
+      <Divider></Divider>
+      <List>
+        <ListItem
+          button
+          onClick={() =>
+            setSidebarExpansionStates((s) => [!s[0], ...s.slice(1)])
+          }
+        >
+          <Typography
+            color="textSecondary"
+            sx={{ ...(!open && { display: "none" }) }}
+          >
+            {t("common:community")}
+          </Typography>
+          {sidebarExpansionStates[0] ? <ExpandLess /> : <ExpandMore />}
+        </ListItem>
+        <Collapse
+          in={sidebarExpansionStates[0]}
+          // timeout="auto"
+          // unmountOnExit
+        >
+          {leftBtns[0].map((elem) =>
+            elem.children ? (
+              <ListItemWithChildren key={elem.to} item={elem} />
+            ) : (
+              <ListItem
+                disabled={elem.disabled}
+                button
+                key={elem.to}
+                classes={{
+                  root: classes.listItem,
+                }}
+              >
+                <ListItemLink {...elem} />
+              </ListItem>
+            )
+          )}
+        </Collapse>
+        <ListItem
+          button
+          onClick={() =>
+            setSidebarExpansionStates((s) => [s[0], !s[1], ...s.slice(2)])
+          }
+        >
+          <Typography
+            color="textSecondary"
+            sx={{ ...(!open && { display: "none" }) }}
+          >
+            {t("common:information")}
+          </Typography>
+          {sidebarExpansionStates[1] ? <ExpandLess /> : <ExpandMore />}
+        </ListItem>
+        <Collapse
+          in={sidebarExpansionStates[1]}
+          // timeout="auto"
+          // unmountOnExit
+        >
+          {leftBtns[1].map((elem) =>
+            elem.children ? (
+              <ListItemWithChildren key={elem.to} item={elem} />
+            ) : (
+              <ListItem
+                disabled={elem.disabled}
+                button
+                key={elem.to}
+                classes={{
+                  root: classes.listItem,
+                }}
+              >
+                <ListItemLink
+                  to={elem.to}
+                  text={elem.text}
+                  icon={elem.icon}
+                  disabled={elem.disabled}
+                />
+              </ListItem>
+            )
+          )}
+        </Collapse>
+        <ListItem
+          button
+          onClick={() =>
+            setSidebarExpansionStates((s) => [s[0], s[1], !s[2], ...s.slice(3)])
+          }
+        >
+          <Typography
+            color="textSecondary"
+            sx={{ ...(!open && { display: "none" }) }}
+          >
+            {t("common:tools")}
+          </Typography>
+          {sidebarExpansionStates[2] ? <ExpandLess /> : <ExpandMore />}
+        </ListItem>
+        <Collapse in={sidebarExpansionStates[2]} timeout="auto" unmountOnExit>
+          {leftBtns[2].map((elem) =>
+            elem.children ? (
+              <ListItemWithChildren key={elem.to} item={elem} />
+            ) : (
+              <ListItem
+                disabled={elem.disabled}
+                button
+                key={elem.to}
+                classes={{
+                  root: classes.listItem,
+                }}
+              >
+                <ListItemLink
+                  to={elem.to}
+                  text={elem.text}
+                  icon={elem.icon}
+                  disabled={elem.disabled}
+                />
+              </ListItem>
+            )
+          )}
+        </Collapse>
+        <ListItem
+          button
+          onClick={() =>
+            setSidebarExpansionStates((s) => [
+              ...s.slice(0, 3),
+              !s[3],
+              ...s.slice(4),
+            ])
+          }
+        >
+          <Typography
+            color="textSecondary"
+            sx={{ ...(!open && { display: "none" }) }}
+          >
+            {t("common:about")}
+          </Typography>
+          {sidebarExpansionStates[3] ? <ExpandLess /> : <ExpandMore />}
+        </ListItem>
+        <Collapse in={sidebarExpansionStates[3]} timeout="auto" unmountOnExit>
+          {leftBtns[3].map((elem) =>
+            elem.children ? (
+              <ListItemWithChildren key={elem.to} item={elem} />
+            ) : (
+              <ListItem
+                disabled={elem.disabled}
+                button
+                key={elem.to}
+                classes={{
+                  root: classes.listItem,
+                }}
+              >
+                <ListItemLink
+                  to={elem.to}
+                  text={elem.text}
+                  icon={elem.icon}
+                  disabled={elem.disabled}
+                />
+              </ListItem>
+            )
+          )}
+        </Collapse>
+      </List>
+      <ReloadPrompt />
+    </div>
   );
 };
 
-const AppInner = (props: { theme: Theme }) => {
+const AppInner = observer((props: { theme: Theme }) => {
   const { t } = useTranslation();
   const history = useHistory();
   const { goBack } = useHistory();
+  const {
+    user: { userinfo, setUserInfo, setMetadata },
+    jwtToken,
+    sekai: {
+      sekaiProfileMap,
+      sekaiCardTeamMap,
+      fetchSekaiProfile,
+      fetchSekaiCardTeam,
+    },
+    settings: { region },
+  } = useRootStore();
+  const { getUserMe, getUserMetadataMe, getRefreshToken } = useStrapi(
+    jwtToken,
+    region
+  );
 
   const classes = useStyles();
   const { theme } = props;
@@ -801,6 +821,55 @@ const AppInner = (props: { theme: Theme }) => {
   const iOS =
     typeof navigator !== "undefined" &&
     /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+  useEffect(() => {
+    if (jwtToken) {
+      const lastCheck = Number(localStorage.getItem("lastUserCheck") || "0");
+
+      if (
+        import.meta.env.DEV ||
+        !userinfo || // has token but no userinfo, should fetch
+        new Date().getTime() - lastCheck > 3600 * 24 * 1000
+      ) {
+        const func = async () => {
+          const userInfo = await getUserMe();
+          const userMetaDatum = await getUserMetadataMe();
+          const refreshToken = await getRefreshToken();
+
+          setUserInfo(apiUserInfoToStoreUserInfo(userInfo));
+          setMetadata(userMetaDatum as IUserMetadata);
+          localStorage.setItem("refreshToken", refreshToken.refresh);
+
+          localStorage.setItem(
+            "lastUserCheck",
+            new Date().getTime().toString()
+          );
+        };
+
+        func();
+      }
+
+      if (!sekaiProfileMap.has(region)) {
+        fetchSekaiProfile(region);
+      }
+      if (!sekaiCardTeamMap.has(region)) {
+        fetchSekaiCardTeam(region);
+      }
+    }
+  }, [
+    fetchSekaiCardTeam,
+    fetchSekaiProfile,
+    getRefreshToken,
+    getUserMe,
+    getUserMetadataMe,
+    jwtToken,
+    region,
+    sekaiCardTeamMap,
+    sekaiProfileMap,
+    setMetadata,
+    setUserInfo,
+    userinfo,
+  ]);
 
   return (
     <SnackbarProvider>
@@ -967,145 +1036,138 @@ const AppInner = (props: { theme: Theme }) => {
         </nav>
         <Container className={classes.content}>
           <div className={classes.toolbar} id="back-to-top-anchor"></div>
-          <UserProvider>
-            <Switch>
-              <Suspense
-                fallback={
-                  <Grid container direction="column" spacing={3}>
-                    <Grid item>
-                      <Skeleton variant="rectangular" width="30%" height={30} />
-                    </Grid>
-                    <Grid item>
-                      <Skeleton
-                        variant="rectangular"
-                        width="90%"
-                        height={200}
-                      />
-                    </Grid>
-                    <Grid item>
-                      <Skeleton
-                        variant="rectangular"
-                        width="90%"
-                        height={200}
-                      />
-                    </Grid>
+          <Switch>
+            <Suspense
+              fallback={
+                <Grid container direction="column" spacing={3}>
+                  <Grid item>
+                    <Skeleton variant="rectangular" width="30%" height={30} />
                   </Grid>
-                }
-              >
-                <Route path="/" exact>
-                  <HomeView />
-                </Route>
-                <Route path="/card" exact>
-                  <CardList />
-                </Route>
-                <Route path="/card/:cardId(\d+)">
-                  <CardDetail />
-                </Route>
-                <Route path="/music" exact>
-                  <MusicList />
-                </Route>
-                <Route path="/music/:musicId(\d+)">
-                  <MusicDetail />
-                </Route>
-                <Route path="/gacha" exact>
-                  <GachaList />
-                </Route>
-                <Route path="/gacha/:gachaId">
-                  <GachaDetail />
-                </Route>
-                <Route path="/event" exact>
-                  <EventList />
-                </Route>
-                <Route path="/event/:eventId">
-                  <EventDetail />
-                </Route>
-                <Route path="/stamp">
-                  <StampList />
-                </Route>
-                <Route path="/comic">
-                  <ComicList />
-                </Route>
-                <Route path="/chara" exact>
-                  <MemberList />
-                </Route>
-                <Route path="/chara/:charaId">
-                  <MemberDetail />
-                </Route>
-                <Route path="/unit/:unitId">
-                  <UnitDetail />
-                </Route>
-                <Route path="/about" exact>
-                  <About />
-                </Route>
-                <Route path="/support" exact>
-                  <Support />
-                </Route>
-                <Route path="/music_recommend" exact>
-                  <MusicRecommend />
-                </Route>
-                <Route path="/event_calc" exact>
-                  <EventPointCalc />
-                </Route>
-                <Route path="/storyreader">
-                  <StoryReader />
-                </Route>
-                <Route path="/mission/title">
-                  <TitleMissionList />
-                </Route>
-                <Route path="/mission/normal">
-                  <NormalMissionList />
-                </Route>
-                <Route path="/mission/beginner">
-                  <BeginnerMissionList />
-                </Route>
-                <Route path="/mission/character">
-                  <CharacterMissionList />
-                </Route>
-                <Route path="/user">
-                  <User />
-                </Route>
-                <Route path="/connect/:provider/redirect">
-                  <Connect />
-                </Route>
-                <Route path="/eventtracker">
-                  <EventTracker />
-                </Route>
-                <Route path="/announcement" exact>
-                  <AnnouncementList />
-                </Route>
-                <Route path="/announcement/:id">
-                  <AnnouncementDetail />
-                </Route>
-                <Route path="/l2d">
-                  <Live2D />
-                </Route>
-                <Route path="/virtual_live" exact>
-                  <VirtualLiveList />
-                </Route>
-                <Route path="/virtual_live/:id">
-                  <VirtualLiveDetail />
-                </Route>
-                <Route path="/translation" exact>
-                  <TranslationPage />
-                </Route>
-                <Route path="/translation/:slug">
-                  <TranslationEditor />
-                </Route>
-                <Route path="/honor">
-                  <HonorList />
-                </Route>
-                <Route path="/eventanalyzer">
-                  <EventAnalyzer />
-                </Route>
-                <Route path="/music_meta">
-                  <MusicMeta />
-                </Route>
-                <Route path="/settings">
-                  <Settings />
-                </Route>
-              </Suspense>
-            </Switch>
-          </UserProvider>
+                  <Grid item>
+                    <Skeleton variant="rectangular" width="90%" height={200} />
+                  </Grid>
+                  <Grid item>
+                    <Skeleton variant="rectangular" width="90%" height={200} />
+                  </Grid>
+                </Grid>
+              }
+            >
+              <Route path="/" exact>
+                <HomeView />
+              </Route>
+              <Route path="/card" exact>
+                <CardList />
+              </Route>
+              <Route path="/card/:cardId(\d+)">
+                <CardDetail />
+              </Route>
+              <Route path="/music" exact>
+                <MusicList />
+              </Route>
+              <Route path="/music/:musicId(\d+)">
+                <MusicDetail />
+              </Route>
+              <Route path="/gacha" exact>
+                <GachaList />
+              </Route>
+              <Route path="/gacha/:gachaId">
+                <GachaDetail />
+              </Route>
+              <Route path="/event" exact>
+                <EventList />
+              </Route>
+              <Route path="/event/:eventId">
+                <EventDetail />
+              </Route>
+              <Route path="/stamp">
+                <StampList />
+              </Route>
+              <Route path="/comic">
+                <ComicList />
+              </Route>
+              <Route path="/chara" exact>
+                <MemberList />
+              </Route>
+              <Route path="/chara/:charaId">
+                <MemberDetail />
+              </Route>
+              <Route path="/unit/:unitId">
+                <UnitDetail />
+              </Route>
+              <Route path="/about" exact>
+                <About />
+              </Route>
+              <Route path="/support" exact>
+                <Support />
+              </Route>
+              <Route path="/music_recommend" exact>
+                <MusicRecommend />
+              </Route>
+              <Route path="/event_calc" exact>
+                <EventPointCalc />
+              </Route>
+              <Route path="/storyreader">
+                <StoryReader />
+              </Route>
+              <Route path="/mission/title">
+                <TitleMissionList />
+              </Route>
+              <Route path="/mission/normal">
+                <NormalMissionList />
+              </Route>
+              <Route path="/mission/beginner">
+                <BeginnerMissionList />
+              </Route>
+              <Route path="/mission/character">
+                <CharacterMissionList />
+              </Route>
+              <Route path="/user">
+                <User />
+              </Route>
+              <Route path="/connect/:provider/redirect">
+                <Connect />
+              </Route>
+              <Route path="/eventtracker">
+                <EventTracker />
+              </Route>
+              <Route path="/announcement" exact>
+                <AnnouncementList />
+              </Route>
+              <Route path="/announcement/:id">
+                <AnnouncementDetail />
+              </Route>
+              <Route path="/l2d">
+                <Live2D />
+              </Route>
+              <Route path="/virtual_live" exact>
+                <VirtualLiveList />
+              </Route>
+              <Route path="/virtual_live/:id">
+                <VirtualLiveDetail />
+              </Route>
+              <Route path="/translation" exact>
+                <TranslationPage />
+              </Route>
+              <Route path="/translation/:slug">
+                <TranslationEditor />
+              </Route>
+              <Route path="/honor">
+                <HonorList />
+              </Route>
+              <Route path="/eventanalyzer">
+                <EventAnalyzer />
+              </Route>
+              <Route path="/music_meta">
+                <MusicMeta />
+              </Route>
+              <Route path="/settings">
+                <Settings />
+              </Route>
+              <Route path="/asset_viewer">
+                <AssetViewer />
+              </Route>
+            </Suspense>
+          </Switch>
         </Container>
         <ScrollTop>
           <Fab color="secondary" size="small" aria-label="scroll back to top">
@@ -1119,11 +1181,19 @@ const AppInner = (props: { theme: Theme }) => {
       </div>
     </SnackbarProvider>
   );
-};
+});
 
-function App() {
-  const { displayMode } = useContext(SettingContext)!;
+const App = observer(() => {
+  const {
+    settings: { displayMode, setLanguages, lang, setLang },
+  } = useRootStore();
   const preferDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+  const {
+    languages: remoteLanguages,
+    isLoading: isLanguageLoading,
+    error: languageError,
+  } = useRemoteLanguages();
+  const { i18n } = useTranslation();
 
   const theme = React.useMemo(
     () =>
@@ -1135,16 +1205,6 @@ function App() {
                 ? "dark"
                 : "light"
               : displayMode,
-          // primary: {
-          //   main:
-          //     displayMode === "auto"
-          //       ? preferDarkMode
-          //         ? "#7986cb"
-          //         : "#3f51b5"
-          //       : displayMode === "dark"
-          //       ? "#7986cb"
-          //       : "#3f51b5",
-          // },
           primary: {
             main: "#298a7b",
           },
@@ -1159,6 +1219,31 @@ function App() {
     [displayMode, preferDarkMode]
   );
 
+  useEffect(() => {
+    if (!lang) {
+      setLang(i18n.language);
+    }
+  }, [i18n.language, lang, setLang]);
+
+  useEffect(() => {
+    if (!isLanguageLoading && !languageError) {
+      setLanguages(remoteLanguages);
+      if (!remoteLanguages.find((rl) => rl.code === lang)) {
+        // try setting correct language code
+        if (remoteLanguages.find((rl) => rl.code === lang.split("-")[0])) {
+          setLang(lang.split("-")[0]);
+        }
+      }
+    }
+  }, [
+    isLanguageLoading,
+    lang,
+    languageError,
+    remoteLanguages,
+    setLang,
+    setLanguages,
+  ]);
+
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
@@ -1166,6 +1251,6 @@ function App() {
       </ThemeProvider>
     </StyledEngineProvider>
   );
-}
+});
 
 export default App;

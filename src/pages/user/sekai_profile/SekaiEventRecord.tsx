@@ -3,33 +3,42 @@ import {
   Typography,
   Button,
   Tooltip,
-  IconButton,
   CircularProgress,
   TextField,
 } from "@mui/material";
 import { Update } from "@mui/icons-material";
 import { Autocomplete } from "@mui/material";
-import React, { Fragment, useContext, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { SettingContext, UserContext } from "../../../context";
 import { SekaiProfileEventRecordModel } from "../../../strapi-model";
 import { IEventInfo } from "../../../types.d";
-import { useCachedData } from "../../../utils";
+import { useAlertSnackbar, useCachedData } from "../../../utils";
 import { useCurrentEvent, useStrapi } from "../../../utils/apiClient";
 import { useAssetI18n } from "../../../utils/i18n";
+import { LoadingButton } from "@mui/lab";
+import { useRootStore } from "../../../stores/root";
+import { ISekaiProfile } from "../../../stores/sekai";
+import { observer } from "mobx-react-lite";
+import { autorun } from "mobx";
 
-interface Props {}
+interface Props {
+  eventId?: number;
+}
 
-const SekaiEventRecord = (props: Props) => {
+const SekaiEventRecord = observer((props: Props) => {
   // const layoutClasses = useLayoutStyles();
   // const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
-  const { jwtToken, sekaiProfile, updateSekaiProfile } =
-    useContext(UserContext)!;
+  const {
+    jwtToken,
+    sekai: { sekaiProfileMap, setSekaiProfile },
+    settings: { contentTransMode },
+    region,
+  } = useRootStore();
   const { getSekaiProfileEventRecordMe, postSekaiProfileEventRecord } =
-    useStrapi(jwtToken);
+    useStrapi(jwtToken, region);
   const { getTranslated } = useAssetI18n();
-  const { contentTransMode } = useContext(SettingContext)!;
+  const { showError } = useAlertSnackbar();
 
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
 
@@ -43,11 +52,31 @@ const SekaiEventRecord = (props: Props) => {
     SekaiProfileEventRecordModel[]
   >([]);
   const [isEventRecording, setIsEventRecording] = useState(false);
+  const [sekaiProfile, setLocalSekaiProfile] = useState<ISekaiProfile>();
 
   useEffect(() => {
-    (async () => {
+    autorun(() => {
+      setLocalSekaiProfile(sekaiProfileMap.get(region));
+    });
+  }, []);
+
+  useEffect(() => {
+    const func = async () => {
       // console.log(currEvent);
-      if (currEvent && events) {
+      if (props.eventId && events) {
+        try {
+          const ev = events.find((elem) => elem.id === props.eventId);
+          if (ev) {
+            setSelectedEvent({
+              name: getTranslated(`event_name:${currEvent.eventId}`, ev.name),
+              id: ev.id,
+            });
+          }
+          setEventRecords(await getSekaiProfileEventRecordMe(props.eventId));
+        } catch (error) {
+          setEventRecords([]);
+        }
+      } else if (currEvent && events) {
         const ev = events.find((elem) => elem.id === Number(currEvent.eventId));
         if (ev) {
           setSelectedEvent({
@@ -63,76 +92,85 @@ const SekaiEventRecord = (props: Props) => {
           setEventRecords([]);
         }
       }
-    })();
+    };
+
+    func();
   }, [
     contentTransMode,
     currEvent,
     events,
     getSekaiProfileEventRecordMe,
     getTranslated,
+    props.eventId,
   ]);
 
   return (
     <Grid container direction="column" spacing={1}>
-      <Grid item container spacing={1} alignItems="center">
+      {!props.eventId && (
         <Grid item>
-          <Autocomplete
-            options={(events || [])
-              .slice()
-              .reverse()
-              .map((ev) => ({
-                name: getTranslated(`event_name:${ev.id}`, ev.name),
-                id: ev.id,
-              }))}
-            getOptionLabel={(option) => option.name}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label={t("event:tracker.select.event_name")}
+          <Grid container spacing={1} alignItems="center">
+            <Grid item>
+              <Autocomplete
+                options={(events || [])
+                  .filter((event) => event.startAt <= new Date().getTime())
+                  .slice()
+                  .reverse()
+                  .map((ev) => ({
+                    name: getTranslated(`event_name:${ev.id}`, ev.name),
+                    id: ev.id,
+                  }))}
+                getOptionLabel={(option) => option.name}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label={t("event:tracker.select.event_name")}
+                  />
+                )}
+                value={selectedEvent}
+                autoComplete
+                onChange={async (_, value) => {
+                  setSelectedEvent(value);
+                  setEventRecords([]);
+                  if (value)
+                    setEventRecords(
+                      await getSekaiProfileEventRecordMe(value.id)
+                    );
+                }}
+                disabled={isCurrEventLoading || isEventRecording}
+                style={{
+                  minWidth: "250px",
+                }}
               />
-            )}
-            value={selectedEvent}
-            autoComplete
-            onChange={async (_, value) => {
-              setSelectedEvent(value);
-              setEventRecords([]);
-              if (value)
-                setEventRecords(await getSekaiProfileEventRecordMe(value.id));
-            }}
-            disabled={isCurrEventLoading || isEventRecording}
-            style={{
-              minWidth: "250px",
-            }}
-          />
+            </Grid>
+            <Grid item>
+              <Button
+                variant="contained"
+                onClick={async () => {
+                  setSelectedEvent({
+                    name: getTranslated(
+                      `event_name:${currEvent.eventId}`,
+                      currEvent.eventJson.name
+                    ),
+                    id: currEvent.eventId,
+                  });
+                  setEventRecords([]);
+                  setEventRecords(
+                    await getSekaiProfileEventRecordMe(currEvent.eventId)
+                  );
+                }}
+                disabled={!currEvent || isCurrEventLoading || isEventRecording}
+                size="large"
+              >
+                {t("event:tracker.button.curr_event")}
+              </Button>
+            </Grid>
+          </Grid>
         </Grid>
-        <Grid item>
-          <Button
-            variant="contained"
-            onClick={async () => {
-              setSelectedEvent({
-                name: getTranslated(
-                  `event_name:${currEvent.eventId}`,
-                  currEvent.eventJson.name
-                ),
-                id: currEvent.eventId,
-              });
-              setEventRecords([]);
-              setEventRecords(
-                await getSekaiProfileEventRecordMe(currEvent.eventId)
-              );
-            }}
-            disabled={isCurrEventLoading || isEventRecording}
-          >
-            {t("event:tracker.button.curr_event")}
-          </Button>
-        </Grid>
-      </Grid>
+      )}
       <Grid item container spacing={1} alignItems="center">
-        <Grid item>
-          <Typography>{t("user:profile.event.current_record_info")}</Typography>
-        </Grid>
         {!!selectedEvent &&
+          !!currEvent &&
           selectedEvent.id === currEvent.eventId &&
           !!sekaiProfile && (
             <Grid item>
@@ -147,19 +185,27 @@ const SekaiEventRecord = (props: Props) => {
                 arrow
               >
                 <span>
-                  <IconButton
+                  <LoadingButton
                     size="small"
-                    onClick={() => {
+                    loading={isEventRecording}
+                    variant="contained"
+                    onClick={async () => {
                       setIsEventRecording(true);
-                      postSekaiProfileEventRecord(currEvent!.eventId).then(
-                        async (data) => {
-                          setEventRecords(await getSekaiProfileEventRecordMe());
-                          updateSekaiProfile({
+                      try {
+                        await postSekaiProfileEventRecord(currEvent!.eventId);
+                        setEventRecords(await getSekaiProfileEventRecordMe());
+                        setSekaiProfile(
+                          {
                             eventGetUsed: sekaiProfile.eventGetUsed + 1,
-                          });
-                          setIsEventRecording(false);
-                        }
-                      );
+                          },
+                          region
+                        );
+                        // setSekaiProfile(sp);
+                        setIsEventRecording(false);
+                      } catch (error: any) {
+                        showError(error.message);
+                        setIsEventRecording(false);
+                      }
                     }}
                     disabled={
                       isCurrEventLoading ||
@@ -167,18 +213,19 @@ const SekaiEventRecord = (props: Props) => {
                       sekaiProfile.eventGetAvailable <=
                         sekaiProfile.eventGetUsed
                     }
+                    startIcon={<Update />}
                   >
-                    {isEventRecording ? (
-                      <CircularProgress size={24} />
-                    ) : (
-                      <Update />
-                    )}
-                  </IconButton>
+                    {t("common:update")}
+                  </LoadingButton>
                 </span>
               </Tooltip>
             </Grid>
           )}
-        {eventRecords[0] && (
+        <Grid item>
+          <Typography>{t("user:profile.event.current_record_info")}</Typography>
+        </Grid>
+        {!eventRecords && <CircularProgress size={24} />}
+        {!!eventRecords && eventRecords[0] && (
           <Fragment>
             <Grid item>
               <Typography>
@@ -203,6 +250,6 @@ const SekaiEventRecord = (props: Props) => {
       </Grid>
     </Grid>
   );
-};
+});
 
 export default SekaiEventRecord;

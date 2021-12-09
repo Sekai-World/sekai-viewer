@@ -20,16 +20,9 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import React, {
-  Fragment,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Image from "mui-image";
-import { UserContext } from "../../../context";
 import { charaIcons } from "../../../utils/resources";
 import DegreeImage from "../../../components/widgets/DegreeImage";
 import { getRemoteAssetURL, useCachedData, useToggle } from "../../../utils";
@@ -54,11 +47,15 @@ import IconFullCombo from "../../../assets/music/icon_fullCombo.png";
 import IconAllPerfect from "../../../assets/music/icon_allPerfect.png";
 import { ExpandMore } from "@mui/icons-material";
 import { useLayoutStyles } from "../../../styles/layout";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../../../stores/root";
+import { ISekaiProfile } from "../../../stores/sekai";
+import { autorun } from "mobx";
 
 const ProfileMusicImage: React.FC<{
   assetbundleName: string;
   title: string;
-}> = ({ assetbundleName, title }) => {
+}> = observer(({ assetbundleName, title }) => {
   const [img, setImg] = useState<string>("");
 
   useEffect(() => {
@@ -68,8 +65,8 @@ const ProfileMusicImage: React.FC<{
     );
   }, [assetbundleName]);
 
-  return <Image src={img} alt={title} bgColor=""></Image>;
-};
+  return <Image src={img} alt={title} bgColor="" showLoading></Image>;
+});
 
 const getMusicClearIcon = (status: UserMusicDifficultyStatus) => {
   const isClear = status.userMusicResults.reduce(
@@ -165,154 +162,158 @@ const getSuperStarCount = (userMusics?: UserMusic[]) => {
   }, 0);
 };
 
-const MusicSingleData: React.FC<{ umusic?: UserMusic; music: IMusicInfo }> = ({
-  umusic,
-  music,
-}) => {
-  const { t } = useTranslation();
-  const { getTranslated } = useAssetI18n();
-  // const { contentTransMode } = useContext(SettingContext)!;
+const MusicSingleData: React.FC<{ umusic?: UserMusic; music: IMusicInfo }> =
+  observer(({ umusic, music }) => {
+    const { t } = useTranslation();
+    const { getTranslated } = useAssetI18n();
 
-  return umusic ? (
-    <Fragment>
-      <Grid item xs={12}>
-        <Grid container justifyContent="center" alignItems="center" spacing={1}>
-          <Grid item xs={8} md={3}>
-            <ProfileMusicImage
-              assetbundleName={music.assetbundleName}
-              title={getTranslated(
-                `music_titles:${umusic.musicId}`,
-                music.title
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} md={9}>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>{t("music:difficulty")}</TableCell>
-                    <TableCell>
-                      <Image
-                        src={BtnDifficultyEasy}
-                        alt="difficulty easy"
-                        bgColor=""
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Image
-                        src={BtnDifficultyNormal}
-                        alt="difficulty normal"
-                        bgColor=""
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Image
-                        src={BtnDifficultyHard}
-                        alt="difficulty hard"
-                        bgColor=""
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Image
-                        src={BtnDifficultyExpert}
-                        alt="difficulty expert"
-                        bgColor=""
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Image
-                        src={BtnDifficultyMaster}
-                        alt="difficulty master"
-                        bgColor=""
-                      />
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <TableRow>
-                    <TableCell>{t("music:clear_status")}</TableCell>
-                    {umusic.userMusicDifficultyStatuses.map((status) => (
-                      <TableCell key={status.musicDifficulty} align="center">
-                        <div style={{ minWidth: "64px" }}>
-                          <img
-                            src={getMusicClearIcon(status)}
-                            alt="clear icon"
-                          />
-                        </div>
+    return umusic ? (
+      <Fragment>
+        <Grid item xs={12}>
+          <Grid
+            container
+            justifyContent="center"
+            alignItems="center"
+            spacing={1}
+          >
+            <Grid item xs={8} md={3}>
+              <ProfileMusicImage
+                assetbundleName={music.assetbundleName}
+                title={getTranslated(
+                  `music_titles:${umusic.musicId}`,
+                  music.title
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} md={9}>
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>{t("music:difficulty")}</TableCell>
+                      <TableCell>
+                        <Image
+                          src={BtnDifficultyEasy}
+                          alt="difficulty easy"
+                          bgColor=""
+                        />
                       </TableCell>
-                    ))}
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>{t("music:hi_score")}</TableCell>
-                    {umusic.userMusicDifficultyStatuses.map((status) => (
-                      <TableCell key={status.musicDifficulty} align="center">
-                        {status.userMusicResults.length &&
-                        status.userMusicResults.find(
-                          (umr) => umr.playType === "multi"
-                        )
-                          ? status.userMusicResults.find(
-                              (umr) => umr.playType === "multi"
-                            )!.highScore
-                          : "N/A"}
+                      <TableCell>
+                        <Image
+                          src={BtnDifficultyNormal}
+                          alt="difficulty normal"
+                          bgColor=""
+                        />
                       </TableCell>
-                    ))}
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>{t("music:mvp_count")}</TableCell>
-                    {umusic.userMusicDifficultyStatuses.map((status) => (
-                      <TableCell key={status.musicDifficulty} align="center">
-                        {status.userMusicResults.length &&
-                        status.userMusicResults.find(
-                          (umr) => umr.playType === "multi"
-                        )
-                          ? status.userMusicResults.find(
-                              (umr) => umr.playType === "multi"
-                            )!.mvpCount
-                          : "N/A"}
+                      <TableCell>
+                        <Image
+                          src={BtnDifficultyHard}
+                          alt="difficulty hard"
+                          bgColor=""
+                        />
                       </TableCell>
-                    ))}
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>{t("music:super_star_count")}</TableCell>
-                    {umusic.userMusicDifficultyStatuses.map((status) => (
-                      <TableCell key={status.musicDifficulty} align="center">
-                        {status.userMusicResults.length &&
-                        status.userMusicResults.find(
-                          (umr) => umr.playType === "multi"
-                        )
-                          ? status.userMusicResults.find(
-                              (umr) => umr.playType === "multi"
-                            )!.superStarCount
-                          : "N/A"}
+                      <TableCell>
+                        <Image
+                          src={BtnDifficultyExpert}
+                          alt="difficulty expert"
+                          bgColor=""
+                        />
                       </TableCell>
-                    ))}
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </TableContainer>
+                      <TableCell>
+                        <Image
+                          src={BtnDifficultyMaster}
+                          alt="difficulty master"
+                          bgColor=""
+                        />
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>{t("music:clear_status")}</TableCell>
+                      {umusic.userMusicDifficultyStatuses.map((status) => (
+                        <TableCell key={status.musicDifficulty} align="center">
+                          <div style={{ minWidth: "64px" }}>
+                            <img
+                              src={getMusicClearIcon(status)}
+                              alt="clear icon"
+                            />
+                          </div>
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>{t("music:hi_score")}</TableCell>
+                      {umusic.userMusicDifficultyStatuses.map((status) => (
+                        <TableCell key={status.musicDifficulty} align="center">
+                          {status.userMusicResults.length &&
+                          status.userMusicResults.find(
+                            (umr) => umr.playType === "multi"
+                          )
+                            ? status.userMusicResults.find(
+                                (umr) => umr.playType === "multi"
+                              )!.highScore
+                            : "N/A"}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>{t("music:mvp_count")}</TableCell>
+                      {umusic.userMusicDifficultyStatuses.map((status) => (
+                        <TableCell key={status.musicDifficulty} align="center">
+                          {status.userMusicResults.length &&
+                          status.userMusicResults.find(
+                            (umr) => umr.playType === "multi"
+                          )
+                            ? status.userMusicResults.find(
+                                (umr) => umr.playType === "multi"
+                              )!.mvpCount
+                            : "N/A"}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>{t("music:super_star_count")}</TableCell>
+                      {umusic.userMusicDifficultyStatuses.map((status) => (
+                        <TableCell key={status.musicDifficulty} align="center">
+                          {status.userMusicResults.length &&
+                          status.userMusicResults.find(
+                            (umr) => umr.playType === "multi"
+                          )
+                            ? status.userMusicResults.find(
+                                (umr) => umr.playType === "multi"
+                              )!.superStarCount
+                            : "N/A"}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Grid>
           </Grid>
         </Grid>
-      </Grid>
-    </Fragment>
-  ) : (
-    <Fragment>
-      <Grid item xs={12}>
-        <Typography>
-          {t("user:profile.label.sekai_user_music_not_found")}
-        </Typography>
-      </Grid>
-    </Fragment>
-  );
-};
+      </Fragment>
+    ) : (
+      <Fragment>
+        <Grid item xs={12}>
+          <Typography>
+            {t("user:profile.label.sekai_user_music_not_found")}
+          </Typography>
+        </Grid>
+      </Fragment>
+    );
+  });
 
-const SekaiUserStatistics = () => {
+const SekaiUserStatistics = observer(() => {
   const layoutClasses = useLayoutStyles();
   // const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
-  const { sekaiProfile } = useContext(UserContext)!;
-  // const { contentTransMode } = useContext(SettingContext)!;
+  const {
+    sekai: { sekaiProfileMap },
+    region,
+  } = useRootStore();
 
   const [areas] = useCachedData<IArea>("areas");
   const [areaItems] = useCachedData<IAreaItem>("areaItems");
@@ -324,6 +325,14 @@ const SekaiUserStatistics = () => {
   const [areaItemOpen, toggleAreaItemOpen] = useToggle(false);
   const [musicOpen, toggleMusicOpen] = useToggle(false);
   const [selectedMusic, setSelectedMusic] = useState(1);
+
+  const [sekaiProfile, setLocalSekaiProfile] = useState<ISekaiProfile>();
+
+  useEffect(() => {
+    autorun(() => {
+      setLocalSekaiProfile(sekaiProfileMap.get(region));
+    });
+  }, []);
 
   const challengeLiveRanks = useMemo(
     () =>
@@ -338,10 +347,10 @@ const SekaiUserStatistics = () => {
         },
         {} as { [key: number]: number }
       ),
-    [sekaiProfile?.sekaiUserProfile?.userChallengeLiveSoloStages]
+    [sekaiProfile]
   );
 
-  return (
+  return !!sekaiProfile && !!sekaiProfile.sekaiUserProfile ? (
     <Grid container spacing={1}>
       <Grid item xs={12}>
         <Accordion
@@ -356,7 +365,7 @@ const SekaiUserStatistics = () => {
           </AccordionSummary>
           <AccordionDetails>
             <Grid container spacing={1}>
-              {sekaiProfile?.sekaiUserProfile?.userCharacters.map((chara) => (
+              {sekaiProfile.sekaiUserProfile?.userCharacters.map((chara) => (
                 <Grid key={chara.characterId} item xs={3} md={2} lg={1}>
                   <Chip
                     avatar={
@@ -383,7 +392,7 @@ const SekaiUserStatistics = () => {
           </AccordionSummary>
           <AccordionDetails>
             <Grid container spacing={1}>
-              {sekaiProfile?.sekaiUserProfile?.userCharacters.map((chara) => (
+              {sekaiProfile.sekaiUserProfile?.userCharacters.map((chara) => (
                 <Grid key={chara.characterId} item xs={3} md={2} lg={1}>
                   <Chip
                     avatar={
@@ -405,21 +414,29 @@ const SekaiUserStatistics = () => {
               <Grid item>
                 <Typography>{t("music:hi_score")}</Typography>
               </Grid>
-              <Grid item>
-                <Avatar
-                  src={
-                    charaIcons[
-                      `CharaIcon${sekaiProfile?.sekaiUserProfile?.userChallengeLiveSoloResults[0].characterId}`
-                    ]
-                  }
-                />
-              </Grid>
-              <Grid item>
-                {
-                  sekaiProfile?.sekaiUserProfile
-                    ?.userChallengeLiveSoloResults[0].highScore
-                }
-              </Grid>
+              {sekaiProfile.sekaiUserProfile.userChallengeLiveSoloResults[0] ? (
+                <Fragment>
+                  <Grid item>
+                    <Avatar
+                      src={
+                        charaIcons[
+                          `CharaIcon${sekaiProfile.sekaiUserProfile.userChallengeLiveSoloResults[0].characterId}`
+                        ]
+                      }
+                    />
+                  </Grid>
+                  <Grid item>
+                    {
+                      sekaiProfile.sekaiUserProfile
+                        .userChallengeLiveSoloResults[0].highScore
+                    }
+                  </Grid>
+                </Fragment>
+              ) : (
+                <Grid item>
+                  <Typography>N/A</Typography>
+                </Grid>
+              )}
             </Grid>
           </AccordionDetails>
         </Accordion>
@@ -435,7 +452,7 @@ const SekaiUserStatistics = () => {
           </AccordionSummary>
           <AccordionDetails>
             <Grid container spacing={1}>
-              {sekaiProfile?.sekaiUserProfile?.userHonors.map((honor) => (
+              {sekaiProfile.sekaiUserProfile.userHonors.map((honor) => (
                 <Grid key={honor.honorId} item xs={12} sm={6} md={3}>
                   <Tooltip title={new Date(honor.obtainedAt).toLocaleString()}>
                     <div>
@@ -508,6 +525,7 @@ const SekaiUserStatistics = () => {
                               alt={`area ${area.id}`}
                               style={{ height: "64px", width: "64px" }}
                               bgColor=""
+                              showLoading
                             />
                           </Tooltip>
                         </Grid>
@@ -552,13 +570,13 @@ const SekaiUserStatistics = () => {
                                             width: "64px",
                                           }}
                                           bgColor=""
+                                          showLoading
                                         />
                                       </Grid>
                                       <Grid item xs={12}>
                                         <Typography align="center">
-                                          {!!sekaiProfile &&
-                                            !!sekaiProfile.sekaiUserProfile &&
-                                            sekaiProfile.sekaiUserProfile.userAreaItems.find(
+                                          {!!sekaiProfile.sekaiUserProfile &&
+                                            sekaiProfile.sekaiUserProfile!.userAreaItems.find(
                                               (uai) =>
                                                 uai.areaItemId === areaItem.id
                                             )?.level}
@@ -597,12 +615,12 @@ const SekaiUserStatistics = () => {
                   <Grid container spacing={1}>
                     <Grid item>
                       <Chip label={t("music:mvp_count")}></Chip>
-                      {getMVPCount(sekaiProfile?.sekaiUserProfile?.userMusics)}
+                      {getMVPCount(sekaiProfile.sekaiUserProfile.userMusics)}
                     </Grid>
                     <Grid item>
                       <Chip label={t("music:super_star_count")}></Chip>
                       {getSuperStarCount(
-                        sekaiProfile?.sekaiUserProfile?.userMusics
+                        sekaiProfile.sekaiUserProfile.userMusics
                       )}
                     </Grid>
                   </Grid>
@@ -660,7 +678,7 @@ const SekaiUserStatistics = () => {
                               <div style={{ minWidth: "64px" }}>
                                 {getClearCount(
                                   idx,
-                                  sekaiProfile?.sekaiUserProfile?.userMusics
+                                  sekaiProfile.sekaiUserProfile!.userMusics
                                 )}
                               </div>
                             </TableCell>
@@ -675,7 +693,7 @@ const SekaiUserStatistics = () => {
                               <div style={{ minWidth: "64px" }}>
                                 {getFullComboCount(
                                   idx,
-                                  sekaiProfile?.sekaiUserProfile?.userMusics
+                                  sekaiProfile.sekaiUserProfile!.userMusics
                                 )}
                               </div>
                             </TableCell>
@@ -690,7 +708,7 @@ const SekaiUserStatistics = () => {
                               <div style={{ minWidth: "64px" }}>
                                 {getAllPerfectCount(
                                   idx,
-                                  sekaiProfile?.sekaiUserProfile?.userMusics
+                                  sekaiProfile.sekaiUserProfile!.userMusics
                                 )}
                               </div>
                             </TableCell>
@@ -718,21 +736,19 @@ const SekaiUserStatistics = () => {
                     </Select>
                   </FormControl>
                 </Grid>
-                {!!sekaiProfile && (
-                  <MusicSingleData
-                    umusic={sekaiProfile?.sekaiUserProfile?.userMusics.find(
-                      (um) => um.musicId === selectedMusic
-                    )}
-                    music={musics.find((m) => m.id === selectedMusic)!}
-                  />
-                )}
+                <MusicSingleData
+                  umusic={sekaiProfile.sekaiUserProfile.userMusics.find(
+                    (um) => um.musicId === selectedMusic
+                  )}
+                  music={musics.find((m) => m.id === selectedMusic)!}
+                />
               </Grid>
             )}
           </AccordionDetails>
         </Accordion>
       </Grid>
     </Grid>
-  );
-};
+  ) : null;
+});
 
 export default SekaiUserStatistics;

@@ -2,13 +2,14 @@ import { Grid } from "@mui/material";
 import React from "react";
 import { UserCard, UserDeck } from "../../../types.d";
 import { CardThumbMedium } from "../../../components/widgets/CardThumb";
+import { observer } from "mobx-react-lite";
 
 interface Props {
   userDecks: UserDeck[];
   userCards: UserCard[];
 }
 
-const SekaiUserDeck = (props: Props) => {
+const SekaiUserDeck = observer((props: Props) => {
   return (
     <Grid container spacing={2} justifyContent="center">
       {Array.from({ length: 5 }).map((_, idx) => (
@@ -48,6 +49,6 @@ const SekaiUserDeck = (props: Props) => {
       ))}
     </Grid>
   );
-};
+});
 
 export default SekaiUserDeck;

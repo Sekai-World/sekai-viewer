@@ -14,13 +14,7 @@ import { AccountCircle, Email, VpnKey } from "@mui/icons-material";
 import { Field } from "formik";
 import { Form, Formik } from "formik";
 import { Select, TextField } from "formik-mui";
-import React, {
-  Fragment,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, Link as RouteLink } from "react-router-dom";
 import PasswordStrengthBar from "react-password-strength-bar";
@@ -28,16 +22,17 @@ import { useInteractiveStyles } from "../../styles/interactive";
 import { useLayoutStyles } from "../../styles/layout";
 import { RegisterValues } from "../../strapi-model";
 import { useStrapi } from "../../utils/apiClient";
-import useJwtAuth from "../../utils/jwt";
-import { SettingContext } from "../../context";
+import { useRootStore } from "../../stores/root";
+import { observer } from "mobx-react-lite";
 
-const Signup: React.FC<{}> = () => {
+const Signup: React.FC<{}> = observer(() => {
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
-  const jwtAuth = useJwtAuth();
   const history = useHistory();
-  const { languages } = useContext(SettingContext)!;
+  const {
+    settings: { languages },
+  } = useRootStore();
   const { postRegisterLocal } = useStrapi();
 
   const [passwordScore, setPasswordScore] = useState(0);
@@ -94,16 +89,13 @@ const Signup: React.FC<{}> = () => {
           onSubmit={async (values, { setErrors }) => {
             try {
               const data = await postRegisterLocal(values);
-              // jwtAuth.token = data.jwt;
-              jwtAuth.user = data.user;
-              // jwtAuth.usermeta = await getUserMetadataMe(data.jwt);
               history.push("/user/confirmation");
               // window.location.reload();
-              localStorage.setItem(
-                "lastUserCheck",
-                String(new Date().getTime())
-              );
-            } catch (error) {
+              // localStorage.setItem(
+              //   "lastUserCheck",
+              //   String(new Date().getTime())
+              // );
+            } catch (error: any) {
               // console.log(error.response.data);
               if (error.id === "Auth.form.error.email.taken")
                 setErrors({
@@ -255,6 +247,6 @@ const Signup: React.FC<{}> = () => {
       </Container>
     </Fragment>
   );
-};
+});
 
 export default Signup;

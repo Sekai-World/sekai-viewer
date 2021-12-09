@@ -21,22 +21,36 @@ import { useInteractiveStyles } from "../../styles/interactive";
 // import { useInteractiveStyles } from "../../styles/interactive";
 import { useLayoutStyles } from "../../styles/layout";
 import { LoginValues } from "../../strapi-model";
-import { useAlertSnackbar, useQuery } from "../../utils";
+import {
+  apiUserInfoToStoreUserInfo,
+  useAlertSnackbar,
+  useQuery,
+} from "../../utils";
 import { useStrapi } from "../../utils/apiClient";
-import useJwtAuth from "../../utils/jwt";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../../stores/root";
+import { IUserMetadata } from "../../stores/user";
 
-const Login: React.FC<{}> = () => {
+const Login: React.FC<{}> = observer(() => {
   const theme = useTheme();
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const query = useQuery();
   const history = useHistory();
-  const jwtAuth = useJwtAuth();
-  const { decodedToken } = useJwtAuth();
-  const { postLoginLocal, getRedirectConnectLoginUrl, getUserMetadataMe } =
-    useStrapi();
+  const {
+    postLoginLocal,
+    getRedirectConnectLoginUrl,
+    getUserMetadataMe,
+    // getSekaiProfileMe,
+    // getSekaiCardTeamMe,
+  } = useStrapi();
   const { showError } = useAlertSnackbar();
+  const {
+    // jwtToken,
+    decodedToken,
+    user: { setToken, setUserInfo, setMetadata },
+  } = useRootStore();
 
   useEffect(() => {
     if (query.get("error")) showError(query.get("error")!);
@@ -56,6 +70,7 @@ const Login: React.FC<{}> = () => {
       <Container className={layoutClasses.content} maxWidth="md">
         <Formik
           initialValues={{
+            // @ts-ignore
             identifier: decodedToken ? decodedToken.identifier : "",
             password: "",
           }}
@@ -72,16 +87,21 @@ const Login: React.FC<{}> = () => {
           onSubmit={async (values, { setErrors }) => {
             try {
               const data = await postLoginLocal(values);
-              jwtAuth.token = data.jwt;
-              jwtAuth.user = data.user;
-              jwtAuth.usermeta = await getUserMetadataMe(data.jwt);
+              // jwtAuth.token = data.jwt;
+              // jwtAuth.user = data.user;
+              // jwtAuth.usermeta = await getUserMetadataMe(data.jwt);
+              setToken(data.jwt);
+              setUserInfo(apiUserInfoToStoreUserInfo(data.user));
+              setMetadata((await getUserMetadataMe(data.jwt)) as IUserMetadata);
+              // updateSekaiProfile(await getSekaiProfileMe(data.jwt));
+              // updateSekaiCardTeam(await getSekaiCardTeamMe(data.jwt));
               history.replace("/user");
               // window.location.reload();
               localStorage.setItem(
                 "lastUserCheck",
                 String(new Date().getTime())
               );
-            } catch (error) {
+            } catch (error: any) {
               // console.log(error.response.data);
               if (error.id === "Auth.form.error.invalid")
                 setErrors({
@@ -183,7 +203,7 @@ const Login: React.FC<{}> = () => {
               <Grid item xs={12} md={1}>
                 <Divider
                   orientation={matchMdUp ? "vertical" : "horizontal"}
-                  style={{ margin: matchMdUp ? "0" : "1rem 0" }}
+                  style={{ margin: matchMdUp ? "0 1rem" : "1rem 0" }}
                 />
               </Grid>
               <Grid item xs={12} md={4}>
@@ -224,6 +244,6 @@ const Login: React.FC<{}> = () => {
       </Container>
     </Fragment>
   );
-};
+});
 
 export default Login;

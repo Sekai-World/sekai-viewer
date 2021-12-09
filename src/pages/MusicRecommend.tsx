@@ -31,6 +31,7 @@ import {
   DataGrid,
   GridRenderCellParams,
   GridValueFormatterParams,
+  GridSortModel,
 } from "@mui/x-data-grid";
 import { Link } from "react-router-dom";
 import { OpenInNew } from "@mui/icons-material";
@@ -79,6 +80,7 @@ const MusicRecommend: React.FC<{}> = () => {
     IMusicRecommendResult[]
   >([]);
   const [validMetas, setValidMetas] = useState<IMusicMeta[]>([]);
+  const [sortModel, setSortModel] = useState<GridSortModel>([]);
 
   const {
     getCardSkillRates,
@@ -175,7 +177,7 @@ const MusicRecommend: React.FC<{}> = () => {
         align: "center",
         hide: selectedMode === "solo",
         valueFormatter: (params: GridValueFormatterParams) =>
-          params.api.getCellParams(params.id).row.result,
+          params.api.getCellValue(params.id, "result"),
         sortComparator: (v1, v2, param1, param2) =>
           param1.api.getCellValue(param1.id, "result") -
           param2.api.getCellValue(param2.id, "result"),
@@ -219,6 +221,13 @@ const MusicRecommend: React.FC<{}> = () => {
     if (!isSolo) {
       const skillRates = getMultiAverageSkillRates(cardSkills);
 
+      setSortModel([
+        {
+          field: "avgScore",
+          sort: "desc",
+        },
+      ]);
+
       result = validMetas
         .map((meta, idx) => {
           const music = musics.find((it) => it.id === meta.music_id);
@@ -241,6 +250,13 @@ const MusicRecommend: React.FC<{}> = () => {
         })
         .filter((result) => result.result);
     } else {
+      setSortModel([
+        {
+          field: "highScore",
+          sort: "desc",
+        },
+      ]);
+
       result = validMetas
         .map((meta, idx) => {
           const music = musics.find((it) => it.id === meta.music_id);
@@ -423,6 +439,7 @@ const MusicRecommend: React.FC<{}> = () => {
                 <RadioGroup
                   value={selectedMode}
                   onChange={(e) => setSelectedMode(e.target.value)}
+                  row
                 >
                   <FormControlLabel
                     value="solo"
@@ -462,6 +479,8 @@ const MusicRecommend: React.FC<{}> = () => {
                 disableColumnMenu
                 disableSelectionOnClick
                 disableColumnSelector
+                sortModel={sortModel}
+                onSortModelChange={setSortModel}
               />
             </div>
           </StepContent>

@@ -1,7 +1,7 @@
 import React, {
   Fragment,
   useCallback,
-  useContext,
+  useEffect,
   useMemo,
   // useRef,
   useState,
@@ -12,7 +12,7 @@ import {
   Button,
   CardMedia,
   Checkbox,
-  CircularProgress,
+  // CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -39,11 +39,15 @@ import { createWorker, createScheduler } from "tesseract.js";
 import { useAlertSnackbar, useCachedData, useToggle } from "../../../utils";
 import { ICardInfo } from "../../../types.d";
 // import { Link } from "react-router-dom";
-import { UserContext } from "../../../context";
 import { useStrapi } from "../../../utils/apiClient";
 import { useLayoutStyles } from "../../../styles/layout";
 import Carousel from "react-material-ui-carousel";
 import { Alert } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import { useRootStore } from "../../../stores/root";
+import { observer } from "mobx-react-lite";
+import { ISekaiCardTeam } from "../../../stores/sekai";
+import { autorun } from "mobx";
 
 function initCOS(N: number = 64) {
   const entries = 2 * N * (N - 1);
@@ -132,15 +136,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SekaiUserImportMember = () => {
+const SekaiUserImportMember = observer(() => {
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const theme = useTheme();
   const classes = useStyles();
   const { t } = useTranslation();
-  const { jwtToken, sekaiProfile, updateSekaiProfile } =
-    useContext(UserContext)!;
-  const { putSekaiCardList } = useStrapi(jwtToken);
+  const {
+    jwtToken,
+    sekai: { sekaiCardTeamMap, setSekaiCardTeam },
+    region,
+  } = useRootStore();
+  const { putSekaiCards } = useStrapi(jwtToken, region);
   const { showError, showSuccess } = useAlertSnackbar();
 
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -169,6 +176,13 @@ const SekaiUserImportMember = () => {
   const [isCardSelectionOpen, toggleIsCardSelectionOpen] = useToggle(false);
   const [editId, setEditId] = useState(-1);
   const [helpOpen, toggleHelpOpen] = useToggle(false);
+  const [sekaiCardTeam, setLocalSekaiCardTeam] = useState<ISekaiCardTeam>();
+
+  useEffect(() => {
+    autorun(() => {
+      setLocalSekaiCardTeam(sekaiCardTeamMap.get(region));
+    });
+  }, []);
 
   // const canvasRef = useRef<HTMLCanvasElement>(null);
   const maxLevels = useMemo(() => [0, 20, 30, 50, 60], []);
@@ -555,8 +569,8 @@ const SekaiUserImportMember = () => {
           const { data: charaHash } = await axios.get<[string, string][]>(
             `${
               window.isChinaMainland
-                ? import.meta.env.VITE_FRONTEND_ASSET_BASE
-                : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-best-assets`
+                ? import.meta.env.VITE_FRONTEND_ASSET_BASE_CN
+                : import.meta.env.VITE_FRONTEND_ASSET_BASE
             }/chara_hash.json`
           );
 
@@ -683,7 +697,7 @@ const SekaiUserImportMember = () => {
                   ) || 0
                 : 0,
               cardIds,
-              useIndex: 0,
+              useIndex: cardIds.findIndex((cardId) => cardId !== -1),
               trained:
                 (!!hashResults[idx].length &&
                   hashResults[idx][0][0].includes("after_training")) ||
@@ -921,7 +935,7 @@ const SekaiUserImportMember = () => {
                     }}
                   />
                 }
-                label={t("card:trained")}
+                label={t("card:trained") as string}
               ></FormControlLabel>
               <FormControlLabel
                 control={
@@ -938,7 +952,7 @@ const SekaiUserImportMember = () => {
                     }}
                   />
                 }
-                label={t("card:sideStory1Unlocked")}
+                label={t("card:sideStory1Unlocked") as string}
               ></FormControlLabel>
               <FormControlLabel
                 control={
@@ -955,7 +969,7 @@ const SekaiUserImportMember = () => {
                     }}
                   />
                 }
-                label={t("card:sideStory2Unlocked")}
+                label={t("card:sideStory2Unlocked") as string}
               ></FormControlLabel>
             </Grid>
           );
@@ -966,9 +980,10 @@ const SekaiUserImportMember = () => {
   );
 
   const handleSubmitCardList = useCallback(async () => {
-    if (!sekaiProfile || !cards) return;
+    if (!sekaiCardTeam || !cards) return;
     setPostingCardList(true);
     try {
+      console.log(rows);
       const cardList = rows
         .map((row) => {
           const cardId = row.cardIds[row.useIndex];
@@ -990,10 +1005,10 @@ const SekaiUserImportMember = () => {
         })
         .sort((a, b) => a.cardId - b.cardId);
 
-      await putSekaiCardList(sekaiProfile.id, cardList);
+      await putSekaiCards(sekaiCardTeam.id, cardList);
 
-      if (sekaiProfile.cardList && sekaiProfile.cardList.length) {
-        sekaiProfile.cardList.forEach((card) => {
+      if (sekaiCardTeam.cards && sekaiCardTeam.cards.length) {
+        sekaiCardTeam.cards.forEach((card) => {
           if (!cardList.some((_card) => _card.cardId === card.cardId)) {
             cardList.push(card);
           }
@@ -1001,24 +1016,31 @@ const SekaiUserImportMember = () => {
         cardList.sort((a, b) => a.cardId - b.cardId);
       }
 
-      updateSekaiProfile({
-        cardList,
+      // updateSekaiProfile({
+      //   cardList,
+      // });
+      const sct = Object.assign({}, sekaiCardTeam, {
+        cards: cardList,
       });
+      setSekaiCardTeam(sct, region);
+      // setSekaiCardTeam(sct);
 
       showSuccess(t("user:profile.import_card.submit_success"));
     } catch (error) {
+      console.error(error);
       showError(t("user:profile.import_card.submit_error"));
     }
     setPostingCardList(false);
   }, [
     cards,
-    putSekaiCardList,
+    putSekaiCards,
+    region,
     rows,
-    sekaiProfile,
+    sekaiCardTeam,
+    setSekaiCardTeam,
     showError,
     showSuccess,
     t,
-    updateSekaiProfile,
   ]);
 
   return (
@@ -1051,16 +1073,15 @@ const SekaiUserImportMember = () => {
           <Grid container alignItems="center" spacing={1}>
             <Grid item>
               <label htmlFor="upload-member-button">
-                <Button
+                <LoadingButton
                   variant="outlined"
                   component="span"
-                  disabled={isUploading || !cards || !cards.length}
-                  startIcon={
-                    isUploading ? <CircularProgress size={24} /> : <Upload />
-                  }
+                  disabled={!cards || !cards.length}
+                  loading={isUploading}
+                  startIcon={<Upload />}
                 >
                   {t("user:profile.import_card.import_button")}
-                </Button>
+                </LoadingButton>
               </label>
             </Grid>
             <Grid item>
@@ -1101,7 +1122,7 @@ const SekaiUserImportMember = () => {
                         onChange={(ev) => setOcrEnabled(ev.target.checked)}
                       />
                     }
-                    label={t("user:profile.import_card.enable_ocr")}
+                    label={t("user:profile.import_card.enable_ocr") as string}
                   />
                 </FormControl>
               </Tooltip>
@@ -1249,7 +1270,7 @@ const SekaiUserImportMember = () => {
                                 }}
                               />
                             }
-                            label={t("card:trained")}
+                            label={t("card:trained") as string}
                           ></FormControlLabel>
                           <FormControlLabel
                             control={
@@ -1268,7 +1289,7 @@ const SekaiUserImportMember = () => {
                                 }}
                               />
                             }
-                            label={t("card:sideStory1Unlocked")}
+                            label={t("card:sideStory1Unlocked") as string}
                           ></FormControlLabel>
                           <FormControlLabel
                             control={
@@ -1287,7 +1308,7 @@ const SekaiUserImportMember = () => {
                                 }}
                               />
                             }
-                            label={t("card:sideStory2Unlocked")}
+                            label={t("card:sideStory2Unlocked") as string}
                           ></FormControlLabel>
                         </Grid>
                       </Grid>
@@ -1299,16 +1320,17 @@ const SekaiUserImportMember = () => {
         </Grid>
 
         <Grid item xs={12}>
-          <Button
+          <LoadingButton
             variant="contained"
             color="primary"
-            disabled={!rows.length || postingCardList}
+            disabled={!rows.length}
+            loading={postingCardList}
             onClick={handleSubmitCardList}
             fullWidth
-            startIcon={postingCardList && <CircularProgress size={24} />}
+            // startIcon={postingCardList && <CircularProgress size={24} />}
           >
             {t("common:submit")}
-          </Button>
+          </LoadingButton>
         </Grid>
       </Grid>
       <Dialog
@@ -1344,6 +1366,14 @@ const SekaiUserImportMember = () => {
                       toggleIsCardSelectionOpen();
                       setEditId(-1);
                     }}
+                    sx={{
+                      display:
+                        rows.find((row) => row.id === editId)?.cardIds[idx] ===
+                        -1
+                          ? "none"
+                          : "inherit",
+                    }}
+                    xs={2}
                   >
                     <Grid container direction="column" alignItems="center">
                       <img
@@ -1403,8 +1433,8 @@ const SekaiUserImportMember = () => {
           <DialogContent>
             <CardMedia
               image={`${
-                import.meta.env.VITE_ASSET_DOMAIN_MINIO
-              }/sekai-best-assets/import_cards/Screenshot_20210130-184257.jpg`}
+                import.meta.env.VITE_FRONTEND_ASSET_BASE
+              }/import_cards/Screenshot_20210130-184257.jpg`}
               title="import card step 1"
               className={classes.media}
             />
@@ -1421,8 +1451,8 @@ const SekaiUserImportMember = () => {
           <DialogContent>
             <CardMedia
               image={`${
-                import.meta.env.VITE_ASSET_DOMAIN_MINIO
-              }/sekai-best-assets/import_cards/step2.png`}
+                import.meta.env.VITE_FRONTEND_ASSET_BASE
+              }/import_cards/step2.png`}
               title="import card step 2"
               className={classes.media}
             />
@@ -1439,8 +1469,8 @@ const SekaiUserImportMember = () => {
           <DialogContent>
             <CardMedia
               image={`${
-                import.meta.env.VITE_ASSET_DOMAIN_MINIO
-              }/sekai-best-assets/import_cards/step3.png`}
+                import.meta.env.VITE_FRONTEND_ASSET_BASE
+              }/import_cards/step3.png`}
               title="import card step 3"
               className={classes.media}
             />
@@ -1457,8 +1487,8 @@ const SekaiUserImportMember = () => {
           <DialogContent>
             <CardMedia
               image={`${
-                import.meta.env.VITE_ASSET_DOMAIN_MINIO
-              }/sekai-best-assets/import_cards/step4.png`}
+                import.meta.env.VITE_FRONTEND_ASSET_BASE
+              }/import_cards/step4.png`}
               title="import card step 4"
               className={classes.media}
             />
@@ -1483,6 +1513,6 @@ const SekaiUserImportMember = () => {
       </Dialog>
     </Grid>
   );
-};
+});
 
 export default SekaiUserImportMember;

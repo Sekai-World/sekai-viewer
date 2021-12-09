@@ -62,17 +62,20 @@ const ResourceBox: React.FC<{
                 style={{ height: "64px", width: "64px" }}
                 bgColor=""
                 duration={0}
+                key={detail.resourceId}
               />
             ) : detail.resourceType === "honor" ? (
               <DegreeImage
                 style={{ width: "160px" }}
                 honorId={detail.resourceId}
+                key={detail.resourceId}
               />
             ) : detail.resourceType !== "honor" ? (
               <CommonMaterialIcon
                 materialName={detail.resourceType}
                 materialId={detail.resourceId}
                 quantity={detail.resourceQuantity}
+                key={detail.resourceId}
               />
             ) : null}
           </Grid>

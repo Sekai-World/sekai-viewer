@@ -1,7 +1,7 @@
 import { Grid, Typography, TypographyProps } from "@mui/material";
 import { StringMap, TOptions } from "i18next";
-import React, { useContext, useEffect, useState } from "react";
-import { SettingContext } from "../../context";
+import React, { useEffect, useState } from "react";
+import { useRootStore } from "../../stores/root";
 import { IGameChara, IReleaseCondition } from "../../types.d";
 import { useCachedData } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
@@ -19,7 +19,9 @@ export const ContentTrans: React.FC<{
   translatedProps,
   assetTOptions,
 }) => {
-  const { contentTransMode } = useContext(SettingContext)!;
+  const {
+    settings: { contentTransMode },
+  } = useRootStore();
   const { assetT } = useAssetI18n();
 
   switch (contentTransMode) {
@@ -51,7 +53,9 @@ export const CharaNameTrans: React.FC<{
   translatedProps?: TypographyProps;
   assetTOptions?: string | TOptions<StringMap>;
 }> = ({ characterId, originalProps, translatedProps, assetTOptions }) => {
-  const { contentTransMode } = useContext(SettingContext)!;
+  const {
+    settings: { contentTransMode },
+  } = useRootStore();
 
   const [charas] = useCachedData<IGameChara>("gameCharacters");
   const { assetT, assetI18n } = useAssetI18n();

@@ -2,25 +2,29 @@ import { Container, Typography } from "@mui/material";
 import React, {
   Fragment,
   useCallback,
-  useContext,
   useEffect,
   useLayoutEffect,
   useMemo,
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { SettingContext, UserContext } from "../../context";
 import { AnnouncementModel } from "../../strapi-model";
 import { useLayoutStyles } from "../../styles/layout";
 import { useStrapi } from "../../utils/apiClient";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
 import GridView from "./GridView";
+import { useRootStore } from "../../stores/root";
+import { observer } from "mobx-react-lite";
 
-const AnnouncementList: React.FC<{}> = () => {
+const AnnouncementList: React.FC<{}> = observer(() => {
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
-  const { usermeta } = useContext(UserContext)!;
-  const { languages, lang } = useContext(SettingContext)!;
+  const {
+    user: { metadata },
+  } = useRootStore();
+  const {
+    settings: { languages, lang },
+  } = useRootStore();
   const { getAnnouncementByLanguagesPage, getAnnouncementByLanguagesCount } =
     useStrapi();
 
@@ -45,10 +49,10 @@ const AnnouncementList: React.FC<{}> = () => {
   }, [lang, languages]);
   const targetLangs = useMemo(
     () =>
-      usermeta
-        ? [langId, ...usermeta?.languages.map((lang) => lang.id)]
+      metadata
+        ? [langId, ...metadata?.languages.map((lang) => lang.id)]
         : [langId],
-    [langId, usermeta]
+    [langId, metadata]
   );
 
   useLayoutEffect(() => {
@@ -72,15 +76,7 @@ const AnnouncementList: React.FC<{}> = () => {
       setAnnouncements((announcements) => [...announcements, ...data]);
       setLastQueryFin(true);
     })();
-  }, [
-    getAnnouncementByLanguagesPage,
-    lang,
-    languages,
-    limit,
-    page,
-    targetLangs,
-    usermeta,
-  ]);
+  }, [getAnnouncementByLanguagesPage, limit, page, targetLangs]);
 
   const callback = useCallback(
     (
@@ -119,6 +115,6 @@ const AnnouncementList: React.FC<{}> = () => {
       </Container>
     </Fragment>
   );
-};
+});
 
 export default AnnouncementList;

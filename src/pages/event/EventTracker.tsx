@@ -26,13 +26,11 @@ import { CronJob } from "cron";
 import React, {
   Fragment,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { SettingContext, UserContext } from "../../context";
 import { useLayoutStyles } from "../../styles/layout";
 import {
   EventPrediction,
@@ -40,12 +38,7 @@ import {
   IEventInfo,
   UserRanking,
 } from "../../types.d";
-import {
-  useCachedData,
-  useQuery,
-  useServerRegion,
-  useToggle,
-} from "../../utils";
+import { useCachedData, useQuery, useToggle } from "../../utils";
 import { useCurrentEvent } from "../../utils/apiClient";
 import {
   useEventTrackerAPI,
@@ -56,8 +49,17 @@ import { HistoryMobileRow, LiveMobileRow } from "./EventTrackerMobileRow";
 // import DegreeImage from "../../components/widgets/DegreeImage";
 import { HistoryRow, LiveRow } from "./EventTrackerTableRow";
 import { useDebouncedCallback } from "use-debounce";
-import SekaiEventRecord from "./SekaiEventRecord";
-import AdSense from "../../components/blocks/AdSenseBlock";
+import { useRootStore } from "../../stores/root";
+import { ISekaiProfile } from "../../stores/sekai";
+import { observer } from "mobx-react-lite";
+import { autorun } from "mobx";
+
+const SekaiEventRecord = React.lazy(
+  () => import("../user/sekai_profile/SekaiEventRecord")
+);
+const AdSense = React.lazy(
+  () => import("../../components/blocks/AdSenseBlock")
+);
 
 const useStyles = makeStyles(() => ({
   eventSelect: {
@@ -66,22 +68,26 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const EventTracker: React.FC<{}> = () => {
+const EventTracker: React.FC<{}> = observer(() => {
   const layoutClasses = useLayoutStyles();
   const classes = useStyles();
   const query = useQuery();
   const theme = useTheme();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
-  const [region] = useServerRegion();
+  const {
+    settings: { contentTransMode },
+    region,
+  } = useRootStore();
   const {
     getLive,
     getEventPred,
     getEventTimePoints,
     getEventRankingsByTimestamp,
   } = useEventTrackerAPI(region);
-  const { contentTransMode } = useContext(SettingContext)!;
-  const { sekaiProfile } = useContext(UserContext)!;
+  const {
+    sekai: { sekaiProfileMap },
+  } = useRootStore();
   const refreshData = useRealtimeEventData();
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
 
@@ -115,6 +121,7 @@ const EventTracker: React.FC<{}> = () => {
     EventRankingResponse[]
   >([]);
   const [fetchingTimePoints, toggleFetchingTimePoints] = useToggle(false);
+  const [sekaiProfile, setLocalSekaiProfile] = useState<ISekaiProfile>();
 
   const fullRank = useMemo(
     () => [
@@ -132,6 +139,12 @@ const EventTracker: React.FC<{}> = () => {
   useEffect(() => {
     document.title = t("title:eventTracker");
   }, [t]);
+
+  useEffect(() => {
+    autorun(() => {
+      setLocalSekaiProfile(sekaiProfileMap.get(region));
+    });
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -444,7 +457,7 @@ const EventTracker: React.FC<{}> = () => {
                   onChange={() => toggleIsFullRank()}
                 />
               }
-              label={t("event:tracker.show_all_rank")}
+              label={t("event:tracker.show_all_rank") as string}
             />
             <FormControlLabel
               control={
@@ -696,6 +709,6 @@ const EventTracker: React.FC<{}> = () => {
       />
     </Fragment>
   );
-};
+});
 
 export default EventTracker;

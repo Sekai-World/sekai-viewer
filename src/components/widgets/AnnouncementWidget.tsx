@@ -1,19 +1,21 @@
 import { Box, Card, CardContent, Grid, Typography } from "@mui/material";
 import Pin from "~icons/mdi/pin";
-import React, { Fragment, useContext, useMemo } from "react";
+import React, { Fragment, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { SettingContext, UserContext } from "../../context";
 import { useInteractiveStyles } from "../../styles/interactive";
 import { useLayoutStyles } from "../../styles/layout";
 import { useAnnouncementsByLanguages } from "../../utils/apiClient";
+import { useRootStore } from "../../stores/root";
 
 const AnnouncementWidget: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
-  const { usermeta } = useContext(UserContext)!;
-  const { languages, lang } = useContext(SettingContext)!;
+  const {
+    user: { metadata },
+    settings: { languages, lang },
+  } = useRootStore();
 
   const langId = useMemo(() => {
     let id = 1;
@@ -29,10 +31,10 @@ const AnnouncementWidget: React.FC<{}> = () => {
   }, [lang, languages]);
   const params = useMemo(
     () =>
-      usermeta
-        ? [langId, ...usermeta?.languages.map((lang) => lang.id)]
+      metadata
+        ? [langId, ...metadata?.languages.map((lang) => lang.id)]
         : [langId],
-    [langId, usermeta]
+    [langId, metadata]
   );
   const { announcements, isLoading, error } = useAnnouncementsByLanguages(
     0,

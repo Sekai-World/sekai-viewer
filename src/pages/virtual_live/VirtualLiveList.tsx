@@ -8,20 +8,15 @@ import {
 } from "@mui/icons-material";
 import { ToggleButtonGroup, ToggleButton } from "@mui/material";
 import Pound from "~icons/mdi/pound";
-import React, {
-  Fragment,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { SettingContext } from "../../context";
 import { useLayoutStyles } from "../../styles/layout";
 import { IVirtualLiveInfo } from "../../types.d";
 import { useCachedData, useLocalStorage } from "../../utils";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
 import AgendaView from "./AgendaView";
+import { observer } from "mobx-react-lite";
+import { useRootStore } from "../../stores/root";
 
 type ViewGridType = "agenda";
 
@@ -37,10 +32,12 @@ const ListCard: { [key: string]: React.FC<{ data?: IVirtualLiveInfo }> } = {
   agenda: AgendaView,
 };
 
-const VirtualLiveList: React.FC<{}> = () => {
+const VirtualLiveList: React.FC<{}> = observer(() => {
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
-  const { isShowSpoiler } = useContext(SettingContext)!;
+  const {
+    settings: { isShowSpoiler },
+  } = useRootStore();
 
   const [virtualLives, setVirtualLives] = useState<IVirtualLiveInfo[]>([]);
   const [virtualLivesCache] = useCachedData<IVirtualLiveInfo>("virtualLives");
@@ -195,6 +192,6 @@ const VirtualLiveList: React.FC<{}> = () => {
       </Container>
     </Fragment>
   );
-};
+});
 
 export default VirtualLiveList;

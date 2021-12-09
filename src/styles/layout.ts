@@ -25,6 +25,13 @@ const useLayoutStyles = makeStyles((theme) => ({
   "grid-out": {
     padding: theme.spacing("1%", "0"),
   },
+  componentBackdrop: {
+    position: "absolute",
+    zIndex: 1,
+  },
+  backdropParent: {
+    position: "relative",
+  },
 }));
 
 export { useLayoutStyles };

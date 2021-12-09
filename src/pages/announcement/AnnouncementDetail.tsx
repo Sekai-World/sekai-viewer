@@ -8,7 +8,6 @@ import {
 } from "@mui/material";
 import React, {
   Fragment,
-  useContext,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -27,14 +26,17 @@ import { useStrapi } from "../../utils/apiClient";
 import Comment from "../comment/Comment";
 import CommentTextMultiple from "~icons/mdi/comment-text-multiple";
 import { useQuery } from "../../utils";
-import { UserContext } from "../../context";
+import { useRootStore } from "../../stores/root";
 // import AdSense from "../../components/blocks/AdSense";
+import { observer } from "mobx-react-lite";
 
-const AnnouncementDetail: React.FC<{}> = () => {
+const AnnouncementDetail: React.FC<{}> = observer(() => {
   const layoutClasses = useLayoutStyles();
   const { id } = useParams<{ id: string }>();
   const query = useQuery();
-  const { usermeta } = useContext(UserContext)!;
+  const {
+    user: { metadata },
+  } = useRootStore();
   const { getAnnouncementById, getTranslationBySlug } = useStrapi();
   const { t } = useTranslation();
 
@@ -68,10 +70,10 @@ const AnnouncementDetail: React.FC<{}> = () => {
       (data) =>
         data[0] &&
         setContributors(
-          data[0].users.filter((meta) => meta.id !== (usermeta || { id: 0 }).id)
+          data[0].users.filter((meta) => meta.id !== (metadata || { id: 0 }).id)
         )
     );
-  }, [getAnnouncementById, getTranslationBySlug, id, query, usermeta]);
+  }, [getAnnouncementById, getTranslationBySlug, id, query, metadata]);
 
   return !!announcement ? (
     <Fragment>
@@ -164,6 +166,6 @@ const AnnouncementDetail: React.FC<{}> = () => {
       Loading...
     </Typography>
   );
-};
+});
 
 export default AnnouncementDetail;

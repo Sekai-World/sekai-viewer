@@ -105,6 +105,11 @@ export default defineConfig({
         // target: "https://minio.dnaroma.eu",
         changeOrigin: true,
       },
+      "/sekai-en-assets": {
+        target: "https://sekai-res.dnaroma.eu/file",
+        // target: "https://minio.dnaroma.eu",
+        changeOrigin: true,
+      },
       "/minio/": {
         target: "https://minio.dnaroma.eu",
         changeOrigin: true,
@@ -118,7 +123,7 @@ export default defineConfig({
       },
       "/strapi": {
         // target: "https://strapi-staging.sekai.best",
-        target: "http://localhost:1447",
+        target: "http://localhost:1337",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/strapi/, ""),
       },
