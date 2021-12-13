@@ -1303,3 +1303,27 @@ export interface IAssetListElement {
   path: string;
   type: "folder" | "file" | "parent";
 }
+
+export interface SpecialStoryEpisode {
+  id: number;
+  specialStoryId: number;
+  episodeNo: number;
+  title: string;
+  specialStoryEpisodeType: string;
+  assetbundleName: string;
+  scenarioId: string;
+  releaseConditionId: number;
+  isAbleSkip: boolean;
+  rewardResourceBoxIds: number[];
+  specialStoryEpisodeTypeId?: number;
+}
+
+export interface ISpecialStory {
+  id: number;
+  seq: number;
+  title: string;
+  assetbundleName: string;
+  startAt: any;
+  endAt: any;
+  episodes: SpecialStoryEpisode[];
+}

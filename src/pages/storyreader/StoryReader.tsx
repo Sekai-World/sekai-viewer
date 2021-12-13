@@ -21,6 +21,7 @@ import {
   ICharaProfile,
   IEventInfo,
   IEventStory,
+  ISpecialStory,
   IUnitProfile,
   IUnitStory,
 } from "../../types.d";
@@ -69,6 +70,7 @@ const StoryReader: React.FC<{}> = observer(() => {
   const [areas] = useCachedData<IArea>("areas");
   const [actionSets] = useCachedData<IActionSet>("actionSets");
   const [chara2Ds] = useCachedData<ICharacter2D>("character2ds");
+  const [specialStories] = useCachedData<ISpecialStory>("specialStories");
 
   const breadcrumbNameMap: { [key: string]: string } = useMemo(
     () => ({
@@ -79,6 +81,7 @@ const StoryReader: React.FC<{}> = observer(() => {
       cardStory: t("story_reader:selectValue.cardStory"),
       areaTalk: t("story_reader:selectValue.areaTalk"),
       liveTalk: t("story_reader:selectValue.liveTalk"),
+      specialStory: t("story_reader:selectValue.special"),
     }),
     [t]
   );
@@ -234,6 +237,29 @@ const StoryReader: React.FC<{}> = observer(() => {
                         name = pathname;
                       }
                       break;
+                    case "specialStory":
+                      if (specialStories) {
+                        if (idx === 2) {
+                          const chapter = specialStories.find(
+                            (sp) => sp.id === Number(pathname)
+                          );
+                          if (chapter) {
+                            name = chapter.title;
+                          }
+                        } else if (idx === 3) {
+                          const chapter = specialStories.find(
+                            (sp) => sp.id === Number(pathnames[2])
+                          );
+                          if (chapter) {
+                            const episode = chapter.episodes.find(
+                              (ep) => ep.episodeNo === Number(pathname)
+                            );
+                            if (episode) {
+                              name = episode.title;
+                            }
+                          }
+                        }
+                      }
                   }
                 }
 
@@ -329,6 +355,21 @@ const StoryReader: React.FC<{}> = observer(() => {
                   <CardContent>
                     <Typography>
                       {t("story_reader:selectValue.areaTalk")}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Link>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <Link
+                className={interactiveClasses.noDecorationAlsoOnHover}
+                color="inherit"
+                to="/storyreader/specialStory"
+              >
+                <Card className={classes.selectCard}>
+                  <CardContent>
+                    <Typography>
+                      {t("story_reader:selectValue.special")}
                     </Typography>
                   </CardContent>
                 </Card>
@@ -895,6 +936,90 @@ const StoryReader: React.FC<{}> = observer(() => {
           {({ match }) =>
             !!match && (
               <StoryReaderContent storyType="areaTalk" storyId={match.url} />
+            )
+          }
+        </Route>
+        <Route path={`${path}/specialStory`} exact>
+          <Grid container spacing={1}>
+            {!!specialStories &&
+              specialStories
+                .slice()
+                .reverse()
+                .map((sp) => (
+                  <Grid item xs={12} sm={6} md={3} key={sp.id}>
+                    <Link
+                      className={interactiveClasses.noDecorationAlsoOnHover}
+                      color="inherit"
+                      to={`/storyreader/specialStory/${sp.id}`}
+                    >
+                      <Card className={classes.selectCard}>
+                        <CardContent>
+                          {/* <ContentTrans
+                            contentKey={`event_name:${ev.id}`}
+                            original={ev.name}
+                            originalProps={{ style: { overflow: "hidden" } }}
+                            translatedProps={{ style: { overflow: "hidden" } }}
+                          /> */}
+                          <Typography style={{ overflow: "hidden" }}>
+                            {sp.title}
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  </Grid>
+                ))}
+          </Grid>
+        </Route>
+        <Route path={`${path}/specialStory/:storyId`} exact>
+          {({ match }) => {
+            const storyId = match?.params.storyId;
+            if (storyId && specialStories) {
+              const chapter = specialStories.find(
+                (sp) => sp.id === Number(storyId)
+              );
+              if (chapter) {
+                return (
+                  <Grid container spacing={1}>
+                    {chapter.episodes.map((episode) => (
+                      <Grid item xs={12} sm={6} md={3} key={episode.id}>
+                        <Link
+                          className={interactiveClasses.noDecorationAlsoOnHover}
+                          color="inherit"
+                          to={`${match?.url}/${episode.episodeNo}`}
+                        >
+                          <Card className={classes.selectCard}>
+                            <CardContent>
+                              {/* <ContentTrans
+                                contentKey={`event_story_episode_title:${episode.eventStoryId}-${episode.episodeNo}`}
+                                original={episode.title}
+                                originalProps={{
+                                  style: { overflow: "hidden" },
+                                }}
+                                translatedProps={{
+                                  style: { overflow: "hidden" },
+                                }}
+                              /> */}
+                              <Typography style={{ overflow: "hidden" }}>
+                                {episode.title}
+                              </Typography>
+                            </CardContent>
+                          </Card>
+                        </Link>
+                      </Grid>
+                    ))}
+                  </Grid>
+                );
+              }
+            }
+          }}
+        </Route>
+        <Route path={`${path}/specialStory/:storyId/:episodeNo`} exact>
+          {({ match }) =>
+            !!match && (
+              <StoryReaderContent
+                storyType="specialStory"
+                storyId={match.url}
+              />
             )
           }
         </Route>
