@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.1.1...v1.1.2) (2021-12-13)
+
+
+### Bug Fixes
+
+* **story:** :bug: special story wrong voice path ([8452ead](https://github.com/Sekai-World/sekai-viewer/commits/8452eadb98599c246fe6439f1dee880f30295e27))
+
 ### [1.1.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.1.0...v1.1.1) (2021-12-13)
 
 
