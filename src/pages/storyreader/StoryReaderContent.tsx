@@ -17,6 +17,7 @@ import {
   ICharaProfile,
   ICardEpisode,
   IActionSet,
+  ISpecialStory,
 } from "../../types.d";
 import {
   getRemoteAssetURL,
@@ -52,6 +53,7 @@ const StoryReaderContent: React.FC<{ storyType: string; storyId: string }> = ({
   const [characterProfiles] = useCachedData<ICharaProfile>("characterProfiles");
   const [cardEpisodes] = useCachedData<ICardEpisode>("cardEpisodes");
   const [actionSets] = useCachedData<IActionSet>("actionSets");
+  const [specialStories] = useCachedData<ISpecialStory>("specialStories");
 
   const [bannerUrl, setBannerUrl] = useState<string>("");
   const [chapterTitle, setChapterTitle] = useState<string>("");
@@ -220,6 +222,31 @@ const StoryReaderContent: React.FC<{ storyType: string; storyId: string }> = ({
             // setReleaseConditionId(episode.releaseConditionId);
           }
           break;
+        case "specialStory":
+          if (specialStories) {
+            const [, , , spId, episodeNo] = storyId.split("/");
+            const chapter = specialStories.find((sp) => sp.id === Number(spId));
+            const episode = chapter?.episodes.find(
+              (ep) => ep.episodeNo === Number(episodeNo)
+            );
+
+            if (episode?.scenarioId.startsWith("op"))
+              getProcessedScenarioData(
+                `scenario/special/${chapter?.assetbundleName}_rip/${episode?.scenarioId}.asset`,
+                false,
+                true
+              ).then((data) => setScenarioData(data));
+            else
+              getProcessedScenarioData(
+                `scenario/special/${episode?.assetbundleName}_rip/${episode?.scenarioId}.asset`,
+                false,
+                true
+              ).then((data) => setScenarioData(data));
+
+            setChapterTitle(chapter?.title || "");
+            setEpisodeTitle(episode?.title || "");
+          }
+          break;
       }
     } catch (error) {
       showError("failed to load episode");
@@ -236,6 +263,7 @@ const StoryReaderContent: React.FC<{ storyType: string; storyId: string }> = ({
     getTranslated,
     showError,
     actionSets,
+    specialStories,
   ]);
 
   return (

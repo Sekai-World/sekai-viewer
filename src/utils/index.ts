@@ -64,6 +64,7 @@ import {
   ServerRegion,
   AssetDomainKey,
   IVersionInfo,
+  ISpecialStory,
 } from "./../types.d";
 import { useAssetI18n, useCharaName } from "./i18n";
 import { useLocation } from "react-router-dom";
@@ -133,6 +134,7 @@ export function useCachedData<
     | ICheerfulCarnivalTeam
     | IArea
     | IActionSet
+    | ISpecialStory
 >(name: string): [T[] | undefined, boolean, any] {
   // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
   const { region } = useRootStore();
@@ -406,7 +408,12 @@ export function useProcessedScenarioData() {
 
       // eslint-disable-next-line array-callback-return
       ret.characters = AppearCharacters.map((ap) => {
-        const chara2d = chara2Ds.find((ch) => ch.id === ap.Character2dId)!;
+        const chara2d = chara2Ds.find((ch) => ch.id === ap.Character2dId);
+        if (!chara2d)
+          return {
+            id: ap.Character2dId,
+            name: ap.CostumeType,
+          };
         switch (chara2d.characterType) {
           case "game_character": {
             return {
