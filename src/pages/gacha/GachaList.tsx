@@ -30,6 +30,7 @@ const GachaList: React.FC<{}> = observer(() => {
   const { t } = useTranslation();
   const {
     settings: { isShowSpoiler },
+    region,
   } = useRootStore();
 
   const [gachas, setGachas] = useState<IGachaInfo[]>([]);
@@ -64,6 +65,10 @@ const GachaList: React.FC<{}> = observer(() => {
   useEffect(() => {
     if (!gachasCache || !gachasCache.length) return;
     let sortedCache = [...gachasCache];
+    if (region === "en") {
+      // only show gacha after release (2021/12/7)
+      sortedCache = sortedCache.filter((g) => g.endAt > 1638914400000);
+    }
     if (!isShowSpoiler) {
       sortedCache = sortedCache.filter(
         (g) => g.startAt <= new Date().getTime()
