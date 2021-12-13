@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.1.0...v1.1.1) (2021-12-13)
+
+
+### Features
+
+* **story:** :sparkles: add special stories to story reader ([68e1b1d](https://github.com/Sekai-World/sekai-viewer/commits/68e1b1dfccc5aa9c0376b975b0f8c0027c5f093d))
+
+
+### Bug Fixes
+
+* **card:** :bug: really fix the empty list problem ([842b2cb](https://github.com/Sekai-World/sekai-viewer/commits/842b2cb603a96c5239d577c3178350bb241a6d9e))
+* **gacha:** :bug: gacha detail card rate becomes NaN ([024a2a4](https://github.com/Sekai-World/sekai-viewer/commits/024a2a42524a126c979516291fe00bb54ed2e9cb))
+
+
+### Refactors
+
+* **gacha:** filter not really opened en gachas ([328c3d0](https://github.com/Sekai-World/sekai-viewer/commits/328c3d005ac52c23c496cd54e90fdea5fc693808))
+
 ## [1.1.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.0.5...v1.1.0) (2021-12-09)
 
 
