@@ -233,14 +233,12 @@ const StoryReaderContent: React.FC<{ storyType: string; storyId: string }> = ({
             if (episode?.scenarioId.startsWith("op"))
               getProcessedScenarioData(
                 `scenario/special/${chapter?.assetbundleName}_rip/${episode?.scenarioId}.asset`,
-                false,
-                true
+                false
               ).then((data) => setScenarioData(data));
             else
               getProcessedScenarioData(
                 `scenario/special/${episode?.assetbundleName}_rip/${episode?.scenarioId}.asset`,
-                false,
-                true
+                false
               ).then((data) => setScenarioData(data));
 
             setChapterTitle(chapter?.title || "");
