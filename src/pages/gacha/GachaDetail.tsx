@@ -18,6 +18,7 @@ import {
   TableRow,
   TableBody,
   TableCell,
+  DialogProps,
 } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import { useLayoutStyles } from "../../styles/layout";
@@ -121,6 +122,19 @@ const StarIcon: React.FC<{ num: number; right?: boolean }> = ({
 const BirthdayIcon = () => (
   <img src={rarityBirthday} alt="star" height="24px" />
 );
+
+const DescDialog: React.FC<
+  { title: string; content: string } & DialogProps
+> = ({ title, content, ...props }) => {
+  return (
+    <Dialog {...props}>
+      <DialogTitle>{title}</DialogTitle>
+      <DialogContent>
+        <Typography style={{ whiteSpace: "pre-line" }}>{content}</Typography>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 const GachaDetailPage: React.FC<{}> = observer(() => {
   const classes = useStyles();
@@ -287,17 +301,17 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
   }, []);
 
   useLayoutEffect(() => {
-    if (gachas && gachas.length)
+    if (gachas && gachas.length && !gacha)
       setGacha(gachas.find((elem) => elem.id === Number(gachaId)));
-  }, [gachaId, gachas]);
+  }, [gacha, gachaId, gachas]);
 
   useLayoutEffect(() => {
-    if (gacha && gachaCeilItems && gachaCeilItems.length) {
+    if (gacha && gachaCeilItems && gachaCeilItems.length && !gachaCeilItem) {
       setGachaCeilItem(
         gachaCeilItems.find((elem) => elem.id === gacha.gachaCeilItemId)
       );
     }
-  }, [gacha, gachaCeilItems]);
+  }, [gacha, gachaCeilItem, gachaCeilItems]);
 
   useLayoutEffect(() => {
     if (gacha && rarities) {
@@ -395,6 +409,7 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
           )
         ] += detail.weight;
       });
+      console.log(weightArr);
       setWeights(weightArr);
     }
   }, [cards, gacha, gachaRarityRates]);
@@ -490,29 +505,38 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
 
   const getCardRate = useCallback(
     (cardId: number) => {
-      if (gacha && cards && cards.length) {
+      if (gacha && gachaRarityRates.length && cards && cards.length) {
         const detail = gacha.gachaDetails.find(
           (detail) => detail.cardId === cardId
         )!;
         const card = cards.find((card) => card.id === cardId)!;
 
+        let idx;
+        if (card.cardRarityType) {
+          idx = gachaRarityRates.findIndex(
+            (rarity) => rarity.cardRarityType === card.cardRarityType
+          );
+        } else {
+          idx = gachaRarityRates.findIndex(
+            (rarity) => rarity.rarity === card.rarity
+          );
+        }
+
         return (
-          Math.round(
-            (detail.weight / weights[card.rarity - 1]) *
-              normalRates[card.rarity - 1] *
-              1000
-          ) /
+          Math.round((detail.weight / weights[idx]) * normalRates[idx] * 1000) /
             1000 +
           " %" +
-          (card.rarity >= 3 &&
-          gacha.gachaBehaviors.some(
-            (behavior) => behavior.gachaBehaviorType === "over_rarity_3_once"
-          )
+          ((card.rarity >= 3 &&
+            gacha.gachaBehaviors.some(
+              (behavior) => behavior.gachaBehaviorType === "over_rarity_3_once"
+            )) ||
+          (card.rarity >= 4 &&
+            gacha.gachaBehaviors.some(
+              (behavior) => behavior.gachaBehaviorType === "over_rarity_4_once"
+            ))
             ? "\n" +
               Math.round(
-                (detail.weight / weights[card.rarity - 1]) *
-                  guaranteedRates[card.rarity - 1] *
-                  1000
+                (detail.weight / weights[idx]) * guaranteedRates[idx] * 1000
               ) /
                 1000 +
               " %"
@@ -521,7 +545,7 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
       }
       return "";
     },
-    [cards, gacha, guaranteedRates, normalRates, weights]
+    [cards, gacha, gachaRarityRates, guaranteedRates, normalRates, weights]
   );
 
   if (gacha) {
@@ -1095,25 +1119,18 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
           zoomSpeed={0.25}
           onChange={(_, idx) => setActiveIdx(idx)}
         />
-        <Dialog
+        <DescDialog
           open={isSummaryDialog}
           onClose={() => setIsSummaryDialog(false)}
-        >
-          <DialogTitle>{t("gacha:summary")}</DialogTitle>
-          <DialogContent>
-            <Typography style={{ whiteSpace: "pre-line" }}>
-              {gacha.gachaInformation.summary}
-            </Typography>
-          </DialogContent>
-        </Dialog>
-        <Dialog open={isDescDialog} onClose={() => setIsDescDialog(false)}>
-          <DialogTitle>{t("gacha:description")}</DialogTitle>
-          <DialogContent>
-            <Typography style={{ whiteSpace: "pre-line" }}>
-              {gacha.gachaInformation.description}
-            </Typography>
-          </DialogContent>
-        </Dialog>
+          title={t("gacha:summary")}
+          content={gacha.gachaInformation.summary}
+        />
+        <DescDialog
+          open={isDescDialog}
+          onClose={() => setIsDescDialog(false)}
+          title={t("gacha:description")}
+          content={gacha.gachaInformation.description}
+        />
         <Dialog
           open={isCardsDialog}
           onClose={() => {
