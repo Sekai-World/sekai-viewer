@@ -87,14 +87,14 @@ const Live2DView: React.FC<{}> = () => {
       const styleWidth = wrap.current.clientWidth;
       const styleHeight =
         window.innerWidth * window.devicePixelRatio >=
-        theme.breakpoints.values.md
+        theme.breakpoints.values.xl
           ? (styleWidth * 9) / 16
           : (styleWidth * 4) / 3;
       const displayWidth = styleWidth * window.devicePixelRatio;
       const displayHeight = styleHeight * window.devicePixelRatio;
       model._modelSize =
         window.innerWidth * window.devicePixelRatio >=
-        theme.breakpoints.values.md
+        theme.breakpoints.values.xl
           ? displayWidth * 1.3
           : displayWidth * 3;
       // setCurrentWidth(displayWidth);
@@ -110,7 +110,7 @@ const Live2DView: React.FC<{}> = () => {
         pointY: 60,
       });
     }
-  }, [model, theme.breakpoints.values.md]);
+  }, [model, theme.breakpoints.values.xl]);
 
   useLayoutEffect(() => {
     const _us = updateSize;
