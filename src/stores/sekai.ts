@@ -152,8 +152,8 @@ export const SekaiCardState = types.model({
   trainable: types.optional(types.boolean, false),
   // power: types.number,
   masterRank: types.optional(types.number, 0),
-  story1Unlock: types.optional(types.boolean, false),
-  story2Unlock: types.optional(types.boolean, false),
+  story1Unlock: types.optional(types.union(types.boolean, types.number), false),
+  story2Unlock: types.optional(types.union(types.boolean, types.number), false),
 });
 export interface ISekaiCardState extends Instance<typeof SekaiCardState> {}
 
