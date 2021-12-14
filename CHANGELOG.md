@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.5](https://github.com/Sekai-World/sekai-viewer/compare/v1.1.4...v1.1.5) (2021-12-14)
+
+
+### Bug Fixes
+
+* **user:** sekai profile cards teams story unlock type fix ([b21ca63](https://github.com/Sekai-World/sekai-viewer/commits/b21ca6368ba164968b530cb287b0d8d97e636d33))
+
 ### [1.1.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.1.3...v1.1.4) (2021-12-14)
 
 
