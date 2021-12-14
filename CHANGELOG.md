@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.1.3...v1.1.4) (2021-12-14)
+
+
+### Bug Fixes
+
+* **card:** :bug: correctly process card detail without side stories ([da132a0](https://github.com/Sekai-World/sekai-viewer/commits/da132a0d1121a186382ee74c0248dcbd0f0d707f))
+* **live2d:** :lipstick: fit wide screen mobile device ([b986f09](https://github.com/Sekai-World/sekai-viewer/commits/b986f09caf2a3147757efbd8d28d1e7df72dfa8a))
+
 ### [1.1.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.1.2...v1.1.3) (2021-12-14)
 
 
