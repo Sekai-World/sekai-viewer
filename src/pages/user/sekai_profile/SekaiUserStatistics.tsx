@@ -481,7 +481,9 @@ const SekaiUserStatistics = observer(() => {
             {!!areaItems && !!areas && (
               <Grid container spacing={2}>
                 {areas
-                  .filter((area) => area.areaType === "spirit_world")
+                  .filter(
+                    (area) => area.areaType === "spirit_world" && !area.label
+                  )
                   .concat([
                     {
                       id: 2,
