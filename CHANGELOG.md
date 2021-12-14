@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.6](https://github.com/Sekai-World/sekai-viewer/compare/v1.1.5...v1.1.6) (2021-12-14)
+
+
+### Bug Fixes
+
+* collab area icons and voice ([86b19ad](https://github.com/Sekai-World/sekai-viewer/commits/86b19ada0f3b24b70e245ff53dc46a9d52a4f5d4))
+
 ### [1.1.5](https://github.com/Sekai-World/sekai-viewer/compare/v1.1.4...v1.1.5) (2021-12-14)
 
 
