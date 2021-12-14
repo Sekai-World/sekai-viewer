@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.1.2...v1.1.3) (2021-12-14)
+
+
+### Bug Fixes
+
+* **live2d:** :bug: jp clb model motion base url ([980bbe8](https://github.com/Sekai-World/sekai-viewer/commits/980bbe8ba933b6efca497abcac657024d808202d))
+
 ### [1.1.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.1.1...v1.1.2) (2021-12-13)
 
 
