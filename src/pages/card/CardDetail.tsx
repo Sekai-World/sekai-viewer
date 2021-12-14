@@ -931,37 +931,43 @@ const CardDetail: React.FC<{}> = observer(() => {
                 </Box>
               </Grid>
             </Grid>
-            <Grid
-              item
-              container
-              xs={12}
-              alignItems="center"
-              justifyContent="space-between"
-            >
-              <Grid item xs={12} md={2}>
-                <Typography classes={{ root: interactiveClasses.caption }}>
-                  {t("card:sideStory")}
-                </Typography>
-              </Grid>
-              <Grid item container xs={12} md={9} spacing={1}>
-                <Grid item>
-                  <Chip
-                    clickable
-                    color={sideStory1Unlocked ? "primary" : "default"}
-                    label={t("card:sideStory1Unlocked")}
-                    onClick={() => setSideStory1Unlocked((v) => !v)}
-                  />
+            {!!cardEpisode.length && (
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justifyContent="space-between"
+              >
+                <Grid item xs={12} md={2}>
+                  <Typography classes={{ root: interactiveClasses.caption }}>
+                    {t("card:sideStory")}
+                  </Typography>
                 </Grid>
-                <Grid item>
-                  <Chip
-                    clickable
-                    color={sideStory2Unlocked ? "primary" : "default"}
-                    label={t("card:sideStory2Unlocked")}
-                    onClick={() => setSideStory2Unlocked((v) => !v)}
-                  />
+                <Grid item container xs={12} md={9} spacing={1}>
+                  {!!cardEpisode[0] && (
+                    <Grid item>
+                      <Chip
+                        clickable
+                        color={sideStory1Unlocked ? "primary" : "default"}
+                        label={t("card:sideStory1Unlocked")}
+                        onClick={() => setSideStory1Unlocked((v) => !v)}
+                      />
+                    </Grid>
+                  )}
+                  {!!cardEpisode[1] && (
+                    <Grid item>
+                      <Chip
+                        clickable
+                        color={sideStory2Unlocked ? "primary" : "default"}
+                        label={t("card:sideStory2Unlocked")}
+                        onClick={() => setSideStory2Unlocked((v) => !v)}
+                      />
+                    </Grid>
+                  )}
                 </Grid>
               </Grid>
-            </Grid>
+            )}
           </Grid>
         </Paper>
         <Grid className={classes["grid-out"]} container direction="column">
@@ -984,8 +990,12 @@ const CardDetail: React.FC<{}> = observer(() => {
                 (cardLevel > card.maxNormalLevel
                   ? card.specialTrainingPower1BonusFixed
                   : 0) +
-                (sideStory1Unlocked ? cardEpisode[0].power1BonusFixed : 0) +
-                (sideStory2Unlocked ? cardEpisode[1].power1BonusFixed : 0)}
+                (sideStory1Unlocked && cardEpisode[0]
+                  ? cardEpisode[0].power1BonusFixed
+                  : 0) +
+                (sideStory2Unlocked && cardEpisode[1]
+                  ? cardEpisode[1].power1BonusFixed
+                  : 0)}
             </Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
@@ -1008,8 +1018,12 @@ const CardDetail: React.FC<{}> = observer(() => {
                 (cardLevel > card.maxNormalLevel
                   ? card.specialTrainingPower2BonusFixed
                   : 0) +
-                (sideStory1Unlocked ? cardEpisode[0].power2BonusFixed : 0) +
-                (sideStory2Unlocked ? cardEpisode[1].power2BonusFixed : 0)}
+                (sideStory1Unlocked && cardEpisode[0]
+                  ? cardEpisode[0].power2BonusFixed
+                  : 0) +
+                (sideStory2Unlocked && cardEpisode[1]
+                  ? cardEpisode[1].power2BonusFixed
+                  : 0)}
             </Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
@@ -1032,8 +1046,12 @@ const CardDetail: React.FC<{}> = observer(() => {
                 (cardLevel > card.maxNormalLevel
                   ? card.specialTrainingPower3BonusFixed
                   : 0) +
-                (sideStory1Unlocked ? cardEpisode[0].power3BonusFixed : 0) +
-                (sideStory2Unlocked ? cardEpisode[1].power3BonusFixed : 0)}
+                (sideStory1Unlocked && cardEpisode[0]
+                  ? cardEpisode[0].power3BonusFixed
+                  : 0) +
+                (sideStory2Unlocked && cardEpisode[1]
+                  ? cardEpisode[1].power3BonusFixed
+                  : 0)}
             </Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
@@ -1056,12 +1074,12 @@ const CardDetail: React.FC<{}> = observer(() => {
                     card.specialTrainingPower2BonusFixed +
                     card.specialTrainingPower3BonusFixed
                   : 0) +
-                (sideStory1Unlocked
+                (sideStory1Unlocked && cardEpisode[0]
                   ? cardEpisode[0].power1BonusFixed +
                     cardEpisode[0].power2BonusFixed +
                     cardEpisode[0].power3BonusFixed
                   : 0) +
-                (sideStory2Unlocked
+                (sideStory2Unlocked && cardEpisode[1]
                   ? cardEpisode[1].power1BonusFixed +
                     cardEpisode[1].power2BonusFixed +
                     cardEpisode[1].power3BonusFixed
@@ -1077,262 +1095,290 @@ const CardDetail: React.FC<{}> = observer(() => {
         format="auto"
         responsive="true"
       /> */}
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("card:sideStory", { count: cardEpisode.length })}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
-        <TabContext value={episodeTabVal}>
-          <Paper className={interactiveClasses.container}>
-            <Tabs
-              value={episodeTabVal}
-              onChange={(e, v) => setEpisodeTabVal(v)}
-              variant="scrollable"
-              scrollButtons
-            >
-              <Tab
-                label={
-                  <ContentTrans
-                    contentKey={`card_episode_title:${cardEpisode[0].title}`}
-                    original={cardEpisode[0].title}
-                    originalProps={{ variant: "body2" }}
-                    translatedProps={{ variant: "body2" }}
-                  />
-                }
-                value="1"
-              ></Tab>
-              <Tab
-                label={
-                  <ContentTrans
-                    contentKey={`card_episode_title:${cardEpisode[1].title}`}
-                    original={cardEpisode[1].title}
-                    originalProps={{ variant: "body2" }}
-                    translatedProps={{ variant: "body2" }}
-                  />
-                }
-                value="2"
-              ></Tab>
-            </Tabs>
-          </Paper>
-          <TabPanel value="1" classes={{ root: classes.tabpanel }}>
-            <Grid container direction="column">
-              <Grid
-                container
-                direction="row"
-                wrap="nowrap"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Grid item xs={2}>
-                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                    {t("common:releaseCondition")}
-                  </Typography>
-                </Grid>
-                <Grid item xs={8} container justifyContent="flex-end">
-                  <ReleaseCondTrans
-                    releaseCondId={cardEpisode[0].releaseConditionId}
-                    originalProps={{ align: "right" }}
-                    translatedProps={{ align: "right" }}
-                  />
-                </Grid>
-              </Grid>
-              <Divider style={{ margin: "1% 0" }} />
-              <Grid
-                container
-                direction="row"
-                wrap="nowrap"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Grid item xs={3}>
-                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                    {t("common:releaseCosts")}
-                  </Typography>
-                </Grid>
-                <Grid
-                  item
-                  container
-                  spacing={1}
-                  xs={9}
-                  justifyContent="flex-end"
+      {!!cardEpisode.length && (
+        <Fragment>
+          <Typography variant="h6" className={layoutClasses.header}>
+            {t("card:sideStory", { count: cardEpisode.length })}
+          </Typography>
+          <Container className={layoutClasses.content} maxWidth="md">
+            <TabContext value={episodeTabVal}>
+              <Paper className={interactiveClasses.container}>
+                <Tabs
+                  value={episodeTabVal}
+                  onChange={(e, v) => setEpisodeTabVal(v)}
+                  variant="scrollable"
+                  scrollButtons
                 >
-                  {cardEpisode[0].costs.map((c, idx) => (
-                    <Grid key={`episode-cost-${idx}`} item>
-                      <MaterialIcon
-                        materialId={c.resourceId}
-                        quantity={c.quantity}
+                  <Tab
+                    label={
+                      <ContentTrans
+                        contentKey={`card_episode_title:${cardEpisode[0].title}`}
+                        original={cardEpisode[0].title}
+                        originalProps={{ variant: "body2" }}
+                        translatedProps={{ variant: "body2" }}
+                      />
+                    }
+                    value="1"
+                  ></Tab>
+                  <Tab
+                    label={
+                      <ContentTrans
+                        contentKey={`card_episode_title:${cardEpisode[1].title}`}
+                        original={cardEpisode[1].title}
+                        originalProps={{ variant: "body2" }}
+                        translatedProps={{ variant: "body2" }}
+                      />
+                    }
+                    value="2"
+                  ></Tab>
+                </Tabs>
+              </Paper>
+              <TabPanel value="1" classes={{ root: classes.tabpanel }}>
+                <Grid container direction="column">
+                  <Grid
+                    container
+                    direction="row"
+                    wrap="nowrap"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    <Grid item xs={2}>
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {t("common:releaseCondition")}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={8} container justifyContent="flex-end">
+                      <ReleaseCondTrans
+                        releaseCondId={cardEpisode[0].releaseConditionId}
+                        originalProps={{ align: "right" }}
+                        translatedProps={{ align: "right" }}
                       />
                     </Grid>
-                  ))}
-                </Grid>
-              </Grid>
-              <Divider style={{ margin: "1% 0" }} />
-              <Grid
-                container
-                direction="row"
-                wrap="nowrap"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Grid item xs={2}>
-                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                    {t("common:rewards")}
-                  </Typography>
-                </Grid>
-                <Grid
-                  item
-                  container
-                  spacing={1}
-                  xs={10}
-                  justifyContent="flex-end"
-                >
-                  {cardEpisode[0].rewardResourceBoxIds.map((id) => (
-                    <ResourceBox
-                      resourceBoxId={id}
-                      resourceBoxPurpose="episode_reward"
-                      justifyContent="flex-end"
-                      key={id}
-                    />
-                  ))}
-                </Grid>
-              </Grid>
-              <Divider style={{ margin: "1% 0" }} />
-              <Grid
-                container
-                direction="row"
-                wrap="nowrap"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Grid item xs={8}>
-                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                    {t("common:storyReader")}
-                  </Typography>
-                </Grid>
-                <Grid item container justifyContent="flex-end">
-                  <Link
-                    to={`/storyreader/cardStory/${card.characterId}/${card.id}/${cardEpisode[0].id}`}
-                    className={interactiveClasses.noDecoration}
+                  </Grid>
+                  <Divider style={{ margin: "1% 0" }} />
+                  <Grid
+                    container
+                    direction="row"
+                    wrap="nowrap"
+                    justifyContent="space-between"
+                    alignItems="center"
                   >
-                    <Grid container alignItems="center">
-                      <OpenInNew />
+                    <Grid item xs={3}>
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {t("common:releaseCosts")}
+                      </Typography>
                     </Grid>
-                  </Link>
+                    <Grid
+                      item
+                      container
+                      spacing={1}
+                      xs={9}
+                      justifyContent="flex-end"
+                    >
+                      {cardEpisode[0].costs.map((c, idx) => (
+                        <Grid key={`episode-cost-${idx}`} item>
+                          <MaterialIcon
+                            materialId={c.resourceId}
+                            quantity={c.quantity}
+                          />
+                        </Grid>
+                      ))}
+                    </Grid>
+                  </Grid>
+                  <Divider style={{ margin: "1% 0" }} />
+                  <Grid
+                    container
+                    direction="row"
+                    wrap="nowrap"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    <Grid item xs={2}>
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {t("common:rewards")}
+                      </Typography>
+                    </Grid>
+                    <Grid
+                      item
+                      container
+                      spacing={1}
+                      xs={10}
+                      justifyContent="flex-end"
+                    >
+                      {cardEpisode[0].rewardResourceBoxIds.map((id) => (
+                        <ResourceBox
+                          resourceBoxId={id}
+                          resourceBoxPurpose="episode_reward"
+                          justifyContent="flex-end"
+                          key={id}
+                        />
+                      ))}
+                    </Grid>
+                  </Grid>
+                  <Divider style={{ margin: "1% 0" }} />
+                  <Grid
+                    container
+                    direction="row"
+                    wrap="nowrap"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    <Grid item xs={8}>
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {t("common:storyReader")}
+                      </Typography>
+                    </Grid>
+                    <Grid item container justifyContent="flex-end">
+                      <Link
+                        to={`/storyreader/cardStory/${card.characterId}/${card.id}/${cardEpisode[0].id}`}
+                        className={interactiveClasses.noDecoration}
+                      >
+                        <Grid container alignItems="center">
+                          <OpenInNew />
+                        </Grid>
+                      </Link>
+                    </Grid>
+                  </Grid>
+                  <Divider style={{ margin: "1% 0" }} />
                 </Grid>
-              </Grid>
-              <Divider style={{ margin: "1% 0" }} />
-            </Grid>
-          </TabPanel>
-          <TabPanel value="2" classes={{ root: classes.tabpanel }}>
-            <Grid container direction="column">
-              <Grid
-                container
-                direction="row"
-                wrap="nowrap"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Grid item xs={2}>
-                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                    {t("common:releaseCondition")}
-                  </Typography>
-                </Grid>
-                <Grid item xs={8} container justifyContent="flex-end">
-                  <ReleaseCondTrans
-                    releaseCondId={cardEpisode[1].releaseConditionId}
-                    originalProps={{ align: "right" }}
-                    translatedProps={{ align: "right" }}
-                  />
-                </Grid>
-              </Grid>
-              <Divider style={{ margin: "1% 0" }} />
-              <Grid
-                container
-                direction="row"
-                wrap="nowrap"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Grid item xs={3}>
-                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                    {t("common:releaseCosts")}
-                  </Typography>
-                </Grid>
-                <Grid
-                  item
-                  container
-                  spacing={1}
-                  xs={9}
-                  justifyContent="flex-end"
-                >
-                  {cardEpisode[1].costs.map((c, idx) => (
-                    <Grid key={`episode-cost-${idx}`} item>
-                      <MaterialIcon
-                        materialId={c.resourceId}
-                        quantity={c.quantity}
+              </TabPanel>
+              <TabPanel value="2" classes={{ root: classes.tabpanel }}>
+                <Grid container direction="column">
+                  <Grid
+                    container
+                    direction="row"
+                    wrap="nowrap"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    <Grid item xs={2}>
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {t("common:releaseCondition")}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={8} container justifyContent="flex-end">
+                      <ReleaseCondTrans
+                        releaseCondId={cardEpisode[1].releaseConditionId}
+                        originalProps={{ align: "right" }}
+                        translatedProps={{ align: "right" }}
                       />
                     </Grid>
-                  ))}
-                </Grid>
-              </Grid>
-              <Divider style={{ margin: "1% 0" }} />
-              <Grid
-                container
-                direction="row"
-                wrap="nowrap"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Grid item xs={2}>
-                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                    {t("common:rewards")}
-                  </Typography>
-                </Grid>
-                <Grid
-                  item
-                  container
-                  spacing={1}
-                  xs={10}
-                  justifyContent="flex-end"
-                >
-                  {cardEpisode[1].rewardResourceBoxIds.map((id) => (
-                    <ResourceBox
-                      resourceBoxId={id}
-                      resourceBoxPurpose="episode_reward"
-                      justifyContent="flex-end"
-                      key={id}
-                    />
-                  ))}
-                </Grid>
-              </Grid>
-              <Divider style={{ margin: "1% 0" }} />
-              <Grid
-                container
-                direction="row"
-                wrap="nowrap"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Grid item xs={8}>
-                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                    {t("common:storyReader")}
-                  </Typography>
-                </Grid>
-                <Grid item container justifyContent="flex-end">
-                  <Link
-                    to={`/storyreader/cardStory/${card.characterId}/${card.id}/${cardEpisode[1].id}`}
-                    className={interactiveClasses.noDecoration}
+                  </Grid>
+                  <Divider style={{ margin: "1% 0" }} />
+                  <Grid
+                    container
+                    direction="row"
+                    wrap="nowrap"
+                    justifyContent="space-between"
+                    alignItems="center"
                   >
-                    <Grid container alignItems="center">
-                      <OpenInNew />
+                    <Grid item xs={3}>
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {t("common:releaseCosts")}
+                      </Typography>
                     </Grid>
-                  </Link>
+                    <Grid
+                      item
+                      container
+                      spacing={1}
+                      xs={9}
+                      justifyContent="flex-end"
+                    >
+                      {cardEpisode[1].costs.map((c, idx) => (
+                        <Grid key={`episode-cost-${idx}`} item>
+                          <MaterialIcon
+                            materialId={c.resourceId}
+                            quantity={c.quantity}
+                          />
+                        </Grid>
+                      ))}
+                    </Grid>
+                  </Grid>
+                  <Divider style={{ margin: "1% 0" }} />
+                  <Grid
+                    container
+                    direction="row"
+                    wrap="nowrap"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    <Grid item xs={2}>
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {t("common:rewards")}
+                      </Typography>
+                    </Grid>
+                    <Grid
+                      item
+                      container
+                      spacing={1}
+                      xs={10}
+                      justifyContent="flex-end"
+                    >
+                      {cardEpisode[1].rewardResourceBoxIds.map((id) => (
+                        <ResourceBox
+                          resourceBoxId={id}
+                          resourceBoxPurpose="episode_reward"
+                          justifyContent="flex-end"
+                          key={id}
+                        />
+                      ))}
+                    </Grid>
+                  </Grid>
+                  <Divider style={{ margin: "1% 0" }} />
+                  <Grid
+                    container
+                    direction="row"
+                    wrap="nowrap"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    <Grid item xs={8}>
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {t("common:storyReader")}
+                      </Typography>
+                    </Grid>
+                    <Grid item container justifyContent="flex-end">
+                      <Link
+                        to={`/storyreader/cardStory/${card.characterId}/${card.id}/${cardEpisode[1].id}`}
+                        className={interactiveClasses.noDecoration}
+                      >
+                        <Grid container alignItems="center">
+                          <OpenInNew />
+                        </Grid>
+                      </Link>
+                    </Grid>
+                  </Grid>
+                  <Divider style={{ margin: "1% 0" }} />
                 </Grid>
-              </Grid>
-              <Divider style={{ margin: "1% 0" }} />
-            </Grid>
-          </TabPanel>
-        </TabContext>
-      </Container>
+              </TabPanel>
+            </TabContext>
+          </Container>
+        </Fragment>
+      )}
       {!!cardCommentId && (
         <Fragment>
           <Typography variant="h6" className={layoutClasses.header}>
