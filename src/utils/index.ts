@@ -453,7 +453,8 @@ export function useProcessedScenarioData() {
 
               if (
                 talkData.Voices.length &&
-                talkData.Voices[0].VoiceId.startsWith("partvoice")
+                talkData.Voices[0].VoiceId.startsWith("partvoice") &&
+                !isActionSet
               ) {
                 const chara2d = chara2Ds.find(
                   (ch) => ch.id === talkData.TalkCharacters[0].Character2dId

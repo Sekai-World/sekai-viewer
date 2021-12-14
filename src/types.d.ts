@@ -1262,6 +1262,9 @@ export interface IArea {
   areaType: string;
   viewType: string;
   name: string;
+  label?: string;
+  startAt?: number;
+  endAt?: number;
   releaseConditionId: number;
 }
 

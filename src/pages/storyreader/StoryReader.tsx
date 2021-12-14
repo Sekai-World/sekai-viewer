@@ -807,7 +807,44 @@ const StoryReader: React.FC<{}> = observer(() => {
           <Grid container spacing={1}>
             {!!areas &&
               areas
-                .filter((area) => area.areaType === "spirit_world")
+                .filter((area) => area.label)
+                .map((area) => (
+                  <Grid item xs={12} sm={6} md={3} key={area.id}>
+                    <Link
+                      className={interactiveClasses.noDecorationAlsoOnHover}
+                      color="inherit"
+                      to={`/storyreader/areaTalk/${area.id}`}
+                    >
+                      <Card className={classes.selectCard}>
+                        <CardContent>
+                          <ImageWrapper
+                            src={`worldmap/contents/collaboration/${
+                              area.assetbundleName
+                            }_rip/img_worldmap_areas${String(area.id).padStart(
+                              2,
+                              "0"
+                            )}.webp`}
+                            bgColor=""
+                            duration={0}
+                          />
+                        </CardContent>
+                        <CardContent>
+                          <ContentTrans
+                            contentKey={`area_name:${area.id}`}
+                            original={area.name}
+                            originalProps={{ style: { overflow: "hidden" } }}
+                            translatedProps={{ style: { overflow: "hidden" } }}
+                          />
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  </Grid>
+                ))}
+            {!!areas &&
+              areas
+                .filter(
+                  (area) => area.areaType === "spirit_world" && !area.label
+                )
                 .map((area) => (
                   <Grid item xs={12} sm={6} md={3} key={area.id}>
                     <Link
@@ -880,11 +917,7 @@ const StoryReader: React.FC<{}> = observer(() => {
                 return (
                   <Grid container spacing={1}>
                     {actionSets
-                      .filter(
-                        (as) =>
-                          as.areaId === Number(areaId) &&
-                          as.actionSetType === "normal"
-                      )
+                      .filter((as) => as.areaId === Number(areaId))
                       .map((actionSet) => (
                         <Grid
                           item
