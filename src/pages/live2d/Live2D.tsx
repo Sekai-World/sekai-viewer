@@ -495,7 +495,8 @@ const Live2DView: React.FC<{}> = () => {
             onClick={() => {
               setModelName(selectedModelName);
               setMotionName(
-                (selectedModelName?.startsWith("sub")
+                (selectedModelName?.startsWith("sub") ||
+                selectedModelName?.startsWith("clb")
                   ? selectedModelName
                   : selectedModelName?.split("_")[0]) + "_motion_base"
               );
