@@ -66,7 +66,7 @@ export const HistoryRow: React.FC<{
             <DegreeImage
               style={{
                 maxHeight: "40px",
-                minWidth: "120px",
+                minWidth: "160px",
                 maxWidth: "220px",
               }}
               resourceBoxId={rankingReward.eventRankingRewards[0].resourceBoxId}
@@ -77,10 +77,10 @@ export const HistoryRow: React.FC<{
           )}
         </TableCell>
         <TableCell>
-          <Grid container alignItems="center">
+          <Grid container alignItems="center" spacing={1}>
             {rankingData.userCheerfulCarnival &&
               rankingData.userCheerfulCarnival.eventId && (
-                <Grid item md={4} lg={2} xl={1}>
+                <Grid item md={3} lg={2} xl={1}>
                   <CheerfulCarnivalTeamIcon
                     eventId={rankingData.userCheerfulCarnival.eventId}
                     teamId={
@@ -89,7 +89,7 @@ export const HistoryRow: React.FC<{
                   />
                 </Grid>
               )}
-            <Grid item>
+            <Grid item md={8} lg={9} xl={10}>
               <Typography style={{ minWidth: "100px" }}>
                 {rankingData.name}
               </Typography>
@@ -232,7 +232,7 @@ export const LiveRow: React.FC<{
             <DegreeImage
               style={{
                 maxHeight: "40px",
-                minWidth: "120px",
+                minWidth: "160px",
                 maxWidth: "220px",
               }}
               resourceBoxId={rankingReward.eventRankingRewards[0].resourceBoxId}
@@ -246,7 +246,7 @@ export const LiveRow: React.FC<{
           <Grid container alignItems="center" spacing={1}>
             {rankingData.userCheerfulCarnival &&
               rankingData.userCheerfulCarnival.eventId && (
-                <Grid item md={4} lg={2} xl={1}>
+                <Grid item md={3} lg={2} xl={1}>
                   <CheerfulCarnivalTeamIcon
                     eventId={rankingData.eventId}
                     teamId={
@@ -255,7 +255,7 @@ export const LiveRow: React.FC<{
                   />
                 </Grid>
               )}
-            <Grid item md={6} lg={8} xl={9}>
+            <Grid item md={8} lg={9} xl={10}>
               <Typography style={{ minWidth: "100px" }}>
                 {rankingData.userName}
               </Typography>
