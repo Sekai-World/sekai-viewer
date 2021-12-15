@@ -75,7 +75,7 @@ export function useRealtimeEventData() {
   return useCallback(async (eventId: number, region: ServerRegion = "jp") => {
     const { data }: { data: IEventRealtimeRank } = await Axios.get(
       `https://bitbucket.org/sekai-world/sekai-event-track${
-        region === "tw" ? "-tw" : ""
+        region === "tw" ? "-tw" : region === "en" ? "-en" : ""
       }/raw/main/event${eventId}.json?t=${Date.now()}`
     );
     return data;
