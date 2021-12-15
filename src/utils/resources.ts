@@ -41,6 +41,11 @@ import FrameDegreeM2 from "../assets/frame/frame_degree_m_2.png";
 import FrameDegreeM3 from "../assets/frame/frame_degree_m_3.png";
 import FrameDegreeM4 from "../assets/frame/frame_degree_m_4.png";
 
+import FrameDegreeS1 from "../assets/frame/frame_degree_s_1.png";
+import FrameDegreeS2 from "../assets/frame/frame_degree_s_2.png";
+import FrameDegreeS3 from "../assets/frame/frame_degree_s_3.png";
+import FrameDegreeS4 from "../assets/frame/frame_degree_s_4.png";
+
 import cardThumbFrameS1 from "../assets/frame/cardFrame_S_1.png";
 import cardThumbFrameS2 from "../assets/frame/cardFrame_S_2.png";
 import cardThumbFrameS3 from "../assets/frame/cardFrame_S_3.png";
@@ -130,6 +135,15 @@ export const degreeFrameMap: {
   middle: FrameDegreeM2,
   high: FrameDegreeM3,
   highest: FrameDegreeM4,
+};
+
+export const degreeFramSubMap: {
+  [key: string]: string;
+} = {
+  low: FrameDegreeS1,
+  middle: FrameDegreeS2,
+  high: FrameDegreeS3,
+  highest: FrameDegreeS4,
 };
 
 export const cardThumbFrameMap: { [key: string]: string } = {
