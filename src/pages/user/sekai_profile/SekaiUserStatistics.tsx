@@ -196,6 +196,7 @@ const MusicSingleData: React.FC<{ umusic?: UserMusic; music: IMusicInfo }> =
                           src={BtnDifficultyEasy}
                           alt="difficulty easy"
                           bgColor=""
+                          duration={0}
                         />
                       </TableCell>
                       <TableCell>
@@ -203,6 +204,7 @@ const MusicSingleData: React.FC<{ umusic?: UserMusic; music: IMusicInfo }> =
                           src={BtnDifficultyNormal}
                           alt="difficulty normal"
                           bgColor=""
+                          duration={0}
                         />
                       </TableCell>
                       <TableCell>
@@ -210,6 +212,7 @@ const MusicSingleData: React.FC<{ umusic?: UserMusic; music: IMusicInfo }> =
                           src={BtnDifficultyHard}
                           alt="difficulty hard"
                           bgColor=""
+                          duration={0}
                         />
                       </TableCell>
                       <TableCell>
@@ -217,6 +220,7 @@ const MusicSingleData: React.FC<{ umusic?: UserMusic; music: IMusicInfo }> =
                           src={BtnDifficultyExpert}
                           alt="difficulty expert"
                           bgColor=""
+                          duration={0}
                         />
                       </TableCell>
                       <TableCell>
@@ -224,6 +228,7 @@ const MusicSingleData: React.FC<{ umusic?: UserMusic; music: IMusicInfo }> =
                           src={BtnDifficultyMaster}
                           alt="difficulty master"
                           bgColor=""
+                          duration={0}
                         />
                       </TableCell>
                     </TableRow>
@@ -638,6 +643,7 @@ const SekaiUserStatistics = observer(() => {
                               src={BtnDifficultyEasy}
                               alt="difficulty easy"
                               bgColor=""
+                              duration={0}
                             />
                           </TableCell>
                           <TableCell>
@@ -645,6 +651,7 @@ const SekaiUserStatistics = observer(() => {
                               src={BtnDifficultyNormal}
                               alt="difficulty normal"
                               bgColor=""
+                              duration={0}
                             />
                           </TableCell>
                           <TableCell>
@@ -652,6 +659,7 @@ const SekaiUserStatistics = observer(() => {
                               src={BtnDifficultyHard}
                               alt="difficulty hard"
                               bgColor=""
+                              duration={0}
                             />
                           </TableCell>
                           <TableCell>
@@ -659,6 +667,7 @@ const SekaiUserStatistics = observer(() => {
                               src={BtnDifficultyExpert}
                               alt="difficulty expert"
                               bgColor=""
+                              duration={0}
                             />
                           </TableCell>
                           <TableCell>
@@ -666,6 +675,7 @@ const SekaiUserStatistics = observer(() => {
                               src={BtnDifficultyMaster}
                               alt="difficulty master"
                               bgColor=""
+                              duration={0}
                             />
                           </TableCell>
                         </TableRow>
