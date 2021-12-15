@@ -31,8 +31,8 @@ const SekaiProfile = React.lazy(() => import("../sekai_profile/SekaiProfile"));
 const useStyles = makeStyles((theme) => ({
   avatarProfile: {
     [theme.breakpoints.down("md")]: {
-      height: theme.spacing(10),
-      width: theme.spacing(10),
+      height: theme.spacing(15),
+      width: theme.spacing(15),
     },
     [theme.breakpoints.up("md")]: {
       height: theme.spacing(20),
@@ -94,7 +94,7 @@ const UserHome: React.FC<{}> = observer(() => {
             <Grid container spacing={2}>
               <Grid item xs={12} container justifyContent="center">
                 <Avatar src={avatarUrl || ""} className={classes.avatarProfile}>
-                  {(nickname || "").substr(0, 2).toUpperCase()}
+                  {(nickname || "").substring(0, 2).toUpperCase()}
                 </Avatar>
               </Grid>
               <Grid item xs={12} container justifyContent="center">
