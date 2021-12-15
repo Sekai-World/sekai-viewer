@@ -8,7 +8,7 @@ import {
   ResourceBoxDetail,
 } from "../../types.d";
 import { getRemoteAssetURL, useCachedData } from "../../utils";
-import { degreeFrameMap } from "../../utils/resources";
+import { degreeFrameMap, degreeFramSubMap } from "../../utils/resources";
 import degreeLevelIcon from "../../assets/frame/icon_degreeLv.png";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
@@ -19,9 +19,17 @@ const DegreeImage: React.FC<
     honorId?: number;
     type?: string;
     honorLevel?: number;
+    sub?: boolean;
   } & React.HTMLProps<HTMLDivElement>
 > = observer(
-  ({ resourceBoxId, type, honorId, style, honorLevel: _honorLevel }) => {
+  ({
+    resourceBoxId,
+    type,
+    honorId,
+    style,
+    honorLevel: _honorLevel,
+    sub = false,
+  }) => {
     const classes = useSvgStyles();
     const { region } = useRootStore();
 
@@ -73,21 +81,27 @@ const DegreeImage: React.FC<
       if (honor) {
         if (honorGroup && honorGroup.backgroundAssetbundleName) {
           getRemoteAssetURL(
-            `honor/${honorGroup.backgroundAssetbundleName}_rip/degree_main.webp`,
+            `honor/${honorGroup.backgroundAssetbundleName}_rip/degree_${
+              sub ? "sub" : "main"
+            }.webp`,
             setDegreeImage,
             window.isChinaMainland ? "cn" : "ww",
             region
           );
         } else if (honor.assetbundleName)
           getRemoteAssetURL(
-            `honor/${honor.assetbundleName}_rip/degree_main.webp`,
+            `honor/${honor.assetbundleName}_rip/degree_${
+              sub ? "sub" : "main"
+            }.webp`,
             setDegreeImage,
             window.isChinaMainland ? "cn" : "ww",
             region
           );
         if (type === "event_ranking_reward")
           getRemoteAssetURL(
-            `honor/${honor.assetbundleName}_rip/rank_main.webp`,
+            `honor/${honor.assetbundleName}_rip/rank_${
+              sub ? "sub" : "main"
+            }.webp`,
             setDegreeRankImage,
             window.isChinaMainland ? "cn" : "ww",
             region
@@ -98,7 +112,9 @@ const DegreeImage: React.FC<
           honor.name.match(/第\d+名/)
         )
           getRemoteAssetURL(
-            `honor/${honor.assetbundleName}_rip/rank_main.webp`,
+            `honor/${honor.assetbundleName}_rip/rank_${
+              sub ? "sub" : "main"
+            }.webp`,
             setDegreeRankImage,
             window.isChinaMainland ? "cn" : "ww",
             region
@@ -107,23 +123,33 @@ const DegreeImage: React.FC<
       return () => {
         setDegreeRankImage("");
       };
-    }, [honor, honorGroup, region, type]);
+    }, [honor, honorGroup, region, sub, type]);
 
     return honor === undefined ? null : !!honor ? (
       <div className={classes.svg}>
         <svg
           style={style}
           xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 380 80"
+          viewBox={sub ? "0 0 180 80" : "0 0 380 80"}
         >
-          <image href={degreeImage} x="0" y="0" height="80" width="380" />
-          {/* frame */}
           <image
-            href={degreeFrameMap[honor.honorRarity]}
+            href={degreeImage}
             x="0"
             y="0"
             height="80"
-            width="380"
+            width={sub ? 180 : 380}
+          />
+          {/* frame */}
+          <image
+            href={
+              sub
+                ? degreeFramSubMap[honor.honorRarity]
+                : degreeFrameMap[honor.honorRarity]
+            }
+            x="0"
+            y="0"
+            height="80"
+            width={sub ? 180 : 380}
           />
           {/* degree level */}
           {!!honorLevel &&
@@ -151,7 +177,11 @@ const DegreeImage: React.FC<
         </svg>
       </div>
     ) : (
-      <Skeleton variant="rectangular" width="256" height="64"></Skeleton>
+      <Skeleton
+        variant="rectangular"
+        width={sub ? 180 : 380}
+        height="80"
+      ></Skeleton>
     );
   }
 );
