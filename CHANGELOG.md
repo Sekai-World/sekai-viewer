@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.7](https://github.com/Sekai-World/sekai-viewer/compare/v1.1.6...v1.1.7) (2021-12-15)
+
+
+### Features
+
+* :bento: add sub degree frame ([42d638e](https://github.com/Sekai-World/sekai-viewer/commits/42d638e39adadc4effd58773717dedff1f710a64))
+
+
+### Bug Fixes
+
+* **event:** :bug: en server event tracker shows jp result after event ends ([d01eaa8](https://github.com/Sekai-World/sekai-viewer/commits/d01eaa86d1decae4d6411d3883e0f763a5f5dc0e))
+
+
+### Refactors
+
+* **event:** :lipstick: make event tracker table looks better ([1e90fe3](https://github.com/Sekai-World/sekai-viewer/commits/1e90fe363ec3698d4ff532a51285a4ea9a06488c))
+* **user:** :lipstick: style fix ([257d083](https://github.com/Sekai-World/sekai-viewer/commits/257d083ebe3dd46c1348eea63cc9ed9b4fa3f1c3))
+
 ### [1.1.6](https://github.com/Sekai-World/sekai-viewer/compare/v1.1.5...v1.1.6) (2021-12-14)
 
 
