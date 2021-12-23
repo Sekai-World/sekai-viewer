@@ -11,7 +11,7 @@ import Live2D from "@sekai-world/find-live2d-v3";
 import Axios from "axios";
 import { LAppLive2DManager } from "@sekai-world/find-live2d-v3/dist/types/lapplive2dmanager";
 import { LAppModel } from "@sekai-world/find-live2d-v3/dist/types/lappmodel";
-import { Alert, Autocomplete } from "@mui/material";
+import { Alert, Autocomplete, Box } from "@mui/material";
 import {
   Button,
   Container,
@@ -512,7 +512,7 @@ const Live2DView: React.FC<{}> = () => {
           <LinearProgress variant="determinate" value={progress} />
         </Container>
       )}
-      <Container ref={wrap} className={layoutClasses.content}>
+      <Box ref={wrap} className={layoutClasses.content}>
         {model && (
           <Toolbar component={Paper}>
             <Grid container spacing={1} alignItems="center">
@@ -643,75 +643,83 @@ const Live2DView: React.FC<{}> = () => {
                 )}
               </Grid>
               <Grid item>
-                <Grid container>
-                  <Autocomplete
-                    value={selectedMotion}
-                    onChange={(e, v) => setSelectedMotion(v)}
-                    options={motions}
-                    getOptionLabel={(option) => option}
-                    renderInput={(props) => (
-                      <TextField
-                        {...props}
-                        label={t("live2d:select.motions")}
-                      />
-                    )}
-                    style={{ minWidth: "170px" }}
-                  />
-                  <Button
-                    disabled={!selectedMotion}
-                    variant="contained"
-                    onClick={() => {
-                      if (selectedMotion) {
-                        model.startMotion({
-                          groupName: selectedMotion,
-                          no: 0,
-                          priority: 3,
-                          autoIdle: false,
-                          autoAppear: false,
-                          fadeInTime: 0.5,
-                          fadeOutTime: 0.5,
-                        });
-                      }
-                    }}
-                  >
-                    {t("common:apply")}
-                  </Button>
+                <Grid container spacing={1} alignItems="center">
+                  <Grid item>
+                    <Autocomplete
+                      value={selectedMotion}
+                      onChange={(e, v) => setSelectedMotion(v)}
+                      options={motions}
+                      getOptionLabel={(option) => option}
+                      renderInput={(props) => (
+                        <TextField
+                          {...props}
+                          label={t("live2d:select.motions")}
+                        />
+                      )}
+                      style={{ minWidth: "170px" }}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Button
+                      disabled={!selectedMotion}
+                      variant="contained"
+                      onClick={() => {
+                        if (selectedMotion) {
+                          model.startMotion({
+                            groupName: selectedMotion,
+                            no: 0,
+                            priority: 3,
+                            autoIdle: false,
+                            autoAppear: false,
+                            fadeInTime: 0.5,
+                            fadeOutTime: 0.5,
+                          });
+                        }
+                      }}
+                    >
+                      {t("common:apply")}
+                    </Button>
+                  </Grid>
                 </Grid>
               </Grid>
               <Grid item>
-                <Grid container>
-                  <Autocomplete
-                    value={selectedExpression}
-                    onChange={(e, v) => setSelectedExpression(v)}
-                    options={expressions}
-                    getOptionLabel={(option) => option}
-                    renderInput={(props) => (
-                      <TextField
-                        {...props}
-                        label={t("live2d:select.expressions")}
-                      />
-                    )}
-                    style={{ minWidth: "170px" }}
-                  />
-                  <Button
-                    disabled={!selectedExpression}
-                    variant="contained"
-                    onClick={() => {
-                      if (selectedExpression) {
-                        model.startMotion({
-                          groupName: selectedExpression,
-                          no: 0,
-                          priority: 3,
-                          autoIdle: false,
-                          autoAppear: false,
-                          fadeInTime: 0.5,
-                          fadeOutTime: 0.5,
-                        });
-                      }
-                    }}
-                  >
-                    {t("common:apply")}
-                  </Button>
+                <Grid container spacing={1} alignItems="center">
+                  <Grid item>
+                    <Autocomplete
+                      value={selectedExpression}
+                      onChange={(e, v) => setSelectedExpression(v)}
+                      options={expressions}
+                      getOptionLabel={(option) => option}
+                      renderInput={(props) => (
+                        <TextField
+                          {...props}
+                          label={t("live2d:select.expressions")}
+                        />
+                      )}
+                      style={{ minWidth: "170px" }}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Button
+                      disabled={!selectedExpression}
+                      variant="contained"
+                      onClick={() => {
+                        if (selectedExpression) {
+                          model.startMotion({
+                            groupName: selectedExpression,
+                            no: 0,
+                            priority: 3,
+                            autoIdle: false,
+                            autoAppear: false,
+                            fadeInTime: 0.5,
+                            fadeOutTime: 0.5,
+                          });
+                        }
+                      }}
+                    >
+                      {t("common:apply")}
+                    </Button>
+                  </Grid>
                 </Grid>
               </Grid>
               {/* <Grid item>
@@ -722,7 +730,7 @@ const Live2DView: React.FC<{}> = () => {
           </Toolbar>
         )}
         <canvas ref={canvas}></canvas>
-      </Container>
+      </Box>
     </Fragment>
   );
 };
