@@ -20,7 +20,7 @@ import {
 import React, { Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useInteractiveStyles } from "../../styles/interactive";
-import { IUserInformationInfo } from "../../types";
+import { IUserInformationInfo, ServerRegion } from "../../types";
 import { useCachedData } from "../../utils";
 
 const useIframeStyle = makeStyles((theme) => ({
@@ -63,7 +63,10 @@ function InfoInternalDialog(props: {
   );
 }
 
-const SekaiGameNews: React.FC<{}> = () => {
+const SekaiGameNews: React.FC<{
+  isShowSpoiler: boolean;
+  region: ServerRegion;
+}> = ({ isShowSpoiler, region }) => {
   const theme = useTheme();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
@@ -159,7 +162,11 @@ const SekaiGameNews: React.FC<{}> = () => {
           rows={
             informations
               ? informations.filter(
-                  (info) => info.informationTag === gameNewsTag
+                  (info) =>
+                    info.informationTag === gameNewsTag &&
+                    (!isShowSpoiler
+                      ? info.startAt < new Date().getTime()
+                      : true)
                 )
               : []
           }
@@ -176,6 +183,8 @@ const SekaiGameNews: React.FC<{}> = () => {
           info
             ? info.path.match(/^http/)
               ? info.path
+              : region === "en"
+              ? `https://n-production-web.sekai-en.com/${info.path}`
               : `https://production-web.sekai.colorfulpalette.org/${info.path}`
             : ""
         }
