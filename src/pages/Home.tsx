@@ -35,6 +35,7 @@ import AnnouncementWidget from "../components/widgets/AnnouncementWidget";
 import CurrentEventWidget from "../components/widgets/CurrentEventWidget";
 import AdSense from "../components/blocks/AdSenseBlock";
 import SekaiGameNews from "../components/blocks/SekaiGameNews";
+import { useRootStore } from "../stores/root";
 
 interface IDetectResult {
   webp: number;
@@ -115,6 +116,10 @@ function Home() {
   const layoutClasses = useLayoutStyles();
   const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
+
+  const {
+    settings: { isShowSpoiler, region },
+  } = useRootStore();
 
   const [jpTime] = useState<string>(getJPTime());
 
@@ -551,7 +556,7 @@ function Home() {
         {t("home:game-news.title")}
       </Typography>
       <Container className={layoutClasses.content}>
-        <SekaiGameNews />
+        <SekaiGameNews isShowSpoiler={isShowSpoiler} region={region} />
       </Container>
     </Fragment>
   );
