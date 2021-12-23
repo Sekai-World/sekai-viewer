@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.8](https://github.com/Sekai-World/sekai-viewer/compare/v1.1.7...v1.1.8) (2021-12-23)
+
+
+### Bug Fixes
+
+* :bug: further fixing sekai data type annotation ([f6b7515](https://github.com/Sekai-World/sekai-viewer/commits/f6b7515d8bba4b56033ca92222993ccbcf5eceae))
+* **home:** :bug: game news spoiler filter, en url fix ([0574068](https://github.com/Sekai-World/sekai-viewer/commits/05740682b5b048229a73183eb6f03bacdaa76061))
+
+
+### Refactors
+
+* **live2d:** :lipstick: live2d toolbar and display area padding remove ([dd67c4d](https://github.com/Sekai-World/sekai-viewer/commits/dd67c4d7920c190e3419fcb5a285cb5dfc1b764e))
+
 ### [1.1.7](https://github.com/Sekai-World/sekai-viewer/compare/v1.1.6...v1.1.7) (2021-12-15)
 
 
