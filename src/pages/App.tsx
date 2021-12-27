@@ -57,6 +57,7 @@ import {
   LiveTv,
   Translate,
   Dns,
+  Favorite,
 } from "@mui/icons-material";
 import AccountGroup from "~icons/mdi/account-group";
 import Bullhorn from "~icons/mdi/bullhorn";
@@ -208,12 +209,13 @@ interface IListItemLinkProps {
   disabled: boolean;
   visibleRoles?: string[];
   children?: IListItemLinkProps[];
+  isRedirection?: boolean; // to be used for redirecting to another page
 }
 
 function ListItemLink(
   props: IListItemLinkProps
 ): React.ReactElement<IListItemLinkProps> {
-  const { icon, text, to } = props;
+  const { icon, text, to, isRedirection } = props;
   const { user } = useRootStore();
   const match = useRouteMatch({
     path: to,
@@ -226,7 +228,6 @@ function ListItemLink(
     (!user.userinfo || !props.visibleRoles.includes(user.userinfo.role))
   )
     return <Fragment></Fragment>;
-
   return (
     <li
       style={{
@@ -236,7 +237,13 @@ function ListItemLink(
       <ListItem
         component={Link}
         classes={{ root: classes.listItemInner }}
-        to={to}
+        to={{
+          pathname: to,
+        }}
+        /**
+         * if true redirect to another page, otherwise used the spa routing
+         */
+        target={isRedirection ? "_top" : undefined}
       >
         <ListItemIcon
           sx={{
@@ -420,6 +427,13 @@ const DrawerContent: React.FC<{
           icon: <Bullhorn></Bullhorn>,
           to: "/announcement",
           disabled: false,
+        },
+        {
+          text: t("common:song wishlist"),
+          icon: <Favorite></Favorite>,
+          to: "https://wishlist.sekai.best/",
+          disabled: false,
+          isRedirection: true,
         },
         {
           text: t("common:translation"),
