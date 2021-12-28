@@ -147,7 +147,20 @@ const DegreeImage: React.FC<
           {/* mask */}
           <defs>
             <mask id="rounded-rect">
-              <rect x="10" y="0" height={80} width={360} rx={40} fill="white" />
+              <rect
+                x="10"
+                y="0"
+                height={80}
+                width={sub ? 160 : 360}
+                rx={40}
+                fill="white"
+              />
+            </mask>
+            <mask id="left-sub-crop">
+              <rect x="0" y="0" height={80} width={90} fill="white" />
+            </mask>
+            <mask id="right-sub-crop">
+              <rect x="90" y="0" height={80} width={90} fill="white" />
             </mask>
           </defs>
           <svg
@@ -161,7 +174,7 @@ const DegreeImage: React.FC<
               x="0"
               y="0"
               height="80"
-              width="190"
+              width={sub ? 90 : 190}
               fill={
                 viewType === "normal"
                   ? gameCharas[0].colorCode
@@ -170,10 +183,10 @@ const DegreeImage: React.FC<
             />
             {/* right bg */}
             <rect
-              x="190"
+              x={sub ? 90 : 190}
               y="0"
               height="80"
-              width="190"
+              width={sub ? 90 : 190}
               fill={
                 viewType === "normal"
                   ? gameCharas[1].colorCode
@@ -185,18 +198,34 @@ const DegreeImage: React.FC<
               x="16"
               y="6"
               height={68}
-              width={348}
+              width={sub ? 148 : 348}
               rx={34}
               stroke="white"
               strokeWidth={8}
               fillOpacity={0}
             />
             {/* left character */}
-            <image href={sdLeft} x="0" y="-55" height="160" width="160" />
+            <image
+              href={sdLeft}
+              x="0"
+              y={sub ? -30 : -55}
+              height={sub ? 120 : 160}
+              width={sub ? 120 : 160}
+              mask={sub ? "url(#left-sub-crop)" : ""}
+            />
             {/* right character */}
-            <image href={sdRight} x="218" y="-55" height="160" width="160" />
+            <image
+              href={sdRight}
+              x={sub ? 60 : 218}
+              y={sub ? -30 : -55}
+              height={sub ? 120 : 160}
+              width={sub ? 120 : 160}
+              mask={sub ? "url(#right-sub-crop)" : ""}
+            />
             {/* word */}
-            <image href={wordImage} x="0" y="0" height="80" width="380" />
+            {!sub && (
+              <image href={wordImage} x="0" y="0" height="80" width="380" />
+            )}
             {/* degree level */}
             {!!honorLevel &&
               honor.levels.length > 1 &&
