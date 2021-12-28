@@ -37,6 +37,7 @@ import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../../stores/root";
 import { ISekaiProfile, ISekaiUserData } from "../../../stores/sekai";
 import { autorun } from "mobx";
+import BondsDegreeImage from "../../../components/widgets/BondsDegreeImage";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -635,36 +636,64 @@ const SekaiID: React.FC<{}> = observer(() => {
               </Grid>
               <Grid item xs={12}>
                 <Grid container spacing={1}>
-                  <Grid item xs={12} md={4}>
-                    <DegreeImage
-                      honorId={
-                        sekaiProfile.sekaiUserProfile.userProfile.honorId1
-                      }
-                      honorLevel={
-                        sekaiProfile.sekaiUserProfile.userProfile.honorLevel1
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={4}>
-                    <DegreeImage
-                      honorId={
-                        sekaiProfile.sekaiUserProfile.userProfile.honorId2
-                      }
-                      honorLevel={
-                        sekaiProfile.sekaiUserProfile.userProfile.honorLevel2
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={4}>
-                    <DegreeImage
-                      honorId={
-                        sekaiProfile.sekaiUserProfile.userProfile.honorId3
-                      }
-                      honorLevel={
-                        sekaiProfile.sekaiUserProfile.userProfile.honorLevel3
-                      }
-                    />
-                  </Grid>
+                  {sekaiProfile.sekaiUserProfile.userProfileHonors ? (
+                    sekaiProfile.sekaiUserProfile.userProfileHonors.map(
+                      (honor) => (
+                        <Grid item xs={12} md={4}>
+                          {honor.profileHonorType === "normal" ? (
+                            <DegreeImage
+                              honorId={honor.honorId}
+                              honorLevel={honor.honorLevel}
+                            />
+                          ) : honor.profileHonorType === "bonds" ? (
+                            <BondsDegreeImage
+                              honorId={honor.honorId}
+                              bondsHonorWordId={honor.bondsHonorWordId}
+                              type={honor.profileHonorType}
+                              viewType={honor.bondsHonorViewType}
+                              honorLevel={honor.honorLevel}
+                            />
+                          ) : null}
+                        </Grid>
+                      )
+                    )
+                  ) : (
+                    <Fragment>
+                      <Grid item xs={12} md={4}>
+                        <DegreeImage
+                          honorId={
+                            sekaiProfile.sekaiUserProfile.userProfile.honorId1
+                          }
+                          honorLevel={
+                            sekaiProfile.sekaiUserProfile.userProfile
+                              .honorLevel1
+                          }
+                        />
+                      </Grid>
+                      <Grid item xs={12} md={4}>
+                        <DegreeImage
+                          honorId={
+                            sekaiProfile.sekaiUserProfile.userProfile.honorId2
+                          }
+                          honorLevel={
+                            sekaiProfile.sekaiUserProfile.userProfile
+                              .honorLevel2
+                          }
+                        />
+                      </Grid>
+                      <Grid item xs={12} md={4}>
+                        <DegreeImage
+                          honorId={
+                            sekaiProfile.sekaiUserProfile.userProfile.honorId3
+                          }
+                          honorLevel={
+                            sekaiProfile.sekaiUserProfile.userProfile
+                              .honorLevel3
+                          }
+                        />
+                      </Grid>
+                    </Fragment>
+                  )}
                 </Grid>
               </Grid>
             </Grid>
