@@ -1330,3 +1330,48 @@ export interface ISpecialStory {
   endAt: any;
   episodes: SpecialStoryEpisode[];
 }
+
+export interface BondsHonorLevel {
+  id: number;
+  bondsHonorId: number;
+  level: number;
+  description: string;
+}
+
+export interface IBondsHonor {
+  id: number;
+  seq: number;
+  bondsGroupId: number;
+  gameCharacterUnitId1: number;
+  gameCharacterUnitId2: number;
+  honorRarity: string;
+  name: string;
+  description: string;
+  levels: BondsHonorLevel[];
+}
+
+export interface IBondsHonorWord {
+  id: number;
+  seq: number;
+  bondsGroupId: number;
+  assetbundleName: string;
+  name: string;
+  description: string;
+}
+
+export interface IBond {
+  id: number;
+  groupId: number;
+  characterId1: number;
+  characterId2: number;
+}
+
+export interface IBondsReward {
+  id: number;
+  bondsGroupId: number;
+  rank: number;
+  seq: number;
+  bondsRewardType: string;
+  resourceBoxId: number;
+  description: string;
+}
