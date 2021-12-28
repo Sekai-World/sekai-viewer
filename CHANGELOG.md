@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.1.8...v1.2.0) (2021-12-28)
+
+
+### Features
+
+* :sparkles: bonds honor badge ([e8ab6e1](https://github.com/Sekai-World/sekai-viewer/commits/e8ab6e12dc2168bef87bb3efe3c032ea805beb50))
+* **event:** :sparkles: show new user profile honors ([8311854](https://github.com/Sekai-World/sekai-viewer/commits/83118540d00db9dda7ea85ad4f5ddb93d0c4473f))
+* **sekai-viewer:** withlist entry point ([650be2b](https://github.com/Sekai-World/sekai-viewer/commits/650be2b67851214fa8f8bc907d3671a24f5f3ff9))
+
+
+### Bug Fixes
+
+* :lipstick: degree sub style improvements ([58feaa1](https://github.com/Sekai-World/sekai-viewer/commits/58feaa1f74e9eca38305a5a19a39f4e7396b2938))
+* **user:** :lipstick: bonds degree badge reverse ([ce95020](https://github.com/Sekai-World/sekai-viewer/commits/ce950201f1a3a09af472fe7f8875a797c1979321))
+
+
+### Refactors
+
+* :lipstick: normal degree image width ([1935e89](https://github.com/Sekai-World/sekai-viewer/commits/1935e89e902bacec42a043ad3530d80a72eafd3c))
+* open external link in new instead of current page ([c549dc2](https://github.com/Sekai-World/sekai-viewer/commits/c549dc27a9a5843d459505285e8c4fee91065c1b))
+* **user:** :ambulance: sekai new profile structure (user honors) ([7dbeabf](https://github.com/Sekai-World/sekai-viewer/commits/7dbeabf9c203c7cf5f1c34ea09c42c0f11390e89))
+
 ### [1.1.8](https://github.com/Sekai-World/sekai-viewer/compare/v1.1.7...v1.1.8) (2021-12-23)
 
 
