@@ -19,6 +19,7 @@ import { CardThumb } from "../../components/widgets/CardThumb";
 import CheerfulCarnivalTeamIcon from "../../components/widgets/CheerfulCarnivalTeamIcon";
 import DegreeImage from "../../components/widgets/DegreeImage";
 import EventTrackerGraph from "./EventTrackerGraph";
+import BondsDegreeImage from "../../components/widgets/BondsDegreeImage";
 
 const useRowStyles = makeStyles((theme) => ({
   root: {
@@ -132,32 +133,56 @@ export const HistoryRow: React.FC<{
                       {rankingData.userProfile.word}
                     </Typography>
                   </Grid>
-                  <Grid item xs={12} container spacing={1}>
-                    {rankingData.userProfile.honorId1 && (
-                      <Grid item xs={4} md={3} lg={2}>
-                        <DegreeImage
-                          honorId={rankingData.userProfile.honorId1}
-                          honorLevel={rankingData.userProfile.honorLevel1}
-                        />
-                      </Grid>
-                    )}
-                    {rankingData.userProfile.honorId2 && (
-                      <Grid item xs={4} md={3} lg={2}>
-                        <DegreeImage
-                          honorId={rankingData.userProfile.honorId2}
-                          honorLevel={rankingData.userProfile.honorLevel2}
-                        />
-                      </Grid>
-                    )}
-                    {rankingData.userProfile.honorId3 && (
-                      <Grid item xs={4} md={3} lg={2}>
-                        <DegreeImage
-                          honorId={rankingData.userProfile.honorId3}
-                          honorLevel={rankingData.userProfile.honorLevel3}
-                        />
-                      </Grid>
-                    )}
-                  </Grid>
+                  {rankingData.userProfile && !rankingData.userProfileHonors && (
+                    <Grid item xs={12} container spacing={1}>
+                      {rankingData.userProfile.honorId1 && (
+                        <Grid item xs={4} md={3} lg={2}>
+                          <DegreeImage
+                            honorId={rankingData.userProfile.honorId1}
+                            honorLevel={rankingData.userProfile.honorLevel1}
+                          />
+                        </Grid>
+                      )}
+                      {rankingData.userProfile.honorId2 && (
+                        <Grid item xs={4} md={3} lg={2}>
+                          <DegreeImage
+                            honorId={rankingData.userProfile.honorId2}
+                            honorLevel={rankingData.userProfile.honorLevel2}
+                          />
+                        </Grid>
+                      )}
+                      {rankingData.userProfile.honorId3 && (
+                        <Grid item xs={4} md={3} lg={2}>
+                          <DegreeImage
+                            honorId={rankingData.userProfile.honorId3}
+                            honorLevel={rankingData.userProfile.honorLevel3}
+                          />
+                        </Grid>
+                      )}
+                    </Grid>
+                  )}
+                  {rankingData.userProfile && rankingData.userProfileHonors && (
+                    <Grid item xs={12} container spacing={1}>
+                      {rankingData.userProfileHonors.map((honor) => (
+                        <Grid item xs={12} md={4}>
+                          {honor.profileHonorType === "normal" ? (
+                            <DegreeImage
+                              honorId={honor.honorId}
+                              honorLevel={honor.honorLevel}
+                            />
+                          ) : honor.profileHonorType === "bonds" ? (
+                            <BondsDegreeImage
+                              honorId={honor.honorId}
+                              bondsHonorWordId={honor.bondsHonorWordId}
+                              type={honor.profileHonorType}
+                              viewType={honor.bondsHonorViewType}
+                              honorLevel={honor.honorLevel}
+                            />
+                          ) : null}
+                        </Grid>
+                      ))}
+                    </Grid>
+                  )}
                 </Grid>
               </Grid>
             </Grid>
@@ -309,7 +334,7 @@ export const LiveRow: React.FC<{
                       </Typography>
                     )}
                   </Grid>
-                  {rankingData.userProfile && (
+                  {rankingData.userProfile && !rankingData.userProfileHonors && (
                     <Grid item xs={12} container spacing={1}>
                       {rankingData.userProfile.honorId1 && (
                         <Grid item xs={4} md={3} lg={2}>
@@ -335,6 +360,28 @@ export const LiveRow: React.FC<{
                           />
                         </Grid>
                       )}
+                    </Grid>
+                  )}
+                  {rankingData.userProfile && rankingData.userProfileHonors && (
+                    <Grid item xs={12} container spacing={1}>
+                      {rankingData.userProfileHonors.map((honor) => (
+                        <Grid item xs={12} md={4}>
+                          {honor.profileHonorType === "normal" ? (
+                            <DegreeImage
+                              honorId={honor.honorId}
+                              honorLevel={honor.honorLevel}
+                            />
+                          ) : honor.profileHonorType === "bonds" ? (
+                            <BondsDegreeImage
+                              honorId={honor.honorId}
+                              bondsHonorWordId={honor.bondsHonorWordId}
+                              type={honor.profileHonorType}
+                              viewType={honor.bondsHonorViewType}
+                              honorLevel={honor.honorLevel}
+                            />
+                          ) : null}
+                        </Grid>
+                      ))}
                     </Grid>
                   )}
                 </Grid>
