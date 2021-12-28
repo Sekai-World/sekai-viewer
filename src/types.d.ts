@@ -1,3 +1,5 @@
+import { ISekaiUserProfileHonor } from "./stores/sekai";
+
 export type ContentTransModeType = "original" | "translated" | "both";
 export type DisplayModeType = "dark" | "light" | "auto";
 export type ServerRegion = "jp" | "tw" | "en";
@@ -369,6 +371,7 @@ export interface UserRanking {
   userCard: UserCard;
   userProfile: UserProfile;
   userCheerfulCarnival: UserCheerfulCarnival;
+  userProfileHonors?: ISekaiUserProfileHonor[];
 }
 
 export interface IEventRealtimeRank {
@@ -1023,6 +1026,7 @@ export interface EventRankingResponse {
   userCard?: UserCard;
   userProfile?: UserProfile;
   userCheerfulCarnival?: UserCheerfulCarnival;
+  userProfileHonors?: ISekaiUserProfileHonor[];
 }
 
 export interface IEventCard {

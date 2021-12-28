@@ -9,6 +9,7 @@ import { CardThumb } from "../../components/widgets/CardThumb";
 import CheerfulCarnivalTeamIcon from "../../components/widgets/CheerfulCarnivalTeamIcon";
 import DegreeImage from "../../components/widgets/DegreeImage";
 import EventTrackerGraph from "./EventTrackerGraph";
+import BondsDegreeImage from "../../components/widgets/BondsDegreeImage";
 
 const useRowStyles = makeStyles((theme) => ({
   updated: {
@@ -258,38 +259,60 @@ export const LiveMobileRow: React.FC<{
         </Grid>
       </Grid>
       <Collapse in={open} timeout="auto" unmountOnExit>
-        <Grid container spacing={1}>
-          {rankingData.userProfile && (
-            <Fragment>
-              {rankingData.userProfile.honorId1 && (
-                <Grid item xs={6} sm={6}>
+        {rankingData.userProfile && !rankingData.userProfileHonors && (
+          <Grid container spacing={1}>
+            {rankingData.userProfile.honorId1 && (
+              <Grid item xs={6} sm={6}>
+                <DegreeImage
+                  honorId={rankingData.userProfile.honorId1}
+                  honorLevel={rankingData.userProfile.honorLevel1}
+                />
+              </Grid>
+            )}
+            {rankingData.userProfile.honorId2 && (
+              <Grid item xs={3} sm={6}>
+                <DegreeImage
+                  honorId={rankingData.userProfile.honorId2}
+                  honorLevel={rankingData.userProfile.honorLevel2}
+                  sub
+                />
+              </Grid>
+            )}
+            {rankingData.userProfile.honorId3 && (
+              <Grid item xs={3} sm={6}>
+                <DegreeImage
+                  honorId={rankingData.userProfile.honorId3}
+                  honorLevel={rankingData.userProfile.honorLevel3}
+                  sub
+                />
+              </Grid>
+            )}
+          </Grid>
+        )}
+        {rankingData.userProfile && rankingData.userProfileHonors && (
+          <Grid container spacing={1}>
+            {rankingData.userProfileHonors.map((honor, idx) => (
+              <Grid item xs={idx === 0 ? 6 : 3} sm={6}>
+                {honor.profileHonorType === "normal" ? (
                   <DegreeImage
-                    honorId={rankingData.userProfile.honorId1}
-                    honorLevel={rankingData.userProfile.honorLevel1}
+                    honorId={honor.honorId}
+                    honorLevel={honor.honorLevel}
+                    sub={idx !== 0}
                   />
-                </Grid>
-              )}
-              {rankingData.userProfile.honorId2 && (
-                <Grid item xs={3} sm={6}>
-                  <DegreeImage
-                    honorId={rankingData.userProfile.honorId2}
-                    honorLevel={rankingData.userProfile.honorLevel2}
-                    sub
+                ) : honor.profileHonorType === "bonds" ? (
+                  <BondsDegreeImage
+                    honorId={honor.honorId}
+                    bondsHonorWordId={honor.bondsHonorWordId}
+                    type={honor.profileHonorType}
+                    viewType={honor.bondsHonorViewType}
+                    honorLevel={honor.honorLevel}
+                    sub={idx !== 0}
                   />
-                </Grid>
-              )}
-              {rankingData.userProfile.honorId3 && (
-                <Grid item xs={3} sm={6}>
-                  <DegreeImage
-                    honorId={rankingData.userProfile.honorId3}
-                    honorLevel={rankingData.userProfile.honorLevel3}
-                    sub
-                  />
-                </Grid>
-              )}
-            </Fragment>
-          )}
-        </Grid>
+                ) : null}
+              </Grid>
+            ))}
+          </Grid>
+        )}
         <EventTrackerGraph
           rtRanking={rankingData}
           ranking={rankingData.rank as 1}
