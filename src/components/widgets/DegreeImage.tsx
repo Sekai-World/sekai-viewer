@@ -168,10 +168,10 @@ const DegreeImage: React.FC<
           {degreeRankImage && (
             <image
               href={degreeRankImage}
-              x="190"
-              y="0"
-              width="150"
-              height="78"
+              x={sub ? 30 : 190}
+              y={sub ? 42 : 0}
+              width={sub ? 120 : 150}
+              height={sub ? 38 : 78}
             />
           )}
         </svg>
