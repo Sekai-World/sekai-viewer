@@ -108,6 +108,27 @@ const DegreeImage: React.FC<
             window.isChinaMainland ? "cn" : "ww",
             region
           );
+        } else if (viewType === "reverse") {
+          getRemoteAssetURL(
+            `bonds_honor/character/chr_sd_${String(
+              gameCharas[1].gameCharacterId
+            ).padStart(2, "0")}_01_rip/chr_sd_${String(
+              gameCharas[1].gameCharacterId
+            ).padStart(2, "0")}_01.webp`,
+            setSdLeft,
+            window.isChinaMainland ? "cn" : "ww",
+            region
+          );
+          getRemoteAssetURL(
+            `bonds_honor/character/chr_sd_${String(
+              gameCharas[0].gameCharacterId
+            ).padStart(2, "0")}_01_rip/chr_sd_${String(
+              gameCharas[0].gameCharacterId
+            ).padStart(2, "0")}_01.webp`,
+            setSdRight,
+            window.isChinaMainland ? "cn" : "ww",
+            region
+          );
         }
       }
       return () => {
@@ -121,93 +142,75 @@ const DegreeImage: React.FC<
         <svg
           style={style}
           xmlns="http://www.w3.org/2000/svg"
-          viewBox={sub ? "0 0 164 80" : "0 0 364 80"}
+          viewBox={sub ? "0 0 180 80" : "0 0 380 80"}
         >
           {/* mask */}
           <defs>
             <mask id="rounded-rect">
-              <rect x="2" y="0" height={80} width={360} rx={40} fill="white" />
+              <rect x="10" y="0" height={80} width={360} rx={40} fill="white" />
             </mask>
           </defs>
-          {/* left bg */}
-          <rect
-            href={sdLeft}
-            x="0"
-            y="0"
-            height="80"
-            width="182"
+          <svg
+            style={style}
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox={sub ? "0 0 180 80" : "0 0 380 80"}
             mask="url(#rounded-rect)"
-            fill={
-              viewType === "normal"
-                ? gameCharas[0].colorCode
-                : gameCharas[1].colorCode
-            }
-          />
-          {/* right bg */}
-          <rect
-            href={sdLeft}
-            x="182"
-            y="0"
-            height="80"
-            width="182"
-            mask="url(#rounded-rect)"
-            fill={
-              viewType === "normal"
-                ? gameCharas[1].colorCode
-                : gameCharas[0].colorCode
-            }
-          />
-          {/* inner frame */}
-          <rect
-            x="9"
-            y="7"
-            height={66}
-            width={346}
-            rx={33}
-            stroke="white"
-            strokeWidth={8}
-            fillOpacity={0}
-          />
-          {/* left character */}
-          <image
-            href={sdLeft}
-            x="-5"
-            y="-55"
-            height="160"
-            width="160"
-            mask="url(#rounded-rect)"
-          />
-          {/* right character */}
-          <image
-            href={sdRight}
-            x="210"
-            y="-55"
-            height="160"
-            width="160"
-            mask="url(#rounded-rect)"
-          />
-          {/* word */}
-          <image
-            href={wordImage}
-            x="0"
-            y="0"
-            height="80"
-            width="364"
-            mask="url(#rounded-rect)"
-          />
-          {/* degree level */}
-          {!!honorLevel &&
-            honor.levels.length > 1 &&
-            Array.from({ length: honorLevel }).map((_, idx) => (
-              <image
-                key={idx}
-                href={degreeLevelIcon}
-                x={54 + idx * 16}
-                y="64"
-                height="16"
-                width="16"
-              />
-            ))}
+          >
+            {/* left bg */}
+            <rect
+              x="0"
+              y="0"
+              height="80"
+              width="190"
+              fill={
+                viewType === "normal"
+                  ? gameCharas[0].colorCode
+                  : gameCharas[1].colorCode
+              }
+            />
+            {/* right bg */}
+            <rect
+              x="190"
+              y="0"
+              height="80"
+              width="190"
+              fill={
+                viewType === "normal"
+                  ? gameCharas[1].colorCode
+                  : gameCharas[0].colorCode
+              }
+            />
+            {/* inner frame */}
+            <rect
+              x="16"
+              y="6"
+              height={68}
+              width={348}
+              rx={34}
+              stroke="white"
+              strokeWidth={8}
+              fillOpacity={0}
+            />
+            {/* left character */}
+            <image href={sdLeft} x="0" y="-55" height="160" width="160" />
+            {/* right character */}
+            <image href={sdRight} x="218" y="-55" height="160" width="160" />
+            {/* word */}
+            <image href={wordImage} x="0" y="0" height="80" width="380" />
+            {/* degree level */}
+            {!!honorLevel &&
+              honor.levels.length > 1 &&
+              Array.from({ length: honorLevel }).map((_, idx) => (
+                <image
+                  key={idx}
+                  href={degreeLevelIcon}
+                  x={54 + idx * 16}
+                  y="64"
+                  height="16"
+                  width="16"
+                />
+              ))}
+          </svg>
           {/* frame */}
           <image
             href={
@@ -218,15 +221,14 @@ const DegreeImage: React.FC<
             x="0"
             y="0"
             height="80"
-            width={sub ? 164 : 364}
-            mask="url(#rounded-rect)"
+            width={sub ? 180 : 380}
           />
         </svg>
       </div>
     ) : (
       <Skeleton
         variant="rectangular"
-        width={sub ? 164 : 364}
+        width={sub ? 180 : 380}
         height="80"
       ></Skeleton>
     );
