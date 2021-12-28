@@ -243,7 +243,7 @@ function ListItemLink(
         /**
          * if true redirect to another page, otherwise used the spa routing
          */
-        target={isRedirection ? "_top" : undefined}
+        target={isRedirection ? "_blank" : undefined}
       >
         <ListItemIcon
           sx={{
