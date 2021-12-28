@@ -130,14 +130,14 @@ const DegreeImage: React.FC<
         <svg
           style={style}
           xmlns="http://www.w3.org/2000/svg"
-          viewBox={sub ? "0 0 180 80" : "0 0 380 80"}
+          viewBox={sub ? "0 0 164 80" : "0 0 364 80"}
         >
           <image
             href={degreeImage}
             x="0"
             y="0"
             height="80"
-            width={sub ? 180 : 380}
+            width={sub ? 164 : 364}
           />
           {/* frame */}
           <image
@@ -149,7 +149,7 @@ const DegreeImage: React.FC<
             x="0"
             y="0"
             height="80"
-            width={sub ? 180 : 380}
+            width={sub ? 164 : 364}
           />
           {/* degree level */}
           {!!honorLevel &&
@@ -179,7 +179,7 @@ const DegreeImage: React.FC<
     ) : (
       <Skeleton
         variant="rectangular"
-        width={sub ? 180 : 380}
+        width={sub ? 164 : 364}
         height="80"
       ></Skeleton>
     );
