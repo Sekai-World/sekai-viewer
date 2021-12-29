@@ -42,7 +42,7 @@ export default defineConfig({
         short_name: "Sekai Viewer",
         theme_color: "#298a7b",
         display: "standalone",
-        orientation: "portrait",
+        orientation: "any",
         scope: "https://sekai.best/",
         start_url: "https://sekai.best/",
         icons: [
