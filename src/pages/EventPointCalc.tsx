@@ -36,6 +36,7 @@ import {
   IEventCard,
   IEventDeckBonus,
   IEventInfo,
+  IEventRarityBonusRate,
   IGameCharaUnit,
   IMusicInfo,
   IMusicMeta,
@@ -48,6 +49,8 @@ import { useDurationI18n } from "../utils/i18nDuration";
 import { useScoreCalc } from "../utils/scoreCalc";
 import { ContentTrans } from "../components/helpers/ContentTrans";
 import TeamBuilder from "../components/blocks/TeamBuilder";
+import { ISekaiCardState } from "../stores/sekai";
+import { useCurrentEvent } from "../utils/apiClient";
 
 const difficulties: Record<number, string> = {
   0: "Easy",
@@ -87,9 +90,13 @@ const EventPointCalc: React.FC<{}> = () => {
   const [events] = useCachedData<IEventInfo>("events");
   const [eventCards] = useCachedData<IEventCard>("eventCards");
   const [eventDeckBonuses] = useCachedData<IEventDeckBonus>("eventDeckBonuses");
+  const [eventRarityBonusRates] = useCachedData<IEventRarityBonusRate>(
+    "eventRarityBonusRates"
+  );
   const [gameCharacterUnits] =
     useCachedData<IGameCharaUnit>("gameCharacterUnits");
   const [metas] = useMusicMeta();
+  const { currEvent } = useCurrentEvent();
 
   const {
     getCardSkillRates,
@@ -104,7 +111,7 @@ const EventPointCalc: React.FC<{}> = () => {
 
   const [activeStep, setActiveStep] = useState<number>(0);
   const [teamCards, setTeamCards] = useState<number[]>([]);
-  const [teamCardsStates, setTeamCardsStates] = useState<ITeamCardState[]>([]);
+  const [teamCardsStates, setTeamCardsStates] = useState<ISekaiCardState[]>([]);
   const [teamTotalPower, setTeamTotalPower] = useState<number>(0);
   const [selectedSong, setSelectedSong] =
     useState<{ id: number; name: string }>();
@@ -158,20 +165,22 @@ const EventPointCalc: React.FC<{}> = () => {
   }, [metas, musics]);
 
   useEffect(() => {
-    if (events && !selectedEvent)
+    if (currEvent && !selectedEvent) {
       setSelectedEvent({
         name: getTranslated(
-          `event_name:${events[events.length - 1].id}`,
-          events[events.length - 1].name
+          `event_name:${currEvent.eventId}`,
+          currEvent.eventJson.name
         ),
-        id: events[events.length - 1].id,
+        id: currEvent.eventId,
       });
+      setSelectedEventId(currEvent.eventId);
+    }
     if (musics && !selectedSong)
       setSelectedSong({
         name: getTranslated(`music_titles:${musics[0].id}`, musics[0].title),
         id: musics[0].id,
       });
-  }, [events, getTranslated, musics, selectedEvent, selectedSong]);
+  }, [currEvent, events, getTranslated, musics, selectedEvent, selectedSong]);
 
   useEffect(() => {
     if (
@@ -182,6 +191,7 @@ const EventPointCalc: React.FC<{}> = () => {
       gameCharacterUnits &&
       selectedEventMode === "existed"
     ) {
+      console.log("triggered");
       const eventBonuses = eventDeckBonuses
         .filter((edb) => edb.eventId === selectedEventId)!
         .map((edb) => {
@@ -243,11 +253,25 @@ const EventPointCalc: React.FC<{}> = () => {
           const cardBonus = eventCardBonuses.find(
             (ecb) => ecb.cardId === card.id
           );
-          // console.log(cardBonus);
+          let rarityBonus;
+          if (eventRarityBonusRates)
+            rarityBonus = eventRarityBonusRates.find(
+              (erbr) =>
+                erbr.cardRarityType === card.cardRarityType &&
+                erbr.masterRank === teamCard.masterRank
+            );
+          // console.log(teamCard, bonus, cardBonus, rarityBonus);
           if (!bonus) return sum;
-          else if (cardBonus)
-            return sum + bonus.bonusRate + cardBonus.bonusRate;
-          else return sum + bonus.bonusRate;
+          else sum += bonus.bonusRate;
+          if (cardBonus && cardBonus.bonusRate) sum += cardBonus.bonusRate;
+          if (
+            !cardBonus &&
+            card.characterId >= 21 &&
+            card.supportUnit === "none"
+          )
+            sum += 15; // pure VS card bonus
+          if (rarityBonus) sum += rarityBonus.bonusRate;
+          return sum;
         }, 0)
       );
     }
@@ -255,6 +279,7 @@ const EventPointCalc: React.FC<{}> = () => {
     cards,
     eventCards,
     eventDeckBonuses,
+    eventRarityBonusRates,
     events,
     gameCharacterUnits,
     selectedEventId,
@@ -528,12 +553,12 @@ const EventPointCalc: React.FC<{}> = () => {
                     <FormControlLabel
                       value="existed"
                       control={<Radio />}
-                      label={t("event_calc:eventMode.existed")}
+                      label={t("event_calc:eventMode.existed") as string}
                     />
                     <FormControlLabel
                       value="custom"
                       control={<Radio />}
-                      label={t("event_calc:eventMode.custom")}
+                      label={t("event_calc:eventMode.custom") as string}
                     />
                   </RadioGroup>
                 </FormControl>
@@ -666,17 +691,17 @@ const EventPointCalc: React.FC<{}> = () => {
                     <FormControlLabel
                       value="solo"
                       control={<Radio />}
-                      label={t("music_recommend:modeSelect.solo")}
+                      label={t("music_recommend:modeSelect.solo") as string}
                     />
                     <FormControlLabel
                       value="multi"
                       control={<Radio />}
-                      label={t("music_recommend:modeSelect.multi")}
+                      label={t("music_recommend:modeSelect.multi") as string}
                     />
                     <FormControlLabel
                       value="challenge_live"
                       control={<Radio />}
-                      label={t("common:challengeLive")}
+                      label={t("common:challengeLive") as string}
                     />
                   </RadioGroup>
                 </FormControl>
@@ -727,12 +752,12 @@ const EventPointCalc: React.FC<{}> = () => {
                     <FormControlLabel
                       value="all_songs"
                       control={<Radio />}
-                      label={t("event_calc:songMode.all_songs")}
+                      label={t("event_calc:songMode.all_songs") as string}
                     />
                     <FormControlLabel
                       value="only_one"
                       control={<Radio />}
-                      label={t("event_calc:songMode.only_one")}
+                      label={t("event_calc:songMode.only_one") as string}
                     />
                   </RadioGroup>
                 </FormControl>
