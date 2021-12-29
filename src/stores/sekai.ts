@@ -142,7 +142,7 @@ export const SekaiUserProfileHonor = types.model({
   seq: types.number,
   honorId: types.number,
   honorLevel: types.number,
-  bondsHonorWordId: types.number,
+  bondsHonorWordId: types.maybe(types.number),
   profileHonorType: types.string,
   bondsHonorViewType: types.maybe(types.string),
 });

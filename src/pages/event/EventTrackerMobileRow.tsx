@@ -302,7 +302,7 @@ export const LiveMobileRow: React.FC<{
                 ) : honor.profileHonorType === "bonds" ? (
                   <BondsDegreeImage
                     honorId={honor.honorId}
-                    bondsHonorWordId={honor.bondsHonorWordId}
+                    bondsHonorWordId={honor.bondsHonorWordId!}
                     type={honor.profileHonorType}
                     viewType={honor.bondsHonorViewType}
                     honorLevel={honor.honorLevel}
