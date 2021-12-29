@@ -36,6 +36,7 @@ import CurrentEventWidget from "../components/widgets/CurrentEventWidget";
 import AdSense from "../components/blocks/AdSenseBlock";
 import SekaiGameNews from "../components/blocks/SekaiGameNews";
 import { useRootStore } from "../stores/root";
+import Countdown from "../components/widgets/Countdown";
 
 interface IDetectResult {
   webp: number;
@@ -151,14 +152,15 @@ function Home() {
       <Container className={layoutClasses.content}>
         {/* <Typography variant="h4">Welcome to Sekai Viewer Open Beta!</Typography> */}
         <Box paddingTop="1%" paddingBottom="1%">
-          {new Date().getTime() < 1609426800000 ? (
+          {1640962800000 - new Date().getTime() < 259200000 ? (
             <Fragment>
               <Typography align="center" variant="h4">
                 {t("home:new_year_countdown")}
               </Typography>
+              <Countdown endDate={new Date(1640962800000)} />
             </Fragment>
           ) : (
-            new Date().getTime() - 1609426800000 < 259200000 && (
+            new Date().getTime() - 1640962800000 < 259200000 && (
               <Typography align="center" variant="h4">
                 {t("home:happy_new_year")}
               </Typography>
