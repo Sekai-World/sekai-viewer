@@ -1,11 +1,12 @@
 import { useCallback } from "react";
 import { sortWithIndices } from ".";
+import { ISekaiCardState } from "../stores/sekai";
 import {
   EventType,
   ICardInfo,
   IMusicMeta,
   ISkillInfo,
-  ITeamCardState,
+  // ITeamCardState,
 } from "../types";
 
 const boostRate: Record<number, number> = {
@@ -24,7 +25,7 @@ const boostRate: Record<number, number> = {
 
 export function useScoreCalc() {
   const getCardSkillRate = useCallback(
-    (cards: ICardInfo[], skills: ISkillInfo[], teamCard: ITeamCardState) => {
+    (cards: ICardInfo[], skills: ISkillInfo[], teamCard: ISekaiCardState) => {
       let skillId = cards.filter((it) => it.id === teamCard.cardId)[0].skillId;
       let skill = skills.filter((it) => it.id === skillId)[0];
       let scoreSkill = skill.skillEffects.filter((it) =>
@@ -38,7 +39,11 @@ export function useScoreCalc() {
     []
   );
   const getCardSkillRates = useCallback(
-    (cards: ICardInfo[], skills: ISkillInfo[], teamCards: ITeamCardState[]) => {
+    (
+      cards: ICardInfo[],
+      skills: ISkillInfo[],
+      teamCards: ISekaiCardState[]
+    ) => {
       let skillRates: number[] = [];
       teamCards.forEach((it) => {
         skillRates.push(getCardSkillRate(cards, skills, it));

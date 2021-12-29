@@ -54,7 +54,11 @@ import { useCharaName } from "../../utils/i18n";
 import { attrIconMap } from "../../utils/resources";
 import { useRootStore } from "../../stores/root";
 import { observer } from "mobx-react-lite";
-import { ISekaiProfile, ISekaiCardTeam } from "../../stores/sekai";
+import {
+  ISekaiProfile,
+  ISekaiCardTeam,
+  ISekaiCardState,
+} from "../../stores/sekai";
 import { autorun } from "mobx";
 
 const useStyle = makeStyles((theme) => ({
@@ -78,10 +82,10 @@ const useStyle = makeStyles((theme) => ({
 
 const TeamBuilder: React.FC<{
   teamCards: number[];
-  teamCardsStates: ITeamCardState[];
+  teamCardsStates: ISekaiCardState[];
   teamTotalPower: number;
   setTeamCards: React.Dispatch<React.SetStateAction<number[]>>;
-  setTeamCardsStates: React.Dispatch<React.SetStateAction<ITeamCardState[]>>;
+  setTeamCardsStates: React.Dispatch<React.SetStateAction<ISekaiCardState[]>>;
   setTeamTotalPower: React.Dispatch<React.SetStateAction<number>>;
 }> = observer(
   ({
@@ -135,7 +139,7 @@ const TeamBuilder: React.FC<{
       useState<boolean>(false);
     const [addCardDialogVisible, setAddCardDialogVisible] =
       useState<boolean>(false);
-    const [editingCard, setEditingCard] = useState<ITeamCardState>();
+    const [editingCard, setEditingCard] = useState<ISekaiCardState>();
     const [isSyncCardState, setIsSyncCardState] = useLocalStorage(
       "team-build-use-sekai-card-state",
       false
@@ -252,7 +256,7 @@ const TeamBuilder: React.FC<{
     );
 
     const handleClick = useCallback(
-      (event: React.MouseEvent<HTMLDivElement>, card: ITeamCardState) => {
+      (event: React.MouseEvent<HTMLDivElement>, card: ISekaiCardState) => {
         setAnchorEl(event.currentTarget);
         setEditingCard(card);
       },
@@ -671,7 +675,7 @@ const TeamBuilder: React.FC<{
               <Grid key={`team-card-${cardId}`} item xs={4} md={2}>
                 <CardThumbMedium
                   cardId={cardId}
-                  trained={teamCardsStates[index].trained}
+                  trained={!!teamCardsStates[index].trained}
                   level={teamCardsStates[index].level}
                   masterRank={teamCardsStates[index].masterRank}
                   style={{ cursor: "pointer" }}
@@ -1118,7 +1122,7 @@ const TeamBuilder: React.FC<{
                             >
                               <CardThumb
                                 cardId={cardId}
-                                trained={team.teamCardsStates[0].trained}
+                                trained={!!team.teamCardsStates[0].trained}
                               />
                             </Grid>
                           ))}
@@ -1220,7 +1224,7 @@ const TeamBuilder: React.FC<{
                 {editingCard.trainable && (
                   <Grid item>
                     <FormControlLabel
-                      control={<Switch checked={editingCard.trained} />}
+                      control={<Switch checked={!!editingCard.trained} />}
                       label={t("card:trained") as string}
                       onChange={(e, checked) =>
                         handleChange(checked, "trained")
@@ -1230,7 +1234,7 @@ const TeamBuilder: React.FC<{
                 )}
                 <Grid item>
                   <FormControlLabel
-                    control={<Switch checked={editingCard.story1Unlock} />}
+                    control={<Switch checked={!!editingCard.story1Unlock} />}
                     label={t("card:sideStory1Unlocked") as string}
                     onChange={(e, checked) =>
                       handleChange(checked, "story1Unlock")
@@ -1239,7 +1243,7 @@ const TeamBuilder: React.FC<{
                 </Grid>
                 <Grid item>
                   <FormControlLabel
-                    control={<Switch checked={editingCard.story2Unlock} />}
+                    control={<Switch checked={!!editingCard.story2Unlock} />}
                     label={t("card:sideStory2Unlocked") as string}
                     onChange={(e, checked) =>
                       handleChange(checked, "story2Unlock")

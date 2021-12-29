@@ -1,4 +1,4 @@
-import { ISekaiUserProfileHonor } from "./stores/sekai";
+import { ISekaiCardState, ISekaiUserProfileHonor } from "./stores/sekai";
 
 export type ContentTransModeType = "original" | "translated" | "both";
 export type DisplayModeType = "dark" | "light" | "auto";
@@ -529,7 +529,7 @@ export interface ITeamCardState {
 export interface ITeamBuild {
   id?: number;
   teamCards: number[];
-  teamCardsStates: ITeamCardState[];
+  teamCardsStates: ISekaiCardState[];
   teamTotalPower: number;
 }
 
@@ -1033,7 +1033,7 @@ export interface IEventCard {
   id: number;
   cardId: number;
   eventId: number;
-  bonusRate: number;
+  bonusRate?: number;
 }
 
 export interface IGachaCeilItem {
@@ -1378,4 +1378,11 @@ export interface IBondsReward {
   bondsRewardType: string;
   resourceBoxId: number;
   description: string;
+}
+
+export interface IEventRarityBonusRate {
+  id: number;
+  cardRarityType: string;
+  masterRank: number;
+  bonusRate: number;
 }
