@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.2.0...v1.2.1) (2021-12-29)
+
+
+### Bug Fixes
+
+* **home:** :bug: service worker reload prompt wrong location ([44e83ad](https://github.com/Sekai-World/sekai-viewer/commits/44e83add65905526eb9ec343bd05c7044e473da1))
+* **tools:** :bug: event pt calc wrong bonus rate ([2240434](https://github.com/Sekai-World/sekai-viewer/commits/2240434226c2e6863b23e3c7cc5290dce11d88d2)), closes [#353](https://github.com/Sekai-World/sekai-viewer/issues/353)
+
 ## [1.2.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.1.8...v1.2.0) (2021-12-28)
 
 
