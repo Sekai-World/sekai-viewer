@@ -792,7 +792,6 @@ const DrawerContent: React.FC<{
           )}
         </Collapse>
       </List>
-      <ReloadPrompt />
     </div>
   );
 };
@@ -1193,6 +1192,7 @@ const AppInner = observer((props: { theme: Theme }) => {
         onClose={() => setIsSettingsOpen(false)}
       /> */}
       </div>
+      <ReloadPrompt />
     </SnackbarProvider>
   );
 });

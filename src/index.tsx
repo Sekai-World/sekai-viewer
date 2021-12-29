@@ -10,7 +10,7 @@ import { initGlobalI18n } from "./utils/i18n";
 import "./index.css";
 import Axios from "axios";
 import localforage from "localforage";
-import { UserMetadatumModel, UserModel } from "./strapi-model";
+// import { UserMetadatumModel, UserModel } from "./strapi-model";
 import AppSkeleton from "./pages/AppSkeleton";
 import { rootStore, RootStoreProvider } from "./stores/root";
 
