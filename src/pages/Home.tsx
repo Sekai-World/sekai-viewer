@@ -157,6 +157,7 @@ function Home() {
               {t("home:happy_new_year")}
             </Typography>
           ) : (
+            1640962800000 - new Date().getTime() > 0 &&
             1640962800000 - new Date().getTime() < 259200000 && (
               <Fragment>
                 <Typography align="center" variant="h4">
