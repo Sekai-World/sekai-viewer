@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.2.3...v1.2.4) (2021-12-31)
+
+
+### Bug Fixes
+
+* **home:** :bug: countdown time bug ([e7754b9](https://github.com/Sekai-World/sekai-viewer/commits/e7754b90d4069853d7871de733e20f6f952e1ce2))
+
 ### [1.2.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.2.2...v1.2.3) (2021-12-31)
 
 
