@@ -152,18 +152,18 @@ function Home() {
       <Container className={layoutClasses.content}>
         {/* <Typography variant="h4">Welcome to Sekai Viewer Open Beta!</Typography> */}
         <Box paddingTop="1%" paddingBottom="1%">
-          {1640962800000 - new Date().getTime() < 259200000 ? (
-            <Fragment>
-              <Typography align="center" variant="h4">
-                {t("home:new_year_countdown")}
-              </Typography>
-              <Countdown endDate={new Date(1640962800000)} />
-            </Fragment>
+          {new Date().getTime() - 1640962800000 < 259200000 ? (
+            <Typography align="center" variant="h4">
+              {t("home:happy_new_year")}
+            </Typography>
           ) : (
-            new Date().getTime() - 1640962800000 < 259200000 && (
-              <Typography align="center" variant="h4">
-                {t("home:happy_new_year")}
-              </Typography>
+            1640962800000 - new Date().getTime() < 259200000 && (
+              <Fragment>
+                <Typography align="center" variant="h4">
+                  {t("home:new_year_countdown")}
+                </Typography>
+                <Countdown endDate={new Date(1640962800000)} />
+              </Fragment>
             )
           )}
         </Box>
@@ -226,9 +226,17 @@ function Home() {
                 width="1500"
                 height="500"
               />
+            ) : new Date().getTime() - 1640962800000 < 259200000 ? (
+              <img
+                src={`/images/banner-new-year-2022.png`}
+                alt="banner"
+                style={{ width: "100%", height: "auto" }}
+                width="1500"
+                height="500"
+              />
             ) : (
               <img
-                src={`/images/banner.png`}
+                src={`/images/banner-new.png`}
                 alt="banner"
                 style={{ width: "100%", height: "auto" }}
                 width="1500"
