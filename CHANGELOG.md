@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.2.2...v1.2.3) (2021-12-31)
+
+
+### Refactors
+
+* **home:** :lipstick: new banners ([6cc93f9](https://github.com/Sekai-World/sekai-viewer/commits/6cc93f90420dd67347a1c2ca7ecaaafbc7809cf2))
+
 ### [1.2.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.2.1...v1.2.2) (2021-12-29)
 
 
