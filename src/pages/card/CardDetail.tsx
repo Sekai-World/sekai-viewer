@@ -32,6 +32,8 @@ import {
   ICardInfo,
   ICardRarity,
   ICharacterRank,
+  IEventCard,
+  IEventInfo,
   IGameChara,
   ISkillInfo,
   IUnitProfile,
@@ -119,6 +121,8 @@ const CardDetail: React.FC<{}> = observer(() => {
   const [charaRanks] = useCachedData<ICharacterRank>("characterRanks");
   const [skills] = useCachedData<ISkillInfo>("skills");
   const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
+  const [eventsCache] = useCachedData<IEventInfo>("events");
+  const [eventCardsCache] = useCachedData<IEventCard>("eventCards");
 
   const { cardId } = useParams<{ cardId: string }>();
 
@@ -138,6 +142,8 @@ const CardDetail: React.FC<{}> = observer(() => {
   // const [maxCardRank, setMaxCardRank] = useState<number>(0);
   const [gachaPhraseUrl, setGachaPhraseUrl] = useState("");
   const [cardCommentId, setCardCommentId] = useState<number>(0);
+
+  const [event, setEvent] = useState<IEventInfo>();
 
   const isBirthdayCard = useMemo(
     () => card?.cardRarityType === "rarity_birthday",
@@ -237,7 +243,11 @@ const CardDetail: React.FC<{}> = observer(() => {
       skills &&
       skills.length &&
       episodes &&
-      episodes.length
+      episodes.length &&
+      eventsCache &&
+      eventsCache.length &&
+      eventCardsCache &&
+      eventCardsCache.length
     ) {
       const _card = cards.find((elem) => elem.id === Number(cardId))!;
       const _rarityInfo = _card.cardRarityType
@@ -270,8 +280,17 @@ const CardDetail: React.FC<{}> = observer(() => {
             window.isChinaMainland ? "cn" : "minio"
           );
       }
+      const _eventCards = eventCardsCache.filter(
+        (elem) => elem.cardId === Number(cardId)
+      );
+      if (_eventCards && _eventCards.length)
+        setEvent(
+          eventsCache.find((elem) => elem.id === Number(_eventCards[0].eventId))
+        );
     }
   }, [
+    eventsCache,
+    eventCardsCache,
     setCard,
     cards,
     cardId,
@@ -722,6 +741,33 @@ const CardDetail: React.FC<{}> = observer(() => {
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
+          {event ? (
+            // TODO: add a Link navigating to ...
+            <Fragment>
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Grid item>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("common:event")}
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <ContentTrans
+                    contentKey={`event_name:${event.id}`}
+                    original={event.name}
+                    originalProps={{ align: "right" }}
+                    translatedProps={{ align: "right" }}
+                  />
+                </Grid>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
+            </Fragment>
+          ) : null}
           <Grid
             container
             direction="row"
