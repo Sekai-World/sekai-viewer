@@ -742,7 +742,6 @@ const CardDetail: React.FC<{}> = observer(() => {
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
           {event ? (
-            // TODO: add a Link navigating to ...
             <Fragment>
               <Grid
                 container
@@ -757,12 +756,17 @@ const CardDetail: React.FC<{}> = observer(() => {
                   </Typography>
                 </Grid>
                 <Grid item>
-                  <ContentTrans
-                    contentKey={`event_name:${event.id}`}
-                    original={event.name}
-                    originalProps={{ align: "right" }}
-                    translatedProps={{ align: "right" }}
-                  />
+                  <Link
+                    to={`/event/${event.id}`}
+                    className={interactiveClasses.noDecoration}
+                  >
+                    <ContentTrans
+                      contentKey={`event_name:${event.id}`}
+                      original={event.name}
+                      originalProps={{ align: "right" }}
+                      translatedProps={{ align: "right" }}
+                    />
+                  </Link>
                 </Grid>
               </Grid>
               <Divider style={{ margin: "1% 0" }} />
