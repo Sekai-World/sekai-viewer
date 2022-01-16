@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.5](https://github.com/Sekai-World/sekai-viewer/compare/v1.2.4...v1.2.5) (2022-01-16)
+
+
+### Features
+
+* **card:** :sparkles: add correlating event title entry ([3397098](https://github.com/Sekai-World/sekai-viewer/commits/3397098aa98b73ee27c3260e558561618f410c9f)), closes [#361](https://github.com/Sekai-World/sekai-viewer/issues/361)
+* **cards:** add link to corr event detail page ([eea440a](https://github.com/Sekai-World/sekai-viewer/commits/eea440a4ebdd523ec2870e314fc678c3ab1f8278))
+
+
+### Bug Fixes
+
+* **user:** :bug: wrong jwt token set function usage ([d235efd](https://github.com/Sekai-World/sekai-viewer/commits/d235efd641d3d4aae9d14fc23b16c13bb3da146f))
+
 ### [1.2.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.2.3...v1.2.4) (2021-12-31)
 
 
