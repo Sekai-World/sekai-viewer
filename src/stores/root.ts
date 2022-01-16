@@ -30,6 +30,9 @@ const Root = types
       self.user.logout();
       self.sekai.logout();
     },
+    setJwtToken(newToken: string) {
+      self.user.setToken(newToken);
+    },
   }));
 export interface IRoot extends Instance<typeof Root> {}
 

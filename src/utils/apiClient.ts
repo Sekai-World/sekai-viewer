@@ -77,7 +77,7 @@ export function useStrapi(token?: string, region?: ServerRegion) {
 
             localStorage.setItem("refreshToken", refresh);
             localStorage.setItem("authToken", jwt);
-            root.user.token = jwt;
+            root.setJwtToken(jwt);
             _token.current = jwt;
 
             originalRequest.headers.authorization = `Bearer ${jwt}`;
@@ -106,7 +106,7 @@ export function useStrapi(token?: string, region?: ServerRegion) {
     );
 
     return axios;
-  }, [region]);
+  }, [region, root]);
 
   return {
     postLoginLocal: useCallback(
