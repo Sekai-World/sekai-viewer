@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.6](https://github.com/Sekai-World/sekai-viewer/compare/v1.2.5...v1.2.6) (2022-01-26)
+
+
+### Bug Fixes
+
+* **musicRecommend:** scroll-to-top button overlapped with content ([425802e](https://github.com/Sekai-World/sekai-viewer/commits/425802e0e07aba465576a404042f7dc15aab9d12))
+* **tools:** :lipstick: make scroll-to-top button not overlapping content in event planner ([f544716](https://github.com/Sekai-World/sekai-viewer/commits/f544716d6b77871a7709752b1fbb11674061bd15))
+
+
+### Refactors
+
+* **tools:** :rotating_light: remove warnings in music recommender ([f7ae04c](https://github.com/Sekai-World/sekai-viewer/commits/f7ae04caa6b7b1f5747ee8d4303cc9dba1f527d8))
+
 ### [1.2.5](https://github.com/Sekai-World/sekai-viewer/compare/v1.2.4...v1.2.5) (2022-01-16)
 
 
