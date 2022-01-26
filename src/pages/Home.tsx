@@ -194,6 +194,22 @@ function Home() {
                 width="1500"
                 height="500"
               />
+            ) : jpTime === "1/27" ? (
+              <img
+                src={`/images/banner-mafuyu.png`}
+                alt="banner"
+                style={{ width: "100%", height: "auto" }}
+                width="1500"
+                height="500"
+              />
+            ) : jpTime === "1/30" ? (
+              <img
+                src={`/images/banner-luka.png`}
+                alt="banner"
+                style={{ width: "100%", height: "auto" }}
+                width="1500"
+                height="500"
+              />
             ) : jpTime === "7/20" ? (
               <img
                 src={`/images/banner-nene.jpg`}
@@ -222,14 +238,6 @@ function Home() {
               (splitJPTime[0] === "10" && Number(splitJPTime[1]) < 16) ? (
               <img
                 src={`/images/banner-anni.jpg`}
-                alt="banner"
-                style={{ width: "100%", height: "auto" }}
-                width="1500"
-                height="500"
-              />
-            ) : new Date().getTime() - 1640962800000 < 259200000 ? (
-              <img
-                src={`/images/banner-new-year-2022.png`}
                 alt="banner"
                 style={{ width: "100%", height: "auto" }}
                 width="1500"
