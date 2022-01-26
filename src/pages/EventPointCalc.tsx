@@ -41,7 +41,7 @@ import {
   IMusicInfo,
   IMusicMeta,
   ISkillInfo,
-  ITeamCardState,
+  // ITeamCardState,
 } from "../types.d";
 import { filterMusicMeta, useCachedData, useMusicMeta } from "../utils";
 import { useAssetI18n } from "../utils/i18n";
@@ -515,132 +515,139 @@ const EventPointCalc: React.FC<{}> = () => {
       <Alert severity="warning" className={layoutClasses.alert}>
         {t("common:betaIndicator")}
       </Alert>
-      {/* <Container> */}
-      <Stepper
-        activeStep={activeStep}
-        orientation="vertical"
-        sx={{ backgroundColor: "inherit" }}
-      >
-        <Step>
-          <StepLabel>{t("music_recommend:buildTeam.label")}</StepLabel>
-          <StepContent>
-            <Typography>{t("music_recommend:buildTeam.desc")}</Typography>
-            <TeamBuilder
-              teamCards={teamCards}
-              teamCardsStates={teamCardsStates}
-              teamTotalPower={teamTotalPower}
-              setTeamCards={setTeamCards}
-              setTeamCardsStates={setTeamCardsStates}
-              setTeamTotalPower={setTeamTotalPower}
-            />
-            <br />
-            <StepButtons nextDisabled={!teamCards.length} />
-          </StepContent>
-        </Step>
-        <Step>
-          <StepLabel>{t("event_calc:eventData.label")}</StepLabel>
-          <StepContent>
-            {/* <Typography>{t("event_calc:gameData.desc")}</Typography> */}
-            <Grid container spacing={1}>
-              <Grid item xs={12}>
-                <FormControl component="fieldset">
-                  <FormLabel component="legend">{t("common:event")}</FormLabel>
-                  <RadioGroup
-                    value={selectedEventMode}
-                    onChange={(e) => setSelectedEventMode(e.target.value)}
-                    row
-                  >
-                    <FormControlLabel
-                      value="existed"
-                      control={<Radio />}
-                      label={t("event_calc:eventMode.existed") as string}
-                    />
-                    <FormControlLabel
-                      value="custom"
-                      control={<Radio />}
-                      label={t("event_calc:eventMode.custom") as string}
-                    />
-                  </RadioGroup>
-                </FormControl>
-              </Grid>
-              {selectedEventMode === "existed" && (
+      <Container className={layoutClasses.content}>
+        <Stepper
+          activeStep={activeStep}
+          orientation="vertical"
+          sx={{ backgroundColor: "inherit" }}
+        >
+          <Step>
+            <StepLabel>{t("music_recommend:buildTeam.label")}</StepLabel>
+            <StepContent>
+              <Typography>{t("music_recommend:buildTeam.desc")}</Typography>
+              <TeamBuilder
+                teamCards={teamCards}
+                teamCardsStates={teamCardsStates}
+                teamTotalPower={teamTotalPower}
+                setTeamCards={setTeamCards}
+                setTeamCardsStates={setTeamCardsStates}
+                setTeamTotalPower={setTeamTotalPower}
+              />
+              <br />
+              <StepButtons nextDisabled={!teamCards.length} />
+            </StepContent>
+          </Step>
+          <Step>
+            <StepLabel>{t("event_calc:eventData.label")}</StepLabel>
+            <StepContent>
+              {/* <Typography>{t("event_calc:gameData.desc")}</Typography> */}
+              <Grid container spacing={1}>
                 <Grid item xs={12}>
-                  <Grid container spacing={1}>
-                    <Grid item xs={12} md={4} lg={3}>
-                      <Autocomplete
-                        options={(events || [])
-                          .slice()
-                          .reverse()
-                          // .filter((ev) => ev.startAt <= new Date().getTime())
-                          .map((ev) => ({
-                            name: getTranslated(`event_name:${ev.id}`, ev.name),
-                            id: ev.id,
-                          }))}
-                        getOptionLabel={(option) => option.name}
-                        isOptionEqualToValue={(option, value) =>
-                          option.id === value.id
-                        }
-                        renderInput={(params) => (
-                          <TextField {...params} label={t("common:event")} />
-                        )}
-                        value={selectedEvent}
-                        autoComplete
-                        onChange={(_, value) => {
-                          if (!!value) {
-                            setSelectedEvent(value);
-                            setSelectedEventId(value.id as number);
-                          }
-                        }}
+                  <FormControl component="fieldset">
+                    <FormLabel component="legend">
+                      {t("common:event")}
+                    </FormLabel>
+                    <RadioGroup
+                      value={selectedEventMode}
+                      onChange={(e) => setSelectedEventMode(e.target.value)}
+                      row
+                    >
+                      <FormControlLabel
+                        value="existed"
+                        control={<Radio />}
+                        label={t("event_calc:eventMode.existed") as string}
                       />
-                    </Grid>
-                  </Grid>
+                      <FormControlLabel
+                        value="custom"
+                        control={<Radio />}
+                        label={t("event_calc:eventMode.custom") as string}
+                      />
+                    </RadioGroup>
+                  </FormControl>
                 </Grid>
-              )}
-              {selectedEventMode === "custom" && (
-                <Grid item xs={12}>
-                  <Grid container spacing={1}>
-                    <Grid item xs={12} md={4} lg={3}>
-                      <FormControl style={{ width: "100%" }}>
-                        <InputLabel id="event-select-label">
-                          {t("common:type")}
-                        </InputLabel>
-                        <Select
-                          labelId="event-select-label"
-                          value={customEventType}
-                          onChange={(e, v) =>
-                            setCustomEventType(e.target.value as EventType)
+                {selectedEventMode === "existed" && (
+                  <Grid item xs={12}>
+                    <Grid container spacing={1}>
+                      <Grid item xs={12} md={4} lg={3}>
+                        <Autocomplete
+                          options={(events || [])
+                            .slice()
+                            .reverse()
+                            // .filter((ev) => ev.startAt <= new Date().getTime())
+                            .map((ev) => ({
+                              name: getTranslated(
+                                `event_name:${ev.id}`,
+                                ev.name
+                              ),
+                              id: ev.id,
+                            }))}
+                          getOptionLabel={(option) => option.name}
+                          isOptionEqualToValue={(option, value) =>
+                            option.id === value.id
                           }
-                          input={<Input />}
-                        >
-                          <MenuItem value="marathon">
-                            {t(`event:type.marathon`)}
-                          </MenuItem>
-                          <MenuItem value="cheerful_carnival">
-                            {t(`event:type.cheerful_carnival`)}
-                          </MenuItem>
-                        </Select>
-                      </FormControl>
+                          renderInput={(params) => (
+                            <TextField {...params} label={t("common:event")} />
+                          )}
+                          value={selectedEvent}
+                          autoComplete
+                          onChange={(_, value) => {
+                            if (!!value) {
+                              setSelectedEvent(value);
+                              setSelectedEventId(value.id as number);
+                            }
+                          }}
+                        />
+                      </Grid>
                     </Grid>
                   </Grid>
+                )}
+                {selectedEventMode === "custom" && (
+                  <Grid item xs={12}>
+                    <Grid container spacing={1}>
+                      <Grid item xs={12} md={4} lg={3}>
+                        <FormControl style={{ width: "100%" }}>
+                          <InputLabel id="event-select-label">
+                            {t("common:type")}
+                          </InputLabel>
+                          <Select
+                            labelId="event-select-label"
+                            value={customEventType}
+                            onChange={(e, v) =>
+                              setCustomEventType(e.target.value as EventType)
+                            }
+                            input={<Input />}
+                          >
+                            <MenuItem value="marathon">
+                              {t(`event:type.marathon`)}
+                            </MenuItem>
+                            <MenuItem value="cheerful_carnival">
+                              {t(`event:type.cheerful_carnival`)}
+                            </MenuItem>
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                )}
+                <Grid item xs={12} sm={6} lg={3} xl={2}>
+                  <TextField
+                    label={t("event_calc:gameData.energyDrink")}
+                    type="number"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    inputProps={{
+                      min: "0",
+                      max: "10",
+                    }}
+                    value={energyDrinkCount}
+                    onChange={(e) =>
+                      setEnergyDrinkCount(Number(e.target.value))
+                    }
+                    style={{ width: "100%" }}
+                  />
                 </Grid>
-              )}
-              <Grid item xs={12} sm={6} lg={3} xl={2}>
-                <TextField
-                  label={t("event_calc:gameData.energyDrink")}
-                  type="number"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  inputProps={{
-                    min: "0",
-                    max: "10",
-                  }}
-                  value={energyDrinkCount}
-                  onChange={(e) => setEnergyDrinkCount(Number(e.target.value))}
-                  style={{ width: "100%" }}
-                />
-              </Grid>
-              {/* <Grid
+                {/* <Grid
                 item
                 xs={12}
                 sm={6}
@@ -663,350 +670,352 @@ const EventPointCalc: React.FC<{}> = () => {
                   style={{ width: "100%" }}
                 />
               </Grid> */}
-              <Grid item xs={12} sm={6} lg={3} xl={2}>
-                <TextField
-                  label={t("event_calc:gameData.eventBonusRate")}
-                  type="number"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  inputProps={{
-                    min: "0",
-                    max: "250",
-                  }}
-                  value={eventBonusRate}
-                  onChange={(e) => setEventBonusRate(Number(e.target.value))}
-                  style={{ width: "100%" }}
-                  disabled={selectedEventMode === "existed"}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <FormControl component="fieldset">
-                  <FormLabel component="legend">{t("common:mode")}</FormLabel>
-                  <RadioGroup
-                    value={playMode}
-                    onChange={(e) => setPlayMode(e.target.value)}
-                    row
-                  >
-                    <FormControlLabel
-                      value="solo"
-                      control={<Radio />}
-                      label={t("music_recommend:modeSelect.solo") as string}
-                    />
-                    <FormControlLabel
-                      value="multi"
-                      control={<Radio />}
-                      label={t("music_recommend:modeSelect.multi") as string}
-                    />
-                    <FormControlLabel
-                      value="challenge_live"
-                      control={<Radio />}
-                      label={t("common:challengeLive") as string}
-                    />
-                  </RadioGroup>
-                </FormControl>
-              </Grid>
-              {playMode === "multi" && (
-                <Grid item xs={12}>
-                  <Grid container spacing={1}>
-                    <Grid item xs={12} sm={6} lg={3} xl={2}>
-                      <TextField
-                        label={t("event_calc:gameData.teamAvgPower")}
-                        type="number"
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                        inputProps={{
-                          min: "0",
-                        }}
-                        value={teamAvgPower}
-                        onChange={(e) =>
-                          setTeamAvgPower(Number(e.target.value))
-                        }
-                        style={{ width: "100%" }}
-                      />
-                    </Grid>
-                  </Grid>
-                </Grid>
-              )}
-            </Grid>
-            <br />
-            <StepButtons />
-          </StepContent>
-        </Step>
-        <Step>
-          <StepLabel>{t("event_calc:songSelect.label")}</StepLabel>
-          <StepContent>
-            {/* <Typography>{t("event_calc:songSelect.desc")}</Typography> */}
-            <Grid container spacing={1}>
-              <Grid item xs={12}>
-                <FormControl component="fieldset">
-                  <FormLabel component="legend">
-                    {t("event_calc:songMode.label")}
-                  </FormLabel>
-                  <RadioGroup
-                    value={selectedMusicMode}
-                    onChange={(e) => setSelectedMusicMode(e.target.value)}
-                    row
-                  >
-                    <FormControlLabel
-                      value="all_songs"
-                      control={<Radio />}
-                      label={t("event_calc:songMode.all_songs") as string}
-                    />
-                    <FormControlLabel
-                      value="only_one"
-                      control={<Radio />}
-                      label={t("event_calc:songMode.only_one") as string}
-                    />
-                  </RadioGroup>
-                </FormControl>
-              </Grid>
-              {selectedMusicMode === "only_one" && (
-                <Grid item xs={12}>
-                  <Grid container spacing={1}>
-                    <Grid item xs={12} md={4} lg={3}>
-                      <Autocomplete
-                        options={(musics || []).slice().map((music) => ({
-                          name: getTranslated(
-                            `music_titles:${music.id}`,
-                            music.title
-                          ),
-                          id: music.id,
-                        }))}
-                        getOptionLabel={(option) => option.name}
-                        isOptionEqualToValue={(option, value) =>
-                          option.id === value.id
-                        }
-                        renderInput={(params) => (
-                          <TextField {...params} label={t("common:music")} />
-                        )}
-                        value={selectedSong}
-                        autoComplete
-                        onChange={(_, value) => {
-                          if (!!value) {
-                            setSelectedSong(value);
-                            setSelectedSongId(value.id as number);
-                          }
-                        }}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={4} lg={3}>
-                      <Autocomplete
-                        options={Object.entries(difficulties).map(
-                          ([key, value]) => ({
-                            name: value,
-                            id: Number(key),
-                          })
-                        )}
-                        getOptionLabel={(option) => option.name}
-                        isOptionEqualToValue={(option, value) =>
-                          option.id === value.id
-                        }
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            label={t("event_calc:songSelect.select.difficulty")}
-                          />
-                        )}
-                        value={selectedSongDifficulty}
-                        autoComplete
-                        onChange={(_, value) => {
-                          if (!!value) {
-                            setSelectedSongDifficulty(value);
-                          }
-                        }}
-                      />
-                    </Grid>
-                  </Grid>
-                </Grid>
-              )}
-              {selectedMusicMode === "only_one" && (
                 <Grid item xs={12} sm={6} lg={3} xl={2}>
                   <TextField
-                    label={t("event_calc:gameData.currentPoint")}
+                    label={t("event_calc:gameData.eventBonusRate")}
                     type="number"
                     InputLabelProps={{
                       shrink: true,
                     }}
                     inputProps={{
                       min: "0",
+                      max: "250",
                     }}
-                    value={currentPoint}
-                    onChange={(e) => setCurrentPoint(Number(e.target.value))}
+                    value={eventBonusRate}
+                    onChange={(e) => setEventBonusRate(Number(e.target.value))}
                     style={{ width: "100%" }}
+                    disabled={selectedEventMode === "existed"}
                   />
                 </Grid>
-              )}
-              {selectedMusicMode === "only_one" && (
-                <Grid item xs={12} sm={6} lg={3} xl={2}>
-                  <TextField
-                    label={t("event_calc:gameData.targetPoint")}
-                    type="number"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    inputProps={{
-                      min: "0",
-                    }}
-                    value={targetPoint}
-                    onChange={(e) => setTargetPoint(Number(e.target.value))}
-                    style={{ width: "100%" }}
-                  />
+                <Grid item xs={12}>
+                  <FormControl component="fieldset">
+                    <FormLabel component="legend">{t("common:mode")}</FormLabel>
+                    <RadioGroup
+                      value={playMode}
+                      onChange={(e) => setPlayMode(e.target.value)}
+                      row
+                    >
+                      <FormControlLabel
+                        value="solo"
+                        control={<Radio />}
+                        label={t("music_recommend:modeSelect.solo") as string}
+                      />
+                      <FormControlLabel
+                        value="multi"
+                        control={<Radio />}
+                        label={t("music_recommend:modeSelect.multi") as string}
+                      />
+                      <FormControlLabel
+                        value="challenge_live"
+                        control={<Radio />}
+                        label={t("common:challengeLive") as string}
+                      />
+                    </RadioGroup>
+                  </FormControl>
                 </Grid>
-              )}
-            </Grid>
-            <br />
-            <StepButtons />
-          </StepContent>
-        </Step>
-        <Step>
-          <StepLabel>{t("music_recommend:result.label")}</StepLabel>
-          <StepContent>
-            <Alert severity="info" className={layoutClasses.alert}>
-              {t("event_calc:assumption")}
-            </Alert>
-            <Button
-              disabled={activeStep === 0}
-              onClick={() => setActiveStep((s) => s - 1)}
-              variant="contained"
-            >
-              {t("common:back")}
-            </Button>
-            {selectedMusicMode === "only_one" && (
-              <Container maxWidth="md" className={layoutClasses.content}>
-                <Paper variant="outlined">
-                  <Grid container>
-                    <Grid item xs={12}>
-                      <Grid
-                        container
-                        justifyContent="space-between"
-                        className={layoutClasses.alert}
-                      >
-                        <Grid item xs={4}>
-                          <Typography
-                            align="center"
-                            className={layoutClasses.bold}
-                          >
-                            {t("event_calc:result.eventPointPerPlay")}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={4}>
-                          <Typography align="center">{eventPoint}</Typography>
-                        </Grid>
+                {playMode === "multi" && (
+                  <Grid item xs={12}>
+                    <Grid container spacing={1}>
+                      <Grid item xs={12} sm={6} lg={3} xl={2}>
+                        <TextField
+                          label={t("event_calc:gameData.teamAvgPower")}
+                          type="number"
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                          inputProps={{
+                            min: "0",
+                          }}
+                          value={teamAvgPower}
+                          onChange={(e) =>
+                            setTeamAvgPower(Number(e.target.value))
+                          }
+                          style={{ width: "100%" }}
+                        />
                       </Grid>
-                      <Divider />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Grid
-                        container
-                        justifyContent="space-between"
-                        className={layoutClasses.alert}
-                      >
-                        <Grid item xs={4}>
-                          <Typography
-                            align="center"
-                            className={layoutClasses.bold}
-                          >
-                            {t("event_calc:result.playClount")}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={4}>
-                          <Typography align="center">{needCount}</Typography>
-                        </Grid>
-                      </Grid>
-                      <Divider />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Grid
-                        container
-                        justifyContent="space-between"
-                        className={layoutClasses.alert}
-                      >
-                        <Grid item xs={4}>
-                          <Typography
-                            align="center"
-                            className={layoutClasses.bold}
-                          >
-                            {t("event_calc:result.playTime")}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={4}>
-                          <Typography align="center">
-                            {humanizeShort(needTimeSeconds * 1000, {
-                              round: true,
-                            })}
-                          </Typography>
-                        </Grid>
-                      </Grid>
-                      <Divider />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Grid
-                        container
-                        justifyContent="space-between"
-                        className={layoutClasses.alert}
-                      >
-                        <Grid item xs={4}>
-                          <Typography
-                            align="center"
-                            className={layoutClasses.bold}
-                          >
-                            {t("event_calc:result.useBoost")}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={4}>
-                          <Typography align="center">{needBoost}</Typography>
-                        </Grid>
-                      </Grid>
-                      <Divider />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Grid
-                        container
-                        justifyContent="space-between"
-                        className={layoutClasses.alert}
-                      >
-                        <Grid item xs={4}>
-                          <Typography
-                            align="center"
-                            className={layoutClasses.bold}
-                          >
-                            {t("event_calc:result.totalPoint")}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={4}>
-                          <Typography align="center">
-                            {eventPoint * needCount + currentPoint}
-                          </Typography>
-                        </Grid>
-                      </Grid>
-                      <Divider />
                     </Grid>
                   </Grid>
-                </Paper>
-              </Container>
-            )}
-            {selectedMusicMode === "all_songs" && (
-              <div style={{ height: 650 }}>
-                <DataGrid
-                  pagination
-                  autoPageSize
-                  rows={eventCalcAllSongsResult}
-                  columns={columns}
-                  disableColumnFilter
-                  disableColumnMenu
-                  disableSelectionOnClick
-                  disableColumnSelector
-                  sortModel={sortModel}
-                  onSortModelChange={setSortModel}
-                />
-              </div>
-            )}
-          </StepContent>
-        </Step>
-      </Stepper>
-      {/* </Container> */}
+                )}
+              </Grid>
+              <br />
+              <StepButtons />
+            </StepContent>
+          </Step>
+          <Step>
+            <StepLabel>{t("event_calc:songSelect.label")}</StepLabel>
+            <StepContent>
+              {/* <Typography>{t("event_calc:songSelect.desc")}</Typography> */}
+              <Grid container spacing={1}>
+                <Grid item xs={12}>
+                  <FormControl component="fieldset">
+                    <FormLabel component="legend">
+                      {t("event_calc:songMode.label")}
+                    </FormLabel>
+                    <RadioGroup
+                      value={selectedMusicMode}
+                      onChange={(e) => setSelectedMusicMode(e.target.value)}
+                      row
+                    >
+                      <FormControlLabel
+                        value="all_songs"
+                        control={<Radio />}
+                        label={t("event_calc:songMode.all_songs") as string}
+                      />
+                      <FormControlLabel
+                        value="only_one"
+                        control={<Radio />}
+                        label={t("event_calc:songMode.only_one") as string}
+                      />
+                    </RadioGroup>
+                  </FormControl>
+                </Grid>
+                {selectedMusicMode === "only_one" && (
+                  <Grid item xs={12}>
+                    <Grid container spacing={1}>
+                      <Grid item xs={12} md={4} lg={3}>
+                        <Autocomplete
+                          options={(musics || []).slice().map((music) => ({
+                            name: getTranslated(
+                              `music_titles:${music.id}`,
+                              music.title
+                            ),
+                            id: music.id,
+                          }))}
+                          getOptionLabel={(option) => option.name}
+                          isOptionEqualToValue={(option, value) =>
+                            option.id === value.id
+                          }
+                          renderInput={(params) => (
+                            <TextField {...params} label={t("common:music")} />
+                          )}
+                          value={selectedSong}
+                          autoComplete
+                          onChange={(_, value) => {
+                            if (!!value) {
+                              setSelectedSong(value);
+                              setSelectedSongId(value.id as number);
+                            }
+                          }}
+                        />
+                      </Grid>
+                      <Grid item xs={12} md={4} lg={3}>
+                        <Autocomplete
+                          options={Object.entries(difficulties).map(
+                            ([key, value]) => ({
+                              name: value,
+                              id: Number(key),
+                            })
+                          )}
+                          getOptionLabel={(option) => option.name}
+                          isOptionEqualToValue={(option, value) =>
+                            option.id === value.id
+                          }
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              label={t(
+                                "event_calc:songSelect.select.difficulty"
+                              )}
+                            />
+                          )}
+                          value={selectedSongDifficulty}
+                          autoComplete
+                          onChange={(_, value) => {
+                            if (!!value) {
+                              setSelectedSongDifficulty(value);
+                            }
+                          }}
+                        />
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                )}
+                {selectedMusicMode === "only_one" && (
+                  <Grid item xs={12} sm={6} lg={3} xl={2}>
+                    <TextField
+                      label={t("event_calc:gameData.currentPoint")}
+                      type="number"
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      inputProps={{
+                        min: "0",
+                      }}
+                      value={currentPoint}
+                      onChange={(e) => setCurrentPoint(Number(e.target.value))}
+                      style={{ width: "100%" }}
+                    />
+                  </Grid>
+                )}
+                {selectedMusicMode === "only_one" && (
+                  <Grid item xs={12} sm={6} lg={3} xl={2}>
+                    <TextField
+                      label={t("event_calc:gameData.targetPoint")}
+                      type="number"
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      inputProps={{
+                        min: "0",
+                      }}
+                      value={targetPoint}
+                      onChange={(e) => setTargetPoint(Number(e.target.value))}
+                      style={{ width: "100%" }}
+                    />
+                  </Grid>
+                )}
+              </Grid>
+              <br />
+              <StepButtons />
+            </StepContent>
+          </Step>
+          <Step>
+            <StepLabel>{t("music_recommend:result.label")}</StepLabel>
+            <StepContent>
+              <Alert severity="info" className={layoutClasses.alert}>
+                {t("event_calc:assumption")}
+              </Alert>
+              <Button
+                disabled={activeStep === 0}
+                onClick={() => setActiveStep((s) => s - 1)}
+                variant="contained"
+              >
+                {t("common:back")}
+              </Button>
+              {selectedMusicMode === "only_one" && (
+                <Container maxWidth="md" className={layoutClasses.content}>
+                  <Paper variant="outlined">
+                    <Grid container>
+                      <Grid item xs={12}>
+                        <Grid
+                          container
+                          justifyContent="space-between"
+                          className={layoutClasses.alert}
+                        >
+                          <Grid item xs={4}>
+                            <Typography
+                              align="center"
+                              className={layoutClasses.bold}
+                            >
+                              {t("event_calc:result.eventPointPerPlay")}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={4}>
+                            <Typography align="center">{eventPoint}</Typography>
+                          </Grid>
+                        </Grid>
+                        <Divider />
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Grid
+                          container
+                          justifyContent="space-between"
+                          className={layoutClasses.alert}
+                        >
+                          <Grid item xs={4}>
+                            <Typography
+                              align="center"
+                              className={layoutClasses.bold}
+                            >
+                              {t("event_calc:result.playClount")}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={4}>
+                            <Typography align="center">{needCount}</Typography>
+                          </Grid>
+                        </Grid>
+                        <Divider />
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Grid
+                          container
+                          justifyContent="space-between"
+                          className={layoutClasses.alert}
+                        >
+                          <Grid item xs={4}>
+                            <Typography
+                              align="center"
+                              className={layoutClasses.bold}
+                            >
+                              {t("event_calc:result.playTime")}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={4}>
+                            <Typography align="center">
+                              {humanizeShort(needTimeSeconds * 1000, {
+                                round: true,
+                              })}
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                        <Divider />
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Grid
+                          container
+                          justifyContent="space-between"
+                          className={layoutClasses.alert}
+                        >
+                          <Grid item xs={4}>
+                            <Typography
+                              align="center"
+                              className={layoutClasses.bold}
+                            >
+                              {t("event_calc:result.useBoost")}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={4}>
+                            <Typography align="center">{needBoost}</Typography>
+                          </Grid>
+                        </Grid>
+                        <Divider />
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Grid
+                          container
+                          justifyContent="space-between"
+                          className={layoutClasses.alert}
+                        >
+                          <Grid item xs={4}>
+                            <Typography
+                              align="center"
+                              className={layoutClasses.bold}
+                            >
+                              {t("event_calc:result.totalPoint")}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={4}>
+                            <Typography align="center">
+                              {eventPoint * needCount + currentPoint}
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                        <Divider />
+                      </Grid>
+                    </Grid>
+                  </Paper>
+                </Container>
+              )}
+              {selectedMusicMode === "all_songs" && (
+                <div style={{ height: 650 }}>
+                  <DataGrid
+                    pagination
+                    autoPageSize
+                    rows={eventCalcAllSongsResult}
+                    columns={columns}
+                    disableColumnFilter
+                    disableColumnMenu
+                    disableSelectionOnClick
+                    disableColumnSelector
+                    sortModel={sortModel}
+                    onSortModelChange={setSortModel}
+                  />
+                </div>
+              )}
+            </StepContent>
+          </Step>
+        </Stepper>
+      </Container>
     </Fragment>
   );
 };
