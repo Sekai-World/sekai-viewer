@@ -1,6 +1,7 @@
 import {
   Button,
   Chip,
+  Container,
   FormControl,
   FormControlLabel,
   IconButton,
@@ -355,138 +356,138 @@ const MusicRecommend: React.FC<{}> = () => {
       <Alert severity="warning" className={layoutClasses.alert}>
         {t("common:betaIndicator")}
       </Alert>
-      {/* <Container> */}
-      <Stepper
-        activeStep={activeStep}
-        orientation="vertical"
-        style={{ backgroundColor: "inherit" }}
-      >
-        <Step>
-          <StepLabel>{t("music_recommend:buildTeam.label")}</StepLabel>
-          <StepContent>
-            <Typography>{t("music_recommend:buildTeam.desc")}</Typography>
-            <TeamBuilder
-              teamCards={teamCards}
-              teamCardsStates={teamCardsStates}
-              teamTotalPower={teamTotalPower}
-              setTeamCards={setTeamCards}
-              setTeamCardsStates={setTeamCardsStates}
-              setTeamTotalPower={setTeamTotalPower}
-            />
-            <br />
-            <StepButtons nextDisabled={!teamCards.length} />
-          </StepContent>
-        </Step>
-        {/*
-        <Step>
-          <StepLabel>{t("music_recommend:songSelect.label")}</StepLabel>
-          <StepContent>
-            <Typography>{t("music_recommend:songSelect.desc")}</Typography>
-            <div>
-              <FormControl style={{ minWidth: 200 }}>
-                <InputLabel id="song-select-label">Selected Songs</InputLabel>
-                <Select
-                  labelId="song-select-label"
-                  multiple
-                  value={selectedSongIds}
-                  onChange={(e, v) =>
-                    setSelectedSongIds(e.target.value as number[])
-                  }
-                  input={<Input />}
-                  renderValue={(selected) => (
-                    <Grid container spacing={1}>
-                      {(selected as number[]).map((v) => {
-                        const m = musics.find((music) => music.id === v);
-                        return (
-                          <Grid item>
-                            <Chip
-                              key={v}
-                              label={getTranslated(
-                                contentTransMode,
-                                `music_titles:${v}`,
-                                m!.title
-                              )}
-                            />
-                          </Grid>
-                        );
-                      })}
-                    </Grid>
-                  )}
-                >
-                  {musics.map((music) => (
-                    <MenuItem key={`music-${music.id}`} value={music.id}>
-                      {getTranslated(
-                        `music_titles:${music.id}`,
-                        music!.title
-                      )}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </div>
-            <br />
-            <StepButtons />
-          </StepContent>
-        </Step>
-        */}
-        <Step>
-          <StepLabel>{t("music_recommend:modeSelect.label")}</StepLabel>
-          <StepContent>
-            <Typography>{t("music_recommend:modeSelect.desc")}</Typography>
-            <div>
-              <FormControl component="fieldset">
-                {/* <FormLabel component="legend">Select Mode</FormLabel> */}
-                <RadioGroup
-                  value={selectedMode}
-                  onChange={(e) => setSelectedMode(e.target.value)}
-                  row
-                >
-                  <FormControlLabel
-                    value="solo"
-                    control={<Radio />}
-                    label={t("music_recommend:modeSelect.solo")}
-                  />
-                  <FormControlLabel
-                    value="multi"
-                    control={<Radio />}
-                    label={t("music_recommend:modeSelect.multi")}
-                  />
-                </RadioGroup>
-              </FormControl>
-            </div>
-            <br />
-            <StepButtons />
-          </StepContent>
-        </Step>
-        <Step>
-          <StepLabel>{t("music_recommend:result.label")}</StepLabel>
-          <StepContent>
-            <Alert severity="info">{t("music_recommend:assumption")}</Alert>
-            <Button
-              disabled={activeStep === 0}
-              onClick={() => setActiveStep((s) => s - 1)}
-              variant="contained"
-            >
-              {t("common:back")}
-            </Button>
-            <div style={{ height: 650 }}>
-              <DataGrid
-                pagination
-                autoPageSize
-                rows={recommendResult}
-                columns={columns}
-                disableColumnFilter
-                disableColumnMenu
-                disableSelectionOnClick
-                disableColumnSelector
-                sortModel={sortModel}
-                onSortModelChange={setSortModel}
+      <Container className={layoutClasses.content}>
+        <Stepper
+          activeStep={activeStep}
+          orientation="vertical"
+          style={{ backgroundColor: "inherit" }}
+        >
+          <Step>
+            <StepLabel>{t("music_recommend:buildTeam.label")}</StepLabel>
+            <StepContent>
+              <Typography>{t("music_recommend:buildTeam.desc")}</Typography>
+              <TeamBuilder
+                teamCards={teamCards}
+                teamCardsStates={teamCardsStates}
+                teamTotalPower={teamTotalPower}
+                setTeamCards={setTeamCards}
+                setTeamCardsStates={setTeamCardsStates}
+                setTeamTotalPower={setTeamTotalPower}
               />
-            </div>
-          </StepContent>
-        </Step>
-      </Stepper>
-      {/* </Container> */}
+              <br />
+              <StepButtons nextDisabled={!teamCards.length} />
+            </StepContent>
+          </Step>
+          {/*
+          <Step>
+            <StepLabel>{t("music_recommend:songSelect.label")}</StepLabel>
+            <StepContent>
+              <Typography>{t("music_recommend:songSelect.desc")}</Typography>
+              <div>
+                <FormControl style={{ minWidth: 200 }}>
+                  <InputLabel id="song-select-label">Selected Songs</InputLabel>
+                  <Select
+                    labelId="song-select-label"
+                    multiple
+                    value={selectedSongIds}
+                    onChange={(e, v) =>
+                      setSelectedSongIds(e.target.value as number[])
+                    }
+                    input={<Input />}
+                    renderValue={(selected) => (
+                      <Grid container spacing={1}>
+                        {(selected as number[]).map((v) => {
+                          const m = musics.find((music) => music.id === v);
+                          return (
+                            <Grid item>
+                              <Chip
+                                key={v}
+                                label={getTranslated(
+                                  contentTransMode,
+                                  `music_titles:${v}`,
+                                  m!.title
+                                )}
+                              />
+                            </Grid>
+                          );
+                        })}
+                      </Grid>
+                    )}
+                  >
+                    {musics.map((music) => (
+                      <MenuItem key={`music-${music.id}`} value={music.id}>
+                        {getTranslated(
+                          `music_titles:${music.id}`,
+                          music!.title
+                        )}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </div>
+              <br />
+              <StepButtons />
+            </StepContent>
+          </Step>
+          */}
+          <Step>
+            <StepLabel>{t("music_recommend:modeSelect.label")}</StepLabel>
+            <StepContent>
+              <Typography>{t("music_recommend:modeSelect.desc")}</Typography>
+              <div>
+                <FormControl component="fieldset">
+                  {/* <FormLabel component="legend">Select Mode</FormLabel> */}
+                  <RadioGroup
+                    value={selectedMode}
+                    onChange={(e) => setSelectedMode(e.target.value)}
+                    row
+                  >
+                    <FormControlLabel
+                      value="solo"
+                      control={<Radio />}
+                      label={t("music_recommend:modeSelect.solo")}
+                    />
+                    <FormControlLabel
+                      value="multi"
+                      control={<Radio />}
+                      label={t("music_recommend:modeSelect.multi")}
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </div>
+              <br />
+              <StepButtons />
+            </StepContent>
+          </Step>
+          <Step>
+            <StepLabel>{t("music_recommend:result.label")}</StepLabel>
+            <StepContent>
+              <Alert severity="info">{t("music_recommend:assumption")}</Alert>
+              <Button
+                disabled={activeStep === 0}
+                onClick={() => setActiveStep((s) => s - 1)}
+                variant="contained"
+              >
+                {t("common:back")}
+              </Button>
+              <div style={{ height: 650 }}>
+                <DataGrid
+                  pagination
+                  autoPageSize
+                  rows={recommendResult}
+                  columns={columns}
+                  disableColumnFilter
+                  disableColumnMenu
+                  disableSelectionOnClick
+                  disableColumnSelector
+                  sortModel={sortModel}
+                  onSortModelChange={setSortModel}
+                />
+              </div>
+            </StepContent>
+          </Step>
+        </Stepper>
+      </Container>
     </Fragment>
   );
 };
