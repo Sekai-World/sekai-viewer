@@ -24,7 +24,7 @@ import {
   IMusicMeta,
   IMusicRecommendResult,
   ISkillInfo,
-  ITeamCardState,
+  // ITeamCardState,
 } from "../types.d";
 import { filterMusicMeta, useCachedData, useMusicMeta } from "../utils";
 import {
@@ -40,6 +40,7 @@ import { useScoreCalc } from "../utils/scoreCalc";
 import TeamBuilder from "../components/blocks/TeamBuilder";
 import { ContentTrans } from "../components/helpers/ContentTrans";
 import { useMemo } from "react";
+import { ISekaiCardState } from "../stores/sekai";
 
 const useStyle = makeStyles(() => ({
   easy: {
@@ -72,7 +73,7 @@ const MusicRecommend: React.FC<{}> = () => {
   const maxStep = 3;
 
   const [teamCards, setTeamCards] = useState<number[]>([]);
-  const [teamCardsStates, setTeamCardsStates] = useState<ITeamCardState[]>([]);
+  const [teamCardsStates, setTeamCardsStates] = useState<ISekaiCardState[]>([]);
   const [teamTotalPower, setTeamTotalPower] = useState<number>(0);
   const [activeStep, setActiveStep] = useState<number>(0);
   // const [selectedSongIds, setSelectedSongIds] = useState<number[]>([]);
@@ -445,12 +446,12 @@ const MusicRecommend: React.FC<{}> = () => {
                     <FormControlLabel
                       value="solo"
                       control={<Radio />}
-                      label={t("music_recommend:modeSelect.solo")}
+                      label={t("music_recommend:modeSelect.solo") as string}
                     />
                     <FormControlLabel
                       value="multi"
                       control={<Radio />}
-                      label={t("music_recommend:modeSelect.multi")}
+                      label={t("music_recommend:modeSelect.multi") as string}
                     />
                   </RadioGroup>
                 </FormControl>
