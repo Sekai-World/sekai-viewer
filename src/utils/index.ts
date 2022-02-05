@@ -348,11 +348,9 @@ export function useProcessedScenarioDataForLive2d() {
       const ret: {
         characters: { id: number; name: string }[];
         actions: { [key: string]: any }[];
-        resourcesNeed: Set<string>;
       } = {
         characters: [],
         actions: [],
-        resourcesNeed: new Set<string>(),
       };
 
       if (
@@ -400,13 +398,6 @@ export function useProcessedScenarioDataForLive2d() {
             window.isChinaMainland ? "cn" : "ww"
           ),
         });
-        ret.resourcesNeed.add(
-          await getRemoteAssetURL(
-            `scenario/background/${FirstBackground}_rip/${FirstBackground}.webp`,
-            undefined,
-            window.isChinaMainland ? "cn" : "ww"
-          )
-        );
       }
       if (FirstBgm) {
         ret.actions.push({
@@ -423,13 +414,6 @@ export function useProcessedScenarioDataForLive2d() {
           ),
           se: "",
         });
-        ret.resourcesNeed.add(
-          await getRemoteAssetURL(
-            `sound/scenario/bgm/${FirstBgm}_rip/${FirstBgm}.mp3`,
-            undefined,
-            window.isChinaMainland ? "cn" : "ww"
-          )
-        );
       }
 
       // eslint-disable-next-line array-callback-return
@@ -507,6 +491,12 @@ export function useProcessedScenarioDataForLive2d() {
                       window.isChinaMainland ? "cn" : "ww"
                     )
                   : "",
+                motionName: talkData.Motions.length
+                  ? talkData.Motions[0].MotionName
+                  : "",
+                facialName: talkData.Motions.length
+                  ? talkData.Motions[0].FacialName
+                  : "",
               };
             }
             break;
@@ -524,6 +514,7 @@ export function useProcessedScenarioDataForLive2d() {
                 delay: snippet.Delay,
                 seType: specialEffectType,
                 body: specialEffect.StringVal,
+                sub: specialEffect.StringValSub,
                 resource:
                   specialEffectType === "FullScreenText"
                     ? await getRemoteAssetURL(
