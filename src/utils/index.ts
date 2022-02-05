@@ -332,6 +332,290 @@ export async function getRemoteAssetURL(
 //   );
 // }
 
+export function useProcessedScenarioDataForLive2d() {
+  const [mobCharas] = useCachedData<IMobCharacter>("mobCharacters");
+  const [chara2Ds] = useCachedData<ICharacter2D>("character2ds");
+
+  const getCharaName = useCharaName();
+  const { region } = useRootStore();
+
+  return useCallback(
+    async (
+      scenarioPath: string,
+      isCardStory: boolean = false,
+      isActionSet: boolean = false
+    ) => {
+      const ret: {
+        characters: { id: number; name: string }[];
+        actions: { [key: string]: any }[];
+        resourcesNeed: Set<string>;
+      } = {
+        characters: [],
+        actions: [],
+        resourcesNeed: new Set<string>(),
+      };
+
+      if (
+        !chara2Ds ||
+        !chara2Ds.length ||
+        !mobCharas ||
+        !mobCharas.length ||
+        !scenarioPath
+      )
+        return ret;
+
+      const { data }: { data: IScenarioData } = await Axios.get(
+        await getRemoteAssetURL(
+          scenarioPath,
+          undefined,
+          window.isChinaMainland ? "cn" : "ww",
+          region
+        ),
+        {
+          responseType: "json",
+        }
+      );
+      const {
+        ScenarioId,
+        AppearCharacters,
+        Snippets,
+        TalkData,
+        LayoutData,
+        SpecialEffectData,
+        SoundData,
+        FirstBgm,
+        FirstBackground,
+      } = data;
+
+      if (FirstBackground) {
+        ret.actions.push({
+          type: SnippetAction.SpecialEffect,
+          isWait: SnippetProgressBehavior.WaitUnitilFinished,
+          delay: 0,
+          seType: "ChangeBackground",
+          body: FirstBgm,
+          resource: await getRemoteAssetURL(
+            `scenario/background/${FirstBackground}_rip/${FirstBackground}.webp`,
+            undefined,
+            window.isChinaMainland ? "cn" : "ww"
+          ),
+        });
+        ret.resourcesNeed.add(
+          await getRemoteAssetURL(
+            `scenario/background/${FirstBackground}_rip/${FirstBackground}.webp`,
+            undefined,
+            window.isChinaMainland ? "cn" : "ww"
+          )
+        );
+      }
+      if (FirstBgm) {
+        ret.actions.push({
+          type: SnippetAction.Sound,
+          isWait: SnippetProgressBehavior.WaitUnitilFinished,
+          delay: 0,
+          playMode: SoundPlayMode[0],
+          hasBgm: true,
+          hasSe: false,
+          bgm: await getRemoteAssetURL(
+            `sound/scenario/bgm/${FirstBgm}_rip/${FirstBgm}.mp3`,
+            undefined,
+            window.isChinaMainland ? "cn" : "ww"
+          ),
+          se: "",
+        });
+        ret.resourcesNeed.add(
+          await getRemoteAssetURL(
+            `sound/scenario/bgm/${FirstBgm}_rip/${FirstBgm}.mp3`,
+            undefined,
+            window.isChinaMainland ? "cn" : "ww"
+          )
+        );
+      }
+
+      // eslint-disable-next-line array-callback-return
+      ret.characters = AppearCharacters.map((ap) => {
+        const chara2d = chara2Ds.find((ch) => ch.id === ap.Character2dId);
+        if (!chara2d)
+          return {
+            id: ap.Character2dId,
+            name: ap.CostumeType,
+          };
+        switch (chara2d.characterType) {
+          case "game_character": {
+            return {
+              id: chara2d.characterId,
+              name: getCharaName(chara2d.characterId)!,
+            };
+          }
+          case "mob": {
+            return {
+              id: chara2d.characterId,
+              name: mobCharas.find((mc) => mc.id === chara2d.characterId)!.name,
+            };
+          }
+        }
+      });
+
+      for (let snippet of Snippets) {
+        let action: { [key: string]: any } = {};
+        switch (snippet.Action) {
+          case SnippetAction.Talk:
+            {
+              const talkData = TalkData[snippet.ReferenceIndex];
+              // try get character
+              let chara = { id: 0, name: "" };
+              if (talkData.TalkCharacters[0].Character2dId) {
+                const chara2d = chara2Ds.find(
+                  (ch) => ch.id === talkData.TalkCharacters[0].Character2dId
+                )!;
+                chara.id = chara2d.characterId;
+              }
+              chara.name = talkData.WindowDisplayName;
+              let voiceUrl = talkData.Voices.length
+                ? `sound/${isCardStory ? "card_" : ""}${
+                    isActionSet ? "actionset" : "scenario"
+                  }/voice/${ScenarioId}_rip/${talkData.Voices[0].VoiceId}.mp3`
+                : "";
+
+              if (
+                talkData.Voices.length &&
+                talkData.Voices[0].VoiceId.startsWith("partvoice") &&
+                !isActionSet
+              ) {
+                const chara2d = chara2Ds.find(
+                  (ch) => ch.id === talkData.TalkCharacters[0].Character2dId
+                );
+                if (chara2d) {
+                  voiceUrl = `sound/scenario/part_voice/${chara2d.assetName}_${chara2d.unit}_rip/${talkData.Voices[0].VoiceId}.mp3`;
+                } else {
+                  voiceUrl = "";
+                }
+              }
+
+              action = {
+                type: snippet.Action,
+                isWait:
+                  snippet.ProgressBehavior ===
+                  SnippetProgressBehavior.WaitUnitilFinished,
+                delay: snippet.Delay,
+                chara,
+                body: talkData.Body,
+                voice: talkData.Voices.length
+                  ? await getRemoteAssetURL(
+                      voiceUrl,
+                      undefined,
+                      window.isChinaMainland ? "cn" : "ww"
+                    )
+                  : "",
+              };
+            }
+            break;
+          case SnippetAction.SpecialEffect:
+            {
+              const specialEffect = SpecialEffectData[snippet.ReferenceIndex];
+              const specialEffectType =
+                SpecialEffectType[specialEffect.EffectType];
+
+              action = {
+                type: snippet.Action,
+                isWait:
+                  snippet.ProgressBehavior ===
+                  SnippetProgressBehavior.WaitUnitilFinished,
+                delay: snippet.Delay,
+                seType: specialEffectType,
+                body: specialEffect.StringVal,
+                resource:
+                  specialEffectType === "FullScreenText"
+                    ? await getRemoteAssetURL(
+                        `sound/scenario/voice/${ScenarioId}_rip/${specialEffect.StringValSub}.mp3`,
+                        undefined,
+                        window.isChinaMainland ? "cn" : "ww"
+                      )
+                    : specialEffectType === "ChangeBackground"
+                    ? await getRemoteAssetURL(
+                        `scenario/background/${specialEffect.StringValSub}_rip/${specialEffect.StringValSub}.webp`,
+                        undefined,
+                        window.isChinaMainland ? "cn" : "ww"
+                      )
+                    : specialEffectType === "Movie"
+                    ? `scenario/movie/${specialEffect.StringVal}_rip`
+                    : "",
+              };
+            }
+            break;
+          case SnippetAction.Sound:
+            {
+              const soundData = SoundData[snippet.ReferenceIndex];
+
+              action = {
+                type: snippet.Action,
+                isWait:
+                  snippet.ProgressBehavior ===
+                  SnippetProgressBehavior.WaitUnitilFinished,
+                delay: snippet.Delay,
+                playMode: SoundPlayMode[soundData.PlayMode],
+                hasBgm: !!soundData.Bgm,
+                hasSe: !!soundData.Se,
+                bgm: soundData.Bgm
+                  ? await getRemoteAssetURL(
+                      `sound/scenario/bgm/${soundData.Bgm}_rip/${soundData.Bgm}.mp3`,
+                      undefined,
+                      window.isChinaMainland ? "cn" : "ww"
+                    )
+                  : "",
+                se: soundData.Se
+                  ? await getRemoteAssetURL(
+                      `sound/scenario/se/se_pack00001_rip/${soundData.Se}.mp3`,
+                      undefined,
+                      window.isChinaMainland ? "cn" : "ww"
+                    )
+                  : "",
+              };
+            }
+            break;
+          case SnippetAction.CharacerLayout:
+            {
+              const charaLayoutData = LayoutData[snippet.ReferenceIndex];
+
+              action = {
+                type: snippet.Action,
+                isWait:
+                  snippet.ProgressBehavior ===
+                  SnippetProgressBehavior.WaitUnitilFinished,
+                delay: snippet.Delay,
+                layoutType: charaLayoutData.Type,
+                sideFrom: charaLayoutData.SideFrom,
+                sideTo: charaLayoutData.SideTo,
+                sideToOffsetX: charaLayoutData.SideToOffsetX,
+                depthType: charaLayoutData.DepthType,
+                character2dId: charaLayoutData.Character2dId,
+                costumeType: charaLayoutData.CostumeType,
+                motionName: charaLayoutData.MotionName,
+                facialName: charaLayoutData.FacialName,
+                moveSpeedType: charaLayoutData.MoveSpeedType,
+              };
+            }
+            break;
+          default: {
+            action = {
+              type: snippet.Action,
+              isWait:
+                snippet.ProgressBehavior ===
+                SnippetProgressBehavior.WaitUnitilFinished,
+              delay: snippet.Delay,
+            };
+          }
+        }
+
+        ret.actions.push(action);
+      }
+
+      return ret;
+    },
+    [chara2Ds, getCharaName, mobCharas, region]
+  );
+}
+
 export function useProcessedScenarioData() {
   const [mobCharas] = useCachedData<IMobCharacter>("mobCharacters");
   const [chara2Ds] = useCachedData<ICharacter2D>("character2ds");
