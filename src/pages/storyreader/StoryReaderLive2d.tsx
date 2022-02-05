@@ -34,7 +34,7 @@ import {
   ContentTrans,
 } from "../../components/helpers/ContentTrans";
 import ImageWrapper from "../../components/helpers/ImageWrapper";
-import StoryReaderContent from "./StoryReaderContent";
+import StoryReaderContentLive2d from "./StoryReaderContentLive2d";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
 
@@ -471,7 +471,10 @@ const StoryReaderLive2d: React.FC<{}> = observer(() => {
         <Route path={`${path}/eventStory/:eventId/:episodeNo`} exact>
           {({ match }) =>
             !!match && (
-              <StoryReaderContent storyType="eventStory" storyId={match.url} />
+              <StoryReaderContentLive2d
+                storyType="eventStory"
+                storyId={match.url}
+              />
             )
           }
         </Route>
@@ -604,7 +607,10 @@ const StoryReaderLive2d: React.FC<{}> = observer(() => {
         <Route path={`${path}/unitStory/:unit/:chapterNo/:episodeNo`} exact>
           {({ match }) =>
             !!match && (
-              <StoryReaderContent storyType="unitStory" storyId={match.url} />
+              <StoryReaderContentLive2d
+                storyType="unitStory"
+                storyId={match.url}
+              />
             )
           }
         </Route>
@@ -657,7 +663,10 @@ const StoryReaderLive2d: React.FC<{}> = observer(() => {
         <Route path={`${path}/charaStory/:charaId`} exact>
           {({ match }) =>
             !!match && (
-              <StoryReaderContent storyType="charaStory" storyId={match.url} />
+              <StoryReaderContentLive2d
+                storyType="charaStory"
+                storyId={match.url}
+              />
             )
           }
         </Route>
@@ -799,7 +808,10 @@ const StoryReaderLive2d: React.FC<{}> = observer(() => {
         <Route path={`${path}/cardStory/:charaId/:cardId/:episodeId`} exact>
           {({ match }) =>
             !!match && (
-              <StoryReaderContent storyType="cardStory" storyId={match.url} />
+              <StoryReaderContentLive2d
+                storyType="cardStory"
+                storyId={match.url}
+              />
             )
           }
         </Route>
@@ -968,7 +980,10 @@ const StoryReaderLive2d: React.FC<{}> = observer(() => {
         <Route path={`${path}/areaTalk/:areaId/:actionSetId`} exact>
           {({ match }) =>
             !!match && (
-              <StoryReaderContent storyType="areaTalk" storyId={match.url} />
+              <StoryReaderContentLive2d
+                storyType="areaTalk"
+                storyId={match.url}
+              />
             )
           }
         </Route>
@@ -1049,7 +1064,7 @@ const StoryReaderLive2d: React.FC<{}> = observer(() => {
         <Route path={`${path}/specialStory/:storyId/:episodeNo`} exact>
           {({ match }) =>
             !!match && (
-              <StoryReaderContent
+              <StoryReaderContentLive2d
                 storyType="specialStory"
                 storyId={match.url}
               />
