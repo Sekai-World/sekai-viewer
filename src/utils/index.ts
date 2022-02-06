@@ -418,26 +418,10 @@ export function useProcessedScenarioDataForLive2d() {
 
       // eslint-disable-next-line array-callback-return
       ret.characters = AppearCharacters.map((ap) => {
-        const chara2d = chara2Ds.find((ch) => ch.id === ap.Character2dId);
-        if (!chara2d)
-          return {
-            id: ap.Character2dId,
-            name: ap.CostumeType,
-          };
-        switch (chara2d.characterType) {
-          case "game_character": {
-            return {
-              id: chara2d.characterId,
-              name: getCharaName(chara2d.characterId)!,
-            };
-          }
-          case "mob": {
-            return {
-              id: chara2d.characterId,
-              name: mobCharas.find((mc) => mc.id === chara2d.characterId)!.name,
-            };
-          }
-        }
+        return {
+          id: ap.Character2dId,
+          name: ap.CostumeType,
+        };
       });
 
       for (let snippet of Snippets) {
