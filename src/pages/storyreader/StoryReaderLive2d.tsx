@@ -74,14 +74,14 @@ const StoryReaderLive2d: React.FC<{}> = observer(() => {
 
   const breadcrumbNameMap: { [key: string]: string } = useMemo(
     () => ({
-      storyreader: t("common:storyReaderLive2d"),
-      eventStory: t("story_reader_l2d:selectValue.eventStory"),
-      unitStory: t("story_reader_l2d:selectValue.unitStory"),
-      charaStory: t("story_reader_l2d:selectValue.charaStory"),
-      cardStory: t("story_reader_l2d:selectValue.cardStory"),
-      areaTalk: t("story_reader_l2d:selectValue.areaTalk"),
-      liveTalk: t("story_reader_l2d:selectValue.liveTalk"),
-      specialStory: t("story_reader_l2d:selectValue.special"),
+      storyreader: t("common:storyReader"),
+      eventStory: t("story_reader:selectValue.eventStory"),
+      unitStory: t("story_reader:selectValue.unitStory"),
+      charaStory: t("story_reader:selectValue.charaStory"),
+      cardStory: t("story_reader:selectValue.cardStory"),
+      areaTalk: t("story_reader:selectValue.areaTalk"),
+      liveTalk: t("story_reader:selectValue.liveTalk"),
+      specialStory: t("story_reader:selectValue.special"),
     }),
     [t]
   );

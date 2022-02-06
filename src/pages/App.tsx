@@ -118,6 +118,7 @@ const Settings = lazy(() => import("./Settings"));
 const MusicRecommend = lazy(() => import("./MusicRecommend"));
 const EventPointCalc = lazy(() => import("./EventPointCalc"));
 const StoryReader = lazy(() => import("./storyreader/StoryReader"));
+const StoryReaderLive2d = lazy(() => import("./storyreader/StoryReaderLive2d"));
 const TitleMissionList = lazy(() => import("./mission/honor/TitleMissionList"));
 const NormalMissionList = lazy(
   () => import("./mission/normal/NormalMissionList")
@@ -576,8 +577,8 @@ const DrawerContent: React.FC<{
             },
             {
               text: "Live2D",
-              to: "/storyreader-live2d",
-              disabled: true,
+              to: "/storyreaderlive2d",
+              disabled: false,
             },
           ],
         },
@@ -1121,6 +1122,9 @@ const AppInner = observer((props: { theme: Theme }) => {
               </Route>
               <Route path="/storyreader">
                 <StoryReader />
+              </Route>
+              <Route path="/storyreaderlive2d">
+                <StoryReaderLive2d />
               </Route>
               <Route path="/mission/title">
                 <TitleMissionList />
