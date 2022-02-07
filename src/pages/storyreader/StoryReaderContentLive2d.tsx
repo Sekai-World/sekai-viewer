@@ -1,3 +1,4 @@
+/* eslint-disable no-lone-blocks */
 import { Box, Button, Container, useTheme } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import React, {
@@ -19,6 +20,7 @@ import {
   ICardEpisode,
   IActionSet,
   ISpecialStory,
+  SpecialEffectType,
 } from "../../types.d";
 import {
   getRemoteAssetURL,
@@ -36,6 +38,13 @@ import { LAppLive2DManager } from "@sekai-world/find-live2d-v3/dist/types/lappli
 import { LAppModel } from "@sekai-world/find-live2d-v3/dist/types/lappmodel";
 import Live2D from "@sekai-world/find-live2d-v3";
 import Axios from "axios";
+import * as PIXI from "pixi.js";
+import { Stage, Sprite } from "@inlet/react-pixi";
+import { gsap } from "gsap";
+import { PixiPlugin } from "gsap/PixiPlugin";
+
+gsap.registerPlugin(PixiPlugin);
+PixiPlugin.registerPIXI(PIXI);
 
 const useStyle = makeStyles((theme) => ({
   episodeBanner: {
@@ -74,27 +83,50 @@ const StoryReaderContentLive2d: React.FC<{
     actions: {
       [key: string]: any;
     }[];
+    resourcesNeed: Set<string>;
   }>({
     characters: [],
     actions: [],
+    resourcesNeed: new Set(),
   });
 
   const [releaseConditionId, setReleaseConditionId] = useState<number>(0);
   const [currentWidth, setCurrentWidth] = useState<number>(0);
   const [currentModelIndex, setCurrentModelIndex] = useState<number>(1);
+  const [actionsLength, setActionsLength] = useState<number>(0);
+  const [currentActionIndex, setCurrentActionIndex] = useState<number>(0);
 
   const live2dInstance = useMemo(() => new Live2D(), []);
   const [live2dManager, setLive2dManager] = useState<LAppLive2DManager>();
 
   const [model, setModel] = useState<LAppModel>();
 
+  const voiceAudioPlayer = useState(new Audio());
+  const seAudioPlayer = useState(new Audio());
+  const bgmAudioPlayer = useState(new Audio());
+
   const wrap = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
+  const stage = useRef<Stage>(null);
 
+  const [pixiApp, setPixiApp] = useState<PIXI.Application>();
+  const [blackBackgroundGraphic, setBlackBackgroundGraphic] =
+    useState<PIXI.Graphics>();
+  const [fullScreenTextContainer, setFullScreenTextContainer] =
+    useState<PIXI.Container>();
+  const [backgroundSprite, setBackgroundSprite] = useState<PIXI.Sprite>();
+
+  // const pixiApp = new PIXI.Application({
+  //   width: 1024,
+  //   height: 631,
+  //   autoStart: false,
+  //   resizeTo: wrap.current!,
+  // });
   useEffect(() => {
     setScenarioData({
       characters: [],
       actions: [],
+      resourcesNeed: new Set(),
     });
     try {
       switch (storyType) {
@@ -283,6 +315,10 @@ const StoryReaderContentLive2d: React.FC<{
     specialStories,
   ]);
 
+  const sleep = (milliseconds: number | undefined) => {
+    return new Promise((resolve) => setTimeout(resolve, milliseconds));
+  };
+
   const updateSize = useCallback(() => {
     if (wrap.current && canvas.current) {
       // canvas.current.width = wrap.current.clientWidth;
@@ -305,14 +341,14 @@ const StoryReaderContentLive2d: React.FC<{
     }
   }, [theme.breakpoints.values.xl]);
 
-  useLayoutEffect(() => {
-    const _us = updateSize;
-    _us();
-    window.addEventListener("resize", _us);
-    return () => {
-      window.removeEventListener("resize", _us);
-    };
-  }, [updateSize]);
+  // useLayoutEffect(() => {
+  //   const _us = updateSize;
+  //   _us();
+  //   window.addEventListener("resize", _us);
+  //   return () => {
+  //     window.removeEventListener("resize", _us);
+  //   };
+  // }, [updateSize]);
 
   useLayoutEffect(() => {
     console.log("Hi");
@@ -327,14 +363,32 @@ const StoryReaderContentLive2d: React.FC<{
         })!
       );
     }
+
     return () => {
       live2dInstance.release();
     };
   }, [live2dInstance]);
 
+  // useEffect(() => {
+  //   setPixiApp(
+  //     new PIXI.Application({
+  //       width: 1024,
+  //       height: 631,
+  //       autoStart: false,
+  //       resizeTo: wrap.current!,
+  //     })
+  //   );
+  //   wrap.current?.appendChild(pixiApp!.view);
+  // }, [pixiApp]);
+
   const live2dScenarioPlayerInit = useCallback(() => {
+    setCurrentActionIndex(0);
+    setActionsLength(scenarioData.actions.length);
+    const lengthAllresourcesNeed =
+      scenarioData.resourcesNeed.size + scenarioData.characters.length;
     scenarioData.characters.forEach(async (character, index, _) => {
       const modelName = character.name;
+
       console.log(`Load model metadata for ${modelName}`);
       const { data: modelData } = await Axios.get<{
         Moc3FileName: string;
@@ -446,24 +500,255 @@ const StoryReaderContentLive2d: React.FC<{
           theme.breakpoints.values.xl
             ? currentWidth * 1.3
             : currentWidth * 3;
-        model.appear({
-          pointX: 250 * (index + 1),
-          pointY: 300,
-        });
+        console.log(
+          `${
+            index + 1
+          }/${lengthAllresourcesNeed} Model data for ${modelName} loaded`
+        );
       }
     });
+    let resourcesNeedIndex = scenarioData.characters.length;
+    scenarioData.resourcesNeed.forEach(async (resourceUrl) => {
+      await Axios.get(resourceUrl).then(() => {
+        console.log(
+          `${resourcesNeedIndex}/${lengthAllresourcesNeed} Resource for ${resourceUrl} loaded.`
+        );
+      });
+      resourcesNeedIndex++;
+    });
+
+    pixiApp!.stage.sortableChildren = true;
+
+    const background = PIXI.Texture.EMPTY;
+
+    const backgroundSprite = new PIXI.Sprite(background);
+    backgroundSprite.name = "backgroundSprite";
+    backgroundSprite!.anchor.x = 0.5;
+    backgroundSprite!.anchor.y = 0.5;
+    backgroundSprite!.x = pixiApp!.screen.width / 2;
+    backgroundSprite!.y = pixiApp!.screen.height / 2;
+    backgroundSprite!.width = pixiApp!.screen.width;
+    backgroundSprite!.height = pixiApp!.screen.height;
+    backgroundSprite!.zIndex = 0;
+
+    pixiApp!.stage.addChild(backgroundSprite!);
+
+    const characterDialogContainer = new PIXI.Container();
+    characterDialogContainer.name = "characterDialogContainer";
+
+    const blackInOutGraphic = new PIXI.Graphics();
+    blackInOutGraphic.name = "blackInOutGraphic";
+    blackInOutGraphic?.beginFill(0x000000);
+    blackInOutGraphic?.drawRect(
+      0,
+      0,
+      pixiApp!.screen.width,
+      pixiApp!.screen.height
+    );
+    blackInOutGraphic?.endFill();
+    blackInOutGraphic!.x = pixiApp!.screen.width / 2;
+    blackInOutGraphic!.y = pixiApp!.screen.height / 2;
+    blackInOutGraphic!.zIndex = 100;
+    blackInOutGraphic!.pivot.x = pixiApp!.screen.width / 2;
+    blackInOutGraphic!.pivot.y = pixiApp!.screen.height / 2;
+    blackInOutGraphic!.alpha = 0;
+    pixiApp!.stage.addChild(blackInOutGraphic!);
+
+    const whiteInOutGraphic = new PIXI.Graphics();
+    whiteInOutGraphic.name = "whiteInOutGraphic";
+    whiteInOutGraphic?.beginFill(0xffffff);
+    whiteInOutGraphic?.drawRect(
+      0,
+      0,
+      pixiApp!.screen.width,
+      pixiApp!.screen.height
+    );
+    whiteInOutGraphic?.endFill();
+    whiteInOutGraphic!.x = pixiApp!.screen.width / 2;
+    whiteInOutGraphic!.y = pixiApp!.screen.height / 2;
+    whiteInOutGraphic!.zIndex = 100;
+    whiteInOutGraphic!.pivot.x = pixiApp!.screen.width / 2;
+    whiteInOutGraphic!.pivot.y = pixiApp!.screen.height / 2;
+    whiteInOutGraphic!.alpha = 0;
+    pixiApp!.stage.addChild(whiteInOutGraphic!);
+
+    // pixiApp!.stage.addChild(blackBackgroundGraphic!);
+
+    const fullScreenTextContainer = new PIXI.Container();
+    fullScreenTextContainer.name = "fullScreenTextContainer";
+    fullScreenTextContainer!.x = pixiApp!.screen.width / 2;
+    fullScreenTextContainer!.y = pixiApp!.screen.height / 2;
+
+    const fullScreenTextContainerBackground = new PIXI.Graphics()
+      .beginFill(0x000000)
+      .drawRect(0, 0, pixiApp!.screen.width, pixiApp!.screen.height)
+      .endFill();
+    fullScreenTextContainerBackground.x = pixiApp!.screen.width / 2;
+    fullScreenTextContainerBackground.y = pixiApp!.screen.height / 2;
+    fullScreenTextContainerBackground.name =
+      "fullScreenTextContainerBackground";
+    // fullScreenTextContainer!.addChild(fullScreenTextContainerBackground);
+    const fullScreenText = new PIXI.Text("", {
+      fill: 0xffffff,
+      fontSize: 30,
+    });
+    fullScreenText.x = pixiApp!.screen.width / 2;
+    fullScreenText.y = pixiApp!.screen.height / 2;
+    fullScreenText.name = "fullScreenText";
+    fullScreenText.anchor.x = 0.5;
+    fullScreenText.anchor.y = 0.5;
+    fullScreenText.zIndex = 101;
+    fullScreenText.visible = false;
+
+    pixiApp!.stage.addChild(fullScreenText);
   }, [
+    scenarioData.actions.length,
+    scenarioData.resourcesNeed,
     scenarioData.characters,
+    pixiApp,
     live2dManager,
     theme.breakpoints.values.xl,
     currentWidth,
   ]);
 
+  const live2dScenarioPlayerSeek = useCallback(() => {
+    const currentAction = scenarioData.actions[currentActionIndex];
+    console.log(
+      `Current: ${currentActionIndex}/${scenarioData.actions.length}`
+    );
+    console.log(currentAction);
+    switch (currentAction.type) {
+      case SnippetAction.Talk:
+        {
+          const charaId = currentAction.chara.id;
+          const charaName = currentAction.chara.name;
+          const talkBody = currentAction.body;
+          console.log(`${charaName} (ID: ${charaId}) says: ${talkBody}`);
+          if (currentAction.voiceUrl !== "") {
+            voiceAudioPlayer[0].src = currentAction.voice;
+            voiceAudioPlayer[0].play();
+          }
+        }
+        break;
+      case SnippetAction.SpecialEffect:
+        {
+          switch (currentAction.seType) {
+            case "BlackIn":
+              {
+                let blackInOutGraphic = pixiApp!.stage.getChildByName(
+                  "blackInOutGraphic"
+                ) as PIXI.Graphics;
+                gsap.to(blackInOutGraphic, { alpha: 0, duration: 1.0 });
+              }
+              break;
+            case "BlackOut":
+              {
+                let blackInOutGraphic = pixiApp!.stage.getChildByName(
+                  "blackInOutGraphic"
+                ) as PIXI.Graphics;
+                let fullscreenText = pixiApp!.stage.getChildByName(
+                  "fullScreenText"
+                ) as PIXI.Text;
+                fullscreenText.text = "";
+
+                gsap.to(blackInOutGraphic, { alpha: 1, duration: 1.0 });
+              }
+              break;
+            case "WhiteOut":
+              {
+                let whiteInOutGraphic = pixiApp!.stage.getChildByName(
+                  "whiteInOutGraphic"
+                ) as PIXI.Graphics;
+                let fullscreenText = pixiApp!.stage.getChildByName(
+                  "fullScreenText"
+                ) as PIXI.Text;
+                fullscreenText.text = "";
+                gsap.to(whiteInOutGraphic, { alpha: 1, duration: 1.0 });
+              }
+              break;
+            case "WhiteIn":
+              {
+                let whiteInOutGraphic = pixiApp!.stage.getChildByName(
+                  "whiteInOutGraphic"
+                ) as PIXI.Graphics;
+                gsap.to(whiteInOutGraphic, { alpha: 0, duration: 1.0 });
+              }
+              break;
+
+            case "FullScreenText":
+              {
+                let fullScreenText = pixiApp!.stage.getChildByName(
+                  "fullScreenText"
+                ) as PIXI.Text;
+
+                fullScreenText.text = currentAction.body;
+                fullScreenText.anchor.x = 0.5;
+                fullScreenText.anchor.y = 0.5;
+                fullScreenText.visible = true;
+                if (currentAction.resource !== "") {
+                  voiceAudioPlayer[0].src = currentAction.resource;
+                  voiceAudioPlayer[0].play();
+                }
+              }
+              break;
+            case "ChangeBackground":
+              {
+                const newBackground = PIXI.Texture.from(currentAction.resource);
+                (
+                  pixiApp!.stage.getChildByName(
+                    "backgroundSprite"
+                  ) as PIXI.Sprite
+                ).texture = newBackground;
+              }
+              break;
+            default:
+              break;
+          }
+        }
+        break;
+      case SnippetAction.Sound:
+        {
+          if (currentAction.hasBgm) {
+            bgmAudioPlayer[0].src = currentAction.bgm;
+            bgmAudioPlayer[0].loop = true;
+            bgmAudioPlayer[0].play();
+          }
+          if (currentAction.hasSe) {
+            seAudioPlayer[0].src = currentAction.se;
+            seAudioPlayer[0].play();
+          }
+        }
+        break;
+      default:
+        break;
+    }
+    setCurrentActionIndex(currentActionIndex + 1);
+  }, [
+    scenarioData.actions,
+    currentActionIndex,
+    voiceAudioPlayer,
+    pixiApp,
+    bgmAudioPlayer,
+    seAudioPlayer,
+  ]);
+
   return (
     <Fragment>
       <Button onClick={live2dScenarioPlayerInit}>{t("common:show")}</Button>
-      <Box ref={wrap} className={layoutClasses.content}>
-        <canvas ref={canvas}></canvas>
+      <Button onClick={live2dScenarioPlayerSeek}>{t("common:next")}</Button>
+      <Box
+        width={1024}
+        height={631}
+        ref={wrap}
+        className={layoutClasses.content}
+      >
+        {/* <canvas ref={canvas}></canvas> */}
+        <Stage
+          width={1024}
+          height={631}
+          ref={stage}
+          onMount={setPixiApp}
+        ></Stage>
       </Box>
     </Fragment>
   );
