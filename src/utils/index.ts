@@ -348,9 +348,11 @@ export function useProcessedScenarioDataForLive2d() {
       const ret: {
         characters: { id: number; name: string }[];
         actions: { [key: string]: any }[];
+        resourcesNeed: Set<string>;
       } = {
         characters: [],
         actions: [],
+        resourcesNeed: new Set<string>(),
       };
 
       if (
@@ -386,20 +388,28 @@ export function useProcessedScenarioDataForLive2d() {
       } = data;
 
       if (FirstBackground) {
+        const firstBackgroundRemoteAssetUrl = await getRemoteAssetURL(
+          `scenario/background/${FirstBackground}_rip/${FirstBackground}.webp`,
+          undefined,
+          window.isChinaMainland ? "cn" : "ww"
+        );
+        ret.resourcesNeed.add(firstBackgroundRemoteAssetUrl);
         ret.actions.push({
           type: SnippetAction.SpecialEffect,
           isWait: SnippetProgressBehavior.WaitUnitilFinished,
           delay: 0,
           seType: "ChangeBackground",
           body: FirstBgm,
-          resource: await getRemoteAssetURL(
-            `scenario/background/${FirstBackground}_rip/${FirstBackground}.webp`,
-            undefined,
-            window.isChinaMainland ? "cn" : "ww"
-          ),
+          resource: firstBackgroundRemoteAssetUrl,
         });
       }
       if (FirstBgm) {
+        const firstBgmRemoteAssetUrl = await getRemoteAssetURL(
+          `sound/scenario/bgm/${FirstBgm}_rip/${FirstBgm}.mp3`,
+          undefined,
+          window.isChinaMainland ? "cn" : "ww"
+        );
+        ret.resourcesNeed.add(firstBgmRemoteAssetUrl);
         ret.actions.push({
           type: SnippetAction.Sound,
           isWait: SnippetProgressBehavior.WaitUnitilFinished,
@@ -407,11 +417,7 @@ export function useProcessedScenarioDataForLive2d() {
           playMode: SoundPlayMode[0],
           hasBgm: true,
           hasSe: false,
-          bgm: await getRemoteAssetURL(
-            `sound/scenario/bgm/${FirstBgm}_rip/${FirstBgm}.mp3`,
-            undefined,
-            window.isChinaMainland ? "cn" : "ww"
-          ),
+          bgm: firstBgmRemoteAssetUrl,
           se: "",
         });
       }
@@ -460,6 +466,18 @@ export function useProcessedScenarioDataForLive2d() {
                 }
               }
 
+              const voiceRemoteAssestUrl = talkData.Voices.length
+                ? await getRemoteAssetURL(
+                    voiceUrl,
+                    undefined,
+                    window.isChinaMainland ? "cn" : "ww"
+                  )
+                : "";
+
+              if (voiceRemoteAssestUrl !== "") {
+                ret.resourcesNeed.add(voiceRemoteAssestUrl);
+              }
+
               action = {
                 type: snippet.Action,
                 isWait:
@@ -468,13 +486,7 @@ export function useProcessedScenarioDataForLive2d() {
                 delay: snippet.Delay,
                 chara,
                 body: talkData.Body,
-                voice: talkData.Voices.length
-                  ? await getRemoteAssetURL(
-                      voiceUrl,
-                      undefined,
-                      window.isChinaMainland ? "cn" : "ww"
-                    )
-                  : "",
+                voice: voiceRemoteAssestUrl,
                 motionName: talkData.Motions.length
                   ? talkData.Motions[0].MotionName
                   : "",
@@ -490,6 +502,27 @@ export function useProcessedScenarioDataForLive2d() {
               const specialEffectType =
                 SpecialEffectType[specialEffect.EffectType];
 
+              const specialEffectRemoteAssetUrl =
+                specialEffectType === "FullScreenText"
+                  ? await getRemoteAssetURL(
+                      `sound/scenario/voice/${ScenarioId}_rip/${specialEffect.StringValSub}.mp3`,
+                      undefined,
+                      window.isChinaMainland ? "cn" : "ww"
+                    )
+                  : specialEffectType === "ChangeBackground"
+                  ? await getRemoteAssetURL(
+                      `scenario/background/${specialEffect.StringValSub}_rip/${specialEffect.StringValSub}.webp`,
+                      undefined,
+                      window.isChinaMainland ? "cn" : "ww"
+                    )
+                  : specialEffectType === "Movie"
+                  ? `scenario/movie/${specialEffect.StringVal}_rip`
+                  : "";
+
+              if (specialEffectRemoteAssetUrl !== "") {
+                ret.resourcesNeed.add(specialEffectRemoteAssetUrl);
+              }
+
               action = {
                 type: snippet.Action,
                 isWait:
@@ -499,28 +532,34 @@ export function useProcessedScenarioDataForLive2d() {
                 seType: specialEffectType,
                 body: specialEffect.StringVal,
                 sub: specialEffect.StringValSub,
-                resource:
-                  specialEffectType === "FullScreenText"
-                    ? await getRemoteAssetURL(
-                        `sound/scenario/voice/${ScenarioId}_rip/${specialEffect.StringValSub}.mp3`,
-                        undefined,
-                        window.isChinaMainland ? "cn" : "ww"
-                      )
-                    : specialEffectType === "ChangeBackground"
-                    ? await getRemoteAssetURL(
-                        `scenario/background/${specialEffect.StringValSub}_rip/${specialEffect.StringValSub}.webp`,
-                        undefined,
-                        window.isChinaMainland ? "cn" : "ww"
-                      )
-                    : specialEffectType === "Movie"
-                    ? `scenario/movie/${specialEffect.StringVal}_rip`
-                    : "",
+                resource: specialEffectRemoteAssetUrl,
               };
             }
             break;
           case SnippetAction.Sound:
             {
               const soundData = SoundData[snippet.ReferenceIndex];
+              const soundBGMRemoteAssetUrl = soundData.Bgm
+                ? await getRemoteAssetURL(
+                    `sound/scenario/bgm/${soundData.Bgm}_rip/${soundData.Bgm}.mp3`,
+                    undefined,
+                    window.isChinaMainland ? "cn" : "ww"
+                  )
+                : "";
+              const soundSERemoteAssetUrl = soundData.Se
+                ? await getRemoteAssetURL(
+                    `sound/scenario/se/se_pack00001_rip/${soundData.Se}.mp3`,
+                    undefined,
+                    window.isChinaMainland ? "cn" : "ww"
+                  )
+                : "";
+
+              if (soundBGMRemoteAssetUrl !== "") {
+                ret.resourcesNeed.add(soundBGMRemoteAssetUrl);
+              }
+              if (soundSERemoteAssetUrl !== "") {
+                ret.resourcesNeed.add(soundSERemoteAssetUrl);
+              }
 
               action = {
                 type: snippet.Action,
@@ -531,20 +570,8 @@ export function useProcessedScenarioDataForLive2d() {
                 playMode: SoundPlayMode[soundData.PlayMode],
                 hasBgm: !!soundData.Bgm,
                 hasSe: !!soundData.Se,
-                bgm: soundData.Bgm
-                  ? await getRemoteAssetURL(
-                      `sound/scenario/bgm/${soundData.Bgm}_rip/${soundData.Bgm}.mp3`,
-                      undefined,
-                      window.isChinaMainland ? "cn" : "ww"
-                    )
-                  : "",
-                se: soundData.Se
-                  ? await getRemoteAssetURL(
-                      `sound/scenario/se/se_pack00001_rip/${soundData.Se}.mp3`,
-                      undefined,
-                      window.isChinaMainland ? "cn" : "ww"
-                    )
-                  : "",
+                bgm: soundBGMRemoteAssetUrl,
+                se: soundSERemoteAssetUrl,
               };
             }
             break;
