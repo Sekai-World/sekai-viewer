@@ -606,7 +606,7 @@ export interface AppearCharacter {
 export enum SnippetAction {
   None = 0,
   Talk = 1,
-  CharacerLayout = 2,
+  CharacterLayout = 2,
   InputName = 3,
   CharacterMotion = 4,
   Selectable = 5,
@@ -673,6 +673,12 @@ export interface LayoutData {
   MotionName: string;
   FacialName: string;
   MoveSpeedType: number;
+}
+
+export enum LayoutType {
+  NotChange = 0,
+  Appear = 2,
+  Disappear = 3,
 }
 
 export enum SpecialEffectType {
