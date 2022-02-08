@@ -575,7 +575,7 @@ export function useProcessedScenarioDataForLive2d() {
               };
             }
             break;
-          case SnippetAction.CharacerLayout:
+          case SnippetAction.CharacterLayout:
             {
               const charaLayoutData = LayoutData[snippet.ReferenceIndex];
 
@@ -595,6 +595,29 @@ export function useProcessedScenarioDataForLive2d() {
                 motionName: charaLayoutData.MotionName,
                 facialName: charaLayoutData.FacialName,
                 moveSpeedType: charaLayoutData.MoveSpeedType,
+              };
+            }
+            break;
+          case SnippetAction.CharacterMotion:
+            {
+              const charaMotionData = LayoutData[snippet.ReferenceIndex];
+
+              action = {
+                type: snippet.Action,
+                isWait:
+                  snippet.ProgressBehavior ===
+                  SnippetProgressBehavior.WaitUnitilFinished,
+                delay: snippet.Delay,
+                layoutType: charaMotionData.Type,
+                sideFrom: charaMotionData.SideFrom,
+                sideTo: charaMotionData.SideTo,
+                sideToOffsetX: charaMotionData.SideToOffsetX,
+                depthType: charaMotionData.DepthType,
+                character2dId: charaMotionData.Character2dId,
+                costumeType: charaMotionData.CostumeType,
+                motionName: charaMotionData.MotionName,
+                facialName: charaMotionData.FacialName,
+                moveSpeedType: charaMotionData.MoveSpeedType,
               };
             }
             break;
