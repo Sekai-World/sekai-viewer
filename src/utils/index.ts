@@ -530,6 +530,7 @@ export function useProcessedScenarioDataForLive2d() {
                   SnippetProgressBehavior.WaitUnitilFinished,
                 delay: snippet.Delay,
                 seType: specialEffectType,
+                seTypeId: specialEffect.EffectType,
                 body: specialEffect.StringVal,
                 sub: specialEffect.StringValSub,
                 resource: specialEffectRemoteAssetUrl,
