@@ -49,6 +49,7 @@ import {
   Live2DModel,
   MotionPreloadStrategy,
   MotionPriority,
+  config,
   // @ts-ignore
 } from "pixi-live2d-display/dist/cubism4";
 import { render } from "react-dom";
@@ -56,7 +57,8 @@ import { object } from "prop-types";
 
 (window as any).PIXI = PIXI;
 
-// config.idleMotionFadingDuration = 2147483647;
+config.idleMotionFadingDuration = 0;
+config.logLevel = config.LOG_LEVEL_VERBOSE;
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -111,10 +113,9 @@ const StoryReaderContentLive2d: React.FC<{
   });
 
   const [releaseConditionId, setReleaseConditionId] = useState<number>(0);
-  const [currentWidth, setCurrentWidth] = useState<number>(0);
-  const [currentModelIndex, setCurrentModelIndex] = useState<number>(1);
   const [actionsLength, setActionsLength] = useState<number>(0);
-  const [currentActionIndex, setCurrentActionIndex] = useState<number>(0);
+  // const [currentActionIndex, setCurrentActionIndex] = useState<number>(0);
+  const actionIndex = useRef<number>(0);
   const [currentLive2dModelIndex, setCurrentLive2dModelIndex] =
     useState<number>(0);
 
@@ -333,184 +334,18 @@ const StoryReaderContentLive2d: React.FC<{
     specialStories,
   ]);
 
-  const sleep = (milliseconds: number | undefined) => {
-    return new Promise((resolve) => setTimeout(resolve, milliseconds));
-  };
-
-  const updateSize = useCallback(() => {
-    if (wrap.current && canvas.current) {
-      // canvas.current.width = wrap.current.clientWidth;
-      const styleWidth = wrap.current.clientWidth;
-      const styleHeight =
-        window.innerWidth * window.devicePixelRatio >=
-        theme.breakpoints.values.xl
-          ? (styleWidth * 9) / 16
-          : (styleWidth * 4) / 3;
-      const displayWidth = styleWidth * window.devicePixelRatio;
-      const displayHeight = styleHeight * window.devicePixelRatio;
-
-      setCurrentWidth(displayWidth);
-      // setCurrentStyleWidth(styleWidth);
-
-      canvas.current.style.width = `${styleWidth}px`;
-      canvas.current.style.height = `${styleHeight}px`;
-      canvas.current.width = displayWidth;
-      canvas.current.height = displayHeight;
-    }
-  }, [theme.breakpoints.values.xl]);
-
-  // useLayoutEffect(() => {
-  //   const _us = updateSize;
-  //   _us();
-  //   window.addEventListener("resize", _us);
-  //   return () => {
-  //     window.removeEventListener("resize", _us);
-  //   };
-  // }, [updateSize]);
-
-  // useLayoutEffect(() => {
-  //   console.log("Hi");
-  //   if (wrap.current && canvas.current) {
-  //     canvas.current.getContext("webgl", {
-  //       preserveDrawingBuffer: true,
-  //     });
-  //     setLive2dManager(
-  //       live2dInstance.initialize(undefined, {
-  //         wrap: wrap.current,
-  //         canvas: canvas.current,
-  //       })!
-  //     );
-  //   }
-
-  //   return () => {
-  //     live2dInstance.release();
-  //   };
-  // }, [live2dInstance]);
-
   useEffect(() => {
-    // const interactionManager = new PIXI.InteractionManager(
-    //   pixiApp!.stage,
-    //   pixiApp!.renderer.view
-    // );
     Live2DModel.registerTicker(PIXI.Ticker);
-    // PIXI.Renderer.registerPlugin("interaction", PIXI.InteractionManager as any);
   }, [pixiApp]);
 
-  const AddNextLive2dModeltoCanvas = async () => {
-    pixiApp!.renderer.plugins.interaction.destroy();
-    let modelName = scenarioData.characters[currentLive2dModelIndex].name;
-    console.log(`Load model metadata for ${modelName}`);
-    const { data: modelData } = await Axios.get<{
-      Moc3FileName: string;
-      TextureNames: string[];
-      PhysicsFileName: string;
-      UserDataFileName: string;
-      AdditionalMotionData: any[];
-      CategoryRules: any[];
-    }>(
-      `${
-        window.isChinaMainland
-          ? import.meta.env.VITE_ASSET_DOMAIN_CN
-          : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
-      }/live2d/model/${modelName}_rip/buildmodeldata.asset`,
-      { responseType: "json" }
-    );
-
-    console.log(`Load model texture for ${modelName}`);
-    await Axios.get(
-      `${
-        window.isChinaMainland
-          ? import.meta.env.VITE_ASSET_DOMAIN_CN
-          : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
-      }/live2d/model/${modelName}_rip/${modelData.TextureNames[0]}`
-    );
-
-    console.log(`Load model moc3 for ${modelName}`);
-    await Axios.get(
-      `${
-        window.isChinaMainland
-          ? import.meta.env.VITE_ASSET_DOMAIN_CN
-          : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
-      }/live2d/model/${modelName}_rip/${modelData.Moc3FileName}`
-    );
-
-    console.log(`Load model physics for ${modelName}`);
-    await Axios.get(
-      `${
-        window.isChinaMainland
-          ? import.meta.env.VITE_ASSET_DOMAIN_CN
-          : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
-      }/live2d/model/${modelName}_rip/${modelData.PhysicsFileName}`
-    );
-
-    let motionData;
-    const motionName: String =
-      (modelName.startsWith("sub") || modelName.startsWith("clb")
-        ? modelName
-        : modelName.split("_")[0]) + "_motion_base";
-    if (!modelName.startsWith("normal")) {
-      console.log(`Load model motion for ${modelName}`);
-      const { data } = await Axios.get<{
-        motions: string[];
-        expressions: string[];
-      }>(
-        `${
-          window.isChinaMainland
-            ? import.meta.env.VITE_ASSET_DOMAIN_CN
-            : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
-        }/live2d/motion/${motionName}_rip/BuildMotionData.json`,
-        { responseType: "json" }
-      );
-      motionData = data;
-    } else {
-      motionData = {
-        motions: [],
-        expressions: [],
-      };
-    }
-    console.log(`Load model to manager`);
-    const filename = modelData.Moc3FileName.replace(".moc3.bytes", "");
-
-    let model3Json;
-    const { data } = await Axios.get<{
-      Version: number;
-      FileReferences: {
-        [key: string]: string;
-      };
-      Groups: { [key: number]: any };
-    }>(
-      `${
-        window.isChinaMainland
-          ? import.meta.env.VITE_ASSET_DOMAIN_CN
-          : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
-      }/live2d/model/${modelName}_rip/${filename}.model3.json`,
-      { responseType: "json" }
-    );
-    model3Json = data as any;
-    model3Json.url = `${
-      window.isChinaMainland
-        ? import.meta.env.VITE_ASSET_DOMAIN_CN
-        : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
-    }/live2d/model/${modelName}_rip/${filename}.model3.json`;
-    model3Json.FileReferences.Moc = model3Json.FileReferences.Moc + ".bytes";
-    const model = await Live2DModel.from(model3Json);
-    model.x = pixiApp!.screen.width / 2;
-    model.y = pixiApp!.screen.height / 2;
-    model.anchor.x = 0.5;
-    model.anchor.y = 0.5;
-    model.alpha = 1;
-    model.zIndex = 150;
-    model.scale.x = 0.3;
-    model.scale.y = 0.3;
-    pixiApp?.stage.addChild(model);
-    setCurrentLive2dModelIndex(currentLive2dModelIndex + 1);
-  };
-
   const live2dScenarioPlayerSeek = useCallback(async () => {
+    actionIndex.current = actionIndex.current + 1;
+    const currentActionIndex = actionIndex.current;
     const currentAction = scenarioData.actions[currentActionIndex];
     console.log(
       `Current: ${currentActionIndex}/${scenarioData.actions.length}`
     );
+
     console.log(currentAction);
     switch (currentAction.type) {
       case SnippetAction.Talk:
@@ -518,6 +353,14 @@ const StoryReaderContentLive2d: React.FC<{
           const charaId = currentAction.chara.id;
           const charaName = currentAction.chara.name;
           const talkBody = currentAction.body;
+          const character2dId = currentAction.character2dId;
+          let live2dModel = pixiApp!.stage.getChildByName(
+            `${
+              scenarioData.characters.find(
+                (charcter) => charcter.id === character2dId
+              )?.name
+            }_live2d`
+          );
           console.log(`${charaName} (ID: ${charaId}) says: ${talkBody}`);
           const characterDialogContainer = pixiApp!.stage.getChildByName(
             "characterDialogContainer"
@@ -531,6 +374,14 @@ const StoryReaderContentLive2d: React.FC<{
             voiceAudioPlayer[0].src = currentAction.voice;
             voiceAudioPlayer[0].play();
           }
+          if (live2dModel) {
+            (live2dModel as any).internalModel.motionManager.stopAllMotions();
+            await (live2dModel as any).motion(currentAction.facialName, 0);
+            setTimeout(() => {
+              (live2dModel as any).internalModel.motionManager.stopAllMotions();
+              (live2dModel as any).motion(currentAction.motionName, 0);
+            }, 300);
+          }
         }
         break;
       case SnippetAction.SpecialEffect:
@@ -538,90 +389,124 @@ const StoryReaderContentLive2d: React.FC<{
           switch (currentAction.seTypeId) {
             case SpecialEffectType.BlackIn:
               {
-                let blackInOutGraphic = pixiApp!.stage.getChildByName(
-                  "blackInOutGraphic"
-                ) as PIXI.Graphics;
-                gsap.to(blackInOutGraphic, { alpha: 0, duration: 1.0 });
+                setTimeout(() => {
+                  let blackInOutGraphic = pixiApp!.stage.getChildByName(
+                    "blackInOutGraphic"
+                  ) as PIXI.Graphics;
+                  gsap
+                    .to(blackInOutGraphic, { alpha: 0, duration: 1.0 })
+                    .then(live2dScenarioPlayerSeek);
+                }, currentAction.delay * 1000);
               }
+
               break;
             case SpecialEffectType.BlackOut:
               {
-                let blackInOutGraphic = pixiApp!.stage.getChildByName(
-                  "blackInOutGraphic"
-                ) as PIXI.Graphics;
-                let fullscreenText = pixiApp!.stage.getChildByName(
-                  "fullScreenText"
-                ) as PIXI.Text;
-                fullscreenText.text = "";
-                fullscreenText.alpha = 0;
-                let characterDialogContainer = pixiApp!.stage.getChildByName(
-                  "characterDialogContainer"
-                ) as PIXI.Container;
-                characterDialogContainer.alpha = 0;
+                setTimeout(() => {
+                  let blackInOutGraphic = pixiApp!.stage.getChildByName(
+                    "blackInOutGraphic"
+                  ) as PIXI.Graphics;
+                  let fullscreenText = pixiApp!.stage.getChildByName(
+                    "fullScreenText"
+                  ) as PIXI.Text;
+                  fullscreenText.text = "";
+                  fullscreenText.alpha = 0;
+                  let characterDialogContainer = pixiApp!.stage.getChildByName(
+                    "characterDialogContainer"
+                  ) as PIXI.Container;
+                  characterDialogContainer.alpha = 0;
 
-                gsap.to(blackInOutGraphic, { alpha: 1, duration: 1.0 });
+                  gsap
+                    .to(blackInOutGraphic, { alpha: 1, duration: 1.0 })
+                    .then(live2dScenarioPlayerSeek);
+                }, currentAction.delay * 1000);
               }
               break;
+            case SpecialEffectType.SekaiOut:
             case SpecialEffectType.WhiteOut:
               {
-                let whiteInOutGraphic = pixiApp!.stage.getChildByName(
-                  "whiteInOutGraphic"
-                ) as PIXI.Graphics;
-                let fullscreenText = pixiApp!.stage.getChildByName(
-                  "fullScreenText"
-                ) as PIXI.Text;
-                fullscreenText.text = "";
-                fullscreenText.alpha = 0;
-                gsap.to(whiteInOutGraphic, { alpha: 1, duration: 1.0 });
+                setTimeout(() => {
+                  let whiteInOutGraphic = pixiApp!.stage.getChildByName(
+                    "whiteInOutGraphic"
+                  ) as PIXI.Graphics;
+                  let fullscreenText = pixiApp!.stage.getChildByName(
+                    "fullScreenText"
+                  ) as PIXI.Text;
+                  fullscreenText.text = "";
+                  fullscreenText.alpha = 0;
+                  gsap
+                    .to(whiteInOutGraphic, { alpha: 1, duration: 1.0 })
+                    .then(live2dScenarioPlayerSeek);
+                }, currentAction.delay * 1000);
               }
               break;
+            case SpecialEffectType.SekaiIn:
             case SpecialEffectType.WhiteIn:
               {
-                let whiteInOutGraphic = pixiApp!.stage.getChildByName(
-                  "whiteInOutGraphic"
-                ) as PIXI.Graphics;
-                gsap.to(whiteInOutGraphic, { alpha: 0, duration: 1.0 });
+                setTimeout(() => {
+                  let whiteInOutGraphic = pixiApp!.stage.getChildByName(
+                    "whiteInOutGraphic"
+                  ) as PIXI.Graphics;
+                  gsap
+                    .to(whiteInOutGraphic, { alpha: 0, duration: 1.0 })
+                    .then(live2dScenarioPlayerSeek);
+                }, currentAction.delay * 1000);
               }
               break;
 
             case SpecialEffectType.FullScreenText:
               {
-                let fullScreenText = pixiApp!.stage.getChildByName(
-                  "fullScreenText"
-                ) as PIXI.Text;
+                setTimeout(() => {
+                  let fullScreenText = pixiApp!.stage.getChildByName(
+                    "fullScreenText"
+                  ) as PIXI.Text;
 
-                fullScreenText.text = currentAction.body;
-                fullScreenText.anchor.x = 0.5;
-                fullScreenText.anchor.y = 0.5;
-                fullScreenText.alpha = 1;
-                if (currentAction.resource !== "") {
-                  voiceAudioPlayer[0].src = currentAction.resource;
-                  voiceAudioPlayer[0].play();
-                }
+                  fullScreenText.text = currentAction.body;
+                  fullScreenText.anchor.x = 0.5;
+                  fullScreenText.anchor.y = 0.5;
+                  fullScreenText.alpha = 1;
+                  if (currentAction.resource !== "") {
+                    voiceAudioPlayer[0].src = currentAction.resource;
+                    voiceAudioPlayer[0].play();
+                  }
+                }, currentAction.delay * 1000);
               }
               break;
             case SpecialEffectType.ChangeBackground:
               {
-                const newBackground = PIXI.Texture.from(currentAction.resource);
-                (
-                  pixiApp!.stage.getChildByName(
-                    "backgroundSprite"
-                  ) as PIXI.Sprite
-                ).texture = newBackground;
+                setTimeout(() => {
+                  const newBackground = PIXI.Texture.from(
+                    currentAction.resource
+                  );
+                  (
+                    pixiApp!.stage.getChildByName(
+                      "backgroundSprite"
+                    ) as PIXI.Sprite
+                  ).texture = newBackground;
+                }, currentAction.delay * 1000);
+                live2dScenarioPlayerSeek();
               }
               break;
+            case SpecialEffectType.PlaceInfo:
             case SpecialEffectType.Telop:
               {
-                let fullScreenText = pixiApp!.stage.getChildByName(
-                  "fullScreenText"
-                ) as PIXI.Text;
-                pixiApp!.stage.sortChildren();
-                fullScreenText.text = currentAction.body;
-                fullScreenText.anchor.x = 0.5;
-                fullScreenText.anchor.y = 0.5;
-                fullScreenText.alpha = 1;
-                gsap.to(fullScreenText, { alpha: 1, duration: 1.5 });
-                gsap.to(fullScreenText, { alpha: 0, duration: 1.0, delay: 2 });
+                setTimeout(() => {
+                  let telopContainer = pixiApp!.stage.getChildByName(
+                    "telopContainer"
+                  ) as PIXI.Container;
+                  let telopText = telopContainer.getChildByName(
+                    "telopText"
+                  ) as PIXI.Text;
+                  telopText.text = currentAction.body;
+                  gsap.to(telopContainer, { alpha: 1, duration: 1.5 });
+                  gsap
+                    .to(telopContainer, {
+                      alpha: 0,
+                      duration: 1.0,
+                      delay: 2,
+                    })
+                    .then(live2dScenarioPlayerSeek);
+                }, currentAction.delay * 1000);
               }
               break;
             default:
@@ -631,75 +516,116 @@ const StoryReaderContentLive2d: React.FC<{
         break;
       case SnippetAction.Sound:
         {
-          if (currentAction.hasBgm) {
-            bgmAudioPlayer[0].src = currentAction.bgm;
-            bgmAudioPlayer[0].loop = true;
-            bgmAudioPlayer[0].play();
-          }
-          if (currentAction.hasSe) {
-            seAudioPlayer[0].src = currentAction.se;
-            seAudioPlayer[0].play();
-          }
+          setTimeout(() => {
+            if (currentAction.hasBgm) {
+              bgmAudioPlayer[0].src = currentAction.bgm;
+              bgmAudioPlayer[0].loop = true;
+              bgmAudioPlayer[0].play();
+            }
+            if (currentAction.hasSe) {
+              seAudioPlayer[0].src = currentAction.se;
+              seAudioPlayer[0].play();
+            }
+          }, currentAction.delay * 1000);
+          live2dScenarioPlayerSeek();
         }
         break;
       case SnippetAction.CharacterLayout:
       case SnippetAction.CharacterMotion:
         {
           let live2dModel = pixiApp!.stage.getChildByName(
-            `${currentAction.costumeType}_live2d`
+            `${
+              scenarioData.characters.find(
+                (charcter) => charcter.id === currentAction.character2dId
+              )?.name
+            }_live2d`
           );
-          switch (currentAction.type) {
-            case LayoutType.NotChange:
-              {
-              }
-              break;
-            case LayoutType.Appear:
-              {
-                live2dModel.x = 9999;
-                live2dModel.visible = true;
-                await (live2dModel as any).motion(
-                  currentAction.facialName,
-                  0,
-                  MotionPriority.FORCE
-                );
-                await (live2dModel as any)
-                  .motion(currentAction.motionName, 0, MotionPriority.FORCE)
-                  .then(() => {
-                    live2dModel.visible = true;
-                  });
+          setTimeout(async () => {
+            switch (currentAction.layoutType) {
+              case LayoutType.NotChange:
+                {
+                  (
+                    live2dModel as any
+                  ).internalModel.motionManager.stopAllMotions();
+                  await (live2dModel as any).motion(
+                    currentAction.facialName,
+                    0
+                  );
+                  setTimeout(async () => {
+                    (
+                      live2dModel as any
+                    ).internalModel.motionManager.stopAllMotions();
+                    await (live2dModel as any).motion(
+                      currentAction.motionName,
+                      0
+                    );
+                  }, 300);
+                }
+                break;
+              case LayoutType.Appear:
+                {
+                  live2dModel.x = 9999;
+                  live2dModel.visible = true;
+                  if (currentAction.sideFrom === 4) {
+                    live2dModel.x = 5 * (pixiApp!.screen.width / 10);
+                  } else if (currentAction.sideFrom === 3) {
+                    live2dModel.x = (pixiApp!.screen.width / 10) * 3;
+                  } else if (currentAction.sideFrom === 7) {
+                    live2dModel.x = (pixiApp!.screen.width / 10) * 7;
+                  } else {
+                    live2dModel.x =
+                      (currentAction.sideFrom + 1) *
+                      (pixiApp!.screen.width / 10);
+                  }
 
-                live2dModel.x =
-                  (currentAction.sideFrom + 1) * (pixiApp!.screen.width / 10);
-                await (live2dModel as any).motion(currentAction.motionName, 0);
-              }
-              break;
-            case LayoutType.Disappear:
-              {
-                live2dModel.visible = false;
-              }
-              break;
-            default:
-              break;
-          }
+                  // await (live2dModel as any).motion(currentAction.facialName, 0);
+                  (
+                    live2dModel as any
+                  ).internalModel.motionManager.stopAllMotions();
+                  await (live2dModel as any).motion(
+                    currentAction.facialName,
+                    0
+                  );
+                  setTimeout(async () => {
+                    (
+                      live2dModel as any
+                    ).internalModel.motionManager.stopAllMotions();
+                    await (live2dModel as any).motion(
+                      currentAction.motionName,
+                      0
+                    );
+                  }, 300);
+                }
+                break;
+              case LayoutType.Disappear:
+                {
+                  live2dModel.x = 9999;
+                  (
+                    live2dModel as any
+                  ).internalModel.motionManager.stopAllMotions();
+                }
+                break;
+              default:
+                break;
+            }
+          }, currentAction.delay * 1000);
+          live2dScenarioPlayerSeek();
         }
         break;
       default:
         break;
     }
-    setCurrentActionIndex(currentActionIndex + 1);
   }, [
     scenarioData.actions,
-    currentActionIndex,
-    voiceAudioPlayer,
+    scenarioData.characters,
     pixiApp,
+    voiceAudioPlayer,
     bgmAudioPlayer,
     seAudioPlayer,
   ]);
 
   const live2dScenarioPlayerInit = () => {
-    setCurrentActionIndex(28);
     setActionsLength(scenarioData.actions.length);
-    setCurrentLive2dModelIndex(0);
     const lengthAllresourcesNeed =
       scenarioData.resourcesNeed.size + scenarioData.characters.length;
     pixiApp!.renderer.plugins.interaction.destroy();
@@ -805,18 +731,7 @@ const StoryReaderContentLive2d: React.FC<{
           },
         ];
       });
-      // motionData.expressions.forEach((name) => {
-      //   model3Json.FileReferences.Motions[name] = Object;
-      //   model3Json.FileReferences.Motions[name] = [
-      //     {
-      //       File: `${
-      //         window.isChinaMainland
-      //           ? import.meta.env.VITE_ASSET_DOMAIN_CN
-      //           : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
-      //       }/live2d/motion/${motionName}_rip/${name}.motion3.json`,
-      //     },
-      //   ];
-      // });
+
       const model = await Live2DModel.from(model3Json, {
         motionPreload: MotionPreloadStrategy.ALL,
       });
@@ -831,6 +746,7 @@ const StoryReaderContentLive2d: React.FC<{
       model.scale.y = scale;
       model.name = `${modelName}_live2d`;
       model.visible = true;
+      // Inorder to prevent the T-pose of model, we need to set the model to the initial pose.
       let firstMotion = Array.from(
         scenarioData.motionsNeed.get(character.id)!
       )[0];
@@ -838,19 +754,6 @@ const StoryReaderContentLive2d: React.FC<{
       model.motion(firstMotion, 0, MotionPriority.FORCE);
 
       pixiApp?.stage.addChild(model);
-
-      // if (model) {
-      //   model._modelSize =
-      //     window.innerWidth * window.devicePixelRatio >=
-      //     theme.breakpoints.values.xl
-      //       ? currentWidth * 1.3
-      //       : currentWidth * 3;
-      //   console.log(
-      //     `${
-      //       index + 1
-      //     }/${lengthAllresourcesNeed} Model data for ${modelName} loaded`
-      //   );
-      // }
     });
     let resourcesNeedIndex = scenarioData.characters.length;
     scenarioData.resourcesNeed.forEach(async (resourceUrl) => {
@@ -915,7 +818,7 @@ const StoryReaderContentLive2d: React.FC<{
 
     const characterDialogText = new PIXI.Text("", {
       fill: 0xffffff,
-      fontSize: 15,
+      fontSize: 20,
     });
     characterDialogText.name = "characterDialogText";
     characterDialogContainer.addChild(characterDialogText);
@@ -956,6 +859,40 @@ const StoryReaderContentLive2d: React.FC<{
     whiteInOutGraphic!.alpha = 0;
 
     pixiApp!.stage.addChild(whiteInOutGraphic!);
+
+    const telopContainer = new PIXI.Container();
+    telopContainer.name = "telopContainer";
+    telopContainer.x = (pixiApp!.screen.width * 3) / 10;
+    telopContainer.y = pixiApp!.screen.height / 2;
+
+    telopContainer.zIndex = 10;
+    telopContainer.alpha = 0;
+
+    pixiApp!.stage.addChild(telopContainer);
+    const telopBackground = new PIXI.Graphics();
+    telopBackground.name = "telopBackground";
+    telopBackground.beginFill(0x000000, 0.5);
+    telopBackground.drawRect(
+      0,
+      0,
+      (pixiApp!.screen.width * 4) / 10,
+      (pixiApp!.screen.height * 1) / 10
+    );
+    telopBackground.endFill();
+    telopContainer.addChild(telopBackground);
+
+    const telopText = new PIXI.Text("", {
+      fill: 0xffffff,
+      fontSize: 30,
+      align: "center",
+    });
+    telopText.name = "telopText";
+    telopText.x = telopContainer.width / 2;
+    telopText.y = telopContainer.height / 2;
+    telopText.anchor.x = 0.5;
+    telopText.anchor.y = 0.5;
+
+    telopContainer.addChild(telopText);
     // pixiApp!.stage.addChild(blackBackgroundGraphic!);
 
     pixiApp!.stage.interactive = true;
@@ -964,7 +901,6 @@ const StoryReaderContentLive2d: React.FC<{
   return (
     <Fragment>
       <Button onClick={live2dScenarioPlayerInit}>{t("common:show")}</Button>
-      <Button onClick={AddNextLive2dModeltoCanvas}>{t("common:next")}</Button>
       <Box
         width={1024}
         height={631}
@@ -972,7 +908,6 @@ const StoryReaderContentLive2d: React.FC<{
         className={layoutClasses.content}
         id="live2dScenarioPlayerBox"
       >
-        {/* <canvas ref={canvas}></canvas> */}
         <Stage
           width={1024}
           height={631}
