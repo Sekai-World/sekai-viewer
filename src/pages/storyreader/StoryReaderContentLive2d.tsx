@@ -1,20 +1,9 @@
 /* eslint-disable no-lone-blocks */
-import {
-  Alert,
-  Box,
-  Button,
-  Container,
-  Grid,
-  LinearProgress,
-  Typography,
-  useTheme,
-} from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
+import { Alert, Box, Button, Container, Grid, Typography } from "@mui/material";
 import React, {
   Fragment,
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -36,22 +25,16 @@ import {
   getRemoteAssetURL,
   useAlertSnackbar,
   useCachedData,
-  useProcessedScenarioData,
   useProcessedScenarioDataForLive2d,
 } from "../../utils";
 import { charaIcons } from "../../utils/resources";
-import { ReleaseCondTrans } from "../../components/helpers/ContentTrans";
-import { Sound, SpecialEffect, Talk } from "./StoryReaderSnippet";
-import Image from "mui-image";
 import { useAssetI18n } from "../../utils/i18n";
-import { LAppLive2DManager } from "@sekai-world/find-live2d-v3/dist/types/lapplive2dmanager";
-import { LAppModel } from "@sekai-world/find-live2d-v3/dist/types/lappmodel";
 import Live2D from "@sekai-world/find-live2d-v3";
 
 import Axios from "axios";
 import * as PIXI from "pixi.js";
 
-import { Stage, Sprite } from "@inlet/react-pixi";
+import { Stage } from "@inlet/react-pixi";
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import {
@@ -61,8 +44,6 @@ import {
   config,
   // @ts-ignore
 } from "pixi-live2d-display/dist/cubism4";
-import { render } from "react-dom";
-import { object } from "prop-types";
 import { useHistory } from "react-router-dom";
 
 const live2dInstance = new Live2D();
@@ -74,19 +55,11 @@ config.idleMotionFadingDuration = 0;
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
 
-const useStyle = makeStyles((theme) => ({
-  episodeBanner: {
-    padding: theme.spacing(1.5, 0),
-  },
-}));
-
 const StoryReaderContentLive2d: React.FC<{
   storyType: string;
   storyId: string;
 }> = ({ storyType, storyId }) => {
   const layoutClasses = useLayoutStyles();
-  const classes = useStyle();
-  const theme = useTheme();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
   const getProcessedScenarioDataForLive2d = useProcessedScenarioDataForLive2d();
@@ -132,7 +105,6 @@ const StoryReaderContentLive2d: React.FC<{
   const bgmAudioPlayer = useMemo(() => new Audio(), []);
 
   const wrap = useRef<HTMLDivElement>(null);
-  const canvas = useRef<HTMLCanvasElement>(null);
   const stage = useRef<Stage>(null);
 
   const [pixiApp, setPixiApp] = useState<PIXI.Application>();
@@ -690,8 +662,6 @@ const StoryReaderContentLive2d: React.FC<{
 
   const live2dScenarioPlayerInit = () => {
     setActionsLength(scenarioData.actions.length);
-    const lengthAllresourcesNeed =
-      scenarioData.resourcesNeed.size + scenarioData.characters.length;
     pixiApp!.renderer.plugins.interaction.destroy();
     pixiApp!.stage.removeChildren();
     let promises = scenarioData.characters.map(async (character, _index, _) => {
