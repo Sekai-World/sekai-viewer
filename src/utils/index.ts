@@ -498,11 +498,17 @@ export function useProcessedScenarioDataForLive2d() {
                   : "",
               };
               if (action.motionName !== "") {
-                ret.motionsNeed.get(chara.id)?.add(action.motionName);
+                action.character2dId = talkData.Motions[0].Character2dId;
+                ret.motionsNeed
+                  .get(action.character2dId)
+                  ?.add(action.motionName);
               }
 
               if (action.facialName !== "") {
-                ret.motionsNeed.get(chara.id)?.add(action.facialName);
+                action.character2dId = talkData.Motions[0].Character2dId;
+                ret.motionsNeed
+                  .get(action.character2dId)
+                  ?.add(action.facialName);
               }
             }
             break;
