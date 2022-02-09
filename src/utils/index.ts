@@ -401,6 +401,7 @@ export function useProcessedScenarioDataForLive2d() {
           isWait: SnippetProgressBehavior.WaitUnitilFinished,
           delay: 0,
           seType: "ChangeBackground",
+          seTypeId: 7,
           body: FirstBgm,
           resource: firstBackgroundRemoteAssetUrl,
         });
@@ -531,8 +532,6 @@ export function useProcessedScenarioDataForLive2d() {
                       undefined,
                       window.isChinaMainland ? "cn" : "ww"
                     )
-                  : specialEffectType === "Movie"
-                  ? `scenario/movie/${specialEffect.StringVal}_rip`
                   : "";
 
               if (specialEffectRemoteAssetUrl !== "") {
