@@ -349,10 +349,12 @@ export function useProcessedScenarioDataForLive2d() {
         characters: { id: number; name: string }[];
         actions: { [key: string]: any }[];
         resourcesNeed: Set<string>;
+        motionsNeed: Map<number, Set<string>>;
       } = {
         characters: [],
         actions: [],
         resourcesNeed: new Set<string>(),
+        motionsNeed: new Map<number, Set<string>>(),
       };
 
       if (
@@ -424,6 +426,7 @@ export function useProcessedScenarioDataForLive2d() {
 
       // eslint-disable-next-line array-callback-return
       ret.characters = AppearCharacters.map((ap) => {
+        ret.motionsNeed.set(ap.Character2dId, new Set<string>());
         return {
           id: ap.Character2dId,
           name: ap.CostumeType,
@@ -494,6 +497,13 @@ export function useProcessedScenarioDataForLive2d() {
                   ? talkData.Motions[0].FacialName
                   : "",
               };
+              if (action.motionName !== "") {
+                ret.motionsNeed.get(chara.id)?.add(action.motionName);
+              }
+
+              if (action.facialName !== "") {
+                ret.motionsNeed.get(chara.id)?.add(action.facialName);
+              }
             }
             break;
           case SnippetAction.SpecialEffect:
@@ -597,6 +607,17 @@ export function useProcessedScenarioDataForLive2d() {
                 facialName: charaLayoutData.FacialName,
                 moveSpeedType: charaLayoutData.MoveSpeedType,
               };
+              if (action.motionName !== "") {
+                ret.motionsNeed
+                  .get(action.character2dId)
+                  ?.add(action.motionName);
+              }
+
+              if (action.facialName !== "") {
+                ret.motionsNeed
+                  .get(action.character2dId)
+                  ?.add(action.facialName);
+              }
             }
             break;
           case SnippetAction.CharacterMotion:
@@ -620,6 +641,17 @@ export function useProcessedScenarioDataForLive2d() {
                 facialName: charaMotionData.FacialName,
                 moveSpeedType: charaMotionData.MoveSpeedType,
               };
+              if (action.motionName !== "") {
+                ret.motionsNeed
+                  .get(action.character2dId)
+                  ?.add(action.motionName);
+              }
+
+              if (action.facialName !== "") {
+                ret.motionsNeed
+                  .get(action.character2dId)
+                  ?.add(action.facialName);
+              }
             }
             break;
           default: {
@@ -638,7 +670,7 @@ export function useProcessedScenarioDataForLive2d() {
 
       return ret;
     },
-    [chara2Ds, getCharaName, mobCharas, region]
+    [chara2Ds, mobCharas, region]
   );
 }
 
