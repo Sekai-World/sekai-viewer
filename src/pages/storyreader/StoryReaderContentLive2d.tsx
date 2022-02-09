@@ -38,19 +38,28 @@ import { useAssetI18n } from "../../utils/i18n";
 import { LAppLive2DManager } from "@sekai-world/find-live2d-v3/dist/types/lapplive2dmanager";
 import { LAppModel } from "@sekai-world/find-live2d-v3/dist/types/lappmodel";
 import Live2D from "@sekai-world/find-live2d-v3";
+
 import Axios from "axios";
 import * as PIXI from "pixi.js";
 
 import { Stage, Sprite } from "@inlet/react-pixi";
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
+import {
+  Live2DModel,
+  MotionPreloadStrategy,
+  MotionPriority,
+  // @ts-ignore
+} from "pixi-live2d-display/dist/cubism4";
+import { render } from "react-dom";
+import { object } from "prop-types";
+
+(window as any).PIXI = PIXI;
+
+// config.idleMotionFadingDuration = 2147483647;
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
-
-// Live2DModel.registerTicker(PIXI.Ticker);
-
-// config.idleMotionFadingDuration = 2147483647;
 
 const useStyle = makeStyles((theme) => ({
   episodeBanner: {
@@ -69,6 +78,9 @@ const StoryReaderContentLive2d: React.FC<{
   const { getTranslated } = useAssetI18n();
   const getProcessedScenarioDataForLive2d = useProcessedScenarioDataForLive2d();
   const { showError } = useAlertSnackbar();
+
+  const live2dInstance = useMemo(() => new Live2D(), []);
+  const [live2dManager, setLive2dManager] = useState<LAppLive2DManager>();
 
   const [unitStories] = useCachedData<IUnitStory>("unitStories");
   const [eventStories] = useCachedData<IEventStory>("eventStories");
@@ -90,10 +102,12 @@ const StoryReaderContentLive2d: React.FC<{
       [key: string]: any;
     }[];
     resourcesNeed: Set<string>;
+    motionsNeed: Map<number, Set<string>>;
   }>({
     characters: [],
     actions: [],
     resourcesNeed: new Set(),
+    motionsNeed: new Map(),
   });
 
   const [releaseConditionId, setReleaseConditionId] = useState<number>(0);
@@ -130,6 +144,7 @@ const StoryReaderContentLive2d: React.FC<{
       characters: [],
       actions: [],
       resourcesNeed: new Set(),
+      motionsNeed: new Map(),
     });
     try {
       switch (storyType) {
@@ -372,19 +387,17 @@ const StoryReaderContentLive2d: React.FC<{
   //   };
   // }, [live2dInstance]);
 
-  // useEffect(() => {
-  //   setPixiApp(
-  //     new PIXI.Application({
-  //       width: 1024,
-  //       height: 631,
-  //       autoStart: false,
-  //       resizeTo: wrap.current!,
-  //     })
-  //   );
-  //   wrap.current?.appendChild(pixiApp!.view);
-  // }, [pixiApp]);
+  useEffect(() => {
+    // const interactionManager = new PIXI.InteractionManager(
+    //   pixiApp!.stage,
+    //   pixiApp!.renderer.view
+    // );
+    Live2DModel.registerTicker(PIXI.Ticker);
+    // PIXI.Renderer.registerPlugin("interaction", PIXI.InteractionManager as any);
+  }, [pixiApp]);
 
   const AddNextLive2dModeltoCanvas = async () => {
+    pixiApp!.renderer.plugins.interaction.destroy();
     let modelName = scenarioData.characters[currentLive2dModelIndex].name;
     console.log(`Load model metadata for ${modelName}`);
     const { data: modelData } = await Axios.get<{
@@ -458,68 +471,42 @@ const StoryReaderContentLive2d: React.FC<{
     console.log(`Load model to manager`);
     const filename = modelData.Moc3FileName.replace(".moc3.bytes", "");
 
-    let curCanvas = document.getElementById(
-      `live2d_${modelName}`
-    ) as HTMLCanvasElement;
-    curCanvas.getContext("webgl", {
-      preserveDrawingBuffer: true,
-    });
-    let live2dInstance = new Live2D();
-    // let live2dManager = new LAppLive2DManager();
-    // live2dManager.initDelegate(undefined, {
-    //   wrap: wrap.current!,
-    //   canvas: curCanvas!,
-    // });
-    let live2dManager = live2dInstance.initialize(undefined, {
-      wrap: wrap.current!,
-      canvas: curCanvas!,
-    })!;
-
-    const model = await live2dManager?.addModel(
-      {
-        path: `${
-          window.isChinaMainland
-            ? import.meta.env.VITE_ASSET_DOMAIN_CN
-            : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
-        }/live2d/model/${modelName}_rip/`,
-        fileName: filename,
-        modelName,
-        modelSize: pixiApp!.screen.width * 2,
-        textures: [],
-        motions: [
-          ...motionData.motions.map((name) => ({
-            name,
-            url: `${
-              window.isChinaMainland
-                ? import.meta.env.VITE_ASSET_DOMAIN_CN
-                : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
-            }/live2d/motion/${motionName}_rip/${name}.motion3.json`,
-          })),
-          ...motionData.expressions.map((name) => ({
-            name,
-            url: `${
-              window.isChinaMainland
-                ? import.meta.env.VITE_ASSET_DOMAIN_CN
-                : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
-            }/live2d/motion/${motionName}_rip/${name}.motion3.json`,
-          })),
-        ],
-        expressions: [],
-      },
-      true
+    let model3Json;
+    const { data } = await Axios.get<{
+      Version: number;
+      FileReferences: {
+        [key: string]: string;
+      };
+      Groups: { [key: number]: any };
+    }>(
+      `${
+        window.isChinaMainland
+          ? import.meta.env.VITE_ASSET_DOMAIN_CN
+          : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
+      }/live2d/model/${modelName}_rip/${filename}.model3.json`,
+      { responseType: "json" }
     );
-
-    if (model) {
-      model.appear({
-        pointX: 512,
-        pointY: 100,
-        zIndex: 0,
-      });
-    }
+    model3Json = data as any;
+    model3Json.url = `${
+      window.isChinaMainland
+        ? import.meta.env.VITE_ASSET_DOMAIN_CN
+        : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
+    }/live2d/model/${modelName}_rip/${filename}.model3.json`;
+    model3Json.FileReferences.Moc = model3Json.FileReferences.Moc + ".bytes";
+    const model = await Live2DModel.from(model3Json);
+    model.x = pixiApp!.screen.width / 2;
+    model.y = pixiApp!.screen.height / 2;
+    model.anchor.x = 0.5;
+    model.anchor.y = 0.5;
+    model.alpha = 1;
+    model.zIndex = 150;
+    model.scale.x = 0.3;
+    model.scale.y = 0.3;
+    pixiApp?.stage.addChild(model);
     setCurrentLive2dModelIndex(currentLive2dModelIndex + 1);
   };
 
-  const live2dScenarioPlayerSeek = useCallback(() => {
+  const live2dScenarioPlayerSeek = useCallback(async () => {
     const currentAction = scenarioData.actions[currentActionIndex];
     console.log(
       `Current: ${currentActionIndex}/${scenarioData.actions.length}`
@@ -658,6 +645,9 @@ const StoryReaderContentLive2d: React.FC<{
       case SnippetAction.CharacterLayout:
       case SnippetAction.CharacterMotion:
         {
+          let live2dModel = pixiApp!.stage.getChildByName(
+            `${currentAction.costumeType}_live2d`
+          );
           switch (currentAction.type) {
             case LayoutType.NotChange:
               {
@@ -665,10 +655,27 @@ const StoryReaderContentLive2d: React.FC<{
               break;
             case LayoutType.Appear:
               {
+                live2dModel.x = 9999;
+                live2dModel.visible = true;
+                await (live2dModel as any).motion(
+                  currentAction.facialName,
+                  0,
+                  MotionPriority.FORCE
+                );
+                await (live2dModel as any)
+                  .motion(currentAction.motionName, 0, MotionPriority.FORCE)
+                  .then(() => {
+                    live2dModel.visible = true;
+                  });
+
+                live2dModel.x =
+                  (currentAction.sideFrom + 1) * (pixiApp!.screen.width / 10);
+                await (live2dModel as any).motion(currentAction.motionName, 0);
               }
               break;
             case LayoutType.Disappear:
               {
+                live2dModel.visible = false;
               }
               break;
             default:
@@ -689,21 +696,148 @@ const StoryReaderContentLive2d: React.FC<{
     seAudioPlayer,
   ]);
 
-  const live2dScenarioPlayerInit = useCallback(() => {
+  const live2dScenarioPlayerInit = () => {
     setCurrentActionIndex(28);
     setActionsLength(scenarioData.actions.length);
     setCurrentLive2dModelIndex(0);
     const lengthAllresourcesNeed =
       scenarioData.resourcesNeed.size + scenarioData.characters.length;
-
+    pixiApp!.renderer.plugins.interaction.destroy();
     scenarioData.characters.forEach(async (character, index, _) => {
       const modelName = character.name;
-      let canvas = document.createElement("canvas");
-      let box = wrap.current;
-      canvas.width = 1024;
-      canvas.height = 631;
-      canvas.id = `live2d_${modelName}`;
-      box!.appendChild(canvas);
+      console.log(`Load model metadata for ${modelName}`);
+      const { data: modelData } = await Axios.get<{
+        Moc3FileName: string;
+        TextureNames: string[];
+        PhysicsFileName: string;
+        UserDataFileName: string;
+        AdditionalMotionData: any[];
+        CategoryRules: any[];
+      }>(
+        `${
+          window.isChinaMainland
+            ? import.meta.env.VITE_ASSET_DOMAIN_CN
+            : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
+        }/live2d/model/${modelName}_rip/buildmodeldata.asset`,
+        { responseType: "json" }
+      );
+
+      console.log(`Load model texture for ${modelName}`);
+      await Axios.get(
+        `${
+          window.isChinaMainland
+            ? import.meta.env.VITE_ASSET_DOMAIN_CN
+            : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
+        }/live2d/model/${modelName}_rip/${modelData.TextureNames[0]}`
+      );
+
+      console.log(`Load model moc3 for ${modelName}`);
+      await Axios.get(
+        `${
+          window.isChinaMainland
+            ? import.meta.env.VITE_ASSET_DOMAIN_CN
+            : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
+        }/live2d/model/${modelName}_rip/${modelData.Moc3FileName}`
+      );
+
+      console.log(`Load model physics for ${modelName}`);
+      await Axios.get(
+        `${
+          window.isChinaMainland
+            ? import.meta.env.VITE_ASSET_DOMAIN_CN
+            : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
+        }/live2d/model/${modelName}_rip/${modelData.PhysicsFileName}`
+      );
+      let model3Json: any;
+      let motionData;
+      const motionName: String =
+        (modelName.startsWith("sub") || modelName.startsWith("clb")
+          ? modelName
+          : modelName.split("_")[0]) + "_motion_base";
+      if (!modelName.startsWith("normal")) {
+        console.log(`Load model motion for ${modelName}`);
+        const { data } = await Axios.get<{
+          motions: string[];
+          expressions: string[];
+        }>(
+          `${
+            window.isChinaMainland
+              ? import.meta.env.VITE_ASSET_DOMAIN_CN
+              : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
+          }/live2d/motion/${motionName}_rip/BuildMotionData.json`,
+          { responseType: "json" }
+        );
+        motionData = data;
+      } else {
+        motionData = {
+          motions: [],
+          expressions: [],
+        };
+      }
+      console.log(`Load model to manager`);
+      const filename = modelData.Moc3FileName.replace(".moc3.bytes", "");
+
+      let model3JsonUrl = `${
+        window.isChinaMainland
+          ? import.meta.env.VITE_ASSET_DOMAIN_CN
+          : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
+      }/live2d/model/${modelName}_rip/${filename}.model3.json`;
+      const { data } = await Axios.get<{
+        Version: number;
+        FileReferences: {
+          [key: string]: any;
+        };
+        Groups: { [key: number]: any };
+      }>(model3JsonUrl, { responseType: "json" });
+      model3Json = data;
+      model3Json.url = model3JsonUrl;
+      model3Json.FileReferences.Moc = model3Json.FileReferences.Moc + ".bytes";
+      model3Json.FileReferences.Motions = Object;
+      scenarioData.motionsNeed.get(character.id)?.forEach((name) => {
+        model3Json.FileReferences.Motions[name] = Object;
+        model3Json.FileReferences.Motions[name] = [
+          {
+            File: `${
+              window.isChinaMainland
+                ? import.meta.env.VITE_ASSET_DOMAIN_CN
+                : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
+            }/live2d/motion/${motionName}_rip/${name}.motion3.json`,
+          },
+        ];
+      });
+      // motionData.expressions.forEach((name) => {
+      //   model3Json.FileReferences.Motions[name] = Object;
+      //   model3Json.FileReferences.Motions[name] = [
+      //     {
+      //       File: `${
+      //         window.isChinaMainland
+      //           ? import.meta.env.VITE_ASSET_DOMAIN_CN
+      //           : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
+      //       }/live2d/motion/${motionName}_rip/${name}.motion3.json`,
+      //     },
+      //   ];
+      // });
+      const model = await Live2DModel.from(model3Json, {
+        motionPreload: MotionPreloadStrategy.ALL,
+      });
+      model.x = 9999;
+      model.y = (pixiApp!.screen.height / 5) * 3;
+      model.anchor.x = 0.5;
+      model.anchor.y = 0.5;
+      model.alpha = 1;
+      model.zIndex = 5;
+      let scale = pixiApp!.screen.width / 2 / model.width;
+      model.scale.x = scale;
+      model.scale.y = scale;
+      model.name = `${modelName}_live2d`;
+      model.visible = true;
+      let firstMotion = Array.from(
+        scenarioData.motionsNeed.get(character.id)!
+      )[0];
+      console.log(firstMotion);
+      model.motion(firstMotion, 0, MotionPriority.FORCE);
+
+      pixiApp?.stage.addChild(model);
 
       // if (model) {
       //   model._modelSize =
@@ -822,16 +956,10 @@ const StoryReaderContentLive2d: React.FC<{
     whiteInOutGraphic!.alpha = 0;
 
     pixiApp!.stage.addChild(whiteInOutGraphic!);
-    pixiApp!.stage.addChild(blackBackgroundGraphic!);
+    // pixiApp!.stage.addChild(blackBackgroundGraphic!);
 
     pixiApp!.stage.interactive = true;
-  }, [
-    scenarioData.actions.length,
-    scenarioData.resourcesNeed,
-    scenarioData.characters,
-    pixiApp,
-    blackBackgroundGraphic,
-  ]);
+  };
 
   return (
     <Fragment>
