@@ -59,7 +59,7 @@ const StoryReaderLive2d: React.FC<{}> = observer(() => {
   // const match = useRouteMatch<{
   //   storyType: storyType;
   //   storyId: string;
-  // }>("/storyreaderl2d/:storyType/:storyId");
+  // }>("/storyreaderlive2d/:storyType/:storyId");
   const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
   const [unitStories] = useCachedData<IUnitStory>("unitStories");
   const [eventStories] = useCachedData<IEventStory>("eventStories");
@@ -289,12 +289,12 @@ const StoryReaderLive2d: React.FC<{}> = observer(() => {
               <Link
                 className={interactiveClasses.noDecorationAlsoOnHover}
                 color="inherit"
-                to="/storyreaderl2d/eventStory"
+                to="/storyreaderlive2d/eventStory"
               >
                 <Card className={classes.selectCard}>
                   <CardContent>
                     <Typography>
-                      {t("story_reader_l2d:selectValue.eventStory")}
+                      {t("story_reader:selectValue.eventStory")}
                     </Typography>
                   </CardContent>
                 </Card>
@@ -304,12 +304,12 @@ const StoryReaderLive2d: React.FC<{}> = observer(() => {
               <Link
                 className={interactiveClasses.noDecorationAlsoOnHover}
                 color="inherit"
-                to="/storyreaderl2d/unitStory"
+                to="/storyreaderlive2d/unitStory"
               >
                 <Card className={classes.selectCard}>
                   <CardContent>
                     <Typography>
-                      {t("story_reader_l2d:selectValue.unitStory")}
+                      {t("story_reader:selectValue.unitStory")}
                     </Typography>
                   </CardContent>
                 </Card>
@@ -319,12 +319,12 @@ const StoryReaderLive2d: React.FC<{}> = observer(() => {
               <Link
                 className={interactiveClasses.noDecorationAlsoOnHover}
                 color="inherit"
-                to="/storyreaderl2d/charaStory"
+                to="/storyreaderlive2d/charaStory"
               >
                 <Card className={classes.selectCard}>
                   <CardContent>
                     <Typography>
-                      {t("story_reader_l2d:selectValue.charaStory")}
+                      {t("story_reader:selectValue.charaStory")}
                     </Typography>
                   </CardContent>
                 </Card>
@@ -334,12 +334,12 @@ const StoryReaderLive2d: React.FC<{}> = observer(() => {
               <Link
                 className={interactiveClasses.noDecorationAlsoOnHover}
                 color="inherit"
-                to="/storyreaderl2d/cardStory"
+                to="/storyreaderlive2d/cardStory"
               >
                 <Card className={classes.selectCard}>
                   <CardContent>
                     <Typography>
-                      {t("story_reader_l2d:selectValue.cardStory")}
+                      {t("story_reader:selectValue.cardStory")}
                     </Typography>
                   </CardContent>
                 </Card>
@@ -349,12 +349,12 @@ const StoryReaderLive2d: React.FC<{}> = observer(() => {
               <Link
                 className={interactiveClasses.noDecorationAlsoOnHover}
                 color="inherit"
-                to="/storyreaderl2d/areaTalk"
+                to="/storyreaderlive2d/areaTalk"
               >
                 <Card className={classes.selectCard}>
                   <CardContent>
                     <Typography>
-                      {t("story_reader_l2d:selectValue.areaTalk")}
+                      {t("story_reader:selectValue.areaTalk")}
                     </Typography>
                   </CardContent>
                 </Card>
@@ -364,12 +364,12 @@ const StoryReaderLive2d: React.FC<{}> = observer(() => {
               <Link
                 className={interactiveClasses.noDecorationAlsoOnHover}
                 color="inherit"
-                to="/storyreaderl2d/specialStory"
+                to="/storyreaderlive2d/specialStory"
               >
                 <Card className={classes.selectCard}>
                   <CardContent>
                     <Typography>
-                      {t("story_reader_l2d:selectValue.special")}
+                      {t("story_reader:selectValue.special")}
                     </Typography>
                   </CardContent>
                 </Card>
@@ -379,7 +379,7 @@ const StoryReaderLive2d: React.FC<{}> = observer(() => {
               <Card>
                 <CardContent>
                   <Typography color="textSecondary">
-                    {t("story_reader_l2d:selectValue.liveTalk")}
+                    {t("story_reader:selectValue.liveTalk")}
                   </Typography>
                 </CardContent>
               </Card>
@@ -397,7 +397,7 @@ const StoryReaderLive2d: React.FC<{}> = observer(() => {
                     <Link
                       className={interactiveClasses.noDecorationAlsoOnHover}
                       color="inherit"
-                      to={`/storyreaderl2d/eventStory/${ev.id}`}
+                      to={`/storyreaderlive2d/eventStory/${ev.id}`}
                     >
                       <Card className={classes.selectCard}>
                         <CardContent>
@@ -486,7 +486,7 @@ const StoryReaderLive2d: React.FC<{}> = observer(() => {
                   <Link
                     className={interactiveClasses.noDecorationAlsoOnHover}
                     color="inherit"
-                    to={`/storyreaderl2d/unitStory/${unit.unit}`}
+                    to={`/storyreaderlive2d/unitStory/${unit.unit}`}
                   >
                     <Card className={classes.selectCard}>
                       <CardContent>
@@ -622,7 +622,7 @@ const StoryReaderLive2d: React.FC<{}> = observer(() => {
                   <Link
                     className={interactiveClasses.noDecorationAlsoOnHover}
                     color="inherit"
-                    to={`/storyreaderl2d/charaStory/${character.characterId}`}
+                    to={`/storyreaderlive2d/charaStory/${character.characterId}`}
                   >
                     <Card className={classes.selectCard}>
                       <CardContent>
@@ -678,7 +678,7 @@ const StoryReaderLive2d: React.FC<{}> = observer(() => {
                   <Link
                     className={interactiveClasses.noDecorationAlsoOnHover}
                     color="inherit"
-                    to={`/storyreaderl2d/cardStory/${character.characterId}`}
+                    to={`/storyreaderlive2d/cardStory/${character.characterId}`}
                   >
                     <Card className={classes.selectCard}>
                       <CardContent>
@@ -825,7 +825,7 @@ const StoryReaderLive2d: React.FC<{}> = observer(() => {
                     <Link
                       className={interactiveClasses.noDecorationAlsoOnHover}
                       color="inherit"
-                      to={`/storyreaderl2d/areaTalk/${area.id}`}
+                      to={`/storyreaderlive2d/areaTalk/${area.id}`}
                     >
                       <Card className={classes.selectCard}>
                         <CardContent>
@@ -862,7 +862,7 @@ const StoryReaderLive2d: React.FC<{}> = observer(() => {
                     <Link
                       className={interactiveClasses.noDecorationAlsoOnHover}
                       color="inherit"
-                      to={`/storyreaderl2d/areaTalk/${area.id}`}
+                      to={`/storyreaderlive2d/areaTalk/${area.id}`}
                     >
                       <Card className={classes.selectCard}>
                         <CardContent>
@@ -894,7 +894,7 @@ const StoryReaderLive2d: React.FC<{}> = observer(() => {
                     <Link
                       className={interactiveClasses.noDecorationAlsoOnHover}
                       color="inherit"
-                      to={`/storyreaderl2d/areaTalk/${area.id}`}
+                      to={`/storyreaderlive2d/areaTalk/${area.id}`}
                     >
                       <Card className={classes.selectCard}>
                         <CardContent>
@@ -998,7 +998,7 @@ const StoryReaderLive2d: React.FC<{}> = observer(() => {
                     <Link
                       className={interactiveClasses.noDecorationAlsoOnHover}
                       color="inherit"
-                      to={`/storyreaderl2d/specialStory/${sp.id}`}
+                      to={`/storyreaderlive2d/specialStory/${sp.id}`}
                     >
                       <Card className={classes.selectCard}>
                         <CardContent>
