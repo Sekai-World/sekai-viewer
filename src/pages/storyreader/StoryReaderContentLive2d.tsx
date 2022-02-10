@@ -548,6 +548,18 @@ const StoryReaderContentLive2d: React.FC<{
             switch (currentAction.layoutType) {
               case LayoutType.NotChange:
                 {
+                  live2dModel.visible = true;
+                  if (currentAction.sideFrom === 4) {
+                    live2dModel.x = 5 * (pixiApp!.screen.width / 10);
+                  } else if (currentAction.sideFrom === 3) {
+                    live2dModel.x = (pixiApp!.screen.width / 10) * 3;
+                  } else if (currentAction.sideFrom === 7) {
+                    live2dModel.x = (pixiApp!.screen.width / 10) * 7;
+                  } else {
+                    live2dModel.x =
+                      (currentAction.sideFrom + 1) *
+                      (pixiApp!.screen.width / 10);
+                  }
                   (
                     live2dModel as any
                   ).internalModel.motionManager.stopAllMotions();
@@ -737,7 +749,7 @@ const StoryReaderContentLive2d: React.FC<{
       model.name = `${modelName}_live2d`;
       pixiApp?.stage.addChild(model);
       model.visible = true;
-      // Inorder to prevent the T-pose of model, we need to set the model to the initial pose.
+      // Inorder to prevent the A-pose of model, we need to set the model to the initial pose.
       let firstMotion = Array.from(
         scenarioData.motionsNeed.get(character.id)!
       )[0];

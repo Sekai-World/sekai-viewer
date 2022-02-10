@@ -70,6 +70,7 @@ import {
   IBond,
   IBondsReward,
   IEventRarityBonusRate,
+  LayoutType,
 } from "./../types.d";
 import { useAssetI18n, useCharaName } from "./i18n";
 import { useLocation } from "react-router-dom";
@@ -387,7 +388,37 @@ export function useProcessedScenarioDataForLive2d() {
         SoundData,
         FirstBgm,
         FirstBackground,
+        FirstLayout,
       } = data;
+
+      if (FirstLayout) {
+        FirstLayout.forEach((character) => {
+          let action: { [key: string]: any } = {};
+          action = {
+            type: SnippetAction.CharacterLayout,
+            isWait: true,
+            delay: 0,
+            layoutType: LayoutType.Appear,
+            sideFrom: character.PositionSide,
+            sideTo: character.PositionSide,
+            sideToOffsetX: character.OffsetX,
+            depthType: 0,
+            character2dId: character.Character2dId,
+            costumeType: character.CostumeType,
+            motionName: character.MotionName,
+            facialName: character.FacialName,
+            moveSpeedType: 0,
+          };
+          ret.actions.push(action);
+          if (action.motionName !== "") {
+            ret.motionsNeed.get(action.character2dId)?.add(action.motionName);
+          }
+
+          if (action.facialName !== "") {
+            ret.motionsNeed.get(action.character2dId)?.add(action.facialName);
+          }
+        });
+      }
 
       if (FirstBackground) {
         const firstBackgroundRemoteAssetUrl = await getRemoteAssetURL(
