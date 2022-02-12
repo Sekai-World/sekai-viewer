@@ -677,8 +677,33 @@ export interface LayoutData {
 
 export enum LayoutType {
   NotChange = 0,
+  Move = 1,
   Appear = 2,
   Disappear = 3,
+  ShakeOnXAxis = 4,
+  ShakeOnYAxis = 5,
+}
+
+export enum LayoutMoveSpeedType {
+  Normal = 0,
+  Fast = 1,
+  Slow = 2,
+}
+
+export enum LayoutSideType {
+  None = 0,
+  Left = 1,
+  LeftOver = 2,
+  LeftInside = 3,
+  Center = 4,
+  Right = 5,
+  RightOver = 6,
+  RightInside = 7,
+  LeftUnder = 8,
+  LeftInsideUnder = 9,
+  CenterUnder = 10,
+  RightUnder = 11,
+  RightInsideUnder = 12,
 }
 
 export enum SpecialEffectType {
