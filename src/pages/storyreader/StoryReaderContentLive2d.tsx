@@ -20,6 +20,7 @@ import {
   ISpecialStory,
   SpecialEffectType,
   LayoutType,
+  LayoutSideType,
 } from "../../types.d";
 import {
   getRemoteAssetURL,
@@ -549,17 +550,17 @@ const StoryReaderContentLive2d: React.FC<{
               case LayoutType.NotChange:
                 {
                   live2dModel.visible = true;
-                  if (currentAction.sideFrom === 4) {
-                    live2dModel.x = 5 * (pixiApp!.screen.width / 10);
-                  } else if (currentAction.sideFrom === 3) {
-                    live2dModel.x = (pixiApp!.screen.width / 10) * 3;
-                  } else if (currentAction.sideFrom === 7) {
-                    live2dModel.x = (pixiApp!.screen.width / 10) * 7;
-                  } else {
-                    live2dModel.x =
-                      (currentAction.sideFrom + 1) *
-                      (pixiApp!.screen.width / 10);
-                  }
+                  // if (currentAction.sideFrom === 4) {
+                  //   live2dModel.x = 5 * (pixiApp!.screen.width / 10);
+                  // } else if (currentAction.sideFrom === 3) {
+                  //   live2dModel.x = (pixiApp!.screen.width / 10) * 3;
+                  // } else if (currentAction.sideFrom === 7) {
+                  //   live2dModel.x = (pixiApp!.screen.width / 10) * 7;
+                  // } else {
+                  //   live2dModel.x =
+                  //     (currentAction.sideFrom + 1) *
+                  //     (pixiApp!.screen.width / 10);
+                  // }
                   (
                     live2dModel as any
                   ).internalModel.motionManager.stopAllMotions();
@@ -651,6 +652,48 @@ const StoryReaderContentLive2d: React.FC<{
                     live2dModel as any
                   ).internalModel.motionManager.stopAllMotions();
                   live2dScenarioPlayerSeek();
+                }
+                break;
+              case LayoutType.Move:
+                {
+                  live2dModel.visible = true;
+                  if (currentAction.sideFrom === 4) {
+                    live2dModel.x = 5 * (pixiApp!.screen.width / 10);
+                  } else if (currentAction.sideFrom === 3) {
+                    live2dModel.x = (pixiApp!.screen.width / 10) * 3;
+                  } else if (currentAction.sideFrom === 7) {
+                    live2dModel.x = (pixiApp!.screen.width / 10) * 7;
+                  } else {
+                    live2dModel.x =
+                      (currentAction.sideFrom + 1) *
+                      (pixiApp!.screen.width / 10);
+                  }
+                  (
+                    live2dModel as any
+                  ).internalModel.motionManager.stopAllMotions();
+                  let newX = 0;
+
+                  switch (currentAction.sideTo) {
+                    case LayoutSideType.Center:
+                      newX = pixiApp!.screen.width / 2;
+                      break;
+                    case LayoutSideType.LeftInside:
+                      newX = (pixiApp!.screen.width / 10) * 3;
+                      break;
+                    case LayoutSideType.RightInside:
+                      newX = (pixiApp!.screen.width / 10) * 7;
+                      break;
+                    default:
+                      console.log("Not implemented yet.");
+                      newX =
+                        (currentAction.sideTo + 1) *
+                        (pixiApp!.screen.width / 10);
+                      break;
+                  }
+
+                  gsap.to(live2dModel, { x: newX, duration: 1.0 }).then(() => {
+                    live2dScenarioPlayerSeek();
+                  });
                 }
                 break;
               default:
