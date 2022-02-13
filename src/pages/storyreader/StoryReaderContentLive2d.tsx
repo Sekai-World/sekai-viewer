@@ -35,6 +35,8 @@ import * as PIXI from "pixi.js";
 import { Stage } from "@inlet/react-pixi";
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
+// @ts-ignore
+import "@sekai-world/find-live2d-v3/dist/core/live2dcubismcore";
 import {
   Live2DModel,
   MotionPreloadStrategy,
@@ -42,16 +44,15 @@ import {
   config,
   // @ts-ignore
 } from "pixi-live2d-display/dist/cubism4";
-// @ts-ignore
-import "@sekai-world/find-live2d-v3/dist/core/live2dcubismcore";
 import { useHistory } from "react-router-dom";
+import { action } from "mobx";
 
 // const live2dInstance = new Live2D();
 
 (window as any).PIXI = PIXI;
 
 config.idleMotionFadingDuration = 0;
-
+config.logLevel = config.LOG_LEVEL_VERBOSE;
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
 
@@ -707,6 +708,7 @@ const StoryReaderContentLive2d: React.FC<{
 
   const live2dScenarioPlayerInit = () => {
     setActionsLength(scenarioData.actions.length);
+    actionIndex.current = -1;
     pixiApp!.renderer.plugins.interaction.destroy();
     pixiApp!.stage.removeChildren();
     let promises = scenarioData.characters.map(async (character, _index, _) => {
@@ -797,13 +799,13 @@ const StoryReaderContentLive2d: React.FC<{
       }
     });
 
-    scenarioData.resourcesNeed.forEach(async (resourceUrl) => {
-      promises.push(
-        Axios.get(resourceUrl).then(() => {
-          setProgressWords(`${resourceUrl}`);
-        })
-      );
-    });
+    // scenarioData.resourcesNeed.forEach(async (resourceUrl) => {
+    //   promises.push(
+    //     Axios.get(resourceUrl).then(() => {
+    //       setProgressWords(`${resourceUrl}`);
+    //     })
+    //   );
+    // });
 
     Promise.all(promises).then(() => {
       setProgressWords(`DONE! Click the canvas below to start!`);
