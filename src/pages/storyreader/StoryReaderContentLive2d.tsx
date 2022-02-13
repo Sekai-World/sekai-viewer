@@ -30,11 +30,8 @@ import {
 } from "../../utils";
 import { charaIcons } from "../../utils/resources";
 import { useAssetI18n } from "../../utils/i18n";
-import Live2D from "@sekai-world/find-live2d-v3";
-
 import Axios from "axios";
 import * as PIXI from "pixi.js";
-
 import { Stage } from "@inlet/react-pixi";
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
@@ -45,9 +42,11 @@ import {
   config,
   // @ts-ignore
 } from "pixi-live2d-display/dist/cubism4";
+// @ts-ignore
+import "@sekai-world/find-live2d-v3/dist/core/live2dcubismcore";
 import { useHistory } from "react-router-dom";
 
-const live2dInstance = new Live2D();
+// const live2dInstance = new Live2D();
 
 (window as any).PIXI = PIXI;
 
@@ -657,17 +656,6 @@ const StoryReaderContentLive2d: React.FC<{
               case LayoutType.Move:
                 {
                   live2dModel.visible = true;
-                  if (currentAction.sideFrom === 4) {
-                    live2dModel.x = 5 * (pixiApp!.screen.width / 10);
-                  } else if (currentAction.sideFrom === 3) {
-                    live2dModel.x = (pixiApp!.screen.width / 10) * 3;
-                  } else if (currentAction.sideFrom === 7) {
-                    live2dModel.x = (pixiApp!.screen.width / 10) * 7;
-                  } else {
-                    live2dModel.x =
-                      (currentAction.sideFrom + 1) *
-                      (pixiApp!.screen.width / 10);
-                  }
                   (
                     live2dModel as any
                   ).internalModel.motionManager.stopAllMotions();
@@ -690,6 +678,8 @@ const StoryReaderContentLive2d: React.FC<{
                         (pixiApp!.screen.width / 10);
                       break;
                   }
+
+                  newX += currentAction.sideToOffsetX;
 
                   gsap.to(live2dModel, { x: newX, duration: 1.0 }).then(() => {
                     live2dScenarioPlayerSeek();
@@ -958,7 +948,13 @@ const StoryReaderContentLive2d: React.FC<{
       voiceAudioPlayer.pause();
       bgmAudioPlayer.pause();
       seAudioPlayer.pause();
-      live2dInstance.release();
+      // live2dInstance.release();
+
+      pixiApp!.stage.destroy({
+        children: true,
+        texture: true,
+        baseTexture: true,
+      });
     });
   });
 
