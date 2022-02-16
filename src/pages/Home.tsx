@@ -210,6 +210,14 @@ function Home() {
                 width="1500"
                 height="500"
               />
+            ) : jpTime === "2/17" ? (
+              <img
+                src={`/images/banner-kaito.png`}
+                alt="banner"
+                style={{ width: "100%", height: "auto" }}
+                width="1500"
+                height="500"
+              />
             ) : jpTime === "7/20" ? (
               <img
                 src={`/images/banner-nene.jpg`}
