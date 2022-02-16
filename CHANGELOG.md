@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.7](https://github.com/Sekai-World/sekai-viewer/compare/v1.2.6...v1.2.7) (2022-02-16)
+
+
+### Features
+
+* **Home:** add kaito banner ([95db8a2](https://github.com/Sekai-World/sekai-viewer/commits/95db8a23c475fcaa625004278744b6cd46c040c6))
+
 ### [1.2.6](https://github.com/Sekai-World/sekai-viewer/compare/v1.2.5...v1.2.6) (2022-01-26)
 
 
