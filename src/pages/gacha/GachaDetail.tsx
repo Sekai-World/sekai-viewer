@@ -43,9 +43,12 @@ import {
   IGachaCeilItem,
   IGachaInfo,
 } from "../../types.d";
-import { getRemoteAssetURL, useCachedData } from "../../utils";
+import {
+  cardRarityTypeToRarity,
+  getRemoteAssetURL,
+  useCachedData,
+} from "../../utils";
 import { CardThumb, CardThumbs } from "../../components/widgets/CardThumb";
-import rarityNormal from "../../assets/rarity_star_normal.png";
 import { useTranslation } from "react-i18next";
 import { useAssetI18n } from "../../utils/i18n";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
@@ -54,7 +57,10 @@ import CommonMaterialIcon from "../../components/widgets/CommonMaterialIcon";
 // import AdSense from "../../components/blocks/AdSense";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
+
 import rarityBirthday from "../../assets/rarity_birthday.png";
+import rarityNormal from "../../assets/rarity_star_normal.png";
+import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
 
 const gachaImageNameMap: {
   [key: number]: {
@@ -106,14 +112,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const StarIcon: React.FC<{ num: number; right?: boolean }> = ({
-  num,
-  right = false,
-}) => (
+const StarIcon: React.FC<{
+  num: number;
+  right?: boolean;
+  trained?: boolean;
+}> = ({ num, right = false, trained = false }) => (
   <Grid container justifyContent={right ? "flex-end" : "inherit"}>
     <Grid item>
       {Array.from({ length: num }).map((_, idx) => (
-        <img key={idx} src={rarityNormal} alt="star" height="24px" />
+        <img
+          key={idx}
+          src={trained ? rarityAfterTraining : rarityNormal}
+          alt="star"
+          height="24px"
+        />
       ))}
     </Grid>
   </Grid>
@@ -254,7 +266,11 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
           ]
         );
 
-        if (isOverRarity && gachaRarityRates[idx].rarity < 3)
+        if (
+          isOverRarity &&
+          (gachaRarityRates[idx].rarity ||
+            cardRarityTypeToRarity[gachaRarityRates[idx].cardRarityType!]) < 3
+        )
           noOverRarityCount += 1;
       }
 
@@ -363,7 +379,9 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
         )!;
         grs[rarity3Idx] = sumRates[rarity3Idx];
         rates.forEach((rate, idx) => {
-          if (rate.rarity < 3) {
+          if (
+            (rate.rarity || cardRarityTypeToRarity[rate.cardRarityType!]) < 3
+          ) {
             grs[idx] = 0;
           }
         });
@@ -381,7 +399,7 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
         )!;
         grs[rarity4Idx] = sumRates[rarity4Idx];
         rates.forEach((rate, idx) => {
-          if (rate.rarity < 4) {
+          if (rate.rarity || cardRarityTypeToRarity[rate.cardRarityType!] < 4) {
             grs[idx] = 0;
           }
         });
@@ -526,11 +544,13 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
           Math.round((detail.weight / weights[idx]) * normalRates[idx] * 1000) /
             1000 +
           " %" +
-          ((card.rarity >= 3 &&
+          (card.rarity ||
+          (cardRarityTypeToRarity[card.cardRarityType!] >= 3 &&
             gacha.gachaBehaviors.some(
               (behavior) => behavior.gachaBehaviorType === "over_rarity_3_once"
             )) ||
-          (card.rarity >= 4 &&
+          card.rarity ||
+          (cardRarityTypeToRarity[card.cardRarityType!] >= 4 &&
             gacha.gachaBehaviors.some(
               (behavior) => behavior.gachaBehaviorType === "over_rarity_4_once"
             ))
@@ -787,7 +807,21 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
                                     </Grid>
                                   </Grid>
                                 ) : (
-                                  <StarIcon num={rate.rarity} right />
+                                  <StarIcon
+                                    num={
+                                      rate.rarity ||
+                                      cardRarityTypeToRarity[
+                                        rate.cardRarityType!
+                                      ]
+                                    }
+                                    right
+                                    trained={
+                                      (rate.rarity ||
+                                        cardRarityTypeToRarity[
+                                          rate.cardRarityType!
+                                        ]) >= 3
+                                    }
+                                  />
                                 )}
                               </Grid>
                               <Grid item xs={5}>
@@ -842,7 +876,21 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
                                     </Grid>
                                   </Grid>
                                 ) : (
-                                  <StarIcon num={rate.rarity} right />
+                                  <StarIcon
+                                    num={
+                                      rate.rarity ||
+                                      cardRarityTypeToRarity[
+                                        rate.cardRarityType!
+                                      ]
+                                    }
+                                    right
+                                    trained={
+                                      (rate.rarity ||
+                                        cardRarityTypeToRarity[
+                                          rate.cardRarityType!
+                                        ]) >= 3
+                                    }
+                                  />
                                 )}
                               </Grid>
                               <Grid item xs={5}>
@@ -914,7 +962,16 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
                           </Grid>
                         </Grid>
                       ) : (
-                        <StarIcon num={rate.rarity} />
+                        <StarIcon
+                          num={
+                            rate.rarity ||
+                            cardRarityTypeToRarity[rate.cardRarityType!]
+                          }
+                          trained={
+                            (rate.rarity ||
+                              cardRarityTypeToRarity[rate.cardRarityType!]) >= 3
+                          }
+                        />
                       )}
                     </Grid>
                     <Button
@@ -1081,7 +1138,20 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
                                     </Grid>
                                   </Grid>
                                 ) : (
-                                  <StarIcon num={rate.rarity} />
+                                  <StarIcon
+                                    num={
+                                      rate.rarity ||
+                                      cardRarityTypeToRarity[
+                                        rate.cardRarityType!
+                                      ]
+                                    }
+                                    trained={
+                                      (rate.rarity ||
+                                        cardRarityTypeToRarity[
+                                          rate.cardRarityType!
+                                        ]) >= 3
+                                    }
+                                  />
                                 )}
                               </TableCell>
                               <TableCell>{statistic.counts[idx]}</TableCell>

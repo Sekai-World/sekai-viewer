@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { useCachedData } from ".";
+import { cardRarityTypeToRarity, useCachedData } from ".";
 import {
   IAreaItemLevel,
   ICardEpisode,
@@ -58,7 +58,11 @@ export const useTeamCalc = () => {
       });
       const userCardMasterRankRewards = userTeamCardStates.map((state, idx) => {
         const card = userCards[idx];
-        return masterRankRewards[card.rarity] * state.masterRank;
+        return (
+          masterRankRewards[
+            card.rarity || cardRarityTypeToRarity[card.cardRarityType!]
+          ] * state.masterRank
+        );
       });
       // console.log(
       //   userCardPowers,

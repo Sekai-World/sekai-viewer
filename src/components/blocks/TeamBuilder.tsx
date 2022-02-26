@@ -43,6 +43,7 @@ import {
   useLocalStorage,
   useSkillMapping,
   useToggle,
+  cardRarityTypeToRarity,
 } from "../../utils";
 import { CardThumb, CardThumbMedium } from "../widgets/CardThumb";
 import rarityNormal from "../../assets/rarity_star_normal.png";
@@ -220,11 +221,13 @@ const TeamBuilder: React.FC<{
           showError(t("music_recommend:buildTeam.cardMaxError"));
           return;
         }
-        const maxLevel = [0, 20, 30, 50, 60];
+        const maxLevel = [50, 20, 30, 50, 60];
         setTeamCards((tc) => [...tc, card.id]);
         let stateFrom = sekaiCardTeam?.cards?.find(
           (cl) => cl.cardId === card.id
         );
+        const rarity =
+          card.rarity || cardRarityTypeToRarity[card.cardRarityType!];
         setTeamCardsStates((tcs) => [
           ...tcs,
           isSyncCardState && !!stateFrom
@@ -233,11 +236,11 @@ const TeamBuilder: React.FC<{
                 cardId: card.id,
                 skillLevel: 1,
                 masterRank: 0,
-                level: maxLevel[card.rarity],
+                level: maxLevel[rarity],
                 trained:
-                  card.cardRarityType !== "rarity_birthday" && card.rarity >= 3,
+                  card.cardRarityType !== "rarity_birthday" && rarity >= 3,
                 trainable:
-                  card.cardRarityType !== "rarity_birthday" && card.rarity >= 3,
+                  card.cardRarityType !== "rarity_birthday" && rarity >= 3,
                 story1Unlock: true,
                 story2Unlock: true,
               },
@@ -475,14 +478,20 @@ const TeamBuilder: React.FC<{
           currentEntry.teamCardsStates = currentEntry.teamCardsStates.map(
             (state) => {
               const card = cards.find((elem) => elem.id === state.cardId)!;
-              const maxNormalLevel = [0, 20, 30, 50, 60];
+              const maxNormalLevel = [0, 20, 30, 40, 50];
               return Object.assign({}, state, {
                 masterRank: 0,
                 trained:
                   card.cardRarityType !== "rarity_birthday" &&
-                  state.level > maxNormalLevel[card.rarity],
+                  state.level >
+                    maxNormalLevel[
+                      card.rarity ||
+                        cardRarityTypeToRarity[card.cardRarityType!]
+                    ],
                 trainable:
-                  card.cardRarityType !== "rarity_birthday" && card.rarity >= 3,
+                  card.cardRarityType !== "rarity_birthday" &&
+                  (card.rarity ||
+                    cardRarityTypeToRarity[card.cardRarityType!]) >= 3,
                 story1Unlock: false,
                 story2Unlock: false,
               });
@@ -500,7 +509,9 @@ const TeamBuilder: React.FC<{
 
               return Object.assign({}, state, {
                 trainable:
-                  card.cardRarityType !== "rarity_birthday" && card.rarity >= 3,
+                  card.cardRarityType !== "rarity_birthday" &&
+                  (card.rarity ||
+                    cardRarityTypeToRarity[card.cardRarityType!]) >= 3,
               });
             }
           );
@@ -591,7 +602,9 @@ const TeamBuilder: React.FC<{
 
         const cardInfo = cards.find((card) => card.id === cardId)!;
         const trainable =
-          cardInfo.cardRarityType !== "rarity_birthday" && cardInfo.rarity >= 3;
+          cardInfo.cardRarityType !== "rarity_birthday" &&
+          (cardInfo.rarity ||
+            cardRarityTypeToRarity[cardInfo.cardRarityType!]) >= 3;
 
         return {
           cardId,

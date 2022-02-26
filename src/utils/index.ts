@@ -760,3 +760,34 @@ export function apiUserInfoToStoreUserInfo(userInfo: UserModel): IUserInfo {
     avatarUrl: userInfo.avatarUrl,
   };
 }
+
+export const specialTrainingRarityTypes = ["rarity_3", "rarity_4"];
+export const cardRarityTypeToRarity: {
+  [key: string]: number;
+} = {
+  rarity_1: 1,
+  rarity_2: 2,
+  rarity_3: 3,
+  rarity_4: 4,
+  rarity_birthday: 0,
+};
+
+export function useCardType(card?: ICardInfo) {
+  const isNewRarityCard = useMemo(
+    () => !!card && !!card.cardRarityType,
+    [card]
+  );
+  const isBirthdayCard = useMemo(
+    () => card?.cardRarityType === "rarity_birthday",
+    [card?.cardRarityType]
+  );
+  const isTrainableCard = useMemo(
+    () =>
+      isNewRarityCard
+        ? specialTrainingRarityTypes.includes(card?.cardRarityType!)
+        : card?.rarity! >= 3,
+    [card?.cardRarityType, card?.rarity, isNewRarityCard]
+  );
+
+  return { isNewRarityCard, isBirthdayCard, isTrainableCard };
+}

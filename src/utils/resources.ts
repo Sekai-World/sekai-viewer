@@ -168,6 +168,7 @@ export const cardImageFrameMap: { [key: string]: string } = {
   3: cardImageFrameL3,
   4: cardImageFrameL4,
   bd: cardImageFrameLBD,
+  0: cardImageFrameLBD,
 };
 
 export const cardMasterRankSmallMap: { [key: string]: string } = {

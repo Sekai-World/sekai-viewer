@@ -154,23 +154,33 @@ const EventDetail: React.FC<{}> = observer(() => {
             )!
         );
       setEventBonusCharas(ebc);
-      setBoostCards(
-        cards
-          .filter((elem) =>
-            ebc.some((chara) => {
-              let ret =
-                chara.gameCharacterId === elem.characterId &&
-                elem.attr === edb[0].cardAttr &&
-                elem.releaseAt <= ev!.startAt;
-              if (elem.characterId >= 21) {
-                ret = ret && chara.unit === elem.supportUnit;
-              }
+      setBoostCards(() => {
+        let result = cards.filter((elem) =>
+          ebc.some((chara) => {
+            let ret =
+              chara.gameCharacterId === elem.characterId &&
+              elem.attr === edb[0].cardAttr &&
+              elem.releaseAt <= ev!.startAt;
+            if (elem.characterId >= 21) {
+              ret = ret && chara.unit === elem.supportUnit;
+            }
 
-              return ret;
-            })
-          )
-          .sort((a, b) => b.rarity - a.rarity)
-      );
+            return ret;
+          })
+        );
+        if (result.length) {
+          const sortKey =
+            result[0] && result[0].rarity ? "rarity" : "cardRarityType";
+          result = result.sort((a, b) => {
+            if (a[sortKey]! > b[sortKey]!) return 1;
+            if (a[sortKey]! < b[sortKey]!) return -1;
+
+            return 0;
+          });
+        }
+
+        return result;
+      });
       setLinkedVirtualLive(
         virtualLives.find((elem) => elem.id === ev?.virtualLiveId)
       );
@@ -668,12 +678,12 @@ const EventDetail: React.FC<{}> = observer(() => {
                 justifyContent="space-between"
                 alignItems="center"
               >
-                <Grid item xs={5}>
+                <Grid item xs={3}>
                   <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                     {t("event:boostSpecificCards")}
                   </Typography>
                 </Grid>
-                <Grid item xs={5} sm={6}>
+                <Grid item xs={8} sm={7} md={6} container>
                   <Grid container spacing={2} justifyContent="flex-end">
                     {eventCards
                       .filter((ec) => ec.bonusRate !== 0)

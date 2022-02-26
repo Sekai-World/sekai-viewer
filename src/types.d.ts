@@ -74,7 +74,7 @@ export interface ICardInfo {
   id: number;
   seq: number;
   characterId: number;
-  rarity: number;
+  rarity?: number;
   cardRarityType?: string;
   specialTrainingPower1BonusFixed: number;
   specialTrainingPower2BonusFixed: number;
@@ -185,7 +185,7 @@ export interface ISkillInfo {
 }
 
 export interface ICardRarity {
-  rarity: number;
+  rarity?: number;
   maxLevel: number;
   maxSkillLevel: number;
   trainingMaxLevel?: number;

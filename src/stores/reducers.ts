@@ -121,10 +121,10 @@ export function supportUnitSelectReducer(
 }
 
 export function raritySelectReducer(
-  state: number[],
+  state: { rarity: number; cardRarityType: string }[],
   action: {
     type: "add" | "remove" | "reset";
-    payload: number;
+    payload: { rarity: number; cardRarityType: string };
     storeName: string;
   }
 ) {
@@ -135,9 +135,15 @@ export function raritySelectReducer(
       return data;
     }
     case "remove": {
+      console.log(state, action.payload);
       const data = [
-        ...state.slice(0, state.indexOf(action.payload)),
-        ...state.slice(state.indexOf(action.payload) + 1),
+        ...state.slice(
+          0,
+          state.findIndex((s) => s.rarity === action.payload.rarity)
+        ),
+        ...state.slice(
+          state.findIndex((s) => s.rarity === action.payload.rarity) + 1
+        ),
       ];
       localStorage.setItem(action.storeName, JSON.stringify(data));
       return data;

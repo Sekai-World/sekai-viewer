@@ -48,6 +48,7 @@ import { CardThumb } from "../../../components/widgets/CardThumb";
 // import { useInteractiveStyles } from "../../../styles/interactive";
 import rarityNormal from "../../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../../assets/rarity_star_afterTraining.png";
+import rarityBirthday from "../../../assets/rarity_birthday.png";
 import {
   attrSelectReducer,
   characterSelectReducer,
@@ -65,10 +66,11 @@ import {
   IEventInfo,
   IGameChara,
   IGameCharaUnit,
-  ITeamCardState,
+  // ITeamCardState,
   IUnitProfile,
 } from "../../../types.d";
 import {
+  cardRarityTypeToRarity,
   useAlertSnackbar,
   useCachedData,
   useLocalStorage,
@@ -76,7 +78,7 @@ import {
 import { ContentTrans } from "../../../components/helpers/ContentTrans";
 import { useAssetI18n, useCharaName } from "../../../utils/i18n";
 import { useRootStore } from "../../../stores/root";
-import { ISekaiCardTeam } from "../../../stores/sekai";
+import { ISekaiCardState, ISekaiCardTeam } from "../../../stores/sekai";
 import { observer } from "mobx-react-lite";
 import { autorun } from "mobx";
 
@@ -106,10 +108,10 @@ const SekaiUserCardList = observer(() => {
   const [rarity, setRarity] = useState<number>(4);
   const [filteredCards, setFilteredCards] = useState<ICardInfo[]>([]);
 
-  const [cardList, setCardList] = useState<ITeamCardState[]>([]);
-  // const [displayCardList, setDisplayCardList] = useState<ITeamCardState[]>([]);
-  const [card, setCard] = useState<ITeamCardState>();
-  const [editList, setEditList] = useState<ITeamCardState[]>([]);
+  const [cardList, setCardList] = useState<ISekaiCardState[]>([]);
+  // const [displayCardList, setDisplayCardList] = useState<ISekaiCardState[]>([]);
+  const [card, setCard] = useState<ISekaiCardState>();
+  const [editList, setEditList] = useState<ISekaiCardState[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [deleteCardIds, setDeleteCardIds] = useState<number[]>([]);
   const [addCardIds, setAddCardIds] = useState<number[]>([]);
@@ -196,20 +198,28 @@ const SekaiUserCardList = observer(() => {
           )
         ),
       ];
-      if (characterSelected.length) {
+      if (_cardList.length && characterSelected.length) {
         _cardList = _cardList.filter((elem) =>
           characterSelected.includes(elem.card.characterId)
         );
       }
-      if (attrSelected.length) {
+      if (_cardList.length && attrSelected.length) {
         _cardList = _cardList.filter((elem) =>
           attrSelected.includes(elem.card.attr)
         );
       }
-      if (raritySelected.length) {
-        _cardList = _cardList.filter((elem) =>
-          raritySelected.includes(elem.card.rarity)
-        );
+      if (_cardList.length && raritySelected.length) {
+        if (_cardList[0].card.rarity) {
+          const rarityFilter = raritySelected.map((rs) => rs.rarity);
+          _cardList = _cardList.filter((c) =>
+            rarityFilter.includes(c.card.rarity!)
+          );
+        } else {
+          const rarityFilter = raritySelected.map((rs) => rs.cardRarityType);
+          _cardList = _cardList.filter((c) =>
+            rarityFilter.includes(c.card.cardRarityType!)
+          );
+        }
       }
       if (supportUnitSelected.length) {
         _cardList = _cardList.filter(
@@ -257,7 +267,7 @@ const SekaiUserCardList = observer(() => {
   }, [currEvent, isCurrEventLoading]);
 
   const handleClick = useCallback(
-    (event: React.MouseEvent<HTMLDivElement>, card: ITeamCardState) => {
+    (event: React.MouseEvent<HTMLDivElement>, card: ISekaiCardState) => {
       setAnchorEl(event.currentTarget);
       setCard(card);
     },
@@ -346,10 +356,14 @@ const SekaiUserCardList = observer(() => {
         cardId: card.id,
         masterRank: 0,
         skillLevel: 1,
-        level: maxLevel[card.rarity],
-        trained: card.cardRarityType !== "rarity_birthday" && card.rarity >= 3,
+        level:
+          maxLevel[card.rarity || cardRarityTypeToRarity[card.cardRarityType!]],
+        trained:
+          card.cardRarityType !== "rarity_birthday" &&
+          (card.rarity || cardRarityTypeToRarity[card.cardRarityType!]) >= 3,
         trainable:
-          card.cardRarityType !== "rarity_birthday" && card.rarity >= 3,
+          card.cardRarityType !== "rarity_birthday" &&
+          (card.rarity || cardRarityTypeToRarity[card.cardRarityType!]) >= 3,
         story1Unlock: true,
         story2Unlock: true,
       },
@@ -658,22 +672,26 @@ const SekaiUserCardList = observer(() => {
               </Grid>
               <Grid item xs={12} md={11}>
                 <Grid container spacing={1}>
-                  {[1, 2, 3, 4].map((rarity) => (
-                    <Grid key={`rarity-${rarity}`} item>
+                  {[1, 2, 3, 4, 5].map((rarity) => (
+                    <Grid key={rarity} item>
                       <Chip
                         clickable
                         color={
-                          raritySelected.includes(rarity)
+                          raritySelected.map((rs) => rs.rarity).includes(rarity)
                             ? "primary"
                             : "default"
                         }
                         label={
                           <Grid container>
-                            {Array.from({ length: rarity }).map((_, idx) => (
-                              <Grid key={`rarity-${rarity}-${idx}`} item>
+                            {Array.from({
+                              length: rarity === 5 ? 1 : rarity,
+                            }).map((_, idx) => (
+                              <Grid item key={`rarity-${idx}`}>
                                 <img
                                   src={
-                                    rarity >= 3
+                                    rarity >= 5
+                                      ? rarityBirthday
+                                      : rarity >= 3
                                       ? rarityAfterTraining
                                       : rarityNormal
                                   }
@@ -685,17 +703,33 @@ const SekaiUserCardList = observer(() => {
                           </Grid>
                         }
                         onClick={() => {
-                          if (raritySelected.includes(rarity)) {
+                          if (
+                            raritySelected
+                              .map((rs) => rs.rarity)
+                              .includes(rarity)
+                          ) {
                             dispatchRaritySelected({
                               type: "remove",
-                              payload: rarity,
+                              payload: {
+                                rarity,
+                                cardRarityType:
+                                  rarity === 5
+                                    ? "rarity_birthday"
+                                    : `rarity_${rarity}`,
+                              },
                               storeName:
                                 "user-profile-sekai-cards-filter-rarities",
                             });
                           } else {
                             dispatchRaritySelected({
                               type: "add",
-                              payload: rarity,
+                              payload: {
+                                rarity,
+                                cardRarityType:
+                                  rarity === 5
+                                    ? "rarity_birthday"
+                                    : `rarity_${rarity}`,
+                              },
                               storeName:
                                 "user-profile-sekai-cards-filter-rarities",
                             });
@@ -789,7 +823,10 @@ const SekaiUserCardList = observer(() => {
                     });
                     dispatchRaritySelected({
                       type: "reset",
-                      payload: 0,
+                      payload: {
+                        rarity: 0,
+                        cardRarityType: "",
+                      },
                       storeName: "user-profile-sekai-cards-filter-rarities",
                     });
                     // dispatchSkillSelected({
@@ -831,7 +868,7 @@ const SekaiUserCardList = observer(() => {
             <Grid item xs={3} sm={2} lg={1} key={card.cardId}>
               <CardThumb
                 cardId={card.cardId}
-                trained={card.trained}
+                trained={Boolean(card.trained)}
                 level={card.level}
                 masterRank={card.masterRank}
                 onClick={(e) => handleClick(e, card)}
@@ -905,14 +942,14 @@ const SekaiUserCardList = observer(() => {
               </Grid>
               <Grid item>
                 <FormControlLabel
-                  control={<Switch checked={card.trained} />}
+                  control={<Switch checked={Boolean(card.trained)} />}
                   label={t("card:trained") as string}
                   onChange={(e, checked) => handleChange(checked, "trained")}
                 />
               </Grid>
               <Grid item>
                 <FormControlLabel
-                  control={<Switch checked={card.story1Unlock} />}
+                  control={<Switch checked={Boolean(card.story1Unlock)} />}
                   label={t("card:sideStory1Unlocked") as string}
                   onChange={(e, checked) =>
                     handleChange(checked, "story1Unlock")
@@ -921,7 +958,7 @@ const SekaiUserCardList = observer(() => {
               </Grid>
               <Grid item>
                 <FormControlLabel
-                  control={<Switch checked={card.story2Unlock} />}
+                  control={<Switch checked={Boolean(card.story2Unlock)} />}
                   label={t("card:sideStory2Unlocked") as string}
                   onChange={(e, checked) =>
                     handleChange(checked, "story2Unlock")
@@ -1069,7 +1106,10 @@ const SekaiUserCardList = observer(() => {
                       const attr = bonuses[0].cardAttr;
                       dispatchRaritySelected({
                         type: "reset",
-                        payload: 0,
+                        payload: {
+                          rarity: 0,
+                          cardRarityType: "",
+                        },
                         storeName: "user-profile-sekai-cards-filter-rarities",
                       });
                       dispatchAttrSelected({

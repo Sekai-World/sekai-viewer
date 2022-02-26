@@ -38,7 +38,13 @@ import {
   ISkillInfo,
   IUnitProfile,
 } from "../../types.d";
-import { getRemoteAssetURL, useCachedData } from "../../utils";
+import {
+  cardRarityTypeToRarity,
+  getRemoteAssetURL,
+  specialTrainingRarityTypes,
+  useCachedData,
+  useCardType,
+} from "../../utils";
 import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
 import rarityBirthday from "../../assets/rarity_birthday.png";
@@ -145,10 +151,8 @@ const CardDetail: React.FC<{}> = observer(() => {
 
   const [event, setEvent] = useState<IEventInfo>();
 
-  const isBirthdayCard = useMemo(
-    () => card?.cardRarityType === "rarity_birthday",
-    [card?.cardRarityType]
-  );
+  const { isNewRarityCard, isBirthdayCard, isTrainableCard } =
+    useCardType(card);
 
   const getSkillDesc = useCallback(
     (skill: ISkillInfo, skillLevel: number | number[]) => {
@@ -250,7 +254,7 @@ const CardDetail: React.FC<{}> = observer(() => {
       eventCardsCache.length
     ) {
       const _card = cards.find((elem) => elem.id === Number(cardId))!;
-      const _rarityInfo = _card.cardRarityType
+      const _rarityInfo = isNewRarityCard
         ? rarities.find(
             (rarity) => rarity.cardRarityType === _card.cardRarityType
           )
@@ -302,6 +306,7 @@ const CardDetail: React.FC<{}> = observer(() => {
     assetT,
     getTranslated,
     t,
+    isNewRarityCard,
   ]);
 
   useEffect(() => {
@@ -334,7 +339,7 @@ const CardDetail: React.FC<{}> = observer(() => {
         setNormalTrimImg,
         window.isChinaMainland ? "cn" : "ww"
       );
-      if (card.rarity >= 3) {
+      if (isTrainableCard) {
         getRemoteAssetURL(
           `character/member/${card.assetbundleName}_rip/card_after_training.webp`,
           setTrainedImg,
@@ -347,12 +352,12 @@ const CardDetail: React.FC<{}> = observer(() => {
         );
       }
     }
-  }, [card]);
+  }, [card, isTrainableCard]);
 
   const getCardImages: () => ImageDecorator[] = useCallback(
     () =>
       card
-        ? card?.rarity >= 3
+        ? isTrainableCard
           ? [
               {
                 src: normalImg,
@@ -388,7 +393,14 @@ const CardDetail: React.FC<{}> = observer(() => {
               },
             ]
         : [],
-    [card, normalImg, normalTrimImg, trainedImg, trainedTrimImg]
+    [
+      card,
+      isTrainableCard,
+      normalImg,
+      normalTrimImg,
+      trainedImg,
+      trainedTrimImg,
+    ]
   );
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
@@ -415,10 +427,10 @@ const CardDetail: React.FC<{}> = observer(() => {
             >
               <Tab label={t("card:tab.title[0]")} value="0"></Tab>
               <Tab label={t("card:tab.title[1]")} value="2"></Tab>
-              {card.rarity >= 3 && !isBirthdayCard ? (
+              {isTrainableCard && !isBirthdayCard ? (
                 <Tab label={t("card:tab.title[2]")} value="1"></Tab>
               ) : null}
-              {card.rarity >= 3 && !isBirthdayCard ? (
+              {isTrainableCard && !isBirthdayCard ? (
                 <Tab label={t("card:tab.title[3]")} value="3"></Tab>
               ) : null}
             </Tabs>
@@ -796,22 +808,26 @@ const CardDetail: React.FC<{}> = observer(() => {
               {t("common:rarity")}
             </Typography>
             <Typography>
-              {Array.from({ length: isBirthdayCard ? 1 : card.rarity }).map(
-                (_, id) => (
-                  <img
-                    className={classes["rarity-star-img"]}
-                    src={
-                      isBirthdayCard
-                        ? rarityBirthday
-                        : cardLevel > card.maxNormalLevel
-                        ? rarityAfterTraining
-                        : rarityNormal
-                    }
-                    alt={`star-${id}`}
-                    key={`star-${id}`}
-                  ></img>
-                )
-              )}
+              {Array.from({
+                length: isBirthdayCard
+                  ? 1
+                  : isNewRarityCard
+                  ? cardRarityTypeToRarity[card.cardRarityType!]
+                  : card.rarity!,
+              }).map((_, id) => (
+                <img
+                  className={classes["rarity-star-img"]}
+                  src={
+                    isBirthdayCard
+                      ? rarityBirthday
+                      : cardLevel > card.maxNormalLevel
+                      ? rarityAfterTraining
+                      : rarityNormal
+                  }
+                  alt={`star-${id}`}
+                  key={`star-${id}`}
+                ></img>
+              ))}
             </Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
@@ -837,7 +853,7 @@ const CardDetail: React.FC<{}> = observer(() => {
                 <Grid item xs={12} sm={6} md={5} lg={4}>
                   <CardThumb cardId={Number(cardId)} />
                 </Grid>
-                {card.rarity >= 3 && !isBirthdayCard ? (
+                {isTrainableCard && !isBirthdayCard ? (
                   <Grid item xs={12} sm={6} md={5} lg={4}>
                     <CardThumb cardId={Number(cardId)} trained />
                   </Grid>
@@ -954,12 +970,12 @@ const CardDetail: React.FC<{}> = observer(() => {
                     step={1}
                     min={1}
                     max={
-                      card.rarity >= 3 && !isBirthdayCard
+                      isTrainableCard && !isBirthdayCard
                         ? card.maxTrainedLevel
                         : card.maxNormalLevel
                     }
                     marks={
-                      card.rarity >= 3 && !isBirthdayCard
+                      isTrainableCard && !isBirthdayCard
                         ? [
                             {
                               value: card.maxNormalLevel,

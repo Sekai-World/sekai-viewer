@@ -11,6 +11,7 @@ import {
 } from "../../components/widgets/CardThumb";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
 import SpoilerTag from "../../components/widgets/SpoilerTag";
+import { cardRarityTypeToRarity } from "../../utils";
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -113,7 +114,8 @@ const AgendaView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
             <Grid item xs={12} md={6} lg={4}>
               <CardThumb cardId={data.id} />
             </Grid>
-            {data.rarity >= 3 && data.cardRarityType !== "rarity_birthday" ? (
+            {(data.rarity || cardRarityTypeToRarity[data.cardRarityType!]) >=
+            3 ? (
               <Grid item xs={12} md={6} lg={4}>
                 <CardThumb cardId={data.id} trained />
               </Grid>

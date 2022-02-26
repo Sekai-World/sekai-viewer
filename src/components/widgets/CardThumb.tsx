@@ -2,7 +2,12 @@ import { Grid } from "@mui/material";
 import { Skeleton } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import { ICardInfo } from "../../types.d";
-import { getRemoteAssetURL, useCachedData } from "../../utils";
+import {
+  cardRarityTypeToRarity,
+  getRemoteAssetURL,
+  useCachedData,
+  useCardType,
+} from "../../utils";
 
 import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
@@ -29,19 +34,20 @@ export const CardThumb: React.FC<
   const classes = useSvgStyles();
   const [cards] = useCachedData<ICardInfo>("cards");
   const [card, setCard] = useState<ICardInfo>();
-  const isBirthdayCard = useMemo(
-    () => card?.cardRarityType === "rarity_birthday",
-    [card?.cardRarityType]
-  );
+  const { isNewRarityCard, isBirthdayCard, isTrainableCard } =
+    useCardType(card);
   const _trained = useMemo(() => {
-    const maxNormalLevel = [0, 20, 30, 50, 60];
+    const maxNormalLevel = [0, 20, 30, 40, 50];
+    if (card) {
+      const rarity =
+        card.rarity || cardRarityTypeToRarity[card.cardRarityType!];
 
-    return (
-      card &&
-      card.rarity >= 3 &&
-      card.cardRarityType !== "rarity_birthday" &&
-      (trained || (level && level > maxNormalLevel[card.rarity]))
-    );
+      return (
+        rarity >= 3 &&
+        card.cardRarityType !== "rarity_birthday" &&
+        (trained || (level && level > maxNormalLevel[rarity]))
+      );
+    }
   }, [card, level, trained]);
 
   useEffect(() => {
@@ -113,7 +119,15 @@ export const CardThumb: React.FC<
         )}
         {/* frame */}
         <image
-          href={cardThumbFrameMap[String(isBirthdayCard ? "bd" : card.rarity)]}
+          href={
+            cardThumbFrameMap[
+              String(
+                isBirthdayCard
+                  ? "bd"
+                  : card.rarity || cardRarityTypeToRarity[card.cardRarityType!]
+              )
+            ]
+          }
           x="0"
           y="0"
           height="156"
@@ -128,18 +142,22 @@ export const CardThumb: React.FC<
           height="35"
         />
         {/* rarity */}
-        {Array.from({ length: isBirthdayCard ? 1 : card.rarity }).map(
-          (_, i) => (
-            <image
-              key={`card-rarity-${i}`}
-              href={rarityIcon}
-              x={i * 26 + 10}
-              y={level || power ? "87" : "118"}
-              width="28"
-              height="28"
-            />
-          )
-        )}
+        {Array.from({
+          length: isBirthdayCard
+            ? 1
+            : isNewRarityCard
+            ? cardRarityTypeToRarity[card.cardRarityType!]
+            : card.rarity!,
+        }).map((_, i) => (
+          <image
+            key={`card-rarity-${i}`}
+            href={rarityIcon}
+            x={i * 26 + 10}
+            y={level || power ? "87" : "118"}
+            width="28"
+            height="28"
+          />
+        ))}
         {/* masterRank */}
         {masterRank && (
           <image
@@ -227,19 +245,20 @@ export const CardThumbMedium: React.FC<
 
   const [cards] = useCachedData<ICardInfo>("cards");
   const [card, setCard] = useState<ICardInfo>();
-  const isBirthdayCard = useMemo(
-    () => card?.cardRarityType === "rarity_birthday",
-    [card?.cardRarityType]
-  );
+  const { isNewRarityCard, isBirthdayCard, isTrainableCard } =
+    useCardType(card);
   const _trained = useMemo(() => {
-    const maxNormalLevel = [0, 20, 30, 50, 60];
+    const maxNormalLevel = [0, 20, 30, 40, 50];
+    if (card) {
+      const rarity =
+        card.rarity || cardRarityTypeToRarity[card.cardRarityType!];
 
-    return (
-      card &&
-      card.rarity >= 3 &&
-      card.cardRarityType !== "rarity_birthday" &&
-      (trained || (level && level > maxNormalLevel[card.rarity]))
-    );
+      return (
+        rarity >= 3 &&
+        card.cardRarityType !== "rarity_birthday" &&
+        (trained || (level && level > maxNormalLevel[rarity]))
+      );
+    }
   }, [card, level, trained]);
 
   useEffect(() => {
@@ -320,7 +339,12 @@ export const CardThumbMedium: React.FC<
               <image
                 href={
                   cardThumbMediumFrameMap[
-                    String(isBirthdayCard ? "bd" : card.rarity)
+                    String(
+                      isBirthdayCard
+                        ? "bd"
+                        : card.rarity ||
+                            cardRarityTypeToRarity[card.cardRarityType!]
+                    )
                   ]
                 }
                 x="0"
@@ -337,18 +361,22 @@ export const CardThumbMedium: React.FC<
                 height="50"
               />
               {/* rarity */}
-              {Array.from({ length: isBirthdayCard ? 1 : card.rarity }).map(
-                (_, i) => (
-                  <image
-                    key={`card-rarity-${i}`}
-                    href={rarityIcon}
-                    x={i * 50 + 16}
-                    y="395"
-                    width="50"
-                    height="50"
-                  />
-                )
-              )}
+              {Array.from({
+                length: isBirthdayCard
+                  ? 1
+                  : isNewRarityCard
+                  ? cardRarityTypeToRarity[card.cardRarityType!]
+                  : card.rarity!,
+              }).map((_, i) => (
+                <image
+                  key={`card-rarity-${i}`}
+                  href={rarityIcon}
+                  x={i * 50 + 16}
+                  y="395"
+                  width="50"
+                  height="50"
+                />
+              ))}
               {/* masterRank */}
               {masterRank && (
                 <image

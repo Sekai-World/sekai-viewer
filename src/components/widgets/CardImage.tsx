@@ -10,7 +10,13 @@ import React, {
 } from "react";
 import { useSvgStyles } from "../../styles/svg";
 import { ICardInfo } from "../../types.d";
-import { getRemoteAssetURL, useCachedData, useRefState } from "../../utils";
+import {
+  cardRarityTypeToRarity,
+  getRemoteAssetURL,
+  useCachedData,
+  useCardType,
+  useRefState,
+} from "../../utils";
 
 import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
@@ -28,10 +34,8 @@ export const CardImage: React.FC<{ id: number; trained?: boolean }> = ({
   const [card, setCard] = useState<ICardInfo>();
   const [cardImg, setCardImg] = useState<string>("");
 
-  const isBirthdayCard = useMemo(
-    () => card?.cardRarityType === "rarity_birthday",
-    [card?.cardRarityType]
-  );
+  const { isNewRarityCard, isBirthdayCard, isTrainableCard } =
+    useCardType(card);
 
   const rarityIcon = useMemo(
     () =>
@@ -73,7 +77,13 @@ export const CardImage: React.FC<{ id: number; trained?: boolean }> = ({
       ></image>
       {/* frame */}
       <image
-        href={cardImageFrameMap[isBirthdayCard ? "bd" : card.rarity]}
+        href={
+          cardImageFrameMap[
+            isNewRarityCard
+              ? cardRarityTypeToRarity[card.cardRarityType!]
+              : card.rarity!
+          ]
+        }
         x="0"
         y="0"
         width="1024"
@@ -88,7 +98,13 @@ export const CardImage: React.FC<{ id: number; trained?: boolean }> = ({
         height="88"
       />
       {/* rarity */}
-      {Array.from({ length: isBirthdayCard ? 1 : card.rarity }).map((_, i) => (
+      {Array.from({
+        length: isBirthdayCard
+          ? 1
+          : isNewRarityCard
+          ? cardRarityTypeToRarity[card.cardRarityType!]
+          : card.rarity!,
+      }).map((_, i) => (
         <image
           key={`card-rarity-${i}`}
           href={rarityIcon}
@@ -120,10 +136,8 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
       useRefState<number>(768);
     const [imgRightWidth, refImgRightWidth, setImgRightWidth] =
       useRefState<number>(768);
-    const isBirthdayCard = useMemo(
-      () => card?.cardRarityType === "rarity_birthday",
-      [card?.cardRarityType]
-    );
+    const { isNewRarityCard, isBirthdayCard, isTrainableCard } =
+      useCardType(card);
 
     const svgElement = useRef<SVGSVGElement>(null);
 
@@ -131,10 +145,10 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
       () =>
         isBirthdayCard
           ? rarityBirthday
-          : card.rarity >= 3
+          : isTrainableCard
           ? rarityAfterTraining
           : rarityNormal,
-      [card.rarity, isBirthdayCard]
+      [isBirthdayCard, isTrainableCard]
     );
     const animationDuration = 500;
 
@@ -283,7 +297,7 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
         onMouseMove={handleMoseOver}
         onMouseLeave={() => setHoveredArea(0)}
       >
-        {card.rarity >= 3 && !isBirthdayCard ? (
+        {isTrainableCard && !isBirthdayCard ? (
           <Fragment>
             <svg
               x={imgLeftX}
@@ -320,7 +334,13 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
         )}
         {/* frame */}
         <image
-          href={cardImageFrameMap[isBirthdayCard ? "bd" : card.rarity]}
+          href={
+            cardImageFrameMap[
+              isNewRarityCard
+                ? cardRarityTypeToRarity[card.cardRarityType!]
+                : card.rarity!
+            ]
+          }
           x="0"
           y="0"
           width="1024"
@@ -335,18 +355,22 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
           height="88"
         />
         {/* rarity */}
-        {Array.from({ length: isBirthdayCard ? 1 : card.rarity }).map(
-          (_, i) => (
-            <image
-              key={`card-rarity-${i}`}
-              href={rarityIcon}
-              x="16"
-              y={490 - i * 62}
-              width="72"
-              height="70"
-            />
-          )
-        )}
+        {Array.from({
+          length: isBirthdayCard
+            ? 1
+            : isNewRarityCard
+            ? cardRarityTypeToRarity[card.cardRarityType!]
+            : card.rarity!,
+        }).map((_, i) => (
+          <image
+            key={`card-rarity-${i}`}
+            href={rarityIcon}
+            x="16"
+            y={490 - i * 62}
+            width="72"
+            height="70"
+          />
+        ))}
       </svg>
     ) : (
       skeleton

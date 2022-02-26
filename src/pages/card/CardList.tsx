@@ -52,6 +52,7 @@ import {
   IUnitProfile,
 } from "../../types.d";
 import {
+  specialTrainingRarityTypes,
   useCachedData,
   useLocalStorage,
   useSkillMapping,
@@ -59,6 +60,10 @@ import {
 } from "../../utils";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
 // import InfiniteScroll from "react-infinite-scroll-component";
+
+import rarityNormal from "../../assets/rarity_star_normal.png";
+import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
+import rarityBirthday from "../../assets/rarity_birthday.png";
 
 import { useTranslation } from "react-i18next";
 import { useInteractiveStyles } from "../../styles/interactive";
@@ -78,8 +83,6 @@ import {
 import GridView from "./GridView";
 import AgendaView from "./AgendaView";
 import ComfyView from "./ComfyView";
-import rarityNormal from "../../assets/rarity_star_normal.png";
-import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
 import { useCurrentEvent } from "../../utils/apiClient";
@@ -124,7 +127,11 @@ function getMaxParam(
         sum += episode.power3BonusFixed;
         return sum;
       }, 0);
-  if (card.rarity >= 3)
+  if (
+    card.rarity
+      ? card.rarity >= 3
+      : specialTrainingRarityTypes.includes(card?.cardRarityType!)
+  )
     maxParam +=
       card.specialTrainingPower1BonusFixed +
       card.specialTrainingPower2BonusFixed +
@@ -264,28 +271,36 @@ const CardList: React.FC<{}> = observer(() => {
     ) {
       let result = [...cardsCache];
       // do filter
-      if (!isShowSpoiler) {
+      if (result.length && !isShowSpoiler) {
         result = result.filter((c) => c.releaseAt <= new Date().getTime());
       }
-      if (characterSelected.length) {
+      if (result.length && characterSelected.length) {
         result = result.filter((c) =>
           characterSelected.includes(c.characterId)
         );
       }
-      if (attrSelected.length) {
+      if (result.length && attrSelected.length) {
         result = result.filter((c) => attrSelected.includes(c.attr));
       }
-      if (supportUnitSelected.length) {
+      if (result.length && supportUnitSelected.length) {
         result = result.filter(
           (c) =>
             c.supportUnit === "none" ||
             supportUnitSelected.includes(c.supportUnit)
         );
       }
-      if (raritySelected.length) {
-        result = result.filter((c) => raritySelected.includes(c.rarity));
+      if (result.length && raritySelected.length) {
+        if (result[0].rarity) {
+          const rarityFilter = raritySelected.map((rs) => rs.rarity);
+          result = result.filter((c) => rarityFilter.includes(c.rarity!));
+        } else {
+          const rarityFilter = raritySelected.map((rs) => rs.cardRarityType);
+          result = result.filter((c) =>
+            rarityFilter.includes(c.cardRarityType!)
+          );
+        }
       }
-      if (skillSelected.length) {
+      if (result.length && skillSelected.length) {
         result = result.filter((c) => {
           let skill = skills.find((s) => c.skillId === s.id);
           if (skill) {
@@ -305,11 +320,25 @@ const CardList: React.FC<{}> = observer(() => {
       // temporarily sort cards cache
       switch (sortBy) {
         case "id":
-        case "rarity":
         case "releaseAt":
           result = result.sort((a, b) =>
             sortType === "asc" ? a[sortBy] - b[sortBy] : b[sortBy] - a[sortBy]
           );
+          break;
+        case "rarity":
+          const sortKey =
+            result[0] && result[0].rarity ? "rarity" : "cardRarityType";
+          result = result.sort((a, b) => {
+            if (sortType === "asc") {
+              if (a[sortKey]! > b[sortKey]!) return 1;
+              if (a[sortKey]! < b[sortKey]!) return -1;
+            } else {
+              if (a[sortKey]! > b[sortKey]!) return -1;
+              if (a[sortKey]! < b[sortKey]!) return 1;
+            }
+
+            return 0;
+          });
           break;
         case "power":
           result = result.sort((a, b) =>
@@ -360,7 +389,10 @@ const CardList: React.FC<{}> = observer(() => {
     });
     dispatchRaritySelected({
       type: "reset",
-      payload: 0,
+      payload: {
+        rarity: 0,
+        cardRarityType: "",
+      },
       storeName: "card-list-filter-rarities",
     });
     dispatchSkillSelected({
@@ -376,7 +408,8 @@ const CardList: React.FC<{}> = observer(() => {
 
   useEffect(() => {
     if (isReady) doFilter();
-  }, [isReady, doFilter]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isReady]);
 
   useEffect(() => {
     if (sortedCache.length) {
@@ -802,22 +835,28 @@ const CardList: React.FC<{}> = observer(() => {
                 </Grid>
                 <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
-                    {[1, 2, 3, 4].map((rarity) => (
+                    {[1, 2, 3, 4, 5].map((rarity) => (
                       <Grid key={rarity} item>
                         <Chip
                           clickable
                           color={
-                            raritySelected.includes(rarity)
+                            raritySelected
+                              .map((rs) => rs.rarity)
+                              .includes(rarity)
                               ? "primary"
                               : "default"
                           }
                           label={
                             <Grid container>
-                              {Array.from({ length: rarity }).map((_, idx) => (
+                              {Array.from({
+                                length: rarity === 5 ? 1 : rarity,
+                              }).map((_, idx) => (
                                 <Grid item key={`rarity-${idx}`}>
                                   <img
                                     src={
-                                      rarity >= 3
+                                      rarity >= 5
+                                        ? rarityBirthday
+                                        : rarity >= 3
                                         ? rarityAfterTraining
                                         : rarityNormal
                                     }
@@ -829,16 +868,32 @@ const CardList: React.FC<{}> = observer(() => {
                             </Grid>
                           }
                           onClick={() => {
-                            if (raritySelected.includes(rarity)) {
+                            if (
+                              raritySelected
+                                .map((rs) => rs.rarity)
+                                .includes(rarity)
+                            ) {
                               dispatchRaritySelected({
                                 type: "remove",
-                                payload: rarity,
+                                payload: {
+                                  rarity,
+                                  cardRarityType:
+                                    rarity === 5
+                                      ? "rarity_birthday"
+                                      : `rarity_${rarity}`,
+                                },
                                 storeName: "card-list-filter-rarities",
                               });
                             } else {
                               dispatchRaritySelected({
                                 type: "add",
-                                payload: rarity,
+                                payload: {
+                                  rarity,
+                                  cardRarityType:
+                                    rarity === 5
+                                      ? "rarity_birthday"
+                                      : `rarity_${rarity}`,
+                                },
                                 storeName: "card-list-filter-rarities",
                               });
                             }
@@ -1030,7 +1085,10 @@ const CardList: React.FC<{}> = observer(() => {
                   const attr = bonuses[0].cardAttr;
                   dispatchRaritySelected({
                     type: "reset",
-                    payload: 0,
+                    payload: {
+                      rarity: 0,
+                      cardRarityType: "",
+                    },
                     storeName: "card-list-filter-rarities",
                   });
                   dispatchAttrSelected({

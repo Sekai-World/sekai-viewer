@@ -26,13 +26,14 @@ import {
 } from "../strapi-model";
 import {
   ITeamBuild,
-  ITeamCardState,
+  // ITeamCardState,
   IUserProfile,
   ServerRegion,
   // ServerRegion,
 } from "../types";
 import useSWR from "swr";
 import { useRootStore } from "../stores/root";
+import { ISekaiCardState } from "../stores/sekai";
 
 /**
  * Access Strapi endpoints.
@@ -604,7 +605,7 @@ export function useStrapi(token?: string, region?: ServerRegion) {
       [axios]
     ),
     postSekaiCardTeamMe: useCallback(
-      async (cards: ITeamCardState[], decks: ITeamBuild[]) =>
+      async (cards: ISekaiCardState[], decks: ITeamBuild[]) =>
         (
           await axios.post(`/sekai-card-teams/me`, {
             cards,
@@ -614,7 +615,7 @@ export function useStrapi(token?: string, region?: ServerRegion) {
       [axios]
     ),
     putSekaiCards: useCallback(
-      async (id: number, cards: ITeamCardState[]) =>
+      async (id: number, cards: ISekaiCardState[]) =>
         (await axios.put(`/sekai-card-teams/${id}/cards`, cards)).data,
       [axios]
     ),
