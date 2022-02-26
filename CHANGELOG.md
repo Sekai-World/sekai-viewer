@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.8](https://github.com/Sekai-World/sekai-viewer/compare/v1.2.7...v1.2.8) (2022-02-26)
+
+
+### Bug Fixes
+
+* **card:** :bug: rarity field is removed in JP server ([aa6f565](https://github.com/Sekai-World/sekai-viewer/commits/aa6f565c5df99a080fb94fdbbf02c536d3f9b99e)), closes [#373](https://github.com/Sekai-World/sekai-viewer/issues/373)
+
 ### [1.2.7](https://github.com/Sekai-World/sekai-viewer/compare/v1.2.6...v1.2.7) (2022-02-16)
 
 
