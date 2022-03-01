@@ -972,7 +972,7 @@ const StoryReaderContentLive2d: React.FC<{
           variant="contained"
           disabled={!showButtonEnable}
         >
-          {t("common:show")}
+          {t("common:load")}
         </Button>
       </Grid>
       <Container className={layoutClasses.content}>
