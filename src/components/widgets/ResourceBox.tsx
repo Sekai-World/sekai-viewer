@@ -6,6 +6,7 @@ import { useCachedData } from "../../utils";
 import CommonMaterialIcon from "./CommonMaterialIcon";
 import MaterialIcon from "./MaterialIcon";
 import DegreeImage from "./DegreeImage";
+import Costume3DThumbnail from "./Costume3DThumbnail";
 
 const ResourceBox: React.FC<{
   resourceBoxId: number;
@@ -41,7 +42,7 @@ const ResourceBox: React.FC<{
         alignItems="center"
       >
         {resource.details.map((detail) => (
-          <Grid item key={`${detail.resourceType}-${detail.resourceBoxId}`}>
+          <Grid item key={`${detail.resourceType}-${detail.resourceId}`}>
             {detail.resourceType === "material" ? (
               <MaterialIcon
                 materialId={detail.resourceId!}
@@ -71,6 +72,8 @@ const ResourceBox: React.FC<{
                 honorId={detail.resourceId}
                 key={detail.resourceId}
               />
+            ) : detail.resourceType === "costume_3d" ? (
+              <Costume3DThumbnail costumeId={detail.resourceId!} />
             ) : detail.resourceType !== "honor" ? (
               <CommonMaterialIcon
                 materialName={detail.resourceType}

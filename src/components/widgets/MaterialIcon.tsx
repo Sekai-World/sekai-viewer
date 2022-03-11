@@ -108,11 +108,8 @@ const MaterialIcon: React.FC<{
           <Image
             src={materialMap[materialId]}
             alt={`material ${materialId}`}
-            // aspectRatio={1}
-            style={{
-              height: mini ? "32px" : "64px",
-              width: mini ? "32px" : "64px",
-            }}
+            height={mini ? 32 : 64}
+            width={mini ? 32 : 64}
             bgColor=""
             duration={0}
           ></Image>

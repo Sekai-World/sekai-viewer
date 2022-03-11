@@ -59,10 +59,8 @@ const CommonMaterialIcon: React.FC<{
                 : materialMap[materialName as "coin"]
             }
             alt={`material ${materialName} ${materialId}`}
-            style={{
-              height: mini ? "32px" : "64px",
-              width: mini ? "32px" : "64px",
-            }}
+            height={mini ? 32 : 64}
+            width={mini ? 32 : 64}
             bgColor=""
             duration={0}
           ></Image>
