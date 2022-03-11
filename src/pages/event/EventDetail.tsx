@@ -1004,6 +1004,7 @@ const EventDetail: React.FC<{}> = observer(() => {
                         rankingReward.eventRankingRewards[0].resourceBoxId
                       }
                       resourceBoxPurpose="event_ranking_reward"
+                      justifyContent="center"
                     />
                   </Grid>
                 </Grid>

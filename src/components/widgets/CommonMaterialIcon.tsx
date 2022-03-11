@@ -40,10 +40,17 @@ const CommonMaterialIcon: React.FC<{
   materialId?: number;
   quantity?: number;
   mini?: boolean;
-}> = ({ materialName, materialId, quantity, mini = false }) => (
+  justify?: string;
+}> = ({
+  materialName,
+  materialId,
+  quantity,
+  mini = false,
+  justify = "flex-end",
+}) => (
   <Grid container direction="row" alignItems="center" spacing={1}>
     <Grid item xs={mini ? 4 : 12}>
-      <Grid container justifyContent="flex-end">
+      <Grid container justifyContent={justify}>
         <Grid item>
           <Image
             src={
@@ -63,7 +70,7 @@ const CommonMaterialIcon: React.FC<{
       </Grid>
     </Grid>
     <Grid item xs={mini ? 8 : 12}>
-      <Grid container justifyContent="flex-end">
+      <Grid container justifyContent={justify}>
         <Grid item>
           {!Number.isNaN(Number(quantity)) ? (
             <Typography variant="body2">{quantity}</Typography>

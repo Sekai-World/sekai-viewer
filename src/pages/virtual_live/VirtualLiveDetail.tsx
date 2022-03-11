@@ -267,7 +267,7 @@ const VirtualLiveDetail: React.FC<{}> = observer(() => {
               <ResourceBox
                 resourceBoxId={virtualLive.virtualLiveReward.resourceBoxId}
                 resourceBoxPurpose="virtual_live_reward"
-                justifyContent="flex-end"
+                justifyContent="center"
               />
             </Grid>
           </Grid>

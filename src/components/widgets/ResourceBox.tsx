@@ -46,6 +46,7 @@ const ResourceBox: React.FC<{
               <MaterialIcon
                 materialId={detail.resourceId!}
                 quantity={detail.resourceQuantity}
+                justify={justifyContent}
               />
             ) : detail.resourceType === "stamp" ? (
               <Image
@@ -76,6 +77,7 @@ const ResourceBox: React.FC<{
                 materialId={detail.resourceId}
                 quantity={detail.resourceQuantity}
                 key={detail.resourceId}
+                justify={justifyContent}
               />
             ) : null}
           </Grid>
