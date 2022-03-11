@@ -1386,3 +1386,50 @@ export interface IEventRarityBonusRate {
   masterRank: number;
   bonusRate: number;
 }
+
+export interface IMasterLessonCost {
+  id: number;
+  cardRarityType: string;
+  masterRank: number;
+  seq: number;
+  resourceType: string;
+  resourceId: number;
+  quantity: number;
+}
+
+export interface IMasterLesson {
+  cardRarityType?: string;
+  cardRarity?: number;
+  masterRank: number;
+  power1BonusFixed: number;
+  power2BonusFixed: number;
+  power3BonusFixed: number;
+  characterRankExp: number;
+  costs: Cost[];
+  rewards: any[];
+}
+
+export interface IMasterLessonReward {
+  id: number;
+  cardId: number;
+  masterRank: number;
+  seq: number;
+  resourceBoxId: number;
+  cardRarity: number;
+}
+
+export interface ICostume3D {
+  id: number;
+  seq: number;
+  costume3dGroupId: number;
+  costume3dType: string;
+  name: string;
+  partType: string;
+  colorId: number;
+  colorName: string;
+  characterId: number;
+  costume3dRarity: string;
+  assetbundleName: string;
+  designer: string;
+  publishedAt: number;
+}

@@ -20,7 +20,7 @@ import React, {
   Fragment,
   useCallback,
   useEffect,
-  useMemo,
+  // useMemo,
   useState,
 } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -35,13 +35,15 @@ import {
   IEventCard,
   IEventInfo,
   IGameChara,
+  IMasterLesson,
+  IMasterLessonReward,
   ISkillInfo,
   IUnitProfile,
 } from "../../types.d";
 import {
   cardRarityTypeToRarity,
   getRemoteAssetURL,
-  specialTrainingRarityTypes,
+  // specialTrainingRarityTypes,
   useCachedData,
   useCardType,
 } from "../../utils";
@@ -129,6 +131,10 @@ const CardDetail: React.FC<{}> = observer(() => {
   const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
   const [eventsCache] = useCachedData<IEventInfo>("events");
   const [eventCardsCache] = useCachedData<IEventCard>("eventCards");
+  const [masterLessonsCache] = useCachedData<IMasterLesson>("masterLessons");
+  const [masterLessonRewardsCache] = useCachedData<IMasterLessonReward>(
+    "masterLessonRewards"
+  );
 
   const { cardId } = useParams<{ cardId: string }>();
 
@@ -138,9 +144,14 @@ const CardDetail: React.FC<{}> = observer(() => {
   const [cardTitle, setCardTitle] = useState<string>("");
   const [tabVal, setTabVal] = useState<string>("0");
   const [episodeTabVal, setEpisodeTabVal] = useState<string>("1");
-  const [cardLevel, setCardLevel] = useState<number | number[]>(0);
+  const [cardLevel, setCardLevel] = useState<number>(0);
   const [skill, setSkill] = useState<ISkillInfo>();
-  const [skillLevel, setSkillLevel] = useState<number | number[]>(0);
+  const [skillLevel, setSkillLevel] = useState<number>(0);
+  const [masterLessons, setMasterLessons] = useState<IMasterLesson[]>([]);
+  const [masterLessonRewards, setMasterLessonRewards] = useState<
+    IMasterLessonReward[]
+  >([]);
+  const [masterRank, setMasterRank] = useState<number>(0);
   const [cardEpisode, setCardEpisode] = useState<ICardEpisode[]>([]);
   const [sideStory1Unlocked, setSideStory1Unlocked] = useState<boolean>(true);
   const [sideStory2Unlocked, setSideStory2Unlocked] = useState<boolean>(true);
@@ -153,6 +164,8 @@ const CardDetail: React.FC<{}> = observer(() => {
 
   const { isNewRarityCard, isBirthdayCard, isTrainableCard } =
     useCardType(card);
+
+  const masterRankRewards = [0, 50, 100, 150, 200];
 
   const getSkillDesc = useCallback(
     (skill: ISkillInfo, skillLevel: number | number[]) => {
@@ -241,17 +254,13 @@ const CardDetail: React.FC<{}> = observer(() => {
   useEffect(() => {
     if (
       cards &&
-      cards.length &&
       rarities &&
-      rarities.length &&
       skills &&
-      skills.length &&
       episodes &&
-      episodes.length &&
       eventsCache &&
-      eventsCache.length &&
       eventCardsCache &&
-      eventCardsCache.length
+      masterLessonsCache &&
+      masterLessonRewardsCache
     ) {
       const _card = cards.find((elem) => elem.id === Number(cardId))!;
       const _rarityInfo = isNewRarityCard
@@ -291,6 +300,20 @@ const CardDetail: React.FC<{}> = observer(() => {
         setEvent(
           eventsCache.find((elem) => elem.id === Number(_eventCards[0].eventId))
         );
+
+      const _masterLessons = masterLessonsCache
+        .filter((mlc) =>
+          _card.cardRarityType
+            ? mlc.cardRarityType === _card.cardRarityType
+            : mlc.cardRarity === _card.rarity
+        )
+        .sort((a, b) => a.masterRank - b.masterRank);
+      setMasterLessons(_masterLessons);
+
+      setMasterRank(_masterLessons.slice(-1)[0].masterRank);
+      setMasterLessonRewards(
+        masterLessonRewardsCache.filter((mlrc) => mlrc.cardId === _card.id)
+      );
     }
   }, [
     eventsCache,
@@ -307,6 +330,8 @@ const CardDetail: React.FC<{}> = observer(() => {
     getTranslated,
     t,
     isNewRarityCard,
+    masterLessonsCache,
+    masterLessonRewardsCache,
   ]);
 
   useEffect(() => {
@@ -886,7 +911,7 @@ const CardDetail: React.FC<{}> = observer(() => {
                 <Box className={interactiveClasses.sliderContainer}>
                   <Slider
                     value={skillLevel}
-                    onChange={(e, value) => setSkillLevel(value)}
+                    onChange={(e, value) => setSkillLevel(value as number)}
                     valueLabelDisplay="auto"
                     step={1}
                     min={1}
@@ -944,6 +969,105 @@ const CardDetail: React.FC<{}> = observer(() => {
         </Grid>
       </Container>
       <Typography variant="h6" className={layoutClasses.header}>
+        {t("card:masterRank")}
+      </Typography>
+      <Container className={layoutClasses.content} maxWidth="md">
+        <Paper className={interactiveClasses.container}>
+          <Grid container direction="column" spacing={1}>
+            <Grid
+              item
+              container
+              xs={12}
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <Grid item xs={12} md={2}>
+                <Typography classes={{ root: interactiveClasses.caption }}>
+                  {t("card:masterRankLevel")}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} md={9}>
+                <Box className={interactiveClasses.sliderContainer}>
+                  <Slider
+                    value={masterRank}
+                    onChange={(e, value) => setMasterRank(value as number)}
+                    valueLabelDisplay="auto"
+                    step={1}
+                    min={0}
+                    max={masterLessons.slice(-1)[0].masterRank}
+                  />
+                </Box>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Paper>
+        <Grid className={classes["grid-out"]} container direction="column">
+          {masterRank > 0 && (
+            <Fragment>
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Grid item xs={2}>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("common:cost")}
+                  </Typography>
+                </Grid>
+                <Grid item xs={9} container justifyContent="flex-end">
+                  {masterLessons
+                    .find((ml) => ml.masterRank === masterRank)!
+                    .costs.map((c, idx) => (
+                      <Grid key={`master-rank-cost-${idx}`} item>
+                        <MaterialIcon
+                          materialId={c.resourceId}
+                          quantity={c.quantity}
+                          justify="center"
+                        />
+                      </Grid>
+                    ))}
+                </Grid>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
+            </Fragment>
+          )}
+          {!!masterLessonRewards.length &&
+            !!masterLessonRewards.find(
+              (mlr) => mlr.masterRank === masterRank
+            ) && (
+              <Fragment>
+                <Grid
+                  container
+                  direction="row"
+                  wrap="nowrap"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <Grid item xs={2}>
+                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                      {t("common:rewards")}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={9}>
+                    <ResourceBox
+                      resourceBoxId={
+                        masterLessonRewards.find(
+                          (mlr) => mlr.masterRank === masterRank
+                        )!.resourceBoxId
+                      }
+                      resourceBoxPurpose="master_lesson_reward"
+                      justifyContent="flex-end"
+                    />
+                  </Grid>
+                </Grid>
+                <Divider style={{ margin: "1% 0" }} />
+              </Fragment>
+            )}
+        </Grid>
+      </Container>
+      <Typography variant="h6" className={layoutClasses.header}>
         {t("card:stats")}
       </Typography>
       <Container className={layoutClasses.content} maxWidth="md">
@@ -965,7 +1089,7 @@ const CardDetail: React.FC<{}> = observer(() => {
                 <Box className={interactiveClasses.sliderContainer}>
                   <Slider
                     value={cardLevel}
-                    onChange={(e, value) => setCardLevel(value)}
+                    onChange={(e, value) => setCardLevel(value as number)}
                     valueLabelDisplay="auto"
                     step={1}
                     min={1}
@@ -1061,7 +1185,13 @@ const CardDetail: React.FC<{}> = observer(() => {
                   : 0) +
                 (sideStory2Unlocked && cardEpisode[1]
                   ? cardEpisode[1].power1BonusFixed
-                  : 0)}
+                  : 0) +
+                masterRank *
+                  masterRankRewards[
+                    isNewRarityCard
+                      ? Number(card.cardRarityType!.split("_")[1])
+                      : card.rarity!
+                  ]}
             </Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
@@ -1089,7 +1219,13 @@ const CardDetail: React.FC<{}> = observer(() => {
                   : 0) +
                 (sideStory2Unlocked && cardEpisode[1]
                   ? cardEpisode[1].power2BonusFixed
-                  : 0)}
+                  : 0) +
+                masterRank *
+                  masterRankRewards[
+                    isNewRarityCard
+                      ? Number(card.cardRarityType!.split("_")[1])
+                      : card.rarity!
+                  ]}
             </Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
@@ -1117,7 +1253,13 @@ const CardDetail: React.FC<{}> = observer(() => {
                   : 0) +
                 (sideStory2Unlocked && cardEpisode[1]
                   ? cardEpisode[1].power3BonusFixed
-                  : 0)}
+                  : 0) +
+                masterRank *
+                  masterRankRewards[
+                    isNewRarityCard
+                      ? Number(card.cardRarityType!.split("_")[1])
+                      : card.rarity!
+                  ]}
             </Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
@@ -1149,7 +1291,14 @@ const CardDetail: React.FC<{}> = observer(() => {
                   ? cardEpisode[1].power1BonusFixed +
                     cardEpisode[1].power2BonusFixed +
                     cardEpisode[1].power3BonusFixed
-                  : 0)}
+                  : 0) +
+                masterRank *
+                  masterRankRewards[
+                    isNewRarityCard
+                      ? Number(card.cardRarityType!.split("_")[1])
+                      : card.rarity!
+                  ] *
+                  3}
             </Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
@@ -1232,7 +1381,7 @@ const CardDetail: React.FC<{}> = observer(() => {
                     justifyContent="space-between"
                     alignItems="center"
                   >
-                    <Grid item xs={3}>
+                    <Grid item xs={2}>
                       <Typography
                         variant="subtitle1"
                         style={{ fontWeight: 600 }}
@@ -1244,7 +1393,7 @@ const CardDetail: React.FC<{}> = observer(() => {
                       item
                       container
                       spacing={1}
-                      xs={9}
+                      xs={10}
                       justifyContent="flex-end"
                     >
                       {cardEpisode[0].costs.map((c, idx) => (
@@ -1252,6 +1401,7 @@ const CardDetail: React.FC<{}> = observer(() => {
                           <MaterialIcon
                             materialId={c.resourceId}
                             quantity={c.quantity}
+                            justify="center"
                           />
                         </Grid>
                       ))}
@@ -1281,12 +1431,14 @@ const CardDetail: React.FC<{}> = observer(() => {
                       justifyContent="flex-end"
                     >
                       {cardEpisode[0].rewardResourceBoxIds.map((id) => (
-                        <ResourceBox
-                          resourceBoxId={id}
-                          resourceBoxPurpose="episode_reward"
-                          justifyContent="flex-end"
-                          key={id}
-                        />
+                        <Grid key={`episode-reward-${id}`} item>
+                          <ResourceBox
+                            resourceBoxId={id}
+                            resourceBoxPurpose="episode_reward"
+                            justifyContent="center"
+                            key={id}
+                          />
+                        </Grid>
                       ))}
                     </Grid>
                   </Grid>
