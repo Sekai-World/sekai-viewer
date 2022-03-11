@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.9](https://github.com/Sekai-World/sekai-viewer/compare/v1.2.8...v1.2.9) (2022-03-11)
+
+
+### Features
+
+* :sparkles: add costume 3d thumbnails ([cf0d7cf](https://github.com/Sekai-World/sekai-viewer/commits/cf0d7cf4010a8db4724e6a89fe70f63fb315fba2))
+* **card:** :sparkles: add master rank and rewards to card detail page ([c40a168](https://github.com/Sekai-World/sekai-viewer/commits/c40a16832cd8b4d3e0aafe4bfe7a122958d72a8f))
+
+
+### Bug Fixes
+
+* **music:** :bug: wrong music release condition ([538ec93](https://github.com/Sekai-World/sekai-viewer/commits/538ec93db229db16d04037a543fca31dab5c7cc4))
+
+
+### Refactors
+
+* :fire: remove ad on home and event tracker ([79d6640](https://github.com/Sekai-World/sekai-viewer/commits/79d66409f78c99caa0fe97446aa00dfc768cf27e))
+* :lipstick: material icon style fix ([084fa46](https://github.com/Sekai-World/sekai-viewer/commits/084fa4601cd775622fd11dce66517e3d9834034f))
+
 ### [1.2.8](https://github.com/Sekai-World/sekai-viewer/compare/v1.2.7...v1.2.8) (2022-02-26)
 
 
