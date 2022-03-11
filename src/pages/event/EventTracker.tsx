@@ -57,9 +57,9 @@ import { autorun } from "mobx";
 const SekaiEventRecord = React.lazy(
   () => import("../user/sekai_profile/SekaiEventRecord")
 );
-const AdSense = React.lazy(
-  () => import("../../components/blocks/AdSenseBlock")
-);
+// const AdSense = React.lazy(
+//   () => import("../../components/blocks/AdSenseBlock")
+// );
 
 const useStyles = makeStyles(() => ({
   eventSelect: {
@@ -701,12 +701,12 @@ const EventTracker: React.FC<{}> = observer(() => {
             ))}
         </Container>
       )}
-      <AdSense
+      {/* <AdSense
         client="ca-pub-7767752375383260"
         slot="8221864477"
         format="auto"
         responsive="true"
-      />
+      /> */}
     </Fragment>
   );
 });

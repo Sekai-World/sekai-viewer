@@ -565,12 +565,12 @@ function Home() {
         </Grid>
       </Container>
       <VersionInfo />
-      <AdSense
+      {/* <AdSense
         client="ca-pub-7767752375383260"
         slot="7908750736"
         format="auto"
         responsive="true"
-      />
+      /> */}
       <Grid container spacing={1}>
         <Grid item xs={12} md={6}>
           <CurrentEventWidget />
