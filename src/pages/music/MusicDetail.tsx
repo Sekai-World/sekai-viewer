@@ -271,7 +271,7 @@ const MusicDetail: React.FC<{}> = observer(() => {
   const getVocalCharaIcons: (index: number) => JSX.Element = useCallback(
     (index: number) => {
       return (
-        <Grid container spacing={1} alignItems="center">
+        <Grid container columnSpacing={1} alignItems="center">
           {musicVocal[index].characters.map((chara) =>
             chara.characterType === "game_character" ? (
               <Grid item key={`chara-${chara.characterId}`}>
@@ -462,6 +462,7 @@ const MusicDetail: React.FC<{}> = observer(() => {
                     control={<Radio color="primary"></Radio>}
                     label={getVocalCharaIcons(idx)}
                     labelPlacement="end"
+                    disableTypography
                   />
                 ))}
               </RadioGroup>
@@ -532,13 +533,13 @@ const MusicDetail: React.FC<{}> = observer(() => {
                   <FormControlLabel
                     value="0"
                     control={<Radio color="primary"></Radio>}
-                    label={t("music:vocalTab.title[0]")}
+                    label={t("music:vocalTab.title[0]") as string}
                     labelPlacement="end"
                   />
                   <FormControlLabel
                     value="1"
                     control={<Radio color="primary"></Radio>}
-                    label={t("music:vocalTab.title[1]")}
+                    label={t("music:vocalTab.title[1]") as string}
                     labelPlacement="end"
                   />
                   {music.categories
@@ -547,7 +548,7 @@ const MusicDetail: React.FC<{}> = observer(() => {
                       <FormControlLabel
                         value={cat}
                         control={<Radio color="primary"></Radio>}
-                        label={t(`music:categoryType.${cat}`)}
+                        label={t(`music:categoryType.${cat}`) as string}
                         labelPlacement="end"
                         key={cat}
                       />
@@ -587,13 +588,13 @@ const MusicDetail: React.FC<{}> = observer(() => {
                   <FormControlLabel
                     value="mp3"
                     control={<Radio color="primary"></Radio>}
-                    label={t("music:fileFormat.mp3")}
+                    label={t("music:fileFormat.mp3") as string}
                     labelPlacement="end"
                   />
                   <FormControlLabel
                     value="flac"
                     control={<Radio color="primary"></Radio>}
-                    label={t("music:fileFormat.flac")}
+                    label={t("music:fileFormat.flac") as string}
                     labelPlacement="end"
                   />
                 </RadioGroup>
@@ -916,7 +917,9 @@ const MusicDetail: React.FC<{}> = observer(() => {
                 <Grid item>
                   <ReleaseCondTrans
                     releaseCondId={
-                      musicVocal[selectedVocalType].releaseConditionId
+                      selectedVocalType === 0
+                        ? music.releaseConditionId
+                        : musicVocal[selectedVocalType].releaseConditionId
                     }
                     originalProps={{ align: "right" }}
                     translatedProps={{ align: "right" }}
@@ -940,7 +943,7 @@ const MusicDetail: React.FC<{}> = observer(() => {
                 <Grid item>
                   <ContentTrans
                     contentKey={`music_vocal:${musicVocal[selectedVocalType].musicVocalType}`}
-                    original={musicVocal[selectedVocalType].musicVocalType}
+                    original={musicVocal[selectedVocalType].caption}
                     originalProps={{ align: "right" }}
                     translatedProps={{ align: "right" }}
                   />
@@ -985,6 +988,7 @@ const MusicDetail: React.FC<{}> = observer(() => {
                     <ResourceBox
                       resourceBoxId={musicAchievements[0].resourceBoxId}
                       resourceBoxPurpose="music_achievement"
+                      justifyContent="center"
                     />
                   </Grid>
                 </Grid>
@@ -998,6 +1002,7 @@ const MusicDetail: React.FC<{}> = observer(() => {
                     <ResourceBox
                       resourceBoxId={musicAchievements[1].resourceBoxId}
                       resourceBoxPurpose="music_achievement"
+                      justifyContent="center"
                     />
                   </Grid>
                 </Grid>
@@ -1011,6 +1016,7 @@ const MusicDetail: React.FC<{}> = observer(() => {
                     <ResourceBox
                       resourceBoxId={musicAchievements[2].resourceBoxId}
                       resourceBoxPurpose="music_achievement"
+                      justifyContent="center"
                     />
                   </Grid>
                 </Grid>
@@ -1024,6 +1030,7 @@ const MusicDetail: React.FC<{}> = observer(() => {
                     <ResourceBox
                       resourceBoxId={musicAchievements[3].resourceBoxId}
                       resourceBoxPurpose="music_achievement"
+                      justifyContent="center"
                     />
                   </Grid>
                 </Grid>
@@ -1175,6 +1182,7 @@ const MusicDetail: React.FC<{}> = observer(() => {
                                   <ResourceBox
                                     resourceBoxId={achieve.resourceBoxId}
                                     resourceBoxPurpose="music_achievement"
+                                    justifyContent="center"
                                   />
                                 </Grid>
                               </Grid>
