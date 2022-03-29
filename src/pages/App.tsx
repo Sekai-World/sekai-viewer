@@ -94,7 +94,7 @@ import { useRootStore } from "../stores/root";
 import { observer } from "mobx-react-lite";
 import { IUserMetadata } from "../stores/user";
 
-import { defaultfont_en, defaultfont_th, defaultfont } from "../stores/fonts";
+import * as fonts from "../stores/fonts";
 
 declare module "@mui/styles/defaultTheme" {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -1232,15 +1232,15 @@ const App = observer(() => {
           },
         },
         typography: {
-          fontFamily:
-            lang === "th"
-              ? defaultfont_th
-              : lang === "en"
-              ? defaultfont_en
-              : defaultfont,
+          fontFamily: fonts.fontList,
+        },
+        components: {
+          MuiCssBaseline: {
+            styleOverrides: fonts.fontFaceOverride,
+          },
         },
       }),
-    [displayMode, preferDarkMode, lang]
+    [displayMode, preferDarkMode]
   );
 
   useEffect(() => {
