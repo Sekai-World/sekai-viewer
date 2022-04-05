@@ -58,6 +58,7 @@ import axios from "axios";
 import { trimMP3 } from "../../utils/trimMP3";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
+import { assetUrl } from "../../utils/urls";
 
 const useStyles = makeStyles((theme) => ({
   "rarity-star-img": {
@@ -1212,11 +1213,9 @@ const MusicDetail: React.FC<{}> = observer(() => {
                               <Link
                                 href={`${
                                   window.isChinaMainland
-                                    ? import.meta.env.VITE_ASSET_DOMAIN_CN
-                                    : `${
-                                        import.meta.env.VITE_ASSET_DOMAIN_MINIO
-                                      }/sekai-assets`
-                                }/music/charts/${musicId.padStart(4, "0")}/${
+                                    ? assetUrl.cn.musicChart
+                                    : assetUrl.minio.musicChart
+                                }/${musicId.padStart(4, "0")}/${
                                   elem.musicDifficulty
                                 }.svg`}
                                 target="_blank"
@@ -1236,11 +1235,9 @@ const MusicDetail: React.FC<{}> = observer(() => {
                               <Link
                                 href={`${
                                   window.isChinaMainland
-                                    ? import.meta.env.VITE_ASSET_DOMAIN_CN
-                                    : `${
-                                        import.meta.env.VITE_ASSET_DOMAIN_MINIO
-                                      }/sekai-assets`
-                                }/music/charts/${musicId.padStart(4, "0")}/${
+                                    ? assetUrl.cn.musicChart
+                                    : assetUrl.minio.musicChart
+                                }/${musicId.padStart(4, "0")}/${
                                   elem.musicDifficulty
                                 }.png`}
                                 target="_blank"
