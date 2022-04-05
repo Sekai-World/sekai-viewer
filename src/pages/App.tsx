@@ -93,8 +93,7 @@ import { useRootStore } from "../stores/root";
 // import AlertSnackbar from "../components/AlertSnackbar";
 import { observer } from "mobx-react-lite";
 import { IUserMetadata } from "../stores/user";
-
-import * as fonts from "../stores/fonts";
+import { fontFaceOverride, fontList } from "../utils/fonts";
 
 declare module "@mui/styles/defaultTheme" {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -1232,11 +1231,11 @@ const App = observer(() => {
           },
         },
         typography: {
-          fontFamily: fonts.fontList,
+          fontFamily: fontList,
         },
         components: {
           MuiCssBaseline: {
-            styleOverrides: fonts.fontFaceOverride,
+            styleOverrides: fontFaceOverride,
           },
         },
       }),
