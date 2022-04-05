@@ -438,7 +438,9 @@ export function useProcessedScenarioData() {
           case "mob": {
             return {
               id: chara2d.characterId,
-              name: mobCharas.find((mc) => mc.id === chara2d.characterId)!.name,
+              name:
+                mobCharas.find((mc) => mc.id === chara2d.characterId)?.name ||
+                "",
             };
           }
         }
