@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.10](https://github.com/Sekai-World/sekai-viewer/compare/v1.2.9...v1.2.10) (2022-04-05)
+
+
+### Features
+
+* add support for custom font's for each language + Add Thai fonts support ([6b59f5c](https://github.com/Sekai-World/sekai-viewer/commits/6b59f5c317c73937a87b3e514045681d7c47aa4d))
+
+
+### Bug Fixes
+
+* :bug: useCallback missing deps in sekai user card list ([ecbced3](https://github.com/Sekai-World/sekai-viewer/commits/ecbced3a6d735afac4877f0181c9c876e0283c3d))
+* **tools:** :bug: filter card by rarity in jp server ([18e9ca2](https://github.com/Sekai-World/sekai-viewer/commits/18e9ca2db6a4f21d7d46a56910743910bd3c16ee))
+
+
+### Refactors
+
+* :lipstick: font family order change ([5152cf4](https://github.com/Sekai-World/sekai-viewer/commits/5152cf456d80c6913637a1c27a665ef9c9e49eea))
+* :recycle: use china friendly url ([a21dbcb](https://github.com/Sekai-World/sekai-viewer/commits/a21dbcbf52b05bf19ad55b6e8415d2c36cf63125))
+* :rotating_light: remove unused codes ([f6d4c68](https://github.com/Sekai-World/sekai-viewer/commits/f6d4c6870fe054394d6bc7b0b655341b9d46e5c1))
+* :truck: move comics to separate bucket ([eb33dbd](https://github.com/Sekai-World/sekai-viewer/commits/eb33dbddcd379646187a62b44229013702a6cc96))
+* :truck: move fonts to utils ([469ef58](https://github.com/Sekai-World/sekai-viewer/commits/469ef58f3efd55d6b2d0ed9106540bc882212ed6))
+* :truck: move music charts to separate bucket ([440e9cc](https://github.com/Sekai-World/sekai-viewer/commits/440e9cc182e3897b3ba77d7040d8620935233434))
+* change how the web decides which fonts to use ([5f95af0](https://github.com/Sekai-World/sekai-viewer/commits/5f95af09e8315c5bb35755ef68ed4a6e66eb2131))
+* import fonts from font-face instead of <link> ([864cdfb](https://github.com/Sekai-World/sekai-viewer/commits/864cdfbd945e0b0aba103b559e67a8371b132fcc))
+
 ### [1.2.9](https://github.com/Sekai-World/sekai-viewer/compare/v1.2.8...v1.2.9) (2022-03-11)
 
 
