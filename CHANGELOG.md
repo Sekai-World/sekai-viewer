@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.11](https://github.com/Sekai-World/sekai-viewer/compare/v1.2.10...v1.2.11) (2022-04-05)
+
+
+### Bug Fixes
+
+* **story:** :bug: failed to show story lines due to missing mob character entries ([49f0f01](https://github.com/Sekai-World/sekai-viewer/commits/49f0f019009c074063d6a34a9ccfa79d00b9c864))
+
 ### [1.2.10](https://github.com/Sekai-World/sekai-viewer/compare/v1.2.9...v1.2.10) (2022-04-05)
 
 
