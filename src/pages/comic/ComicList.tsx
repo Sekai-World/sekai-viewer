@@ -61,13 +61,11 @@ const ComicList: React.FC<{}> = observer(() => {
         switch (resourceLang) {
           case "ja":
           case "zht":
+          case "en":
             url = `comic/one_frame_rip/${comic.assetbundleName}.webp`;
             break;
-          case "en":
-            url = `comic_${resourceLang}/${comic.assetbundleName}.jpg`;
-            break;
           default:
-            url = `comic_${resourceLang}/${comic.assetbundleName}.png`;
+            url = `${resourceLang}/${comic.assetbundleName}.png`;
             break;
         }
         images.push({
@@ -75,14 +73,26 @@ const ComicList: React.FC<{}> = observer(() => {
             url,
             undefined,
             window.isChinaMainland ? "cn" : "minio",
-            resourceLang === "zht" ? "tw" : "jp"
+            resourceLang === "zht"
+              ? "tw"
+              : resourceLang === "ja"
+              ? "jp"
+              : resourceLang === "en"
+              ? "en"
+              : "comic"
           ),
           alt: getTranslated(`comic_title:${comic.id}`, comic.title),
           downloadUrl: await getRemoteAssetURL(
             url.replace(".webp", ".png"),
             undefined,
             window.isChinaMainland ? "cn" : "minio",
-            resourceLang === "zht" ? "tw" : "jp"
+            resourceLang === "zht"
+              ? "tw"
+              : resourceLang === "ja"
+              ? "jp"
+              : resourceLang === "en"
+              ? "en"
+              : "comic"
           ),
         });
       }
@@ -210,24 +220,24 @@ const ComicList: React.FC<{}> = observer(() => {
               </Link>
             </Typography>
           </Alert>
-        ) : resourceLang === "zht" ? (
-          <Alert severity="info">
-            <Typography>Credit: CHKO</Typography>
-          </Alert>
-        ) : resourceLang === "en" ? (
-          <Alert severity="info">
-            <Typography>
-              Credit:{" "}
-              <Link
-                href="https://twitter.com/pjsekai_eng"
-                style={{ textDecorationLine: "none" }}
-                underline="hover"
-              >
-                <Twitter fontSize="inherit" /> @pjsekai_eng
-              </Link>
-            </Typography>
-          </Alert>
-        ) : null}
+        ) : // ) : resourceLang === "zht" ? (
+        //   <Alert severity="info">
+        //     <Typography>Credit: CHKO</Typography>
+        //   </Alert>
+        // ) : resourceLang === "en" ? (
+        //   <Alert severity="info">
+        //     <Typography>
+        //       Credit:{" "}
+        //       <Link
+        //         href="https://twitter.com/pjsekai_eng"
+        //         style={{ textDecorationLine: "none" }}
+        //         underline="hover"
+        //       >
+        //         <Twitter fontSize="inherit" /> @pjsekai_eng
+        //       </Link>
+        //     </Typography>
+        //   </Alert>
+        null}
         <InfiniteScroll<ITipInfoComic>
           ViewComponent={ListCard}
           callback={callback}

@@ -291,7 +291,7 @@ export async function getRemoteAssetURL(
   endpoint: string,
   setFunc?: CallableFunction,
   domainKey: AssetDomainKey = "ww",
-  server: ServerRegion = "jp"
+  server: ServerRegion | "comic" | "musicChart" = "jp"
 ): Promise<string> {
   const isWebpSupported = Modernizr.webplossless;
   const url = `${assetUrl[domainKey][server]}/${endpoint}`;

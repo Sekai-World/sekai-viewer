@@ -19,17 +19,23 @@ export const assetUrl = {
     tw: "https://sekai-tc-assets-1258184166.file.myqcloud.com",
     cn: "https://sekai-cn-assets-1258184166.file.myqcloud.com",
     en: "https://sekai-en-assets-1258184166.file.myqcloud.com",
+    comic: "https://sekai-comics-1258184166.file.myqcloud.com",
+    musicChart: "https://sekai-music-charts-1258184166.file.myqcloud.com",
   },
   ww: {
     jp: import.meta.env.VITE_ASSET_DOMAIN_WW + "/sekai-assets",
     tw: import.meta.env.VITE_ASSET_DOMAIN_WW + "/sekai-tc-assets",
     cn: import.meta.env.VITE_ASSET_DOMAIN_WW + "/sekai-cn-assets",
     en: import.meta.env.VITE_ASSET_DOMAIN_WW + "/sekai-en-assets",
+    comic: import.meta.env.VITE_ASSET_DOMAIN_WW + "/sekai-comics",
+    musicChart: import.meta.env.VITE_ASSET_DOMAIN_WW + "/sekai-music-charts",
   },
   minio: {
     jp: import.meta.env.VITE_ASSET_DOMAIN_MINIO + "/sekai-assets",
     tw: import.meta.env.VITE_ASSET_DOMAIN_MINIO + "/sekai-tc-assets",
     cn: import.meta.env.VITE_ASSET_DOMAIN_MINIO + "/sekai-cn-assets",
     en: import.meta.env.VITE_ASSET_DOMAIN_MINIO + "/sekai-en-assets",
+    comic: import.meta.env.VITE_ASSET_DOMAIN_MINIO + "/sekai-comics",
+    musicChart: import.meta.env.VITE_ASSET_DOMAIN_MINIO + "/sekai-music-charts",
   },
 };
