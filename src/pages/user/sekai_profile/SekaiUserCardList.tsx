@@ -6,15 +6,11 @@ import {
   CircularProgress,
   Collapse,
   Container,
-  Dialog,
-  DialogContent,
-  DialogTitle,
   FormControl,
   FormControlLabel,
   Grid,
   IconButton,
   InputAdornment,
-  InputLabel,
   MenuItem,
   Popover,
   Select,
@@ -64,7 +60,6 @@ import {
   ICardInfo,
   IEventDeckBonus,
   IEventInfo,
-  IGameChara,
   IGameCharaUnit,
   // ITeamCardState,
   IUnitProfile,
@@ -81,6 +76,7 @@ import { useRootStore } from "../../../stores/root";
 import { ISekaiCardState, ISekaiCardTeam } from "../../../stores/sekai";
 import { observer } from "mobx-react-lite";
 import { autorun } from "mobx";
+import FilterCardsModal from "../../../components/widgets/FilterCardsModal";
 
 const SekaiUserCardList = observer(() => {
   // const layoutClasses = useLayoutStyles();
@@ -98,15 +94,10 @@ const SekaiUserCardList = observer(() => {
   const { showError, showSuccess } = useAlertSnackbar();
 
   const [cards] = useCachedData<ICardInfo>("cards");
-  const [charas] = useCachedData<IGameChara>("gameCharacters");
   const [events] = useCachedData<IEventInfo>("events");
   const [eventDeckBonuses] = useCachedData<IEventDeckBonus>("eventDeckBonuses");
   const [charaUnits] = useCachedData<IGameCharaUnit>("gameCharacterUnits");
   const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
-
-  const [characterId, setCharacterId] = useState<number>(0);
-  const [rarity, setRarity] = useState<number>(4);
-  const [filteredCards, setFilteredCards] = useState<ICardInfo[]>([]);
 
   const [cardList, setCardList] = useState<ISekaiCardState[]>([]);
   // const [displayCardList, setDisplayCardList] = useState<ISekaiCardState[]>([]);
@@ -332,20 +323,14 @@ const SekaiUserCardList = observer(() => {
     handleClose();
   }, [addCardIds, card, cardList, editList, handleClose]);
 
-  const filterCards = useCallback(() => {
-    if (!cards || !cards.length) return;
-    setFilteredCards(
-      cards.filter(
-        (card) =>
-          !cardList.find((cl) => cl.cardId === card.id) &&
-          (characterId
-            ? card.characterId === characterId && card.rarity === rarity
-            : card.rarity === rarity)
-      )
-    );
-  }, [cardList, cards, characterId, rarity]);
-
   const handleCardThumbClick = useCallback((card: ICardInfo) => {
+    // avoid duplication
+    const existedCard =
+      cardList.find((_card) => _card.cardId === card.id) ||
+      editList.find((_card) => _card.cardId === card.id);
+
+    if (existedCard) return;
+
     const maxLevel = [0, 20, 30, 50, 60];
     // const maxPower = card.cardParameters
     //   .filter((elem) => elem.cardLevel === maxLevel[card.rarity])
@@ -381,7 +366,7 @@ const SekaiUserCardList = observer(() => {
     //     story2Unlock: true,
     //   },
     // ]);
-    setFilteredCards((cards) => cards.filter((c) => c.id !== card.id));
+    // setFilteredCards((cards) => cards.filter((c) => c.id !== card.id));
   }, []);
 
   return !!sekaiCardTeam ? (
@@ -978,102 +963,11 @@ const SekaiUserCardList = observer(() => {
           </Container>
         )}
       </Popover>
-      <Dialog
+      <FilterCardsModal
         open={addCardDialogVisible}
-        onClose={() => {
-          // setFilteredCards([]);
-          setAddCardDialogVisible(false);
-        }}
-      >
-        <DialogTitle>{t("music_recommend:addCardDialog.title")}</DialogTitle>
-        <DialogContent>
-          <Grid container spacing={1} alignItems="center">
-            <Grid item>
-              <FormControl style={{ minWidth: 200 }}>
-                <InputLabel id="add-card-dialog-select-chara-label">
-                  {t("music_recommend:addCardDialog.selectChara")}
-                </InputLabel>
-                <Select
-                  labelId="add-card-dialog-select-chara-label"
-                  value={characterId}
-                  onChange={(e) => setCharacterId(e.target.value as number)}
-                  label={t("music_recommend:addCardDialog.selectChara")}
-                >
-                  <MenuItem value={0}>{t("common:all")}</MenuItem>
-                  {charas &&
-                    charas.map((chara) => (
-                      <MenuItem
-                        key={`chara-select-item-${chara.id}`}
-                        value={chara.id}
-                      >
-                        {getCharaName(chara.id)}
-                      </MenuItem>
-                    ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item>
-              <FormControl style={{ minWidth: 120 }}>
-                <InputLabel id="add-card-dialog-select-rarity-label">
-                  {t("music_recommend:addCardDialog.selectRarity")}
-                </InputLabel>
-                <Select
-                  labelId="add-card-dialog-select-rarity-label"
-                  value={rarity}
-                  onChange={(e) => setRarity(e.target.value as number)}
-                  label={t("music_recommend:addCardDialog.selectRarity")}
-                >
-                  {Array.from({ length: 4 }).map((_, index) => (
-                    <MenuItem
-                      key={`rarity-select-item-${index + 1}`}
-                      value={index + 1}
-                    >
-                      {index + 1 >= 3
-                        ? Array.from({ length: index + 1 }).map((_, id) => (
-                            <img
-                              src={rarityAfterTraining}
-                              alt={`star-${id}`}
-                              key={`star-${id}`}
-                              height="16"
-                            />
-                          ))
-                        : Array.from({ length: index + 1 }).map((_, id) => (
-                            <img
-                              src={rarityNormal}
-                              alt={`star-${id}`}
-                              key={`star-${id}`}
-                              height="16"
-                            />
-                          ))}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => filterCards()}
-              >
-                {t("common:search")}
-              </Button>
-            </Grid>
-          </Grid>
-          <Grid container direction="row" spacing={1}>
-            {filteredCards.map((card) => (
-              <Grid key={`filtered-card-${card.id}`} item xs={4} md={3} lg={2}>
-                <CardThumb
-                  cardId={card.id}
-                  onClick={() => handleCardThumbClick(card)}
-                  style={{ cursor: "pointer" }}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        </DialogContent>
-        {/* <DialogActions></DialogActions> */}
-      </Dialog>
+        onCardSelected={handleCardThumbClick}
+        onClose={() => setAddCardDialogVisible(false)}
+      />
       <Popover
         open={eventOpen}
         anchorEl={anchorElEvent}
