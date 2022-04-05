@@ -1,4 +1,4 @@
-export const fontList = `"Overpass","Prompt","Noto Sans JP","Roboto","Helvetica","Arial",sans-serif`;
+export const fontList = `"Roboto","Overpass","Prompt","Noto Sans JP","Helvetica","Arial",sans-serif`;
 export const fontFaceOverride = `
 @font-face {  
   font-family: "Overpass";
