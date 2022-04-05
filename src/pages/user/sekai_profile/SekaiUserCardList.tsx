@@ -323,51 +323,56 @@ const SekaiUserCardList = observer(() => {
     handleClose();
   }, [addCardIds, card, cardList, editList, handleClose]);
 
-  const handleCardThumbClick = useCallback((card: ICardInfo) => {
-    // avoid duplication
-    const existedCard =
-      cardList.find((_card) => _card.cardId === card.id) ||
-      editList.find((_card) => _card.cardId === card.id);
+  const handleCardThumbClick = useCallback(
+    (card: ICardInfo) => {
+      // avoid duplication
+      const existedCard =
+        cardList.find((_card) => _card.cardId === card.id) ||
+        editList.find((_card) => _card.cardId === card.id);
 
-    if (existedCard) return;
+      if (existedCard) return;
 
-    const maxLevel = [0, 20, 30, 50, 60];
-    // const maxPower = card.cardParameters
-    //   .filter((elem) => elem.cardLevel === maxLevel[card.rarity])
-    //   .reduce((sum, elem) => sum + elem.power, 0);
-    setEditList((list) => [
-      ...list,
-      {
-        cardId: card.id,
-        masterRank: 0,
-        skillLevel: 1,
-        level:
-          maxLevel[card.rarity || cardRarityTypeToRarity[card.cardRarityType!]],
-        trained:
-          card.cardRarityType !== "rarity_birthday" &&
-          (card.rarity || cardRarityTypeToRarity[card.cardRarityType!]) >= 3,
-        trainable:
-          card.cardRarityType !== "rarity_birthday" &&
-          (card.rarity || cardRarityTypeToRarity[card.cardRarityType!]) >= 3,
-        story1Unlock: true,
-        story2Unlock: true,
-      },
-    ]);
-    setAddCardIds((ids) => [...ids, card.id]);
-    // setCardList((list) => [
-    //   ...list,
-    //   {
-    //     cardId: card.id,
-    //     masterRank: 0,
-    //     skillLevel: 1,
-    //     level: maxLevel[card.rarity],
-    //     trained: card.rarity >= 3,
-    //     story1Unlock: true,
-    //     story2Unlock: true,
-    //   },
-    // ]);
-    // setFilteredCards((cards) => cards.filter((c) => c.id !== card.id));
-  }, []);
+      const maxLevel = [0, 20, 30, 50, 60];
+      // const maxPower = card.cardParameters
+      //   .filter((elem) => elem.cardLevel === maxLevel[card.rarity])
+      //   .reduce((sum, elem) => sum + elem.power, 0);
+      setEditList((list) => [
+        ...list,
+        {
+          cardId: card.id,
+          masterRank: 0,
+          skillLevel: 1,
+          level:
+            maxLevel[
+              card.rarity || cardRarityTypeToRarity[card.cardRarityType!]
+            ],
+          trained:
+            card.cardRarityType !== "rarity_birthday" &&
+            (card.rarity || cardRarityTypeToRarity[card.cardRarityType!]) >= 3,
+          trainable:
+            card.cardRarityType !== "rarity_birthday" &&
+            (card.rarity || cardRarityTypeToRarity[card.cardRarityType!]) >= 3,
+          story1Unlock: true,
+          story2Unlock: true,
+        },
+      ]);
+      setAddCardIds((ids) => [...ids, card.id]);
+      // setCardList((list) => [
+      //   ...list,
+      //   {
+      //     cardId: card.id,
+      //     masterRank: 0,
+      //     skillLevel: 1,
+      //     level: maxLevel[card.rarity],
+      //     trained: card.rarity >= 3,
+      //     story1Unlock: true,
+      //     story2Unlock: true,
+      //   },
+      // ]);
+      // setFilteredCards((cards) => cards.filter((c) => c.id !== card.id));
+    },
+    [cardList, editList]
+  );
 
   return !!sekaiCardTeam ? (
     <Grid container spacing={1}>
