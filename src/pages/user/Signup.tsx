@@ -88,7 +88,7 @@ const Signup: React.FC<{}> = observer(() => {
           validate={handleValidate}
           onSubmit={async (values, { setErrors }) => {
             try {
-              const data = await postRegisterLocal(values);
+              await postRegisterLocal(values);
               history.push("/user/confirmation");
               // window.location.reload();
               // localStorage.setItem(

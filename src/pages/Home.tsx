@@ -33,7 +33,7 @@ import { Link as RouteLink } from "react-router-dom";
 import { getJPTime, useVersionInfo } from "../utils";
 import AnnouncementWidget from "../components/widgets/AnnouncementWidget";
 import CurrentEventWidget from "../components/widgets/CurrentEventWidget";
-import AdSense from "../components/blocks/AdSenseBlock";
+// import AdSense from "../components/blocks/AdSenseBlock";
 import SekaiGameNews from "../components/blocks/SekaiGameNews";
 import { useRootStore } from "../stores/root";
 import Countdown from "../components/widgets/Countdown";

@@ -34,8 +34,7 @@ export const CardThumb: React.FC<
   const classes = useSvgStyles();
   const [cards] = useCachedData<ICardInfo>("cards");
   const [card, setCard] = useState<ICardInfo>();
-  const { isNewRarityCard, isBirthdayCard, isTrainableCard } =
-    useCardType(card);
+  const { isNewRarityCard, isBirthdayCard } = useCardType(card);
   const _trained = useMemo(() => {
     const maxNormalLevel = [0, 20, 30, 40, 50];
     if (card) {
@@ -245,8 +244,7 @@ export const CardThumbMedium: React.FC<
 
   const [cards] = useCachedData<ICardInfo>("cards");
   const [card, setCard] = useState<ICardInfo>();
-  const { isNewRarityCard, isBirthdayCard, isTrainableCard } =
-    useCardType(card);
+  const { isNewRarityCard, isBirthdayCard } = useCardType(card);
   const _trained = useMemo(() => {
     const maxNormalLevel = [0, 20, 30, 40, 50];
     if (card) {

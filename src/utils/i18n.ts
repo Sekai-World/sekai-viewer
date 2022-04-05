@@ -4,7 +4,6 @@ import { initReactI18next } from "react-i18next";
 import fetchBackend from "i18next-fetch-backend";
 import detector from "i18next-browser-languagedetector";
 import { useCallback } from "react";
-import { SettingContext } from "../context";
 import { useCachedData } from ".";
 import { ContentTransModeType, IGameChara } from "../types";
 import { useRootStore } from "../stores/root";

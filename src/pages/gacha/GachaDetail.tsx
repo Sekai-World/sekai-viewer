@@ -23,13 +23,7 @@ import {
 import makeStyles from "@mui/styles/makeStyles";
 import { useLayoutStyles } from "../../styles/layout";
 import { TabContext, TabPanel } from "@mui/lab";
-import React, {
-  Fragment,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from "react";
+import React, { Fragment, useCallback, useLayoutEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
@@ -222,11 +216,11 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
       );
       const tmpGachaResult: GachaDetail[] = [];
       const isOverRarity = behavior.gachaBehaviorType.startsWith("over_rarity");
-      const overRarity = isOverRarity
-        ? behavior.gachaBehaviorType === "over_rarity_3_once"
-          ? 3
-          : 4
-        : 0;
+      // const overRarity = isOverRarity
+      //   ? behavior.gachaBehaviorType === "over_rarity_3_once"
+      //     ? 3
+      //     : 4
+      //   : 0;
       let noOverRarityCount = 0;
       for (let i = 0; i < rollTimes; i++) {
         // console.log(i, rollTimes);

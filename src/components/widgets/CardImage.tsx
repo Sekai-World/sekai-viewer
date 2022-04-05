@@ -34,8 +34,7 @@ export const CardImage: React.FC<{ id: number; trained?: boolean }> = ({
   const [card, setCard] = useState<ICardInfo>();
   const [cardImg, setCardImg] = useState<string>("");
 
-  const { isNewRarityCard, isBirthdayCard, isTrainableCard } =
-    useCardType(card);
+  const { isNewRarityCard, isBirthdayCard } = useCardType(card);
 
   const rarityIcon = useMemo(
     () =>
