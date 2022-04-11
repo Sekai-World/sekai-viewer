@@ -219,22 +219,47 @@ const SekaiUserCardList = observer(() => {
             supportUnitSelected.includes(elem.card.supportUnit)
         );
       }
-      setCardList(
-        _cardList
-          .sort((a, b) =>
-            sortBy === "level"
-              ? sortType === "asc"
-                ? a.level - b.level
-                : b.level - a.level
-              : sortType === "asc"
-              ? a.card[sortBy as "id"] - b.card[sortBy as "id"]
-              : b.card[sortBy as "id"] - a.card[sortBy as "id"]
-          )
-          .map((card) => {
-            const { card: _, ...newCard } = card;
-            return newCard;
-          })
-      );
+      switch (sortBy) {
+        case "level":
+          setCardList(
+            _cardList.sort((a, b) =>
+              sortType === "asc" ? a.level - b.level : b.level - a.level
+            )
+          );
+          break;
+        case "rarity":
+          const sortKey =
+            _cardList[0] && _cardList[0].card.rarity
+              ? "rarity"
+              : "cardRarityType";
+          setCardList(
+            _cardList.sort((a, b) => {
+              if (sortType === "asc") {
+                if (a.card[sortKey]! > b.card[sortKey]!) return 1;
+                if (a.card[sortKey]! < b.card[sortKey]!) return -1;
+              } else {
+                if (a.card[sortKey]! > b.card[sortKey]!) return -1;
+                if (a.card[sortKey]! < b.card[sortKey]!) return 1;
+              }
+
+              return 0;
+            })
+          );
+          break;
+        default:
+          setCardList(
+            _cardList
+              .sort((a, b) =>
+                sortType === "asc"
+                  ? a.card[sortBy as "id"] - b.card[sortBy as "id"]
+                  : b.card[sortBy as "id"] - a.card[sortBy as "id"]
+              )
+              .map((card) => {
+                const { card: _, ...newCard } = card;
+                return newCard;
+              })
+          );
+      }
     }
   }, [
     addCardIds,
