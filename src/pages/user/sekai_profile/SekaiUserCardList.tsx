@@ -100,13 +100,13 @@ const SekaiUserCardList = observer(() => {
   const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
 
   const [cardList, setCardList] = useState<ISekaiCardState[]>([]);
-  // const [displayCardList, setDisplayCardList] = useState<ISekaiCardState[]>([]);
   const [card, setCard] = useState<ISekaiCardState>();
   const [editList, setEditList] = useState<ISekaiCardState[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [deleteCardIds, setDeleteCardIds] = useState<number[]>([]);
   const [addCardIds, setAddCardIds] = useState<number[]>([]);
   const [filterOpened, setFilterOpened] = useState(false);
+  const [excludedCardIds, setExcludedCardIds] = useState<number[]>([]);
   const [characterSelected, dispatchCharacterSelected] = useReducer(
     characterSelectReducer,
     JSON.parse(
@@ -219,6 +219,7 @@ const SekaiUserCardList = observer(() => {
             supportUnitSelected.includes(elem.card.supportUnit)
         );
       }
+      setExcludedCardIds(_cardList.map((cl) => cl.card.id));
       switch (sortBy) {
         case "level":
           setCardList(
@@ -306,12 +307,12 @@ const SekaiUserCardList = observer(() => {
           [key]: value,
         });
         setCard(newCard);
-        const idx = cardList.findIndex((c) => c.cardId === card.cardId);
-        setCardList((cards) => [
-          ...cards.slice(0, idx),
-          newCard,
-          ...cards.slice(idx + 1),
-        ]);
+        // const idx = cardList.findIndex((c) => c.cardId === card.cardId);
+        // setCardList((cards) => [
+        //   ...cards.slice(0, idx),
+        //   newCard,
+        //   ...cards.slice(idx + 1),
+        // ]);
 
         const editIdx = editList.findIndex((c) => c.cardId === card.cardId);
         if (editIdx === -1) {
@@ -325,7 +326,7 @@ const SekaiUserCardList = observer(() => {
         }
       }
     },
-    [card, cardList, editList]
+    [card, editList]
   );
 
   const handleDelete = useCallback(() => {
@@ -344,7 +345,7 @@ const SekaiUserCardList = observer(() => {
         ...ids.slice(addIdx + 1),
       ]);
     else setDeleteCardIds((dc) => [...dc, cardList![idx].cardId]);
-    setCardList((cards) => [...cards.slice(0, idx), ...cards.slice(idx + 1)]);
+    // setCardList((cards) => [...cards.slice(0, idx), ...cards.slice(idx + 1)]);
     handleClose();
   }, [addCardIds, card, cardList, editList, handleClose]);
 
@@ -356,6 +357,17 @@ const SekaiUserCardList = observer(() => {
         editList.find((_card) => _card.cardId === card.id);
 
       if (existedCard) return;
+
+      // check is deleted
+      const alreadyDeletedIdx = deleteCardIds.findIndex((id) => id === card.id);
+      if (alreadyDeletedIdx !== -1) {
+        setDeleteCardIds([
+          ...deleteCardIds.slice(0, alreadyDeletedIdx),
+          ...deleteCardIds.slice(alreadyDeletedIdx + 1),
+        ]);
+      } else {
+        setAddCardIds((ids) => [...ids, card.id]);
+      }
 
       const maxLevel = [0, 20, 30, 50, 60];
       // const maxPower = card.cardParameters
@@ -381,7 +393,6 @@ const SekaiUserCardList = observer(() => {
           story2Unlock: true,
         },
       ]);
-      setAddCardIds((ids) => [...ids, card.id]);
       // setCardList((list) => [
       //   ...list,
       //   {
@@ -396,7 +407,26 @@ const SekaiUserCardList = observer(() => {
       // ]);
       // setFilteredCards((cards) => cards.filter((c) => c.id !== card.id));
     },
-    [cardList, editList]
+    [cardList, deleteCardIds, editList]
+  );
+
+  const getMaxRarity = useCallback(
+    (card: ISekaiCardState) => {
+      const maxLevel = [0, 20, 30, 50, 60];
+      if (cards) {
+        const c = cards.find((c) => c.id === card.cardId);
+        if (c) {
+          const rarity = c.rarity || cardRarityTypeToRarity[c.cardRarityType!];
+          let level = maxLevel[rarity];
+          if (card.trainable && !card.trained) level -= 10;
+
+          return level;
+        }
+      }
+
+      return 1;
+    },
+    [cards]
   );
 
   return !!sekaiCardTeam ? (
@@ -919,6 +949,7 @@ const SekaiUserCardList = observer(() => {
                   }
                   inputProps={{
                     min: "1",
+                    max: getMaxRarity(card),
                   }}
                   fullWidth
                 />
@@ -997,6 +1028,7 @@ const SekaiUserCardList = observer(() => {
         open={addCardDialogVisible}
         onCardSelected={handleCardThumbClick}
         onClose={() => setAddCardDialogVisible(false)}
+        excludeCardIds={excludedCardIds}
       />
       <Popover
         open={eventOpen}
