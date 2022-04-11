@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.12](https://github.com/Sekai-World/sekai-viewer/compare/v1.2.11...v1.2.12) (2022-04-11)
+
+
+### Bug Fixes
+
+* **user:** :bug: removed already existed user cards from filter list, minor bugs fixed ([b8b88c1](https://github.com/Sekai-World/sekai-viewer/commits/b8b88c120f72056e14ef4242d74b1f1a59054a5f))
+* **user:** :bug: user card list sort by rarity ([48a74f3](https://github.com/Sekai-World/sekai-viewer/commits/48a74f3747b9137cd462c4b22ca079091c6f97ea))
+
 ### [1.2.11](https://github.com/Sekai-World/sekai-viewer/compare/v1.2.10...v1.2.11) (2022-04-05)
 
 
