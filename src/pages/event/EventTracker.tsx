@@ -84,11 +84,12 @@ const EventTracker: React.FC<{}> = observer(() => {
     getEventPred,
     getEventTimePoints,
     getEventRankingsByTimestamp,
+    getLastEventRankings,
   } = useEventTrackerAPI(region);
   const {
     sekai: { sekaiProfileMap },
   } = useRootStore();
-  const refreshData = useRealtimeEventData();
+  // const refreshData = useRealtimeEventData();
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
 
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -104,7 +105,9 @@ const EventTracker: React.FC<{}> = observer(() => {
 
   const [rtRanking, setRtRanking] = useState<EventRankingResponse[]>([]);
   const [rtTime, setRtTime] = useState<Date>();
-  const [historyRanking, setHistoryRanking] = useState<UserRanking[]>([]);
+  const [historyRanking, setHistoryRanking] = useState<EventRankingResponse[]>(
+    []
+  );
   const [historyTime, setHistoryTime] = useState<Date>();
   const [nextRefreshTime, setNextRefreshTime] = useState<moment.Moment>();
   const [refreshCron, setRefreshCron] = useState<CronJob>();
@@ -173,20 +176,13 @@ const EventTracker: React.FC<{}> = observer(() => {
 
   const getHistoryData = useCallback(
     async (eventId: number) => {
-      const data = await refreshData(eventId, region);
-      setHistoryTime(new Date(data.time));
-      const rankingData = Object.values(data).filter((elem) =>
-        Array.isArray(elem)
-      ) as UserRanking[][];
-      // console.log(Object.values(data), rankingData);
-      setHistoryRanking(
-        rankingData.reduce(
-          (sum, elem) => [...sum, ...elem],
-          []
-        ) as UserRanking[]
-      );
+      setIsFetching(true);
+      const data = await getLastEventRankings(eventId);
+      setHistoryTime(new Date(data[0].timestamp));
+      setHistoryRanking(data);
+      setIsFetching(false);
     },
-    [refreshData, region]
+    [getLastEventRankings]
   );
 
   const handleFetchGraph = useCallback(

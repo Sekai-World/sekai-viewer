@@ -37,7 +37,7 @@ const useRowStyles = makeStyles((theme) => ({
 
 export const HistoryRow: React.FC<{
   rankingReward?: EventRankingRewardRange;
-  rankingData: UserRanking;
+  rankingData: EventRankingResponse;
   eventDuration: number;
   eventId: number;
 }> = ({ rankingReward, rankingData, eventDuration, eventId }) => {
@@ -92,7 +92,7 @@ export const HistoryRow: React.FC<{
               )}
             <Grid item md={8} lg={9} xl={10}>
               <Typography style={{ minWidth: "100px" }}>
-                {rankingData.name}
+                {rankingData.userName}
               </Typography>
             </Grid>
           </Grid>
@@ -113,12 +113,14 @@ export const HistoryRow: React.FC<{
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Grid container alignItems="center" spacing={2}>
               <Grid item xs={2} md={1}>
-                <CardThumb
-                  cardId={rankingData.userCard.cardId}
-                  trained={
-                    rankingData.userCard.defaultImage === "special_training"
-                  }
-                />
+                {!!rankingData.userCard && (
+                  <CardThumb
+                    cardId={rankingData.userCard.cardId}
+                    trained={
+                      rankingData.userCard.defaultImage === "special_training"
+                    }
+                  />
+                )}
               </Grid>
               <Grid item xs={9} sm={10} md={11}>
                 <Grid container>
@@ -127,13 +129,15 @@ export const HistoryRow: React.FC<{
                       variant="subtitle1"
                       className={layoutClasses.bold}
                     >
-                      {rankingData.name}
+                      {rankingData.userName}
                     </Typography>
-                    <Typography variant="subtitle2">
-                      {rankingData.userProfile.word}
-                    </Typography>
+                    {!!rankingData.userProfile && (
+                      <Typography variant="subtitle2">
+                        {rankingData.userProfile.word}
+                      </Typography>
+                    )}
                   </Grid>
-                  {rankingData.userProfile && !rankingData.userProfileHonors && (
+                  {!!rankingData.userProfile && !rankingData.userProfileHonors && (
                     <Grid item xs={12} container spacing={1}>
                       {rankingData.userProfile.honorId1 && (
                         <Grid item xs={4} md={3} lg={2}>
@@ -161,10 +165,10 @@ export const HistoryRow: React.FC<{
                       )}
                     </Grid>
                   )}
-                  {rankingData.userProfile && rankingData.userProfileHonors && (
+                  {!!rankingData.userProfile && rankingData.userProfileHonors && (
                     <Grid item xs={12} container spacing={1}>
                       {rankingData.userProfileHonors.map((honor) => (
-                        <Grid item xs={12} md={4}>
+                        <Grid item xs={12} md={4} key={honor.honorId}>
                           {honor.profileHonorType === "normal" ? (
                             <DegreeImage
                               honorId={honor.honorId}
@@ -365,7 +369,7 @@ export const LiveRow: React.FC<{
                   {rankingData.userProfile && rankingData.userProfileHonors && (
                     <Grid item xs={12} container spacing={1}>
                       {rankingData.userProfileHonors.map((honor) => (
-                        <Grid item xs={12} md={4}>
+                        <Grid item xs={12} md={4} key={honor.honorId}>
                           {honor.profileHonorType === "normal" ? (
                             <DegreeImage
                               honorId={honor.honorId}

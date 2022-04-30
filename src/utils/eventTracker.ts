@@ -68,6 +68,34 @@ export function useEventTrackerAPI(region: ServerRegion = "jp") {
       },
       [axios]
     ),
+    getLastEventRankings: useCallback(
+      async (eventId: number) => {
+        const lastRecord = (
+          await axios.get<{ data: { eventRankings: EventRankingResponse[] } }>(
+            `/event/${eventId}/rankings`,
+            {
+              params: {
+                limit: 1,
+                sort: JSON.stringify({ timestamp: "desc" }),
+              },
+            }
+          )
+        ).data;
+        const { timestamp } = lastRecord.data.eventRankings[0];
+
+        return (
+          await axios.get<{ data: { eventRankings: EventRankingResponse[] } }>(
+            `/event/${eventId}/rankings`,
+            {
+              params: {
+                timestamp,
+              },
+            }
+          )
+        ).data.data.eventRankings;
+      },
+      [axios]
+    ),
   };
 }
 

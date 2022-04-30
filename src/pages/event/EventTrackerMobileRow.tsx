@@ -21,7 +21,7 @@ const useRowStyles = makeStyles((theme) => ({
 }));
 
 export const HistoryMobileRow: React.FC<{
-  rankingData: UserRanking;
+  rankingData: EventRankingResponse;
   eventId: number;
 }> = ({ rankingData, eventId }) => {
   const layoutClasses = useLayoutStyles();
@@ -83,7 +83,7 @@ export const HistoryMobileRow: React.FC<{
                     variant="subtitle1"
                     className={layoutClasses.bold}
                   >
-                    {rankingData.name}
+                    {rankingData.userName}
                   </Typography>
                   {rankingData.userProfile && (
                     <Typography variant="subtitle2">
@@ -292,7 +292,7 @@ export const LiveMobileRow: React.FC<{
         {rankingData.userProfile && rankingData.userProfileHonors && (
           <Grid container spacing={1}>
             {rankingData.userProfileHonors.map((honor, idx) => (
-              <Grid item xs={idx === 0 ? 6 : 3} sm={6}>
+              <Grid item xs={idx === 0 ? 6 : 3} sm={6} key={honor.honorId}>
                 {honor.profileHonorType === "normal" ? (
                   <DegreeImage
                     honorId={honor.honorId}
