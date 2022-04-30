@@ -125,7 +125,7 @@ const FilterCardsModal: React.FC<
 
     useEffect(() => {
       filterCards();
-    }, [excludeCardIds]);
+    }, [excludeCardIds.length]);
 
     return (
       <Dialog {...props}>
