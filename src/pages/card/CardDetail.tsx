@@ -889,85 +889,89 @@ const CardDetail: React.FC<{}> = observer(() => {
           <Divider style={{ margin: "1% 0" }} />
         </Grid>
       </Container>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:skill")}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
-        <Paper className={interactiveClasses.container}>
-          <Grid container direction="column" spacing={1}>
-            <Grid
-              item
-              container
-              xs={12}
-              alignItems="center"
-              justifyContent="space-between"
-            >
-              <Grid item xs={12} md={2}>
-                <Typography classes={{ root: interactiveClasses.caption }}>
-                  {t("card:skillLevel")}
-                </Typography>
+      {!!skill && (
+        <Fragment>
+          <Typography variant="h6" className={layoutClasses.header}>
+            {t("common:skill")}
+          </Typography>
+          <Container className={layoutClasses.content} maxWidth="md">
+            <Paper className={interactiveClasses.container}>
+              <Grid container direction="column" spacing={1}>
+                <Grid
+                  item
+                  container
+                  xs={12}
+                  alignItems="center"
+                  justifyContent="space-between"
+                >
+                  <Grid item xs={12} md={2}>
+                    <Typography classes={{ root: interactiveClasses.caption }}>
+                      {t("card:skillLevel")}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} md={9}>
+                    <Box className={interactiveClasses.sliderContainer}>
+                      <Slider
+                        value={skillLevel}
+                        onChange={(e, value) => setSkillLevel(value as number)}
+                        valueLabelDisplay="auto"
+                        step={1}
+                        min={1}
+                        max={
+                          skill!.skillEffects[0].skillEffectDetails[
+                            skill!.skillEffects[0].skillEffectDetails.length - 1
+                          ].level
+                        }
+                      />
+                    </Box>
+                  </Grid>
+                </Grid>
               </Grid>
-              <Grid item xs={12} md={9}>
-                <Box className={interactiveClasses.sliderContainer}>
-                  <Slider
-                    value={skillLevel}
-                    onChange={(e, value) => setSkillLevel(value as number)}
-                    valueLabelDisplay="auto"
-                    step={1}
-                    min={1}
-                    max={
-                      skill!.skillEffects[0].skillEffectDetails[
-                        skill!.skillEffects[0].skillEffectDetails.length - 1
-                      ].level
-                    }
+            </Paper>
+            <Grid className={classes["grid-out"]} container direction="column">
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Grid item xs={2}>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("card:skillName")}
+                  </Typography>
+                </Grid>
+                <Grid item xs={9}>
+                  <ContentTrans
+                    contentKey={`card_skill_name:${cardId}`}
+                    original={card.cardSkillName}
+                    originalProps={{ align: "right" }}
+                    translatedProps={{ align: "right" }}
                   />
-                </Box>
+                </Grid>
               </Grid>
+              <Divider style={{ margin: "1% 0" }} />
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Grid item xs={2}>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("card:skillEffect")}
+                  </Typography>
+                </Grid>
+                <Grid item xs={9}>
+                  {getSkillDesc(skill!, skillLevel)}
+                </Grid>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
             </Grid>
-          </Grid>
-        </Paper>
-        <Grid className={classes["grid-out"]} container direction="column">
-          <Grid
-            container
-            direction="row"
-            wrap="nowrap"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Grid item xs={2}>
-              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                {t("card:skillName")}
-              </Typography>
-            </Grid>
-            <Grid item xs={9}>
-              <ContentTrans
-                contentKey={`card_skill_name:${cardId}`}
-                original={card.cardSkillName}
-                originalProps={{ align: "right" }}
-                translatedProps={{ align: "right" }}
-              />
-            </Grid>
-          </Grid>
-          <Divider style={{ margin: "1% 0" }} />
-          <Grid
-            container
-            direction="row"
-            wrap="nowrap"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Grid item xs={2}>
-              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                {t("card:skillEffect")}
-              </Typography>
-            </Grid>
-            <Grid item xs={9}>
-              {getSkillDesc(skill!, skillLevel)}
-            </Grid>
-          </Grid>
-          <Divider style={{ margin: "1% 0" }} />
-        </Grid>
-      </Container>
+          </Container>
+        </Fragment>
+      )}
       <Typography variant="h6" className={layoutClasses.header}>
         {t("card:masterRank")}
       </Typography>
