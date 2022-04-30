@@ -413,7 +413,7 @@ const EventTracker: React.FC<{}> = observer(() => {
           </Grid>
         </Grid>
       </Container>
-      {region === "jp" && !!sekaiProfile && !!sekaiProfile.sekaiUserProfile && (
+      {!!sekaiProfile && !!sekaiProfile.sekaiUserProfile && (
         <Fragment>
           <Typography variant="h6" className={layoutClasses.header}>
             {t("user:profile.title.user_event")}
