@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.2.12...v1.3.0) (2022-04-30)
+
+
+### Features
+
+* :sparkles: asset viewer now supports different regions ([13c48b6](https://github.com/Sekai-World/sekai-viewer/commits/13c48b6aa1f846fa6e0a54e1babd015e84726c57))
+
+
+### Bug Fixes
+
+* **event:** :ambulance: load history data from database ([01ed396](https://github.com/Sekai-World/sekai-viewer/commits/01ed396a0af97b3baa44623a3568a88ea9efc516))
+* **event:** :bug: record event data on other servers ([174974e](https://github.com/Sekai-World/sekai-viewer/commits/174974e1ecc2594b9bcd1038f619dd90007bd9f3))
+
+
+### Refactors
+
+* :recycle: url from env replaced by urls from utilities ([6ffe2de](https://github.com/Sekai-World/sekai-viewer/commits/6ffe2de23e4aed2d06658c4038fec737080f623d))
+
 ### [1.2.12](https://github.com/Sekai-World/sekai-viewer/compare/v1.2.11...v1.2.12) (2022-04-11)
 
 
