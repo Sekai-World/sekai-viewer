@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.3.0...v1.3.1) (2022-04-30)
+
+
+### Bug Fixes
+
+* **card:** :bug: check skill before displaying it ([f66ddc9](https://github.com/Sekai-World/sekai-viewer/commits/f66ddc90e932b4a65353d5706c6cb9751bebf54b))
+
 ## [1.3.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.2.12...v1.3.0) (2022-04-30)
 
 
