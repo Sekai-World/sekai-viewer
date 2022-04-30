@@ -36,7 +36,12 @@ import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { GridColDef, DataGrid, GridRowModel } from "@mui/x-data-grid";
 import { createWorker, createScheduler } from "tesseract.js";
-import { useAlertSnackbar, useCachedData, useToggle } from "../../../utils";
+import {
+  cardRarityTypeToRarity,
+  useAlertSnackbar,
+  useCachedData,
+  useToggle,
+} from "../../../utils";
 import { ICardInfo } from "../../../types.d";
 // import { Link } from "react-router-dom";
 import { useStrapi } from "../../../utils/apiClient";
@@ -48,6 +53,7 @@ import { useRootStore } from "../../../stores/root";
 import { observer } from "mobx-react-lite";
 import { ISekaiCardTeam } from "../../../stores/sekai";
 import { autorun } from "mobx";
+import { assetUrl } from "../../../utils/urls";
 
 function initCOS(N: number = 64) {
   const entries = 2 * N * (N - 1);
@@ -674,15 +680,14 @@ const SekaiUserImportMember = observer(() => {
                   ocrLevelResults[idx].replace(/.*Lv.(\d{1,2}).*/, "$1")
                 ) || 1
               : 1;
+            const card = cards!.find((card) => card.id === cardIds[0]);
             return {
               id: idx + 1,
               crop: dataURL,
               full: hashResults[idx].length
                 ? hashResults[idx].map(
                     (result) =>
-                      `${
-                        import.meta.env.VITE_ASSET_DOMAIN_MINIO
-                      }/sekai-assets/thumbnail/chara_rip/${result[0]}`
+                      `${assetUrl.minio.jp}/thumbnail/chara_rip/${result[0]}`
                   )
                 : [""],
               hashResults: hashResults[idx],
@@ -703,7 +708,8 @@ const SekaiUserImportMember = observer(() => {
                   hashResults[idx][0][0].includes("after_training")) ||
                 level >=
                   trainingLevels[
-                    cards!.find((card) => card.id === cardIds[0])!.rarity
+                    card!.rarity ||
+                      cardRarityTypeToRarity[card!.cardRarityType!]
                   ],
               skillLevel: 1,
               story1Unlock: cardIds[0] !== -1,
@@ -711,7 +717,8 @@ const SekaiUserImportMember = observer(() => {
                 cardIds[0] !== -1 &&
                 level >=
                   maxLevels[
-                    cards!.find((card) => card.id === cardIds[0])!.rarity
+                    card!.rarity ||
+                      cardRarityTypeToRarity[card!.cardRarityType!]
                   ],
             };
           });
@@ -990,7 +997,8 @@ const SekaiUserImportMember = observer(() => {
           const cardInfo = cards.find((card) => card.id === cardId)!;
           const trainable =
             cardInfo.cardRarityType !== "rarity_birthday" &&
-            cardInfo.rarity >= 3;
+            (cardInfo.rarity ||
+              cardRarityTypeToRarity[cardInfo.cardRarityType!]) >= 3;
 
           return {
             cardId,

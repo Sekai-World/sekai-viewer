@@ -51,6 +51,7 @@ import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../../stores/root";
 import { ISekaiProfile } from "../../../stores/sekai";
 import { autorun } from "mobx";
+import { assetUrl } from "../../../utils/urls";
 
 const ProfileMusicImage: React.FC<{
   assetbundleName: string;
@@ -515,10 +516,8 @@ const SekaiUserStatistics = observer(() => {
                             <Image
                               src={`${
                                 window.isChinaMainland
-                                  ? `${import.meta.env.VITE_ASSET_DOMAIN_CN}`
-                                  : `${
-                                      import.meta.env.VITE_ASSET_DOMAIN_MINIO
-                                    }/sekai-assets`
+                                  ? assetUrl.cn.jp
+                                  : assetUrl.minio.jp
                               }/worldmap/contents/normal_rip/${
                                 area.areaType === "reality_world"
                                   ? `worldmap_area${String(area.id).padStart(
@@ -560,14 +559,8 @@ const SekaiUserStatistics = observer(() => {
                                         <Image
                                           src={`${
                                             window.isChinaMainland
-                                              ? `${
-                                                  import.meta.env
-                                                    .VITE_ASSET_DOMAIN_CN
-                                                }`
-                                              : `${
-                                                  import.meta.env
-                                                    .VITE_ASSET_DOMAIN_MINIO
-                                                }/sekai-assets`
+                                              ? assetUrl.cn.jp
+                                              : assetUrl.minio.jp
                                           }/thumbnail/areaitem_rip/${
                                             areaItem.assetbundleName
                                           }.png`}

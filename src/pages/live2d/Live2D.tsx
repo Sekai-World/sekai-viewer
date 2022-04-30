@@ -43,6 +43,7 @@ import fscreen from "fscreen";
 // @ts-ignore
 import { CanvasRecorder } from "@tawaship/canvas-recorder";
 import { useLive2dModelList } from "../../utils/apiClient";
+import { assetUrl } from "../../utils/urls";
 
 const Live2DView: React.FC<{}> = () => {
   const layoutClasses = useLayoutStyles();
@@ -171,9 +172,7 @@ const Live2DView: React.FC<{}> = () => {
           CategoryRules: any[];
         }>(
           `${
-            window.isChinaMainland
-              ? import.meta.env.VITE_ASSET_DOMAIN_CN
-              : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
+            window.isChinaMainland ? assetUrl.cn.jp : assetUrl.minio.jp
           }/live2d/model/${modelName}_rip/buildmodeldata.asset`,
           { responseType: "json" }
         );
@@ -182,9 +181,7 @@ const Live2DView: React.FC<{}> = () => {
         setProgressWords(t("live2d:load_progress.model_texture"));
         await Axios.get(
           `${
-            window.isChinaMainland
-              ? import.meta.env.VITE_ASSET_DOMAIN_CN
-              : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
+            window.isChinaMainland ? assetUrl.cn.jp : assetUrl.minio.jp
           }/live2d/model/${modelName}_rip/${modelData.TextureNames[0]}`
         );
 
@@ -192,9 +189,7 @@ const Live2DView: React.FC<{}> = () => {
         setProgressWords(t("live2d:load_progress.model_moc3"));
         await Axios.get(
           `${
-            window.isChinaMainland
-              ? import.meta.env.VITE_ASSET_DOMAIN_CN
-              : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
+            window.isChinaMainland ? assetUrl.cn.jp : assetUrl.minio.jp
           }/live2d/model/${modelName}_rip/${modelData.Moc3FileName}`
         );
 
@@ -202,9 +197,7 @@ const Live2DView: React.FC<{}> = () => {
         setProgressWords(t("live2d:load_progress.model_physics"));
         await Axios.get(
           `${
-            window.isChinaMainland
-              ? import.meta.env.VITE_ASSET_DOMAIN_CN
-              : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
+            window.isChinaMainland ? assetUrl.cn.jp : assetUrl.minio.jp
           }/live2d/model/${modelName}_rip/${modelData.PhysicsFileName}`
         );
 
@@ -217,9 +210,7 @@ const Live2DView: React.FC<{}> = () => {
             expressions: string[];
           }>(
             `${
-              window.isChinaMainland
-                ? import.meta.env.VITE_ASSET_DOMAIN_CN
-                : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
+              window.isChinaMainland ? assetUrl.cn.jp : assetUrl.minio.jp
             }/live2d/motion/${motionName}_rip/BuildMotionData.json`,
             { responseType: "json" }
           );
@@ -237,9 +228,7 @@ const Live2DView: React.FC<{}> = () => {
         const model = await live2dManager.addModel(
           {
             path: `${
-              window.isChinaMainland
-                ? import.meta.env.VITE_ASSET_DOMAIN_CN
-                : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
+              window.isChinaMainland ? assetUrl.cn.jp : assetUrl.minio.jp
             }/live2d/model/${modelName}_rip/`,
             fileName: filename,
             modelName,
@@ -249,17 +238,13 @@ const Live2DView: React.FC<{}> = () => {
               ...motionData.motions.map((name) => ({
                 name,
                 url: `${
-                  window.isChinaMainland
-                    ? import.meta.env.VITE_ASSET_DOMAIN_CN
-                    : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
+                  window.isChinaMainland ? assetUrl.cn.jp : assetUrl.minio.jp
                 }/live2d/motion/${motionName}_rip/${name}.motion3.json`,
               })),
               ...motionData.expressions.map((name) => ({
                 name,
                 url: `${
-                  window.isChinaMainland
-                    ? import.meta.env.VITE_ASSET_DOMAIN_CN
-                    : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
+                  window.isChinaMainland ? assetUrl.cn.jp : assetUrl.minio.jp
                 }/live2d/motion/${motionName}_rip/${name}.motion3.json`,
               })),
             ],
@@ -297,9 +282,7 @@ const Live2DView: React.FC<{}> = () => {
       CategoryRules: any[];
     }>(
       `${
-        window.isChinaMainland
-          ? import.meta.env.VITE_ASSET_DOMAIN_CN
-          : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
+        window.isChinaMainland ? assetUrl.cn.jp : assetUrl.minio.jp
       }/live2d/model/${modelName}_rip/buildmodeldata.asset`,
       { responseType: "json" }
     );
@@ -352,9 +335,7 @@ const Live2DView: React.FC<{}> = () => {
     setProgressWords(t("live2d:pack_progress.download_texture"));
     const { data: texture } = await Axios.get(
       `${
-        window.isChinaMainland
-          ? import.meta.env.VITE_ASSET_DOMAIN_CN
-          : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
+        window.isChinaMainland ? assetUrl.cn.jp : assetUrl.minio.jp
       }/live2d/model/${modelName}_rip/${modelData.TextureNames[0]}`,
       { responseType: "blob" }
     );
@@ -365,9 +346,7 @@ const Live2DView: React.FC<{}> = () => {
     setProgressWords(t("live2d:pack_progress.download_moc3"));
     const { data: moc3 } = await Axios.get(
       `${
-        window.isChinaMainland
-          ? import.meta.env.VITE_ASSET_DOMAIN_CN
-          : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
+        window.isChinaMainland ? assetUrl.cn.jp : assetUrl.minio.jp
       }/live2d/model/${modelName}_rip/${modelData.Moc3FileName}`,
       { responseType: "blob" }
     );
@@ -378,9 +357,7 @@ const Live2DView: React.FC<{}> = () => {
     setProgressWords(t("live2d:pack_progress.download_physics"));
     const { data: physics } = await Axios.get(
       `${
-        window.isChinaMainland
-          ? import.meta.env.VITE_ASSET_DOMAIN_CN
-          : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
+        window.isChinaMainland ? assetUrl.cn.jp : assetUrl.minio.jp
       }/live2d/model/${modelName}_rip/${modelData.PhysicsFileName}`,
       { responseType: "blob" }
     );
@@ -407,9 +384,7 @@ const Live2DView: React.FC<{}> = () => {
       tasks.push(
         Axios.get<Blob>(
           `${
-            window.isChinaMainland
-              ? import.meta.env.VITE_ASSET_DOMAIN_CN
-              : `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets`
+            window.isChinaMainland ? assetUrl.cn.jp : assetUrl.minio.jp
           }/live2d/motion/${motionName}_rip/${name}.motion3.json`,
           { responseType: "blob" }
         ).then(({ data }) => {
