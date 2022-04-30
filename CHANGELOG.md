@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.3.1...v1.3.2) (2022-04-30)
+
+
+### Bug Fixes
+
+* **tools:** :bug: filter cards modal in team builder may cause unwanted updates ([5e477b1](https://github.com/Sekai-World/sekai-viewer/commits/5e477b13e61d7ba220dd665bec1f27e1d51d3f10))
+
 ### [1.3.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.3.0...v1.3.1) (2022-04-30)
 
 
