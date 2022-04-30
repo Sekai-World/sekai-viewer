@@ -49,6 +49,8 @@ import { useInteractiveStyles } from "../styles/interactive";
 import { FixedSizeList, ListOnItemsRenderedProps } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { useTheme } from "@mui/styles";
+import { useRootStore } from "../stores/root";
+import { assetUrl } from "../utils/urls";
 
 const AssetListDirectory: React.FC<{
   prefix: string;
@@ -189,9 +191,10 @@ const AssetPreview: React.FC<{ filePath: string } & DialogProps> = ({
   const {
     palette: { mode },
   } = useTheme();
+  const { region } = useRootStore();
   const url = useMemo(
-    () => `${import.meta.env.VITE_ASSET_DOMAIN_MINIO}/sekai-assets/${filePath}`,
-    [filePath]
+    () => `${assetUrl.minio[region]}/${filePath}`,
+    [filePath, region]
   );
   const [data, setData] = useState<any>(null);
 
@@ -287,6 +290,7 @@ const Breadcrumb: React.FC<{ paths: string[] } & BreadcrumbsProps> = ({
 };
 
 const AssetViewer = () => {
+  const { region } = useRootStore();
   const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const { pathname } = useLocation();
@@ -339,9 +343,9 @@ const AssetViewer = () => {
       if (resultCache[path + token]) {
         return resultCache[path + token];
       }
-      const baseURL = import.meta.env.VITE_ASSET_DOMAIN_MINIO;
+      const baseURL = assetUrl.minio[region];
       const result = (
-        await axios.get<string>(`/sekai-assets/`, {
+        await axios.get<string>(`/`, {
           baseURL,
           params: {
             "list-type": "2",
@@ -362,7 +366,7 @@ const AssetViewer = () => {
       );
       return parsed;
     },
-    [parser, resultCache]
+    [parser, region, resultCache]
   );
 
   const loadMoreItems = useCallback(async () => {
