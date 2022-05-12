@@ -94,6 +94,7 @@ import { useRootStore } from "../stores/root";
 import { observer } from "mobx-react-lite";
 import { IUserMetadata } from "../stores/user";
 import { fontFaceOverride, fontList } from "../utils/fonts";
+import { WebpMachine } from "webp-hero";
 
 declare module "@mui/styles/defaultTheme" {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -149,6 +150,9 @@ const MusicMeta = lazy(() => import("./music/MusicMeta"));
 const AssetViewer = lazy(() => import("./AssetViewer"));
 
 const drawerWidth = 240;
+
+const webpMachine = new WebpMachine();
+webpMachine.polyfillDocument();
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {

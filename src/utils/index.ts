@@ -7,7 +7,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { WebpMachine } from "webp-hero";
 import PQueue from "p-queue";
 import localforage from "localforage";
 import {
@@ -82,8 +81,6 @@ import { assetUrl, masterUrl } from "./urls";
 import { UserModel } from "../strapi-model";
 import { IUserInfo } from "../stores/user";
 import { useRootStore } from "../stores/root";
-
-const webpMachine = new WebpMachine();
 
 export function useRefState<S>(
   initialValue: S
@@ -285,7 +282,7 @@ export function filterMusicMeta(metas: IMusicMeta[], musics: IMusicInfo[]) {
   return metas.filter((meta) => validIds.includes(meta.music_id));
 }
 
-const queue = new PQueue({ concurrency: 1 });
+// const queue = new PQueue({ concurrency: 1 });
 
 export async function getRemoteAssetURL(
   endpoint: string,
@@ -293,29 +290,28 @@ export async function getRemoteAssetURL(
   domainKey: AssetDomainKey = "ww",
   server: ServerRegion | "comic" | "musicChart" = "jp"
 ): Promise<string> {
-  const isWebpSupported = Modernizr.webplossless;
+  // const isWebpSupported = Modernizr.webplossless;
   const url = `${assetUrl[domainKey][server]}/${endpoint}`;
 
-  if (endpoint.endsWith(".webp") && !isWebpSupported) {
-    let dataUrl = await localforage.getItem<string>(url);
-    if (!dataUrl) {
-      const res = await Axios.get(url, { responseType: "arraybuffer" });
-      dataUrl = await queue.add<string>(() =>
-        webpMachine.decode(new Uint8Array(res.data))
-      );
-      await localforage.setItem(url, dataUrl);
-      if (setFunc) setFunc(dataUrl);
-      return dataUrl;
-    } else {
-      // await Axios.head(url);
-      if (setFunc) setFunc(dataUrl);
-      return dataUrl;
-    }
-  } else {
-    // await Axios.head(url);
-    if (setFunc) setFunc(url);
-    return url;
-  }
+  // if (endpoint.endsWith(".webp") && !isWebpSupported) {
+  //   let dataUrl = await localforage.getItem<string>(url);
+  //   if (!dataUrl) {
+  //     const res = await Axios.get(url, { responseType: "arraybuffer" });
+  //     dataUrl = await queue.add<string>(() =>
+  //       webpMachine.decode(new Uint8Array(res.data))
+  //     );
+  //     await localforage.setItem(url, dataUrl);
+  //     if (setFunc) setFunc(dataUrl);
+  //     return dataUrl;
+  //   } else {
+  //     // await Axios.head(url);
+  //     if (setFunc) setFunc(dataUrl);
+  //     return dataUrl;
+  //   }
+  // } else
+  // await Axios.head(url);
+  if (setFunc) setFunc(url);
+  return url;
 }
 
 // export async function getMovieUrl(stringVal: string) {
