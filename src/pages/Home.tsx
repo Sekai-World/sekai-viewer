@@ -172,7 +172,7 @@ function Home() {
           <Grid item xs={12} md={8} lg={6}>
             {jpTime === "12/6" ? (
               <img
-                src={`/images/banner-shizuku.png`}
+                src={`/images/banner-shizuku.webp`}
                 alt="banner"
                 style={{ width: "100%", height: "auto" }}
                 width="1500"
@@ -180,7 +180,7 @@ function Home() {
               />
             ) : jpTime === "12/27" ? (
               <img
-                src={`/images/banner-rin-ren.png`}
+                src={`/images/banner-rin-ren.webp`}
                 alt="banner"
                 style={{ width: "100%", height: "auto" }}
                 width="1500"
@@ -188,7 +188,7 @@ function Home() {
               />
             ) : jpTime === "1/8" ? (
               <img
-                src={`/images/banner-shiho.png`}
+                src={`/images/banner-shiho.webp`}
                 alt="banner"
                 style={{ width: "100%", height: "auto" }}
                 width="1500"
@@ -196,7 +196,7 @@ function Home() {
               />
             ) : jpTime === "1/27" ? (
               <img
-                src={`/images/banner-mafuyu.png`}
+                src={`/images/banner-mafuyu.webp`}
                 alt="banner"
                 style={{ width: "100%", height: "auto" }}
                 width="1500"
@@ -204,7 +204,7 @@ function Home() {
               />
             ) : jpTime === "1/30" ? (
               <img
-                src={`/images/banner-luka.png`}
+                src={`/images/banner-luka.webp`}
                 alt="banner"
                 style={{ width: "100%", height: "auto" }}
                 width="1500"
@@ -212,7 +212,7 @@ function Home() {
               />
             ) : jpTime === "2/17" ? (
               <img
-                src={`/images/banner-kaito.png`}
+                src={`/images/banner-kaito.webp`}
                 alt="banner"
                 style={{ width: "100%", height: "auto" }}
                 width="1500"
@@ -220,7 +220,7 @@ function Home() {
               />
             ) : jpTime === "4/14" ? (
               <img
-                src={`/images/banner-minori.png`}
+                src={`/images/banner-minori.webp`}
                 alt="banner"
                 style={{ width: "100%", height: "auto" }}
                 width="1500"
@@ -228,7 +228,7 @@ function Home() {
               />
             ) : jpTime === "7/20" ? (
               <img
-                src={`/images/banner-nene.jpg`}
+                src={`/images/banner-nene.webp`}
                 alt="banner"
                 style={{ width: "100%", height: "auto" }}
                 width="1500"
@@ -236,7 +236,7 @@ function Home() {
               />
             ) : jpTime === "7/26" ? (
               <img
-                src={`/images/banner-an.jpg`}
+                src={`/images/banner-an.webp`}
                 alt="banner"
                 style={{ width: "100%", height: "auto" }}
                 width="1500"
@@ -244,7 +244,7 @@ function Home() {
               />
             ) : jpTime === "10/5" ? (
               <img
-                src={`/images/banner-haruka.jpg`}
+                src={`/images/banner-haruka.webp`}
                 alt="banner"
                 style={{ width: "100%", height: "auto" }}
                 width="1500"
@@ -253,7 +253,7 @@ function Home() {
             ) : jpTime === "9/30" ||
               (splitJPTime[0] === "10" && Number(splitJPTime[1]) < 16) ? (
               <img
-                src={`/images/banner-anni.jpg`}
+                src={`/images/banner-anni.webp`}
                 alt="banner"
                 style={{ width: "100%", height: "auto" }}
                 width="1500"
@@ -261,7 +261,7 @@ function Home() {
               />
             ) : (
               <img
-                src={`/images/banner-new.png`}
+                src={`/images/banner-new.webp`}
                 alt="banner"
                 style={{ width: "100%", height: "auto" }}
                 width="1500"

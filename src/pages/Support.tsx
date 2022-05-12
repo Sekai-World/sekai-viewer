@@ -55,7 +55,7 @@ const Support: React.FC<{}> = () => {
             </Typography>
             <img
               style={{ maxWidth: "100%" }}
-              src={`/images/afdian-SekaiViewer.jpg`}
+              src={`/images/afdian-SekaiViewer.webp`}
               // width="320"
               alt="爱发电二维码"
             ></img>
