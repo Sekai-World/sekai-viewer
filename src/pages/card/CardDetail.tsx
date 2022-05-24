@@ -1193,7 +1193,7 @@ const CardDetail: React.FC<{}> = observer(() => {
                 masterRank *
                   masterRankRewards[
                     isNewRarityCard
-                      ? Number(card.cardRarityType!.split("_")[1])
+                      ? cardRarityTypeToRarity[card.cardRarityType!]
                       : card.rarity!
                   ]}
             </Typography>
@@ -1227,7 +1227,7 @@ const CardDetail: React.FC<{}> = observer(() => {
                 masterRank *
                   masterRankRewards[
                     isNewRarityCard
-                      ? Number(card.cardRarityType!.split("_")[1])
+                      ? cardRarityTypeToRarity[card.cardRarityType!]
                       : card.rarity!
                   ]}
             </Typography>
@@ -1261,7 +1261,7 @@ const CardDetail: React.FC<{}> = observer(() => {
                 masterRank *
                   masterRankRewards[
                     isNewRarityCard
-                      ? Number(card.cardRarityType!.split("_")[1])
+                      ? cardRarityTypeToRarity[card.cardRarityType!]
                       : card.rarity!
                   ]}
             </Typography>
@@ -1299,7 +1299,7 @@ const CardDetail: React.FC<{}> = observer(() => {
                 masterRank *
                   masterRankRewards[
                     isNewRarityCard
-                      ? Number(card.cardRarityType!.split("_")[1])
+                      ? cardRarityTypeToRarity[card.cardRarityType!]
                       : card.rarity!
                   ] *
                   3}
@@ -1393,22 +1393,18 @@ const CardDetail: React.FC<{}> = observer(() => {
                         {t("common:releaseCosts")}
                       </Typography>
                     </Grid>
-                    <Grid
-                      item
-                      container
-                      spacing={1}
-                      xs={10}
-                      justifyContent="flex-end"
-                    >
-                      {cardEpisode[0].costs.map((c, idx) => (
-                        <Grid key={`episode-cost-${idx}`} item>
-                          <MaterialIcon
-                            materialId={c.resourceId}
-                            quantity={c.quantity}
-                            justify="center"
-                          />
-                        </Grid>
-                      ))}
+                    <Grid item xs={10}>
+                      <Grid container spacing={1} justifyContent="flex-end">
+                        {cardEpisode[0].costs.map((c, idx) => (
+                          <Grid key={`episode-cost-${idx}`} item>
+                            <MaterialIcon
+                              materialId={c.resourceId}
+                              quantity={c.quantity}
+                              justify="center"
+                            />
+                          </Grid>
+                        ))}
+                      </Grid>
                     </Grid>
                   </Grid>
                   <Divider style={{ margin: "1% 0" }} />
@@ -1427,23 +1423,19 @@ const CardDetail: React.FC<{}> = observer(() => {
                         {t("common:rewards")}
                       </Typography>
                     </Grid>
-                    <Grid
-                      item
-                      container
-                      spacing={1}
-                      xs={10}
-                      justifyContent="flex-end"
-                    >
-                      {cardEpisode[0].rewardResourceBoxIds.map((id) => (
-                        <Grid key={`episode-reward-${id}`} item>
-                          <ResourceBox
-                            resourceBoxId={id}
-                            resourceBoxPurpose="episode_reward"
-                            justifyContent="center"
-                            key={id}
-                          />
-                        </Grid>
-                      ))}
+                    <Grid item xs={10}>
+                      <Grid container spacing={1} justifyContent="flex-end">
+                        {cardEpisode[0].rewardResourceBoxIds.map((id) => (
+                          <Grid key={`episode-reward-${id}`} item>
+                            <ResourceBox
+                              resourceBoxId={id}
+                              resourceBoxPurpose="episode_reward"
+                              justifyContent="center"
+                              key={id}
+                            />
+                          </Grid>
+                        ))}
+                      </Grid>
                     </Grid>
                   </Grid>
                   <Divider style={{ margin: "1% 0" }} />
