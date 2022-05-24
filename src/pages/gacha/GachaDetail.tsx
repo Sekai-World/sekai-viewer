@@ -39,6 +39,7 @@ import {
 } from "../../types.d";
 import {
   cardRarityTypeToRarity,
+  getGachaRemoteImages,
   getRemoteAssetURL,
   useCachedData,
 } from "../../utils";
@@ -55,31 +56,32 @@ import { useRootStore } from "../../stores/root";
 import rarityBirthday from "../../assets/rarity_birthday.png";
 import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
+import { assetUrl } from "../../utils/urls";
 
-const gachaImageNameMap: {
-  [key: number]: {
-    bg: string;
-    feature?: string;
-  };
-} = {
-  1: {
-    bg: "bg_gacha1",
-    feature: "img_gacha1_1",
-  },
-  2: {
-    bg: "bg_gacha_rare3_ticket_2020",
-  },
-  3: {
-    bg: "bg_gacha_virtualsinger_2020",
-  },
-  7: {
-    bg: "bg_gacha6",
-    feature: "img_gacha6",
-  },
-  8: {
-    bg: "bg_gacha8",
-  },
-};
+// const gachaImageNameMap: {
+//   [key: number]: {
+//     bg: string;
+//     feature?: string;
+//   };
+// } = {
+//   1: {
+//     bg: "bg_gacha1",
+//     feature: "img_gacha1_1",
+//   },
+//   2: {
+//     bg: "bg_gacha_rare3_ticket_2020",
+//   },
+//   3: {
+//     bg: "bg_gacha_virtualsinger_2020",
+//   },
+//   7: {
+//     bg: "bg_gacha6",
+//     feature: "img_gacha6",
+//   },
+//   8: {
+//     bg: "bg_gacha8",
+//   },
+// };
 
 const useStyles = makeStyles((theme) => ({
   media: {
@@ -421,7 +423,7 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
           )
         ] += detail.weight;
       });
-      console.log(weightArr);
+      // console.log(weightArr);
       setWeights(weightArr);
     }
   }, [cards, gacha, gachaRarityRates]);
@@ -431,26 +433,77 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
   const [gachaIcon, setGachaIcon] = useState<string>("");
   const [gachaBanner, setGachaBanner] = useState("");
   const [gachaCeilItemIcon, setGachaCeilItemIcon] = useState("");
+  const [gachaPreviewImages, setGachaPreviewImages] = useState<
+    ImageDecorator[]
+  >([]);
 
   useLayoutEffect(() => {
     if (gacha) {
-      getRemoteAssetURL(
-        `gacha/${gacha.assetbundleName}/screen_rip/texture/${
-          (gachaImageNameMap[gacha.id] || { bg: `bg_gacha${gacha.id}` }).bg
-        }.webp`,
-        setGachaBackground,
-        window.isChinaMainland ? "cn" : "ww",
-        region
+      getGachaRemoteImages(gacha.assetbundleName, region).then(
+        ({ bg, card, cardname, img }) => {
+          getRemoteAssetURL(
+            bg[0],
+            setGachaBackground,
+            window.isChinaMainland ? "cn" : "ww",
+            region
+          );
+          getRemoteAssetURL(
+            img[0],
+            setGachaImage,
+            window.isChinaMainland ? "cn" : "ww",
+            region
+          );
+
+          setGachaPreviewImages([
+            ...bg.map((elem, idx) => ({
+              src: `${
+                assetUrl[window.isChinaMainland ? "cn" : "ww"][region]
+              }/${elem.replace(".webp", ".png")}`,
+              alt: `background image ${idx}`,
+              downloadUrl: `${
+                assetUrl[window.isChinaMainland ? "cn" : "ww"][region]
+              }/${elem.replace(".webp", ".png")}`,
+            })),
+            ...img.map((elem, idx) => ({
+              src: `${
+                assetUrl[window.isChinaMainland ? "cn" : "ww"][region]
+              }/${elem.replace(".webp", ".png")}`,
+              alt: `feature image ${idx}`,
+              downloadUrl: `${
+                assetUrl[window.isChinaMainland ? "cn" : "ww"][region]
+              }/${elem.replace(".webp", ".png")}`,
+            })),
+            ...card.map((elem, idx) => ({
+              src: `${
+                assetUrl[window.isChinaMainland ? "cn" : "ww"][region]
+              }/${elem.replace(".webp", ".png")}`,
+              alt: `card image ${idx}`,
+              downloadUrl: `${
+                assetUrl[window.isChinaMainland ? "cn" : "ww"][region]
+              }/${elem.replace(".webp", ".png")}`,
+            })),
+            ...cardname.map((elem, idx) => ({
+              src: `${
+                assetUrl[window.isChinaMainland ? "cn" : "ww"][region]
+              }/${elem.replace(".webp", ".png")}`,
+              alt: `cardname image ${idx}`,
+              downloadUrl: `${
+                assetUrl[window.isChinaMainland ? "cn" : "ww"][region]
+              }/${elem.replace(".webp", ".png")}`,
+            })),
+          ]);
+        }
       );
-      getRemoteAssetURL(
-        `gacha/${gacha.assetbundleName}/screen_rip/texture/${
-          (gachaImageNameMap[gacha.id] || { feature: `img_gacha${gacha.id}` })
-            .feature
-        }.webp`,
-        setGachaImage,
-        window.isChinaMainland ? "cn" : "ww",
-        region
-      );
+    }
+
+    return () => {
+      setGachaBackground("");
+      setGachaImage("");
+    };
+  }, [gacha, region]);
+
+  useLayoutEffect(() => {
+    if (gacha) {
       getRemoteAssetURL(
         `gacha/${gacha.assetbundleName}/logo_rip/logo.webp`,
         setGachaIcon,
@@ -474,42 +527,6 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
       );
     }
   }, [gachaCeilItem]);
-
-  const getGachaImages: (gacha: IGachaInfo) => ImageDecorator[] = useCallback(
-    (gacha) => {
-      const ret: ImageDecorator[] = [];
-      if (gachaImageNameMap[gacha.id]) {
-        if (gachaImageNameMap[gacha.id].bg) {
-          ret.push({
-            src: gachaBackground,
-            alt: "background",
-            downloadUrl: gachaBackground.replace(".webp", ".png"),
-          });
-        }
-        if (gachaImageNameMap[gacha.id].feature) {
-          ret.push({
-            src: gachaImage,
-            alt: "feature",
-            downloadUrl: gachaImage.replace(".webp", ".png"),
-          });
-        }
-      } else {
-        ret.push({
-          src: gachaBackground,
-          alt: "background",
-          downloadUrl: gachaBackground.replace(".webp", ".png"),
-        });
-        ret.push({
-          src: gachaImage,
-          alt: "feature",
-          downloadUrl: gachaImage.replace(".webp", ".png"),
-        });
-      }
-
-      return ret;
-    },
-    [gachaBackground, gachaImage]
-  );
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
     setPicTabVal(newValue);
@@ -588,7 +605,13 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
               <TabPanel value="0" classes={{ root: classes.tabpanel }}>
                 <Card
                   onClick={() => {
-                    setActiveIdx(0);
+                    setActiveIdx(
+                      gachaPreviewImages.findIndex((elem) =>
+                        elem.src.includes(
+                          gachaBackground.replace(".webp", ".png")
+                        )
+                      )
+                    );
                     setVisible(true);
                   }}
                 >
@@ -601,7 +624,11 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
               <TabPanel value="1" classes={{ root: classes.tabpanel }}>
                 <Card
                   onClick={() => {
-                    setActiveIdx(1);
+                    setActiveIdx(
+                      gachaPreviewImages.findIndex((elem) =>
+                        elem.src.includes(gachaImage.replace(".webp", ".png"))
+                      )
+                    );
                     setVisible(true);
                   }}
                 >
@@ -1174,7 +1201,7 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
         <Viewer
           visible={visible}
           onClose={() => setVisible(false)}
-          images={getGachaImages(gacha)}
+          images={gachaPreviewImages}
           zIndex={2000}
           activeIndex={activeIdx}
           downloadable

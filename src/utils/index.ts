@@ -71,6 +71,7 @@ import {
   IEventRarityBonusRate,
   IMasterLesson,
   IMasterLessonReward,
+  IListBucketResult,
 } from "./../types.d";
 import { useAssetI18n, useCharaName } from "./i18n";
 import { useLocation } from "react-router-dom";
@@ -81,6 +82,7 @@ import { assetUrl, masterUrl } from "./urls";
 import { UserModel } from "../strapi-model";
 import { IUserInfo } from "../stores/user";
 import { useRootStore } from "../stores/root";
+import { XMLParser } from "fast-xml-parser";
 
 export function useRefState<S>(
   initialValue: S
@@ -290,6 +292,7 @@ export async function getRemoteAssetURL(
   domainKey: AssetDomainKey = "ww",
   server: ServerRegion | "comic" | "musicChart" = "jp"
 ): Promise<string> {
+  if (!endpoint) return "";
   // const isWebpSupported = Modernizr.webplossless;
   const url = `${assetUrl[domainKey][server]}/${endpoint}`;
 
@@ -792,4 +795,44 @@ export function useCardType(card?: ICardInfo) {
   );
 
   return { isNewRarityCard, isBirthdayCard, isTrainableCard };
+}
+
+export async function getGachaRemoteImages(
+  gachaAssetbundleName: string,
+  region: ServerRegion
+) {
+  const baseURL = assetUrl.minio[region];
+  const result = (
+    await Axios.get<string>(`/`, {
+      baseURL,
+      params: {
+        "list-type": "2",
+        delimiter: "/",
+        prefix: `gacha/${gachaAssetbundleName}/screen_rip/texture/`,
+        "max-keys": "500",
+      },
+      responseType: "text",
+    })
+  ).data;
+
+  const parser = new XMLParser({
+    isArray: (name, jpath) => {
+      if (["CommonPrefixes", "Contents"].includes(name)) return true;
+      return false;
+    },
+  });
+  const parsed = parser.parse(result).ListBucketResult as IListBucketResult;
+  console.log(parsed);
+
+  const filenames = parsed
+    .Contents!.map((content) => content.Key)
+    .filter((elem) => elem.endsWith(".webp"));
+  console.log(filenames);
+
+  return {
+    bg: filenames.filter((name) => name.includes("bg_gacha")),
+    card: filenames.filter((name) => name.includes("card_gacha")),
+    cardname: filenames.filter((name) => name.includes("cardname_gacha")),
+    img: filenames.filter((name) => name.includes("img_gacha")),
+  };
 }
