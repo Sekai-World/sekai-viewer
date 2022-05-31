@@ -144,17 +144,22 @@ const Settings = observer(() => {
               <FormControlLabel
                 value="jp"
                 control={<Radio />}
-                label={t("common:serverRegion.jp")}
+                label={t("common:serverRegion.jp") as string}
               ></FormControlLabel>
               <FormControlLabel
                 value="tw"
                 control={<Radio />}
-                label={t("common:serverRegion.tw")}
+                label={t("common:serverRegion.tw") as string}
               ></FormControlLabel>
               <FormControlLabel
                 value="en"
                 control={<Radio />}
-                label={t("common:serverRegion.en")}
+                label={t("common:serverRegion.en") as string}
+              ></FormControlLabel>
+              <FormControlLabel
+                value="kr"
+                control={<Radio />}
+                label={t("common:serverRegion.kr") as string}
               ></FormControlLabel>
             </RadioGroup>
           </FormControl>
@@ -230,17 +235,17 @@ const Settings = observer(() => {
               <FormControlLabel
                 value="original"
                 control={<Radio />}
-                label={t("common:contentTranslationMode.original")}
+                label={t("common:contentTranslationMode.original") as string}
               ></FormControlLabel>
               <FormControlLabel
                 value="translated"
                 control={<Radio />}
-                label={t("common:contentTranslationMode.translated")}
+                label={t("common:contentTranslationMode.translated") as string}
               ></FormControlLabel>
               <FormControlLabel
                 value="both"
                 control={<Radio />}
-                label={t("common:contentTranslationMode.both")}
+                label={t("common:contentTranslationMode.both") as string}
               ></FormControlLabel>
             </RadioGroup>
           </FormControl>
@@ -264,7 +269,7 @@ const Settings = observer(() => {
                   name="checkedA"
                 />
               }
-              label={t("common:show")}
+              label={t("common:show") as string}
             />
           </FormControl>
         </Grid>

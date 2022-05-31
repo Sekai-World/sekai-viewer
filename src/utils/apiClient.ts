@@ -731,7 +731,7 @@ export function useCurrentEvent() {
   const { region } = useRootStore();
   const { data, error } = useSWR(
     `${import.meta.env.VITE_STRAPI_BASE}/sekai-current-event${
-      region === "tw" ? "-tw" : region === "en" ? "-en" : ""
+      region === "jp" ? "" : `-${region}`
     }`,
     axiosFetcher
   );

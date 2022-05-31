@@ -7,8 +7,8 @@ import {
   useRef,
   useState,
 } from "react";
-import PQueue from "p-queue";
-import localforage from "localforage";
+// import PQueue from "p-queue";
+// import localforage from "localforage";
 import {
   IGachaInfo,
   ICardInfo,
@@ -289,7 +289,7 @@ export function filterMusicMeta(metas: IMusicMeta[], musics: IMusicInfo[]) {
 export async function getRemoteAssetURL(
   endpoint: string,
   setFunc?: CallableFunction,
-  domainKey: AssetDomainKey = "ww",
+  domainKey: AssetDomainKey = "minio",
   server: ServerRegion | "comic" | "musicChart" = "jp"
 ): Promise<string> {
   if (!endpoint) return "";
@@ -369,7 +369,7 @@ export function useProcessedScenarioData() {
         await getRemoteAssetURL(
           scenarioPath,
           undefined,
-          window.isChinaMainland ? "cn" : "ww",
+          window.isChinaMainland ? "cn" : "minio",
           region
         ),
         {
@@ -398,7 +398,7 @@ export function useProcessedScenarioData() {
           resource: await getRemoteAssetURL(
             `scenario/background/${FirstBackground}_rip/${FirstBackground}.webp`,
             undefined,
-            window.isChinaMainland ? "cn" : "ww"
+            window.isChinaMainland ? "cn" : "minio"
           ),
         });
       }
@@ -413,7 +413,7 @@ export function useProcessedScenarioData() {
           bgm: await getRemoteAssetURL(
             `sound/scenario/bgm/${FirstBgm}_rip/${FirstBgm}.mp3`,
             undefined,
-            window.isChinaMainland ? "cn" : "ww"
+            window.isChinaMainland ? "cn" : "minio"
           ),
           se: "",
         });
@@ -493,7 +493,7 @@ export function useProcessedScenarioData() {
                   ? await getRemoteAssetURL(
                       voiceUrl,
                       undefined,
-                      window.isChinaMainland ? "cn" : "ww"
+                      window.isChinaMainland ? "cn" : "minio"
                     )
                   : "",
               };
@@ -518,13 +518,13 @@ export function useProcessedScenarioData() {
                     ? await getRemoteAssetURL(
                         `sound/scenario/voice/${ScenarioId}_rip/${specialEffect.StringValSub}.mp3`,
                         undefined,
-                        window.isChinaMainland ? "cn" : "ww"
+                        window.isChinaMainland ? "cn" : "minio"
                       )
                     : specialEffectType === "ChangeBackground"
                     ? await getRemoteAssetURL(
                         `scenario/background/${specialEffect.StringValSub}_rip/${specialEffect.StringValSub}.webp`,
                         undefined,
-                        window.isChinaMainland ? "cn" : "ww"
+                        window.isChinaMainland ? "cn" : "minio"
                       )
                     : specialEffectType === "Movie"
                     ? `scenario/movie/${specialEffect.StringVal}_rip`
@@ -549,14 +549,14 @@ export function useProcessedScenarioData() {
                   ? await getRemoteAssetURL(
                       `sound/scenario/bgm/${soundData.Bgm}_rip/${soundData.Bgm}.mp3`,
                       undefined,
-                      window.isChinaMainland ? "cn" : "ww"
+                      window.isChinaMainland ? "cn" : "minio"
                     )
                   : "",
                 se: soundData.Se
                   ? await getRemoteAssetURL(
                       `sound/scenario/se/se_pack00001_rip/${soundData.Se}.mp3`,
                       undefined,
-                      window.isChinaMainland ? "cn" : "ww"
+                      window.isChinaMainland ? "cn" : "minio"
                     )
                   : "",
               };

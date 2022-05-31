@@ -18,6 +18,7 @@ export const SettingRegion = types.enumeration<ServerRegion>([
   "jp",
   "tw",
   "en",
+  "kr",
 ]);
 
 export const Settings = types
