@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.3.2...v1.4.0) (2022-05-31)
+
+
+### Features
+
+* add korean server ([474a13a](https://github.com/Sekai-World/sekai-viewer/commits/474a13aa2c0b53a890e922b91ddc6b70def8e28a))
+* **gacha:** :sparkles: gacha fetch images from remote list ([d82005a](https://github.com/Sekai-World/sekai-viewer/commits/d82005ab481b13b3ea34c2c62ae45da8c498b38f))
+
+
+### Bug Fixes
+
+* **card:** :bug: birthday card stats are NaN ([7709d90](https://github.com/Sekai-World/sekai-viewer/commits/7709d901197748949b9f2c4b5bb2fd9a3acbcc8c))
+
+
+### Refactors
+
+* abandon b2 storage ([db610a7](https://github.com/Sekai-World/sekai-viewer/commits/db610a7659fdeb38d1aadf6e6a01003f35ddfd29))
+* change webp-hero implementation ([658d106](https://github.com/Sekai-World/sekai-viewer/commits/658d106b4d085ae0ad1f8ee3276dba1e92ee0737))
+* index description change ([818d248](https://github.com/Sekai-World/sekai-viewer/commits/818d2485528f0d35bd36843b16ee1615871b09e5))
+
 ### [1.3.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.3.1...v1.3.2) (2022-04-30)
 
 
