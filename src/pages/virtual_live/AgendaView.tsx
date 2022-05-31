@@ -52,7 +52,7 @@ const AgendaView: React.FC<{ data?: IVirtualLiveInfo }> = observer(
         getRemoteAssetURL(
           `virtual_live/select/banner/${data.assetbundleName}_rip/${data.assetbundleName}.png`,
           setVirtualLiveLogo,
-          window.isChinaMainland ? "cn" : "ww",
+          window.isChinaMainland ? "cn" : "minio",
           region
         );
       }

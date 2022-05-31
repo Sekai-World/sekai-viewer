@@ -50,7 +50,7 @@ const GridView: React.FC<{ data?: IEventInfo }> = observer(({ data }) => {
       getRemoteAssetURL(
         `event/${data.assetbundleName}/logo_rip/logo.webp`,
         setEventLogo,
-        window.isChinaMainland ? "cn" : "ww",
+        window.isChinaMainland ? "cn" : "minio",
         region
       );
     }

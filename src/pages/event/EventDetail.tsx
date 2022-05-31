@@ -293,25 +293,25 @@ const EventDetail: React.FC<{}> = observer(() => {
       getRemoteAssetURL(
         `event/${event.assetbundleName}/logo_rip/logo.webp`,
         setEventLogo,
-        window.isChinaMainland ? "cn" : "ww",
+        window.isChinaMainland ? "cn" : "minio",
         region
       );
       getRemoteAssetURL(
         `home/banner/${event.assetbundleName}_rip/${event.assetbundleName}.webp`,
         setEventBanner,
-        window.isChinaMainland ? "cn" : "ww",
+        window.isChinaMainland ? "cn" : "minio",
         region
       );
       getRemoteAssetURL(
         `event/${event.assetbundleName}/screen_rip/bg.webp`,
         setEventBackground,
-        window.isChinaMainland ? "cn" : "ww",
+        window.isChinaMainland ? "cn" : "minio",
         region
       );
       getRemoteAssetURL(
         `event/${event.assetbundleName}/screen_rip/character.webp`,
         setEventCharacter,
-        window.isChinaMainland ? "cn" : "ww",
+        window.isChinaMainland ? "cn" : "minio",
         region
       );
     }

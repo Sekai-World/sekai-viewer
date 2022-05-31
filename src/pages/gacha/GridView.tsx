@@ -40,7 +40,7 @@ const GridView: React.FC<{ data?: IGachaInfo }> = observer(({ data }) => {
       getRemoteAssetURL(
         `gacha/${data.assetbundleName}/logo_rip/logo.webp`,
         setUrl,
-        window.isChinaMainland ? "cn" : "ww",
+        window.isChinaMainland ? "cn" : "minio",
         region
       );
     }

@@ -41,7 +41,7 @@ const GridView: React.FC<{
           getRemoteAssetURL(
             `comic/one_frame_rip/${data.assetbundleName}.webp`,
             setImageURL,
-            window.isChinaMainland ? "cn" : "ww",
+            window.isChinaMainland ? "cn" : "minio",
             lang === "zht" ? "tw" : "jp"
           );
           break;

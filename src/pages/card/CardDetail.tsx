@@ -357,23 +357,23 @@ const CardDetail: React.FC<{}> = observer(() => {
       getRemoteAssetURL(
         `character/member/${card.assetbundleName}_rip/card_normal.webp`,
         setNormalImg,
-        window.isChinaMainland ? "cn" : "ww"
+        window.isChinaMainland ? "cn" : "minio"
       );
       getRemoteAssetURL(
         `character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`,
         setNormalTrimImg,
-        window.isChinaMainland ? "cn" : "ww"
+        window.isChinaMainland ? "cn" : "minio"
       );
       if (isTrainableCard) {
         getRemoteAssetURL(
           `character/member/${card.assetbundleName}_rip/card_after_training.webp`,
           setTrainedImg,
-          window.isChinaMainland ? "cn" : "ww"
+          window.isChinaMainland ? "cn" : "minio"
         );
         getRemoteAssetURL(
           `character/member_cutout_trm/${card.assetbundleName}_rip/after_training.webp`,
           setTrainedTrimImg,
-          window.isChinaMainland ? "cn" : "ww"
+          window.isChinaMainland ? "cn" : "minio"
         );
       }
     }

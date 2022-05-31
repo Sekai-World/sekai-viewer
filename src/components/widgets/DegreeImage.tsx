@@ -85,7 +85,7 @@ const DegreeImage: React.FC<
               sub ? "sub" : "main"
             }.webp`,
             setDegreeImage,
-            window.isChinaMainland ? "cn" : "ww",
+            window.isChinaMainland ? "cn" : "minio",
             region
           );
         } else if (honor.assetbundleName)
@@ -94,7 +94,7 @@ const DegreeImage: React.FC<
               sub ? "sub" : "main"
             }.webp`,
             setDegreeImage,
-            window.isChinaMainland ? "cn" : "ww",
+            window.isChinaMainland ? "cn" : "minio",
             region
           );
         if (type === "event_ranking_reward")
@@ -103,7 +103,7 @@ const DegreeImage: React.FC<
               sub ? "sub" : "main"
             }.webp`,
             setDegreeRankImage,
-            window.isChinaMainland ? "cn" : "ww",
+            window.isChinaMainland ? "cn" : "minio",
             region
           );
         else if (
@@ -116,7 +116,7 @@ const DegreeImage: React.FC<
               sub ? "sub" : "main"
             }.webp`,
             setDegreeRankImage,
-            window.isChinaMainland ? "cn" : "ww",
+            window.isChinaMainland ? "cn" : "minio",
             region
           );
       }

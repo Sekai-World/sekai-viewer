@@ -37,7 +37,7 @@ const GridView: React.FC<{ data?: IStampInfo }> = observer(({ data }) => {
       getRemoteAssetURL(
         `stamp/${data.assetbundleName}_rip/${data.assetbundleName}/${data.assetbundleName}.webp`,
         setUrl,
-        window.isChinaMainland ? "cn" : "ww",
+        window.isChinaMainland ? "cn" : "minio",
         region
       );
     }

@@ -94,7 +94,7 @@ const MCCharacterSpawn: React.FC<{ data: CharacterSpawnEvent }> = ({
       getRemoteAssetURL(
         `thumbnail/costume_rip/${headCostume.thumbnailAssetbundleName}.webp`,
         setHeadThumbnail,
-        window.isChinaMainland ? "cn" : "ww"
+        window.isChinaMainland ? "cn" : "minio"
       );
     }
   }, [headCostume]);
@@ -104,7 +104,7 @@ const MCCharacterSpawn: React.FC<{ data: CharacterSpawnEvent }> = ({
       getRemoteAssetURL(
         `thumbnail/costume_rip/${bodyCostume.thumbnailAssetbundleName}.webp`,
         setBodyThumbnail,
-        window.isChinaMainland ? "cn" : "ww"
+        window.isChinaMainland ? "cn" : "minio"
       );
     }
   }, [bodyCostume]);
@@ -203,7 +203,7 @@ const MCCharacterTalk: React.FC<{ data: CharacterTalkEvent; mcId: string }> = ({
     getRemoteAssetURL(
       `virtual_live/mc/voice/${mcId}_rip/${data.VoiceKey}.mp3`,
       setVoiceUrl,
-      window.isChinaMainland ? "cn" : "ww"
+      window.isChinaMainland ? "cn" : "minio"
     );
   }, [data.VoiceKey, mcId]);
 
@@ -243,7 +243,7 @@ const VirtualLiveStepMC: React.FC<{
     getRemoteAssetURL(
       `virtual_live/mc/scenario/${data.assetbundleName}_rip/${data.assetbundleName}.asset`,
       setAssetBundleURL,
-      window.isChinaMainland ? "cn" : "ww",
+      window.isChinaMainland ? "cn" : "minio",
       region
     );
   }, [data.assetbundleName, region]);

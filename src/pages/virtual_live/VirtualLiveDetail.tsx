@@ -88,13 +88,13 @@ const VirtualLiveDetail: React.FC<{}> = observer(() => {
       getRemoteAssetURL(
         `virtual_live/select/banner/${virtualLive.assetbundleName}_rip/${virtualLive.assetbundleName}.webp`,
         setVrLiveLogo,
-        window.isChinaMainland ? "cn" : "ww",
+        window.isChinaMainland ? "cn" : "minio",
         region
       );
       getRemoteAssetURL(
         `home/banner/banner_virtuallive${virtualLiveId}_rip/banner_virtuallive${virtualLiveId}.webp`,
         setVrLiveBanner,
-        window.isChinaMainland ? "cn" : "ww",
+        window.isChinaMainland ? "cn" : "minio",
         region
       );
     }

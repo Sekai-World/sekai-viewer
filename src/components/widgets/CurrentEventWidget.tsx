@@ -39,7 +39,7 @@ const CurrentEventWidget: React.FC<{}> = observer(() => {
       getRemoteAssetURL(
         `home/banner/${currEvent.eventJson.assetbundleName}_rip/${currEvent.eventJson.assetbundleName}.webp`,
         setEventBanner,
-        window.isChinaMainland ? "cn" : "ww",
+        window.isChinaMainland ? "cn" : "minio",
         region
       );
     }

@@ -184,12 +184,12 @@ const MusicDetail: React.FC<{}> = observer(() => {
       getRemoteAssetURL(
         `music/long/${musicVocal[selectedPreviewVocalType].assetbundleName}_rip/${musicVocal[selectedPreviewVocalType].assetbundleName}.${format}`,
         setLongMusicPlaybackURL,
-        window.isChinaMainland ? "cn" : "ww"
+        window.isChinaMainland ? "cn" : "minio"
       );
       getRemoteAssetURL(
         `music/short/${musicVocal[selectedPreviewVocalType].assetbundleName}_rip/${musicVocal[selectedPreviewVocalType].assetbundleName}_short.${format}`,
         setShortMusicPlaybackURL,
-        window.isChinaMainland ? "cn" : "ww"
+        window.isChinaMainland ? "cn" : "minio"
       );
     }
   }, [format, music, musicVocal, selectedPreviewVocalType]);
@@ -313,14 +313,14 @@ const MusicDetail: React.FC<{}> = observer(() => {
         getRemoteAssetURL(
           `music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}_org.webp`,
           setMusicJacket,
-          window.isChinaMainland ? "cn" : "ww",
+          window.isChinaMainland ? "cn" : "minio",
           region
         );
       } else {
         getRemoteAssetURL(
           `music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}.webp`,
           setMusicJacket,
-          window.isChinaMainland ? "cn" : "ww",
+          window.isChinaMainland ? "cn" : "minio",
           region
         );
       }

@@ -444,51 +444,51 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
           getRemoteAssetURL(
             bg[0],
             setGachaBackground,
-            window.isChinaMainland ? "cn" : "ww",
+            window.isChinaMainland ? "cn" : "minio",
             region
           );
           getRemoteAssetURL(
             img[0],
             setGachaImage,
-            window.isChinaMainland ? "cn" : "ww",
+            window.isChinaMainland ? "cn" : "minio",
             region
           );
 
           setGachaPreviewImages([
             ...bg.map((elem, idx) => ({
               src: `${
-                assetUrl[window.isChinaMainland ? "cn" : "ww"][region]
+                assetUrl[window.isChinaMainland ? "cn" : "minio"][region]
               }/${elem.replace(".webp", ".png")}`,
               alt: `background image ${idx}`,
               downloadUrl: `${
-                assetUrl[window.isChinaMainland ? "cn" : "ww"][region]
+                assetUrl[window.isChinaMainland ? "cn" : "minio"][region]
               }/${elem.replace(".webp", ".png")}`,
             })),
             ...img.map((elem, idx) => ({
               src: `${
-                assetUrl[window.isChinaMainland ? "cn" : "ww"][region]
+                assetUrl[window.isChinaMainland ? "cn" : "minio"][region]
               }/${elem.replace(".webp", ".png")}`,
               alt: `feature image ${idx}`,
               downloadUrl: `${
-                assetUrl[window.isChinaMainland ? "cn" : "ww"][region]
+                assetUrl[window.isChinaMainland ? "cn" : "minio"][region]
               }/${elem.replace(".webp", ".png")}`,
             })),
             ...card.map((elem, idx) => ({
               src: `${
-                assetUrl[window.isChinaMainland ? "cn" : "ww"][region]
+                assetUrl[window.isChinaMainland ? "cn" : "minio"][region]
               }/${elem.replace(".webp", ".png")}`,
               alt: `card image ${idx}`,
               downloadUrl: `${
-                assetUrl[window.isChinaMainland ? "cn" : "ww"][region]
+                assetUrl[window.isChinaMainland ? "cn" : "minio"][region]
               }/${elem.replace(".webp", ".png")}`,
             })),
             ...cardname.map((elem, idx) => ({
               src: `${
-                assetUrl[window.isChinaMainland ? "cn" : "ww"][region]
+                assetUrl[window.isChinaMainland ? "cn" : "minio"][region]
               }/${elem.replace(".webp", ".png")}`,
               alt: `cardname image ${idx}`,
               downloadUrl: `${
-                assetUrl[window.isChinaMainland ? "cn" : "ww"][region]
+                assetUrl[window.isChinaMainland ? "cn" : "minio"][region]
               }/${elem.replace(".webp", ".png")}`,
             })),
           ]);
@@ -507,13 +507,13 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
       getRemoteAssetURL(
         `gacha/${gacha.assetbundleName}/logo_rip/logo.webp`,
         setGachaIcon,
-        window.isChinaMainland ? "cn" : "ww",
+        window.isChinaMainland ? "cn" : "minio",
         region
       );
       getRemoteAssetURL(
         `home/banner/banner_gacha${gacha.id}_rip/banner_gacha${gacha.id}.webp`,
         setGachaBanner,
-        window.isChinaMainland ? "cn" : "ww",
+        window.isChinaMainland ? "cn" : "minio",
         region
       );
     }
