@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.4.0...v1.4.1) (2022-06-01)
+
+
+### Features
+
+* **home:** :memo: add disclaimer ([7f2a569](https://github.com/Sekai-World/sekai-viewer/commits/7f2a5694f5a02cb31d81606e37b02a3b0852773f))
+
 ## [1.4.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.3.2...v1.4.0) (2022-05-31)
 
 
