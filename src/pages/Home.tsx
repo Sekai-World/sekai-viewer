@@ -151,7 +151,7 @@ function Home() {
       </Typography>
       <Container className={layoutClasses.content}>
         {/* <Typography variant="h4">Welcome to Sekai Viewer Open Beta!</Typography> */}
-        <Box paddingTop="1%" paddingBottom="1%">
+        {/* <Box paddingTop="1%" paddingBottom="1%">
           {new Date().getTime() - 1640962800000 < 259200000 ? (
             <Typography align="center" variant="h4">
               {t("home:happy_new_year")}
@@ -167,7 +167,7 @@ function Home() {
               </Fragment>
             )
           )}
-        </Box>
+        </Box> */}
         <Grid container justifyContent="center">
           <Grid item xs={12} md={8} lg={6}>
             {jpTime === "12/6" ? (
@@ -270,6 +270,9 @@ function Home() {
             )}
           </Grid>
         </Grid>
+        <Alert className={layoutClasses.alert} severity="info">
+          {t("home:disclaimer")}
+        </Alert>
         {/* <Alert className={layoutClasses.alert} severity="info">
           {t("home:alert0")}
         </Alert> */}
