@@ -1,5 +1,5 @@
 import { types, Instance, onSnapshot } from "mobx-state-tree";
-import makeInspectable from "mobx-devtools-mst";
+// import makeInspectable from "mobx-devtools-mst";
 import { createContext, useContext } from "react";
 import { ISekaiProfileMap, SekaiProfileMap } from "./sekai";
 import { IUser, User } from "./user";
@@ -91,7 +91,7 @@ onSnapshot(rootStore.sekai, (snapshot) =>
 onSnapshot(rootStore.settings, (snapshot) =>
   localStorage.setItem("settings", JSON.stringify(snapshot))
 );
-makeInspectable(rootStore);
+// makeInspectable(rootStore);
 
 const RootStoreContext = createContext<null | IRoot>(null);
 export const RootStoreProvider = RootStoreContext.Provider;

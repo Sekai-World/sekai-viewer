@@ -1,5 +1,5 @@
 import { defineConfig } from "vite";
-import reactRefresh from "@vitejs/plugin-react-refresh";
+import react from "@vitejs/plugin-react";
 import loadVersion from "vite-plugin-package-version";
 import svgr from "vite-plugin-svgr";
 import Icons from "unplugin-icons/vite";
@@ -28,7 +28,7 @@ export default defineConfig({
     },
   },
   plugins: [
-    reactRefresh(),
+    react(),
     svgr(),
     loadVersion(),
     Icons({
