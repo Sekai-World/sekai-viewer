@@ -96,22 +96,22 @@ export default defineConfig({
   server: {
     proxy: {
       "/sekai-assets": {
-        target: "https://sekai-res.dnaroma.eu/file",
+        target: "https://storage.sekai.best",
         // target: "https://minio.dnaroma.eu",
         changeOrigin: true,
       },
       "/sekai-tc-assets": {
-        target: "https://sekai-res.dnaroma.eu/file",
+        target: "https://storage.sekai.best",
         // target: "https://minio.dnaroma.eu",
         changeOrigin: true,
       },
       "/sekai-en-assets": {
-        target: "https://sekai-res.dnaroma.eu/file",
+        target: "https://storage.sekai.best",
         // target: "https://minio.dnaroma.eu",
         changeOrigin: true,
       },
       "/minio/": {
-        target: "https://minio.dnaroma.eu",
+        target: "https://storage.sekai.best",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/minio/, ""),
       },
