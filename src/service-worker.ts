@@ -91,7 +91,7 @@ self.addEventListener("message", (event) => {
 registerRoute(
   // Add in any other file extensions or routing criteria as needed.
   ({ url }) =>
-    (url.origin === "https://sekai-res.dnaroma.eu" ||
+    (url.origin === "https://storage.sekai.best" ||
       url.origin === "https://sekai-assets-1258184166.file.myqcloud.com") &&
     (url.pathname.endsWith(".png") ||
       url.pathname.endsWith(".webp") ||
@@ -112,9 +112,8 @@ registerRoute(
 registerRoute(
   // Add in any other file extensions or routing criteria as needed.
   ({ url }) =>
-    (url.origin === "https://minio.dnaroma.eu" ||
-      url.origin ===
-        "https://sekai-best-assets-1258184166.file.myqcloud.com") &&
+    (url.href.startsWith("https://storage.sekai.best/sekai-best-assets") ||
+      url.origin.endsWith("1258184166.file.myqcloud.com")) &&
     (url.pathname.endsWith(".png") ||
       url.pathname.endsWith(".webp") ||
       url.pathname.endsWith(".moc3.bytes") ||
@@ -134,11 +133,8 @@ registerRoute(
 registerRoute(
   // Add in any other file extensions or routing criteria as needed.
   ({ url }) =>
-    (url.origin === "https://sekai-res.dnaroma.eu" ||
-      url.origin === "https://sekai-assets-1258184166.file.myqcloud.com" ||
-      url.origin === "https://minio.dnaroma.eu" ||
-      url.origin ===
-        "https://sekai-best-assets-1258184166.file.myqcloud.com") &&
+    (url.origin === "https://storage.sekai.best" ||
+      url.origin.endsWith("1258184166.file.myqcloud.com")) &&
     (url.pathname.endsWith(".mp3") || url.pathname.endsWith(".flac")),
   // Customize this strategy as needed, e.g., by changing to CacheFirst.
   new CacheFirst({
