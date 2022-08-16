@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.4.1...v1.4.2) (2022-08-16)
+
+
+### Refactors
+
+* :truck: use storage.sekai.best instead of minio.dnaroma.eu ([bb35e96](https://github.com/Sekai-World/sekai-viewer/commits/bb35e966fefe555a720c9b3a8c58c056286059b6))
+
 ### [1.4.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.4.0...v1.4.1) (2022-06-01)
 
 
