@@ -372,7 +372,7 @@ const SekaiUserStatistics = observer(() => {
           <AccordionDetails>
             <Grid container spacing={1}>
               {sekaiProfile.sekaiUserProfile?.userCharacters.map((chara) => (
-                <Grid key={chara.characterId} item xs={3} md={2} lg={1}>
+                <Grid key={chara.characterId} item>
                   <Chip
                     avatar={
                       <Avatar
@@ -399,18 +399,18 @@ const SekaiUserStatistics = observer(() => {
           <AccordionDetails>
             <Grid container spacing={1}>
               {sekaiProfile.sekaiUserProfile?.userCharacters.map((chara) => (
-                <Grid key={chara.characterId} item xs={3} md={2} lg={1}>
+                <Grid key={chara.characterId} item>
                   <Chip
                     avatar={
                       <Avatar
                         src={charaIcons[`CharaIcon${chara.characterId}`]}
                       />
                     }
-                    label={
+                    label={String(
                       (!!challengeLiveRanks &&
                         challengeLiveRanks[chara.characterId]) ||
-                      0
-                    }
+                        0
+                    ).padStart(2, "0")}
                   />
                 </Grid>
               ))}
