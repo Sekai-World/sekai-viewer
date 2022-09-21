@@ -1521,6 +1521,7 @@ const CardDetail: React.FC<{}> = observer(() => {
                           <MaterialIcon
                             materialId={c.resourceId}
                             quantity={c.quantity}
+                            justify="center"
                           />
                         </Grid>
                       ))}
