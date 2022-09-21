@@ -56,9 +56,9 @@ export function useScoreCalc() {
   const getMultiSkillRate = useCallback((skillRates: number[]) => {
     let multiSkillRate = 1 + skillRates[0];
     skillRates.forEach((v, i) => {
-      if (i > 0) multiSkillRate *= 1 + v / 5;
+      if (i > 0) multiSkillRate += v / 5;
     });
-    return multiSkillRate - 1;
+    return multiSkillRate;
   }, []);
   const getMultiAverageSkillRates = useCallback(
     (skillRates: number[]) => {
