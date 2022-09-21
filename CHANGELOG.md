@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.4.3...v1.5.0) (2022-09-21)
+
+
+### Features
+
+* :clown_face: add mock handlers for user system ([56c4fc0](https://github.com/Sekai-World/sekai-viewer/commits/56c4fc05f59805e501bd62ce75e8302a3dbe6ac2))
+* :clown_face: add mock handlers for user system ([8a08d74](https://github.com/Sekai-World/sekai-viewer/commits/8a08d743472e9f8eb9e107f97ba96b71aa5c3408))
+* :clown_face: add msw to browser env ([0453602](https://github.com/Sekai-World/sekai-viewer/commits/04536025018f842e8bf3f518d87272b859c4b121))
+* :clown_face: add msw to browser env ([1e26864](https://github.com/Sekai-World/sekai-viewer/commits/1e26864887c8796c382023653e85ce56dbf5a120))
+* :sparkles: add newly written song for events ([23ce998](https://github.com/Sekai-World/sekai-viewer/commits/23ce9988efef18c1c004521e2f681c4554dc0e2b))
+* :sparkles: add newly written song for events ([c0c9ffe](https://github.com/Sekai-World/sekai-viewer/commits/c0c9ffe7bd536e1a115fc6edd1c4bf2726d4ed30))
+* :sparkles: add sorting to honor and mission list ([4dc4aed](https://github.com/Sekai-World/sekai-viewer/commits/4dc4aed4ca7e00e402a48997ab0ad1e7702c931e))
+* :sparkles: add sorting to honor and mission list ([172a545](https://github.com/Sekai-World/sekai-viewer/commits/172a54506e6042e6d7518b2a3b98cc35dea029f8))
+
+
+### Bug Fixes
+
+* :lipstick: avoid character rank ellipsis ([c812190](https://github.com/Sekai-World/sekai-viewer/commits/c812190c7feeb30c63437a1345a8ff4381394158))
+* :lipstick: avoid character rank ellipsis ([83ca262](https://github.com/Sekai-World/sekai-viewer/commits/83ca2623b0beeb4b6f33b2be74c36c2010934570))
+* :lipstick: not centered material icon and quantity text ([8ff8efa](https://github.com/Sekai-World/sekai-viewer/commits/8ff8efa1b864df783408824e300e71e0723a7db2))
+* :lipstick: not centered material icon and quantity text ([e9be4d5](https://github.com/Sekai-World/sekai-viewer/commits/e9be4d5e907614d0dc8db06b0ea2f7059eada8d8))
+* **score:** multiroom player skill calculation ([3efca62](https://github.com/Sekai-World/sekai-viewer/commits/3efca62a8fdf544ee09cefc4471bc0463bfce608))
+
+
+### Refactors
+
+* :clown_face: add msw to react ([ba65860](https://github.com/Sekai-World/sekai-viewer/commits/ba65860329737a70c79869eb969bb5f4a40f489f))
+* :clown_face: add msw to react ([8ba6ff0](https://github.com/Sekai-World/sekai-viewer/commits/8ba6ff014702cb23e6f1838bb8f6c0eb61ff0665))
+* :truck: use storage.sekai.best instead of minio.dnaroma.eu ([cf60f6c](https://github.com/Sekai-World/sekai-viewer/commits/cf60f6cb592da59e67bf404c990c3bf35b28f98a))
+
 ### [1.4.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.4.2...v1.4.3) (2022-08-17)
 
 ### [1.4.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.4.1...v1.4.2) (2022-08-16)
