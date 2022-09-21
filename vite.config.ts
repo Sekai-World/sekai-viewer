@@ -121,12 +121,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
-      "/strapi": {
-        // target: "https://strapi-staging.sekai.best",
-        target: "http://localhost:1337",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/strapi/, ""),
-      },
+      // "/strapi": {
+      //   target: "http://localhost:1337",
+      //   changeOrigin: true,
+      //   rewrite: (path) => path.replace(/^\/strapi/, ""),
+      // },
     },
   },
 });
