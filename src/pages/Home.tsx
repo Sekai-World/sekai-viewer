@@ -168,6 +168,24 @@ function Home() {
             )
           )}
         </Box> */}
+        <Box paddingTop="1%" paddingBottom="1%">
+          {new Date().getTime() - 1664463600000 > 0 &&
+          new Date().getTime() - 1664463600000 < 604800000 ? (
+            <Typography align="center" variant="h4">
+              {t("home:happy_2_year_anniversary")}
+            </Typography>
+          ) : (
+            1664463600000 - new Date().getTime() > 0 &&
+            1664463600000 - new Date().getTime() < 604800000 && (
+              <Fragment>
+                <Typography align="center" variant="h4">
+                  {t("home:2_year_anniversary_countdown")}
+                </Typography>
+                <Countdown endDate={new Date(1664463600000)} />
+              </Fragment>
+            )
+          )}
+        </Box>
         <Grid container justifyContent="center">
           <Grid item xs={12} md={8} lg={6}>
             {jpTime === "12/6" ? (
