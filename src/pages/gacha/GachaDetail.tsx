@@ -1050,6 +1050,7 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
                       <CommonMaterialIcon
                         materialName={behavior.costResourceType}
                         quantity={behavior.costResourceQuantity}
+                        justify="center"
                       />
                     </Grid>
                   </Grid>
@@ -1094,6 +1095,7 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
                             materialName={behavior.costResourceType}
                             quantity={behavior.costResourceQuantity}
                             mini
+                            justify="center"
                           />
                         </Button>
                       </Grid>

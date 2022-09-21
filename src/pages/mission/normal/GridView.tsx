@@ -105,6 +105,7 @@ const GridView: React.FC<{ data?: INormalMission }> = ({ data }) => {
                   <MaterialIcon
                     materialId={reward.resourceId!}
                     quantity={reward.resourceQuantity}
+                    justify="center"
                   />
                 </Grid>
               ) : (
@@ -112,6 +113,7 @@ const GridView: React.FC<{ data?: INormalMission }> = ({ data }) => {
                   <CommonMaterialIcon
                     materialName={reward.resourceType}
                     quantity={reward.resourceQuantity}
+                    justify="center"
                   />
                 </Grid>
               )
