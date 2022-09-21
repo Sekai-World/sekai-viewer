@@ -72,6 +72,7 @@ import {
   IMasterLesson,
   IMasterLessonReward,
   IListBucketResult,
+  IEventMusic,
 } from "./../types.d";
 import { useAssetI18n, useCharaName } from "./i18n";
 import { useLocation } from "react-router-dom";
@@ -148,6 +149,7 @@ export function useCachedData<
     | IEventRarityBonusRate
     | IMasterLesson
     | IMasterLessonReward
+    | IEventMusic
 >(name: string): [T[] | undefined, boolean, any] {
   // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
   const { region } = useRootStore();

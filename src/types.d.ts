@@ -1433,3 +1433,10 @@ export interface ICostume3D {
   designer: string;
   publishedAt: number;
 }
+
+export interface IEventMusic {
+  eventId: number;
+  musicId: number;
+  seq: number;
+  releaseConditionId: number;
+}

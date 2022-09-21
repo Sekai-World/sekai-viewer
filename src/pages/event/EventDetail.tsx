@@ -25,6 +25,7 @@ import {
   IEventCard,
   IEventDeckBonus,
   IEventInfo,
+  IEventMusic,
   IGameCharaUnit,
   IVirtualLiveInfo,
 } from "../../types.d";
@@ -92,6 +93,7 @@ const EventDetail: React.FC<{}> = observer(() => {
   const [cheerfulCarnivalTeams] = useCachedData<ICheerfulCarnivalTeam>(
     "cheerfulCarnivalTeams"
   );
+  const [eventMusics] = useCachedData<IEventMusic>("eventMusics");
 
   const [event, setEvent] = useState<IEventInfo>();
   const [eventCards, setEventCards] = useState<IEventCard[]>([]);
@@ -113,6 +115,7 @@ const EventDetail: React.FC<{}> = observer(() => {
   const [ccTeams, setCcTeams] = useState<ICheerfulCarnivalTeam[]>([]);
   const [ccSummary, setCcSummary] = useState<ICheerfulCarnivalSummary>();
   const [eventCommentId, setEventCommentId] = useState<number>(0);
+  const [eventMusic, setEventMusic] = useState<IEventMusic>();
 
   useEffect(() => {
     if (event) {
@@ -134,7 +137,8 @@ const EventDetail: React.FC<{}> = observer(() => {
       eventCardsCache &&
       cards &&
       gameCharacterUnits &&
-      virtualLives
+      virtualLives &&
+      eventMusics
     ) {
       const ev = events.find((elem) => elem.id === Number(eventId));
       setEvent(ev);
@@ -184,6 +188,7 @@ const EventDetail: React.FC<{}> = observer(() => {
       setLinkedVirtualLive(
         virtualLives.find((elem) => elem.id === ev?.virtualLiveId)
       );
+      setEventMusic(eventMusics.find((em) => em.eventId === ev?.id));
     }
   }, [
     events,
@@ -193,6 +198,7 @@ const EventDetail: React.FC<{}> = observer(() => {
     cards,
     gameCharacterUnits,
     virtualLives,
+    eventMusics,
   ]);
 
   useEffect(() => {
@@ -557,6 +563,34 @@ const EventDetail: React.FC<{}> = observer(() => {
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
+          {!!eventMusic && (
+            <Fragment>
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Grid item xs={8}>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("event:newlyWrittenSong")}
+                  </Typography>
+                </Grid>
+                <Grid item container justifyContent="flex-end">
+                  <Link
+                    to={`/music/${eventMusic.musicId}`}
+                    className={interactiveClasses.noDecoration}
+                  >
+                    <Grid container alignItems="center">
+                      <OpenInNew />
+                    </Grid>
+                  </Link>
+                </Grid>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
+            </Fragment>
+          )}
         </Grid>
       </Container>
       <Typography variant="h6" className={layoutClasses.header}>
