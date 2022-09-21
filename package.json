@@ -67,8 +67,8 @@
     "test": "vite test",
     "serve": "vite preview",
     "exti18n": "i18next -c ./i18next-parser.config.js -s",
-    "lint": "eslint **/*.{js,jsx,ts,tsx}",
-    "lint:fix": "eslint --fix **/*.{js,jsx,ts,tsx}",
+    "lint": "eslint src/**/*.{js,ts,tsx}",
+    "lint:fix": "eslint --fix src/**/*.{js,ts,tsx}",
     "commit": "cz",
     "release": "standard-version",
     "release:minor": "standard-version --release-as minor",
@@ -137,6 +137,7 @@
     "http-proxy-middleware": "^1.3.1",
     "husky": "^8.0.1",
     "i18next-parser": "^4.7.0",
+    "msw": "^0.47.3",
     "nano-staged": "^0.8.0",
     "prettier": "^2.7.1",
     "prop-types": "^15.8.1",
@@ -158,5 +159,8 @@
   },
   "nano-staged": {
     "*.{js,ts,jsx,tsx}": "eslint --fix"
+  },
+  "msw": {
+    "workerDirectory": "public"
   }
 }
