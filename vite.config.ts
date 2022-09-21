@@ -4,16 +4,7 @@ import loadVersion from "vite-plugin-package-version";
 import svgr from "vite-plugin-svgr";
 import Icons from "unplugin-icons/vite";
 import { VitePWA } from "vite-plugin-pwa";
-
-import { dependencies } from "./package.json";
-function renderChunks(deps: Record<string, string>) {
-  let chunks = {};
-  Object.keys(deps).forEach((key) => {
-    if (["react", "react-router-dom", "react-dom"].includes(key)) return;
-    chunks[key] = [key];
-  });
-  return chunks;
-}
+import { NodeModulesPolyfillPlugin } from "@esbuild-plugins/node-modules-polyfill";
 
 export default defineConfig({
   build: {
@@ -93,6 +84,11 @@ export default defineConfig({
       filename: "service-worker.ts",
     }),
   ],
+  optimizeDeps: {
+    esbuildOptions: {
+      plugins: [NodeModulesPolyfillPlugin()],
+    },
+  },
   server: {
     proxy: {
       "/sekai-assets": {
