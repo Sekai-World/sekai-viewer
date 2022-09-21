@@ -4,8 +4,11 @@ import {
   Chip,
   Collapse,
   Container,
+  FormControl,
   Grid,
+  MenuItem,
   Paper,
+  Select,
   Typography,
 } from "@mui/material";
 import {
@@ -27,7 +30,7 @@ import { missionTypeReducer } from "../../../stores/reducers";
 import { useInteractiveStyles } from "../../../styles/interactive";
 import { useLayoutStyles } from "../../../styles/layout";
 import { IBeginnerMission } from "../../../types.d";
-import { useCachedData } from "../../../utils";
+import { useCachedData, useLocalStorage } from "../../../utils";
 import InfiniteScroll from "../../../components/helpers/InfiniteScroll";
 import GridView from "./GridView";
 
@@ -68,9 +71,20 @@ const BeginnerMissionList: React.FC<{}> = () => {
   const [filterOpened, setFilterOpened] = useState<boolean>(false);
   const [missionTypeSelected, dispatchMissionTypeSelected] = useReducer(
     missionTypeReducer,
-    []
+    JSON.parse(
+      localStorage.getItem("mission-beginner-list-filter-type") || "[]"
+    )
   );
   const [sortedCache, setSortedCache] = useState<IBeginnerMission[]>([]);
+
+  const [sortType, setSortType] = useLocalStorage<string>(
+    "mission-beginner-list-filter-sort-type",
+    "asc"
+  );
+  const [sortBy, setSortBy] = useLocalStorage<string>(
+    "mission-beginner-list-filter-sort-by",
+    "id"
+  );
 
   useEffect(() => {
     document.title = t("title:beginnerMissionList");
@@ -85,11 +99,26 @@ const BeginnerMissionList: React.FC<{}> = () => {
           missionTypeSelected.some((mt) => c.beginnerMissionType.includes(mt))
         );
       }
+      switch (sortBy) {
+        case "id":
+        case "seq":
+          result = result.sort((a, b) =>
+            sortType === "asc" ? a[sortBy] - b[sortBy] : b[sortBy] - a[sortBy]
+          );
+          break;
+      }
       setSortedCache(result);
       setBeginnerMissions([]);
       setPage(0);
     }
-  }, [beginnerMissionsCache, setPage, setSortedCache, missionTypeSelected]);
+  }, [
+    beginnerMissionsCache,
+    setPage,
+    setSortedCache,
+    missionTypeSelected,
+    sortBy,
+    sortType,
+  ]);
 
   useEffect(() => {
     setBeginnerMissions((events) => [
@@ -194,6 +223,58 @@ const BeginnerMissionList: React.FC<{}> = () => {
                         />
                       </Grid>
                     ))}
+                  </Grid>
+                </Grid>
+                <Grid
+                  item
+                  container
+                  xs={12}
+                  alignItems="center"
+                  justifyContent="space-between"
+                  spacing={1}
+                >
+                  <Grid item xs={12} md={1}>
+                    <Typography classes={{ root: interactiveClasses.caption }}>
+                      {t("filter:sort.caption")}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} md={11}>
+                    <Grid container spacing={1}>
+                      <Grid item>
+                        <FormControl>
+                          <Select
+                            value={sortType}
+                            onChange={(e) => {
+                              setSortType(e.target.value as string);
+                            }}
+                            style={{ minWidth: "100px" }}
+                          >
+                            <MenuItem value="asc">
+                              {t("filter:sort.ascending")}
+                            </MenuItem>
+                            <MenuItem value="desc">
+                              {t("filter:sort.descending")}
+                            </MenuItem>
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                      <Grid item>
+                        <FormControl>
+                          <Select
+                            value={sortBy}
+                            onChange={(e) => {
+                              setSortBy(e.target.value as string);
+                            }}
+                            style={{ minWidth: "100px" }}
+                          >
+                            <MenuItem value="id">{t("common:id")}</MenuItem>
+                            <MenuItem value="seq">
+                              {t("common:sequence")}
+                            </MenuItem>
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                    </Grid>
                   </Grid>
                 </Grid>
                 <Grid

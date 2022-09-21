@@ -4,8 +4,11 @@ import {
   Chip,
   Collapse,
   Container,
+  FormControl,
   Grid,
+  MenuItem,
   Paper,
+  Select,
   Switch,
   Typography,
 } from "@mui/material";
@@ -66,6 +69,15 @@ const HonorList = () => {
   );
   const [filteredCache, setFilteredCache] = useState<IHonorInfo[]>([]);
 
+  const [sortType, setSortType] = useLocalStorage<string>(
+    "honor-list-filter-sort-type",
+    "asc"
+  );
+  const [sortBy, setSortBy] = useLocalStorage<string>(
+    "honor-list-filter-sort-by",
+    "id"
+  );
+
   useLayoutEffect(() => {
     document.title = t("title:honorList");
   }, [t]);
@@ -93,11 +105,27 @@ const HonorList = () => {
           (id) => result.find((elem) => elem.groupId === id)!
         );
       }
+      switch (sortBy) {
+        case "id":
+        case "seq":
+          result = result.sort((a, b) =>
+            sortType === "asc" ? a[sortBy] - b[sortBy] : b[sortBy] - a[sortBy]
+          );
+          break;
+      }
       setFilteredCache(result);
       setHonors([]);
       setPage(0);
     }
-  }, [setPage, honorsCache, honorType, honorGroups, isHonorGroupOnce]);
+  }, [
+    setPage,
+    honorsCache,
+    honorType,
+    honorGroups,
+    isHonorGroupOnce,
+    sortBy,
+    sortType,
+  ]);
 
   useLayoutEffect(() => {
     setHonors((honors) => [
@@ -196,6 +224,58 @@ const HonorList = () => {
                         />
                       </Grid>
                     ))}
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justifyContent="space-between"
+                spacing={1}
+              >
+                <Grid item xs={12} md={2}>
+                  <Typography classes={{ root: interactiveClasses.caption }}>
+                    {t("filter:sort.caption")}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={10}>
+                  <Grid container spacing={1}>
+                    <Grid item>
+                      <FormControl>
+                        <Select
+                          value={sortType}
+                          onChange={(e) => {
+                            setSortType(e.target.value as string);
+                          }}
+                          style={{ minWidth: "100px" }}
+                        >
+                          <MenuItem value="asc">
+                            {t("filter:sort.ascending")}
+                          </MenuItem>
+                          <MenuItem value="desc">
+                            {t("filter:sort.descending")}
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item>
+                      <FormControl>
+                        <Select
+                          value={sortBy}
+                          onChange={(e) => {
+                            setSortBy(e.target.value as string);
+                          }}
+                          style={{ minWidth: "100px" }}
+                        >
+                          <MenuItem value="id">{t("common:id")}</MenuItem>
+                          <MenuItem value="seq">
+                            {t("common:sequence")}
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
                   </Grid>
                 </Grid>
               </Grid>

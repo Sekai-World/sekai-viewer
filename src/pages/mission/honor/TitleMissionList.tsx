@@ -7,8 +7,11 @@ import {
   Dialog,
   DialogContent,
   Divider,
+  FormControl,
   Grid,
+  MenuItem,
   Paper,
+  Select,
   Typography,
 } from "@mui/material";
 import {
@@ -35,7 +38,7 @@ import {
   IHonorMission,
   IResourceBoxInfo,
 } from "../../../types.d";
-import { useCachedData } from "../../../utils";
+import { useCachedData, useLocalStorage } from "../../../utils";
 import { ContentTrans } from "../../../components/helpers/ContentTrans";
 import DegreeImage from "../../../components/widgets/DegreeImage";
 import InfiniteScroll from "../../../components/helpers/InfiniteScroll";
@@ -289,6 +292,15 @@ const TitleMissionList: React.FC<{}> = () => {
   );
   const [sortedCache, setSortedCache] = useState<IHonorMission[]>([]);
 
+  const [sortType, setSortType] = useLocalStorage<string>(
+    "mission-honor-list-filter-sort-type",
+    "asc"
+  );
+  const [sortBy, setSortBy] = useLocalStorage<string>(
+    "mission-honor-list-filter-sort-by",
+    "id"
+  );
+
   useEffect(() => {
     document.title = t("title:honorList");
   }, [t]);
@@ -302,11 +314,26 @@ const TitleMissionList: React.FC<{}> = () => {
           missionTypeSelected.some((mt) => c.honorMissionType.includes(mt))
         );
       }
+      switch (sortBy) {
+        case "id":
+        case "seq":
+          result = result.sort((a, b) =>
+            sortType === "asc" ? a[sortBy] - b[sortBy] : b[sortBy] - a[sortBy]
+          );
+          break;
+      }
       setSortedCache(result);
       setHonorMissions([]);
       setPage(0);
     }
-  }, [honorMissionsCache, setPage, setSortedCache, missionTypeSelected]);
+  }, [
+    honorMissionsCache,
+    setPage,
+    setSortedCache,
+    missionTypeSelected,
+    sortBy,
+    sortType,
+  ]);
 
   useEffect(() => {
     setHonorMissions((events) => [
@@ -426,6 +453,58 @@ const TitleMissionList: React.FC<{}> = () => {
                         />
                       </Grid>
                     ))}
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justifyContent="space-between"
+                spacing={1}
+              >
+                <Grid item xs={12} md={1}>
+                  <Typography classes={{ root: interactiveClasses.caption }}>
+                    {t("filter:sort.caption")}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={11}>
+                  <Grid container spacing={1}>
+                    <Grid item>
+                      <FormControl>
+                        <Select
+                          value={sortType}
+                          onChange={(e) => {
+                            setSortType(e.target.value as string);
+                          }}
+                          style={{ minWidth: "100px" }}
+                        >
+                          <MenuItem value="asc">
+                            {t("filter:sort.ascending")}
+                          </MenuItem>
+                          <MenuItem value="desc">
+                            {t("filter:sort.descending")}
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item>
+                      <FormControl>
+                        <Select
+                          value={sortBy}
+                          onChange={(e) => {
+                            setSortBy(e.target.value as string);
+                          }}
+                          style={{ minWidth: "100px" }}
+                        >
+                          <MenuItem value="id">{t("common:id")}</MenuItem>
+                          <MenuItem value="seq">
+                            {t("common:sequence")}
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
                   </Grid>
                 </Grid>
               </Grid>
