@@ -4,7 +4,7 @@ import { KeyboardArrowUp, KeyboardArrowDown } from "@mui/icons-material";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLayoutStyles } from "../../styles/layout";
-import { EventRankingResponse, UserRanking } from "../../types.d";
+import { EventRankingResponse } from "../../types.d";
 import { CardThumb } from "../../components/widgets/CardThumb";
 import CheerfulCarnivalTeamIcon from "../../components/widgets/CheerfulCarnivalTeamIcon";
 import DegreeImage from "../../components/widgets/DegreeImage";
