@@ -2,6 +2,50 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.5.0...v1.5.1) (2022-09-21)
+
+
+### Features
+
+* :bento: add sub degree frame ([d067bc5](https://github.com/Sekai-World/sekai-viewer/commits/d067bc5b77a982ad81e81dac88be6cae59fed229))
+* :sparkles: 2nd anniversary countdown ([66c721c](https://github.com/Sekai-World/sekai-viewer/commits/66c721c490537c72ad6e05535c95b81005581eb2))
+* :sparkles: bonds honor badge ([f09e488](https://github.com/Sekai-World/sekai-viewer/commits/f09e48830a51eb8cd6f9a257d8f6cd4e5a4ab47f))
+* **event:** :sparkles: show new user profile honors ([0a4e822](https://github.com/Sekai-World/sekai-viewer/commits/0a4e822651971fb054f23e76c738988d0da9f411))
+* **sekai-viewer:** withlist entry point ([58b3723](https://github.com/Sekai-World/sekai-viewer/commits/58b37234d9789da89f103dd44860773a7abc9f4e))
+* **story:** :sparkles: add special stories to story reader ([511fc3b](https://github.com/Sekai-World/sekai-viewer/commits/511fc3b4d72c77cfacf4bcb28a4db8f9b8c86de9))
+
+
+### Bug Fixes
+
+* :bug: add node-modules-polyfill to fix cron problem ([b53a82a](https://github.com/Sekai-World/sekai-viewer/commits/b53a82a838c898b2715db6dce1b1249adcf69b24))
+* :bug: further fixing sekai data type annotation ([ebfcf37](https://github.com/Sekai-World/sekai-viewer/commits/ebfcf37fe4e92bdc56013d39b9a06db195343f4a))
+* :lipstick: degree sub style improvements ([7949b09](https://github.com/Sekai-World/sekai-viewer/commits/7949b095010e9e9c4003fc4f8ca7b29954aa77c6))
+* **card:** :bug: correctly process card detail without side stories ([5fc4e7f](https://github.com/Sekai-World/sekai-viewer/commits/5fc4e7ffa1e68950f0bbf279d2cac94b1a56f065))
+* **card:** :bug: really fix the empty list problem ([7c4fe58](https://github.com/Sekai-World/sekai-viewer/commits/7c4fe581118379efbd1cd2dd77be9b10aa9d9a00))
+* collab area icons and voice ([3cd3988](https://github.com/Sekai-World/sekai-viewer/commits/3cd39888e174f540e1c12f6d2126112f627b834c))
+* **event:** :bug: en server event tracker shows jp result after event ends ([98e2b2e](https://github.com/Sekai-World/sekai-viewer/commits/98e2b2e80160b00a2dffa3c5b465c527a2dd1496))
+* **gacha:** :bug: gacha detail card rate becomes NaN ([fba9e6a](https://github.com/Sekai-World/sekai-viewer/commits/fba9e6af351aea1c4de88d29f5d39a446ce8aeb5))
+* **home:** :bug: game news spoiler filter, en url fix ([ca40eb8](https://github.com/Sekai-World/sekai-viewer/commits/ca40eb8fb31dbea0b40d72e8f0d6212c40c9d0c6))
+* **home:** :bug: service worker reload prompt wrong location ([6bcb76d](https://github.com/Sekai-World/sekai-viewer/commits/6bcb76d7b215456e420630d5a4900fb7f4e1954e))
+* **live2d:** :bug: jp clb model motion base url ([255ed13](https://github.com/Sekai-World/sekai-viewer/commits/255ed13e94d1c6cb5d86ee96ce97ebb82523b7b6))
+* **live2d:** :lipstick: fit wide screen mobile device ([17f0c12](https://github.com/Sekai-World/sekai-viewer/commits/17f0c120005b92d986c07fce346686be0b0bfc80))
+* **story:** :bug: special story wrong voice path ([cc1dcb1](https://github.com/Sekai-World/sekai-viewer/commits/cc1dcb11034ea43234fff7b3926f8cf2e17dd7c9))
+* **tools:** :bug: event pt calc wrong bonus rate ([63daf95](https://github.com/Sekai-World/sekai-viewer/commits/63daf95488bdba9ff5cdab532350a49b727574a2)), closes [#353](https://github.com/Sekai-World/sekai-viewer/issues/353)
+* **user:** :lipstick: bonds degree badge reverse ([8cb3942](https://github.com/Sekai-World/sekai-viewer/commits/8cb3942e25f04401141d054d22b5612ee4939132))
+* **user:** sekai profile cards teams story unlock type fix ([12c42e2](https://github.com/Sekai-World/sekai-viewer/commits/12c42e2d963e1db79d0854a2c13523c7db3b843a))
+
+
+### Refactors
+
+* :lipstick: normal degree image width ([f9a386d](https://github.com/Sekai-World/sekai-viewer/commits/f9a386d10709e5aac260ba76b2815bbe5e621e73))
+* :recycle: remove redundant codes ([d8af11d](https://github.com/Sekai-World/sekai-viewer/commits/d8af11d07dcddf8bc1de3a7e9227f95b0342d5d3))
+* **event:** :lipstick: make event tracker table looks better ([3fcd8f1](https://github.com/Sekai-World/sekai-viewer/commits/3fcd8f15f1e4eeb816d7f6a3bc616329b6c212bb))
+* **gacha:** filter not really opened en gachas ([2507188](https://github.com/Sekai-World/sekai-viewer/commits/2507188285630190ca8bcf93592cf1f4c3aa48ff))
+* **live2d:** :lipstick: live2d toolbar and display area padding remove ([77f3434](https://github.com/Sekai-World/sekai-viewer/commits/77f3434f772e013e08735692b3627d5d224dd37b))
+* open external link in new instead of current page ([e9492bd](https://github.com/Sekai-World/sekai-viewer/commits/e9492bdadbd817c35572547139b1d2bfd131587e))
+* **user:** :ambulance: sekai new profile structure (user honors) ([6e1c230](https://github.com/Sekai-World/sekai-viewer/commits/6e1c230d2895570e73f70fa30efb9fa8450609c1))
+* **user:** :lipstick: style fix ([3a08e01](https://github.com/Sekai-World/sekai-viewer/commits/3a08e0160aa6b66117a33ebfa35756d7460d70c6))
+
 ## [1.5.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.4.3...v1.5.0) (2022-09-21)
 
 
