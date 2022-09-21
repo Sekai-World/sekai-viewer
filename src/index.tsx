@@ -35,6 +35,11 @@ window.isChinaMainland = false;
   window.isChinaMainland = country === "CN";
   await initGlobalI18n();
 
+  if (import.meta.env.DEV) {
+    const { worker } = await import("./mocks/browser");
+    worker.start();
+  }
+
   ReactDOM.render(
     <React.StrictMode>
       <Router>
