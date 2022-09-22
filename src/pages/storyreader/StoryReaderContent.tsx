@@ -18,6 +18,7 @@ import {
   ICardEpisode,
   IActionSet,
   ISpecialStory,
+  ICardInfo,
 } from "../../types.d";
 import {
   getRemoteAssetURL,
@@ -48,6 +49,7 @@ const StoryReaderContent: React.FC<{ storyType: string; storyId: string }> = ({
   const getProcessedScenarioData = useProcessedScenarioData();
   const { showError } = useAlertSnackbar();
 
+  const [cards] = useCachedData<ICardInfo>("cards");
   const [unitStories] = useCachedData<IUnitStory>("unitStories");
   const [eventStories] = useCachedData<IEventStory>("eventStories");
   const [characterProfiles] = useCachedData<ICharaProfile>("characterProfiles");
@@ -174,26 +176,35 @@ const StoryReaderContent: React.FC<{ storyType: string; storyId: string }> = ({
             const episode = cardEpisodes.find(
               (ce) => ce.id === Number(cardEpisodeId)
             )!;
+            let assetbundleName = episode.assetbundleName;
+            if (!assetbundleName && !!cards) {
+              const card = cards.find((card) => card.id === episode.cardId);
+              if (card) {
+                assetbundleName = card.assetbundleName;
+              }
+            }
 
-            // setBannerUrl(charaIcons[`CharaIcon${charaId}` as "CharaIcon1"]);
-            getRemoteAssetURL(
-              `character/member_small/${episode.assetbundleName}_rip/card_normal.webp`,
-              setBannerUrl,
-              window.isChinaMainland ? "cn" : "minio"
-            );
-            getProcessedScenarioData(
-              `character/member/${episode.assetbundleName}_rip/${episode.scenarioId}.asset`,
-              true
-            ).then((data) => setScenarioData(data));
+            if (assetbundleName) {
+              // setBannerUrl(charaIcons[`CharaIcon${charaId}` as "CharaIcon1"]);
+              getRemoteAssetURL(
+                `character/member_small/${assetbundleName}_rip/card_normal.webp`,
+                setBannerUrl,
+                window.isChinaMainland ? "cn" : "minio"
+              );
+              getProcessedScenarioData(
+                `character/member/${assetbundleName}_rip/${episode.scenarioId}.asset`,
+                true
+              ).then((data) => setScenarioData(data));
 
-            setChapterTitle("");
-            setEpisodeTitle(
-              getTranslated(
-                `card_episode_title:${episode.title}`,
-                episode.title
-              )
-            );
-            setReleaseConditionId(episode.releaseConditionId);
+              setChapterTitle("");
+              setEpisodeTitle(
+                getTranslated(
+                  `card_episode_title:${episode.title}`,
+                  episode.title
+                )
+              );
+              setReleaseConditionId(episode.releaseConditionId);
+            }
           }
           break;
         case "areaTalk":
@@ -262,6 +273,7 @@ const StoryReaderContent: React.FC<{ storyType: string; storyId: string }> = ({
     showError,
     actionSets,
     specialStories,
+    cards,
   ]);
 
   return (
