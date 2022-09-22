@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.5.1...v1.5.2) (2022-09-22)
+
+
+### Bug Fixes
+
+* :bug: episode fields deleted by nuverse ([12aab08](https://github.com/Sekai-World/sekai-viewer/commits/12aab08a188b523e75b23a1ef71abbe7d9818afd))
+* :bug: nuverse deleted fields in cardEpisodes ([7836f90](https://github.com/Sekai-World/sekai-viewer/commits/7836f9074396139c0c51ac1bc7d41ebb23facc49))
+* :bug: rank match honor asset url ([1883fca](https://github.com/Sekai-World/sekai-viewer/commits/1883fca275aaf7f0e28b3e80fa757aa14b552f88))
+
 ### [1.5.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.5.0...v1.5.1) (2022-09-21)
 
 
