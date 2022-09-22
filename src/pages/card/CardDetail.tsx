@@ -285,6 +285,7 @@ const CardDetail: React.FC<{}> = observer(() => {
         );
         const _skill = skills.find((elem) => elem.id === _card.skillId)!;
         setSkill(_skill);
+        console.log(episodes.filter((epi) => epi.cardId === Number(cardId)));
         setCardEpisode(episodes.filter((epi) => epi.cardId === Number(cardId)));
         if (_card.gachaPhrase !== "-")
           getRemoteAssetURL(
@@ -1425,16 +1426,18 @@ const CardDetail: React.FC<{}> = observer(() => {
                     </Grid>
                     <Grid item xs={10}>
                       <Grid container spacing={1} justifyContent="flex-end">
-                        {cardEpisode[0].rewardResourceBoxIds.map((id) => (
-                          <Grid key={`episode-reward-${id}`} item>
-                            <ResourceBox
-                              resourceBoxId={id}
-                              resourceBoxPurpose="episode_reward"
-                              justifyContent="center"
-                              key={id}
-                            />
-                          </Grid>
-                        ))}
+                        {(cardEpisode[0].rewardResourceBoxIds || [3]).map(
+                          (id) => (
+                            <Grid key={`episode-reward-${id}`} item>
+                              <ResourceBox
+                                resourceBoxId={id}
+                                resourceBoxPurpose="episode_reward"
+                                justifyContent="center"
+                                key={id}
+                              />
+                            </Grid>
+                          )
+                        )}
                       </Grid>
                     </Grid>
                   </Grid>
@@ -1501,7 +1504,7 @@ const CardDetail: React.FC<{}> = observer(() => {
                     justifyContent="space-between"
                     alignItems="center"
                   >
-                    <Grid item xs={3}>
+                    <Grid item xs={2}>
                       <Typography
                         variant="subtitle1"
                         style={{ fontWeight: 600 }}
@@ -1509,22 +1512,18 @@ const CardDetail: React.FC<{}> = observer(() => {
                         {t("common:releaseCosts")}
                       </Typography>
                     </Grid>
-                    <Grid
-                      item
-                      container
-                      spacing={1}
-                      xs={9}
-                      justifyContent="flex-end"
-                    >
-                      {cardEpisode[1].costs.map((c, idx) => (
-                        <Grid key={`episode-cost-${idx}`} item>
-                          <MaterialIcon
-                            materialId={c.resourceId}
-                            quantity={c.quantity}
-                            justify="center"
-                          />
-                        </Grid>
-                      ))}
+                    <Grid item xs={10}>
+                      <Grid container spacing={1} justifyContent="flex-end">
+                        {cardEpisode[1].costs.map((c, idx) => (
+                          <Grid key={`episode-cost-${idx}`} item>
+                            <MaterialIcon
+                              materialId={c.resourceId}
+                              quantity={c.quantity}
+                              justify="center"
+                            />
+                          </Grid>
+                        ))}
+                      </Grid>
                     </Grid>
                   </Grid>
                   <Divider style={{ margin: "1% 0" }} />
@@ -1543,21 +1542,21 @@ const CardDetail: React.FC<{}> = observer(() => {
                         {t("common:rewards")}
                       </Typography>
                     </Grid>
-                    <Grid
-                      item
-                      container
-                      spacing={1}
-                      xs={10}
-                      justifyContent="flex-end"
-                    >
-                      {cardEpisode[1].rewardResourceBoxIds.map((id) => (
-                        <ResourceBox
-                          resourceBoxId={id}
-                          resourceBoxPurpose="episode_reward"
-                          justifyContent="flex-end"
-                          key={id}
-                        />
-                      ))}
+                    <Grid item xs={10}>
+                      <Grid container spacing={1} justifyContent="flex-end">
+                        {(cardEpisode[1].rewardResourceBoxIds || [4]).map(
+                          (id) => (
+                            <Grid key={`episode-reward-${id}`} item>
+                              <ResourceBox
+                                resourceBoxId={id}
+                                resourceBoxPurpose="episode_reward"
+                                justifyContent="center"
+                                key={id}
+                              />
+                            </Grid>
+                          )
+                        )}
+                      </Grid>
                     </Grid>
                   </Grid>
                   <Divider style={{ margin: "1% 0" }} />
