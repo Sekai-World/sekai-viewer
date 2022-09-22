@@ -79,7 +79,16 @@ const DegreeImage: React.FC<
 
     useEffect(() => {
       if (honor) {
-        if (honorGroup && honorGroup.backgroundAssetbundleName) {
+        if (honorGroup && honorGroup.honorType === "rank_match") {
+          getRemoteAssetURL(
+            `rank_live/honor/${
+              honorGroup.backgroundAssetbundleName
+            }_rip/degree_${sub ? "sub" : "main"}.webp`,
+            setDegreeImage,
+            window.isChinaMainland ? "cn" : "minio",
+            region
+          );
+        } else if (honorGroup && honorGroup.backgroundAssetbundleName) {
           getRemoteAssetURL(
             `honor/${honorGroup.backgroundAssetbundleName}_rip/degree_${
               sub ? "sub" : "main"
@@ -100,6 +109,15 @@ const DegreeImage: React.FC<
         if (type === "event_ranking_reward")
           getRemoteAssetURL(
             `honor/${honor.assetbundleName}_rip/rank_${
+              sub ? "sub" : "main"
+            }.webp`,
+            setDegreeRankImage,
+            window.isChinaMainland ? "cn" : "minio",
+            region
+          );
+        else if (honorGroup && honorGroup.honorType === "rank_match")
+          getRemoteAssetURL(
+            `rank_live/honor/${honor.assetbundleName}_rip/${
               sub ? "sub" : "main"
             }.webp`,
             setDegreeRankImage,
