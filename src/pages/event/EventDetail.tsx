@@ -137,8 +137,7 @@ const EventDetail: React.FC<{}> = observer(() => {
       eventCardsCache &&
       cards &&
       gameCharacterUnits &&
-      virtualLives &&
-      eventMusics
+      virtualLives
     ) {
       const ev = events.find((elem) => elem.id === Number(eventId));
       setEvent(ev);
@@ -188,7 +187,6 @@ const EventDetail: React.FC<{}> = observer(() => {
       setLinkedVirtualLive(
         virtualLives.find((elem) => elem.id === ev?.virtualLiveId)
       );
-      setEventMusic(eventMusics.find((em) => em.eventId === ev?.id));
     }
   }, [
     events,
@@ -198,8 +196,13 @@ const EventDetail: React.FC<{}> = observer(() => {
     cards,
     gameCharacterUnits,
     virtualLives,
-    eventMusics,
   ]);
+
+  useEffect(() => {
+    if (event && eventMusics) {
+      setEventMusic(eventMusics.find((em) => em.eventId === event.id));
+    }
+  }, [event, eventMusics]);
 
   useEffect(() => {
     if (event) {
