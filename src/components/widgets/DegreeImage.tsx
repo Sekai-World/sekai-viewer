@@ -143,9 +143,8 @@ const DegreeImage: React.FC<
     }, [honor, honorGroup, region, sub, type]);
 
     return honor === undefined ? null : !!honor ? (
-      <Svg>
+      <Svg style={style}>
         <svg
-          style={style}
           xmlns="http://www.w3.org/2000/svg"
           viewBox={sub ? "0 0 180 80" : "0 0 380 80"}
         >
