@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.5.3...v1.6.0) (2022-09-27)
+
+
+### Refactors
+
+* :recycle: convert common styles to styled components ([1929516](https://github.com/Sekai-World/sekai-viewer/commits/19295168433872b6ec1f25ccb5e8f66a37847698))
+* :recycle: remove all usage of @mui/styles and use styled components and sx props ([1a8c51e](https://github.com/Sekai-World/sekai-viewer/commits/1a8c51eb0c20eae13c37d09bc2849c1a69ff64d6))
+
 ### [1.5.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.5.2...v1.5.3) (2022-09-23)
 
 
