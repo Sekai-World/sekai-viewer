@@ -1,7 +1,6 @@
 import {
   Button,
   CircularProgress,
-  Container,
   Divider,
   Grid,
   InputAdornment,
@@ -16,10 +15,7 @@ import { TextField } from "formik-mui";
 import Discord from "~icons/mdi/discord";
 import React, { Fragment, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, Link as RouteLink } from "react-router-dom";
-import { useInteractiveStyles } from "../../styles/interactive";
-// import { useInteractiveStyles } from "../../styles/interactive";
-import { useLayoutStyles } from "../../styles/layout";
+import { useHistory } from "react-router-dom";
 import { LoginValues } from "../../strapi-model";
 import {
   apiUserInfoToStoreUserInfo,
@@ -30,24 +26,19 @@ import { useStrapi } from "../../utils/apiClient";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
 import { IUserMetadata } from "../../stores/user";
+import TypographyHeader from "../../components/styled/TypographyHeader";
+import ContainerContent from "../../components/styled/ContainerContent";
+import LinkNoDecoration from "../../components/styled/LinkNoDecoration";
 
 const Login: React.FC<{}> = observer(() => {
   const theme = useTheme();
-  const layoutClasses = useLayoutStyles();
-  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const query = useQuery();
   const history = useHistory();
-  const {
-    postLoginLocal,
-    getRedirectConnectLoginUrl,
-    getUserMetadataMe,
-    // getSekaiProfileMe,
-    // getSekaiCardTeamMe,
-  } = useStrapi();
+  const { postLoginLocal, getRedirectConnectLoginUrl, getUserMetadataMe } =
+    useStrapi();
   const { showError } = useAlertSnackbar();
   const {
-    // jwtToken,
     decodedToken,
     user: { setToken, setUserInfo, setMetadata },
   } = useRootStore();
@@ -64,10 +55,8 @@ const Login: React.FC<{}> = observer(() => {
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:login")}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      <TypographyHeader>{t("common:login")}</TypographyHeader>
+      <ContainerContent maxWidth="md">
         <Formik
           initialValues={{
             // @ts-ignore
@@ -151,24 +140,18 @@ const Login: React.FC<{}> = observer(() => {
                   <br />
                   <Grid container direction="column" spacing={1}>
                     <Grid item>
-                      <RouteLink
-                        to="/user/forgot"
-                        className={interactiveClasses.noDecoration}
-                      >
+                      <LinkNoDecoration to="/user/forgot">
                         <Typography variant="caption" color="textPrimary">
                           {t("auth:forgot-password")}
                         </Typography>
-                      </RouteLink>
+                      </LinkNoDecoration>
                     </Grid>
                     <Grid item>
-                      <RouteLink
-                        to="/user/signup"
-                        className={interactiveClasses.noDecoration}
-                      >
+                      <LinkNoDecoration to="/user/signup">
                         <Typography variant="caption" color="textPrimary">
                           {t("auth:no-account-signup")}
                         </Typography>
-                      </RouteLink>
+                      </LinkNoDecoration>
                     </Grid>
                   </Grid>
                   <br />
@@ -241,7 +224,7 @@ const Login: React.FC<{}> = observer(() => {
             </Grid>
           )}
         </Formik>
-      </Container>
+      </ContainerContent>
     </Fragment>
   );
 });

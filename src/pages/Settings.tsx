@@ -17,7 +17,6 @@ import Brightness7 from "~icons/mdi/brightness-7";
 import BrightnessAuto from "~icons/mdi/brightness-auto";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useLayoutStyles } from "../styles/layout";
 import {
   DisplayModeType,
   ContentTransModeType,
@@ -33,6 +32,7 @@ import IconRefresh from "~icons/mdi/refresh";
 import IconInformation from "~icons/mdi/information";
 import { useRootStore } from "../stores/root";
 import { observer } from "mobx-react-lite";
+import TypographyHeader from "../components/styled/TypographyHeader";
 
 const RegionDetect = () => {
   const { t } = useTranslation();
@@ -90,7 +90,6 @@ const RegionDetect = () => {
 };
 
 const Settings = observer(() => {
-  const layoutClasses = useLayoutStyles();
   const { t, i18n } = useTranslation();
   const { assetI18n } = useAssetI18n();
   const {
@@ -125,9 +124,7 @@ const Settings = observer(() => {
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:settings.title")}
-      </Typography>
+      <TypographyHeader>{t("common:settings.title")}</TypographyHeader>
       <br />
       <Grid container direction="column">
         <Grid item>
@@ -252,9 +249,7 @@ const Settings = observer(() => {
         </Grid>
       </Grid>
       <br />
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:miscs")}
-      </Typography>
+      <TypographyHeader>{t("common:miscs")}</TypographyHeader>
       <Grid container direction="column">
         <Grid item>
           <FormControl component="fieldset" style={{ margin: "1% 0" }}>

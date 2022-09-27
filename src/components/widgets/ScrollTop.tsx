@@ -1,14 +1,5 @@
-import { useScrollTrigger, Zoom } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
+import { Box, useScrollTrigger, Zoom } from "@mui/material";
 import React from "react";
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    position: "fixed",
-    bottom: theme.spacing(2),
-    right: theme.spacing(2),
-  },
-}));
 
 const ScrollTop: React.FC<
   React.PropsWithChildren<{
@@ -16,7 +7,6 @@ const ScrollTop: React.FC<
   }>
 > = (props) => {
   const { children, window } = props;
-  const classes = useStyles();
   // Note that you normally won't need to set the window ref as useScrollTrigger
   // will default to window.
   // This is only being set here because the demo is in an iframe.
@@ -38,9 +28,17 @@ const ScrollTop: React.FC<
 
   return (
     <Zoom in={trigger}>
-      <div onClick={handleClick} role="presentation" className={classes.root}>
+      <Box
+        onClick={handleClick}
+        role="presentation"
+        sx={{
+          position: "fixed",
+          bottom: 2,
+          right: 2,
+        }}
+      >
         {children}
-      </div>
+      </Box>
     </Zoom>
   );
 };

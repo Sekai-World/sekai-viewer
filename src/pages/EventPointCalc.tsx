@@ -1,7 +1,6 @@
 import {
   Autocomplete,
   Button,
-  Chip,
   Container,
   Divider,
   FormControl,
@@ -22,13 +21,11 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
 import { GridColDef, DataGrid, GridSortModel } from "@mui/x-data-grid";
 import { Alert } from "@mui/material";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useLayoutStyles } from "../styles/layout";
 import {
   EventType,
   ICardInfo,
@@ -51,6 +48,9 @@ import { ContentTrans } from "../components/helpers/ContentTrans";
 import TeamBuilder from "../components/blocks/TeamBuilder";
 import { ISekaiCardState } from "../stores/sekai";
 import { useCurrentEvent } from "../utils/apiClient";
+import TypographyHeader from "../components/styled/TypographyHeader";
+import ContainerContent from "../components/styled/ContainerContent";
+import ChipDifficulty from "../components/styled/ChipDifficulty";
 
 const difficulties: Record<number, string> = {
   0: "Easy",
@@ -60,27 +60,7 @@ const difficulties: Record<number, string> = {
   4: "Master",
 };
 
-const useStyle = makeStyles(() => ({
-  easy: {
-    backgroundColor: "#86DA45",
-  },
-  normal: {
-    backgroundColor: "#5FB8E6",
-  },
-  hard: {
-    backgroundColor: "#F3AE3C",
-  },
-  expert: {
-    backgroundColor: "#DC5268",
-  },
-  master: {
-    backgroundColor: "#AC3EE6",
-  },
-}));
-
 const EventPointCalc: React.FC<{}> = () => {
-  const classes = useStyle();
-  const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
 
@@ -113,8 +93,10 @@ const EventPointCalc: React.FC<{}> = () => {
   const [teamCards, setTeamCards] = useState<number[]>([]);
   const [teamCardsStates, setTeamCardsStates] = useState<ISekaiCardState[]>([]);
   const [teamTotalPower, setTeamTotalPower] = useState<number>(0);
-  const [selectedSong, setSelectedSong] =
-    useState<{ id: number; name: string }>();
+  const [selectedSong, setSelectedSong] = useState<{
+    id: number;
+    name: string;
+  }>();
   const [selectedSongId, setSelectedSongId] = useState<number>(1);
   const [selectedSongDifficulty, setSelectedSongDifficulty] = useState<{
     id: number;
@@ -123,8 +105,10 @@ const EventPointCalc: React.FC<{}> = () => {
     id: 4,
     name: difficulties[4],
   });
-  const [selectedEvent, setSelectedEvent] =
-    useState<{ id: number; name: string }>();
+  const [selectedEvent, setSelectedEvent] = useState<{
+    id: number;
+    name: string;
+  }>();
   const [selectedEventId, setSelectedEventId] = useState<number>(1);
   const [selectedMusicMode, setSelectedMusicMode] =
     useState<string>("all_songs");
@@ -308,15 +292,10 @@ const EventPointCalc: React.FC<{}> = () => {
         width: 100,
         renderCell(params) {
           return (
-            <Chip
-              color="primary"
-              size="small"
-              classes={{
-                colorPrimary:
-                  classes[params.getValue(params.id, "difficulty") as "easy"],
-              }}
-              label={params.value}
-            ></Chip>
+            <ChipDifficulty
+              difficulty={params.row.difficulty}
+              value={params.value}
+            />
           );
         },
       },
@@ -342,7 +321,7 @@ const EventPointCalc: React.FC<{}> = () => {
         hide: playMode === "challenge_live",
       },
     ],
-    [classes, playMode, t]
+    [playMode, t]
   );
 
   const calcResult = useCallback(() => {
@@ -509,13 +488,19 @@ const EventPointCalc: React.FC<{}> = () => {
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:eventCalc")}
-      </Typography>
-      <Alert severity="warning" className={layoutClasses.alert}>
+      <TypographyHeader>{t("common:eventCalc")}</TypographyHeader>
+      <Alert
+        severity="warning"
+        sx={(theme) => ({ margin: theme.spacing(1, 0) })}
+      >
         {t("common:betaIndicator")}
       </Alert>
-      <Container className={layoutClasses.content}>
+      <Container
+        sx={(theme) => ({
+          marginTop: theme.spacing(2),
+          marginBottom: theme.spacing(2),
+        })}
+      >
         <Stepper
           activeStep={activeStep}
           orientation="vertical"
@@ -872,7 +857,10 @@ const EventPointCalc: React.FC<{}> = () => {
           <Step>
             <StepLabel>{t("music_recommend:result.label")}</StepLabel>
             <StepContent>
-              <Alert severity="info" className={layoutClasses.alert}>
+              <Alert
+                severity="info"
+                sx={(theme) => ({ margin: theme.spacing(1, 0) })}
+              >
                 {t("event_calc:assumption")}
               </Alert>
               <Button
@@ -883,19 +871,21 @@ const EventPointCalc: React.FC<{}> = () => {
                 {t("common:back")}
               </Button>
               {selectedMusicMode === "only_one" && (
-                <Container maxWidth="md" className={layoutClasses.content}>
+                <ContainerContent maxWidth="md">
                   <Paper variant="outlined">
                     <Grid container>
                       <Grid item xs={12}>
                         <Grid
                           container
                           justifyContent="space-between"
-                          className={layoutClasses.alert}
+                          sx={(theme) => ({ margin: theme.spacing(1, 0) })}
                         >
                           <Grid item xs={4}>
                             <Typography
                               align="center"
-                              className={layoutClasses.bold}
+                              sx={(theme) => ({
+                                fontWeight: theme.typography.fontWeightBold,
+                              })}
                             >
                               {t("event_calc:result.eventPointPerPlay")}
                             </Typography>
@@ -910,12 +900,14 @@ const EventPointCalc: React.FC<{}> = () => {
                         <Grid
                           container
                           justifyContent="space-between"
-                          className={layoutClasses.alert}
+                          sx={(theme) => ({ margin: theme.spacing(1, 0) })}
                         >
                           <Grid item xs={4}>
                             <Typography
                               align="center"
-                              className={layoutClasses.bold}
+                              sx={(theme) => ({
+                                fontWeight: theme.typography.fontWeightBold,
+                              })}
                             >
                               {t("event_calc:result.playClount")}
                             </Typography>
@@ -930,12 +922,14 @@ const EventPointCalc: React.FC<{}> = () => {
                         <Grid
                           container
                           justifyContent="space-between"
-                          className={layoutClasses.alert}
+                          sx={(theme) => ({ margin: theme.spacing(1, 0) })}
                         >
                           <Grid item xs={4}>
                             <Typography
                               align="center"
-                              className={layoutClasses.bold}
+                              sx={(theme) => ({
+                                fontWeight: theme.typography.fontWeightBold,
+                              })}
                             >
                               {t("event_calc:result.playTime")}
                             </Typography>
@@ -954,12 +948,14 @@ const EventPointCalc: React.FC<{}> = () => {
                         <Grid
                           container
                           justifyContent="space-between"
-                          className={layoutClasses.alert}
+                          sx={(theme) => ({ margin: theme.spacing(1, 0) })}
                         >
                           <Grid item xs={4}>
                             <Typography
                               align="center"
-                              className={layoutClasses.bold}
+                              sx={(theme) => ({
+                                fontWeight: theme.typography.fontWeightBold,
+                              })}
                             >
                               {t("event_calc:result.useBoost")}
                             </Typography>
@@ -974,12 +970,14 @@ const EventPointCalc: React.FC<{}> = () => {
                         <Grid
                           container
                           justifyContent="space-between"
-                          className={layoutClasses.alert}
+                          sx={(theme) => ({ margin: theme.spacing(1, 0) })}
                         >
                           <Grid item xs={4}>
                             <Typography
                               align="center"
-                              className={layoutClasses.bold}
+                              sx={(theme) => ({
+                                fontWeight: theme.typography.fontWeightBold,
+                              })}
                             >
                               {t("event_calc:result.totalPoint")}
                             </Typography>
@@ -994,7 +992,7 @@ const EventPointCalc: React.FC<{}> = () => {
                       </Grid>
                     </Grid>
                   </Paper>
-                </Container>
+                </ContainerContent>
               )}
               {selectedMusicMode === "all_songs" && (
                 <div style={{ height: 650 }}>

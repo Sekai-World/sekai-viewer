@@ -21,7 +21,6 @@ import {
   LanguageModel,
   UserMetadatumModel,
 } from "../../../strapi-model";
-// import { useLayoutStyles } from "../../styles/layout";
 import { useStrapi } from "../../../utils/apiClient";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../../stores/root";
@@ -36,8 +35,6 @@ interface Props {
 
 const TableMe: React.FC<Props> = observer((props: Props) => {
   const { t } = useTranslation();
-  // const layoutClasses = useLayoutStyles();
-  // const interactiveClasses = useInteractiveStyles();
   const {
     jwtToken,
     settings: { languages },
@@ -99,7 +96,7 @@ const TableMe: React.FC<Props> = observer((props: Props) => {
         headerName: t("home:game-news.action"),
         width: 100,
         renderCell(params) {
-          const id = params.getValue(params.id, "id") as number;
+          const id = params.row["id"] as number;
           return (
             <Link target="_blank" to={`/announcement/${id}`}>
               <IconButton color="primary" disableRipple size="large">

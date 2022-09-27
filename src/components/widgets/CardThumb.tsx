@@ -1,5 +1,4 @@
 import { Grid } from "@mui/material";
-import { Skeleton } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import { ICardInfo } from "../../types.d";
 import {
@@ -12,13 +11,14 @@ import {
 import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
 import rarityBirthday from "../../assets/rarity_birthday.png";
-import { useSvgStyles } from "../../styles/svg";
 import {
   attrIconMap,
   cardMasterRankSmallMap,
   cardThumbFrameMap,
   cardThumbMediumFrameMap,
 } from "../../utils/resources";
+import SvgSkeleton from "../styled/SvgSkeleton";
+import Svg from "../styled/Svg";
 
 export const CardThumb: React.FC<
   {
@@ -29,9 +29,6 @@ export const CardThumb: React.FC<
     power?: number;
   } & React.HTMLProps<HTMLDivElement>
 > = ({ cardId, trained = false, onClick, style, level, masterRank, power }) => {
-  const skeleton = CardThumbSkeleton({});
-
-  const classes = useSvgStyles();
   const [cards] = useCachedData<ICardInfo>("cards");
   const [card, setCard] = useState<ICardInfo>();
   const { isNewRarityCard, isBirthdayCard } = useCardType(card);
@@ -77,8 +74,8 @@ export const CardThumb: React.FC<
   );
 
   return card ? (
-    <div className={classes.svg} onClick={onClick} style={style}>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 156 156">
+    <div onClick={onClick} style={style}>
+      <Svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 156 156">
         <image href={cardThumbImg} x="8" y="8" height="140" width="140" />
         {/* level */}
         {(level || power) && (
@@ -167,18 +164,10 @@ export const CardThumb: React.FC<
             height="60"
           ></image>
         )}
-      </svg>
+      </Svg>
     </div>
   ) : (
-    skeleton
-  );
-};
-
-export const CardThumbSkeleton: React.FC<{}> = () => {
-  const classes = useSvgStyles();
-
-  return (
-    <Skeleton variant="rectangular" className={classes.skeleton}></Skeleton>
+    <SvgSkeleton variant="rectangular" />
   );
 };
 
@@ -200,25 +189,25 @@ export const CardThumbs: React.FC<{ cardIds: number[] }> = ({ cardIds }) => {
   );
 };
 
-export const CardThumbsSkeleton: React.FC<{ length: number }> = ({
-  length = 1,
-}) => {
-  return (
-    <Grid
-      container
-      direction="row"
-      spacing={2}
-      justifyContent="center"
-      alignItems="center"
-    >
-      {Array.from({ length }).map((_, id) => (
-        <Grid key={id} item xs={4} md={2}>
-          <CardThumbSkeleton></CardThumbSkeleton>
-        </Grid>
-      ))}
-    </Grid>
-  );
-};
+// export const CardThumbsSkeleton: React.FC<{ length: number }> = ({
+//   length = 1,
+// }) => {
+//   return (
+//     <Grid
+//       container
+//       direction="row"
+//       spacing={2}
+//       justifyContent="center"
+//       alignItems="center"
+//     >
+//       {Array.from({ length }).map((_, id) => (
+//         <Grid key={id} item xs={4} md={2}>
+//           <CardThumbSkeleton></CardThumbSkeleton>
+//         </Grid>
+//       ))}
+//     </Grid>
+//   );
+// };
 
 export const CardThumbMedium: React.FC<
   {
@@ -239,9 +228,6 @@ export const CardThumbMedium: React.FC<
   style,
   power,
 }) => {
-  const skeleton = CardThumbSkeleton({});
-  const classes = useSvgStyles();
-
   const [cards] = useCachedData<ICardInfo>("cards");
   const [card, setCard] = useState<ICardInfo>();
   const { isNewRarityCard, isBirthdayCard } = useCardType(card);
@@ -295,8 +281,8 @@ export const CardThumbMedium: React.FC<
   const randomNum = useMemo(() => Math.floor(100 * Math.random()), []);
 
   return card ? (
-    <div className={classes.svg} onClick={onClick} style={style}>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 520">
+    <div onClick={onClick} style={style}>
+      <Svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 520">
         <defs>
           <pattern
             width="330"
@@ -397,9 +383,9 @@ export const CardThumbMedium: React.FC<
           height="512"
           fill={`url(#mediumThumb-${cardId}-${level}-${randomNum})`}
         />
-      </svg>
+      </Svg>
     </div>
   ) : (
-    skeleton
+    <SvgSkeleton variant="rectangular" />
   );
 };

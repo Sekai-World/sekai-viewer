@@ -7,9 +7,9 @@ import {
   Fab,
   Grid,
   Link,
+  styled,
   Typography,
 } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
 import { CloudDownload, PlayArrow, Stop } from "@mui/icons-material";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -19,11 +19,9 @@ import { useEffect } from "react";
 import Image from "mui-image";
 import MoviePlayer from "../../components/blocks/MoviePlayer";
 
-const useStyle = makeStyles((theme) => ({
-  card: {
-    margin: theme.spacing(1.5, 0),
-    padding: theme.spacing(1.5, 0),
-  },
+const CardStyled = styled(Card)(({ theme }) => ({
+  margin: theme.spacing(1.5, 0),
+  padding: theme.spacing(1.5, 0),
 }));
 
 export const AudioPlayButton: React.FC<{ url: string }> = ({ url }) => {
@@ -101,10 +99,8 @@ export const Talk: React.FC<{
   text: string;
   voiceUrl: string;
 }> = ({ characterId, characterName, text, voiceUrl }) => {
-  const classes = useStyle();
-
   return (
-    <Card className={classes.card}>
+    <CardStyled>
       <Grid container alignItems="center" spacing={1}>
         <Grid item xs={3} md={2} lg={1}>
           <Grid container justifyContent="center">
@@ -129,7 +125,7 @@ export const Talk: React.FC<{
           </Grid>
         ) : null}
       </Grid>
-    </Card>
+    </CardStyled>
   );
 };
 
@@ -138,7 +134,6 @@ export const SpecialEffect: React.FC<{
   text: string;
   resource: string;
 }> = ({ seType, text, resource }) => {
-  const classes = useStyle();
   const { t } = useTranslation();
 
   const [isBGOpen, setIsBGOpen] = useState(false);
@@ -147,7 +142,7 @@ export const SpecialEffect: React.FC<{
   switch (seType) {
     case "FullScreenText":
       return (
-        <Card className={classes.card}>
+        <CardStyled>
           <Grid container alignItems="center" spacing={1}>
             <Grid item xs={3} md={2} lg={1}></Grid>
             <Grid item xs={7} md={9} lg={10}>
@@ -166,11 +161,11 @@ export const SpecialEffect: React.FC<{
               </Grid>
             ) : null}
           </Grid>
-        </Card>
+        </CardStyled>
       );
     case "Telop":
       return (
-        <Card className={classes.card}>
+        <CardStyled>
           <Grid container alignItems="center" spacing={1}>
             <Grid item xs={3} md={2} lg={1}></Grid>
             <Grid item xs={8} md={9} lg={10}>
@@ -184,11 +179,11 @@ export const SpecialEffect: React.FC<{
               </Grid>
             </Grid>
           </Grid>
-        </Card>
+        </CardStyled>
       );
     case "ChangeBackground":
       return (
-        <Card className={classes.card}>
+        <CardStyled>
           <Grid container alignItems="center" spacing={1}>
             <Grid item xs={3} md={2} lg={1}></Grid>
             <Grid item xs={8} md={9} lg={10}>
@@ -220,11 +215,11 @@ export const SpecialEffect: React.FC<{
               </Grid>
             </Grid>
           </Grid>
-        </Card>
+        </CardStyled>
       );
     case "Movie":
       return (
-        <Card className={classes.card}>
+        <CardStyled>
           <Grid container alignItems="center" spacing={1}>
             <Grid item xs={3} md={2} lg={1}></Grid>
             <Grid item xs={8} md={9} lg={10}>
@@ -253,7 +248,7 @@ export const SpecialEffect: React.FC<{
               </Grid>
             </Grid>
           </Grid>
-        </Card>
+        </CardStyled>
       );
     default:
       return null;
@@ -265,11 +260,10 @@ export const Sound: React.FC<{
   hasSe: boolean;
   voiceUrl: string;
 }> = ({ hasBgm, hasSe, voiceUrl }) => {
-  const classes = useStyle();
   const { t } = useTranslation();
 
   return (
-    <Card className={classes.card}>
+    <CardStyled>
       <Grid container alignItems="center" spacing={1}>
         <Grid item xs={3} md={2} lg={1}></Grid>
         <Grid item xs={7} md={9} lg={10}>
@@ -298,6 +292,6 @@ export const Sound: React.FC<{
           </Grid>
         ) : null}
       </Grid>
-    </Card>
+    </CardStyled>
   );
 };

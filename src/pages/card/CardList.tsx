@@ -1,7 +1,6 @@
 import {
   Button,
   Grid,
-  Paper,
   Typography,
   Container,
   Collapse,
@@ -16,7 +15,6 @@ import {
   IconButton,
   Popover,
 } from "@mui/material";
-import { useLayoutStyles } from "../../styles/layout";
 import {
   Check,
   FilterAlt as Filter,
@@ -66,7 +64,6 @@ import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
 import rarityBirthday from "../../assets/rarity_birthday.png";
 
 import { useTranslation } from "react-i18next";
-import { useInteractiveStyles } from "../../styles/interactive";
 import {
   characterSelectReducer,
   unitSelectReducer,
@@ -89,6 +86,10 @@ import { useCurrentEvent } from "../../utils/apiClient";
 import { useAssetI18n, useCharaName } from "../../utils/i18n";
 import { useRootStore } from "../../stores/root";
 import { observer } from "mobx-react-lite";
+import TypographyHeader from "../../components/styled/TypographyHeader";
+import ContainerContent from "../../components/styled/ContainerContent";
+import PaperContainer from "../../components/styled/PaperContainer";
+import TypographyCaption from "../../components/styled/TypographyCaption";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -147,8 +148,6 @@ const ListCard: { [key: string]: React.FC<{ data?: ICardInfo }> } = {
 };
 
 const CardList: React.FC<{}> = observer(() => {
-  const layoutClasses = useLayoutStyles();
-  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const {
     settings: { isShowSpoiler },
@@ -427,10 +426,8 @@ const CardList: React.FC<{}> = observer(() => {
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:card")}
-      </Typography>
-      <Container className={layoutClasses.content}>
+      <TypographyHeader>{t("common:card")}</TypographyHeader>
+      <ContainerContent>
         <Grid
           container
           justifyContent="space-between"
@@ -491,7 +488,7 @@ const CardList: React.FC<{}> = observer(() => {
           </Badge>
         </Grid>
         <Collapse in={filterOpen}>
-          <Paper className={interactiveClasses.container}>
+          <PaperContainer>
             <Grid container direction="column" spacing={2}>
               <Grid
                 item
@@ -502,9 +499,7 @@ const CardList: React.FC<{}> = observer(() => {
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
-                  <Typography classes={{ root: interactiveClasses.caption }}>
-                    {t("common:unit")}
-                  </Typography>
+                  <TypographyCaption>{t("common:unit")}</TypographyCaption>
                 </Grid>
                 <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
@@ -590,9 +585,9 @@ const CardList: React.FC<{}> = observer(() => {
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
-                  <Typography classes={{ root: interactiveClasses.caption }}>
+                  <TypographyCaption>
                     {t("filter:character.caption")}
-                  </Typography>
+                  </TypographyCaption>
                 </Grid>
                 <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
@@ -646,9 +641,7 @@ const CardList: React.FC<{}> = observer(() => {
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
-                  <Typography classes={{ root: interactiveClasses.caption }}>
-                    {t("common:attribute")}
-                  </Typography>
+                  <TypographyCaption>{t("common:attribute")}</TypographyCaption>
                 </Grid>
                 <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
@@ -708,9 +701,9 @@ const CardList: React.FC<{}> = observer(() => {
                   spacing={1}
                 >
                   <Grid item xs={12} md={1}>
-                    <Typography classes={{ root: interactiveClasses.caption }}>
+                    <TypographyCaption>
                       {t("common:support_unit")}
-                    </Typography>
+                    </TypographyCaption>
                   </Grid>
                   <Grid item xs={12} md={11}>
                     <Grid container spacing={1}>
@@ -777,9 +770,7 @@ const CardList: React.FC<{}> = observer(() => {
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
-                  <Typography classes={{ root: interactiveClasses.caption }}>
-                    {t("common:skill")}
-                  </Typography>
+                  <TypographyCaption>{t("common:skill")}</TypographyCaption>
                 </Grid>
                 <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
@@ -829,9 +820,7 @@ const CardList: React.FC<{}> = observer(() => {
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
-                  <Typography classes={{ root: interactiveClasses.caption }}>
-                    {t("card:rarity")}
-                  </Typography>
+                  <TypographyCaption>{t("card:rarity")}</TypographyCaption>
                 </Grid>
                 <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
@@ -913,9 +902,9 @@ const CardList: React.FC<{}> = observer(() => {
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
-                  <Typography classes={{ root: interactiveClasses.caption }}>
+                  <TypographyCaption>
                     {t("filter:sort.caption")}
-                  </Typography>
+                  </TypographyCaption>
                 </Grid>
                 <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
@@ -1010,7 +999,7 @@ const CardList: React.FC<{}> = observer(() => {
                 </Grid>
               </Grid>
             </Grid>
-          </Paper>
+          </PaperContainer>
         </Collapse>
         <InfiniteScroll<ICardInfo>
           ViewComponent={ListCard[viewGridType]}
@@ -1037,7 +1026,7 @@ const CardList: React.FC<{}> = observer(() => {
             )[viewGridType]
           }
         />
-      </Container>
+      </ContainerContent>
       <Popover
         open={eventOpen}
         anchorEl={anchorElEvent}

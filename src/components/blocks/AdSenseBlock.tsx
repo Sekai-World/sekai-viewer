@@ -1,9 +1,9 @@
 import { Adsense } from "@ctrl/react-adsense";
-import { Container, Typography } from "@mui/material";
 import React, { Fragment, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useRootStore } from "../../stores/root";
-import { useLayoutStyles } from "../../styles/layout";
+import ContainerContent from "../styled/ContainerContent";
+import TypographyHeader from "../styled/TypographyHeader";
 
 type Props = {
   className?: string;
@@ -18,7 +18,6 @@ type Props = {
 };
 
 const AdSense = (props: Props) => {
-  const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const { user } = useRootStore();
 
@@ -26,12 +25,10 @@ const AdSense = (props: Props) => {
 
   return !!user.userinfo && noAdRoles.includes(user.userinfo.role) ? null : (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:advertisement")}
-      </Typography>
-      <Container className={layoutClasses.content}>
+      <TypographyHeader>{t("common:advertisement")}</TypographyHeader>
+      <ContainerContent>
         <Adsense {...props} />
-      </Container>
+      </ContainerContent>
     </Fragment>
   );
 };

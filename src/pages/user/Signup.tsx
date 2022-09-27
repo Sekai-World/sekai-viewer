@@ -2,7 +2,6 @@ import {
   Button,
   // Chip,
   CircularProgress,
-  Container,
   FormControl,
   Grid,
   InputAdornment,
@@ -16,18 +15,17 @@ import { Form, Formik } from "formik";
 import { Select, TextField } from "formik-mui";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, Link as RouteLink } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import PasswordStrengthBar from "react-password-strength-bar";
-import { useInteractiveStyles } from "../../styles/interactive";
-import { useLayoutStyles } from "../../styles/layout";
 import { RegisterValues } from "../../strapi-model";
 import { useStrapi } from "../../utils/apiClient";
 import { useRootStore } from "../../stores/root";
 import { observer } from "mobx-react-lite";
+import TypographyHeader from "../../components/styled/TypographyHeader";
+import ContainerContent from "../../components/styled/ContainerContent";
+import LinkNoDecoration from "../../components/styled/LinkNoDecoration";
 
 const Signup: React.FC<{}> = observer(() => {
-  const layoutClasses = useLayoutStyles();
-  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const history = useHistory();
   const {
@@ -73,10 +71,8 @@ const Signup: React.FC<{}> = observer(() => {
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:signup")}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      <TypographyHeader>{t("common:signup")}</TypographyHeader>
+      <ContainerContent maxWidth="md">
         <Formik
           initialValues={{
             username: "",
@@ -211,14 +207,11 @@ const Signup: React.FC<{}> = observer(() => {
                   </FormControl>
                   <br />
                   <br />
-                  <RouteLink
-                    to="/user/login"
-                    className={interactiveClasses.noDecoration}
-                  >
+                  <LinkNoDecoration to="/user/login">
                     <Typography variant="caption" color="textPrimary">
                       {t("auth:already-have-account")}
                     </Typography>
-                  </RouteLink>
+                  </LinkNoDecoration>
                   <br />
                   <br />
                   <input type="submit" style={{ display: "none" }} />
@@ -244,7 +237,7 @@ const Signup: React.FC<{}> = observer(() => {
             </Grid>
           )}
         </Formik>
-      </Container>
+      </ContainerContent>
     </Fragment>
   );
 });

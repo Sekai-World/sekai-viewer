@@ -1,5 +1,4 @@
 import { Card, CardContent, Grid, Typography } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
 import { Skeleton } from "@mui/material";
 import React, { Fragment, useEffect, useState } from "react";
 import {
@@ -12,25 +11,7 @@ import CommonMaterialIcon from "../../../components/widgets/CommonMaterialIcon";
 import { useCachedData } from "../../../utils";
 import MaterialIcon from "../../../components/widgets/MaterialIcon";
 
-const useStyles = makeStyles((theme) => ({
-  media: {
-    paddingTop: "5%",
-    backgroundSize: "contain",
-  },
-  card: {
-    cursor: "pointer",
-  },
-  header: {},
-  "grid-out": {
-    padding: theme.spacing("1%", "2%"),
-  },
-}));
-
 const GridView: React.FC<{ data?: INormalMission }> = ({ data }) => {
-  const classes = useStyles();
-  // const { t } = useTranslation();
-  // const { path } = useRouteMatch();
-
   const [resourceBoxes] = useCachedData<IResourceBoxInfo>("resourceBoxes");
 
   const [rewards, setRewards] = useState<ResourceBoxDetail[]>([]);
@@ -50,12 +31,11 @@ const GridView: React.FC<{ data?: INormalMission }> = ({ data }) => {
   if (!data) {
     // loading
     return (
-      <Card className={classes.card}>
-        {/* <Skeleton variant="rect" className={classes.media}></Skeleton> */}
+      <Card>
         <Grid container alignItems="center">
           <Grid item xs={8}>
             <CardContent>
-              <Typography variant="subtitle1" className={classes.header}>
+              <Typography variant="subtitle1">
                 <Skeleton variant="text" width="90%"></Skeleton>
               </Typography>
             </CardContent>
@@ -73,7 +53,7 @@ const GridView: React.FC<{ data?: INormalMission }> = ({ data }) => {
   }
   return (
     <Fragment>
-      <Card className={classes.card}>
+      <Card sx={{ cursor: "pointer" }}>
         <Grid container alignItems="center">
           <Grid item xs={8} md={9}>
             <CardContent style={{ paddingBottom: "16px" }}>
@@ -84,7 +64,6 @@ const GridView: React.FC<{ data?: INormalMission }> = ({ data }) => {
                     original={data.sentence}
                     originalProps={{
                       variant: "subtitle1",
-                      className: classes.header,
                     }}
                   />
                 </Grid>

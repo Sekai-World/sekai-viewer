@@ -2,15 +2,12 @@ import { Box, Card, CardContent, Grid, Typography } from "@mui/material";
 import Pin from "~icons/mdi/pin";
 import React, { Fragment, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
-import { useInteractiveStyles } from "../../styles/interactive";
-import { useLayoutStyles } from "../../styles/layout";
 import { useAnnouncementsByLanguages } from "../../utils/apiClient";
 import { useRootStore } from "../../stores/root";
+import TypographyHeader from "../styled/TypographyHeader";
+import LinkNoDecoration from "../styled/LinkNoDecoration";
 
 const AnnouncementWidget: React.FC<{}> = () => {
-  const layoutClasses = useLayoutStyles();
-  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const {
     user: { metadata },
@@ -44,9 +41,7 @@ const AnnouncementWidget: React.FC<{}> = () => {
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:announcement")}
-      </Typography>
+      <TypographyHeader>{t("common:announcement")}</TypographyHeader>
       <Box padding="3% 5% 3% 3%" maxHeight={340} overflow="auto">
         <Grid container spacing={1}>
           {isLoading ? (
@@ -56,10 +51,7 @@ const AnnouncementWidget: React.FC<{}> = () => {
           ) : announcements.length ? (
             announcements.map((data) => (
               <Grid key={data.id} item xs={12}>
-                <Link
-                  to={`/announcement/${data.id}`}
-                  className={interactiveClasses.noDecoration}
-                >
+                <LinkNoDecoration to={`/announcement/${data.id}`}>
                   <Card>
                     <CardContent>
                       <Typography variant="h5">
@@ -75,7 +67,7 @@ const AnnouncementWidget: React.FC<{}> = () => {
                       </Grid>
                     </CardContent>
                   </Card>
-                </Link>
+                </LinkNoDecoration>
               </Grid>
             ))
           ) : (

@@ -1,4 +1,3 @@
-import { Container, Typography } from "@mui/material";
 import React, {
   Fragment,
   useCallback,
@@ -9,15 +8,15 @@ import React, {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { AnnouncementModel } from "../../strapi-model";
-import { useLayoutStyles } from "../../styles/layout";
 import { useStrapi } from "../../utils/apiClient";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
 import GridView from "./GridView";
 import { useRootStore } from "../../stores/root";
 import { observer } from "mobx-react-lite";
+import TypographyHeader from "../../components/styled/TypographyHeader";
+import ContainerContent from "../../components/styled/ContainerContent";
 
 const AnnouncementList: React.FC<{}> = observer(() => {
-  const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const {
     user: { metadata },
@@ -100,10 +99,8 @@ const AnnouncementList: React.FC<{}> = observer(() => {
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:announcement")}
-      </Typography>
-      <Container className={layoutClasses.content}>
+      <TypographyHeader>{t("common:announcement")}</TypographyHeader>
+      <ContainerContent>
         <InfiniteScroll<AnnouncementModel>
           ViewComponent={GridView}
           callback={callback}
@@ -112,7 +109,7 @@ const AnnouncementList: React.FC<{}> = observer(() => {
             xs: 12,
           }}
         />
-      </Container>
+      </ContainerContent>
     </Fragment>
   );
 });

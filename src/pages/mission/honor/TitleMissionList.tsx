@@ -3,14 +3,12 @@ import {
   Button,
   Chip,
   Collapse,
-  Container,
   Dialog,
   DialogContent,
   Divider,
   FormControl,
   Grid,
   MenuItem,
-  Paper,
   Select,
   Typography,
 } from "@mui/material";
@@ -30,8 +28,6 @@ import React, {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { missionTypeReducer } from "../../../stores/reducers";
-import { useInteractiveStyles } from "../../../styles/interactive";
-import { useLayoutStyles } from "../../../styles/layout";
 import {
   IHonorGroup,
   IHonorInfo,
@@ -43,6 +39,10 @@ import { ContentTrans } from "../../../components/helpers/ContentTrans";
 import DegreeImage from "../../../components/widgets/DegreeImage";
 import InfiniteScroll from "../../../components/helpers/InfiniteScroll";
 import GridView from "./GridView";
+import TypographyHeader from "../../../components/styled/TypographyHeader";
+import ContainerContent from "../../../components/styled/ContainerContent";
+import PaperContainer from "../../../components/styled/PaperContainer";
+import TypographyCaption from "../../../components/styled/TypographyCaption";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -269,8 +269,6 @@ const DetailDialog: React.FC<{
 };
 
 const TitleMissionList: React.FC<{}> = () => {
-  const layoutClasses = useLayoutStyles();
-  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
 
   const [honorMissionsCache] = useCachedData<IHonorMission>("honorMissions");
@@ -369,10 +367,10 @@ const TitleMissionList: React.FC<{}> = () => {
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
+      <TypographyHeader>
         {t("common:mission.main")} - {t("common:mission.honor")}
-      </Typography>
-      <Container className={layoutClasses.content}>
+      </TypographyHeader>
+      <ContainerContent>
         <Grid
           container
           justifyContent="flex-end"
@@ -393,7 +391,7 @@ const TitleMissionList: React.FC<{}> = () => {
           </Badge>
         </Grid>
         <Collapse in={filterOpened}>
-          <Paper className={interactiveClasses.container}>
+          <PaperContainer>
             <Grid container direction="column" spacing={1}>
               <Grid
                 item
@@ -404,9 +402,9 @@ const TitleMissionList: React.FC<{}> = () => {
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
-                  <Typography classes={{ root: interactiveClasses.caption }}>
+                  <TypographyCaption>
                     {t("filter:missionType.caption")}
-                  </Typography>
+                  </TypographyCaption>
                 </Grid>
                 <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
@@ -465,9 +463,9 @@ const TitleMissionList: React.FC<{}> = () => {
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
-                  <Typography classes={{ root: interactiveClasses.caption }}>
+                  <TypographyCaption>
                     {t("filter:sort.caption")}
-                  </Typography>
+                  </TypographyCaption>
                 </Grid>
                 <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
@@ -536,7 +534,7 @@ const TitleMissionList: React.FC<{}> = () => {
                 </Grid>
               </Grid>
             </Grid>
-          </Paper>
+          </PaperContainer>
         </Collapse>
         <InfiniteScroll<IHonorMission>
           ViewComponent={ListCard[viewGridType]}
@@ -567,7 +565,7 @@ const TitleMissionList: React.FC<{}> = () => {
             setOpen(true);
           }}
         />
-      </Container>
+      </ContainerContent>
       <DetailDialog
         missionData={honorMission}
         resourceBoxId={resourceBoxId}

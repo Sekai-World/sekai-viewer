@@ -1,5 +1,4 @@
-import { Card, CardContent, Typography, CardMedia, Grid } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
+import { Card, CardContent, Typography, Grid } from "@mui/material";
 import { Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -11,33 +10,9 @@ import { ContentTrans } from "../../components/helpers/ContentTrans";
 import SpoilerTag from "../../components/widgets/SpoilerTag";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
-
-const useStyles = makeStyles((theme) => ({
-  media: {
-    paddingTop: "56.25%",
-    backgroundSize: "contain",
-    position: "relative",
-  },
-  card: {
-    // margin: theme.spacing(0.5),
-    cursor: "pointer",
-  },
-  header: {
-    // "white-space": "nowrap",
-    // overflow: "hidden",
-    // "text-overflow": "ellipsis",
-    // [theme.breakpoints.down("md")]: {
-    //   "max-width": "200px",
-    // },
-    // "max-width": "250px",
-  },
-  "grid-out": {
-    padding: theme.spacing("1%", "2%"),
-  },
-}));
+import CardMediaCardImg from "../../components/styled/CardMediaCardImg";
 
 const GridView: React.FC<{ data?: IEventInfo }> = observer(({ data }) => {
-  const classes = useStyles();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
   const { path } = useRouteMatch();
@@ -59,10 +34,17 @@ const GridView: React.FC<{ data?: IEventInfo }> = observer(({ data }) => {
   if (!data) {
     // loading
     return (
-      <Card className={classes.card}>
-        <Skeleton variant="rectangular" className={classes.media}></Skeleton>
+      <Card>
+        <Skeleton
+          variant="rectangular"
+          sx={{
+            paddingTop: "56.25%",
+            backgroundSize: "contain",
+            position: "relative",
+          }}
+        ></Skeleton>
         <CardContent>
-          <Typography variant="subtitle1" className={classes.header}>
+          <Typography variant="subtitle1">
             <Skeleton variant="text" width="90%"></Skeleton>
           </Typography>
           <Typography variant="body2">
@@ -74,9 +56,9 @@ const GridView: React.FC<{ data?: IEventInfo }> = observer(({ data }) => {
   }
   return (
     <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
-      <Card className={classes.card}>
-        <CardMedia
-          className={classes.media}
+      <Card sx={{ cursor: "pointer" }}>
+        <CardMediaCardImg
+          sx={{ backgroundSize: "contain" }}
           image={eventLogo}
           title={getTranslated(`event_name:${data.id}`, data.name)}
         >
@@ -88,7 +70,7 @@ const GridView: React.FC<{ data?: IEventInfo }> = observer(({ data }) => {
             }}
             releaseTime={new Date(data.startAt)}
           />
-        </CardMedia>
+        </CardMediaCardImg>
         <CardContent style={{ paddingBottom: "16px" }}>
           <Grid container direction="column" spacing={1}>
             <Grid item>
@@ -97,7 +79,6 @@ const GridView: React.FC<{ data?: IEventInfo }> = observer(({ data }) => {
                 original={data.name}
                 originalProps={{
                   variant: "subtitle1",
-                  className: classes.header,
                 }}
               />
             </Grid>

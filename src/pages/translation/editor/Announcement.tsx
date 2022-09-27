@@ -3,7 +3,6 @@ import {
   Button,
   Chip,
   CircularProgress,
-  Container,
   Dialog,
   DialogActions,
   DialogContent,
@@ -28,17 +27,16 @@ import {
   UserMetadatumModel,
 } from "../../../strapi-model";
 import { useStrapi } from "../../../utils/apiClient";
-import { useLayoutStyles } from "../../../styles/layout";
 import { useAlertSnackbar, useQuery } from "../../../utils";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../../stores/root";
+import TypographyHeader from "../../../components/styled/TypographyHeader";
+import ContainerContent from "../../../components/styled/ContainerContent";
 
 const Announcement: React.FC<{
   slug: string;
 }> = observer(({ slug }) => {
   const { t } = useTranslation();
-  // const history = useHistory();
-  const layoutClasses = useLayoutStyles();
   const {
     jwtToken,
     user: { metadata },
@@ -140,11 +138,11 @@ const Announcement: React.FC<{
 
   return sourceModel === "announcement" && sourceData && metadata ? (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
+      <TypographyHeader>
         {t("translate:editor.title.source")}
         {sourceLoading && <CircularProgress size={20} />}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      </TypographyHeader>
+      <ContainerContent maxWidth="md">
         <Grid container spacing={1}>
           <Grid item>
             <Typography color="textSecondary">
@@ -188,12 +186,12 @@ const Announcement: React.FC<{
           readOnly
           style={{ height: "calc(50vh)" }}
         />
-      </Container>
-      <Typography variant="h6" className={layoutClasses.header}>
+      </ContainerContent>
+      <TypographyHeader>
         {t("translate:editor.title.target")}
         {targetLoading && <CircularProgress size={20} />}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      </TypographyHeader>
+      <ContainerContent maxWidth="md">
         <Grid container spacing={1} alignItems="center">
           <Grid item>
             <Typography color="textSecondary">
@@ -280,7 +278,7 @@ const Announcement: React.FC<{
           onChange={({ text }) => setTargetContent(text)}
           style={{ height: "calc(50vh)" }}
         />
-      </Container>
+      </ContainerContent>
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
           <Button
@@ -395,9 +393,7 @@ const Announcement: React.FC<{
       </Dialog>
     </Fragment>
   ) : (
-    <Typography variant="h6" className={layoutClasses.header}>
-      Loading...
-    </Typography>
+    <TypographyHeader>Loading...</TypographyHeader>
   );
 });
 

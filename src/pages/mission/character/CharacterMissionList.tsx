@@ -1,5 +1,4 @@
 import {
-  Container,
   FormControl,
   Grid,
   InputLabel,
@@ -9,7 +8,6 @@ import {
 } from "@mui/material";
 import React, { useState, useEffect, Fragment, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useLayoutStyles } from "../../../styles/layout";
 import {
   CharacterMissionType,
   ICharacterMission,
@@ -19,6 +17,8 @@ import { useCachedData } from "../../../utils";
 import { CharaNameTrans } from "../../../components/helpers/ContentTrans";
 import InfiniteScroll from "../../../components/helpers/InfiniteScroll";
 import GridView from "./GridView";
+import TypographyHeader from "../../../components/styled/TypographyHeader";
+import ContainerContent from "../../../components/styled/ContainerContent";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -35,7 +35,6 @@ function getPaginatedHonorMissions(
 }
 
 const CharacterMissionList: React.FC<{}> = () => {
-  const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
 
   const [characterMissionsCache] =
@@ -110,10 +109,10 @@ const CharacterMissionList: React.FC<{}> = () => {
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
+      <TypographyHeader>
         {t("common:mission.main")} - {t("common:character")}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      </TypographyHeader>
+      <ContainerContent maxWidth="md">
         <Grid container spacing={1} justifyContent="center">
           {characterProfiles && characterProfiles.length ? (
             <Fragment>
@@ -164,8 +163,8 @@ const CharacterMissionList: React.FC<{}> = () => {
             </Fragment>
           ) : null}
         </Grid>
-      </Container>
-      <Container className={layoutClasses.content} maxWidth="md">
+      </ContainerContent>
+      <ContainerContent maxWidth="md">
         <InfiniteScroll<ICharacterMission>
           ViewComponent={ListCard[viewGridType]}
           callback={callback}
@@ -186,7 +185,7 @@ const CharacterMissionList: React.FC<{}> = () => {
             )[viewGridType]
           }
         />
-      </Container>
+      </ContainerContent>
     </Fragment>
   );
 };

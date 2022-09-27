@@ -1,7 +1,6 @@
 import {
+  Alert,
   Button,
-  Chip,
-  Container,
   FormControl,
   FormControlLabel,
   IconButton,
@@ -13,11 +12,8 @@ import {
   Stepper,
   Typography,
 } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
-import { Alert } from "@mui/material";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useLayoutStyles } from "../styles/layout";
 import {
   ICardInfo,
   IMusicInfo,
@@ -41,28 +37,11 @@ import TeamBuilder from "../components/blocks/TeamBuilder";
 import { ContentTrans } from "../components/helpers/ContentTrans";
 import { useMemo } from "react";
 import { ISekaiCardState } from "../stores/sekai";
-
-const useStyle = makeStyles(() => ({
-  easy: {
-    backgroundColor: "#86DA45",
-  },
-  normal: {
-    backgroundColor: "#5FB8E6",
-  },
-  hard: {
-    backgroundColor: "#F3AE3C",
-  },
-  expert: {
-    backgroundColor: "#DC5268",
-  },
-  master: {
-    backgroundColor: "#AC3EE6",
-  },
-}));
+import ChipDifficulty from "../components/styled/ChipDifficulty";
+import TypographyHeader from "../components/styled/TypographyHeader";
+import ContainerContent from "../components/styled/ContainerContent";
 
 const MusicRecommend: React.FC<{}> = () => {
-  const classes = useStyle();
-  const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
 
   const [cards] = useCachedData<ICardInfo>("cards");
@@ -122,14 +101,10 @@ const MusicRecommend: React.FC<{}> = () => {
         width: 100,
         renderCell(params) {
           return (
-            <Chip
-              color="primary"
-              size="small"
-              classes={{
-                colorPrimary: classes[params.row.difficulty as "easy"],
-              }}
-              label={params.value}
-            ></Chip>
+            <ChipDifficulty
+              difficulty={params.row.difficulty}
+              value={params.value}
+            />
           );
         },
       },
@@ -201,7 +176,7 @@ const MusicRecommend: React.FC<{}> = () => {
         sortable: false,
       },
     ],
-    [classes, selectedMode, t]
+    [selectedMode, t]
   );
 
   const calcResult = useCallback(() => {
@@ -351,13 +326,14 @@ const MusicRecommend: React.FC<{}> = () => {
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:musicRecommend")}
-      </Typography>
-      <Alert severity="warning" className={layoutClasses.alert}>
+      <TypographyHeader>{t("common:musicRecommend")}</TypographyHeader>
+      <Alert
+        severity="warning"
+        sx={(theme) => ({ margin: theme.spacing(1, 0) })}
+      >
         {t("common:betaIndicator")}
       </Alert>
-      <Container className={layoutClasses.content}>
+      <ContainerContent>
         <Stepper
           activeStep={activeStep}
           orientation="vertical"
@@ -488,7 +464,7 @@ const MusicRecommend: React.FC<{}> = () => {
             </StepContent>
           </Step>
         </Stepper>
-      </Container>
+      </ContainerContent>
     </Fragment>
   );
 };

@@ -4,32 +4,21 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { useRootStore } from "../../stores/root";
-import { useLayoutStyles } from "../../styles/layout";
-// import { useQuery } from "../../utils";
 import { useStrapi } from "../../utils/apiClient";
-// import useJwtAuth from "../../utils/jwt";
 import { observer } from "mobx-react-lite";
 import { apiUserInfoToStoreUserInfo } from "../../utils";
 import { IUserMetadata } from "../../stores/user";
+import TypographyHeader from "../../components/styled/TypographyHeader";
 
 const Connect: React.FC<{}> = observer(() => {
-  const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const { provider } = useParams<{ provider: string }>();
   const {
     user: { setUserInfo, setToken, setMetadata },
   } = useRootStore();
-  // const query = useQuery();
   const location = useLocation();
   const history = useHistory();
-  // const jwtAuth = useJwtAuth();
-  const {
-    getConnectCallback,
-    getUserMetadataMe,
-    postUpload,
-    // getSekaiProfileMe,
-    // getSekaiCardTeamMe,
-  } = useStrapi();
+  const { getConnectCallback, getUserMetadataMe, postUpload } = useStrapi();
 
   const [progress, setProgress] = useState(0);
   const [step, setStep] = useState("");
@@ -95,9 +84,7 @@ const Connect: React.FC<{}> = observer(() => {
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("auth:connect.redirect")}
-      </Typography>
+      <TypographyHeader>{t("auth:connect.redirect")}</TypographyHeader>
       <Grid container spacing={1}>
         <Grid item xs={12}>
           <Typography>{step}</Typography>

@@ -9,10 +9,10 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRootStore } from "../../../stores/root";
 import { ISekaiCardTeam, ISekaiProfile } from "../../../stores/sekai";
-import { useLayoutStyles } from "../../../styles/layout";
 import { useStrapi } from "../../../utils/apiClient";
 import { observer } from "mobx-react-lite";
 import { autorun } from "mobx";
+import TypographyHeader from "../../../components/styled/TypographyHeader";
 
 const SekaiUserCardList = React.lazy(() => import("./SekaiUserCardList"));
 const SekaiUserImportMember = React.lazy(
@@ -21,7 +21,6 @@ const SekaiUserImportMember = React.lazy(
 const SekaiUserTeams = React.lazy(() => import("./SekaiUserTeams"));
 
 const SekaiCardTeam: React.FC<{}> = observer(() => {
-  const layoutClasses = useLayoutStyles();
   const {
     sekai: { sekaiProfileMap, sekaiCardTeamMap, setSekaiCardTeam },
     jwtToken,
@@ -106,9 +105,9 @@ const SekaiCardTeam: React.FC<{}> = observer(() => {
         onChange={(e, state) => setIsUserMemberOpen(state)}
       >
         <AccordionSummary expandIcon={<ExpandMore />}>
-          <Typography className={layoutClasses.header}>
+          <TypographyHeader>
             {t("user:profile.title.card_list")}
-          </Typography>
+          </TypographyHeader>
         </AccordionSummary>
         <AccordionDetails>
           <SekaiUserCardList />
@@ -119,9 +118,9 @@ const SekaiCardTeam: React.FC<{}> = observer(() => {
         onChange={(e, state) => setIsUserImportMemberOpen(state)}
       >
         <AccordionSummary expandIcon={<ExpandMore />}>
-          <Typography className={layoutClasses.header}>
+          <TypographyHeader>
             {t("user:profile.title.import_card")}
-          </Typography>
+          </TypographyHeader>
         </AccordionSummary>
         <AccordionDetails>
           <SekaiUserImportMember />
@@ -132,9 +131,9 @@ const SekaiCardTeam: React.FC<{}> = observer(() => {
         onChange={(e, state) => setIsUserTeamsOpen(state)}
       >
         <AccordionSummary expandIcon={<ExpandMore />}>
-          <Typography className={layoutClasses.header}>
+          <TypographyHeader>
             {t("user:profile.title.manage_teams")}
-          </Typography>
+          </TypographyHeader>
         </AccordionSummary>
         <AccordionDetails>
           <SekaiUserTeams />

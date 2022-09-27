@@ -1,5 +1,4 @@
 import { Card, CardContent, Typography, CardMedia, Grid } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
 import { Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -12,24 +11,7 @@ import SpoilerTag from "../../components/widgets/SpoilerTag";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
 
-const useStyles = makeStyles((theme) => ({
-  media: {
-    paddingTop: "75%",
-    position: "relative",
-  },
-  card: {
-    // margin: theme.spacing(0.5),
-    cursor: "pointer",
-  },
-  header: {
-    // "white-space": "nowrap",
-    // overflow: "hidden",
-    // "text-overflow": "ellipsis",
-  },
-}));
-
 const GridView: React.FC<{ data?: IMusicInfo }> = observer(({ data }) => {
-  const classes = useStyles();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
@@ -50,10 +32,16 @@ const GridView: React.FC<{ data?: IMusicInfo }> = observer(({ data }) => {
   if (!data) {
     // loading
     return (
-      <Card className={classes.card}>
-        <Skeleton variant="rectangular" className={classes.media}></Skeleton>
+      <Card>
+        <Skeleton
+          variant="rectangular"
+          sx={{
+            paddingTop: "75%",
+            position: "relative",
+          }}
+        ></Skeleton>
         <CardContent>
-          <Typography variant="subtitle1" className={classes.header}>
+          <Typography variant="subtitle1">
             <Skeleton variant="text" width="90%"></Skeleton>
           </Typography>
           <Typography variant="body2">
@@ -65,11 +53,14 @@ const GridView: React.FC<{ data?: IMusicInfo }> = observer(({ data }) => {
   }
   return (
     <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
-      <Card className={classes.card}>
+      <Card sx={{ cursor: "pointer" }}>
         <CardMedia
-          className={classes.media}
           image={jacket}
           title={getTranslated(`music_titles:${data.id}`, data.title)}
+          sx={{
+            paddingTop: "75%",
+            position: "relative",
+          }}
         >
           <SpoilerTag
             style={{
@@ -88,11 +79,9 @@ const GridView: React.FC<{ data?: IMusicInfo }> = observer(({ data }) => {
                 original={data.title}
                 originalProps={{
                   variant: "subtitle1",
-                  className: classes.header,
                 }}
                 translatedProps={{
                   variant: "subtitle1",
-                  className: classes.header,
                 }}
               />
             </Grid>

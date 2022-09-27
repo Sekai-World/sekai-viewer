@@ -4,7 +4,6 @@ import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
 import { attrIconMap } from "../../utils/resources";
 import { useCharaName } from "../../utils/i18n";
-import makeStyles from "@mui/styles/makeStyles";
 import {
   Dialog,
   DialogTitle,
@@ -18,6 +17,7 @@ import {
   Select,
   Switch,
   DialogProps,
+  styled,
 } from "@mui/material";
 import { ICardInfo, IGameChara, ISkillInfo } from "../../types";
 import {
@@ -30,23 +30,9 @@ import { CardThumb } from "./CardThumb";
 import { useTranslation } from "react-i18next";
 import { ISekaiCardTeam } from "../../stores/sekai";
 
-const useStyle = makeStyles((theme) => ({
-  "rarity-star-img": {
-    maxWidth: "16px",
-    margin: theme.spacing(0, 0.25),
-  },
-  "dialog-paper": {
-    padding: theme.spacing(1),
-    [theme.breakpoints.up("sm")]: {
-      minWidth: "500px",
-    },
-    [theme.breakpoints.up("md")]: {
-      minWidth: "700px",
-    },
-    [theme.breakpoints.up("lg")]: {
-      minWidth: "900px",
-    },
-  },
+const ImgRarityStar = styled("img")(({ theme }) => ({
+  maxWidth: "16px",
+  margin: theme.spacing(0, 0.25),
 }));
 
 const FilterCardsModal: React.FC<
@@ -58,7 +44,6 @@ const FilterCardsModal: React.FC<
 > = observer(
   ({ sekaiCardTeam, onCardSelected, excludeCardIds = [], ...props }) => {
     const { t } = useTranslation();
-    const classes = useStyle();
     const getCharaName = useCharaName();
     const skillMapping = useSkillMapping();
 
@@ -177,16 +162,14 @@ const FilterCardsModal: React.FC<
                     >
                       {index + 1 >= 3
                         ? Array.from({ length: index + 1 }).map((_, id) => (
-                            <img
-                              className={classes["rarity-star-img"]}
+                            <ImgRarityStar
                               src={rarityAfterTraining}
                               alt={`star-${id}`}
                               key={`star-${id}`}
                             />
                           ))
                         : Array.from({ length: index + 1 }).map((_, id) => (
-                            <img
-                              className={classes["rarity-star-img"]}
+                            <ImgRarityStar
                               src={rarityNormal}
                               alt={`star-${id}`}
                               key={`star-${id}`}
@@ -214,8 +197,7 @@ const FilterCardsModal: React.FC<
                   {["cute", "mysterious", "cool", "happy", "pure"].map(
                     (name) => (
                       <MenuItem key={`attr-select-item-${name}`} value={name}>
-                        <img
-                          className={classes["rarity-star-img"]}
+                        <ImgRarityStar
                           src={attrIconMap[name as "cool"]}
                           alt={`attr-${name}`}
                           key={`attr-${name}`}

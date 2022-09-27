@@ -1,10 +1,8 @@
-import { Container, Divider, Grid, Paper, Typography } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
+import { Divider, Grid, Paper, Typography } from "@mui/material";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import Image from "mui-image";
-import { useLayoutStyles } from "../styles/layout";
 import {
   IGameChara,
   IMusicInfo,
@@ -20,33 +18,12 @@ import {
   ContentTrans,
 } from "../components/helpers/ContentTrans";
 import { OpenInNew } from "@mui/icons-material";
-import { useInteractiveStyles } from "../styles/interactive";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../stores/root";
-
-const useStyle = makeStyles((theme) => ({
-  tabpanel: {
-    padding: theme.spacing("1%", 0, 0, 0),
-  },
-  media: {
-    paddingTop: "70%",
-    cursor: "pointer",
-  },
-  nameLabel: {
-    paddingTop: "30%",
-    backgroundSize: "contain",
-  },
-  nameVerticalLabel: {
-    paddingTop: "45%",
-    backgroundSize: "contain",
-  },
-  "grid-out": {
-    padding: theme.spacing("1%", "0"),
-  },
-  "unit-logo-img": {
-    maxWidth: "128px",
-  },
-}));
+import TypographyHeader from "../components/styled/TypographyHeader";
+import ContainerContent from "../components/styled/ContainerContent";
+import GridOut from "../components/styled/GridOut";
+import LinkNoDecoration from "../components/styled/LinkNoDecoration";
 
 const unitIdTagMap: { [key: string]: string } = {
   light_sound: "light_music_club",
@@ -72,9 +49,6 @@ const UnitMusicImage: React.FC<{
 
 const UnitDetail: React.FC<{}> = observer(() => {
   const { unitId } = useParams<{ unitId: string }>();
-  const classes = useStyle();
-  const layoutClasses = useLayoutStyles();
-  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
   const getCharaName = useCharaName();
@@ -112,10 +86,10 @@ const UnitDetail: React.FC<{}> = observer(() => {
 
   return unit ? (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
+      <TypographyHeader>
         {getTranslated(`unit_profile:${unit.unit}.name`, unit.unitName)}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      </TypographyHeader>
+      <ContainerContent maxWidth="md">
         <div style={{ textAlign: "center" }}>
           <img
             src={UnitLogoMap[region][unit.unit]}
@@ -123,7 +97,7 @@ const UnitDetail: React.FC<{}> = observer(() => {
             style={{ maxWidth: "100%" }}
           ></img>
         </div>
-        <Grid className={classes["grid-out"]} container direction="column">
+        <GridOut container direction="column">
           <Grid
             container
             direction="row"
@@ -196,32 +170,23 @@ const UnitDetail: React.FC<{}> = observer(() => {
               </Typography>
             </Grid>
             <Grid item container justifyContent="flex-end">
-              <Link
-                to={`/storyreader/unitStory/${unit.unit}`}
-                className={interactiveClasses.noDecoration}
-              >
+              <LinkNoDecoration to={`/storyreader/unitStory/${unit.unit}`}>
                 <Grid container alignItems="center">
                   <OpenInNew />
                 </Grid>
-              </Link>
+              </LinkNoDecoration>
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
-        </Grid>
-      </Container>
-      <Typography variant="h6" className={layoutClasses.header}>
+        </GridOut>
+      </ContainerContent>
+      <TypographyHeader>
         {t("common:character", {
           count: unitCharas.length,
         })}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
-        <Grid
-          className={classes["grid-out"]}
-          container
-          direction="row"
-          spacing={2}
-          justifyContent="center"
-        >
+      </TypographyHeader>
+      <ContainerContent maxWidth="md">
+        <GridOut container direction="row" spacing={2} justifyContent="center">
           {unitCharas.map((uc) => (
             <Fragment key={`chara-${uc.id}`}>
               <Grid item xs={6} md={4} lg={3}>
@@ -262,19 +227,11 @@ const UnitDetail: React.FC<{}> = observer(() => {
               </Grid>
             </Fragment>
           ))}
-        </Grid>
-      </Container>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:music")}
-      </Typography>
-      <Container className={layoutClasses.content}>
-        <Grid
-          className={classes["grid-out"]}
-          container
-          direction="row"
-          spacing={2}
-          justifyContent="center"
-        >
+        </GridOut>
+      </ContainerContent>
+      <TypographyHeader>{t("common:music")}</TypographyHeader>
+      <ContainerContent>
+        <GridOut container direction="row" spacing={2} justifyContent="center">
           {unitMusics.map((um) => (
             <Fragment key={`music-${um.id}`}>
               <Grid item xs={6} md={3} lg={2}>
@@ -312,8 +269,8 @@ const UnitDetail: React.FC<{}> = observer(() => {
               </Grid>
             </Fragment>
           ))}
-        </Grid>
-      </Container>
+        </GridOut>
+      </ContainerContent>
     </Fragment>
   ) : (
     <div>

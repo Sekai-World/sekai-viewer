@@ -1,4 +1,4 @@
-import { Container, Grid, Typography } from "@mui/material";
+import { Grid } from "@mui/material";
 import {
   GetApp,
   GetAppOutlined,
@@ -10,13 +10,14 @@ import { ToggleButtonGroup, ToggleButton } from "@mui/material";
 import Pound from "~icons/mdi/pound";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useLayoutStyles } from "../../styles/layout";
 import { IVirtualLiveInfo } from "../../types.d";
 import { useCachedData, useLocalStorage } from "../../utils";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
 import AgendaView from "./AgendaView";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
+import TypographyHeader from "../../components/styled/TypographyHeader";
+import ContainerContent from "../../components/styled/ContainerContent";
 
 type ViewGridType = "agenda";
 
@@ -33,7 +34,6 @@ const ListCard: { [key: string]: React.FC<{ data?: IVirtualLiveInfo }> } = {
 };
 
 const VirtualLiveList: React.FC<{}> = observer(() => {
-  const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const {
     settings: { isShowSpoiler },
@@ -137,10 +137,8 @@ const VirtualLiveList: React.FC<{}> = observer(() => {
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:virtualLive")}
-      </Typography>
-      <Container className={layoutClasses.content}>
+      <TypographyHeader>{t("common:virtualLive")}</TypographyHeader>
+      <ContainerContent>
         <Grid container spacing={1}>
           <Grid item>
             <ToggleButtonGroup
@@ -189,7 +187,7 @@ const VirtualLiveList: React.FC<{}> = observer(() => {
             )[viewGridType]
           }
         />
-      </Container>
+      </ContainerContent>
     </Fragment>
   );
 });

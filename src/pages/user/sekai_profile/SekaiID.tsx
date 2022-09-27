@@ -6,23 +6,16 @@ import {
   InputAdornment,
   Chip,
   Grid,
-  // useTheme,
   CardMedia,
   Tooltip,
   Dialog,
-  // Paper,
   DialogContent,
   DialogContentText,
   DialogActions,
   DialogProps,
   DialogTitle,
   TextField as MUITextField,
-  // FormControl,
-  // InputLabel,
-  // Select,
-  // MenuItem,
 } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
 import { Check, Clear, Delete, Twitter, Update } from "@mui/icons-material";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-mui";
@@ -39,19 +32,6 @@ import { ISekaiProfile, ISekaiUserData } from "../../../stores/sekai";
 import { autorun } from "mobx";
 import BondsDegreeImage from "../../../components/widgets/BondsDegreeImage";
 
-const useStyles = makeStyles((theme) => ({
-  media: {
-    [theme.breakpoints.down("md")]: {
-      paddingTop: "75%",
-    },
-    [theme.breakpoints.up("md")]: {
-      paddingTop: "56.25%",
-    },
-    backgroundSize: "contain",
-    width: "100%",
-  },
-}));
-
 const VerifyDialog: React.FC<
   DialogProps & {
     onVerifyClick: React.MouseEventHandler<HTMLButtonElement>;
@@ -59,7 +39,6 @@ const VerifyDialog: React.FC<
   }
 > = ({ onVerifyClick, token, ...dialogProps }) => {
   const { t } = useTranslation();
-  const classes = useStyles();
 
   return (
     <Dialog {...dialogProps} fullWidth>
@@ -72,7 +51,16 @@ const VerifyDialog: React.FC<
                 : import.meta.env.VITE_FRONTEND_ASSET_BASE
             }/verify/step_1.png`}
             title="sekai id verify step 1"
-            className={classes.media}
+            sx={(theme) => ({
+              [theme.breakpoints.down("md")]: {
+                paddingTop: "75%",
+              },
+              [theme.breakpoints.up("md")]: {
+                paddingTop: "56.25%",
+              },
+              backgroundSize: "contain",
+              width: "100%",
+            })}
           />
           <DialogContentText>
             <Typography>
@@ -92,7 +80,16 @@ const VerifyDialog: React.FC<
                 : import.meta.env.VITE_FRONTEND_ASSET_BASE
             }/verify/step_2.png`}
             title="sekai id verify step 2"
-            className={classes.media}
+            sx={(theme) => ({
+              [theme.breakpoints.down("md")]: {
+                paddingTop: "75%",
+              },
+              [theme.breakpoints.up("md")]: {
+                paddingTop: "56.25%",
+              },
+              backgroundSize: "contain",
+              width: "100%",
+            })}
           />
           <DialogContentText>
             <Typography>

@@ -1,9 +1,7 @@
 import { Collapse, Grid, IconButton, Paper, Typography } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
 import { KeyboardArrowUp, KeyboardArrowDown } from "@mui/icons-material";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useLayoutStyles } from "../../styles/layout";
 import { EventRankingResponse } from "../../types.d";
 import { CardThumb } from "../../components/widgets/CardThumb";
 import CheerfulCarnivalTeamIcon from "../../components/widgets/CheerfulCarnivalTeamIcon";
@@ -11,21 +9,10 @@ import DegreeImage from "../../components/widgets/DegreeImage";
 import EventTrackerGraph from "./EventTrackerGraph";
 import BondsDegreeImage from "../../components/widgets/BondsDegreeImage";
 
-const useRowStyles = makeStyles((theme) => ({
-  updated: {
-    backgroundColor: theme.palette.warning.main,
-    WebkitTransition: "background-color 850ms linear",
-    msTransition: "background-color 850ms linear",
-    transition: "background-color 850ms linear",
-  },
-}));
-
 export const HistoryMobileRow: React.FC<{
   rankingData: EventRankingResponse;
   eventId: number;
 }> = ({ rankingData, eventId }) => {
-  const layoutClasses = useLayoutStyles();
-
   const [open, setOpen] = useState(false);
 
   return (
@@ -79,10 +66,7 @@ export const HistoryMobileRow: React.FC<{
             <Grid item xs={9}>
               <Grid container>
                 <Grid item xs={12}>
-                  <Typography
-                    variant="subtitle1"
-                    className={layoutClasses.bold}
-                  >
+                  <Typography variant="subtitle1" fontWeight="bold">
                     {rankingData.userName}
                   </Typography>
                   {rankingData.userProfile && (
@@ -143,31 +127,32 @@ export const LiveMobileRow: React.FC<{
   noPred?: boolean;
 }> = ({ rankingData, rankingPred, noPred = false }) => {
   const { t } = useTranslation();
-  const classes = useRowStyles();
-  const layoutClasses = useLayoutStyles();
 
   const [open, setOpen] = useState(false);
-  const [customClass, setCustomClass] = useState("");
   const [lastScore, setLastScore] = useState(0);
+  const [scoreUpdated, setScoreUpdated] = useState(false);
 
   useEffect(() => {
     if (!lastScore && rankingData.score) {
       setLastScore(rankingData.score);
-      setCustomClass("");
+      setScoreUpdated(false);
     } else if (lastScore && lastScore !== rankingData.score) {
       setLastScore(rankingData.score);
-      setCustomClass(classes.updated);
-      setTimeout(() => setCustomClass(""), 850);
+      setScoreUpdated(true);
+      setTimeout(() => setScoreUpdated(false), 850);
     }
-  }, [classes.updated, lastScore, rankingData.score]);
+  }, [lastScore, rankingData.score]);
 
   return (
     <Fragment>
       <Grid
-        className={customClass}
         container
         onClick={() => setOpen(!open)}
         component={Paper}
+        sx={[
+          { transition: "background-color 850ms linear" },
+          scoreUpdated && { backgroundColor: "warning.main" },
+        ]}
       >
         <Grid item xs={12}>
           <Grid container alignItems="center" spacing={1}>
@@ -241,10 +226,7 @@ export const LiveMobileRow: React.FC<{
             <Grid item xs={9}>
               <Grid container>
                 <Grid item xs={12}>
-                  <Typography
-                    variant="subtitle1"
-                    className={layoutClasses.bold}
-                  >
+                  <Typography variant="subtitle1" fontWeight="bold">
                     {rankingData.userName}
                   </Typography>
                   {rankingData.userProfile && (

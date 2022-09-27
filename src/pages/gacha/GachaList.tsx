@@ -1,5 +1,4 @@
-import { Typography, Container, Grid } from "@mui/material";
-import { useLayoutStyles } from "../../styles/layout";
+import { Grid } from "@mui/material";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useCachedData, useLocalStorage } from "../../utils";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
@@ -18,6 +17,8 @@ import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import Pound from "~icons/mdi/pound";
 import { useRootStore } from "../../stores/root";
 import { observer } from "mobx-react-lite";
+import TypographyHeader from "../../components/styled/TypographyHeader";
+import ContainerContent from "../../components/styled/ContainerContent";
 
 function getPaginatedGachas(gachas: IGachaInfo[], page: number, limit: number) {
   return gachas.slice(limit * (page - 1), limit * page);
@@ -26,7 +27,6 @@ function getPaginatedGachas(gachas: IGachaInfo[], page: number, limit: number) {
 const ListCard: React.FC<{ data?: IGachaInfo }> = GridView;
 
 const GachaList: React.FC<{}> = observer(() => {
-  const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const {
     settings: { isShowSpoiler },
@@ -128,10 +128,8 @@ const GachaList: React.FC<{}> = observer(() => {
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:gacha")}
-      </Typography>
-      <Container className={layoutClasses.content}>
+      <TypographyHeader>{t("common:gacha")}</TypographyHeader>
+      <ContainerContent>
         <Grid container spacing={1}>
           <Grid item>
             <ToggleButtonGroup
@@ -177,7 +175,7 @@ const GachaList: React.FC<{}> = observer(() => {
             lg: 3,
           }}
         />
-      </Container>
+      </ContainerContent>
     </Fragment>
   );
 });

@@ -18,12 +18,10 @@ import React, {
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { useRootStore } from "../../../stores/root";
-// import { useTranslation } from "react-i18next";
 import { LanguageModel, TranslationModel } from "../../../strapi-model";
-import { useInteractiveStyles } from "../../../styles/interactive";
-// import { useLayoutStyles } from "../../styles/layout";
 import { useStrapi } from "../../../utils/apiClient";
 import { observer } from "mobx-react-lite";
+import LinkNoDecoration from "../../../components/styled/LinkNoDecoration";
 
 interface Props {
   languages: LanguageModel[];
@@ -32,8 +30,6 @@ interface Props {
 
 const TableMe: React.FC<Props> = observer((props: Props) => {
   const { t } = useTranslation();
-  // const layoutClasses = useLayoutStyles();
-  const interactiveClasses = useInteractiveStyles();
   const {
     jwtToken,
     user: { metadata },
@@ -112,13 +108,12 @@ const TableMe: React.FC<Props> = observer((props: Props) => {
         width: 150,
         renderCell(params) {
           return (
-            <Link
-              className={interactiveClasses.noDecoration}
+            <LinkNoDecoration
               to={`/${(params.value as string).replace(":", "/")}`}
               target="_blank"
             >
               {params.value}
-            </Link>
+            </LinkNoDecoration>
           );
         },
       },
@@ -136,15 +131,14 @@ const TableMe: React.FC<Props> = observer((props: Props) => {
         width: 150,
         renderCell(params) {
           return (
-            <Link
-              className={interactiveClasses.noDecoration}
+            <LinkNoDecoration
               to={`/${(params.value as string).replace(":", "/")}${
-                params.getValue(params.id, "isFin") ? "" : "?preview=true"
+                params.row["isFin"] ? "" : "?preview=true"
               }`}
               target="_blank"
             >
               {params.value}
-            </Link>
+            </LinkNoDecoration>
           );
         },
       },
@@ -157,7 +151,7 @@ const TableMe: React.FC<Props> = observer((props: Props) => {
         },
       },
     ],
-    [interactiveClasses.noDecoration, t]
+    [t]
   );
 
   return (

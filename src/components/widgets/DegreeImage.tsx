@@ -1,6 +1,5 @@
 import { Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useSvgStyles } from "../../styles/svg";
 import {
   IResourceBoxInfo,
   IHonorInfo,
@@ -12,6 +11,7 @@ import { degreeFrameMap, degreeFramSubMap } from "../../utils/resources";
 import degreeLevelIcon from "../../assets/frame/icon_degreeLv.png";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
+import Svg from "../styled/Svg";
 
 const DegreeImage: React.FC<
   {
@@ -30,7 +30,6 @@ const DegreeImage: React.FC<
     honorLevel: _honorLevel,
     sub = false,
   }) => {
-    const classes = useSvgStyles();
     const { region } = useRootStore();
 
     const [resourceBoxes] = useCachedData<IResourceBoxInfo>("resourceBoxes");
@@ -144,7 +143,7 @@ const DegreeImage: React.FC<
     }, [honor, honorGroup, region, sub, type]);
 
     return honor === undefined ? null : !!honor ? (
-      <div className={classes.svg}>
+      <Svg>
         <svg
           style={style}
           xmlns="http://www.w3.org/2000/svg"
@@ -193,7 +192,7 @@ const DegreeImage: React.FC<
             />
           )}
         </svg>
-      </div>
+      </Svg>
     ) : (
       <Skeleton
         variant="rectangular"

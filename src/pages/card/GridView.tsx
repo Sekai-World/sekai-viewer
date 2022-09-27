@@ -1,31 +1,15 @@
 import { Card, CardContent, Typography, CardMedia, Grid } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
 import { Skeleton } from "@mui/material";
 import React from "react";
-import { Link, useRouteMatch } from "react-router-dom";
+import { useRouteMatch } from "react-router-dom";
 import { ICardInfo } from "../../types.d";
 import { useAssetI18n, useCharaName } from "../../utils/i18n";
 import { CardSmallImage } from "../../components/widgets/CardImage";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
 import SpoilerTag from "../../components/widgets/SpoilerTag";
-
-const useStyles = makeStyles((theme) => ({
-  media: {
-    paddingTop: "56.25%",
-  },
-  card: {
-    // margin: theme.spacing(0.5),
-    cursor: "pointer",
-  },
-  subheader: {
-    // whiteSpace: "nowrap",
-    // overflow: "hidden",
-    // textOverflow: "ellipsis",
-  },
-}));
+import LinkNoDecorationAlsoNoHover from "../../components/styled/LinkNoDecorationAlsoHover";
 
 const GridView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
-  const classes = useStyles();
   const { path } = useRouteMatch();
   const { getTranslated } = useAssetI18n();
   const getCharaName = useCharaName();
@@ -33,13 +17,18 @@ const GridView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
   if (!data) {
     // loading
     return (
-      <Card className={classes.card}>
-        <Skeleton variant="rectangular" className={classes.media}></Skeleton>
+      <Card>
+        <Skeleton
+          variant="rectangular"
+          sx={{
+            paddingTop: "56.25%",
+          }}
+        ></Skeleton>
         <CardContent>
-          <Typography variant="subtitle1" className={classes.subheader}>
+          <Typography variant="subtitle1">
             <Skeleton variant="text" width="90%"></Skeleton>
           </Typography>
-          <Typography variant="body2" className={classes.subheader}>
+          <Typography variant="body2">
             <Skeleton variant="text" width="30%"></Skeleton>
           </Typography>
         </CardContent>
@@ -47,8 +36,12 @@ const GridView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
     );
   }
   return (
-    <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
-      <Card className={classes.card}>
+    <LinkNoDecorationAlsoNoHover to={path + "/" + data.id}>
+      <Card
+        sx={{
+          cursor: "pointer",
+        }}
+      >
         <CardMedia
           title={getTranslated(`card_prefix:${data.id}`, data.prefix)}
           style={{
@@ -73,27 +66,21 @@ const GridView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
                 original={data.prefix}
                 originalProps={{
                   variant: "subtitle1",
-                  className: classes.subheader,
                 }}
                 translatedProps={{
                   variant: "subtitle1",
-                  className: classes.subheader,
                 }}
               />
             </Grid>
             <Grid item>
-              <Typography
-                variant="body2"
-                className={classes.subheader}
-                color="textSecondary"
-              >
+              <Typography variant="body2" color="textSecondary">
                 {getCharaName(data.characterId)}
               </Typography>
             </Grid>
           </Grid>
         </CardContent>
       </Card>
-    </Link>
+    </LinkNoDecorationAlsoNoHover>
   );
 };
 

@@ -6,34 +6,14 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
 import { KeyboardArrowUp, KeyboardArrowDown } from "@mui/icons-material";
 import React, { Fragment, useEffect, useState } from "react";
-import { useLayoutStyles } from "../../styles/layout";
-import {
-  EventRankingResponse,
-  EventRankingRewardRange,
-  UserRanking,
-} from "../../types.d";
+import { EventRankingResponse, EventRankingRewardRange } from "../../types.d";
 import { CardThumb } from "../../components/widgets/CardThumb";
 import CheerfulCarnivalTeamIcon from "../../components/widgets/CheerfulCarnivalTeamIcon";
 import DegreeImage from "../../components/widgets/DegreeImage";
 import EventTrackerGraph from "./EventTrackerGraph";
 import BondsDegreeImage from "../../components/widgets/BondsDegreeImage";
-
-const useRowStyles = makeStyles((theme) => ({
-  root: {
-    "& > *": {
-      borderBottom: "unset",
-    },
-  },
-  updated: {
-    backgroundColor: theme.palette.warning.main,
-    WebkitTransition: "background-color 850ms linear",
-    msTransition: "background-color 850ms linear",
-    transition: "background-color 850ms linear",
-  },
-}));
 
 export const HistoryRow: React.FC<{
   rankingReward?: EventRankingRewardRange;
@@ -41,16 +21,17 @@ export const HistoryRow: React.FC<{
   eventDuration: number;
   eventId: number;
 }> = ({ rankingReward, rankingData, eventDuration, eventId }) => {
-  const classes = useRowStyles();
-  const layoutClasses = useLayoutStyles();
-
   const [open, setOpen] = useState(false);
 
   return (
     <Fragment>
       <TableRow
+        sx={{
+          "& > *": {
+            borderBottom: "unset",
+          },
+        }}
         key={rankingData.userId}
-        className={classes.root}
         onClick={() => setOpen(!open)}
       >
         <TableCell>
@@ -125,10 +106,7 @@ export const HistoryRow: React.FC<{
               <Grid item xs={9} sm={10} md={11}>
                 <Grid container>
                   <Grid item xs={12}>
-                    <Typography
-                      variant="subtitle1"
-                      className={layoutClasses.bold}
-                    >
+                    <Typography variant="subtitle1" fontWeight="bold">
                       {rankingData.userName}
                     </Typography>
                     {!!rankingData.userProfile && (
@@ -220,32 +198,35 @@ export const LiveRow: React.FC<{
   rankingPred,
   noPred = false,
 }) => {
-  // const { t } = useTranslation();
-  const classes = useRowStyles();
-  const layoutClasses = useLayoutStyles();
-
   const [open, setOpen] = useState(false);
-  // const [isShowGraph, toggleIsShowGraph] = useToggle(false);
-  const [customClass, setCustomClass] = useState("");
   const [lastScore, setLastScore] = useState(0);
+  const [scoreUpdated, setScoreUpdated] = useState(false);
 
   useEffect(() => {
     if (!lastScore && rankingData.score) {
       setLastScore(rankingData.score);
-      setCustomClass(classes.root);
+      setScoreUpdated(false);
     } else if (lastScore && lastScore !== rankingData.score) {
       setLastScore(rankingData.score);
-      setCustomClass(`${classes.root} ${classes.updated}`);
-      setTimeout(() => setCustomClass(classes.root), 850);
+      setScoreUpdated(true);
+      setTimeout(() => setScoreUpdated(false), 850);
     }
-  }, [classes.root, classes.updated, lastScore, rankingData.score]);
+  }, [lastScore, rankingData.score]);
 
   return (
     <Fragment>
       <TableRow
         key={rankingData.userId}
-        className={customClass}
         onClick={() => setOpen(!open)}
+        sx={[
+          {
+            "& > *": {
+              borderBottom: "unset",
+            },
+            transition: "background-color 850ms linear",
+          },
+          scoreUpdated && { backgroundColor: "warning.main" },
+        ]}
       >
         <TableCell>
           <IconButton
@@ -326,10 +307,7 @@ export const LiveRow: React.FC<{
               <Grid item xs={9} sm={10} md={11}>
                 <Grid container>
                   <Grid item xs={12}>
-                    <Typography
-                      variant="subtitle1"
-                      className={layoutClasses.bold}
-                    >
+                    <Typography variant="subtitle1" fontWeight="bold">
                       {rankingData.userName}
                     </Typography>
                     {rankingData.userProfile && (

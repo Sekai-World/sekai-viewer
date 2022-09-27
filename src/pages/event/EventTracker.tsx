@@ -1,7 +1,6 @@
 import {
   Button,
   CircularProgress,
-  Container,
   FormControlLabel,
   FormGroup,
   // Divider,
@@ -20,7 +19,6 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
 import { Alert, Autocomplete } from "@mui/material";
 import { CronJob } from "cron";
 import React, {
@@ -31,19 +29,14 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { useLayoutStyles } from "../../styles/layout";
 import {
   EventPrediction,
   EventRankingResponse,
   IEventInfo,
-  UserRanking,
 } from "../../types.d";
 import { useCachedData, useQuery, useToggle } from "../../utils";
 import { useCurrentEvent } from "../../utils/apiClient";
-import {
-  useEventTrackerAPI,
-  useRealtimeEventData,
-} from "../../utils/eventTracker";
+import { useEventTrackerAPI } from "../../utils/eventTracker";
 import { useAssetI18n } from "../../utils/i18n";
 import { HistoryMobileRow, LiveMobileRow } from "./EventTrackerMobileRow";
 // import DegreeImage from "../../components/widgets/DegreeImage";
@@ -53,6 +46,8 @@ import { useRootStore } from "../../stores/root";
 import { ISekaiProfile } from "../../stores/sekai";
 import { observer } from "mobx-react-lite";
 import { autorun } from "mobx";
+import TypographyHeader from "../../components/styled/TypographyHeader";
+import ContainerContent from "../../components/styled/ContainerContent";
 
 const SekaiEventRecord = React.lazy(
   () => import("../user/sekai_profile/SekaiEventRecord")
@@ -61,16 +56,7 @@ const SekaiEventRecord = React.lazy(
 //   () => import("../../components/blocks/AdSenseBlock")
 // );
 
-const useStyles = makeStyles(() => ({
-  eventSelect: {
-    width: "100%",
-    maxWidth: 300,
-  },
-}));
-
 const EventTracker: React.FC<{}> = observer(() => {
-  const layoutClasses = useLayoutStyles();
-  const classes = useStyles();
   const query = useQuery();
   const theme = useTheme();
   const { t } = useTranslation();
@@ -355,12 +341,16 @@ const EventTracker: React.FC<{}> = observer(() => {
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:eventTracker")}
-      </Typography>
-      <Container className={layoutClasses.content}>
+      <TypographyHeader>{t("common:eventTracker")}</TypographyHeader>
+      <ContainerContent>
         <Grid container spacing={1} alignItems="center">
-          <Grid item className={classes.eventSelect}>
+          <Grid
+            item
+            sx={{
+              width: "100%",
+              maxWidth: 300,
+            }}
+          >
             <Autocomplete
               options={(events || [])
                 .slice()
@@ -412,22 +402,22 @@ const EventTracker: React.FC<{}> = observer(() => {
             </Button>
           </Grid>
         </Grid>
-      </Container>
+      </ContainerContent>
       {!!sekaiProfile && !!sekaiProfile.sekaiUserProfile && (
         <Fragment>
-          <Typography variant="h6" className={layoutClasses.header}>
+          <TypographyHeader>
             {t("user:profile.title.user_event")}
-          </Typography>
-          <Container className={layoutClasses.content}>
+          </TypographyHeader>
+          <ContainerContent>
             <SekaiEventRecord eventId={selectedEventId} />
-          </Container>
+          </ContainerContent>
         </Fragment>
       )}
-      <Typography variant="h6" className={layoutClasses.header}>
+      <TypographyHeader>
         {t("event:ranking")} {isFetching && <CircularProgress size="24px" />}
-      </Typography>
+      </TypographyHeader>
       {!!selectedEventId && (!!rtRanking.length || !!historyRanking.length) && (
-        <Container className={layoutClasses.content}>
+        <ContainerContent>
           <Typography variant="h6">
             {t("event:realtime")}{" "}
             {isTimeTravel
@@ -483,7 +473,7 @@ const EventTracker: React.FC<{}> = observer(() => {
             />
           )}
           {region === "jp" && !isTimeTravel && !!rtRanking.length && !!rtTime && (
-            <Alert severity="info" className={layoutClasses.alert}>
+            <Alert severity="info" sx={{ margin: theme.spacing(1, 0) }}>
               <Typography>
                 {t("event:tracker.tooltip.get_prediction")}
               </Typography>
@@ -695,7 +685,7 @@ const EventTracker: React.FC<{}> = observer(() => {
                 </Table>
               </TableContainer>
             ))}
-        </Container>
+        </ContainerContent>
       )}
       {/* <AdSense
         client="ca-pub-7767752375383260"

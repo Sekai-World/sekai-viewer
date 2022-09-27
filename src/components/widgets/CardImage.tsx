@@ -1,4 +1,3 @@
-import { Skeleton } from "@mui/material";
 import React, {
   Fragment,
   useCallback,
@@ -8,7 +7,6 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useSvgStyles } from "../../styles/svg";
 import { ICardInfo } from "../../types.d";
 import {
   cardRarityTypeToRarity,
@@ -22,14 +20,13 @@ import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
 import rarityBirthday from "../../assets/rarity_birthday.png";
 import { attrIconMap, cardImageFrameMap } from "../../utils/resources";
+import SvgSkeleton from "../styled/SvgSkeleton";
+import Svg from "../styled/Svg";
 
 export const CardImage: React.FC<{ id: number; trained?: boolean }> = ({
   id,
   trained = false,
 }) => {
-  const skeleton = CardImageSkeleton({});
-
-  const classes = useSvgStyles();
   const [cards] = useCachedData<ICardInfo>("cards");
   const [card, setCard] = useState<ICardInfo>();
   const [cardImg, setCardImg] = useState<string>("");
@@ -61,11 +58,7 @@ export const CardImage: React.FC<{ id: number; trained?: boolean }> = ({
   }, [card, trained]);
 
   return card ? (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 1024 576"
-      className={classes.svg}
-    >
+    <Svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 576">
       <image
         href={cardImg}
         x="0"
@@ -113,20 +106,14 @@ export const CardImage: React.FC<{ id: number; trained?: boolean }> = ({
           height="70"
         />
       ))}
-    </svg>
+    </Svg>
   ) : (
-    skeleton
+    <SvgSkeleton variant="rectangular" />
   );
 };
 
 export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
   ({ card }) => {
-    const skeleton = CardImageSkeleton({});
-
-    const classes = useSvgStyles();
-    // const [cards] = useCachedData<ICardInfo>("cards");
-    // const [card, setCard] = useState<ICardInfo>();
-
     const [hoveredArea, setHoveredArea] = useState<number>(0);
     const [imgLeftX, refImgLeftX, setImgLeftX] = useRefState<number>(-256);
     const [imgRightX, refImgRightX, setImgRightX] = useRefState<number>(512);
@@ -288,10 +275,9 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
     );
 
     return card ? (
-      <svg
+      <Svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 1024 576"
-        className={classes.svg}
         ref={svgElement}
         onMouseMove={handleMoseOver}
         onMouseLeave={() => setHoveredArea(0)}
@@ -370,17 +356,9 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
             height="70"
           />
         ))}
-      </svg>
+      </Svg>
     ) : (
-      skeleton
+      <SvgSkeleton variant="rectangular" />
     );
   }
 );
-
-export const CardImageSkeleton: React.FC<{}> = () => {
-  const classes = useSvgStyles();
-
-  return (
-    <Skeleton variant="rectangular" className={classes.skeleton}></Skeleton>
-  );
-};

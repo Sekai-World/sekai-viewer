@@ -1,20 +1,15 @@
-import { Container, Link, Typography } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
+import { Container, Link, styled, Typography } from "@mui/material";
 import { GitHub } from "@mui/icons-material";
 import { Alert, AlertTitle } from "@mui/material";
 import React, { Fragment, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useLayoutStyles } from "../styles/layout";
+import TypographyHeader from "../components/styled/TypographyHeader";
 
-const useStyles = makeStyles((theme) => ({
-  alert: {
-    margin: theme.spacing(2, 0),
-  },
+const StyledAlert = styled(Alert)(({ theme }) => ({
+  margin: theme.spacing(2, 0),
 }));
 
 const About: React.FC<{}> = () => {
-  const classes = useStyles();
-  const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -23,11 +18,9 @@ const About: React.FC<{}> = () => {
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:about")}
-      </Typography>
+      <TypographyHeader>{t("common:about")}</TypographyHeader>
       <Container>
-        <Alert className={classes.alert} severity="info">
+        <StyledAlert severity="info">
           <AlertTitle>{t("about:about_me.title")}</AlertTitle>
           <ul style={{ marginBlockEnd: 0 }}>
             <li>
@@ -52,8 +45,8 @@ const About: React.FC<{}> = () => {
               </Link>
             </li>
           </ul>
-        </Alert>
-        <Alert className={classes.alert} severity="info">
+        </StyledAlert>
+        <StyledAlert severity="info">
           <AlertTitle>{t("home:alert_contributor.title")}</AlertTitle>
           <Typography>{t("about:missing_hint")}</Typography>
           <ul style={{ marginBlockEnd: 0 }}>
@@ -106,8 +99,8 @@ const About: React.FC<{}> = () => {
               vvvvv
             </li>
           </ul>
-        </Alert>
-        <Alert className={classes.alert} severity="info">
+        </StyledAlert>
+        <StyledAlert severity="info">
           <AlertTitle>{t("home:alert_translate.title")}</AlertTitle>
           <Typography>{t("about:missing_hint")}</Typography>
           <ul>
@@ -147,7 +140,7 @@ const About: React.FC<{}> = () => {
             <li>Ms: mnh48, sayako</li>
             <li>Ca: use, AidenM12</li>
           </ul>
-        </Alert>
+        </StyledAlert>
       </Container>
     </Fragment>
   );

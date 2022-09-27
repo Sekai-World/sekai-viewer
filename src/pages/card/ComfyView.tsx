@@ -1,93 +1,77 @@
 import { Typography, Grid, Paper } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
 import { Skeleton } from "@mui/material";
 import React from "react";
-import { Link, useRouteMatch } from "react-router-dom";
+import { useRouteMatch } from "react-router-dom";
 import { ICardInfo } from "../../types.d";
 import { useCharaName } from "../../utils/i18n";
-import {
-  CardThumbSkeleton,
-  CardThumb,
-} from "../../components/widgets/CardThumb";
+import { CardThumb } from "../../components/widgets/CardThumb";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
 import SpoilerTag from "../../components/widgets/SpoilerTag";
 import { cardRarityTypeToRarity } from "../../utils";
+import LinkNoDecoration from "../../components/styled/LinkNoDecoration";
+import SvgSkeleton from "../../components/styled/SvgSkeleton";
 
-const useStyles = makeStyles((theme) => ({
-  media: {
-    paddingTop: "56.25%",
-  },
-  card: {
-    // margin: theme.spacing(0.5),
-    cursor: "pointer",
-  },
-  subheader: {
-    // whiteSpace: "nowrap",
-    // overflow: "hidden",
-    // textOverflow: "ellipsis",
-  },
-  comfy: {
-    padding: theme.spacing(1.5),
-    cursor: "pointer",
-  },
-}));
+const ComfyViewSkeleton = () => (
+  <Paper
+    sx={(theme) => ({
+      padding: theme.spacing(1.5),
+      cursor: "pointer",
+    })}
+  >
+    <Grid
+      container
+      direction="column"
+      alignItems="center"
+      columnSpacing={2}
+      rowSpacing={1}
+      justifyContent="space-between"
+    >
+      <Grid item container direction="row" spacing={1} justifyContent="center">
+        <Grid item xs={4}>
+          <SvgSkeleton variant="rectangular" />
+        </Grid>
+        <Grid item xs={4}>
+          <SvgSkeleton variant="rectangular" />
+        </Grid>
+      </Grid>
+      <Grid item>
+        <Typography variant="body1">
+          <Skeleton
+            variant="text"
+            width="70%"
+            style={{ margin: "0 auto" }}
+          ></Skeleton>
+        </Typography>
+      </Grid>
+      <Grid item>
+        <Typography variant="body2">
+          <Skeleton
+            variant="text"
+            width="40%"
+            style={{ margin: "0 auto" }}
+          ></Skeleton>
+        </Typography>
+      </Grid>
+    </Grid>
+  </Paper>
+);
 
 const ComfyView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
-  const classes = useStyles();
   const { path } = useRouteMatch();
   const getCharaName = useCharaName();
 
   if (!data) {
     // loading
-    return (
-      <Paper className={classes.comfy}>
-        <Grid
-          container
-          direction="column"
-          alignItems="center"
-          columnSpacing={2}
-          rowSpacing={1}
-          justifyContent="space-between"
-        >
-          <Grid
-            item
-            container
-            direction="row"
-            spacing={1}
-            justifyContent="center"
-          >
-            <Grid item xs={4}>
-              <CardThumbSkeleton></CardThumbSkeleton>
-            </Grid>
-            <Grid item xs={4}>
-              <CardThumbSkeleton></CardThumbSkeleton>
-            </Grid>
-          </Grid>
-          <Grid item>
-            <Typography variant="body1">
-              <Skeleton
-                variant="text"
-                width="70%"
-                style={{ margin: "0 auto" }}
-              ></Skeleton>
-            </Typography>
-          </Grid>
-          <Grid item>
-            <Typography variant="body2">
-              <Skeleton
-                variant="text"
-                width="40%"
-                style={{ margin: "0 auto" }}
-              ></Skeleton>
-            </Typography>
-          </Grid>
-        </Grid>
-      </Paper>
-    );
+    return <ComfyViewSkeleton />;
   }
   return (
-    <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
-      <Paper className={classes.comfy}>
+    <LinkNoDecoration to={path + "/" + data.id}>
+      <Paper
+        sx={(theme) => ({
+          padding: theme.spacing(1.5),
+          cursor: "pointer",
+        })}
+      >
         <Grid
           container
           direction="column"
@@ -145,7 +129,7 @@ const ComfyView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
           </Grid>
         </Grid>
       </Paper>
-    </Link>
+    </LinkNoDecoration>
   );
 };
 

@@ -12,10 +12,11 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  Box,
 } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
 import {
   createTheme,
+  styled,
   StyledEngineProvider,
   Theme,
   ThemeProvider,
@@ -28,105 +29,94 @@ import {
   Settings as SettingsIcon,
 } from "@mui/icons-material";
 import { Skeleton } from "@mui/material";
-import React, { Fragment, useMemo } from "react";
+import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 
-declare module "@mui/styles/defaultTheme" {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  interface DefaultTheme extends Theme {}
-}
-
 const drawerWidth = 240;
-const useStyles = makeStyles((theme) => ({
-  toolbar: {
-    ...theme.mixins.toolbar,
-    display: "flex",
-    alignItems: "center",
-    padding: theme.spacing(0, 3),
-    // justifyContent: 'flex-end'
-  },
-  root: {
-    display: "flex",
-  },
-  drawer: {
-    [theme.breakpoints.up("md")]: {
-      width: drawerWidth,
-      flexShrink: 0,
-    },
-  },
-  appBar: {
-    [theme.breakpoints.up("md")]: {
-      width: `calc(100% - ${drawerWidth}px)`,
-      marginLeft: drawerWidth,
-    },
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
-    [theme.breakpoints.up("md")]: {
-      display: "none",
-    },
-  },
-  title: {
-    flexGrow: 1,
-  },
-  drawerPaper: {
-    width: drawerWidth,
-  },
-  content: {
-    flexGrow: 1,
-    padding: theme.spacing(3),
-    [theme.breakpoints.up("md")]: {
-      width: `calc(100% - ${drawerWidth}px)`,
-    },
-  },
-}));
 
 const AppSkeletonInner = (props: { theme: Theme }) => {
-  const classes = useStyles();
-
   const { theme } = props;
-  const drawer = useMemo(
-    () => (
-      <div>
-        <div className={classes.toolbar}>
-          <Skeleton variant="text" width="100%" />
-        </div>
-        <Divider></Divider>
-        <List>
-          {Array.from({ length: 20 }).map((_, id) => (
-            <ListItem key={id}>
-              <ListItemIcon>
-                <Skeleton variant="circular" width={24} height={24} />
-              </ListItemIcon>
-              <ListItemText>
-                <Skeleton variant="rectangular" width="100%" height={24} />
-              </ListItemText>
-            </ListItem>
-          ))}
-        </List>
+  const DrawerContentRoot = styled(Box)(({ theme }) => ({
+    "& .drawer-content-toolbar": {
+      ...theme.mixins.toolbar,
+      display: "flex",
+      alignItems: "center",
+      padding: theme.spacing(0, 3),
+      // justifyContent: 'flex-end'
+    },
+  }));
+  const DrawerContent = () => (
+    <DrawerContentRoot>
+      <div className="drawer-content-toolbar">
+        <Skeleton variant="text" width="100%" />
       </div>
-    ),
-    [classes.toolbar]
+      <Divider></Divider>
+      <List>
+        {Array.from({ length: 20 }).map((_, id) => (
+          <ListItem key={id}>
+            <ListItemIcon>
+              <Skeleton variant="circular" width={24} height={24} />
+            </ListItemIcon>
+            <ListItemText>
+              <Skeleton variant="rectangular" width="100%" height={24} />
+            </ListItemText>
+          </ListItem>
+        ))}
+      </List>
+    </DrawerContentRoot>
   );
-
   const container =
     window !== undefined ? () => window.document.body : undefined;
 
+  const Root = styled(Box)(({ theme }) => ({
+    "& .app-skeleton-inner-root": {
+      display: "flex",
+    },
+    "& .app-skeleton-inner-appbar": {
+      [theme.breakpoints.up("md")]: {
+        width: `calc(100% - ${drawerWidth}px)`,
+        marginLeft: drawerWidth,
+      },
+    },
+    "& .app-skeleton-inner-menu-button": {
+      marginRight: theme.spacing(2),
+      [theme.breakpoints.up("md")]: {
+        display: "none",
+      },
+    },
+    "& .app-skeleton-inner-title": {
+      flexGrow: 1,
+    },
+    "& .app-skeleton-inner-drawer": {
+      [theme.breakpoints.up("md")]: {
+        width: drawerWidth,
+        flexShrink: 0,
+      },
+    },
+    "& .app-skeleton-inner-drawer-paper": {
+      width: drawerWidth,
+    },
+  }));
+
   return (
-    <Fragment>
-      <div className={classes.root}>
+    <Root>
+      <div className="app-skeleton-inner-root">
         <CssBaseline />
-        <AppBar position="fixed" className={classes.appBar}>
+        <AppBar position="fixed" className="app-skeleton-inner-appbar">
           <Toolbar>
             <IconButton
               color="inherit"
               edge="start"
-              className={classes.menuButton}
+              className="app-skeleton-inner-menu-button"
               size="large"
             >
               <MenuIcon />
             </IconButton>
-            <Typography variant="h6" noWrap classes={{ root: classes.title }}>
+            <Typography
+              variant="h6"
+              noWrap
+              classes={{ root: "app-skeleton-inner-title" }}
+            >
               Sekai Viewer <small>{import.meta.env.PACKAGE_VERSION}</small>
             </Typography>
             <IconButton
@@ -162,7 +152,7 @@ const AppSkeletonInner = (props: { theme: Theme }) => {
             </Hidden>
           </Toolbar>
         </AppBar>
-        <nav className={classes.drawer}>
+        <nav className="app-skeleton-inner-drawer">
           <Hidden mdUp implementation="css">
             <Drawer
               container={container}
@@ -170,13 +160,13 @@ const AppSkeletonInner = (props: { theme: Theme }) => {
               anchor={theme.direction === "rtl" ? "right" : "left"}
               open={false}
               classes={{
-                paper: classes.drawerPaper,
+                paper: "app-skeleton-inner-drawer-paper",
               }}
               ModalProps={{
                 keepMounted: true,
               }}
             >
-              {drawer}
+              <DrawerContent />
             </Drawer>
           </Hidden>
           <Hidden mdDown implementation="css">
@@ -184,15 +174,15 @@ const AppSkeletonInner = (props: { theme: Theme }) => {
               variant="permanent"
               open
               classes={{
-                paper: classes.drawerPaper,
+                paper: "app-skeleton-inner-drawer-paper",
               }}
             >
-              {drawer}
+              <DrawerContent />
             </Drawer>
           </Hidden>
         </nav>
       </div>
-    </Fragment>
+    </Root>
   );
 };
 

@@ -1,11 +1,4 @@
-import {
-  Avatar,
-  Chip,
-  Container,
-  Divider,
-  Grid,
-  Typography,
-} from "@mui/material";
+import { Avatar, Chip, Divider, Grid, Typography } from "@mui/material";
 import React, {
   Fragment,
   useEffect,
@@ -21,7 +14,6 @@ import MarkdownItCollapsible from "markdown-it-collapsible";
 import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
 import { AnnouncementModel, UserMetadatumModel } from "../../strapi-model";
-import { useLayoutStyles } from "../../styles/layout";
 import { useStrapi } from "../../utils/apiClient";
 import Comment from "../comment/Comment";
 import CommentTextMultiple from "~icons/mdi/comment-text-multiple";
@@ -29,9 +21,10 @@ import { useQuery } from "../../utils";
 import { useRootStore } from "../../stores/root";
 // import AdSense from "../../components/blocks/AdSense";
 import { observer } from "mobx-react-lite";
+import TypographyHeader from "../../components/styled/TypographyHeader";
+import ContainerContent from "../../components/styled/ContainerContent";
 
 const AnnouncementDetail: React.FC<{}> = observer(() => {
-  const layoutClasses = useLayoutStyles();
   const { id } = useParams<{ id: string }>();
   const query = useQuery();
   const {
@@ -77,9 +70,7 @@ const AnnouncementDetail: React.FC<{}> = observer(() => {
 
   return !!announcement ? (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {announcement.title}
-      </Typography>
+      <TypographyHeader>{announcement.title}</TypographyHeader>
       <Grid container spacing={1} alignItems="center">
         <Grid item>
           <Typography variant="subtitle2" color="textSecondary">
@@ -107,7 +98,7 @@ const AnnouncementDetail: React.FC<{}> = observer(() => {
         </Grid>
       </Grid>
       <Divider style={{ margin: "1% 0" }} />
-      <Container className={layoutClasses.content}>
+      <ContainerContent>
         {!!contributors.length && (
           <Grid container spacing={1} alignItems="center">
             <Grid item>
@@ -143,7 +134,7 @@ const AnnouncementDetail: React.FC<{}> = observer(() => {
           }}
           readOnly
         />
-      </Container>
+      </ContainerContent>
       {/* <AdSense
         client="ca-pub-7767752375383260"
         slot="2771743585"
@@ -152,19 +143,17 @@ const AnnouncementDetail: React.FC<{}> = observer(() => {
       /> */}
       {!query.get("preview") && (
         <Fragment>
-          <Typography variant="h6" className={layoutClasses.header}>
+          <TypographyHeader>
             {t("common:comment")} <CommentTextMultiple />
-          </Typography>
-          <Container className={layoutClasses.content} maxWidth="md">
+          </TypographyHeader>
+          <ContainerContent maxWidth="md">
             <Comment contentType="announcement" contentId={Number(id)} />
-          </Container>
+          </ContainerContent>
         </Fragment>
       )}
     </Fragment>
   ) : (
-    <Typography variant="h6" className={layoutClasses.header}>
-      Loading...
-    </Typography>
+    <TypographyHeader>Loading...</TypographyHeader>
   );
 });
 

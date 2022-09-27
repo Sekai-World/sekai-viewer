@@ -3,14 +3,11 @@ import {
   Button,
   Chip,
   Collapse,
-  Container,
   FormControl,
   Grid,
   MenuItem,
-  Paper,
   Select,
   Switch,
-  Typography,
 } from "@mui/material";
 import {
   Sort,
@@ -26,13 +23,15 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { useInteractiveStyles } from "../../styles/interactive";
-import { useLayoutStyles } from "../../styles/layout";
 import { IHonorGroup, IHonorInfo } from "../../types.d";
 import { useCachedData, useLocalStorage } from "../../utils";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
 import GridView from "./GridView";
 import DetailDialog from "./HonorDetailDialog";
+import TypographyHeader from "../../components/styled/TypographyHeader";
+import ContainerContent from "../../components/styled/ContainerContent";
+import PaperContainer from "../../components/styled/PaperContainer";
+import TypographyCaption from "../../components/styled/TypographyCaption";
 
 type ViewGridType = "grid";
 
@@ -45,8 +44,6 @@ function getPaginatedHonors(honors: IHonorInfo[], page: number, limit: number) {
 }
 
 const HonorList = () => {
-  const layoutClasses = useLayoutStyles();
-  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
 
   const [honorsCache] = useCachedData<IHonorInfo>("honors");
@@ -161,10 +158,8 @@ const HonorList = () => {
 
   return isReady && honorGroups && honorGroups.length ? (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("honor:page_title")}
-      </Typography>
-      <Container className={layoutClasses.content}>
+      <TypographyHeader>{t("honor:page_title")}</TypographyHeader>
+      <ContainerContent>
         <Grid
           container
           justifyContent="flex-end"
@@ -181,7 +176,7 @@ const HonorList = () => {
           </Badge>
         </Grid>
         <Collapse in={filterOpened}>
-          <Paper className={interactiveClasses.container}>
+          <PaperContainer>
             <Grid container direction="column" spacing={1}>
               <Grid
                 item
@@ -192,9 +187,9 @@ const HonorList = () => {
                 spacing={1}
               >
                 <Grid item xs={12} md={2}>
-                  <Typography classes={{ root: interactiveClasses.caption }}>
+                  <TypographyCaption>
                     {t("filter:honorType.caption")}
-                  </Typography>
+                  </TypographyCaption>
                 </Grid>
                 <Grid item xs={12} md={10}>
                   <Grid container spacing={1}>
@@ -236,9 +231,9 @@ const HonorList = () => {
                 spacing={1}
               >
                 <Grid item xs={12} md={2}>
-                  <Typography classes={{ root: interactiveClasses.caption }}>
+                  <TypographyCaption>
                     {t("filter:sort.caption")}
-                  </Typography>
+                  </TypographyCaption>
                 </Grid>
                 <Grid item xs={12} md={10}>
                   <Grid container spacing={1}>
@@ -288,9 +283,9 @@ const HonorList = () => {
                 spacing={1}
               >
                 <Grid item xs={12} md={2}>
-                  <Typography classes={{ root: interactiveClasses.caption }}>
+                  <TypographyCaption>
                     {t("filter:honorType.group_only_once")}
-                  </Typography>
+                  </TypographyCaption>
                 </Grid>
                 <Grid item xs={12} md={10}>
                   <Grid container spacing={1}>
@@ -304,7 +299,7 @@ const HonorList = () => {
                 </Grid>
               </Grid>
             </Grid>
-          </Paper>
+          </PaperContainer>
         </Collapse>
         <InfiniteScroll<IHonorInfo>
           ViewComponent={ListCard[viewGridType]}
@@ -327,7 +322,7 @@ const HonorList = () => {
             setIsDialogOpen(true);
           }}
         />
-      </Container>
+      </ContainerContent>
       <DetailDialog
         open={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}

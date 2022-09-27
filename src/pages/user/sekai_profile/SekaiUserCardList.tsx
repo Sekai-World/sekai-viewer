@@ -21,7 +21,6 @@ import {
 import {
   Add,
   Check,
-  // Clear,
   RotateLeft,
   Save as SaveIcon,
   Sort,
@@ -30,7 +29,6 @@ import {
   FilterAltOutlined as FilterOutline,
 } from "@mui/icons-material";
 import React, {
-  // Fragment,
   useCallback,
   useEffect,
   useMemo,
@@ -38,10 +36,8 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { useInteractiveStyles } from "../../../styles/interactive";
 import { useCurrentEvent, useStrapi } from "../../../utils/apiClient";
 import { CardThumb } from "../../../components/widgets/CardThumb";
-// import { useInteractiveStyles } from "../../../styles/interactive";
 import rarityNormal from "../../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../../assets/rarity_star_afterTraining.png";
 import rarityBirthday from "../../../assets/rarity_birthday.png";
@@ -61,7 +57,6 @@ import {
   IEventDeckBonus,
   IEventInfo,
   IGameCharaUnit,
-  // ITeamCardState,
   IUnitProfile,
 } from "../../../types.d";
 import {
@@ -77,10 +72,9 @@ import { ISekaiCardState, ISekaiCardTeam } from "../../../stores/sekai";
 import { observer } from "mobx-react-lite";
 import { autorun } from "mobx";
 import FilterCardsModal from "../../../components/widgets/FilterCardsModal";
+import TypographyCaption from "../../../components/styled/TypographyCaption";
 
 const SekaiUserCardList = observer(() => {
-  // const layoutClasses = useLayoutStyles();
-  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const {
     jwtToken,
@@ -536,9 +530,9 @@ const SekaiUserCardList = observer(() => {
           <Grid container direction="column" spacing={2}>
             <Grid item container xs={12} alignItems="center" spacing={1}>
               <Grid item xs={12} md={1}>
-                <Typography classes={{ root: interactiveClasses.caption }}>
+                <TypographyCaption>
                   {t("filter:character.caption")}
-                </Typography>
+                </TypographyCaption>
               </Grid>
               <Grid item xs={12} md={11}>
                 <Grid container spacing={1}>
@@ -585,9 +579,7 @@ const SekaiUserCardList = observer(() => {
             </Grid>
             <Grid item container xs={12} alignItems="center" spacing={1}>
               <Grid item xs={12} md={1}>
-                <Typography classes={{ root: interactiveClasses.caption }}>
-                  {t("common:attribute")}
-                </Typography>
+                <TypographyCaption>{t("common:attribute")}</TypographyCaption>
               </Grid>
               <Grid item xs={12} md={11}>
                 <Grid container spacing={1}>
@@ -647,9 +639,9 @@ const SekaiUserCardList = observer(() => {
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
-                  <Typography classes={{ root: interactiveClasses.caption }}>
+                  <TypographyCaption>
                     {t("common:support_unit")}
-                  </Typography>
+                  </TypographyCaption>
                 </Grid>
                 <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
@@ -711,9 +703,7 @@ const SekaiUserCardList = observer(() => {
             )}
             <Grid item container xs={12} alignItems="center" spacing={1}>
               <Grid item xs={12} md={1}>
-                <Typography classes={{ root: interactiveClasses.caption }}>
-                  {t("card:rarity")}
-                </Typography>
+                <TypographyCaption>{t("card:rarity")}</TypographyCaption>
               </Grid>
               <Grid item xs={12} md={11}>
                 <Grid container spacing={1}>
@@ -788,9 +778,9 @@ const SekaiUserCardList = observer(() => {
             </Grid>
             <Grid item container xs={12} alignItems="center" spacing={1}>
               <Grid item xs={12} md={1}>
-                <Typography classes={{ root: interactiveClasses.caption }}>
+                <TypographyCaption>
                   {t("filter:sort.caption")}
-                </Typography>
+                </TypographyCaption>
               </Grid>
               <Grid item xs={12} md={11}>
                 <Grid container spacing={1}>

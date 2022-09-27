@@ -1,20 +1,18 @@
-import { Container, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
-import { useLayoutStyles } from "../../styles/layout";
+import ContainerContent from "../../components/styled/ContainerContent";
+import TypographyHeader from "../../components/styled/TypographyHeader";
 
 const Confirmation: React.FC<{}> = () => {
-  const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("auth:send_email_confirmation")}
-      </Typography>
-      <Container className={layoutClasses.content}>
+      <TypographyHeader>{t("auth:send_email_confirmation")}</TypographyHeader>
+      <ContainerContent>
         <Typography>{t("auth:register_email_confirmation")}</Typography>
-      </Container>
+      </ContainerContent>
     </Fragment>
   );
 };
