@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.6.0...v1.6.1) (2022-09-27)
+
+
+### Features
+
+* :globe_with_meridians: add ua and kr comics ([95a1c46](https://github.com/Sekai-World/sekai-viewer/commits/95a1c461847f9ea8a19c808645f502402bf422f3))
+
+
+### Bug Fixes
+
+* :lipstick: card image style not working ([324f698](https://github.com/Sekai-World/sekai-viewer/commits/324f698fe895698f1f6572e967a2d370ce32c70e))
+* :lipstick: degree image style not working ([99da7a7](https://github.com/Sekai-World/sekai-viewer/commits/99da7a79b54063e1936ab33640a4190d2b94bd65))
+
 ## [1.6.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.5.3...v1.6.0) (2022-09-27)
 
 
