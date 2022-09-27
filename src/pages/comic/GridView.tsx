@@ -1,14 +1,14 @@
 import { Card, CardContent, Typography, CardMedia } from "@mui/material";
 import { Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { ITipInfoComic } from "../../types.d";
+import { ComicLangType, ITipInfoComic } from "../../types.d";
 import { getRemoteAssetURL } from "../../utils";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
 
 const GridView: React.FC<{
   data?: ITipInfoComic;
   index?: number;
-  lang?: "ja" | "fr" | "ru" | "zhs" | "zht" | "en";
+  lang?: ComicLangType;
   handleCardClick?: (index: number) => void;
 }> = ({ data, index, lang, handleCardClick }) => {
   const [imageURL, setImageURL] = useState<string>("");
@@ -17,12 +17,19 @@ const GridView: React.FC<{
     if (data) {
       switch (lang) {
         case "ja":
+          getRemoteAssetURL(
+            `comic/one_frame_rip/${data.assetbundleName}.webp`,
+            setImageURL,
+            window.isChinaMainland ? "cn" : "minio",
+            "jp"
+          );
+          break;
         case "zht":
           getRemoteAssetURL(
             `comic/one_frame_rip/${data.assetbundleName}.webp`,
             setImageURL,
             window.isChinaMainland ? "cn" : "minio",
-            lang === "zht" ? "tw" : "jp"
+            "tw"
           );
           break;
         case "en":
@@ -31,6 +38,14 @@ const GridView: React.FC<{
             setImageURL,
             window.isChinaMainland ? "cn" : "minio",
             "en"
+          );
+          break;
+        case "kr":
+          getRemoteAssetURL(
+            `comic/one_frame_rip/${data.assetbundleName}.webp`,
+            setImageURL,
+            window.isChinaMainland ? "cn" : "minio",
+            "kr"
           );
           break;
         default:

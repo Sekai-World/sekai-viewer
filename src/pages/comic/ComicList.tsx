@@ -1,12 +1,12 @@
 import { Grid, Link, Typography } from "@mui/material";
-import { Twitter } from "@mui/icons-material";
+import { Telegram, Twitter, YouTube } from "@mui/icons-material";
 import { Alert, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import Vk from "~icons/entypo-social/vk";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
-import { ITipInfo, ITipInfoComic } from "../../types.d";
+import { ComicLangType, ITipInfo, ITipInfoComic } from "../../types.d";
 import { getRemoteAssetURL, useCachedData } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
@@ -19,7 +19,7 @@ import ContainerContent from "../../components/styled/ContainerContent";
 const ListCard: React.FC<{
   data?: ITipInfoComic;
   index?: number;
-  lang?: "ja" | "fr" | "ru" | "zhs" | "zht" | "en";
+  lang?: ComicLangType;
   handleCardClick?: (index: number) => void;
 }> = GridView;
 
@@ -41,9 +41,7 @@ const ComicList: React.FC<{}> = observer(() => {
   const [isReady, setIsReady] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
   const [activeIdx, setActiveIdx] = useState<number>(0);
-  const [resourceLang, setResourceLang] = useState<
-    "ja" | "fr" | "ru" | "zhs" | "zht" | "en"
-  >("ja");
+  const [resourceLang, setResourceLang] = useState<ComicLangType>("ja");
   const [comicImages, setComicImages] = useState<ImageDecorator[]>([]);
 
   const getPaginatedTips = useCallback(
@@ -62,12 +60,14 @@ const ComicList: React.FC<{}> = observer(() => {
           case "ja":
           case "zht":
           case "en":
+          case "kr":
             url = `comic/one_frame_rip/${comic.assetbundleName}.webp`;
             break;
           default:
             url = `${resourceLang}/${comic.assetbundleName}.png`;
             break;
         }
+        console.log(resourceLang, url);
         images.push({
           src: await getRemoteAssetURL(
             url,
@@ -79,6 +79,8 @@ const ComicList: React.FC<{}> = observer(() => {
               ? "jp"
               : resourceLang === "en"
               ? "en"
+              : resourceLang === "kr"
+              ? "kr"
               : "comic"
           ),
           alt: getTranslated(`comic_title:${comic.id}`, comic.title),
@@ -92,6 +94,8 @@ const ComicList: React.FC<{}> = observer(() => {
               ? "jp"
               : resourceLang === "en"
               ? "en"
+              : resourceLang === "kr"
+              ? "kr"
               : "comic"
           ),
         });
@@ -176,6 +180,12 @@ const ComicList: React.FC<{}> = observer(() => {
             <ToggleButton size="medium" value="en">
               <Typography>EN</Typography>
             </ToggleButton>
+            <ToggleButton size="medium" value="ua">
+              <Typography>UA</Typography>
+            </ToggleButton>
+            <ToggleButton size="medium" value="kr">
+              <Typography>KR</Typography>
+            </ToggleButton>
           </ToggleButtonGroup>
         </Grid>
         {resourceLang === "fr" ? (
@@ -215,6 +225,26 @@ const ComicList: React.FC<{}> = observer(() => {
                 underline="hover"
               >
                 Project_SEKAI资讯站@bilibili
+              </Link>
+            </Typography>
+          </Alert>
+        ) : resourceLang === "ua" ? (
+          <Alert severity="info">
+            <Typography>
+              Credit:
+              <Link
+                href="https://www.youtube.com/channel/UCREl7H5eA6nqacplqY1rhhg"
+                style={{ textDecorationLine: "none" }}
+                underline="hover"
+              >
+                <YouTube fontSize="inherit" /> Соняшниковий Секай
+              </Link>
+              <Link
+                href="https://t.me/sunflowersekai"
+                style={{ textDecorationLine: "none" }}
+                underline="hover"
+              >
+                <Telegram fontSize="inherit" /> Соняшниковий Секай
               </Link>
             </Typography>
           </Alert>

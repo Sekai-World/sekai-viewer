@@ -4,6 +4,15 @@ export type ContentTransModeType = "original" | "translated" | "both";
 export type DisplayModeType = "dark" | "light" | "auto";
 export type ServerRegion = "jp" | "tw" | "en" | "kr";
 export type AssetDomainKey = "cn" | "minio";
+export type ComicLangType =
+  | "ja"
+  | "fr"
+  | "ru"
+  | "zhs"
+  | "zht"
+  | "en"
+  | "ua"
+  | "kr";
 
 export interface GachaDetail {
   id: number;
