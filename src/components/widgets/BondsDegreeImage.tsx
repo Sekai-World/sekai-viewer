@@ -1,12 +1,12 @@
 import { Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useSvgStyles } from "../../styles/svg";
 import { IBondsHonorWord, IBondsHonor, IGameCharaUnit } from "../../types";
 import { getRemoteAssetURL, useCachedData } from "../../utils";
 import { degreeFrameMap, degreeFramSubMap } from "../../utils/resources";
 import degreeLevelIcon from "../../assets/frame/icon_degreeLv.png";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
+import Svg from "../styled/Svg";
 
 const DegreeImage: React.FC<
   {
@@ -27,7 +27,6 @@ const DegreeImage: React.FC<
     honorLevel,
     sub = false,
   }) => {
-    const classes = useSvgStyles();
     const { region } = useRootStore();
 
     // const [bonds] = useCachedData<IBond>("bonds");
@@ -138,128 +137,122 @@ const DegreeImage: React.FC<
     }, [gameCharas, honor, region, viewType]);
 
     return honor === undefined ? null : !!honor ? (
-      <div className={classes.svg}>
+      <Svg
+        style={style}
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox={sub ? "0 0 180 80" : "0 0 380 80"}
+      >
+        {/* mask */}
+        <defs>
+          <mask id="rounded-rect">
+            <rect
+              x="10"
+              y="0"
+              height={80}
+              width={sub ? 160 : 360}
+              rx={40}
+              fill="white"
+            />
+          </mask>
+          <mask id="left-sub-crop">
+            <rect x="0" y="0" height={80} width={90} fill="white" />
+          </mask>
+          <mask id="right-sub-crop">
+            <rect x="90" y="0" height={80} width={90} fill="white" />
+          </mask>
+        </defs>
         <svg
           style={style}
           xmlns="http://www.w3.org/2000/svg"
           viewBox={sub ? "0 0 180 80" : "0 0 380 80"}
+          mask="url(#rounded-rect)"
         >
-          {/* mask */}
-          <defs>
-            <mask id="rounded-rect">
-              <rect
-                x="10"
-                y="0"
-                height={80}
-                width={sub ? 160 : 360}
-                rx={40}
-                fill="white"
-              />
-            </mask>
-            <mask id="left-sub-crop">
-              <rect x="0" y="0" height={80} width={90} fill="white" />
-            </mask>
-            <mask id="right-sub-crop">
-              <rect x="90" y="0" height={80} width={90} fill="white" />
-            </mask>
-          </defs>
-          <svg
-            style={style}
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox={sub ? "0 0 180 80" : "0 0 380 80"}
-            mask="url(#rounded-rect)"
-          >
-            {/* left bg */}
-            <rect
-              x="0"
-              y="0"
-              height="80"
-              width={sub ? 90 : 190}
-              fill={
-                viewType === "normal"
-                  ? gameCharas[0].colorCode
-                  : gameCharas[1].colorCode
-              }
-            />
-            {/* right bg */}
-            <rect
-              x={sub ? 90 : 190}
-              y="0"
-              height="80"
-              width={sub ? 90 : 190}
-              fill={
-                viewType === "normal"
-                  ? gameCharas[1].colorCode
-                  : gameCharas[0].colorCode
-              }
-            />
-            {/* inner frame */}
-            <rect
-              x="16"
-              y="6"
-              height={68}
-              width={sub ? 148 : 348}
-              rx={34}
-              stroke="white"
-              strokeWidth={8}
-              fillOpacity={0}
-            />
-            {/* left character */}
-            <image
-              href={sdLeft}
-              x="0"
-              y={sub ? -30 : -55}
-              height={sub ? 120 : 160}
-              width={sub ? 120 : 160}
-              mask={sub ? "url(#left-sub-crop)" : ""}
-            />
-            {/* right character */}
-            <image
-              href={sdRight}
-              x={sub ? 60 : 218}
-              y={sub ? -30 : -55}
-              height={sub ? 120 : 160}
-              width={sub ? 120 : 160}
-              mask={sub ? "url(#right-sub-crop)" : ""}
-            />
-            {/* word */}
-            {!sub && (
-              <image href={wordImage} x="0" y="0" height="80" width="380" />
-            )}
-            {/* degree level */}
-            {!!honorLevel &&
-              honor.levels.length > 1 &&
-              Array.from({ length: honorLevel }).map((_, idx) => (
-                <image
-                  key={idx}
-                  href={degreeLevelIcon}
-                  x={54 + idx * 16}
-                  y="64"
-                  height="16"
-                  width="16"
-                />
-              ))}
-          </svg>
-          {/* frame */}
-          <image
-            href={
-              sub
-                ? degreeFramSubMap[honor.honorRarity]
-                : degreeFrameMap[honor.honorRarity]
-            }
+          {/* left bg */}
+          <rect
             x="0"
             y="0"
             height="80"
-            width={sub ? 180 : 380}
+            width={sub ? 90 : 190}
+            fill={
+              viewType === "normal"
+                ? gameCharas[0].colorCode
+                : gameCharas[1].colorCode
+            }
           />
+          {/* right bg */}
+          <rect
+            x={sub ? 90 : 190}
+            y="0"
+            height="80"
+            width={sub ? 90 : 190}
+            fill={
+              viewType === "normal"
+                ? gameCharas[1].colorCode
+                : gameCharas[0].colorCode
+            }
+          />
+          {/* inner frame */}
+          <rect
+            x="16"
+            y="6"
+            height={68}
+            width={sub ? 148 : 348}
+            rx={34}
+            stroke="white"
+            strokeWidth={8}
+            fillOpacity={0}
+          />
+          {/* left character */}
+          <image
+            href={sdLeft}
+            x="0"
+            y={sub ? -30 : -55}
+            height={sub ? 120 : 160}
+            width={sub ? 120 : 160}
+            mask={sub ? "url(#left-sub-crop)" : ""}
+          />
+          {/* right character */}
+          <image
+            href={sdRight}
+            x={sub ? 60 : 218}
+            y={sub ? -30 : -55}
+            height={sub ? 120 : 160}
+            width={sub ? 120 : 160}
+            mask={sub ? "url(#right-sub-crop)" : ""}
+          />
+          {/* word */}
+          {!sub && (
+            <image href={wordImage} x="0" y="0" height="80" width="380" />
+          )}
+          {/* degree level */}
+          {!!honorLevel &&
+            honor.levels.length > 1 &&
+            Array.from({ length: honorLevel }).map((_, idx) => (
+              <image
+                key={idx}
+                href={degreeLevelIcon}
+                x={54 + idx * 16}
+                y="64"
+                height="16"
+                width="16"
+              />
+            ))}
         </svg>
-      </div>
+        {/* frame */}
+        <image
+          href={
+            sub
+              ? degreeFramSubMap[honor.honorRarity]
+              : degreeFrameMap[honor.honorRarity]
+          }
+          x="0"
+          y="0"
+          height="80"
+          width={sub ? 180 : 380}
+        />
+      </Svg>
     ) : (
-      <Skeleton
-        variant="rectangular"
-        width={sub ? 180 : 380}
-        height="80"
-      ></Skeleton>
+      <Skeleton variant="rectangular" width={sub ? 180 : 380} height="80" />
     );
   }
 );

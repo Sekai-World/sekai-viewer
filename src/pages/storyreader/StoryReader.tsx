@@ -5,13 +5,11 @@ import {
   Card,
   CardContent,
   Avatar,
+  styled,
 } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
 import React, { Fragment, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, Route, Switch, useRouteMatch } from "react-router-dom";
-import { useInteractiveStyles } from "../../styles/interactive";
-import { useLayoutStyles } from "../../styles/layout";
+import { Route, Switch, useRouteMatch } from "react-router-dom";
 import {
   IActionSet,
   IArea,
@@ -28,7 +26,6 @@ import {
 import { realityAreaWorldmap, useCachedData } from "../../utils";
 import { useAssetI18n, useCharaName } from "../../utils/i18n";
 import { charaIcons, UnitLogoMap } from "../../utils/resources";
-// import { useAssetI18n } from "../../utils/i18n";
 import {
   CharaNameTrans,
   ContentTrans,
@@ -37,29 +34,24 @@ import ImageWrapper from "../../components/helpers/ImageWrapper";
 import StoryReaderContent from "./StoryReaderContent";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
+import TypographyHeader from "../../components/styled/TypographyHeader";
+import LinkNoDecoration from "../../components/styled/LinkNoDecoration";
+import LinkNoDecorationAlsoNoHover from "../../components/styled/LinkNoDecorationAlsoHover";
 
-const useStyle = makeStyles((theme) => ({
-  selectCard: {
-    "&:hover": {
-      cursor: "pointer",
-      border: "1px solid rgba(255, 255, 255, 0.12)",
-    },
-  },
-}));
+const CardSelect = styled(Card)`
+  &:hover {
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+`;
 
 const StoryReader: React.FC<{}> = observer(() => {
-  const classes = useStyle();
-  const layoutClasses = useLayoutStyles();
-  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
   const getCharaName = useCharaName();
   const { path } = useRouteMatch();
   const { region } = useRootStore();
-  // const match = useRouteMatch<{
-  //   storyType: storyType;
-  //   storyId: string;
-  // }>("/storyreader/:storyType/:storyId");
+
   const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
   const [unitStories] = useCachedData<IUnitStory>("unitStories");
   const [eventStories] = useCachedData<IEventStory>("eventStories");
@@ -88,9 +80,7 @@ const StoryReader: React.FC<{}> = observer(() => {
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:storyReader")}
-      </Typography>
+      <TypographyHeader>{t("common:storyReader")}</TypographyHeader>
       <Route>
         {({ location }) => {
           const pathnames = location.pathname.split("/").filter((x) => x);
@@ -268,13 +258,9 @@ const StoryReader: React.FC<{}> = observer(() => {
                     {name}
                   </Typography>
                 ) : (
-                  <Link
-                    key={to}
-                    to={to}
-                    className={interactiveClasses.noDecoration}
-                  >
+                  <LinkNoDecoration key={to} to={to}>
                     {name}
-                  </Link>
+                  </LinkNoDecoration>
                 );
               })}
             </Breadcrumbs>
@@ -286,94 +272,70 @@ const StoryReader: React.FC<{}> = observer(() => {
         <Route path={`${path}`} exact>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={3}>
-              <Link
-                className={interactiveClasses.noDecorationAlsoOnHover}
-                color="inherit"
-                to="/storyreader/eventStory"
-              >
-                <Card className={classes.selectCard}>
+              <LinkNoDecorationAlsoNoHover to="/storyreader/eventStory">
+                <CardSelect>
                   <CardContent>
                     <Typography>
                       {t("story_reader:selectValue.eventStory")}
                     </Typography>
                   </CardContent>
-                </Card>
-              </Link>
+                </CardSelect>
+              </LinkNoDecorationAlsoNoHover>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <Link
-                className={interactiveClasses.noDecorationAlsoOnHover}
-                color="inherit"
-                to="/storyreader/unitStory"
-              >
-                <Card className={classes.selectCard}>
+              <LinkNoDecorationAlsoNoHover to="/storyreader/unitStory">
+                <CardSelect>
                   <CardContent>
                     <Typography>
                       {t("story_reader:selectValue.unitStory")}
                     </Typography>
                   </CardContent>
-                </Card>
-              </Link>
+                </CardSelect>
+              </LinkNoDecorationAlsoNoHover>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <Link
-                className={interactiveClasses.noDecorationAlsoOnHover}
-                color="inherit"
-                to="/storyreader/charaStory"
-              >
-                <Card className={classes.selectCard}>
+              <LinkNoDecorationAlsoNoHover to="/storyreader/charaStory">
+                <CardSelect>
                   <CardContent>
                     <Typography>
                       {t("story_reader:selectValue.charaStory")}
                     </Typography>
                   </CardContent>
-                </Card>
-              </Link>
+                </CardSelect>
+              </LinkNoDecorationAlsoNoHover>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <Link
-                className={interactiveClasses.noDecorationAlsoOnHover}
-                color="inherit"
-                to="/storyreader/cardStory"
-              >
-                <Card className={classes.selectCard}>
+              <LinkNoDecorationAlsoNoHover to="/storyreader/cardStory">
+                <CardSelect>
                   <CardContent>
                     <Typography>
                       {t("story_reader:selectValue.cardStory")}
                     </Typography>
                   </CardContent>
-                </Card>
-              </Link>
+                </CardSelect>
+              </LinkNoDecorationAlsoNoHover>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <Link
-                className={interactiveClasses.noDecorationAlsoOnHover}
-                color="inherit"
-                to="/storyreader/areaTalk"
-              >
-                <Card className={classes.selectCard}>
+              <LinkNoDecorationAlsoNoHover to="/storyreader/areaTalk">
+                <CardSelect>
                   <CardContent>
                     <Typography>
                       {t("story_reader:selectValue.areaTalk")}
                     </Typography>
                   </CardContent>
-                </Card>
-              </Link>
+                </CardSelect>
+              </LinkNoDecorationAlsoNoHover>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <Link
-                className={interactiveClasses.noDecorationAlsoOnHover}
-                color="inherit"
-                to="/storyreader/specialStory"
-              >
-                <Card className={classes.selectCard}>
+              <LinkNoDecorationAlsoNoHover to="/storyreader/specialStory">
+                <CardSelect>
                   <CardContent>
                     <Typography>
                       {t("story_reader:selectValue.special")}
                     </Typography>
                   </CardContent>
-                </Card>
-              </Link>
+                </CardSelect>
+              </LinkNoDecorationAlsoNoHover>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
               <Card>
@@ -394,12 +356,10 @@ const StoryReader: React.FC<{}> = observer(() => {
                 .reverse()
                 .map((ev) => (
                   <Grid item xs={12} sm={6} md={3} key={ev.id}>
-                    <Link
-                      className={interactiveClasses.noDecorationAlsoOnHover}
-                      color="inherit"
+                    <LinkNoDecorationAlsoNoHover
                       to={`/storyreader/eventStory/${ev.id}`}
                     >
-                      <Card className={classes.selectCard}>
+                      <CardSelect>
                         <CardContent>
                           <ImageWrapper
                             src={`home/banner/${ev.assetbundleName}_rip/${ev.assetbundleName}.webp`}
@@ -415,8 +375,8 @@ const StoryReader: React.FC<{}> = observer(() => {
                             translatedProps={{ style: { overflow: "hidden" } }}
                           />
                         </CardContent>
-                      </Card>
-                    </Link>
+                      </CardSelect>
+                    </LinkNoDecorationAlsoNoHover>
                   </Grid>
                 ))}
           </Grid>
@@ -433,12 +393,10 @@ const StoryReader: React.FC<{}> = observer(() => {
                   <Grid container spacing={1}>
                     {chapter.eventStoryEpisodes.map((episode) => (
                       <Grid item xs={12} sm={6} md={3} key={episode.id}>
-                        <Link
-                          className={interactiveClasses.noDecorationAlsoOnHover}
-                          color="inherit"
+                        <LinkNoDecorationAlsoNoHover
                           to={`${match?.url}/${episode.episodeNo}`}
                         >
-                          <Card className={classes.selectCard}>
+                          <CardSelect>
                             <CardContent>
                               <ImageWrapper
                                 src={`event_story/${chapter.assetbundleName}/episode_image_rip/${episode.assetbundleName}.webp`}
@@ -458,8 +416,8 @@ const StoryReader: React.FC<{}> = observer(() => {
                                 }}
                               />
                             </CardContent>
-                          </Card>
-                        </Link>
+                          </CardSelect>
+                        </LinkNoDecorationAlsoNoHover>
                       </Grid>
                     ))}
                   </Grid>
@@ -480,12 +438,10 @@ const StoryReader: React.FC<{}> = observer(() => {
             {!!unitProfiles &&
               unitProfiles.map((unit) => (
                 <Grid item xs={12} sm={6} md={3} key={unit.unit}>
-                  <Link
-                    className={interactiveClasses.noDecorationAlsoOnHover}
-                    color="inherit"
+                  <LinkNoDecorationAlsoNoHover
                     to={`/storyreader/unitStory/${unit.unit}`}
                   >
-                    <Card className={classes.selectCard}>
+                    <CardSelect>
                       <CardContent>
                         <ImageWrapper
                           src={UnitLogoMap[region][unit.unit]}
@@ -502,8 +458,8 @@ const StoryReader: React.FC<{}> = observer(() => {
                           translatedProps={{ style: { overflow: "hidden" } }}
                         />
                       </CardContent>
-                    </Card>
-                  </Link>
+                    </CardSelect>
+                  </LinkNoDecorationAlsoNoHover>
                 </Grid>
               ))}
           </Grid>
@@ -519,12 +475,10 @@ const StoryReader: React.FC<{}> = observer(() => {
                   <Grid container spacing={1}>
                     {stories.chapters.map((chapter) => (
                       <Grid item xs={12} sm={6} md={3} key={chapter.id}>
-                        <Link
-                          className={interactiveClasses.noDecorationAlsoOnHover}
-                          color="inherit"
+                        <LinkNoDecorationAlsoNoHover
                           to={`${match?.url}/${chapter.chapterNo}`}
                         >
-                          <Card className={classes.selectCard}>
+                          <CardSelect>
                             <CardContent>
                               <ContentTrans
                                 contentKey={`unit_story_chapter_title:${chapter.unit}-${chapter.chapterNo}`}
@@ -537,8 +491,8 @@ const StoryReader: React.FC<{}> = observer(() => {
                                 }}
                               />
                             </CardContent>
-                          </Card>
-                        </Link>
+                          </CardSelect>
+                        </LinkNoDecorationAlsoNoHover>
                       </Grid>
                     ))}
                   </Grid>
@@ -563,14 +517,10 @@ const StoryReader: React.FC<{}> = observer(() => {
                     <Grid container spacing={1}>
                       {chapter.episodes.map((episode) => (
                         <Grid item xs={12} sm={6} md={3} key={episode.id}>
-                          <Link
-                            className={
-                              interactiveClasses.noDecorationAlsoOnHover
-                            }
-                            color="inherit"
+                          <LinkNoDecorationAlsoNoHover
                             to={`${match?.url}/${episode.episodeNo}`}
                           >
-                            <Card className={classes.selectCard}>
+                            <CardSelect>
                               <CardContent>
                                 <ImageWrapper
                                   src={`story/episode_image/${chapter.assetbundleName}_rip/${episode.assetbundleName}.webp`}
@@ -590,8 +540,8 @@ const StoryReader: React.FC<{}> = observer(() => {
                                   }}
                                 />
                               </CardContent>
-                            </Card>
-                          </Link>
+                            </CardSelect>
+                          </LinkNoDecorationAlsoNoHover>
                         </Grid>
                       ))}
                     </Grid>
@@ -613,12 +563,10 @@ const StoryReader: React.FC<{}> = observer(() => {
             {!!characterProfiles &&
               characterProfiles.map((character) => (
                 <Grid item xs={12} sm={6} md={3} key={character.characterId}>
-                  <Link
-                    className={interactiveClasses.noDecorationAlsoOnHover}
-                    color="inherit"
+                  <LinkNoDecorationAlsoNoHover
                     to={`/storyreader/charaStory/${character.characterId}`}
                   >
-                    <Card className={classes.selectCard}>
+                    <CardSelect>
                       <CardContent>
                         <Grid container justifyContent="center">
                           <Grid item xs={4}>
@@ -648,8 +596,8 @@ const StoryReader: React.FC<{}> = observer(() => {
                           }}
                         />
                       </CardContent>
-                    </Card>
-                  </Link>
+                    </CardSelect>
+                  </LinkNoDecorationAlsoNoHover>
                 </Grid>
               ))}
           </Grid>
@@ -666,12 +614,10 @@ const StoryReader: React.FC<{}> = observer(() => {
             {!!characterProfiles &&
               characterProfiles.map((character) => (
                 <Grid item xs={12} sm={6} md={3} key={character.characterId}>
-                  <Link
-                    className={interactiveClasses.noDecorationAlsoOnHover}
-                    color="inherit"
+                  <LinkNoDecorationAlsoNoHover
                     to={`/storyreader/cardStory/${character.characterId}`}
                   >
-                    <Card className={classes.selectCard}>
+                    <CardSelect>
                       <CardContent>
                         <Grid container justifyContent="center">
                           <Grid item xs={4}>
@@ -701,8 +647,8 @@ const StoryReader: React.FC<{}> = observer(() => {
                           }}
                         />
                       </CardContent>
-                    </Card>
-                  </Link>
+                    </CardSelect>
+                  </LinkNoDecorationAlsoNoHover>
                 </Grid>
               ))}
           </Grid>
@@ -720,12 +666,10 @@ const StoryReader: React.FC<{}> = observer(() => {
                   <Grid container spacing={1}>
                     {filteredCards.map((card) => (
                       <Grid item xs={12} sm={6} md={3} key={card.id}>
-                        <Link
-                          className={interactiveClasses.noDecorationAlsoOnHover}
-                          color="inherit"
+                        <LinkNoDecorationAlsoNoHover
                           to={`${match?.url}/${card.id}`}
                         >
-                          <Card className={classes.selectCard}>
+                          <CardSelect>
                             <CardContent>
                               <ImageWrapper
                                 src={`character/member_small/${card.assetbundleName}_rip/card_normal.webp`}
@@ -745,8 +689,8 @@ const StoryReader: React.FC<{}> = observer(() => {
                                 }}
                               />
                             </CardContent>
-                          </Card>
-                        </Link>
+                          </CardSelect>
+                        </LinkNoDecorationAlsoNoHover>
                       </Grid>
                     ))}
                   </Grid>
@@ -768,12 +712,10 @@ const StoryReader: React.FC<{}> = observer(() => {
                   <Grid container spacing={1}>
                     {episodes.map((episode) => (
                       <Grid item xs={12} sm={6} md={3} key={episode.id}>
-                        <Link
-                          className={interactiveClasses.noDecorationAlsoOnHover}
-                          color="inherit"
+                        <LinkNoDecorationAlsoNoHover
                           to={`${match?.url}/${episode.id}`}
                         >
-                          <Card className={classes.selectCard}>
+                          <CardSelect>
                             <CardContent>
                               <ContentTrans
                                 contentKey={`card_episode_title:${episode.title}`}
@@ -786,8 +728,8 @@ const StoryReader: React.FC<{}> = observer(() => {
                                 }}
                               />
                             </CardContent>
-                          </Card>
-                        </Link>
+                          </CardSelect>
+                        </LinkNoDecorationAlsoNoHover>
                       </Grid>
                     ))}
                   </Grid>
@@ -810,12 +752,10 @@ const StoryReader: React.FC<{}> = observer(() => {
                 .filter((area) => area.label)
                 .map((area) => (
                   <Grid item xs={12} sm={6} md={3} key={area.id}>
-                    <Link
-                      className={interactiveClasses.noDecorationAlsoOnHover}
-                      color="inherit"
+                    <LinkNoDecorationAlsoNoHover
                       to={`/storyreader/areaTalk/${area.id}`}
                     >
-                      <Card className={classes.selectCard}>
+                      <CardSelect>
                         <CardContent>
                           <ImageWrapper
                             src={`worldmap/contents/collaboration/${
@@ -836,8 +776,8 @@ const StoryReader: React.FC<{}> = observer(() => {
                             translatedProps={{ style: { overflow: "hidden" } }}
                           />
                         </CardContent>
-                      </Card>
-                    </Link>
+                      </CardSelect>
+                    </LinkNoDecorationAlsoNoHover>
                   </Grid>
                 ))}
             {!!areas &&
@@ -847,12 +787,10 @@ const StoryReader: React.FC<{}> = observer(() => {
                 )
                 .map((area) => (
                   <Grid item xs={12} sm={6} md={3} key={area.id}>
-                    <Link
-                      className={interactiveClasses.noDecorationAlsoOnHover}
-                      color="inherit"
+                    <LinkNoDecorationAlsoNoHover
                       to={`/storyreader/areaTalk/${area.id}`}
                     >
-                      <Card className={classes.selectCard}>
+                      <CardSelect>
                         <CardContent>
                           <ImageWrapper
                             src={`worldmap/contents/normal_rip/img_worldmap_areas${String(
@@ -870,8 +808,8 @@ const StoryReader: React.FC<{}> = observer(() => {
                             translatedProps={{ style: { overflow: "hidden" } }}
                           />
                         </CardContent>
-                      </Card>
-                    </Link>
+                      </CardSelect>
+                    </LinkNoDecorationAlsoNoHover>
                   </Grid>
                 ))}
             {!!areas &&
@@ -879,12 +817,10 @@ const StoryReader: React.FC<{}> = observer(() => {
                 .filter((area) => area.areaType === "reality_world")
                 .map((area, idx) => (
                   <Grid item xs={12} sm={6} md={3} key={area.id}>
-                    <Link
-                      className={interactiveClasses.noDecorationAlsoOnHover}
-                      color="inherit"
+                    <LinkNoDecorationAlsoNoHover
                       to={`/storyreader/areaTalk/${area.id}`}
                     >
-                      <Card className={classes.selectCard}>
+                      <CardSelect>
                         <CardContent>
                           <ImageWrapper
                             src={`worldmap/contents/normal_rip/worldmap_area${String(
@@ -902,8 +838,8 @@ const StoryReader: React.FC<{}> = observer(() => {
                             translatedProps={{ style: { overflow: "hidden" } }}
                           />
                         </CardContent>
-                      </Card>
-                    </Link>
+                      </CardSelect>
+                    </LinkNoDecorationAlsoNoHover>
                   </Grid>
                 ))}
           </Grid>
@@ -927,14 +863,10 @@ const StoryReader: React.FC<{}> = observer(() => {
                           lg={2}
                           key={actionSet.id}
                         >
-                          <Link
-                            className={
-                              interactiveClasses.noDecorationAlsoOnHover
-                            }
-                            color="inherit"
+                          <LinkNoDecorationAlsoNoHover
                             to={`${match?.url}/${actionSet.id}`}
                           >
-                            <Card className={classes.selectCard}>
+                            <CardSelect>
                               <CardContent>
                                 <Grid container spacing={1}>
                                   {actionSet.characterIds.map((charaId) => {
@@ -955,8 +887,8 @@ const StoryReader: React.FC<{}> = observer(() => {
                                   })}
                                 </Grid>
                               </CardContent>
-                            </Card>
-                          </Link>
+                            </CardSelect>
+                          </LinkNoDecorationAlsoNoHover>
                         </Grid>
                       ))}
                   </Grid>
@@ -980,12 +912,10 @@ const StoryReader: React.FC<{}> = observer(() => {
                 .reverse()
                 .map((sp) => (
                   <Grid item xs={12} sm={6} md={3} key={sp.id}>
-                    <Link
-                      className={interactiveClasses.noDecorationAlsoOnHover}
-                      color="inherit"
+                    <LinkNoDecorationAlsoNoHover
                       to={`/storyreader/specialStory/${sp.id}`}
                     >
-                      <Card className={classes.selectCard}>
+                      <CardSelect>
                         <CardContent>
                           {/* <ContentTrans
                             contentKey={`event_name:${ev.id}`}
@@ -997,8 +927,8 @@ const StoryReader: React.FC<{}> = observer(() => {
                             {sp.title}
                           </Typography>
                         </CardContent>
-                      </Card>
-                    </Link>
+                      </CardSelect>
+                    </LinkNoDecorationAlsoNoHover>
                   </Grid>
                 ))}
           </Grid>
@@ -1015,12 +945,10 @@ const StoryReader: React.FC<{}> = observer(() => {
                   <Grid container spacing={1}>
                     {chapter.episodes.map((episode) => (
                       <Grid item xs={12} sm={6} md={3} key={episode.id}>
-                        <Link
-                          className={interactiveClasses.noDecorationAlsoOnHover}
-                          color="inherit"
+                        <LinkNoDecorationAlsoNoHover
                           to={`${match?.url}/${episode.episodeNo}`}
                         >
-                          <Card className={classes.selectCard}>
+                          <CardSelect>
                             <CardContent>
                               {/* <ContentTrans
                                 contentKey={`event_story_episode_title:${episode.eventStoryId}-${episode.episodeNo}`}
@@ -1036,8 +964,8 @@ const StoryReader: React.FC<{}> = observer(() => {
                                 {episode.title}
                               </Typography>
                             </CardContent>
-                          </Card>
-                        </Link>
+                          </CardSelect>
+                        </LinkNoDecorationAlsoNoHover>
                       </Grid>
                     ))}
                   </Grid>

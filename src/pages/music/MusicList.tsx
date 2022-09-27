@@ -1,9 +1,6 @@
 import {
   Button,
   Grid,
-  Paper,
-  Typography,
-  Container,
   Collapse,
   FormControl,
   MenuItem,
@@ -12,7 +9,6 @@ import {
   Badge,
   Avatar,
 } from "@mui/material";
-import { useLayoutStyles } from "../../styles/layout";
 import {
   ViewAgenda,
   ViewAgendaOutlined,
@@ -40,7 +36,6 @@ import {
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
-import { useInteractiveStyles } from "../../styles/interactive";
 import GridView from "./GridView";
 import AgendaView from "./AgendaView";
 import {
@@ -59,6 +54,10 @@ import { charaIcons, UnitLogoMiniMap } from "../../utils/resources";
 import { useCharaName } from "../../utils/i18n";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
+import TypographyHeader from "../../components/styled/TypographyHeader";
+import ContainerContent from "../../components/styled/ContainerContent";
+import PaperContainer from "../../components/styled/PaperContainer";
+import TypographyCaption from "../../components/styled/TypographyCaption";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -72,8 +71,6 @@ const ListCard: { [key: string]: React.FC<{ data?: IMusicInfo }> } = {
 };
 
 const MusicList: React.FC<{}> = observer(() => {
-  const layoutClasses = useLayoutStyles();
-  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const {
     settings: { contentTransMode, isShowSpoiler },
@@ -284,10 +281,8 @@ const MusicList: React.FC<{}> = observer(() => {
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:music")}
-      </Typography>
-      <Container className={layoutClasses.content}>
+      <TypographyHeader>{t("common:music")}</TypographyHeader>
+      <ContainerContent>
         <Grid
           container
           justifyContent="space-between"
@@ -345,7 +340,7 @@ const MusicList: React.FC<{}> = observer(() => {
           </Grid>
         </Grid>
         <Collapse in={filterOpened}>
-          <Paper className={interactiveClasses.container}>
+          <PaperContainer>
             <Grid container direction="column" spacing={2}>
               <Grid
                 item
@@ -356,9 +351,9 @@ const MusicList: React.FC<{}> = observer(() => {
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
-                  <Typography classes={{ root: interactiveClasses.caption }}>
+                  <TypographyCaption>
                     {t("filter:music_tag.caption")}
-                  </Typography>
+                  </TypographyCaption>
                 </Grid>
                 <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
@@ -407,9 +402,9 @@ const MusicList: React.FC<{}> = observer(() => {
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
-                  <Typography classes={{ root: interactiveClasses.caption }}>
+                  <TypographyCaption>
                     {t("filter:music_mv.caption")}
-                  </Typography>
+                  </TypographyCaption>
                 </Grid>
                 <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
@@ -449,9 +444,9 @@ const MusicList: React.FC<{}> = observer(() => {
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
-                  <Typography classes={{ root: interactiveClasses.caption }}>
+                  <TypographyCaption>
                     {t("filter:character.caption")}
-                  </Typography>
+                  </TypographyCaption>
                 </Grid>
                 <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
@@ -534,9 +529,7 @@ const MusicList: React.FC<{}> = observer(() => {
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
-                  <Typography classes={{ root: interactiveClasses.caption }}>
-                    {t("music:composer")}
-                  </Typography>
+                  <TypographyCaption>{t("music:composer")}</TypographyCaption>
                 </Grid>
                 <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
@@ -576,9 +569,7 @@ const MusicList: React.FC<{}> = observer(() => {
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
-                  <Typography classes={{ root: interactiveClasses.caption }}>
-                    {t("music:arranger")}
-                  </Typography>
+                  <TypographyCaption>{t("music:arranger")}</TypographyCaption>
                 </Grid>
                 <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
@@ -618,9 +609,7 @@ const MusicList: React.FC<{}> = observer(() => {
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
-                  <Typography classes={{ root: interactiveClasses.caption }}>
-                    {t("music:lyricist")}
-                  </Typography>
+                  <TypographyCaption>{t("music:lyricist")}</TypographyCaption>
                 </Grid>
                 <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
@@ -660,9 +649,9 @@ const MusicList: React.FC<{}> = observer(() => {
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
-                  <Typography classes={{ root: interactiveClasses.caption }}>
+                  <TypographyCaption>
                     {t("filter:sort.caption")}
-                  </Typography>
+                  </TypographyCaption>
                 </Grid>
                 <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
@@ -759,7 +748,7 @@ const MusicList: React.FC<{}> = observer(() => {
                 </Grid>
               </Grid>
             </Grid>
-          </Paper>
+          </PaperContainer>
         </Collapse>
         <InfiniteScroll<IMusicInfo>
           ViewComponent={ListCard[viewGridType]}
@@ -784,7 +773,7 @@ const MusicList: React.FC<{}> = observer(() => {
             )[viewGridType]
           }
         />
-      </Container>
+      </ContainerContent>
     </Fragment>
   );
 });

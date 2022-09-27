@@ -1,41 +1,27 @@
 import { Card, CardContent, CardMedia, Grid, Typography } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
 import { Skeleton } from "@mui/material";
 import React, { Fragment } from "react";
-// import { useTranslation } from "react-i18next";
-// import { Link, useRouteMatch } from "react-router-dom";
 import { IHonorMission } from "../../../types.d";
 import { useAssetI18n } from "../../../utils/i18n";
 import { ContentTrans } from "../../../components/helpers/ContentTrans";
 import DegreeImage from "../../../components/widgets/DegreeImage";
 
-const useStyles = makeStyles((theme) => ({
-  media: {
-    paddingTop: "5%",
-    backgroundSize: "contain",
-  },
-  card: {
-    cursor: "pointer",
-  },
-  header: {},
-  "grid-out": {
-    padding: theme.spacing("1%", "2%"),
-  },
-}));
-
 const GridView: React.FC<{ data?: IHonorMission }> = ({ data }) => {
-  const classes = useStyles();
-  // const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
-  // const { path } = useRouteMatch();
 
   if (!data) {
     // loading
     return (
-      <Card className={classes.card}>
-        <Skeleton variant="rectangular" className={classes.media}></Skeleton>
+      <Card>
+        <Skeleton
+          variant="rectangular"
+          sx={{
+            paddingTop: "5%",
+            backgroundSize: "contain",
+          }}
+        ></Skeleton>
         <CardContent>
-          <Typography variant="subtitle1" className={classes.header}>
+          <Typography variant="subtitle1">
             <Skeleton variant="text" width="90%"></Skeleton>
           </Typography>
           <Typography variant="body2">
@@ -47,10 +33,13 @@ const GridView: React.FC<{ data?: IHonorMission }> = ({ data }) => {
   }
   return (
     <Fragment>
-      <Card className={classes.card}>
+      <Card sx={{ cursor: "pointer" }}>
         <CardMedia
-          className={classes.media}
           title={getTranslated(`honor_mission:${data.id}`, data.sentence)}
+          sx={{
+            paddingTop: "5%",
+            backgroundSize: "contain",
+          }}
         >
           <DegreeImage
             resourceBoxId={data.rewards[0].resourceBoxId}

@@ -1,14 +1,4 @@
-import {
-  Link,
-  Typography,
-  Container,
-  useTheme,
-  Grid,
-  Box,
-  Chip,
-} from "@mui/material";
-import { useLayoutStyles } from "../styles/layout";
-import { useInteractiveStyles } from "../styles/interactive";
+import { Link, Typography, useTheme, Grid, Box, Chip } from "@mui/material";
 import {
   Album,
   AspectRatio,
@@ -29,7 +19,6 @@ import Discord from "~icons/mdi/discord";
 import Patreon from "~icons/mdi/patreon";
 import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { Link as RouteLink } from "react-router-dom";
 import { getJPTime, useVersionInfo } from "../utils";
 import AnnouncementWidget from "../components/widgets/AnnouncementWidget";
 import CurrentEventWidget from "../components/widgets/CurrentEventWidget";
@@ -37,6 +26,9 @@ import CurrentEventWidget from "../components/widgets/CurrentEventWidget";
 import SekaiGameNews from "../components/blocks/SekaiGameNews";
 import { useRootStore } from "../stores/root";
 import Countdown from "../components/widgets/Countdown";
+import ContainerContent from "../components/styled/ContainerContent";
+import TypographyHeader from "../components/styled/TypographyHeader";
+import LinkNoDecoration from "../components/styled/LinkNoDecoration";
 
 interface IDetectResult {
   webp: number;
@@ -59,7 +51,6 @@ function getWebpDetectSeverity(detected: IDetectResult) {
 }
 
 const VersionInfo = () => {
-  const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
 
   const [version] = useVersionInfo();
@@ -67,10 +58,8 @@ const VersionInfo = () => {
   return (
     (!!version && (
       <Fragment>
-        <Typography variant="h6" className={layoutClasses.header}>
-          {t("home:versionInfo.caption")}
-        </Typography>
-        <Container className={layoutClasses.content}>
+        <TypographyHeader>{t("home:versionInfo.caption")}</TypographyHeader>
+        <ContainerContent>
           <Grid container spacing={2}>
             <Grid item>
               <Grid container alignItems="center">
@@ -105,7 +94,7 @@ const VersionInfo = () => {
               </Grid>
             </Grid>
           </Grid>
-        </Container>
+        </ContainerContent>
       </Fragment>
     )) ||
     null
@@ -114,8 +103,6 @@ const VersionInfo = () => {
 
 function Home() {
   const theme = useTheme();
-  const layoutClasses = useLayoutStyles();
-  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
 
   const {
@@ -146,10 +133,8 @@ function Home() {
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:home")}
-      </Typography>
-      <Container className={layoutClasses.content}>
+      <TypographyHeader>{t("common:home")}</TypographyHeader>
+      <ContainerContent>
         {/* <Typography variant="h4">Welcome to Sekai Viewer Open Beta!</Typography> */}
         {/* <Box paddingTop="1%" paddingBottom="1%">
           {new Date().getTime() - 1640962800000 < 259200000 ? (
@@ -288,7 +273,7 @@ function Home() {
             )}
           </Grid>
         </Grid>
-        <Alert className={layoutClasses.alert} severity="info">
+        <Alert sx={{ margin: theme.spacing(1, 0) }} severity="info">
           {t("home:disclaimer")}
         </Alert>
         {/* <Alert className={layoutClasses.alert} severity="info">
@@ -301,7 +286,7 @@ function Home() {
           />
         </Alert> */}
         {window.isChinaMainland && (
-          <Alert className={layoutClasses.alert} severity="info">
+          <Alert sx={{ margin: theme.spacing(1, 0) }} severity="info">
             本站已启用腾讯云CDN加速数据加载，并计划迁移更多数据加速本站访问，但是费用相对高昂，你可以通过
             <Link
               href="https://afdian.net/@sekaiviewer"
@@ -316,34 +301,26 @@ function Home() {
         )}
         {getWebpDetectSeverity(detected) !== "success" && (
           <Alert
-            className={layoutClasses.alert}
+            sx={{ margin: theme.spacing(1, 0) }}
             severity={getWebpDetectSeverity(detected)}
           >
             <AlertTitle>WebP {t("common:support")}</AlertTitle>
             <Trans
               i18nKey="home:detect.warning"
               components={{
-                l: (
-                  <Link
-                    href="https://caniuse.com/webp"
-                    underline="hover"
-                  ></Link>
-                ),
+                l: <Link href="https://caniuse.com/webp" underline="hover" />,
               }}
             />
           </Alert>
         )}
-      </Container>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("home:directLink.caption")}
-      </Typography>
-      <Container className={layoutClasses.content}>
+      </ContainerContent>
+      <TypographyHeader>{t("home:directLink.caption")}</TypographyHeader>
+      <ContainerContent>
         <Grid container rowSpacing={2}>
           <Grid item container columnSpacing={2} rowSpacing={1}>
             <Grid item>
-              <RouteLink
+              <LinkNoDecoration
                 to="/card"
-                className={interactiveClasses.noDecoration}
                 style={{ color: theme.palette.primary.main }}
               >
                 <Grid container direction="row" alignContent="center">
@@ -352,12 +329,11 @@ function Home() {
                   </Grid>
                   <Grid item>{t("common:card")}</Grid>
                 </Grid>
-              </RouteLink>
+              </LinkNoDecoration>
             </Grid>
             <Grid item>
-              <RouteLink
+              <LinkNoDecoration
                 to="/music"
-                className={interactiveClasses.noDecoration}
                 style={{ color: theme.palette.primary.main }}
               >
                 <Grid container direction="row" alignContent="center">
@@ -366,12 +342,11 @@ function Home() {
                   </Grid>
                   <Grid item>{t("common:music")}</Grid>
                 </Grid>
-              </RouteLink>
+              </LinkNoDecoration>
             </Grid>
             <Grid item>
-              <RouteLink
+              <LinkNoDecoration
                 to="/gacha"
-                className={interactiveClasses.noDecoration}
                 style={{ color: theme.palette.primary.main }}
               >
                 <Grid container direction="row" alignContent="center">
@@ -380,12 +355,11 @@ function Home() {
                   </Grid>
                   <Grid item>{t("common:gacha")}</Grid>
                 </Grid>
-              </RouteLink>
+              </LinkNoDecoration>
             </Grid>
             <Grid item>
-              <RouteLink
+              <LinkNoDecoration
                 to="/event"
-                className={interactiveClasses.noDecoration}
                 style={{ color: theme.palette.primary.main }}
               >
                 <Grid container direction="row" alignContent="center">
@@ -394,12 +368,11 @@ function Home() {
                   </Grid>
                   <Grid item>{t("common:event")}</Grid>
                 </Grid>
-              </RouteLink>
+              </LinkNoDecoration>
             </Grid>
             <Grid item>
-              <RouteLink
+              <LinkNoDecoration
                 to="/music_recommend"
-                className={interactiveClasses.noDecoration}
                 style={{ color: theme.palette.primary.main }}
               >
                 <Grid container direction="row" alignContent="center">
@@ -408,12 +381,11 @@ function Home() {
                   </Grid>
                   <Grid item>{t("common:musicRecommend")}</Grid>
                 </Grid>
-              </RouteLink>
+              </LinkNoDecoration>
             </Grid>
             <Grid item>
-              <RouteLink
+              <LinkNoDecoration
                 to="/eventtracker"
-                className={interactiveClasses.noDecoration}
                 style={{ color: theme.palette.primary.main }}
               >
                 <Grid container direction="row" alignContent="center">
@@ -422,12 +394,11 @@ function Home() {
                   </Grid>
                   <Grid item>{t("common:eventTracker")}</Grid>
                 </Grid>
-              </RouteLink>
+              </LinkNoDecoration>
             </Grid>
             <Grid item>
-              <RouteLink
+              <LinkNoDecoration
                 to="/storyreader"
-                className={interactiveClasses.noDecoration}
                 style={{ color: theme.palette.primary.main }}
               >
                 <Grid container direction="row" alignContent="center">
@@ -436,14 +407,13 @@ function Home() {
                   </Grid>
                   <Grid item>{t("common:storyReader")}</Grid>
                 </Grid>
-              </RouteLink>
+              </LinkNoDecoration>
             </Grid>
           </Grid>
           <Grid item container columnSpacing={2} rowSpacing={1}>
             <Grid item>
-              <RouteLink
+              <LinkNoDecoration
                 to="/settings"
-                className={interactiveClasses.noDecoration}
                 style={{ color: theme.palette.primary.main }}
               >
                 <Grid container direction="row" alignContent="center">
@@ -452,7 +422,7 @@ function Home() {
                   </Grid>
                   <Grid item>{t("common:settings.title")}</Grid>
                 </Grid>
-              </RouteLink>
+              </LinkNoDecoration>
             </Grid>
             <Grid item>
               <Link
@@ -531,9 +501,8 @@ function Home() {
               </Grid>
             )}
             <Grid item>
-              <RouteLink
+              <LinkNoDecoration
                 to="/about"
-                className={interactiveClasses.noDecoration}
                 style={{ color: theme.palette.primary.main }}
               >
                 <Grid container direction="row" alignContent="center">
@@ -542,7 +511,7 @@ function Home() {
                   </Grid>
                   <Grid item>{t("home:directLink.contribList")}</Grid>
                 </Grid>
-              </RouteLink>
+              </LinkNoDecoration>
             </Grid>
             <Grid item>
               <Link
@@ -592,7 +561,7 @@ function Home() {
             </Grid>
           )}
         </Grid>
-      </Container>
+      </ContainerContent>
       <VersionInfo />
       {/* <AdSense
         client="ca-pub-7767752375383260"
@@ -608,12 +577,10 @@ function Home() {
           <AnnouncementWidget />
         </Grid>
       </Grid>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("home:game-news.title")}
-      </Typography>
-      <Container className={layoutClasses.content}>
+      <TypographyHeader>{t("home:game-news.title")}</TypographyHeader>
+      <ContainerContent>
         <SekaiGameNews isShowSpoiler={isShowSpoiler} region={region} />
-      </Container>
+      </ContainerContent>
     </Fragment>
   );
 }

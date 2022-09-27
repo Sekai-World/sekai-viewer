@@ -24,7 +24,6 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { useLayoutStyles } from "../../styles/layout";
 import { EventGraphRanking, EventRankingResponse } from "../../types.d";
 import { useEventTrackerAPI } from "../../utils/eventTracker";
 import { observer } from "mobx-react-lite";
@@ -37,7 +36,6 @@ const EventTrackerGraph: React.FC<{
   mobileTable?: boolean;
 }> = observer(({ rtRanking, ranking, eventId, mobileTable = false }) => {
   const theme = useTheme();
-  const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const { region } = useRootStore();
 
@@ -160,7 +158,13 @@ const EventTrackerGraph: React.FC<{
 
   return isShowChart ? (
     <Fragment>
-      <Grid container className={layoutClasses.content}>
+      <Grid
+        container
+        sx={(theme) => ({
+          marginTop: theme.spacing(2),
+          marginBottom: theme.spacing(2),
+        })}
+      >
         <Grid item xs={12}>
           <Paper variant={mobileTable ? "elevation" : "outlined"}>
             <ResponsiveContainer height={500}>
@@ -218,7 +222,10 @@ const EventTrackerGraph: React.FC<{
         <TableContainer
           component={Paper}
           variant={mobileTable ? "elevation" : "outlined"}
-          className={layoutClasses.content}
+          sx={(theme) => ({
+            marginTop: theme.spacing(2),
+            marginBottom: theme.spacing(2),
+          })}
         >
           <Table size="small">
             <TableBody>
@@ -241,7 +248,10 @@ const EventTrackerGraph: React.FC<{
         <TableContainer
           component={Paper}
           variant="outlined"
-          className={layoutClasses.content}
+          sx={(theme) => ({
+            marginTop: theme.spacing(2),
+            marginBottom: theme.spacing(2),
+          })}
         >
           <Table size="small">
             <TableHead>

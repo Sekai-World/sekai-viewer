@@ -1,17 +1,8 @@
-import {
-  Avatar,
-  Container,
-  Divider,
-  Grid,
-  Paper,
-  Typography,
-} from "@mui/material";
+import { Avatar, Divider, Grid, Paper, Typography } from "@mui/material";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import Image from "mui-image";
-// import { useInteractiveStyles } from "../../styles/interactive";
-import { useLayoutStyles } from "../../styles/layout";
 import { IGameCharaUnit, IVirtualLiveInfo } from "../../types.d";
 import { getRemoteAssetURL, useCachedData } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
@@ -25,12 +16,13 @@ import Comment from "../comment/Comment";
 import { useStrapi } from "../../utils/apiClient";
 import { useRootStore } from "../../stores/root";
 import { observer } from "mobx-react-lite";
+import TypographyHeader from "../../components/styled/TypographyHeader";
+import ContainerContent from "../../components/styled/ContainerContent";
+import GridOut from "../../components/styled/GridOut";
 
 const VirtualLiveDetail: React.FC<{}> = observer(() => {
   const { t } = useTranslation();
   const { id: virtualLiveId } = useParams<{ id: string }>();
-  const layoutClasses = useLayoutStyles();
-  // const interactiveClasses = useInteractiveStyles();
   const { getTranslated } = useAssetI18n();
   const {
     settings: { contentTransMode },
@@ -102,10 +94,10 @@ const VirtualLiveDetail: React.FC<{}> = observer(() => {
 
   return virtualLive && gameCharacterUnits ? (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
+      <TypographyHeader>
         {getTranslated(`virtualLive_name:${virtualLiveId}`, virtualLive.name)}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      </TypographyHeader>
+      <ContainerContent maxWidth="md">
         <Grid container direction="row" spacing={1} alignItems="center">
           <Grid item xs={12} md={6}>
             <Image
@@ -124,11 +116,7 @@ const VirtualLiveDetail: React.FC<{}> = observer(() => {
             ></Image>
           </Grid>
         </Grid>
-        <Grid
-          className={layoutClasses["grid-out"]}
-          container
-          direction="column"
-        >
+        <GridOut container direction="column">
           <Grid
             item
             container
@@ -272,13 +260,11 @@ const VirtualLiveDetail: React.FC<{}> = observer(() => {
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
-        </Grid>
-      </Container>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("virtual_live:title.schedules")}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
-        <Grid className={layoutClasses["grid-out"]} container spacing={1}>
+        </GridOut>
+      </ContainerContent>
+      <TypographyHeader>{t("virtual_live:title.schedules")}</TypographyHeader>
+      <ContainerContent maxWidth="md">
+        <GridOut container spacing={1}>
           {virtualLive.virtualLiveSchedules.map((schedule) => (
             <Grid key={schedule.id} item xs={12} md={4} lg={3}>
               <Paper style={{ padding: "2%" }}>
@@ -303,33 +289,31 @@ const VirtualLiveDetail: React.FC<{}> = observer(() => {
               </Paper>
             </Grid>
           ))}
-        </Grid>
-      </Container>
+        </GridOut>
+      </ContainerContent>
       {/* <AdSense
         client="ca-pub-7767752375383260"
         slot="8221864477"
         format="auto"
         responsive="true"
       /> */}
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("virtual_live:title.setlist")}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      <TypographyHeader>{t("virtual_live:title.setlist")}</TypographyHeader>
+      <ContainerContent maxWidth="md">
         {virtualLive.virtualLiveSetlists.map((setlist) => (
           <VirtualLiveStep key={setlist.id} data={setlist} />
         ))}
-      </Container>
+      </ContainerContent>
       {!!virtualLiveCommentId && (
         <Fragment>
-          <Typography variant="h6" className={layoutClasses.header}>
+          <TypographyHeader>
             {t("common:comment")} <CommentTextMultiple />
-          </Typography>
-          <Container className={layoutClasses.content} maxWidth="md">
+          </TypographyHeader>
+          <ContainerContent maxWidth="md">
             <Comment
               contentType="virtual-live"
               contentId={virtualLiveCommentId}
             />
-          </Container>
+          </ContainerContent>
         </Fragment>
       )}
     </Fragment>

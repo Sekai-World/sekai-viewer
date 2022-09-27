@@ -3,12 +3,10 @@ import {
   AccordionDetails,
   AccordionSummary,
   Avatar,
-  // Button,
   Chip,
   Divider,
   FormControl,
   Grid,
-  // InputLabel,
   MenuItem,
   Select,
   Table,
@@ -46,12 +44,12 @@ import IconClear from "../../../assets/music/icon_clear.png";
 import IconFullCombo from "../../../assets/music/icon_fullCombo.png";
 import IconAllPerfect from "../../../assets/music/icon_allPerfect.png";
 import { ExpandMore } from "@mui/icons-material";
-import { useLayoutStyles } from "../../../styles/layout";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../../stores/root";
 import { ISekaiProfile } from "../../../stores/sekai";
 import { autorun } from "mobx";
 import { assetUrl } from "../../../utils/urls";
+import TypographyHeader from "../../../components/styled/TypographyHeader";
 
 const ProfileMusicImage: React.FC<{
   assetbundleName: string;
@@ -312,8 +310,6 @@ const MusicSingleData: React.FC<{ umusic?: UserMusic; music: IMusicInfo }> =
   });
 
 const SekaiUserStatistics = observer(() => {
-  const layoutClasses = useLayoutStyles();
-  // const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
   const {
@@ -365,9 +361,9 @@ const SekaiUserStatistics = observer(() => {
           TransitionProps={{ unmountOnExit: true }}
         >
           <AccordionSummary expandIcon={<ExpandMore />}>
-            <Typography className={layoutClasses.header}>
+            <TypographyHeader>
               {t("mission:type.character_rank")}
-            </Typography>
+            </TypographyHeader>
           </AccordionSummary>
           <AccordionDetails>
             <Grid container spacing={1}>
@@ -392,9 +388,7 @@ const SekaiUserStatistics = observer(() => {
           TransitionProps={{ unmountOnExit: true }}
         >
           <AccordionSummary expandIcon={<ExpandMore />}>
-            <Typography className={layoutClasses.header}>
-              {t("common:challengeLive")}
-            </Typography>
+            <TypographyHeader>{t("common:challengeLive")}</TypographyHeader>
           </AccordionSummary>
           <AccordionDetails>
             <Grid container spacing={1}>
@@ -452,9 +446,7 @@ const SekaiUserStatistics = observer(() => {
           TransitionProps={{ unmountOnExit: true }}
         >
           <AccordionSummary expandIcon={<ExpandMore />}>
-            <Typography className={layoutClasses.header}>
-              {t("common:mission.honor")}
-            </Typography>
+            <TypographyHeader>{t("common:mission.honor")}</TypographyHeader>
           </AccordionSummary>
           <AccordionDetails>
             <Grid container spacing={1}>
@@ -479,9 +471,7 @@ const SekaiUserStatistics = observer(() => {
           TransitionProps={{ unmountOnExit: true }}
         >
           <AccordionSummary expandIcon={<ExpandMore />}>
-            <Typography className={layoutClasses.header}>
-              {t("common:area_item")}
-            </Typography>
+            <TypographyHeader>{t("common:area_item")}</TypographyHeader>
           </AccordionSummary>
           <AccordionDetails>
             {!!areaItems && !!areas && (
@@ -604,9 +594,7 @@ const SekaiUserStatistics = observer(() => {
           TransitionProps={{ unmountOnExit: true }}
         >
           <AccordionSummary expandIcon={<ExpandMore />}>
-            <Typography className={layoutClasses.header}>
-              {t("common:music")}
-            </Typography>
+            <TypographyHeader>{t("common:music")}</TypographyHeader>
           </AccordionSummary>
           <AccordionDetails>
             {musics && (

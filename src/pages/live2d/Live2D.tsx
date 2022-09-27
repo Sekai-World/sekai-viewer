@@ -14,7 +14,6 @@ import { LAppModel } from "@sekai-world/find-live2d-v3/dist/types/lappmodel";
 import { Alert, Autocomplete, Box } from "@mui/material";
 import {
   Button,
-  Container,
   Grid,
   IconButton,
   LinearProgress,
@@ -28,7 +27,6 @@ import {
   useTheme,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { useLayoutStyles } from "../../styles/layout";
 import {
   Camera,
   CloudDownload,
@@ -44,9 +42,10 @@ import fscreen from "fscreen";
 import { CanvasRecorder } from "@tawaship/canvas-recorder";
 import { useLive2dModelList } from "../../utils/apiClient";
 import { assetUrl } from "../../utils/urls";
+import TypographyHeader from "../../components/styled/TypographyHeader";
+import ContainerContent from "../../components/styled/ContainerContent";
 
 const Live2DView: React.FC<{}> = () => {
-  const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -445,10 +444,8 @@ const Live2DView: React.FC<{}> = () => {
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        Live2D
-      </Typography>
-      <Alert severity="warning" className={layoutClasses.alert}>
+      <TypographyHeader>Live2D</TypographyHeader>
+      <Alert severity="warning" sx={{ margin: theme.spacing(1, 0) }}>
         {t("common:betaIndicator")}
       </Alert>
       <Grid container spacing={1} alignItems="center">
@@ -482,12 +479,15 @@ const Live2DView: React.FC<{}> = () => {
         </Grid>
       </Grid>
       {showProgress && (
-        <Container className={layoutClasses.content}>
+        <ContainerContent>
           <Typography>{progressWords}</Typography>
           <LinearProgress variant="determinate" value={progress} />
-        </Container>
+        </ContainerContent>
       )}
-      <Box ref={wrap} className={layoutClasses.content}>
+      <Box
+        ref={wrap}
+        sx={{ marginTop: theme.spacing(2), marginBottom: theme.spacing(2) }}
+      >
         {model && (
           <Toolbar component={Paper}>
             <Grid container spacing={1} alignItems="center">

@@ -1,23 +1,16 @@
-import {
-  Button,
-  CircularProgress,
-  Container,
-  Grid,
-  InputAdornment,
-  Typography,
-} from "@mui/material";
+import { Button, CircularProgress, Grid, InputAdornment } from "@mui/material";
 import { Email } from "@mui/icons-material";
 import { Alert } from "@mui/material";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-mui";
 import React, { Fragment, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useLayoutStyles } from "../../styles/layout";
 import { useAlertSnackbar } from "../../utils";
 import { useStrapi } from "../../utils/apiClient";
+import TypographyHeader from "../../components/styled/TypographyHeader";
+import ContainerContent from "../../components/styled/ContainerContent";
 
 const ResetPassword: React.FC<{}> = () => {
-  const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const { postForgotPassword } = useStrapi();
   const { showError, showSuccess } = useAlertSnackbar();
@@ -28,13 +21,14 @@ const ResetPassword: React.FC<{}> = () => {
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:reset_password")}
-      </Typography>
-      <Alert severity="warning" className={layoutClasses.alert}>
+      <TypographyHeader>{t("common:reset_password")}</TypographyHeader>
+      <Alert
+        severity="warning"
+        sx={(theme) => ({ margin: theme.spacing(1, 0) })}
+      >
         {t("auth:reset_password_no_provider")}
       </Alert>
-      <Container className={layoutClasses.content} maxWidth="md">
+      <ContainerContent maxWidth="md">
         <Formik
           initialValues={{
             email: "",
@@ -101,7 +95,7 @@ const ResetPassword: React.FC<{}> = () => {
             </Grid>
           )}
         </Formik>
-      </Container>
+      </ContainerContent>
     </Fragment>
   );
 };

@@ -1,8 +1,6 @@
 import { Grid, Typography } from "@mui/material";
 import React, { Fragment, useLayoutEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
-import { useInteractiveStyles } from "../../styles/interactive";
 import { IMusicInfo, IMusicVocalInfo, VirtualLiveSetlist } from "../../types.d";
 import { getRemoteAssetURL, useCachedData } from "../../utils";
 import AudioPlayer from "../music/AudioPlayer";
@@ -10,12 +8,12 @@ import {
   CharaNameTrans,
   ContentTrans,
 } from "../../components/helpers/ContentTrans";
+import LinkNoDecoration from "../../components/styled/LinkNoDecoration";
 
 const VirtualLiveStepMusic: React.FC<{
   data: VirtualLiveSetlist;
 }> = ({ data }) => {
   const { t } = useTranslation();
-  const interactiveClasses = useInteractiveStyles();
 
   const [musics] = useCachedData<IMusicInfo>("musics");
   const [musicVocals] = useCachedData<IMusicVocalInfo>("musicVocals");
@@ -64,15 +62,12 @@ const VirtualLiveStepMusic: React.FC<{
                   </Typography>
                 </Grid>
                 <Grid item>
-                  <Link
-                    to={`/music/${music.id}`}
-                    className={interactiveClasses.noDecoration}
-                  >
+                  <LinkNoDecoration to={`/music/${music.id}`}>
                     <ContentTrans
                       contentKey={"music_name:" + music.id}
                       original={music.title}
                     />
-                  </Link>
+                  </LinkNoDecoration>
                 </Grid>
               </Grid>
             </Grid>

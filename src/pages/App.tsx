@@ -23,7 +23,6 @@ import {
   Skeleton,
   SwipeableDrawer,
   CSSObject,
-  styled,
   Box,
 } from "@mui/material";
 import {
@@ -31,8 +30,8 @@ import {
   ThemeProvider,
   Theme,
   createTheme,
+  styled,
 } from "@mui/material/styles";
-import { makeStyles } from "@mui/styles";
 import {
   Menu as MenuIcon,
   Home as HomeIcon,
@@ -96,10 +95,6 @@ import { IUserMetadata } from "../stores/user";
 import { fontFaceOverride, fontList } from "../utils/fonts";
 import { WebpMachine } from "webp-hero";
 
-declare module "@mui/styles/defaultTheme" {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  interface DefaultTheme extends Theme {}
-}
 const CardList = lazy(() => import("./card/CardList"));
 const HomeView = lazy(() => import("./Home"));
 const MusicList = lazy(() => import("./music/MusicList"));
@@ -154,59 +149,6 @@ const drawerWidth = 240;
 const webpMachine = new WebpMachine();
 webpMachine.polyfillDocument();
 
-const useStyles = makeStyles((theme) => ({
-  toolbar: {
-    ...theme.mixins.toolbar,
-    display: "flex",
-    alignItems: "center",
-    padding: theme.spacing(0, 3),
-    // justifyContent: 'flex-end'
-  },
-  root: {
-    display: "flex",
-    minHeight: "100vh",
-  },
-  drawer: {
-    [theme.breakpoints.up("md")]: {
-      width: drawerWidth,
-      flexShrink: 0,
-    },
-  },
-  appBar: {
-    [theme.breakpoints.up("md")]: {
-      width: `calc(100% - ${drawerWidth}px)`,
-      marginLeft: drawerWidth,
-    },
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
-  title: {
-    flexGrow: 1,
-  },
-  drawerPaper: {
-    width: drawerWidth,
-  },
-  content: {
-    flexGrow: 1,
-    padding: theme.spacing(2),
-    [theme.breakpoints.up("md")]: {
-      width: `calc(100% - ${drawerWidth}px)`,
-    },
-  },
-  listItem: {
-    padding: theme.spacing(0, 1),
-  },
-  listItemInner: {
-    paddingTop: "2px",
-    paddingBottom: "2px",
-    [theme.breakpoints.down("lg")]: {
-      paddingTop: "8px",
-      paddingBottom: "8px",
-    },
-  },
-}));
-
 interface IListItemLinkProps {
   icon?: React.ReactElement;
   text: string;
@@ -226,45 +168,57 @@ function ListItemLink(
     path: to,
     exact: to === "/",
   });
-  const classes = useStyles();
+
+  const Root = styled(Box)(({ theme }) => ({
+    "& .list-item-link-inner": {
+      paddingTop: "2px",
+      paddingBottom: "2px",
+      [theme.breakpoints.down("lg")]: {
+        paddingTop: "8px",
+        paddingBottom: "8px",
+      },
+    },
+  }));
 
   if (
     props.visibleRoles &&
     (!user.userinfo || !props.visibleRoles.includes(user.userinfo.role))
   )
-    return <Fragment></Fragment>;
+    return <Fragment />;
   return (
-    <li
-      style={{
-        width: "100%",
-      }}
-    >
-      <ListItem
-        component={Link}
-        classes={{ root: classes.listItemInner }}
-        to={{
-          pathname: to,
+    <Root>
+      <li
+        style={{
+          width: "100%",
         }}
-        /**
-         * if true redirect to another page, otherwise used the spa routing
-         */
-        target={isRedirection ? "_blank" : undefined}
       >
-        <ListItemIcon
-          sx={{
-            color: match ? "secondary.main" : "text.primary",
+        <ListItem
+          component={Link}
+          classes={{ root: "list-item-link-inner" }}
+          to={{
+            pathname: to,
           }}
+          /**
+           * if true redirect to another page, otherwise used the spa routing
+           */
+          target={isRedirection ? "_blank" : undefined}
         >
-          {icon}
-        </ListItemIcon>
-        <ListItemText
-          primary={text}
-          sx={{
-            color: match ? "secondary.main" : "text.primary",
-          }}
-        ></ListItemText>
-      </ListItem>
-    </li>
+          <ListItemIcon
+            sx={{
+              color: match ? "secondary.main" : "text.primary",
+            }}
+          >
+            {icon}
+          </ListItemIcon>
+          <ListItemText
+            primary={text}
+            sx={{
+              color: match ? "secondary.main" : "text.primary",
+            }}
+          ></ListItemText>
+        </ListItem>
+      </li>
+    </Root>
   );
 }
 
@@ -282,30 +236,43 @@ function ListItemWithChildren(props: {
     path: item.to,
     exact: item.to === "/",
   });
-  const classes = useStyles();
 
   const [expansionState, setExpansionState] = useState(Boolean(match));
+
+  const Root = styled(Box)(({ theme }) => ({
+    "& .list-item-children-inner": {
+      paddingTop: "2px",
+      paddingBottom: "2px",
+      [theme.breakpoints.down("lg")]: {
+        paddingTop: "8px",
+        paddingBottom: "8px",
+      },
+    },
+    "& .list-item-children": {
+      padding: theme.spacing(0, 1),
+    },
+  }));
 
   if (
     item.visibleRoles &&
     (!user.userinfo || !item.visibleRoles.includes(user.userinfo.role))
   )
-    return <Fragment></Fragment>;
+    return <Fragment />;
 
   return (
-    <Fragment>
+    <Root>
       <ListItem
         disabled={item.disabled}
         button
         key={item.to}
         classes={{
-          root: classes.listItem,
+          root: "list-item-children",
         }}
         onClick={() => setExpansionState((state) => !state)}
       >
         <ListItem
           classes={{
-            root: classes.listItemInner,
+            root: "list-item-children-inner",
           }}
         >
           <ListItemIcon
@@ -331,7 +298,7 @@ function ListItemWithChildren(props: {
             button
             key={elem.to}
             classes={{
-              root: classes.listItem,
+              root: "list-item-children",
             }}
           >
             {elem.children ? (
@@ -347,7 +314,7 @@ function ListItemWithChildren(props: {
           </ListItem>
         ))}
       </Collapse>
-    </Fragment>
+    </Root>
   );
 }
 
@@ -415,7 +382,6 @@ const DrawerContent: React.FC<{
   open: boolean;
   onFoldButtonClick?: React.MouseEventHandler<HTMLButtonElement>;
 }> = ({ open, onFoldButtonClick }) => {
-  const classes = useStyles();
   const { t } = useTranslation();
 
   const leftBtns: IListItemLinkProps[][] = React.useMemo(
@@ -627,9 +593,22 @@ const DrawerContent: React.FC<{
     boolean[]
   >(leftBtns.map(() => true));
 
+  const Root = styled(Box)(({ theme }) => ({
+    "& .drawer-content-toolbar": {
+      ...theme.mixins.toolbar,
+      display: "flex",
+      alignItems: "center",
+      padding: theme.spacing(0, 3),
+      // justifyContent: 'flex-end'
+    },
+    "& .drawer-content-list-item": {
+      padding: theme.spacing(0, 1),
+    },
+  }));
+
   return (
-    <div>
-      <div className={classes.toolbar}>
+    <Root>
+      <div className="drawer-content-toolbar">
         <Typography variant="h6">{t("common:toolbar.title")}</Typography>
         <Box sx={{ marginLeft: "auto" }}>
           <Hidden mdDown implementation="css">
@@ -669,7 +648,7 @@ const DrawerContent: React.FC<{
                 button
                 key={elem.to}
                 classes={{
-                  root: classes.listItem,
+                  root: "drawer-content-list-item",
                 }}
               >
                 <ListItemLink {...elem} />
@@ -705,7 +684,7 @@ const DrawerContent: React.FC<{
                 button
                 key={elem.to}
                 classes={{
-                  root: classes.listItem,
+                  root: "drawer-content-list-item",
                 }}
               >
                 <ListItemLink
@@ -742,7 +721,7 @@ const DrawerContent: React.FC<{
                 button
                 key={elem.to}
                 classes={{
-                  root: classes.listItem,
+                  root: "drawer-content-list-item",
                 }}
               >
                 <ListItemLink
@@ -783,7 +762,7 @@ const DrawerContent: React.FC<{
                 button
                 key={elem.to}
                 classes={{
-                  root: classes.listItem,
+                  root: "drawer-content-list-item",
                 }}
               >
                 <ListItemLink
@@ -797,7 +776,7 @@ const DrawerContent: React.FC<{
           )}
         </Collapse>
       </List>
-    </div>
+    </Root>
   );
 };
 
@@ -821,7 +800,6 @@ const AppInner = observer((props: { theme: Theme }) => {
     region
   );
 
-  const classes = useStyles();
   const { theme } = props;
 
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -889,9 +867,45 @@ const AppInner = observer((props: { theme: Theme }) => {
     userinfo,
   ]);
 
+  const Root = styled(Box)(({ theme }) => ({
+    "& .app-inner-root": {
+      display: "flex",
+      minHeight: "100vh",
+    },
+    "& .app-inner-menu-button": {
+      marginRight: theme.spacing(2),
+    },
+    "& .app-inner-title": {
+      flexGrow: 1,
+    },
+    "& .app-inner-drawer": {
+      [theme.breakpoints.up("md")]: {
+        width: drawerWidth,
+        flexShrink: 0,
+      },
+    },
+    "& .app-inner-drawer-paper": {
+      width: drawerWidth,
+    },
+    "& .app-inner-drawer-content": {
+      flexGrow: 1,
+      padding: theme.spacing(2),
+      [theme.breakpoints.up("md")]: {
+        width: `calc(100% - ${drawerWidth}px)`,
+      },
+    },
+    "& .app-inner-drawer-toolbar": {
+      ...theme.mixins.toolbar,
+      display: "flex",
+      alignItems: "center",
+      padding: theme.spacing(0, 3),
+      // justifyContent: 'flex-end'
+    },
+  }));
+
   return (
     <SnackbarProvider>
-      <div className={classes.root}>
+      <Root className="app-inner-root">
         <CssBaseline />
         <Hidden mdDown implementation="css">
           <DesktopAppBar position="fixed" open={desktopOpen}>
@@ -900,7 +914,7 @@ const AppInner = observer((props: { theme: Theme }) => {
                 color="inherit"
                 edge="start"
                 onClick={() => setDesktopOpen(true)}
-                className={classes.menuButton}
+                className="app-inner-menu-button"
                 size="large"
                 sx={{
                   ...(desktopOpen && { display: "none" }),
@@ -908,7 +922,11 @@ const AppInner = observer((props: { theme: Theme }) => {
               >
                 <MenuIcon />
               </IconButton>
-              <Typography variant="h6" noWrap classes={{ root: classes.title }}>
+              <Typography
+                variant="h6"
+                noWrap
+                classes={{ root: "app-inner-title" }}
+              >
                 Sekai Viewer <small>{import.meta.env.PACKAGE_VERSION}</small>
               </Typography>
               <IconButton
@@ -951,12 +969,16 @@ const AppInner = observer((props: { theme: Theme }) => {
                 color="inherit"
                 edge="start"
                 onClick={() => setMobileOpen(true)}
-                className={classes.menuButton}
+                className="app-inner-menu-button"
                 size="large"
               >
                 <MenuIcon />
               </IconButton>
-              <Typography variant="h6" noWrap classes={{ root: classes.title }}>
+              <Typography
+                variant="h6"
+                noWrap
+                classes={{ root: "app-inner-title" }}
+              >
                 Sekai Viewer <small>{import.meta.env.PACKAGE_VERSION}</small>
               </Typography>
               <IconButton
@@ -1016,7 +1038,7 @@ const AppInner = observer((props: { theme: Theme }) => {
             <Typography>{t("common:user")}</Typography>
           </MenuItem>
         </Menu>
-        <nav className={classes.drawer}>
+        <nav className="app-inner-drawer">
           <Hidden mdUp implementation="css">
             <SwipeableDrawer
               container={container}
@@ -1026,7 +1048,7 @@ const AppInner = observer((props: { theme: Theme }) => {
               onClose={() => setMobileOpen(false)}
               onOpen={() => setMobileOpen(true)}
               classes={{
-                paper: classes.drawerPaper,
+                paper: "app-inner-drawer-paper",
               }}
               ModalProps={{
                 keepMounted: true,
@@ -1042,7 +1064,7 @@ const AppInner = observer((props: { theme: Theme }) => {
               variant="permanent"
               open={desktopOpen}
               classes={{
-                paper: classes.drawerPaper,
+                paper: "app-inner-drawer-paper",
               }}
             >
               <DrawerContent
@@ -1052,8 +1074,11 @@ const AppInner = observer((props: { theme: Theme }) => {
             </Drawer>
           </Hidden>
         </nav>
-        <Container className={classes.content}>
-          <div className={classes.toolbar} id="back-to-top-anchor"></div>
+        <Container className="app-inner-drawer-content">
+          <div
+            className="app-inner-drawer-toolbar"
+            id="back-to-top-anchor"
+          ></div>
           <Switch>
             <Suspense
               fallback={
@@ -1196,7 +1221,7 @@ const AppInner = observer((props: { theme: Theme }) => {
         open={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
       /> */}
-      </div>
+      </Root>
       <ReloadPrompt />
     </SnackbarProvider>
   );

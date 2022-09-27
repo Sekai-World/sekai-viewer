@@ -1,21 +1,19 @@
 import {
   Card,
   CardMedia,
-  Container,
   Divider,
   Grid,
   Paper,
+  styled,
   Tab,
   Tabs,
   Typography,
 } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
-import { TabContext, TabPanel } from "@mui/lab";
+import { TabContext } from "@mui/lab";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import Viewer from "react-viewer";
-import { useLayoutStyles } from "../styles/layout";
 import {
   IGameChara,
   ICharaUnitInfo,
@@ -33,43 +31,16 @@ import {
 } from "../components/helpers/ContentTrans";
 import { OpenInNew } from "@mui/icons-material";
 import { useCharaName } from "../utils/i18n";
-import { useInteractiveStyles } from "../styles/interactive";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../stores/root";
-
-const useStyle = makeStyles((theme) => ({
-  tabpanel: {
-    padding: theme.spacing("1%", 0, 0, 0),
-  },
-  media: {
-    paddingTop: "70%",
-    cursor: "pointer",
-  },
-  nameLabel: {
-    paddingTop: "30%",
-    backgroundSize: "contain",
-  },
-  nameVerticalLabel: {
-    paddingTop: "45%",
-    backgroundSize: "contain",
-  },
-  "grid-out": {
-    padding: theme.spacing("1%", "0"),
-  },
-  "unit-logo-img": {
-    maxHeight: "64px",
-  },
-  "unit-logo-large": {
-    maxHeight: "64px",
-    maxWidth: "100%",
-  },
-}));
+import TypographyHeader from "../components/styled/TypographyHeader";
+import ContainerContent from "../components/styled/ContainerContent";
+import GridOut from "../components/styled/GridOut";
+import LinkNoDecoration from "../components/styled/LinkNoDecoration";
+import TabPanelPadding from "../components/styled/TabPanelPadding";
 
 const MemberDetail: React.FC<{}> = observer(() => {
   const { charaId } = useParams<{ charaId: string }>();
-  const classes = useStyle();
-  const layoutClasses = useLayoutStyles();
-  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const getCharaName = useCharaName();
   const { region } = useRootStore();
@@ -177,12 +148,19 @@ const MemberDetail: React.FC<{}> = observer(() => {
     setTabVal(newValue);
   };
 
+  const UnitLogoImg = styled("img")`
+    max-height: 64px;
+  `;
+
+  const UnitLogoLargeImg = styled("img")`
+    max-height: 64px;
+    max-width: 100%;
+  `;
+
   return chara && charaUnit && charaProfile && charaCards.length ? (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {getCharaName(Number(charaId))}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      <TypographyHeader>{getCharaName(Number(charaId))}</TypographyHeader>
+      <ContainerContent maxWidth="md">
         <TabContext value={tabVal}>
           <Paper>
             <Tabs
@@ -195,7 +173,7 @@ const MemberDetail: React.FC<{}> = observer(() => {
               <Tab label={t("member:tab.title[1]")} value="1"></Tab>
               <Tab label={t("member:tab.title[2]")} value="2"></Tab>
             </Tabs>
-            <TabPanel value="0" classes={{ root: classes.tabpanel }}>
+            <TabPanelPadding value="0">
               <Card
                 onClick={() => {
                   setActiveIdx(0);
@@ -203,30 +181,39 @@ const MemberDetail: React.FC<{}> = observer(() => {
                 }}
               >
                 <CardMedia
-                  classes={{ root: classes.media }}
+                  sx={{
+                    paddingTop: "70%",
+                    cursor: "pointer",
+                  }}
                   image={charaTrimImg}
                 ></CardMedia>
               </Card>
-            </TabPanel>
-            <TabPanel value="1" classes={{ root: classes.tabpanel }}>
+            </TabPanelPadding>
+            <TabPanelPadding value="1">
               <Card>
                 <CardMedia
-                  classes={{ root: classes.nameLabel }}
+                  sx={{
+                    paddingTop: "30%",
+                    backgroundSize: "contain",
+                  }}
                   image={charaLabelHImg}
                 ></CardMedia>
               </Card>
-            </TabPanel>
-            <TabPanel value="2" classes={{ root: classes.tabpanel }}>
+            </TabPanelPadding>
+            <TabPanelPadding value="2">
               <Card>
                 <CardMedia
-                  classes={{ root: classes.nameVerticalLabel }}
+                  sx={{
+                    paddingTop: "45%",
+                    backgroundSize: "contain",
+                  }}
                   image={charaLabelVImg}
                 ></CardMedia>
               </Card>
-            </TabPanel>
+            </TabPanelPadding>
           </Paper>
         </TabContext>
-        <Grid className={classes["grid-out"]} container direction="column">
+        <GridOut container direction="column">
           <Grid
             container
             direction="row"
@@ -300,11 +287,10 @@ const MemberDetail: React.FC<{}> = observer(() => {
               {t("common:unit")}
             </Typography>
             <Link to={"/unit/" + chara.unit}>
-              <img
-                className={classes["unit-logo-img"]}
+              <UnitLogoImg
                 src={UnitLogoMap[region][chara.unit]}
                 alt={chara.unit}
-              ></img>
+              />
             </Link>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
@@ -343,13 +329,11 @@ const MemberDetail: React.FC<{}> = observer(() => {
               <Divider style={{ margin: "1% 0" }} />
             </Fragment>
           ))}
-        </Grid>
-      </Container>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:profile")}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
-        <Grid className={classes["grid-out"]} container direction="column">
+        </GridOut>
+      </ContainerContent>
+      <TypographyHeader>{t("common:profile")}</TypographyHeader>
+      <ContainerContent maxWidth="md">
+        <GridOut container direction="column">
           {Object.keys(charaProfile)
             .filter((key) => !["characterId", "scenarioId"].includes(key))
             .map((key) => (
@@ -401,27 +385,23 @@ const MemberDetail: React.FC<{}> = observer(() => {
               </Typography>
             </Grid>
             <Grid item container justifyContent="flex-end">
-              <Link
+              <LinkNoDecoration
                 to={`/storyreader/charaStory/${charaProfile.characterId}`}
-                className={interactiveClasses.noDecoration}
               >
                 <Grid container alignItems="center">
                   <OpenInNew />
                 </Grid>
-              </Link>
+              </LinkNoDecoration>
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
-        </Grid>
-      </Container>
+        </GridOut>
+      </ContainerContent>
       {charaSupportUnits.length ? (
         <Fragment>
-          <Typography variant="h6" className={layoutClasses.header}>
-            {t("common:support_unit")}
-          </Typography>
-          <Container className={layoutClasses.content}>
-            <Grid
-              className={classes["grid-out"]}
+          <TypographyHeader>{t("common:support_unit")}</TypographyHeader>
+          <ContainerContent>
+            <GridOut
               container
               direction="row"
               justifyContent="center"
@@ -441,11 +421,10 @@ const MemberDetail: React.FC<{}> = observer(() => {
                           wrap="nowrap"
                           alignItems="center"
                         >
-                          <img
-                            className={classes["unit-logo-large"]}
+                          <UnitLogoLargeImg
                             src={UnitLogoMap[region][csu.unit]}
                             alt={csu.unit}
-                          ></img>
+                          ></UnitLogoLargeImg>
                           <Typography
                             variant="subtitle1"
                             style={{ fontWeight: 600 }}
@@ -460,20 +439,13 @@ const MemberDetail: React.FC<{}> = observer(() => {
                   </Grid>
                 </Fragment>
               ))}
-            </Grid>
-          </Container>
+            </GridOut>
+          </ContainerContent>
         </Fragment>
       ) : null}
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:card")}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="lg">
-        <Grid
-          className={classes["grid-out"]}
-          container
-          direction="row"
-          spacing={2}
-        >
+      <TypographyHeader>{t("common:card")}</TypographyHeader>
+      <ContainerContent maxWidth="lg">
+        <GridOut container direction="row" spacing={2}>
           {charaCards.map((cc) => (
             <Grid item xs={4} md={2} lg={1} key={"card-" + cc.id}>
               <Link to={"/card/" + cc.id} style={{ textDecoration: "none" }}>
@@ -481,8 +453,8 @@ const MemberDetail: React.FC<{}> = observer(() => {
               </Link>
             </Grid>
           ))}
-        </Grid>
-      </Container>
+        </GridOut>
+      </ContainerContent>
       <Viewer
         visible={visible}
         onClose={() => setVisible(false)}

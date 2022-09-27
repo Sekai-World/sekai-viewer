@@ -1,46 +1,19 @@
-import {
-  Chip,
-  // CircularProgress,
-  Container,
-  IconButton,
-  Typography,
-} from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
+import { IconButton } from "@mui/material";
 import { GridColDef, DataGrid } from "@mui/x-data-grid";
 import { OpenInNew } from "@mui/icons-material";
 import React, { Fragment, useEffect } from "react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
-import { useInteractiveStyles } from "../../styles/interactive";
-import { useLayoutStyles } from "../../styles/layout";
 import { IMusicInfo, IMusicMeta } from "../../types.d";
 import { filterMusicMeta, useCachedData, useMusicMeta } from "../../utils";
 // import AdSense from "../../components/blocks/AdSense";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
-
-const useStyles = makeStyles((theme) => ({
-  "diffi-easy": {
-    backgroundColor: "#66DD11",
-  },
-  "diffi-normal": {
-    backgroundColor: "#33BBEE",
-  },
-  "diffi-hard": {
-    backgroundColor: "#FFAA00",
-  },
-  "diffi-expert": {
-    backgroundColor: "#EE4466",
-  },
-  "diffi-master": {
-    backgroundColor: "#BB33EE",
-  },
-}));
+import LinkNoDecoration from "../../components/styled/LinkNoDecoration";
+import ChipDifficulty from "../../components/styled/ChipDifficulty";
+import TypographyHeader from "../../components/styled/TypographyHeader";
+import ContainerContent from "../../components/styled/ContainerContent";
 
 const MusicMeta = () => {
-  const classes = useStyles();
-  const layoutClasses = useLayoutStyles();
-  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
 
   const [metas] = useMusicMeta();
@@ -55,16 +28,12 @@ const MusicMeta = () => {
       width: 90,
       renderCell(params) {
         return (
-          <Link
-            to={`/music/${params.value}`}
-            target="_blank"
-            className={interactiveClasses.noDecoration}
-          >
+          <LinkNoDecoration to={`/music/${params.value}`} target="_blank">
             {params.value}
             <IconButton color="primary" size="large">
               <OpenInNew></OpenInNew>
             </IconButton>
-          </Link>
+          </LinkNoDecoration>
         );
       },
     },
@@ -97,22 +66,10 @@ const MusicMeta = () => {
       width: 100,
       renderCell(params) {
         return (
-          <Chip
-            color="primary"
-            size="small"
-            classes={{
-              colorPrimary:
-                classes[
-                  `diffi-${params.getValue(params.id, "difficulty")}` as
-                    | "diffi-easy"
-                    | "diffi-normal"
-                    | "diffi-hard"
-                    | "diffi-expert"
-                    | "diffi-master"
-                ],
-            }}
-            label={params.value}
-          ></Chip>
+          <ChipDifficulty
+            difficulty={params.row["difficulty"]}
+            value={params.value}
+          ></ChipDifficulty>
         );
       },
     },
@@ -160,10 +117,8 @@ const MusicMeta = () => {
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:musicMeta")}
-      </Typography>
-      <Container className={layoutClasses.content}>
+      <TypographyHeader>{t("common:musicMeta")}</TypographyHeader>
+      <ContainerContent>
         <div style={{ height: 750 }}>
           <DataGrid
             rows={validMetas.map((elem, idx) =>
@@ -174,7 +129,7 @@ const MusicMeta = () => {
             loading={!validMetas.length}
           />
         </div>
-      </Container>
+      </ContainerContent>
       {/* <AdSense
         client="ca-pub-7767752375383260"
         slot="8221864477"

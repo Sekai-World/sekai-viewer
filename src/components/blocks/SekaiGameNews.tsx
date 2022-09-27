@@ -1,6 +1,5 @@
 import { OpenInNew } from "@mui/icons-material";
 import {
-  Paper,
   Tabs,
   Tab,
   Dialog,
@@ -8,8 +7,9 @@ import {
   Link,
   Typography,
   useMediaQuery,
+  useTheme,
+  styled,
 } from "@mui/material";
-import { makeStyles, useTheme } from "@mui/styles";
 import {
   DataGrid,
   GridColDef,
@@ -19,20 +19,18 @@ import {
 } from "@mui/x-data-grid";
 import React, { Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useInteractiveStyles } from "../../styles/interactive";
 import { IUserInformationInfo, ServerRegion } from "../../types";
 import { useCachedData } from "../../utils";
+import PaperContainer from "../styled/PaperContainer";
 
-const useIframeStyle = makeStyles((theme) => ({
-  iframe: {
-    [theme.breakpoints.down("md")]: {
-      width: "300px",
-      height: "480px",
-    },
-    [theme.breakpoints.up("md")]: {
-      width: "600px",
-      height: "480px",
-    },
+const InfoIframe = styled("iframe")(({ theme }) => ({
+  [theme.breakpoints.down("md")]: {
+    width: "300px",
+    height: "480px",
+  },
+  [theme.breakpoints.up("md")]: {
+    width: "600px",
+    height: "480px",
   },
 }));
 
@@ -50,15 +48,10 @@ function InfoInternalDialog(props: {
   onClose: (event: {}, reason: "backdropClick" | "escapeKeyDown") => void;
   title: string;
 }) {
-  const classes = useIframeStyle();
   return (
     <Dialog open={props.open} onClose={props.onClose}>
       <Typography>{props.title}</Typography>
-      <iframe
-        className={classes.iframe}
-        title={props.title}
-        src={props.url}
-      ></iframe>
+      <InfoIframe title={props.title} src={props.url}></InfoIframe>
     </Dialog>
   );
 }
@@ -68,7 +61,6 @@ const SekaiGameNews: React.FC<{
   region: ServerRegion;
 }> = ({ isShowSpoiler, region }) => {
   const theme = useTheme();
-  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
 
   const isUpMd = useMediaQuery(theme.breakpoints.up("md"));
@@ -139,7 +131,7 @@ const SekaiGameNews: React.FC<{
 
   return (
     <Fragment>
-      <Paper className={interactiveClasses.container}>
+      <PaperContainer>
         <Tabs
           value={gameNewsTag}
           onChange={(e, v) => setGameNewsTag(v)}
@@ -154,7 +146,7 @@ const SekaiGameNews: React.FC<{
           <Tab label={t("common:bug")} value="bug"></Tab>
           <Tab label={t("home:update")} value="update"></Tab>
         </Tabs>
-      </Paper>
+      </PaperContainer>
       <div style={{ height: 650 }}>
         <DataGrid
           pagination

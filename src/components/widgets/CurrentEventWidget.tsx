@@ -1,33 +1,18 @@
-import {
-  Container,
-  Grid,
-  /* makeStyles, */
-  Typography,
-} from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import Image from "mui-image";
-import { useLayoutStyles } from "../../styles/layout";
 import { getRemoteAssetURL } from "../../utils";
 import { useCurrentEvent } from "../../utils/apiClient";
 import Countdown from "./Countdown";
 import { useRootStore } from "../../stores/root";
 import { observer } from "mobx-react-lite";
-
-// const useStyles = makeStyles((theme) => ({
-//   banner: {
-//     [theme.breakpoints.up("md")]: {
-//       maxWidth: "60%",
-//     },
-//     maxWidth: "90%",
-//   },
-// }));
+import TypographyHeader from "../styled/TypographyHeader";
+import ContainerContent from "../styled/ContainerContent";
 
 const CurrentEventWidget: React.FC<{}> = observer(() => {
-  // const classes = useStyles();
-  const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const { currEvent, error } = useCurrentEvent();
   const { region } = useRootStore();
@@ -47,10 +32,8 @@ const CurrentEventWidget: React.FC<{}> = observer(() => {
 
   return (
     <Grid container>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:ongoing_event")}
-      </Typography>
-      <Container className={layoutClasses.content}>
+      <TypographyHeader>{t("common:ongoing_event")}</TypographyHeader>
+      <ContainerContent>
         <Grid container spacing={2} justifyContent="center">
           {eventBanner ? (
             <Grid item xs={12} sm={7}>
@@ -78,7 +61,7 @@ const CurrentEventWidget: React.FC<{}> = observer(() => {
             </Grid>
           )}
         </Grid>
-      </Container>
+      </ContainerContent>
     </Grid>
   );
 });

@@ -7,8 +7,8 @@ import React, {
   useState,
 } from "react";
 import { Marvin, MarvinImage, MarvinSegment } from "marvinj-ts";
-import { useInteractiveStyles } from "../../../styles/interactive";
 import {
+  Box,
   Button,
   CardMedia,
   Checkbox,
@@ -29,12 +29,17 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
 import { Upload } from "@mui/icons-material";
 import Information from "~icons/mdi/information";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
-import { GridColDef, DataGrid, GridRowModel } from "@mui/x-data-grid";
+import {
+  GridColDef,
+  DataGrid,
+  GridRowModel,
+  GridRenderCellParams,
+  GridRowId,
+} from "@mui/x-data-grid";
 import { createWorker, createScheduler } from "tesseract.js";
 import {
   cardRarityTypeToRarity,
@@ -43,15 +48,13 @@ import {
   useToggle,
 } from "../../../utils";
 import { ICardInfo } from "../../../types.d";
-// import { Link } from "react-router-dom";
 import { useStrapi } from "../../../utils/apiClient";
-import { useLayoutStyles } from "../../../styles/layout";
 import Carousel from "react-material-ui-carousel";
 import { Alert } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useRootStore } from "../../../stores/root";
 import { observer } from "mobx-react-lite";
-import { ISekaiCardTeam } from "../../../stores/sekai";
+import { ISekaiCardState, ISekaiCardTeam } from "../../../stores/sekai";
 import { autorun } from "mobx";
 import { assetUrl } from "../../../utils/urls";
 
@@ -123,30 +126,24 @@ function distance(a: string, b: string) {
   return count;
 }
 
-const useStyles = makeStyles((theme) => ({
-  media: {
-    [theme.breakpoints.down("md")]: {
-      paddingTop: "75%",
-    },
-    [theme.breakpoints.up("md")]: {
-      paddingTop: "56.25%",
-    },
-    backgroundSize: "contain",
-    width: "100%",
-  },
-  slideSubtitle: {
-    "&": {
-      whiteSpace: "pre-line",
-      textAlign: "left",
-    },
-  },
-}));
+interface CardRowModel {
+  id: GridRowId;
+  crop: string;
+  full: string[];
+  hashResults: [string, number][];
+  distances: number[];
+  level: number;
+  masterRank: number;
+  cardIds: number[];
+  useIndex: number;
+  trained: boolean;
+  skillLevel: number;
+  story1Unlock: boolean;
+  story2Unlock: boolean;
+}
 
 const SekaiUserImportMember = observer(() => {
-  const layoutClasses = useLayoutStyles();
-  const interactiveClasses = useInteractiveStyles();
   const theme = useTheme();
-  const classes = useStyles();
   const { t } = useTranslation();
   const {
     jwtToken,
@@ -161,22 +158,7 @@ const SekaiUserImportMember = observer(() => {
   const [cards] = useCachedData<ICardInfo>("cards");
 
   const [isUploading, setIsUploading] = useState(false);
-  const [rows, setRows] = useState<
-    (GridRowModel & {
-      crop: string;
-      full: string[];
-      hashResults: [string, number][];
-      distances: number[];
-      level: number;
-      masterRank: number;
-      cardIds: number[];
-      useIndex: number;
-      trained: boolean;
-      skillLevel: number;
-      story1Unlock: boolean;
-      story2Unlock: boolean;
-    })[]
-  >([]);
+  const [rows, setRows] = useState<GridRowModel<CardRowModel>[]>([]);
   const [ocrEnable, setOcrEnabled] = useState(false);
   const [postingCardList, setPostingCardList] = useState(false);
   const [isCardSelectionOpen, toggleIsCardSelectionOpen] = useToggle(false);
@@ -733,11 +715,16 @@ const SekaiUserImportMember = observer(() => {
   );
 
   const handleValueChange = useCallback(
-    (value: any, field: string, row: GridRowModel) => {
+    (
+      value: any,
+      field: keyof CardRowModel,
+      row: GridRowModel<CardRowModel>
+    ) => {
       const { id } = row;
       const idx = rows.findIndex((row) => row.id === id);
       const elem = rows[idx];
-      elem[field] = Number(value);
+      // @ts-ignore
+      elem[field] = value;
 
       setRows([...rows.slice(0, idx), elem, ...rows.slice(idx + 1)]);
     },
@@ -745,16 +732,18 @@ const SekaiUserImportMember = observer(() => {
   );
 
   const columns = useMemo(
-    (): GridColDef[] => [
+    (): GridColDef<GridRowModel<CardRowModel>>[] => [
       { field: "id", headerName: t("common:id"), width: 60 },
       {
         field: "crop",
         headerName: t("user:profile.import_card.table.row.cropped_image"),
         width: 100,
-        renderCell(params) {
+        renderCell(
+          params: GridRenderCellParams<string, GridRowModel<CardRowModel>>
+        ) {
           return (
             <img
-              src={params.value as string}
+              src={params.value}
               style={{ height: "64px", width: "64px" }}
               alt=""
             />
@@ -767,11 +756,9 @@ const SekaiUserImportMember = observer(() => {
         headerName: t("user:profile.import_card.table.row.best_match"),
         width: 100,
         renderCell(params) {
-          const idx = params.getValue(params.id, "useIndex") as number;
+          const idx = params.row["useIndex"] as number;
           const card = cards?.find(
-            (card) =>
-              card.id ===
-              (params.getValue(params.id, "cardIds") as number[])[idx]
+            (card) => card.id === (params.row["cardIds"] as number[])[idx]
           )!;
           return card ? (
             <Grid
@@ -784,19 +771,15 @@ const SekaiUserImportMember = observer(() => {
               }}
             >
               <img
-                src={(params.getValue(params.id, "full") as string[])[idx]}
+                src={(params.row["full"] as string[])[idx]}
                 style={{ height: "64px", width: "64px", cursor: "pointer" }}
                 alt={`${(
-                  (1 -
-                    (params.getValue(params.id, "distances") as number[])[idx] /
-                      64) *
+                  (1 - (params.row["distances"] as number[])[idx] / 64) *
                   100
                 ).toFixed(1)}%`}
               />
               <Typography>{`${(
-                (1 -
-                  (params.getValue(params.id, "distances") as number[])[idx] /
-                    64) *
+                (1 - (params.row["distances"] as number[])[idx] / 64) *
                 100
               ).toFixed(1)}%`}</Typography>
             </Grid>
@@ -806,64 +789,16 @@ const SekaiUserImportMember = observer(() => {
         },
         align: "center",
       },
-      // {
-      //   field: "changeCard",
-      //   headerName: t(
-      //     "user:profile.import_card.table.row.other_possible_result"
-      //   ),
-      //   width:
-      //     100 *
-      //     (Math.max(...rows.map((row) => row.hashResults.length)) - 1 || 0.1),
-      //   renderCell(params) {
-      //     const useIdx = params.getValue("useIndex") as number;
-      //     return (
-      //       <Grid container spacing={1}>
-      //         {Array.from({
-      //           length: (params.getValue("distances") as number[]).length,
-      //         })
-      //           .map((_, idx) => idx)
-      //           .filter((idx) => idx !== useIdx)
-      //           .map((idx) => (
-      //             <Grid item key={idx}>
-      //               <Grid container direction="column" alignItems="center">
-      //                 <img
-      //                   src={(params.getValue("full") as string[])[idx]}
-      //                   style={{
-      //                     height: "64px",
-      //                     width: "64px",
-      //                     cursor: "pointer",
-      //                   }}
-      //                   alt={`${(
-      //                     (1 -
-      //                       (params.getValue("distances") as number[])[idx] /
-      //                         64) *
-      //                     100
-      //                   ).toFixed(1)}%`}
-      //                   onClick={() =>
-      //                     handleValueChange(idx, "useIndex", params.row)
-      //                   }
-      //                 />
-      //                 <Typography>{`${(
-      //                   (1 -
-      //                     (params.getValue("distances") as number[])[idx] /
-      //                       64) *
-      //                   100
-      //                 ).toFixed(1)}%`}</Typography>
-      //               </Grid>
-      //             </Grid>
-      //           ))}
-      //       </Grid>
-      //     );
-      //   },
-      // },
       {
         field: "level",
         headerName: t("card:cardLevel"),
         width: 100,
-        renderCell(params) {
+        renderCell(
+          params: GridRenderCellParams<number, GridRowModel<CardRowModel>>
+        ) {
           return (
             <Input
-              value={params.value as string}
+              value={params.value}
               type="number"
               inputMode="numeric"
               inputProps={{
@@ -872,7 +807,7 @@ const SekaiUserImportMember = observer(() => {
               }}
               fullWidth
               onChange={(e) =>
-                handleValueChange(e.target.value, "level", params.row)
+                handleValueChange(Number(e.target.value), "level", params.row)
               }
             />
           );
@@ -882,10 +817,12 @@ const SekaiUserImportMember = observer(() => {
         field: "masterRank",
         headerName: t("user:profile.import_card.table.row.card_master_rank"),
         width: 100,
-        renderCell(params) {
+        renderCell(
+          params: GridRenderCellParams<number, GridRowModel<CardRowModel>>
+        ) {
           return (
             <Input
-              value={params.value as number}
+              value={params.value}
               type="number"
               fullWidth
               inputMode="numeric"
@@ -894,7 +831,11 @@ const SekaiUserImportMember = observer(() => {
                 max: 5,
               }}
               onChange={(e) =>
-                handleValueChange(e.target.value, "masterRank", params.row)
+                handleValueChange(
+                  Number(e.target.value),
+                  "masterRank",
+                  params.row
+                )
               }
             />
           );
@@ -904,10 +845,12 @@ const SekaiUserImportMember = observer(() => {
         field: "skillLevel",
         headerName: t("card:skillLevel"),
         width: 100,
-        renderCell(params) {
+        renderCell(
+          params: GridRenderCellParams<number, GridRowModel<CardRowModel>>
+        ) {
           return (
             <Input
-              value={params.value as number}
+              value={params.value}
               type="number"
               fullWidth
               inputMode="numeric"
@@ -916,7 +859,11 @@ const SekaiUserImportMember = observer(() => {
                 max: 4,
               }}
               onChange={(e) =>
-                handleValueChange(e.target.value, "skillLevel", params.row)
+                handleValueChange(
+                  Number(e.target.value),
+                  "skillLevel",
+                  params.row
+                )
               }
             />
           );
@@ -932,7 +879,7 @@ const SekaiUserImportMember = observer(() => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={params.getValue(params.id, "trained") as boolean}
+                    checked={params.row["trained"] as boolean}
                     onChange={(e, checked) =>
                       handleValueChange(checked, "trained", params.row)
                     }
@@ -947,9 +894,7 @@ const SekaiUserImportMember = observer(() => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={
-                      params.getValue(params.id, "story1Unlock") as boolean
-                    }
+                    checked={params.row["story1Unlock"] as boolean}
                     onChange={(e, checked) =>
                       handleValueChange(checked, "story1Unlock", params.row)
                     }
@@ -964,9 +909,7 @@ const SekaiUserImportMember = observer(() => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={
-                      params.getValue(params.id, "story2Unlock") as boolean
-                    }
+                    checked={params.row["story2Unlock"] as boolean}
                     onChange={(e, checked) =>
                       handleValueChange(checked, "story2Unlock", params.row)
                     }
@@ -990,8 +933,8 @@ const SekaiUserImportMember = observer(() => {
     if (!sekaiCardTeam || !cards) return;
     setPostingCardList(true);
     try {
-      console.log(rows);
-      const cardList = rows
+      // console.log(rows);
+      const cardList: ISekaiCardState[] = rows
         .map((row) => {
           const cardId = row.cardIds[row.useIndex];
           const cardInfo = cards.find((card) => card.id === cardId)!;
@@ -1053,14 +996,18 @@ const SekaiUserImportMember = observer(() => {
 
   return (
     <Grid container direction="column">
-      <Alert severity="warning" className={layoutClasses.alert}>
+      <Alert
+        severity="warning"
+        sx={(theme) => ({ margin: theme.spacing(1, 0) })}
+      >
         {t("common:betaIndicator")}
       </Alert>
       <Grid container spacing={1}>
         <Grid item xs={12}>
-          <input
+          <Box
+            component="input"
+            sx={{ display: "none" }}
             accept="image/png,image/jpeg"
-            className={interactiveClasses.inputHidden}
             id="upload-member-button"
             type="file"
             onChange={(e) => {
@@ -1444,14 +1391,30 @@ const SekaiUserImportMember = observer(() => {
                 import.meta.env.VITE_FRONTEND_ASSET_BASE
               }/import_cards/Screenshot_20210130-184257.jpg`}
               title="import card step 1"
-              className={classes.media}
+              sx={(theme) => ({
+                [theme.breakpoints.down("md")]: {
+                  paddingTop: "75%",
+                },
+                [theme.breakpoints.up("md")]: {
+                  paddingTop: "56.25%",
+                },
+                backgroundSize: "contain",
+                width: "100%",
+              })}
             />
             <DialogContentText>
               <Typography>
                 {t("user:profile.import_card.help.step1.title")}
               </Typography>
               <br />
-              <Typography className={classes.slideSubtitle}>
+              <Typography
+                sx={{
+                  "&": {
+                    whiteSpace: "pre-line",
+                    textAlign: "left",
+                  },
+                }}
+              >
                 {t("user:profile.import_card.help.step1.subtitle")}
               </Typography>
             </DialogContentText>
@@ -1462,14 +1425,30 @@ const SekaiUserImportMember = observer(() => {
                 import.meta.env.VITE_FRONTEND_ASSET_BASE
               }/import_cards/step2.png`}
               title="import card step 2"
-              className={classes.media}
+              sx={(theme) => ({
+                [theme.breakpoints.down("md")]: {
+                  paddingTop: "75%",
+                },
+                [theme.breakpoints.up("md")]: {
+                  paddingTop: "56.25%",
+                },
+                backgroundSize: "contain",
+                width: "100%",
+              })}
             />
             <DialogContentText>
               <Typography>
                 {t("user:profile.import_card.help.step2.title")}
               </Typography>
               <br />
-              <Typography className={classes.slideSubtitle}>
+              <Typography
+                sx={{
+                  "&": {
+                    whiteSpace: "pre-line",
+                    textAlign: "left",
+                  },
+                }}
+              >
                 {t("user:profile.import_card.help.step2.subtitle")}
               </Typography>
             </DialogContentText>
@@ -1480,14 +1459,30 @@ const SekaiUserImportMember = observer(() => {
                 import.meta.env.VITE_FRONTEND_ASSET_BASE
               }/import_cards/step3.png`}
               title="import card step 3"
-              className={classes.media}
+              sx={(theme) => ({
+                [theme.breakpoints.down("md")]: {
+                  paddingTop: "75%",
+                },
+                [theme.breakpoints.up("md")]: {
+                  paddingTop: "56.25%",
+                },
+                backgroundSize: "contain",
+                width: "100%",
+              })}
             />
             <DialogContentText>
               <Typography>
                 {t("user:profile.import_card.help.step3.title")}
               </Typography>
               <br />
-              <Typography className={classes.slideSubtitle}>
+              <Typography
+                sx={{
+                  "&": {
+                    whiteSpace: "pre-line",
+                    textAlign: "left",
+                  },
+                }}
+              >
                 {t("user:profile.import_card.help.step3.subtitle")}
               </Typography>
             </DialogContentText>
@@ -1498,14 +1493,30 @@ const SekaiUserImportMember = observer(() => {
                 import.meta.env.VITE_FRONTEND_ASSET_BASE
               }/import_cards/step4.png`}
               title="import card step 4"
-              className={classes.media}
+              sx={(theme) => ({
+                [theme.breakpoints.down("md")]: {
+                  paddingTop: "75%",
+                },
+                [theme.breakpoints.up("md")]: {
+                  paddingTop: "56.25%",
+                },
+                backgroundSize: "contain",
+                width: "100%",
+              })}
             />
             <DialogContentText>
               <Typography>
                 {t("user:profile.import_card.help.step4.title")}
               </Typography>
               <br />
-              <Typography className={classes.slideSubtitle}>
+              <Typography
+                sx={{
+                  "&": {
+                    whiteSpace: "pre-line",
+                    textAlign: "left",
+                  },
+                }}
+              >
                 {t("user:profile.import_card.help.step4.subtitle")}
               </Typography>
             </DialogContentText>

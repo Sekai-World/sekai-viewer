@@ -1,7 +1,6 @@
 import {
   Box,
   Card,
-  CardMedia,
   Divider,
   Grid,
   Paper,
@@ -9,13 +8,10 @@ import {
   Tab,
   Tabs,
   Typography,
-  Container,
   Chip,
+  styled,
 } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
-import { useLayoutStyles } from "../../styles/layout";
-import { useInteractiveStyles } from "../../styles/interactive";
-import { TabContext, TabPanel } from "@mui/lab";
+import { TabContext } from "@mui/lab";
 import React, {
   Fragment,
   useCallback,
@@ -74,34 +70,22 @@ import Comment from "../comment/Comment";
 import { useStrapi } from "../../utils/apiClient";
 import { useRootStore } from "../../stores/root";
 import { observer } from "mobx-react-lite";
+import GridOut from "../../components/styled/GridOut";
+import ContainerContent from "../../components/styled/ContainerContent";
+import TypographyHeader from "../../components/styled/TypographyHeader";
+import TabPanelPadding from "../../components/styled/TabPanelPadding";
+import CardMediaCardImg from "../../components/styled/CardMediaCardImg";
+import LinkNoDecoration from "../../components/styled/LinkNoDecoration";
+import PaperContainer from "../../components/styled/PaperContainer";
+import TypographyCaption from "../../components/styled/TypographyCaption";
 
-const useStyles = makeStyles((theme) => ({
-  "rarity-star-img": {
-    maxWidth: "32px",
-    margin: theme.spacing(0, 0.25),
-  },
-  "card-thumb-img": {
-    maxWidth: "100%",
-    // margin: theme.spacing(0, 1),
-  },
-  "unit-logo-img": {
-    maxWidth: "128px",
-    // margin: theme.spacing(0, 1),
-  },
-  media: {
-    paddingTop: "56.25%",
-    cursor: "pointer",
-  },
-  "media-contain": {
-    paddingTop: "56.25%",
-    backgroundSize: "contain",
-    cursor: "pointer",
-  },
-  tabpanel: {
-    padding: theme.spacing("1%", 0, 0, 0),
-  },
-  "grid-out": {
-    padding: theme.spacing("1%", "0"),
+const ImgRarityStar = styled("img")(({ theme }) => ({
+  maxWidth: "32px",
+  margin: theme.spacing(0, 0.25),
+}));
+const BoxSliderContainer = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.up("md")]: {
+    paddingRight: theme.spacing(5),
   },
 }));
 
@@ -111,9 +95,6 @@ interface IExtendCardInfo extends ICardInfo {
 }
 
 const CardDetail: React.FC<{}> = observer(() => {
-  const classes = useStyles();
-  const layoutClasses = useLayoutStyles();
-  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const { assetT, getTranslated } = useAssetI18n();
   const {
@@ -439,10 +420,8 @@ const CardDetail: React.FC<{}> = observer(() => {
     unitProfiles &&
     unitProfiles.length ? (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {cardTitle}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      <TypographyHeader>{cardTitle}</TypographyHeader>
+      <ContainerContent maxWidth="md">
         <TabContext value={tabVal}>
           <Paper>
             <Tabs
@@ -460,61 +439,55 @@ const CardDetail: React.FC<{}> = observer(() => {
                 <Tab label={t("card:tab.title[3]")} value="3"></Tab>
               ) : null}
             </Tabs>
-            <TabPanel value="0" classes={{ root: classes.tabpanel }}>
+            <TabPanelPadding value="0">
               <Card
                 onClick={() => {
                   setActiveIdx(0);
                   setVisible(true);
                 }}
               >
-                <CardMedia
-                  classes={{ root: classes.media }}
-                  image={normalImg}
-                ></CardMedia>
+                <CardMediaCardImg image={normalImg} />
               </Card>
-            </TabPanel>
-            <TabPanel value="1" classes={{ root: classes.tabpanel }}>
+            </TabPanelPadding>
+            <TabPanelPadding value="1">
               <Card
                 onClick={() => {
                   setActiveIdx(2);
                   setVisible(true);
                 }}
               >
-                <CardMedia
-                  classes={{ root: classes.media }}
-                  image={trainedImg}
-                ></CardMedia>
+                <CardMediaCardImg image={trainedImg} />
               </Card>
-            </TabPanel>
-            <TabPanel value="2" classes={{ root: classes.tabpanel }}>
+            </TabPanelPadding>
+            <TabPanelPadding value="2">
               <Card
                 onClick={() => {
                   setActiveIdx(1);
                   setVisible(true);
                 }}
               >
-                <CardMedia
-                  classes={{ root: classes["media-contain"] }}
+                <CardMediaCardImg
                   image={normalTrimImg}
-                ></CardMedia>
+                  sx={{ backgroundSize: "contain" }}
+                />
               </Card>
-            </TabPanel>
-            <TabPanel value="3" classes={{ root: classes.tabpanel }}>
+            </TabPanelPadding>
+            <TabPanelPadding value="3">
               <Card
                 onClick={() => {
                   setActiveIdx(3);
                   setVisible(true);
                 }}
               >
-                <CardMedia
-                  classes={{ root: classes["media-contain"] }}
+                <CardMediaCardImg
                   image={trainedTrimImg}
-                ></CardMedia>
+                  sx={{ backgroundSize: "contain" }}
+                />
               </Card>
-            </TabPanel>
+            </TabPanelPadding>
           </Paper>
         </TabContext>
-        <Grid className={classes["grid-out"]} container direction="column">
+        <GridOut container direction="column">
           <Grid
             container
             direction="row"
@@ -601,10 +574,7 @@ const CardDetail: React.FC<{}> = observer(() => {
               </Typography>
             </Grid>
             <Grid item xs={8}>
-              <Link
-                to={"/chara/" + card.characterId}
-                className={interactiveClasses.noDecoration}
-              >
+              <LinkNoDecoration to={"/chara/" + card.characterId}>
                 <Grid
                   container
                   spacing={1}
@@ -619,14 +589,13 @@ const CardDetail: React.FC<{}> = observer(() => {
                     />
                   </Grid>
                   <Grid item>
-                    <img
-                      className={classes["rarity-star-img"]}
+                    <ImgRarityStar
                       src={charaIcons[`CharaIcon${card.characterId}`]}
                       alt={getCharaName(card.characterId)}
-                    ></img>
+                    ></ImgRarityStar>
                   </Grid>
                 </Grid>
-              </Link>
+              </LinkNoDecoration>
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
@@ -643,9 +612,8 @@ const CardDetail: React.FC<{}> = observer(() => {
               </Typography>
             </Grid>
             <Grid item xs={8}>
-              <Link
+              <LinkNoDecoration
                 to={"/unit/" + getCharaUnitName(card.characterId)}
-                className={interactiveClasses.noDecoration}
               >
                 <Grid
                   container
@@ -668,14 +636,13 @@ const CardDetail: React.FC<{}> = observer(() => {
                     />
                   </Grid>
                   <Grid item>
-                    <img
-                      className={classes["rarity-star-img"]}
+                    <ImgRarityStar
                       src={getCharaUnitImage(card.characterId)}
                       alt={getCharaUnitName(card.characterId)}
-                    ></img>
+                    ></ImgRarityStar>
                   </Grid>
                 </Grid>
-              </Link>
+              </LinkNoDecoration>
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
@@ -720,11 +687,10 @@ const CardDetail: React.FC<{}> = observer(() => {
                         />
                       </Grid>
                       <Grid item>
-                        <img
-                          className={classes["rarity-star-img"]}
+                        <ImgRarityStar
                           src={UnitLogoMiniMap[card.supportUnit]}
                           alt={card.supportUnit}
-                        ></img>
+                        ></ImgRarityStar>
                       </Grid>
                     </Grid>
                   </Link>
@@ -769,11 +735,10 @@ const CardDetail: React.FC<{}> = observer(() => {
                       /> */}
                 </Grid>
                 <Grid item>
-                  <img
+                  <ImgRarityStar
                     src={attrIconMap[card.attr]}
                     alt={card.attr}
-                    className={classes["rarity-star-img"]}
-                  ></img>
+                  ></ImgRarityStar>
                 </Grid>
               </Grid>
             </Grid>
@@ -794,17 +759,14 @@ const CardDetail: React.FC<{}> = observer(() => {
                   </Typography>
                 </Grid>
                 <Grid item>
-                  <Link
-                    to={`/event/${event.id}`}
-                    className={interactiveClasses.noDecoration}
-                  >
+                  <LinkNoDecoration to={`/event/${event.id}`}>
                     <ContentTrans
                       contentKey={`event_name:${event.id}`}
                       original={event.name}
                       originalProps={{ align: "right" }}
                       translatedProps={{ align: "right" }}
                     />
-                  </Link>
+                  </LinkNoDecoration>
                 </Grid>
               </Grid>
               <Divider style={{ margin: "1% 0" }} />
@@ -841,8 +803,7 @@ const CardDetail: React.FC<{}> = observer(() => {
                   ? cardRarityTypeToRarity[card.cardRarityType!]
                   : card.rarity!,
               }).map((_, id) => (
-                <img
-                  className={classes["rarity-star-img"]}
+                <ImgRarityStar
                   src={
                     isBirthdayCard
                       ? rarityBirthday
@@ -852,7 +813,7 @@ const CardDetail: React.FC<{}> = observer(() => {
                   }
                   alt={`star-${id}`}
                   key={`star-${id}`}
-                ></img>
+                ></ImgRarityStar>
               ))}
             </Typography>
           </Grid>
@@ -888,15 +849,13 @@ const CardDetail: React.FC<{}> = observer(() => {
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
-        </Grid>
-      </Container>
+        </GridOut>
+      </ContainerContent>
       {!!skill && (
         <Fragment>
-          <Typography variant="h6" className={layoutClasses.header}>
-            {t("common:skill")}
-          </Typography>
-          <Container className={layoutClasses.content} maxWidth="md">
-            <Paper className={interactiveClasses.container}>
+          <TypographyHeader>{t("common:skill")}</TypographyHeader>
+          <ContainerContent maxWidth="md">
+            <PaperContainer>
               <Grid container direction="column" spacing={1}>
                 <Grid
                   item
@@ -906,12 +865,12 @@ const CardDetail: React.FC<{}> = observer(() => {
                   justifyContent="space-between"
                 >
                   <Grid item xs={12} md={2}>
-                    <Typography classes={{ root: interactiveClasses.caption }}>
+                    <TypographyCaption>
                       {t("card:skillLevel")}
-                    </Typography>
+                    </TypographyCaption>
                   </Grid>
                   <Grid item xs={12} md={9}>
-                    <Box className={interactiveClasses.sliderContainer}>
+                    <BoxSliderContainer>
                       <Slider
                         value={skillLevel}
                         onChange={(e, value) => setSkillLevel(value as number)}
@@ -924,12 +883,12 @@ const CardDetail: React.FC<{}> = observer(() => {
                           ].level
                         }
                       />
-                    </Box>
+                    </BoxSliderContainer>
                   </Grid>
                 </Grid>
               </Grid>
-            </Paper>
-            <Grid className={classes["grid-out"]} container direction="column">
+            </PaperContainer>
+            <GridOut container direction="column">
               <Grid
                 container
                 direction="row"
@@ -969,15 +928,13 @@ const CardDetail: React.FC<{}> = observer(() => {
                 </Grid>
               </Grid>
               <Divider style={{ margin: "1% 0" }} />
-            </Grid>
-          </Container>
+            </GridOut>
+          </ContainerContent>
         </Fragment>
       )}
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("card:masterRank")}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
-        <Paper className={interactiveClasses.container}>
+      <TypographyHeader>{t("card:masterRank")}</TypographyHeader>
+      <ContainerContent maxWidth="md">
+        <PaperContainer>
           <Grid container direction="column" spacing={1}>
             <Grid
               item
@@ -987,12 +944,12 @@ const CardDetail: React.FC<{}> = observer(() => {
               justifyContent="space-between"
             >
               <Grid item xs={12} md={2}>
-                <Typography classes={{ root: interactiveClasses.caption }}>
+                <TypographyCaption>
                   {t("card:masterRankLevel")}
-                </Typography>
+                </TypographyCaption>
               </Grid>
               <Grid item xs={12} md={9}>
-                <Box className={interactiveClasses.sliderContainer}>
+                <BoxSliderContainer>
                   <Slider
                     value={masterRank}
                     onChange={(e, value) => setMasterRank(value as number)}
@@ -1001,12 +958,12 @@ const CardDetail: React.FC<{}> = observer(() => {
                     min={0}
                     max={masterLessons.slice(-1)[0].masterRank}
                   />
-                </Box>
+                </BoxSliderContainer>
               </Grid>
             </Grid>
           </Grid>
-        </Paper>
-        <Grid className={classes["grid-out"]} container direction="column">
+        </PaperContainer>
+        <GridOut container direction="column">
           {masterRank > 0 && (
             <Fragment>
               <Grid
@@ -1070,13 +1027,11 @@ const CardDetail: React.FC<{}> = observer(() => {
                 <Divider style={{ margin: "1% 0" }} />
               </Fragment>
             )}
-        </Grid>
-      </Container>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("card:stats")}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
-        <Paper className={interactiveClasses.container}>
+        </GridOut>
+      </ContainerContent>
+      <TypographyHeader>{t("card:stats")}</TypographyHeader>
+      <ContainerContent maxWidth="md">
+        <PaperContainer>
           <Grid container direction="column" spacing={1}>
             <Grid
               item
@@ -1086,12 +1041,10 @@ const CardDetail: React.FC<{}> = observer(() => {
               justifyContent="space-between"
             >
               <Grid item xs={12} md={2}>
-                <Typography classes={{ root: interactiveClasses.caption }}>
-                  {t("card:cardLevel")}
-                </Typography>
+                <TypographyCaption>{t("card:cardLevel")}</TypographyCaption>
               </Grid>
               <Grid item xs={12} md={9}>
-                <Box className={interactiveClasses.sliderContainer}>
+                <BoxSliderContainer>
                   <Slider
                     value={cardLevel}
                     onChange={(e, value) => setCardLevel(value as number)}
@@ -1123,7 +1076,7 @@ const CardDetail: React.FC<{}> = observer(() => {
                           ]
                     }
                   />
-                </Box>
+                </BoxSliderContainer>
               </Grid>
             </Grid>
             {!!cardEpisode.length && (
@@ -1135,9 +1088,7 @@ const CardDetail: React.FC<{}> = observer(() => {
                 justifyContent="space-between"
               >
                 <Grid item xs={12} md={2}>
-                  <Typography classes={{ root: interactiveClasses.caption }}>
-                    {t("card:sideStory")}
-                  </Typography>
+                  <TypographyCaption>{t("card:sideStory")}</TypographyCaption>
                 </Grid>
                 <Grid item container xs={12} md={9} spacing={1}>
                   {!!cardEpisode[0] && (
@@ -1164,8 +1115,8 @@ const CardDetail: React.FC<{}> = observer(() => {
               </Grid>
             )}
           </Grid>
-        </Paper>
-        <Grid className={classes["grid-out"]} container direction="column">
+        </PaperContainer>
+        <GridOut container direction="column">
           <Grid
             container
             direction="row"
@@ -1307,8 +1258,8 @@ const CardDetail: React.FC<{}> = observer(() => {
             </Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
-        </Grid>
-      </Container>
+        </GridOut>
+      </ContainerContent>
       {/* <AdSense
         client="ca-pub-7767752375383260"
         slot="8221864477"
@@ -1317,12 +1268,12 @@ const CardDetail: React.FC<{}> = observer(() => {
       /> */}
       {!!cardEpisode.length && (
         <Fragment>
-          <Typography variant="h6" className={layoutClasses.header}>
+          <TypographyHeader>
             {t("card:sideStory", { count: cardEpisode.length })}
-          </Typography>
-          <Container className={layoutClasses.content} maxWidth="md">
+          </TypographyHeader>
+          <ContainerContent maxWidth="md">
             <TabContext value={episodeTabVal}>
-              <Paper className={interactiveClasses.container}>
+              <PaperContainer>
                 <Tabs
                   value={episodeTabVal}
                   onChange={(e, v) => setEpisodeTabVal(v)}
@@ -1352,8 +1303,8 @@ const CardDetail: React.FC<{}> = observer(() => {
                     value="2"
                   ></Tab>
                 </Tabs>
-              </Paper>
-              <TabPanel value="1" classes={{ root: classes.tabpanel }}>
+              </PaperContainer>
+              <TabPanelPadding value="1">
                 <Grid container direction="column">
                   <Grid
                     container
@@ -1458,20 +1409,19 @@ const CardDetail: React.FC<{}> = observer(() => {
                       </Typography>
                     </Grid>
                     <Grid item container justifyContent="flex-end">
-                      <Link
+                      <LinkNoDecoration
                         to={`/storyreader/cardStory/${card.characterId}/${card.id}/${cardEpisode[0].id}`}
-                        className={interactiveClasses.noDecoration}
                       >
                         <Grid container alignItems="center">
                           <OpenInNew />
                         </Grid>
-                      </Link>
+                      </LinkNoDecoration>
                     </Grid>
                   </Grid>
                   <Divider style={{ margin: "1% 0" }} />
                 </Grid>
-              </TabPanel>
-              <TabPanel value="2" classes={{ root: classes.tabpanel }}>
+              </TabPanelPadding>
+              <TabPanelPadding value="2">
                 <Grid container direction="column">
                   <Grid
                     container
@@ -1576,31 +1526,30 @@ const CardDetail: React.FC<{}> = observer(() => {
                       </Typography>
                     </Grid>
                     <Grid item container justifyContent="flex-end">
-                      <Link
+                      <LinkNoDecoration
                         to={`/storyreader/cardStory/${card.characterId}/${card.id}/${cardEpisode[1].id}`}
-                        className={interactiveClasses.noDecoration}
                       >
                         <Grid container alignItems="center">
                           <OpenInNew />
                         </Grid>
-                      </Link>
+                      </LinkNoDecoration>
                     </Grid>
                   </Grid>
                   <Divider style={{ margin: "1% 0" }} />
                 </Grid>
-              </TabPanel>
+              </TabPanelPadding>
             </TabContext>
-          </Container>
+          </ContainerContent>
         </Fragment>
       )}
       {!!cardCommentId && (
         <Fragment>
-          <Typography variant="h6" className={layoutClasses.header}>
+          <TypographyHeader>
             {t("common:comment")} <CommentTextMultiple />
-          </Typography>
-          <Container className={layoutClasses.content} maxWidth="md">
+          </TypographyHeader>
+          <ContainerContent maxWidth="md">
             <Comment contentType="cards" contentId={cardCommentId} />
-          </Container>
+          </ContainerContent>
         </Fragment>
       )}
       <Viewer

@@ -1,11 +1,4 @@
-import {
-  Avatar,
-  Chip,
-  Container,
-  Grid,
-  Paper,
-  Typography,
-} from "@mui/material";
+import { Avatar, Chip, Grid, Paper, Typography } from "@mui/material";
 import axios from "axios";
 import React, { Fragment, useEffect, useLayoutEffect, useState } from "react";
 import Image from "mui-image";
@@ -23,10 +16,10 @@ import { getRemoteAssetURL, useCachedData } from "../../utils";
 import { charaIcons } from "../../utils/resources";
 import { useTranslation } from "react-i18next";
 import { AudioPlayButton } from "../storyreader/StoryReaderSnippet";
-import { useLayoutStyles } from "../../styles/layout";
 import { useCharaName } from "../../utils/i18n";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
+import ContainerContent from "../../components/styled/ContainerContent";
 
 type MCSerialData =
   | {
@@ -232,7 +225,6 @@ const MCCharacterTalk: React.FC<{ data: CharacterTalkEvent; mcId: string }> = ({
 const VirtualLiveStepMC: React.FC<{
   data: VirtualLiveSetlist;
 }> = observer(({ data }) => {
-  const layoutClasses = useLayoutStyles();
   const { region } = useRootStore();
 
   const [assetBundleURL, setAssetBundleURL] = useState("");
@@ -283,7 +275,7 @@ const VirtualLiveStepMC: React.FC<{
       {mcSerialData.map((mc) => (
         <Grid item xs={12}>
           <Paper variant="outlined">
-            <Container className={layoutClasses.content}>
+            <ContainerContent>
               <Grid container key={mc.data.Id} alignItems="center" spacing={1}>
                 {mc.type === "spawn" && <MCCharacterSpawn data={mc.data} />}
                 {mc.type === "unspawn" && <MCCharacterUnspawn data={mc.data} />}
@@ -291,7 +283,7 @@ const VirtualLiveStepMC: React.FC<{
                   <MCCharacterTalk data={mc.data} mcId={mcId} />
                 )}
               </Grid>
-            </Container>
+            </ContainerContent>
           </Paper>
         </Grid>
       ))}

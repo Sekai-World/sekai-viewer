@@ -1,36 +1,19 @@
 import { Card, CardContent, Chip, Grid, Typography } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
 import { Skeleton } from "@mui/material";
 import React, { Fragment } from "react";
 import { ICharacterMission } from "../../../types.d";
 import { useCharaName } from "../../../utils/i18n";
 import { ContentTrans } from "../../../components/helpers/ContentTrans";
 
-const useStyles = makeStyles((theme) => ({
-  media: {
-    paddingTop: "5%",
-    backgroundSize: "contain",
-  },
-  card: {
-    cursor: "pointer",
-  },
-  header: {},
-  "grid-out": {
-    padding: theme.spacing("1%", "2%"),
-  },
-}));
-
 const GridView: React.FC<{ data?: ICharacterMission }> = ({ data }) => {
-  const classes = useStyles();
   const getCharaName = useCharaName();
 
   if (!data) {
     // loading
     return (
-      <Card className={classes.card}>
-        {/* <Skeleton variant="rect" className={classes.media}></Skeleton> */}
+      <Card>
         <CardContent>
-          <Typography variant="subtitle1" className={classes.header}>
+          <Typography variant="subtitle1">
             <Skeleton variant="text" width="90%"></Skeleton>
           </Typography>
         </CardContent>
@@ -39,7 +22,11 @@ const GridView: React.FC<{ data?: ICharacterMission }> = ({ data }) => {
   }
   return (
     <Fragment>
-      <Card className={classes.card}>
+      <Card
+        sx={{
+          cursor: "pointer",
+        }}
+      >
         <Grid container alignItems="center">
           <Grid item xs={12}>
             <CardContent style={{ paddingBottom: "16px" }}>
@@ -53,11 +40,9 @@ const GridView: React.FC<{ data?: ICharacterMission }> = ({ data }) => {
                     original={data.sentence}
                     originalProps={{
                       variant: "subtitle1",
-                      className: classes.header,
                     }}
                     translatedProps={{
                       variant: "subtitle1",
-                      className: classes.header,
                     }}
                     assetTOptions={{
                       name: getCharaName(data.characterId),

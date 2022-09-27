@@ -6,13 +6,9 @@ import {
   Tab,
   Tabs,
   Typography,
-  Container,
+  Box,
 } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
-import { useLayoutStyles } from "../../styles/layout";
-import { TabContext, TabPanel } from "@mui/lab";
-// import { CronJob } from "cron";
-// import moment from "moment";
+import { TabContext } from "@mui/lab";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
@@ -38,7 +34,6 @@ import { CardThumb } from "../../components/widgets/CardThumb";
 // import DegreeImage from "../../components/widgets/DegreeImage";
 import ResourceBox from "../../components/widgets/ResourceBox";
 import { OpenInNew } from "@mui/icons-material";
-import { useInteractiveStyles } from "../../styles/interactive";
 import AudioPlayer from "../music/AudioPlayer";
 import AgendaView from "../virtual_live/AgendaView";
 // import AdSense from "../../components/blocks/AdSense";
@@ -49,29 +44,15 @@ import Comment from "../comment/Comment";
 import CheerfulCarnivalTeamIcon from "../../components/widgets/CheerfulCarnivalTeamIcon";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
-
-const useStyle = makeStyles((theme) => ({
-  // bannerImg: {
-  //   maxWidth: "100%",
-  // },
-  // eventImg: {
-  //   maxWidth: "100%",
-  //   cursor: "pointer",
-  // },
-  tabpanel: {
-    padding: theme.spacing("0.1rem", 0, 0, 0),
-  },
-  "grid-out": {
-    padding: theme.spacing("1%", "0"),
-  },
-}));
+import TypographyHeader from "../../components/styled/TypographyHeader";
+import ContainerContent from "../../components/styled/ContainerContent";
+import TabPanelPadding from "../../components/styled/TabPanelPadding";
+import GridOut from "../../components/styled/GridOut";
+import LinkNoDecoration from "../../components/styled/LinkNoDecoration";
 
 const EventDetail: React.FC<{}> = observer(() => {
   const { t } = useTranslation();
   const { eventId } = useParams<{ eventId: string }>();
-  const classes = useStyle();
-  const layoutClasses = useLayoutStyles();
-  const interactiveClasses = useInteractiveStyles();
   const { getTranslated } = useAssetI18n();
   const {
     settings: { contentTransMode },
@@ -366,10 +347,10 @@ const EventDetail: React.FC<{}> = observer(() => {
     gameCharacterUnits.length &&
     eventCards.length ? (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
+      <TypographyHeader>
         {getTranslated(`event_name:${eventId}`, event.name)}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      </TypographyHeader>
+      <ContainerContent maxWidth="md">
         <TabContext value={imgTabVal}>
           <Paper>
             <Tabs
@@ -382,7 +363,7 @@ const EventDetail: React.FC<{}> = observer(() => {
               <Tab value="1" label={t("event:tab.title[1]")}></Tab>
               <Tab value="2" label={t("event:tab.title[2]")}></Tab>
             </Tabs>
-            <TabPanel value="0" classes={{ root: classes.tabpanel }}>
+            <TabPanelPadding value="0">
               <Grid container direction="row">
                 <Grid item xs={12} md={6}>
                   <Image
@@ -405,46 +386,48 @@ const EventDetail: React.FC<{}> = observer(() => {
                   ></Image>
                 </Grid>
               </Grid>
-            </TabPanel>
-            <TabPanel value="1" classes={{ root: classes.tabpanel }}>
+            </TabPanelPadding>
+            <TabPanelPadding value="1">
               <div
                 onClick={() => {
                   setActiveIdx(0);
                   setVisible(true);
                 }}
               >
-                <Image
-                  className={interactiveClasses.pointer}
+                <Box
+                  component={Image}
+                  sx={{ cursor: "pointer" }}
                   src={eventBackground}
                   // aspectRatio={1.625}
                   alt="background"
                   bgColor=""
-                ></Image>
+                />
               </div>
-            </TabPanel>
-            <TabPanel value="2" classes={{ root: classes.tabpanel }}>
+            </TabPanelPadding>
+            <TabPanelPadding value="2">
               <div
                 onClick={() => {
                   setActiveIdx(1);
                   setVisible(true);
                 }}
               >
-                <Image
-                  className={interactiveClasses.pointer}
+                <Box
+                  component={Image}
+                  sx={{ cursor: "pointer" }}
                   src={eventCharacter}
                   // aspectRatio={1.625}
                   alt="character"
                   bgColor=""
-                ></Image>
+                />
               </div>
-            </TabPanel>
+            </TabPanelPadding>
           </Paper>
         </TabContext>
         <AudioPlayer
           style={{ width: "100%", margin: "1% 0" }}
           src={eventBgm}
         ></AudioPlayer>
-        <Grid className={classes["grid-out"]} container direction="column">
+        <GridOut container direction="column">
           <Grid
             item
             container
@@ -529,14 +512,11 @@ const EventDetail: React.FC<{}> = observer(() => {
                   </Typography>
                 </Grid>
                 <Grid item container justifyContent="flex-end">
-                  <Link
-                    to={`/eventtracker?id=${eventId}`}
-                    className={interactiveClasses.noDecoration}
-                  >
+                  <LinkNoDecoration to={`/eventtracker?id=${eventId}`}>
                     <Grid container alignItems="center">
                       <OpenInNew />
                     </Grid>
-                  </Link>
+                  </LinkNoDecoration>
                 </Grid>
               </Grid>
               <Divider style={{ margin: "1% 0" }} />
@@ -555,14 +535,11 @@ const EventDetail: React.FC<{}> = observer(() => {
               </Typography>
             </Grid>
             <Grid item container justifyContent="flex-end">
-              <Link
-                to={`/storyreader/eventStory/${event.id}`}
-                className={interactiveClasses.noDecoration}
-              >
+              <LinkNoDecoration to={`/storyreader/eventStory/${event.id}`}>
                 <Grid container alignItems="center">
                   <OpenInNew />
                 </Grid>
-              </Link>
+              </LinkNoDecoration>
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
@@ -581,26 +558,21 @@ const EventDetail: React.FC<{}> = observer(() => {
                   </Typography>
                 </Grid>
                 <Grid item container justifyContent="flex-end">
-                  <Link
-                    to={`/music/${eventMusic.musicId}`}
-                    className={interactiveClasses.noDecoration}
-                  >
+                  <LinkNoDecoration to={`/music/${eventMusic.musicId}`}>
                     <Grid container alignItems="center">
                       <OpenInNew />
                     </Grid>
-                  </Link>
+                  </LinkNoDecoration>
                 </Grid>
               </Grid>
               <Divider style={{ margin: "1% 0" }} />
             </Fragment>
           )}
-        </Grid>
-      </Container>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("event:title.boost")}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
-        <Grid className={classes["grid-out"]} container direction="column">
+        </GridOut>
+      </ContainerContent>
+      <TypographyHeader>{t("event:title.boost")}</TypographyHeader>
+      <ContainerContent maxWidth="md">
+        <GridOut container direction="column">
           <Grid
             item
             container
@@ -777,13 +749,11 @@ const EventDetail: React.FC<{}> = observer(() => {
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
-        </Grid>
-      </Container>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:card")}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
-        <Grid className={classes["grid-out"]} container direction="column">
+        </GridOut>
+      </ContainerContent>
+      <TypographyHeader>{t("common:card")}</TypographyHeader>
+      <ContainerContent maxWidth="md">
+        <GridOut container direction="column">
           <Grid
             item
             container
@@ -816,28 +786,23 @@ const EventDetail: React.FC<{}> = observer(() => {
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
-        </Grid>
-      </Container>
+        </GridOut>
+      </ContainerContent>
       {event.eventType === "cheerful_carnival" &&
         !!ccTeams.length &&
         ccSummary && (
           <Fragment>
-            <Typography variant="h6" className={layoutClasses.header}>
+            <TypographyHeader>
               {t("event:title.cheerful_carnival")}
-            </Typography>
-            <Container className={layoutClasses.content} maxWidth="md">
+            </TypographyHeader>
+            <ContainerContent maxWidth="md">
               <ContentTrans
                 contentKey={`cheerful_carnival_themes:${ccSummary.id}`}
                 original={ccSummary.theme}
                 originalProps={{ align: "center", variant: "h6" }}
                 translatedProps={{ align: "center", variant: "h6" }}
               />
-              <Grid
-                className={classes["grid-out"]}
-                container
-                spacing={1}
-                justifyContent="space-around"
-              >
+              <GridOut container spacing={1} justifyContent="space-around">
                 <Grid item xs={5} md={3} lg={2}>
                   <CheerfulCarnivalTeamIcon
                     eventId={event.id}
@@ -862,12 +827,8 @@ const EventDetail: React.FC<{}> = observer(() => {
                     translatedProps={{ align: "center" }}
                   />
                 </Grid>
-              </Grid>
-              <Grid
-                className={classes["grid-out"]}
-                container
-                direction="column"
-              >
+              </GridOut>
+              <GridOut container direction="column">
                 <Grid
                   item
                   container
@@ -900,15 +861,13 @@ const EventDetail: React.FC<{}> = observer(() => {
                   </Typography>
                 </Grid>
                 <Divider style={{ margin: "1% 0" }} />
-              </Grid>
-            </Container>
+              </GridOut>
+            </ContainerContent>
           </Fragment>
         )}
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("event:title.timepoint")}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
-        <Grid className={classes["grid-out"]} container direction="column">
+      <TypographyHeader>{t("event:title.timepoint")}</TypographyHeader>
+      <ContainerContent maxWidth="md">
+        <GridOut container direction="column">
           <Grid
             item
             container
@@ -989,8 +948,8 @@ const EventDetail: React.FC<{}> = observer(() => {
             </Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
-        </Grid>
-      </Container>
+        </GridOut>
+      </ContainerContent>
       {/* <AdSense
         client="ca-pub-7767752375383260"
         slot="8221864477"
@@ -999,23 +958,18 @@ const EventDetail: React.FC<{}> = observer(() => {
       /> */}
       {!!linkedVirtualLive && (
         <Fragment>
-          <Typography variant="h6" className={layoutClasses.header}>
-            {t("common:virtualLive")}
-          </Typography>
-          <Container className={layoutClasses.content} maxWidth="md">
+          <TypographyHeader>{t("common:virtualLive")}</TypographyHeader>
+          <ContainerContent maxWidth="md">
             <AgendaView data={linkedVirtualLive} />
-          </Container>
+          </ContainerContent>
         </Fragment>
       )}
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("event:title.rankingRewards")}
-      </Typography>
-      <Container
-        className={layoutClasses.content}
+      <TypographyHeader>{t("event:title.rankingRewards")}</TypographyHeader>
+      <ContainerContent
         maxWidth="md"
         style={{ maxHeight: 400, overflow: "auto" }}
       >
-        <Grid className={classes["grid-out"]} container direction="column">
+        <GridOut container direction="column">
           {event.eventRankingRewardRanges.map((rankingReward) => (
             <Fragment key={rankingReward.id}>
               <Grid
@@ -1049,16 +1003,16 @@ const EventDetail: React.FC<{}> = observer(() => {
               <Divider style={{ margin: "1% 0" }} />
             </Fragment>
           ))}
-        </Grid>
-      </Container>
+        </GridOut>
+      </ContainerContent>
       {!!eventCommentId && (
         <Fragment>
-          <Typography variant="h6" className={layoutClasses.header}>
+          <TypographyHeader>
             {t("common:comment")} <CommentTextMultiple />
-          </Typography>
-          <Container className={layoutClasses.content} maxWidth="md">
+          </TypographyHeader>
+          <ContainerContent maxWidth="md">
             <Comment contentType="event" contentId={eventCommentId} />
-          </Container>
+          </ContainerContent>
         </Fragment>
       )}
       <Viewer

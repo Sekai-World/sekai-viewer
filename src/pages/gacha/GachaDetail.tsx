@@ -1,14 +1,12 @@
 import {
   Button,
   Card,
-  CardMedia,
   Divider,
   Grid,
   Paper,
   Tab,
   Tabs,
   Typography,
-  Container,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -19,12 +17,11 @@ import {
   TableBody,
   TableCell,
   DialogProps,
+  styled,
 } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
-import { useLayoutStyles } from "../../styles/layout";
-import { TabContext, TabPanel } from "@mui/lab";
+import { TabContext } from "@mui/lab";
 import React, { Fragment, useCallback, useLayoutEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
 import {
@@ -47,7 +44,6 @@ import { CardThumb, CardThumbs } from "../../components/widgets/CardThumb";
 import { useTranslation } from "react-i18next";
 import { useAssetI18n } from "../../utils/i18n";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
-import { useInteractiveStyles } from "../../styles/interactive";
 import CommonMaterialIcon from "../../components/widgets/CommonMaterialIcon";
 // import AdSense from "../../components/blocks/AdSense";
 import { observer } from "mobx-react-lite";
@@ -57,56 +53,15 @@ import rarityBirthday from "../../assets/rarity_birthday.png";
 import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
 import { assetUrl } from "../../utils/urls";
+import TypographyHeader from "../../components/styled/TypographyHeader";
+import ContainerContent from "../../components/styled/ContainerContent";
+import TabPanelPadding from "../../components/styled/TabPanelPadding";
+import CardMediaCardImg from "../../components/styled/CardMediaCardImg";
+import LinkNoDecoration from "../../components/styled/LinkNoDecoration";
 
-// const gachaImageNameMap: {
-//   [key: number]: {
-//     bg: string;
-//     feature?: string;
-//   };
-// } = {
-//   1: {
-//     bg: "bg_gacha1",
-//     feature: "img_gacha1_1",
-//   },
-//   2: {
-//     bg: "bg_gacha_rare3_ticket_2020",
-//   },
-//   3: {
-//     bg: "bg_gacha_virtualsinger_2020",
-//   },
-//   7: {
-//     bg: "bg_gacha6",
-//     feature: "img_gacha6",
-//   },
-//   8: {
-//     bg: "bg_gacha8",
-//   },
-// };
-
-const useStyles = makeStyles((theme) => ({
-  media: {
-    paddingTop: "56.25%",
-    cursor: "pointer",
-  },
-  card: {
-    margin: theme.spacing(0.5),
-  },
-  tabpanel: {
-    padding: theme.spacing("1%", 0, 0, 0),
-  },
-  subheader: {
-    "white-space": "nowrap",
-    overflow: "hidden",
-    "text-overflow": "ellipsis",
-    "max-width": "260px",
-  },
-  gachaBtn: {
-    padding: theme.spacing(1, 3.5),
-  },
-  bannerImg: {
-    maxWidth: "100%",
-  },
-}));
+const ImgBanner = styled("img")`
+  max-width: 100%;
+`;
 
 const StarIcon: React.FC<{
   num: number;
@@ -145,9 +100,6 @@ const DescDialog: React.FC<
 };
 
 const GachaDetailPage: React.FC<{}> = observer(() => {
-  const classes = useStyles();
-  const layoutClasses = useLayoutStyles();
-  const interactiveClasses = useInteractiveStyles();
   const { gachaId } = useParams<{ gachaId: string }>();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
@@ -582,10 +534,10 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
   if (gacha) {
     return (
       <Fragment>
-        <Typography variant="h6" className={layoutClasses.header}>
+        <TypographyHeader>
           {getTranslated(`gacha_name:${gachaId}`, gacha.name)}
-        </Typography>
-        <Container className={layoutClasses.content} maxWidth="md">
+        </TypographyHeader>
+        <ContainerContent maxWidth="md">
           <TabContext value={picTabVal}>
             <Paper>
               <Tabs
@@ -602,7 +554,7 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
                   <Tab label={t("gacha:tab.title[4]")} value="1"></Tab>
                 )}
               </Tabs>
-              <TabPanel value="0" classes={{ root: classes.tabpanel }}>
+              <TabPanelPadding value="0">
                 <Card
                   onClick={() => {
                     setActiveIdx(
@@ -615,13 +567,10 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
                     setVisible(true);
                   }}
                 >
-                  <CardMedia
-                    className={classes.media}
-                    image={gachaBackground}
-                  ></CardMedia>
+                  <CardMediaCardImg image={gachaBackground}></CardMediaCardImg>
                 </Card>
-              </TabPanel>
-              <TabPanel value="1" classes={{ root: classes.tabpanel }}>
+              </TabPanelPadding>
+              <TabPanelPadding value="1">
                 <Card
                   onClick={() => {
                     setActiveIdx(
@@ -632,32 +581,21 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
                     setVisible(true);
                   }}
                 >
-                  <CardMedia
-                    className={classes.media}
-                    image={gachaImage}
-                  ></CardMedia>
+                  <CardMediaCardImg image={gachaImage}></CardMediaCardImg>
                 </Card>
-              </TabPanel>
-              <TabPanel value="2" classes={{ root: classes.tabpanel }}>
+              </TabPanelPadding>
+              <TabPanelPadding value="2">
                 <Grid container direction="row">
                   <Grid item xs={12} md={6}>
-                    <img
-                      className={classes.bannerImg}
-                      src={gachaIcon}
-                      alt="logo"
-                    ></img>
+                    <ImgBanner src={gachaIcon} alt="logo" />
                   </Grid>
                   <Grid item xs={12} md={6}>
                     {gachaBanner && (
-                      <img
-                        className={classes.bannerImg}
-                        src={gachaBanner}
-                        alt="banner"
-                      ></img>
+                      <ImgBanner src={gachaBanner} alt="banner" />
                     )}
                   </Grid>
                 </Grid>
-              </TabPanel>
+              </TabPanelPadding>
             </Paper>
           </TabContext>
           {/* <Container style={{marginTop: '2%'}} maxWidth="md"> */}
@@ -787,11 +725,9 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
             </Grid>
             <Divider style={{ margin: "1% 0" }} />
           </Grid>
-        </Container>
-        <Typography variant="h6" className={layoutClasses.header}>
-          {t("gacha:gacha_rate")}
-        </Typography>
-        <Container className={layoutClasses.content} maxWidth="md">
+        </ContainerContent>
+        <TypographyHeader>{t("gacha:gacha_rate")}</TypographyHeader>
+        <ContainerContent maxWidth="md">
           <Grid container direction="row">
             {!!gachaRarityRates && !!normalRates.length && (
               <Fragment>
@@ -932,11 +868,9 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
               </Fragment>
             )}
           </Grid>
-        </Container>
-        <Typography variant="h6" className={layoutClasses.header}>
-          {t("gacha:gacha_cards")}
-        </Typography>
-        <Container className={layoutClasses.content} maxWidth="md">
+        </ContainerContent>
+        <TypographyHeader>{t("gacha:gacha_cards")}</TypographyHeader>
+        <ContainerContent maxWidth="md">
           <Grid container direction="row">
             <Grid item xs={12}>
               <Grid
@@ -1023,11 +957,9 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
               </Fragment>
             ))}
           </Grid>
-        </Container>
-        <Typography variant="h6" className={layoutClasses.header}>
-          {t("gacha:gacha_behaviors")}
-        </Typography>
-        <Container className={layoutClasses.content} maxWidth="md">
+        </ContainerContent>
+        <TypographyHeader>{t("gacha:gacha_behaviors")}</TypographyHeader>
+        <ContainerContent maxWidth="md">
           <Grid container direction="row">
             {gacha.gachaBehaviors.map((behavior) => (
               <Fragment key={behavior.id}>
@@ -1061,17 +993,15 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
               </Fragment>
             ))}
           </Grid>
-        </Container>
+        </ContainerContent>
         {/* <AdSense
           client="ca-pub-7767752375383260"
           slot="8221864477"
           format="auto"
           responsive="true"
         /> */}
-        <Typography variant="h6" className={layoutClasses.header}>
-          {t("gacha:gacha_simulator")}
-        </Typography>
-        <Container className={layoutClasses.content} maxWidth="md">
+        <TypographyHeader>{t("gacha:gacha_simulator")}</TypographyHeader>
+        <ContainerContent maxWidth="md">
           <Grid
             container
             spacing={1}
@@ -1086,9 +1016,9 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
                       <Grid item>
                         <Button
                           variant="contained"
-                          className={classes.gachaBtn}
                           color="primary"
                           onClick={() => doGacha(behavior)}
+                          sx={(theme) => ({ padding: theme.spacing(1, 3.5) })}
                         >
                           {/* {t("gacha:behavior." + behavior.gachaBehaviorType)} */}
                           <CommonMaterialIcon
@@ -1107,9 +1037,9 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
             <Grid item>
               <Button
                 variant="contained"
-                className={classes.gachaBtn}
                 color="secondary"
                 onClick={() => resetGacha()}
+                sx={(theme) => ({ padding: theme.spacing(1, 3.5) })}
               >
                 {t("gacha:simulator.reset")}
               </Button>
@@ -1199,7 +1129,7 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
           </Grid>
           <br />
           <CardThumbs cardIds={currentGachaResult.map((elem) => elem.cardId)} />
-        </Container>
+        </ContainerContent>
         <Viewer
           visible={visible}
           onClose={() => setVisible(false)}
@@ -1237,11 +1167,7 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
             <Grid container spacing={1}>
               {gachaCards.map((cardId) => (
                 <Grid key={cardId} item xs={4} md={2}>
-                  <Link
-                    to={"/card/" + cardId}
-                    className={interactiveClasses.noDecoration}
-                    target="_blank"
-                  >
+                  <LinkNoDecoration to={"/card/" + cardId} target="_blank">
                     <Grid container direction="column">
                       <CardThumb cardId={cardId} />
                       <Typography
@@ -1251,7 +1177,7 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
                         {getCardRate(cardId)}
                       </Typography>
                     </Grid>
-                  </Link>
+                  </LinkNoDecoration>
                 </Grid>
               ))}
             </Grid>

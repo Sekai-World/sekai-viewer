@@ -7,7 +7,6 @@ import React, {
   useState,
 } from "react";
 import axios from "axios";
-import { useLayoutStyles } from "../styles/layout";
 import { useTranslation } from "react-i18next";
 import {
   Alert,
@@ -28,6 +27,7 @@ import {
   DialogProps,
   DialogContent,
   IconButton,
+  useTheme,
 } from "@mui/material";
 import { XMLParser } from "fast-xml-parser";
 import { IAssetListElement, IListBucketResult } from "../types";
@@ -45,12 +45,12 @@ import { JsonView, defaultStyles, darkStyles } from "react-json-view-lite";
 import "react-json-view-lite/dist/index.css";
 import AudioPlayer from "./music/AudioPlayer";
 import { saveAs } from "file-saver";
-import { useInteractiveStyles } from "../styles/interactive";
 import { FixedSizeList, ListOnItemsRenderedProps } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
-import { useTheme } from "@mui/styles";
 import { useRootStore } from "../stores/root";
 import { assetUrl } from "../utils/urls";
+import LinkNoDecoration from "../components/styled/LinkNoDecoration";
+import TypographyHeader from "../components/styled/TypographyHeader";
 
 const AssetListDirectory: React.FC<{
   prefix: string;
@@ -251,19 +251,14 @@ const Breadcrumb: React.FC<{ paths: string[] } & BreadcrumbsProps> = ({
   paths,
   ...props
 }) => {
-  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
 
   return (
     <Breadcrumbs {...props}>
       {paths.length && paths[0] !== "" ? (
-        <RouterLink
-          className={interactiveClasses.noDecoration}
-          color="inherit"
-          to="/asset_viewer/"
-        >
+        <LinkNoDecoration to="/asset_viewer/">
           {t("asset_viewer:root")}
-        </RouterLink>
+        </LinkNoDecoration>
       ) : (
         <Typography color="text.primary">{t("asset_viewer:root")}</Typography>
       )}
@@ -275,14 +270,12 @@ const Breadcrumb: React.FC<{ paths: string[] } & BreadcrumbsProps> = ({
               {path}
             </Typography>
           ) : (
-            <RouterLink
-              className={interactiveClasses.noDecoration}
-              color="inherit"
+            <LinkNoDecoration
               to={`/asset_viewer/${arr.slice(0, idx + 1).join("/")}`}
               key={path}
             >
               {path}
-            </RouterLink>
+            </LinkNoDecoration>
           )
         )}
     </Breadcrumbs>
@@ -291,7 +284,6 @@ const Breadcrumb: React.FC<{ paths: string[] } & BreadcrumbsProps> = ({
 
 const AssetViewer = () => {
   const { region } = useRootStore();
-  const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const parser = useMemo(
@@ -436,23 +428,36 @@ const AssetViewer = () => {
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:assetViewer")}
-      </Typography>
-      <Alert severity="warning" className={layoutClasses.alert}>
+      <TypographyHeader>{t("common:assetViewer")}</TypographyHeader>
+      <Alert
+        severity="warning"
+        sx={(theme) => ({ margin: theme.spacing(1, 0) })}
+      >
         {t("common:betaIndicator")}
       </Alert>
-      <Breadcrumb paths={folderPath} className={layoutClasses.content} />
+      <Breadcrumb
+        paths={folderPath}
+        sx={(theme) => ({
+          marginTop: theme.spacing(2),
+          marginBottom: theme.spacing(2),
+        })}
+      />
       <Paper
         variant="outlined"
-        className={layoutClasses.backdropParent}
         sx={{
           display: "flex",
           flexDirection: "column",
           flex: 1,
+          position: "relative",
         }}
       >
-        <Backdrop className={layoutClasses.componentBackdrop} open={isFetching}>
+        <Backdrop
+          sx={{
+            position: "absolute",
+            zIndex: 1,
+          }}
+          open={isFetching}
+        >
           <CircularProgress color="inherit" />
         </Backdrop>
         <AutoSizer>

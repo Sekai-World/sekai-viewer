@@ -1,6 +1,5 @@
 import {
   Typography,
-  Container,
   Grid,
   Avatar,
   Button,
@@ -11,40 +10,24 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  Box,
 } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
 import { Check, Clear, Create, Upload, Logout } from "@mui/icons-material";
 import { Field, Form, Formik } from "formik";
 import { Select, TextField } from "formik-mui";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import { useInteractiveStyles } from "../../../styles/interactive";
-import { useLayoutStyles } from "../../../styles/layout";
 import { useAlertSnackbar } from "../../../utils";
 import { useStrapi } from "../../../utils/apiClient";
 import { useRootStore } from "../../../stores/root";
 import { IUserMetadata } from "../../../stores/user";
 import { observer } from "mobx-react-lite";
+import TypographyHeader from "../../../components/styled/TypographyHeader";
+import ContainerContent from "../../../components/styled/ContainerContent";
 const SekaiProfile = React.lazy(() => import("../sekai_profile/SekaiProfile"));
 
-const useStyles = makeStyles((theme) => ({
-  avatarProfile: {
-    [theme.breakpoints.down("md")]: {
-      height: theme.spacing(15),
-      width: theme.spacing(15),
-    },
-    [theme.breakpoints.up("md")]: {
-      height: theme.spacing(20),
-      width: theme.spacing(20),
-    },
-  },
-}));
-
 const UserHome: React.FC<{}> = observer(() => {
-  const classes = useStyles();
-  const layoutClasses = useLayoutStyles();
-  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const history = useHistory();
   const {
@@ -85,22 +68,33 @@ const UserHome: React.FC<{}> = observer(() => {
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:user")}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      <TypographyHeader>{t("common:user")}</TypographyHeader>
+      <ContainerContent maxWidth="md">
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
             <Grid container spacing={2}>
               <Grid item xs={12} container justifyContent="center">
-                <Avatar src={avatarUrl || ""} className={classes.avatarProfile}>
+                <Avatar
+                  src={avatarUrl || ""}
+                  sx={(theme) => ({
+                    [theme.breakpoints.down("md")]: {
+                      height: theme.spacing(15),
+                      width: theme.spacing(15),
+                    },
+                    [theme.breakpoints.up("md")]: {
+                      height: theme.spacing(20),
+                      width: theme.spacing(20),
+                    },
+                  })}
+                >
                   {(nickname || "").substring(0, 2).toUpperCase()}
                 </Avatar>
               </Grid>
               <Grid item xs={12} container justifyContent="center">
-                <input
+                <Box
+                  component="input"
+                  sx={{ display: "none" }}
                   accept="image/png,image/jpeg"
-                  className={interactiveClasses.inputHidden}
                   id="upload-avatar-button"
                   type="file"
                   onChange={(e) => {
@@ -177,7 +171,7 @@ const UserHome: React.FC<{}> = observer(() => {
             <Grid container spacing={1}>
               <Grid item xs={12}>
                 <Grid container justifyContent="space-between">
-                  <Typography className={layoutClasses.bold}>
+                  <Typography fontWeight="bold">
                     {t("user:profile.username")}
                   </Typography>
                   <Typography>{userinfo?.username}</Typography>
@@ -192,7 +186,7 @@ const UserHome: React.FC<{}> = observer(() => {
                   justifyContent="space-between"
                   alignItems="center"
                 >
-                  <Typography className={layoutClasses.bold}>
+                  <Typography fontWeight="bold">
                     {t("user:profile.nickname")}
                     {!isEditingNickname && (
                       <IconButton
@@ -272,7 +266,7 @@ const UserHome: React.FC<{}> = observer(() => {
               </Grid>
               <Grid item xs={12}>
                 <Grid container justifyContent="space-between">
-                  <Typography className={layoutClasses.bold}>
+                  <Typography fontWeight="bold">
                     {t("user:profile.role")}
                   </Typography>
                   <Typography>{userinfo?.role}</Typography>
@@ -287,7 +281,7 @@ const UserHome: React.FC<{}> = observer(() => {
                   justifyContent="space-between"
                   alignItems="center"
                 >
-                  <Typography className={layoutClasses.bold}>
+                  <Typography fontWeight="bold">
                     {t("user:profile.email")}
                   </Typography>
                   {isShowEmail ? (
@@ -307,7 +301,7 @@ const UserHome: React.FC<{}> = observer(() => {
               </Grid>
               <Grid item xs={12}>
                 <Grid container justifyContent="space-between">
-                  <Typography className={layoutClasses.bold}>
+                  <Typography fontWeight="bold">
                     {t("user:profile.email_confirmed")}
                   </Typography>
                   <Typography
@@ -332,7 +326,7 @@ const UserHome: React.FC<{}> = observer(() => {
                   justifyContent="space-between"
                   alignItems="center"
                 >
-                  <Typography className={layoutClasses.bold}>
+                  <Typography fontWeight="bold">
                     {t("auth:signup.label.prefer_langs")}
                     {!isEditingPreferLangs && (
                       <IconButton
@@ -433,7 +427,7 @@ const UserHome: React.FC<{}> = observer(() => {
           </Grid>
         </Grid>
         {/* {JSON.stringify(user)} */}
-      </Container>
+      </ContainerContent>
       <SekaiProfile />
     </Fragment>
   );

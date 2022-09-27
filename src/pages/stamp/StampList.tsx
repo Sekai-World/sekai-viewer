@@ -1,12 +1,4 @@
-import {
-  Avatar,
-  Chip,
-  Collapse,
-  Container,
-  Grid,
-  Typography,
-  Paper,
-} from "@mui/material";
+import { Avatar, Chip, Collapse, Grid } from "@mui/material";
 import {
   GetApp,
   GetAppOutlined,
@@ -27,8 +19,6 @@ import React, {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { characterSelectReducer } from "../../stores/reducers";
-import { useInteractiveStyles } from "../../styles/interactive";
-import { useLayoutStyles } from "../../styles/layout";
 import { IStampInfo } from "../../types.d";
 import { useCachedData, useLocalStorage } from "../../utils";
 import { charaIcons } from "../../utils/resources";
@@ -36,12 +26,14 @@ import GridView from "./GridView";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
 import { ToggleButtonGroup, ToggleButton } from "@mui/material";
 import { useCharaName } from "../../utils/i18n";
+import TypographyHeader from "../../components/styled/TypographyHeader";
+import ContainerContent from "../../components/styled/ContainerContent";
+import PaperContainer from "../../components/styled/PaperContainer";
+import TypographyCaption from "../../components/styled/TypographyCaption";
 
 const ListCard: React.FC<{ data?: IStampInfo }> = GridView;
 
 const StampList: React.FC<{}> = () => {
-  const layoutClasses = useLayoutStyles();
-  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const getCharaName = useCharaName();
 
@@ -161,10 +153,8 @@ const StampList: React.FC<{}> = () => {
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:stamp")}
-      </Typography>
-      <Container className={layoutClasses.content}>
+      <TypographyHeader>{t("common:stamp")}</TypographyHeader>
+      <ContainerContent>
         <Grid container justifyContent="space-between">
           <Grid item>
             <Grid container spacing={1}>
@@ -211,7 +201,7 @@ const StampList: React.FC<{}> = () => {
         </Grid>
         <br />
         <Collapse in={filterOpened}>
-          <Paper className={interactiveClasses.container}>
+          <PaperContainer>
             <Grid container direction="column" spacing={1}>
               <Grid
                 item
@@ -222,9 +212,9 @@ const StampList: React.FC<{}> = () => {
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
-                  <Typography classes={{ root: interactiveClasses.caption }}>
+                  <TypographyCaption>
                     {t("filter:character.caption")}
-                  </Typography>
+                  </TypographyCaption>
                 </Grid>
                 <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
@@ -278,9 +268,9 @@ const StampList: React.FC<{}> = () => {
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
-                  <Typography classes={{ root: interactiveClasses.caption }}>
+                  <TypographyCaption>
                     {t("filter:stampType.caption")}
-                  </Typography>
+                  </TypographyCaption>
                 </Grid>
                 <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
@@ -301,7 +291,7 @@ const StampList: React.FC<{}> = () => {
                 </Grid>
               </Grid>
             </Grid>
-          </Paper>
+          </PaperContainer>
         </Collapse>
         <InfiniteScroll<IStampInfo>
           ViewComponent={ListCard}
@@ -314,7 +304,7 @@ const StampList: React.FC<{}> = () => {
             lg: 2,
           }}
         />
-      </Container>
+      </ContainerContent>
     </Fragment>
   );
 };

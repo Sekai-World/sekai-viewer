@@ -1,59 +1,26 @@
-import { Typography, Grid, Box, Paper } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
+import { Typography, Grid } from "@mui/material";
 import { Skeleton } from "@mui/material";
 import React from "react";
 import { Link, useRouteMatch } from "react-router-dom";
 import { ICardInfo } from "../../types.d";
 import { useCharaName } from "../../utils/i18n";
-import {
-  CardThumbSkeleton,
-  CardThumb,
-} from "../../components/widgets/CardThumb";
+import { CardThumb } from "../../components/widgets/CardThumb";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
 import SpoilerTag from "../../components/widgets/SpoilerTag";
 import { cardRarityTypeToRarity } from "../../utils";
-
-const useStyles = makeStyles((theme) => ({
-  media: {
-    paddingTop: "56.25%",
-  },
-  card: {
-    // margin: theme.spacing(0.5),
-    cursor: "pointer",
-  },
-  subheader: {
-    // whiteSpace: "nowrap",
-    // overflow: "hidden",
-    // textOverflow: "ellipsis",
-  },
-  agendaWrapper: {
-    display: "block",
-    [theme.breakpoints.down("md")]: {
-      maxWidth: "100%",
-    },
-    // [theme.breakpoints.only("md")]: {
-    //   maxWidth: "600px",
-    // },
-    maxWidth: "80%",
-    margin: "auto",
-    cursor: "pointer",
-  },
-  agenda: {
-    [theme.breakpoints.down("xl")]: { padding: "4% 4%" },
-    [theme.breakpoints.up("md")]: { padding: "2% 2%" },
-  },
-}));
+import SvgSkeleton from "../../components/styled/SvgSkeleton";
+import AgendaBox from "../../components/styled/AgendaBox";
+import AgendaPaper from "../../components/styled/AgendaPaper";
 
 const AgendaView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
-  const classes = useStyles();
   const { path } = useRouteMatch();
   const getCharaName = useCharaName();
 
   if (!data) {
     // loading
     return (
-      <Box className={classes.agendaWrapper}>
-        <Paper className={classes.agenda}>
+      <AgendaBox>
+        <AgendaPaper>
           <Grid
             container
             alignItems="center"
@@ -70,10 +37,10 @@ const AgendaView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
               justifyContent="center"
             >
               <Grid item xs={12} md={6}>
-                <CardThumbSkeleton></CardThumbSkeleton>
+                <SvgSkeleton variant="rectangular" />
               </Grid>
               <Grid item xs={12} md={6}>
-                <CardThumbSkeleton></CardThumbSkeleton>
+                <SvgSkeleton variant="rectangular" />
               </Grid>
             </Grid>
             <Grid item xs={6} md={7}>
@@ -85,17 +52,17 @@ const AgendaView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
               </Typography>
             </Grid>
           </Grid>
-        </Paper>
-      </Box>
+        </AgendaPaper>
+      </AgendaBox>
     );
   }
   return (
     <Link
       to={path + "/" + data.id}
-      className={classes.agendaWrapper}
+      component={AgendaBox}
       style={{ textDecoration: "none" }}
     >
-      <Paper className={classes.agenda}>
+      <AgendaPaper>
         <Grid
           container
           alignItems="center"
@@ -142,7 +109,7 @@ const AgendaView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
             </Grid>
           </Grid>
         </Grid>
-      </Paper>
+      </AgendaPaper>
     </Link>
   );
 };

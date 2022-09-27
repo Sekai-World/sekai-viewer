@@ -1,5 +1,4 @@
-import { Typography, Container, Grid } from "@mui/material";
-import { useLayoutStyles } from "../../styles/layout";
+import { Grid } from "@mui/material";
 import React, { Fragment, useEffect, useState, useCallback } from "react";
 import { IEventInfo } from "../../types.d";
 import { useCachedData, useLocalStorage } from "../../utils";
@@ -18,6 +17,8 @@ import { ToggleButtonGroup, ToggleButton } from "@mui/material";
 import Pound from "~icons/mdi/pound";
 import { useRootStore } from "../../stores/root";
 import { observer } from "mobx-react-lite";
+import TypographyHeader from "../../components/styled/TypographyHeader";
+import ContainerContent from "../../components/styled/ContainerContent";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -30,7 +31,6 @@ const ListCard: { [key: string]: React.FC<{ data?: IEventInfo }> } = {
 };
 
 const EventList: React.FC<{}> = observer(() => {
-  const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
   const {
     settings: { isShowSpoiler },
@@ -131,10 +131,8 @@ const EventList: React.FC<{}> = observer(() => {
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:event")}
-      </Typography>
-      <Container className={layoutClasses.content}>
+      <TypographyHeader>{t("common:event")}</TypographyHeader>
+      <ContainerContent>
         <Grid container spacing={1}>
           <Grid item>
             <ToggleButtonGroup
@@ -192,7 +190,7 @@ const EventList: React.FC<{}> = observer(() => {
             )[viewGridType]
           }
         />
-      </Container>
+      </ContainerContent>
     </Fragment>
   );
 });

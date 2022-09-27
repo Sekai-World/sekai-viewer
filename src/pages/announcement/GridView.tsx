@@ -1,7 +1,5 @@
 import Pin from "~icons/mdi/pin";
 import React, { Fragment } from "react";
-import { Link } from "react-router-dom";
-import { useInteractiveStyles } from "../../styles/interactive";
 import { AnnouncementModel } from "../../strapi-model";
 import {
   // Avatar,
@@ -13,17 +11,14 @@ import {
 } from "@mui/material";
 import { Skeleton } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import LinkNoDecoration from "../../components/styled/LinkNoDecoration";
 
 const GridView: React.FC<{ data?: AnnouncementModel }> = ({ data }) => {
-  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
 
   return data ? (
     <Fragment>
-      <Link
-        to={`/announcement/${data.id}`}
-        className={interactiveClasses.noDecoration}
-      >
+      <LinkNoDecoration to={`/announcement/${data.id}`}>
         <Card>
           <CardContent>
             <Typography variant="h5">
@@ -58,7 +53,7 @@ const GridView: React.FC<{ data?: AnnouncementModel }> = ({ data }) => {
             </Grid>
           </CardContent>
         </Card>
-      </Link>
+      </LinkNoDecoration>
     </Fragment>
   ) : (
     <Card>

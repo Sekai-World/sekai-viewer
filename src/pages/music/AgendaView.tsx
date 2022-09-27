@@ -1,9 +1,8 @@
-import { Typography, Grid, Paper, Box, Chip } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
+import { Typography, Grid, Chip } from "@mui/material";
 import { Skeleton } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useRouteMatch } from "react-router-dom";
+import { useRouteMatch } from "react-router-dom";
 import {
   IMusicDifficultyInfo,
   IMusicInfo,
@@ -18,54 +17,12 @@ import Image from "mui-image";
 import { charaIcons } from "../../utils/resources";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
-
-const useStyles = makeStyles((theme) => ({
-  media: {
-    paddingTop: "75%",
-  },
-  card: {
-    // margin: theme.spacing(0.5),
-    cursor: "pointer",
-  },
-  header: {
-    // "white-space": "nowrap",
-    // overflow: "hidden",
-    // "text-overflow": "ellipsis",
-  },
-  agendaWrapper: {
-    display: "block",
-    // [theme.breakpoints.down("sm")]: {
-    //   maxWidth: "300px",
-    // },
-    // [theme.breakpoints.only("md")]: {
-    //   maxWidth: "600px",
-    // },
-    // maxWidth: "70%",
-    margin: "auto",
-    cursor: "pointer",
-  },
-  agenda: {
-    padding: "0.3rem 0.5rem",
-  },
-  "diffi-easy": {
-    backgroundColor: "#66DD11",
-  },
-  "diffi-normal": {
-    backgroundColor: "#33BBEE",
-  },
-  "diffi-hard": {
-    backgroundColor: "#FFAA00",
-  },
-  "diffi-expert": {
-    backgroundColor: "#EE4466",
-  },
-  "diffi-master": {
-    backgroundColor: "#BB33EE",
-  },
-}));
+import AgendaBox from "../../components/styled/AgendaBox";
+import AgendaPaper from "../../components/styled/AgendaPaper";
+import LinkNoDecoration from "../../components/styled/LinkNoDecoration";
+import ChipDifficulty from "../../components/styled/ChipDifficulty";
 
 const AgendaView: React.FC<{ data?: IMusicInfo }> = observer(({ data }) => {
-  const classes = useStyles();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
@@ -146,8 +103,8 @@ const AgendaView: React.FC<{ data?: IMusicInfo }> = observer(({ data }) => {
   if (!data) {
     // loading
     return (
-      <Box className={classes.agendaWrapper}>
-        <Paper className={classes.agenda}>
+      <AgendaBox>
+        <AgendaPaper>
           <Grid container alignItems="center" spacing={1}>
             <Grid item xs={3} sm={2} md={1}>
               <Skeleton
@@ -172,92 +129,76 @@ const AgendaView: React.FC<{ data?: IMusicInfo }> = observer(({ data }) => {
               </Typography>
             </Grid>
           </Grid>
-        </Paper>
-      </Box>
+        </AgendaPaper>
+      </AgendaBox>
     );
   }
   return (
-    <Link
-      to={path + "/" + data.id}
-      className={classes.agendaWrapper}
-      style={{ textDecoration: "none" }}
-    >
-      <Paper className={classes.agenda}>
-        <Grid container alignItems="center" spacing={1}>
-          <Grid item xs={3} sm={2} md={1}>
-            <Image
-              src={jacket}
-              alt={getTranslated(`music_titles:${data.id}`, data.title)}
-              // aspectRatio={1}
-              bgColor=""
-            ></Image>
-          </Grid>
-          <Grid item xs={9} sm={2}>
-            <Grid container direction="column" spacing={1}>
+    <LinkNoDecoration to={path + "/" + data.id}>
+      <AgendaBox>
+        <AgendaPaper>
+          <Grid container alignItems="center" spacing={1}>
+            <Grid item xs={3} sm={2} md={1}>
+              <Image
+                src={jacket}
+                alt={getTranslated(`music_titles:${data.id}`, data.title)}
+                // aspectRatio={1}
+                bgColor=""
+              ></Image>
+            </Grid>
+            <Grid item xs={9} sm={2}>
+              <Grid container direction="column" spacing={1}>
+                <Grid item>
+                  <SpoilerTag releaseTime={new Date(data.publishedAt)} />
+                </Grid>
+                <Grid item>
+                  <ContentTrans
+                    contentKey={`music_titles:${data.id}`}
+                    original={data.title}
+                    originalProps={{
+                      variant: "subtitle1",
+                    }}
+                    translatedProps={{
+                      variant: "subtitle1",
+                    }}
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item xs={12} sm={3} md={4}>
               <Grid item>
-                <SpoilerTag releaseTime={new Date(data.publishedAt)} />
-              </Grid>
-              <Grid item>
-                <ContentTrans
-                  contentKey={`music_titles:${data.id}`}
-                  original={data.title}
-                  originalProps={{
-                    variant: "subtitle1",
-                    className: classes.header,
-                  }}
-                  translatedProps={{
-                    variant: "subtitle1",
-                    className: classes.header,
-                  }}
-                />
+                <Grid container direction="row" spacing={1}>
+                  {diffis.map((elem) => (
+                    <Grid item xs={2} key={`diff-${elem.id}`}>
+                      <ChipDifficulty
+                        difficulty={elem.musicDifficulty}
+                        value={String(elem.playLevel)}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
               </Grid>
             </Grid>
-          </Grid>
-          <Grid item xs={12} sm={3} md={4}>
-            <Grid item>
-              <Grid container direction="row" spacing={1}>
-                {diffis.map((elem) => (
-                  <Grid item xs={2} key={`diff-${elem.id}`}>
-                    <Chip
-                      color="primary"
-                      size="small"
-                      classes={{
-                        colorPrimary:
-                          classes[
-                            `diffi-${elem.musicDifficulty}` as
-                              | "diffi-easy"
-                              | "diffi-normal"
-                              | "diffi-hard"
-                              | "diffi-expert"
-                              | "diffi-master"
-                          ],
-                      }}
-                      label={elem.playLevel}
-                    ></Chip>
-                  </Grid>
-                ))}
-              </Grid>
+            <Grid item xs={12} sm={2}>
+              {data.categories.map((cat) => (
+                <Chip label={t(`music:categoryType.${cat}`)} key={cat}></Chip>
+              ))}
             </Grid>
-          </Grid>
-          <Grid item xs={12} sm={2}>
-            {data.categories.map((cat) => (
-              <Chip label={t(`music:categoryType.${cat}`)} key={cat}></Chip>
-            ))}
-          </Grid>
-          {musicVocal && (
-            <Grid item xs={12} sm={3} md={3}>
-              <Grid container spacing={2} alignItems="center">
-                {musicVocal.map((_, idx) => (
-                  <Grid item key={idx}>
-                    {getVocalCharaIcons(idx)}
-                  </Grid>
-                ))}
+            {musicVocal && (
+              <Grid item xs={12} sm={3} md={3}>
+                <Grid container spacing={2} alignItems="center">
+                  {musicVocal.map((_, idx) => (
+                    <Grid item key={idx}>
+                      {getVocalCharaIcons(idx)}
+                    </Grid>
+                  ))}
+                </Grid>
               </Grid>
-            </Grid>
-          )}
-        </Grid>
-      </Paper>
-    </Link>
+            )}
+          </Grid>
+        </AgendaPaper>
+      </AgendaBox>
+    </LinkNoDecoration>
   );
 });
 

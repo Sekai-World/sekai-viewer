@@ -1,30 +1,23 @@
 import {
-  // CircularProgress,
   Divider,
   FormControl,
   FormControlLabel,
   Grid,
-  Paper,
   Radio,
   RadioGroup,
   Tab,
   Tabs,
   Typography,
-  Container,
-  Switch, // useTheme,
+  Switch,
   Link,
+  Box,
 } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
-import { useLayoutStyles } from "../../styles/layout";
-import { useInteractiveStyles } from "../../styles/interactive";
 import { Alert } from "@mui/material";
 import { TabContext, TabPanel } from "@mui/lab";
 import { OpenInNew } from "@mui/icons-material";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Viewer from "react-viewer";
-// import AudioPlayer from "react-h5-audio-player";
-// import "react-h5-audio-player/lib/styles.css";
 import {
   IMusicAchievement,
   IMusicDanceMembers,
@@ -39,7 +32,6 @@ import { charaIcons } from "../../utils/resources";
 import { Trans, useTranslation } from "react-i18next";
 import { useAssetI18n, useCharaName } from "../../utils/i18n";
 import { useDurationI18n } from "../../utils/i18nDuration";
-// import { useTrimMP3 } from "../../utils/trimMP3";
 import MusicVideoPlayer from "../../components/blocks/MusicVideoPlayer";
 import {
   ContentTrans,
@@ -49,7 +41,6 @@ import ResourceBox from "../../components/widgets/ResourceBox";
 import AudioPlayer from "./AudioPlayer";
 import { Howl } from "howler";
 import { saveAs } from "file-saver";
-// import AdSense from "../../components/blocks/AdSense";
 import Image from "mui-image";
 import { useStrapi } from "../../utils/apiClient";
 import CommentTextMultiple from "~icons/mdi/comment-text-multiple";
@@ -59,33 +50,13 @@ import { trimMP3 } from "../../utils/trimMP3";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
 import { assetUrl } from "../../utils/urls";
-
-const useStyles = makeStyles((theme) => ({
-  "rarity-star-img": {
-    maxWidth: "32px",
-    margin: theme.spacing(0, 0.25),
-  },
-  "card-thumb-img": {
-    maxWidth: "100%",
-    // margin: theme.spacing(0, 1),
-  },
-  "unit-logo-img": {
-    maxWidth: "128px",
-    // margin: theme.spacing(0, 1),
-  },
-  tabpanel: {
-    padding: 0,
-  },
-  "grid-out": {
-    padding: theme.spacing("1%", "0"),
-  },
-}));
+import TypographyCaption from "../../components/styled/TypographyCaption";
+import TypographyHeader from "../../components/styled/TypographyHeader";
+import ContainerContent from "../../components/styled/ContainerContent";
+import PaperContainer from "../../components/styled/PaperContainer";
+import GridOut from "../../components/styled/GridOut";
 
 const MusicDetail: React.FC<{}> = observer(() => {
-  // const theme = useTheme();
-  const classes = useStyles();
-  const layoutClasses = useLayoutStyles();
-  const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
   const {
@@ -226,49 +197,6 @@ const MusicDetail: React.FC<{}> = observer(() => {
     }
   }, [music, musicVocal, selectedPreviewVocalType, vocalPreviewVal]);
 
-  // useEffect(() => {
-  //   if (
-  //     vocalPreviewVal === "1" &&
-  //     musicVocal &&
-  //     musicVocal[selectedPreviewVocalType] &&
-  //     music &&
-  //     longMusicPlaybackURL &&
-  //     trimSilence &&
-  //     !trimmedMP3URL
-  //   ) {
-  //     setTrimOptions({
-  //       sourceURL: longMusicPlaybackURL,
-  //       trimDuration: music.fillerSec,
-  //       inclusive: false,
-  //     });
-  //     setTrimLoading(true);
-  //   }
-  // }, [
-  //   music,
-  //   musicVocal,
-  //   selectedPreviewVocalType,
-  //   vocalPreviewVal,
-  //   setTrimOptions,
-  //   setTrimLoading,
-  //   longMusicPlaybackURL,
-  //   trimSilence,
-  //   trimmedMP3URL,
-  // ]);
-
-  // useEffect(() => {
-  //   if (
-  //     musicVocal &&
-  //     musicVocal[selectedPreviewVocalType] &&
-  //     music &&
-  //     trimmedMP3URL
-  //   ) {
-  //     setTrimmedLongMusicPlaybackURL(trimmedMP3URL);
-  //     setTrimLoading(false);
-  //   } else {
-  //     setTrimmedLongMusicPlaybackURL(undefined);
-  //   }
-  // }, [music, musicVocal, selectedPreviewVocalType, trimmedMP3URL]);
-
   const getVocalCharaIcons: (index: number) => JSX.Element = useCallback(
     (index: number) => {
       return (
@@ -309,7 +237,6 @@ const MusicDetail: React.FC<{}> = observer(() => {
         musicVocalTypes.length &&
         musicVocalTypes[selectedPreviewVocalType].includes("original")
       ) {
-        // console.log(musicVocalTypes[selectedPreviewVocalType]);
         getRemoteAssetURL(
           `music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}_org.webp`,
           setMusicJacket,
@@ -443,9 +370,7 @@ const MusicDetail: React.FC<{}> = observer(() => {
           justifyContent="space-between"
         >
           <Grid item xs={12} md={2}>
-            <Typography classes={{ root: interactiveClasses.caption }}>
-              {t("music:vocal")}
-            </Typography>
+            <TypographyCaption>{t("music:vocal")}</TypographyCaption>
           </Grid>
           <Grid item container xs={12} md={9} spacing={1}>
             <FormControl disabled={vocalDisabled}>
@@ -472,21 +397,15 @@ const MusicDetail: React.FC<{}> = observer(() => {
         </Grid>
       );
     },
-    [
-      interactiveClasses.caption,
-      t,
-      vocalDisabled,
-      musicVocalTypes,
-      getVocalCharaIcons,
-    ]
+    [t, vocalDisabled, musicVocalTypes, getVocalCharaIcons]
   );
 
   return music && musicVocals && musicVocals.length ? (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
+      <TypographyHeader>
         {getTranslated(`music_titles:${musicId}`, music.title)}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      </TypographyHeader>
+      <ContainerContent maxWidth="md">
         <Alert severity="warning">
           <Trans i18nKey="music:alert[0]" components={{ b: <b /> }} />
         </Alert>
@@ -498,15 +417,16 @@ const MusicDetail: React.FC<{}> = observer(() => {
                 setVisible(true);
               }}
             >
-              <Image
-                className={interactiveClasses.pointer}
+              <Box
+                component={Image}
                 src={musicJacket}
                 bgColor=""
-              ></Image>
+                sx={{ cursor: "pointer" }}
+              />
             </div>
           </Grid>
         </Grid>
-        <Paper className={interactiveClasses.container}>
+        <PaperContainer>
           <Grid container direction="column" spacing={1}>
             <Grid
               item
@@ -516,9 +436,7 @@ const MusicDetail: React.FC<{}> = observer(() => {
               justifyContent="space-between"
             >
               <Grid item xs={12} md={2}>
-                <Typography classes={{ root: interactiveClasses.caption }}>
-                  {t("common:type")}
-                </Typography>
+                <TypographyCaption>{t("common:type")}</TypographyCaption>
               </Grid>
               <Grid item container xs={12} md={9} spacing={1}>
                 <RadioGroup
@@ -572,9 +490,9 @@ const MusicDetail: React.FC<{}> = observer(() => {
               justifyContent="space-between"
             >
               <Grid item xs={12} md={2}>
-                <Typography classes={{ root: interactiveClasses.caption }}>
+                <TypographyCaption>
                   {t("music:fileFormat.caption")}
-                </Typography>
+                </TypographyCaption>
               </Grid>
               <Grid item container xs={12} md={9} spacing={1}>
                 <RadioGroup
@@ -610,9 +528,9 @@ const MusicDetail: React.FC<{}> = observer(() => {
                 justifyContent="space-between"
               >
                 <Grid item xs={12} md={2}>
-                  <Typography classes={{ root: interactiveClasses.caption }}>
+                  <TypographyCaption>
                     {t("music:skipBeginningSilence")}
-                  </Typography>
+                  </TypographyCaption>
                 </Grid>
                 <Grid item container xs={12} md={9} spacing={1}>
                   <Switch
@@ -624,7 +542,7 @@ const MusicDetail: React.FC<{}> = observer(() => {
               </Grid>
             ) : null}
           </Grid>
-        </Paper>
+        </PaperContainer>
         {vocalPreviewVal === "0" &&
           musicVocalTypes.length &&
           musicVocal.length &&
@@ -660,7 +578,7 @@ const MusicDetail: React.FC<{}> = observer(() => {
             />
           )}
 
-        <Grid className={classes["grid-out"]} container direction="column">
+        <GridOut container direction="column">
           <Grid
             container
             direction="row"
@@ -849,22 +767,22 @@ const MusicDetail: React.FC<{}> = observer(() => {
             </Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
-        </Grid>
-      </Container>
-      <Typography variant="h6" className={layoutClasses.header}>
+        </GridOut>
+      </ContainerContent>
+      <TypographyHeader>
         {t("music:vocal", { count: musicVocal.length })}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
-        <Paper className={interactiveClasses.container}>
+      </TypographyHeader>
+      <ContainerContent maxWidth="md">
+        <PaperContainer>
           <Grid container direction="column" spacing={1}>
             <VocalTypeSelector
               vocalType={selectedVocalType}
               onSelect={(v) => setSelectedVocalType(v)}
             />
           </Grid>
-        </Paper>
+        </PaperContainer>
         {musicVocal.length && musicVocal[selectedVocalType] ? (
-          <Grid className={classes["grid-out"]} container direction="column">
+          <GridOut container direction="column">
             <Grid
               item
               container
@@ -952,20 +870,18 @@ const MusicDetail: React.FC<{}> = observer(() => {
               </Grid>
             </Grid>
             <Divider style={{ margin: "1% 0" }} />
-          </Grid>
+          </GridOut>
         ) : null}
-      </Container>
+      </ContainerContent>
       {/* <AdSense
         client="ca-pub-7767752375383260"
         slot="8221864477"
         format="auto"
         responsive="true"
       /> */}
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("music:achievement")}
-      </Typography>
+      <TypographyHeader>{t("music:achievement")}</TypographyHeader>
       {musicAchievements && !!musicAchievements.length && (
-        <Container className={layoutClasses.content} maxWidth="md">
+        <ContainerContent maxWidth="md">
           <Grid container direction="column">
             <Grid
               item
@@ -1039,23 +955,23 @@ const MusicDetail: React.FC<{}> = observer(() => {
             </Grid>
             <Divider style={{ margin: "1% 0" }} />
           </Grid>
-        </Container>
+        </ContainerContent>
       )}
-      <Typography variant="h6" className={layoutClasses.header}>
+      <TypographyHeader>
         {t("music:difficulty", {
           count:
             musicDiffis &&
             musicDiffis.filter((elem) => elem.musicId === Number(musicId))
               .length,
         })}
-      </Typography>
+      </TypographyHeader>
       {musicDiffis && musicAchievements && (
-        <Container className={layoutClasses.content} maxWidth="md">
+        <ContainerContent maxWidth="md">
           <Alert severity="info">
             <Trans i18nKey="music:chartCredit" />
           </Alert>
           <TabContext value={diffiInfoTabVal}>
-            <Paper className={interactiveClasses.container}>
+            <PaperContainer>
               <Tabs
                 value={diffiInfoTabVal}
                 onChange={(e, v) => {
@@ -1074,7 +990,7 @@ const MusicDetail: React.FC<{}> = observer(() => {
                     ></Tab>
                   ))}
               </Tabs>
-            </Paper>
+            </PaperContainer>
             {musicDiffis
               .filter((elem) => elem.musicId === Number(musicId))
               .map((elem, idx) => (
@@ -1262,16 +1178,16 @@ const MusicDetail: React.FC<{}> = observer(() => {
                 </TabPanel>
               ))}
           </TabContext>
-        </Container>
+        </ContainerContent>
       )}
       {!!musicCommentId && (
         <Fragment>
-          <Typography variant="h6" className={layoutClasses.header}>
+          <TypographyHeader>
             {t("common:comment")} <CommentTextMultiple />
-          </Typography>
-          <Container className={layoutClasses.content} maxWidth="md">
+          </TypographyHeader>
+          <ContainerContent maxWidth="md">
             <Comment contentType="musics" contentId={musicCommentId} />
-          </Container>
+          </ContainerContent>
         </Fragment>
       )}
       <Viewer

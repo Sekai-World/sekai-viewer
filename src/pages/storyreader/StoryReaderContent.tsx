@@ -1,15 +1,6 @@
-import {
-  Chip,
-  Container,
-  Grid,
-  LinearProgress,
-  Paper,
-  Typography,
-} from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
+import { Chip, Grid, LinearProgress, Paper, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useLayoutStyles } from "../../styles/layout";
 import {
   IUnitStory,
   IEventStory,
@@ -31,19 +22,12 @@ import { ReleaseCondTrans } from "../../components/helpers/ContentTrans";
 import { Sound, SpecialEffect, Talk } from "./StoryReaderSnippet";
 import Image from "mui-image";
 import { useAssetI18n } from "../../utils/i18n";
-
-const useStyle = makeStyles((theme) => ({
-  episodeBanner: {
-    padding: theme.spacing(1.5, 0),
-  },
-}));
+import ContainerContent from "../../components/styled/ContainerContent";
 
 const StoryReaderContent: React.FC<{ storyType: string; storyId: string }> = ({
   storyType,
   storyId,
 }) => {
-  const layoutClasses = useLayoutStyles();
-  const classes = useStyle();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
   const getProcessedScenarioData = useProcessedScenarioData();
@@ -277,9 +261,9 @@ const StoryReaderContent: React.FC<{ storyType: string; storyId: string }> = ({
   ]);
 
   return (
-    <Container className={layoutClasses.content}>
+    <ContainerContent>
       {storyType !== "areaTalk" && (
-        <Paper className={classes.episodeBanner}>
+        <Paper sx={(theme) => ({ padding: theme.spacing(1.5, 0) })}>
           <Grid container spacing={1} justifyContent="space-around">
             <Grid
               item
@@ -368,7 +352,7 @@ const StoryReaderContent: React.FC<{ storyType: string; storyId: string }> = ({
             return null;
         }
       })}
-    </Container>
+    </ContainerContent>
   );
 };
 

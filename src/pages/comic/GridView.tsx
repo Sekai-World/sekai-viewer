@@ -1,27 +1,9 @@
 import { Card, CardContent, Typography, CardMedia } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
 import { Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { ITipInfoComic } from "../../types.d";
 import { getRemoteAssetURL } from "../../utils";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
-
-const useStyles = makeStyles((theme) => ({
-  media: {
-    paddingTop: "75%",
-    backgroundSize: "contain",
-  },
-  card: {
-    // margin: theme.spacing(0.5),
-    cursor: "pointer",
-  },
-  subheader: {
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    textAlign: "center",
-  },
-}));
 
 const GridView: React.FC<{
   data?: ITipInfoComic;
@@ -29,8 +11,6 @@ const GridView: React.FC<{
   lang?: "ja" | "fr" | "ru" | "zhs" | "zht" | "en";
   handleCardClick?: (index: number) => void;
 }> = ({ data, index, lang, handleCardClick }) => {
-  const classes = useStyles();
-
   const [imageURL, setImageURL] = useState<string>("");
 
   useEffect(() => {
@@ -68,10 +48,16 @@ const GridView: React.FC<{
   if (!data) {
     // loading
     return (
-      <Card className={classes.card}>
-        <Skeleton variant="rectangular" className={classes.media}></Skeleton>
+      <Card>
+        <Skeleton
+          variant="rectangular"
+          sx={{
+            paddingTop: "75%",
+            backgroundSize: "contain",
+          }}
+        ></Skeleton>
         <CardContent>
-          <Typography variant="subtitle1" className={classes.subheader}>
+          <Typography variant="subtitle1">
             <Skeleton
               variant="text"
               width="90%"
@@ -84,9 +70,17 @@ const GridView: React.FC<{
   }
 
   return (
-    <Card className={classes.card} onClick={() => handleCardClick!(index!)}>
+    <Card
+      sx={{
+        cursor: "pointer",
+      }}
+      onClick={() => handleCardClick!(index!)}
+    >
       <CardMedia
-        className={classes.media}
+        sx={{
+          paddingTop: "75%",
+          backgroundSize: "contain",
+        }}
         image={imageURL}
         title={data.title}
       ></CardMedia>

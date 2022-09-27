@@ -1,25 +1,23 @@
 import {
   Button,
   CircularProgress,
-  Container,
   FormControl,
   Grid,
   MenuItem,
-  Typography,
 } from "@mui/material";
 import { Field, Formik } from "formik";
 import { Select } from "formik-mui";
 import React, { Fragment, useLayoutEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-// import { useInteractiveStyles } from "../../styles/interactive";
-import { useLayoutStyles } from "../../styles/layout";
 import { useStrapi } from "../../utils/apiClient";
 import TableAnnouncements from "./table/TableAnnouncements";
 import TableMe from "./table/TableWork";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
 import { IUserMetadata } from "../../stores/user";
+import TypographyHeader from "../../components/styled/TypographyHeader";
+import ContainerContent from "../../components/styled/ContainerContent";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface preferLangValues {
@@ -32,8 +30,6 @@ interface preferLangErrors {
 
 const Translation: React.FC<{}> = observer(() => {
   const { t } = useTranslation();
-  const layoutClasses = useLayoutStyles();
-  // const interactiveClasses = useInteractiveStyles();
   const {
     jwtToken,
     user: { metadata, setMetadata },
@@ -49,10 +45,8 @@ const Translation: React.FC<{}> = observer(() => {
 
   return !!metadata && !!jwtToken ? (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:translation")}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      <TypographyHeader>{t("common:translation")}</TypographyHeader>
+      <ContainerContent maxWidth="md">
         <Grid container>
           <Formik<preferLangValues>
             initialValues={{
@@ -130,23 +124,19 @@ const Translation: React.FC<{}> = observer(() => {
             )}
           </Formik>
         </Grid>
-      </Container>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("translate:title.my_works")}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      </ContainerContent>
+      <TypographyHeader>{t("translate:title.my_works")}</TypographyHeader>
+      <ContainerContent maxWidth="md">
         <TableMe languages={languages} />
-      </Container>
-      <Typography variant="h6" className={layoutClasses.header}>
+      </ContainerContent>
+      <TypographyHeader>
         {t("translate:title.available_contents")}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      </TypographyHeader>
+      <ContainerContent maxWidth="md">
         <TableAnnouncements
           languages={languages}
-          onSelected={(params, { api }) => {
-            setSelectedContent(
-              `announcement:${api?.getCellValue(params[0], "id")}`
-            );
+          onSelected={(params) => {
+            setSelectedContent(`announcement:${params[0]}`);
           }}
         />
         <br />
@@ -163,7 +153,7 @@ const Translation: React.FC<{}> = observer(() => {
             </Button>
           </Grid>
         </Grid>
-      </Container>
+      </ContainerContent>
     </Fragment>
   ) : null;
 });

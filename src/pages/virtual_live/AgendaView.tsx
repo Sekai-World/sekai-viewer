@@ -1,5 +1,4 @@
 import { Typography, Grid, Container, Paper } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
 import { Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -13,36 +12,10 @@ import Image from "mui-image";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
 
-const useStyles = makeStyles((theme) => ({
-  media: {
-    paddingTop: "30%",
-    width: "100%",
-    backgroundSize: "contain",
-  },
-  card: {
-    // margin: theme.spacing(0.5),
-    cursor: "pointer",
-  },
-  header: {
-    // "white-space": "nowrap",
-    // overflow: "hidden",
-    // "text-overflow": "ellipsis",
-    // [theme.breakpoints.down("md")]: {
-    //   "max-width": "200px",
-    // },
-    // "max-width": "250px",
-  },
-  "grid-out": {
-    margin: theme.spacing("1%", 0),
-  },
-}));
-
 const AgendaView: React.FC<{ data?: IVirtualLiveInfo }> = observer(
   ({ data }) => {
-    const classes = useStyles();
     const { t } = useTranslation();
     const { getTranslated } = useAssetI18n();
-    // const { path } = useRouteMatch();
     const { region } = useRootStore();
 
     const [virtualLiveLogo, setVirtualLiveLogo] = useState<string>("");
@@ -61,22 +34,26 @@ const AgendaView: React.FC<{ data?: IVirtualLiveInfo }> = observer(
     if (!data) {
       // loading
       return (
-        <Container maxWidth="md" className={classes.card}>
+        <Container maxWidth="md">
           <Grid
             container
             spacing={2}
             component={Paper}
-            className={classes["grid-out"]}
+            sx={(theme) => ({ margin: theme.spacing("1%", 0) })}
           >
             <Grid item xs={12} md={4} container alignItems="center">
               <Skeleton
                 variant="rectangular"
-                className={classes.media}
-              ></Skeleton>
+                sx={(theme) => ({
+                  paddingTop: "30%",
+                  width: "100%",
+                  backgroundSize: "contain",
+                })}
+              />
             </Grid>
             <Grid item xs={12} md={8}>
               <Grid container direction="column" spacing={1}>
-                <Typography variant="subtitle1" className={classes.header}>
+                <Typography variant="subtitle1">
                   <Skeleton variant="text" width="90%"></Skeleton>
                 </Typography>
                 <Typography variant="body2">
@@ -90,13 +67,13 @@ const AgendaView: React.FC<{ data?: IVirtualLiveInfo }> = observer(
     }
     return (
       <Link to={"/virtual_live/" + data.id} style={{ textDecoration: "none" }}>
-        <Container maxWidth="md" className={classes.card}>
+        <Container maxWidth="md" sx={{ cursor: "pointer" }}>
           <Grid
             container
             spacing={2}
             component={Paper}
-            className={classes["grid-out"]}
             alignItems="center"
+            sx={(theme) => ({ margin: theme.spacing("1%", 0) })}
           >
             <Grid item xs={12} md={4}>
               <Image
@@ -125,7 +102,6 @@ const AgendaView: React.FC<{ data?: IVirtualLiveInfo }> = observer(
                     original={data.name}
                     originalProps={{
                       variant: "subtitle1",
-                      className: classes.header,
                     }}
                   />
                 </Grid>

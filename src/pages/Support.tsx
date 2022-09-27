@@ -15,21 +15,17 @@ import {
 import Patreon from "~icons/mdi/patreon";
 import React, { Fragment } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { useLayoutStyles } from "../styles/layout";
-// import AifadianQRCode from "../assets/aifadian-qrcode.png";
 import { usePatronList } from "../utils/apiClient";
+import TypographyHeader from "../components/styled/TypographyHeader";
 
 const Support: React.FC<{}> = () => {
-  const layoutClasses = useLayoutStyles();
   const { t } = useTranslation();
 
   const { patrons, isLoading, error } = usePatronList();
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
-        {t("common:support")}
-      </Typography>
+      <TypographyHeader>{t("common:support")}</TypographyHeader>
       <br />
       {/* <Container> */}
       <Typography>
@@ -38,9 +34,9 @@ const Support: React.FC<{}> = () => {
       <br />
       {window.isChinaMainland ? (
         <Fragment>
-          <Typography variant="subtitle1" className={layoutClasses.header}>
+          <TypographyHeader variant="subtitle1">
             爱发电 <MonetizationOn fontSize="inherit" />
-          </Typography>
+          </TypographyHeader>
           <Typography>
             {/* <Trans i18nKey="support:patreon.desc" /> */}
             如果你喜欢本站，欢迎赞助支持！你的支持可以进一步提高本站在大陆地区的访问速度。
@@ -64,9 +60,9 @@ const Support: React.FC<{}> = () => {
         </Fragment>
       ) : (
         <Fragment>
-          <Typography variant="subtitle1" className={layoutClasses.header}>
+          <TypographyHeader variant="subtitle1">
             Patreon <Patreon fontSize="inherit" />
-          </Typography>
+          </TypographyHeader>
           <Typography>
             <Trans i18nKey="support:patreon.desc" />
           </Typography>
@@ -131,9 +127,9 @@ const Support: React.FC<{}> = () => {
           <br />
         </Fragment>
       )}
-      <Typography variant="subtitle1" className={layoutClasses.header}>
+      <TypographyHeader variant="subtitle1">
         {t("support:translation.title")} <Translate fontSize="inherit" />
-      </Typography>
+      </TypographyHeader>
       <Typography>
         <Trans i18nKey="support:translation.desc" />
       </Typography>
@@ -147,9 +143,9 @@ const Support: React.FC<{}> = () => {
         </Typography>
       </Link>
       <br />
-      <Typography variant="subtitle1" className={layoutClasses.header}>
+      <TypographyHeader variant="subtitle1">
         {t("support:development.title")} <GitHub fontSize="inherit" />
-      </Typography>
+      </TypographyHeader>
       <Typography>
         <Trans i18nKey="support:development.desc" />
       </Typography>

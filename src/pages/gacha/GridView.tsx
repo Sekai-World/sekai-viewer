@@ -1,5 +1,4 @@
-import { Card, CardContent, Typography, CardMedia } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
+import { Card, CardContent, Typography } from "@mui/material";
 import { Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Link, useRouteMatch } from "react-router-dom";
@@ -9,27 +8,9 @@ import { ContentTrans } from "../../components/helpers/ContentTrans";
 import SpoilerTag from "../../components/widgets/SpoilerTag";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
-
-const useStyles = makeStyles((theme) => ({
-  media: {
-    paddingTop: "56.25%",
-    backgroundSize: "contain",
-    position: "relative",
-  },
-  card: {
-    // margin: theme.spacing(0.5),
-    cursor: "pointer",
-  },
-  subheader: {
-    "white-space": "nowrap",
-    overflow: "hidden",
-    "text-overflow": "ellipsis",
-    "max-width": "260px",
-  },
-}));
+import CardMediaCardImg from "../../components/styled/CardMediaCardImg";
 
 const GridView: React.FC<{ data?: IGachaInfo }> = observer(({ data }) => {
-  const classes = useStyles();
   const { path } = useRouteMatch();
   const { region } = useRootStore();
 
@@ -49,10 +30,17 @@ const GridView: React.FC<{ data?: IGachaInfo }> = observer(({ data }) => {
   if (!data) {
     // loading
     return (
-      <Card className={classes.card}>
-        <Skeleton variant="rectangular" className={classes.media}></Skeleton>
+      <Card>
+        <Skeleton
+          variant="rectangular"
+          sx={{
+            paddingTop: "56.25%",
+            backgroundSize: "contain",
+            position: "relative",
+          }}
+        ></Skeleton>
         <CardContent>
-          <Typography variant="subtitle1" className={classes.subheader}>
+          <Typography variant="subtitle1">
             <Skeleton variant="text" width="90%"></Skeleton>
           </Typography>
         </CardContent>
@@ -61,8 +49,12 @@ const GridView: React.FC<{ data?: IGachaInfo }> = observer(({ data }) => {
   }
   return (
     <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
-      <Card className={classes.card}>
-        <CardMedia className={classes.media} image={url} title={data.name}>
+      <Card sx={{ cursor: "pointer" }}>
+        <CardMediaCardImg
+          image={url}
+          title={data.name}
+          sx={{ backgroundSize: "contain" }}
+        >
           <SpoilerTag
             style={{
               position: "absolute",
@@ -71,18 +63,28 @@ const GridView: React.FC<{ data?: IGachaInfo }> = observer(({ data }) => {
             }}
             releaseTime={new Date(data.startAt)}
           />
-        </CardMedia>
+        </CardMediaCardImg>
         <CardContent style={{ paddingBottom: "16px" }}>
           <ContentTrans
             contentKey={`gacha_name:${data.id}`}
             original={data.name}
             originalProps={{
               variant: "subtitle1",
-              className: classes.subheader,
+              sx: {
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                maxWidth: "260px",
+              },
             }}
             translatedProps={{
               variant: "subtitle1",
-              className: classes.subheader,
+              sx: {
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                maxWidth: "260px",
+              },
             }}
           />
           <Typography variant="body2" color="textSecondary">

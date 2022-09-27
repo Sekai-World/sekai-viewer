@@ -1,22 +1,20 @@
-import { Container, Grid, Typography } from "@mui/material";
+import { Grid } from "@mui/material";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-// import { useInteractiveStyles } from "../../../styles/interactive";
-import { useLayoutStyles } from "../../../styles/layout";
 import SekaiUserStatistics from "./SekaiUserStatistics";
 import SekaiCardTeam from "./SekaiCardTeam";
 import { useRootStore } from "../../../stores/root";
 import { observer } from "mobx-react-lite";
 import { ISekaiProfile } from "../../../stores/sekai";
 import { autorun } from "mobx";
+import TypographyHeader from "../../../components/styled/TypographyHeader";
+import ContainerContent from "../../../components/styled/ContainerContent";
 
 const SekaiEventRecord = React.lazy(() => import("./SekaiEventRecord"));
 const SekaiID = React.lazy(() => import("./SekaiID"));
 const SekaiUserDeck = React.lazy(() => import("./SekaiUserDeck"));
 
 const SekaiProfile = observer(() => {
-  const layoutClasses = useLayoutStyles();
-  // const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const {
     sekai: { sekaiProfileMap },
@@ -33,10 +31,10 @@ const SekaiProfile = observer(() => {
 
   return (
     <Fragment>
-      <Typography variant="h6" className={layoutClasses.header}>
+      <TypographyHeader>
         {t("user:profile.title.sekai_profile")}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      </TypographyHeader>
+      <ContainerContent maxWidth="md">
         <Grid container spacing={1}>
           <Grid item xs={12}>
             <SekaiID />
@@ -59,21 +57,21 @@ const SekaiProfile = observer(() => {
               )}
           </Grid>
         </Grid>
-      </Container>
-      <Typography variant="h6" className={layoutClasses.header}>
+      </ContainerContent>
+      <TypographyHeader>
         {t("user:profile.title.sekai_cards_teams")}
-      </Typography>
-      <Container className={layoutClasses.content} maxWidth="md">
+      </TypographyHeader>
+      <ContainerContent maxWidth="md">
         <SekaiCardTeam />
-      </Container>
+      </ContainerContent>
       {!!sekaiProfile && !sekaiProfile.sekaiUserToken && (
         <Fragment>
-          <Typography variant="h6" className={layoutClasses.header}>
+          <TypographyHeader>
             {t("user:profile.title.user_event")}
-          </Typography>
-          <Container className={layoutClasses.content} maxWidth="md">
+          </TypographyHeader>
+          <ContainerContent maxWidth="md">
             <SekaiEventRecord />
-          </Container>
+          </ContainerContent>
         </Fragment>
       )}
     </Fragment>
