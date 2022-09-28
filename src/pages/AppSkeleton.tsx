@@ -36,15 +36,19 @@ const drawerWidth = 240;
 
 const AppSkeletonInner = (props: { theme: Theme }) => {
   const { theme } = props;
-  const DrawerContentRoot = styled(Box)(({ theme }) => ({
-    "& .drawer-content-toolbar": {
-      ...theme.mixins.toolbar,
-      display: "flex",
-      alignItems: "center",
-      padding: theme.spacing(0, 3),
-      // justifyContent: 'flex-end'
-    },
-  }));
+  const DrawerContentRoot = useMemo(
+    () =>
+      styled(Box)(({ theme }) => ({
+        "& .drawer-content-toolbar": {
+          ...theme.mixins.toolbar,
+          display: "flex",
+          alignItems: "center",
+          padding: theme.spacing(0, 3),
+          // justifyContent: 'flex-end'
+        },
+      })),
+    []
+  );
   const DrawerContent = () => (
     <DrawerContentRoot>
       <div className="drawer-content-toolbar">
@@ -68,35 +72,39 @@ const AppSkeletonInner = (props: { theme: Theme }) => {
   const container =
     window !== undefined ? () => window.document.body : undefined;
 
-  const Root = styled(Box)(({ theme }) => ({
-    "& .app-skeleton-inner-root": {
-      display: "flex",
-    },
-    "& .app-skeleton-inner-appbar": {
-      [theme.breakpoints.up("md")]: {
-        width: `calc(100% - ${drawerWidth}px)`,
-        marginLeft: drawerWidth,
-      },
-    },
-    "& .app-skeleton-inner-menu-button": {
-      marginRight: theme.spacing(2),
-      [theme.breakpoints.up("md")]: {
-        display: "none",
-      },
-    },
-    "& .app-skeleton-inner-title": {
-      flexGrow: 1,
-    },
-    "& .app-skeleton-inner-drawer": {
-      [theme.breakpoints.up("md")]: {
-        width: drawerWidth,
-        flexShrink: 0,
-      },
-    },
-    "& .app-skeleton-inner-drawer-paper": {
-      width: drawerWidth,
-    },
-  }));
+  const Root = useMemo(
+    () =>
+      styled(Box)(({ theme }) => ({
+        "& .app-skeleton-inner-root": {
+          display: "flex",
+        },
+        "& .app-skeleton-inner-appbar": {
+          [theme.breakpoints.up("md")]: {
+            width: `calc(100% - ${drawerWidth}px)`,
+            marginLeft: drawerWidth,
+          },
+        },
+        "& .app-skeleton-inner-menu-button": {
+          marginRight: theme.spacing(2),
+          [theme.breakpoints.up("md")]: {
+            display: "none",
+          },
+        },
+        "& .app-skeleton-inner-title": {
+          flexGrow: 1,
+        },
+        "& .app-skeleton-inner-drawer": {
+          [theme.breakpoints.up("md")]: {
+            width: drawerWidth,
+            flexShrink: 0,
+          },
+        },
+        "& .app-skeleton-inner-drawer-paper": {
+          width: drawerWidth,
+        },
+      })),
+    []
+  );
 
   return (
     <Root>

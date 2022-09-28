@@ -72,6 +72,7 @@ import React, {
   Fragment,
   useState,
   useEffect,
+  useMemo,
 } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -169,16 +170,20 @@ function ListItemLink(
     exact: to === "/",
   });
 
-  const Root = styled(Box)(({ theme }) => ({
-    "& .list-item-link-inner": {
-      paddingTop: "2px",
-      paddingBottom: "2px",
-      [theme.breakpoints.down("lg")]: {
-        paddingTop: "8px",
-        paddingBottom: "8px",
-      },
-    },
-  }));
+  const Root = useMemo(
+    () =>
+      styled(Box)(({ theme }) => ({
+        "& .list-item-link-inner": {
+          paddingTop: "2px",
+          paddingBottom: "2px",
+          [theme.breakpoints.down("lg")]: {
+            paddingTop: "8px",
+            paddingBottom: "8px",
+          },
+        },
+      })),
+    []
+  );
 
   if (
     props.visibleRoles &&
@@ -239,19 +244,23 @@ function ListItemWithChildren(props: {
 
   const [expansionState, setExpansionState] = useState(Boolean(match));
 
-  const Root = styled(Box)(({ theme }) => ({
-    "& .list-item-children-inner": {
-      paddingTop: "2px",
-      paddingBottom: "2px",
-      [theme.breakpoints.down("lg")]: {
-        paddingTop: "8px",
-        paddingBottom: "8px",
-      },
-    },
-    "& .list-item-children": {
-      padding: theme.spacing(0, 1),
-    },
-  }));
+  const Root = useMemo(
+    () =>
+      styled(Box)(({ theme }) => ({
+        "& .list-item-children-inner": {
+          paddingTop: "2px",
+          paddingBottom: "2px",
+          [theme.breakpoints.down("lg")]: {
+            paddingTop: "8px",
+            paddingBottom: "8px",
+          },
+        },
+        "& .list-item-children": {
+          padding: theme.spacing(0, 1),
+        },
+      })),
+    []
+  );
 
   if (
     item.visibleRoles &&
@@ -593,18 +602,22 @@ const DrawerContent: React.FC<{
     boolean[]
   >(leftBtns.map(() => true));
 
-  const Root = styled(Box)(({ theme }) => ({
-    "& .drawer-content-toolbar": {
-      ...theme.mixins.toolbar,
-      display: "flex",
-      alignItems: "center",
-      padding: theme.spacing(0, 3),
-      // justifyContent: 'flex-end'
-    },
-    "& .drawer-content-list-item": {
-      padding: theme.spacing(0, 1),
-    },
-  }));
+  const Root = useMemo(
+    () =>
+      styled(Box)(({ theme }) => ({
+        "& .drawer-content-toolbar": {
+          ...theme.mixins.toolbar,
+          display: "flex",
+          alignItems: "center",
+          padding: theme.spacing(0, 3),
+          // justifyContent: 'flex-end'
+        },
+        "& .drawer-content-list-item": {
+          padding: theme.spacing(0, 1),
+        },
+      })),
+    []
+  );
 
   return (
     <Root>
@@ -867,45 +880,53 @@ const AppInner = observer((props: { theme: Theme }) => {
     userinfo,
   ]);
 
-  const Root = styled(Box)(({ theme }) => ({
-    "& .app-inner-root": {
-      display: "flex",
-      minHeight: "100vh",
-    },
-    "& .app-inner-menu-button": {
-      marginRight: theme.spacing(2),
-    },
-    "& .app-inner-title": {
-      flexGrow: 1,
-    },
-    "& .app-inner-drawer": {
-      [theme.breakpoints.up("md")]: {
-        width: drawerWidth,
-        flexShrink: 0,
-      },
-    },
-    "& .app-inner-drawer-paper": {
-      width: drawerWidth,
-    },
-    "& .app-inner-drawer-content": {
-      flexGrow: 1,
-      padding: theme.spacing(2),
-      [theme.breakpoints.up("md")]: {
-        width: `calc(100% - ${drawerWidth}px)`,
-      },
-    },
-    "& .app-inner-drawer-toolbar": {
-      ...theme.mixins.toolbar,
-      display: "flex",
-      alignItems: "center",
-      padding: theme.spacing(0, 3),
-      // justifyContent: 'flex-end'
-    },
-  }));
+  useEffect(() => {
+    console.log(mobileMenuAnchorEl);
+  }, [mobileMenuAnchorEl]);
+
+  const Root = useMemo(
+    () =>
+      styled(Box)(({ theme }) => ({
+        // "& .app-inner-root": {
+        display: "flex",
+        minHeight: "100vh",
+        // },
+        "& .app-inner-menu-button": {
+          marginRight: theme.spacing(2),
+        },
+        "& .app-inner-title": {
+          flexGrow: 1,
+        },
+        "& .app-inner-drawer": {
+          [theme.breakpoints.up("md")]: {
+            width: drawerWidth,
+            flexShrink: 0,
+          },
+        },
+        "& .app-inner-drawer-paper": {
+          width: drawerWidth,
+        },
+        "& .app-inner-drawer-content": {
+          flexGrow: 1,
+          padding: theme.spacing(2),
+          [theme.breakpoints.up("md")]: {
+            width: `calc(100% - ${drawerWidth}px)`,
+          },
+        },
+        "& .app-inner-drawer-toolbar": {
+          ...theme.mixins.toolbar,
+          display: "flex",
+          alignItems: "center",
+          padding: theme.spacing(0, 3),
+          // justifyContent: 'flex-end'
+        },
+      })),
+    []
+  );
 
   return (
     <SnackbarProvider>
-      <Root className="app-inner-root">
+      <Root>
         <CssBaseline />
         <Hidden mdDown implementation="css">
           <DesktopAppBar position="fixed" open={desktopOpen}>
