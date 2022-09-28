@@ -135,7 +135,7 @@ export function raritySelectReducer(
       return data;
     }
     case "remove": {
-      console.log(state, action.payload);
+      // console.log(state, action.payload);
       const data = [
         ...state.slice(
           0,

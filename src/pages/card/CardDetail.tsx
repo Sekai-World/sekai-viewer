@@ -266,7 +266,6 @@ const CardDetail: React.FC<{}> = observer(() => {
         );
         const _skill = skills.find((elem) => elem.id === _card.skillId)!;
         setSkill(_skill);
-        console.log(episodes.filter((epi) => epi.cardId === Number(cardId)));
         setCardEpisode(episodes.filter((epi) => epi.cardId === Number(cardId)));
         if (_card.gachaPhrase !== "-")
           getRemoteAssetURL(
