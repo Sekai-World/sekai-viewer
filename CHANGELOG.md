@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.6.1...v1.6.2) (2022-09-28)
+
+
+### Bug Fixes
+
+* :bug: memoize styled components or make them const ([7e376db](https://github.com/Sekai-World/sekai-viewer/commits/7e376dba393e1ae97b31cc39fc1ab950f3af606c))
+
+
+### Refactors
+
+* :fire: remove unused console log ([48c4d4f](https://github.com/Sekai-World/sekai-viewer/commits/48c4d4fafa34a0c6d4c871da6aab63d32a580923))
+
 ### [1.6.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.6.0...v1.6.1) (2022-09-27)
 
 
