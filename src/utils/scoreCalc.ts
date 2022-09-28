@@ -167,7 +167,7 @@ export function useScoreCalc() {
       mode: EventType,
       leftLife?: number
     ): number => {
-      console.log(mode);
+      // console.log(mode);
       switch (mode) {
         case "marathon": {
           const basePoint =

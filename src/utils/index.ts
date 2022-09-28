@@ -635,7 +635,7 @@ export function useLocalStorage<T>(
       return initialValue;
     } catch (error) {
       // If error also return initialValue
-      console.log(key, error);
+      // console.log(key, error);
       window.localStorage.setItem(key, JSON.stringify(initialValue));
       return initialValue;
     }
@@ -824,12 +824,12 @@ export async function getGachaRemoteImages(
     },
   });
   const parsed = parser.parse(result).ListBucketResult as IListBucketResult;
-  console.log(parsed);
+  // console.log(parsed);
 
   const filenames = parsed
     .Contents!.map((content) => content.Key)
     .filter((elem) => elem.endsWith(".webp"));
-  console.log(filenames);
+  // console.log(filenames);
 
   return {
     bg: filenames.filter((name) => name.includes("bg_gacha")),
