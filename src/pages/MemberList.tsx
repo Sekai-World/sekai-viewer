@@ -10,6 +10,11 @@ import { useRootStore } from "../stores/root";
 import TypographyHeader from "../components/styled/TypographyHeader";
 import ContainerContent from "../components/styled/ContainerContent";
 
+const MemberSelectImg = styled("img")`
+  width: 100%;
+  cursor: pointer;
+`;
+
 const MemberImage: React.FC<{ id: number }> = ({ id }) => {
   const { path } = useRouteMatch();
   const { region } = useRootStore();
@@ -25,11 +30,6 @@ const MemberImage: React.FC<{ id: number }> = ({ id }) => {
     );
   }, [id, region]);
 
-  const MemberSelectImg = styled("img")`
-    width: 100%;
-    cursor: pointer;
-  `;
-
   return (
     <Grid item xs={3} md={2} key={`chara-${id}`}>
       <Link to={path + "/" + id} style={{ textDecoration: "none" }}>
@@ -38,6 +38,13 @@ const MemberImage: React.FC<{ id: number }> = ({ id }) => {
     </Grid>
   );
 };
+
+const UnitIconImg = styled("img")(({ theme }) => ({
+  [theme.breakpoints.down("md")]: {
+    height: "48px",
+  },
+  height: "96px",
+}));
 
 const MemberList: React.FC<{}> = observer(() => {
   const { t } = useTranslation();
@@ -72,13 +79,6 @@ const MemberList: React.FC<{}> = observer(() => {
       );
     }
   }, [unitProfiles, gameCharas]);
-
-  const UnitIconImg = styled("img")(({ theme }) => ({
-    [theme.breakpoints.down("md")]: {
-      height: "48px",
-    },
-    height: "96px",
-  }));
 
   return (
     <Fragment>

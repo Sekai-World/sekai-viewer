@@ -39,6 +39,15 @@ import GridOut from "../components/styled/GridOut";
 import LinkNoDecoration from "../components/styled/LinkNoDecoration";
 import TabPanelPadding from "../components/styled/TabPanelPadding";
 
+const UnitLogoImg = styled("img")`
+  max-height: 64px;
+`;
+
+const UnitLogoLargeImg = styled("img")`
+  max-height: 64px;
+  max-width: 100%;
+`;
+
 const MemberDetail: React.FC<{}> = observer(() => {
   const { charaId } = useParams<{ charaId: string }>();
   const { t } = useTranslation();
@@ -147,15 +156,6 @@ const MemberDetail: React.FC<{}> = observer(() => {
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
     setTabVal(newValue);
   };
-
-  const UnitLogoImg = styled("img")`
-    max-height: 64px;
-  `;
-
-  const UnitLogoLargeImg = styled("img")`
-    max-height: 64px;
-    max-width: 100%;
-  `;
 
   return chara && charaUnit && charaProfile && charaCards.length ? (
     <Fragment>
