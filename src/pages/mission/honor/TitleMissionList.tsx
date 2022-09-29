@@ -10,6 +10,7 @@ import {
   Grid,
   MenuItem,
   Select,
+  ToggleButton,
   Typography,
 } from "@mui/material";
 import {
@@ -34,7 +35,7 @@ import {
   IHonorMission,
   IResourceBoxInfo,
 } from "../../../types.d";
-import { useCachedData, useLocalStorage } from "../../../utils";
+import { useCachedData, useLocalStorage, useToggle } from "../../../utils";
 import { ContentTrans } from "../../../components/helpers/ContentTrans";
 import DegreeImage from "../../../components/widgets/DegreeImage";
 import InfiniteScroll from "../../../components/helpers/InfiniteScroll";
@@ -283,7 +284,7 @@ const TitleMissionList: React.FC<{}> = () => {
   const [limit] = useState<number>(12);
   const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
   const [isReady, setIsReady] = useState<boolean>(false);
-  const [filterOpened, setFilterOpened] = useState<boolean>(false);
+  const [filterOpen, toggleFilterOpen] = useToggle(false);
   const [missionTypeSelected, dispatchMissionTypeSelected] = useReducer(
     missionTypeReducer,
     JSON.parse(localStorage.getItem("mission-honor-list-filter-type") || "[]")
@@ -381,16 +382,18 @@ const TitleMissionList: React.FC<{}> = () => {
             variant="dot"
             invisible={!missionTypeSelected.length}
           >
-            <Button
-              variant="outlined"
-              onClick={() => setFilterOpened((v) => !v)}
+            <ToggleButton
+              value=""
+              color="primary"
+              selected={filterOpen}
+              onClick={() => toggleFilterOpen()}
             >
-              {filterOpened ? <Filter /> : <FilterOutline />}
-              {filterOpened ? <Sort /> : <SortOutlined />}
-            </Button>
+              {filterOpen ? <Filter /> : <FilterOutline />}
+              {filterOpen ? <Sort /> : <SortOutlined />}
+            </ToggleButton>
           </Badge>
         </Grid>
-        <Collapse in={filterOpened}>
+        <Collapse in={filterOpen}>
           <PaperContainer>
             <Grid container direction="column" spacing={1}>
               <Grid

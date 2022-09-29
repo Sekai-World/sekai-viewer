@@ -20,7 +20,7 @@ import React, {
 import { useTranslation } from "react-i18next";
 import { characterSelectReducer } from "../../stores/reducers";
 import { IStampInfo } from "../../types.d";
-import { useCachedData, useLocalStorage } from "../../utils";
+import { useCachedData, useLocalStorage, useToggle } from "../../utils";
 import { charaIcons } from "../../utils/resources";
 import GridView from "./GridView";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
@@ -41,7 +41,7 @@ const StampList: React.FC<{}> = () => {
 
   const [stamps, setStamps] = useState<IStampInfo[]>([]);
   const [filteredCache, setFilteredCache] = useState<IStampInfo[]>([]);
-  const [filterOpened, setFilterOpened] = useState<boolean>(false);
+  const [filterOpen, toggleFilterOpen] = useToggle(false);
   const [sortType, setSortType] = useLocalStorage<string>(
     "stamp-list-update-sort",
     "desc"
@@ -155,7 +155,11 @@ const StampList: React.FC<{}> = () => {
     <Fragment>
       <TypographyHeader>{t("common:stamp")}</TypographyHeader>
       <ContainerContent>
-        <Grid container justifyContent="space-between">
+        <Grid
+          container
+          justifyContent="space-between"
+          style={{ marginBottom: "0.5rem" }}
+        >
           <Grid item>
             <Grid container spacing={1}>
               <Grid item>
@@ -190,17 +194,17 @@ const StampList: React.FC<{}> = () => {
           </Grid>
           <Grid item>
             <ToggleButton
-              value="check"
-              selected={filterOpened}
-              onChange={() => setFilterOpened((v) => !v)}
+              value=""
+              color="primary"
+              selected={filterOpen}
+              onClick={() => toggleFilterOpen()}
             >
-              {filterOpened ? <Filter /> : <FilterOutline />}
-              {filterOpened ? <Sort /> : <SortOutlined />}
+              {filterOpen ? <Filter /> : <FilterOutline />}
+              {filterOpen ? <Sort /> : <SortOutlined />}
             </ToggleButton>
           </Grid>
         </Grid>
-        <br />
-        <Collapse in={filterOpened}>
+        <Collapse in={filterOpen}>
           <PaperContainer>
             <Grid container direction="column" spacing={1}>
               <Grid

@@ -1,6 +1,5 @@
 import {
   Badge,
-  Button,
   Chip,
   Collapse,
   FormControl,
@@ -8,6 +7,7 @@ import {
   MenuItem,
   Select,
   Switch,
+  ToggleButton,
 } from "@mui/material";
 import {
   Sort,
@@ -24,7 +24,7 @@ import React, {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { IHonorGroup, IHonorInfo } from "../../types.d";
-import { useCachedData, useLocalStorage } from "../../utils";
+import { useCachedData, useLocalStorage, useToggle } from "../../utils";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
 import GridView from "./GridView";
 import DetailDialog from "./HonorDetailDialog";
@@ -59,7 +59,7 @@ const HonorList = () => {
   const [limit] = useState<number>(12);
   const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
   const [isReady, setIsReady] = useState<boolean>(false);
-  const [filterOpened, setFilterOpened] = useState<boolean>(false);
+  const [filterOpen, toggleFilterOpen] = useToggle(false);
   const [honorType, setHonorType] = useLocalStorage(
     "honor-list-filter-type",
     ""
@@ -166,16 +166,18 @@ const HonorList = () => {
           style={{ marginBottom: "0.5rem" }}
         >
           <Badge color="secondary" variant="dot" invisible={!honorType}>
-            <Button
-              variant="outlined"
-              onClick={() => setFilterOpened((v) => !v)}
+            <ToggleButton
+              value=""
+              color="primary"
+              selected={filterOpen}
+              onClick={() => toggleFilterOpen()}
             >
-              {filterOpened ? <Filter /> : <FilterOutline />}
-              {filterOpened ? <Sort /> : <SortOutlined />}
-            </Button>
+              {filterOpen ? <Filter /> : <FilterOutline />}
+              {filterOpen ? <Sort /> : <SortOutlined />}
+            </ToggleButton>
           </Badge>
         </Grid>
-        <Collapse in={filterOpened}>
+        <Collapse in={filterOpen}>
           <PaperContainer>
             <Grid container direction="column" spacing={1}>
               <Grid

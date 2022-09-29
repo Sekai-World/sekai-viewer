@@ -7,6 +7,7 @@ import {
   Grid,
   MenuItem,
   Select,
+  ToggleButton,
 } from "@mui/material";
 import {
   RotateLeft,
@@ -25,7 +26,7 @@ import React, {
 import { useTranslation } from "react-i18next";
 import { missionTypeReducer } from "../../../stores/reducers";
 import { INormalMission } from "../../../types.d";
-import { useCachedData, useLocalStorage } from "../../../utils";
+import { useCachedData, useLocalStorage, useToggle } from "../../../utils";
 import InfiniteScroll from "../../../components/helpers/InfiniteScroll";
 import GridView from "./GridView";
 import TypographyHeader from "../../../components/styled/TypographyHeader";
@@ -62,7 +63,7 @@ const NormalMissionList: React.FC<{}> = () => {
   const [limit] = useState<number>(12);
   const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
   const [isReady, setIsReady] = useState<boolean>(false);
-  const [filterOpened, setFilterOpened] = useState<boolean>(false);
+  const [filterOpen, toggleFilterOpen] = useToggle(false);
   const [missionTypeSelected, dispatchMissionTypeSelected] = useReducer(
     missionTypeReducer,
     JSON.parse(localStorage.getItem("mission-normal-list-filter-type") || "[]")
@@ -160,16 +161,18 @@ const NormalMissionList: React.FC<{}> = () => {
             variant="dot"
             invisible={!missionTypeSelected.length}
           >
-            <Button
-              variant="outlined"
-              onClick={() => setFilterOpened((v) => !v)}
+            <ToggleButton
+              value=""
+              color="primary"
+              selected={filterOpen}
+              onClick={() => toggleFilterOpen()}
             >
-              {filterOpened ? <Filter /> : <FilterOutline />}
-              {filterOpened ? <Sort /> : <SortOutlined />}
-            </Button>
+              {filterOpen ? <Filter /> : <FilterOutline />}
+              {filterOpen ? <Sort /> : <SortOutlined />}
+            </ToggleButton>
           </Badge>
         </Grid>
-        <Collapse in={filterOpened}>
+        <Collapse in={filterOpen}>
           <PaperContainer>
             <Grid container direction="column" spacing={1}>
               <Grid

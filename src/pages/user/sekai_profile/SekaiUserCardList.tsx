@@ -16,6 +16,7 @@ import {
   Select,
   Switch,
   TextField,
+  ToggleButton,
   Typography,
 } from "@mui/material";
 import {
@@ -64,6 +65,7 @@ import {
   useAlertSnackbar,
   useCachedData,
   useLocalStorage,
+  useToggle,
 } from "../../../utils";
 import { ContentTrans } from "../../../components/helpers/ContentTrans";
 import { useAssetI18n, useCharaName } from "../../../utils/i18n";
@@ -99,7 +101,7 @@ const SekaiUserCardList = observer(() => {
   const [isSaving, setIsSaving] = useState(false);
   const [deleteCardIds, setDeleteCardIds] = useState<number[]>([]);
   const [addCardIds, setAddCardIds] = useState<number[]>([]);
-  const [filterOpened, setFilterOpened] = useState(false);
+  const [filterOpen, toggleFilterOpen] = useToggle(false);
   const [excludedCardIds, setExcludedCardIds] = useState<number[]>([]);
   const [characterSelected, dispatchCharacterSelected] = useReducer(
     characterSelectReducer,
@@ -511,14 +513,15 @@ const SekaiUserCardList = observer(() => {
                     !raritySelected.length
                   }
                 >
-                  <Button
-                    size="medium"
-                    onClick={() => setFilterOpened((v) => !v)}
-                    variant="outlined"
+                  <ToggleButton
+                    value=""
+                    color="primary"
+                    selected={filterOpen}
+                    onClick={() => toggleFilterOpen()}
                   >
-                    {filterOpened ? <Filter /> : <FilterOutline />}
-                    {filterOpened ? <Sort /> : <SortOutlined />}
-                  </Button>
+                    {filterOpen ? <Filter /> : <FilterOutline />}
+                    {filterOpen ? <Sort /> : <SortOutlined />}
+                  </ToggleButton>
                 </Badge>
               </Grid>
             </Grid>
@@ -526,7 +529,7 @@ const SekaiUserCardList = observer(() => {
         </Grid>
       </Grid>
       <Grid item xs={12}>
-        <Collapse in={filterOpened}>
+        <Collapse in={filterOpen}>
           <Grid container direction="column" spacing={2}>
             <Grid item container xs={12} alignItems="center" spacing={1}>
               <Grid item xs={12} md={1}>
