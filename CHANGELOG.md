@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.6.3...v1.6.4) (2022-09-29)
+
+
+### Bug Fixes
+
+* :lipstick: card image position set to relative ([d05cc2b](https://github.com/Sekai-World/sekai-viewer/commits/d05cc2b75b85bb625c87861586db51569b24909b))
+
+
+### Refactors
+
+* :lipstick: add missing margin bottom to list ([529790c](https://github.com/Sekai-World/sekai-viewer/commits/529790c8b00d30976b6e1283296c71a99ec4cafb))
+* :lipstick: unify all toggle button style ([a2bc804](https://github.com/Sekai-World/sekai-viewer/commits/a2bc8044275c17adee4af68ea04e4ed1ce692875))
+
 ### [1.6.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.6.2...v1.6.3) (2022-09-29)
 
 
