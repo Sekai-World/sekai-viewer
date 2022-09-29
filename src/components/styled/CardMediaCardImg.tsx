@@ -12,10 +12,14 @@ const Root = styled(Box)`
   }
 `;
 
-const CardMediaCardImg = (props: Props) => {
+const CardMediaCardImg = ({ sx, ...props }: Props) => {
   return (
     <Root>
-      <CardMedia classes={{ root: "card-img-root" }} {...props} />
+      <CardMedia
+        classes={{ root: "card-img-root" }}
+        sx={[{ position: "relative" }, ...(Array.isArray(sx) ? sx : [sx])]}
+        {...props}
+      />
     </Root>
   );
 };
