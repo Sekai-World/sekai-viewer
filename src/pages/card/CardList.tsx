@@ -178,7 +178,7 @@ const CardList: React.FC<{}> = observer(() => {
   const [limit] = useState<number>(12);
   const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
   const [isReady, setIsReady] = useState<boolean>(false);
-  const [filterOpen, togglefilterOpen] = useToggle(false);
+  const [filterOpen, toggleFilterOpen] = useToggle(false);
   const [sortType, setSortType] = useLocalStorage<string>(
     "card-list-filter-sort-type",
     "asc",
@@ -480,7 +480,7 @@ const CardList: React.FC<{}> = observer(() => {
               value=""
               color="primary"
               selected={filterOpen}
-              onClick={() => togglefilterOpen()}
+              onClick={() => toggleFilterOpen()}
             >
               {filterOpen ? <Filter /> : <FilterOutline />}
               {filterOpen ? <Sort /> : <SortOutlined />}
@@ -962,7 +962,10 @@ const CardList: React.FC<{}> = observer(() => {
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={() => doFilter()}
+                    onClick={() => {
+                      doFilter();
+                      toggleFilterOpen();
+                    }}
                     startIcon={<Check />}
                   >
                     {t("common:apply")}
