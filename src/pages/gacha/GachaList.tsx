@@ -86,7 +86,7 @@ const GachaList: React.FC<{}> = observer(() => {
     setSortedCache(sortedCache);
     setGachas([]);
     setPage(0);
-  }, [gachasCache, setPage, sortType, sortBy, isShowSpoiler]);
+  }, [gachasCache, setPage, sortType, sortBy, isShowSpoiler, region]);
 
   useEffect(() => {
     setIsReady(Boolean(gachasCache && gachasCache.length));
@@ -130,7 +130,7 @@ const GachaList: React.FC<{}> = observer(() => {
     <Fragment>
       <TypographyHeader>{t("common:gacha")}</TypographyHeader>
       <ContainerContent>
-        <Grid container spacing={1}>
+        <Grid container spacing={1} style={{ marginBottom: "0.5rem" }}>
           <Grid item>
             <ToggleButtonGroup
               value={sortType}
@@ -163,7 +163,6 @@ const GachaList: React.FC<{}> = observer(() => {
             </ToggleButtonGroup>
           </Grid>
         </Grid>
-        <br />
         <InfiniteScroll<IGachaInfo>
           ViewComponent={ListCard}
           callback={callback}
