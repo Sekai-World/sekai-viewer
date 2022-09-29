@@ -133,7 +133,7 @@ const EventList: React.FC<{}> = observer(() => {
     <Fragment>
       <TypographyHeader>{t("common:event")}</TypographyHeader>
       <ContainerContent>
-        <Grid container spacing={1}>
+        <Grid container spacing={1} style={{ marginBottom: "0.5rem" }}>
           <Grid item>
             <ToggleButtonGroup
               value={sortType}
@@ -166,7 +166,6 @@ const EventList: React.FC<{}> = observer(() => {
             </ToggleButtonGroup>
           </Grid>
         </Grid>
-        <br />
         <InfiniteScroll<IEventInfo>
           ViewComponent={ListCard[viewGridType]}
           callback={callback}
