@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.6.2...v1.6.3) (2022-09-29)
+
+
+### Refactors
+
+* :bento: update anniversary banner to 2nd ([df89b23](https://github.com/Sekai-World/sekai-viewer/commits/df89b23136afb21ee36345bed6e1f900371a1d9a))
+* :lipstick: auto collapse filter after applying ([f4a64cd](https://github.com/Sekai-World/sekai-viewer/commits/f4a64cd94a2579ddee7bf35d3727431b3501d7f9))
+
 ### [1.6.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.6.1...v1.6.2) (2022-09-28)
 
 
