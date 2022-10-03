@@ -181,6 +181,7 @@ function ListItemLink(
             paddingBottom: "8px",
           },
         },
+        width: "100%",
       })),
     []
   );
@@ -192,11 +193,7 @@ function ListItemLink(
     return <Fragment />;
   return (
     <Root>
-      <li
-        style={{
-          width: "100%",
-        }}
-      >
+      <li>
         <ListItem
           component={Link}
           classes={{ root: "list-item-link-inner" }}
@@ -879,10 +876,6 @@ const AppInner = observer((props: { theme: Theme }) => {
     setUserInfo,
     userinfo,
   ]);
-
-  useEffect(() => {
-    console.log(mobileMenuAnchorEl);
-  }, [mobileMenuAnchorEl]);
 
   const Root = useMemo(
     () =>
