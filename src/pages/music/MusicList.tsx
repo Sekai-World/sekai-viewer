@@ -19,6 +19,7 @@ import {
   GridViewOutlined as ViewGridOutline,
   FilterAlt as Filter,
   FilterAltOutlined as FilterOutline,
+  Check,
 } from "@mui/icons-material";
 import React, {
   Fragment,
@@ -146,7 +147,7 @@ const MusicList: React.FC<{}> = observer(() => {
     setIsReady(Boolean(musicsCache));
   }, [setIsReady, musicsCache]);
 
-  useEffect(() => {
+  const doFilter = useCallback(() => {
     if (musicsCache && musicTags && musicVocals && musicDiffis) {
       let result = [...musicsCache];
       // do filter
@@ -250,6 +251,10 @@ const MusicList: React.FC<{}> = observer(() => {
   ]);
 
   useEffect(() => {
+    if (isReady) doFilter();
+  }, [isReady, doFilter]);
+
+  useEffect(() => {
     if (sortedCache.length) {
       setMusics((musics) => [
         ...musics,
@@ -278,6 +283,28 @@ const MusicList: React.FC<{}> = observer(() => {
     },
     [isReady, lastQueryFin, limit, page, sortedCache.length]
   );
+
+  const resetFilter = useCallback(() => {
+    setMusicTag("all");
+    dispatchMusicMVTypes({
+      type: "reset",
+      payload: "",
+      storeName: "music-list-filter-mv-types.d",
+    });
+    setArranger("");
+    setComposer("");
+    setLyricist("");
+    dispatchCharacterSelected({
+      type: "reset",
+      payload: 0,
+      storeName: "music-list-filter-charas",
+    });
+    dispatchOutsideCharacterSelected({
+      type: "reset",
+      payload: 0,
+      storeName: "music-list-filter-outside-charas",
+    });
+  }, [setArranger, setComposer, setLyricist, setMusicTag]);
 
   return (
     <Fragment>
@@ -711,6 +738,19 @@ const MusicList: React.FC<{}> = observer(() => {
                   <Button
                     variant="contained"
                     color="primary"
+                    onClick={() => {
+                      doFilter();
+                      toggleFilterOpened();
+                    }}
+                    startIcon={<Check />}
+                  >
+                    {t("common:apply")}
+                  </Button>
+                </Grid>
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    color="primary"
                     disabled={
                       musicTag === "all" &&
                       !musicMVTypes.length &&
@@ -720,27 +760,7 @@ const MusicList: React.FC<{}> = observer(() => {
                       !arranger &&
                       !lyricist
                     }
-                    onClick={() => {
-                      setMusicTag("all");
-                      dispatchMusicMVTypes({
-                        type: "reset",
-                        payload: "",
-                        storeName: "music-list-filter-mv-types.d",
-                      });
-                      setArranger("");
-                      setComposer("");
-                      setLyricist("");
-                      dispatchCharacterSelected({
-                        type: "reset",
-                        payload: 0,
-                        storeName: "music-list-filter-charas",
-                      });
-                      dispatchOutsideCharacterSelected({
-                        type: "reset",
-                        payload: 0,
-                        storeName: "music-list-filter-outside-charas",
-                      });
-                    }}
+                    onClick={() => resetFilter()}
                     startIcon={<RotateLeft />}
                   >
                     {t("common:reset")}
