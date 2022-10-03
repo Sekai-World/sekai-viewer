@@ -9,7 +9,7 @@ import {
   FilterAlt as Filter,
   FilterAltOutlined as FilterOutline,
 } from "@mui/icons-material";
-import Pound from "~icons/mdi/pound";
+// import Pound from "~icons/mdi/pound";
 import React, {
   Fragment,
   useCallback,
@@ -46,7 +46,7 @@ const StampList: React.FC<{}> = () => {
     "stamp-list-update-sort",
     "desc"
   );
-  const [sortBy, setSortBy] = useLocalStorage<string>(
+  const [sortBy /*, setSortBy*/] = useLocalStorage<string>(
     "stamp-list-filter-sort-by",
     "id"
   );
@@ -143,13 +143,13 @@ const StampList: React.FC<{}> = () => {
     [setSortType]
   );
 
-  const handleUpdateSortBy = useCallback(
-    (_, sort: string) => {
-      if (!sort) return;
-      setSortBy(sort || "id");
-    },
-    [setSortBy]
-  );
+  // const handleUpdateSortBy = useCallback(
+  //   (_, sort: string) => {
+  //     if (!sort) return;
+  //     setSortBy(sort || "id");
+  //   },
+  //   [setSortBy]
+  // );
 
   return (
     <Fragment>
@@ -177,7 +177,7 @@ const StampList: React.FC<{}> = () => {
                   </ToggleButton>
                 </ToggleButtonGroup>
               </Grid>
-              <Grid item>
+              {/* <Grid item>
                 <ToggleButtonGroup
                   size="medium"
                   value={sortBy}
@@ -189,7 +189,7 @@ const StampList: React.FC<{}> = () => {
                     <Pound />
                   </ToggleButton>
                 </ToggleButtonGroup>
-              </Grid>
+              </Grid> */}
             </Grid>
           </Grid>
           <Grid item>
