@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.5](https://github.com/Sekai-World/sekai-viewer/compare/v1.6.4...v1.6.5) (2022-10-04)
+
+
+### Features
+
+* :lipstick: add "do filter" button to music list page ([73139f6](https://github.com/Sekai-World/sekai-viewer/commits/73139f600d3ad8c0361dd01fb33b7f9a74a2bc8c))
+
+
+### Bug Fixes
+
+* :bug: filter operation upon opening card list page ([af38e0e](https://github.com/Sekai-World/sekai-viewer/commits/af38e0ee5805a6eba6daae233fcd9714fb765b79))
+
+
+### Refactors
+
+* :fire: unnecessary filter option on stamp list page ([dd23d9b](https://github.com/Sekai-World/sekai-viewer/commits/dd23d9bf78516b2d3e5d7306e64a647f2e419f76))
+* :fire: unused console log ([632abf3](https://github.com/Sekai-World/sekai-viewer/commits/632abf3f0863bb21fcf6097435141c930bddd48a))
+* :recycle: filterOpen -> filterOpened ([2c2db70](https://github.com/Sekai-World/sekai-viewer/commits/2c2db707e5f338cebc722d3b92947d28f25a4f84))
+
 ### [1.6.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.6.3...v1.6.4) (2022-09-29)
 
 
