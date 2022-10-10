@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.6](https://github.com/Sekai-World/sekai-viewer/compare/v1.6.5...v1.6.6) (2022-10-10)
+
+
+### Bug Fixes
+
+* :bug: add kr unit logos resource url ([1d751e2](https://github.com/Sekai-World/sekai-viewer/commits/1d751e2f26b2ac35c09470e32720d9a2680a8cfe))
+* :bug: story reader respect spoiler switch and region setting ([3bf570d](https://github.com/Sekai-World/sekai-viewer/commits/3bf570d766e27bee52b641376de297ee90e5ccb7))
+
 ### [1.6.5](https://github.com/Sekai-World/sekai-viewer/compare/v1.6.4...v1.6.5) (2022-10-04)
 
 
