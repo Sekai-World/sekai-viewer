@@ -50,7 +50,10 @@ const StoryReader: React.FC<{}> = observer(() => {
   const { getTranslated } = useAssetI18n();
   const getCharaName = useCharaName();
   const { path } = useRouteMatch();
-  const { region } = useRootStore();
+  const {
+    region,
+    settings: { isShowSpoiler },
+  } = useRootStore();
 
   const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
   const [unitStories] = useCachedData<IUnitStory>("unitStories");
@@ -351,7 +354,10 @@ const StoryReader: React.FC<{}> = observer(() => {
         <Route path={`${path}/eventStory`} exact>
           <Grid container spacing={1}>
             {!!events &&
-              events
+              (isShowSpoiler
+                ? events
+                : events.filter((e) => e.startAt <= new Date().getTime())
+              )
                 .slice()
                 .reverse()
                 .map((ev) => (
@@ -365,6 +371,7 @@ const StoryReader: React.FC<{}> = observer(() => {
                             src={`home/banner/${ev.assetbundleName}_rip/${ev.assetbundleName}.webp`}
                             bgColor=""
                             duration={0}
+                            region={region}
                           />
                         </CardContent>
                         <CardContent>
@@ -402,6 +409,7 @@ const StoryReader: React.FC<{}> = observer(() => {
                                 src={`event_story/${chapter.assetbundleName}/episode_image_rip/${episode.assetbundleName}.webp`}
                                 bgColor=""
                                 duration={0}
+                                region={region}
                               />
                             </CardContent>
                             <CardContent>
@@ -659,7 +667,9 @@ const StoryReader: React.FC<{}> = observer(() => {
             const charaId = match?.params.charaId;
             if (charaId && cards) {
               const filteredCards = cards.filter(
-                (card) => card.characterId === Number(charaId)
+                (card) =>
+                  card.characterId === Number(charaId) &&
+                  (isShowSpoiler || card.releaseAt <= new Date().getTime())
               );
               if (filteredCards.length) {
                 return (
