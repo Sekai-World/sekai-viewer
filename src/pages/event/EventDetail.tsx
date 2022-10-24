@@ -83,7 +83,7 @@ const EventDetail: React.FC<{}> = observer(() => {
   const [event, setEvent] = useState<IEventInfo>();
   const [eventCards, setEventCards] = useState<IEventCard[]>([]);
   const [boostCards, setBoostCards] = useState<
-    { card: ICardInfo; bonus: number }[]
+    { card: ICardInfo; minBonus: number; maxBonus: number }[]
   >([]);
   const [eventDeckBonus, setEventDeckBonus] = useState<IEventDeckBonus[]>([]);
   const [eventAttrBonus, setEventAttrBonus] = useState<IEventDeckBonus>();
@@ -152,6 +152,15 @@ const EventDetail: React.FC<{}> = observer(() => {
             )!
         );
       setEventBonusCharas(ebc);
+      const masterRankBonus = {
+        rarity_1: [0, 0.5, 0.5],
+        rarity_2: [0, 1, 1],
+        rarity_3: [0, 5, 5],
+        rarity_birthday: [0, 7.5, 10],
+        rarity_4: [0, 10, 15],
+      };
+      const masterRankBonusIndex =
+        Number(eventId) >= 36 ? (Number(eventId) >= 54 ? 2 : 1) : 0;
       setBoostCards(() => {
         let result = cards
           .filter((elem) => elem.releaseAt <= ev!.aggregateAt)
@@ -195,16 +204,30 @@ const EventDetail: React.FC<{}> = observer(() => {
               return Math.max(v, deckBonus.bonusRate);
             }, 0);
 
-            return { card: card, bonus: finalEventBonus };
+            let maxBonus = finalEventBonus;
+            if (card.cardRarityType !== undefined) {
+              maxBonus +=
+                // @ts-ignore
+                masterRankBonus[card.cardRarityType][masterRankBonusIndex];
+            }
+
+            return {
+              card: card,
+              minBonus: finalEventBonus,
+              maxBonus: maxBonus,
+            };
           })
-          .filter((it) => it.bonus >= 40);
+          .filter((it) => it.minBonus >= 40);
 
         if (result.length) {
           const sortKey =
             result[0] && result[0].card.rarity ? "rarity" : "cardRarityType";
           result = result.sort((a, b) => {
-            if (a.bonus > b.bonus) return -1;
-            if (a.bonus < b.bonus) return 1;
+            if (a.minBonus > b.minBonus) return -1;
+            if (a.minBonus < b.minBonus) return 1;
+
+            if (a.maxBonus > b.maxBonus) return -1;
+            if (a.maxBonus < b.maxBonus) return 1;
 
             if (a.card[sortKey]! > b.card[sortKey]!) return -1;
             if (a.card[sortKey]! < b.card[sortKey]!) return 1;
@@ -1032,7 +1055,9 @@ const EventDetail: React.FC<{}> = observer(() => {
                       align="center"
                       style={{ whiteSpace: "pre-line" }}
                     >
-                      +{card.bonus}%
+                      +{card.minBonus}
+                      {card.maxBonus > card.minBonus ? `~${card.maxBonus}` : ""}
+                      %
                     </Typography>
                   </Grid>
                 </LinkNoDecoration>
