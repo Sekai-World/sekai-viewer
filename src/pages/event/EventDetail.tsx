@@ -24,7 +24,7 @@ import {
   IEventMusic,
   IGameCharaUnit,
   IVirtualLiveInfo,
-} from "../../types.d";
+} from "../../types";
 import { getRemoteAssetURL, useCachedData } from "../../utils";
 import { attrIconMap, charaIcons } from "../../utils/resources";
 import { useAssetI18n } from "../../utils/i18n";
@@ -80,6 +80,7 @@ const EventDetail: React.FC<{}> = observer(() => {
   const [eventCards, setEventCards] = useState<IEventCard[]>([]);
   const [boostCards, setBoostCards] = useState<ICardInfo[]>([]);
   const [eventDeckBonus, setEventDeckBonus] = useState<IEventDeckBonus[]>([]);
+  const [eventAttrBonus, setEventAttrBonus] = useState<IEventDeckBonus>();
   const [eventBonusCharas, setEventBonusCharas] = useState<IGameCharaUnit[]>(
     []
   );
@@ -126,11 +127,15 @@ const EventDetail: React.FC<{}> = observer(() => {
         (elem) => elem.eventId === Number(eventId)
       );
       setEventDeckBonus(edb);
+      setEventAttrBonus(edb.find((it) => it.gameCharacterUnitId === undefined));
       setEventCards(
         eventCardsCache.filter((elem) => elem.eventId === Number(eventId))
       );
       const ebc = edb
-        .slice(0, 5)
+        .filter(
+          (it) =>
+            it.cardAttr !== undefined && it.gameCharacterUnitId !== undefined
+        )
         .map(
           (elem) =>
             gameCharacterUnits.find(
@@ -144,7 +149,7 @@ const EventDetail: React.FC<{}> = observer(() => {
             let ret =
               chara.gameCharacterId === elem.characterId &&
               elem.attr === edb[0].cardAttr &&
-              elem.releaseAt <= ev!.startAt;
+              elem.releaseAt <= ev!.aggregateAt;
             if (elem.characterId >= 21) {
               ret = ret && chara.unit === elem.supportUnit;
             }
@@ -598,14 +603,14 @@ const EventDetail: React.FC<{}> = observer(() => {
                     <Grid item>
                       <img
                         style={{ maxHeight: "36px" }}
-                        src={attrIconMap[eventDeckBonus[0].cardAttr]}
-                        alt={eventDeckBonus[0].cardAttr}
+                        src={attrIconMap[eventAttrBonus!.cardAttr]}
+                        alt={eventAttrBonus!.cardAttr}
                       ></img>
                     </Grid>
                   </Grid>
                 </Grid>
                 <Grid item xs={5} sm={2}>
-                  <Typography>+{eventDeckBonus[10].bonusRate}%</Typography>
+                  <Typography>+{eventAttrBonus!.bonusRate}%</Typography>
                 </Grid>
               </Grid>
             </Grid>
@@ -633,7 +638,7 @@ const EventDetail: React.FC<{}> = observer(() => {
               >
                 <Grid item xs={6} sm={10}>
                   <Grid container spacing={1} justifyContent="flex-end">
-                    {eventBonusCharas.slice(0, 5).map((chara, idx) => (
+                    {eventBonusCharas.map((chara, idx) => (
                       <Grid key={`chara-${idx}`} item>
                         <img
                           style={{ maxHeight: "36px" }}
@@ -645,7 +650,17 @@ const EventDetail: React.FC<{}> = observer(() => {
                   </Grid>
                 </Grid>
                 <Grid item xs={5} sm={2}>
-                  <Typography>+{eventDeckBonus[6].bonusRate}%</Typography>
+                  <Typography>
+                    +
+                    {eventDeckBonus
+                      .filter(
+                        (it) =>
+                          it.cardAttr === undefined &&
+                          it.gameCharacterUnitId !== undefined
+                      )
+                      .reduce((v, it) => Math.max(v, it.bonusRate), 0)}
+                    %
+                  </Typography>
                 </Grid>
               </Grid>
             </Grid>
@@ -671,7 +686,17 @@ const EventDetail: React.FC<{}> = observer(() => {
               >
                 <Grid item xs={6} sm={10}></Grid>
                 <Grid item xs={5} sm={2}>
-                  <Typography>+{eventDeckBonus[0].bonusRate}%</Typography>
+                  <Typography>
+                    +
+                    {eventDeckBonus
+                      .filter(
+                        (it) =>
+                          it.cardAttr !== undefined &&
+                          it.gameCharacterUnitId !== undefined
+                      )
+                      .reduce((v, it) => Math.max(v, it.bonusRate), 0)}
+                    %
+                  </Typography>
                 </Grid>
               </Grid>
             </Grid>
