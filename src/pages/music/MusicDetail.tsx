@@ -322,7 +322,8 @@ const MusicDetail: React.FC<{}> = observer(() => {
             ? outCharas.find((elem) => elem.id === chara.characterId)!.name
             : chara.characterId
       );
-      if (trimSilence && format === "mp3") {
+      if (trimSilence && format === "mp3" && vocalPreviewVal === "1") {
+        // only trim when downloading full version
         const buf = (await axios.get(src, { responseType: "arraybuffer" }))
           .data as ArrayBuffer;
         const trimmed = trimMP3(buf, music.fillerSec);
