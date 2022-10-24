@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.7](https://github.com/Sekai-World/sekai-viewer/compare/v1.6.6...v1.6.7) (2022-10-24)
+
+
+### Features
+
+* **event:** add max bonus to bonus card list ([0fd596a](https://github.com/Sekai-World/sekai-viewer/commits/0fd596a67ca3027d7da2dd798e7210acb3e1f666))
+* **event:** card bonus detail list ([d184acf](https://github.com/Sekai-World/sekai-viewer/commits/d184acfda0e119ea83963601c860527a21794aa0))
+
+
+### Bug Fixes
+
+* :bug: wrongly trimmed short version of songs ([1ec2456](https://github.com/Sekai-World/sekai-viewer/commits/1ec245645f4c60d63b5cff3b876cbee1ac73e1f8))
+* 403 and CORS problem for Mainland China developer ([2ad3b63](https://github.com/Sekai-World/sekai-viewer/commits/2ad3b63438dc3a1b8c23872e7e34039b0f383d20))
+* **event:** more bonus characters after first anniversary ([061fd2a](https://github.com/Sekai-World/sekai-viewer/commits/061fd2a601838a69d8766d094b8131b2d07d36a2))
+
 ### [1.6.6](https://github.com/Sekai-World/sekai-viewer/compare/v1.6.5...v1.6.6) (2022-10-10)
 
 
