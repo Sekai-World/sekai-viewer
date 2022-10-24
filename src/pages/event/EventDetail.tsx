@@ -7,6 +7,10 @@ import {
   Tabs,
   Typography,
   Box,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Button,
 } from "@mui/material";
 import { TabContext } from "@mui/lab";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
@@ -78,7 +82,9 @@ const EventDetail: React.FC<{}> = observer(() => {
 
   const [event, setEvent] = useState<IEventInfo>();
   const [eventCards, setEventCards] = useState<IEventCard[]>([]);
-  const [boostCards, setBoostCards] = useState<ICardInfo[]>([]);
+  const [boostCards, setBoostCards] = useState<
+    { card: ICardInfo; bonus: number }[]
+  >([]);
   const [eventDeckBonus, setEventDeckBonus] = useState<IEventDeckBonus[]>([]);
   const [eventAttrBonus, setEventAttrBonus] = useState<IEventDeckBonus>();
   const [eventBonusCharas, setEventBonusCharas] = useState<IGameCharaUnit[]>(
@@ -98,6 +104,7 @@ const EventDetail: React.FC<{}> = observer(() => {
   const [ccSummary, setCcSummary] = useState<ICheerfulCarnivalSummary>();
   const [eventCommentId, setEventCommentId] = useState<number>(0);
   const [eventMusic, setEventMusic] = useState<IEventMusic>();
+  const [isCardsDialog, setIsCardsDialog] = useState(false);
 
   useEffect(() => {
     if (event) {
@@ -127,10 +134,12 @@ const EventDetail: React.FC<{}> = observer(() => {
         (elem) => elem.eventId === Number(eventId)
       );
       setEventDeckBonus(edb);
-      setEventAttrBonus(edb.find((it) => it.gameCharacterUnitId === undefined));
-      setEventCards(
-        eventCardsCache.filter((elem) => elem.eventId === Number(eventId))
+      const eab = edb.find((it) => it.gameCharacterUnitId === undefined);
+      setEventAttrBonus(eab);
+      const ec = eventCardsCache.filter(
+        (elem) => elem.eventId === Number(eventId)
       );
+      setEventCards(ec);
       const ebc = edb
         .filter(
           (it) =>
@@ -144,30 +153,65 @@ const EventDetail: React.FC<{}> = observer(() => {
         );
       setEventBonusCharas(ebc);
       setBoostCards(() => {
-        let result = cards.filter((elem) =>
-          ebc.some((chara) => {
-            let ret =
-              chara.gameCharacterId === elem.characterId &&
-              elem.attr === edb[0].cardAttr &&
-              elem.releaseAt <= ev!.aggregateAt;
-            if (elem.characterId >= 21) {
-              ret = ret && chara.unit === elem.supportUnit;
-            }
+        let result = cards
+          .filter((elem) => elem.releaseAt <= ev!.aggregateAt)
+          .map((card) => {
+            let eventCard = ec.find(
+              (it) => it.cardId === card.id && it.bonusRate !== undefined
+            );
+            let finalEventBonus =
+              eventCard === undefined ? 0 : eventCard.bonusRate!;
 
-            return ret;
+            finalEventBonus += edb.reduce((v, deckBonus) => {
+              if (
+                deckBonus.cardAttr !== undefined &&
+                deckBonus.cardAttr !== card.attr
+              ) {
+                return v;
+              }
+
+              if (deckBonus.gameCharacterUnitId !== undefined) {
+                let gameCharacterUnit = gameCharacterUnits.find(
+                  (it) => it.id === deckBonus.gameCharacterUnitId
+                )!;
+                if (gameCharacterUnit.gameCharacterId !== card.characterId) {
+                  return v;
+                }
+                if (
+                  gameCharacterUnit.gameCharacterId >= 21 &&
+                  gameCharacterUnit.unit !== card.supportUnit
+                ) {
+                  if (card.supportUnit !== "none") {
+                    return v;
+                  }
+                  return Math.max(
+                    v,
+                    gameCharacterUnit.unit === "piapro"
+                      ? deckBonus.bonusRate
+                      : deckBonus.bonusRate - 10
+                  );
+                }
+              }
+              return Math.max(v, deckBonus.bonusRate);
+            }, 0);
+
+            return { card: card, bonus: finalEventBonus };
           })
-        );
+          .filter((it) => it.bonus >= 40);
+
         if (result.length) {
           const sortKey =
-            result[0] && result[0].rarity ? "rarity" : "cardRarityType";
+            result[0] && result[0].card.rarity ? "rarity" : "cardRarityType";
           result = result.sort((a, b) => {
-            if (a[sortKey]! > b[sortKey]!) return 1;
-            if (a[sortKey]! < b[sortKey]!) return -1;
+            if (a.bonus > b.bonus) return -1;
+            if (a.bonus < b.bonus) return 1;
+
+            if (a.card[sortKey]! > b.card[sortKey]!) return -1;
+            if (a.card[sortKey]! < b.card[sortKey]!) return 1;
 
             return 0;
           });
         }
-
         return result;
       });
       setLinkedVirtualLive(
@@ -674,103 +718,20 @@ const EventDetail: React.FC<{}> = observer(() => {
             justifyContent="space-between"
             alignItems="center"
           >
-            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t("event:maxBoost")}
-            </Typography>
-            <Grid item xs={5} sm={6}>
-              <Grid
-                container
-                spacing={1}
-                alignItems="center"
-                justifyContent="space-between"
-              >
-                <Grid item xs={6} sm={10}></Grid>
-                <Grid item xs={5} sm={2}>
-                  <Typography>
-                    +
-                    {eventDeckBonus
-                      .filter(
-                        (it) =>
-                          it.cardAttr !== undefined &&
-                          it.gameCharacterUnitId !== undefined
-                      )
-                      .reduce((v, it) => Math.max(v, it.bonusRate), 0)}
-                    %
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Divider style={{ margin: "1% 0" }} />
-          {!!eventCards.filter((ec) => ec.bonusRate).length && (
-            <Fragment>
-              <Grid
-                item
-                container
-                direction="row"
-                wrap="nowrap"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Grid item xs={3}>
-                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                    {t("event:boostSpecificCards")}
-                  </Typography>
-                </Grid>
-                <Grid item xs={8} sm={7} md={6} container>
-                  <Grid container spacing={2} justifyContent="flex-end">
-                    {eventCards
-                      .filter((ec) => ec.bonusRate !== 0)
-                      .slice(0, 5)
-                      .map(({ cardId, bonusRate }) => (
-                        <Grid key={cardId} item xs={5} md={4} lg={3}>
-                          <Grid container justifyContent="center">
-                            <Grid item xs={12}>
-                              <Link to={`/card/${cardId}`}>
-                                <CardThumb cardId={cardId} />
-                              </Link>
-                            </Grid>
-                            <Grid item>
-                              <Typography>+{bonusRate}%</Typography>
-                            </Grid>
-                          </Grid>
-                        </Grid>
-                      ))}
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Divider style={{ margin: "1% 0" }} />
-            </Fragment>
-          )}
-          <Grid
-            item
-            container
-            direction="row"
-            wrap="nowrap"
-            justifyContent="space-between"
-            alignItems="center"
-          >
             <Grid item xs={3}>
               <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                 {t("event:boostCards")}
               </Typography>
             </Grid>
-            <Grid
-              item
-              xs={8}
-              sm={7}
-              md={6}
-              container
-              justifyContent="flex-end"
-              spacing={2}
-            >
-              {boostCards.map((card) => (
-                <Grid key={card.id} item xs={5} md={4} lg={3}>
-                  <Link to={`/card/${card.id}`}>
-                    <CardThumb cardId={card.id} />
-                  </Link>
-                </Grid>
-              ))}
+            <Grid item>
+              <Button
+                onClick={() => {
+                  setIsCardsDialog(true);
+                }}
+                variant="contained"
+              >
+                {t("common:show")}
+              </Button>
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
@@ -1052,6 +1013,34 @@ const EventDetail: React.FC<{}> = observer(() => {
         zoomSpeed={0.25}
         onChange={(_, idx) => setActiveIdx(idx)}
       />
+      <Dialog
+        open={isCardsDialog}
+        onClose={() => {
+          setIsCardsDialog(false);
+        }}
+        fullWidth
+      >
+        <DialogTitle>{t("event:boostCards")}</DialogTitle>
+        <DialogContent>
+          <Grid container spacing={1}>
+            {boostCards.map((card) => (
+              <Grid key={card.card.id} item xs={4} md={2}>
+                <LinkNoDecoration to={"/card/" + card.card.id} target="_blank">
+                  <Grid container direction="column">
+                    <CardThumb cardId={card.card.id} />
+                    <Typography
+                      align="center"
+                      style={{ whiteSpace: "pre-line" }}
+                    >
+                      +{card.bonus}%
+                    </Typography>
+                  </Grid>
+                </LinkNoDecoration>
+              </Grid>
+            ))}
+          </Grid>
+        </DialogContent>
+      </Dialog>
     </Fragment>
   ) : (
     <div>
