@@ -179,6 +179,30 @@ const CardDetail: React.FC<{}> = observer(() => {
           new RegExp(`{{${elem.id};v}}`),
           String(skillEffectDetail.activateEffectValue)
         );
+        if (elem.skillEnhance != null) {
+          originalSkillInfo = originalSkillInfo.replaceAll(
+            new RegExp(`{{${elem.id};e}}`, "g"),
+            String(elem.skillEnhance.activateEffectValue)
+          );
+          originalSkillInfo = originalSkillInfo.replace(
+            new RegExp(`{{${elem.id};m}}`),
+            String(
+              elem.skillEnhance.activateEffectValue * 5 +
+                skillEffectDetail.activateEffectValue
+            )
+          );
+          translatedSkillInfo = translatedSkillInfo.replaceAll(
+            new RegExp(`{{${elem.id};e}}`, "g"),
+            String(elem.skillEnhance.activateEffectValue)
+          );
+          translatedSkillInfo = translatedSkillInfo.replace(
+            new RegExp(`{{${elem.id};m}}`),
+            String(
+              elem.skillEnhance.activateEffectValue * 5 +
+                skillEffectDetail.activateEffectValue
+            )
+          );
+        }
       }
 
       switch (contentTransMode) {

@@ -178,11 +178,26 @@ export interface SkillEffectDetail {
   activateEffectValue: number;
 }
 
+export interface SkillEnhanceCondition {
+  id: number;
+  seq: number;
+  unit: string;
+}
+
+export interface SkillEnhance {
+  id: number;
+  skillEnhanceType: string;
+  activateEffectValueType: string;
+  activateEffectValue: number;
+  skillEnhanceCondition: SkillEnhanceCondition;
+}
+
 export interface SkillEffect {
   id: number;
   skillEffectType: string;
   activateNotesJudgmentType: string;
   skillEffectDetails: SkillEffectDetail[];
+  skillEnhance: SkillEnhance;
 }
 
 export interface ISkillInfo {
