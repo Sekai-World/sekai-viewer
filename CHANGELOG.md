@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.8](https://github.com/Sekai-World/sekai-viewer/compare/v1.6.7...v1.6.8) (2022-11-01)
+
+
+### Bug Fixes
+
+* :bug: tw and kr server sekai profile not matching ([19badb6](https://github.com/Sekai-World/sekai-viewer/commits/19badb64c27d01e57dd38734a7944b321992c93e))
+* enhance skill ([b171341](https://github.com/Sekai-World/sekai-viewer/commits/b17134143f21035799c17d49514b979638a2727b))
+
 ### [1.6.7](https://github.com/Sekai-World/sekai-viewer/compare/v1.6.6...v1.6.7) (2022-10-24)
 
 
