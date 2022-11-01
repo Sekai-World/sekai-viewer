@@ -43,7 +43,7 @@ export interface ISekaiUserDeck extends Instance<typeof SekaiUserDeck> {}
 export const SekaiUserCardEpisode = types.model({
   cardEpisodeId: types.number,
   scenarioStatus: types.string,
-  scenarioStatusReasons: types.array(types.string),
+  scenarioStatusReasons: types.maybe(types.array(types.string)),
   isNotSkipped: types.boolean,
 });
 export interface ISekaiUserCardEpisode
@@ -60,8 +60,8 @@ export const SekaiUserCard = types.model({
 export interface ISekaiUserCard extends Instance<typeof SekaiUserCard> {}
 
 export const SekaiUserMusicResult = types.model({
-  userId: types.number,
-  musicId: types.number,
+  userId: types.maybe(types.number),
+  musicId: types.maybe(types.number),
   musicDifficulty: types.string,
   playType: types.string,
   playResult: types.string,
@@ -70,14 +70,14 @@ export const SekaiUserMusicResult = types.model({
   fullPerfectFlg: types.boolean,
   mvpCount: types.number,
   superStarCount: types.number,
-  createdAt: types.number,
-  updatedAt: types.number,
+  createdAt: types.maybe(types.number),
+  updatedAt: types.maybe(types.number),
 });
 export interface ISekaiUserMusicResult
   extends Instance<typeof SekaiUserMusicResult> {}
 
 export const SekaiUserMusicDifficultyStatus = types.model({
-  musicId: types.number,
+  musicId: types.maybe(types.number),
   musicDifficulty: types.string,
   musicDifficultyStatus: types.string,
   userMusicResults: types.array(SekaiUserMusicResult),
@@ -86,7 +86,7 @@ export interface ISekaiUserMusicDifficultyStatus
   extends Instance<typeof SekaiUserMusicDifficultyStatus> {}
 
 export const SekaiUserMusic = types.model({
-  userId: types.number,
+  userId: types.maybe(types.number),
   musicId: types.number,
   userMusicDifficultyStatuses: types.array(SekaiUserMusicDifficultyStatus),
 });
