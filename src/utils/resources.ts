@@ -88,14 +88,6 @@ import { ServerRegion } from "../types";
 
 export const charaIcons: { [key: string]: string } = {
   CharaIcon1,
-  CharaIcon2,
-  CharaIcon3,
-  CharaIcon4,
-  CharaIcon5,
-  CharaIcon6,
-  CharaIcon7,
-  CharaIcon8,
-  CharaIcon9,
   CharaIcon10,
   CharaIcon11,
   CharaIcon12,
@@ -106,6 +98,7 @@ export const charaIcons: { [key: string]: string } = {
   CharaIcon17,
   CharaIcon18,
   CharaIcon19,
+  CharaIcon2,
   CharaIcon20,
   CharaIcon21,
   CharaIcon212,
@@ -118,6 +111,13 @@ export const charaIcons: { [key: string]: string } = {
   CharaIcon24,
   CharaIcon25,
   CharaIcon26,
+  CharaIcon3,
+  CharaIcon4,
+  CharaIcon5,
+  CharaIcon6,
+  CharaIcon7,
+  CharaIcon8,
+  CharaIcon9,
 };
 
 export const attrIconMap: { [key: string]: string } = {
@@ -131,19 +131,19 @@ export const attrIconMap: { [key: string]: string } = {
 export const degreeFrameMap: {
   [key: string]: string;
 } = {
-  low: FrameDegreeM1,
-  middle: FrameDegreeM2,
   high: FrameDegreeM3,
   highest: FrameDegreeM4,
+  low: FrameDegreeM1,
+  middle: FrameDegreeM2,
 };
 
 export const degreeFramSubMap: {
   [key: string]: string;
 } = {
-  low: FrameDegreeS1,
-  middle: FrameDegreeS2,
   high: FrameDegreeS3,
   highest: FrameDegreeS4,
+  low: FrameDegreeS1,
+  middle: FrameDegreeS2,
 };
 
 export const cardThumbFrameMap: { [key: string]: string } = {
@@ -163,12 +163,12 @@ export const cardThumbMediumFrameMap: { [key: string]: string } = {
 };
 
 export const cardImageFrameMap: { [key: string]: string } = {
+  0: cardImageFrameLBD,
   1: cardImageFrameL1,
   2: cardImageFrameL2,
   3: cardImageFrameL3,
   4: cardImageFrameL4,
   bd: cardImageFrameLBD,
-  0: cardImageFrameLBD,
 };
 
 export const cardMasterRankSmallMap: { [key: string]: string } = {
@@ -183,22 +183,6 @@ export const cardMasterRankSmallMap: { [key: string]: string } = {
 export const UnitLogoMap: {
   [region in ServerRegion]: { [key: string]: string };
 } = {
-  jp: {
-    idol: `/images/jp/logol_outline/logo_idol.png`,
-    light_sound: `/images/jp/logol_outline/logo_light_sound.png`,
-    piapro: `/images/jp/logol_outline/logo_piapro.png`,
-    school_refusal: `/images/jp/logol_outline/logo_school_refusal.png`,
-    street: `/images/jp/logol_outline/logo_street.png`,
-    theme_park: `/images/jp/logol_outline/logo_theme_park.png`,
-  },
-  tw: {
-    idol: `/images/tw/logol_outline/logo_idol.png`,
-    light_sound: `/images/tw/logol_outline/logo_light_sound.png`,
-    piapro: `/images/tw/logol_outline/logo_piapro.png`,
-    school_refusal: `/images/tw/logol_outline/logo_school_refusal.png`,
-    street: `/images/tw/logol_outline/logo_street.png`,
-    theme_park: `/images/tw/logol_outline/logo_theme_park.png`,
-  },
   en: {
     idol: `/images/en/logol_outline/logo_idol.png`,
     light_sound: `/images/en/logol_outline/logo_light_sound.png`,
@@ -206,6 +190,14 @@ export const UnitLogoMap: {
     school_refusal: `/images/en/logol_outline/logo_school_refusal.png`,
     street: `/images/en/logol_outline/logo_street.png`,
     theme_park: `/images/en/logol_outline/logo_theme_park.png`,
+  },
+  jp: {
+    idol: `/images/jp/logol_outline/logo_idol.png`,
+    light_sound: `/images/jp/logol_outline/logo_light_sound.png`,
+    piapro: `/images/jp/logol_outline/logo_piapro.png`,
+    school_refusal: `/images/jp/logol_outline/logo_school_refusal.png`,
+    street: `/images/jp/logol_outline/logo_street.png`,
+    theme_park: `/images/jp/logol_outline/logo_theme_park.png`,
   },
   kr: {
     idol: `/images/kr/logol_outline/logo_idol.png`,
@@ -215,15 +207,23 @@ export const UnitLogoMap: {
     street: `/images/kr/logol_outline/logo_street.png`,
     theme_park: `/images/kr/logol_outline/logo_theme_park.png`,
   },
+  tw: {
+    idol: `/images/tw/logol_outline/logo_idol.png`,
+    light_sound: `/images/tw/logol_outline/logo_light_sound.png`,
+    piapro: `/images/tw/logol_outline/logo_piapro.png`,
+    school_refusal: `/images/tw/logol_outline/logo_school_refusal.png`,
+    street: `/images/tw/logol_outline/logo_street.png`,
+    theme_park: `/images/tw/logol_outline/logo_theme_park.png`,
+  },
 };
 
 export const UnitLogoMiniMap: { [key: string]: string } = {
   idol: LogoMiniIdol,
   light_music_club: LogoMiniLightSound,
   light_sound: LogoMiniLightSound,
-  vocaloid: LogoMiniPiapro,
   piapro: LogoMiniPiapro,
   school_refusal: LogoMiniSchoolRefusal,
   street: LogoMiniStreet,
   theme_park: LogoMiniThemePark,
+  vocaloid: LogoMiniPiapro,
 };

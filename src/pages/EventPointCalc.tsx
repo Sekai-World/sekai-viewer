@@ -151,18 +151,18 @@ const EventPointCalc: React.FC<{}> = () => {
   useEffect(() => {
     if (currEvent && !selectedEvent) {
       setSelectedEvent({
+        id: currEvent.eventId,
         name: getTranslated(
           `event_name:${currEvent.eventId}`,
           currEvent.eventJson.name
         ),
-        id: currEvent.eventId,
       });
       setSelectedEventId(currEvent.eventId);
     }
     if (musics && !selectedSong)
       setSelectedSong({
-        name: getTranslated(`music_titles:${musics[0].id}`, musics[0].title),
         id: musics[0].id,
+        name: getTranslated(`music_titles:${musics[0].id}`, musics[0].title),
       });
   }, [currEvent, events, getTranslated, musics, selectedEvent, selectedSong]);
 
@@ -184,24 +184,24 @@ const EventPointCalc: React.FC<{}> = () => {
               (gcu) => gcu.id === edb.gameCharacterUnitId
             )!;
             return {
+              bonusRate: edb.bonusRate,
+              cardAttr: edb.cardAttr,
               gameCharacterId: gameCharaUnit.gameCharacterId,
               unit: gameCharaUnit.unit,
-              cardAttr: edb.cardAttr,
-              bonusRate: edb.bonusRate,
             };
           } else if (edb.gameCharacterUnitId) {
             const gameCharaUnit = gameCharacterUnits.find(
               (gcu) => gcu.id === edb.gameCharacterUnitId
             )!;
             return {
+              bonusRate: edb.bonusRate,
               gameCharacterId: gameCharaUnit.gameCharacterId,
               unit: gameCharaUnit.unit,
-              bonusRate: edb.bonusRate,
             };
           } else {
             return {
-              cardAttr: edb.cardAttr,
               bonusRate: edb.bonusRate,
+              cardAttr: edb.cardAttr,
             };
           }
         });
@@ -276,7 +276,6 @@ const EventPointCalc: React.FC<{}> = () => {
       {
         field: "name",
         headerName: t("music_recommend:result.musicName"),
-        width: 400,
         renderCell(params) {
           return (
             <ContentTrans
@@ -285,11 +284,11 @@ const EventPointCalc: React.FC<{}> = () => {
             />
           );
         },
+        width: 400,
       },
       {
         field: "level",
         headerName: t("music:difficulty"),
-        width: 100,
         renderCell(params) {
           return (
             <ChipDifficulty
@@ -298,27 +297,31 @@ const EventPointCalc: React.FC<{}> = () => {
             />
           );
         },
+        width: 100,
       },
       {
+        align: "center",
         field: "duration",
         headerName: t("music:actualPlaybackTime"),
         width: 150,
-        align: "center",
       },
       {
+        align: "center",
         field: "result",
         headerName: t("music_recommend:result.label"),
-        width: 100,
         sortDirection: "desc",
-        align: "center",
+        width: 100,
       },
       {
-        field: "resultPerHour",
-        headerName: t("event_calc:result.perHour"),
-        width: 100,
         // sortDirection: "desc",
         align: "center",
+
+        field: "resultPerHour",
+
+        headerName: t("event_calc:result.perHour"),
+
         hide: playMode === "challenge_live",
+        width: 100,
       },
     ],
     [playMode, t]
@@ -381,12 +384,12 @@ const EventPointCalc: React.FC<{}> = () => {
           let music = musics.find((it) => it.id === meta.music_id);
           if (!music)
             return {
+              difficulty: meta.difficulty,
+              duration: meta.music_time,
               id: i,
+              level: 0,
               mid: meta.music_id,
               name: "",
-              difficulty: meta.difficulty,
-              level: 0,
-              duration: meta.music_time,
               result: 0,
               resultPerHour: 0,
             };
@@ -412,12 +415,12 @@ const EventPointCalc: React.FC<{}> = () => {
           const result = eventPoint;
 
           return {
+            difficulty: meta.difficulty,
+            duration: meta.music_time,
             id: i,
+            level: meta.level,
             mid: music.id,
             name: music.title,
-            difficulty: meta.difficulty,
-            level: meta.level,
-            duration: meta.music_time,
             result: result,
             resultPerHour: Math.floor((result / (meta.music_time + 30)) * 3600),
           };
@@ -497,8 +500,8 @@ const EventPointCalc: React.FC<{}> = () => {
       </Alert>
       <Container
         sx={(theme) => ({
-          marginTop: theme.spacing(2),
           marginBottom: theme.spacing(2),
+          marginTop: theme.spacing(2),
         })}
       >
         <Stepper
@@ -560,11 +563,11 @@ const EventPointCalc: React.FC<{}> = () => {
                             .reverse()
                             // .filter((ev) => ev.startAt <= new Date().getTime())
                             .map((ev) => ({
+                              id: ev.id,
                               name: getTranslated(
                                 `event_name:${ev.id}`,
                                 ev.name
                               ),
-                              id: ev.id,
                             }))}
                           getOptionLabel={(option) => option.name}
                           isOptionEqualToValue={(option, value) =>
@@ -622,8 +625,8 @@ const EventPointCalc: React.FC<{}> = () => {
                       shrink: true,
                     }}
                     inputProps={{
-                      min: "0",
                       max: "10",
+                      min: "0",
                     }}
                     value={energyDrinkCount}
                     onChange={(e) =>
@@ -663,8 +666,8 @@ const EventPointCalc: React.FC<{}> = () => {
                       shrink: true,
                     }}
                     inputProps={{
-                      min: "0",
                       max: "250",
+                      min: "0",
                     }}
                     value={eventBonusRate}
                     onChange={(e) => setEventBonusRate(Number(e.target.value))}
@@ -760,11 +763,11 @@ const EventPointCalc: React.FC<{}> = () => {
                       <Grid item xs={12} md={4} lg={3}>
                         <Autocomplete
                           options={(musics || []).slice().map((music) => ({
+                            id: music.id,
                             name: getTranslated(
                               `music_titles:${music.id}`,
                               music.title
                             ),
-                            id: music.id,
                           }))}
                           getOptionLabel={(option) => option.name}
                           isOptionEqualToValue={(option, value) =>
@@ -787,8 +790,8 @@ const EventPointCalc: React.FC<{}> = () => {
                         <Autocomplete
                           options={Object.entries(difficulties).map(
                             ([key, value]) => ({
-                              name: value,
                               id: Number(key),
+                              name: value,
                             })
                           )}
                           getOptionLabel={(option) => option.name}

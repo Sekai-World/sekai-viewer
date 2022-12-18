@@ -41,8 +41,8 @@ const AppSkeletonInner = (props: { theme: Theme }) => {
       styled(Box)(({ theme }) => ({
         "& .drawer-content-toolbar": {
           ...theme.mixins.toolbar,
-          display: "flex",
           alignItems: "center",
+          display: "flex",
           padding: theme.spacing(0, 3),
           // justifyContent: 'flex-end'
         },
@@ -75,14 +75,20 @@ const AppSkeletonInner = (props: { theme: Theme }) => {
   const Root = useMemo(
     () =>
       styled(Box)(({ theme }) => ({
-        "& .app-skeleton-inner-root": {
-          display: "flex",
-        },
         "& .app-skeleton-inner-appbar": {
           [theme.breakpoints.up("md")]: {
-            width: `calc(100% - ${drawerWidth}px)`,
             marginLeft: drawerWidth,
+            width: `calc(100% - ${drawerWidth}px)`,
           },
+        },
+        "& .app-skeleton-inner-drawer": {
+          [theme.breakpoints.up("md")]: {
+            flexShrink: 0,
+            width: drawerWidth,
+          },
+        },
+        "& .app-skeleton-inner-drawer-paper": {
+          width: drawerWidth,
         },
         "& .app-skeleton-inner-menu-button": {
           marginRight: theme.spacing(2),
@@ -90,17 +96,11 @@ const AppSkeletonInner = (props: { theme: Theme }) => {
             display: "none",
           },
         },
+        "& .app-skeleton-inner-root": {
+          display: "flex",
+        },
         "& .app-skeleton-inner-title": {
           flexGrow: 1,
-        },
-        "& .app-skeleton-inner-drawer": {
-          [theme.breakpoints.up("md")]: {
-            width: drawerWidth,
-            flexShrink: 0,
-          },
-        },
-        "& .app-skeleton-inner-drawer-paper": {
-          width: drawerWidth,
         },
       })),
     []

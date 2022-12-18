@@ -12,6 +12,7 @@ import {
 const boostRate: Record<number, number> = {
   0: 1,
   1: 5,
+  10: 35,
   2: 10,
   3: 15,
   4: 19,
@@ -20,7 +21,6 @@ const boostRate: Record<number, number> = {
   7: 29,
   8: 31,
   9: 33,
-  10: 35,
 };
 
 export function useScoreCalc() {
@@ -224,14 +224,14 @@ export function useScoreCalc() {
   return {
     getCardSkillRate,
     getCardSkillRates,
-    getMultiSkillRate,
-    getMultiAverageSkillRates,
-    getSoloAverageSkillRate,
-    getSoloAverageSkillRates,
-    getScore,
     getEventPoint,
     getEventPointPerHour,
-    getSoloWorstSkillOrderAndRates,
+    getMultiAverageSkillRates,
+    getMultiSkillRate,
+    getScore,
+    getSoloAverageSkillRate,
+    getSoloAverageSkillRates,
     getSoloBestSkillOrderAndRates,
+    getSoloWorstSkillOrderAndRates,
   };
 }

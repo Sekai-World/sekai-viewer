@@ -17,6 +17,18 @@ export async function initGlobalI18n() {
     .use(fetchBackend)
     .use(detector)
     .init({
+      backend: {
+        loadPath:
+          (window.isChinaMainland
+            ? import.meta.env.VITE_JSON_DOMAIN_CN + "/locales"
+            : import.meta.env.VITE_JSON_DOMAIN_WW) + "/{{lng}}/{{ns}}.json",
+      },
+      defaultNS: "common",
+      fallbackLng: {
+        default: ["en"],
+      },
+      fallbackNS: "common",
+      load: "currentOnly",
       ns: [
         "common",
         "home",
@@ -48,18 +60,6 @@ export async function initGlobalI18n() {
         "honor",
         "asset_viewer",
       ],
-      defaultNS: "common",
-      fallbackLng: {
-        default: ["en"],
-      },
-      fallbackNS: "common",
-      load: "currentOnly",
-      backend: {
-        loadPath:
-          (window.isChinaMainland
-            ? import.meta.env.VITE_JSON_DOMAIN_CN + "/locales"
-            : import.meta.env.VITE_JSON_DOMAIN_WW) + "/{{lng}}/{{ns}}.json",
-      },
       returnEmptyString: false,
     });
 
@@ -67,6 +67,16 @@ export async function initGlobalI18n() {
     .use(fetchBackend)
     .use(detector)
     .init({
+      backend: {
+        loadPath:
+          (window.isChinaMainland
+            ? import.meta.env.VITE_JSON_DOMAIN_CN + "/locales"
+            : import.meta.env.VITE_JSON_DOMAIN_WW) + "/{{lng}}/{{ns}}.json",
+      },
+      fallbackLng: {
+        default: ["ja"],
+      },
+      load: "currentOnly",
       ns: [
         "music_titles",
         "card_prefix",
@@ -97,16 +107,6 @@ export async function initGlobalI18n() {
         "cheerful_carnival_themes",
         "area_name",
       ],
-      fallbackLng: {
-        default: ["ja"],
-      },
-      load: "currentOnly",
-      backend: {
-        loadPath:
-          (window.isChinaMainland
-            ? import.meta.env.VITE_JSON_DOMAIN_CN + "/locales"
-            : import.meta.env.VITE_JSON_DOMAIN_WW) + "/{{lng}}/{{ns}}.json",
-      },
       returnEmptyString: false,
     });
 
@@ -152,7 +152,7 @@ export function useAssetI18n() {
     },
     [assetT, contentTransMode]
   );
-  return { assetT, assetI18n, getTranslated };
+  return { assetI18n, assetT, getTranslated };
 }
 
 export function useCharaName(forceTransMode?: ContentTransModeType) {

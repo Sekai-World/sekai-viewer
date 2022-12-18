@@ -106,9 +106,9 @@ function parseFrameHeader(view: DataView): FrameHeader | undefined {
 
   return {
     bitrate,
-    samplingRate,
-    padding,
     frameSize: calcFrameSize(bitrate, samplingRate, padding),
+    padding,
+    samplingRate,
   };
 }
 
@@ -128,9 +128,9 @@ export function parseMP3(buffer: ArrayBuffer): Frame[] {
     if (frameHeaderOffset == null) {
       // EOF
       frames.push({
+        frameHeader: null,
         offset,
         size: u8Buffer.length - offset,
-        frameHeader: null,
       });
       break;
     }
@@ -151,18 +151,18 @@ export function parseMP3(buffer: ArrayBuffer): Frame[] {
       // there is something between the previous frame and this frame
       // add that
       frames.push({
+        frameHeader: null,
         offset,
         size: frameHeaderOffset - offset,
-        frameHeader: null,
       });
     }
 
     // add current MPEG frame
     offset = frameHeaderOffset;
     frames.push({
+      frameHeader,
       offset,
       size: frameHeader.frameSize,
-      frameHeader,
     });
 
     offset += frameHeader.frameSize;

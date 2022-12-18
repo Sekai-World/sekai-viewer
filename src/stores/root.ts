@@ -8,16 +8,16 @@ import { decodeToken } from "react-jwt";
 
 const Root = types
   .model({
-    user: User,
     sekai: SekaiProfileMap,
     settings: Settings,
+    user: User,
   })
   .views((self) => ({
-    get jwtToken() {
-      return self.user.token;
-    },
     get decodedToken() {
       return decodeToken(self.user.token);
+    },
+    get jwtToken() {
+      return self.user.token;
     },
     get region() {
       return self.settings.region;
@@ -48,34 +48,39 @@ const settingsJson = JSON.parse(
 
 const initialState: IRoot = {
   //@ts-ignore
-  user: User.is(userJson)
-    ? userJson!
-    : {
-        token: localStorage.getItem("authToken") || "",
-        userinfo: null,
-        metadata: null,
-      },
-  //@ts-ignore
   sekai: SekaiProfileMap.is(sekaiJson)
     ? sekaiJson!
     : {
-        //@ts-ignore
-        sekaiProfileMap: {},
+        isFetchingSekaiCardTeam: false,
+
         isFetchingSekaiProfile: false,
+
         //@ts-ignore
         sekaiCardTeamMap: {},
-        isFetchingSekaiCardTeam: false,
+
+        //@ts-ignore
+        sekaiProfileMap: {},
       },
+
   //@ts-ignore
   settings: Settings.is(settingsJson)
     ? settingsJson!
     : {
-        lang: "",
-        displayMode: "auto",
         contentTransMode: "both",
-        languages: [],
+        displayMode: "auto",
         isShowSpoiler: false,
+        lang: "",
+        languages: [],
         region: "jp",
+      },
+
+  //@ts-ignore
+  user: User.is(userJson)
+    ? userJson!
+    : {
+        metadata: null,
+        token: localStorage.getItem("authToken") || "",
+        userinfo: null,
       },
 };
 

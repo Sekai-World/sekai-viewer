@@ -166,19 +166,19 @@ function ListItemLink(
   const { icon, text, to, isRedirection } = props;
   const { user } = useRootStore();
   const match = useRouteMatch({
-    path: to,
     exact: to === "/",
+    path: to,
   });
 
   const Root = useMemo(
     () =>
       styled(Box)(({ theme }) => ({
         "& .list-item-link-inner": {
-          paddingTop: "2px",
           paddingBottom: "2px",
+          paddingTop: "2px",
           [theme.breakpoints.down("lg")]: {
-            paddingTop: "8px",
             paddingBottom: "8px",
+            paddingTop: "8px",
           },
         },
         width: "100%",
@@ -235,8 +235,8 @@ function ListItemWithChildren(props: {
   const { user } = useRootStore();
 
   const match = useRouteMatch({
-    path: item.to,
     exact: item.to === "/",
+    path: item.to,
   });
 
   const [expansionState, setExpansionState] = useState(Boolean(match));
@@ -244,16 +244,16 @@ function ListItemWithChildren(props: {
   const Root = useMemo(
     () =>
       styled(Box)(({ theme }) => ({
-        "& .list-item-children-inner": {
-          paddingTop: "2px",
-          paddingBottom: "2px",
-          [theme.breakpoints.down("lg")]: {
-            paddingTop: "8px",
-            paddingBottom: "8px",
-          },
-        },
         "& .list-item-children": {
           padding: theme.spacing(0, 1),
+        },
+        "& .list-item-children-inner": {
+          paddingBottom: "2px",
+          paddingTop: "2px",
+          [theme.breakpoints.down("lg")]: {
+            paddingBottom: "8px",
+            paddingTop: "8px",
+          },
         },
       })),
     []
@@ -325,20 +325,20 @@ function ListItemWithChildren(props: {
 }
 
 const openedMixin = (theme: Theme): CSSObject => ({
-  width: drawerWidth,
-  transition: theme.transitions.create("width", {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
   overflowX: "hidden",
+  transition: theme.transitions.create("width", {
+    duration: theme.transitions.duration.enteringScreen,
+    easing: theme.transitions.easing.sharp,
+  }),
+  width: drawerWidth,
 });
 
 const closedMixin = (theme: Theme): CSSObject => ({
-  transition: theme.transitions.create("width", {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
   overflowX: "hidden",
+  transition: theme.transitions.create("width", {
+    duration: theme.transitions.duration.leavingScreen,
+    easing: theme.transitions.easing.sharp,
+  }),
   width: `calc(${theme.spacing(7)} + 1px)`,
   [theme.breakpoints.up("sm")]: {
     width: `calc(${theme.spacing(9)} + 1px)`,
@@ -352,28 +352,28 @@ interface AppBarProps extends MuiAppBarProps {
 const DesktopAppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })<AppBarProps>(({ theme, open }) => ({
-  zIndex: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(["width", "margin"], {
-    easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
+    easing: theme.transitions.easing.sharp,
   }),
+  zIndex: theme.zIndex.drawer + 1,
   ...(open && {
     marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
     transition: theme.transitions.create(["width", "margin"], {
-      easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
+      easing: theme.transitions.easing.sharp,
     }),
+    width: `calc(100% - ${drawerWidth}px)`,
   }),
 }));
 
 const Drawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
-  width: drawerWidth,
+  boxSizing: "border-box",
   flexShrink: 0,
   whiteSpace: "nowrap",
-  boxSizing: "border-box",
+  width: drawerWidth,
   ...(open && {
     ...openedMixin(theme),
     "& .MuiDrawer-paper": openedMixin(theme),
@@ -394,201 +394,201 @@ const DrawerContent: React.FC<{
     () => [
       [
         {
-          text: t("common:home"),
+          disabled: false,
           icon: <HomeIcon></HomeIcon>,
+          text: t("common:home"),
           to: "/",
-          disabled: false,
         },
         {
-          text: t("common:announcement"),
+          disabled: false,
           icon: <Bullhorn></Bullhorn>,
+          text: t("common:announcement"),
           to: "/announcement",
-          disabled: false,
         },
         {
-          text: t("common:song wishlist"),
+          disabled: false,
           icon: <Favorite></Favorite>,
-          to: "https://wishlist.sekai.best/",
-          disabled: false,
           isRedirection: true,
+          text: t("common:song wishlist"),
+          to: "https://wishlist.sekai.best/",
         },
         {
-          text: t("common:translation"),
-          icon: <Translate></Translate>,
-          to: "/translation",
           disabled: false,
+          icon: <Translate></Translate>,
+          text: t("common:translation"),
+          to: "/translation",
           visibleRoles: ["translator", "admin"],
         },
       ],
       [
         {
-          text: t("common:card"),
+          disabled: false,
           icon: <AspectRatioIcon></AspectRatioIcon>,
+          text: t("common:card"),
           to: "/card",
-          disabled: false,
         },
         {
-          text: t("common:music"),
+          disabled: false,
           icon: <AlbumIcon></AlbumIcon>,
+          text: t("common:music"),
           to: "/music",
-          disabled: false,
         },
         {
-          text: t("common:gacha"),
+          disabled: false,
           icon: <MoveToInboxIcon></MoveToInboxIcon>,
+          text: t("common:gacha"),
           to: "/gacha",
-          disabled: false,
         },
         {
-          text: t("common:event"),
+          disabled: false,
           icon: <CalendarText></CalendarText>,
+          text: t("common:event"),
           to: "/event",
-          disabled: false,
         },
         {
-          text: t("common:stamp"),
+          disabled: false,
           icon: <StickerEmoji />,
+          text: t("common:stamp"),
           to: "/stamp",
-          disabled: false,
         },
         {
-          text: t("common:comic"),
+          disabled: false,
           icon: <CropOriginal />,
+          text: t("common:comic"),
           to: "/comic",
-          disabled: false,
         },
         {
-          text: t("common:character"),
+          disabled: false,
           icon: <AccountGroup></AccountGroup>,
+          text: t("common:character"),
           to: "/chara",
-          disabled: false,
         },
         {
-          text: t("common:mission.main"),
-          icon: <Assignment></Assignment>,
-          to: "/mission",
-          disabled: false,
           children: [
             {
+              disabled: false,
               text: t("common:mission.honor"),
               to: "/mission/title",
-              disabled: false,
             },
             {
+              disabled: true,
               text: t("common:mission.livepass"),
               to: "/mission/livepass",
-              disabled: true,
             },
             {
+              disabled: false,
               text: t("common:character"),
               to: "/mission/character",
-              disabled: false,
             },
             {
+              disabled: false,
               text: t("common:mission.normal"),
               to: "/mission/normal",
-              disabled: false,
             },
             {
+              disabled: false,
               text: t("common:mission.beginner"),
               to: "/mission/beginner",
-              disabled: false,
             },
           ],
+          disabled: false,
+          icon: <Assignment></Assignment>,
+          text: t("common:mission.main"),
+          to: "/mission",
         },
         {
-          text: t("honor:page_title"),
+          disabled: false,
           icon: <Dns></Dns>,
+          text: t("honor:page_title"),
           to: "/honor",
-          disabled: false,
         },
         {
-          text: "Live2D",
+          disabled: false,
           icon: <ControlCamera></ControlCamera>,
+          text: "Live2D",
           to: "/l2d",
-          disabled: false,
         },
         {
-          text: t("common:virtualLive"),
-          icon: <LiveTv></LiveTv>,
-          to: "/virtual_live",
           disabled: false,
+          icon: <LiveTv></LiveTv>,
+          text: t("common:virtualLive"),
+          to: "/virtual_live",
         },
       ],
       [
         {
-          text: t("common:assetViewer"),
+          disabled: false,
           icon: <FileFindOutline />,
+          text: t("common:assetViewer"),
           to: "/asset_viewer",
-          disabled: false,
         },
         {
-          text: t("common:musicMeta"),
+          disabled: false,
           icon: <QueueMusic />,
+          text: t("common:musicMeta"),
           to: "/music_meta",
-          disabled: false,
         },
         {
+          disabled: false,
+          icon: <Calculator />,
           text: t("common:musicRecommend"),
-          icon: <Calculator />,
           to: "/music_recommend",
-          disabled: false,
         },
         {
-          text: t("common:eventCalc"),
+          disabled: false,
           icon: <Calculator />,
+          text: t("common:eventCalc"),
           to: "/event_calc",
-          disabled: false,
         },
         {
-          text: t("common:storyReader"),
-          icon: <Textsms></Textsms>,
-          to: "/storyreader",
-          disabled: false,
           children: [
             {
+              disabled: false,
               text: t("common:text"),
               to: "/storyreader",
-              disabled: false,
             },
             {
+              disabled: true,
               text: "Live2D",
               to: "/storyreader-live2d",
-              disabled: true,
             },
           ],
-        },
-        {
-          text: t("common:eventTracker"),
-          icon: <Timeline></Timeline>,
-          to: "/eventtracker",
           disabled: false,
+          icon: <Textsms></Textsms>,
+          text: t("common:storyReader"),
+          to: "/storyreader",
         },
         {
-          text: t("common:eventAnalyzer"),
+          disabled: false,
           icon: <Timeline></Timeline>,
-          to: "/eventanalyzer",
+          text: t("common:eventTracker"),
+          to: "/eventtracker",
+        },
+        {
           disabled: true,
+          icon: <Timeline></Timeline>,
+          text: t("common:eventAnalyzer"),
+          to: "/eventanalyzer",
         },
       ],
       [
         {
-          text: t("common:settings.title"),
+          disabled: false,
           icon: <SettingsIcon />,
+          text: t("common:settings.title"),
           to: "/settings",
-          disabled: false,
         },
         {
-          text: t("common:support"),
+          disabled: false,
           icon: <MonetizationOn />,
+          text: t("common:support"),
           to: "/support",
-          disabled: false,
         },
         {
-          text: t("common:about"),
-          icon: <Info />,
-          to: "/about",
           disabled: false,
+          icon: <Info />,
+          text: t("common:about"),
+          to: "/about",
         },
       ],
     ],
@@ -602,15 +602,15 @@ const DrawerContent: React.FC<{
   const Root = useMemo(
     () =>
       styled(Box)(({ theme }) => ({
-        "& .drawer-content-toolbar": {
-          ...theme.mixins.toolbar,
-          display: "flex",
-          alignItems: "center",
-          padding: theme.spacing(0, 3),
-          // justifyContent: 'flex-end'
-        },
         "& .drawer-content-list-item": {
           padding: theme.spacing(0, 1),
+        },
+        "& .drawer-content-toolbar": {
+          ...theme.mixins.toolbar,
+          alignItems: "center",
+          display: "flex",
+          padding: theme.spacing(0, 3),
+          // justifyContent: 'flex-end'
         },
       })),
     []
@@ -880,25 +880,13 @@ const AppInner = observer((props: { theme: Theme }) => {
   const Root = useMemo(
     () =>
       styled(Box)(({ theme }) => ({
-        // "& .app-inner-root": {
-        display: "flex",
-        minHeight: "100vh",
-        // },
-        "& .app-inner-menu-button": {
-          marginRight: theme.spacing(2),
-        },
-        "& .app-inner-title": {
-          flexGrow: 1,
-        },
         "& .app-inner-drawer": {
           [theme.breakpoints.up("md")]: {
-            width: drawerWidth,
             flexShrink: 0,
+            width: drawerWidth,
           },
         },
-        "& .app-inner-drawer-paper": {
-          width: drawerWidth,
-        },
+
         "& .app-inner-drawer-content": {
           flexGrow: 1,
           padding: theme.spacing(2),
@@ -906,13 +894,30 @@ const AppInner = observer((props: { theme: Theme }) => {
             width: `calc(100% - ${drawerWidth}px)`,
           },
         },
+
+        "& .app-inner-drawer-paper": {
+          width: drawerWidth,
+        },
+
         "& .app-inner-drawer-toolbar": {
           ...theme.mixins.toolbar,
-          display: "flex",
           alignItems: "center",
+          display: "flex",
           padding: theme.spacing(0, 3),
           // justifyContent: 'flex-end'
         },
+
+        // },
+        "& .app-inner-menu-button": {
+          marginRight: theme.spacing(2),
+        },
+
+        "& .app-inner-title": {
+          flexGrow: 1,
+        },
+        // "& .app-inner-root": {
+        display: "flex",
+        minHeight: "100vh",
       })),
     []
   );
@@ -1256,6 +1261,11 @@ const App = observer(() => {
   const theme = React.useMemo(
     () =>
       createTheme({
+        components: {
+          MuiCssBaseline: {
+            styleOverrides: fontFaceOverride,
+          },
+        },
         palette: {
           mode:
             displayMode === "auto"
@@ -1275,11 +1285,6 @@ const App = observer(() => {
         },
         typography: {
           fontFamily: fontList,
-        },
-        components: {
-          MuiCssBaseline: {
-            styleOverrides: fontFaceOverride,
-          },
         },
       }),
     [displayMode, preferDarkMode]

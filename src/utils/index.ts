@@ -190,11 +190,11 @@ export function useVersionInfo(): [IVersionInfo | undefined, boolean, any] {
 }
 
 export const musicCategoryToName: { [key: string]: string } = {
+  image: "Static Image",
   mv: "3D MV",
+  mv_2d: "2D MV",
   original: "Original MV",
   sekai: "Sekai MV",
-  image: "Static Image",
-  mv_2d: "2D MV",
 };
 
 export function useMusicTagName(contentTransMode: ContentTransModeType) {
@@ -204,61 +204,61 @@ export function useMusicTagName(contentTransMode: ContentTransModeType) {
     case "both": {
       return {
         all: "All",
-        vocaloid: `バーチャル・シンガー | ${assetT(
-          `unit_profile:piapro.name`,
-          "バーチャル・シンガー"
+        idol: `MORE MORE JUMP! | ${assetT(
+          `unit_profile:idol.name`,
+          "MORE MORE JUMP!"
         )}`,
         light_music_club: `Leo/need | ${assetT(
           `unit_profile:light_sound.name`,
           "Leo/need"
         )}`,
-        idol: `MORE MORE JUMP! | ${assetT(
-          `unit_profile:idol.name`,
-          "MORE MORE JUMP!"
-        )}`,
+        other: "Other",
         school_refusal: `25時、ナイトコードで。 | ${assetT(
           `unit_profile:school_refusal.name`,
           "25時、ナイトコードで。"
-        )}`,
-        theme_park: `ワンダーランズ×ショウタイム | ${assetT(
-          `unit_profile:theme_park.name`,
-          "ワンダーランズ×ショウタイム"
         )}`,
         street: `Vivid BAD SQUAD | ${assetT(
           `unit_profile:street.name`,
           "Vivid BAD SQUAD"
         )}`,
-        other: "Other",
+        theme_park: `ワンダーランズ×ショウタイム | ${assetT(
+          `unit_profile:theme_park.name`,
+          "ワンダーランズ×ショウタイム"
+        )}`,
+        vocaloid: `バーチャル・シンガー | ${assetT(
+          `unit_profile:piapro.name`,
+          "バーチャル・シンガー"
+        )}`,
       };
     }
     case "original": {
       return {
         all: "All",
-        vocaloid: `バーチャル・シンガー`,
-        light_music_club: `Leo/need`,
         idol: `MORE MORE JUMP!`,
-        school_refusal: `25時、ナイトコードで。`,
-        theme_park: `ワンダーランズ×ショウタイム`,
-        street: `Vivid BAD SQUAD`,
+        light_music_club: `Leo/need`,
         other: "Other",
+        school_refusal: `25時、ナイトコードで。`,
+        street: `Vivid BAD SQUAD`,
+        theme_park: `ワンダーランズ×ショウタイム`,
+        vocaloid: `バーチャル・シンガー`,
       };
     }
     case "translated": {
       return {
         all: "All",
-        vocaloid: assetT(`unit_profile:piapro.name`, "バーチャル・シンガー"),
-        light_music_club: assetT(`unit_profile:light_sound.name`, "Leo/need"),
         idol: assetT(`unit_profile:idol.name`, "MORE MORE JUMP!"),
+        light_music_club: assetT(`unit_profile:light_sound.name`, "Leo/need"),
+        other: "Other",
         school_refusal: assetT(
           `unit_profile:school_refusal.name`,
           "25時、ナイトコードで。"
         ),
+        street: assetT(`unit_profile:street.name`, "Vivid BAD SQUAD"),
         theme_park: assetT(
           `unit_profile:theme_park.name`,
           "ワンダーランズ×ショウタイム"
         ),
-        street: assetT(`unit_profile:street.name`, "Vivid BAD SQUAD"),
-        other: "Other",
+        vocaloid: assetT(`unit_profile:piapro.name`, "バーチャル・シンガー"),
       };
     }
   }
@@ -354,8 +354,8 @@ export function useProcessedScenarioData() {
         characters: { id: number; name: string }[];
         actions: { [key: string]: any }[];
       } = {
-        characters: [],
         actions: [],
+        characters: [],
       };
 
       if (
@@ -392,32 +392,32 @@ export function useProcessedScenarioData() {
 
       if (FirstBackground) {
         ret.actions.push({
-          type: SnippetAction.SpecialEffect,
-          isWait: SnippetProgressBehavior.WaitUnitilFinished,
-          delay: 0,
-          seType: "ChangeBackground",
           body: FirstBgm,
+          delay: 0,
+          isWait: SnippetProgressBehavior.WaitUnitilFinished,
           resource: await getRemoteAssetURL(
             `scenario/background/${FirstBackground}_rip/${FirstBackground}.webp`,
             undefined,
             window.isChinaMainland ? "cn" : "minio"
           ),
+          seType: "ChangeBackground",
+          type: SnippetAction.SpecialEffect,
         });
       }
       if (FirstBgm) {
         ret.actions.push({
-          type: SnippetAction.Sound,
-          isWait: SnippetProgressBehavior.WaitUnitilFinished,
-          delay: 0,
-          playMode: SoundPlayMode[0],
-          hasBgm: true,
-          hasSe: false,
           bgm: await getRemoteAssetURL(
             `sound/scenario/bgm/${FirstBgm}_rip/${FirstBgm}.mp3`,
             undefined,
             window.isChinaMainland ? "cn" : "minio"
           ),
+          delay: 0,
+          hasBgm: true,
+          hasSe: false,
+          isWait: SnippetProgressBehavior.WaitUnitilFinished,
+          playMode: SoundPlayMode[0],
           se: "",
+          type: SnippetAction.Sound,
         });
       }
 
@@ -484,13 +484,13 @@ export function useProcessedScenarioData() {
               }
 
               action = {
-                type: snippet.Action,
+                body: talkData.Body,
+                chara,
+                delay: snippet.Delay,
                 isWait:
                   snippet.ProgressBehavior ===
                   SnippetProgressBehavior.WaitUnitilFinished,
-                delay: snippet.Delay,
-                chara,
-                body: talkData.Body,
+                type: snippet.Action,
                 voice: talkData.Voices.length
                   ? await getRemoteAssetURL(
                       voiceUrl,
@@ -508,13 +508,11 @@ export function useProcessedScenarioData() {
                 SpecialEffectType[specialEffect.EffectType];
 
               action = {
-                type: snippet.Action,
+                body: specialEffect.StringVal,
+                delay: snippet.Delay,
                 isWait:
                   snippet.ProgressBehavior ===
                   SnippetProgressBehavior.WaitUnitilFinished,
-                delay: snippet.Delay,
-                seType: specialEffectType,
-                body: specialEffect.StringVal,
                 resource:
                   specialEffectType === "FullScreenText"
                     ? await getRemoteAssetURL(
@@ -531,6 +529,8 @@ export function useProcessedScenarioData() {
                     : specialEffectType === "Movie"
                     ? `scenario/movie/${specialEffect.StringVal}_rip`
                     : "",
+                seType: specialEffectType,
+                type: snippet.Action,
               };
             }
             break;
@@ -539,14 +539,6 @@ export function useProcessedScenarioData() {
               const soundData = SoundData[snippet.ReferenceIndex];
 
               action = {
-                type: snippet.Action,
-                isWait:
-                  snippet.ProgressBehavior ===
-                  SnippetProgressBehavior.WaitUnitilFinished,
-                delay: snippet.Delay,
-                playMode: SoundPlayMode[soundData.PlayMode],
-                hasBgm: !!soundData.Bgm,
-                hasSe: !!soundData.Se,
                 bgm: soundData.Bgm
                   ? await getRemoteAssetURL(
                       `sound/scenario/bgm/${soundData.Bgm}_rip/${soundData.Bgm}.mp3`,
@@ -554,6 +546,13 @@ export function useProcessedScenarioData() {
                       window.isChinaMainland ? "cn" : "minio"
                     )
                   : "",
+                delay: snippet.Delay,
+                hasBgm: !!soundData.Bgm,
+                hasSe: !!soundData.Se,
+                isWait:
+                  snippet.ProgressBehavior ===
+                  SnippetProgressBehavior.WaitUnitilFinished,
+                playMode: SoundPlayMode[soundData.PlayMode],
                 se: soundData.Se
                   ? await getRemoteAssetURL(
                       `sound/scenario/se/se_pack00001_rip/${soundData.Se}.mp3`,
@@ -561,16 +560,17 @@ export function useProcessedScenarioData() {
                       window.isChinaMainland ? "cn" : "minio"
                     )
                   : "",
+                type: snippet.Action,
               };
             }
             break;
           default: {
             action = {
-              type: snippet.Action,
+              delay: snippet.Delay,
               isWait:
                 snippet.ProgressBehavior ===
                 SnippetProgressBehavior.WaitUnitilFinished,
-              delay: snippet.Delay,
+              type: snippet.Action,
             };
           }
         }
@@ -686,11 +686,11 @@ export function useAlertSnackbar() {
         );
     return {
       ...snackbar,
-      showMessage: showMessage("default"),
-      showInfo: showMessage("info"),
-      showWarning: showMessage("warning"),
       showError: showMessage("error"),
+      showInfo: showMessage("info"),
+      showMessage: showMessage("default"),
       showSuccess: showMessage("success"),
+      showWarning: showMessage("warning"),
     };
   }, [snackbar]);
 }
@@ -711,29 +711,29 @@ export function useSkillMapping() {
     () => [
       //skills.json
       {
+        descriptionSpriteName: "score_up",
         // name: "スコアＵＰ",
         name: t("filter:skill.score_up"),
-        descriptionSpriteName: "score_up",
       },
       {
+        descriptionSpriteName: "judgment_up",
         // name: "判定強化＆スコアＵＰ",
         name: t("filter:skill.judgment_up"),
-        descriptionSpriteName: "judgment_up",
       },
       {
+        descriptionSpriteName: "life_recovery",
         // name: "ライフ回復＆スコアＵＰ",
         name: t("filter:skill.life_recovery"),
-        descriptionSpriteName: "life_recovery",
       },
       {
+        descriptionSpriteName: "perfect_score_up",
         // name: "PERFECTのときのみスコアＵＰ",
         name: t("filter:skill.perfect_score_up"),
-        descriptionSpriteName: "perfect_score_up",
       },
       {
+        descriptionSpriteName: "life_score_up",
         // name: "発動時ライフがOO未満ならスコアUP",
         name: t("filter:skill.life_score_up"),
-        descriptionSpriteName: "life_score_up",
       },
     ],
     [t]
@@ -757,14 +757,14 @@ export function sortWithIndices(toSort: (string | number)[]) {
 
 export function apiUserInfoToStoreUserInfo(userInfo: UserModel): IUserInfo {
   return {
-    id: userInfo.id,
-    username: userInfo.username,
-    email: userInfo.email,
-    provider: userInfo.provider,
-    confirmed: userInfo.confirmed,
-    blocked: userInfo.blocked || false,
-    role: userInfo.role.type,
     avatarUrl: userInfo.avatarUrl,
+    blocked: userInfo.blocked || false,
+    confirmed: userInfo.confirmed,
+    email: userInfo.email,
+    id: userInfo.id,
+    provider: userInfo.provider,
+    role: userInfo.role.type,
+    username: userInfo.username,
   };
 }
 
@@ -796,7 +796,7 @@ export function useCardType(card?: ICardInfo) {
     [card?.cardRarityType, card?.rarity, isNewRarityCard]
   );
 
-  return { isNewRarityCard, isBirthdayCard, isTrainableCard };
+  return { isBirthdayCard, isNewRarityCard, isTrainableCard };
 }
 
 export async function getGachaRemoteImages(
@@ -808,10 +808,10 @@ export async function getGachaRemoteImages(
     await Axios.get<string>(`/`, {
       baseURL,
       params: {
-        "list-type": "2",
         delimiter: "/",
-        prefix: `gacha/${gachaAssetbundleName}/screen_rip/texture/`,
+        "list-type": "2",
         "max-keys": "500",
+        prefix: `gacha/${gachaAssetbundleName}/screen_rip/texture/`,
       },
       responseType: "text",
     })

@@ -211,13 +211,13 @@ const UnitDetail: React.FC<{}> = observer(() => {
                         <CharaNameTrans
                           characterId={uc.id}
                           originalProps={{
-                            variant: "subtitle1",
-                            style: { fontWeight: 600 },
                             align: "center",
+                            style: { fontWeight: 600 },
+                            variant: "subtitle1",
                           }}
                           translatedProps={{
-                            variant: "subtitle2",
                             align: "center",
+                            variant: "subtitle2",
                           }}
                         />
                       </Grid>
@@ -253,13 +253,13 @@ const UnitDetail: React.FC<{}> = observer(() => {
                           contentKey={`music_titles:${um.id}`}
                           original={um.title}
                           originalProps={{
-                            variant: "subtitle1",
-                            style: { fontWeight: 600 },
                             align: "center",
+                            style: { fontWeight: 600 },
+                            variant: "subtitle1",
                           }}
                           translatedProps={{
-                            variant: "subtitle2",
                             align: "center",
+                            variant: "subtitle2",
                           }}
                         />
                       </Grid>
