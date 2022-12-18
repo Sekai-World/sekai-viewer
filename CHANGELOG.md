@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.9](https://github.com/Sekai-World/sekai-viewer/compare/v1.6.8...v1.6.9) (2022-12-18)
+
+
+### Bug Fixes
+
+* :bug: sekai profile update error ([e0174cd](https://github.com/Sekai-World/sekai-viewer/commits/e0174cd2d4bad4fc4cc9bfec0f2c8023e88554f5))
+* add missing region param to one useStrapi usage ([544bd37](https://github.com/Sekai-World/sekai-viewer/commits/544bd3725562b78171753e834ec6f966970d568f))
+
 ### [1.6.8](https://github.com/Sekai-World/sekai-viewer/compare/v1.6.7...v1.6.8) (2022-11-01)
 
 
