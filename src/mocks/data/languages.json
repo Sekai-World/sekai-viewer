@@ -1,0 +1,170 @@
+[
+    {
+        "id": 1,
+        "code": "en",
+        "name": "English",
+        "enabled": true,
+        "created_at": "2020-12-30T19:56:51.425Z",
+        "updated_at": "2020-12-30T19:56:51.650Z"
+    },
+    {
+        "id": 2,
+        "code": "zh-CN",
+        "name": "简体中文",
+        "enabled": true,
+        "created_at": "2020-12-30T19:57:21.226Z",
+        "updated_at": "2020-12-30T19:57:21.391Z"
+    },
+    {
+        "id": 4,
+        "code": "ja",
+        "name": "日本語",
+        "enabled": true,
+        "created_at": "2020-12-30T19:58:24.606Z",
+        "updated_at": "2020-12-30T19:58:24.612Z"
+    },
+    {
+        "id": 5,
+        "code": "ko",
+        "name": "한국어",
+        "enabled": true,
+        "created_at": "2020-12-30T19:58:57.212Z",
+        "updated_at": "2020-12-30T19:58:57.383Z"
+    },
+    {
+        "id": 11,
+        "code": "id",
+        "name": "bahasa Indonesia",
+        "enabled": true,
+        "created_at": "2020-12-30T20:02:28.733Z",
+        "updated_at": "2020-12-30T20:02:28.903Z"
+    },
+    {
+        "id": 12,
+        "code": "th",
+        "name": "ภาษาไทย",
+        "enabled": true,
+        "created_at": "2020-12-30T20:03:25.191Z",
+        "updated_at": "2020-12-30T20:03:25.363Z"
+    },
+    {
+        "id": 13,
+        "code": "ru",
+        "name": "русский язык",
+        "enabled": true,
+        "created_at": "2020-12-30T20:03:52.199Z",
+        "updated_at": "2020-12-30T20:03:52.372Z"
+    },
+    {
+        "id": 14,
+        "code": "de",
+        "name": "Deutsch",
+        "enabled": true,
+        "created_at": "2020-12-30T20:04:07.962Z",
+        "updated_at": "2020-12-30T20:04:07.966Z"
+    },
+    {
+        "id": 15,
+        "code": "ms",
+        "name": "bahasa Melayu",
+        "enabled": true,
+        "created_at": "2021-01-09T09:52:05.136Z",
+        "updated_at": "2021-01-09T09:52:05.342Z"
+    },
+    {
+        "id": 3,
+        "code": "zh-TW",
+        "name": "繁體中文",
+        "enabled": true,
+        "created_at": "2020-12-30T19:57:33.115Z",
+        "updated_at": "2021-01-10T10:39:22.369Z"
+    },
+    {
+        "id": 18,
+        "code": "ar",
+        "name": "اَلْعَرَبِيَّةُ",
+        "enabled": true,
+        "created_at": "2021-04-14T17:17:51.280Z",
+        "updated_at": "2021-04-14T17:17:51.289Z"
+    },
+    {
+        "id": 19,
+        "code": "cs",
+        "name": "Čeština",
+        "enabled": true,
+        "created_at": "2021-11-04T21:10:02.467Z",
+        "updated_at": "2021-11-04T21:10:02.491Z"
+    },
+    {
+        "id": 16,
+        "code": "ca_ES",
+        "name": "Català",
+        "enabled": true,
+        "created_at": "2021-02-05T22:47:48.901Z",
+        "updated_at": "2021-11-04T21:10:23.667Z"
+    },
+    {
+        "id": 7,
+        "code": "es",
+        "name": "Español",
+        "enabled": true,
+        "created_at": "2020-12-30T20:00:47.050Z",
+        "updated_at": "2021-11-04T21:10:30.065Z"
+    },
+    {
+        "id": 6,
+        "code": "fr",
+        "name": "Français",
+        "enabled": true,
+        "created_at": "2020-12-30T19:59:27.573Z",
+        "updated_at": "2021-11-04T21:10:48.809Z"
+    },
+    {
+        "id": 8,
+        "code": "it",
+        "name": "Italiano",
+        "enabled": true,
+        "created_at": "2020-12-30T20:01:02.693Z",
+        "updated_at": "2021-11-04T21:11:00.833Z"
+    },
+    {
+        "id": 9,
+        "code": "pl",
+        "name": "Polski",
+        "enabled": true,
+        "created_at": "2020-12-30T20:01:25.588Z",
+        "updated_at": "2021-11-04T21:11:10.536Z"
+    },
+    {
+        "id": 17,
+        "code": "pt",
+        "name": "Português",
+        "enabled": true,
+        "created_at": "2021-02-17T15:00:38.108Z",
+        "updated_at": "2021-11-04T21:11:18.853Z"
+    },
+    {
+        "id": 10,
+        "code": "pt-BR",
+        "name": "Português do Brasil",
+        "enabled": true,
+        "created_at": "2020-12-30T20:01:52.698Z",
+        "updated_at": "2021-11-04T21:11:26.372Z"
+    },
+    {
+        "id": 20,
+        "code": "bg",
+        "name": "български език",
+        "enabled": true,
+        "created_at": "2022-03-20T14:42:24.097Z",
+        "updated_at": "2022-03-20T14:42:24.108Z"
+    },
+    {
+        "id": 21,
+        "code": "vi_VN",
+        "name": "Tiếng Việt",
+        "enabled": true,
+        "created_at": "2022-09-04T07:56:35.674Z",
+        "updated_at": "2022-09-04T07:56:35.684Z"
+    }
+]
