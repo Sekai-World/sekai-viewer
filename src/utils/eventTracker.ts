@@ -21,38 +21,9 @@ export function useEventTrackerAPI(region: ServerRegion = "jp") {
   }, [region]);
 
   return {
-    getGraph: useCallback(
-      async (eventId: number, ranking: EventGraphRanking) =>
-        (
-          await axios.get<{ data: { eventRankings: EventRankingResponse[] } }>(
-            `/event/${eventId}/rankings/graph`,
-            {
-              params: { rank: ranking },
-            }
-          )
-        ).data.data.eventRankings,
-      [axios]
-    ),
-    getLive: useCallback(
-      async () =>
-        (
-          await axios.get<{ data: { eventRankings: EventRankingResponse[] } }>(
-            "/event/live"
-          )
-        ).data.data.eventRankings,
-      [axios]
-    ),
     getEventPred: useCallback(async () => {
       return (await axios.get<EventPrediction>(`/event/pred`)).data;
     }, [axios]),
-    getEventTimePoints: useCallback(
-      async (eventId: number) => {
-        return (
-          await axios.get<{ data: string[] }>(`/event/${eventId}/rankings/time`)
-        ).data;
-      },
-      [axios]
-    ),
     getEventRankingsByTimestamp: useCallback(
       async (eventId: number, timestamp: Date) => {
         return (
@@ -66,6 +37,26 @@ export function useEventTrackerAPI(region: ServerRegion = "jp") {
           )
         ).data;
       },
+      [axios]
+    ),
+    getEventTimePoints: useCallback(
+      async (eventId: number) => {
+        return (
+          await axios.get<{ data: string[] }>(`/event/${eventId}/rankings/time`)
+        ).data;
+      },
+      [axios]
+    ),
+    getGraph: useCallback(
+      async (eventId: number, ranking: EventGraphRanking) =>
+        (
+          await axios.get<{ data: { eventRankings: EventRankingResponse[] } }>(
+            `/event/${eventId}/rankings/graph`,
+            {
+              params: { rank: ranking },
+            }
+          )
+        ).data.data.eventRankings,
       [axios]
     ),
     getLastEventRankings: useCallback(
@@ -94,6 +85,15 @@ export function useEventTrackerAPI(region: ServerRegion = "jp") {
           )
         ).data.data.eventRankings;
       },
+      [axios]
+    ),
+    getLive: useCallback(
+      async () =>
+        (
+          await axios.get<{ data: { eventRankings: EventRankingResponse[] } }>(
+            "/event/live"
+          )
+        ).data.data.eventRankings,
       [axios]
     ),
   };

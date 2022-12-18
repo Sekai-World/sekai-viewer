@@ -119,15 +119,15 @@ function Home() {
 
   const [detected, setDetected] = useState<IDetectResult>({
     webp: -1,
-    webpLossless: -1,
     webpAlpha: -1,
+    webpLossless: -1,
   });
 
   useEffect(() => {
     setDetected({
       webp: Number(Modernizr.webp),
-      webpLossless: Number(Modernizr.webplossless),
       webpAlpha: Number(Modernizr.webpalpha),
+      webpLossless: Number(Modernizr.webplossless),
     });
   }, []);
 
@@ -177,7 +177,7 @@ function Home() {
               <img
                 src={`/images/banner-shizuku.webp`}
                 alt="banner"
-                style={{ width: "100%", height: "auto" }}
+                style={{ height: "auto", width: "100%" }}
                 width="1500"
                 height="500"
               />
@@ -185,7 +185,7 @@ function Home() {
               <img
                 src={`/images/banner-rin-ren.webp`}
                 alt="banner"
-                style={{ width: "100%", height: "auto" }}
+                style={{ height: "auto", width: "100%" }}
                 width="1500"
                 height="500"
               />
@@ -193,7 +193,7 @@ function Home() {
               <img
                 src={`/images/banner-shiho.webp`}
                 alt="banner"
-                style={{ width: "100%", height: "auto" }}
+                style={{ height: "auto", width: "100%" }}
                 width="1500"
                 height="500"
               />
@@ -201,7 +201,7 @@ function Home() {
               <img
                 src={`/images/banner-mafuyu.webp`}
                 alt="banner"
-                style={{ width: "100%", height: "auto" }}
+                style={{ height: "auto", width: "100%" }}
                 width="1500"
                 height="500"
               />
@@ -209,7 +209,7 @@ function Home() {
               <img
                 src={`/images/banner-luka.webp`}
                 alt="banner"
-                style={{ width: "100%", height: "auto" }}
+                style={{ height: "auto", width: "100%" }}
                 width="1500"
                 height="500"
               />
@@ -217,7 +217,7 @@ function Home() {
               <img
                 src={`/images/banner-kaito.webp`}
                 alt="banner"
-                style={{ width: "100%", height: "auto" }}
+                style={{ height: "auto", width: "100%" }}
                 width="1500"
                 height="500"
               />
@@ -225,7 +225,7 @@ function Home() {
               <img
                 src={`/images/banner-minori.webp`}
                 alt="banner"
-                style={{ width: "100%", height: "auto" }}
+                style={{ height: "auto", width: "100%" }}
                 width="1500"
                 height="500"
               />
@@ -233,7 +233,7 @@ function Home() {
               <img
                 src={`/images/banner-nene.webp`}
                 alt="banner"
-                style={{ width: "100%", height: "auto" }}
+                style={{ height: "auto", width: "100%" }}
                 width="1500"
                 height="500"
               />
@@ -241,7 +241,7 @@ function Home() {
               <img
                 src={`/images/banner-an.webp`}
                 alt="banner"
-                style={{ width: "100%", height: "auto" }}
+                style={{ height: "auto", width: "100%" }}
                 width="1500"
                 height="500"
               />
@@ -249,7 +249,7 @@ function Home() {
               <img
                 src={`/images/banner-haruka.webp`}
                 alt="banner"
-                style={{ width: "100%", height: "auto" }}
+                style={{ height: "auto", width: "100%" }}
                 width="1500"
                 height="500"
               />
@@ -258,7 +258,7 @@ function Home() {
               <img
                 src={`/images/banner-anni.webp`}
                 alt="banner"
-                style={{ width: "100%", height: "auto" }}
+                style={{ height: "auto", width: "100%" }}
                 width="1500"
                 height="500"
               />
@@ -266,7 +266,7 @@ function Home() {
               <img
                 src={`/images/banner-new.webp`}
                 alt="banner"
-                style={{ width: "100%", height: "auto" }}
+                style={{ height: "auto", width: "100%" }}
                 width="1500"
                 height="500"
               />

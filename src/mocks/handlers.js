@@ -15,27 +15,27 @@ export const handlers = [
         refresh:
           "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJTZWthaSBWaWV3ZXIiLCJpYXQiOjE2NjM3NTg1OTcsImV4cCI6MTY5NTI5NDU5NywiYXVkIjoibG9jYWxob3N0OjUxNzMiLCJzdWIiOiIxIiwidGt2IjoiMSJ9.fuyFtp8Og5OGDcNKux51dNA-gM3ORG2tfJ1zS1wPuz4",
         user: {
-          id: 1,
-          username: "user",
-          email: "user@sekai.best",
-          provider: "local",
-          confirmed: true,
+          avatarUrl: "",
           blocked: false,
-          role: { name: "Admin", description: "", type: "admin" },
+          confirmed: true,
+          email: "user@sekai.best",
+          id: 1,
+          provider: "local",
+          role: { description: "", name: "Admin", type: "admin" },
           userMetadatum: {
-            id: 1,
             avatar: null,
-            nickname: "Mock User",
+            id: 1,
             languages: [
               {
-                id: 1,
                 code: "en",
-                name: "English",
                 enabled: true,
+                id: 1,
+                name: "English",
               },
             ],
+            nickname: "Mock User",
           },
-          avatarUrl: "",
+          username: "user",
         },
       })
     );
@@ -45,10 +45,10 @@ export const handlers = [
       ctx.status(200),
       ctx.json([
         {
-          id: 1,
           code: "en",
-          name: "English",
           enabled: true,
+          id: 1,
+          name: "English",
         },
       ])
     );
@@ -79,14 +79,14 @@ export const handlers = [
     return res(
       ctx.status(200),
       ctx.json({
-        id: 1,
-        username: "user",
-        email: "user@sekai.best",
-        provider: "local",
-        confirmed: true,
-        blocked: false,
-        role: { name: "Admin", description: "", type: "admin" },
         avatarUrl: "",
+        blocked: false,
+        confirmed: true,
+        email: "user@sekai.best",
+        id: 1,
+        provider: "local",
+        role: { description: "", name: "Admin", type: "admin" },
+        username: "user",
       })
     );
   }),
@@ -116,17 +116,17 @@ export const handlers = [
     return res(
       ctx.status(200),
       ctx.json({
-        id: 1,
         avatar: null,
-        nickname: "Mock User",
+        id: 1,
         languages: [
           {
-            id: 1,
             code: "en",
-            name: "English",
             enabled: true,
+            id: 1,
+            name: "English",
           },
         ],
+        nickname: "Mock User",
       })
     );
   }),
@@ -155,19 +155,19 @@ export const handlers = [
     return res(
       ctx.status(200),
       ctx.json({
+        cardList: [],
+        dailySyncEnabled: false,
+        deckList: [],
+        eventGetAvailable: 10,
+        eventGetUsed: 0,
+        eventHistorySync: false,
         id: 1,
+        region: "jp",
         sekaiUserId: "123456789",
         sekaiUserProfile: sekaiUserProfileJson,
         sekaiUserToken: null,
         updateAvailable: 3,
         updateUsed: 0,
-        eventGetAvailable: 10,
-        eventGetUsed: 0,
-        eventHistorySync: false,
-        dailySyncEnabled: false,
-        region: "jp",
-        cardList: [],
-        deckList: [],
       })
     );
   }),
@@ -196,11 +196,11 @@ export const handlers = [
     return res(
       ctx.status(200),
       ctx.json({
-        id: 1,
-        region: "jp",
         cards: [],
         decks: [],
+        id: 1,
         maxNumOfDecks: 5,
+        region: "jp",
       })
     );
   }),

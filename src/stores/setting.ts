@@ -23,29 +23,29 @@ export const SettingRegion = types.enumeration<ServerRegion>([
 
 export const Settings = types
   .model({
-    lang: types.string,
-    displayMode: SettingDisplayMode,
     contentTransMode: SettingContentTransMode,
-    languages: types.array(LanguageModel),
+    displayMode: SettingDisplayMode,
     isShowSpoiler: types.optional(types.boolean, false),
+    lang: types.string,
+    languages: types.array(LanguageModel),
     region: SettingRegion,
   })
   .actions((self) => ({
-    setLang(newLang: string) {
-      self.lang = newLang;
+    setContentTransMode(newMode: ContentTransModeType) {
+      self.contentTransMode = newMode;
     },
     setDisplayMode(newMode: DisplayModeType) {
       self.displayMode = newMode;
     },
-    setContentTransMode(newMode: ContentTransModeType) {
-      self.contentTransMode = newMode;
+    setIsShowSpoiler(newMode: boolean) {
+      self.isShowSpoiler = newMode;
+    },
+    setLang(newLang: string) {
+      self.lang = newLang;
     },
     setLanguages(newLanguages: ILanguageModel[]) {
       //@ts-ignore
       self.languages = newLanguages;
-    },
-    setIsShowSpoiler(newMode: boolean) {
-      self.isShowSpoiler = newMode;
     },
     setRegion(newRegion: ServerRegion) {
       self.region = newRegion;

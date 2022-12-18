@@ -85,7 +85,6 @@ const MusicRecommend: React.FC<{}> = () => {
       {
         field: "name",
         headerName: t("music_recommend:result.musicName"),
-        width: 400,
         renderCell(params) {
           return (
             <ContentTrans
@@ -94,11 +93,11 @@ const MusicRecommend: React.FC<{}> = () => {
             />
           );
         },
+        width: 400,
       },
       {
         field: "level",
         headerName: t("music:difficulty"),
-        width: 100,
         renderCell(params) {
           return (
             <ChipDifficulty
@@ -107,62 +106,65 @@ const MusicRecommend: React.FC<{}> = () => {
             />
           );
         },
+        width: 100,
       },
       {
+        align: "center",
         field: "duration",
         headerName: t("music:actualPlaybackTime"),
         width: 150,
-        align: "center",
       },
       {
+        align: "center",
         field: "combo",
         headerName: t("music:noteCount"),
         width: 110,
-        align: "center",
       },
       {
-        field: "lowScore",
-        headerName: t("music_recommend:table.column.low"),
-        width: 150,
         // sortDirection: "desc",
         align: "center",
+
+        field: "lowScore",
+
+        headerName: t("music_recommend:table.column.low"),
+
         hide: selectedMode === "multi",
-        valueFormatter: (params: GridValueFormatterParams) =>
-          params.api.getCellValue(params.id, "result")[0],
         sortComparator: (v1, v2, param1, param2) =>
           param1.api.getCellValue(param1.id, "result")[0] -
           param2.api.getCellValue(param2.id, "result")[0],
+        valueFormatter: (params: GridValueFormatterParams) =>
+          params.api.getCellValue(params.id, "result")[0],
+        width: 150,
       },
       {
+        align: "center",
         field: "highScore",
         headerName: t("music_recommend:table.column.high"),
-        width: 150,
-        sortDirection: selectedMode === "solo" ? "desc" : null,
-        align: "center",
         hide: selectedMode === "multi",
-        valueFormatter: (params: GridValueFormatterParams) =>
-          params.api.getCellValue(params.id, "result")[1],
         sortComparator: (v1, v2, param1, param2) =>
           param1.api.getCellValue(param1.id, "result")[1] -
           param2.api.getCellValue(param2.id, "result")[1],
+        sortDirection: selectedMode === "solo" ? "desc" : null,
+        valueFormatter: (params: GridValueFormatterParams) =>
+          params.api.getCellValue(params.id, "result")[1],
+        width: 150,
       },
       {
+        align: "center",
         field: "avgScore",
         headerName: t("music_recommend:result.label"),
-        width: 100,
-        sortDirection: selectedMode === "multi" ? "desc" : null,
-        align: "center",
         hide: selectedMode === "solo",
-        valueFormatter: (params: GridValueFormatterParams) =>
-          params.api.getCellValue(params.id, "result"),
         sortComparator: (v1, v2, param1, param2) =>
           param1.api.getCellValue(param1.id, "result") -
           param2.api.getCellValue(param2.id, "result"),
+        sortDirection: selectedMode === "multi" ? "desc" : null,
+        valueFormatter: (params: GridValueFormatterParams) =>
+          params.api.getCellValue(params.id, "result"),
+        width: 100,
       },
       {
         field: "action",
         headerName: t("home:game-news.action"),
-        width: 80,
         renderCell: (params: GridRenderCellParams) => {
           const info = params.row as IMusicRecommendResult;
           return (
@@ -174,6 +176,7 @@ const MusicRecommend: React.FC<{}> = () => {
           );
         },
         sortable: false,
+        width: 80,
       },
     ],
     [selectedMode, t]
@@ -214,15 +217,15 @@ const MusicRecommend: React.FC<{}> = () => {
           );
 
           return {
+            combo: meta.combo,
+            difficulty: meta.difficulty,
+            duration: meta.music_time,
             id: idx,
+            level: meta.level,
+            link: `/music/${music.id}`,
             mid: meta.music_id,
             name: music.title,
-            level: meta.level,
-            difficulty: meta.difficulty,
-            combo: meta.combo,
-            duration: meta.music_time,
             result: score,
-            link: `/music/${music.id}`,
           } as IMusicRecommendResult;
         })
         .filter((result) => result.result);
@@ -261,15 +264,15 @@ const MusicRecommend: React.FC<{}> = () => {
           // );
 
           return {
+            combo: meta.combo,
+            difficulty: meta.difficulty,
+            duration: meta.music_time,
             id: idx,
+            level: meta.level,
+            link: `/music/${music.id}`,
             mid: meta.music_id,
             name: music.title,
-            level: meta.level,
-            difficulty: meta.difficulty,
-            combo: meta.combo,
-            duration: meta.music_time,
             result: [worstScore, bestScore],
-            link: `/music/${music.id}`,
           } as IMusicRecommendResult;
         })
         .filter((result) => result.result);

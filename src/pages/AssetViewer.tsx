@@ -74,12 +74,12 @@ const AssetListFile: React.FC<{
   const fileIconMap: {
     [key: string]: React.ReactElement;
   } = {
+    flac: <FileMusic fontSize="32" color="inherit" />,
+    jpg: <FileImage fontSize="32" color="inherit" />,
+    mp3: <FileMusic fontSize="32" color="inherit" />,
+    mp4: <FileVideo fontSize="32" color="inherit" />,
     png: <FileImage fontSize="32" color="inherit" />,
     webp: <FileImage fontSize="32" color="inherit" />,
-    jpg: <FileImage fontSize="32" color="inherit" />,
-    mp4: <FileVideo fontSize="32" color="inherit" />,
-    mp3: <FileMusic fontSize="32" color="inherit" />,
-    flac: <FileMusic fontSize="32" color="inherit" />,
   };
 
   return (
@@ -340,11 +340,11 @@ const AssetViewer = () => {
         await axios.get<string>(`/`, {
           baseURL,
           params: {
-            "list-type": "2",
-            delimiter: "/",
-            prefix: path,
-            "max-keys": "500",
             "continuation-token": token,
+            delimiter: "/",
+            "list-type": "2",
+            "max-keys": "500",
+            prefix: path,
           },
           responseType: "text",
         })
@@ -438,16 +438,16 @@ const AssetViewer = () => {
       <Breadcrumb
         paths={folderPath}
         sx={(theme) => ({
-          marginTop: theme.spacing(2),
           marginBottom: theme.spacing(2),
+          marginTop: theme.spacing(2),
         })}
       />
       <Paper
         variant="outlined"
         sx={{
           display: "flex",
-          flexDirection: "column",
           flex: 1,
+          flexDirection: "column",
           position: "relative",
         }}
       >

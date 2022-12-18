@@ -20,14 +20,14 @@ const humanizer = createHumanizer({
 
     // short langs
     short_en: {
-      y: () => "y",
-      mo: () => "mo",
-      w: () => "w",
       d: () => "d",
       h: () => "h",
       m: () => "m",
-      s: () => "s",
+      mo: () => "mo",
       ms: () => "ms",
+      s: () => "s",
+      w: () => "w",
+      y: () => "y",
     },
   },
 });
@@ -40,8 +40,8 @@ export function useDurationI18n() {
   const humanize = useCallback(
     (duration: number, options?: HumanizerOptions) =>
       humanizer(duration, {
-        language,
         fallbacks: [fallbackLang],
+        language,
         ...options,
       }),
     [language]
@@ -50,8 +50,8 @@ export function useDurationI18n() {
   const humanizeShort = useCallback(
     (duration: number, options?: HumanizerOptions) =>
       humanizer(duration, {
-        language: `short_${language}`,
         fallbacks: [language, `short_${fallbackLang}`, fallbackLang],
+        language: `short_${language}`,
         ...options,
       }),
     [language]

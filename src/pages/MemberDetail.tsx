@@ -182,8 +182,8 @@ const MemberDetail: React.FC<{}> = observer(() => {
               >
                 <CardMedia
                   sx={{
-                    paddingTop: "70%",
                     cursor: "pointer",
+                    paddingTop: "70%",
                   }}
                   image={charaTrimImg}
                 ></CardMedia>
@@ -193,8 +193,8 @@ const MemberDetail: React.FC<{}> = observer(() => {
               <Card>
                 <CardMedia
                   sx={{
-                    paddingTop: "30%",
                     backgroundSize: "contain",
+                    paddingTop: "30%",
                   }}
                   image={charaLabelHImg}
                 ></CardMedia>
@@ -204,8 +204,8 @@ const MemberDetail: React.FC<{}> = observer(() => {
               <Card>
                 <CardMedia
                   sx={{
-                    paddingTop: "45%",
                     backgroundSize: "contain",
+                    paddingTop: "45%",
                   }}
                   image={charaLabelVImg}
                 ></CardMedia>
@@ -460,8 +460,8 @@ const MemberDetail: React.FC<{}> = observer(() => {
         onClose={() => setVisible(false)}
         images={[
           {
-            src: charaTrimImg,
             alt: t("member:tab.title[0]"),
+            src: charaTrimImg,
           },
         ]}
         zIndex={2000}

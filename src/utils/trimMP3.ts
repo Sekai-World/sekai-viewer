@@ -123,9 +123,9 @@ export function useTrimMP3() {
         // try clean cache
         if (window.navigator.serviceWorker.controller) {
           window.navigator.serviceWorker.controller.postMessage({
-            type: "cleanSingleCache",
             cacheName: "sekaiAudioFiles",
             endpoint: options.sourceURL,
+            type: "cleanSingleCache",
           });
         }
       });
