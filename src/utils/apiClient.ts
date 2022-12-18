@@ -41,12 +41,11 @@ import { ISekaiCardState } from "../stores/sekai";
 export function useStrapi(token?: string, region?: ServerRegion) {
   const _token = useRef(token);
   const root = useRootStore();
-  region = region || root.region;
   const axios = useMemo(() => {
     const axios = Axios.create({
       baseURL: import.meta.env.VITE_STRAPI_BASE,
       headers: {
-        region: region || "",
+        region: region || root.region || "",
       },
     });
 

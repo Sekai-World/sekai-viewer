@@ -83,7 +83,7 @@ const SekaiUserCardList = observer(() => {
     sekai: { sekaiCardTeamMap, setSekaiCardTeam },
     region,
   } = useRootStore();
-  const { putSekaiCards, deleteSekaiCards } = useStrapi(jwtToken);
+  const { putSekaiCards, deleteSekaiCards } = useStrapi(jwtToken, region);
   const getCharaName = useCharaName();
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
   const { getTranslated } = useAssetI18n();
