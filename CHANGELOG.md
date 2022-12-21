@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.10](https://github.com/Sekai-World/sekai-viewer/compare/v1.6.9...v1.6.10) (2022-12-21)
+
+
+### Bug Fixes
+
+* jp server music note count field rename ([a08398d](https://github.com/Sekai-World/sekai-viewer/commits/a08398d772db2f6715ce0e6369dd13e5a07777c2))
+
 ### [1.6.9](https://github.com/Sekai-World/sekai-viewer/compare/v1.6.8...v1.6.9) (2022-12-18)
 
 
