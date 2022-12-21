@@ -279,7 +279,8 @@ export interface IMusicDifficultyInfo {
   musicDifficulty: string;
   playLevel: number;
   releaseConditionId: number;
-  noteCount: number;
+  noteCount?: number;
+  totalNoteCount?: number;
 }
 
 export interface IMusicTagInfo {
