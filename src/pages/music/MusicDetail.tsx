@@ -272,16 +272,16 @@ const MusicDetail: React.FC<{}> = observer(() => {
   const onPlay = useCallback(() => {
     if ("mediaSession" in window.navigator) {
       window.navigator.mediaSession!.metadata = new MediaMetadata({
-        title: music?.title,
-        artist: music?.composer,
         album: musicVocal[selectedPreviewVocalType].caption,
+        artist: music?.composer,
         artwork: [
           {
-            src: musicJacket,
             sizes: "740x740",
+            src: musicJacket,
             type: "image/webp",
           },
         ],
+        title: music?.title,
       });
     }
   }, [music, musicVocal, musicJacket, selectedPreviewVocalType]);
@@ -295,15 +295,15 @@ const MusicDetail: React.FC<{}> = observer(() => {
       // else durationMsec = (howl.duration() - music.fillerSec) * 1000;
       setActualPlaybackTime(
         `${humanizeDurationShort(durationMsec, {
+          delimiter: " ",
+          maxDecimalPoints: 1,
+          spacer: "",
           units: ["s"],
-          delimiter: " ",
-          spacer: "",
-          maxDecimalPoints: 1,
         })} (${humanizeDurationShort(durationMsec, {
-          units: ["m", "s"],
           delimiter: " ",
-          spacer: "",
           maxDecimalPoints: 1,
+          spacer: "",
+          units: ["m", "s"],
         })})`
       );
     },
@@ -1028,7 +1028,7 @@ const MusicDetail: React.FC<{}> = observer(() => {
                       >
                         {t("music:noteCount")}
                       </Typography>
-                      <Grid item>{elem.noteCount}</Grid>
+                      <Grid item>{elem.noteCount || elem.totalNoteCount}</Grid>
                     </Grid>
                     <Divider style={{ margin: "1% 0" }} />
                     <Grid item>
@@ -1089,7 +1089,7 @@ const MusicDetail: React.FC<{}> = observer(() => {
                                 <Grid item>
                                   <Typography align="center">
                                     {Math.floor(
-                                      elem.noteCount *
+                                      (elem.noteCount || elem.totalNoteCount)! *
                                         Number(
                                           achieve.musicAchievementTypeValue
                                         )
@@ -1196,9 +1196,9 @@ const MusicDetail: React.FC<{}> = observer(() => {
         onClose={() => setVisible(false)}
         images={[
           {
-            src: musicJacket,
             alt: "music jacket",
             downloadUrl: musicJacket.replace(".webp", ".png"),
+            src: musicJacket,
           },
         ]}
         zIndex={2000}
