@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.11](https://github.com/Sekai-World/sekai-viewer/compare/v1.6.10...v1.6.11) (2023-01-13)
+
+
+### Bug Fixes
+
+* :bug: user config in jp sekai profile ([f3d7728](https://github.com/Sekai-World/sekai-viewer/commits/f3d7728911d2f4baa0ac19d0962cb1c43fa76e29))
+
 ### [1.6.10](https://github.com/Sekai-World/sekai-viewer/compare/v1.6.9...v1.6.10) (2022-12-21)
 
 
