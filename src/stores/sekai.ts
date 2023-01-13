@@ -324,6 +324,12 @@ export const SekaiUserCustomProfileCard = types.model({
 export interface ISekaiUserCustomProfileCard
   extends Instance<typeof SekaiUserCustomProfileCard> {}
 
+export const SekaiUserConfig = types.model({
+  friendRequestScope: types.string,
+});
+
+export interface ISekaiUserConfig extends Instance<typeof SekaiUserConfig> {}
+
 export const SekaiUserData = types.model({
   user: SekaiUser,
   userAreaItems: types.array(SekaiUserAreaItem),
@@ -332,6 +338,7 @@ export const SekaiUserData = types.model({
   userChallengeLiveSoloResults: types.array(SekaiUserChallengeLiveSoloResult),
   userChallengeLiveSoloStages: types.array(SekaiUserChallengeLiveSoloStage),
   userCharacters: types.array(SekaiUserCharacter),
+  userConfig: types.maybe(SekaiUserConfig),
   userCustomProfileCards: types.maybe(types.array(SekaiUserCustomProfileCard)),
   userDecks: types.array(SekaiUserDeck),
   userHonors: types.array(SekaiUserHonor),
