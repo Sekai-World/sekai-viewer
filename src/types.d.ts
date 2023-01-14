@@ -365,7 +365,7 @@ export interface IGameCharaUnit {
   skinShadowColorCode2: string;
 }
 
-export interface UserCard {
+export interface UserCardRanking {
   cardId: number;
   level: number;
   masterRank: number;
@@ -373,8 +373,8 @@ export interface UserCard {
   defaultImage: string;
 }
 
-export interface UserProfile {
-  userId: any;
+export interface UserProfileRanking {
+  userId: string | number;
   word: string;
   honorId1?: number;
   honorLevel1?: number;
@@ -384,17 +384,17 @@ export interface UserProfile {
   honorLevel3?: number;
   twitterId: string;
   profileImageType: string;
-  userVirtualLiveTop10Rankings: any[];
+  userVirtualLiveTop10Rankings?: any[];
 }
 
 export interface UserRanking {
-  userId: any;
+  userId: string | number;
   score: number;
   rank: number;
   isOwn: boolean;
   name: string;
-  userCard: UserCard;
-  userProfile: UserProfile;
+  userCard: UserCardRanking;
+  userProfile: UserProfileRanking;
   userCheerfulCarnival: UserCheerfulCarnival;
   userProfileHonors?: ISekaiUserProfileHonor[];
 }
@@ -883,7 +883,7 @@ export interface ICharacterMission {
 }
 
 export interface UserGamedata {
-  userId: number;
+  userId: string | number;
   name: string;
   deck: number;
   rank: number;
@@ -894,14 +894,14 @@ export interface User {
 }
 
 export interface UserProfile {
-  userId: number;
+  userId: string | number;
   word: string;
-  honorId1: number;
-  honorLevel1: number;
-  honorId2: number;
-  honorLevel2: number;
-  honorId3: number;
-  honorLevel3: number;
+  honorId1?: number;
+  honorLevel1?: number;
+  honorId2?: number;
+  honorLevel2?: number;
+  honorId3?: number;
+  honorLevel3?: number;
   twitterId: string;
   profileImageType: string;
 }
@@ -918,7 +918,7 @@ export interface UserDeck {
 export interface UserCardEpisode {
   cardEpisodeId: number;
   scenarioStatus: string;
-  scenarioStatusReasons: string[];
+  scenarioStatusReasons?: string[];
   isNotSkipped: boolean;
 }
 
@@ -932,7 +932,7 @@ export interface UserCard {
 }
 
 export interface UserMusicResult {
-  userId: number;
+  userId: string | number;
   musicId: number;
   musicDifficulty: string;
   playType: string;
@@ -954,7 +954,7 @@ export interface UserMusicDifficultyStatus {
 }
 
 export interface UserMusic {
-  userId: number;
+  userId: string | number;
   musicId: number;
   userMusicDifficultyStatuses: UserMusicDifficultyStatus[];
 }
@@ -982,7 +982,7 @@ export interface UserAreaItem {
 }
 
 export interface UserHonor {
-  userId: number;
+  userId: string | number;
   honorId: number;
   level: number;
   obtainedAt: number;

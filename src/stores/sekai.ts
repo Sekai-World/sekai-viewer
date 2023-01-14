@@ -6,7 +6,7 @@ export const SekaiUserGamedata = types.model({
   deck: types.number,
   name: types.string,
   rank: types.number,
-  userId: types.number,
+  userId: types.union(types.number, types.string),
 });
 export interface ISekaiUserGamedata
   extends Instance<typeof SekaiUserGamedata> {}
@@ -25,7 +25,7 @@ export const SekaiUserProfile = types.model({
   honorLevel3: types.maybe(types.number),
   profileImageType: types.string,
   twitterId: types.optional(types.string, ""),
-  userId: types.number,
+  userId: types.union(types.number, types.string),
   word: types.string,
 });
 export interface ISekaiUserProfile extends Instance<typeof SekaiUserProfile> {}
@@ -72,7 +72,7 @@ export const SekaiUserMusicResult = types.model({
   playType: types.string,
   superStarCount: types.number,
   updatedAt: types.maybe(types.number),
-  userId: types.maybe(types.number),
+  userId: types.maybe(types.union(types.number, types.string)),
 });
 export interface ISekaiUserMusicResult
   extends Instance<typeof SekaiUserMusicResult> {}
@@ -88,7 +88,7 @@ export interface ISekaiUserMusicDifficultyStatus
 
 export const SekaiUserMusic = types.model({
   musicId: types.number,
-  userId: types.maybe(types.number),
+  userId: types.maybe(types.union(types.number, types.string)),
   userMusicDifficultyStatuses: types.array(SekaiUserMusicDifficultyStatus),
 });
 export interface ISekaiUserMusic extends Instance<typeof SekaiUserMusic> {}
@@ -127,7 +127,7 @@ export const SekaiUserHonor = types.model({
   honorId: types.number,
   level: types.number,
   obtainedAt: types.number,
-  userId: types.maybe(types.number),
+  userId: types.maybe(types.union(types.number, types.string)),
 });
 export interface ISekaiUserHonor extends Instance<typeof SekaiUserHonor> {}
 
