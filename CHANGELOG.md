@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.7.0...v1.7.1) (2023-01-14)
+
+
+### Bug Fixes
+
+* :bug: remove country detection in settings page ([5fc211f](https://github.com/Sekai-World/sekai-viewer/commits/5fc211f1967ab48d24fe34366df206e161e9da80))
+
 ## [1.7.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.6.11...v1.7.0) (2023-01-14)
 
 
