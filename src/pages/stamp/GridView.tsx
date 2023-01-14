@@ -17,7 +17,7 @@ const GridView: React.FC<{ data?: IStampInfo }> = observer(({ data }) => {
       getRemoteAssetURL(
         `stamp/${data.assetbundleName}_rip/${data.assetbundleName}/${data.assetbundleName}.webp`,
         setUrl,
-        window.isChinaMainland ? "cn" : "minio",
+        "minio",
         region
       );
     }
@@ -30,9 +30,9 @@ const GridView: React.FC<{ data?: IStampInfo }> = observer(({ data }) => {
         <Skeleton
           variant="rectangular"
           sx={{
+            backgroundSize: "contain",
             marginTop: "0.5em",
             paddingTop: "75%",
-            backgroundSize: "contain",
           }}
         ></Skeleton>
         <CardContent>
@@ -53,9 +53,9 @@ const GridView: React.FC<{ data?: IStampInfo }> = observer(({ data }) => {
       <Card sx={{ cursor: "pointer" }}>
         <CardMedia
           sx={{
+            backgroundSize: "contain",
             marginTop: "0.5em",
             paddingTop: "75%",
-            backgroundSize: "contain",
           }}
           image={url}
           title={data.name}

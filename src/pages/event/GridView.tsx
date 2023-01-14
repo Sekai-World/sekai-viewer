@@ -25,7 +25,7 @@ const GridView: React.FC<{ data?: IEventInfo }> = observer(({ data }) => {
       getRemoteAssetURL(
         `event/${data.assetbundleName}/logo_rip/logo.webp`,
         setEventLogo,
-        window.isChinaMainland ? "cn" : "minio",
+        "minio",
         region
       );
     }
@@ -38,8 +38,8 @@ const GridView: React.FC<{ data?: IEventInfo }> = observer(({ data }) => {
         <Skeleton
           variant="rectangular"
           sx={{
-            paddingTop: "56.25%",
             backgroundSize: "contain",
+            paddingTop: "56.25%",
             position: "relative",
           }}
         ></Skeleton>
@@ -64,9 +64,9 @@ const GridView: React.FC<{ data?: IEventInfo }> = observer(({ data }) => {
         >
           <SpoilerTag
             style={{
+              left: "1%",
               position: "absolute",
               top: "1%",
-              left: "1%",
             }}
             releaseTime={new Date(data.startAt)}
           />

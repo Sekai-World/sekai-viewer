@@ -45,7 +45,7 @@ const CheerfulCarnivalTeamIcon: React.FC<
       getRemoteAssetURL(
         `event/${event.assetbundleName}/team_image_rip/${ccTeam.assetbundleName}.webp`,
         setCcTeamLogo,
-        window.isChinaMainland ? "cn" : "minio",
+        "minio",
         region
       );
     }

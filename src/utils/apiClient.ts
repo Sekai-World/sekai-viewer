@@ -762,11 +762,7 @@ export function useCurrentEvent() {
 
 export function useLive2dModelList() {
   const { data, error } = useSWR(
-    `${
-      window.isChinaMainland
-        ? import.meta.env.VITE_FRONTEND_ASSET_BASE_CN
-        : import.meta.env.VITE_FRONTEND_ASSET_BASE
-    }/models.json`,
+    `${import.meta.env.VITE_FRONTEND_ASSET_BASE}/models.json`,
     axiosFetcher
   );
 

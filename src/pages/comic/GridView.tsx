@@ -20,7 +20,7 @@ const GridView: React.FC<{
           getRemoteAssetURL(
             `comic/one_frame_rip/${data.assetbundleName}.webp`,
             setImageURL,
-            window.isChinaMainland ? "cn" : "minio",
+            "minio",
             "jp"
           );
           break;
@@ -28,7 +28,7 @@ const GridView: React.FC<{
           getRemoteAssetURL(
             `comic/one_frame_rip/${data.assetbundleName}.webp`,
             setImageURL,
-            window.isChinaMainland ? "cn" : "minio",
+            "minio",
             "tw"
           );
           break;
@@ -36,7 +36,7 @@ const GridView: React.FC<{
           getRemoteAssetURL(
             `comic/one_frame_rip/${data.assetbundleName}.webp`,
             setImageURL,
-            window.isChinaMainland ? "cn" : "minio",
+            "minio",
             "en"
           );
           break;
@@ -44,7 +44,7 @@ const GridView: React.FC<{
           getRemoteAssetURL(
             `comic/one_frame_rip/${data.assetbundleName}.webp`,
             setImageURL,
-            window.isChinaMainland ? "cn" : "minio",
+            "minio",
             "kr"
           );
           break;
@@ -52,7 +52,7 @@ const GridView: React.FC<{
           getRemoteAssetURL(
             `${lang}/${data.assetbundleName}.png`,
             setImageURL,
-            window.isChinaMainland ? "cn" : "minio",
+            "minio",
             "comic"
           );
           break;
@@ -67,8 +67,8 @@ const GridView: React.FC<{
         <Skeleton
           variant="rectangular"
           sx={{
-            paddingTop: "75%",
             backgroundSize: "contain",
+            paddingTop: "75%",
           }}
         ></Skeleton>
         <CardContent>
@@ -93,8 +93,8 @@ const GridView: React.FC<{
     >
       <CardMedia
         sx={{
-          paddingTop: "75%",
           backgroundSize: "contain",
+          paddingTop: "75%",
         }}
         image={imageURL}
         title={data.title}

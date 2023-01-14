@@ -156,8 +156,8 @@ const EventDetail: React.FC<{}> = observer(() => {
         rarity_1: [0, 0.5, 0.5],
         rarity_2: [0, 1, 1],
         rarity_3: [0, 5, 5],
-        rarity_birthday: [0, 7.5, 10],
         rarity_4: [0, 10, 15],
+        rarity_birthday: [0, 7.5, 10],
       };
       const masterRankBonusIndex =
         Number(eventId) >= 36 ? (Number(eventId) >= 54 ? 2 : 1) : 0;
@@ -213,8 +213,8 @@ const EventDetail: React.FC<{}> = observer(() => {
 
             return {
               card: card,
-              minBonus: finalEventBonus,
               maxBonus: maxBonus,
+              minBonus: finalEventBonus,
             };
           })
           .filter((it) => it.minBonus >= 40);
@@ -319,8 +319,8 @@ const EventDetail: React.FC<{}> = observer(() => {
 
       setRemainingTime(
         `${humanizeDuration(event.aggregateAt - Date.now(), {
-          units: ["d", "h", "m"],
           round: true,
+          units: ["d", "h", "m"],
         })} (${progressPercent.toFixed(1)}%)`
       );
 
@@ -355,25 +355,25 @@ const EventDetail: React.FC<{}> = observer(() => {
       getRemoteAssetURL(
         `event/${event.assetbundleName}/logo_rip/logo.webp`,
         setEventLogo,
-        window.isChinaMainland ? "cn" : "minio",
+        "minio",
         region
       );
       getRemoteAssetURL(
         `home/banner/${event.assetbundleName}_rip/${event.assetbundleName}.webp`,
         setEventBanner,
-        window.isChinaMainland ? "cn" : "minio",
+        "minio",
         region
       );
       getRemoteAssetURL(
         `event/${event.assetbundleName}/screen_rip/bg.webp`,
         setEventBackground,
-        window.isChinaMainland ? "cn" : "minio",
+        "minio",
         region
       );
       getRemoteAssetURL(
         `event/${event.assetbundleName}/screen_rip/character.webp`,
         setEventCharacter,
-        window.isChinaMainland ? "cn" : "minio",
+        "minio",
         region
       );
     }
@@ -399,14 +399,14 @@ const EventDetail: React.FC<{}> = observer(() => {
       eventBackground && eventCharacter
         ? [
             {
-              src: eventBackground,
               alt: "event background",
               downloadUrl: eventBackground.replace(".webp", ".png"),
+              src: eventBackground,
             },
             {
-              src: eventCharacter,
               alt: "event character",
               downloadUrl: eventCharacter.replace(".webp", ".png"),
+              src: eventCharacter,
             },
           ]
         : [],
@@ -496,7 +496,7 @@ const EventDetail: React.FC<{}> = observer(() => {
           </Paper>
         </TabContext>
         <AudioPlayer
-          style={{ width: "100%", margin: "1% 0" }}
+          style={{ margin: "1% 0", width: "100%" }}
           src={eventBgm}
         ></AudioPlayer>
         <GridOut container direction="column">

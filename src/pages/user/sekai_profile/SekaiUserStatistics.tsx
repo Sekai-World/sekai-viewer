@@ -482,20 +482,20 @@ const SekaiUserStatistics = observer(() => {
                   )
                   .concat([
                     {
-                      id: 2,
-                      assetbundleName: "area11",
                       areaType: "reality_world",
-                      viewType: "side_view",
+                      assetbundleName: "area11",
+                      id: 2,
                       name: "神山高校",
                       releaseConditionId: 1,
+                      viewType: "side_view",
                     },
                     {
-                      id: 6,
-                      assetbundleName: "area13",
                       areaType: "reality_world",
-                      viewType: "side_view",
+                      assetbundleName: "area13",
+                      id: 6,
                       name: "宮益坂女子学園",
                       releaseConditionId: 1,
+                      viewType: "side_view",
                     },
                   ])
                   .map((area) => (
@@ -505,9 +505,7 @@ const SekaiUserStatistics = observer(() => {
                           <Tooltip title={area.name}>
                             <Image
                               src={`${
-                                window.isChinaMainland
-                                  ? assetUrl.cn.jp
-                                  : assetUrl.minio.jp
+                                assetUrl.minio.jp
                               }/worldmap/contents/normal_rip/${
                                 area.areaType === "reality_world"
                                   ? `worldmap_area${String(area.id).padStart(
@@ -547,13 +545,7 @@ const SekaiUserStatistics = observer(() => {
                                     <Grid container>
                                       <Grid item xs={12}>
                                         <Image
-                                          src={`${
-                                            window.isChinaMainland
-                                              ? assetUrl.cn.jp
-                                              : assetUrl.minio.jp
-                                          }/thumbnail/areaitem_rip/${
-                                            areaItem.assetbundleName
-                                          }.png`}
+                                          src={`${assetUrl.minio.jp}/thumbnail/areaitem_rip/${areaItem.assetbundleName}.png`}
                                           alt={`area item ${areaItem.id}`}
                                           style={{
                                             height: "64px",

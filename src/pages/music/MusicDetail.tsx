@@ -155,12 +155,12 @@ const MusicDetail: React.FC<{}> = observer(() => {
       getRemoteAssetURL(
         `music/long/${musicVocal[selectedPreviewVocalType].assetbundleName}_rip/${musicVocal[selectedPreviewVocalType].assetbundleName}.${format}`,
         setLongMusicPlaybackURL,
-        window.isChinaMainland ? "cn" : "minio"
+        "minio"
       );
       getRemoteAssetURL(
         `music/short/${musicVocal[selectedPreviewVocalType].assetbundleName}_rip/${musicVocal[selectedPreviewVocalType].assetbundleName}_short.${format}`,
         setShortMusicPlaybackURL,
-        window.isChinaMainland ? "cn" : "minio"
+        "minio"
       );
     }
   }, [format, music, musicVocal, selectedPreviewVocalType]);
@@ -240,14 +240,14 @@ const MusicDetail: React.FC<{}> = observer(() => {
         getRemoteAssetURL(
           `music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}_org.webp`,
           setMusicJacket,
-          window.isChinaMainland ? "cn" : "minio",
+          "minio",
           region
         );
       } else {
         getRemoteAssetURL(
           `music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}.webp`,
           setMusicJacket,
-          window.isChinaMainland ? "cn" : "minio",
+          "minio",
           region
         );
       }
@@ -1129,9 +1129,7 @@ const MusicDetail: React.FC<{}> = observer(() => {
                             <Grid item>
                               <Link
                                 href={`${
-                                  window.isChinaMainland
-                                    ? assetUrl.cn.musicChart
-                                    : assetUrl.minio.musicChart
+                                  assetUrl.minio.musicChart
                                 }/${musicId.padStart(4, "0")}/${
                                   elem.musicDifficulty
                                 }.svg`}
@@ -1151,9 +1149,7 @@ const MusicDetail: React.FC<{}> = observer(() => {
                             <Grid item>
                               <Link
                                 href={`${
-                                  window.isChinaMainland
-                                    ? assetUrl.cn.musicChart
-                                    : assetUrl.minio.musicChart
+                                  assetUrl.minio.musicChart
                                 }/${musicId.padStart(4, "0")}/${
                                   elem.musicDifficulty
                                 }.png`}

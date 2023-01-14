@@ -119,12 +119,12 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
   const [picTabVal, setPicTabVal] = useState<string>("2");
   const [activeIdx, setActiveIdx] = useState<number>(0);
   const [statistic, setStatistic] = useState<GachaStatistic>({
-    spinCount: 0,
     cost: {
-      ticket: 0,
       jewel: 0,
+      ticket: 0,
     },
     counts: [],
+    spinCount: 0,
   });
   const [currentGachaResult, setCurrentGachaResult] = useState<GachaDetail[]>(
     []
@@ -224,7 +224,6 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
 
       setStatistic((stats) =>
         Object.assign({}, stats, {
-          spinCount: stats.spinCount + behavior.spinCount,
           cost: {
             jewel:
               behavior.costResourceType === "jewel"
@@ -236,6 +235,7 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
                 : stats.cost.ticket,
           },
           counts: stats.counts.map((count, idx) => rollResult[idx] + count),
+          spinCount: stats.spinCount + behavior.spinCount,
         })
       );
 
@@ -254,12 +254,12 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
 
   const resetGacha = useCallback(() => {
     setStatistic((stats) => ({
-      spinCount: 0,
       cost: {
         jewel: 0,
         ticket: 0,
       },
       counts: stats.counts.map(() => 0),
+      spinCount: 0,
     }));
     setCurrentGachaResult([]);
   }, []);
@@ -299,9 +299,9 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
       } else {
         rates = rarities.map((rarity) =>
           Object.assign({}, rarity, {
-            id: 0,
-            groupId: 0,
             cardRarityType: "",
+            groupId: 0,
+            id: 0,
             rate: gacha[`rarity${rarity.rarity}Rate` as "rarity1Rate"],
           })
         );
@@ -393,55 +393,53 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
     if (gacha) {
       getGachaRemoteImages(gacha.assetbundleName, region).then(
         ({ bg, card, cardname, img }) => {
-          getRemoteAssetURL(
-            bg[0],
-            setGachaBackground,
-            window.isChinaMainland ? "cn" : "minio",
-            region
-          );
-          getRemoteAssetURL(
-            img[0],
-            setGachaImage,
-            window.isChinaMainland ? "cn" : "minio",
-            region
-          );
+          getRemoteAssetURL(bg[0], setGachaBackground, "minio", region);
+          getRemoteAssetURL(img[0], setGachaImage, "minio", region);
 
           setGachaPreviewImages([
             ...bg.map((elem, idx) => ({
-              src: `${
-                assetUrl[window.isChinaMainland ? "cn" : "minio"][region]
-              }/${elem.replace(".webp", ".png")}`,
               alt: `background image ${idx}`,
-              downloadUrl: `${
-                assetUrl[window.isChinaMainland ? "cn" : "minio"][region]
-              }/${elem.replace(".webp", ".png")}`,
+              downloadUrl: `${assetUrl["minio"][region]}/${elem.replace(
+                ".webp",
+                ".png"
+              )}`,
+              src: `${assetUrl["minio"][region]}/${elem.replace(
+                ".webp",
+                ".png"
+              )}`,
             })),
             ...img.map((elem, idx) => ({
-              src: `${
-                assetUrl[window.isChinaMainland ? "cn" : "minio"][region]
-              }/${elem.replace(".webp", ".png")}`,
               alt: `feature image ${idx}`,
-              downloadUrl: `${
-                assetUrl[window.isChinaMainland ? "cn" : "minio"][region]
-              }/${elem.replace(".webp", ".png")}`,
+              downloadUrl: `${assetUrl["minio"][region]}/${elem.replace(
+                ".webp",
+                ".png"
+              )}`,
+              src: `${assetUrl["minio"][region]}/${elem.replace(
+                ".webp",
+                ".png"
+              )}`,
             })),
             ...card.map((elem, idx) => ({
-              src: `${
-                assetUrl[window.isChinaMainland ? "cn" : "minio"][region]
-              }/${elem.replace(".webp", ".png")}`,
               alt: `card image ${idx}`,
-              downloadUrl: `${
-                assetUrl[window.isChinaMainland ? "cn" : "minio"][region]
-              }/${elem.replace(".webp", ".png")}`,
+              downloadUrl: `${assetUrl["minio"][region]}/${elem.replace(
+                ".webp",
+                ".png"
+              )}`,
+              src: `${assetUrl["minio"][region]}/${elem.replace(
+                ".webp",
+                ".png"
+              )}`,
             })),
             ...cardname.map((elem, idx) => ({
-              src: `${
-                assetUrl[window.isChinaMainland ? "cn" : "minio"][region]
-              }/${elem.replace(".webp", ".png")}`,
               alt: `cardname image ${idx}`,
-              downloadUrl: `${
-                assetUrl[window.isChinaMainland ? "cn" : "minio"][region]
-              }/${elem.replace(".webp", ".png")}`,
+              downloadUrl: `${assetUrl["minio"][region]}/${elem.replace(
+                ".webp",
+                ".png"
+              )}`,
+              src: `${assetUrl["minio"][region]}/${elem.replace(
+                ".webp",
+                ".png"
+              )}`,
             })),
           ]);
         }
@@ -459,13 +457,13 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
       getRemoteAssetURL(
         `gacha/${gacha.assetbundleName}/logo_rip/logo.webp`,
         setGachaIcon,
-        window.isChinaMainland ? "cn" : "minio",
+        "minio",
         region
       );
       getRemoteAssetURL(
         `home/banner/banner_gacha${gacha.id}_rip/banner_gacha${gacha.id}.webp`,
         setGachaBanner,
-        window.isChinaMainland ? "cn" : "minio",
+        "minio",
         region
       );
     }

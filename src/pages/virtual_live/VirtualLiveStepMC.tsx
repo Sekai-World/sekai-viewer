@@ -87,7 +87,7 @@ const MCCharacterSpawn: React.FC<{ data: CharacterSpawnEvent }> = ({
       getRemoteAssetURL(
         `thumbnail/costume_rip/${headCostume.thumbnailAssetbundleName}.webp`,
         setHeadThumbnail,
-        window.isChinaMainland ? "cn" : "minio"
+        "minio"
       );
     }
   }, [headCostume]);
@@ -97,7 +97,7 @@ const MCCharacterSpawn: React.FC<{ data: CharacterSpawnEvent }> = ({
       getRemoteAssetURL(
         `thumbnail/costume_rip/${bodyCostume.thumbnailAssetbundleName}.webp`,
         setBodyThumbnail,
-        window.isChinaMainland ? "cn" : "minio"
+        "minio"
       );
     }
   }, [bodyCostume]);
@@ -196,7 +196,7 @@ const MCCharacterTalk: React.FC<{ data: CharacterTalkEvent; mcId: string }> = ({
     getRemoteAssetURL(
       `virtual_live/mc/voice/${mcId}_rip/${data.VoiceKey}.mp3`,
       setVoiceUrl,
-      window.isChinaMainland ? "cn" : "minio"
+      "minio"
     );
   }, [data.VoiceKey, mcId]);
 
@@ -235,7 +235,7 @@ const VirtualLiveStepMC: React.FC<{
     getRemoteAssetURL(
       `virtual_live/mc/scenario/${data.assetbundleName}_rip/${data.assetbundleName}.asset`,
       setAssetBundleURL,
-      window.isChinaMainland ? "cn" : "minio",
+      "minio",
       region
     );
   }, [data.assetbundleName, region]);
@@ -251,16 +251,16 @@ const VirtualLiveStepMC: React.FC<{
 
       const tmp: MCSerialData[] = [
         ...data.characterSpawnEvents.map((elem) => ({
-          type: "spawn" as "spawn",
           data: elem,
+          type: "spawn" as "spawn",
         })),
         ...data.characterUnspawnEvents.map((elem) => ({
-          type: "unspawn" as "unspawn",
           data: elem,
+          type: "unspawn" as "unspawn",
         })),
         ...data.characterTalkEvents.map((elem) => ({
-          type: "talk" as "talk",
           data: elem,
+          type: "talk" as "talk",
         })),
       ];
 

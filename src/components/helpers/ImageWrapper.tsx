@@ -17,7 +17,7 @@ const ImageWrapper: React.FC<
           setRealSrc(value);
           setIsReady(true);
         },
-        window.isChinaMainland ? "cn" : "minio",
+        "minio",
         region
       );
     } else {

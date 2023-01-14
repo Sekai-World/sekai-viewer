@@ -69,10 +69,11 @@ const ComicList: React.FC<{}> = observer(() => {
         }
         console.log(resourceLang, url);
         images.push({
-          src: await getRemoteAssetURL(
-            url,
+          alt: getTranslated(`comic_title:${comic.id}`, comic.title),
+          downloadUrl: await getRemoteAssetURL(
+            url.replace(".webp", ".png"),
             undefined,
-            window.isChinaMainland ? "cn" : "minio",
+            "minio",
             resourceLang === "zht"
               ? "tw"
               : resourceLang === "ja"
@@ -83,11 +84,10 @@ const ComicList: React.FC<{}> = observer(() => {
               ? "kr"
               : "comic"
           ),
-          alt: getTranslated(`comic_title:${comic.id}`, comic.title),
-          downloadUrl: await getRemoteAssetURL(
-            url.replace(".webp", ".png"),
+          src: await getRemoteAssetURL(
+            url,
             undefined,
-            window.isChinaMainland ? "cn" : "minio",
+            "minio",
             resourceLang === "zht"
               ? "tw"
               : resourceLang === "ja"
@@ -271,16 +271,16 @@ const ComicList: React.FC<{}> = observer(() => {
           callback={callback}
           data={comics}
           gridSize={{
-            xs: 12,
-            md: 4,
             lg: 3,
+            md: 4,
+            xs: 12,
           }}
           viewProps={{
-            lang: resourceLang,
             handleCardClick: (index: number) => {
               setActiveIdx(index);
               setVisible(true);
             },
+            lang: resourceLang,
           }}
         />
       </ContainerContent>

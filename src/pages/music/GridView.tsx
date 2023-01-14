@@ -24,7 +24,7 @@ const GridView: React.FC<{ data?: IMusicInfo }> = observer(({ data }) => {
       getRemoteAssetURL(
         `music/jacket/${data.assetbundleName}_rip/${data.assetbundleName}.webp`,
         setJacket,
-        window.isChinaMainland ? "cn" : "minio",
+        "minio",
         region
       );
   }, [data, region]);
@@ -64,9 +64,9 @@ const GridView: React.FC<{ data?: IMusicInfo }> = observer(({ data }) => {
         >
           <SpoilerTag
             style={{
+              left: "1%",
               position: "absolute",
               top: "1%",
-              left: "1%",
             }}
             releaseTime={new Date(data.publishedAt)}
           />

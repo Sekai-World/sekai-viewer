@@ -75,7 +75,7 @@ const DegreeImage: React.FC<
         getRemoteAssetURL(
           `bonds_honor/word/${honorWord.assetbundleName}_01_rip/${honorWord.assetbundleName}_01.webp`,
           setWordImage,
-          window.isChinaMainland ? "cn" : "minio",
+          "minio",
           region
         );
       }
@@ -94,7 +94,7 @@ const DegreeImage: React.FC<
               gameCharas[0].gameCharacterId
             ).padStart(2, "0")}_01.webp`,
             setSdLeft,
-            window.isChinaMainland ? "cn" : "minio",
+            "minio",
             region
           );
           getRemoteAssetURL(
@@ -104,7 +104,7 @@ const DegreeImage: React.FC<
               gameCharas[1].gameCharacterId
             ).padStart(2, "0")}_01.webp`,
             setSdRight,
-            window.isChinaMainland ? "cn" : "minio",
+            "minio",
             region
           );
         } else if (viewType === "reverse") {
@@ -115,7 +115,7 @@ const DegreeImage: React.FC<
               gameCharas[1].gameCharacterId
             ).padStart(2, "0")}_01.webp`,
             setSdLeft,
-            window.isChinaMainland ? "cn" : "minio",
+            "minio",
             region
           );
           getRemoteAssetURL(
@@ -125,7 +125,7 @@ const DegreeImage: React.FC<
               gameCharas[0].gameCharacterId
             ).padStart(2, "0")}_01.webp`,
             setSdRight,
-            window.isChinaMainland ? "cn" : "minio",
+            "minio",
             region
           );
         }

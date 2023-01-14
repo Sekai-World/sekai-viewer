@@ -21,7 +21,7 @@ const GridView: React.FC<{ data?: IGachaInfo }> = observer(({ data }) => {
       getRemoteAssetURL(
         `gacha/${data.assetbundleName}/logo_rip/logo.webp`,
         setUrl,
-        window.isChinaMainland ? "cn" : "minio",
+        "minio",
         region
       );
     }
@@ -34,8 +34,8 @@ const GridView: React.FC<{ data?: IGachaInfo }> = observer(({ data }) => {
         <Skeleton
           variant="rectangular"
           sx={{
-            paddingTop: "56.25%",
             backgroundSize: "contain",
+            paddingTop: "56.25%",
             position: "relative",
           }}
         ></Skeleton>
@@ -57,9 +57,9 @@ const GridView: React.FC<{ data?: IGachaInfo }> = observer(({ data }) => {
         >
           <SpoilerTag
             style={{
+              left: "1%",
               position: "absolute",
               top: "1%",
-              left: "1%",
             }}
             releaseTime={new Date(data.startAt)}
           />
@@ -69,22 +69,22 @@ const GridView: React.FC<{ data?: IGachaInfo }> = observer(({ data }) => {
             contentKey={`gacha_name:${data.id}`}
             original={data.name}
             originalProps={{
-              variant: "subtitle1",
               sx: {
-                whiteSpace: "nowrap",
+                maxWidth: "260px",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
-                maxWidth: "260px",
+                whiteSpace: "nowrap",
               },
+              variant: "subtitle1",
             }}
             translatedProps={{
-              variant: "subtitle1",
               sx: {
-                whiteSpace: "nowrap",
+                maxWidth: "260px",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
-                maxWidth: "260px",
+                whiteSpace: "nowrap",
               },
+              variant: "subtitle1",
             }}
           />
           <Typography variant="body2" color="textSecondary">

@@ -136,19 +136,19 @@ const MemberDetail: React.FC<{}> = observer(() => {
     getRemoteAssetURL(
       `character/trim_rip/chr_trim_${charaId}.webp`,
       setCharaTrimImg,
-      window.isChinaMainland ? "cn" : "minio",
+      "minio",
       region
     );
     getRemoteAssetURL(
       `character/label_rip/chr_h_lb_${charaId}.webp`,
       setCharaLabelHImg,
-      window.isChinaMainland ? "cn" : "minio",
+      "minio",
       region
     );
     getRemoteAssetURL(
       `character/label_vertical_rip/chr_v_lb_${charaId}.webp`,
       setCharaLabelVImg,
-      window.isChinaMainland ? "cn" : "minio",
+      "minio",
       region
     );
   }, [charaId, region]);

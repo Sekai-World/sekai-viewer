@@ -18,10 +18,7 @@ export async function initGlobalI18n() {
     .use(detector)
     .init({
       backend: {
-        loadPath:
-          (window.isChinaMainland
-            ? import.meta.env.VITE_JSON_DOMAIN_CN + "/locales"
-            : import.meta.env.VITE_JSON_DOMAIN_WW) + "/{{lng}}/{{ns}}.json",
+        loadPath: import.meta.env.VITE_JSON_DOMAIN_WW + "/{{lng}}/{{ns}}.json",
       },
       defaultNS: "common",
       fallbackLng: {
@@ -68,10 +65,7 @@ export async function initGlobalI18n() {
     .use(detector)
     .init({
       backend: {
-        loadPath:
-          (window.isChinaMainland
-            ? import.meta.env.VITE_JSON_DOMAIN_CN + "/locales"
-            : import.meta.env.VITE_JSON_DOMAIN_WW) + "/{{lng}}/{{ns}}.json",
+        loadPath: import.meta.env.VITE_JSON_DOMAIN_WW + "/{{lng}}/{{ns}}.json",
       },
       fallbackLng: {
         default: ["ja"],

@@ -16,7 +16,7 @@ const MoviePlayer: React.FC<
       const buildDataUrl = await getRemoteAssetURL(
         `${path}/moviebundlebuilddata.asset`,
         undefined,
-        window.isChinaMainland ? "cn" : "minio"
+        "minio"
       );
       const buildData = (
         await axios.get(buildDataUrl, { responseType: "json" })
@@ -27,7 +27,7 @@ const MoviePlayer: React.FC<
       return getRemoteAssetURL(
         `${path}/${fileName}.mp4`,
         setSrc,
-        window.isChinaMainland ? "cn" : "minio",
+        "minio",
         region
       );
     };

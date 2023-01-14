@@ -53,15 +53,15 @@ const StoryReaderContent: React.FC<{ storyType: string; storyId: string }> = ({
       [key: string]: any;
     }[];
   }>({
-    characters: [],
     actions: [],
+    characters: [],
   });
   const [releaseConditionId, setReleaseConditionId] = useState<number>(0);
 
   useEffect(() => {
     setScenarioData({
-      characters: [],
       actions: [],
+      characters: [],
     });
     try {
       switch (storyType) {
@@ -80,7 +80,7 @@ const StoryReaderContent: React.FC<{ storyType: string; storyId: string }> = ({
             getRemoteAssetURL(
               `story/episode_image/${chapter.assetbundleName}_rip/${episode.assetbundleName}.webp`,
               setBannerUrl,
-              window.isChinaMainland ? "cn" : "minio"
+              "minio"
             );
             getProcessedScenarioData(
               `scenario/unitstory/${chapter.assetbundleName}_rip/${episode.scenarioId}.asset`,
@@ -117,7 +117,7 @@ const StoryReaderContent: React.FC<{ storyType: string; storyId: string }> = ({
             getRemoteAssetURL(
               `event_story/${chapter.assetbundleName}/episode_image_rip/${episode.assetbundleName}.webp`,
               setBannerUrl,
-              window.isChinaMainland ? "cn" : "minio"
+              "minio"
             );
             getProcessedScenarioData(
               `event_story/${chapter.assetbundleName}/scenario_rip/${episode.scenarioId}.asset`,
@@ -173,7 +173,7 @@ const StoryReaderContent: React.FC<{ storyType: string; storyId: string }> = ({
               getRemoteAssetURL(
                 `character/member_small/${assetbundleName}_rip/card_normal.webp`,
                 setBannerUrl,
-                window.isChinaMainland ? "cn" : "minio"
+                "minio"
               );
               getProcessedScenarioData(
                 `character/member/${assetbundleName}_rip/${episode.scenarioId}.asset`,
