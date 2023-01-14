@@ -440,9 +440,9 @@ const SekaiID: React.FC<{}> = observer(() => {
                                     );
                                   setSekaiProfile(
                                     {
-                                      updateUsed: sekaiProfile.updateUsed + 1,
                                       sekaiUserProfile:
                                         profile as unknown as ISekaiUserData,
+                                      updateUsed: sekaiProfile.updateUsed + 1,
                                     },
                                     region
                                   );
