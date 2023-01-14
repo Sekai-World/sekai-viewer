@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.6.11...v1.7.0) (2023-01-14)
+
+
+### Bug Fixes
+
+* :bug: sekai profile userid now string ([163a23d](https://github.com/Sekai-World/sekai-viewer/commits/163a23d2d91e8600ebf66ecd7864ac172aa78221))
+
+
+### Refactors
+
+* :fire: remove china mainland urls ([d4d3a90](https://github.com/Sekai-World/sekai-viewer/commits/d4d3a90c338f667d44dff216f3495d41c9767329))
+
 ### [1.6.11](https://github.com/Sekai-World/sekai-viewer/compare/v1.6.10...v1.6.11) (2023-01-13)
 
 
