@@ -8,8 +8,8 @@ import { BrowserRouter as Router } from "react-router-dom";
 import "./modernizr-custom";
 import { initGlobalI18n } from "./utils/i18n";
 import "./index.css";
-import Axios from "axios";
-import localforage from "localforage";
+// import Axios from "axios";
+// import localforage from "localforage";
 // import { UserMetadatumModel, UserModel } from "./strapi-model";
 import AppSkeleton from "./pages/AppSkeleton";
 import { rootStore, RootStoreProvider } from "./stores/root";
@@ -18,21 +18,21 @@ TagManager.initialize({
   gtmId: "GTM-NFC6SW2",
 });
 
-window.isChinaMainland = false;
+// window.isChinaMainland = false;
 
 (async () => {
-  let country = await localforage.getItem<string>("country");
-  if (!country) {
-    country =
-      (
-        await Axios.get<{ data: { country: string } }>(
-          `${import.meta.env.VITE_API_BACKEND_BASE}/country`
-        )
-      ).data.data.country || "unknown";
-    localforage.setItem<string>("country", country);
-  }
+  // let country = await localforage.getItem<string>("country");
+  // if (!country) {
+  //   country =
+  //     (
+  //       await Axios.get<{ data: { country: string } }>(
+  //         `${import.meta.env.VITE_API_BACKEND_BASE}/country`
+  //       )
+  //     ).data.data.country || "unknown";
+  //   localforage.setItem<string>("country", country);
+  // }
 
-  window.isChinaMainland = country === "CN";
+  // window.isChinaMainland = country === "CN";
   await initGlobalI18n();
 
   if (import.meta.env.DEV) {

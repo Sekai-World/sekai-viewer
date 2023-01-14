@@ -132,8 +132,8 @@ const Live2DView: React.FC<{}> = () => {
       });
       setLive2dManager(
         live2dInstance.initialize(undefined, {
-          wrap: wrap.current,
           canvas: canvas.current,
+          wrap: wrap.current,
         })!
       );
     }
@@ -170,34 +170,26 @@ const Live2DView: React.FC<{}> = () => {
           AdditionalMotionData: any[];
           CategoryRules: any[];
         }>(
-          `${
-            window.isChinaMainland ? assetUrl.cn.jp : assetUrl.minio.jp
-          }/live2d/model/${modelName}_rip/buildmodeldata.asset`,
+          `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/buildmodeldata.asset`,
           { responseType: "json" }
         );
 
         setProgress(20);
         setProgressWords(t("live2d:load_progress.model_texture"));
         await Axios.get(
-          `${
-            window.isChinaMainland ? assetUrl.cn.jp : assetUrl.minio.jp
-          }/live2d/model/${modelName}_rip/${modelData.TextureNames[0]}`
+          `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/${modelData.TextureNames[0]}`
         );
 
         setProgress(40);
         setProgressWords(t("live2d:load_progress.model_moc3"));
         await Axios.get(
-          `${
-            window.isChinaMainland ? assetUrl.cn.jp : assetUrl.minio.jp
-          }/live2d/model/${modelName}_rip/${modelData.Moc3FileName}`
+          `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/${modelData.Moc3FileName}`
         );
 
         setProgress(60);
         setProgressWords(t("live2d:load_progress.model_physics"));
         await Axios.get(
-          `${
-            window.isChinaMainland ? assetUrl.cn.jp : assetUrl.minio.jp
-          }/live2d/model/${modelName}_rip/${modelData.PhysicsFileName}`
+          `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/${modelData.PhysicsFileName}`
         );
 
         let motionData;
@@ -208,16 +200,14 @@ const Live2DView: React.FC<{}> = () => {
             motions: string[];
             expressions: string[];
           }>(
-            `${
-              window.isChinaMainland ? assetUrl.cn.jp : assetUrl.minio.jp
-            }/live2d/motion/${motionName}_rip/BuildMotionData.json`,
+            `${assetUrl.minio.jp}/live2d/motion/${motionName}_rip/BuildMotionData.json`,
             { responseType: "json" }
           );
           motionData = data;
         } else {
           motionData = {
-            motions: [],
             expressions: [],
+            motions: [],
           };
         }
 
@@ -226,28 +216,22 @@ const Live2DView: React.FC<{}> = () => {
         const filename = modelData.Moc3FileName.replace(".moc3.bytes", "");
         const model = await live2dManager.addModel(
           {
-            path: `${
-              window.isChinaMainland ? assetUrl.cn.jp : assetUrl.minio.jp
-            }/live2d/model/${modelName}_rip/`,
+            expressions: [],
             fileName: filename,
             modelName,
             modelSize: wrap.current!.clientWidth,
-            textures: [],
             motions: [
               ...motionData.motions.map((name) => ({
                 name,
-                url: `${
-                  window.isChinaMainland ? assetUrl.cn.jp : assetUrl.minio.jp
-                }/live2d/motion/${motionName}_rip/${name}.motion3.json`,
+                url: `${assetUrl.minio.jp}/live2d/motion/${motionName}_rip/${name}.motion3.json`,
               })),
               ...motionData.expressions.map((name) => ({
                 name,
-                url: `${
-                  window.isChinaMainland ? assetUrl.cn.jp : assetUrl.minio.jp
-                }/live2d/motion/${motionName}_rip/${name}.motion3.json`,
+                url: `${assetUrl.minio.jp}/live2d/motion/${motionName}_rip/${name}.motion3.json`,
               })),
             ],
-            expressions: [],
+            path: `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/`,
+            textures: [],
           },
           true
         );
@@ -280,18 +264,13 @@ const Live2DView: React.FC<{}> = () => {
       AdditionalMotionData: any[];
       CategoryRules: any[];
     }>(
-      `${
-        window.isChinaMainland ? assetUrl.cn.jp : assetUrl.minio.jp
-      }/live2d/model/${modelName}_rip/buildmodeldata.asset`,
+      `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/buildmodeldata.asset`,
       { responseType: "json" }
     );
 
     const model3 = {
-      Version: 3,
       FileReferences: {
         Moc: `${modelName}.moc3`,
-        Textures: [`${modelName}.2048/texture_00.png`],
-        Physics: `${modelName}.physics3.json`,
         Motions: [...motions, ...expressions].reduce<{
           [key: string]: [
             {
@@ -305,27 +284,30 @@ const Live2DView: React.FC<{}> = () => {
             Object.assign({}, sum, {
               [elem]: [
                 {
-                  File: `motions/${elem}.motion3.json`,
                   FadeInTime: 0.5,
                   FadeOutTime: 0.5,
+                  File: `motions/${elem}.motion3.json`,
                 },
               ],
             }),
           {}
         ),
+        Physics: `${modelName}.physics3.json`,
+        Textures: [`${modelName}.2048/texture_00.png`],
       },
       Groups: [
         {
-          Target: "Parameter",
-          Name: "EyeBlink",
           Ids: [],
+          Name: "EyeBlink",
+          Target: "Parameter",
         },
         {
-          Target: "Parameter",
-          Name: "LipSync",
           Ids: [],
+          Name: "LipSync",
+          Target: "Parameter",
         },
       ],
+      Version: 3,
     };
 
     zip.file(`${modelName}.model3.json`, JSON.stringify(model3, null, 2));
@@ -333,9 +315,7 @@ const Live2DView: React.FC<{}> = () => {
     setProgress(10);
     setProgressWords(t("live2d:pack_progress.download_texture"));
     const { data: texture } = await Axios.get(
-      `${
-        window.isChinaMainland ? assetUrl.cn.jp : assetUrl.minio.jp
-      }/live2d/model/${modelName}_rip/${modelData.TextureNames[0]}`,
+      `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/${modelData.TextureNames[0]}`,
       { responseType: "blob" }
     );
 
@@ -344,9 +324,7 @@ const Live2DView: React.FC<{}> = () => {
     setProgress(20);
     setProgressWords(t("live2d:pack_progress.download_moc3"));
     const { data: moc3 } = await Axios.get(
-      `${
-        window.isChinaMainland ? assetUrl.cn.jp : assetUrl.minio.jp
-      }/live2d/model/${modelName}_rip/${modelData.Moc3FileName}`,
+      `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/${modelData.Moc3FileName}`,
       { responseType: "blob" }
     );
 
@@ -355,9 +333,7 @@ const Live2DView: React.FC<{}> = () => {
     setProgress(30);
     setProgressWords(t("live2d:pack_progress.download_physics"));
     const { data: physics } = await Axios.get(
-      `${
-        window.isChinaMainland ? assetUrl.cn.jp : assetUrl.minio.jp
-      }/live2d/model/${modelName}_rip/${modelData.PhysicsFileName}`,
+      `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/${modelData.PhysicsFileName}`,
       { responseType: "blob" }
     );
 
@@ -370,21 +346,19 @@ const Live2DView: React.FC<{}> = () => {
     const updateCount = () => {
       count++;
       setProgressWords(
-        t("live2d:pack_progress.download_motions", { total, dlcount: count })
+        t("live2d:pack_progress.download_motions", { dlcount: count, total })
       );
       setProgress(40 + Math.round(50 * (count / total)));
     };
     setProgressWords(
-      t("live2d:pack_progress.download_motions", { total, dlcount: count })
+      t("live2d:pack_progress.download_motions", { dlcount: count, total })
     );
 
     const tasks = [];
     for (let [name, motion] of Object.entries(model3.FileReferences.Motions)) {
       tasks.push(
         Axios.get<Blob>(
-          `${
-            window.isChinaMainland ? assetUrl.cn.jp : assetUrl.minio.jp
-          }/live2d/motion/${motionName}_rip/${name}.motion3.json`,
+          `${assetUrl.minio.jp}/live2d/motion/${motionName}_rip/${name}.motion3.json`,
           { responseType: "blob" }
         ).then(({ data }) => {
           updateCount();
@@ -486,7 +460,7 @@ const Live2DView: React.FC<{}> = () => {
       )}
       <Box
         ref={wrap}
-        sx={{ marginTop: theme.spacing(2), marginBottom: theme.spacing(2) }}
+        sx={{ marginBottom: theme.spacing(2), marginTop: theme.spacing(2) }}
       >
         {model && (
           <Toolbar component={Paper}>
@@ -641,13 +615,13 @@ const Live2DView: React.FC<{}> = () => {
                       onClick={() => {
                         if (selectedMotion) {
                           model.startMotion({
+                            autoAppear: false,
+                            autoIdle: false,
+                            fadeInTime: 0.5,
+                            fadeOutTime: 0.5,
                             groupName: selectedMotion,
                             no: 0,
                             priority: 3,
-                            autoIdle: false,
-                            autoAppear: false,
-                            fadeInTime: 0.5,
-                            fadeOutTime: 0.5,
                           });
                         }
                       }}
@@ -681,13 +655,13 @@ const Live2DView: React.FC<{}> = () => {
                       onClick={() => {
                         if (selectedExpression) {
                           model.startMotion({
+                            autoAppear: false,
+                            autoIdle: false,
+                            fadeInTime: 0.5,
+                            fadeOutTime: 0.5,
                             groupName: selectedExpression,
                             no: 0,
                             priority: 3,
-                            autoIdle: false,
-                            autoAppear: false,
-                            fadeInTime: 0.5,
-                            fadeOutTime: 0.5,
                           });
                         }
                       }}

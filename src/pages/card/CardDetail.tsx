@@ -80,8 +80,8 @@ import PaperContainer from "../../components/styled/PaperContainer";
 import TypographyCaption from "../../components/styled/TypographyCaption";
 
 const ImgRarityStar = styled("img")(({ theme }) => ({
-  maxWidth: "32px",
   margin: theme.spacing(0, 0.25),
+  maxWidth: "32px",
 }));
 const BoxSliderContainer = styled(Box)(({ theme }) => ({
   [theme.breakpoints.up("md")]: {
@@ -250,8 +250,8 @@ const CardDetail: React.FC<{}> = observer(() => {
     if (_card) {
       const prefix = getTranslated(`card_prefix:${_card.id}`, _card.prefix);
       document.title = t("title:cardDetail", {
-        prefix,
         character: getCharaName(_card.characterId),
+        prefix,
       });
     }
   }, [cards, cardId, contentTransMode, getCharaName, assetT, getTranslated, t]);
@@ -276,8 +276,8 @@ const CardDetail: React.FC<{}> = observer(() => {
       if (_rarityInfo) {
         setCard(
           Object.assign({}, _card, {
-            maxTrainedLevel: _rarityInfo.trainingMaxLevel,
             maxNormalLevel: _rarityInfo.maxLevel,
+            maxTrainedLevel: _rarityInfo.trainingMaxLevel,
           })
         );
         setCardLevel(_rarityInfo.trainingMaxLevel || _rarityInfo.maxLevel);
@@ -295,7 +295,7 @@ const CardDetail: React.FC<{}> = observer(() => {
           getRemoteAssetURL(
             `sound/gacha/get_voice/${_card.assetbundleName}_rip/${_card.assetbundleName}.mp3`,
             setGachaPhraseUrl,
-            window.isChinaMainland ? "cn" : "minio"
+            "minio"
           );
       }
       const _eventCards = eventCardsCache.filter(
@@ -362,23 +362,23 @@ const CardDetail: React.FC<{}> = observer(() => {
       getRemoteAssetURL(
         `character/member/${card.assetbundleName}_rip/card_normal.webp`,
         setNormalImg,
-        window.isChinaMainland ? "cn" : "minio"
+        "minio"
       );
       getRemoteAssetURL(
         `character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`,
         setNormalTrimImg,
-        window.isChinaMainland ? "cn" : "minio"
+        "minio"
       );
       if (isTrainableCard) {
         getRemoteAssetURL(
           `character/member/${card.assetbundleName}_rip/card_after_training.webp`,
           setTrainedImg,
-          window.isChinaMainland ? "cn" : "minio"
+          "minio"
         );
         getRemoteAssetURL(
           `character/member_cutout_trm/${card.assetbundleName}_rip/after_training.webp`,
           setTrainedTrimImg,
-          window.isChinaMainland ? "cn" : "minio"
+          "minio"
         );
       }
     }
@@ -390,36 +390,36 @@ const CardDetail: React.FC<{}> = observer(() => {
         ? isTrainableCard
           ? [
               {
-                src: normalImg,
                 alt: "card normal",
                 downloadUrl: normalImg.replace(".webp", ".png"),
+                src: normalImg,
               },
               {
-                src: normalTrimImg,
                 alt: "card normal trim",
                 downloadUrl: normalTrimImg.replace(".webp", ".png"),
+                src: normalTrimImg,
               },
               {
-                src: trainedImg,
                 alt: "card after training",
                 downloadUrl: trainedImg.replace(".webp", ".png"),
+                src: trainedImg,
               },
               {
-                src: trainedTrimImg,
                 alt: "card after training trim",
                 downloadUrl: trainedTrimImg.replace(".webp", ".png"),
+                src: trainedTrimImg,
               },
             ]
           : [
               {
-                src: normalImg,
                 alt: "card normal",
                 downloadUrl: normalImg.replace(".webp", ".png"),
+                src: normalImg,
               },
               {
-                src: normalTrimImg,
                 alt: "card normal",
                 downloadUrl: normalTrimImg.replace(".webp", ".png"),
+                src: normalTrimImg,
               },
             ]
         : [],
@@ -1083,18 +1083,18 @@ const CardDetail: React.FC<{}> = observer(() => {
                       isTrainableCard && !isBirthdayCard
                         ? [
                             {
-                              value: card.maxNormalLevel,
                               label: t("card:normal"),
+                              value: card.maxNormalLevel,
                             },
                             {
-                              value: card.maxTrainedLevel!,
                               label: t("card:trained"),
+                              value: card.maxTrainedLevel!,
                             },
                           ]
                         : [
                             {
-                              value: card.maxNormalLevel,
                               label: t("card:normal"),
+                              value: card.maxNormalLevel,
                             },
                           ]
                     }

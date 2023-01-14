@@ -84,7 +84,7 @@ const DegreeImage: React.FC<
               honorGroup.backgroundAssetbundleName
             }_rip/degree_${sub ? "sub" : "main"}.webp`,
             setDegreeImage,
-            window.isChinaMainland ? "cn" : "minio",
+            "minio",
             region
           );
         } else if (honorGroup && honorGroup.backgroundAssetbundleName) {
@@ -93,7 +93,7 @@ const DegreeImage: React.FC<
               sub ? "sub" : "main"
             }.webp`,
             setDegreeImage,
-            window.isChinaMainland ? "cn" : "minio",
+            "minio",
             region
           );
         } else if (honor.assetbundleName)
@@ -102,7 +102,7 @@ const DegreeImage: React.FC<
               sub ? "sub" : "main"
             }.webp`,
             setDegreeImage,
-            window.isChinaMainland ? "cn" : "minio",
+            "minio",
             region
           );
         if (type === "event_ranking_reward")
@@ -111,7 +111,7 @@ const DegreeImage: React.FC<
               sub ? "sub" : "main"
             }.webp`,
             setDegreeRankImage,
-            window.isChinaMainland ? "cn" : "minio",
+            "minio",
             region
           );
         else if (honorGroup && honorGroup.honorType === "rank_match")
@@ -120,7 +120,7 @@ const DegreeImage: React.FC<
               sub ? "sub" : "main"
             }.webp`,
             setDegreeRankImage,
-            window.isChinaMainland ? "cn" : "minio",
+            "minio",
             region
           );
         else if (
@@ -133,7 +133,7 @@ const DegreeImage: React.FC<
               sub ? "sub" : "main"
             }.webp`,
             setDegreeRankImage,
-            window.isChinaMainland ? "cn" : "minio",
+            "minio",
             region
           );
       }

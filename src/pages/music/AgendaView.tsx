@@ -42,7 +42,7 @@ const AgendaView: React.FC<{ data?: IMusicInfo }> = observer(({ data }) => {
       getRemoteAssetURL(
         `music/jacket/${data.assetbundleName}_rip/${data.assetbundleName}.webp`,
         setJacket,
-        window.isChinaMainland ? "cn" : "minio",
+        "minio",
         region
       );
   }, [data, region]);

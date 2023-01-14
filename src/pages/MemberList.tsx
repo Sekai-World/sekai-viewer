@@ -25,7 +25,7 @@ const MemberImage: React.FC<{ id: number }> = ({ id }) => {
     getRemoteAssetURL(
       `character/character_select_rip/chr_tl_${id}.webp`,
       setUrl,
-      window.isChinaMainland ? "cn" : "minio",
+      "minio",
       region
     );
   }, [id, region]);

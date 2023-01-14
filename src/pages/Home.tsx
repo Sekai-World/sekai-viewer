@@ -3,7 +3,7 @@ import {
   Album,
   AspectRatio,
   GitHub,
-  MonetizationOn,
+  // MonetizationOn,
   MoveToInbox,
   OpenInNew,
   Settings as SettingsIcon,
@@ -103,7 +103,7 @@ const VersionInfo = () => {
 
 function Home() {
   const theme = useTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const {
     settings: { isShowSpoiler, region },
@@ -285,7 +285,7 @@ function Home() {
             components={{ s: <Settings fontSize="inherit" /> }}
           />
         </Alert> */}
-        {window.isChinaMainland && (
+        {/* {window.isChinaMainland && (
           <Alert sx={{ margin: theme.spacing(1, 0) }} severity="info">
             本站已启用腾讯云CDN加速数据加载，并计划迁移更多数据加速本站访问，但是费用相对高昂，你可以通过
             <Link
@@ -298,7 +298,7 @@ function Home() {
             </Link>
             来赞助支持让我更轻松地进行迁移工作。
           </Alert>
-        )}
+        )} */}
         {getWebpDetectSeverity(detected) !== "success" && (
           <Alert
             sx={{ margin: theme.spacing(1, 0) }}
@@ -452,7 +452,7 @@ function Home() {
                 </Grid>
               </Link>
             </Grid>
-            {window.isChinaMainland && (
+            {i18n.language.startsWith("zh") && (
               <Grid item>
                 <Link
                   href="https://b23.tv/AIjzvc"
@@ -468,23 +468,21 @@ function Home() {
                 </Link>
               </Grid>
             )}
-            {!window.isChinaMainland && (
-              <Grid item>
-                <Link
-                  href="https://www.patreon.com/bePatron?u=6503151"
-                  target="_blank"
-                  underline="hover"
-                >
-                  <Grid container direction="row" alignContent="center">
-                    <Grid item>
-                      <Patreon fontSize="small" />
-                    </Grid>
-                    <Grid item>Patreon</Grid>
+            <Grid item>
+              <Link
+                href="https://www.patreon.com/bePatron?u=6503151"
+                target="_blank"
+                underline="hover"
+              >
+                <Grid container direction="row" alignContent="center">
+                  <Grid item>
+                    <Patreon fontSize="small" />
                   </Grid>
-                </Link>
-              </Grid>
-            )}
-            {window.isChinaMainland && (
+                  <Grid item>Patreon</Grid>
+                </Grid>
+              </Link>
+            </Grid>
+            {/* {window.isChinaMainland && (
               <Grid item>
                 <Link
                   href="https://afdian.net/@sekaiviewer"
@@ -499,7 +497,7 @@ function Home() {
                   </Grid>
                 </Link>
               </Grid>
-            )}
+            )} */}
             <Grid item>
               <LinkNoDecoration
                 to="/about"
@@ -528,38 +526,36 @@ function Home() {
               </Link>
             </Grid>
           </Grid>
-          {!window.isChinaMainland && (
-            <Grid item container columnSpacing={2} rowSpacing={1}>
-              <Grid item>
-                <Link
-                  href="https://www.twitter.com/SekaiViewer"
-                  target="_blank"
-                  underline="hover"
-                >
-                  <Grid container direction="row" alignContent="center">
-                    <Grid item>
-                      <Twitter fontSize="small"></Twitter>
-                    </Grid>
-                    <Grid item>@SekaiViewer</Grid>
+          <Grid item container columnSpacing={2} rowSpacing={1}>
+            <Grid item>
+              <Link
+                href="https://www.twitter.com/SekaiViewer"
+                target="_blank"
+                underline="hover"
+              >
+                <Grid container direction="row" alignContent="center">
+                  <Grid item>
+                    <Twitter fontSize="small"></Twitter>
                   </Grid>
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link
-                  href="https://discord.gg/xcDBRMd"
-                  target="_blank"
-                  underline="hover"
-                >
-                  <Grid container direction="row" alignContent="center">
-                    <Grid item>
-                      <Discord fontSize="small"></Discord>
-                    </Grid>
-                    <Grid item>Sekai Viewer</Grid>
-                  </Grid>
-                </Link>
-              </Grid>
+                  <Grid item>@SekaiViewer</Grid>
+                </Grid>
+              </Link>
             </Grid>
-          )}
+            <Grid item>
+              <Link
+                href="https://discord.gg/xcDBRMd"
+                target="_blank"
+                underline="hover"
+              >
+                <Grid container direction="row" alignContent="center">
+                  <Grid item>
+                    <Discord fontSize="small"></Discord>
+                  </Grid>
+                  <Grid item>Sekai Viewer</Grid>
+                </Grid>
+              </Link>
+            </Grid>
+          </Grid>
         </Grid>
       </ContainerContent>
       <VersionInfo />

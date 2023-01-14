@@ -24,7 +24,7 @@ const Costume3DThumbnail = ({ costumeId }: Props) => {
       getRemoteAssetURL(
         `thumbnail/costume_rip/${costume.thumbnailAssetbundleName}.webp`,
         setThumbnail,
-        window.isChinaMainland ? "cn" : "minio"
+        "minio"
       );
     }
   }, [costume]);

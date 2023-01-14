@@ -25,7 +25,7 @@ const AgendaView: React.FC<{ data?: IVirtualLiveInfo }> = observer(
         getRemoteAssetURL(
           `virtual_live/select/banner/${data.assetbundleName}_rip/${data.assetbundleName}.png`,
           setVirtualLiveLogo,
-          window.isChinaMainland ? "cn" : "minio",
+          "minio",
           region
         );
       }
@@ -45,9 +45,9 @@ const AgendaView: React.FC<{ data?: IVirtualLiveInfo }> = observer(
               <Skeleton
                 variant="rectangular"
                 sx={(theme) => ({
+                  backgroundSize: "contain",
                   paddingTop: "30%",
                   width: "100%",
-                  backgroundSize: "contain",
                 })}
               />
             </Grid>

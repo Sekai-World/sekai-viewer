@@ -32,13 +32,12 @@ const Support: React.FC<{}> = () => {
         <Trans i18nKey="support:general.desc" />
       </Typography>
       <br />
-      {window.isChinaMainland ? (
+      {/* {window.isChinaMainland ? (
         <Fragment>
           <TypographyHeader variant="subtitle1">
             爱发电 <MonetizationOn fontSize="inherit" />
           </TypographyHeader>
           <Typography>
-            {/* <Trans i18nKey="support:patreon.desc" /> */}
             如果你喜欢本站，欢迎赞助支持！你的支持可以进一步提高本站在大陆地区的访问速度。
           </Typography>
           <Link
@@ -58,75 +57,75 @@ const Support: React.FC<{}> = () => {
           </Link>
           <br />
         </Fragment>
-      ) : (
-        <Fragment>
-          <TypographyHeader variant="subtitle1">
-            Patreon <Patreon fontSize="inherit" />
-          </TypographyHeader>
+      ) : ( */}
+      <Fragment>
+        <TypographyHeader variant="subtitle1">
+          Patreon <Patreon fontSize="inherit" />
+        </TypographyHeader>
+        <Typography>
+          <Trans i18nKey="support:patreon.desc" />
+        </Typography>
+        <Link
+          href="https://www.patreon.com/SekaiViewer"
+          target="_blank"
+          underline="hover"
+        >
           <Typography>
-            <Trans i18nKey="support:patreon.desc" />
+            Become a Patron! <OpenInNew fontSize="inherit" />
           </Typography>
-          <Link
-            href="https://www.patreon.com/SekaiViewer"
-            target="_blank"
-            underline="hover"
-          >
-            <Typography>
-              Become a Patron! <OpenInNew fontSize="inherit" />
-            </Typography>
-          </Link>
-          <br />
-          {isLoading ? (
-            <CircularProgress size="24" />
-          ) : error ? (
-            <Container>
-              <Typography>Failed loading patron list!</Typography>
-            </Container>
-          ) : (
-            <Container>
-              {["Happy", "Lucky", "Smile", "Yay"].map((tier) => (
-                <Fragment>
-                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                    Tier {tier}
-                  </Typography>
-                  <Grid container spacing={1}>
-                    {patrons
-                      .filter((elem) => elem.tier === tier)
-                      .map((patron) => (
-                        <Grid item xs={12} md={4} lg={3}>
-                          <Grid container alignItems="center" spacing={1}>
-                            <Grid item>
-                              <Avatar
-                                src={patron.avatarUrl}
-                                alt={patron.name}
-                              ></Avatar>
-                            </Grid>
-                            <Grid item>
-                              <Typography>{patron.name}</Typography>
-                            </Grid>
-                          </Grid>
-                        </Grid>
-                      ))}
-                    {!patrons.filter((elem) => elem.tier === tier).length && (
+        </Link>
+        <br />
+        {isLoading ? (
+          <CircularProgress size="24" />
+        ) : error ? (
+          <Container>
+            <Typography>Failed loading patron list!</Typography>
+          </Container>
+        ) : (
+          <Container>
+            {["Happy", "Lucky", "Smile", "Yay"].map((tier) => (
+              <Fragment>
+                <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                  Tier {tier}
+                </Typography>
+                <Grid container spacing={1}>
+                  {patrons
+                    .filter((elem) => elem.tier === tier)
+                    .map((patron) => (
                       <Grid item xs={12} md={4} lg={3}>
                         <Grid container alignItems="center" spacing={1}>
                           <Grid item>
-                            <Avatar>NA</Avatar>
+                            <Avatar
+                              src={patron.avatarUrl}
+                              alt={patron.name}
+                            ></Avatar>
                           </Grid>
                           <Grid item>
-                            <Typography>N/A</Typography>
+                            <Typography>{patron.name}</Typography>
                           </Grid>
                         </Grid>
                       </Grid>
-                    )}
-                  </Grid>
-                </Fragment>
-              ))}
-            </Container>
-          )}
-          <br />
-        </Fragment>
-      )}
+                    ))}
+                  {!patrons.filter((elem) => elem.tier === tier).length && (
+                    <Grid item xs={12} md={4} lg={3}>
+                      <Grid container alignItems="center" spacing={1}>
+                        <Grid item>
+                          <Avatar>NA</Avatar>
+                        </Grid>
+                        <Grid item>
+                          <Typography>N/A</Typography>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  )}
+                </Grid>
+              </Fragment>
+            ))}
+          </Container>
+        )}
+        <br />
+      </Fragment>
+      {/* )} */}
       <TypographyHeader variant="subtitle1">
         {t("support:translation.title")} <Translate fontSize="inherit" />
       </TypographyHeader>

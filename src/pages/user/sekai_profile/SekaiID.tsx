@@ -46,9 +46,7 @@ const VerifyDialog: React.FC<
         <DialogContent>
           <CardMedia
             image={`${
-              window.isChinaMainland
-                ? import.meta.env.VITE_FRONTEND_ASSET_BASE_CN
-                : import.meta.env.VITE_FRONTEND_ASSET_BASE
+              import.meta.env.VITE_FRONTEND_ASSET_BASE
             }/verify/step_1.png`}
             title="sekai id verify step 1"
             sx={(theme) => ({
@@ -75,9 +73,7 @@ const VerifyDialog: React.FC<
         <DialogContent>
           <CardMedia
             image={`${
-              window.isChinaMainland
-                ? import.meta.env.VITE_FRONTEND_ASSET_BASE_CN
-                : import.meta.env.VITE_FRONTEND_ASSET_BASE
+              import.meta.env.VITE_FRONTEND_ASSET_BASE
             }/verify/step_2.png`}
             title="sekai id verify step 2"
             sx={(theme) => ({

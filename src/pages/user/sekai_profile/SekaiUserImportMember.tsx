@@ -555,11 +555,7 @@ const SekaiUserImportMember = observer(() => {
           }
 
           const { data: charaHash } = await axios.get<[string, string][]>(
-            `${
-              window.isChinaMainland
-                ? import.meta.env.VITE_FRONTEND_ASSET_BASE_CN
-                : import.meta.env.VITE_FRONTEND_ASSET_BASE
-            }/chara_hash.json`
+            `${import.meta.env.VITE_FRONTEND_ASSET_BASE}/chara_hash.json`
           );
 
           // match hash
@@ -589,23 +585,11 @@ const SekaiUserImportMember = observer(() => {
           if (ocrEnable) {
             const workers = Array.from({ length: 1 }).map(() =>
               createWorker({
-                corePath: window.isChinaMainland
-                  ? `${
-                      import.meta.env.VITE_FRONTEND_ASSET_BASE_CN
-                    }/tesseract-core.${
-                      typeof WebAssembly === "object" ? "wasm" : "asm"
-                    }.js`
-                  : `https://unpkg.com/tesseract.js-core@2.2.0/tesseract-core.${
-                      typeof WebAssembly === "object" ? "wasm" : "asm"
-                    }.js`,
-                workerPath: window.isChinaMainland
-                  ? `${
-                      import.meta.env.VITE_FRONTEND_ASSET_BASE_CN
-                    }/worker.min.js`
-                  : `https://unpkg.com/tesseract.js@2.1.4/dist/worker.min.js`,
-                langPath: window.isChinaMainland
-                  ? import.meta.env.VITE_FRONTEND_ASSET_BASE_CN
-                  : "https://tessdata.projectnaptha.com/4.0.0",
+                corePath: `https://unpkg.com/tesseract.js-core@2.2.0/tesseract-core.${
+                  typeof WebAssembly === "object" ? "wasm" : "asm"
+                }.js`,
+                langPath: "https://tessdata.projectnaptha.com/4.0.0",
+                workerPath: `https://unpkg.com/tesseract.js@2.1.4/dist/worker.min.js`,
               })
             );
             const scheduler = createScheduler();
@@ -664,8 +648,11 @@ const SekaiUserImportMember = observer(() => {
               : 1;
             const card = cards!.find((card) => card.id === cardIds[0]);
             return {
-              id: idx + 1,
+              cardIds,
               crop: dataURL,
+              distances: hashResults[idx].length
+                ? hashResults[idx].map((result) => result[1])
+                : [0],
               full: hashResults[idx].length
                 ? hashResults[idx].map(
                     (result) =>
@@ -673,9 +660,7 @@ const SekaiUserImportMember = observer(() => {
                   )
                 : [""],
               hashResults: hashResults[idx],
-              distances: hashResults[idx].length
-                ? hashResults[idx].map((result) => result[1])
-                : [0],
+              id: idx + 1,
               level,
               masterRank: ocrMasterRankResults.length
                 ? Math.min(
@@ -683,16 +668,6 @@ const SekaiUserImportMember = observer(() => {
                     5
                   ) || 0
                 : 0,
-              cardIds,
-              useIndex: cardIds.findIndex((cardId) => cardId !== -1),
-              trained:
-                (!!hashResults[idx].length &&
-                  hashResults[idx][0][0].includes("after_training")) ||
-                level >=
-                  trainingLevels[
-                    card!.rarity ||
-                      cardRarityTypeToRarity[card!.cardRarityType!]
-                  ],
               skillLevel: 1,
               story1Unlock: cardIds[0] !== -1,
               story2Unlock:
@@ -702,6 +677,15 @@ const SekaiUserImportMember = observer(() => {
                     card!.rarity ||
                       cardRarityTypeToRarity[card!.cardRarityType!]
                   ],
+              trained:
+                (!!hashResults[idx].length &&
+                  hashResults[idx][0][0].includes("after_training")) ||
+                level >=
+                  trainingLevels[
+                    card!.rarity ||
+                      cardRarityTypeToRarity[card!.cardRarityType!]
+                  ],
+              useIndex: cardIds.findIndex((cardId) => cardId !== -1),
             };
           });
           // console.log(_rows);
@@ -735,9 +719,9 @@ const SekaiUserImportMember = observer(() => {
     (): GridColDef<GridRowModel<CardRowModel>>[] => [
       { field: "id", headerName: t("common:id"), width: 60 },
       {
+        align: "center",
         field: "crop",
         headerName: t("user:profile.import_card.table.row.cropped_image"),
-        width: 100,
         renderCell(
           params: GridRenderCellParams<string, GridRowModel<CardRowModel>>
         ) {
@@ -749,12 +733,12 @@ const SekaiUserImportMember = observer(() => {
             />
           );
         },
-        align: "center",
+        width: 100,
       },
       {
+        align: "center",
         field: "bestMatch",
         headerName: t("user:profile.import_card.table.row.best_match"),
-        width: 100,
         renderCell(params) {
           const idx = params.row["useIndex"] as number;
           const card = cards?.find(
@@ -772,7 +756,7 @@ const SekaiUserImportMember = observer(() => {
             >
               <img
                 src={(params.row["full"] as string[])[idx]}
-                style={{ height: "64px", width: "64px", cursor: "pointer" }}
+                style={{ cursor: "pointer", height: "64px", width: "64px" }}
                 alt={`${(
                   (1 - (params.row["distances"] as number[])[idx] / 64) *
                   100
@@ -787,12 +771,11 @@ const SekaiUserImportMember = observer(() => {
             <Fragment></Fragment>
           );
         },
-        align: "center",
+        width: 100,
       },
       {
         field: "level",
         headerName: t("card:cardLevel"),
-        width: 100,
         renderCell(
           params: GridRenderCellParams<number, GridRowModel<CardRowModel>>
         ) {
@@ -802,8 +785,8 @@ const SekaiUserImportMember = observer(() => {
               type="number"
               inputMode="numeric"
               inputProps={{
-                min: 0,
                 max: 60,
+                min: 0,
               }}
               fullWidth
               onChange={(e) =>
@@ -812,11 +795,11 @@ const SekaiUserImportMember = observer(() => {
             />
           );
         },
+        width: 100,
       },
       {
         field: "masterRank",
         headerName: t("user:profile.import_card.table.row.card_master_rank"),
-        width: 100,
         renderCell(
           params: GridRenderCellParams<number, GridRowModel<CardRowModel>>
         ) {
@@ -827,8 +810,8 @@ const SekaiUserImportMember = observer(() => {
               fullWidth
               inputMode="numeric"
               inputProps={{
-                min: 0,
                 max: 5,
+                min: 0,
               }}
               onChange={(e) =>
                 handleValueChange(
@@ -840,11 +823,11 @@ const SekaiUserImportMember = observer(() => {
             />
           );
         },
+        width: 100,
       },
       {
         field: "skillLevel",
         headerName: t("card:skillLevel"),
-        width: 100,
         renderCell(
           params: GridRenderCellParams<number, GridRowModel<CardRowModel>>
         ) {
@@ -855,8 +838,8 @@ const SekaiUserImportMember = observer(() => {
               fullWidth
               inputMode="numeric"
               inputProps={{
-                min: 0,
                 max: 4,
+                min: 0,
               }}
               onChange={(e) =>
                 handleValueChange(
@@ -868,11 +851,11 @@ const SekaiUserImportMember = observer(() => {
             />
           );
         },
+        width: 100,
       },
       {
         field: "card_states",
         headerName: t("user:profile.import_card.table.row.card_states"),
-        width: 250,
         renderCell(params) {
           return (
             <Grid container direction="column">
@@ -884,8 +867,8 @@ const SekaiUserImportMember = observer(() => {
                       handleValueChange(checked, "trained", params.row)
                     }
                     style={{
-                      paddingTop: "0.1rem",
                       paddingBottom: "0.1rem",
+                      paddingTop: "0.1rem",
                     }}
                   />
                 }
@@ -899,8 +882,8 @@ const SekaiUserImportMember = observer(() => {
                       handleValueChange(checked, "story1Unlock", params.row)
                     }
                     style={{
-                      paddingTop: "0.1rem",
                       paddingBottom: "0.1rem",
+                      paddingTop: "0.1rem",
                     }}
                   />
                 }
@@ -914,8 +897,8 @@ const SekaiUserImportMember = observer(() => {
                       handleValueChange(checked, "story2Unlock", params.row)
                     }
                     style={{
-                      paddingTop: "0.1rem",
                       paddingBottom: "0.1rem",
+                      paddingTop: "0.1rem",
                     }}
                   />
                 }
@@ -924,6 +907,7 @@ const SekaiUserImportMember = observer(() => {
             </Grid>
           );
         },
+        width: 250,
       },
     ],
     [t, cards, toggleIsCardSelectionOpen, handleValueChange]
@@ -948,10 +932,10 @@ const SekaiUserImportMember = observer(() => {
             level: row.level,
             masterRank: row.masterRank,
             skillLevel: row.skillLevel,
-            trained: trainable && row.trained,
-            trainable,
             story1Unlock: row.story1Unlock,
             story2Unlock: row.story2Unlock,
+            trainable,
+            trained: trainable && row.trained,
           };
         })
         .sort((a, b) => a.cardId - b.cardId);
@@ -1131,9 +1115,9 @@ const SekaiUserImportMember = observer(() => {
                               <img
                                 src={row.full[row.useIndex]}
                                 style={{
+                                  cursor: "pointer",
                                   height: "64px",
                                   width: "64px",
-                                  cursor: "pointer",
                                 }}
                                 alt={`${(
                                   (1 - row.distances[row.useIndex] / 64) *
@@ -1157,8 +1141,8 @@ const SekaiUserImportMember = observer(() => {
                               fullWidth
                               inputMode="numeric"
                               inputProps={{
-                                min: 0,
                                 max: 60,
+                                min: 0,
                               }}
                               label={t("card:cardLevel")}
                               onChange={(e) =>
@@ -1173,8 +1157,8 @@ const SekaiUserImportMember = observer(() => {
                               fullWidth
                               inputMode="numeric"
                               inputProps={{
-                                min: 0,
                                 max: 5,
+                                min: 0,
                               }}
                               label={t(
                                 "user:profile.import_card.table.row.card_master_rank"
@@ -1195,8 +1179,8 @@ const SekaiUserImportMember = observer(() => {
                               fullWidth
                               inputMode="numeric"
                               inputProps={{
-                                min: 0,
                                 max: 4,
+                                min: 0,
                               }}
                               label={t("card:skillLevel")}
                               onChange={(e) =>
@@ -1220,8 +1204,8 @@ const SekaiUserImportMember = observer(() => {
                                   handleValueChange(checked, "trained", row)
                                 }
                                 style={{
-                                  paddingTop: "0.1rem",
                                   paddingBottom: "0.1rem",
+                                  paddingTop: "0.1rem",
                                 }}
                               />
                             }
@@ -1239,8 +1223,8 @@ const SekaiUserImportMember = observer(() => {
                                   )
                                 }
                                 style={{
-                                  paddingTop: "0.1rem",
                                   paddingBottom: "0.1rem",
+                                  paddingTop: "0.1rem",
                                 }}
                               />
                             }
@@ -1258,8 +1242,8 @@ const SekaiUserImportMember = observer(() => {
                                   )
                                 }
                                 style={{
-                                  paddingTop: "0.1rem",
                                   paddingBottom: "0.1rem",
+                                  paddingTop: "0.1rem",
                                 }}
                               />
                             }
@@ -1334,9 +1318,9 @@ const SekaiUserImportMember = observer(() => {
                       <img
                         src={url}
                         style={{
+                          cursor: "pointer",
                           height: "64px",
                           width: "64px",
-                          cursor: "pointer",
                         }}
                         alt={`${(
                           (1 -
@@ -1410,8 +1394,8 @@ const SekaiUserImportMember = observer(() => {
               <Typography
                 sx={{
                   "&": {
-                    whiteSpace: "pre-line",
                     textAlign: "left",
+                    whiteSpace: "pre-line",
                   },
                 }}
               >
@@ -1444,8 +1428,8 @@ const SekaiUserImportMember = observer(() => {
               <Typography
                 sx={{
                   "&": {
-                    whiteSpace: "pre-line",
                     textAlign: "left",
+                    whiteSpace: "pre-line",
                   },
                 }}
               >
@@ -1478,8 +1462,8 @@ const SekaiUserImportMember = observer(() => {
               <Typography
                 sx={{
                   "&": {
-                    whiteSpace: "pre-line",
                     textAlign: "left",
+                    whiteSpace: "pre-line",
                   },
                 }}
               >
@@ -1512,8 +1496,8 @@ const SekaiUserImportMember = observer(() => {
               <Typography
                 sx={{
                   "&": {
-                    whiteSpace: "pre-line",
                     textAlign: "left",
+                    whiteSpace: "pre-line",
                   },
                 }}
               >

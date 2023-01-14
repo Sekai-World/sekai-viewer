@@ -156,9 +156,7 @@ export function useCachedData<
 
   const fetchCached = useCallback(async (name: string) => {
     const [region, filename] = name.split("|");
-    const urlBase = window.isChinaMainland
-      ? masterUrl["cn"][region as ServerRegion]
-      : masterUrl["ww"][region as ServerRegion];
+    const urlBase = masterUrl["ww"][region as ServerRegion];
     const { data }: { data: T[] } = await Axios.get(
       `${urlBase}/${filename}.json`
     );
@@ -175,9 +173,7 @@ export function useVersionInfo(): [IVersionInfo | undefined, boolean, any] {
 
   const fetchCached = useCallback(async (name: string) => {
     const [region, filename] = name.split("|");
-    const urlBase = window.isChinaMainland
-      ? masterUrl["cn"][region as ServerRegion]
-      : masterUrl["ww"][region as ServerRegion];
+    const urlBase = masterUrl["ww"][region as ServerRegion];
     const { data }: { data: IVersionInfo } = await Axios.get(
       `${urlBase}/${filename}.json`
     );
@@ -267,9 +263,7 @@ export function useMusicTagName(contentTransMode: ContentTransModeType) {
 export function useMusicMeta() {
   const fetchCached = useCallback(async (name: string) => {
     const { data }: { data: IMusicMeta[] } = await Axios.get(
-      (window.isChinaMainland
-        ? import.meta.env.VITE_FRONTEND_ASSET_BASE_CN
-        : import.meta.env.VITE_FRONTEND_ASSET_BASE) + `/${name}.json`
+      import.meta.env.VITE_FRONTEND_ASSET_BASE + `/${name}.json`
     );
     //console.log(data.length);
     return data;
@@ -368,12 +362,7 @@ export function useProcessedScenarioData() {
         return ret;
 
       const { data }: { data: IScenarioData } = await Axios.get(
-        await getRemoteAssetURL(
-          scenarioPath,
-          undefined,
-          window.isChinaMainland ? "cn" : "minio",
-          region
-        ),
+        await getRemoteAssetURL(scenarioPath, undefined, "minio", region),
         {
           responseType: "json",
         }
@@ -398,7 +387,7 @@ export function useProcessedScenarioData() {
           resource: await getRemoteAssetURL(
             `scenario/background/${FirstBackground}_rip/${FirstBackground}.webp`,
             undefined,
-            window.isChinaMainland ? "cn" : "minio"
+            "minio"
           ),
           seType: "ChangeBackground",
           type: SnippetAction.SpecialEffect,
@@ -409,7 +398,7 @@ export function useProcessedScenarioData() {
           bgm: await getRemoteAssetURL(
             `sound/scenario/bgm/${FirstBgm}_rip/${FirstBgm}.mp3`,
             undefined,
-            window.isChinaMainland ? "cn" : "minio"
+            "minio"
           ),
           delay: 0,
           hasBgm: true,
@@ -492,11 +481,7 @@ export function useProcessedScenarioData() {
                   SnippetProgressBehavior.WaitUnitilFinished,
                 type: snippet.Action,
                 voice: talkData.Voices.length
-                  ? await getRemoteAssetURL(
-                      voiceUrl,
-                      undefined,
-                      window.isChinaMainland ? "cn" : "minio"
-                    )
+                  ? await getRemoteAssetURL(voiceUrl, undefined, "minio")
                   : "",
               };
             }
@@ -518,13 +503,13 @@ export function useProcessedScenarioData() {
                     ? await getRemoteAssetURL(
                         `sound/scenario/voice/${ScenarioId}_rip/${specialEffect.StringValSub}.mp3`,
                         undefined,
-                        window.isChinaMainland ? "cn" : "minio"
+                        "minio"
                       )
                     : specialEffectType === "ChangeBackground"
                     ? await getRemoteAssetURL(
                         `scenario/background/${specialEffect.StringValSub}_rip/${specialEffect.StringValSub}.webp`,
                         undefined,
-                        window.isChinaMainland ? "cn" : "minio"
+                        "minio"
                       )
                     : specialEffectType === "Movie"
                     ? `scenario/movie/${specialEffect.StringVal}_rip`
@@ -543,7 +528,7 @@ export function useProcessedScenarioData() {
                   ? await getRemoteAssetURL(
                       `sound/scenario/bgm/${soundData.Bgm}_rip/${soundData.Bgm}.mp3`,
                       undefined,
-                      window.isChinaMainland ? "cn" : "minio"
+                      "minio"
                     )
                   : "",
                 delay: snippet.Delay,
@@ -557,7 +542,7 @@ export function useProcessedScenarioData() {
                   ? await getRemoteAssetURL(
                       `sound/scenario/se/se_pack00001_rip/${soundData.Se}.mp3`,
                       undefined,
-                      window.isChinaMainland ? "cn" : "minio"
+                      "minio"
                     )
                   : "",
                 type: snippet.Action,

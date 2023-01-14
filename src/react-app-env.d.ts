@@ -2,7 +2,7 @@ import "@types/modernizr";
 
 declare global {
   interface Window {
-    isChinaMainland: boolean;
+    // isChinaMainland: boolean;
     webkitAudioContext: AudioContext;
   }
 }
