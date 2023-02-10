@@ -298,6 +298,7 @@ const SekaiID: React.FC<{}> = observer(() => {
   ]);
 
   const doDeleteProfile = useCallback(async () => {
+    toggleIsDeleteProfileConfirmOpen();
     if (!!sekaiProfile) {
       toggleIsDeletingProfile();
       try {
@@ -308,7 +309,6 @@ const SekaiID: React.FC<{}> = observer(() => {
       }
       toggleIsDeletingProfile();
     }
-    toggleIsDeleteProfileConfirmOpen();
   }, [
     deleteSekaiProfile,
     deleteSekaiProfileById,
