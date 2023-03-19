@@ -164,8 +164,15 @@ const EventTracker: React.FC<{}> = observer(() => {
     async (eventId: number) => {
       setIsFetching(true);
       const data = await getLastEventRankings(eventId);
-      setHistoryTime(new Date(data[0].timestamp));
-      setHistoryRanking(data);
+
+      if (!!data) {
+        setHistoryTime(new Date(data[0].timestamp));
+        setHistoryRanking(data);
+      } else {
+        setHistoryTime(undefined);
+        setHistoryRanking([]);
+      }
+
       setIsFetching(false);
     },
     [getLastEventRankings]
