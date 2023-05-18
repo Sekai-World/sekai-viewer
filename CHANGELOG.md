@@ -2,6 +2,61 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.7.1...v1.7.2) (2023-05-18)
+
+
+### Features
+
+* :clown_face: mock sekai profile update ([2dab17c](https://github.com/Sekai-World/sekai-viewer/commits/2dab17c043660b5f86e04af96d0384eed4c80825))
+* :globe_with_meridians: add ua and kr comics ([1187b64](https://github.com/Sekai-World/sekai-viewer/commits/1187b64be0ddf8630ac0a07b5b74b42c7959f45a))
+* :lipstick: add "do filter" button to music list page ([a5a9f65](https://github.com/Sekai-World/sekai-viewer/commits/a5a9f65c7c28c90449d063cc681b254f037f8d1d))
+* :sparkles: 2nd anniversary countdown ([a3bee9f](https://github.com/Sekai-World/sekai-viewer/commits/a3bee9fde4b242500f3e779bfd298778a5440a8b))
+* **event:** add max bonus to bonus card list ([c1972e4](https://github.com/Sekai-World/sekai-viewer/commits/c1972e4cb96e93181ebf6bf4df4eb2eb7cf62924))
+* **event:** card bonus detail list ([a8a3b22](https://github.com/Sekai-World/sekai-viewer/commits/a8a3b228fb29d24817cebcc74ff091ec7069ba3b))
+
+
+### Bug Fixes
+
+* :bug: add kr unit logos resource url ([c6e5a94](https://github.com/Sekai-World/sekai-viewer/commits/c6e5a94f355221d0749430de57b5c64d55b154f9))
+* :bug: add node-modules-polyfill to fix cron problem ([dbd0ed9](https://github.com/Sekai-World/sekai-viewer/commits/dbd0ed98741e807e222065dae944da42f111dbad))
+* :bug: close deletion confirm dialog before execution ([98727bc](https://github.com/Sekai-World/sekai-viewer/commits/98727bcf361c15ad1ab3b1f46b5da4049ba0dacd))
+* :bug: episode fields deleted by nuverse ([2372d08](https://github.com/Sekai-World/sekai-viewer/commits/2372d087d8502521674450d7d56880f42d6c9c5b))
+* :bug: eventMusics only exist in JP server ([e41b575](https://github.com/Sekai-World/sekai-viewer/commits/e41b575f59071eff69142a89a28f359b47ccc419))
+* :bug: filter operation upon opening card list page ([5e55157](https://github.com/Sekai-World/sekai-viewer/commits/5e55157c10e8448d7bac85ab0cc58de83d8a54a0))
+* :bug: memoize styled components or make them const ([3c8fae3](https://github.com/Sekai-World/sekai-viewer/commits/3c8fae348c694f22e1bd2c2818cb26b34b8689ee))
+* :bug: nuverse deleted fields in cardEpisodes ([fbffe33](https://github.com/Sekai-World/sekai-viewer/commits/fbffe3340b8b6dbfc95230d41879b1d080a2f771))
+* :bug: rank match honor asset url ([867ae8c](https://github.com/Sekai-World/sekai-viewer/commits/867ae8c572807812de6cf919516038957dedabe8))
+* :bug: sekai profile update error ([75b96aa](https://github.com/Sekai-World/sekai-viewer/commits/75b96aa2c9d89d302f4e9b12439858be36545782))
+* :bug: sekai profile userid now string ([c47e339](https://github.com/Sekai-World/sekai-viewer/commits/c47e33979aed51f56ac73cbb6c9d75bf2231ede0))
+* :bug: story reader respect spoiler switch and region setting ([f2ca4ff](https://github.com/Sekai-World/sekai-viewer/commits/f2ca4ffcad707acf7eda31795e205468bc5620fc))
+* :bug: tw and kr server sekai profile not matching ([9518457](https://github.com/Sekai-World/sekai-viewer/commits/95184570415f2fcd69616277a19587f87f917d51))
+* :bug: user config in jp sekai profile ([31f3e6b](https://github.com/Sekai-World/sekai-viewer/commits/31f3e6bddc4f2e3a55137b07b933aeed71603c8f))
+* :bug: wrongly trimmed short version of songs ([daabecd](https://github.com/Sekai-World/sekai-viewer/commits/daabecd49b39ef609b1c463bc06e6b0105a86976))
+* :lipstick: card image position set to relative ([2d6f3d1](https://github.com/Sekai-World/sekai-viewer/commits/2d6f3d189e4ce00c95408dc59a2b12dba02f635c))
+* :lipstick: card image style not working ([b3c4212](https://github.com/Sekai-World/sekai-viewer/commits/b3c421288e98fdb7ba39a69c82be7aa9404ec837))
+* :lipstick: degree image style not working ([05b856f](https://github.com/Sekai-World/sekai-viewer/commits/05b856ffac554cb54ddb00e1bb4295f3a2a51cf2))
+* 403 and CORS problem for Mainland China developer ([f0d4d1d](https://github.com/Sekai-World/sekai-viewer/commits/f0d4d1dda291333219481f768722151b34d97271))
+* add missing region param to one useStrapi usage ([b6db0e2](https://github.com/Sekai-World/sekai-viewer/commits/b6db0e2b0f664ca0881758447ecfb89f86d4b048))
+* add null checks for event tracker ([9d38e2c](https://github.com/Sekai-World/sekai-viewer/commits/9d38e2cce18ba75648b1270d72701f09f41e9675))
+* enhance skill ([3245a42](https://github.com/Sekai-World/sekai-viewer/commits/3245a42284c7a576e6b3eca780c0024ca4e3a598))
+* **event:** more bonus characters after first anniversary ([56b7919](https://github.com/Sekai-World/sekai-viewer/commits/56b7919b64f9efd35c20589c356940b851d0b458))
+* jp server music note count field rename ([73b1228](https://github.com/Sekai-World/sekai-viewer/commits/73b12280946ee88244368c478809c3f752022ab3))
+
+
+### Refactors
+
+* :bento: update anniversary banner to 2nd ([3d6e5de](https://github.com/Sekai-World/sekai-viewer/commits/3d6e5decd581537bd18faceac4dfebc6407ff477))
+* :fire: remove china mainland urls ([7a9dba2](https://github.com/Sekai-World/sekai-viewer/commits/7a9dba22ff0ad89444f6e247afa50e0ca6d7e0b8))
+* :fire: remove unused console log ([69471f8](https://github.com/Sekai-World/sekai-viewer/commits/69471f85c33269e5c6b3b58d61a7eab023a42e86))
+* :fire: unnecessary filter option on stamp list page ([c3fce73](https://github.com/Sekai-World/sekai-viewer/commits/c3fce730d8e4723a3989fd5c0747d02d634171b5))
+* :fire: unused console log ([7e3a479](https://github.com/Sekai-World/sekai-viewer/commits/7e3a4799e7af80dba1ca3381d25c436e9c870cae))
+* :lipstick: add missing margin bottom to list ([7286539](https://github.com/Sekai-World/sekai-viewer/commits/728653980aeab2b59743e5bd6d7684da075ac39d))
+* :lipstick: auto collapse filter after applying ([22e0f25](https://github.com/Sekai-World/sekai-viewer/commits/22e0f25e84eee719e4d89ad5a8cf3861fe87f826))
+* :lipstick: unify all toggle button style ([f1dc202](https://github.com/Sekai-World/sekai-viewer/commits/f1dc202746d062f8138d3364f8a22ed69a0598bc))
+* :recycle: convert common styles to styled components ([c2cda9d](https://github.com/Sekai-World/sekai-viewer/commits/c2cda9dd8f84bc00f41c521121da07273cd7c36f))
+* :recycle: filterOpen -> filterOpened ([0ad1850](https://github.com/Sekai-World/sekai-viewer/commits/0ad1850eba92b5defd455618ddce1440ea98d32f))
+* :recycle: remove all usage of @mui/styles and use styled components and sx props ([073025a](https://github.com/Sekai-World/sekai-viewer/commits/073025a4f9867c2e08a3157a8aa1b9c90ba3ad99))
+
 ### [1.7.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.7.0...v1.7.1) (2023-01-14)
 
 
