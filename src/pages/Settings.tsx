@@ -34,60 +34,60 @@ import { useRootStore } from "../stores/root";
 import { observer } from "mobx-react-lite";
 import TypographyHeader from "../components/styled/TypographyHeader";
 
-const RegionDetect = () => {
-  const { t } = useTranslation();
-  const { showError } = useAlertSnackbar();
+// const RegionDetect = () => {
+//   const { t } = useTranslation();
+//   const { showError } = useAlertSnackbar();
 
-  const [clientRegion, setClientRegion] = useState("unknown");
-  const [isDetecting, setIsDetecting] = useState(false);
+//   const [clientRegion, setClientRegion] = useState("unknown");
+//   const [isDetecting, setIsDetecting] = useState(false);
 
-  useEffect(() => {
-    localforage
-      .getItem<string>("country")
-      .then((value) => setClientRegion(value || "unknown"));
-    return () => {
-      setClientRegion("unknown");
-    };
-  }, []);
+//   useEffect(() => {
+//     localforage
+//       .getItem<string>("country")
+//       .then((value) => setClientRegion(value || "unknown"));
+//     return () => {
+//       setClientRegion("unknown");
+//     };
+//   }, []);
 
-  const doDetect = useCallback<
-    React.MouseEventHandler<HTMLButtonElement>
-  >(async () => {
-    setIsDetecting(true);
+//   const doDetect = useCallback<
+//     React.MouseEventHandler<HTMLButtonElement>
+//   >(async () => {
+//     setIsDetecting(true);
 
-    try {
-      const country =
-        (
-          await axios.get<{ data: { country: string } }>(
-            `${import.meta.env.VITE_API_BACKEND_BASE}/country`
-          )
-        ).data.data.country || "unknown";
-      setClientRegion(country);
-      localforage.setItem<string>("country", country);
-    } catch (error) {
-      showError(t("common:detectionFailedPrompt"));
-      setClientRegion("unknown");
-      localforage.setItem<string>("country", "unknown");
-    }
+//     try {
+//       const country =
+//         (
+//           await axios.get<{ data: { country: string } }>(
+//             `${import.meta.env.VITE_API_BACKEND_BASE}/country`
+//           )
+//         ).data.data.country || "unknown";
+//       setClientRegion(country);
+//       localforage.setItem<string>("country", country);
+//     } catch (error) {
+//       showError(t("common:detectionFailedPrompt"));
+//       setClientRegion("unknown");
+//       localforage.setItem<string>("country", "unknown");
+//     }
 
-    setIsDetecting(false);
-  }, [showError, t]);
+//     setIsDetecting(false);
+//   }, [showError, t]);
 
-  return (
-    <Grid container alignItems="center" spacing={2}>
-      <Grid item>
-        <Typography>{clientRegion}</Typography>
-      </Grid>
-      <Grid item>
-        <LoadingButton
-          loading={isDetecting}
-          startIcon={<IconRefresh />}
-          onClick={doDetect}
-        ></LoadingButton>
-      </Grid>
-    </Grid>
-  );
-};
+//   return (
+//     <Grid container alignItems="center" spacing={2}>
+//       <Grid item>
+//         <Typography>{clientRegion}</Typography>
+//       </Grid>
+//       <Grid item>
+//         <LoadingButton
+//           loading={isDetecting}
+//           startIcon={<IconRefresh />}
+//           onClick={doDetect}
+//         ></LoadingButton>
+//       </Grid>
+//     </Grid>
+//   );
+// };
 
 const Settings = observer(() => {
   const { t, i18n } = useTranslation();
@@ -268,7 +268,7 @@ const Settings = observer(() => {
             />
           </FormControl>
         </Grid>
-        <Grid item>
+        {/* <Grid item>
           <Grid container>
             <Grid item>
               <FormLabel>{t("common:currentRegion")}</FormLabel>
@@ -282,7 +282,7 @@ const Settings = observer(() => {
             </Grid>
           </Grid>
           <RegionDetect />
-        </Grid>
+        </Grid> */}
       </Grid>
     </Fragment>
   );

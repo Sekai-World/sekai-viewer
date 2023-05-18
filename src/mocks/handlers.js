@@ -204,4 +204,34 @@ export const handlers = [
       })
     );
   }),
+  rest.put("strapi/sekai-profiles/1/update", (req, res, ctx) => {
+    const isAuthenticated = sessionStorage.getItem("is-authenticated");
+
+    if (!isAuthenticated) {
+      // If not authenticated, respond with a 403 error
+      return res(
+        ctx.status(403),
+        ctx.json({
+          message: [
+            {
+              messages: [
+                {
+                  id: "Auth.error.unauthencated",
+                },
+              ],
+            },
+          ],
+        })
+      );
+    }
+
+    // If authenticated, return a mocked user details
+    return res(
+      ctx.status(200),
+      ctx.json({
+        profile: sekaiUserProfileJson,
+        status: "success",
+      })
+    );
+  }),
 ];

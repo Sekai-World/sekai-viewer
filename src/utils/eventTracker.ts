@@ -72,6 +72,11 @@ export function useEventTrackerAPI(region: ServerRegion = "jp") {
             }
           )
         ).data;
+
+        if (lastRecord.data.eventRankings.length === 0) {
+          return null;
+        }
+
         const { timestamp } = lastRecord.data.eventRankings[0];
 
         return (
