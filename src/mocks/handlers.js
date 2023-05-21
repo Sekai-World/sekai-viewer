@@ -204,7 +204,7 @@ export const handlers = [
       })
     );
   }),
-  rest.put("strapi/sekai-profiles/1/update", (req, res, ctx) => {
+  rest.put("/strapi/sekai-profiles/1/update", (req, res, ctx) => {
     const isAuthenticated = sessionStorage.getItem("is-authenticated");
 
     if (!isAuthenticated) {
@@ -233,5 +233,8 @@ export const handlers = [
         status: "success",
       })
     );
+  }),
+  rest.get("/strapi/sekai-current-event*", (req, res, ctx) => {
+    return req.passthrough();
   }),
 ];
