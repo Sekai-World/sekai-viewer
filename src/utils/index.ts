@@ -73,6 +73,8 @@ import {
   IMasterLessonReward,
   IListBucketResult,
   IEventMusic,
+  ICompactResourceBox,
+  ICompactResourceBoxDetail,
 } from "./../types.d";
 import { useAssetI18n, useCharaName } from "./i18n";
 import { useLocation } from "react-router-dom";
@@ -158,6 +160,25 @@ export function useCachedData<
     const [region, filename] = name.split("|");
     const urlBase = masterUrl["ww"][region as ServerRegion];
     const { data }: { data: T[] } = await Axios.get(
+      `${urlBase}/${filename}.json`
+    );
+    return data;
+  }, []);
+
+  const { data, error } = useSWR(`${region}|${name}`, fetchCached);
+
+  return [data, !error && !data, error];
+}
+
+export function useCompactData<
+  T extends ICompactResourceBox | ICompactResourceBoxDetail
+>(name: string): [T | undefined, boolean, any] {
+  const { region } = useRootStore();
+
+  const fetchCached = useCallback(async (name: string) => {
+    const [region, filename] = name.split("|");
+    const urlBase = masterUrl["ww"][region as ServerRegion];
+    const { data }: { data: T } = await Axios.get(
       `${urlBase}/${filename}.json`
     );
     return data;
