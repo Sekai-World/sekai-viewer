@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.7.2...v1.7.3) (2023-05-21)
+
+
+### Features
+
+* :sparkles: process compact json data ([3818ae9](https://github.com/Sekai-World/sekai-viewer/commits/3818ae9be0518af20aa32b40da62cd6793a6a005))
+
+
+### Bug Fixes
+
+* :bug: event honor badge display for TW and KR servers ([df0b862](https://github.com/Sekai-World/sekai-viewer/commits/df0b862b657ba8f51b14472a0942002725669a54))
+
+
+### Refactors
+
+* :clown_face: passthrough current-event request ([dee2e8d](https://github.com/Sekai-World/sekai-viewer/commits/dee2e8d0a732e0be195416960d59971fb577e65b))
+
 ### [1.7.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.7.1...v1.7.2) (2023-05-18)
 
 
