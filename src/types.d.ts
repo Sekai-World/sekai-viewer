@@ -1465,3 +1465,32 @@ export interface IEventMusic {
   seq: number;
   releaseConditionId: number;
 }
+
+export interface ICompactResourceBox {
+  __ENUM__: ICompactResourceBoxEnum;
+  assetbundleName: (null | string)[];
+  resourceBoxPurpose: number[];
+  name: (null | string)[];
+  id: number[];
+  resourceBoxType: number[];
+}
+
+export interface ICompactResourceBoxEnum {
+  resourceBoxPurpose: string[];
+  resourceBoxType: string[];
+}
+
+interface ICompactResourceBoxDetail {
+  __ENUM__: ICompactResourceBoxDetailENUM;
+  resourceBoxId: number[];
+  resourceQuantity: number[];
+  resourceId: (null | number)[];
+  resourceBoxPurpose: number[];
+  resourceLevel: (null | number)[];
+  resourceType: number[];
+}
+
+interface ICompactResourceBoxDetailENUM {
+  resourceBoxPurpose: string[];
+  resourceType: string[];
+}
