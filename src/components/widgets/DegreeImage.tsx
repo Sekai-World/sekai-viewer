@@ -5,8 +5,10 @@ import {
   IHonorInfo,
   IHonorGroup,
   ResourceBoxDetail,
+  ICompactResourceBox,
+  ICompactResourceBoxDetail,
 } from "../../types.d";
-import { getRemoteAssetURL, useCachedData } from "../../utils";
+import { getRemoteAssetURL, useCachedData, useCompactData } from "../../utils";
 import { degreeFrameMap, degreeFramSubMap } from "../../utils/resources";
 import degreeLevelIcon from "../../assets/frame/icon_degreeLv.png";
 import { observer } from "mobx-react-lite";
@@ -33,6 +35,8 @@ const DegreeImage: React.FC<
     const { region } = useRootStore();
 
     const [resourceBoxes] = useCachedData<IResourceBoxInfo>("resourceBoxes");
+    const [compactResourceBoxDetails] =
+      useCompactData<ICompactResourceBoxDetail>("compactResourceBoxDetails");
     const [honors] = useCachedData<IHonorInfo>("honors");
     const [honorGroups] = useCachedData<IHonorGroup>("honorGroups");
 
@@ -43,32 +47,78 @@ const DegreeImage: React.FC<
     const [degreeRankImage, setDegreeRankImage] = useState<string>("");
 
     useEffect(() => {
-      if (resourceBoxes && honors) {
-        let honorDetail: ResourceBoxDetail | undefined;
-        if (resourceBoxId) {
-          const honorBox = resourceBoxes.find(
-            (resBox) =>
-              resBox.resourceBoxPurpose === type! && resBox.id === resourceBoxId
-          );
-          if (honorBox)
-            honorDetail = honorBox.details.find(
-              (detail) => detail.resourceType === "honor"
+      if (["tw", "kr"].includes(region)) {
+        if (compactResourceBoxDetails && honors) {
+          if (resourceBoxId) {
+            // convert purpose to enum id
+            const boxPurposeId =
+              compactResourceBoxDetails.__ENUM__.resourceBoxPurpose.indexOf(
+                type!
+              );
+            // convert type "honor" to enum id
+            const boxTypeId =
+              compactResourceBoxDetails.__ENUM__.resourceType.indexOf("honor");
+            // find honor id
+            const honorIndex = compactResourceBoxDetails.resourceId.findIndex(
+              (id, index) =>
+                compactResourceBoxDetails.resourceBoxPurpose[index] ===
+                  boxPurposeId &&
+                compactResourceBoxDetails.resourceType[index] === boxTypeId &&
+                compactResourceBoxDetails.resourceBoxId[index] === resourceBoxId
             );
+            const honorId = compactResourceBoxDetails.resourceId[honorIndex];
+            const honorLevel =
+              compactResourceBoxDetails.resourceLevel[honorIndex];
+            if (honorId && honorLevel) {
+              // set honor
+              setHonor(honors.find((honor) => honor.id === honorId));
+              setHonorLevel(honorLevel);
+            } else {
+              console.warn(
+                `unable to find ${region} honor from resource box id ${resourceBoxId}`
+              );
+            }
+          } else {
+            setHonor(honors.find((honor) => honor.id === honorId));
+          }
         }
-        setHonor(
-          honors.find((honor) =>
-            resourceBoxId && honorDetail
-              ? honor.id === honorDetail.resourceId
-              : honorId
-              ? honor.id === honorId
-              : false
-          )
-        );
-        if (honorDetail) {
-          setHonorLevel(honorDetail.resourceLevel);
+      } else {
+        if (resourceBoxes && honors) {
+          let honorDetail: ResourceBoxDetail | undefined;
+          if (resourceBoxId) {
+            const honorBox = resourceBoxes.find(
+              (resBox) =>
+                resBox.resourceBoxPurpose === type! &&
+                resBox.id === resourceBoxId
+            );
+            if (honorBox)
+              honorDetail = honorBox.details.find(
+                (detail) => detail.resourceType === "honor"
+              );
+          }
+          setHonor(
+            honors.find((honor) =>
+              resourceBoxId && honorDetail
+                ? honor.id === honorDetail.resourceId
+                : honorId
+                ? honor.id === honorId
+                : false
+            )
+          );
+          if (honorDetail) {
+            setHonorLevel(honorDetail.resourceLevel);
+          }
         }
       }
-    }, [honors, resourceBoxes, resourceBoxId, type, honorId]);
+    }, [
+      honors,
+      resourceBoxes,
+      resourceBoxId,
+      type,
+      honorId,
+      region,
+      compactResourceBoxDetails,
+    ]);
 
     useEffect(() => {
       if (honor && honorGroups) {
