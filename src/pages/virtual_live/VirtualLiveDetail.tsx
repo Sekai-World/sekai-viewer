@@ -251,13 +251,28 @@ const VirtualLiveDetail: React.FC<{}> = observer(() => {
                 {t("virtual_live:rewards")}
               </Typography>
             </Grid>
-            <Grid item>
-              <ResourceBox
-                resourceBoxId={virtualLive.virtualLiveReward.resourceBoxId}
-                resourceBoxPurpose="virtual_live_reward"
-                justifyContent="center"
-              />
-            </Grid>
+
+            {virtualLive.virtualLiveReward ? (
+              <Grid item>
+                <ResourceBox
+                  resourceBoxId={virtualLive.virtualLiveReward.resourceBoxId}
+                  resourceBoxPurpose="virtual_live_reward"
+                  justifyContent="center"
+                />
+              </Grid>
+            ) : (
+              <Grid item container spacing={1} justifyContent="flex-end">
+                {virtualLive.virtualLiveRewards.map((reward) => (
+                  <Grid item>
+                    <ResourceBox
+                      resourceBoxId={reward.resourceBoxId}
+                      resourceBoxPurpose="virtual_live_reward"
+                      justifyContent="center"
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            )}
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
         </GridOut>
