@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.7.3...v1.7.4) (2023-07-08)
+
+
+### Bug Fixes
+
+* :bug: virtual live detail crash ([e65fba9](https://github.com/Sekai-World/sekai-viewer/commits/e65fba96c41713009cfa4456aca9e3f53363f91a))
+
 ### [1.7.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.7.2...v1.7.3) (2023-05-21)
 
 
