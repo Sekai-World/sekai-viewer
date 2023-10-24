@@ -365,7 +365,7 @@ const AssetViewer = () => {
     if (!isFetching) {
       setIsFetching(true);
       let url = folderPath.join("/");
-      if (!url.endsWith("/")) url += "/";
+      if (url.length && !url.endsWith("/")) url += "/";
       const data: IListBucketResult = await fetchStructure(
         url,
         continuationToken
