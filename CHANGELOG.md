@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.5](https://github.com/Sekai-World/sekai-viewer/compare/v1.7.4...v1.7.5) (2023-10-24)
+
+
+### Bug Fixes
+
+* :bug: asset-viewer cannot list root folder ([79eb3f1](https://github.com/Sekai-World/sekai-viewer/commits/79eb3f197af4912083f24bf9c8439e278c80cf06))
+
 ### [1.7.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.7.3...v1.7.4) (2023-07-08)
 
 
