@@ -444,6 +444,8 @@ const Live2DView: React.FC<{}> = () => {
                 (selectedModelName?.startsWith("sub") ||
                 selectedModelName?.startsWith("clb")
                   ? selectedModelName
+                  : selectedModelName?.startsWith("v2")
+                  ? selectedModelName?.split("_").slice(0, 2).join("_")
                   : selectedModelName?.split("_")[0]) + "_motion_base"
               );
             }}
