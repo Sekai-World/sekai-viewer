@@ -805,7 +805,9 @@ const CardDetail: React.FC<{}> = observer(() => {
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
               {t("common:startAt")}
             </Typography>
-            <Typography>{new Date(card.releaseAt).toLocaleString()}</Typography>
+            <Typography>
+              {new Date(card.releaseAt ?? card.archivePublishedAt).toLocaleString()}
+            </Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
           <Grid
@@ -1151,11 +1153,13 @@ const CardDetail: React.FC<{}> = observer(() => {
               {t("common:performance")}
             </Typography>
             <Typography>
-              {card.cardParameters.find(
-                (elem) =>
-                  elem.cardParameterType === "param1" &&
-                  elem.cardLevel === cardLevel
-              )?.power! +
+              {(Array.isArray(card.cardParameters)
+                ? card.cardParameters.find(
+                    (elem) =>
+                      elem.cardParameterType === "param1" &&
+                      elem.cardLevel === cardLevel
+                  )?.power!
+                : card.cardParameters["param1"][cardLevel - 1]) +
                 (cardLevel > card.maxNormalLevel
                   ? card.specialTrainingPower1BonusFixed
                   : 0) +
@@ -1185,11 +1189,13 @@ const CardDetail: React.FC<{}> = observer(() => {
               {t("common:technique")}
             </Typography>
             <Typography>
-              {card.cardParameters.find(
-                (elem) =>
-                  elem.cardParameterType === "param2" &&
-                  elem.cardLevel === cardLevel
-              )?.power! +
+              {(Array.isArray(card.cardParameters)
+                ? card.cardParameters.find(
+                    (elem) =>
+                      elem.cardParameterType === "param2" &&
+                      elem.cardLevel === cardLevel
+                  )?.power!
+                : card.cardParameters["param2"][cardLevel - 1]) +
                 (cardLevel > card.maxNormalLevel
                   ? card.specialTrainingPower2BonusFixed
                   : 0) +
@@ -1219,11 +1225,13 @@ const CardDetail: React.FC<{}> = observer(() => {
               {t("common:stamina")}
             </Typography>
             <Typography>
-              {card.cardParameters.find(
-                (elem) =>
-                  elem.cardParameterType === "param3" &&
-                  elem.cardLevel === cardLevel
-              )?.power! +
+              {(Array.isArray(card.cardParameters)
+                ? card.cardParameters.find(
+                    (elem) =>
+                      elem.cardParameterType === "param3" &&
+                      elem.cardLevel === cardLevel
+                  )?.power!
+                : card.cardParameters["param3"][cardLevel - 1]) +
                 (cardLevel > card.maxNormalLevel
                   ? card.specialTrainingPower3BonusFixed
                   : 0) +
@@ -1253,9 +1261,13 @@ const CardDetail: React.FC<{}> = observer(() => {
               {t("common:power")}
             </Typography>
             <Typography>
-              {card.cardParameters
-                .filter((elem) => elem.cardLevel === cardLevel)
-                .reduce((sum, elem) => sum + elem.power, 0) +
+              {(Array.isArray(card.cardParameters)
+                ? card.cardParameters
+                    .filter((elem) => elem.cardLevel === cardLevel)
+                    .reduce((sum, elem) => sum + elem.power, 0)
+                : card.cardParameters["param1"][cardLevel - 1] +
+                  card.cardParameters["param2"][cardLevel - 1] +
+                  card.cardParameters["param3"][cardLevel - 1]) +
                 (cardLevel > card.maxNormalLevel
                   ? card.specialTrainingPower1BonusFixed +
                     card.specialTrainingPower2BonusFixed +
