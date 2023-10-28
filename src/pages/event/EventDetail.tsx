@@ -163,7 +163,7 @@ const EventDetail: React.FC<{}> = observer(() => {
         Number(eventId) >= 36 ? (Number(eventId) >= 54 ? 2 : 1) : 0;
       setBoostCards(() => {
         let result = cards
-          .filter((elem) => elem.releaseAt <= ev!.aggregateAt)
+          .filter((elem) => (elem.releaseAt ?? elem.archivePublishedAt) <= ev!.aggregateAt)
           .map((card) => {
             let eventCard = ec.find(
               (it) => it.cardId === card.id && it.bonusRate !== undefined

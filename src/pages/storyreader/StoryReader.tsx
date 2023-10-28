@@ -669,7 +669,7 @@ const StoryReader: React.FC<{}> = observer(() => {
               const filteredCards = cards.filter(
                 (card) =>
                   card.characterId === Number(charaId) &&
-                  (isShowSpoiler || card.releaseAt <= new Date().getTime())
+                  (isShowSpoiler || (card.releaseAt ?? card.archivePublishedAt) <= new Date().getTime())
               );
               if (filteredCards.length) {
                 return (

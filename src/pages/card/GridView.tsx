@@ -55,7 +55,7 @@ const GridView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
               top: "1%",
               left: "1%",
             }}
-            releaseTime={new Date(data.releaseAt)}
+            releaseTime={new Date(data.releaseAt ?? data.archivePublishedAt)}
           />
         </CardMedia>
         <CardContent style={{ paddingBottom: "16px" }}>
