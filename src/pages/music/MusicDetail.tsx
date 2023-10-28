@@ -463,14 +463,28 @@ const MusicDetail: React.FC<{}> = observer(() => {
                     labelPlacement="end"
                   />
                   {music.categories
-                    .filter((cat) => ["original", "mv_2d"].includes(cat))
+                    .filter((cat) =>
+                      ["original", "mv_2d"].includes(
+                        typeof cat === "string" ? cat : cat.musicCategoryName
+                      )
+                    )
                     .map((cat) => (
                       <FormControlLabel
                         value={cat}
                         control={<Radio color="primary"></Radio>}
-                        label={t(`music:categoryType.${cat}`) as string}
+                        label={
+                          t(
+                            `music:categoryType.${
+                              typeof cat === "string"
+                                ? cat
+                                : cat.musicCategoryName
+                            }`
+                          ) as string
+                        }
                         labelPlacement="end"
-                        key={cat}
+                        key={
+                          typeof cat === "string" ? cat : cat.musicCategoryName
+                        }
                       />
                     ))}
                 </RadioGroup>
@@ -655,11 +669,15 @@ const MusicDetail: React.FC<{}> = observer(() => {
               {t("music:category", { count: music.categories.length })}
             </Typography>
             <Grid item>
-              {music.categories.map((elem) => (
-                <Typography align="right" key={`music-cat-${elem}`}>
-                  {t(`music:categoryType.${elem}`)}
-                </Typography>
-              ))}
+              {music.categories.map((elem) => {
+                const cat =
+                  typeof elem === "string" ? elem : elem.musicCategoryName;
+                return (
+                  <Typography align="right" key={`music-cat-${cat}`}>
+                    {t(`music:categoryType.${cat}`)}
+                  </Typography>
+                );
+              })}
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />

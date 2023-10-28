@@ -148,7 +148,13 @@ export interface IMusicInfo {
   id: number;
   seq: number;
   releaseConditionId: number;
-  categories: string[];
+  categories: (
+    | string
+    | {
+        musicCategoryName: string;
+        startAt: number;
+      }
+  )[];
   title: string;
   lyricist: string;
   composer: string;

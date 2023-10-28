@@ -67,8 +67,8 @@ function getPaginatedMusics(musics: IMusicInfo[], page: number, limit: number) {
 }
 
 const ListCard: { [key: string]: React.FC<{ data?: IMusicInfo }> } = {
-  grid: GridView,
   agenda: AgendaView,
+  grid: GridView,
 };
 
 const MusicList: React.FC<{}> = observer(() => {
@@ -162,9 +162,12 @@ const MusicList: React.FC<{}> = observer(() => {
         );
       }
       if (musicMVTypes.length) {
-        result = result.filter((m) =>
-          musicMVTypes.every((type) => m.categories.includes(type))
-        );
+        result = result.filter((m) => {
+          const cats = m.categories.map((c) =>
+            typeof c === "string" ? c : c.musicCategoryName
+          );
+          musicMVTypes.every((type) => cats.includes(type));
+        });
       }
       if (characterSelected.length || outsideCharacterSelected.length) {
         result = result.filter((m) =>
@@ -287,22 +290,22 @@ const MusicList: React.FC<{}> = observer(() => {
   const resetFilter = useCallback(() => {
     setMusicTag("all");
     dispatchMusicMVTypes({
-      type: "reset",
       payload: "",
       storeName: "music-list-filter-mv-types.d",
+      type: "reset",
     });
     setArranger("");
     setComposer("");
     setLyricist("");
     dispatchCharacterSelected({
-      type: "reset",
       payload: 0,
       storeName: "music-list-filter-charas",
+      type: "reset",
     });
     dispatchOutsideCharacterSelected({
-      type: "reset",
       payload: 0,
       storeName: "music-list-filter-outside-charas",
+      type: "reset",
     });
   }, [setArranger, setComposer, setLyricist, setMusicTag]);
 
@@ -446,14 +449,14 @@ const MusicList: React.FC<{}> = observer(() => {
                           onClick={() => {
                             musicMVTypes.includes(cat)
                               ? dispatchMusicMVTypes({
-                                  type: "remove",
                                   payload: cat,
                                   storeName: "music-list-filter-mv-types.d",
+                                  type: "remove",
                                 })
                               : dispatchMusicMVTypes({
-                                  type: "add",
                                   payload: cat,
                                   storeName: "music-list-filter-mv-types.d",
+                                  type: "add",
                                 });
                           }}
                         />
@@ -500,15 +503,15 @@ const MusicList: React.FC<{}> = observer(() => {
                           onClick={() => {
                             if (characterSelected.includes(idx + 1)) {
                               dispatchCharacterSelected({
-                                type: "remove",
                                 payload: idx + 1,
                                 storeName: "music-list-filter-charas",
+                                type: "remove",
                               });
                             } else {
                               dispatchCharacterSelected({
-                                type: "add",
                                 payload: idx + 1,
                                 storeName: "music-list-filter-charas",
+                                type: "add",
                               });
                             }
                           }}
@@ -529,15 +532,15 @@ const MusicList: React.FC<{}> = observer(() => {
                             onClick={() => {
                               if (outsideCharacterSelected.includes(idx + 1)) {
                                 dispatchOutsideCharacterSelected({
-                                  type: "remove",
                                   payload: idx + 1,
                                   storeName: "music-list-filter-outside-charas",
+                                  type: "remove",
                                 });
                               } else {
                                 dispatchOutsideCharacterSelected({
-                                  type: "add",
                                   payload: idx + 1,
                                   storeName: "music-list-filter-outside-charas",
+                                  type: "add",
                                 });
                               }
                             }}
@@ -777,16 +780,16 @@ const MusicList: React.FC<{}> = observer(() => {
           gridSize={
             (
               {
-                grid: {
-                  xs: 12,
-                  sm: 6,
-                  md: 4,
-                  lg: 3,
-                },
                 agenda: {
                   xs: 12,
                 },
                 comfy: {
+                  xs: 12,
+                },
+                grid: {
+                  lg: 3,
+                  md: 4,
+                  sm: 6,
                   xs: 12,
                 },
               } as const

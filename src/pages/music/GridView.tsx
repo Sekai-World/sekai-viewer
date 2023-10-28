@@ -88,7 +88,13 @@ const GridView: React.FC<{ data?: IMusicInfo }> = observer(({ data }) => {
             <Grid item>
               <Typography variant="body2" color="textSecondary">
                 {data.categories
-                  .map((cat) => t(`music:categoryType.${cat}`))
+                  .map((cat) =>
+                    t(
+                      `music:categoryType.${
+                        typeof cat === "string" ? cat : cat.musicCategoryName
+                      }`
+                    )
+                  )
                   .join(", ")}
               </Typography>
             </Grid>
