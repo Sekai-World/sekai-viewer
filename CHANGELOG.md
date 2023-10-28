@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.6](https://github.com/Sekai-World/sekai-viewer/compare/v1.7.5...v1.7.6) (2023-10-28)
+
+
+### Bug Fixes
+
+* :bug: card list not loading for tw and kr server ([adf8f2c](https://github.com/Sekai-World/sekai-viewer/commits/adf8f2cbbc9091c06d7ea3d8635801570cba57ce)), closes [#450](https://github.com/Sekai-World/sekai-viewer/issues/450)
+* :bug: live2d v2 model motions ([edc1377](https://github.com/Sekai-World/sekai-viewer/commits/edc137732f9a3c6285dadbd4f4d3dc98ccd1de11)), closes [#453](https://github.com/Sekai-World/sekai-viewer/issues/453)
+* :bug: music category display ([fe1a626](https://github.com/Sekai-World/sekai-viewer/commits/fe1a626e881dc93bd9b06d45a70a8783a35cfa3a)), closes [#448](https://github.com/Sekai-World/sekai-viewer/issues/448)
+
 ### [1.7.5](https://github.com/Sekai-World/sekai-viewer/compare/v1.7.4...v1.7.5) (2023-10-24)
 
 
