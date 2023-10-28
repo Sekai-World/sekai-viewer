@@ -8,19 +8,19 @@ type Props = {
 } & ChipProps;
 
 const ChipDifficultyStyled = styled(Chip)(() => ({
-  "& .chip-bg-easy": {
+  "&.chip-bg-easy": {
     backgroundColor: "#86DA45",
   },
-  "& .chip-bg-normal": {
+  "&.chip-bg-normal": {
     backgroundColor: "#5FB8E6",
   },
-  "& .chip-bg-hard": {
+  "&.chip-bg-hard": {
     backgroundColor: "#F3AE3C",
   },
-  "& .chip-bg-expert": {
+  "&.chip-bg-expert": {
     backgroundColor: "#DC5268",
   },
-  "& .chip-bg-master": {
+  "&.chip-bg-master": {
     backgroundColor: "#AC3EE6",
   },
 }));
