@@ -313,7 +313,9 @@ const CardList: React.FC<{}> = observer(() => {
         case "id":
         case "releaseAt": {
           let sortKey: "id" | "releaseAt" | "archivePublishedAt" = sortBy;
-          if (region === "tw") sortKey = "archivePublishedAt";
+          if (sortKey === "releaseAt" && ["tw", "kr"].includes(region)) {
+            sortKey = "archivePublishedAt";
+          }
           result = result.sort((a, b) =>
             sortType === "asc"
               ? (a[sortKey] || 0) - (b[sortKey] || 0)
