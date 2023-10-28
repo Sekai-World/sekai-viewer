@@ -9,7 +9,7 @@
     "@emotion/styled": "^11.10.0",
     "@esbuild-plugins/node-modules-polyfill": "^0.1.4",
     "@mui/icons-material": "^5.8.4",
-    "@mui/lab": "^5.0.0-alpha.95",
+    "@mui/lab": "5.0.0-alpha.95",
     "@mui/material": "^5.10.1",
     "@mui/system": "^5.10.1",
     "@mui/x-data-grid": "^5.15.2",
