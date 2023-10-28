@@ -83,8 +83,7 @@ export interface ICardInfo {
   id: number;
   seq: number;
   characterId: number;
-  rarity?: number;
-  cardRarityType?: string;
+  cardRarityType: string;
   specialTrainingPower1BonusFixed: number;
   specialTrainingPower2BonusFixed: number;
   specialTrainingPower3BonusFixed: number;
@@ -96,7 +95,8 @@ export interface ICardInfo {
   assetbundleName: string;
   gachaPhrase: string;
   flavorText: string;
-  releaseAt: number;
+  releaseAt?: number;
+  archivePublishedAt: number;
   cardParameters: {
     id: number;
     cardId: number;
