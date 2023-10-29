@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.7.6...v1.8.0) (2023-10-29)
+
+
+### Bug Fixes
+
+* :bug: music list crash if sorting by play levels ([a818545](https://github.com/Sekai-World/sekai-viewer/commits/a81854546d2f62081927534e2c350ff95adb5031)), closes [#451](https://github.com/Sekai-World/sekai-viewer/issues/451)
+* :lipstick: weird font fallback ([a0c6106](https://github.com/Sekai-World/sekai-viewer/commits/a0c6106d82b55ff5aa946adc3a8a4170d142f8cb)), closes [#427](https://github.com/Sekai-World/sekai-viewer/issues/427)
+
 ### [1.7.6](https://github.com/Sekai-World/sekai-viewer/compare/v1.7.5...v1.7.6) (2023-10-28)
 
 
