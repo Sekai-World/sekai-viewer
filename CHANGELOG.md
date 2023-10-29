@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.7.6...v1.8.0) (2023-10-29)
+
+
+### Bug Fixes
+
+* :bug: music list crash if sorting by play levels ([a818545](https://github.com/Sekai-World/sekai-viewer/commits/a81854546d2f62081927534e2c350ff95adb5031)), closes [#451](https://github.com/Sekai-World/sekai-viewer/issues/451)
+* :lipstick: weird font fallback ([a0c6106](https://github.com/Sekai-World/sekai-viewer/commits/a0c6106d82b55ff5aa946adc3a8a4170d142f8cb)), closes [#427](https://github.com/Sekai-World/sekai-viewer/issues/427)
+* 🐛 card details not showing for tw, kr region ([296329c](https://github.com/Sekai-World/sekai-viewer/commits/296329c75a3e966da5c57d500c7993db1891e2e0))
+* 🐛 music difficulty background colors ([01307d5](https://github.com/Sekai-World/sekai-viewer/commits/01307d5a683fc4d30e4928e092a03c5869a7456e))
+* 🐛 sorting cards by id and release date for tw, kr region ([684b840](https://github.com/Sekai-World/sekai-viewer/commits/684b840406d7ef4cac1ddd10a553cac7cdf447f7))
+* 🐛 spoiler tags and event boost cards display ([9dc2377](https://github.com/Sekai-World/sekai-viewer/commits/9dc2377b1abf3d276b09b083a82b716f9e6229d8))
+
 ### [1.7.6](https://github.com/Sekai-World/sekai-viewer/compare/v1.7.5...v1.7.6) (2023-10-28)
 
 
