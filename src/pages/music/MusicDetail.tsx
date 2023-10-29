@@ -96,6 +96,7 @@ const MusicDetail: React.FC<{}> = observer(() => {
   const [selectedVocalType, setSelectedVocalType] = useState<number>(0);
   const [vocalPreviewVal, setVocalPreviewVal] = useState<string>("1");
   const [vocalDisabled, setVocalDisabled] = useState<boolean>(false);
+  const [difficulties, setDifficulties] = useState<IMusicDifficultyInfo[]>([]);
   const [diffiInfoTabVal, setDiffiInfoTabVal] = useState<string>("4");
   const [actualPlaybackTime, setActualPlaybackTime] = useState<string>("");
   const [trimSilence, setTrimSilence] = useState<boolean>(true);
@@ -149,6 +150,20 @@ const MusicDetail: React.FC<{}> = observer(() => {
       );
     }
   }, [danceMembers, musicId]);
+
+  useEffect(() => {
+    if (music && musicDiffis) {
+      setDifficulties(
+        musicDiffis.filter((elem) => elem.musicId === Number(musicId))
+      );
+    }
+  }, [music, musicDiffis, musicId]);
+
+  useEffect(() => {
+    if (difficulties && difficulties.length) {
+      setDiffiInfoTabVal(String(difficulties.length - 1));
+    }
+  }, [difficulties]);
 
   useEffect(() => {
     if (music && musicVocal && musicVocal[selectedPreviewVocalType]) {
@@ -978,13 +993,10 @@ const MusicDetail: React.FC<{}> = observer(() => {
       )}
       <TypographyHeader>
         {t("music:difficulty", {
-          count:
-            musicDiffis &&
-            musicDiffis.filter((elem) => elem.musicId === Number(musicId))
-              .length,
+          count: difficulties.length,
         })}
       </TypographyHeader>
-      {musicDiffis && musicAchievements && (
+      {difficulties.length && musicAchievements && (
         <ContainerContent maxWidth="md">
           <Alert severity="info">
             <Trans i18nKey="music:chartCredit" />
@@ -999,199 +1011,187 @@ const MusicDetail: React.FC<{}> = observer(() => {
                 variant="scrollable"
                 scrollButtons
               >
-                {musicDiffis
-                  .filter((elem) => elem.musicId === Number(musicId))
-                  .map((elem, idx) => (
-                    <Tab
-                      key={`diffi-info-tab-${idx}`}
-                      label={elem.musicDifficulty}
-                      value={String(idx)}
-                    ></Tab>
-                  ))}
+                {difficulties.map((elem, idx) => (
+                  <Tab
+                    key={`diffi-info-tab-${idx}`}
+                    label={elem.musicDifficulty}
+                    value={String(idx)}
+                  ></Tab>
+                ))}
               </Tabs>
             </PaperContainer>
-            {musicDiffis
-              .filter((elem) => elem.musicId === Number(musicId))
-              .map((elem, idx) => (
-                <TabPanel
-                  value={String(idx)}
-                  key={`diffi-info-tab-panel-${idx}`}
-                  style={{ paddingLeft: 0, paddingRight: 0 }}
-                >
-                  <Grid container direction="column">
+            {difficulties.map((elem, idx) => (
+              <TabPanel
+                value={String(idx)}
+                key={`diffi-info-tab-panel-${idx}`}
+                style={{ paddingLeft: 0, paddingRight: 0 }}
+              >
+                <Grid container direction="column">
+                  <Grid
+                    item
+                    container
+                    direction="row"
+                    justifyContent="space-between"
+                  >
+                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                      {t("common:level")}
+                    </Typography>
+                    <Grid item>{elem.playLevel}</Grid>
+                  </Grid>
+                  <Divider style={{ margin: "1% 0" }} />
+                  <Grid
+                    item
+                    container
+                    direction="row"
+                    justifyContent="space-between"
+                  >
+                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                      {t("music:noteCount")}
+                    </Typography>
+                    <Grid item>{elem.noteCount || elem.totalNoteCount}</Grid>
+                  </Grid>
+                  <Divider style={{ margin: "1% 0" }} />
+                  <Grid item>
                     <Grid
-                      item
                       container
                       direction="row"
                       justifyContent="space-between"
+                      alignItems="center"
                     >
-                      <Typography
-                        variant="subtitle1"
-                        style={{ fontWeight: 600 }}
-                      >
-                        {t("common:level")}
-                      </Typography>
-                      <Grid item>{elem.playLevel}</Grid>
-                    </Grid>
-                    <Divider style={{ margin: "1% 0" }} />
-                    <Grid
-                      item
-                      container
-                      direction="row"
-                      justifyContent="space-between"
-                    >
-                      <Typography
-                        variant="subtitle1"
-                        style={{ fontWeight: 600 }}
-                      >
-                        {t("music:noteCount")}
-                      </Typography>
-                      <Grid item>{elem.noteCount || elem.totalNoteCount}</Grid>
-                    </Grid>
-                    <Divider style={{ margin: "1% 0" }} />
-                    <Grid item>
-                      <Grid
-                        container
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        <Grid item>
-                          <Typography
-                            variant="subtitle1"
-                            style={{ fontWeight: 600 }}
-                          >
-                            {t("common:releaseCondition")}
-                          </Typography>
-                        </Grid>
-                        <Grid item>
-                          <ReleaseCondTrans
-                            releaseCondId={elem.releaseConditionId}
-                            originalProps={{ align: "right" }}
-                            translatedProps={{ align: "right" }}
-                          />
-                        </Grid>
+                      <Grid item>
+                        <Typography
+                          variant="subtitle1"
+                          style={{ fontWeight: 600 }}
+                        >
+                          {t("common:releaseCondition")}
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <ReleaseCondTrans
+                          releaseCondId={elem.releaseConditionId}
+                          originalProps={{ align: "right" }}
+                          translatedProps={{ align: "right" }}
+                        />
                       </Grid>
                     </Grid>
-                    <Divider style={{ margin: "1% 0" }} />
-                    <Grid item>
-                      <Grid
-                        container
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        <Grid item xs={2}>
-                          <Typography
-                            variant="subtitle1"
-                            style={{ fontWeight: 600 }}
-                          >
-                            {t("music:comboRewards")}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={9} container spacing={1}>
-                          {musicAchievements
-                            .filter(
-                              (ma) =>
-                                ma.musicDifficultyType === elem.musicDifficulty
-                            )
-                            .map((achieve) => (
-                              <Grid
-                                key={achieve.id}
-                                item
-                                xs={6}
-                                md={3}
-                                container
-                                direction="column"
-                              >
+                  </Grid>
+                  <Divider style={{ margin: "1% 0" }} />
+                  <Grid item>
+                    <Grid
+                      container
+                      direction="row"
+                      justifyContent="space-between"
+                      alignItems="center"
+                    >
+                      <Grid item xs={2}>
+                        <Typography
+                          variant="subtitle1"
+                          style={{ fontWeight: 600 }}
+                        >
+                          {t("music:comboRewards")}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={9} container spacing={1}>
+                        {musicAchievements
+                          .filter(
+                            (ma) =>
+                              ma.musicDifficultyType === elem.musicDifficulty
+                          )
+                          .map((achieve) => (
+                            <Grid
+                              key={achieve.id}
+                              item
+                              xs={6}
+                              md={3}
+                              container
+                              direction="column"
+                            >
+                              <Grid item>
+                                <Typography align="center">
+                                  {Math.floor(
+                                    (elem.noteCount || elem.totalNoteCount)! *
+                                      Number(achieve.musicAchievementTypeValue)
+                                  )}
+                                </Typography>
+                              </Grid>
+                              <Grid item>
+                                <ResourceBox
+                                  resourceBoxId={achieve.resourceBoxId}
+                                  resourceBoxPurpose="music_achievement"
+                                  justifyContent="center"
+                                />
+                              </Grid>
+                            </Grid>
+                          ))}
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  <Divider style={{ margin: "1% 0" }} />
+                  <Grid item>
+                    <Grid
+                      container
+                      direction="row"
+                      justifyContent="space-between"
+                      alignItems="center"
+                    >
+                      <Grid item>
+                        <Typography
+                          variant="subtitle1"
+                          style={{ fontWeight: 600 }}
+                        >
+                          {t("music:chartImage")}
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <Grid container alignItems="center" spacing={2}>
+                          <Grid item>
+                            <Link
+                              href={`${
+                                assetUrl.minio.musicChart
+                              }/${musicId.padStart(4, "0")}/${
+                                elem.musicDifficulty
+                              }.svg`}
+                              target="_blank"
+                              underline="hover"
+                            >
+                              <Grid container justifyContent="flex-end">
                                 <Grid item>
-                                  <Typography align="center">
-                                    {Math.floor(
-                                      (elem.noteCount || elem.totalNoteCount)! *
-                                        Number(
-                                          achieve.musicAchievementTypeValue
-                                        )
-                                    )}
-                                  </Typography>
+                                  <Typography>SVG</Typography>
                                 </Grid>
                                 <Grid item>
-                                  <ResourceBox
-                                    resourceBoxId={achieve.resourceBoxId}
-                                    resourceBoxPurpose="music_achievement"
-                                    justifyContent="center"
-                                  />
+                                  <OpenInNew />
                                 </Grid>
                               </Grid>
-                            ))}
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                    <Divider style={{ margin: "1% 0" }} />
-                    <Grid item>
-                      <Grid
-                        container
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        <Grid item>
-                          <Typography
-                            variant="subtitle1"
-                            style={{ fontWeight: 600 }}
-                          >
-                            {t("music:chartImage")}
-                          </Typography>
-                        </Grid>
-                        <Grid item>
-                          <Grid container alignItems="center" spacing={2}>
-                            <Grid item>
-                              <Link
-                                href={`${
-                                  assetUrl.minio.musicChart
-                                }/${musicId.padStart(4, "0")}/${
-                                  elem.musicDifficulty
-                                }.svg`}
-                                target="_blank"
-                                underline="hover"
-                              >
-                                <Grid container justifyContent="flex-end">
-                                  <Grid item>
-                                    <Typography>SVG</Typography>
-                                  </Grid>
-                                  <Grid item>
-                                    <OpenInNew />
-                                  </Grid>
+                            </Link>
+                          </Grid>
+                          <Grid item>
+                            <Link
+                              href={`${
+                                assetUrl.minio.musicChart
+                              }/${musicId.padStart(4, "0")}/${
+                                elem.musicDifficulty
+                              }.png`}
+                              target="_blank"
+                              underline="hover"
+                            >
+                              <Grid container justifyContent="flex-end">
+                                <Grid item>
+                                  <Typography>PNG</Typography>
                                 </Grid>
-                              </Link>
-                            </Grid>
-                            <Grid item>
-                              <Link
-                                href={`${
-                                  assetUrl.minio.musicChart
-                                }/${musicId.padStart(4, "0")}/${
-                                  elem.musicDifficulty
-                                }.png`}
-                                target="_blank"
-                                underline="hover"
-                              >
-                                <Grid container justifyContent="flex-end">
-                                  <Grid item>
-                                    <Typography>PNG</Typography>
-                                  </Grid>
-                                  <Grid item>
-                                    <OpenInNew />
-                                  </Grid>
+                                <Grid item>
+                                  <OpenInNew />
                                 </Grid>
-                              </Link>
-                            </Grid>
+                              </Grid>
+                            </Link>
                           </Grid>
                         </Grid>
                       </Grid>
                     </Grid>
-                    <Divider style={{ margin: "1% 0" }} />
                   </Grid>
-                </TabPanel>
-              ))}
+                  <Divider style={{ margin: "1% 0" }} />
+                </Grid>
+              </TabPanel>
+            ))}
           </TabContext>
         </ContainerContent>
       )}

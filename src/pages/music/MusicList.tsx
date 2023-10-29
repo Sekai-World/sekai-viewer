@@ -166,7 +166,7 @@ const MusicList: React.FC<{}> = observer(() => {
           const cats = m.categories.map((c) =>
             typeof c === "string" ? c : c.musicCategoryName
           );
-          musicMVTypes.every((type) => cats.includes(type));
+          return musicMVTypes.every((type) => cats.includes(type));
         });
       }
       if (characterSelected.length || outsideCharacterSelected.length) {
@@ -209,23 +209,40 @@ const MusicList: React.FC<{}> = observer(() => {
           break;
         case "difficultyMaster":
           result = result.sort((a, b) => {
-            const levelA = musicDiffis.find(
-              (md) => md.musicId === a.id && md.musicDifficulty === "master"
-            )!.playLevel;
-            const levelB = musicDiffis.find(
-              (md) => md.musicId === b.id && md.musicDifficulty === "master"
-            )!.playLevel;
+            const levelA =
+              musicDiffis.find(
+                (md) => md.musicId === a.id && md.musicDifficulty === "master"
+              )?.playLevel || -1;
+            const levelB =
+              musicDiffis.find(
+                (md) => md.musicId === b.id && md.musicDifficulty === "master"
+              )?.playLevel || -1;
             return sortType === "asc" ? levelA - levelB : levelB - levelA;
           });
           break;
         case "difficultyExpert":
           result = result.sort((a, b) => {
-            const levelA = musicDiffis.find(
-              (md) => md.musicId === a.id && md.musicDifficulty === "expert"
-            )!.playLevel;
-            const levelB = musicDiffis.find(
-              (md) => md.musicId === b.id && md.musicDifficulty === "expert"
-            )!.playLevel;
+            const levelA =
+              musicDiffis.find(
+                (md) => md.musicId === a.id && md.musicDifficulty === "expert"
+              )?.playLevel || -1;
+            const levelB =
+              musicDiffis.find(
+                (md) => md.musicId === b.id && md.musicDifficulty === "expert"
+              )?.playLevel || -1;
+            return sortType === "asc" ? levelA - levelB : levelB - levelA;
+          });
+          break;
+        case "difficultyAppend":
+          result = result.sort((a, b) => {
+            const levelA =
+              musicDiffis.find(
+                (md) => md.musicId === a.id && md.musicDifficulty === "append"
+              )?.playLevel || -1;
+            const levelB =
+              musicDiffis.find(
+                (md) => md.musicId === b.id && md.musicDifficulty === "append"
+              )?.playLevel || -1;
             return sortType === "asc" ? levelA - levelB : levelB - levelA;
           });
           break;
@@ -721,6 +738,9 @@ const MusicList: React.FC<{}> = observer(() => {
                           </MenuItem>
                           <MenuItem value="difficultyExpert">
                             {t("music:difficulty")} (Expert)
+                          </MenuItem>
+                          <MenuItem value="difficultyAppend">
+                            {t("music:difficulty")} (Append)
                           </MenuItem>
                         </Select>
                       </FormControl>
