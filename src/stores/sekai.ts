@@ -365,7 +365,7 @@ export interface ISekaiUserTotalPower
   extends Instance<typeof SekaiUserTotalPower> {}
 
 export const SekaiUserData = types.model({
-  totalPower: SekaiUserTotalPower,
+  totalPower: types.maybe(SekaiUserTotalPower),
   user: SekaiUser,
   userAreaItems: types.maybe(types.array(SekaiUserAreaItem)),
   userBondsHonors: types.maybe(types.array(SekaiUserBondsHonor)),
@@ -484,8 +484,10 @@ export const SekaiProfileMap = types
               region,
             },
           });
+          // console.log(res.data);
           self.sekaiProfileMap.set(region, res.data);
         } catch (err) {
+          // console.log(err.message);
           console.error(err);
         }
         self.isFetchingSekaiProfile = false;

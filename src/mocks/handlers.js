@@ -138,7 +138,6 @@ export const handlers = [
   }),
   rest.get("/strapi/sekai-profiles/me", (req, res, ctx) => {
     const isAuthenticated = sessionStorage.getItem("is-authenticated");
-    console.log(isAuthenticated);
 
     if (!isAuthenticated) {
       // If not authenticated, respond with a 403 error
