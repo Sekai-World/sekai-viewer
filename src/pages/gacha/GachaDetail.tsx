@@ -859,34 +859,38 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
         <TypographyHeader>{t("gacha:gacha_cards")}</TypographyHeader>
         <ContainerContent maxWidth="md">
           <Grid container direction="row">
-            <Grid item xs={12}>
-              <Grid
-                container
-                wrap="nowrap"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                  {t("gacha:pickupMember", {
-                    count: gacha.gachaPickups.length,
-                  })}
-                </Typography>
-                <Button
-                  onClick={() => {
-                    setGachaCards(
-                      gacha.gachaPickups.map((pickup) => pickup.cardId)
-                    );
-                    setIsCardsDialog(true);
-                  }}
-                  variant="contained"
-                >
-                  {t("common:show")}
-                </Button>
-              </Grid>
-            </Grid>
-            <Grid item xs={12}>
-              <Divider style={{ margin: "1% 0" }} />
-            </Grid>
+            {gacha.gachaDetails.some((detail) => detail.weight > 1) && (
+              <Fragment>
+                <Grid item xs={12}>
+                  <Grid
+                    container
+                    wrap="nowrap"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                      {t("gacha:pickupMember", {
+                        count: gacha.gachaPickups.length,
+                      })}
+                    </Typography>
+                    <Button
+                      onClick={() => {
+                        setGachaCards(
+                          gacha.gachaPickups.map((pickup) => pickup.cardId)
+                        );
+                        setIsCardsDialog(true);
+                      }}
+                      variant="contained"
+                    >
+                      {t("common:show")}
+                    </Button>
+                  </Grid>
+                </Grid>
+                <Grid item xs={12}>
+                  <Divider style={{ margin: "1% 0" }} />
+                </Grid>
+              </Fragment>
+            )}
             {gachaRarityRates.map((rate, idx) => (
               <Fragment key={idx}>
                 <Grid item xs={12}>
