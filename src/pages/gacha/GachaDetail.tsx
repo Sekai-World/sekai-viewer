@@ -153,11 +153,8 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
       const rollableCards = gachaRarityRates.map((rate) =>
         gacha.gachaDetails
           .filter((gd) =>
+            cards.find((card) => card.id === gd.cardId)?.cardRarityType ===
             rate.cardRarityType
-              ? cards.find((card) => card.id === gd.cardId)?.cardRarityType ===
-                rate.cardRarityType
-              : cards.find((card) => card.id === gd.cardId)?.rarity ===
-                rate.rarity
           )
           .sort((a, b) => a.weight - b.weight)
       );
@@ -212,8 +209,7 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
 
         if (
           isOverRarity &&
-          (gachaRarityRates[idx].rarity ||
-            cardRarityTypeToRarity[gachaRarityRates[idx].cardRarityType!]) < 3
+          cardRarityTypeToRarity[gachaRarityRates[idx].cardRarityType] < 3
         )
           noOverRarityCount += 1;
       }
@@ -280,30 +276,16 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
       document.title = t("title:gachaDetail", {
         name,
       });
-      let rates: (GachaCardRarityRate & ICardRarity)[] = [];
-      if (gacha.gachaCardRarityRates) {
-        rates = [...gacha.gachaCardRarityRates]
-          .sort((a, b) => b.rate - a.rate)
-          .map((rate) =>
-            Object.assign(
-              {},
-              rate,
-              rarities.find(
-                (rarity) => rarity.cardRarityType === rate.cardRarityType
-              )
-            )
-          );
-      } else {
-        rates = rarities.map((rarity) =>
-          Object.assign({}, rarity, {
-            cardRarityType: "",
-            groupId: 0,
-            id: 0,
-            rate: gacha[`rarity${rarity.rarity}Rate` as "rarity1Rate"],
-          })
-        );
-      }
-      rates = rates.filter((rate) => rate.rate);
+
+      const rates: (GachaCardRarityRate & ICardRarity)[] =
+        [...gacha.gachaCardRarityRates]
+        .sort((a, b) => b.rate - a.rate)
+        .map((rate) => Object.assign({}, rate,
+          rarities.find(
+            (rarity) => rarity.cardRarityType === rate.cardRarityType
+          )
+        ))
+        .filter((rate) => !!rate.rate);
       setGachaRarityRates(rates);
       setNormalRates(rates.map((rate) => rate.rate));
 
@@ -311,40 +293,41 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
         (sum, curr) => [...sum, curr.rate + (sum.slice(-1)[0] || 0)],
         [] as number[]
       );
+
       if (
-        gacha.gachaBehaviors.find(
+        gacha.gachaBehaviors.some(
           (gb) => gb.gachaBehaviorType === "over_rarity_3_once"
         )
       ) {
         const grs = rates.map((rate) => rate.rate);
-        const rarity3Idx = rates.findIndex((rate) =>
-          rate.cardRarityType
-            ? rate.cardRarityType === "rarity_3"
-            : rate.rarity === 3
+        const rarity3Idx = rates.findIndex(
+          (rate) => rate.cardRarityType === "rarity_3"
         )!;
         grs[rarity3Idx] = sumRates[rarity3Idx];
         rates.forEach((rate, idx) => {
           if (
-            (rate.rarity || cardRarityTypeToRarity[rate.cardRarityType!]) < 3
+            rate.cardRarityType !== "rarity_birthday" &&
+            cardRarityTypeToRarity[rate.cardRarityType] < 3
           ) {
             grs[idx] = 0;
           }
         });
         setGuaranteedRates(grs);
       } else if (
-        gacha.gachaBehaviors.find(
+        gacha.gachaBehaviors.some(
           (gb) => gb.gachaBehaviorType === "over_rarity_4_once"
         )
       ) {
         const grs = [...sumRates];
-        const rarity4Idx = rates.findIndex((rate) =>
-          rate.cardRarityType
-            ? rate.cardRarityType === "rarity_4"
-            : rate.rarity === 4
+        const rarity4Idx = rates.findIndex(
+          (rate) => rate.cardRarityType === "rarity_4"
         )!;
         grs[rarity4Idx] = sumRates[rarity4Idx];
         rates.forEach((rate, idx) => {
-          if (rate.rarity || cardRarityTypeToRarity[rate.cardRarityType!] < 4) {
+          if (
+            rate.cardRarityType !== "rarity_birthday" &&
+            cardRarityTypeToRarity[rate.cardRarityType] < 4
+          ) {
             grs[idx] = 0;
           }
         });
@@ -365,10 +348,8 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
       gacha.gachaDetails.forEach((detail) => {
         const card = cards.find((elem) => elem.id === detail.cardId)!;
         weightArr[
-          gachaRarityRates.findIndex((rate) =>
-            rate.cardRarityType
-              ? rate.cardRarityType === card.cardRarityType
-              : rate.rarity === card.rarity
+          gachaRarityRates.findIndex(
+            (rate) => rate.cardRarityType === card.cardRarityType
           )
         ] += detail.weight;
       });
@@ -487,28 +468,19 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
         )!;
         const card = cards.find((card) => card.id === cardId)!;
 
-        let idx;
-        if (card.cardRarityType) {
-          idx = gachaRarityRates.findIndex(
-            (rarity) => rarity.cardRarityType === card.cardRarityType
-          );
-        } else {
-          idx = gachaRarityRates.findIndex(
-            (rarity) => rarity.rarity === card.rarity
-          );
-        }
+        const idx = gachaRarityRates.findIndex(
+          (rarity) => rarity.cardRarityType === card.cardRarityType
+        );
 
         return (
           Math.round((detail.weight / weights[idx]) * normalRates[idx] * 1000) /
             1000 +
           " %" +
-          (card.rarity ||
-          (cardRarityTypeToRarity[card.cardRarityType!] >= 3 &&
+          ((cardRarityTypeToRarity[card.cardRarityType] >= 3 &&
             gacha.gachaBehaviors.some(
               (behavior) => behavior.gachaBehaviorType === "over_rarity_3_once"
             )) ||
-          card.rarity ||
-          (cardRarityTypeToRarity[card.cardRarityType!] >= 4 &&
+          (cardRarityTypeToRarity[card.cardRarityType] >= 4 &&
             gacha.gachaBehaviors.some(
               (behavior) => behavior.gachaBehaviorType === "over_rarity_4_once"
             ))
@@ -767,17 +739,15 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
                                 ) : (
                                   <StarIcon
                                     num={
-                                      rate.rarity ||
                                       cardRarityTypeToRarity[
-                                        rate.cardRarityType!
+                                        rate.cardRarityType
                                       ]
                                     }
                                     right
                                     trained={
-                                      (rate.rarity ||
-                                        cardRarityTypeToRarity[
-                                          rate.cardRarityType!
-                                        ]) >= 3
+                                      cardRarityTypeToRarity[
+                                        rate.cardRarityType
+                                      ] >= 3
                                     }
                                   />
                                 )}
@@ -836,17 +806,15 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
                                 ) : (
                                   <StarIcon
                                     num={
-                                      rate.rarity ||
                                       cardRarityTypeToRarity[
-                                        rate.cardRarityType!
+                                        rate.cardRarityType
                                       ]
                                     }
                                     right
                                     trained={
-                                      (rate.rarity ||
-                                        cardRarityTypeToRarity[
-                                          rate.cardRarityType!
-                                        ]) >= 3
+                                      cardRarityTypeToRarity[
+                                        rate.cardRarityType
+                                      ] >= 3
                                     }
                                   />
                                 )}
@@ -920,12 +888,10 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
                       ) : (
                         <StarIcon
                           num={
-                            rate.rarity ||
-                            cardRarityTypeToRarity[rate.cardRarityType!]
+                            cardRarityTypeToRarity[rate.cardRarityType]
                           }
                           trained={
-                            (rate.rarity ||
-                              cardRarityTypeToRarity[rate.cardRarityType!]) >= 3
+                            cardRarityTypeToRarity[rate.cardRarityType] >= 3
                           }
                         />
                       )}
@@ -937,11 +903,8 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
                           gacha.gachaDetails
                             .map((detail) => detail.cardId)
                             .filter((cardId) =>
-                              rate.cardRarityType
-                                ? cards.find((card) => card.id === cardId)!
-                                    .cardRarityType === rate.cardRarityType
-                                : cards.find((card) => card.id === cardId)!
-                                    .rarity === rate.rarity
+                              cards.find((card) => card.id === cardId)!
+                                .cardRarityType === rate.cardRarityType
                             )
                         );
                         setIsCardsDialog(true);
@@ -1094,16 +1057,14 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
                                 ) : (
                                   <StarIcon
                                     num={
-                                      rate.rarity ||
                                       cardRarityTypeToRarity[
-                                        rate.cardRarityType!
+                                        rate.cardRarityType
                                       ]
                                     }
                                     trained={
-                                      (rate.rarity ||
-                                        cardRarityTypeToRarity[
-                                          rate.cardRarityType!
-                                        ]) >= 3
+                                      cardRarityTypeToRarity[
+                                        rate.cardRarityType
+                                      ] >= 3
                                     }
                                   />
                                 )}
