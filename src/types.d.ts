@@ -19,23 +19,30 @@ export interface GachaDetail {
   gachaId: number;
   cardId: number;
   weight: number;
+  isWish: boolean;
 }
 
 export interface GachaBehavior {
   id: number;
   gachaId: number;
+  groupId: number;
+  priority: number;
   gachaBehaviorType: string;
-  costResourceType: string;
-  costResourceQuantity: number;
+  gachaSpinnableType: string;
+  costResourceType?: string;
+  costResourceQuantity?: number;
+  costResourceId?: number;
+  resourceCategory: string;
   spinCount: number;
-  spinLimit: number;
+  // spinLimit?: number;
+  executeLimit?: number;
 }
 
 export interface GachaPickup {
-  id: number;
+  id?: number;
   gachaId: number;
   cardId: number;
-  gachaPickupType: string;
+  gachaPickupType?: string;
 }
 
 export interface GachaInformation {
@@ -45,10 +52,11 @@ export interface GachaInformation {
 }
 
 export interface GachaCardRarityRate {
-  id: number;
-  groupId: number;
+  id?: number;
+  groupId?: number;
   cardRarityType: string;
   rate: number;
+  lotteryType: string;
 }
 
 export interface IGachaInfo {
@@ -57,26 +65,25 @@ export interface IGachaInfo {
   name: string;
   seq: number;
   assetbundleName: string;
-  rarity1Rate: number;
-  rarity2Rate: number;
-  rarity3Rate: number;
-  rarity4Rate: number;
+  // rarity1Rate?: number;
+  // rarity2Rate?: number;
+  // rarity3Rate?: number;
+  // rarity4Rate?: number;
   startAt: number;
   endAt: number;
-  gachaCeilItemId: number;
-  gachaCardRarityRates?: GachaCardRarityRate[];
+  drawableGachaHour?: number;
+  gachaCeilItemId?: number;
+  gachaCardRarityRateGroupId: number;
+  gachaCardRarityRates: GachaCardRarityRate[];
   gachaDetails: GachaDetail[];
   gachaBehaviors: GachaBehavior[];
   gachaPickups: GachaPickup[];
   gachaPickupCostumes: never[];
   gachaInformation: GachaInformation;
-}
-
-export interface IGachaTicket {
-  id: number;
-  name: string;
-  assetbundleName: string;
-  gachaDisplayType: string;
+  isShowPeriod: boolean;
+  wishFixedSelectCount: number;
+  wishLimitedSelectCount: number;
+  wishSelectCount: number;
 }
 
 export interface Cost {
@@ -84,6 +91,20 @@ export interface Cost {
   resourceType: string;
   resourceLevel?: number;
   quantity: number;
+}
+
+export interface CardParameter {
+  id: number;
+  cardId: number;
+  cardLevel: number;
+  cardParameterType: string;
+  power: number;
+}
+
+export interface CardParameter2 {
+  param1: number[];
+  param2: number[];
+  param3: number[];
 }
 
 export interface ICardInfo {
@@ -104,13 +125,8 @@ export interface ICardInfo {
   flavorText: string;
   releaseAt?: number;
   archivePublishedAt: number;
-  cardParameters: {
-    id: number;
-    cardId: number;
-    cardLevel: number;
-    cardParameterType: string;
-    power: number;
-  }[];
+  archiveDisplayType?: string;
+  cardParameters: CardParameter[] | CardParameter2;
   specialTrainingCosts: {
     cardId: number;
     seq: number;
@@ -222,11 +238,12 @@ export interface ISkillInfo {
 }
 
 export interface ICardRarity {
-  rarity?: number;
+  // rarity?: number;
   maxLevel: number;
   maxSkillLevel: number;
   trainingMaxLevel?: number;
-  cardRarityType?: string;
+  cardRarityType: string;
+  seq: number;
 }
 
 export interface CharacterRankAchieveResource {
@@ -265,6 +282,8 @@ export interface IMusicVocalInfo {
   caption: string;
   characters: Character[];
   assetbundleName: string;
+  archiveDisplayType?: string;
+  archivePublishedAt: number;
 }
 
 export interface IOutCharaProfile {
@@ -443,8 +462,8 @@ export interface ResourceBoxDetail {
   seq: number;
   resourceType: string;
   resourceQuantity: number;
-  resourceId?: number;
-  resourceLevel?: number;
+  resourceId?: number | null;
+  resourceLevel?: number | null;
 }
 
 export interface IResourceBoxInfo {
@@ -452,9 +471,9 @@ export interface IResourceBoxInfo {
   id: number;
   resourceBoxType: string;
   details: ResourceBoxDetail[];
-  description: string;
-  name: string;
-  assetbundleName: string;
+  description?: string;
+  name?: string;
+  assetbundleName?: string;
 }
 
 export interface HonorLevel {
@@ -1085,11 +1104,11 @@ export interface IGachaCeilItem {
 
 export interface VirtualLiveSetlist {
   id: number;
-  virtualLiveId: number;
+  virtualLiveId?: number;
   seq: number;
   virtualLiveSetlistType: string;
-  assetbundleName: string;
-  virtualLiveStageId: number;
+  assetbundleName?: string;
+  virtualLiveStageId?: number;
   musicId?: number;
   musicVocalId?: number;
   character3dId1?: number;
@@ -1113,13 +1132,14 @@ export interface VirtualLiveSchedule {
   seq: number;
   startAt: any;
   endAt: any;
+  noticeGroupId?: string;
 }
 
 export interface VirtualLiveCharacter {
-  id: number;
-  virtualLiveId: number;
+  id?: number;
+  virtualLiveId?: number;
   gameCharacterUnitId: number;
-  seq: number;
+  seq?: number;
 }
 
 export interface VirtualLiveReward {
@@ -1130,16 +1150,22 @@ export interface VirtualLiveReward {
 }
 
 export interface VirtualLiveReward2 {
-  id: number;
+  id?: number;
   virtualLiveType: string;
-  virtualLiveId: number;
+  virtualLiveId?: number;
   resourceBoxId: number;
+}
+
+export interface VirtualLiveBackgroundMusic {
+  backgroundMusicId: number;
+  id: number;
+  virtualLiveId: number;
 }
 
 export interface VirtualLiveWaitingRoom {
   id: number;
-  virtualLiveId: number;
-  assetbundleName: string;
+  virtualLiveId?: number;
+  assetbundleName?: string;
   startAt: any;
   endAt: any;
 }
@@ -1156,7 +1182,20 @@ export interface VirtualItem {
   cheerPoint: number;
   effectAssetbundleName: string;
   effectExpressionType: string;
-  virtualItemLabelType: string;
+  virtualItemLabelType?: string;
+}
+
+export interface VirtualLiveAppeal {
+  appealText: string;
+  id: number;
+  virtualLiveId: number;
+  virtualLiveStageStatus: string;
+}
+
+export interface VirtualLiveInformation {
+  description?: string;
+  summary?: string;
+  virtualLiveId?: number;
 }
 
 export interface IVirtualLiveInfo {
@@ -1174,12 +1213,16 @@ export interface IVirtualLiveInfo {
   virtualLiveBeginnerSchedules: VirtualLiveBeginnerSchedule[];
   virtualLiveSchedules: VirtualLiveSchedule[];
   virtualLiveCharacters: VirtualLiveCharacter[];
-  virtualLiveReward: VirtualLiveReward;
+  virtualLiveReward?: VirtualLiveReward;
   virtualLiveRewards: VirtualLiveReward2[];
-  virtualLiveCheerPointRewards: any[];
+  virtualLiveCheerPointRewards?: any[];
+  virtualLiveBackgroundMusics: VirtualLiveBackgroundMusic[];
   virtualLiveWaitingRoom: VirtualLiveWaitingRoom;
   virtualItems: VirtualItem[];
+  virtualLiveAppeals: VirtualLiveAppeal[];
+  virtualLiveInformation: VirtualLiveInformation;
   archiveReleaseConditionId?: number;
+  virtualLiveTicketId?: number;
 }
 
 export interface MasterOfCermonyBaseEvent {
