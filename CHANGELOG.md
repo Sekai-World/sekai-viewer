@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.8.2...v1.8.3) (2023-11-04)
+
+
+### Bug Fixes
+
+* :bug: old profile have no "totalPower" field ([229ef01](https://github.com/Sekai-World/sekai-viewer/commits/229ef012ec9fba6a68200dafd0c4c4eaf3599716))
+
 ### [1.8.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.8.1...v1.8.2) (2023-11-04)
 
 
