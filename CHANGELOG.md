@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.8.3...v1.8.4) (2023-11-04)
+
+
+### Bug Fixes
+
+* :bug: more problem about sekai profile ([aa0a68d](https://github.com/Sekai-World/sekai-viewer/commits/aa0a68de95ef123b19300fcab66d1c93b0c3c1be))
+
 ### [1.8.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.8.2...v1.8.3) (2023-11-04)
 
 
