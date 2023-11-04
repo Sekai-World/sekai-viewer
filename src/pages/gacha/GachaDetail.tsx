@@ -222,7 +222,8 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
         Object.assign({}, stats, {
           cost: {
             jewel:
-              behavior.costResourceType === "jewel"
+              behavior.costResourceType === "jewel" ||
+              behavior.costResourceType === "paid_jewel"
                 ? stats.cost.jewel + behavior.costResourceQuantity
                 : stats.cost.jewel,
             ticket:
