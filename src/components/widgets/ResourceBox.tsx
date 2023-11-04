@@ -1,12 +1,18 @@
 import { Grid } from "@mui/material";
 import React, { Fragment, useEffect, useState } from "react";
 import Image from "mui-image";
-import { IResourceBoxInfo } from "../../types.d";
-import { useCachedData } from "../../utils";
+import {
+  IResourceBoxInfo,
+  ICompactResourceBox,
+  ICompactResourceBoxDetail,
+  ResourceBoxDetail,
+} from "../../types.d";
+import { useCachedData, useCompactData } from "../../utils";
 import CommonMaterialIcon from "./CommonMaterialIcon";
 import MaterialIcon from "./MaterialIcon";
 import DegreeImage from "./DegreeImage";
 import Costume3DThumbnail from "./Costume3DThumbnail";
+import { useRootStore } from "../../stores/root";
 
 const ResourceBox: React.FC<{
   resourceBoxId: number;
@@ -17,23 +23,70 @@ const ResourceBox: React.FC<{
   resourceBoxPurpose,
   justifyContent = "space-around",
 }) => {
-  const [resourceBoxes] = useCachedData<IResourceBoxInfo>("resourceBoxes");
+  const { region } = useRootStore();
 
-  const [resource, setResource] = useState<IResourceBoxInfo>();
+  const [resourceBoxes] = useCachedData<IResourceBoxInfo>("resourceBoxes");
+  const [compactResourceBoxDetails] =
+    useCompactData<ICompactResourceBoxDetail>("compactResourceBoxDetails");
+
+  const [resourceDetails, setResourceDetails] = useState<ResourceBoxDetail[]>();
 
   useEffect(() => {
-    if (resourceBoxes) {
-      setResource(
-        resourceBoxes.find(
-          (elem) =>
-            elem.id === resourceBoxId &&
-            elem.resourceBoxPurpose === resourceBoxPurpose
-        )!
-      );
-    }
-  }, [resourceBoxId, resourceBoxPurpose, resourceBoxes]);
+    if (["tw", "kr"].includes(region)) {
+      if (compactResourceBoxDetails && resourceBoxId) {
 
-  return resource ? (
+        const purposeIndex =
+          compactResourceBoxDetails.__ENUM__.resourceBoxPurpose.indexOf(
+            resourceBoxPurpose
+          );
+
+        const itemTypeIndexes: number[] = [];
+        for (let i = 0; i < compactResourceBoxDetails.resourceBoxId.length; i++) {
+          if (
+            compactResourceBoxDetails.resourceBoxPurpose[i] === purposeIndex &&
+            compactResourceBoxDetails.resourceBoxId[i] === resourceBoxId
+          ) {
+            itemTypeIndexes.push(i);
+          }
+        }
+
+        setResourceDetails(
+          itemTypeIndexes.reduce((details, index, i) => {
+            details.push({
+              resourceId: compactResourceBoxDetails.resourceId[index],
+              resourceType: compactResourceBoxDetails.__ENUM__.resourceType[
+                compactResourceBoxDetails.resourceType[index]
+              ],
+              resourceQuantity: compactResourceBoxDetails.resourceQuantity[index],
+              resourceLevel: compactResourceBoxDetails.resourceLevel[index],
+              resourceBoxId,
+              resourceBoxPurpose,
+              seq: ++i,
+            });
+            return details;
+          }, [] as ResourceBoxDetail[])
+        );
+      }
+    } else {
+      if (resourceBoxes) {
+        setResourceDetails(
+          resourceBoxes.find(
+            (elem) =>
+              elem.id === resourceBoxId &&
+              elem.resourceBoxPurpose === resourceBoxPurpose
+          )?.details
+        );
+      }
+    }
+  }, [
+    resourceBoxId,
+    resourceBoxPurpose,
+    resourceBoxes,
+    region,
+    compactResourceBoxDetails,
+  ]);
+
+  return !!resourceDetails?.length ? (
     <Fragment>
       <Grid
         container
@@ -41,7 +94,7 @@ const ResourceBox: React.FC<{
         justifyContent={justifyContent}
         alignItems="center"
       >
-        {resource.details.map((detail) => (
+        {resourceDetails.map((detail) => (
           <Grid item key={`${detail.resourceType}-${detail.resourceId}`}>
             {detail.resourceType === "material" ? (
               <MaterialIcon
