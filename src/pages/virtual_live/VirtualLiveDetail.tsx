@@ -262,15 +262,15 @@ const VirtualLiveDetail: React.FC<{}> = observer(() => {
               </Grid>
             ) : (
               <Grid item container spacing={1} justifyContent="flex-end">
-                {virtualLive.virtualLiveRewards.map((reward) => (
-                  <Grid item>
-                    <ResourceBox
-                      resourceBoxId={reward.resourceBoxId}
-                      resourceBoxPurpose="virtual_live_reward"
-                      justifyContent="center"
-                    />
-                  </Grid>
-                ))}
+                <Grid item>
+                  <ResourceBox
+                    resourceBoxId={
+                      virtualLive.virtualLiveRewards[0].resourceBoxId
+                    }
+                    resourceBoxPurpose="virtual_live_reward"
+                    justifyContent="center"
+                  />
+                </Grid>
               </Grid>
             )}
           </Grid>
