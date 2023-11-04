@@ -1,57 +1,62 @@
 {
     "totalPower": {
-        "areaItemBonus": 62544,
-        "basicCardTotalPower": 172656,
-        "characterRankBonus": 6289,
-        "honorBonus": 150,
-        "totalPower": 241639
+        "areaItemBonus": 55393,
+        "basicCardTotalPower": 174093,
+        "characterRankBonus": 5204,
+        "honorBonus": 160,
+        "totalPower": 234850
     },
     "user": {
-        "name": "user",
-        "rank": 245,
-        "userId": 1234567890123456
+        "name": "123456",
+        "rank": 280,
+        "userId": "1234567890123456"
     },
-    "userBondsHonors": [],
+    "userBondsHonors": [
+        {
+            "bondsHonorId": 1092101,
+            "level": 1
+        }
+    ],
     "userCards": [
         {
-            "cardId": 156,
+            "cardId": 4,
             "defaultImage": "special_training",
             "level": 60,
-            "masterRank": 0,
+            "masterRank": 1,
             "specialTrainingStatus": "done"
         },
         {
-            "cardId": 245,
-            "defaultImage": "special_training",
-            "level": 60,
-            "masterRank": 0,
-            "specialTrainingStatus": "done"
-        },
-        {
-            "cardId": 289,
+            "cardId": 88,
             "defaultImage": "special_training",
             "level": 60,
             "masterRank": 5,
             "specialTrainingStatus": "done"
         },
         {
-            "cardId": 405,
-            "defaultImage": "special_training",
-            "level": 60,
-            "masterRank": 5,
-            "specialTrainingStatus": "done"
-        },
-        {
-            "cardId": 407,
+            "cardId": 130,
             "defaultImage": "special_training",
             "level": 60,
             "masterRank": 0,
             "specialTrainingStatus": "done"
+        },
+        {
+            "cardId": 131,
+            "defaultImage": "special_training",
+            "level": 60,
+            "masterRank": 0,
+            "specialTrainingStatus": "done"
+        },
+        {
+            "cardId": 295,
+            "defaultImage": "original",
+            "level": 60,
+            "masterRank": 0,
+            "specialTrainingStatus": "not_doing"
         }
     ],
     "userChallengeLiveSoloResult": {
         "characterId": 21,
-        "highScore": 1598732
+        "highScore": 1474088
     },
     "userChallengeLiveSoloStages": [
         {
@@ -67,190 +72,6 @@
             "rank": 3
         },
         {
-            "characterId": 1,
-            "rank": 4
-        },
-        {
-            "characterId": 1,
-            "rank": 5
-        },
-        {
-            "characterId": 1,
-            "rank": 6
-        },
-        {
-            "characterId": 1,
-            "rank": 7
-        },
-        {
-            "characterId": 2,
-            "rank": 1
-        },
-        {
-            "characterId": 2,
-            "rank": 2
-        },
-        {
-            "characterId": 2,
-            "rank": 3
-        },
-        {
-            "characterId": 2,
-            "rank": 4
-        },
-        {
-            "characterId": 2,
-            "rank": 5
-        },
-        {
-            "characterId": 2,
-            "rank": 6
-        },
-        {
-            "characterId": 2,
-            "rank": 7
-        },
-        {
-            "characterId": 2,
-            "rank": 8
-        },
-        {
-            "characterId": 2,
-            "rank": 9
-        },
-        {
-            "characterId": 2,
-            "rank": 10
-        },
-        {
-            "characterId": 2,
-            "rank": 11
-        },
-        {
-            "characterId": 2,
-            "rank": 12
-        },
-        {
-            "characterId": 2,
-            "rank": 13
-        },
-        {
-            "characterId": 2,
-            "rank": 14
-        },
-        {
-            "characterId": 2,
-            "rank": 15
-        },
-        {
-            "characterId": 2,
-            "rank": 16
-        },
-        {
-            "characterId": 2,
-            "rank": 17
-        },
-        {
-            "characterId": 2,
-            "rank": 18
-        },
-        {
-            "characterId": 2,
-            "rank": 19
-        },
-        {
-            "characterId": 2,
-            "rank": 20
-        },
-        {
-            "characterId": 2,
-            "rank": 21
-        },
-        {
-            "characterId": 2,
-            "rank": 22
-        },
-        {
-            "characterId": 2,
-            "rank": 23
-        },
-        {
-            "characterId": 2,
-            "rank": 24
-        },
-        {
-            "characterId": 2,
-            "rank": 25
-        },
-        {
-            "characterId": 2,
-            "rank": 26
-        },
-        {
-            "characterId": 2,
-            "rank": 27
-        },
-        {
-            "characterId": 2,
-            "rank": 28
-        },
-        {
-            "characterId": 2,
-            "rank": 29
-        },
-        {
-            "characterId": 2,
-            "rank": 30
-        },
-        {
-            "characterId": 2,
-            "rank": 31
-        },
-        {
-            "characterId": 2,
-            "rank": 32
-        },
-        {
-            "characterId": 2,
-            "rank": 33
-        },
-        {
-            "characterId": 2,
-            "rank": 34
-        },
-        {
-            "characterId": 2,
-            "rank": 35
-        },
-        {
-            "characterId": 3,
-            "rank": 1
-        },
-        {
-            "characterId": 3,
-            "rank": 2
-        },
-        {
-            "characterId": 3,
-            "rank": 3
-        },
-        {
-            "characterId": 3,
-            "rank": 4
-        },
-        {
-            "characterId": 3,
-            "rank": 5
-        },
-        {
-            "characterId": 3,
-            "rank": 6
-        },
-        {
-            "characterId": 3,
-            "rank": 7
-        },
-        {
             "characterId": 4,
             "rank": 1
         },
@@ -267,330 +88,6 @@
             "rank": 4
         },
         {
-            "characterId": 4,
-            "rank": 5
-        },
-        {
-            "characterId": 4,
-            "rank": 6
-        },
-        {
-            "characterId": 4,
-            "rank": 7
-        },
-        {
-            "characterId": 5,
-            "rank": 1
-        },
-        {
-            "characterId": 5,
-            "rank": 2
-        },
-        {
-            "characterId": 5,
-            "rank": 3
-        },
-        {
-            "characterId": 5,
-            "rank": 4
-        },
-        {
-            "characterId": 5,
-            "rank": 5
-        },
-        {
-            "characterId": 5,
-            "rank": 6
-        },
-        {
-            "characterId": 5,
-            "rank": 7
-        },
-        {
-            "characterId": 6,
-            "rank": 1
-        },
-        {
-            "characterId": 6,
-            "rank": 2
-        },
-        {
-            "characterId": 6,
-            "rank": 3
-        },
-        {
-            "characterId": 6,
-            "rank": 4
-        },
-        {
-            "characterId": 6,
-            "rank": 5
-        },
-        {
-            "characterId": 6,
-            "rank": 6
-        },
-        {
-            "characterId": 6,
-            "rank": 7
-        },
-        {
-            "characterId": 7,
-            "rank": 1
-        },
-        {
-            "characterId": 7,
-            "rank": 2
-        },
-        {
-            "characterId": 7,
-            "rank": 3
-        },
-        {
-            "characterId": 7,
-            "rank": 4
-        },
-        {
-            "characterId": 7,
-            "rank": 5
-        },
-        {
-            "characterId": 7,
-            "rank": 6
-        },
-        {
-            "characterId": 7,
-            "rank": 7
-        },
-        {
-            "characterId": 8,
-            "rank": 1
-        },
-        {
-            "characterId": 8,
-            "rank": 2
-        },
-        {
-            "characterId": 8,
-            "rank": 3
-        },
-        {
-            "characterId": 8,
-            "rank": 4
-        },
-        {
-            "characterId": 8,
-            "rank": 5
-        },
-        {
-            "characterId": 8,
-            "rank": 6
-        },
-        {
-            "characterId": 8,
-            "rank": 7
-        },
-        {
-            "characterId": 9,
-            "rank": 1
-        },
-        {
-            "characterId": 9,
-            "rank": 2
-        },
-        {
-            "characterId": 9,
-            "rank": 3
-        },
-        {
-            "characterId": 9,
-            "rank": 4
-        },
-        {
-            "characterId": 9,
-            "rank": 5
-        },
-        {
-            "characterId": 9,
-            "rank": 6
-        },
-        {
-            "characterId": 9,
-            "rank": 7
-        },
-        {
-            "characterId": 9,
-            "rank": 8
-        },
-        {
-            "characterId": 10,
-            "rank": 1
-        },
-        {
-            "characterId": 10,
-            "rank": 2
-        },
-        {
-            "characterId": 10,
-            "rank": 3
-        },
-        {
-            "characterId": 10,
-            "rank": 4
-        },
-        {
-            "characterId": 10,
-            "rank": 5
-        },
-        {
-            "characterId": 10,
-            "rank": 6
-        },
-        {
-            "characterId": 10,
-            "rank": 7
-        },
-        {
-            "characterId": 10,
-            "rank": 8
-        },
-        {
-            "characterId": 11,
-            "rank": 1
-        },
-        {
-            "characterId": 11,
-            "rank": 2
-        },
-        {
-            "characterId": 11,
-            "rank": 3
-        },
-        {
-            "characterId": 11,
-            "rank": 4
-        },
-        {
-            "characterId": 11,
-            "rank": 5
-        },
-        {
-            "characterId": 11,
-            "rank": 6
-        },
-        {
-            "characterId": 11,
-            "rank": 7
-        },
-        {
-            "characterId": 12,
-            "rank": 1
-        },
-        {
-            "characterId": 12,
-            "rank": 2
-        },
-        {
-            "characterId": 12,
-            "rank": 3
-        },
-        {
-            "characterId": 12,
-            "rank": 4
-        },
-        {
-            "characterId": 12,
-            "rank": 5
-        },
-        {
-            "characterId": 12,
-            "rank": 6
-        },
-        {
-            "characterId": 12,
-            "rank": 7
-        },
-        {
-            "characterId": 13,
-            "rank": 1
-        },
-        {
-            "characterId": 13,
-            "rank": 2
-        },
-        {
-            "characterId": 13,
-            "rank": 3
-        },
-        {
-            "characterId": 13,
-            "rank": 4
-        },
-        {
-            "characterId": 13,
-            "rank": 5
-        },
-        {
-            "characterId": 14,
-            "rank": 1
-        },
-        {
-            "characterId": 14,
-            "rank": 2
-        },
-        {
-            "characterId": 14,
-            "rank": 3
-        },
-        {
-            "characterId": 14,
-            "rank": 4
-        },
-        {
-            "characterId": 14,
-            "rank": 5
-        },
-        {
-            "characterId": 15,
-            "rank": 1
-        },
-        {
-            "characterId": 15,
-            "rank": 2
-        },
-        {
-            "characterId": 15,
-            "rank": 3
-        },
-        {
-            "characterId": 15,
-            "rank": 4
-        },
-        {
-            "characterId": 15,
-            "rank": 5
-        },
-        {
-            "characterId": 16,
-            "rank": 1
-        },
-        {
-            "characterId": 16,
-            "rank": 2
-        },
-        {
-            "characterId": 16,
-            "rank": 3
-        },
-        {
-            "characterId": 16,
-            "rank": 4
-        },
-        {
-            "characterId": 16,
-            "rank": 5
-        },
-        {
             "characterId": 17,
             "rank": 1
         },
@@ -609,102 +106,6 @@
         {
             "characterId": 17,
             "rank": 5
-        },
-        {
-            "characterId": 17,
-            "rank": 6
-        },
-        {
-            "characterId": 17,
-            "rank": 7
-        },
-        {
-            "characterId": 17,
-            "rank": 8
-        },
-        {
-            "characterId": 18,
-            "rank": 1
-        },
-        {
-            "characterId": 18,
-            "rank": 2
-        },
-        {
-            "characterId": 18,
-            "rank": 3
-        },
-        {
-            "characterId": 18,
-            "rank": 4
-        },
-        {
-            "characterId": 18,
-            "rank": 5
-        },
-        {
-            "characterId": 18,
-            "rank": 6
-        },
-        {
-            "characterId": 18,
-            "rank": 7
-        },
-        {
-            "characterId": 19,
-            "rank": 1
-        },
-        {
-            "characterId": 19,
-            "rank": 2
-        },
-        {
-            "characterId": 19,
-            "rank": 3
-        },
-        {
-            "characterId": 19,
-            "rank": 4
-        },
-        {
-            "characterId": 19,
-            "rank": 5
-        },
-        {
-            "characterId": 19,
-            "rank": 6
-        },
-        {
-            "characterId": 19,
-            "rank": 7
-        },
-        {
-            "characterId": 20,
-            "rank": 1
-        },
-        {
-            "characterId": 20,
-            "rank": 2
-        },
-        {
-            "characterId": 20,
-            "rank": 3
-        },
-        {
-            "characterId": 20,
-            "rank": 4
-        },
-        {
-            "characterId": 20,
-            "rank": 5
-        },
-        {
-            "characterId": 20,
-            "rank": 6
-        },
-        {
-            "characterId": 20,
-            "rank": 7
         },
         {
             "characterId": 21,
@@ -867,6 +268,18 @@
             "rank": 40
         },
         {
+            "characterId": 21,
+            "rank": 41
+        },
+        {
+            "characterId": 21,
+            "rank": 42
+        },
+        {
+            "characterId": 21,
+            "rank": 43
+        },
+        {
             "characterId": 22,
             "rank": 1
         },
@@ -889,236 +302,112 @@
         {
             "characterId": 22,
             "rank": 6
-        },
-        {
-            "characterId": 22,
-            "rank": 7
-        },
-        {
-            "characterId": 23,
-            "rank": 1
-        },
-        {
-            "characterId": 23,
-            "rank": 2
-        },
-        {
-            "characterId": 23,
-            "rank": 3
-        },
-        {
-            "characterId": 23,
-            "rank": 4
-        },
-        {
-            "characterId": 23,
-            "rank": 5
-        },
-        {
-            "characterId": 23,
-            "rank": 6
-        },
-        {
-            "characterId": 23,
-            "rank": 7
-        },
-        {
-            "characterId": 24,
-            "rank": 1
-        },
-        {
-            "characterId": 24,
-            "rank": 2
-        },
-        {
-            "characterId": 24,
-            "rank": 3
-        },
-        {
-            "characterId": 24,
-            "rank": 4
-        },
-        {
-            "characterId": 24,
-            "rank": 5
-        },
-        {
-            "characterId": 24,
-            "rank": 6
-        },
-        {
-            "characterId": 24,
-            "rank": 7
-        },
-        {
-            "characterId": 24,
-            "rank": 8
-        },
-        {
-            "characterId": 24,
-            "rank": 9
-        },
-        {
-            "characterId": 25,
-            "rank": 1
-        },
-        {
-            "characterId": 25,
-            "rank": 2
-        },
-        {
-            "characterId": 25,
-            "rank": 3
-        },
-        {
-            "characterId": 25,
-            "rank": 4
-        },
-        {
-            "characterId": 25,
-            "rank": 5
-        },
-        {
-            "characterId": 25,
-            "rank": 6
-        },
-        {
-            "characterId": 25,
-            "rank": 7
-        },
-        {
-            "characterId": 26,
-            "rank": 1
-        },
-        {
-            "characterId": 26,
-            "rank": 2
-        },
-        {
-            "characterId": 26,
-            "rank": 3
-        },
-        {
-            "characterId": 26,
-            "rank": 4
-        },
-        {
-            "characterId": 26,
-            "rank": 5
-        },
-        {
-            "characterId": 26,
-            "rank": 6
-        },
-        {
-            "characterId": 26,
-            "rank": 7
         }
     ],
     "userCharacters": [
         {
             "characterId": 1,
-            "characterRank": 32
+            "characterRank": 25
         },
         {
             "characterId": 2,
-            "characterRank": 35
+            "characterRank": 24
         },
         {
             "characterId": 3,
-            "characterRank": 30
+            "characterRank": 22
         },
         {
             "characterId": 4,
-            "characterRank": 31
+            "characterRank": 23
         },
         {
             "characterId": 5,
-            "characterRank": 30
+            "characterRank": 25
         },
         {
             "characterId": 6,
-            "characterRank": 30
+            "characterRank": 23
         },
         {
             "characterId": 7,
-            "characterRank": 31
+            "characterRank": 23
         },
         {
             "characterId": 8,
-            "characterRank": 30
+            "characterRank": 22
         },
         {
             "characterId": 9,
-            "characterRank": 31
+            "characterRank": 24
         },
         {
             "characterId": 10,
-            "characterRank": 31
+            "characterRank": 23
         },
         {
             "characterId": 11,
-            "characterRank": 30
+            "characterRank": 21
         },
         {
             "characterId": 12,
-            "characterRank": 30
+            "characterRank": 19
         },
         {
             "characterId": 13,
-            "characterRank": 32
+            "characterRank": 23
         },
         {
             "characterId": 14,
-            "characterRank": 30
+            "characterRank": 21
         },
         {
             "characterId": 15,
-            "characterRank": 30
+            "characterRank": 20
         },
         {
             "characterId": 16,
-            "characterRank": 30
+            "characterRank": 20
         },
         {
             "characterId": 17,
-            "characterRank": 30
+            "characterRank": 27
         },
         {
             "characterId": 18,
-            "characterRank": 30
+            "characterRank": 21
         },
         {
             "characterId": 19,
-            "characterRank": 32
+            "characterRank": 22
         },
         {
             "characterId": 20,
-            "characterRank": 31
+            "characterRank": 24
         },
         {
             "characterId": 21,
-            "characterRank": 51
+            "characterRank": 48
         },
         {
             "characterId": 22,
-            "characterRank": 32
+            "characterRank": 27
         },
         {
             "characterId": 23,
-            "characterRank": 33
+            "characterRank": 22
         },
         {
             "characterId": 24,
-            "characterRank": 33
+            "characterRank": 26
         },
         {
             "characterId": 25,
-            "characterRank": 33
+            "characterRank": 20
         },
         {
             "characterId": 26,
-            "characterRank": 33
+            "characterRank": 18
         }
     ],
     "userConfig": {
@@ -1126,119 +415,99 @@
     },
     "userCustomProfileCards": [],
     "userDeck": {
-        "deckId": 1,
-        "leader": 289,
-        "member1": 289,
-        "member2": 156,
-        "member3": 245,
-        "member4": 407,
-        "member5": 405,
-        "name": "ユニット01",
-        "subLeader": 156,
-        "userId": 1234567890123456
+        "deckId": 3,
+        "leader": 88,
+        "member1": 88,
+        "member2": 131,
+        "member3": 130,
+        "member4": 295,
+        "member5": 4,
+        "name": "ユニット03",
+        "subLeader": 131,
+        "userId": "1234567890123456"
     },
     "userHonorMissions": [],
     "userHonors": [
         {
             "honorId": 82,
-            "level": 5
-        },
-        {
-            "honorId": 226,
             "level": 4
         },
         {
-            "honorId": 250,
+            "honorId": 106,
             "level": 1
         }
     ],
     "userMultiLiveTopScoreCount": {
-        "mvp": 89,
-        "superStar": 10
+        "mvp": 787,
+        "superStar": 14
     },
     "userMusicDifficultyClearCount": [
         {
             "allPerfect": 1,
-            "fullCombo": 66,
-            "liveClear": 70,
+            "fullCombo": 2,
+            "liveClear": 13,
             "musicDifficultyType": "easy"
         },
         {
             "allPerfect": 0,
-            "fullCombo": 85,
-            "liveClear": 90,
+            "fullCombo": 0,
+            "liveClear": 5,
             "musicDifficultyType": "normal"
         },
         {
             "allPerfect": 0,
-            "fullCombo": 298,
-            "liveClear": 298,
+            "fullCombo": 60,
+            "liveClear": 97,
             "musicDifficultyType": "hard"
         },
         {
-            "allPerfect": 2,
-            "fullCombo": 297,
-            "liveClear": 368,
+            "allPerfect": 0,
+            "fullCombo": 120,
+            "liveClear": 178,
             "musicDifficultyType": "expert"
         },
         {
-            "allPerfect": 2,
-            "fullCombo": 51,
-            "liveClear": 232,
+            "allPerfect": 0,
+            "fullCombo": 13,
+            "liveClear": 98,
             "musicDifficultyType": "master"
         },
         {
             "allPerfect": 0,
             "fullCombo": 0,
-            "liveClear": 3,
+            "liveClear": 0,
             "musicDifficultyType": "append"
         }
     ],
     "userProfile": {
         "profileImageType": "leader",
-        "twitterId": "Tamako",
-        "userId": 1234567890123456,
-        "word": "70f23e51c4"
+        "twitterId": "",
+        "userId": "1234567890123456",
+        "word": "8b98a873a3"
     },
     "userProfileHonors": [
         {
-            "bondsHonorViewType": "none",
             "bondsHonorWordId": 0,
             "honorId": 82,
-            "honorLevel": 5,
+            "honorLevel": 4,
             "profileHonorType": "normal",
             "seq": 1
         },
         {
-            "bondsHonorViewType": "none",
-            "bondsHonorWordId": 0,
-            "honorId": 250,
+            "bondsHonorViewType": "normal",
+            "bondsHonorWordId": 1092101,
+            "honorId": 1092101,
             "honorLevel": 1,
-            "profileHonorType": "normal",
+            "profileHonorType": "bonds",
             "seq": 2
         },
         {
-            "bondsHonorViewType": "none",
             "bondsHonorWordId": 0,
-            "honorId": 226,
-            "honorLevel": 4,
+            "honorId": 106,
+            "honorLevel": 1,
             "profileHonorType": "normal",
             "seq": 3
         }
     ],
-    "userStoryFavorites": [
-        {
-            "isSpoiler": false,
-            "shareNo": 2,
-            "storyId": 94,
-            "storyType": "event_story"
-        },
-        {
-            "comment": "cao",
-            "isSpoiler": true,
-            "shareNo": 1,
-            "storyId": 96,
-            "storyType": "event_story"
-        }
-    ]
+    "userStoryFavorites": []
 }
