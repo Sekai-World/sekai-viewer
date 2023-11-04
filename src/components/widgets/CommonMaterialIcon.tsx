@@ -3,6 +3,7 @@ import React from "react";
 import Image from "mui-image";
 
 import coinIcon from "../../assets/common/material/coin.png";
+import boostIcon from "../../assets/common/material/boost_item2.png";
 import honor1Icon from "../../assets/common/material/honor_1.png";
 import honor2Icon from "../../assets/common/material/honor_2.png";
 import honor3Icon from "../../assets/common/material/honor_3.png";
@@ -21,6 +22,7 @@ import gachaTicketStar4 from "../../assets/common/material/gacha_ticket_star4.pn
 
 const materialMap = {
   coin: coinIcon,
+  boost_item: boostIcon,
   honor: ["", honor1Icon, honor2Icon, honor3Icon, honor4Icon],
   jewel: jewelIcon,
   paid_jewel: jewelIcon,
