@@ -87,7 +87,10 @@ const VirtualLiveStepMusic: React.FC<{
               </Grid>
             </Grid>
             <Grid item xs={12}>
-              <AudioPlayer src={musicVocalURL} />
+              <AudioPlayer
+                src={musicVocalURL}
+                offset={music.fillerSec}
+              />
             </Grid>
           </Grid>
         </Fragment>
