@@ -17,8 +17,8 @@ import {
   TableBody,
   TableCell,
   DialogProps,
-  styled,
 } from "@mui/material";
+import Image from "mui-image";
 import { TabContext } from "@mui/lab";
 import React, { Fragment, useCallback, useLayoutEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -58,10 +58,6 @@ import ContainerContent from "../../components/styled/ContainerContent";
 import TabPanelPadding from "../../components/styled/TabPanelPadding";
 import CardMediaCardImg from "../../components/styled/CardMediaCardImg";
 import LinkNoDecoration from "../../components/styled/LinkNoDecoration";
-
-const ImgBanner = styled("img")`
-  max-width: 100%;
-`;
 
 const StarIcon: React.FC<{
   num: number;
@@ -583,14 +579,20 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
                 </Card>
               </TabPanelPadding>
               <TabPanelPadding value="2">
-                <Grid container direction="row">
+                <Grid container direction="row" spacing={1} alignItems="center">
                   <Grid item xs={12} md={6}>
-                    <ImgBanner src={gachaIcon} alt="logo" />
+                    <Image
+                      src={gachaIcon}
+                      alt="logo"
+                      bgColor=""
+                    />
                   </Grid>
                   <Grid item xs={12} md={6}>
-                    {gachaBanner && (
-                      <ImgBanner src={gachaBanner} alt="banner" />
-                    )}
+                    <Image
+                      src={gachaBanner}
+                      alt="banner"
+                      bgColor=""
+                    />
                   </Grid>
                 </Grid>
               </TabPanelPadding>
