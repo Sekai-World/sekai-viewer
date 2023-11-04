@@ -972,6 +972,7 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
                             : behavior.costResourceQuantity
                         }
                         justify="center"
+                        maxWidth="72px"
                       />
                     </Grid>
                   </Grid>
