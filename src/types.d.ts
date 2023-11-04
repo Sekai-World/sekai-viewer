@@ -72,6 +72,13 @@ export interface IGachaInfo {
   gachaInformation: GachaInformation;
 }
 
+export interface IGachaTicket {
+  id: number;
+  name: string;
+  assetbundleName: string;
+  gachaDisplayType: string;
+}
+
 export interface Cost {
   resourceId: number;
   resourceType: string;

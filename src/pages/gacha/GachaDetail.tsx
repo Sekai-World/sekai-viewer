@@ -33,6 +33,7 @@ import {
   ICardRarity,
   IGachaCeilItem,
   IGachaInfo,
+  IGachaTicket,
 } from "../../types.d";
 import {
   cardRarityTypeToRarity,
@@ -108,6 +109,7 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
   const [gachaCeilItems] = useCachedData<IGachaCeilItem>("gachaCeilItems");
   const [cards] = useCachedData<ICardInfo>("cards");
   const [rarities] = useCachedData<ICardRarity>("cardRarities");
+  const [gachaTickets] = useCachedData<IGachaTicket>("gachaTickets");
 
   const [gacha, setGacha] = useState<IGachaInfo>();
   const [gachaCeilItem, setGachaCeilItem] = useState<IGachaCeilItem>();
@@ -135,6 +137,22 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
   const [isDescDialog, setIsDescDialog] = useState(false);
   const [isCardsDialog, setIsCardsDialog] = useState(false);
   const [gachaCards, setGachaCards] = useState<number[]>([]);
+
+  const getGachaMaterialName = useCallback(
+    (behavior: GachaBehavior): string => {
+      if (behavior.gachaSpinnableType === "colorful_pass") {
+        return behavior.gachaBehaviorType === "once_a_week"
+          ? "over_the_3_ticket"
+          : "gacha_ticket";
+      } else if (behavior.costResourceType === "gacha_ticket") {
+        return gachaTickets?.find(
+          (ticket) => ticket.id === behavior.costResourceId
+        )?.assetbundleName ?? "gacha_ticket";
+      }
+      return behavior.costResourceType;
+    },
+    [gachaTickets]
+  );
 
   const doGacha = useCallback(
     (behavior: GachaBehavior) => {
@@ -939,13 +957,20 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
                         variant="subtitle1"
                         style={{ fontWeight: 600 }}
                       >
-                        {t("gacha:behavior." + behavior.gachaBehaviorType)}
+                        {behavior.gachaSpinnableType === "colorful_pass"
+                          ? t("gacha:behavior." + behavior.gachaSpinnableType)
+                          : t("gacha:behavior." + behavior.gachaBehaviorType)
+                        }
                       </Typography>
                     </Grid>
                     <Grid item>
                       <CommonMaterialIcon
-                        materialName={behavior.costResourceType}
-                        quantity={behavior.costResourceQuantity}
+                        materialName={getGachaMaterialName(behavior)}
+                        quantity={
+                          behavior.gachaSpinnableType === "colorful_pass"
+                            ? t("gacha:behavior.free")
+                            : behavior.costResourceQuantity
+                        }
                         justify="center"
                       />
                     </Grid>
@@ -986,8 +1011,12 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
                         >
                           {/* {t("gacha:behavior." + behavior.gachaBehaviorType)} */}
                           <CommonMaterialIcon
-                            materialName={behavior.costResourceType}
-                            quantity={behavior.costResourceQuantity}
+                            materialName={getGachaMaterialName(behavior)}
+                            quantity={
+                              behavior.gachaSpinnableType === "colorful_pass"
+                                ? t("gacha:behavior.free")
+                                : behavior.costResourceQuantity
+                            }
                             mini
                             justify="center"
                           />

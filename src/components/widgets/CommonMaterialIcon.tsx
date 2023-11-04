@@ -14,8 +14,10 @@ import virtualCoinIcon from "../../assets/common/material/virtual_coin.png";
 import skillPracticeTicket1 from "../../assets/common/material/ticket1.png";
 import skillPracticeTicket2 from "../../assets/common/material/ticket2.png";
 import skillPracticeTicket3 from "../../assets/common/material/ticket3.png";
-// import gachaTicket from "../../assets/common/material/gacha_ticket.png";
+import gachaTicket from "../../assets/common/material/gacha_ticket.png";
 import overThe3Ticket from "../../assets/common/material/over_the_3_ticket.png";
+import gachaTicketFree10 from "../../assets/common/material/free_gacha_10_ticket.png";
+import gachaTicketStar4 from "../../assets/common/material/gacha_ticket_star4.png";
 
 const materialMap = {
   coin: coinIcon,
@@ -31,14 +33,17 @@ const materialMap = {
     skillPracticeTicket2,
     skillPracticeTicket3,
   ],
-  gacha_ticket: overThe3Ticket,
+  gacha_ticket: gachaTicket,
   over_the_3_ticket: overThe3Ticket,
+  free_gacha_10_ticket: gachaTicketFree10,
+  anniversary_free_gacha_ticket: gachaTicketFree10,
+  gacha_ticket_star4: gachaTicketStar4,
 };
 
 const CommonMaterialIcon: React.FC<{
   materialName: string;
   materialId?: number;
-  quantity?: number;
+  quantity?: number | string;
   mini?: boolean;
   justify?: string;
 }> = ({
@@ -54,9 +59,9 @@ const CommonMaterialIcon: React.FC<{
         <Grid item>
           <Image
             src={
-              materialId
-                ? materialMap[materialName as "honor"][materialId]
-                : materialMap[materialName as "coin"]
+              materialId && Array.isArray(materialMap[materialName])
+                ? materialMap[materialName][materialId]
+                : materialMap[materialName]
             }
             alt={`material ${materialName} ${materialId}`}
             height={mini ? 32 : 64}
@@ -70,7 +75,7 @@ const CommonMaterialIcon: React.FC<{
     <Grid item xs={mini ? 8 : 12}>
       <Grid container justifyContent={justify}>
         <Grid item>
-          {!Number.isNaN(Number(quantity)) ? (
+          {typeof quantity === "string" || !Number.isNaN(Number(quantity)) ? (
             <Typography variant="body2">{quantity}</Typography>
           ) : null}
         </Grid>
