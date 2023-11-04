@@ -113,8 +113,8 @@ const ResourceBox: React.FC<{
                   4,
                   "0"
                 )}/stamp${String(detail.resourceId).padStart(4, "0")}.png`}
-                // aspectRatio={1}
-                style={{ height: "64px", width: "64px" }}
+                fit="contain"
+                style={{ height: "100px", width: "100px" }}
                 bgColor=""
                 duration={0}
                 key={detail.resourceId}
