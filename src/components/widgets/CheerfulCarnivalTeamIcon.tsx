@@ -59,7 +59,14 @@ const CheerfulCarnivalTeamIcon: React.FC<
     [ccTeamLogo, props]
   );
 
-  return <Image bgColor="" duration={0} {...imageProps} />;
+  return (
+    <Image
+      bgColor=""
+      duration={0}
+      fit="contain"
+      {...imageProps}
+    />
+  );
 });
 
 export default CheerfulCarnivalTeamIcon;
