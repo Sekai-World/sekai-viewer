@@ -23,6 +23,9 @@ const ChipDifficultyStyled = styled(Chip)(() => ({
   "&.chip-bg-master": {
     backgroundColor: "#AC3EE6",
   },
+  "&.chip-bg-append": {
+    backgroundColor: "#FF82C4",
+  },
 }));
 
 const ChipDifficulty = (props: Props) => {
