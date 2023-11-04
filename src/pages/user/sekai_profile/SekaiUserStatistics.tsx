@@ -350,6 +350,14 @@ const SekaiUserStatistics = observer(() => {
     [sekaiProfile]
   );
 
+  const userChallengeLiveSoloResult = useMemo(
+    () =>
+      sekaiProfile?.sekaiUserProfile?.userChallengeLiveSoloResults
+        ? sekaiProfile?.sekaiUserProfile?.userChallengeLiveSoloResults[0]
+        : sekaiProfile?.sekaiUserProfile?.userChallengeLiveSoloResult,
+    [sekaiProfile]
+  );
+
   return !!sekaiProfile && !!sekaiProfile.sekaiUserProfile ? (
     <Grid container spacing={1}>
       <Grid item xs={12}>
@@ -412,23 +420,18 @@ const SekaiUserStatistics = observer(() => {
               <Grid item>
                 <Typography>{t("music:hi_score")}</Typography>
               </Grid>
-              {sekaiProfile.sekaiUserProfile.userChallengeLiveSoloResults[0] ? (
+              {!!userChallengeLiveSoloResult ? (
                 <Fragment>
                   <Grid item>
                     <Avatar
                       src={
                         charaIcons[
-                          `CharaIcon${sekaiProfile.sekaiUserProfile.userChallengeLiveSoloResults[0].characterId}`
+                          `CharaIcon${userChallengeLiveSoloResult.characterId}`
                         ]
                       }
                     />
                   </Grid>
-                  <Grid item>
-                    {
-                      sekaiProfile.sekaiUserProfile
-                        .userChallengeLiveSoloResults[0].highScore
-                    }
-                  </Grid>
+                  <Grid item>{userChallengeLiveSoloResult.highScore}</Grid>
                 </Fragment>
               ) : (
                 <Grid item>
@@ -469,123 +472,126 @@ const SekaiUserStatistics = observer(() => {
             </Grid>
           </AccordionDetails>
         </Accordion>
-        <Accordion
-          expanded={areaItemOpen}
-          onChange={() => toggleAreaItemOpen()}
-          TransitionProps={{ unmountOnExit: true }}
-        >
-          <AccordionSummary expandIcon={<ExpandMore />}>
-            <TypographyHeader>{t("common:area_item")}</TypographyHeader>
-          </AccordionSummary>
-          <AccordionDetails>
-            {!!areaItems && !!areas && (
-              <Grid container spacing={2}>
-                {areas
-                  .filter(
-                    (area) => area.areaType === "spirit_world" && !area.label
-                  )
-                  .concat([
-                    {
-                      areaType: "reality_world",
-                      assetbundleName: "area11",
-                      id: 2,
-                      name: "神山高校",
-                      releaseConditionId: 1,
-                      viewType: "side_view",
-                    },
-                    {
-                      areaType: "reality_world",
-                      assetbundleName: "area13",
-                      id: 6,
-                      name: "宮益坂女子学園",
-                      releaseConditionId: 1,
-                      viewType: "side_view",
-                    },
-                  ])
-                  .map((area) => (
-                    <Grid key={area.id} item xs={12}>
-                      <Grid container spacing={1} alignItems="center">
-                        <Grid item xs={4} md={2}>
-                          <Tooltip title={area.name}>
-                            <Image
-                              src={`${
-                                assetUrl.minio.jp
-                              }/worldmap/contents/normal_rip/${
-                                area.areaType === "reality_world"
-                                  ? `worldmap_area${String(area.id).padStart(
-                                      2,
-                                      "0"
-                                    )}`
-                                  : `img_worldmap_areas${String(
-                                      area.id
-                                    ).padStart(2, "0")}`
-                              }.png`}
-                              alt={`area ${area.id}`}
-                              style={{ height: "64px", width: "64px" }}
-                              bgColor=""
-                              showLoading
-                            />
-                          </Tooltip>
-                        </Grid>
-                        <Grid item xs={8} md={10}>
-                          <Grid container>
-                            {areaItems
-                              .filter((ai) =>
-                                area.id === 2
-                                  ? ai.areaId === 11
-                                  : area.id === 6
-                                  ? ai.areaId === 13
-                                  : ai.areaId === area.id
-                              )
-                              .map((areaItem) => (
-                                <Grid
-                                  item
-                                  key={areaItem.id}
-                                  xs={4}
-                                  md={2}
-                                  lg={1}
-                                >
-                                  <Tooltip title={areaItem.name}>
-                                    <Grid container>
-                                      <Grid item xs={12}>
-                                        <Image
-                                          src={`${assetUrl.minio.jp}/thumbnail/areaitem_rip/${areaItem.assetbundleName}.png`}
-                                          alt={`area item ${areaItem.id}`}
-                                          style={{
-                                            height: "64px",
-                                            width: "64px",
-                                          }}
-                                          bgColor=""
-                                          showLoading
-                                        />
-                                      </Grid>
-                                      <Grid item xs={12}>
-                                        <Typography align="center">
-                                          {sekaiProfile.sekaiUserProfile &&
-                                            sekaiProfile.sekaiUserProfile
-                                              .userAreaItems &&
-                                            sekaiProfile.sekaiUserProfile.userAreaItems.find(
-                                              (uai) =>
-                                                uai.areaItemId === areaItem.id
-                                            )?.level}
-                                        </Typography>
-                                      </Grid>
+        {!!sekaiProfile.sekaiUserProfile &&
+          !!sekaiProfile.sekaiUserProfile.userAreaItems && (
+            <Accordion
+              expanded={areaItemOpen}
+              onChange={() => toggleAreaItemOpen()}
+              TransitionProps={{ unmountOnExit: true }}
+            >
+              <AccordionSummary expandIcon={<ExpandMore />}>
+                <TypographyHeader>{t("common:area_item")}</TypographyHeader>
+              </AccordionSummary>
+              <AccordionDetails>
+                {!!areaItems && !!areas && (
+                  <Grid container spacing={2}>
+                    {areas
+                      .filter(
+                        (area) =>
+                          area.areaType === "spirit_world" && !area.label
+                      )
+                      .concat([
+                        {
+                          areaType: "reality_world",
+                          assetbundleName: "area11",
+                          id: 2,
+                          name: "神山高校",
+                          releaseConditionId: 1,
+                          viewType: "side_view",
+                        },
+                        {
+                          areaType: "reality_world",
+                          assetbundleName: "area13",
+                          id: 6,
+                          name: "宮益坂女子学園",
+                          releaseConditionId: 1,
+                          viewType: "side_view",
+                        },
+                      ])
+                      .map((area) => (
+                        <Grid key={area.id} item xs={12}>
+                          <Grid container spacing={1} alignItems="center">
+                            <Grid item xs={4} md={2}>
+                              <Tooltip title={area.name}>
+                                <Image
+                                  src={`${
+                                    assetUrl.minio.jp
+                                  }/worldmap/contents/normal_rip/${
+                                    area.areaType === "reality_world"
+                                      ? `worldmap_area${String(
+                                          area.id
+                                        ).padStart(2, "0")}`
+                                      : `img_worldmap_areas${String(
+                                          area.id
+                                        ).padStart(2, "0")}`
+                                  }.png`}
+                                  alt={`area ${area.id}`}
+                                  style={{ height: "64px", width: "64px" }}
+                                  bgColor=""
+                                  showLoading
+                                />
+                              </Tooltip>
+                            </Grid>
+                            <Grid item xs={8} md={10}>
+                              <Grid container>
+                                {areaItems
+                                  .filter((ai) =>
+                                    area.id === 2
+                                      ? ai.areaId === 11
+                                      : area.id === 6
+                                      ? ai.areaId === 13
+                                      : ai.areaId === area.id
+                                  )
+                                  .map((areaItem) => (
+                                    <Grid
+                                      item
+                                      key={areaItem.id}
+                                      xs={4}
+                                      md={2}
+                                      lg={1}
+                                    >
+                                      <Tooltip title={areaItem.name}>
+                                        <Grid container>
+                                          <Grid item xs={12}>
+                                            <Image
+                                              src={`${assetUrl.minio.jp}/thumbnail/areaitem_rip/${areaItem.assetbundleName}.png`}
+                                              alt={`area item ${areaItem.id}`}
+                                              style={{
+                                                height: "64px",
+                                                width: "64px",
+                                              }}
+                                              bgColor=""
+                                              showLoading
+                                            />
+                                          </Grid>
+                                          <Grid item xs={12}>
+                                            <Typography align="center">
+                                              {
+                                                sekaiProfile.sekaiUserProfile.userAreaItems!.find(
+                                                  (uai) =>
+                                                    uai.areaItemId ===
+                                                    areaItem.id
+                                                )?.level
+                                              }
+                                            </Typography>
+                                          </Grid>
+                                        </Grid>
+                                      </Tooltip>
                                     </Grid>
-                                  </Tooltip>
-                                </Grid>
-                              ))}
+                                  ))}
+                              </Grid>
+                            </Grid>
+                          </Grid>
+                          <Grid item xs={12}>
+                            <Divider style={{ marginTop: "1em" }} />
                           </Grid>
                         </Grid>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Divider style={{ marginTop: "1em" }} />
-                      </Grid>
-                    </Grid>
-                  ))}
-              </Grid>
-            )}
-          </AccordionDetails>
-        </Accordion>
+                      ))}
+                  </Grid>
+                )}
+              </AccordionDetails>
+            </Accordion>
+          )}
         <Accordion
           expanded={musicOpen}
           onChange={() => toggleMusicOpen()}

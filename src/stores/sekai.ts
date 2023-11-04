@@ -139,7 +139,7 @@ export interface ISekaiUserHonor extends Instance<typeof SekaiUserHonor> {}
 export const SekaiUserBondsHonor = types.model({
   bondsHonorId: types.number,
   level: types.number,
-  obtainedAt: types.number,
+  obtainedAt: types.maybe(types.number),
 });
 export interface ISekaiUserBondsHonor
   extends Instance<typeof SekaiUserBondsHonor> {}
@@ -370,7 +370,10 @@ export const SekaiUserData = types.model({
   userAreaItems: types.maybe(types.array(SekaiUserAreaItem)),
   userBondsHonors: types.maybe(types.array(SekaiUserBondsHonor)),
   userCards: types.array(SekaiUserCard),
-  userChallengeLiveSoloResults: types.array(SekaiUserChallengeLiveSoloResult),
+  userChallengeLiveSoloResult: types.maybe(SekaiUserChallengeLiveSoloResult),
+  userChallengeLiveSoloResults: types.maybe(
+    types.array(SekaiUserChallengeLiveSoloResult)
+  ),
   userChallengeLiveSoloStages: types.array(SekaiUserChallengeLiveSoloStage),
   userCharacters: types.array(SekaiUserCharacter),
   userConfig: types.maybe(SekaiUserConfig),
