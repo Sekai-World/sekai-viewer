@@ -46,7 +46,11 @@ const SekaiProfile = observer(() => {
                 <Grid container direction="row" spacing={1}>
                   <Grid item xs={12}>
                     <SekaiUserDeck
-                      userDecks={sekaiProfile.sekaiUserProfile.userDecks}
+                      userDecks={
+                        sekaiProfile.sekaiUserProfile.userDecks ?? [
+                          sekaiProfile.sekaiUserProfile.userDeck!,
+                        ]
+                      }
                       userCards={sekaiProfile.sekaiUserProfile.userCards}
                     />
                   </Grid>

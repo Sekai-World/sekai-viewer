@@ -12,7 +12,10 @@ export interface ISekaiUserGamedata
   extends Instance<typeof SekaiUserGamedata> {}
 
 export const SekaiUser = types.model({
-  userGamedata: SekaiUserGamedata,
+  name: types.maybe(types.string),
+  rank: types.maybe(types.number),
+  userGamedata: types.maybe(SekaiUserGamedata),
+  userId: types.maybe(types.union(types.number, types.string)),
 });
 export interface ISekaiUser extends Instance<typeof SekaiUser> {}
 
@@ -31,12 +34,14 @@ export const SekaiUserProfile = types.model({
 export interface ISekaiUserProfile extends Instance<typeof SekaiUserProfile> {}
 
 export const SekaiUserDeck = types.model({
+  deckId: types.maybe(types.number),
   leader: types.number,
   member1: types.number,
   member2: types.number,
   member3: types.number,
   member4: types.number,
   member5: types.number,
+  name: types.maybe(types.string),
   subLeader: types.maybe(types.number),
 });
 export interface ISekaiUserDeck extends Instance<typeof SekaiUserDeck> {}
@@ -53,7 +58,7 @@ export interface ISekaiUserCardEpisode
 export const SekaiUserCard = types.model({
   cardId: types.number,
   defaultImage: types.string,
-  episodes: types.array(SekaiUserCardEpisode),
+  episodes: types.maybe(types.array(SekaiUserCardEpisode)),
   level: types.number,
   masterRank: types.number,
   specialTrainingStatus: types.string,
@@ -108,8 +113,8 @@ export interface ISekaiUserChallengeLiveSoloResult
   extends Instance<typeof SekaiUserChallengeLiveSoloResult> {}
 
 export const SekaiUserChallengeLiveSoloStage = types.model({
-  challengeLiveStageId: types.number,
-  challengeLiveStageType: types.string,
+  challengeLiveStageId: types.maybe(types.number),
+  challengeLiveStageType: types.maybe(types.string),
   characterId: types.number,
   rank: types.number,
 });
@@ -126,7 +131,7 @@ export interface ISekaiUserAreaItem
 export const SekaiUserHonor = types.model({
   honorId: types.number,
   level: types.number,
-  obtainedAt: types.number,
+  obtainedAt: types.maybe(types.number),
   userId: types.maybe(types.union(types.number, types.string)),
 });
 export interface ISekaiUserHonor extends Instance<typeof SekaiUserHonor> {}
@@ -330,9 +335,39 @@ export const SekaiUserConfig = types.model({
 
 export interface ISekaiUserConfig extends Instance<typeof SekaiUserConfig> {}
 
+export const SekaiUserMultiLiveTopScoreCount = types.model({
+  mvp: types.number,
+  superStar: types.number,
+});
+
+export interface ISekaiUserMultiLiveTopScoreCount
+  extends Instance<typeof SekaiUserMultiLiveTopScoreCount> {}
+
+export const SekaiUserMusicDifficultyClearCount = types.model({
+  allPerfect: types.number,
+  fullCombo: types.number,
+  liveClear: types.number,
+  musicDifficultyType: types.string,
+});
+
+export interface ISekaiUserMusicDifficultyClearCount
+  extends Instance<typeof SekaiUserMusicDifficultyClearCount> {}
+
+export const SekaiUserTotalPower = types.model({
+  areaItemBonus: types.number,
+  basicCardTotalPower: types.number,
+  characterRankBonus: types.number,
+  honorBonus: types.number,
+  totalPower: types.number,
+});
+
+export interface ISekaiUserTotalPower
+  extends Instance<typeof SekaiUserTotalPower> {}
+
 export const SekaiUserData = types.model({
+  totalPower: SekaiUserTotalPower,
   user: SekaiUser,
-  userAreaItems: types.array(SekaiUserAreaItem),
+  userAreaItems: types.maybe(types.array(SekaiUserAreaItem)),
   userBondsHonors: types.maybe(types.array(SekaiUserBondsHonor)),
   userCards: types.array(SekaiUserCard),
   userChallengeLiveSoloResults: types.array(SekaiUserChallengeLiveSoloResult),
@@ -340,12 +375,18 @@ export const SekaiUserData = types.model({
   userCharacters: types.array(SekaiUserCharacter),
   userConfig: types.maybe(SekaiUserConfig),
   userCustomProfileCards: types.maybe(types.array(SekaiUserCustomProfileCard)),
-  userDecks: types.array(SekaiUserDeck),
+  userDeck: types.maybe(SekaiUserDeck),
+  userDecks: types.maybe(types.array(SekaiUserDeck)),
   userHonors: types.array(SekaiUserHonor),
+  userMultiLiveTopScoreCount: types.maybe(SekaiUserMultiLiveTopScoreCount),
+  userMusicDifficultyClearCount: types.maybe(
+    types.array(SekaiUserMusicDifficultyClearCount)
+  ),
   userMusicResults: types.maybe(types.array(SekaiUserMusicResult)),
-  userMusics: types.array(SekaiUserMusic),
+  userMusics: types.maybe(types.array(SekaiUserMusic)),
   userProfile: SekaiUserProfile,
   userProfileHonors: types.maybe(types.array(SekaiUserProfileHonor)),
+  // userStoryFavorites: types.maybe(types.array()),
 });
 export interface ISekaiUserData extends Instance<typeof SekaiUserData> {}
 

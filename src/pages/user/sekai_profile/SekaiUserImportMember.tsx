@@ -1,4 +1,5 @@
 import React, {
+  ChangeEvent,
   Fragment,
   useCallback,
   useEffect,
@@ -673,18 +674,12 @@ const SekaiUserImportMember = observer(() => {
               story2Unlock:
                 cardIds[0] !== -1 &&
                 level >=
-                  maxLevels[
-                    card!.rarity ||
-                      cardRarityTypeToRarity[card!.cardRarityType!]
-                  ],
+                  maxLevels[cardRarityTypeToRarity[card!.cardRarityType!]],
               trained:
                 (!!hashResults[idx].length &&
                   hashResults[idx][0][0].includes("after_training")) ||
                 level >=
-                  trainingLevels[
-                    card!.rarity ||
-                      cardRarityTypeToRarity[card!.cardRarityType!]
-                  ],
+                  trainingLevels[cardRarityTypeToRarity[card!.cardRarityType!]],
               useIndex: cardIds.findIndex((cardId) => cardId !== -1),
             };
           });
@@ -924,8 +919,7 @@ const SekaiUserImportMember = observer(() => {
           const cardInfo = cards.find((card) => card.id === cardId)!;
           const trainable =
             cardInfo.cardRarityType !== "rarity_birthday" &&
-            (cardInfo.rarity ||
-              cardRarityTypeToRarity[cardInfo.cardRarityType!]) >= 3;
+            cardRarityTypeToRarity[cardInfo.cardRarityType!] >= 3;
 
           return {
             cardId,
@@ -994,7 +988,7 @@ const SekaiUserImportMember = observer(() => {
             accept="image/png,image/jpeg"
             id="upload-member-button"
             type="file"
-            onChange={(e) => {
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
               if (!e.target.files || !e.target.files.length) return;
               const file = e.target.files.item(0);
               if (!file?.type.startsWith("image/")) return;

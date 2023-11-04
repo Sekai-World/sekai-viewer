@@ -110,15 +110,14 @@ const TeamBuilder: React.FC<{
     const [teamBuildArray, dispatchTeamBuildArray] = useReducer(
       teamBuildReducer,
       {
-        teams: JSON.parse(localStorage.getItem("team-build-array") || "[]"),
         localKey: "team-build-array",
         storageLocation: "local",
+        teams: JSON.parse(localStorage.getItem("team-build-array") || "[]"),
       }
     );
 
     useEffect(() => {
       dispatchTeamBuildArray({
-        type: "reload",
         payload: {
           location: storageLocation,
           teams:
@@ -126,6 +125,7 @@ const TeamBuilder: React.FC<{
               ? JSON.parse(localStorage.getItem("team-build-array") || "[]")
               : sekaiCardTeam?.decks || [],
         },
+        type: "reload",
       });
     }, [region, sekaiCardTeam, storageLocation]);
 
@@ -152,23 +152,22 @@ const TeamBuilder: React.FC<{
         let stateFrom = sekaiCardTeam?.cards?.find(
           (cl) => cl.cardId === card.id
         );
-        const rarity =
-          card.rarity || cardRarityTypeToRarity[card.cardRarityType!];
+        const rarity = cardRarityTypeToRarity[card.cardRarityType!];
         setTeamCardsStates((tcs) => [
           ...tcs,
           isSyncCardState && !!stateFrom
             ? stateFrom
             : {
                 cardId: card.id,
-                skillLevel: 1,
-                masterRank: 0,
                 level: maxLevel[rarity],
-                trained:
-                  card.cardRarityType !== "rarity_birthday" && rarity >= 3,
-                trainable:
-                  card.cardRarityType !== "rarity_birthday" && rarity >= 3,
+                masterRank: 0,
+                skillLevel: 1,
                 story1Unlock: true,
                 story2Unlock: true,
+                trainable:
+                  card.cardRarityType !== "rarity_birthday" && rarity >= 3,
+                trained:
+                  card.cardRarityType !== "rarity_birthday" && rarity >= 3,
               },
         ]);
         // setAddCardDialogVisible(false);
@@ -240,8 +239,8 @@ const TeamBuilder: React.FC<{
         putSekaiDecks(sekaiCardTeam.id, [toSaveEntry])
           .then(() => {
             dispatchTeamBuildArray({
-              type: "add",
               payload: toSaveEntry,
+              type: "add",
             });
             const sct = Object.assign({}, sekaiCardTeam, {
               decks: [...(sekaiCardTeam.decks || []), toSaveEntry],
@@ -256,8 +255,8 @@ const TeamBuilder: React.FC<{
           });
       } else if (storageLocation === "local") {
         dispatchTeamBuildArray({
-          type: "add",
           payload: toSaveEntry,
+          type: "add",
         });
         toggleIsSaveingEntry();
       }
@@ -293,11 +292,11 @@ const TeamBuilder: React.FC<{
           ])
             .then(() => {
               dispatchTeamBuildArray({
-                type: "replace",
                 payload: {
-                  id,
                   data: currentEntry,
+                  id,
                 },
+                type: "replace",
               });
               const sct = Object.assign({}, sekaiCardTeam, {
                 decks: [
@@ -317,11 +316,11 @@ const TeamBuilder: React.FC<{
             });
         } else if (storageLocation === "local") {
           dispatchTeamBuildArray({
-            type: "replace",
             payload: {
-              id,
               data: currentEntry,
+              id,
             },
+            type: "replace",
           });
           showSuccess(t("team_build:save_team_succeed"));
           toggleIsSaveingEntry();
@@ -352,8 +351,8 @@ const TeamBuilder: React.FC<{
           deleteSekaiDecks(sekaiCardTeam.id, [id])
             .then(() => {
               dispatchTeamBuildArray({
-                type: "remove",
                 payload: id,
+                type: "remove",
               });
               const sct = Object.assign({}, sekaiCardTeam, {
                 decks: [
@@ -371,8 +370,8 @@ const TeamBuilder: React.FC<{
             });
         } else if (storageLocation === "local") {
           dispatchTeamBuildArray({
-            type: "remove",
             payload: id,
+            type: "remove",
           });
           toggleIsSaveingEntry();
         }
@@ -406,19 +405,17 @@ const TeamBuilder: React.FC<{
               const maxNormalLevel = [0, 20, 30, 40, 50];
               return Object.assign({}, state, {
                 masterRank: 0,
+                story1Unlock: false,
+                story2Unlock: false,
+                trainable:
+                  card.cardRarityType !== "rarity_birthday" &&
+                  cardRarityTypeToRarity[card.cardRarityType!] >= 3,
                 trained:
                   card.cardRarityType !== "rarity_birthday" &&
                   state.level >
                     maxNormalLevel[
-                      card.rarity ||
-                        cardRarityTypeToRarity[card.cardRarityType!]
+                      cardRarityTypeToRarity[card.cardRarityType!]
                     ],
-                trainable:
-                  card.cardRarityType !== "rarity_birthday" &&
-                  (card.rarity ||
-                    cardRarityTypeToRarity[card.cardRarityType!]) >= 3,
-                story1Unlock: false,
-                story2Unlock: false,
               });
             }
           );
@@ -435,8 +432,7 @@ const TeamBuilder: React.FC<{
               return Object.assign({}, state, {
                 trainable:
                   card.cardRarityType !== "rarity_birthday" &&
-                  (card.rarity ||
-                    cardRarityTypeToRarity[card.cardRarityType!]) >= 3,
+                  cardRarityTypeToRarity[card.cardRarityType!] >= 3,
               });
             }
           );
@@ -469,10 +465,12 @@ const TeamBuilder: React.FC<{
           !!sekaiProfile &&
           !!sekaiProfile.sekaiUserProfile
         ) {
-          const areaItemBonus = getAreaItemBonus(
-            cardStates || teamCardsStates,
-            sekaiProfile.sekaiUserProfile.userAreaItems
-          );
+          // const areaItemBonus = getAreaItemBonus(
+          //   cardStates || teamCardsStates,
+          //   sekaiProfile.sekaiUserProfile.userAreaItems
+          // );
+          const areaItemBonus =
+            sekaiProfile.sekaiUserProfile.totalPower.areaItemBonus;
 
           // console.log(areaItemBonus);
 
@@ -481,9 +479,11 @@ const TeamBuilder: React.FC<{
             cardStates || teamCardsStates
           );
 
-          const honorBonus = getHonorBonus(
-            sekaiProfile.sekaiUserProfile.userHonors
-          );
+          // const honorBonus = getHonorBonus(
+          //   sekaiProfile.sekaiUserProfile.userHonors
+          // );
+          const honorBonus =
+            sekaiProfile.sekaiUserProfile.totalPower.honorBonus;
 
           // console.log(
           //   pureDeckPower,
@@ -500,9 +500,7 @@ const TeamBuilder: React.FC<{
         return pureDeckPower;
       },
       [
-        getAreaItemBonus,
         getCharacterRankBonus,
-        getHonorBonus,
         getPureTeamPowers,
         isAutoCalcBonus,
         sekaiProfile,
@@ -515,9 +513,9 @@ const TeamBuilder: React.FC<{
 
       const cardIds = Array.from({ length: 5 }).map(
         (_, idx) =>
-          sekaiProfile.sekaiUserProfile!.userDecks[0][
-            `member${idx + 1}` as "member1"
-          ]
+          (sekaiProfile.sekaiUserProfile!.userDecks ?? [
+            sekaiProfile.sekaiUserProfile!.userDeck!,
+          ])[0][`member${idx + 1}` as "member1"]
       );
 
       const cardStates: ITeamCardState[] = cardIds.map((cardId) => {
@@ -528,18 +526,21 @@ const TeamBuilder: React.FC<{
         const cardInfo = cards.find((card) => card.id === cardId)!;
         const trainable =
           cardInfo.cardRarityType !== "rarity_birthday" &&
-          (cardInfo.rarity ||
-            cardRarityTypeToRarity[cardInfo.cardRarityType!]) >= 3;
+          cardRarityTypeToRarity[cardInfo.cardRarityType!] >= 3;
 
         return {
           cardId,
           level: userCard.level,
           masterRank: userCard.masterRank,
-          trained: trainable && userCard.specialTrainingStatus === "done",
-          trainable,
           skillLevel: 1,
-          story1Unlock: userCard.episodes[0].scenarioStatus !== "unreleased",
-          story2Unlock: userCard.episodes[1].scenarioStatus !== "unreleased",
+          story1Unlock: userCard.episodes
+            ? userCard.episodes[0].scenarioStatus !== "unreleased"
+            : false,
+          story2Unlock: userCard.episodes
+            ? userCard.episodes[1].scenarioStatus !== "unreleased"
+            : false,
+          trainable,
+          trained: trainable && userCard.specialTrainingStatus === "done",
         };
       });
 
@@ -812,9 +813,9 @@ const TeamBuilder: React.FC<{
                             >
                               <CardThumb
                                 cardId={
-                                  sekaiProfile.sekaiUserProfile!.userDecks[0][
-                                    `member${idx + 1}` as "member1"
-                                  ]
+                                  (sekaiProfile.sekaiUserProfile!.userDecks || [
+                                    sekaiProfile.sekaiUserProfile!.userDeck!,
+                                  ])[0][`member${idx + 1}` as "member1"]
                                 }
                                 trained={
                                   sekaiProfile.sekaiUserProfile!.userCards[idx]
@@ -929,16 +930,16 @@ const TeamBuilder: React.FC<{
           anchorEl={anchorEl}
           onClose={handleClose}
           anchorOrigin={{
-            vertical: "top",
             horizontal: "center",
+            vertical: "top",
           }}
           transformOrigin={{
-            vertical: "bottom",
             horizontal: "center",
+            vertical: "bottom",
           }}
         >
           {editingCard && (
-            <Container style={{ paddingTop: "1em", paddingBottom: "1em" }}>
+            <Container style={{ paddingBottom: "1em", paddingTop: "1em" }}>
               <Grid container direction="column" spacing={1}>
                 <Grid item>
                   <TextField
@@ -965,8 +966,8 @@ const TeamBuilder: React.FC<{
                       handleChange(Number(e.target.value), "masterRank")
                     }
                     inputProps={{
-                      min: "0",
                       max: "5",
+                      min: "0",
                     }}
                     fullWidth
                   />
@@ -980,8 +981,8 @@ const TeamBuilder: React.FC<{
                       handleChange(Number(e.target.value), "skillLevel")
                     }
                     inputProps={{
-                      min: "1",
                       max: "4",
+                      min: "1",
                     }}
                     fullWidth
                   />

@@ -934,12 +934,12 @@ export interface UserCard {
   masterRank: number;
   specialTrainingStatus: string;
   defaultImage: string;
-  episodes: UserCardEpisode[];
+  episodes?: UserCardEpisode[];
 }
 
 export interface UserMusicResult {
-  userId: string | number;
-  musicId: number;
+  userId?: string | number;
+  musicId?: number;
   musicDifficulty: string;
   playType: string;
   playResult: string;
@@ -948,19 +948,19 @@ export interface UserMusicResult {
   fullPerfectFlg: boolean;
   mvpCount: number;
   superStarCount: number;
-  createdAt: number;
-  updatedAt: number;
+  createdAt?: number;
+  updatedAt?: number;
 }
 
 export interface UserMusicDifficultyStatus {
-  musicId: number;
+  musicId?: number;
   musicDifficulty: string;
   musicDifficultyStatus: string;
   userMusicResults: UserMusicResult[];
 }
 
 export interface UserMusic {
-  userId: string | number;
+  userId?: string | number;
   musicId: number;
   userMusicDifficultyStatuses: UserMusicDifficultyStatus[];
 }

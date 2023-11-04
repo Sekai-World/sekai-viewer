@@ -196,17 +196,10 @@ const SekaiUserCardList = observer(() => {
         );
       }
       if (_cardList.length && raritySelected.length) {
-        if (_cardList[0].card.rarity) {
-          const rarityFilter = raritySelected.map((rs) => rs.rarity);
-          _cardList = _cardList.filter((c) =>
-            rarityFilter.includes(c.card.rarity!)
-          );
-        } else {
-          const rarityFilter = raritySelected.map((rs) => rs.cardRarityType);
-          _cardList = _cardList.filter((c) =>
-            rarityFilter.includes(c.card.cardRarityType!)
-          );
-        }
+        const rarityFilter = raritySelected.map((rs) => rs.cardRarityType);
+        _cardList = _cardList.filter((c) =>
+          rarityFilter.includes(c.card.cardRarityType!)
+        );
       }
       if (supportUnitSelected.length) {
         _cardList = _cardList.filter(
@@ -225,22 +218,14 @@ const SekaiUserCardList = observer(() => {
           );
           break;
         case "rarity":
-          const sortKey =
-            _cardList[0] && _cardList[0].card.rarity
-              ? "rarity"
-              : "cardRarityType";
           setCardList(
-            _cardList.sort((a, b) => {
-              if (sortType === "asc") {
-                if (a.card[sortKey]! > b.card[sortKey]!) return 1;
-                if (a.card[sortKey]! < b.card[sortKey]!) return -1;
-              } else {
-                if (a.card[sortKey]! > b.card[sortKey]!) return -1;
-                if (a.card[sortKey]! < b.card[sortKey]!) return 1;
-              }
-
-              return 0;
-            })
+            _cardList.sort((a, b) =>
+              sortType === "asc"
+                ? cardRarityTypeToRarity[a.card.cardRarityType] -
+                  cardRarityTypeToRarity[b.card.cardRarityType]
+                : cardRarityTypeToRarity[b.card.cardRarityType] -
+                  cardRarityTypeToRarity[a.card.cardRarityType]
+            )
           );
           break;
         default:
@@ -373,20 +358,17 @@ const SekaiUserCardList = observer(() => {
         ...list,
         {
           cardId: card.id,
+          level: maxLevel[cardRarityTypeToRarity[card.cardRarityType!]],
           masterRank: 0,
           skillLevel: 1,
-          level:
-            maxLevel[
-              card.rarity || cardRarityTypeToRarity[card.cardRarityType!]
-            ],
-          trained:
-            card.cardRarityType !== "rarity_birthday" &&
-            (card.rarity || cardRarityTypeToRarity[card.cardRarityType!]) >= 3,
-          trainable:
-            card.cardRarityType !== "rarity_birthday" &&
-            (card.rarity || cardRarityTypeToRarity[card.cardRarityType!]) >= 3,
           story1Unlock: true,
           story2Unlock: true,
+          trainable:
+            card.cardRarityType !== "rarity_birthday" &&
+            cardRarityTypeToRarity[card.cardRarityType!] >= 3,
+          trained:
+            card.cardRarityType !== "rarity_birthday" &&
+            cardRarityTypeToRarity[card.cardRarityType!] >= 3,
         },
       ]);
       // setCardList((list) => [
@@ -412,7 +394,7 @@ const SekaiUserCardList = observer(() => {
       if (cards) {
         const c = cards.find((c) => c.id === card.cardId);
         if (c) {
-          const rarity = c.rarity || cardRarityTypeToRarity[c.cardRarityType!];
+          const rarity = cardRarityTypeToRarity[c.cardRarityType!];
           let level = maxLevel[rarity];
           if (card.trainable && !card.trained) level -= 10;
 
@@ -560,17 +542,17 @@ const SekaiUserCardList = observer(() => {
                         onClick={() => {
                           if (characterSelected.includes(idx + 1)) {
                             dispatchCharacterSelected({
-                              type: "remove",
                               payload: idx + 1,
                               storeName:
                                 "user-profile-sekai-cards-filter-charas",
+                              type: "remove",
                             });
                           } else {
                             dispatchCharacterSelected({
-                              type: "add",
                               payload: idx + 1,
                               storeName:
                                 "user-profile-sekai-cards-filter-charas",
+                              type: "add",
                             });
                           }
                         }}
@@ -611,17 +593,17 @@ const SekaiUserCardList = observer(() => {
                           onClick={() => {
                             if (attrSelected.includes(attr)) {
                               dispatchAttrSelected({
-                                type: "remove",
                                 payload: attr,
                                 storeName:
                                   "user-profile-sekai-cards-filter-attrs",
+                                type: "remove",
                               });
                             } else {
                               dispatchAttrSelected({
-                                type: "add",
                                 payload: attr,
                                 storeName:
                                   "user-profile-sekai-cards-filter-attrs",
+                                type: "add",
                               });
                             }
                           }}
@@ -683,17 +665,17 @@ const SekaiUserCardList = observer(() => {
                             onClick={() => {
                               if (supportUnitSelected.includes(supportUnit)) {
                                 dispatchSupportUnitSelected({
-                                  type: "remove",
                                   payload: supportUnit,
                                   storeName:
                                     "user-profile-sekai-cards-filter-support-units",
+                                  type: "remove",
                                 });
                               } else {
                                 dispatchSupportUnitSelected({
-                                  type: "add",
                                   payload: supportUnit,
                                   storeName:
                                     "user-profile-sekai-cards-filter-support-units",
+                                  type: "add",
                                 });
                               }
                             }}
@@ -747,29 +729,29 @@ const SekaiUserCardList = observer(() => {
                               .includes(rarity)
                           ) {
                             dispatchRaritySelected({
-                              type: "remove",
                               payload: {
-                                rarity,
                                 cardRarityType:
                                   rarity === 5
                                     ? "rarity_birthday"
                                     : `rarity_${rarity}`,
+                                rarity,
                               },
                               storeName:
                                 "user-profile-sekai-cards-filter-rarities",
+                              type: "remove",
                             });
                           } else {
                             dispatchRaritySelected({
-                              type: "add",
                               payload: {
-                                rarity,
                                 cardRarityType:
                                   rarity === 5
                                     ? "rarity_birthday"
                                     : `rarity_${rarity}`,
+                                rarity,
                               },
                               storeName:
                                 "user-profile-sekai-cards-filter-rarities",
+                              type: "add",
                             });
                           }
                         }}
@@ -850,32 +832,32 @@ const SekaiUserCardList = observer(() => {
                   }
                   onClick={() => {
                     dispatchCharacterSelected({
-                      type: "reset",
                       payload: 0,
                       storeName: "user-profile-sekai-cards-filter-charas",
+                      type: "reset",
                     });
                     dispatchAttrSelected({
-                      type: "reset",
                       payload: "",
                       storeName: "user-profile-sekai-cards-filter-attrs",
+                      type: "reset",
                     });
                     dispatchRaritySelected({
-                      type: "reset",
                       payload: {
-                        rarity: 0,
                         cardRarityType: "",
+                        rarity: 0,
                       },
                       storeName: "user-profile-sekai-cards-filter-rarities",
+                      type: "reset",
                     });
                     // dispatchSkillSelected({
                     //   type: "reset",
                     //   payload: "",
                     // });
                     dispatchSupportUnitSelected({
-                      type: "reset",
                       payload: "",
                       storeName:
                         "user-profile-sekai-cards-filter-support-units",
+                      type: "reset",
                     });
                   }}
                   startIcon={<RotateLeft />}
@@ -921,12 +903,12 @@ const SekaiUserCardList = observer(() => {
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{
-          vertical: "top",
           horizontal: "center",
+          vertical: "top",
         }}
         transformOrigin={{
-          vertical: "bottom",
           horizontal: "center",
+          vertical: "bottom",
         }}
       >
         {card && (
@@ -941,8 +923,8 @@ const SekaiUserCardList = observer(() => {
                     handleChange(Number(e.target.value), "level")
                   }
                   inputProps={{
-                    min: "1",
                     max: getMaxRarity(card),
+                    min: "1",
                   }}
                   fullWidth
                 />
@@ -958,8 +940,8 @@ const SekaiUserCardList = observer(() => {
                     handleChange(Number(e.target.value), "masterRank")
                   }
                   inputProps={{
-                    min: "0",
                     max: "5",
+                    min: "0",
                   }}
                   fullWidth
                 />
@@ -973,8 +955,8 @@ const SekaiUserCardList = observer(() => {
                     handleChange(Number(e.target.value), "skillLevel")
                   }
                   inputProps={{
-                    min: "1",
                     max: "4",
+                    min: "1",
                   }}
                   fullWidth
                 />
@@ -1028,15 +1010,15 @@ const SekaiUserCardList = observer(() => {
         anchorEl={anchorElEvent}
         onClose={handleEventClose}
         anchorOrigin={{
-          vertical: "top",
           horizontal: "center",
+          vertical: "top",
         }}
         transformOrigin={{
-          vertical: "bottom",
           horizontal: "center",
+          vertical: "bottom",
         }}
       >
-        <Container style={{ paddingTop: "1em", paddingBottom: "1em" }}>
+        <Container style={{ paddingBottom: "1em", paddingTop: "1em" }}>
           <TextField
             select
             label={t("common:event")}
@@ -1054,17 +1036,17 @@ const SekaiUserCardList = observer(() => {
                       // console.log(bonuses, eventId, eventDeckBonuses);
                       const attr = bonuses[0].cardAttr;
                       dispatchRaritySelected({
-                        type: "reset",
                         payload: {
-                          rarity: 0,
                           cardRarityType: "",
+                          rarity: 0,
                         },
                         storeName: "user-profile-sekai-cards-filter-rarities",
+                        type: "reset",
                       });
                       dispatchAttrSelected({
-                        type: "add",
                         payload: attr,
                         storeName: "user-profile-sekai-cards-filter-attrs",
+                        type: "add",
                       });
                       const charas = bonuses.map(
                         (bonus) =>
@@ -1073,31 +1055,31 @@ const SekaiUserCardList = observer(() => {
                           )!
                       );
                       dispatchCharacterSelected({
-                        type: "reset",
                         payload: 0,
                         storeName: "user-profile-sekai-cards-filter-charas",
+                        type: "reset",
                       });
                       charas.forEach((chara) =>
                         dispatchCharacterSelected({
-                          type: "add",
                           payload: chara.gameCharacterId,
                           storeName: "user-profile-sekai-cards-filter-charas",
+                          type: "add",
                         })
                       );
                       dispatchSupportUnitSelected({
-                        type: "reset",
                         payload: "",
                         storeName:
                           "user-profile-sekai-cards-filter-support-units",
+                        type: "reset",
                       });
                       charas
                         .filter((chara) => chara.gameCharacterId >= 21)
                         .forEach((chara) => {
                           dispatchSupportUnitSelected({
-                            type: "add",
                             payload: chara.unit,
                             storeName:
                               "user-profile-sekai-cards-filter-support-units",
+                            type: "add",
                           });
                         });
                       handleEventClose();

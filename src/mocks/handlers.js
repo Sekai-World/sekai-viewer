@@ -1,6 +1,12 @@
 import { rest } from "msw";
 
-import sekaiUserProfileJson from "./data/sampleSekaiProfile.json";
+import sekaiUserProfileJsonJP from "./data/sampleSekaiProfileJP.json";
+import sekaiUserProfileJsonTW from "./data/sampleSekaiProfileTW.json";
+
+const sekaiUserProfileJsonMap = {
+  jp: sekaiUserProfileJsonJP,
+  tw: sekaiUserProfileJsonTW,
+};
 
 export const handlers = [
   rest.post("/strapi/auth/local", (req, res, ctx) => {
@@ -132,6 +138,7 @@ export const handlers = [
   }),
   rest.get("/strapi/sekai-profiles/me", (req, res, ctx) => {
     const isAuthenticated = sessionStorage.getItem("is-authenticated");
+    console.log(isAuthenticated);
 
     if (!isAuthenticated) {
       // If not authenticated, respond with a 403 error
@@ -162,9 +169,11 @@ export const handlers = [
         eventGetUsed: 0,
         eventHistorySync: false,
         id: 1,
-        region: "jp",
+        region: req.headers.get("region"),
         sekaiUserId: "123456789",
-        sekaiUserProfile: sekaiUserProfileJson,
+        sekaiUserProfile:
+          sekaiUserProfileJsonMap[req.headers.get("region")] ||
+          sekaiUserProfileJsonJP,
         sekaiUserToken: null,
         updateAvailable: 3,
         updateUsed: 0,
@@ -229,7 +238,9 @@ export const handlers = [
     return res(
       ctx.status(200),
       ctx.json({
-        profile: sekaiUserProfileJson,
+        profile:
+          sekaiUserProfileJsonMap[req.headers.get("region")] ||
+          sekaiUserProfileJsonJP,
         status: "success",
       })
     );

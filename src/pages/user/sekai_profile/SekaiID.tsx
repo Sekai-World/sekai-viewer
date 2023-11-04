@@ -592,7 +592,12 @@ const SekaiID: React.FC<{}> = observer(() => {
                   </Grid>
                   <Grid item>
                     <Typography>
-                      {sekaiProfile.sekaiUserProfile.user.userGamedata.name}
+                      {
+                        (
+                          sekaiProfile.sekaiUserProfile.user.userGamedata ??
+                          sekaiProfile.sekaiUserProfile.user
+                        ).name
+                      }
                     </Typography>
                   </Grid>
                 </Grid>
@@ -607,7 +612,12 @@ const SekaiID: React.FC<{}> = observer(() => {
                   </Grid>
                   <Grid item>
                     <Typography>
-                      {sekaiProfile.sekaiUserProfile.user.userGamedata.rank}
+                      {
+                        (
+                          sekaiProfile.sekaiUserProfile.user.userGamedata ??
+                          sekaiProfile.sekaiUserProfile.user
+                        ).rank
+                      }
                     </Typography>
                   </Grid>
                 </Grid>

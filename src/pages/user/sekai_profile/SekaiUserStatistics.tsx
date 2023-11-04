@@ -137,8 +137,7 @@ const getAllPerfectCount = (idx: number, userMusics?: UserMusic[]) => {
   }, 0);
 };
 
-const getMVPCount = (userMusics?: UserMusic[]) => {
-  if (!userMusics) return 0;
+const getMVPCount = (userMusics: UserMusic[]) => {
   return userMusics.reduce((sum, umusic) => {
     umusic.userMusicDifficultyStatuses.forEach((status) => {
       status.userMusicResults.forEach((result) => {
@@ -149,8 +148,7 @@ const getMVPCount = (userMusics?: UserMusic[]) => {
   }, 0);
 };
 
-const getSuperStarCount = (userMusics?: UserMusic[]) => {
-  if (!userMusics) return 0;
+const getSuperStarCount = (userMusics: UserMusic[]) => {
   return userMusics.reduce((sum, umusic) => {
     umusic.userMusicDifficultyStatuses.forEach((status) => {
       status.userMusicResults.forEach((result) => {
@@ -452,7 +450,13 @@ const SekaiUserStatistics = observer(() => {
             <Grid container spacing={1}>
               {sekaiProfile.sekaiUserProfile.userHonors.map((honor) => (
                 <Grid key={honor.honorId} item xs={12} sm={6} md={3}>
-                  <Tooltip title={new Date(honor.obtainedAt).toLocaleString()}>
+                  <Tooltip
+                    title={
+                      honor.obtainedAt
+                        ? new Date(honor.obtainedAt).toLocaleString()
+                        : honor.honorId
+                    }
+                  >
                     <div>
                       <DegreeImage
                         honorId={honor.honorId}
@@ -557,8 +561,10 @@ const SekaiUserStatistics = observer(() => {
                                       </Grid>
                                       <Grid item xs={12}>
                                         <Typography align="center">
-                                          {!!sekaiProfile.sekaiUserProfile &&
-                                            sekaiProfile.sekaiUserProfile!.userAreaItems.find(
+                                          {sekaiProfile.sekaiUserProfile &&
+                                            sekaiProfile.sekaiUserProfile
+                                              .userAreaItems &&
+                                            sekaiProfile.sekaiUserProfile.userAreaItems.find(
                                               (uai) =>
                                                 uai.areaItemId === areaItem.id
                                             )?.level}
@@ -595,13 +601,19 @@ const SekaiUserStatistics = observer(() => {
                   <Grid container spacing={1}>
                     <Grid item>
                       <Chip label={t("music:mvp_count")}></Chip>
-                      {getMVPCount(sekaiProfile.sekaiUserProfile.userMusics)}
+                      {sekaiProfile.sekaiUserProfile.userMusics
+                        ? getMVPCount(sekaiProfile.sekaiUserProfile.userMusics)
+                        : sekaiProfile.sekaiUserProfile
+                            .userMultiLiveTopScoreCount?.mvp}
                     </Grid>
                     <Grid item>
                       <Chip label={t("music:super_star_count")}></Chip>
-                      {getSuperStarCount(
-                        sekaiProfile.sekaiUserProfile.userMusics
-                      )}
+                      {sekaiProfile.sekaiUserProfile.userMusics
+                        ? getSuperStarCount(
+                            sekaiProfile.sekaiUserProfile.userMusics
+                          )
+                        : sekaiProfile.sekaiUserProfile
+                            .userMultiLiveTopScoreCount?.superStar}
                     </Grid>
                   </Grid>
                 </Grid>
@@ -721,12 +733,14 @@ const SekaiUserStatistics = observer(() => {
                     </Select>
                   </FormControl>
                 </Grid>
-                <MusicSingleData
-                  umusic={sekaiProfile.sekaiUserProfile.userMusics.find(
-                    (um) => um.musicId === selectedMusic
-                  )}
-                  music={musics.find((m) => m.id === selectedMusic)!}
-                />
+                {sekaiProfile.sekaiUserProfile.userMusics ? (
+                  <MusicSingleData
+                    umusic={sekaiProfile.sekaiUserProfile.userMusics.find(
+                      (um) => um.musicId === selectedMusic
+                    )}
+                    music={musics.find((m) => m.id === selectedMusic)!}
+                  />
+                ) : null}
               </Grid>
             )}
           </AccordionDetails>
