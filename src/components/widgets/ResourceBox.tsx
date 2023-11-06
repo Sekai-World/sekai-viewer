@@ -51,20 +51,17 @@ const ResourceBox: React.FC<{
         }
 
         setResourceDetails(
-          itemTypeIndexes.reduce((details, index, i) => {
-            details.push({
-              resourceId: compactResourceBoxDetails.resourceId[index],
-              resourceType: compactResourceBoxDetails.__ENUM__.resourceType[
-                compactResourceBoxDetails.resourceType[index]
-              ],
-              resourceQuantity: compactResourceBoxDetails.resourceQuantity[index],
-              resourceLevel: compactResourceBoxDetails.resourceLevel[index],
-              resourceBoxId,
-              resourceBoxPurpose,
-              seq: ++i,
-            });
-            return details;
-          }, [] as ResourceBoxDetail[])
+          itemTypeIndexes.map((index, i): ResourceBoxDetail => ({
+            resourceId: compactResourceBoxDetails.resourceId[index],
+            resourceType: compactResourceBoxDetails.__ENUM__.resourceType[
+              compactResourceBoxDetails.resourceType[index]
+            ],
+            resourceQuantity: compactResourceBoxDetails.resourceQuantity[index],
+            resourceLevel: compactResourceBoxDetails.resourceLevel[index],
+            resourceBoxId,
+            resourceBoxPurpose,
+            seq: ++i,
+          }))
         );
       }
     } else {
