@@ -4,8 +4,13 @@ import { OpenInNew } from "@mui/icons-material";
 import React, { Fragment, useEffect } from "react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { IMusicInfo, IMusicMeta } from "../../types.d";
-import { filterMusicMeta, useCachedData, useMusicMeta } from "../../utils";
+import { IMusicDifficultyInfo, IMusicInfo, IMusicMeta } from "../../types.d";
+import {
+  addLevelToMusicMeta,
+  filterMusicMeta,
+  useCachedData,
+  useMusicMeta,
+} from "../../utils";
 // import AdSense from "../../components/blocks/AdSense";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
 import LinkNoDecoration from "../../components/styled/LinkNoDecoration";
@@ -18,6 +23,8 @@ const MusicMeta = () => {
 
   const [metas] = useMusicMeta();
   const [musics] = useCachedData<IMusicInfo>("musics");
+  const [musicDifficulties] =
+    useCachedData<IMusicDifficultyInfo>("musicDifficulties");
 
   const [validMetas, setValidMetas] = useState<IMusicMeta[]>([]);
 
@@ -40,21 +47,16 @@ const MusicMeta = () => {
     {
       field: "music_name",
       headerName: t("music_recommend:result.musicName"),
-      width: 350,
+      width: 300,
       renderCell(params) {
         return (
           <ContentTrans
-            contentKey={`music_titles:${params.getValue(
-              params.id,
-              "music_id"
-            )}`}
+            contentKey={`music_titles:${params.row["music_id"]}`}
             original={
               musics
-                ? musics.find(
-                    (music) =>
-                      music.id === params.getValue(params.id, "music_id")
-                  )!.title
-                : String(params.getValue(params.id, "music_id"))
+                ? musics.find((music) => music.id === params.row["music_id"])!
+                    .title
+                : String(params.row["music_id"])
             }
           />
         );
@@ -80,7 +82,7 @@ const MusicMeta = () => {
       align: "center",
     },
     {
-      field: "combo",
+      field: "tap_count",
       headerName: t("music:noteCount"),
       width: 110,
       align: "center",
@@ -112,8 +114,11 @@ const MusicMeta = () => {
   ];
 
   useEffect(() => {
-    if (metas && musics) setValidMetas(filterMusicMeta(metas, musics));
-  }, [metas, musics]);
+    if (metas && musics && musicDifficulties) {
+      const filteredMetas = filterMusicMeta(metas, musics);
+      setValidMetas(addLevelToMusicMeta(filteredMetas, musicDifficulties));
+    }
+  }, [metas, musicDifficulties, musics]);
 
   return (
     <Fragment>
