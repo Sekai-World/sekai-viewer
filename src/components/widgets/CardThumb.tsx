@@ -31,12 +31,11 @@ export const CardThumb: React.FC<
 > = ({ cardId, trained = false, onClick, style, level, masterRank, power }) => {
   const [cards] = useCachedData<ICardInfo>("cards");
   const [card, setCard] = useState<ICardInfo>();
-  const { isNewRarityCard, isBirthdayCard } = useCardType(card);
+  const { isBirthdayCard } = useCardType(card);
   const _trained = useMemo(() => {
     const maxNormalLevel = [0, 20, 30, 40, 50];
     if (card) {
-      const rarity =
-        card.rarity || cardRarityTypeToRarity[card.cardRarityType!];
+      const rarity = cardRarityTypeToRarity[card.cardRarityType!];
 
       return (
         rarity >= 3 &&
@@ -120,7 +119,7 @@ export const CardThumb: React.FC<
               String(
                 isBirthdayCard
                   ? "bd"
-                  : card.rarity || cardRarityTypeToRarity[card.cardRarityType!]
+                  : cardRarityTypeToRarity[card.cardRarityType!]
               )
             ]
           }
@@ -141,9 +140,7 @@ export const CardThumb: React.FC<
         {Array.from({
           length: isBirthdayCard
             ? 1
-            : isNewRarityCard
-            ? cardRarityTypeToRarity[card.cardRarityType!]
-            : card.rarity!,
+            : cardRarityTypeToRarity[card.cardRarityType!],
         }).map((_, i) => (
           <image
             key={`card-rarity-${i}`}
@@ -230,12 +227,11 @@ export const CardThumbMedium: React.FC<
 }) => {
   const [cards] = useCachedData<ICardInfo>("cards");
   const [card, setCard] = useState<ICardInfo>();
-  const { isNewRarityCard, isBirthdayCard } = useCardType(card);
+  const { isBirthdayCard } = useCardType(card);
   const _trained = useMemo(() => {
     const maxNormalLevel = [0, 20, 30, 40, 50];
     if (card) {
-      const rarity =
-        card.rarity || cardRarityTypeToRarity[card.cardRarityType!];
+      const rarity = cardRarityTypeToRarity[card.cardRarityType!];
 
       return (
         rarity >= 3 &&
@@ -326,8 +322,7 @@ export const CardThumbMedium: React.FC<
                     String(
                       isBirthdayCard
                         ? "bd"
-                        : card.rarity ||
-                            cardRarityTypeToRarity[card.cardRarityType!]
+                        : cardRarityTypeToRarity[card.cardRarityType!]
                     )
                   ]
                 }
@@ -348,9 +343,7 @@ export const CardThumbMedium: React.FC<
               {Array.from({
                 length: isBirthdayCard
                   ? 1
-                  : isNewRarityCard
-                  ? cardRarityTypeToRarity[card.cardRarityType!]
-                  : card.rarity!,
+                  : cardRarityTypeToRarity[card.cardRarityType!],
               }).map((_, i) => (
                 <image
                   key={`card-rarity-${i}`}

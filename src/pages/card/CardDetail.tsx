@@ -143,8 +143,7 @@ const CardDetail: React.FC<{}> = observer(() => {
 
   const [event, setEvent] = useState<IEventInfo>();
 
-  const { isNewRarityCard, isBirthdayCard, isTrainableCard } =
-    useCardType(card);
+  const { isBirthdayCard, isTrainableCard } = useCardType(card);
 
   const masterRankRewards = [0, 50, 100, 150, 200];
 
@@ -268,11 +267,9 @@ const CardDetail: React.FC<{}> = observer(() => {
       masterLessonRewardsCache
     ) {
       const _card = cards.find((elem) => elem.id === Number(cardId))!;
-      const _rarityInfo = isNewRarityCard
-        ? rarities.find(
-            (rarity) => rarity.cardRarityType === _card.cardRarityType
-          )
-        : rarities.find((rarity) => rarity.rarity === _card.rarity);
+      const _rarityInfo = rarities.find(
+        (rarity) => rarity.cardRarityType === _card.cardRarityType
+      );
       if (_rarityInfo) {
         setCard(
           Object.assign({}, _card, {
@@ -307,11 +304,7 @@ const CardDetail: React.FC<{}> = observer(() => {
         );
 
       const _masterLessons = masterLessonsCache
-        .filter((mlc) =>
-          _card.cardRarityType
-            ? mlc.cardRarityType === _card.cardRarityType
-            : mlc.cardRarity === _card.rarity
-        )
+        .filter((mlc) => mlc.cardRarityType === _card.cardRarityType)
         .sort((a, b) => a.masterRank - b.masterRank);
       setMasterLessons(_masterLessons);
 
@@ -334,7 +327,6 @@ const CardDetail: React.FC<{}> = observer(() => {
     assetT,
     getTranslated,
     t,
-    isNewRarityCard,
     masterLessonsCache,
     masterLessonRewardsCache,
   ]);
@@ -806,7 +798,9 @@ const CardDetail: React.FC<{}> = observer(() => {
               {t("common:startAt")}
             </Typography>
             <Typography>
-              {new Date(card.releaseAt ?? card.archivePublishedAt).toLocaleString()}
+              {new Date(
+                card.releaseAt ?? card.archivePublishedAt
+              ).toLocaleString()}
             </Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
@@ -824,9 +818,7 @@ const CardDetail: React.FC<{}> = observer(() => {
               {Array.from({
                 length: isBirthdayCard
                   ? 1
-                  : isNewRarityCard
-                  ? cardRarityTypeToRarity[card.cardRarityType!]
-                  : card.rarity!,
+                  : cardRarityTypeToRarity[card.cardRarityType!],
               }).map((_, id) => (
                 <ImgRarityStar
                   src={
@@ -1171,9 +1163,7 @@ const CardDetail: React.FC<{}> = observer(() => {
                   : 0) +
                 masterRank *
                   masterRankRewards[
-                    isNewRarityCard
-                      ? cardRarityTypeToRarity[card.cardRarityType!]
-                      : card.rarity!
+                    cardRarityTypeToRarity[card.cardRarityType!]
                   ]}
             </Typography>
           </Grid>
@@ -1207,9 +1197,7 @@ const CardDetail: React.FC<{}> = observer(() => {
                   : 0) +
                 masterRank *
                   masterRankRewards[
-                    isNewRarityCard
-                      ? cardRarityTypeToRarity[card.cardRarityType!]
-                      : card.rarity!
+                    cardRarityTypeToRarity[card.cardRarityType!]
                   ]}
             </Typography>
           </Grid>
@@ -1243,9 +1231,7 @@ const CardDetail: React.FC<{}> = observer(() => {
                   : 0) +
                 masterRank *
                   masterRankRewards[
-                    isNewRarityCard
-                      ? cardRarityTypeToRarity[card.cardRarityType!]
-                      : card.rarity!
+                    cardRarityTypeToRarity[card.cardRarityType!]
                   ]}
             </Typography>
           </Grid>
@@ -1285,9 +1271,7 @@ const CardDetail: React.FC<{}> = observer(() => {
                   : 0) +
                 masterRank *
                   masterRankRewards[
-                    isNewRarityCard
-                      ? cardRarityTypeToRarity[card.cardRarityType!]
-                      : card.rarity!
+                    cardRarityTypeToRarity[card.cardRarityType!]
                   ] *
                   3}
             </Typography>
