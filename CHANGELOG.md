@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.9.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.8.4...v1.9.0) (2024-01-20)
+
+
+### Bug Fixes
+
+* :bug: card rarity ([8b4149d](https://github.com/Sekai-World/sekai-viewer/commits/8b4149d71184e544c1f0b3fedd8db66714512a82))
+* :bug: music meta no level and no tap count ([8b7ecd1](https://github.com/Sekai-World/sekai-viewer/commits/8b7ecd1594097d2c621d7034c4e1d6be38415c92))
+* align icons in gacha behaviors ([f7abd37](https://github.com/Sekai-World/sekai-viewer/commits/f7abd37b489dd4f8d1d80b5c6f033ed201e47c94))
+* check if gacha actually has pickups ([cf9b28e](https://github.com/Sekai-World/sekai-viewer/commits/cf9b28ee8f39d745cafbe4e02f16846f1b8ddf1f))
+* gacha ticket icon and colorful pass free pulls ([2fbce4e](https://github.com/Sekai-World/sekai-viewer/commits/2fbce4ef7f6343b4fccae6cb0a335f852dff5f66))
+* increment jewel count when pulling with paid jewels ([734bef3](https://github.com/Sekai-World/sekai-viewer/commits/734bef38959f5b4647cc77e6cf459b71e7a56ba1))
+* some live2d model motion base not found ([74a23fe](https://github.com/Sekai-World/sekai-viewer/commits/74a23feb0c4b2a50c16d6b2df932bb38b2e36712))
+* some resource icons not showing on tw/kr ([18c3376](https://github.com/Sekai-World/sekai-viewer/commits/18c337687a16ac8d6221e33bebdcbe25d4b4497d))
+* streaming live page crash on jp ([5d87f66](https://github.com/Sekai-World/sekai-viewer/commits/5d87f66c5b4be6fcf118408146cb68c5b99dc8ce))
+* virtual live music setlists not showing on tw/kr ([128495e](https://github.com/Sekai-World/sekai-viewer/commits/128495e8a5bb1ed36db575692091b00752894791))
+* world link no attr bonus ([c7be441](https://github.com/Sekai-World/sekai-viewer/commits/c7be441f79695173b40ebaf3420b741c16209eb3))
+
+
+### Refactors
+
+* remove old rarity checks and fix bday gacha guaranteed rates ([3dc5fed](https://github.com/Sekai-World/sekai-viewer/commits/3dc5fed9ed77506d2d87571fc3e58b2ea26c65a8))
+* use `array.map` instead ([c1ae461](https://github.com/Sekai-World/sekai-viewer/commits/c1ae461492b9088e63dc6cc20c4576aef107078f))
+
 ### [1.8.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.8.3...v1.8.4) (2023-11-04)
 
 
