@@ -786,23 +786,16 @@ export const cardRarityTypeToRarity: {
 };
 
 export function useCardType(card?: ICardInfo) {
-  const isNewRarityCard = useMemo(
-    () => !!card && !!card.cardRarityType,
-    [card]
-  );
   const isBirthdayCard = useMemo(
     () => card?.cardRarityType === "rarity_birthday",
     [card?.cardRarityType]
   );
   const isTrainableCard = useMemo(
-    () =>
-      isNewRarityCard
-        ? specialTrainingRarityTypes.includes(card?.cardRarityType!)
-        : card?.rarity! >= 3,
-    [card?.cardRarityType, card?.rarity, isNewRarityCard]
+    () => specialTrainingRarityTypes.includes(card?.cardRarityType!),
+    [card?.cardRarityType]
   );
 
-  return { isBirthdayCard, isNewRarityCard, isTrainableCard };
+  return { isBirthdayCard, isTrainableCard };
 }
 
 export async function getGachaRemoteImages(

@@ -31,7 +31,7 @@ export const CardImage: React.FC<{ id: number; trained?: boolean }> = ({
   const [card, setCard] = useState<ICardInfo>();
   const [cardImg, setCardImg] = useState<string>("");
 
-  const { isNewRarityCard, isBirthdayCard } = useCardType(card);
+  const { isBirthdayCard } = useCardType(card);
 
   const rarityIcon = useMemo(
     () =>
@@ -69,13 +69,7 @@ export const CardImage: React.FC<{ id: number; trained?: boolean }> = ({
       ></image>
       {/* frame */}
       <image
-        href={
-          cardImageFrameMap[
-            isNewRarityCard
-              ? cardRarityTypeToRarity[card.cardRarityType!]
-              : card.rarity!
-          ]
-        }
+        href={cardImageFrameMap[cardRarityTypeToRarity[card.cardRarityType!]]}
         x="0"
         y="0"
         width="1024"
@@ -93,9 +87,7 @@ export const CardImage: React.FC<{ id: number; trained?: boolean }> = ({
       {Array.from({
         length: isBirthdayCard
           ? 1
-          : isNewRarityCard
-          ? cardRarityTypeToRarity[card.cardRarityType!]
-          : card.rarity!,
+          : cardRarityTypeToRarity[card.cardRarityType!],
       }).map((_, i) => (
         <image
           key={`card-rarity-${i}`}
@@ -122,8 +114,7 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
       useRefState<number>(768);
     const [imgRightWidth, refImgRightWidth, setImgRightWidth] =
       useRefState<number>(768);
-    const { isNewRarityCard, isBirthdayCard, isTrainableCard } =
-      useCardType(card);
+    const { isBirthdayCard, isTrainableCard } = useCardType(card);
 
     const svgElement = useRef<SVGSVGElement>(null);
 
@@ -319,13 +310,7 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
         )}
         {/* frame */}
         <image
-          href={
-            cardImageFrameMap[
-              isNewRarityCard
-                ? cardRarityTypeToRarity[card.cardRarityType!]
-                : card.rarity!
-            ]
-          }
+          href={cardImageFrameMap[cardRarityTypeToRarity[card.cardRarityType!]]}
           x="0"
           y="0"
           width="1024"
@@ -343,9 +328,7 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
         {Array.from({
           length: isBirthdayCard
             ? 1
-            : isNewRarityCard
-            ? cardRarityTypeToRarity[card.cardRarityType!]
-            : card.rarity!,
+            : cardRarityTypeToRarity[card.cardRarityType!],
         }).map((_, i) => (
           <image
             key={`card-rarity-${i}`}
