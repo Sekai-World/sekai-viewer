@@ -301,6 +301,26 @@ export function filterMusicMeta(metas: IMusicMeta[], musics: IMusicInfo[]) {
   return metas.filter((meta) => validIds.includes(meta.music_id));
 }
 
+export function addLevelToMusicMeta(
+  metas: IMusicMeta[],
+  musicDifficulties: IMusicDifficultyInfo[]
+) {
+  return metas.map((meta) => {
+    const music = musicDifficulties.find(
+      (music) =>
+        music.musicId === meta.music_id &&
+        music.musicDifficulty === meta.difficulty
+    );
+    if (music) {
+      return {
+        ...meta,
+        level: music.playLevel,
+      };
+    }
+    return meta;
+  });
+}
+
 // const queue = new PQueue({ concurrency: 1 });
 
 export async function getRemoteAssetURL(
