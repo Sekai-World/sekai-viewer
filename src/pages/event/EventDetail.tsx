@@ -141,9 +141,10 @@ const EventDetail: React.FC<{}> = observer(() => {
       );
       setEventCards(ec);
       const ebc = edb
-        .filter(
-          (it) =>
-            it.cardAttr !== undefined && it.gameCharacterUnitId !== undefined
+        .filter((it) =>
+          ev?.eventType !== "world_bloom"
+            ? it.cardAttr !== undefined && it.gameCharacterUnitId !== undefined
+            : it.gameCharacterUnitId !== undefined
         )
         .map(
           (elem) =>
@@ -151,6 +152,7 @@ const EventDetail: React.FC<{}> = observer(() => {
               (gcu) => gcu.id === elem.gameCharacterUnitId
             )!
         );
+      console.log(edb, ebc);
       setEventBonusCharas(ebc);
       const masterRankBonus = {
         rarity_1: [0, 0.5, 0.5],
@@ -163,7 +165,10 @@ const EventDetail: React.FC<{}> = observer(() => {
         Number(eventId) >= 36 ? (Number(eventId) >= 54 ? 2 : 1) : 0;
       setBoostCards(() => {
         let result = cards
-          .filter((elem) => (elem.releaseAt ?? elem.archivePublishedAt) <= ev!.aggregateAt)
+          .filter(
+            (elem) =>
+              (elem.releaseAt ?? elem.archivePublishedAt) <= ev!.aggregateAt
+          )
           .map((card) => {
             let eventCard = ec.find(
               (it) => it.cardId === card.id && it.bonusRate !== undefined
@@ -220,8 +225,7 @@ const EventDetail: React.FC<{}> = observer(() => {
           .filter((it) => it.minBonus >= 40);
 
         if (result.length) {
-          const sortKey =
-            result[0] && result[0].card.rarity ? "rarity" : "cardRarityType";
+          const sortKey = "cardRarityType";
           result = result.sort((a, b) => {
             if (a.minBonus > b.minBonus) return -1;
             if (a.minBonus < b.minBonus) return 1;
@@ -645,43 +649,45 @@ const EventDetail: React.FC<{}> = observer(() => {
       <TypographyHeader>{t("event:title.boost")}</TypographyHeader>
       <ContainerContent maxWidth="md">
         <GridOut container direction="column">
-          <Grid
-            item
-            container
-            direction="row"
-            wrap="nowrap"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Grid item xs={5}>
-              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                {t("event:boostAttribute")}
-              </Typography>
-            </Grid>
-            <Grid item xs={5} sm={6}>
-              <Grid
-                spacing={1}
-                container
-                alignItems="center"
-                justifyContent="space-between"
-              >
-                <Grid item xs={6} sm={10}>
-                  <Grid container spacing={1} justifyContent="flex-end">
-                    <Grid item>
-                      <img
-                        style={{ maxHeight: "36px" }}
-                        src={attrIconMap[eventAttrBonus!.cardAttr]}
-                        alt={eventAttrBonus!.cardAttr}
-                      ></img>
+          {!!eventAttrBonus && (
+            <Grid
+              item
+              container
+              direction="row"
+              wrap="nowrap"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Grid item xs={5}>
+                <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                  {t("event:boostAttribute")}
+                </Typography>
+              </Grid>
+              <Grid item xs={5} sm={6}>
+                <Grid
+                  spacing={1}
+                  container
+                  alignItems="center"
+                  justifyContent="space-between"
+                >
+                  <Grid item xs={6} sm={10}>
+                    <Grid container spacing={1} justifyContent="flex-end">
+                      <Grid item>
+                        <img
+                          style={{ maxHeight: "36px" }}
+                          src={attrIconMap[eventAttrBonus.cardAttr]}
+                          alt={eventAttrBonus.cardAttr}
+                        ></img>
+                      </Grid>
                     </Grid>
                   </Grid>
-                </Grid>
-                <Grid item xs={5} sm={2}>
-                  <Typography>+{eventAttrBonus!.bonusRate}%</Typography>
+                  <Grid item xs={5} sm={2}>
+                    <Typography>+{eventAttrBonus.bonusRate}%</Typography>
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
-          </Grid>
+          )}
           <Divider style={{ margin: "1% 0" }} />
           <Grid
             item

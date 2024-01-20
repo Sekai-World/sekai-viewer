@@ -361,7 +361,11 @@ export interface EventRankingRewardRange {
   eventRankingRewards: EventRankingReward[];
 }
 
-export type EventType = "marathon" | "cheerful_carnival" | "challenge_live";
+export type EventType =
+  | "marathon"
+  | "cheerful_carnival"
+  | "challenge_live"
+  | "world_bloom";
 
 export interface IEventInfo {
   id: number;
