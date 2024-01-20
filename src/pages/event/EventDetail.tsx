@@ -152,7 +152,6 @@ const EventDetail: React.FC<{}> = observer(() => {
               (gcu) => gcu.id === elem.gameCharacterUnitId
             )!
         );
-      console.log(edb, ebc);
       setEventBonusCharas(ebc);
       const masterRankBonus = {
         rarity_1: [0, 0.5, 0.5],
