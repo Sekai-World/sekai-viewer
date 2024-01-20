@@ -123,6 +123,12 @@ export default defineConfig({
 
         target: "https://storage.sekai.best",
       },
+      "/sekai-best-assets": {
+        // target: "https://minio.dnaroma.eu",
+        changeOrigin: true,
+
+        target: "https://storage.sekai.best",
+      },
       "^/strapi/sekai-current-event.*": {
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/strapi/, ""),
