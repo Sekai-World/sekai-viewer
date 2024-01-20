@@ -4,18 +4,5 @@
     "react-app",
     "plugin:prettier/recommended",
     "prettier/@typescript-eslint"
-  ],
-  "rules": {
-    "sort-keys-fix/sort-keys-fix": [
-      "error",
-      "asc",
-      {
-        "caseSensitive": true,
-        "natural": false
-      }
-    ]
-  },
-  "plugins": [
-    "sort-keys-fix"
   ]
 }
