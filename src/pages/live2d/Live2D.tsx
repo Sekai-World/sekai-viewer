@@ -416,6 +416,22 @@ const Live2DView: React.FC<{}> = () => {
     [isRecording, recorder]
   );
 
+  const handleShow = useCallback(() => {
+    setModelName(selectedModelName);
+    let motionName = selectedModelName;
+    if (motionName) {
+      if (motionName?.startsWith("sub") || motionName?.startsWith("clb")) {
+        motionName = motionName.split("_").slice(0, 2).join("_");
+      } else {
+        motionName = motionName.split("_")[0]!;
+      }
+      if (motionName.endsWith("black")) {
+        motionName = motionName.slice(0, -5);
+      }
+      setMotionName(motionName + "_motion_base");
+    }
+  }, [selectedModelName]);
+
   return (
     <Fragment>
       <TypographyHeader>Live2D</TypographyHeader>
@@ -438,17 +454,7 @@ const Live2DView: React.FC<{}> = () => {
           <Button
             disabled={!selectedModelName || showProgress}
             variant="contained"
-            onClick={() => {
-              setModelName(selectedModelName);
-              setMotionName(
-                (selectedModelName?.startsWith("sub") ||
-                selectedModelName?.startsWith("clb")
-                  ? selectedModelName
-                  : selectedModelName?.startsWith("v2")
-                  ? selectedModelName?.split("_").slice(0, 2).join("_")
-                  : selectedModelName?.split("_")[0]) + "_motion_base"
-              );
-            }}
+            onClick={handleShow}
           >
             {t("common:show")}
           </Button>
