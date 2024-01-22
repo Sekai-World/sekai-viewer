@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.0...v1.9.1) (2024-01-22)
+
 ## [1.9.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.8.4...v1.9.0) (2024-01-20)
 
 
