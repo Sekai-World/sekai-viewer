@@ -846,6 +846,8 @@ export interface EventStoryEpisode {
 export interface IEventStory {
   id: number;
   eventId: number;
+  outline?: string;
+  bannerGameCharacterUnitId?: number;
   assetbundleName: string;
   eventStoryEpisodes: EventStoryEpisode[];
 }

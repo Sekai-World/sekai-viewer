@@ -368,7 +368,7 @@ const StoryReader: React.FC<{}> = observer(() => {
                       <CardSelect>
                         <CardContent>
                           <ImageWrapper
-                            src={`home/banner/${ev.assetbundleName}_rip/${ev.assetbundleName}.webp`}
+                            src={`event_story/${ev.assetbundleName}/screen_image_rip/banner_event_story.webp`}
                             bgColor=""
                             duration={0}
                             region={region}
@@ -398,6 +398,13 @@ const StoryReader: React.FC<{}> = observer(() => {
               if (chapter) {
                 return (
                   <Grid container spacing={1}>
+                    {!!chapter.outline && (
+                      <Grid item xs={12}>
+                        <Typography variant="body2" color="textSecondary">
+                          {chapter.outline}
+                        </Typography>
+                      </Grid>
+                    )}
                     {chapter.eventStoryEpisodes.map((episode) => (
                       <Grid item xs={12} sm={6} md={3} key={episode.id}>
                         <LinkNoDecorationAlsoNoHover
@@ -663,13 +670,14 @@ const StoryReader: React.FC<{}> = observer(() => {
         </Route>
         <Route path={`${path}/cardStory/:charaId`} exact>
           {({ match }) => {
-            // console.log(match);
             const charaId = match?.params.charaId;
             if (charaId && cards) {
               const filteredCards = cards.filter(
                 (card) =>
                   card.characterId === Number(charaId) &&
-                  (isShowSpoiler || (card.releaseAt ?? card.archivePublishedAt) <= new Date().getTime())
+                  (isShowSpoiler ||
+                    (card.releaseAt ?? card.archivePublishedAt) <=
+                      new Date().getTime())
               );
               if (filteredCards.length) {
                 return (
