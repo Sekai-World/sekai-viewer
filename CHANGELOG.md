@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.2...v1.9.3) (2024-01-23)
+
+
+### Features
+
+* **storyreader:** :sparkles: event story outline ([3f41a2d](https://github.com/Sekai-World/sekai-viewer/commits/3f41a2d4d8a694ee6825aab90044598ad90ab57b))
+
+
+### Bug Fixes
+
+* **live2d:** :bug: v2 model motion path ([21f6097](https://github.com/Sekai-World/sekai-viewer/commits/21f60977b47e5bfe23069039d4479fa73e0d76f7))
+
 ### [1.9.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.1...v1.9.2) (2024-01-22)
 
 ### [1.9.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.0...v1.9.1) (2024-01-22)
