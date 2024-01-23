@@ -422,6 +422,8 @@ const Live2DView: React.FC<{}> = () => {
     if (motionName) {
       if (motionName?.startsWith("sub") || motionName?.startsWith("clb")) {
         motionName = motionName.split("_").slice(0, 2).join("_");
+      } else if (motionName.startsWith("v2")) {
+        motionName = motionName.split("_")[1]!;
       } else {
         motionName = motionName.split("_")[0]!;
       }
@@ -439,7 +441,7 @@ const Live2DView: React.FC<{}> = () => {
         {t("common:betaIndicator")}
       </Alert>
       <Grid container spacing={1} alignItems="center">
-        <Grid item xs={9} md={4} lg={3} xl={2}>
+        <Grid item xs={9} md={4} lg={3}>
           <Autocomplete
             value={selectedModelName}
             onChange={(e, v) => setSelectedModelName(v)}
