@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.3...v1.9.4) (2024-01-28)
+
+
+### Bug Fixes
+
+* ignore custom profile ([96f20ce](https://github.com/Sekai-World/sekai-viewer/commits/96f20cefa4b1313e10d0d5b21c6771b2428a29c5))
+* missing key warning ([05bc4d9](https://github.com/Sekai-World/sekai-viewer/commits/05bc4d9ae920c4202594c27f749f9cf001d4df81))
+
 ### [1.9.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.2...v1.9.3) (2024-01-23)
 
 
