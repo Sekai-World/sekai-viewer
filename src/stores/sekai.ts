@@ -377,7 +377,7 @@ export const SekaiUserData = types.model({
   userChallengeLiveSoloStages: types.array(SekaiUserChallengeLiveSoloStage),
   userCharacters: types.array(SekaiUserCharacter),
   userConfig: types.maybe(SekaiUserConfig),
-  userCustomProfileCards: types.maybe(types.array(SekaiUserCustomProfileCard)),
+  // userCustomProfileCards: types.maybe(types.array(SekaiUserCustomProfileCard)),
   userDeck: types.maybe(SekaiUserDeck),
   userDecks: types.maybe(types.array(SekaiUserDeck)),
   userHonors: types.array(SekaiUserHonor),
