@@ -642,7 +642,12 @@ const SekaiID: React.FC<{}> = observer(() => {
                   {sekaiProfile.sekaiUserProfile.userProfileHonors ? (
                     sekaiProfile.sekaiUserProfile.userProfileHonors.map(
                       (honor) => (
-                        <Grid item xs={12} md={4}>
+                        <Grid
+                          item
+                          xs={12}
+                          md={4}
+                          key={"user-honor-" + honor.honorId}
+                        >
                           {honor.profileHonorType === "normal" ? (
                             <DegreeImage
                               honorId={honor.honorId}
