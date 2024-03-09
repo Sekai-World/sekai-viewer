@@ -34,7 +34,9 @@ import { Link } from "react-router-dom";
 
 const drawerWidth = 240;
 
-const AppSkeletonInner = (props: { theme: Theme }) => {
+const AppSkeletonInner: React.FC<{ theme: Theme }> = (props: {
+  theme: Theme;
+}) => {
   const { theme } = props;
   const DrawerContentRoot = useMemo(
     () =>

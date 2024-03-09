@@ -71,7 +71,7 @@ const ListCard: { [key: string]: React.FC<{ data?: IMusicInfo }> } = {
   grid: GridView,
 };
 
-const MusicList: React.FC<{}> = observer(() => {
+const MusicList: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
   const {
     settings: { contentTransMode, isShowSpoiler },

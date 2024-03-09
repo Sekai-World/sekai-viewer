@@ -23,7 +23,7 @@ const ListCard: React.FC<{
   handleCardClick?: (index: number) => void;
 }> = GridView;
 
-const ComicList: React.FC<{}> = observer(() => {
+const ComicList: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
   const {
     settings: { contentTransMode },
@@ -54,7 +54,7 @@ const ComicList: React.FC<{}> = observer(() => {
   useEffect(() => {
     const f = async () => {
       const images: ImageDecorator[] = [];
-      for (let comic of filteredCache) {
+      for (const comic of filteredCache) {
         let url;
         switch (resourceLang) {
           case "ja":

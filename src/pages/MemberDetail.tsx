@@ -48,7 +48,7 @@ const UnitLogoLargeImg = styled("img")`
   max-width: 100%;
 `;
 
-const MemberDetail: React.FC<{}> = observer(() => {
+const MemberDetail: React.FC<unknown> = observer(() => {
   const { charaId } = useParams<{ charaId: string }>();
   const { t } = useTranslation();
   const getCharaName = useCharaName();
@@ -153,7 +153,10 @@ const MemberDetail: React.FC<{}> = observer(() => {
     );
   }, [charaId, region]);
 
-  const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
+  const handleChange = (
+    event: React.ChangeEvent<unknown>,
+    newValue: string
+  ) => {
     setTabVal(newValue);
   };
 

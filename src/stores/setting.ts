@@ -2,19 +2,17 @@ import { types, Instance } from "mobx-state-tree";
 import { ContentTransModeType, DisplayModeType, ServerRegion } from "../types";
 import { ILanguageModel, LanguageModel } from "./user";
 
-export const SettingDisplayMode = types.enumeration<DisplayModeType>([
-  "dark",
-  "light",
-  "auto",
-]);
+export const SettingDisplayMode = types.enumeration<DisplayModeType>(
+  "DisplayMode",
+  ["dark", "light", "auto"]
+);
 
-export const SettingContentTransMode = types.enumeration<ContentTransModeType>([
-  "original",
-  "translated",
-  "both",
-]);
+export const SettingContentTransMode = types.enumeration<ContentTransModeType>(
+  "ContentTransMode",
+  ["original", "translated", "both"]
+);
 
-export const SettingRegion = types.enumeration<ServerRegion>([
+export const SettingRegion = types.enumeration<ServerRegion>("ServerRegion", [
   "jp",
   "tw",
   "en",
@@ -44,7 +42,7 @@ export const Settings = types
       self.lang = newLang;
     },
     setLanguages(newLanguages: ILanguageModel[]) {
-      //@ts-ignore
+      // @ts-expect-error type mismatch
       self.languages = newLanguages;
     },
     setRegion(newRegion: ServerRegion) {

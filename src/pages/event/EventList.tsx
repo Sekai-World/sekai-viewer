@@ -30,7 +30,7 @@ const ListCard: { [key: string]: React.FC<{ data?: IEventInfo }> } = {
   grid: GridView,
 };
 
-const EventList: React.FC<{}> = observer(() => {
+const EventList: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
   const {
     settings: { isShowSpoiler },

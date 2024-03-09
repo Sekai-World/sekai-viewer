@@ -41,7 +41,7 @@ import ChipDifficulty from "../components/styled/ChipDifficulty";
 import TypographyHeader from "../components/styled/TypographyHeader";
 import ContainerContent from "../components/styled/ContainerContent";
 
-const MusicRecommend: React.FC<{}> = () => {
+const MusicRecommend: React.FC<unknown> = () => {
   const { t } = useTranslation();
 
   const [cards] = useCachedData<ICardInfo>("cards");
@@ -193,9 +193,9 @@ const MusicRecommend: React.FC<{}> = () => {
       !validMetas.length
     )
       return;
-    let isSolo = selectedMode === "solo";
+    const isSolo = selectedMode === "solo";
 
-    let cardSkills = getCardSkillRates(cards, skills, teamCardsStates);
+    const cardSkills = getCardSkillRates(cards, skills, teamCardsStates);
     let result: IMusicRecommendResult[] = [];
 
     if (!isSolo) {

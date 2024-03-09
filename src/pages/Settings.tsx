@@ -1,5 +1,4 @@
 import {
-  Box,
   // Button,
   // Container,
   FormControl,
@@ -9,27 +8,20 @@ import {
   Radio,
   RadioGroup,
   Switch,
-  Tooltip,
-  Typography,
 } from "@mui/material";
 import Brightness4 from "~icons/mdi/brightness-4";
 import Brightness7 from "~icons/mdi/brightness-7";
 import BrightnessAuto from "~icons/mdi/brightness-auto";
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import React, { Fragment, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
   DisplayModeType,
   ContentTransModeType,
   ServerRegion,
 } from "../types.d";
-import { useAlertSnackbar } from "../utils";
 import { useRemoteLanguages } from "../utils/apiClient";
 import { useAssetI18n } from "../utils/i18n";
-import localforage from "localforage";
-import { LoadingButton } from "@mui/lab";
-import axios from "axios";
-import IconRefresh from "~icons/mdi/refresh";
-import IconInformation from "~icons/mdi/information";
 import { useRootStore } from "../stores/root";
 import { observer } from "mobx-react-lite";
 import TypographyHeader from "../components/styled/TypographyHeader";

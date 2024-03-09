@@ -133,7 +133,10 @@ function getMaxParam(
         sum += episode.power3BonusFixed;
         return sum;
       }, 0);
-  if (specialTrainingRarityTypes.includes(card?.cardRarityType!))
+  if (
+    card?.cardRarityType &&
+    specialTrainingRarityTypes.includes(card?.cardRarityType)
+  )
     maxParam +=
       card.specialTrainingPower1BonusFixed +
       card.specialTrainingPower2BonusFixed +
@@ -148,7 +151,7 @@ const ListCard: { [key: string]: React.FC<{ data?: ICardInfo }> } = {
   grid: GridView,
 };
 
-const CardList: React.FC<{}> = observer(() => {
+const CardList: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
   const {
     settings: { isShowSpoiler, region },
@@ -298,7 +301,7 @@ const CardList: React.FC<{}> = observer(() => {
       }
       if (result.length && skillSelected.length) {
         result = result.filter((c) => {
-          let skill = skills.find((s) => c.skillId === s.id);
+          const skill = skills.find((s) => c.skillId === s.id);
           if (skill) {
             let descriptionSpriteName = skill.descriptionSpriteName;
             if (skill.skillEffects[0].activateNotesJudgmentType === "perfect")

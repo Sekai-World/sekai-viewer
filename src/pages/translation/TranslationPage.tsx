@@ -28,7 +28,7 @@ interface preferLangErrors {
   languages: string;
 }
 
-const Translation: React.FC<{}> = observer(() => {
+const Translation: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
   const {
     jwtToken,

@@ -60,7 +60,7 @@ const difficulties: Record<number, string> = {
   4: "Master",
 };
 
-const EventPointCalc: React.FC<{}> = () => {
+const EventPointCalc: React.FC<unknown> = () => {
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
 
@@ -381,7 +381,7 @@ const EventPointCalc: React.FC<{}> = () => {
     } else {
       const result: IEventCalcAllSongsResult[] = validMetas
         .map((meta, i) => {
-          let music = musics.find((it) => it.id === meta.music_id);
+          const music = musics.find((it) => it.id === meta.music_id);
           if (!music)
             return {
               difficulty: meta.difficulty,
@@ -600,7 +600,7 @@ const EventPointCalc: React.FC<{}> = () => {
                           <Select
                             labelId="event-select-label"
                             value={customEventType}
-                            onChange={(e, v) =>
+                            onChange={(e) =>
                               setCustomEventType(e.target.value as EventType)
                             }
                             input={<Input />}

@@ -12,7 +12,7 @@ import { observer } from "mobx-react-lite";
 import TypographyHeader from "../styled/TypographyHeader";
 import ContainerContent from "../styled/ContainerContent";
 
-const CurrentEventWidget: React.FC<{}> = observer(() => {
+const CurrentEventWidget: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
   const { currEvent, error } = useCurrentEvent();
   const { region } = useRootStore();

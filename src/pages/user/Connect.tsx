@@ -10,7 +10,7 @@ import { apiUserInfoToStoreUserInfo } from "../../utils";
 import { IUserMetadata } from "../../stores/user";
 import TypographyHeader from "../../components/styled/TypographyHeader";
 
-const Connect: React.FC<{}> = observer(() => {
+const Connect: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
   const { provider } = useParams<{ provider: string }>();
   const {
@@ -71,8 +71,8 @@ const Connect: React.FC<{}> = observer(() => {
 
         history.push("/user");
         localStorage.setItem("lastUserCheck", String(new Date().getTime()));
-      } catch (error: any) {
-        if (error.id === "Auth.form.error.email.taken") {
+      } catch (error: unknown) {
+        if ((error as { id: string }).id === "Auth.form.error.email.taken") {
           history.replace(`/user/login?error=${t("auth:error.email_taken")}`);
         }
       }

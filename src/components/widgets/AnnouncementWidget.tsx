@@ -7,7 +7,7 @@ import { useRootStore } from "../../stores/root";
 import TypographyHeader from "../styled/TypographyHeader";
 import LinkNoDecoration from "../styled/LinkNoDecoration";
 
-const AnnouncementWidget: React.FC<{}> = () => {
+const AnnouncementWidget: React.FC<unknown> = () => {
   const { t } = useTranslation();
   const {
     user: { metadata },
@@ -17,7 +17,7 @@ const AnnouncementWidget: React.FC<{}> = () => {
   const langId = useMemo(() => {
     let id = 1;
     if (languages.length) {
-      let currentLang =
+      const currentLang =
         languages.find((elem) => elem.code === lang) ||
         languages.find((elem) => elem.code === lang.split("-")[0]);
       if (currentLang) {

@@ -48,7 +48,7 @@ function getPaginatedHonorMissions(
   return events.slice(limit * (page - 1), limit * page);
 }
 
-const BeginnerMissionList: React.FC<{}> = () => {
+const BeginnerMissionList: React.FC<unknown> = () => {
   const { t } = useTranslation();
 
   const [beginnerMissionsCache] =

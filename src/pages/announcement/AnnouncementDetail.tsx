@@ -9,7 +9,7 @@ import React, {
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import MarkdownIt from "markdown-it";
-// @ts-ignore
+// @ts-expect-error missing type definition
 import MarkdownItCollapsible from "markdown-it-collapsible";
 import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
@@ -24,7 +24,7 @@ import { observer } from "mobx-react-lite";
 import TypographyHeader from "../../components/styled/TypographyHeader";
 import ContainerContent from "../../components/styled/ContainerContent";
 
-const AnnouncementDetail: React.FC<{}> = observer(() => {
+const AnnouncementDetail: React.FC<unknown> = observer(() => {
   const { id } = useParams<{ id: string }>();
   const query = useQuery();
   const {
@@ -109,7 +109,7 @@ const AnnouncementDetail: React.FC<{}> = observer(() => {
             <Grid item>
               <Grid container spacing={1}>
                 {contributors.map((userMeta) => (
-                  <Grid item>
+                  <Grid item key={userMeta.id}>
                     <Chip
                       label={userMeta.nickname}
                       avatar={

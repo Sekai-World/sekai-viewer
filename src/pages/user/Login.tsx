@@ -30,7 +30,7 @@ import TypographyHeader from "../../components/styled/TypographyHeader";
 import ContainerContent from "../../components/styled/ContainerContent";
 import LinkNoDecoration from "../../components/styled/LinkNoDecoration";
 
-const Login: React.FC<{}> = observer(() => {
+const Login: React.FC<unknown> = observer(() => {
   const theme = useTheme();
   const { t } = useTranslation();
   const query = useQuery();
@@ -59,8 +59,7 @@ const Login: React.FC<{}> = observer(() => {
       <ContainerContent maxWidth="md">
         <Formik
           initialValues={{
-            // @ts-ignore
-            identifier: decodedToken ? decodedToken.identifier : "",
+            identifier: (decodedToken?.identifier ?? "") as string,
             password: "",
           }}
           validate={(values) => {
@@ -104,7 +103,7 @@ const Login: React.FC<{}> = observer(() => {
             }
           }}
         >
-          {({ submitForm, isSubmitting, errors, dirty, isValid }) => (
+          {({ submitForm, isSubmitting, dirty, isValid }) => (
             <Grid container justifyContent="center">
               <Grid item xs={12} md={6} container justifyContent="center">
                 <Form>

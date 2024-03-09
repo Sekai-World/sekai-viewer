@@ -94,7 +94,7 @@ interface IExtendCardInfo extends ICardInfo {
   maxNormalLevel: number;
 }
 
-const CardDetail: React.FC<{}> = observer(() => {
+const CardDetail: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
   const { assetT, getTranslated } = useAssetI18n();
   const {
@@ -158,7 +158,7 @@ const CardDetail: React.FC<{}> = observer(() => {
         }
       );
 
-      for (let elem of skill.skillEffects) {
+      for (const elem of skill.skillEffects) {
         const skillEffectDetail = elem.skillEffectDetails.find(
           (d) => d.level === skillLevel
         )!;
@@ -425,7 +425,10 @@ const CardDetail: React.FC<{}> = observer(() => {
     ]
   );
 
-  const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
+  const handleChange = (
+    event: React.ChangeEvent<unknown>,
+    newValue: string
+  ) => {
     setTabVal(newValue);
   };
 
@@ -799,7 +802,7 @@ const CardDetail: React.FC<{}> = observer(() => {
             </Typography>
             <Typography>
               {new Date(
-                card.releaseAt ?? card.archivePublishedAt
+                card.releaseAt ?? card.archivePublishedAt ?? 0
               ).toLocaleString()}
             </Typography>
           </Grid>
@@ -1150,7 +1153,7 @@ const CardDetail: React.FC<{}> = observer(() => {
                     (elem) =>
                       elem.cardParameterType === "param1" &&
                       elem.cardLevel === cardLevel
-                  )?.power!
+                  )?.power ?? 0
                 : card.cardParameters["param1"][cardLevel - 1]) +
                 (cardLevel > card.maxNormalLevel
                   ? card.specialTrainingPower1BonusFixed
@@ -1184,7 +1187,7 @@ const CardDetail: React.FC<{}> = observer(() => {
                     (elem) =>
                       elem.cardParameterType === "param2" &&
                       elem.cardLevel === cardLevel
-                  )?.power!
+                  )?.power ?? 0
                 : card.cardParameters["param2"][cardLevel - 1]) +
                 (cardLevel > card.maxNormalLevel
                   ? card.specialTrainingPower2BonusFixed
@@ -1218,7 +1221,7 @@ const CardDetail: React.FC<{}> = observer(() => {
                     (elem) =>
                       elem.cardParameterType === "param3" &&
                       elem.cardLevel === cardLevel
-                  )?.power!
+                  )?.power ?? 0
                 : card.cardParameters["param3"][cardLevel - 1]) +
                 (cardLevel > card.maxNormalLevel
                   ? card.specialTrainingPower3BonusFixed

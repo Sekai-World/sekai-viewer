@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import ContainerContent from "../../components/styled/ContainerContent";
 import TypographyHeader from "../../components/styled/TypographyHeader";
 
-const Confirmation: React.FC<{}> = () => {
+const Confirmation: React.FC<unknown> = () => {
   const { t } = useTranslation();
 
   return (

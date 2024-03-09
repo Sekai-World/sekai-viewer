@@ -244,7 +244,7 @@ export const handlers = [
       })
     );
   }),
-  rest.get("/strapi/sekai-current-event*", (req, res, ctx) => {
+  rest.get("/strapi/sekai-current-event*", (req) => {
     return req.passthrough();
   }),
 ];

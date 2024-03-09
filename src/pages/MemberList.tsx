@@ -46,7 +46,7 @@ const UnitIconImg = styled("img")(({ theme }) => ({
   height: "96px",
 }));
 
-const MemberList: React.FC<{}> = observer(() => {
+const MemberList: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
   const { region } = useRootStore();
 
@@ -108,7 +108,7 @@ const MemberList: React.FC<{}> = observer(() => {
                 style={{ marginBottom: "1em" }}
               >
                 {charaUnitMap[unit].map((chara) => (
-                  <MemberImage id={chara.id} />
+                  <MemberImage id={chara.id} key={chara.id} />
                 ))}
               </Grid>
             </Fragment>

@@ -12,7 +12,7 @@ const ResetPasswordCallback = lazy(() => import("./ResetPasswordCallback"));
 const UserHome = lazy(() => import("./home/UserHome"));
 const Confirmation = lazy(() => import("./EmailConfirm"));
 
-const User: React.FC<{}> = observer(() => {
+const User: React.FC<unknown> = observer(() => {
   // const interactiveClasses = useInteractiveStyles();
   // const { user, isExpired, token } = useJwtAuth();
   const {
@@ -20,7 +20,7 @@ const User: React.FC<{}> = observer(() => {
     decodedToken,
     user: { userinfo },
   } = useRootStore();
-  let { path } = useRouteMatch();
+  const { path } = useRouteMatch();
 
   return (
     <Fragment>

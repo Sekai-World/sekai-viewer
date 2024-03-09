@@ -56,7 +56,7 @@ const SekaiEventRecord = React.lazy(
 //   () => import("../../components/blocks/AdSenseBlock")
 // );
 
-const EventTracker: React.FC<{}> = observer(() => {
+const EventTracker: React.FC<unknown> = observer(() => {
   const query = useQuery();
   const theme = useTheme();
   const { t } = useTranslation();
@@ -479,13 +479,16 @@ const EventTracker: React.FC<{}> = observer(() => {
               onChange={handleSliderChange}
             />
           )}
-          {region === "jp" && !isTimeTravel && !!rtRanking.length && !!rtTime && (
-            <Alert severity="info" sx={{ margin: theme.spacing(1, 0) }}>
-              <Typography>
-                {t("event:tracker.tooltip.get_prediction")}
-              </Typography>
-            </Alert>
-          )}
+          {region === "jp" &&
+            !isTimeTravel &&
+            !!rtRanking.length &&
+            !!rtTime && (
+              <Alert severity="info" sx={{ margin: theme.spacing(1, 0) }}>
+                <Typography>
+                  {t("event:tracker.tooltip.get_prediction")}
+                </Typography>
+              </Alert>
+            )}
           {!isTimeTravel &&
             !!rtRanking.length &&
             !!rtTime &&

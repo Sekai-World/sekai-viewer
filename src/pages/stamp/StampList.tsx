@@ -33,7 +33,7 @@ import TypographyCaption from "../../components/styled/TypographyCaption";
 
 const ListCard: React.FC<{ data?: IStampInfo }> = GridView;
 
-const StampList: React.FC<{}> = () => {
+const StampList: React.FC<unknown> = () => {
   const { t } = useTranslation();
   const getCharaName = useCharaName();
 

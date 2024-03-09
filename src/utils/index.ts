@@ -75,6 +75,7 @@ import {
   IEventMusic,
   ICompactResourceBox,
   ICompactResourceBoxDetail,
+  IGachaTicket,
 } from "./../types.d";
 import { useAssetI18n, useCharaName } from "./i18n";
 import { useLocation } from "react-router-dom";
@@ -152,6 +153,7 @@ export function useCachedData<
     | IMasterLesson
     | IMasterLessonReward
     | IEventMusic
+    | IGachaTicket
 >(name: string): [T[] | undefined, boolean, any] {
   // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
   const { region } = useRootStore();
@@ -477,14 +479,14 @@ export function useProcessedScenarioData() {
         }
       });
 
-      for (let snippet of Snippets) {
+      for (const snippet of Snippets) {
         let action: { [key: string]: any } = {};
         switch (snippet.Action) {
           case SnippetAction.Talk:
             {
               const talkData = TalkData[snippet.ReferenceIndex];
               // try get character
-              let chara = { id: 0, name: "" };
+              const chara = { id: 0, name: "" };
               if (talkData.TalkCharacters[0].Character2dId) {
                 const chara2d = chara2Ds.find(
                   (ch) => ch.id === talkData.TalkCharacters[0].Character2dId
@@ -811,7 +813,10 @@ export function useCardType(card?: ICardInfo) {
     [card?.cardRarityType]
   );
   const isTrainableCard = useMemo(
-    () => specialTrainingRarityTypes.includes(card?.cardRarityType!),
+    () =>
+      card?.cardRarityType
+        ? specialTrainingRarityTypes.includes(card.cardRarityType)
+        : false,
     [card?.cardRarityType]
   );
 
@@ -837,7 +842,7 @@ export async function getGachaRemoteImages(
   ).data;
 
   const parser = new XMLParser({
-    isArray: (name, jpath) => {
+    isArray: (name) => {
       if (["CommonPrefixes", "Contents"].includes(name)) return true;
       return false;
     },

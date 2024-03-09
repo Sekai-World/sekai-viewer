@@ -50,7 +50,7 @@ function getWebpDetectSeverity(detected: IDetectResult) {
   }
 }
 
-const VersionInfo = () => {
+const VersionInfo: React.FC<unknown> = () => {
   const { t } = useTranslation();
 
   const [version] = useVersionInfo();
@@ -101,7 +101,7 @@ const VersionInfo = () => {
   );
 };
 
-function Home() {
+const Home: React.FC = () => {
   const theme = useTheme();
   const { t, i18n } = useTranslation();
 
@@ -579,6 +579,6 @@ function Home() {
       </ContainerContent>
     </Fragment>
   );
-}
+};
 
 export default Home;

@@ -6,19 +6,14 @@ import {
   Link,
   Typography,
 } from "@mui/material";
-import {
-  GitHub,
-  MonetizationOn,
-  OpenInNew,
-  Translate,
-} from "@mui/icons-material";
+import { GitHub, OpenInNew, Translate } from "@mui/icons-material";
 import Patreon from "~icons/mdi/patreon";
 import React, { Fragment } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { usePatronList } from "../utils/apiClient";
 import TypographyHeader from "../components/styled/TypographyHeader";
 
-const Support: React.FC<{}> = () => {
+const Support: React.FC<unknown> = () => {
   const { t } = useTranslation();
 
   const { patrons, isLoading, error } = usePatronList();
@@ -84,7 +79,7 @@ const Support: React.FC<{}> = () => {
         ) : (
           <Container>
             {["Happy", "Lucky", "Smile", "Yay"].map((tier) => (
-              <Fragment>
+              <Fragment key={tier}>
                 <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                   Tier {tier}
                 </Typography>
@@ -92,7 +87,7 @@ const Support: React.FC<{}> = () => {
                   {patrons
                     .filter((elem) => elem.tier === tier)
                     .map((patron) => (
-                      <Grid item xs={12} md={4} lg={3}>
+                      <Grid item xs={12} md={4} lg={3} key={patron.id}>
                         <Grid container alignItems="center" spacing={1}>
                           <Grid item>
                             <Avatar

@@ -62,7 +62,7 @@ function getPaginatedHonorMissions(
 const DetailDialog: React.FC<{
   resourceBoxId: number;
   open: boolean;
-  onClose: (event: {}, reason: "backdropClick" | "escapeKeyDown") => void;
+  onClose: (event: unknown, reason: "backdropClick" | "escapeKeyDown") => void;
   missionData?: IHonorMission;
 }> = ({ resourceBoxId, open, onClose, missionData }) => {
   const { t } = useTranslation();
@@ -231,7 +231,7 @@ const DetailDialog: React.FC<{
         </Grid>
         <Divider style={{ margin: "1% 0" }} />
         {honor.levels.map((level) => (
-          <Fragment>
+          <Fragment key={level.honorId}>
             <Grid
               container
               direction="row"
@@ -269,7 +269,7 @@ const DetailDialog: React.FC<{
   ) : null;
 };
 
-const TitleMissionList: React.FC<{}> = () => {
+const TitleMissionList: React.FC<unknown> = () => {
   const { t } = useTranslation();
 
   const [honorMissionsCache] = useCachedData<IHonorMission>("honorMissions");

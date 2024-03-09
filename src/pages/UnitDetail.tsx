@@ -47,7 +47,7 @@ const UnitMusicImage: React.FC<{
   return <Image src={img} alt={title} bgColor="" />;
 };
 
-const UnitDetail: React.FC<{}> = observer(() => {
+const UnitDetail: React.FC<unknown> = observer(() => {
   const { unitId } = useParams<{ unitId: string }>();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();

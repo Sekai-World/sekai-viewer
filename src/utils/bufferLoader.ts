@@ -23,6 +23,7 @@ export class BufferLoader {
     request.open("GET", url, true);
     request.responseType = "arraybuffer";
 
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const loader = this;
 
     request.onload = function () {
