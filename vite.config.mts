@@ -4,7 +4,7 @@ import loadVersion from "vite-plugin-package-version";
 import svgr from "vite-plugin-svgr";
 import Icons from "unplugin-icons/vite";
 import { VitePWA } from "vite-plugin-pwa";
-import { NodeModulesPolyfillPlugin } from "@esbuild-plugins/node-modules-polyfill";
+import { nodeModulesPolyfillPlugin } from 'esbuild-plugins-node-modules-polyfill';
 
 export default defineConfig({
   build: {
@@ -20,7 +20,7 @@ export default defineConfig({
   },
   optimizeDeps: {
     esbuildOptions: {
-      plugins: [NodeModulesPolyfillPlugin()],
+      plugins: [nodeModulesPolyfillPlugin()],
     },
   },
   plugins: [
