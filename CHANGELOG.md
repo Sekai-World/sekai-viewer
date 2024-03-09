@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.5](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.4...v1.9.5) (2024-03-09)
+
+
+### Bug Fixes
+
+* :bug: service worker cache only status between 0 and 200 ([f491155](https://github.com/Sekai-World/sekai-viewer/commits/f4911553bd711d6917030bc87662388050fe999d))
+* en and kr exclusive song music path ([7c8ab3d](https://github.com/Sekai-World/sekai-viewer/commits/7c8ab3d810921f2d3c6d9dfb902a1ed34ac23415))
+
+
+### Refactors
+
+* :arrow_up: update msw ([a93f419](https://github.com/Sekai-World/sekai-viewer/commits/a93f419159cbea7535f6a6b40251d3d0e9e35a4f))
+* :recycle: card and music list default sorting, card max param calc for tc and kr ([f15c2a2](https://github.com/Sekai-World/sekai-viewer/commits/f15c2a2a5193cdd138ee5506e91ce3c7ffa47c97))
+
 ### [1.9.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.3...v1.9.4) (2024-01-28)
 
 
