@@ -167,18 +167,34 @@ const MusicDetail: React.FC<{}> = observer(() => {
 
   useEffect(() => {
     if (music && musicVocal && musicVocal[selectedPreviewVocalType]) {
-      getRemoteAssetURL(
-        `music/long/${musicVocal[selectedPreviewVocalType].assetbundleName}_rip/${musicVocal[selectedPreviewVocalType].assetbundleName}.${format}`,
-        setLongMusicPlaybackURL,
-        "minio"
-      );
-      getRemoteAssetURL(
-        `music/short/${musicVocal[selectedPreviewVocalType].assetbundleName}_rip/${musicVocal[selectedPreviewVocalType].assetbundleName}_short.${format}`,
-        setShortMusicPlaybackURL,
-        "minio"
-      );
+      if ([420, 445, 453, 459, 464, 10001, 10002].includes(music.id)) {
+        // handle server exclusive music
+        getRemoteAssetURL(
+          `music/long/${musicVocal[selectedPreviewVocalType].assetbundleName}_rip/${musicVocal[selectedPreviewVocalType].assetbundleName}.${format}`,
+          setLongMusicPlaybackURL,
+          "minio",
+          region
+        );
+        getRemoteAssetURL(
+          `music/short/${musicVocal[selectedPreviewVocalType].assetbundleName}_rip/${musicVocal[selectedPreviewVocalType].assetbundleName}_short.${format}`,
+          setShortMusicPlaybackURL,
+          "minio",
+          region
+        );
+      } else {
+        getRemoteAssetURL(
+          `music/long/${musicVocal[selectedPreviewVocalType].assetbundleName}_rip/${musicVocal[selectedPreviewVocalType].assetbundleName}.${format}`,
+          setLongMusicPlaybackURL,
+          "minio"
+        );
+        getRemoteAssetURL(
+          `music/short/${musicVocal[selectedPreviewVocalType].assetbundleName}_rip/${musicVocal[selectedPreviewVocalType].assetbundleName}_short.${format}`,
+          setShortMusicPlaybackURL,
+          "minio"
+        );
+      }
     }
-  }, [format, music, musicVocal, selectedPreviewVocalType]);
+  }, [format, music, musicVocal, region, selectedPreviewVocalType]);
 
   useEffect(() => {
     if (music) {
