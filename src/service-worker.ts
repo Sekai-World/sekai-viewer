@@ -10,6 +10,7 @@
 
 import { clientsClaim } from "workbox-core";
 import { ExpirationPlugin } from "workbox-expiration";
+import { CacheableResponsePlugin } from "workbox-cacheable-response";
 import {
   precacheAndRoute,
   createHandlerBoundToURL,
@@ -91,8 +92,7 @@ self.addEventListener("message", (event) => {
 registerRoute(
   // Add in any other file extensions or routing criteria as needed.
   ({ url }) =>
-    (url.origin === "https://storage.sekai.best" ||
-      url.origin === "https://sekai-assets-1258184166.file.myqcloud.com") &&
+    url.origin === "https://storage.sekai.best" &&
     (url.pathname.endsWith(".png") ||
       url.pathname.endsWith(".webp") ||
       url.pathname.endsWith(".moc3.bytes") ||
@@ -105,6 +105,9 @@ registerRoute(
       // Ensure that once this runtime cache reaches a maximum size the
       // least-recently used images are removed.
       new ExpirationPlugin({ maxEntries: 1000 }),
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
     ],
   })
 );
@@ -112,8 +115,7 @@ registerRoute(
 registerRoute(
   // Add in any other file extensions or routing criteria as needed.
   ({ url }) =>
-    (url.href.startsWith("https://storage.sekai.best/sekai-best-assets") ||
-      url.origin.endsWith("1258184166.file.myqcloud.com")) &&
+    url.href.startsWith("https://storage.sekai.best/sekai-best-assets") &&
     (url.pathname.endsWith(".png") ||
       url.pathname.endsWith(".webp") ||
       url.pathname.endsWith(".moc3.bytes") ||
@@ -126,6 +128,9 @@ registerRoute(
       // Ensure that once this runtime cache reaches a maximum size the
       // least-recently used images are removed.
       new ExpirationPlugin({ maxEntries: 1000 }),
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
     ],
   })
 );
@@ -133,8 +138,7 @@ registerRoute(
 registerRoute(
   // Add in any other file extensions or routing criteria as needed.
   ({ url }) =>
-    (url.origin === "https://storage.sekai.best" ||
-      url.origin.endsWith("1258184166.file.myqcloud.com")) &&
+    url.origin === "https://storage.sekai.best" &&
     (url.pathname.endsWith(".mp3") || url.pathname.endsWith(".flac")),
   // Customize this strategy as needed, e.g., by changing to CacheFirst.
   new CacheFirst({
@@ -143,16 +147,16 @@ registerRoute(
       // Ensure that once this runtime cache reaches a maximum size the
       // least-recently used images are removed.
       new ExpirationPlugin({ maxEntries: 300 }),
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
     ],
   })
 );
 
 registerRoute(
   // Add in any other file extensions or routing criteria as needed.
-  ({ url }) =>
-    url.origin === "https://i18n-json.sekai.best" ||
-    (url.origin === "https://sekai-json-1258184166.file.myqcloud.com" &&
-      url.pathname.startsWith("/locales")),
+  ({ url }) => url.origin === "https://i18n-json.sekai.best",
   // Customize this strategy as needed, e.g., by changing to CacheFirst.
   new NetworkFirst({
     cacheName: "i18next",
@@ -160,6 +164,9 @@ registerRoute(
       // Ensure that once this runtime cache reaches a maximum size the
       // least-recently used images are removed.
       new ExpirationPlugin(),
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
     ],
   })
 );
@@ -167,10 +174,8 @@ registerRoute(
 registerRoute(
   // Add in any other file extensions or routing criteria as needed.
   ({ url }) =>
-    (url.origin === "https://sekai-world.github.io" &&
-      url.pathname.startsWith("/sekai-master-db-diff")) ||
-    (url.origin === "https://sekai-json-1258184166.file.myqcloud.com" &&
-      url.pathname.startsWith("/master")),
+    url.origin === "https://sekai-world.github.io" &&
+    url.pathname.startsWith("/sekai-master-db-diff"),
   // Customize this strategy as needed, e.g., by changing to CacheFirst.
   new NetworkFirst({
     cacheName: "sekaiMaster",
@@ -178,6 +183,9 @@ registerRoute(
       // Ensure that once this runtime cache reaches a maximum size the
       // least-recently used images are removed.
       new ExpirationPlugin(),
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
     ],
   })
 );
