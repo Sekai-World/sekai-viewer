@@ -413,7 +413,10 @@
     "userConfig": {
         "friendRequestScope": "all"
     },
-    "userCustomProfileCards": [],
+    "userCustomProfileCards": [{
+        "card": 1,
+        "any": 2
+    }],
     "userDeck": {
         "deckId": 3,
         "leader": 88,
