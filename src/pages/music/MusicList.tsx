@@ -101,11 +101,11 @@ const MusicList: React.FC<{}> = observer(() => {
   const [filterOpened, toggleFilterOpened] = useToggle(false);
   const [sortType, setSortType] = useLocalStorage<string>(
     "music-list-filter-sort-type",
-    "asc"
+    "desc"
   );
   const [sortBy, setSortBy] = useLocalStorage<string>(
     "music-list-filter-sort-by",
-    "id"
+    "publishedAt"
   );
   const [musicTag, setMusicTag] = useLocalStorage<string>(
     "music-list-filter-tag",

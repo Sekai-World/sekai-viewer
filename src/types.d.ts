@@ -124,7 +124,7 @@ export interface ICardInfo {
   gachaPhrase: string;
   flavorText: string;
   releaseAt?: number;
-  archivePublishedAt: number;
+  archivePublishedAt?: number;
   archiveDisplayType?: string;
   cardParameters: CardParameter[] | CardParameter2;
   specialTrainingCosts: {

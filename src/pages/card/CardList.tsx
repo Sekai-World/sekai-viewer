@@ -115,12 +115,16 @@ function getMaxParam(
   const maxLevel = rarity.trainingMaxLevel || rarity.maxLevel;
 
   let maxParam =
-    card.cardParameters
-      .filter((cp) => cp.cardLevel === maxLevel)
-      .reduce((sum, cp) => {
-        sum += cp.power;
-        return sum;
-      }, 0) +
+    (Array.isArray(card.cardParameters)
+      ? card.cardParameters
+          .filter((cp) => cp.cardLevel === maxLevel)
+          .reduce((sum, cp) => {
+            sum += cp.power;
+            return sum;
+          }, 0)
+      : card.cardParameters.param1[maxLevel] +
+        card.cardParameters.param2[maxLevel] +
+        card.cardParameters.param3[maxLevel]) +
     episodes
       .filter((episode) => episode.cardId === card.id)
       .reduce((sum, episode) => {
@@ -178,12 +182,12 @@ const CardList: React.FC<{}> = observer(() => {
   const [filterOpened, toggleFilterOpen] = useToggle(false);
   const [sortType, setSortType] = useLocalStorage<string>(
     "card-list-filter-sort-type",
-    "asc",
+    "desc",
     false
   );
   const [sortBy, setSortBy] = useLocalStorage<string>(
     "card-list-filter-sort-by",
-    "id",
+    "releaseAt",
     false
   );
   const [characterSelected, dispatchCharacterSelected] = useReducer(
@@ -269,7 +273,8 @@ const CardList: React.FC<{}> = observer(() => {
       // do filter
       if (result.length && !isShowSpoiler) {
         result = result.filter(
-          (c) => (c.releaseAt || c.archivePublishedAt) <= new Date().getTime()
+          (c) =>
+            (c.releaseAt || c.archivePublishedAt || 0) <= new Date().getTime()
         );
       }
       if (result.length && characterSelected.length) {
