@@ -20,7 +20,7 @@ const SekaiUserImportMember = React.lazy(
 );
 const SekaiUserTeams = React.lazy(() => import("./SekaiUserTeams"));
 
-const SekaiCardTeam: React.FC<{}> = observer(() => {
+const SekaiCardTeam: React.FC<unknown> = observer(() => {
   const {
     sekai: { sekaiProfileMap, sekaiCardTeamMap, setSekaiCardTeam },
     jwtToken,

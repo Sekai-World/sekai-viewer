@@ -96,7 +96,7 @@ const DescDialog: React.FC<
   );
 };
 
-const GachaDetailPage: React.FC<{}> = observer(() => {
+const GachaDetailPage: React.FC<unknown> = observer(() => {
   const { gachaId } = useParams<{ gachaId: string }>();
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
@@ -145,11 +145,12 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
           ? "over_the_3_ticket"
           : "gacha_ticket";
       } else if (behavior.costResourceType === "gacha_ticket") {
-        return gachaTickets?.find(
-          (ticket) => ticket.id === behavior.costResourceId
-        )?.assetbundleName ?? "gacha_ticket";
+        return (
+          gachaTickets?.find((ticket) => ticket.id === behavior.costResourceId)
+            ?.assetbundleName ?? "gacha_ticket"
+        );
       }
-      return behavior.costResourceType;
+      return behavior.costResourceType ?? "jewel";
     },
     [gachaTickets]
   );
@@ -170,9 +171,10 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
       );
       const rollableCards = gachaRarityRates.map((rate) =>
         gacha.gachaDetails
-          .filter((gd) =>
-            cards.find((card) => card.id === gd.cardId)?.cardRarityType ===
-            rate.cardRarityType
+          .filter(
+            (gd) =>
+              cards.find((card) => card.id === gd.cardId)?.cardRarityType ===
+              rate.cardRarityType
           )
           .sort((a, b) => a.weight - b.weight)
       );
@@ -238,11 +240,11 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
             jewel:
               behavior.costResourceType === "jewel" ||
               behavior.costResourceType === "paid_jewel"
-                ? stats.cost.jewel + behavior.costResourceQuantity
+                ? stats.cost.jewel + (behavior.costResourceQuantity ?? 0)
                 : stats.cost.jewel,
             ticket:
               behavior.costResourceType === "gacha_ticket"
-                ? stats.cost.ticket + behavior.costResourceQuantity
+                ? stats.cost.ticket + (behavior.costResourceQuantity ?? 0)
                 : stats.cost.ticket,
           },
           counts: stats.counts.map((count, idx) => rollResult[idx] + count),
@@ -295,14 +297,19 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
         name,
       });
 
-      const rates: (GachaCardRarityRate & ICardRarity)[] =
-        [...gacha.gachaCardRarityRates]
+      const rates: (GachaCardRarityRate & ICardRarity)[] = [
+        ...gacha.gachaCardRarityRates,
+      ]
         .sort((a, b) => b.rate - a.rate)
-        .map((rate) => Object.assign({}, rate,
-          rarities.find(
-            (rarity) => rarity.cardRarityType === rate.cardRarityType
+        .map((rate) =>
+          Object.assign(
+            {},
+            rate,
+            rarities.find(
+              (rarity) => rarity.cardRarityType === rate.cardRarityType
+            )
           )
-        ))
+        )
         .filter((rate) => !!rate.rate);
       setGachaRarityRates(rates);
       setNormalRates(rates.map((rate) => rate.rate));
@@ -362,7 +369,7 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
 
   useLayoutEffect(() => {
     if (cards && gacha && gachaRarityRates) {
-      const weightArr = gachaRarityRates.map((rate) => 0);
+      const weightArr = gachaRarityRates.map(() => 0);
       gacha.gachaDetails.forEach((detail) => {
         const card = cards.find((elem) => elem.id === detail.cardId)!;
         weightArr[
@@ -474,7 +481,10 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
     }
   }, [gachaCeilItem]);
 
-  const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
+  const handleChange = (
+    event: React.ChangeEvent<unknown>,
+    newValue: string
+  ) => {
     setPicTabVal(newValue);
   };
 
@@ -572,18 +582,10 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
               <TabPanelPadding value="2">
                 <Grid container direction="row" spacing={1} alignItems="center">
                   <Grid item xs={12} md={6}>
-                    <Image
-                      src={gachaIcon}
-                      alt="logo"
-                      bgColor=""
-                    />
+                    <Image src={gachaIcon} alt="logo" bgColor="" />
                   </Grid>
                   <Grid item xs={12} md={6}>
-                    <Image
-                      src={gachaBanner}
-                      alt="banner"
-                      bgColor=""
-                    />
+                    <Image src={gachaBanner} alt="banner" bgColor="" />
                   </Grid>
                 </Grid>
               </TabPanelPadding>
@@ -909,9 +911,7 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
                         </Grid>
                       ) : (
                         <StarIcon
-                          num={
-                            cardRarityTypeToRarity[rate.cardRarityType]
-                          }
+                          num={cardRarityTypeToRarity[rate.cardRarityType]}
                           trained={
                             cardRarityTypeToRarity[rate.cardRarityType] >= 3
                           }
@@ -924,9 +924,10 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
                         setGachaCards(
                           gacha.gachaDetails
                             .map((detail) => detail.cardId)
-                            .filter((cardId) =>
-                              cards.find((card) => card.id === cardId)!
-                                .cardRarityType === rate.cardRarityType
+                            .filter(
+                              (cardId) =>
+                                cards.find((card) => card.id === cardId)!
+                                  .cardRarityType === rate.cardRarityType
                             )
                         );
                         setIsCardsDialog(true);
@@ -963,8 +964,7 @@ const GachaDetailPage: React.FC<{}> = observer(() => {
                       >
                         {behavior.gachaSpinnableType === "colorful_pass"
                           ? t("gacha:behavior." + behavior.gachaSpinnableType)
-                          : t("gacha:behavior." + behavior.gachaBehaviorType)
-                        }
+                          : t("gacha:behavior." + behavior.gachaBehaviorType)}
                       </Typography>
                     </Grid>
                     <Grid item>

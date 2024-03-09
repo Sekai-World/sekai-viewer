@@ -107,6 +107,13 @@ export interface CardParameter2 {
   param3: number[];
 }
 
+export interface IGachaTicket {
+  id: number;
+  name: string;
+  assetbundleName: string;
+  gachaDisplayType: string;
+}
+
 export interface ICardInfo {
   id: number;
   seq: number;
@@ -136,7 +143,7 @@ export interface ICardInfo {
     releaseConditionId: number;
     cardId: number;
     masterRank: number;
-    resources: {}[];
+    resources: Record<string, unknown>[];
   }[];
 }
 

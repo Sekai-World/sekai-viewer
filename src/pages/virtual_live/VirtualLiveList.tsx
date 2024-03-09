@@ -33,7 +33,7 @@ const ListCard: { [key: string]: React.FC<{ data?: IVirtualLiveInfo }> } = {
   agenda: AgendaView,
 };
 
-const VirtualLiveList: React.FC<{}> = observer(() => {
+const VirtualLiveList: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
   const {
     settings: { isShowSpoiler },

@@ -25,7 +25,7 @@ import TypographyHeader from "../../components/styled/TypographyHeader";
 import ContainerContent from "../../components/styled/ContainerContent";
 import LinkNoDecoration from "../../components/styled/LinkNoDecoration";
 
-const Signup: React.FC<{}> = observer(() => {
+const Signup: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
   const history = useHistory();
   const {

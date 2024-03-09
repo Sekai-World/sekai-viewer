@@ -16,7 +16,7 @@ import { observer } from "mobx-react-lite";
 import TypographyHeader from "../../components/styled/TypographyHeader";
 import ContainerContent from "../../components/styled/ContainerContent";
 
-const AnnouncementList: React.FC<{}> = observer(() => {
+const AnnouncementList: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
   const {
     user: { metadata },
@@ -37,7 +37,7 @@ const AnnouncementList: React.FC<{}> = observer(() => {
   const langId = useMemo(() => {
     let id = 1;
     if (languages.length) {
-      let currentLang =
+      const currentLang =
         languages.find((elem) => elem.code === lang) ||
         languages.find((elem) => elem.code === lang.split("-")[0]);
       if (currentLang) {

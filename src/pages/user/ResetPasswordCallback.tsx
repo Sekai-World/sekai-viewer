@@ -12,7 +12,7 @@ import { useHistory } from "react-router-dom";
 import TypographyHeader from "../../components/styled/TypographyHeader";
 import ContainerContent from "../../components/styled/ContainerContent";
 
-const ResetPassword: React.FC<{}> = () => {
+const ResetPassword: React.FC<unknown> = () => {
   const { t } = useTranslation();
   const { postResetPassword } = useStrapi();
   const query = useQuery();
@@ -64,7 +64,7 @@ const ResetPassword: React.FC<{}> = () => {
 
             return errors;
           }}
-          onSubmit={async (values, { setErrors }) => {
+          onSubmit={async (values) => {
             try {
               await postResetPassword(
                 values.code,

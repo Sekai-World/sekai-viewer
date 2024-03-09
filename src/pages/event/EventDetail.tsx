@@ -54,7 +54,7 @@ import TabPanelPadding from "../../components/styled/TabPanelPadding";
 import GridOut from "../../components/styled/GridOut";
 import LinkNoDecoration from "../../components/styled/LinkNoDecoration";
 
-const EventDetail: React.FC<{}> = observer(() => {
+const EventDetail: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
   const { eventId } = useParams<{ eventId: string }>();
   const { getTranslated } = useAssetI18n();
@@ -159,17 +159,18 @@ const EventDetail: React.FC<{}> = observer(() => {
         rarity_3: [0, 5, 5],
         rarity_4: [0, 10, 15],
         rarity_birthday: [0, 7.5, 10],
-      };
+      } as Record<string, number[]>;
       const masterRankBonusIndex =
         Number(eventId) >= 36 ? (Number(eventId) >= 54 ? 2 : 1) : 0;
       setBoostCards(() => {
         let result = cards
           .filter(
             (elem) =>
-              (elem.releaseAt ?? elem.archivePublishedAt) <= ev!.aggregateAt
+              (elem.releaseAt ?? elem.archivePublishedAt ?? 0) <=
+              ev!.aggregateAt
           )
           .map((card) => {
-            let eventCard = ec.find(
+            const eventCard = ec.find(
               (it) => it.cardId === card.id && it.bonusRate !== undefined
             );
             let finalEventBonus =
@@ -184,7 +185,7 @@ const EventDetail: React.FC<{}> = observer(() => {
               }
 
               if (deckBonus.gameCharacterUnitId !== undefined) {
-                let gameCharacterUnit = gameCharacterUnits.find(
+                const gameCharacterUnit = gameCharacterUnits.find(
                   (it) => it.id === deckBonus.gameCharacterUnitId
                 )!;
                 if (gameCharacterUnit.gameCharacterId !== card.characterId) {
@@ -211,7 +212,6 @@ const EventDetail: React.FC<{}> = observer(() => {
             let maxBonus = finalEventBonus;
             if (card.cardRarityType !== undefined) {
               maxBonus +=
-                // @ts-ignore
                 masterRankBonus[card.cardRarityType][masterRankBonusIndex];
             }
 

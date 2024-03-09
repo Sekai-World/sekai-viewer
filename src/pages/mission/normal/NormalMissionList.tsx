@@ -48,7 +48,7 @@ function getPaginatedHonorMissions(
   return events.slice(limit * (page - 1), limit * page);
 }
 
-const NormalMissionList: React.FC<{}> = () => {
+const NormalMissionList: React.FC<unknown> = () => {
   const { t } = useTranslation();
 
   const [normalMissionsCache] = useCachedData<INormalMission>("normalMissions");

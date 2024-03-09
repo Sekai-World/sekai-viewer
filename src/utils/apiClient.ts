@@ -64,7 +64,7 @@ export function useStrapi(token?: string, region?: ServerRegion) {
           // _token.current = "";
           const refreshToken = localStorage.getItem("refreshToken") || "";
           if (refreshToken) {
-            let {
+            const {
               data: { jwt, refresh },
             } = await Axios.post<{
               jwt: string;
@@ -139,7 +139,7 @@ export function useStrapi(token?: string, region?: ServerRegion) {
     ),
 
     getAnnouncementById: useCallback(
-      async (id: string, params?: { [key: string]: any }) =>
+      async (id: string, params?: Record<string, unknown>) =>
         (await axios.get<AnnouncementModel>(`/announcements/${id}`, { params }))
           .data,
       [axios]
@@ -162,7 +162,7 @@ export function useStrapi(token?: string, region?: ServerRegion) {
         limit: number = 30,
         page: number = 0,
         languages: number[],
-        params?: { [key: string]: any }
+        params?: Record<string, unknown>
       ) =>
         (
           await axios.get<AnnouncementModel[]>("/announcements/language", {
@@ -188,7 +188,7 @@ export function useStrapi(token?: string, region?: ServerRegion) {
       async (
         limit: number = 30,
         page: number = 0,
-        params?: { [key: string]: any }
+        params?: Record<string, unknown>
       ) =>
         (
           await axios.get<AnnouncementModel[]>("/announcements", {
@@ -234,7 +234,7 @@ export function useStrapi(token?: string, region?: ServerRegion) {
     //   [axios]
     // ),
     getAnnouncements: useCallback(
-      async (params?: { [key: string]: any }) =>
+      async (params?: Record<string, unknown>) =>
         (
           await axios.get<AnnouncementModel[]>("/announcements?", {
             params: {
@@ -387,7 +387,7 @@ export function useStrapi(token?: string, region?: ServerRegion) {
       [axios]
     ),
     getTranslations: useCallback(
-      async (page: number, limit: number, params?: { [key: string]: any }) =>
+      async (page: number, limit: number, params?: Record<string, unknown>) =>
         (
           await axios.get<TranslationModel[]>("/translations", {
             params: {

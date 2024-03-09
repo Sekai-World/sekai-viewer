@@ -38,14 +38,13 @@ import {
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import fscreen from "fscreen";
-// @ts-ignore
 import { CanvasRecorder } from "@tawaship/canvas-recorder";
 import { useLive2dModelList } from "../../utils/apiClient";
 import { assetUrl } from "../../utils/urls";
 import TypographyHeader from "../../components/styled/TypographyHeader";
 import ContainerContent from "../../components/styled/ContainerContent";
 
-const Live2DView: React.FC<{}> = () => {
+const Live2DView: React.FC<unknown> = () => {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -355,7 +354,9 @@ const Live2DView: React.FC<{}> = () => {
     );
 
     const tasks = [];
-    for (let [name, motion] of Object.entries(model3.FileReferences.Motions)) {
+    for (const [name, motion] of Object.entries(
+      model3.FileReferences.Motions
+    )) {
       tasks.push(
         Axios.get<Blob>(
           `${assetUrl.minio.jp}/live2d/motion/${motionName}_rip/${name}.motion3.json`,
@@ -402,12 +403,12 @@ const Live2DView: React.FC<{}> = () => {
         const canvasRecorder = await CanvasRecorder.createAsync(
           canvas.current!,
           {
-            // @ts-ignore
+            // @ts-expect-error mimeType is not in the type
             mimeType,
           }
         );
         setRecorder(canvasRecorder);
-        // @ts-ignore
+        // @ts-expect-error start param is optional
         canvasRecorder.start();
         setAnchorEl(undefined);
         setIsRecording(true);

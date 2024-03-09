@@ -9,7 +9,7 @@ const StyledAlert = styled(Alert)(({ theme }) => ({
   margin: theme.spacing(2, 0),
 }));
 
-const About: React.FC<{}> = () => {
+const About: React.FC<unknown> = () => {
   const { t } = useTranslation();
 
   useEffect(() => {

@@ -214,7 +214,7 @@ const TransferConfirmDialog: React.FC<
   );
 };
 
-const SekaiID: React.FC<{}> = observer(() => {
+const SekaiID: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
   // const { token } = useJwtAuth();
   // const theme = useTheme();
@@ -487,7 +487,7 @@ const SekaiID: React.FC<{}> = observer(() => {
                 initialValues={{
                   userid: (!!sekaiProfile && sekaiProfile.sekaiUserId) || "",
                 }}
-                onSubmit={async (values, { setErrors }) => {
+                onSubmit={async (values) => {
                   if (!/^\d{16,}$/.test(values.userid)) {
                     showError(t("user:profile.error.sekai_id_malformed"));
                     return;

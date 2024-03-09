@@ -20,7 +20,7 @@ import TypographyHeader from "../../components/styled/TypographyHeader";
 import ContainerContent from "../../components/styled/ContainerContent";
 import GridOut from "../../components/styled/GridOut";
 
-const VirtualLiveDetail: React.FC<{}> = observer(() => {
+const VirtualLiveDetail: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
   const { id: virtualLiveId } = useParams<{ id: string }>();
   const { getTranslated } = useAssetI18n();
@@ -220,7 +220,7 @@ const VirtualLiveDetail: React.FC<{}> = observer(() => {
             <Grid item xs={6} md={4}>
               <Grid container spacing={1} justifyContent="flex-end">
                 {virtualLive.virtualLiveCharacters.map((chara) => (
-                  <Grid item xs={4} md={3} lg={2}>
+                  <Grid item xs={4} md={3} lg={2} key={chara.id}>
                     <Avatar
                       src={
                         charaIcons[

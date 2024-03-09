@@ -94,7 +94,7 @@ const AssetListFile: React.FC<{
   );
 };
 
-const AssetListMore: React.FC<{}> = () => {
+const AssetListMore: React.FC<unknown> = () => {
   return (
     <ListItemButton>
       <ListItemAvatar>
@@ -196,7 +196,7 @@ const AssetPreview: React.FC<{ filePath: string } & DialogProps> = ({
     () => `${assetUrl.minio[region]}/${filePath}`,
     [filePath, region]
   );
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<unknown>(null);
 
   useEffect(() => {
     if (filePath.endsWith("asset")) {
@@ -232,7 +232,7 @@ const AssetPreview: React.FC<{ filePath: string } & DialogProps> = ({
             <CircularProgress size={32} />
           ) : (
             <JsonView
-              data={data}
+              data={data as object}
               shouldInitiallyExpand={() => false}
               style={mode === "dark" ? darkStyles : defaultStyles}
             />
@@ -289,7 +289,7 @@ const AssetViewer = () => {
   const parser = useMemo(
     () =>
       new XMLParser({
-        isArray: (name, jpath) => {
+        isArray: (name) => {
           if (["CommonPrefixes", "Contents"].includes(name)) return true;
           return false;
         },
@@ -377,7 +377,7 @@ const AssetViewer = () => {
           ...tmpArr,
           ...data.CommonPrefixes.map((cps) => ({
             path: cps.Prefix,
-            type: "folder" as "folder",
+            type: "folder" as const,
           })),
         ];
       }
@@ -386,7 +386,7 @@ const AssetViewer = () => {
           ...tmpArr,
           ...data.Contents.map((cts) => ({
             path: cts.Key,
-            type: "file" as "file",
+            type: "file" as const,
           })),
         ];
       }
@@ -417,7 +417,9 @@ const AssetViewer = () => {
   const onItemsRendered = useCallback(
     (props: ListOnItemsRenderedProps) => {
       if (
+        // eslint-disable-next-line react/prop-types
         props.overscanStopIndex !== props.overscanStartIndex &&
+        // eslint-disable-next-line react/prop-types
         props.overscanStopIndex >= listElements.length
       ) {
         loadMoreItems();
@@ -461,7 +463,7 @@ const AssetViewer = () => {
           <CircularProgress color="inherit" />
         </Backdrop>
         <AutoSizer>
-          {({ height, width }) => (
+          {({ height, width }: { height: number; width: number }) => (
             <FixedSizeList
               itemCount={itemCount}
               itemSize={56}

@@ -26,7 +26,7 @@ function getPaginatedGachas(gachas: IGachaInfo[], page: number, limit: number) {
 
 const ListCard: React.FC<{ data?: IGachaInfo }> = GridView;
 
-const GachaList: React.FC<{}> = observer(() => {
+const GachaList: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
   const {
     settings: { isShowSpoiler },

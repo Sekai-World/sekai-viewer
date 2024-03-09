@@ -45,7 +45,7 @@ const CardSelect = styled(Card)`
   }
 `;
 
-const StoryReader: React.FC<{}> = observer(() => {
+const StoryReader: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
   const getCharaName = useCharaName();

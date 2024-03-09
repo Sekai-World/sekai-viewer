@@ -56,7 +56,7 @@ import ContainerContent from "../../components/styled/ContainerContent";
 import PaperContainer from "../../components/styled/PaperContainer";
 import GridOut from "../../components/styled/GridOut";
 
-const MusicDetail: React.FC<{}> = observer(() => {
+const MusicDetail: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
   const {

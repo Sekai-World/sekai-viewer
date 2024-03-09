@@ -14,7 +14,7 @@ const Root = types
   })
   .views((self) => ({
     get decodedToken() {
-      return decodeToken(self.user.token);
+      return decodeToken<Record<string, unknown>>(self.user.token);
     },
     get jwtToken() {
       return self.user.token;
@@ -47,22 +47,16 @@ const settingsJson = JSON.parse(
 ) as ISettings | null;
 
 const initialState: IRoot = {
-  //@ts-ignore
+  // @ts-expect-error mobx-state-tree type not recursive
   sekai: SekaiProfileMap.is(sekaiJson)
     ? sekaiJson!
     : {
         isFetchingSekaiCardTeam: false,
-
         isFetchingSekaiProfile: false,
-
-        //@ts-ignore
         sekaiCardTeamMap: {},
-
-        //@ts-ignore
         sekaiProfileMap: {},
       },
-
-  //@ts-ignore
+  // @ts-expect-error mobx-state-tree type not recursive
   settings: Settings.is(settingsJson)
     ? settingsJson!
     : {
@@ -73,8 +67,7 @@ const initialState: IRoot = {
         languages: [],
         region: "jp",
       },
-
-  //@ts-ignore
+  // @ts-expect-error mobx-state-tree type not recursive
   user: User.is(userJson)
     ? userJson!
     : {
@@ -84,7 +77,7 @@ const initialState: IRoot = {
       },
 };
 
-//@ts-ignore
+// @ts-expect-error mobx-state-tree type not recursive
 export const rootStore = Root.create(initialState);
 onSnapshot(rootStore.user, (snapshot) => {
   localStorage.setItem("authToken", snapshot.token);

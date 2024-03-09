@@ -27,7 +27,7 @@ import TypographyHeader from "../../../components/styled/TypographyHeader";
 import ContainerContent from "../../../components/styled/ContainerContent";
 const SekaiProfile = React.lazy(() => import("../sekai_profile/SekaiProfile"));
 
-const UserHome: React.FC<{}> = observer(() => {
+const UserHome: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
   const history = useHistory();
   const {

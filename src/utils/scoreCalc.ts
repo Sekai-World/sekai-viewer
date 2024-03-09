@@ -26,9 +26,10 @@ const boostRate: Record<number, number> = {
 export function useScoreCalc() {
   const getCardSkillRate = useCallback(
     (cards: ICardInfo[], skills: ISkillInfo[], teamCard: ISekaiCardState) => {
-      let skillId = cards.filter((it) => it.id === teamCard.cardId)[0].skillId;
-      let skill = skills.filter((it) => it.id === skillId)[0];
-      let scoreSkill = skill.skillEffects.filter((it) =>
+      const skillId = cards.filter((it) => it.id === teamCard.cardId)[0]
+        .skillId;
+      const skill = skills.filter((it) => it.id === skillId)[0];
+      const scoreSkill = skill.skillEffects.filter((it) =>
         it.skillEffectType.includes("score_up")
       )[0];
       return (
@@ -44,7 +45,7 @@ export function useScoreCalc() {
       skills: ISkillInfo[],
       teamCards: ISekaiCardState[]
     ) => {
-      let skillRates: number[] = [];
+      const skillRates: number[] = [];
       teamCards.forEach((it) => {
         skillRates.push(getCardSkillRate(cards, skills, it));
       });
@@ -62,8 +63,8 @@ export function useScoreCalc() {
   }, []);
   const getMultiAverageSkillRates = useCallback(
     (skillRates: number[]) => {
-      let averageSkillRates: number[] = [];
-      let rate = getMultiSkillRate(skillRates);
+      const averageSkillRates: number[] = [];
+      const rate = getMultiSkillRate(skillRates);
       for (let i = 0; i < 6; ++i) {
         averageSkillRates.push(rate);
       }
@@ -147,7 +148,7 @@ export function useScoreCalc() {
   const getScore = useCallback(
     (meta: IMusicMeta, power: number, skillRates: number[], solo: boolean) => {
       let score = meta.base_score;
-      let skillScore = solo ? meta.skill_score_solo : meta.skill_score_multi;
+      const skillScore = solo ? meta.skill_score_solo : meta.skill_score_multi;
       skillRates.forEach((v, i) => {
         score += skillScore[i] * v;
       });
@@ -205,7 +206,7 @@ export function useScoreCalc() {
       mode: EventType,
       leftLife?: number
     ): number => {
-      let point = getEventPoint(
+      const point = getEventPoint(
         selfScore,
         otherScore,
         musicRate,
@@ -214,8 +215,8 @@ export function useScoreCalc() {
         mode,
         leftLife
       );
-      let fullTime = musicTime + 30;
-      let pointPerSecond = point / fullTime;
+      const fullTime = musicTime + 30;
+      const pointPerSecond = point / fullTime;
       return pointPerSecond * 3600;
     },
     [getEventPoint]

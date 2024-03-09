@@ -10,7 +10,7 @@ import { useStrapi } from "../../utils/apiClient";
 import TypographyHeader from "../../components/styled/TypographyHeader";
 import ContainerContent from "../../components/styled/ContainerContent";
 
-const ResetPassword: React.FC<{}> = () => {
+const ResetPassword: React.FC<unknown> = () => {
   const { t } = useTranslation();
   const { postForgotPassword } = useStrapi();
   const { showError, showSuccess } = useAlertSnackbar();
@@ -44,7 +44,7 @@ const ResetPassword: React.FC<{}> = () => {
             }
             return errors;
           }}
-          onSubmit={async (values, { setErrors }) => {
+          onSubmit={async (values) => {
             try {
               await postForgotPassword(values.email);
               showSuccess(t("auth:reset_password_email_sent"));
@@ -53,7 +53,7 @@ const ResetPassword: React.FC<{}> = () => {
             }
           }}
         >
-          {({ submitForm, isSubmitting, errors, dirty, isValid }) => (
+          {({ submitForm, isSubmitting, dirty, isValid }) => (
             <Grid container justifyContent="center">
               <Form>
                 <Field
