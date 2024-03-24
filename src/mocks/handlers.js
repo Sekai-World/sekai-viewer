@@ -1,90 +1,45 @@
-import { rest } from "msw";
+import { http, passthrough, HttpResponse } from "msw";
 
 import sekaiUserProfileJsonJP from "./data/sampleSekaiProfileJP.json";
 import sekaiUserProfileJsonTW from "./data/sampleSekaiProfileTW.json";
+import sekaiUserProfileJsonEN from "./data/sampleSekaiProfileEN.json";
 
 const sekaiUserProfileJsonMap = {
   jp: sekaiUserProfileJsonJP,
   tw: sekaiUserProfileJsonTW,
+  en: sekaiUserProfileJsonEN,
 };
 
+function checkIsAuthenticated(sessionStorage) {
+  return sessionStorage.getItem("is-authenticated") === "true";
+}
+
+const getUnauthenticatedResponse = () =>
+  HttpResponse.json(
+    {
+      message: [
+        {
+          messages: [
+            {
+              id: "Auth.error.unauthencated",
+            },
+          ],
+        },
+      ],
+    },
+    { status: 403 }
+  );
+
 export const handlers = [
-  rest.post("/strapi/auth/local", (req, res, ctx) => {
+  http.post("/strapi/auth/local", () => {
     // Persist user's authentication in the session
     sessionStorage.setItem("is-authenticated", "true");
 
-    return res(
-      // Respond with a 200 status code
-      ctx.status(200),
-      ctx.json({
-        jwt: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJTZWthaSBWaWV3ZXIiLCJpYXQiOjE2NjM3NTg1OTcsImV4cCI6MTY5NTI5NDU5NywiYXVkIjoibG9jYWxob3N0OjUxNzMiLCJzdWIiOiJ1c2VyIiwiaWQiOiIxIn0._Jw0dGUTGVOX3VivZ7QoE8uKTj8Krzt57kp0X2jvFj4",
-        refresh:
-          "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJTZWthaSBWaWV3ZXIiLCJpYXQiOjE2NjM3NTg1OTcsImV4cCI6MTY5NTI5NDU5NywiYXVkIjoibG9jYWxob3N0OjUxNzMiLCJzdWIiOiIxIiwidGt2IjoiMSJ9.fuyFtp8Og5OGDcNKux51dNA-gM3ORG2tfJ1zS1wPuz4",
-        user: {
-          avatarUrl: "",
-          blocked: false,
-          confirmed: true,
-          email: "user@sekai.best",
-          id: 1,
-          provider: "local",
-          role: { description: "", name: "Admin", type: "admin" },
-          userMetadatum: {
-            avatar: null,
-            id: 1,
-            languages: [
-              {
-                code: "en",
-                enabled: true,
-                id: 1,
-                name: "English",
-              },
-            ],
-            nickname: "Mock User",
-          },
-          username: "user",
-        },
-      })
-    );
-  }),
-  rest.get("/strapi/languages", (req, res, ctx) => {
-    return res(
-      ctx.status(200),
-      ctx.json([
-        {
-          code: "en",
-          enabled: true,
-          id: 1,
-          name: "English",
-        },
-      ])
-    );
-  }),
-  rest.get("/strapi/users/me", (req, res, ctx) => {
-    // Check if the user is authenticated in this session
-    const isAuthenticated = sessionStorage.getItem("is-authenticated");
-
-    if (!isAuthenticated) {
-      // If not authenticated, respond with a 403 error
-      return res(
-        ctx.status(403),
-        ctx.json({
-          message: [
-            {
-              messages: [
-                {
-                  id: "Auth.error.unauthencated",
-                },
-              ],
-            },
-          ],
-        })
-      );
-    }
-
-    // If authenticated, return a mocked user details
-    return res(
-      ctx.status(200),
-      ctx.json({
+    return HttpResponse.json({
+      jwt: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJTZWthaSBWaWV3ZXIiLCJpYXQiOjE2NjM3NTg1OTcsImV4cCI6MTY5NTI5NDU5NywiYXVkIjoibG9jYWxob3N0OjUxNzMiLCJzdWIiOiJ1c2VyIiwiaWQiOiIxIn0._Jw0dGUTGVOX3VivZ7QoE8uKTj8Krzt57kp0X2jvFj4",
+      refresh:
+        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJTZWthaSBWaWV3ZXIiLCJpYXQiOjE2NjM3NTg1OTcsImV4cCI6MTY5NTI5NDU5NywiYXVkIjoibG9jYWxob3N0OjUxNzMiLCJzdWIiOiIxIiwidGt2IjoiMSJ9.fuyFtp8Og5OGDcNKux51dNA-gM3ORG2tfJ1zS1wPuz4",
+      user: {
         avatarUrl: "",
         blocked: false,
         confirmed: true,
@@ -92,159 +47,122 @@ export const handlers = [
         id: 1,
         provider: "local",
         role: { description: "", name: "Admin", type: "admin" },
+        userMetadatum: {
+          avatar: null,
+          id: 1,
+          languages: [
+            {
+              code: "en",
+              enabled: true,
+              id: 1,
+              name: "English",
+            },
+          ],
+          nickname: "Mock User",
+        },
         username: "user",
-      })
-    );
+      },
+    });
   }),
-  rest.get("/strapi/user-metadata/me", (req, res, ctx) => {
-    // Check if the user is authenticated in this session
-    const isAuthenticated = sessionStorage.getItem("is-authenticated");
-
-    if (!isAuthenticated) {
-      // If not authenticated, respond with a 403 error
-      return res(
-        ctx.status(403),
-        ctx.json({
-          message: [
-            {
-              messages: [
-                {
-                  id: "Auth.error.unauthencated",
-                },
-              ],
-            },
-          ],
-        })
-      );
-    }
-
-    // If authenticated, return a mocked user details
-    return res(
-      ctx.status(200),
-      ctx.json({
-        avatar: null,
+  http.get("/strapi/languages", () => {
+    return HttpResponse.json([
+      {
+        code: "en",
+        enabled: true,
         id: 1,
-        languages: [
-          {
-            code: "en",
-            enabled: true,
-            id: 1,
-            name: "English",
-          },
-        ],
-        nickname: "Mock User",
-      })
-    );
+        name: "English",
+      },
+    ]);
   }),
-  rest.get("/strapi/sekai-profiles/me", (req, res, ctx) => {
-    const isAuthenticated = sessionStorage.getItem("is-authenticated");
-
-    if (!isAuthenticated) {
-      // If not authenticated, respond with a 403 error
-      return res(
-        ctx.status(403),
-        ctx.json({
-          message: [
-            {
-              messages: [
-                {
-                  id: "Auth.error.unauthencated",
-                },
-              ],
-            },
-          ],
-        })
-      );
+  http.get("/strapi/users/me", () => {
+    if (!checkIsAuthenticated(sessionStorage)) {
+      return getUnauthenticatedResponse();
     }
 
     // If authenticated, return a mocked user details
-    return res(
-      ctx.status(200),
-      ctx.json({
-        cardList: [],
-        dailySyncEnabled: false,
-        deckList: [],
-        eventGetAvailable: 10,
-        eventGetUsed: 0,
-        eventHistorySync: false,
-        id: 1,
-        region: req.headers.get("region"),
-        sekaiUserId: "123456789",
-        sekaiUserProfile:
-          sekaiUserProfileJsonMap[req.headers.get("region")] ||
-          sekaiUserProfileJsonJP,
-        sekaiUserToken: null,
-        updateAvailable: 3,
-        updateUsed: 0,
-      })
-    );
+    return HttpResponse.json({
+      avatarUrl: "",
+      blocked: false,
+      confirmed: true,
+      email: "user@sekai.best",
+      id: 1,
+      provider: "local",
+      role: { description: "", name: "Admin", type: "admin" },
+      username: "user",
+    });
   }),
-  rest.get("/strapi/sekai-card-teams/me", (req, res, ctx) => {
-    const isAuthenticated = sessionStorage.getItem("is-authenticated");
-
-    if (!isAuthenticated) {
-      // If not authenticated, respond with a 403 error
-      return res(
-        ctx.status(403),
-        ctx.json({
-          message: [
-            {
-              messages: [
-                {
-                  id: "Auth.error.unauthencated",
-                },
-              ],
-            },
-          ],
-        })
-      );
+  http.get("/strapi/user-metadata/me", () => {
+    if (!checkIsAuthenticated(sessionStorage)) {
+      return getUnauthenticatedResponse();
     }
 
     // If authenticated, return a mocked user details
-    return res(
-      ctx.status(200),
-      ctx.json({
-        cards: [],
-        decks: [],
-        id: 1,
-        maxNumOfDecks: 5,
-        region: "jp",
-      })
-    );
+    return HttpResponse.json({
+      avatar: null,
+      id: 1,
+      languages: [
+        {
+          code: "en",
+          enabled: true,
+          id: 1,
+          name: "English",
+        },
+      ],
+      nickname: "Mock User",
+    });
   }),
-  rest.put("/strapi/sekai-profiles/1/update", (req, res, ctx) => {
-    const isAuthenticated = sessionStorage.getItem("is-authenticated");
-
-    if (!isAuthenticated) {
-      // If not authenticated, respond with a 403 error
-      return res(
-        ctx.status(403),
-        ctx.json({
-          message: [
-            {
-              messages: [
-                {
-                  id: "Auth.error.unauthencated",
-                },
-              ],
-            },
-          ],
-        })
-      );
+  http.get("/strapi/sekai-profiles/me", ({ request: req }) => {
+    if (!checkIsAuthenticated(sessionStorage)) {
+      return getUnauthenticatedResponse();
     }
 
     // If authenticated, return a mocked user details
-    return res(
-      ctx.status(200),
-      ctx.json({
-        profile:
-          sekaiUserProfileJsonMap[req.headers.get("region")] ||
-          sekaiUserProfileJsonJP,
-        status: "success",
-      })
-    );
+    return HttpResponse.json({
+      cardList: [],
+      dailySyncEnabled: false,
+      deckList: [],
+      eventGetAvailable: 10,
+      eventGetUsed: 0,
+      eventHistorySync: false,
+      id: 1,
+      region: req.headers.get("region"),
+      sekaiUserId: "123456789",
+      sekaiUserProfile:
+        sekaiUserProfileJsonMap[req.headers.get("region")] ||
+        sekaiUserProfileJsonJP,
+      sekaiUserToken: null,
+      updateAvailable: 3,
+      updateUsed: 0,
+    });
   }),
-  rest.get("/strapi/sekai-current-event*", (req) => {
-    return req.passthrough();
+  http.get("/strapi/sekai-card-teams/me", () => {
+    if (!checkIsAuthenticated(sessionStorage)) {
+      return getUnauthenticatedResponse();
+    }
+
+    // If authenticated, return a mocked user details
+    return HttpResponse.json({
+      cards: [],
+      decks: [],
+      id: 1,
+      maxNumOfDecks: 5,
+      region: "jp",
+    });
+  }),
+  http.put("/strapi/sekai-profiles/1/update", ({ request }) => {
+    if (!checkIsAuthenticated(sessionStorage)) {
+      return getUnauthenticatedResponse();
+    }
+
+    // If authenticated, return a mocked user details
+    return HttpResponse.json({
+      profile:
+        sekaiUserProfileJsonMap[request.headers.get("region")] ||
+        sekaiUserProfileJsonJP,
+      status: "success",
+    });
+  }),
+  http.get("/strapi/sekai-current-event*", () => {
+    return passthrough();
   }),
 ];
