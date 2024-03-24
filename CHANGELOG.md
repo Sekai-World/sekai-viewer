@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.7](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.6...v1.9.7) (2024-03-24)
+
+
+### Bug Fixes
+
+* await for msw to start ([618561a](https://github.com/Sekai-World/sekai-viewer/commits/618561a8d5cf0473b31016f0977736792d07d388))
+* en profile definition ([374e34f](https://github.com/Sekai-World/sekai-viewer/commits/374e34fcb93a2cb449844f3d8ce702213c258223))
+
+
+### Refactors
+
+* :arrow_up: msw migration to v2 ([d878701](https://github.com/Sekai-World/sekai-viewer/commits/d8787019fbd1e2c1a28f53c549f286ab4bc0187d))
+* minor changes ([43ca9b7](https://github.com/Sekai-World/sekai-viewer/commits/43ca9b7c70b8c87eb3d1f1a3c735d8f6ec35e071))
+
 ### [1.9.6](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.5...v1.9.6) (2024-03-09)
 
 ### [1.9.5](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.4...v1.9.5) (2024-03-09)
