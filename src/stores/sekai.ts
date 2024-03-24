@@ -344,7 +344,7 @@ export interface ISekaiUserMultiLiveTopScoreCount
   extends Instance<typeof SekaiUserMultiLiveTopScoreCount> {}
 
 export const SekaiUserMusicDifficultyClearCount = types.model({
-  allPerfect: types.number,
+  allPerfect: types.maybe(types.number),
   fullCombo: types.number,
   liveClear: types.number,
   musicDifficultyType: types.string,
@@ -490,7 +490,7 @@ export const SekaiProfileMap = types
           // console.log(res.data);
           self.sekaiProfileMap.set(region, res.data);
         } catch (err) {
-          // console.log(err.message);
+          // console.log((err as Error).message);
           console.error(err);
         }
         self.isFetchingSekaiProfile = false;
