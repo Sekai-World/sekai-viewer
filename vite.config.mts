@@ -4,7 +4,7 @@ import loadVersion from "vite-plugin-package-version";
 import svgr from "vite-plugin-svgr";
 import Icons from "unplugin-icons/vite";
 import { VitePWA } from "vite-plugin-pwa";
-import { nodeModulesPolyfillPlugin } from 'esbuild-plugins-node-modules-polyfill';
+import { nodeModulesPolyfillPlugin } from "esbuild-plugins-node-modules-polyfill";
 
 export default defineConfig({
   build: {
@@ -20,6 +20,7 @@ export default defineConfig({
   },
   optimizeDeps: {
     esbuildOptions: {
+      // @ts-expect-error plugin is not typed
       plugins: [nodeModulesPolyfillPlugin()],
     },
   },
@@ -129,7 +130,7 @@ export default defineConfig({
 
         target: "https://storage.sekai.best",
       },
-      "^/strapi/sekai-current-event.*": {
+      "/strapi": {
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/strapi/, ""),
         target: "http://localhost:1337",
