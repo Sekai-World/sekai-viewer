@@ -335,25 +335,13 @@ export async function getRemoteAssetURL(
   // const isWebpSupported = Modernizr.webplossless;
   const url = `${assetUrl[domainKey][server]}/${endpoint}`;
 
-  // if (endpoint.endsWith(".webp") && !isWebpSupported) {
-  //   let dataUrl = await localforage.getItem<string>(url);
-  //   if (!dataUrl) {
-  //     const res = await Axios.get(url, { responseType: "arraybuffer" });
-  //     dataUrl = await queue.add<string>(() =>
-  //       webpMachine.decode(new Uint8Array(res.data))
-  //     );
-  //     await localforage.setItem(url, dataUrl);
-  //     if (setFunc) setFunc(dataUrl);
-  //     return dataUrl;
-  //   } else {
-  //     // await Axios.head(url);
-  //     if (setFunc) setFunc(dataUrl);
-  //     return dataUrl;
-  //   }
-  // } else
-  // await Axios.head(url);
-  if (setFunc) setFunc(url);
-  return url;
+  const headRes = await Axios.head(url);
+  // console.log(headRes.status, url);
+  if (headRes.status <= 400) {
+    if (setFunc) setFunc(url);
+    return url;
+  }
+  return "";
 }
 
 // export async function getMovieUrl(stringVal: string) {
