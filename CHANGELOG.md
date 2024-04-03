@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.8](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.7...v1.9.8) (2024-04-03)
+
+
+### Features
+
+* hide trim image tabs if no trim images available ([71cf095](https://github.com/Sekai-World/sekai-viewer/commits/71cf095aa24b81e08b225923d5cff2da7059781c))
+* only return resource path if it exists ([eb44ffc](https://github.com/Sekai-World/sekai-viewer/commits/eb44ffcd9e7eed9dc7fc5826f0c2626111d064bd))
+
+
+### Bug Fixes
+
+* **live2d:** motion path for sanrio models ([3c703ca](https://github.com/Sekai-World/sekai-viewer/commits/3c703ca4439e68f5c7203c7ee9fc9ae73d0e135d))
+
 ### [1.9.7](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.6...v1.9.7) (2024-03-24)
 
 
