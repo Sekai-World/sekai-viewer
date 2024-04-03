@@ -378,7 +378,7 @@ const CardDetail: React.FC<unknown> = observer(() => {
 
   const getCardImages: () => ImageDecorator[] = useCallback(
     () =>
-      card
+      (card
         ? isTrainableCard
           ? [
               {
@@ -386,21 +386,25 @@ const CardDetail: React.FC<unknown> = observer(() => {
                 downloadUrl: normalImg.replace(".webp", ".png"),
                 src: normalImg,
               },
-              {
-                alt: "card normal trim",
-                downloadUrl: normalTrimImg.replace(".webp", ".png"),
-                src: normalTrimImg,
-              },
+              normalTrimImg
+                ? {
+                    alt: "card normal trim",
+                    downloadUrl: normalTrimImg.replace(".webp", ".png"),
+                    src: normalTrimImg,
+                  }
+                : undefined,
               {
                 alt: "card after training",
                 downloadUrl: trainedImg.replace(".webp", ".png"),
                 src: trainedImg,
               },
-              {
-                alt: "card after training trim",
-                downloadUrl: trainedTrimImg.replace(".webp", ".png"),
-                src: trainedTrimImg,
-              },
+              trainedTrimImg
+                ? {
+                    alt: "card after training trim",
+                    downloadUrl: trainedTrimImg.replace(".webp", ".png"),
+                    src: trainedTrimImg,
+                  }
+                : undefined,
             ]
           : [
               {
@@ -414,7 +418,8 @@ const CardDetail: React.FC<unknown> = observer(() => {
                 src: normalTrimImg,
               },
             ]
-        : [],
+        : []
+      ).filter((img) => !!img) as ImageDecorator[],
     [
       card,
       isTrainableCard,
@@ -449,13 +454,15 @@ const CardDetail: React.FC<unknown> = observer(() => {
               scrollButtons
             >
               <Tab label={t("card:tab.title[0]")} value="0"></Tab>
-              <Tab label={t("card:tab.title[1]")} value="2"></Tab>
-              {isTrainableCard && !isBirthdayCard ? (
+              {!!normalTrimImg && (
+                <Tab label={t("card:tab.title[1]")} value="2"></Tab>
+              )}
+              {isTrainableCard && !isBirthdayCard && (
                 <Tab label={t("card:tab.title[2]")} value="1"></Tab>
-              ) : null}
-              {isTrainableCard && !isBirthdayCard ? (
+              )}
+              {isTrainableCard && !isBirthdayCard && !!trainedTrimImg && (
                 <Tab label={t("card:tab.title[3]")} value="3"></Tab>
-              ) : null}
+              )}
             </Tabs>
             <TabPanelPadding value="0">
               <Card
@@ -477,32 +484,36 @@ const CardDetail: React.FC<unknown> = observer(() => {
                 <CardMediaCardImg image={trainedImg} />
               </Card>
             </TabPanelPadding>
-            <TabPanelPadding value="2">
-              <Card
-                onClick={() => {
-                  setActiveIdx(1);
-                  setVisible(true);
-                }}
-              >
-                <CardMediaCardImg
-                  image={normalTrimImg}
-                  sx={{ backgroundSize: "contain" }}
-                />
-              </Card>
-            </TabPanelPadding>
-            <TabPanelPadding value="3">
-              <Card
-                onClick={() => {
-                  setActiveIdx(3);
-                  setVisible(true);
-                }}
-              >
-                <CardMediaCardImg
-                  image={trainedTrimImg}
-                  sx={{ backgroundSize: "contain" }}
-                />
-              </Card>
-            </TabPanelPadding>
+            {!!normalTrimImg && (
+              <TabPanelPadding value="2">
+                <Card
+                  onClick={() => {
+                    setActiveIdx(1);
+                    setVisible(true);
+                  }}
+                >
+                  <CardMediaCardImg
+                    image={normalTrimImg}
+                    sx={{ backgroundSize: "contain" }}
+                  />
+                </Card>
+              </TabPanelPadding>
+            )}
+            {!!trainedTrimImg && (
+              <TabPanelPadding value="3">
+                <Card
+                  onClick={() => {
+                    setActiveIdx(3);
+                    setVisible(true);
+                  }}
+                >
+                  <CardMediaCardImg
+                    image={trainedTrimImg}
+                    sx={{ backgroundSize: "contain" }}
+                  />
+                </Card>
+              </TabPanelPadding>
+            )}
           </Paper>
         </TabContext>
         <GridOut container direction="column">
