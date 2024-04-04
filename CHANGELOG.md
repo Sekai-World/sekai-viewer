@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.9](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.8...v1.9.9) (2024-04-04)
+
+
+### Bug Fixes
+
+* :bug: v2 models motion path was incorrect ([c791c2a](https://github.com/Sekai-World/sekai-viewer/commits/c791c2af66f6297c949608e620133515abaf922e))
+
 ### [1.9.8](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.7...v1.9.8) (2024-04-03)
 
 
