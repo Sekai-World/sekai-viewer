@@ -1,5 +1,6 @@
 import { Box, useScrollTrigger, Zoom } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 const ScrollTop: React.FC<
   React.PropsWithChildren<{
@@ -25,6 +26,14 @@ const ScrollTop: React.FC<
       anchor.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   };
+
+  // Extracts pathname property(key) from an object
+  const { pathname } = useLocation();
+
+  // Automatically scrolls to top whenever pathname changes
+  useEffect(() => {
+    document.defaultView?.scrollTo(0, 0);
+  }, [pathname]);
 
   return (
     <Zoom in={trigger}>
