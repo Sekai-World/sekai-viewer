@@ -45,7 +45,7 @@ function InfoInternal(props: { onClick: () => void }) {
 function InfoInternalDialog(props: {
   url: string;
   open: boolean;
-  onClose: (event: {}, reason: "backdropClick" | "escapeKeyDown") => void;
+  onClose: (event: unknown, reason: "backdropClick" | "escapeKeyDown") => void;
   title: string;
 }) {
   return (

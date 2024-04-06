@@ -11,6 +11,7 @@ import {
   Switch,
   Link,
   Box,
+  IconButton,
 } from "@mui/material";
 import { Alert } from "@mui/material";
 import { TabContext, TabPanel } from "@mui/lab";
@@ -26,6 +27,7 @@ import {
   IMusicTagInfo,
   IMusicVocalInfo,
   IOutCharaProfile,
+  IMusicOriginal,
 } from "../../types.d";
 import { getRemoteAssetURL, useCachedData, useMusicTagName } from "../../utils";
 import { charaIcons } from "../../utils/resources";
@@ -55,6 +57,7 @@ import TypographyHeader from "../../components/styled/TypographyHeader";
 import ContainerContent from "../../components/styled/ContainerContent";
 import PaperContainer from "../../components/styled/PaperContainer";
 import GridOut from "../../components/styled/GridOut";
+import EmbedVideoPlayer from "../../components/blocks/EmbedVideoPlayer";
 
 const MusicDetail: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
@@ -81,6 +84,7 @@ const MusicDetail: React.FC<unknown> = observer(() => {
   const [danceMembers] = useCachedData<IMusicDanceMembers>("musicDanceMembers");
   const [musicAchievements] =
     useCachedData<IMusicAchievement>("musicAchievements");
+  const [musicOriginals] = useCachedData<IMusicOriginal>("musicOriginals");
 
   const { musicId } = useParams<{ musicId: string }>();
 
@@ -91,6 +95,7 @@ const MusicDetail: React.FC<unknown> = observer(() => {
   const [musicVocalTypes, setMusicVocalTypes] = useState<string[]>([]);
   const [musicDanceMember, setMusicDanceMember] =
     useState<IMusicDanceMembers>();
+  const [musicOriginal, setMusicOriginal] = useState<IMusicOriginal>();
   const [selectedPreviewVocalType, setSelectedPreviewVocalType] =
     useState<number>(0);
   const [selectedVocalType, setSelectedVocalType] = useState<number>(0);
@@ -164,6 +169,14 @@ const MusicDetail: React.FC<unknown> = observer(() => {
       setDiffiInfoTabVal(String(difficulties.length - 1));
     }
   }, [difficulties]);
+
+  useEffect(() => {
+    if (musicOriginals) {
+      setMusicOriginal(
+        musicOriginals.find((elem) => elem.musicId === Number(musicId))
+      );
+    }
+  }, [musicOriginals, musicId]);
 
   useEffect(() => {
     if (music && musicVocal && musicVocal[selectedPreviewVocalType]) {
@@ -441,23 +454,39 @@ const MusicDetail: React.FC<unknown> = observer(() => {
         <Alert severity="warning">
           <Trans i18nKey="music:alert[0]" components={{ b: <b /> }} />
         </Alert>
-        <Grid container justifyContent="center">
-          <Grid item xs={12} sm={6}>
-            <div
-              onClick={() => {
-                setActiveIdx(0);
-                setVisible(true);
-              }}
-            >
-              <Box
-                component={Image}
-                src={musicJacket}
-                bgColor=""
-                sx={{ cursor: "pointer" }}
-              />
-            </div>
+        {["original", "mv_2d"].includes(vocalPreviewVal) &&
+        musicVocalTypes.length &&
+        musicVocal.length &&
+        longMusicPlaybackURL ? (
+          <MusicVideoPlayer
+            audioPath={longMusicPlaybackURL}
+            videoPath={musicVideoURL}
+            onPlay={() => setVocalDisabled(true)}
+            onPause={() => setVocalDisabled(false)}
+            onEnded={() => setVocalDisabled(false)}
+          />
+        ) : ["original_video"].includes(vocalPreviewVal) &&
+          musicOriginal?.videoLink ? (
+          <EmbedVideoPlayer videoUrl={musicOriginal.videoLink} />
+        ) : (
+          <Grid container justifyContent="center">
+            <Grid item xs={12} sm={6}>
+              <div
+                onClick={() => {
+                  setActiveIdx(0);
+                  setVisible(true);
+                }}
+              >
+                <Box
+                  component={Image}
+                  src={musicJacket}
+                  bgColor=""
+                  sx={{ cursor: "pointer" }}
+                />
+              </div>
+            </Grid>
           </Grid>
-        </Grid>
+        )}
         <PaperContainer>
           <Grid container direction="column" spacing={1}>
             <Grid
@@ -518,6 +547,14 @@ const MusicDetail: React.FC<unknown> = observer(() => {
                         }
                       />
                     ))}
+                  {!!musicOriginal && (
+                    <FormControlLabel
+                      value="original_video"
+                      control={<Radio color="primary"></Radio>}
+                      label={t("music:vocalTab.original_video") as string}
+                      labelPlacement="end"
+                    />
+                  )}
                 </RadioGroup>
               </Grid>
             </Grid>
@@ -611,19 +648,6 @@ const MusicDetail: React.FC<unknown> = observer(() => {
               offset={trimSilence ? music.fillerSec : 0}
             />
           )}
-        {["original", "mv_2d"].includes(vocalPreviewVal) &&
-          musicVocalTypes.length &&
-          musicVocal.length &&
-          longMusicPlaybackURL && (
-            <MusicVideoPlayer
-              audioPath={longMusicPlaybackURL}
-              videoPath={musicVideoURL}
-              onPlay={() => setVocalDisabled(true)}
-              onPause={() => setVocalDisabled(false)}
-              onEnded={() => setVocalDisabled(false)}
-            />
-          )}
-
         <GridOut container direction="column">
           <Grid
             container
@@ -817,6 +841,33 @@ const MusicDetail: React.FC<unknown> = observer(() => {
             </Typography>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
+          {!!musicOriginal && (
+            <Fragment>
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                  {t("music:vocalTab.original_video")}
+                </Typography>
+                <Typography>
+                  <IconButton
+                    component="a"
+                    href={musicOriginal.videoLink}
+                    target="_blank"
+                    size="small"
+                    color="inherit"
+                  >
+                    <OpenInNew />
+                  </IconButton>
+                </Typography>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
+            </Fragment>
+          )}
         </GridOut>
       </ContainerContent>
       <TypographyHeader>

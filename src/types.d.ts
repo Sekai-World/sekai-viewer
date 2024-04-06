@@ -1563,3 +1563,9 @@ interface ICompactResourceBoxDetailENUM {
   resourceBoxPurpose: string[];
   resourceType: string[];
 }
+
+export interface IMusicOriginal {
+  id: number;
+  musicId: number;
+  videoLink: string;
+}
