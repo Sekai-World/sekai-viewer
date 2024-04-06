@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.10](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.9...v1.9.10) (2024-04-06)
+
+
+### Features
+
+* :lipstick: always scroll to page top after route change ([a401c72](https://github.com/Sekai-World/sekai-viewer/commits/a401c72eb7db59329a4c7bd811eff9709ba6bcee))
+* **music:** original music video link ([627432d](https://github.com/Sekai-World/sekai-viewer/commits/627432d44814e5dc603bf8a2b37973ed082c92a6))
+
+
+### Bug Fixes
+
+* do not verify asset url unless necessary ([e81e944](https://github.com/Sekai-World/sekai-viewer/commits/e81e944c7fd16255196c84cabbe3715463890cef))
+
 ### [1.9.9](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.8...v1.9.9) (2024-04-04)
 
 
