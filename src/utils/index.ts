@@ -329,19 +329,27 @@ export async function getRemoteAssetURL(
   endpoint: string,
   setFunc?: CallableFunction,
   domainKey: AssetDomainKey = "minio",
-  server: ServerRegion | "comic" | "musicChart" = "jp"
+  server: ServerRegion | "comic" | "musicChart" = "jp",
+  verifyStatus: boolean = false
 ): Promise<string> {
   if (!endpoint) return "";
   // const isWebpSupported = Modernizr.webplossless;
   const url = `${assetUrl[domainKey][server]}/${endpoint}`;
 
-  const headRes = await Axios.head(url);
-  // console.log(headRes.status, url);
-  if (headRes.status <= 400) {
+  if (verifyStatus) {
+    const headRes = await Axios.head(url, {
+      validateStatus: (status) => status < 500,
+    });
+    // console.log(headRes.status, url);
+    if (headRes.status <= 400) {
+      if (setFunc) setFunc(url);
+      return url;
+    }
+    return "";
+  } else {
     if (setFunc) setFunc(url);
     return url;
   }
-  return "";
 }
 
 // export async function getMovieUrl(stringVal: string) {
@@ -553,6 +561,9 @@ export function useProcessedScenarioData() {
           case SnippetAction.Sound:
             {
               const soundData = SoundData[snippet.ReferenceIndex];
+              const seBundleName = soundData.Se.endsWith("_b")
+                ? "se_pack00001_b"
+                : "se_pack00001";
 
               action = {
                 bgm: soundData.Bgm
@@ -571,13 +582,15 @@ export function useProcessedScenarioData() {
                 playMode: SoundPlayMode[soundData.PlayMode],
                 se: soundData.Se
                   ? await getRemoteAssetURL(
-                      `sound/scenario/se/se_pack00001_rip/${soundData.Se}.mp3`,
+                      `sound/scenario/se/${seBundleName}_rip/${soundData.Se}.mp3`,
                       undefined,
                       "minio"
                     )
                   : "",
                 type: snippet.Action,
               };
+
+              console.dir(action);
             }
             break;
           default: {

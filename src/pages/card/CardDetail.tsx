@@ -359,7 +359,9 @@ const CardDetail: React.FC<unknown> = observer(() => {
       getRemoteAssetURL(
         `character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`,
         setNormalTrimImg,
-        "minio"
+        "minio",
+        "jp",
+        true
       );
       if (isTrainableCard) {
         getRemoteAssetURL(
@@ -370,7 +372,9 @@ const CardDetail: React.FC<unknown> = observer(() => {
         getRemoteAssetURL(
           `character/member_cutout_trm/${card.assetbundleName}_rip/after_training.webp`,
           setTrainedTrimImg,
-          "minio"
+          "minio",
+          "jp",
+          true
         );
       }
     }
