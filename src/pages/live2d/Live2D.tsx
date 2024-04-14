@@ -422,9 +422,12 @@ const Live2DView: React.FC<unknown> = () => {
     let motionName = selectedModelName;
     if (!motionName) return;
     if (!motionName.startsWith("v2_sub_sanrio")) {
-      if (motionName.endsWith("black")) {
+      if (motionName.endsWith("_black")) {
+        motionName = motionName.slice(0, -6);
+      } else if (motionName.endsWith("black")) {
         motionName = motionName.slice(0, -5);
-      } else if (
+      }
+      if (
         motionName?.startsWith("sub") ||
         motionName?.startsWith("clb") ||
         motionName.match(/^v2_\d{2}.*/)
