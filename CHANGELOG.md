@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.11](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.10...v1.9.11) (2024-04-14)
+
+
+### Bug Fixes
+
+* **live2d:** :bug: black model motion path ([d1cba45](https://github.com/Sekai-World/sekai-viewer/commits/d1cba45bfd2fc2f570208eefd25fa9de3d7de847))
+
 ### [1.9.10](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.9...v1.9.10) (2024-04-06)
 
 
