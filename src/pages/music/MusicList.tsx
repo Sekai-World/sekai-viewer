@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import {
   Button,
   Grid,
@@ -8,6 +9,10 @@ import {
   Chip,
   Badge,
   Avatar,
+  IconButton,
+  Tooltip,
+  Autocomplete,
+  TextField,
 } from "@mui/material";
 import {
   ViewAgenda,
@@ -272,7 +277,8 @@ const MusicList: React.FC<unknown> = observer(() => {
 
   useEffect(() => {
     if (isReady) doFilter();
-  }, [isReady, doFilter]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isReady]);
 
   useEffect(() => {
     if (sortedCache.length) {
@@ -325,6 +331,33 @@ const MusicList: React.FC<unknown> = observer(() => {
       type: "reset",
     });
   }, [setArranger, setComposer, setLyricist, setMusicTag]);
+
+  const handleTagFilterClick = useCallback(
+    (tag: string) => {
+      if (musicTag === tag) setMusicTag("all");
+      else setMusicTag(tag);
+    },
+    [musicTag, setMusicTag]
+  );
+
+  const handleCharaFilterClick = useCallback(
+    (idx: number) => {
+      if (characterSelected.includes(idx + 1)) {
+        dispatchCharacterSelected({
+          payload: idx + 1,
+          storeName: "music-list-filter-charas",
+          type: "remove",
+        });
+      } else {
+        dispatchCharacterSelected({
+          payload: idx + 1,
+          storeName: "music-list-filter-charas",
+          type: "add",
+        });
+      }
+    },
+    [characterSelected]
+  );
 
   return (
     <Fragment>
@@ -403,7 +436,7 @@ const MusicList: React.FC<unknown> = observer(() => {
                   </TypographyCaption>
                 </Grid>
                 <Grid item xs={12} md={11}>
-                  <Grid container spacing={1}>
+                  <Grid container spacing={1} alignItems="center">
                     {[
                       "all",
                       "vocaloid",
@@ -415,26 +448,34 @@ const MusicList: React.FC<unknown> = observer(() => {
                       "other",
                     ].map((tag) => (
                       <Grid key={tag} item>
-                        <Chip
-                          clickable
-                          color={musicTag === tag ? "primary" : "default"}
-                          label={musicTagToName[tag as "all"]}
-                          onClick={() => {
-                            if (musicTag === tag) setMusicTag("all");
-                            else setMusicTag(tag);
-                          }}
-                          avatar={
-                            Object.prototype.hasOwnProperty.call(
-                              UnitLogoMiniMap,
-                              tag
-                            ) ? (
+                        {Object.hasOwn(UnitLogoMiniMap, tag) ? (
+                          <Tooltip
+                            title={musicTagToName[tag as "all"]}
+                            placement="top"
+                          >
+                            <IconButton
+                              size="small"
+                              onClick={() => handleTagFilterClick(tag)}
+                              className={clsx({
+                                "icon-not-selected": musicTag !== tag,
+                                "icon-selected": musicTag === tag,
+                              })}
+                            >
                               <Avatar
                                 alt={musicTagToName[tag as "all"]}
                                 src={UnitLogoMiniMap[tag as "idol"]}
+                                sx={{ width: 32, height: 32 }}
                               />
-                            ) : undefined
-                          }
-                        />
+                            </IconButton>
+                          </Tooltip>
+                        ) : (
+                          <Chip
+                            clickable
+                            color={musicTag === tag ? "primary" : "default"}
+                            label={musicTagToName[tag as "all"]}
+                            onClick={() => handleTagFilterClick(tag)}
+                          />
+                        )}
                       </Grid>
                     ))}
                   </Grid>
@@ -486,53 +527,67 @@ const MusicList: React.FC<unknown> = observer(() => {
                 item
                 container
                 xs={12}
-                alignItems="center"
                 justifyContent="space-between"
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
-                  <TypographyCaption>
+                  <TypographyCaption sx={{ paddingTop: "0.5em" }}>
                     {t("filter:character.caption")}
                   </TypographyCaption>
                 </Grid>
                 <Grid item xs={12} md={11}>
-                  <Grid container spacing={1}>
+                  <Grid container spacing={1} alignItems="center">
                     {Array.from({ length: 26 }).map((_, idx) => (
                       <Grid key={"chara-filter-" + idx} item>
-                        <Chip
-                          clickable
-                          color={
-                            characterSelected.includes(idx + 1)
-                              ? "primary"
-                              : "default"
-                          }
-                          avatar={
-                            <Avatar
-                              alt={getCharaName(idx + 1)}
-                              src={
-                                charaIcons[
-                                  `CharaIcon${idx + 1}` as "CharaIcon1"
-                                ]
-                              }
-                            />
-                          }
-                          label={getCharaName(idx + 1)}
-                          onClick={() => {
-                            if (characterSelected.includes(idx + 1)) {
-                              dispatchCharacterSelected({
-                                payload: idx + 1,
-                                storeName: "music-list-filter-charas",
-                                type: "remove",
-                              });
-                            } else {
-                              dispatchCharacterSelected({
-                                payload: idx + 1,
-                                storeName: "music-list-filter-charas",
-                                type: "add",
-                              });
+                        {charaIcons[`CharaIcon${idx + 1}` as "CharaIcon1"] ? (
+                          <Tooltip
+                            title={getCharaName(idx + 1)}
+                            placement="top"
+                          >
+                            <IconButton
+                              size="small"
+                              onClick={() => handleCharaFilterClick(idx)}
+                              className={clsx({
+                                "icon-not-selected":
+                                  !characterSelected.includes(idx + 1),
+                                "icon-selected": characterSelected.includes(
+                                  idx + 1
+                                ),
+                              })}
+                            >
+                              <Avatar
+                                alt={getCharaName(idx + 1)}
+                                src={
+                                  charaIcons[
+                                    `CharaIcon${idx + 1}` as "CharaIcon1"
+                                  ]
+                                }
+                                sx={{ width: 32, height: 32 }}
+                              />
+                            </IconButton>
+                          </Tooltip>
+                        ) : (
+                          <Chip
+                            clickable
+                            color={
+                              characterSelected.includes(idx + 1)
+                                ? "primary"
+                                : "default"
                             }
-                          }}
-                        />
+                            avatar={
+                              <Avatar
+                                alt={getCharaName(idx + 1)}
+                                src={
+                                  charaIcons[
+                                    `CharaIcon${idx + 1}` as "CharaIcon1"
+                                  ]
+                                }
+                              />
+                            }
+                            label={getCharaName(idx + 1)}
+                            onClick={() => handleCharaFilterClick(idx)}
+                          />
+                        )}
                       </Grid>
                     ))}
                     {outCharas &&
@@ -581,27 +636,21 @@ const MusicList: React.FC<unknown> = observer(() => {
                 <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
                     <Grid item>
-                      <FormControl>
-                        <Select
+                      <FormControl size="small">
+                        <Autocomplete
                           value={composer}
-                          onChange={(e) => {
-                            setComposer(e.target.value as string);
+                          onChange={(e, newVal) => {
+                            setComposer(newVal || "");
                           }}
-                          style={{ minWidth: "200px" }}
-                        >
-                          <MenuItem value="">
-                            {t("filter:not-selected")}
-                          </MenuItem>
-                          {Array.from(
-                            new Set(sortedCache.map((m) => m.composer))
-                          )
-                            .sort()
-                            .map((name) => (
-                              <MenuItem value={name} key={name}>
-                                {name}
-                              </MenuItem>
-                            ))}
-                        </Select>
+                          disablePortal
+                          options={Array.from(
+                            new Set((musicsCache ?? []).map((m) => m.composer))
+                          ).sort()}
+                          renderInput={(params) => (
+                            <TextField {...params} size="small" />
+                          )}
+                          sx={{ minWidth: "200px" }}
+                        />
                       </FormControl>
                     </Grid>
                   </Grid>
@@ -621,27 +670,21 @@ const MusicList: React.FC<unknown> = observer(() => {
                 <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
                     <Grid item>
-                      <FormControl>
-                        <Select
+                      <FormControl size="small">
+                        <Autocomplete
                           value={arranger}
-                          onChange={(e) => {
-                            setArranger(e.target.value as string);
+                          onChange={(e, newVal) => {
+                            setArranger(newVal || "");
                           }}
-                          style={{ minWidth: "200px" }}
-                        >
-                          <MenuItem value="">
-                            {t("filter:not-selected")}
-                          </MenuItem>
-                          {Array.from(
-                            new Set(sortedCache.map((m) => m.arranger))
-                          )
-                            .sort()
-                            .map((name) => (
-                              <MenuItem value={name} key={name}>
-                                {name}
-                              </MenuItem>
-                            ))}
-                        </Select>
+                          disablePortal
+                          options={Array.from(
+                            new Set((musicsCache ?? []).map((m) => m.arranger))
+                          ).sort()}
+                          renderInput={(params) => (
+                            <TextField {...params} size="small" />
+                          )}
+                          sx={{ minWidth: "200px" }}
+                        />
                       </FormControl>
                     </Grid>
                   </Grid>
@@ -661,27 +704,21 @@ const MusicList: React.FC<unknown> = observer(() => {
                 <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
                     <Grid item>
-                      <FormControl>
-                        <Select
+                      <FormControl size="small">
+                        <Autocomplete
                           value={lyricist}
-                          onChange={(e) => {
-                            setLyricist(e.target.value as string);
+                          onChange={(e, newVal) => {
+                            setLyricist(newVal || "");
                           }}
-                          style={{ minWidth: "200px" }}
-                        >
-                          <MenuItem value="">
-                            {t("filter:not-selected")}
-                          </MenuItem>
-                          {Array.from(
-                            new Set(sortedCache.map((m) => m.lyricist))
-                          )
-                            .sort()
-                            .map((name) => (
-                              <MenuItem value={name} key={name}>
-                                {name}
-                              </MenuItem>
-                            ))}
-                        </Select>
+                          disablePortal
+                          options={Array.from(
+                            new Set((musicsCache ?? []).map((m) => m.lyricist))
+                          ).sort()}
+                          renderInput={(params) => (
+                            <TextField {...params} size="small" />
+                          )}
+                          sx={{ minWidth: "200px" }}
+                        />
                       </FormControl>
                     </Grid>
                   </Grid>
@@ -703,7 +740,7 @@ const MusicList: React.FC<unknown> = observer(() => {
                 <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
                     <Grid item>
-                      <FormControl>
+                      <FormControl size="small">
                         <Select
                           value={sortType}
                           onChange={(e) => {
@@ -721,7 +758,7 @@ const MusicList: React.FC<unknown> = observer(() => {
                       </FormControl>
                     </Grid>
                     <Grid item>
-                      <FormControl>
+                      <FormControl size="small">
                         <Select
                           value={sortBy}
                           onChange={(e) => {
@@ -773,7 +810,7 @@ const MusicList: React.FC<unknown> = observer(() => {
                 <Grid item>
                   <Button
                     variant="contained"
-                    color="primary"
+                    color="secondary"
                     disabled={
                       musicTag === "all" &&
                       !musicMVTypes.length &&

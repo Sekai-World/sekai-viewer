@@ -693,7 +693,7 @@ const CardList: React.FC<unknown> = observer(() => {
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
-                  <TypographyCaption style={{ paddingTop: "0.375em" }}>
+                  <TypographyCaption sx={{ paddingTop: "0.375em" }}>
                     {t("filter:character.caption")}
                   </TypographyCaption>
                 </Grid>
