@@ -451,9 +451,6 @@ const MusicDetail: React.FC<unknown> = observer(() => {
         {getTranslated(`music_titles:${musicId}`, music.title)}
       </TypographyHeader>
       <ContainerContent maxWidth="md">
-        <Alert severity="warning">
-          <Trans i18nKey="music:alert[0]" components={{ b: <b /> }} />
-        </Alert>
         {["original", "mv_2d"].includes(vocalPreviewVal) &&
         musicVocalTypes.length &&
         musicVocal.length &&
