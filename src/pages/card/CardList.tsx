@@ -1,7 +1,7 @@
+import clsx from "clsx";
 import {
   Button,
   Grid,
-  Typography,
   Container,
   Collapse,
   FormControl,
@@ -11,9 +11,10 @@ import {
   Avatar,
   Badge,
   TextField,
-  // InputAdornment,
   IconButton,
   Popover,
+  Tooltip,
+  capitalize,
 } from "@mui/material";
 import {
   Check,
@@ -58,7 +59,6 @@ import {
   useToggle,
 } from "../../utils";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
-// import InfiniteScroll from "react-infinite-scroll-component";
 
 import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
@@ -407,7 +407,8 @@ const CardList: React.FC<unknown> = observer(() => {
 
   useEffect(() => {
     if (isReady) doFilter();
-  }, [isReady, doFilter]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isReady]);
 
   useEffect(() => {
     if (sortedCache.length) {
@@ -422,6 +423,148 @@ const CardList: React.FC<unknown> = observer(() => {
   const handleEventClose = useCallback(() => {
     setAnchorElEvent(null);
   }, []);
+
+  const handleUnitIconClick = useCallback(
+    (unitProfile: IUnitProfile) => {
+      if (charas?.length) {
+        if (unitSelected.includes(unitProfile.unit)) {
+          dispatchUnitSelected({
+            payload: unitProfile.unit,
+            storeName: "card-list-filter-units",
+            type: "remove",
+          });
+          const filteredCharas = charas.filter(
+            (chara) => chara.unit === unitProfile.unit
+          );
+          filteredCharas.forEach((chara) =>
+            dispatchCharacterSelected({
+              payload: chara.id,
+              storeName: "card-list-filter-charas",
+              type: "remove",
+            })
+          );
+        } else {
+          dispatchUnitSelected({
+            payload: unitProfile.unit,
+            storeName: "card-list-filter-units",
+            type: "add",
+          });
+          const filteredCharas = charas.filter(
+            (chara) => chara.unit === unitProfile.unit
+          );
+          filteredCharas.forEach((chara) =>
+            dispatchCharacterSelected({
+              payload: chara.id,
+              storeName: "card-list-filter-charas",
+              type: "add",
+            })
+          );
+        }
+      }
+    },
+    [charas, unitSelected, dispatchUnitSelected, dispatchCharacterSelected]
+  );
+
+  const handleCharaIconClick = useCallback(
+    (chara: IGameChara) => {
+      if (characterSelected.includes(chara.id)) {
+        dispatchCharacterSelected({
+          payload: chara.id,
+          storeName: "card-list-filter-charas",
+          type: "remove",
+        });
+      } else {
+        dispatchCharacterSelected({
+          payload: chara.id,
+          storeName: "card-list-filter-charas",
+          type: "add",
+        });
+      }
+    },
+    [characterSelected, dispatchCharacterSelected]
+  );
+
+  const handleAttrIconClick = useCallback(
+    (attr: string) => {
+      if (attrSelected.includes(attr)) {
+        dispatchAttrSelected({
+          payload: attr,
+          storeName: "card-list-filter-attrs",
+          type: "remove",
+        });
+      } else {
+        dispatchAttrSelected({
+          payload: attr,
+          storeName: "card-list-filter-attrs",
+          type: "add",
+        });
+      }
+    },
+    [attrSelected, dispatchAttrSelected]
+  );
+
+  const handleSupportUnitIconClick = useCallback(
+    (supportUnit: string) => {
+      if (supportUnitSelected.includes(supportUnit)) {
+        dispatchSupportUnitSelected({
+          payload: supportUnit,
+          storeName: "card-list-filter-support-units",
+          type: "remove",
+        });
+      } else {
+        dispatchSupportUnitSelected({
+          payload: supportUnit,
+          storeName: "card-list-filter-support-units",
+          type: "add",
+        });
+      }
+    },
+    [supportUnitSelected, dispatchSupportUnitSelected]
+  );
+
+  const handleSkillIconClick = useCallback(
+    (skill: { descriptionSpriteName: string; name: string }) => {
+      if (skillSelected.includes(skill.descriptionSpriteName)) {
+        dispatchSkillSelected({
+          payload: skill.descriptionSpriteName,
+          type: "remove",
+        });
+      } else {
+        dispatchSkillSelected({
+          payload: skill.descriptionSpriteName,
+          type: "add",
+        });
+      }
+    },
+    [skillSelected, dispatchSkillSelected]
+  );
+
+  const handleRarityIconClick = useCallback(
+    (rarity: number) => {
+      if (raritySelected.map((rs) => rs.rarity).includes(rarity)) {
+        dispatchRaritySelected({
+          payload: {
+            cardRarityType:
+              rarity === 5 ? "rarity_birthday" : `rarity_${rarity}`,
+            rarity,
+          },
+          storeName: "card-list-filter-rarities",
+          type: "remove",
+        });
+      } else {
+        dispatchRaritySelected({
+          payload: {
+            cardRarityType:
+              rarity === 5 ? "rarity_birthday" : `rarity_${rarity}`,
+            rarity,
+          },
+          storeName: "card-list-filter-rarities",
+          type: "add",
+        });
+      }
+    },
+    [raritySelected, dispatchRaritySelected]
+  );
 
   return (
     <Fragment>
@@ -509,67 +652,34 @@ const CardList: React.FC<unknown> = observer(() => {
                           key={"unit-profile-filter-" + unitProfile.unit}
                           item
                         >
-                          <Chip
-                            clickable
-                            color={
-                              unitSelected.includes(unitProfile.unit)
-                                ? "primary"
-                                : "default"
-                            }
-                            avatar={
+                          <Tooltip
+                            title={getTranslated(
+                              `unit_profile:${unitProfile.unit}.name`,
+                              unitProfile.unitName
+                            )}
+                            placement="top"
+                          >
+                            <IconButton
+                              size="small"
+                              onClick={() => handleUnitIconClick(unitProfile)}
+                              className={clsx({
+                                "icon-not-selected": !unitSelected.includes(
+                                  unitProfile.unit
+                                ),
+                                "icon-selected": unitSelected.includes(
+                                  unitProfile.unit
+                                ),
+                              })}
+                            >
                               <Avatar
                                 alt={unitProfile.unit}
                                 src={
                                   UnitLogoMiniMap[unitProfile.unit as "idol"]
                                 }
+                                sx={{ width: 32, height: 32 }}
                               />
-                            }
-                            label={
-                              <Typography variant="body2">
-                                {getTranslated(
-                                  `unit_profile:${unitProfile.unit}.name`,
-                                  unitProfile.unitName
-                                )}
-                              </Typography>
-                            }
-                            onClick={() => {
-                              if (charas?.length) {
-                                if (unitSelected.includes(unitProfile.unit)) {
-                                  dispatchUnitSelected({
-                                    payload: unitProfile.unit,
-                                    storeName: "card-list-filter-units",
-                                    type: "remove",
-                                  });
-                                  const filteredCharas = charas.filter(
-                                    (chara) => chara.unit === unitProfile.unit
-                                  );
-                                  filteredCharas.forEach((chara) =>
-                                    dispatchCharacterSelected({
-                                      payload: chara.id,
-                                      storeName: "card-list-filter-charas",
-                                      type: "remove",
-                                    })
-                                  );
-                                } else {
-                                  dispatchUnitSelected({
-                                    payload: unitProfile.unit,
-                                    storeName: "card-list-filter-units",
-                                    type: "add",
-                                  });
-                                  const filteredCharas = charas.filter(
-                                    (chara) => chara.unit === unitProfile.unit
-                                  );
-                                  filteredCharas.forEach((chara) =>
-                                    dispatchCharacterSelected({
-                                      payload: chara.id,
-                                      storeName: "card-list-filter-charas",
-                                      type: "add",
-                                    })
-                                  );
-                                }
-                              }
-                            }}
-                          />
+                            </IconButton>
+                          </Tooltip>
                         </Grid>
                       ))}
                   </Grid>
@@ -579,12 +689,11 @@ const CardList: React.FC<unknown> = observer(() => {
                 item
                 container
                 xs={12}
-                alignItems="center"
                 justifyContent="space-between"
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
-                  <TypographyCaption>
+                  <TypographyCaption style={{ paddingTop: "0.375em" }}>
                     {t("filter:character.caption")}
                   </TypographyCaption>
                 </Grid>
@@ -592,14 +701,19 @@ const CardList: React.FC<unknown> = observer(() => {
                   <Grid container spacing={1}>
                     {(charas || []).map((chara) => (
                       <Grid key={"chara-filter-" + chara.id} item>
-                        <Chip
-                          clickable
-                          color={
-                            characterSelected.includes(chara.id)
-                              ? "primary"
-                              : "default"
-                          }
-                          avatar={
+                        <Tooltip title={getCharaName(chara.id)} placement="top">
+                          <IconButton
+                            size="small"
+                            onClick={() => handleCharaIconClick(chara)}
+                            className={clsx({
+                              "icon-not-selected": !characterSelected.includes(
+                                chara.id
+                              ),
+                              "icon-selected": characterSelected.includes(
+                                chara.id
+                              ),
+                            })}
+                          >
                             <Avatar
                               alt={getCharaName(chara.id)}
                               src={
@@ -607,25 +721,10 @@ const CardList: React.FC<unknown> = observer(() => {
                                   `CharaIcon${chara.id}` as "CharaIcon1"
                                 ]
                               }
+                              sx={{ width: 32, height: 32 }}
                             />
-                          }
-                          label={getCharaName(chara.id)}
-                          onClick={() => {
-                            if (characterSelected.includes(chara.id)) {
-                              dispatchCharacterSelected({
-                                payload: chara.id,
-                                storeName: "card-list-filter-charas",
-                                type: "remove",
-                              });
-                            } else {
-                              dispatchCharacterSelected({
-                                payload: chara.id,
-                                storeName: "card-list-filter-charas",
-                                type: "add",
-                              });
-                            }
-                          }}
-                        />
+                          </IconButton>
+                        </Tooltip>
                       </Grid>
                     ))}
                   </Grid>
@@ -647,43 +746,23 @@ const CardList: React.FC<unknown> = observer(() => {
                     {["cute", "mysterious", "cool", "happy", "pure"].map(
                       (attr) => (
                         <Grid key={"attr-filter-" + attr} item>
-                          <Chip
-                            clickable
-                            color={
-                              attrSelected.includes(attr)
-                                ? "primary"
-                                : "default"
-                            }
-                            avatar={
+                          <Tooltip title={capitalize(attr)} placement="top">
+                            <IconButton
+                              size="small"
+                              onClick={() => handleAttrIconClick(attr)}
+                              className={clsx({
+                                "icon-not-selected":
+                                  !attrSelected.includes(attr),
+                                "icon-selected": attrSelected.includes(attr),
+                              })}
+                            >
                               <Avatar
                                 alt={attr}
                                 src={attrIconMap[attr as "cool"]}
+                                sx={{ width: 32, height: 32 }}
                               />
-                            }
-                            label={
-                              <Typography
-                                variant="body2"
-                                style={{ textTransform: "capitalize" }}
-                              >
-                                {attr}
-                              </Typography>
-                            }
-                            onClick={() => {
-                              if (attrSelected.includes(attr)) {
-                                dispatchAttrSelected({
-                                  payload: attr,
-                                  storeName: "card-list-filter-attrs",
-                                  type: "remove",
-                                });
-                              } else {
-                                dispatchAttrSelected({
-                                  payload: attr,
-                                  storeName: "card-list-filter-attrs",
-                                  type: "add",
-                                });
-                              }
-                            }}
-                          />
+                            </IconButton>
+                          </Tooltip>
                         </Grid>
                       )
                     )}
@@ -715,45 +794,34 @@ const CardList: React.FC<unknown> = observer(() => {
                           "light_sound",
                         ].map((supportUnit) => (
                           <Grid key={"supportUnit-filter-" + supportUnit} item>
-                            <Chip
-                              clickable
-                              color={
-                                supportUnitSelected.includes(supportUnit)
-                                  ? "primary"
-                                  : "default"
-                              }
-                              avatar={
+                            <Tooltip
+                              title={getTranslated(
+                                `unit_profile:${supportUnit}.name`,
+                                unitProfiles.find(
+                                  (up) => up.unit === supportUnit
+                                )!.unitName
+                              )}
+                              placement="top"
+                            >
+                              <IconButton
+                                size="small"
+                                onClick={() =>
+                                  handleSupportUnitIconClick(supportUnit)
+                                }
+                                className={clsx({
+                                  "icon-not-selected":
+                                    !supportUnitSelected.includes(supportUnit),
+                                  "icon-selected":
+                                    supportUnitSelected.includes(supportUnit),
+                                })}
+                              >
                                 <Avatar
                                   alt={supportUnit}
                                   src={UnitLogoMiniMap[supportUnit as "idol"]}
+                                  sx={{ width: 32, height: 32 }}
                                 />
-                              }
-                              label={
-                                <Typography variant="body2">
-                                  {getTranslated(
-                                    `unit_profile:${supportUnit}.name`,
-                                    unitProfiles.find(
-                                      (up) => up.unit === supportUnit
-                                    )!.unitName
-                                  )}
-                                </Typography>
-                              }
-                              onClick={() => {
-                                if (supportUnitSelected.includes(supportUnit)) {
-                                  dispatchSupportUnitSelected({
-                                    payload: supportUnit,
-                                    storeName: "card-list-filter-support-units",
-                                    type: "remove",
-                                  });
-                                } else {
-                                  dispatchSupportUnitSelected({
-                                    payload: supportUnit,
-                                    storeName: "card-list-filter-support-units",
-                                    type: "add",
-                                  });
-                                }
-                              }}
-                            />
+                              </IconButton>
+                            </Tooltip>
                           </Grid>
                         ))}
                     </Grid>
@@ -787,23 +855,7 @@ const CardList: React.FC<unknown> = observer(() => {
                               <Grid item>{skill.name}</Grid>
                             </Grid>
                           }
-                          onClick={() => {
-                            if (
-                              skillSelected.includes(
-                                skill.descriptionSpriteName
-                              )
-                            ) {
-                              dispatchSkillSelected({
-                                payload: skill.descriptionSpriteName,
-                                type: "remove",
-                              });
-                            } else {
-                              dispatchSkillSelected({
-                                payload: skill.descriptionSpriteName,
-                                type: "add",
-                              });
-                            }
-                          }}
+                          onClick={() => handleSkillIconClick(skill)}
                         />
                       </Grid>
                     ))}
@@ -835,11 +887,15 @@ const CardList: React.FC<unknown> = observer(() => {
                               : "default"
                           }
                           label={
-                            <Grid container>
+                            <Grid container alignItems="center">
                               {Array.from({
                                 length: rarity === 5 ? 1 : rarity,
                               }).map((_, idx) => (
-                                <Grid item key={`rarity-${idx}`}>
+                                <Grid
+                                  item
+                                  key={`rarity-${idx}`}
+                                  sx={{ height: 16 }}
+                                >
                                   <img
                                     src={
                                       rarity >= 5
@@ -855,37 +911,7 @@ const CardList: React.FC<unknown> = observer(() => {
                               ))}
                             </Grid>
                           }
-                          onClick={() => {
-                            if (
-                              raritySelected
-                                .map((rs) => rs.rarity)
-                                .includes(rarity)
-                            ) {
-                              dispatchRaritySelected({
-                                payload: {
-                                  cardRarityType:
-                                    rarity === 5
-                                      ? "rarity_birthday"
-                                      : `rarity_${rarity}`,
-                                  rarity,
-                                },
-                                storeName: "card-list-filter-rarities",
-                                type: "remove",
-                              });
-                            } else {
-                              dispatchRaritySelected({
-                                payload: {
-                                  cardRarityType:
-                                    rarity === 5
-                                      ? "rarity_birthday"
-                                      : `rarity_${rarity}`,
-                                  rarity,
-                                },
-                                storeName: "card-list-filter-rarities",
-                                type: "add",
-                              });
-                            }
-                          }}
+                          onClick={() => handleRarityIconClick(rarity)}
                         />
                       </Grid>
                     ))}
@@ -908,7 +934,7 @@ const CardList: React.FC<unknown> = observer(() => {
                 <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
                     <Grid item>
-                      <FormControl>
+                      <FormControl size="small">
                         <Select
                           value={sortType}
                           onChange={(e) => {
@@ -926,7 +952,7 @@ const CardList: React.FC<unknown> = observer(() => {
                       </FormControl>
                     </Grid>
                     <Grid item>
-                      <FormControl>
+                      <FormControl size="small">
                         <Select
                           value={sortBy}
                           onChange={(e) => {
@@ -1119,7 +1145,9 @@ const CardList: React.FC<unknown> = observer(() => {
                         type: "add",
                       });
                     });
+                  doFilter();
                   handleEventClose();
+                  toggleFilterOpen();
                 }}
                 disabled={eventId === 0}
               >
