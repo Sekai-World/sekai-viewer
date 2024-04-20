@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.12](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.11...v1.9.12) (2024-04-20)
+
+
+### Bug Fixes
+
+* **card:** :bug: blank screen when clicking traimed image ([41f52a8](https://github.com/Sekai-World/sekai-viewer/commits/41f52a889e6018e350f8b587ceb96702217b80a3))
+
+
+### Refactors
+
+* :lipstick: card filter use icons only for units, charas and attrs ([e8a33aa](https://github.com/Sekai-World/sekai-viewer/commits/e8a33aa749c03337b034caf4301b1df17fbf359e))
+* **music:** :fire: remove warning text on music detail page ([d98de3c](https://github.com/Sekai-World/sekai-viewer/commits/d98de3c902af91ed0ae61c822989dbbdfacaf7c9))
+* **music:** :lipstick: filter style change like card list ([55a5600](https://github.com/Sekai-World/sekai-viewer/commits/55a5600774f3f8b21c45dbadd44bb28d2354815e))
+
 ### [1.9.11](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.10...v1.9.11) (2024-04-14)
 
 
