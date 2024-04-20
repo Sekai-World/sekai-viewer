@@ -350,13 +350,16 @@ const CardDetail: React.FC<unknown> = observer(() => {
   const [trainedTrimImg, setTrainedTrimImg] = useState<string>("");
 
   useEffect(() => {
-    if (card) {
-      getRemoteAssetURL(
+    const getRemoteImageAssetURL = async (
+      card: ICardInfo,
+      isTrainableCard: boolean
+    ) => {
+      await getRemoteAssetURL(
         `character/member/${card.assetbundleName}_rip/card_normal.webp`,
         setNormalImg,
         "minio"
       );
-      getRemoteAssetURL(
+      await getRemoteAssetURL(
         `character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`,
         setNormalTrimImg,
         "minio",
@@ -364,12 +367,12 @@ const CardDetail: React.FC<unknown> = observer(() => {
         true
       );
       if (isTrainableCard) {
-        getRemoteAssetURL(
+        await getRemoteAssetURL(
           `character/member/${card.assetbundleName}_rip/card_after_training.webp`,
           setTrainedImg,
           "minio"
         );
-        getRemoteAssetURL(
+        await getRemoteAssetURL(
           `character/member_cutout_trm/${card.assetbundleName}_rip/after_training.webp`,
           setTrainedTrimImg,
           "minio",
@@ -377,8 +380,23 @@ const CardDetail: React.FC<unknown> = observer(() => {
           true
         );
       }
+    };
+
+    if (card) {
+      getRemoteImageAssetURL(card, isTrainableCard);
     }
+
+    return () => {
+      setNormalImg("");
+      setTrainedImg("");
+      setNormalTrimImg("");
+      setTrainedTrimImg("");
+    };
   }, [card, isTrainableCard]);
+
+  const [cardImagesForViewer, setCardImagesForViewer] = useState<
+    ImageDecorator[]
+  >([]);
 
   const getCardImages: () => ImageDecorator[] = useCallback(
     () =>
@@ -434,6 +452,10 @@ const CardDetail: React.FC<unknown> = observer(() => {
     ]
   );
 
+  useEffect(() => {
+    setCardImagesForViewer(getCardImages());
+  }, [getCardImages]);
+
   const handleChange = (
     event: React.ChangeEvent<unknown>,
     newValue: string
@@ -478,16 +500,18 @@ const CardDetail: React.FC<unknown> = observer(() => {
                 <CardMediaCardImg image={normalImg} />
               </Card>
             </TabPanelPadding>
-            <TabPanelPadding value="1">
-              <Card
-                onClick={() => {
-                  setActiveIdx(2);
-                  setVisible(true);
-                }}
-              >
-                <CardMediaCardImg image={trainedImg} />
-              </Card>
-            </TabPanelPadding>
+            {isTrainableCard && (
+              <TabPanelPadding value="1">
+                <Card
+                  onClick={() => {
+                    setActiveIdx(trainedTrimImg ? 2 : 1);
+                    setVisible(true);
+                  }}
+                >
+                  <CardMediaCardImg image={trainedImg} />
+                </Card>
+              </TabPanelPadding>
+            )}
             {!!normalTrimImg && (
               <TabPanelPadding value="2">
                 <Card
@@ -1592,7 +1616,7 @@ const CardDetail: React.FC<unknown> = observer(() => {
       <Viewer
         visible={visible}
         onClose={() => setVisible(false)}
-        images={getCardImages()}
+        images={cardImagesForViewer}
         zIndex={2000}
         activeIndex={activeIdx}
         downloadable
