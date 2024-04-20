@@ -41,3 +41,11 @@ code {
   display: flex;
   flex-flow: column;
 }
+
+.icon-not-selected {
+  filter: grayscale(100%);
+}
+
+.icon-selected {
+  box-shadow: inset 0px 0px 0px 0.0625em #298a7b;
+}

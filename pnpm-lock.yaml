@@ -44,6 +44,9 @@ dependencies:
   axios:
     specifier: ^1.6.7
     version: 1.6.7
+  clsx:
+    specifier: ^2.1.0
+    version: 2.1.0
   cron:
     specifier: ^1.8.2
     version: 1.8.2
