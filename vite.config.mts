@@ -130,16 +130,16 @@ export default defineConfig({
 
         target: "https://storage.sekai.best",
       },
+      "/strapi/sekai-current-event": {
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/strapi/, ""),
+        target: "https://strapi.sekai.best",
+      },
       "/strapi": {
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/strapi/, ""),
         target: "http://localhost:1337",
       },
-      // "/strapi": {
-      //   target: "http://localhost:1337",
-      //   changeOrigin: true,
-      //   rewrite: (path) => path.replace(/^\/strapi/, ""),
-      // },
     },
   },
 });
