@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.13](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.12...v1.9.13) (2024-04-22)
+
+
+### Bug Fixes
+
+* :sparkles: event prediction ([23f6d17](https://github.com/Sekai-World/sekai-viewer/commits/23f6d17a56a3eeb9ae09390b2f55fb34a9caa8ac))
+
+
+### Refactors
+
+* :hammer: proxy current event api in development ([eac0f20](https://github.com/Sekai-World/sekai-viewer/commits/eac0f203634087280ffc4d683e1bc24cd775a1a9))
+
 ### [1.9.12](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.11...v1.9.12) (2024-04-20)
 
 
