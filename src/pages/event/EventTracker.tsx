@@ -149,10 +149,13 @@ const EventTracker: React.FC<unknown> = observer(() => {
 
   const refreshRealtimeData = useCallback(async () => {
     setIsFetching(true);
-    const data = await getLive();
-    setRtRanking(data);
-    setRtTime(new Date(data[0].timestamp));
-    setIsFetching(false);
+    try {
+      const data = await getLive();
+      setRtRanking(data);
+      setRtTime(new Date(data[0].timestamp));
+    } finally {
+      setIsFetching(false);
+    }
   }, [getLive]);
 
   const refreshPrediction = useCallback(async () => {
@@ -210,7 +213,7 @@ const EventTracker: React.FC<unknown> = observer(() => {
           currentTime >= event.startAt &&
           currentTime < event.aggregateAt
         ) {
-          const cron = new CronJob("10 * * * * *", () => {
+          const cron = new CronJob("10 */3 * * * *", () => {
             const currentTime = Date.now();
             if (currentTime >= event.aggregateAt) cron.stop();
             else {
@@ -229,7 +232,7 @@ const EventTracker: React.FC<unknown> = observer(() => {
             region === "jp" &&
             currentTime >= event.startAt + 24 * 3600 * 1000
           ) {
-            const predcron = new CronJob("1,16,31,46 * * * *", () => {
+            const predcron = new CronJob("*/30 * * * *", () => {
               const currentTime = Date.now();
               if (currentTime >= event.rankingAnnounceAt) predcron.stop();
               else {

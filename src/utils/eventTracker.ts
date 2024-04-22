@@ -22,8 +22,12 @@ export function useEventTrackerAPI(region: ServerRegion = "jp") {
 
   return {
     getEventPred: useCallback(async () => {
-      return (await axios.get<EventPrediction>(`/event/pred`)).data;
-    }, [axios]),
+      return (
+        await Axios.get<EventPrediction>(
+          `${import.meta.env.VITE_FRONTEND_ASSET_BASE}/sekai-event-predict.json`
+        )
+      ).data;
+    }, []),
     getEventRankingsByTimestamp: useCallback(
       async (eventId: number, timestamp: Date) => {
         return (
