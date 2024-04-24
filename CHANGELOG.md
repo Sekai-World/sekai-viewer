@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.14](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.13...v1.9.14) (2024-04-24)
+
+
+### Refactors
+
+* :zap: better filtering for card and music lists ([4392c6a](https://github.com/Sekai-World/sekai-viewer/commits/4392c6a3911f27173743e648b781b74ff7ec3a0a))
+* :zap: better isReady handling ([844f159](https://github.com/Sekai-World/sekai-viewer/commits/844f159b1b6884ff06b9553626296ebfe9b240d5))
+
 ### [1.9.13](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.12...v1.9.13) (2024-04-22)
 
 
