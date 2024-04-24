@@ -277,35 +277,36 @@ const CardList: React.FC<unknown> = observer(() => {
       episodes?.length &&
       skills?.length
     ) {
-      let result = [...cardsCache];
-      // do filter
-      if (result.length && !isShowSpoiler) {
-        result = result.filter(
-          (c) =>
-            (c.releaseAt || c.archivePublishedAt || 0) <= new Date().getTime()
-        );
-      }
-      if (result.length && characterSelected.length) {
-        result = result.filter((c) =>
-          characterSelected.includes(c.characterId)
-        );
-      }
-      if (result.length && attrSelected.length) {
-        result = result.filter((c) => attrSelected.includes(c.attr));
-      }
-      if (result.length && supportUnitSelected.length) {
-        result = result.filter(
-          (c) =>
-            c.supportUnit === "none" ||
-            supportUnitSelected.includes(c.supportUnit)
-        );
-      }
-      if (result.length && raritySelected.length) {
-        const rarityFilter = raritySelected.map((rs) => rs.cardRarityType);
-        result = result.filter((c) => rarityFilter.includes(c.cardRarityType!));
-      }
-      if (result.length && skillSelected.length) {
-        result = result.filter((c) => {
+      const result = cardsCache.filter((c) => {
+        if (
+          !isShowSpoiler &&
+          (c.releaseAt || c.archivePublishedAt || 0) > new Date().getTime()
+        ) {
+          return false;
+        }
+        if (
+          characterSelected.length &&
+          !characterSelected.includes(c.characterId)
+        ) {
+          return false;
+        }
+        if (attrSelected.length && !attrSelected.includes(c.attr)) {
+          return false;
+        }
+        if (
+          supportUnitSelected.length &&
+          c.supportUnit !== "none" &&
+          !supportUnitSelected.includes(c.supportUnit)
+        ) {
+          return false;
+        }
+        if (raritySelected.length) {
+          const rarityFilter = raritySelected.map((rs) => rs.cardRarityType);
+          if (!rarityFilter.includes(c.cardRarityType!)) {
+            return false;
+          }
+        }
+        if (skillSelected.length) {
           const skill = skills.find((s) => c.skillId === s.id);
           if (skill) {
             let descriptionSpriteName = skill.descriptionSpriteName;
@@ -316,45 +317,41 @@ const CardList: React.FC<unknown> = observer(() => {
               "score_up_condition_life"
             )
               descriptionSpriteName = "life_score_up";
-            return skillSelected.includes(descriptionSpriteName);
+            if (!skillSelected.includes(descriptionSpriteName)) {
+              return false;
+            }
           }
-          return true;
-        });
-      }
-      // temporarily sort cards cache
-      switch (sortBy) {
-        case "id":
-        case "releaseAt": {
-          let sortKey: "id" | "releaseAt" | "archivePublishedAt" = sortBy;
-          if (sortKey === "releaseAt" && ["tw", "kr"].includes(region)) {
-            sortKey = "archivePublishedAt";
-          }
-          result = result.sort((a, b) =>
-            sortType === "asc"
-              ? (a[sortKey] || 0) - (b[sortKey] || 0)
-              : (b[sortKey] || 0) - (a[sortKey] || 0)
-          );
-          break;
         }
-        case "rarity":
-          result = result.sort((a, b) =>
-            sortType === "asc"
-              ? cardRarityTypeToRarity[a.cardRarityType] -
-                cardRarityTypeToRarity[b.cardRarityType]
-              : cardRarityTypeToRarity[b.cardRarityType] -
-                cardRarityTypeToRarity[a.cardRarityType]
-          );
-          break;
-        case "power":
-          result = result.sort((a, b) =>
-            sortType === "asc"
-              ? getMaxParam(a, rarities, episodes) -
-                getMaxParam(b, rarities, episodes)
-              : getMaxParam(b, rarities, episodes) -
-                getMaxParam(a, rarities, episodes)
-          );
-          break;
-      }
+        return true;
+      });
+
+      // sort cards
+      result.sort((a, b) => {
+        let compare = 0;
+        switch (sortBy) {
+          case "id":
+          case "releaseAt": {
+            let sortKey: "id" | "releaseAt" | "archivePublishedAt" = sortBy;
+            if (sortKey === "releaseAt" && ["tw", "kr"].includes(region)) {
+              sortKey = "archivePublishedAt";
+            }
+            compare = (a[sortKey] || 0) - (b[sortKey] || 0);
+            break;
+          }
+          case "rarity":
+            compare =
+              cardRarityTypeToRarity[a.cardRarityType] -
+              cardRarityTypeToRarity[b.cardRarityType];
+            break;
+          case "power":
+            compare =
+              getMaxParam(a, rarities, episodes) -
+              getMaxParam(b, rarities, episodes);
+            break;
+        }
+        return sortType === "asc" ? compare : -compare;
+      });
+
       setSortedCache(result);
       setCards([]);
       setPage(0);
