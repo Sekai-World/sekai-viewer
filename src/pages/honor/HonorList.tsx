@@ -80,12 +80,7 @@ const HonorList = () => {
   }, [t]);
 
   useEffect(() => {
-    if (
-      honorsCache &&
-      honorsCache.length &&
-      honorGroups &&
-      honorGroups.length
-    ) {
+    if (honorGroups?.length && honorsCache?.length) {
       let result = [...honorsCache];
       // do filter
       if (honorType) {
@@ -114,15 +109,7 @@ const HonorList = () => {
       setHonors([]);
       setPage(0);
     }
-  }, [
-    setPage,
-    honorsCache,
-    honorType,
-    honorGroups,
-    isHonorGroupOnce,
-    sortBy,
-    sortType,
-  ]);
+  }, [honorGroups, honorType, honorsCache, isHonorGroupOnce, sortBy, sortType]);
 
   useLayoutEffect(() => {
     setHonors((honors) => [
@@ -133,8 +120,8 @@ const HonorList = () => {
   }, [page, limit, setLastQueryFin, filteredCache]);
 
   useLayoutEffect(() => {
-    setIsReady(Boolean(honorsCache && honorsCache.length));
-  }, [honorsCache, setIsReady]);
+    setIsReady(!!honorsCache?.length && !!honorGroups?.length);
+  }, [honorsCache?.length, honorGroups?.length]);
 
   const callback = useCallback(
     (

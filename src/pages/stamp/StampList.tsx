@@ -93,7 +93,7 @@ const StampList: React.FC<unknown> = () => {
   }, [t]);
 
   useEffect(() => {
-    if (stampsCache && stampsCache.length) {
+    if (stampsCache?.length) {
       let cache = stampsCache;
       if (characterSelected.length) {
         cache = stampsCache.filter((s) =>
@@ -115,16 +115,7 @@ const StampList: React.FC<unknown> = () => {
       setStamps([]);
       setPage(0);
     }
-  }, [
-    characterSelected,
-    stampsCache,
-    setStamps,
-    setPage,
-    setFilteredCache,
-    sortType,
-    sortBy,
-    stampType,
-  ]);
+  }, [characterSelected, sortBy, sortType, stampType, stampsCache]);
 
   useEffect(() => {
     setStamps((stamps) => [...stamps, ...getPaginatedStamps(page, limit)]);
@@ -132,8 +123,8 @@ const StampList: React.FC<unknown> = () => {
   }, [page, limit, setLastQueryFin, getPaginatedStamps]);
 
   useEffect(() => {
-    setIsReady(Boolean(stampsCache && stampsCache.length));
-  }, [setIsReady, stampsCache]);
+    setIsReady(!!stampsCache?.length);
+  }, [stampsCache?.length]);
 
   const handleUpdateSortType = useCallback(
     (_, sort: string) => {

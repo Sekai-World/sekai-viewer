@@ -82,10 +82,8 @@ const CharacterMissionList: React.FC<unknown> = () => {
   }, [page, limit, setLastQueryFin, sortedCache]);
 
   useEffect(() => {
-    setIsReady(
-      Boolean(characterMissionsCache && characterMissionsCache.length)
-    );
-  }, [setIsReady, characterMissionsCache]);
+    setIsReady(!!characterMissionsCache?.length && !!characterProfiles?.length);
+  }, [characterMissionsCache?.length, characterProfiles?.length]);
 
   const callback = useCallback(
     (

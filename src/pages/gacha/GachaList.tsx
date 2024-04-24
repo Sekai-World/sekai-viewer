@@ -63,7 +63,7 @@ const GachaList: React.FC<unknown> = observer(() => {
   }, [page, limit, setLastQueryFin, sortedCache]);
 
   useEffect(() => {
-    if (!gachasCache || !gachasCache.length) return;
+    if (!gachasCache?.length) return;
     let sortedCache = [...gachasCache];
     if (region === "en") {
       // only show gacha after release (2021/12/7)
@@ -86,11 +86,11 @@ const GachaList: React.FC<unknown> = observer(() => {
     setSortedCache(sortedCache);
     setGachas([]);
     setPage(0);
-  }, [gachasCache, setPage, sortType, sortBy, isShowSpoiler, region]);
+  }, [gachasCache, isShowSpoiler, region, sortBy, sortType]);
 
   useEffect(() => {
-    setIsReady(Boolean(gachasCache && gachasCache.length));
-  }, [setIsReady, gachasCache]);
+    setIsReady(!!gachasCache?.length);
+  }, [gachasCache?.length]);
 
   const callback = useCallback(
     (

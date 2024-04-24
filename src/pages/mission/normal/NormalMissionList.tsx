@@ -84,7 +84,7 @@ const NormalMissionList: React.FC<unknown> = () => {
   }, [t]);
 
   useEffect(() => {
-    if (normalMissionsCache && normalMissionsCache.length) {
+    if (normalMissionsCache?.length) {
       let result = [...normalMissionsCache];
       // do filter
       if (missionTypeSelected.length) {
@@ -104,14 +104,7 @@ const NormalMissionList: React.FC<unknown> = () => {
       setNormalMissions([]);
       setPage(0);
     }
-  }, [
-    normalMissionsCache,
-    setPage,
-    setSortedCache,
-    missionTypeSelected,
-    sortBy,
-    sortType,
-  ]);
+  }, [missionTypeSelected, normalMissionsCache, sortBy, sortType]);
 
   useEffect(() => {
     setNormalMissions((events) => [
@@ -122,8 +115,8 @@ const NormalMissionList: React.FC<unknown> = () => {
   }, [page, limit, setLastQueryFin, sortedCache]);
 
   useEffect(() => {
-    setIsReady(Boolean(normalMissionsCache && normalMissionsCache.length));
-  }, [setIsReady, normalMissionsCache]);
+    setIsReady(!!normalMissionsCache?.length);
+  }, [normalMissionsCache?.length]);
 
   const callback = useCallback(
     (

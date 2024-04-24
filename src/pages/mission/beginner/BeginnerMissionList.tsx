@@ -89,7 +89,7 @@ const BeginnerMissionList: React.FC<unknown> = () => {
   }, [t]);
 
   useEffect(() => {
-    if (beginnerMissionsCache && beginnerMissionsCache.length) {
+    if (beginnerMissionsCache?.length) {
       let result = [...beginnerMissionsCache];
       // do filter
       if (missionTypeSelected.length) {
@@ -109,14 +109,7 @@ const BeginnerMissionList: React.FC<unknown> = () => {
       setBeginnerMissions([]);
       setPage(0);
     }
-  }, [
-    beginnerMissionsCache,
-    setPage,
-    setSortedCache,
-    missionTypeSelected,
-    sortBy,
-    sortType,
-  ]);
+  }, [beginnerMissionsCache, missionTypeSelected, sortBy, sortType]);
 
   useEffect(() => {
     setBeginnerMissions((events) => [
@@ -127,8 +120,8 @@ const BeginnerMissionList: React.FC<unknown> = () => {
   }, [page, limit, setLastQueryFin, sortedCache]);
 
   useEffect(() => {
-    setIsReady(Boolean(beginnerMissionsCache && beginnerMissionsCache.length));
-  }, [setIsReady, beginnerMissionsCache]);
+    setIsReady(!!beginnerMissionsCache?.length);
+  }, [beginnerMissionsCache?.length]);
 
   const callback = useCallback(
     (
