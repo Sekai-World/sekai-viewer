@@ -92,8 +92,8 @@ const EventList: React.FC<unknown> = observer(() => {
   }, [eventsCache, setPage, sortType, sortBy, isShowSpoiler]);
 
   useEffect(() => {
-    setIsReady(Boolean(eventsCache && eventsCache.length));
-  }, [setIsReady, eventsCache]);
+    setIsReady(!!eventsCache?.length);
+  }, [eventsCache?.length]);
 
   const callback = useCallback(
     (

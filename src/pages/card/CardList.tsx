@@ -250,10 +250,19 @@ const CardList: React.FC<unknown> = observer(() => {
 
   useLayoutEffect(() => {
     setIsReady(
-      Boolean(cardsCache && cardsCache.length) &&
-        Boolean(charas && charas.length)
+      !!cardsCache?.length &&
+        !!charas?.length &&
+        !!rarities?.length &&
+        !!episodes?.length &&
+        !!skills?.length
     );
-  }, [setIsReady, cardsCache, charas]);
+  }, [
+    rarities?.length,
+    episodes?.length,
+    skills?.length,
+    cardsCache?.length,
+    charas?.length,
+  ]);
 
   useEffect(() => {
     if (!isCurrEventLoading && !!currEvent) {
@@ -263,14 +272,10 @@ const CardList: React.FC<unknown> = observer(() => {
 
   const doFilter = useCallback(() => {
     if (
-      cardsCache &&
-      cardsCache.length &&
-      rarities &&
-      rarities.length &&
-      episodes &&
-      episodes.length &&
-      skills &&
-      skills.length
+      cardsCache?.length &&
+      rarities?.length &&
+      episodes?.length &&
+      skills?.length
     ) {
       let result = [...cardsCache];
       // do filter
@@ -355,19 +360,19 @@ const CardList: React.FC<unknown> = observer(() => {
       setPage(0);
     }
   }, [
-    cardsCache,
-    rarities,
-    episodes,
-    skills,
-    isShowSpoiler,
-    characterSelected,
     attrSelected,
-    supportUnitSelected,
+    cardsCache,
+    characterSelected,
+    episodes,
+    isShowSpoiler,
+    rarities,
     raritySelected,
-    skillSelected,
-    sortBy,
     region,
+    skillSelected,
+    skills,
+    sortBy,
     sortType,
+    supportUnitSelected,
   ]);
 
   const resetFilter = useCallback(() => {

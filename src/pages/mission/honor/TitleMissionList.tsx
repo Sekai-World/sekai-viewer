@@ -305,7 +305,7 @@ const TitleMissionList: React.FC<unknown> = () => {
   }, [t]);
 
   useEffect(() => {
-    if (honorMissionsCache && honorMissionsCache.length) {
+    if (honorMissionsCache?.length) {
       let result = [...honorMissionsCache];
       // do filter
       if (missionTypeSelected.length) {
@@ -325,14 +325,7 @@ const TitleMissionList: React.FC<unknown> = () => {
       setHonorMissions([]);
       setPage(0);
     }
-  }, [
-    honorMissionsCache,
-    setPage,
-    setSortedCache,
-    missionTypeSelected,
-    sortBy,
-    sortType,
-  ]);
+  }, [honorMissionsCache, missionTypeSelected, sortBy, sortType]);
 
   useEffect(() => {
     setHonorMissions((events) => [
@@ -343,8 +336,8 @@ const TitleMissionList: React.FC<unknown> = () => {
   }, [page, limit, setLastQueryFin, sortedCache]);
 
   useEffect(() => {
-    setIsReady(Boolean(honorMissionsCache && honorMissionsCache.length));
-  }, [setIsReady, honorMissionsCache]);
+    setIsReady(!!honorMissionsCache?.length);
+  }, [honorMissionsCache?.length]);
 
   const callback = useCallback(
     (

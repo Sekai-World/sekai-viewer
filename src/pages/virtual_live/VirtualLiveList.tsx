@@ -73,7 +73,7 @@ const VirtualLiveList: React.FC<unknown> = observer(() => {
   }, [page, limit, setLastQueryFin, sortedCache]);
 
   useEffect(() => {
-    if (!virtualLivesCache) return;
+    if (!virtualLivesCache?.length) return;
     let sortedCache = [...virtualLivesCache];
     if (!isShowSpoiler) {
       sortedCache = sortedCache.filter(
@@ -95,11 +95,11 @@ const VirtualLiveList: React.FC<unknown> = observer(() => {
     setSortedCache(sortedCache);
     setVirtualLives([]);
     setPage(0);
-  }, [isShowSpoiler, setPage, sortBy, sortType, virtualLivesCache]);
+  }, [isShowSpoiler, sortBy, sortType, virtualLivesCache]);
 
   useEffect(() => {
-    setIsReady(Boolean(virtualLivesCache));
-  }, [setIsReady, virtualLivesCache]);
+    setIsReady(!!virtualLivesCache?.length);
+  }, [virtualLivesCache?.length]);
 
   const callback = useCallback(
     (

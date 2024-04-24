@@ -131,7 +131,7 @@ const ComicList: React.FC<unknown> = observer(() => {
   }, [t]);
 
   useEffect(() => {
-    if (tipsCache && tipsCache.length) {
+    if (tipsCache?.length) {
       const filtered = tipsCache.filter(
         (tip): tip is ITipInfoComic => "assetbundleName" in tip
       );
@@ -139,7 +139,7 @@ const ComicList: React.FC<unknown> = observer(() => {
       setComics([]);
       setPage(0);
     }
-  }, [tipsCache, setComics, setPage, setFilteredCache]);
+  }, [tipsCache]);
 
   useEffect(() => {
     setComics((tips) => [...tips, ...getPaginatedTips(page, limit)]);
@@ -147,8 +147,8 @@ const ComicList: React.FC<unknown> = observer(() => {
   }, [page, limit, tipsCache, setLastQueryFin, getPaginatedTips]);
 
   useEffect(() => {
-    setIsReady(Boolean(tipsCache && tipsCache.length));
-  }, [setIsReady, tipsCache]);
+    setIsReady(!!tipsCache?.length);
+  }, [tipsCache?.length]);
 
   return (
     <Fragment>

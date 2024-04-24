@@ -149,8 +149,19 @@ const MusicList: React.FC<unknown> = observer(() => {
   }, [t]);
 
   useEffect(() => {
-    setIsReady(Boolean(musicsCache));
-  }, [setIsReady, musicsCache]);
+    setIsReady(
+      !!musicsCache?.length &&
+        !!musicTags?.length &&
+        !!musicVocals?.length &&
+        !!musicDiffis?.length
+    );
+  }, [
+    musicDiffis?.length,
+    musicTags?.length,
+    musicVocals?.length,
+    musicsCache?.length,
+    setIsReady,
+  ]);
 
   const doFilter = useCallback(() => {
     if (musicsCache && musicTags && musicVocals && musicDiffis) {
