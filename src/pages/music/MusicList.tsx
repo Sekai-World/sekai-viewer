@@ -160,130 +160,111 @@ const MusicList: React.FC<unknown> = observer(() => {
     musicTags?.length,
     musicVocals?.length,
     musicsCache?.length,
-    setIsReady,
   ]);
 
   const doFilter = useCallback(() => {
     if (musicsCache && musicTags && musicVocals && musicDiffis) {
-      let result = [...musicsCache];
-      // do filter
-      if (!isShowSpoiler) {
-        result = result.filter((m) => m.publishedAt <= new Date().getTime());
-      }
-      if (musicTag) {
-        result = result.filter((m) =>
-          musicTags
-            .filter((mt) => mt.musicId === m.id)!
-            .some((mt) => musicTag === mt.musicTag)
-        );
-      }
-      if (musicMVTypes.length) {
-        result = result.filter((m) => {
-          const cats = m.categories.map((c) =>
-            typeof c === "string" ? c : c.musicCategoryName
-          );
-          return musicMVTypes.every((type) => cats.includes(type));
-        });
-      }
-      if (characterSelected.length || outsideCharacterSelected.length) {
-        result = result.filter((m) =>
-          musicVocals
-            .filter((mv) => mv.musicId === m.id)
-            .some(
-              (mv) =>
-                characterSelected.every((chara) =>
-                  mv.characters
-                    .filter((c) => c.characterType === "game_character")
-                    .map((c) => c.characterId)
-                    .includes(chara)
-                ) &&
-                outsideCharacterSelected.every((chara) =>
-                  mv.characters
-                    .filter((c) => c.characterType === "outside_character")
-                    .map((c) => c.characterId)
-                    .includes(chara)
-                )
-            )
-        );
-      }
-      if (composer) {
-        result = result.filter((m) => m.composer === composer);
-      }
-      if (arranger) {
-        result = result.filter((m) => m.arranger === arranger);
-      }
-      if (lyricist) {
-        result = result.filter((m) => m.lyricist === lyricist);
-      }
+      const result = musicsCache.filter((m) => {
+        if (!isShowSpoiler && m.publishedAt > new Date().getTime()) {
+          return false;
+        }
+        if (
+          musicTag &&
+          !musicTags.some(
+            (mt) => mt.musicId === m.id && musicTag === mt.musicTag
+          )
+        ) {
+          return false;
+        }
+        if (
+          musicMVTypes.length &&
+          !musicMVTypes.every((type) =>
+            m.categories
+              .map((cat) =>
+                typeof cat === "string" ? cat : cat.musicCategoryName
+              )
+              .includes(type)
+          )
+        ) {
+          return false;
+        }
+        if (
+          (characterSelected.length || outsideCharacterSelected.length) &&
+          !musicVocals.some(
+            (mv) =>
+              mv.musicId === m.id &&
+              characterSelected.every((chara) =>
+                mv.characters
+                  .filter((c) => c.characterType === "game_character")
+                  .map((c) => c.characterId)
+                  .includes(chara)
+              ) &&
+              outsideCharacterSelected.every((chara) =>
+                mv.characters
+                  .filter((c) => c.characterType === "outside_character")
+                  .map((c) => c.characterId)
+                  .includes(chara)
+              )
+          )
+        ) {
+          return false;
+        }
+        if (composer && m.composer !== composer) {
+          return false;
+        }
+        if (arranger && m.arranger !== arranger) {
+          return false;
+        }
+        if (lyricist && m.lyricist !== lyricist) {
+          return false;
+        }
+        return true;
+      });
+
       // sort musics cache
-      switch (sortBy) {
-        case "id":
-        case "publishedAt":
-          result = result.sort((a, b) =>
-            sortType === "asc" ? a[sortBy] - b[sortBy] : b[sortBy] - a[sortBy]
-          );
-          break;
-        case "difficultyMaster":
-          result = result.sort((a, b) => {
+      result.sort((a, b) => {
+        let compare = 0;
+        switch (sortBy) {
+          case "id":
+          case "publishedAt":
+            compare = a[sortBy] - b[sortBy];
+            break;
+          case "difficultyMaster":
+          case "difficultyExpert":
+          case "difficultyAppend":
             const levelA =
               musicDiffis.find(
-                (md) => md.musicId === a.id && md.musicDifficulty === "master"
+                (md) => md.musicId === a.id && md.musicDifficulty === sortBy
               )?.playLevel || -1;
             const levelB =
               musicDiffis.find(
-                (md) => md.musicId === b.id && md.musicDifficulty === "master"
+                (md) => md.musicId === b.id && md.musicDifficulty === sortBy
               )?.playLevel || -1;
-            return sortType === "asc" ? levelA - levelB : levelB - levelA;
-          });
-          break;
-        case "difficultyExpert":
-          result = result.sort((a, b) => {
-            const levelA =
-              musicDiffis.find(
-                (md) => md.musicId === a.id && md.musicDifficulty === "expert"
-              )?.playLevel || -1;
-            const levelB =
-              musicDiffis.find(
-                (md) => md.musicId === b.id && md.musicDifficulty === "expert"
-              )?.playLevel || -1;
-            return sortType === "asc" ? levelA - levelB : levelB - levelA;
-          });
-          break;
-        case "difficultyAppend":
-          result = result.sort((a, b) => {
-            const levelA =
-              musicDiffis.find(
-                (md) => md.musicId === a.id && md.musicDifficulty === "append"
-              )?.playLevel || -1;
-            const levelB =
-              musicDiffis.find(
-                (md) => md.musicId === b.id && md.musicDifficulty === "append"
-              )?.playLevel || -1;
-            return sortType === "asc" ? levelA - levelB : levelB - levelA;
-          });
-          break;
-      }
+            compare = levelA - levelB;
+            break;
+        }
+        return sortType === "asc" ? compare : -compare;
+      });
+
       setSortedCache(result);
       setMusics([]);
       setPage(0);
     }
   }, [
+    arranger,
+    characterSelected,
+    composer,
+    isShowSpoiler,
+    lyricist,
+    musicDiffis,
+    musicMVTypes,
+    musicTag,
+    musicTags,
+    musicVocals,
     musicsCache,
+    outsideCharacterSelected,
     sortBy,
     sortType,
-    setPage,
-    setSortedCache,
-    musicTags,
-    musicTag,
-    musicMVTypes,
-    isShowSpoiler,
-    composer,
-    arranger,
-    lyricist,
-    musicVocals,
-    characterSelected,
-    outsideCharacterSelected,
-    musicDiffis,
   ]);
 
   useEffect(() => {
