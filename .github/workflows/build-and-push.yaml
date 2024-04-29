@@ -2,8 +2,8 @@ name: "Build and Push for Production"
 on:
   push:
     branches:
-      - master
-      # - dev
+      - main
+      - dev
       # - actions-docker # only for testing purpose
     tags:
       - "v*"
@@ -22,8 +22,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{github.event.pull_request.head.ref}}
-          repository: ${{github.event.pull_request.head.repo.full_name}}
+          ref: ${{github.event.after}}
+          repository: ${{github.repository}}
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
@@ -95,3 +95,13 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+        env:
+          DOCKER_BUILDKIT: 1
+      - name: Update deployment.yaml, commit and push
+        run: |
+          sed -i "s/${{ secrets.DOCKER_DOMAIN }}\/sekai-viewer:.*$/${{ secrets.DOCKER_DOMAIN }}\/sekai-viewer:${{ steps.meta.outputs.version }}/g" manifests/deployment.yaml
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git add manifests/deployment.yaml
+          git commit -m "Update deployment.yaml to version ${{ steps.meta.outputs.version }}"
+          git push

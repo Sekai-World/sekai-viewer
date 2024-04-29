@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    reloader.stakater.com/search: "true"
+  labels:
+    app: frontend
+  name: frontend
+  namespace: sekai-viewer
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: frontend
+  strategy:
+    type: RollingUpdate
+#    rollingUpdate:
+#      maxUnavailable: 50%
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      # nodeSelector:
+      #   nodegroup: contabo
+      containers:
+      - image: docker.dnaroma.eu/sekai-viewer:1.9.14
+        name: frontend
+        ports:
+        - containerPort: 80
+          name: http
+        resources:
+          requests:
+            cpu: 100m
+            memory: 50Mi
+          limits:
+            cpu: 500m
+            memory: 300Mi
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        startupProbe:
+          httpGet:
+            path: /
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      imagePullSecrets:
+        - name: regcred
