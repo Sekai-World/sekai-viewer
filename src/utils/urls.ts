@@ -16,20 +16,20 @@ export const masterUrl = {
 };
 
 export const assetUrl = {
-  cn: {
-    cn: "https://sekai-cn-assets-1258184166.file.myqcloud.com",
-    comic: "https://sekai-comics-1258184166.file.myqcloud.com",
-    en: "https://sekai-en-assets-1258184166.file.myqcloud.com",
-    jp: "https://sekai-assets-1258184166.file.myqcloud.com",
-    kr: "https://sekai-kr-assets-1258184166.cos.ap-shanghai.myqcloud.com",
-    musicChart: "https://sekai-music-charts-1258184166.file.myqcloud.com",
-    tw: "https://sekai-tc-assets-1258184166.file.myqcloud.com",
-  },
+  // cn: {
+  //   cn: "https://sekai-cn-assets-1258184166.file.myqcloud.com",
+  //   comic: "https://sekai-comics-1258184166.file.myqcloud.com",
+  //   en: "https://sekai-en-assets-1258184166.file.myqcloud.com",
+  //   jp: "https://sekai-assets-1258184166.file.myqcloud.com",
+  //   kr: "https://sekai-kr-assets-1258184166.cos.ap-shanghai.myqcloud.com",
+  //   musicChart: "https://sekai-music-charts-1258184166.file.myqcloud.com",
+  //   tw: "https://sekai-tc-assets-1258184166.file.myqcloud.com",
+  // },
   minio: {
     cn: import.meta.env.VITE_ASSET_DOMAIN_MINIO + "/sekai-cn-assets",
     comic: import.meta.env.VITE_ASSET_DOMAIN_MINIO + "/sekai-comics",
     en: import.meta.env.VITE_ASSET_DOMAIN_MINIO + "/sekai-en-assets",
-    jp: import.meta.env.VITE_ASSET_DOMAIN_MINIO + "/sekai-assets",
+    jp: import.meta.env.VITE_ASSET_DOMAIN_MINIO + "/sekai-jp-assets",
     kr: import.meta.env.VITE_ASSET_DOMAIN_MINIO + "/sekai-kr-assets",
     musicChart: import.meta.env.VITE_ASSET_DOMAIN_MINIO + "/sekai-music-charts",
     tw: import.meta.env.VITE_ASSET_DOMAIN_MINIO + "/sekai-tc-assets",

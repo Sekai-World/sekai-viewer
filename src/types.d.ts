@@ -473,8 +473,8 @@ export interface ResourceBoxDetail {
   seq: number;
   resourceType: string;
   resourceQuantity: number;
-  resourceId?: number | null;
-  resourceLevel?: number | null;
+  resourceId?: number;
+  resourceLevel?: number;
 }
 
 export interface IResourceBoxInfo {
@@ -1576,9 +1576,9 @@ interface ICompactResourceBoxDetail {
   __ENUM__: ICompactResourceBoxDetailENUM;
   resourceBoxId: number[];
   resourceQuantity: number[];
-  resourceId: (null | number)[];
+  resourceId: (number | undefined)[];
   resourceBoxPurpose: number[];
-  resourceLevel: (null | number)[];
+  resourceLevel: (number | undefined)[];
   resourceType: number[];
 }
 

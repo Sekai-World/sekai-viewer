@@ -3,7 +3,6 @@ import React, { Fragment, useEffect, useState } from "react";
 import Image from "mui-image";
 import {
   IResourceBoxInfo,
-  ICompactResourceBox,
   ICompactResourceBoxDetail,
   ResourceBoxDetail,
 } from "../../types.d";
@@ -13,6 +12,7 @@ import MaterialIcon from "./MaterialIcon";
 import DegreeImage from "./DegreeImage";
 import Costume3DThumbnail from "./Costume3DThumbnail";
 import { useRootStore } from "../../stores/root";
+import { assetUrl } from "../../utils/urls";
 
 const ResourceBox: React.FC<{
   resourceBoxId: number;
@@ -26,22 +26,26 @@ const ResourceBox: React.FC<{
   const { region } = useRootStore();
 
   const [resourceBoxes] = useCachedData<IResourceBoxInfo>("resourceBoxes");
-  const [compactResourceBoxDetails] =
-    useCompactData<ICompactResourceBoxDetail>("compactResourceBoxDetails");
+  const [compactResourceBoxDetails] = useCompactData<ICompactResourceBoxDetail>(
+    "compactResourceBoxDetails"
+  );
 
   const [resourceDetails, setResourceDetails] = useState<ResourceBoxDetail[]>();
 
   useEffect(() => {
     if (["tw", "kr"].includes(region)) {
       if (compactResourceBoxDetails && resourceBoxId) {
-
         const purposeIndex =
           compactResourceBoxDetails.__ENUM__.resourceBoxPurpose.indexOf(
             resourceBoxPurpose
           );
 
         const itemTypeIndexes: number[] = [];
-        for (let i = 0; i < compactResourceBoxDetails.resourceBoxId.length; i++) {
+        for (
+          let i = 0;
+          i < compactResourceBoxDetails.resourceBoxId.length;
+          i++
+        ) {
           if (
             compactResourceBoxDetails.resourceBoxPurpose[i] === purposeIndex &&
             compactResourceBoxDetails.resourceBoxId[i] === resourceBoxId
@@ -51,17 +55,21 @@ const ResourceBox: React.FC<{
         }
 
         setResourceDetails(
-          itemTypeIndexes.map((index, i): ResourceBoxDetail => ({
-            resourceId: compactResourceBoxDetails.resourceId[index],
-            resourceType: compactResourceBoxDetails.__ENUM__.resourceType[
-              compactResourceBoxDetails.resourceType[index]
-            ],
-            resourceQuantity: compactResourceBoxDetails.resourceQuantity[index],
-            resourceLevel: compactResourceBoxDetails.resourceLevel[index],
-            resourceBoxId,
-            resourceBoxPurpose,
-            seq: ++i,
-          }))
+          itemTypeIndexes.map(
+            (index, i): ResourceBoxDetail => ({
+              resourceId: compactResourceBoxDetails.resourceId[index],
+              resourceType:
+                compactResourceBoxDetails.__ENUM__.resourceType[
+                  compactResourceBoxDetails.resourceType[index]
+                ],
+              resourceQuantity:
+                compactResourceBoxDetails.resourceQuantity[index],
+              resourceLevel: compactResourceBoxDetails.resourceLevel[index],
+              resourceBoxId,
+              resourceBoxPurpose,
+              seq: ++i,
+            })
+          )
         );
       }
     } else {
@@ -101,15 +109,14 @@ const ResourceBox: React.FC<{
               />
             ) : detail.resourceType === "stamp" ? (
               <Image
-                src={`${
-                  import.meta.env.VITE_ASSET_DOMAIN_WW
-                }/sekai-assets/stamp/stamp${String(detail.resourceId).padStart(
+                src={`${assetUrl.minio.jp}/stamp/stamp${String(
+                  detail.resourceId
+                ).padStart(4, "0")}_rip/stamp${String(
+                  detail.resourceId
+                ).padStart(4, "0")}/stamp${String(detail.resourceId).padStart(
                   4,
                   "0"
-                )}_rip/stamp${String(detail.resourceId).padStart(
-                  4,
-                  "0"
-                )}/stamp${String(detail.resourceId).padStart(4, "0")}.png`}
+                )}.png`}
                 fit="contain"
                 style={{ height: "100px", width: "100px" }}
                 bgColor=""

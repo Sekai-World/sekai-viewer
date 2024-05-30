@@ -106,7 +106,7 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/minio/, ""),
         target: "https://storage.sekai.best",
       },
-      "/sekai-assets": {
+      "/sekai-jp-assets": {
         // target: "https://minio.dnaroma.eu",
         changeOrigin: true,
 
