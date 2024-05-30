@@ -111,4 +111,4 @@ jobs:
           git config --global user.name "GitHub Actions"
           git add manifests/deployment.yaml
           git commit -m "Update deployment.yaml to version ${{ steps.meta.outputs.version }}"
-          git push
+          git push origin HEAD:deploy -f
