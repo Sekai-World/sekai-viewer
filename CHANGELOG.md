@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.15](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.14...v1.9.15) (2024-05-30)
+
+
+### Refactors
+
+* :bento: use sekai-jp-assets bucket ([6d5d47d](https://github.com/Sekai-World/sekai-viewer/commits/6d5d47de9ea58a225cbd04ad26faa6449324bdfa))
+
 ### [1.9.14](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.13...v1.9.14) (2024-04-24)
 
 
