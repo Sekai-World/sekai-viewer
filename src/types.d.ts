@@ -528,6 +528,9 @@ export interface IStampInfo {
   assetbundleName: string;
   balloonAssetbundleName: string;
   characterId1: number;
+  characterId2?: number;
+  archivePublishedAt?: number;
+  description?: string;
 }
 
 export interface ITipInfoComic {

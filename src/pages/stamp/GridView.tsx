@@ -15,7 +15,7 @@ const GridView: React.FC<{ data?: IStampInfo }> = observer(({ data }) => {
   useEffect(() => {
     if (data) {
       getRemoteAssetURL(
-        `stamp/${data.assetbundleName}_rip/${data.assetbundleName}/${data.assetbundleName}.webp`,
+        `stamp/${data.assetbundleName}_rip/${data.assetbundleName}.webp`,
         setUrl,
         "minio",
         region
