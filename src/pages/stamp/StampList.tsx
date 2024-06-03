@@ -1,4 +1,11 @@
-import { Avatar, Chip, Collapse, Grid } from "@mui/material";
+import {
+  Avatar,
+  Chip,
+  Collapse,
+  Grid,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
 import {
   GetApp,
   GetAppOutlined,
@@ -19,7 +26,7 @@ import React, {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { characterSelectReducer } from "../../stores/reducers";
-import { IStampInfo } from "../../types.d";
+import { IGameChara, IStampInfo } from "../../types.d";
 import { useCachedData, useLocalStorage, useToggle } from "../../utils";
 import { charaIcons } from "../../utils/resources";
 import GridView from "./GridView";
@@ -30,6 +37,10 @@ import TypographyHeader from "../../components/styled/TypographyHeader";
 import ContainerContent from "../../components/styled/ContainerContent";
 import PaperContainer from "../../components/styled/PaperContainer";
 import TypographyCaption from "../../components/styled/TypographyCaption";
+import clsx from "clsx";
+
+const CHARACTER1_SELECTED_STORAGE_KEY = "stamp-list-filter-chara1";
+const CHARACTER2_SELECTED_STORAGE_KEY = "stamp-list-filter-chara2";
 
 const ListCard: React.FC<{ data?: IStampInfo }> = GridView;
 
@@ -38,6 +49,7 @@ const StampList: React.FC<unknown> = () => {
   const getCharaName = useCharaName();
 
   const [stampsCache] = useCachedData<IStampInfo>("stamps");
+  const [charas] = useCachedData<IGameChara>("gameCharacters");
 
   const [stamps, setStamps] = useState<IStampInfo[]>([]);
   const [filteredCache, setFilteredCache] = useState<IStampInfo[]>([]);
@@ -50,9 +62,13 @@ const StampList: React.FC<unknown> = () => {
     "stamp-list-filter-sort-by",
     "id"
   );
-  const [characterSelected, dispatchCharacterSelected] = useReducer(
+  const [character1Selected, dispatchCharacter1Selected] = useReducer(
     characterSelectReducer,
-    JSON.parse(localStorage.getItem("stamp-list-filter-charas") || "[]")
+    JSON.parse(localStorage.getItem(CHARACTER1_SELECTED_STORAGE_KEY) || "[]")
+  );
+  const [character2Selected, dispatchCharacter2Selected] = useReducer(
+    characterSelectReducer,
+    JSON.parse(localStorage.getItem(CHARACTER2_SELECTED_STORAGE_KEY) || "[]")
   );
 
   const [page, setPage] = useState<number>(0);
@@ -95,16 +111,34 @@ const StampList: React.FC<unknown> = () => {
   useEffect(() => {
     if (stampsCache?.length) {
       let cache = stampsCache;
-      if (characterSelected.length) {
-        cache = stampsCache.filter((s) =>
-          characterSelected.includes(s.characterId1)
+      if (character1Selected.length && character2Selected.length) {
+        cache = cache.filter(
+          (s) =>
+            (character1Selected.includes(s.characterId1) &&
+              s.characterId2 &&
+              character2Selected.includes(s.characterId2)) ||
+            (s.characterId2 &&
+              character1Selected.includes(s.characterId2) &&
+              character2Selected.includes(s.characterId1))
+        );
+      } else if (character1Selected.length) {
+        cache = cache.filter(
+          (s) =>
+            character1Selected.includes(s.characterId1) ||
+            (s.characterId2 && character1Selected.includes(s.characterId2))
+        );
+      } else if (character2Selected.length) {
+        cache = cache.filter(
+          (s) =>
+            character2Selected.includes(s.characterId1) ||
+            (s.characterId2 && character2Selected.includes(s.characterId2))
         );
       }
       if (stampType) {
         const compareTypes = [stampType];
         if (stampType === "text")
           compareTypes.push("cheerful_carnival_message");
-        cache = stampsCache.filter((s) => compareTypes.includes(s.stampType));
+        cache = cache.filter((s) => compareTypes.includes(s.stampType));
       }
       if (sortType === "desc") {
         cache = cache.sort((a, b) => b[sortBy as "id"] - a[sortBy as "id"]);
@@ -115,7 +149,14 @@ const StampList: React.FC<unknown> = () => {
       setStamps([]);
       setPage(0);
     }
-  }, [characterSelected, sortBy, sortType, stampType, stampsCache]);
+  }, [
+    character1Selected,
+    character2Selected,
+    sortBy,
+    sortType,
+    stampType,
+    stampsCache,
+  ]);
 
   useEffect(() => {
     setStamps((stamps) => [...stamps, ...getPaginatedStamps(page, limit)]);
@@ -125,6 +166,44 @@ const StampList: React.FC<unknown> = () => {
   useEffect(() => {
     setIsReady(!!stampsCache?.length);
   }, [stampsCache?.length]);
+
+  const handleChara1IconClick = useCallback(
+    (chara: IGameChara) => {
+      if (character1Selected.includes(chara.id)) {
+        dispatchCharacter1Selected({
+          type: "remove",
+          payload: chara.id,
+          storeName: CHARACTER1_SELECTED_STORAGE_KEY,
+        });
+      } else {
+        dispatchCharacter1Selected({
+          type: "add",
+          payload: chara.id,
+          storeName: CHARACTER1_SELECTED_STORAGE_KEY,
+        });
+      }
+    },
+    [character1Selected]
+  );
+
+  const handleChara2IconClick = useCallback(
+    (chara: IGameChara) => {
+      if (character2Selected.includes(chara.id)) {
+        dispatchCharacter2Selected({
+          type: "remove",
+          payload: chara.id,
+          storeName: CHARACTER2_SELECTED_STORAGE_KEY,
+        });
+      } else {
+        dispatchCharacter2Selected({
+          type: "add",
+          payload: chara.id,
+          storeName: CHARACTER2_SELECTED_STORAGE_KEY,
+        });
+      }
+    },
+    [character2Selected]
+  );
 
   const handleUpdateSortType = useCallback(
     (_, sort: string) => {
@@ -208,47 +287,83 @@ const StampList: React.FC<unknown> = () => {
               >
                 <Grid item xs={12} md={1}>
                   <TypographyCaption>
-                    {t("filter:character.caption")}
+                    {t("filter:character.caption")} 1
                   </TypographyCaption>
                 </Grid>
                 <Grid item xs={12} md={11}>
                   <Grid container spacing={1}>
-                    {Array.from({ length: 26 }).map((_, idx) => (
-                      <Grid key={"chara-filter-" + idx} item>
-                        <Chip
-                          clickable
-                          color={
-                            characterSelected.includes(idx + 1)
-                              ? "primary"
-                              : "default"
-                          }
-                          avatar={
+                    {(charas || []).map((chara) => (
+                      <Grid key={"chara-filter-" + chara.id} item>
+                        <Tooltip title={getCharaName(chara.id)} placement="top">
+                          <IconButton
+                            size="small"
+                            onClick={() => handleChara1IconClick(chara)}
+                            className={clsx({
+                              "icon-not-selected": !character1Selected.includes(
+                                chara.id
+                              ),
+                              "icon-selected": character1Selected.includes(
+                                chara.id
+                              ),
+                            })}
+                          >
                             <Avatar
-                              alt={getCharaName(idx + 1)}
+                              alt={getCharaName(chara.id)}
                               src={
                                 charaIcons[
-                                  `CharaIcon${idx + 1}` as "CharaIcon1"
+                                  `CharaIcon${chara.id}` as "CharaIcon1"
                                 ]
                               }
+                              sx={{ width: 32, height: 32 }}
                             />
-                          }
-                          label={getCharaName(idx + 1)}
-                          onClick={() => {
-                            if (characterSelected.includes(idx + 1)) {
-                              dispatchCharacterSelected({
-                                type: "remove",
-                                payload: idx + 1,
-                                storeName: "stamp-list-filter-charas",
-                              });
-                            } else {
-                              dispatchCharacterSelected({
-                                type: "add",
-                                payload: idx + 1,
-                                storeName: "stamp-list-filter-charas",
-                              });
-                            }
-                          }}
-                        />
+                          </IconButton>
+                        </Tooltip>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justifyContent="space-between"
+                spacing={1}
+              >
+                <Grid item xs={12} md={1}>
+                  <TypographyCaption>
+                    {t("filter:character.caption")} 2
+                  </TypographyCaption>
+                </Grid>
+                <Grid item xs={12} md={11}>
+                  <Grid container spacing={1}>
+                    {(charas || []).map((chara) => (
+                      <Grid key={"chara-filter-" + chara.id} item>
+                        <Tooltip title={getCharaName(chara.id)} placement="top">
+                          <IconButton
+                            size="small"
+                            onClick={() => handleChara2IconClick(chara)}
+                            className={clsx({
+                              "icon-not-selected": !character2Selected.includes(
+                                chara.id
+                              ),
+                              "icon-selected": character2Selected.includes(
+                                chara.id
+                              ),
+                            })}
+                          >
+                            <Avatar
+                              alt={getCharaName(chara.id)}
+                              src={
+                                charaIcons[
+                                  `CharaIcon${chara.id}` as "CharaIcon1"
+                                ]
+                              }
+                              sx={{ width: 32, height: 32 }}
+                            />
+                          </IconButton>
+                        </Tooltip>
                       </Grid>
                     ))}
                   </Grid>
