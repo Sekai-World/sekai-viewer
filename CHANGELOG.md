@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.10.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.10.1...v1.10.2) (2024-06-03)
+
+
+### Bug Fixes
+
+* **stamp:** stamp asset path ([450d82c](https://github.com/Sekai-World/sekai-viewer/commits/450d82c73e07b3945edd823fc58a07e05f8100e3))
+
+
+### Refactors
+
+* **stamp:** character filter ([db44a30](https://github.com/Sekai-World/sekai-viewer/commits/db44a30fdff457340128221a7bfce96ddc786078))
+
 ### [1.10.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.10.0...v1.10.1) (2024-05-30)
 
 ## [1.10.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.9.15...v1.10.0) (2024-05-30)
