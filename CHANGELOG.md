@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.10.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.10.2...v1.10.3) (2024-06-04)
+
+
+### Refactors
+
+* **music:** update server exclusive song list ([897123d](https://github.com/Sekai-World/sekai-viewer/commits/897123d5c1b26125801ce1ddb1831e028f3c97b3))
+
 ### [1.10.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.10.1...v1.10.2) (2024-06-03)
 
 
