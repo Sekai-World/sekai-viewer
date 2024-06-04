@@ -59,6 +59,10 @@ import PaperContainer from "../../components/styled/PaperContainer";
 import GridOut from "../../components/styled/GridOut";
 import EmbedVideoPlayer from "../../components/blocks/EmbedVideoPlayer";
 
+const KR_EXCLUSIVE_IDS = [10001, 10002, 371, 387, 420, 464];
+const EN_EXCLUSIVE_IDS = [420, 445, 453, 459, 464];
+const TW_EXCLUSIVE_IDS = [371, 387, 420, 464];
+
 const MusicDetail: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
@@ -180,7 +184,11 @@ const MusicDetail: React.FC<unknown> = observer(() => {
 
   useEffect(() => {
     if (music && musicVocal && musicVocal[selectedPreviewVocalType]) {
-      if ([420, 445, 453, 459, 464, 10001, 10002].includes(music.id)) {
+      if (
+        (TW_EXCLUSIVE_IDS.includes(music.id) && region === "tw") ||
+        (EN_EXCLUSIVE_IDS.includes(music.id) && region === "en") ||
+        (KR_EXCLUSIVE_IDS.includes(music.id) && region === "kr")
+      ) {
         // handle server exclusive music
         getRemoteAssetURL(
           `music/long/${musicVocal[selectedPreviewVocalType].assetbundleName}_rip/${musicVocal[selectedPreviewVocalType].assetbundleName}.${format}`,
@@ -229,17 +237,33 @@ const MusicDetail: React.FC<unknown> = observer(() => {
       musicVocal[selectedPreviewVocalType] &&
       (vocalPreviewVal === "original" || vocalPreviewVal === "mv_2d")
     ) {
-      setMusicVideoURL(
-        `live/2dmode/${
-          vocalPreviewVal === "original"
-            ? "original_mv"
-            : vocalPreviewVal === "mv_2d"
-            ? "sekai_mv"
-            : ""
-        }/${String(music.id).padStart(4, "0")}_rip`
-      );
+      if (
+        (TW_EXCLUSIVE_IDS.includes(music.id) && region === "tw") ||
+        (EN_EXCLUSIVE_IDS.includes(music.id) && region === "en") ||
+        (KR_EXCLUSIVE_IDS.includes(music.id) && region === "kr")
+      ) {
+        setMusicVideoURL(
+          `live/2dmode/${
+            vocalPreviewVal === "original"
+              ? "original_mv"
+              : vocalPreviewVal === "mv_2d"
+              ? "sekai_mv"
+              : ""
+          }/${String(music.id).padStart(4, "0")}_rip`
+        );
+      } else {
+        setMusicVideoURL(
+          `live/2dmode/${
+            vocalPreviewVal === "original"
+              ? "original_mv"
+              : vocalPreviewVal === "mv_2d"
+              ? "sekai_mv"
+              : ""
+          }/${String(music.id).padStart(4, "0")}_rip`
+        );
+      }
     }
-  }, [music, musicVocal, selectedPreviewVocalType, vocalPreviewVal]);
+  }, [music, musicVocal, region, selectedPreviewVocalType, vocalPreviewVal]);
 
   const getVocalCharaIcons: (index: number) => JSX.Element = useCallback(
     (index: number) => {

@@ -16,7 +16,8 @@ const MoviePlayer: React.FC<
       const buildDataUrl = await getRemoteAssetURL(
         `${path}/moviebundlebuilddata.asset`,
         undefined,
-        "minio"
+        "minio",
+        region
       );
       const buildData = (
         await axios.get(buildDataUrl, { responseType: "json" })
