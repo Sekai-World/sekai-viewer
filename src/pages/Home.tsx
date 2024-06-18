@@ -135,38 +135,37 @@ const Home: React.FC = () => {
     <Fragment>
       <TypographyHeader>{t("common:home")}</TypographyHeader>
       <ContainerContent>
-        {/* <Typography variant="h4">Welcome to Sekai Viewer Open Beta!</Typography> */}
-        {/* <Box paddingTop="1%" paddingBottom="1%">
-          {new Date().getTime() - 1640962800000 < 259200000 ? (
+        <Box paddingTop="1%" paddingBottom="1%">
+          {new Date().getTime() - 1735689600000 < 259200000 ? (
             <Typography align="center" variant="h4">
               {t("home:happy_new_year")}
             </Typography>
           ) : (
-            1640962800000 - new Date().getTime() > 0 &&
-            1640962800000 - new Date().getTime() < 259200000 && (
+            1735689600000 - new Date().getTime() > 0 &&
+            1735689600000 - new Date().getTime() < 259200000 && (
               <Fragment>
                 <Typography align="center" variant="h4">
                   {t("home:new_year_countdown")}
                 </Typography>
-                <Countdown endDate={new Date(1640962800000)} />
+                <Countdown endDate={new Date(1735689600000)} />
               </Fragment>
             )
           )}
-        </Box> */}
+        </Box>
         <Box paddingTop="1%" paddingBottom="1%">
-          {new Date().getTime() - 1664463600000 > 0 &&
-          new Date().getTime() - 1664463600000 < 604800000 ? (
+          {new Date().getTime() - 1727622000000 > 0 &&
+          new Date().getTime() - 1727622000000 < 604800000 ? (
             <Typography align="center" variant="h4">
-              {t("home:happy_2_year_anniversary")}
+              {t("home:happy_anniversary", { year: "4th" })}
             </Typography>
           ) : (
-            1664463600000 - new Date().getTime() > 0 &&
-            1664463600000 - new Date().getTime() < 604800000 && (
+            1727622000000 - new Date().getTime() > 0 &&
+            1727622000000 - new Date().getTime() < 604800000 && (
               <Fragment>
                 <Typography align="center" variant="h4">
-                  {t("home:2_year_anniversary_countdown")}
+                  {t("home:anniversary_countdown", { year: "4th" })}
                 </Typography>
-                <Countdown endDate={new Date(1664463600000)} />
+                <Countdown endDate={new Date(1727622000000)} />
               </Fragment>
             )
           )}
@@ -276,29 +275,6 @@ const Home: React.FC = () => {
         <Alert sx={{ margin: theme.spacing(1, 0) }} severity="info">
           {t("home:disclaimer")}
         </Alert>
-        {/* <Alert className={layoutClasses.alert} severity="info">
-          {t("home:alert0")}
-        </Alert> */}
-        {/* <Alert className={layoutClasses.alert} severity="info">
-          <Trans
-            i18nKey="home:alert_settings"
-            components={{ s: <Settings fontSize="inherit" /> }}
-          />
-        </Alert> */}
-        {/* {window.isChinaMainland && (
-          <Alert sx={{ margin: theme.spacing(1, 0) }} severity="info">
-            本站已启用腾讯云CDN加速数据加载，并计划迁移更多数据加速本站访问，但是费用相对高昂，你可以通过
-            <Link
-              href="https://afdian.net/@sekaiviewer"
-              target="_blank"
-              underline="hover"
-            >
-              <MonetizationOn fontSize="inherit" />
-              爱发电
-            </Link>
-            来赞助支持让我更轻松地进行迁移工作。
-          </Alert>
-        )} */}
         {getWebpDetectSeverity(detected) !== "success" && (
           <Alert
             sx={{ margin: theme.spacing(1, 0) }}
