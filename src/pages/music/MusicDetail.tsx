@@ -544,28 +544,17 @@ const MusicDetail: React.FC<unknown> = observer(() => {
                     labelPlacement="end"
                   />
                   {music.categories
-                    .filter((cat) =>
-                      ["original", "mv_2d"].includes(
-                        typeof cat === "string" ? cat : cat.musicCategoryName
-                      )
+                    .map((cat) =>
+                      typeof cat === "string" ? cat : cat.musicCategoryName
                     )
+                    .filter((cat) => ["original", "mv_2d"].includes(cat))
                     .map((cat) => (
                       <FormControlLabel
                         value={cat}
                         control={<Radio color="primary"></Radio>}
-                        label={
-                          t(
-                            `music:categoryType.${
-                              typeof cat === "string"
-                                ? cat
-                                : cat.musicCategoryName
-                            }`
-                          ) as string
-                        }
+                        label={t(`music:categoryType.${cat}`) as string}
                         labelPlacement="end"
-                        key={
-                          typeof cat === "string" ? cat : cat.musicCategoryName
-                        }
+                        key={cat}
                       />
                     ))}
                   {!!musicOriginal && (
