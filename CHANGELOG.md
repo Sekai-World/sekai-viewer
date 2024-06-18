@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.10.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.10.3...v1.10.4) (2024-06-18)
+
+
+### Features
+
+* **home:** prepare countdown ([e11f263](https://github.com/Sekai-World/sekai-viewer/commits/e11f263ccb91153890a418eba4e02a5139d66d75))
+
+
+### Bug Fixes
+
+* **home:** wrong countdown condition and placement ([2d6f309](https://github.com/Sekai-World/sekai-viewer/commits/2d6f309e3ada94d4d4260b24e66c4b3a2d6d0d4d))
+* **music:** mv radio button not selectable ([1fded80](https://github.com/Sekai-World/sekai-viewer/commits/1fded8012c921e12eeb0ba69fb1090e009d01eaa))
+
+
+### Refactors
+
+* :arrow_up: new live2d use pixi renderer ([0361dcd](https://github.com/Sekai-World/sekai-viewer/commits/0361dcd624fbffa0e1c5dfe1914a09138a6b0d65))
+* :arrow_up: use new flip countdown package ([a51cb46](https://github.com/Sekai-World/sekai-viewer/commits/a51cb46b7021f07e25b26e44f29c57651b12fe3e))
+
 ### [1.10.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.10.2...v1.10.3) (2024-06-04)
 
 
