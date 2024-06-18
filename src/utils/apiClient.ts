@@ -677,7 +677,9 @@ export async function getLanguages() {
   ).data;
 }
 
-const axiosFetcher = async (url: string, params?: any) =>
+const axiosFetcher = async ([url, params]:
+  | [string]
+  | [string, Record<string, unknown>]) =>
   (await Axios.get(url, { params })).data;
 
 export function useRemoteLanguages() {
@@ -747,9 +749,11 @@ export function useAnnouncementsByLanguages(
 export function useCurrentEvent() {
   const { region } = useRootStore();
   const { data, error } = useSWR(
-    `${import.meta.env.VITE_STRAPI_BASE}/sekai-current-event${
-      region === "jp" ? "" : `-${region}`
-    }`,
+    [
+      `${import.meta.env.VITE_STRAPI_BASE}/sekai-current-event${
+        region === "jp" ? "" : `-${region}`
+      }`,
+    ],
     axiosFetcher
   );
 
@@ -762,7 +766,7 @@ export function useCurrentEvent() {
 
 export function useLive2dModelList() {
   const { data, error } = useSWR(
-    `${import.meta.env.VITE_FRONTEND_ASSET_BASE}/models.json`,
+    [`${import.meta.env.VITE_FRONTEND_ASSET_BASE}/models.json`],
     axiosFetcher
   );
 

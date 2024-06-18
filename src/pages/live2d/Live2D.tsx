@@ -3,22 +3,20 @@ import React, {
   useCallback,
   useEffect,
   useLayoutEffect,
-  useMemo,
+  // useMemo,
   useRef,
   useState,
 } from "react";
-import Live2D from "@sekai-world/find-live2d-v3";
+// import Live2D from "@sekai-world/find-live2d-v3";
 import Axios from "axios";
-import { LAppLive2DManager } from "@sekai-world/find-live2d-v3/dist/types/lapplive2dmanager";
-import { LAppModel } from "@sekai-world/find-live2d-v3/dist/types/lappmodel";
+// import { LAppLive2DManager } from "@sekai-world/find-live2d-v3/dist/types/lapplive2dmanager";
+// import { LAppModel } from "@sekai-world/find-live2d-v3/dist/types/lappmodel";
 import { Alert, Autocomplete, Box } from "@mui/material";
 import {
   Button,
   Grid,
   IconButton,
   LinearProgress,
-  Menu,
-  MenuItem,
   Paper,
   TextField,
   Toolbar,
@@ -32,30 +30,30 @@ import {
   CloudDownload,
   Fullscreen,
   FullscreenExit,
-  Videocam,
-  VideocamOff,
 } from "@mui/icons-material";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import fscreen from "fscreen";
-import { CanvasRecorder } from "@tawaship/canvas-recorder";
 import { useLive2dModelList } from "../../utils/apiClient";
 import { assetUrl } from "../../utils/urls";
 import TypographyHeader from "../../components/styled/TypographyHeader";
 import ContainerContent from "../../components/styled/ContainerContent";
+import { Stage } from "@pixi/react";
+import Live2dModel from "../../components/pixi/Live2dModel";
+import { InternalModel, Live2DModel } from "pixi-live2d-display";
 
 const Live2DView: React.FC<unknown> = () => {
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const live2dInstance = useMemo(() => new Live2D(), []);
-  const [live2dManager, setLive2dManager] = useState<LAppLive2DManager>();
+  // const live2dInstance = useMemo(() => new Live2D(), []);
+  // const [live2dManager, setLive2dManager] = useState<LAppLive2DManager>();
   const [selectedModelName, setSelectedModelName] = useState<string | null>(
     null
   );
   const [modelName, setModelName] = useState<string | null>("");
   const [motionName, setMotionName] = useState<string | null>("");
-  const [model, setModel] = useState<LAppModel>();
+  const [modelData, setModelData] = useState<Record<string, any>>();
   const [motions, setMotions] = useState<string[]>([]);
   const [selectedMotion, setSelectedMotion] = useState<string | null>(null);
   const [expressions, setExpressions] = useState<string[]>([]);
@@ -66,50 +64,71 @@ const Live2DView: React.FC<unknown> = () => {
   const [progress, setProgress] = useState(0);
   const [progressWords, setProgressWords] = useState("");
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
-  const [recorder, setRecorder] = useState<any>();
-  const [recordType, setRecordType] = useState("");
-  const [anchorEl, setAnchorEl] = useState<HTMLElement>();
   // const [currentWidth, setCurrentWidth] = useState(0);
   // const [currentStyleWidth, setCurrentStyleWidth] = useState(0);
+  const [live2dScale, setLive2dScale] = useState(1);
+  const [live2dX, setLive2dX] = useState(0);
+  const [live2dY, setLive2dY] = useState(0);
 
   const { modelList } = useLive2dModelList();
 
   const wrap = useRef<HTMLDivElement>(null);
-  const canvas = useRef<HTMLCanvasElement>(null);
+  const stage = useRef<Stage>(null);
+  const live2dModel = useRef<Live2DModel<InternalModel>>(null);
+
+  const [stageWidth, setStageWidth] = useState(0);
+  const [stageHeight, setStageHeight] = useState(0);
 
   const fullScreenEnabled = fscreen.fullscreenEnabled;
 
   const updateSize = useCallback(() => {
-    if (wrap.current && canvas.current && model) {
+    if (wrap.current && modelData) {
       // canvas.current.width = wrap.current.clientWidth;
-      const styleWidth = wrap.current.clientWidth;
+      const styleWidth = wrap.current.clientWidth * 0.8;
       const styleHeight =
         window.innerWidth * window.devicePixelRatio >=
         theme.breakpoints.values.xl
           ? (styleWidth * 9) / 16
           : (styleWidth * 4) / 3;
-      const displayWidth = styleWidth * window.devicePixelRatio;
-      const displayHeight = styleHeight * window.devicePixelRatio;
-      model._modelSize =
-        window.innerWidth * window.devicePixelRatio >=
-        theme.breakpoints.values.xl
-          ? displayWidth * 1.3
-          : displayWidth * 3;
+      // const displayWidth = styleWidth * window.devicePixelRatio;
+      // const displayHeight = styleHeight * window.devicePixelRatio;
+      // model._modelSize =
+      //   window.innerWidth * window.devicePixelRatio >=
+      //   theme.breakpoints.values.xl
+      //     ? displayWidth * 1.3
+      //     : displayWidth * 3;
       // setCurrentWidth(displayWidth);
       // setCurrentStyleWidth(styleWidth);
 
-      canvas.current.style.width = `${styleWidth}px`;
-      canvas.current.style.height = `${styleHeight}px`;
-      canvas.current.width = displayWidth;
-      canvas.current.height = displayHeight;
+      // stage.current.style.width = `${styleWidth}px`;
+      // stage.current.style.height = `${styleHeight}px`;
+      // stage.current.width = displayWidth;
+      // stage.current.height = displayHeight;
 
-      model.appear({
-        pointX: 140,
-        pointY: 60,
-      });
+      // model.appear({
+      //   pointX: 140,
+      //   pointY: 60,
+      // });
+      setStageWidth(styleWidth);
+      setStageHeight(styleHeight);
+
+      if (live2dModel.current) {
+        const live2dTrueWidth = live2dModel.current.internalModel.originalWidth;
+        const live2dTrueHeight =
+          live2dModel.current.internalModel.originalHeight;
+        let scale = Math.min(
+          styleWidth / live2dTrueWidth,
+          styleHeight / live2dTrueHeight
+        );
+
+        scale = (Math.round(scale * 100) / 100) * 1.3;
+        setLive2dScale(scale);
+
+        setLive2dX((styleWidth - live2dTrueWidth * scale) / 2);
+        setLive2dY((styleHeight - live2dTrueHeight * scale) / 2);
+      }
     }
-  }, [model, theme.breakpoints.values.xl]);
+  }, [modelData, theme.breakpoints.values.xl]);
 
   useLayoutEffect(() => {
     const _us = updateSize;
@@ -124,22 +143,22 @@ const Live2DView: React.FC<unknown> = () => {
     document.title = t("title:live2d");
   }, [t]);
 
-  useLayoutEffect(() => {
-    if (wrap.current && canvas.current) {
-      canvas.current.getContext("webgl", {
-        preserveDrawingBuffer: true,
-      });
-      setLive2dManager(
-        live2dInstance.initialize(undefined, {
-          canvas: canvas.current,
-          wrap: wrap.current,
-        })!
-      );
-    }
-    return () => {
-      live2dInstance.release();
-    };
-  }, [live2dInstance]);
+  // useLayoutEffect(() => {
+  //   if (wrap.current && canvas.current) {
+  //     canvas.current.getContext("webgl", {
+  //       preserveDrawingBuffer: true,
+  //     });
+  //     setLive2dManager(
+  //       live2dInstance.initialize(undefined, {
+  //         canvas: canvas.current,
+  //         wrap: wrap.current,
+  //       })!
+  //     );
+  //   }
+  //   return () => {
+  //     live2dInstance.release();
+  //   };
+  // }, [live2dInstance]);
 
   useLayoutEffect(() => {
     let handler: (e?: Event) => void;
@@ -154,9 +173,8 @@ const Live2DView: React.FC<unknown> = () => {
 
   useEffect(() => {
     const func = async () => {
-      if (live2dManager && modelName) {
-        live2dManager.releaseAllModel();
-        setModel(undefined);
+      if (modelName) {
+        setModelData(undefined);
         setShowProgress(true);
 
         setProgress(0);
@@ -166,8 +184,8 @@ const Live2DView: React.FC<unknown> = () => {
           TextureNames: string[];
           PhysicsFileName: string;
           UserDataFileName: string;
-          AdditionalMotionData: any[];
-          CategoryRules: any[];
+          AdditionalMotionData: unknown[];
+          CategoryRules: unknown[];
         }>(
           `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/buildmodeldata.asset`,
           { responseType: "json" }
@@ -195,14 +213,14 @@ const Live2DView: React.FC<unknown> = () => {
         if (!modelName.startsWith("normal")) {
           setProgress(80);
           setProgressWords(t("live2d:load_progress.motion_metadata"));
-          const { data } = await Axios.get<{
+          const motionRes = await Axios.get<{
             motions: string[];
             expressions: string[];
           }>(
             `${assetUrl.minio.jp}/live2d/motion/${motionName}_rip/BuildMotionData.json`,
             { responseType: "json" }
           );
-          motionData = data;
+          motionData = motionRes.data;
         } else {
           motionData = {
             expressions: [],
@@ -212,34 +230,33 @@ const Live2DView: React.FC<unknown> = () => {
 
         setProgress(90);
         setProgressWords(t("live2d:load_progress.display_model"));
-        const filename = modelData.Moc3FileName.replace(".moc3.bytes", "");
-        const model = await live2dManager.addModel(
-          {
-            expressions: [],
-            fileName: filename,
-            modelName,
-            modelSize: wrap.current!.clientWidth,
-            motions: [
-              ...motionData.motions.map((name) => ({
-                name,
-                url: `${assetUrl.minio.jp}/live2d/motion/${motionName}_rip/${name}.motion3.json`,
-              })),
-              ...motionData.expressions.map((name) => ({
-                name,
-                url: `${assetUrl.minio.jp}/live2d/motion/${motionName}_rip/${name}.motion3.json`,
-              })),
-            ],
-            path: `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/`,
-            textures: [],
-          },
-          true
+        const filename = modelData.Moc3FileName.replace(
+          ".moc3.bytes",
+          ".model3.json"
         );
+        const model3Json = (
+          await Axios.get(
+            `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/${filename}`
+          )
+        ).data;
+        model3Json.url = `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/`;
+        model3Json.FileReferences.Moc = `${model3Json.FileReferences.Moc}.bytes`;
+        model3Json.FileReferences.Motions = {
+          Motion: motionData.motions.map((elem) => ({
+            File: `../../motion/${motionName}_rip/${elem}.motion3.json`,
+            FadeInTime: 1,
+            FadeOutTime: 1,
+          })),
+          Expression: motionData.expressions.map((elem) => ({
+            Name: elem,
+            File: `../../motion/${motionName}_rip/${elem}.motion3.json`,
+          })),
+        };
+        setModelData(model3Json);
 
         setMotions(motionData.motions);
         setExpressions(motionData.expressions);
-        if (model) {
-          setModel(model);
-        }
+
         setShowProgress(false);
         setProgress(0);
         setProgressWords("");
@@ -247,7 +264,7 @@ const Live2DView: React.FC<unknown> = () => {
     };
 
     func();
-  }, [live2dManager, modelName, motionName, t]);
+  }, [modelName, motionName, t]);
 
   const handleDownload = useCallback(async () => {
     setShowProgress(true);
@@ -260,8 +277,8 @@ const Live2DView: React.FC<unknown> = () => {
       TextureNames: string[];
       PhysicsFileName: string;
       UserDataFileName: string;
-      AdditionalMotionData: any[];
-      CategoryRules: any[];
+      AdditionalMotionData: unknown[];
+      CategoryRules: unknown[];
     }>(
       `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/buildmodeldata.asset`,
       { responseType: "json" }
@@ -382,40 +399,15 @@ const Live2DView: React.FC<unknown> = () => {
   }, [expressions, modelName, motionName, motions, t]);
 
   const handleScreenshot = useCallback(() => {
-    if (canvas.current) {
-      const screenshot = canvas.current.toDataURL();
+    if (stage.current && live2dModel.current) {
+      // @ts-expect-error app is private
+      const screenshot = stage.current.app.renderer.extract.base64(
+        // @ts-expect-error app is private
+        stage.current.app.stage
+      );
       saveAs(screenshot);
     }
   }, []);
-
-  const handleRecord = useCallback(
-    async (mimeType: string) => {
-      if (isRecording) {
-        // end record
-        const movie = await recorder!.finishAsync();
-        saveAs(movie.blobURL);
-        recorder.destroy();
-        setRecorder(undefined);
-        setIsRecording(false);
-      } else {
-        // start record
-        setRecordType(mimeType);
-        const canvasRecorder = await CanvasRecorder.createAsync(
-          canvas.current!,
-          {
-            // @ts-expect-error mimeType is not in the type
-            mimeType,
-          }
-        );
-        setRecorder(canvasRecorder);
-        // @ts-expect-error start param is optional
-        canvasRecorder.start();
-        setAnchorEl(undefined);
-        setIsRecording(true);
-      }
-    },
-    [isRecording, recorder]
-  );
 
   const handleShow = useCallback(() => {
     setModelName(selectedModelName);
@@ -439,6 +431,10 @@ const Live2DView: React.FC<unknown> = () => {
     }
     setMotionName(motionName + "_motion_base");
   }, [selectedModelName]);
+
+  const onLive2dModelReady = useCallback(() => {
+    updateSize();
+  }, [updateSize]);
 
   return (
     <Fragment>
@@ -476,15 +472,21 @@ const Live2DView: React.FC<unknown> = () => {
       )}
       <Box
         ref={wrap}
-        sx={{ marginBottom: theme.spacing(2), marginTop: theme.spacing(2) }}
+        sx={{
+          marginBottom: theme.spacing(2),
+          marginTop: theme.spacing(2),
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
       >
-        {model && (
-          <Toolbar component={Paper}>
+        {!!modelData && (
+          <Toolbar component={Paper} sx={{ width: "100%" }}>
             <Grid container spacing={1} alignItems="center">
               <Grid item>
                 <Tooltip title={t("live2d:tooltip.download") as string}>
                   <IconButton
-                    disabled={!model}
+                    disabled={!modelData}
                     onClick={handleDownload}
                     size="large"
                   >
@@ -516,96 +518,13 @@ const Live2DView: React.FC<unknown> = () => {
                 </Tooltip>
                 <Tooltip title={t("live2d:tooltip.shot") as string}>
                   <IconButton
-                    disabled={!model}
+                    disabled={!modelData}
                     onClick={handleScreenshot}
                     size="large"
                   >
                     <Camera fontSize="inherit" />
                   </IconButton>
                 </Tooltip>
-                {window.MediaRecorder && (
-                  <Fragment>
-                    <Tooltip
-                      title={
-                        isRecording
-                          ? (t("live2d:tooltip.stop_record") as string)
-                          : (t("live2d:tooltip.start_record") as string)
-                      }
-                    >
-                      <IconButton
-                        disabled={!model}
-                        onClick={(e) => {
-                          if (isRecording) {
-                            handleRecord(recordType);
-                          } else {
-                            setAnchorEl(e.currentTarget);
-                          }
-                        }}
-                        size="large"
-                      >
-                        {isRecording ? (
-                          <Videocam fontSize="inherit" />
-                        ) : (
-                          <VideocamOff fontSize="inherit" />
-                        )}
-                      </IconButton>
-                    </Tooltip>
-                    <Menu
-                      anchorEl={anchorEl}
-                      open={!!anchorEl}
-                      onClose={() => setAnchorEl(undefined)}
-                    >
-                      <MenuItem
-                        disabled={
-                          !window.MediaRecorder.isTypeSupported(
-                            "video/webm; codecs=vp8"
-                          )
-                        }
-                        onClick={() => {
-                          handleRecord("video/webm; codecs=vp8");
-                        }}
-                      >
-                        WebM VP8
-                      </MenuItem>
-                      <MenuItem
-                        disabled={
-                          !window.MediaRecorder.isTypeSupported(
-                            "video/webm; codecs=vp9"
-                          )
-                        }
-                        onClick={() => {
-                          handleRecord("video/webm; codecs=vp9");
-                        }}
-                      >
-                        WebM VP9
-                      </MenuItem>
-                      <MenuItem
-                        disabled={
-                          !window.MediaRecorder.isTypeSupported(
-                            "video/webm; codecs=h264"
-                          )
-                        }
-                        onClick={() => {
-                          handleRecord("video/webm; codecs=h264");
-                        }}
-                      >
-                        WebM H.264 (MKV)
-                      </MenuItem>
-                      <MenuItem
-                        disabled={
-                          !window.MediaRecorder.isTypeSupported(
-                            "video/webm; codecs=h265"
-                          )
-                        }
-                        onClick={() => {
-                          handleRecord("video/webm; codecs=h265");
-                        }}
-                      >
-                        WebM H.265
-                      </MenuItem>
-                    </Menu>
-                  </Fragment>
-                )}
               </Grid>
               <Grid item>
                 <Grid container spacing={1} alignItems="center">
@@ -630,15 +549,10 @@ const Live2DView: React.FC<unknown> = () => {
                       variant="contained"
                       onClick={() => {
                         if (selectedMotion) {
-                          model.startMotion({
-                            autoAppear: false,
-                            autoIdle: false,
-                            fadeInTime: 0.5,
-                            fadeOutTime: 0.5,
-                            groupName: selectedMotion,
-                            no: 0,
-                            priority: 3,
-                          });
+                          live2dModel.current?.motion(
+                            "Motion",
+                            motions.indexOf(selectedMotion)
+                          );
                         }
                       }}
                     >
@@ -670,15 +584,10 @@ const Live2DView: React.FC<unknown> = () => {
                       variant="contained"
                       onClick={() => {
                         if (selectedExpression) {
-                          model.startMotion({
-                            autoAppear: false,
-                            autoIdle: false,
-                            fadeInTime: 0.5,
-                            fadeOutTime: 0.5,
-                            groupName: selectedExpression,
-                            no: 0,
-                            priority: 3,
-                          });
+                          live2dModel.current?.motion(
+                            "Expression",
+                            expressions.indexOf(selectedExpression)
+                          );
                         }
                       }}
                     >
@@ -694,7 +603,25 @@ const Live2DView: React.FC<unknown> = () => {
             </Grid>
           </Toolbar>
         )}
-        <canvas ref={canvas}></canvas>
+        {/* <canvas ref={canvas}></canvas> */}
+        <Box sx={{ width: "fit-content", display: "flex" }}>
+          <Stage
+            width={stageWidth}
+            height={stageHeight}
+            ref={stage}
+            options={{ backgroundAlpha: 0, antialias: true }}
+          >
+            <Live2dModel
+              ref={live2dModel}
+              modelData={modelData}
+              x={live2dX}
+              y={live2dY}
+              scaleX={live2dScale}
+              scaleY={live2dScale}
+              onReady={onLive2dModelReady}
+            />
+          </Stage>
+        </Box>
       </Box>
     </Fragment>
   );
