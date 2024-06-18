@@ -1,4 +1,5 @@
-import FlipCountdown from "@sekai-world/react-flip-countdown";
+import FlipClockCountdown from "@leenguyen/react-flip-clock-countdown";
+import "@leenguyen/react-flip-clock-countdown/dist/index.css";
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -11,16 +12,14 @@ const Countdown: React.FC<React.PropsWithChildren<{ endDate: Date }>> = ({
   return new Date() > endDate ? (
     <Fragment>{children}</Fragment>
   ) : (
-    // @ts-ignore
-    <FlipCountdown
-      endAt={endDate.toISOString()}
-      hideYear
-      hideMonth
-      titlePosition="bottom"
-      dayTitle={t("common:countdown.day")}
-      hourTitle={t("common:countdown.hour")}
-      minuteTitle={t("common:countdown.minute")}
-      secondTitle={t("common:countdown.second")}
+    <FlipClockCountdown
+      to={endDate.toISOString()}
+      labels={[
+        t("common:countdown.day"),
+        t("common:countdown.hour"),
+        t("common:countdown.minute"),
+        t("common:countdown.second"),
+      ]}
     />
   );
 };
