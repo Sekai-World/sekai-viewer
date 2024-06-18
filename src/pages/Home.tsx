@@ -133,10 +133,18 @@ const Home: React.FC = () => {
 
   return (
     <Fragment>
-      <TypographyHeader>{t("common:home")}</TypographyHeader>
       <ContainerContent>
-        <Box paddingTop="1%" paddingBottom="1%">
-          {new Date().getTime() - 1735689600000 < 259200000 ? (
+        <Box
+          paddingTop="1%"
+          paddingBottom="1%"
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          {new Date().getTime() - 1735689600000 > 0 &&
+          new Date().getTime() - 1735689600000 < 259200000 ? (
             <Typography align="center" variant="h4">
               {t("home:happy_new_year")}
             </Typography>
@@ -152,7 +160,15 @@ const Home: React.FC = () => {
             )
           )}
         </Box>
-        <Box paddingTop="1%" paddingBottom="1%">
+        <Box
+          paddingTop="1%"
+          paddingBottom="1%"
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
           {new Date().getTime() - 1727622000000 > 0 &&
           new Date().getTime() - 1727622000000 < 604800000 ? (
             <Typography align="center" variant="h4">
