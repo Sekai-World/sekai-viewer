@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import TagManager from "react-gtm-module";
 
 import App from "./pages/App";
@@ -40,7 +40,9 @@ TagManager.initialize({
     await worker.start();
   }
 
-  ReactDOM.render(
+  const container = document.getElementById("root");
+  const root = createRoot(container!);
+  root.render(
     <React.StrictMode>
       <Router>
         <Suspense fallback={<AppSkeleton />}>
@@ -49,8 +51,7 @@ TagManager.initialize({
           </RootStoreProvider>
         </Suspense>
       </Router>
-    </React.StrictMode>,
-    document.getElementById("root")
+    </React.StrictMode>
   );
 })();
 
