@@ -107,27 +107,19 @@ export default defineConfig({
         target: "https://storage.sekai.best",
       },
       "/sekai-jp-assets": {
-        // target: "https://minio.dnaroma.eu",
         changeOrigin: true,
-
         target: "https://storage.sekai.best",
       },
       "/sekai-en-assets": {
-        // target: "https://minio.dnaroma.eu",
         changeOrigin: true,
-
         target: "https://storage.sekai.best",
       },
       "/sekai-tc-assets": {
-        // target: "https://minio.dnaroma.eu",
         changeOrigin: true,
-
         target: "https://storage.sekai.best",
       },
       "/sekai-best-assets": {
-        // target: "https://minio.dnaroma.eu",
         changeOrigin: true,
-
         target: "https://storage.sekai.best",
       },
       "/strapi/sekai-current-event": {

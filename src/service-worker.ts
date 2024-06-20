@@ -97,14 +97,15 @@ registerRoute(
       url.pathname.endsWith(".webp") ||
       url.pathname.endsWith(".moc3.bytes") ||
       url.pathname.endsWith(".model3.json") ||
-      url.pathname.endsWith(".physics3.json")),
+      url.pathname.endsWith(".physics3.json") ||
+      url.pathname.endsWith(".motion3.json")),
   // Customize this strategy as needed, e.g., by changing to CacheFirst.
   new CacheFirst({
     cacheName: "sekaiResImages",
     plugins: [
       // Ensure that once this runtime cache reaches a maximum size the
       // least-recently used images are removed.
-      new ExpirationPlugin({ maxEntries: 1000 }),
+      new ExpirationPlugin({ maxEntries: 10000 }),
       new CacheableResponsePlugin({
         statuses: [200],
       }),
@@ -116,18 +117,14 @@ registerRoute(
   // Add in any other file extensions or routing criteria as needed.
   ({ url }) =>
     url.href.startsWith("https://storage.sekai.best/sekai-best-assets") &&
-    (url.pathname.endsWith(".png") ||
-      url.pathname.endsWith(".webp") ||
-      url.pathname.endsWith(".moc3.bytes") ||
-      url.pathname.endsWith(".model3.json") ||
-      url.pathname.endsWith(".physics3.json")),
+    (url.pathname.endsWith(".png") || url.pathname.endsWith(".webp")),
   // Customize this strategy as needed, e.g., by changing to CacheFirst.
   new CacheFirst({
     cacheName: "minioImages",
     plugins: [
       // Ensure that once this runtime cache reaches a maximum size the
       // least-recently used images are removed.
-      new ExpirationPlugin({ maxEntries: 1000 }),
+      new ExpirationPlugin({ maxEntries: 10000 }),
       new CacheableResponsePlugin({
         statuses: [200],
       }),
