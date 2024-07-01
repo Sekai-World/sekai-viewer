@@ -53,6 +53,7 @@ const Live2dModel = forwardRef<
         return;
       }
       _model = await Live2DModel.from(modelData);
+      _model.autoInteract = false;
       setModel(_model);
       if (props.onReady) {
         setTimeout(() => props.onReady!());
