@@ -39,15 +39,16 @@ import { assetUrl } from "../../utils/urls";
 import TypographyHeader from "../../components/styled/TypographyHeader";
 import ContainerContent from "../../components/styled/ContainerContent";
 import { Stage } from "@pixi/react";
+import { settings } from "pixi.js";
 import Live2dModel from "../../components/pixi/Live2dModel";
 import { InternalModel, Live2DModel } from "pixi-live2d-display";
+
+settings.RESOLUTION = window.devicePixelRatio * 2;
 
 const Live2DView: React.FC<unknown> = () => {
   const { t } = useTranslation();
   const theme = useTheme();
 
-  // const live2dInstance = useMemo(() => new Live2D(), []);
-  // const [live2dManager, setLive2dManager] = useState<LAppLive2DManager>();
   const [selectedModelName, setSelectedModelName] = useState<string | null>(
     null
   );
@@ -64,8 +65,6 @@ const Live2DView: React.FC<unknown> = () => {
   const [progress, setProgress] = useState(0);
   const [progressWords, setProgressWords] = useState("");
   const [isFullscreen, setIsFullscreen] = useState(false);
-  // const [currentWidth, setCurrentWidth] = useState(0);
-  // const [currentStyleWidth, setCurrentStyleWidth] = useState(0);
   const [live2dScale, setLive2dScale] = useState(1);
   const [live2dX, setLive2dX] = useState(0);
   const [live2dY, setLive2dY] = useState(0);
@@ -84,31 +83,13 @@ const Live2DView: React.FC<unknown> = () => {
   const updateSize = useCallback(() => {
     if (wrap.current && modelData) {
       // canvas.current.width = wrap.current.clientWidth;
-      const styleWidth = wrap.current.clientWidth * 0.8;
+      const styleWidth = wrap.current.clientWidth;
       const styleHeight =
         window.innerWidth * window.devicePixelRatio >=
         theme.breakpoints.values.xl
           ? (styleWidth * 9) / 16
           : (styleWidth * 4) / 3;
-      // const displayWidth = styleWidth * window.devicePixelRatio;
-      // const displayHeight = styleHeight * window.devicePixelRatio;
-      // model._modelSize =
-      //   window.innerWidth * window.devicePixelRatio >=
-      //   theme.breakpoints.values.xl
-      //     ? displayWidth * 1.3
-      //     : displayWidth * 3;
-      // setCurrentWidth(displayWidth);
-      // setCurrentStyleWidth(styleWidth);
 
-      // stage.current.style.width = `${styleWidth}px`;
-      // stage.current.style.height = `${styleHeight}px`;
-      // stage.current.width = displayWidth;
-      // stage.current.height = displayHeight;
-
-      // model.appear({
-      //   pointX: 140,
-      //   pointY: 60,
-      // });
       setStageWidth(styleWidth);
       setStageHeight(styleHeight);
 
@@ -609,7 +590,7 @@ const Live2DView: React.FC<unknown> = () => {
             width={stageWidth}
             height={stageHeight}
             ref={stage}
-            options={{ backgroundAlpha: 0, antialias: true }}
+            options={{ backgroundAlpha: 0, antialias: true, autoDensity: true }}
           >
             <Live2dModel
               ref={live2dModel}
