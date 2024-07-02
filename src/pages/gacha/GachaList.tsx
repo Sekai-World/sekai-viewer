@@ -1,6 +1,5 @@
-import { Grid } from "@mui/material";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { useCachedData, useLocalStorage } from "../../utils";
+import { useCachedData, useLocalStorage, useToggle } from "../../utils";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
@@ -12,13 +11,26 @@ import {
   PublishOutlined,
   GetApp,
   GetAppOutlined,
+  FilterAlt as Filter,
+  FilterAltOutlined as FilterOutlined,
 } from "@mui/icons-material";
-import { ToggleButton, ToggleButtonGroup } from "@mui/material";
+import {
+  Badge,
+  Collapse,
+  FormControl,
+  Grid,
+  TextField,
+  ToggleButton,
+  ToggleButtonGroup,
+} from "@mui/material";
 import Pound from "~icons/mdi/pound";
 import { useRootStore } from "../../stores/root";
 import { observer } from "mobx-react-lite";
 import TypographyHeader from "../../components/styled/TypographyHeader";
 import ContainerContent from "../../components/styled/ContainerContent";
+import PaperContainer from "../../components/styled/PaperContainer";
+import TypographyCaption from "../../components/styled/TypographyCaption";
+import { useDebounce } from "use-debounce";
 
 function getPaginatedGachas(gachas: IGachaInfo[], page: number, limit: number) {
   return gachas.slice(limit * (page - 1), limit * page);
@@ -49,6 +61,9 @@ const GachaList: React.FC<unknown> = observer(() => {
     "startAt"
   );
   const [sortedCache, setSortedCache] = useState<IGachaInfo[]>([]);
+  const [filterOpened, toggleFilterOpened] = useToggle(false);
+  const [searchTitle, setSearchTitle] = useState<string>("");
+  const [debouncedSearchTitle] = useDebounce(searchTitle, 500);
 
   useEffect(() => {
     document.title = t("title:gachaList");
@@ -83,10 +98,22 @@ const GachaList: React.FC<unknown> = observer(() => {
         (a, b) => a[sortBy as "startAt"] - b[sortBy as "startAt"]
       );
     }
+    if (debouncedSearchTitle) {
+      sortedCache = sortedCache.filter((g) =>
+        g.name.toLowerCase().includes(debouncedSearchTitle.toLowerCase())
+      );
+    }
     setSortedCache(sortedCache);
     setGachas([]);
     setPage(0);
-  }, [gachasCache, isShowSpoiler, region, sortBy, sortType]);
+  }, [
+    debouncedSearchTitle,
+    gachasCache,
+    isShowSpoiler,
+    region,
+    sortBy,
+    sortType,
+  ]);
 
   useEffect(() => {
     setIsReady(!!gachasCache?.length);
@@ -113,14 +140,14 @@ const GachaList: React.FC<unknown> = observer(() => {
   );
 
   const handleUpdateSortType = useCallback(
-    (_, sort: string) => {
+    (_: any, sort: string) => {
       setSortType(sort || "asc");
     },
     [setSortType]
   );
 
   const handleUpdateSortBy = useCallback(
-    (_, sort: string) => {
+    (_: any, sort: string) => {
       setSortBy(sort || "id");
     },
     [setSortBy]
@@ -130,39 +157,84 @@ const GachaList: React.FC<unknown> = observer(() => {
     <Fragment>
       <TypographyHeader>{t("common:gacha")}</TypographyHeader>
       <ContainerContent>
-        <Grid container spacing={1} style={{ marginBottom: "0.5rem" }}>
+        <Grid container justifyContent="space-between">
           <Grid item>
-            <ToggleButtonGroup
-              value={sortType}
-              color="primary"
-              exclusive
-              onChange={handleUpdateSortType}
-            >
-              <ToggleButton value="asc">
-                {sortType === "asc" ? <Publish /> : <PublishOutlined />}
-              </ToggleButton>
-              <ToggleButton value="desc">
-                {sortType === "desc" ? <GetApp /> : <GetAppOutlined />}
-              </ToggleButton>
-            </ToggleButtonGroup>
+            <Grid container spacing={1} style={{ marginBottom: "0.5rem" }}>
+              <Grid item>
+                <ToggleButtonGroup
+                  value={sortType}
+                  color="primary"
+                  exclusive
+                  onChange={handleUpdateSortType}
+                >
+                  <ToggleButton value="asc">
+                    {sortType === "asc" ? <Publish /> : <PublishOutlined />}
+                  </ToggleButton>
+                  <ToggleButton value="desc">
+                    {sortType === "desc" ? <GetApp /> : <GetAppOutlined />}
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </Grid>
+              <Grid item>
+                <ToggleButtonGroup
+                  size="medium"
+                  value={sortBy}
+                  color="primary"
+                  exclusive
+                  onChange={handleUpdateSortBy}
+                >
+                  <ToggleButton value="id">
+                    <Pound />
+                  </ToggleButton>
+                  <ToggleButton value="startAt">
+                    <Update />
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </Grid>
+            </Grid>
           </Grid>
           <Grid item>
-            <ToggleButtonGroup
-              size="medium"
-              value={sortBy}
-              color="primary"
-              exclusive
-              onChange={handleUpdateSortBy}
-            >
-              <ToggleButton value="id">
-                <Pound />
+            <Badge color="secondary" variant="dot" invisible={!searchTitle}>
+              <ToggleButton
+                value=""
+                color="primary"
+                selected={filterOpened}
+                onClick={() => toggleFilterOpened()}
+              >
+                {filterOpened ? <Filter /> : <FilterOutlined />}
               </ToggleButton>
-              <ToggleButton value="startAt">
-                <Update />
-              </ToggleButton>
-            </ToggleButtonGroup>
+            </Badge>
           </Grid>
         </Grid>
+        <Collapse in={filterOpened}>
+          <PaperContainer>
+            <Grid container direction="column" spacing={2}>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justifyContent="space-between"
+                spacing={1}
+              >
+                <Grid item xs={12} md={1}>
+                  <TypographyCaption>{t("common:title")}</TypographyCaption>
+                </Grid>
+                <Grid item xs={12} md={11}>
+                  <FormControl size="small">
+                    <TextField
+                      size="small"
+                      fullWidth
+                      value={searchTitle}
+                      onChange={(e) => setSearchTitle(e.target.value)}
+                      sx={{ minWidth: "200px" }}
+                    />
+                  </FormControl>
+                </Grid>
+              </Grid>
+            </Grid>
+          </PaperContainer>
+        </Collapse>
         <InfiniteScroll<IGachaInfo>
           ViewComponent={ListCard}
           callback={callback}

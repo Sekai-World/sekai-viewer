@@ -1,23 +1,35 @@
-import { Grid } from "@mui/material";
 import {
   GetApp,
   GetAppOutlined,
   Publish,
   PublishOutlined,
   Update,
+  FilterAlt as Filter,
+  FilterAltOutlined as FilterOutlined,
 } from "@mui/icons-material";
-import { ToggleButtonGroup, ToggleButton } from "@mui/material";
+import {
+  Badge,
+  Grid,
+  ToggleButtonGroup,
+  ToggleButton,
+  Collapse,
+  FormControl,
+  TextField,
+} from "@mui/material";
 import Pound from "~icons/mdi/pound";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IVirtualLiveInfo } from "../../types.d";
-import { useCachedData, useLocalStorage } from "../../utils";
+import { useCachedData, useLocalStorage, useToggle } from "../../utils";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
 import AgendaView from "./AgendaView";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
 import TypographyHeader from "../../components/styled/TypographyHeader";
 import ContainerContent from "../../components/styled/ContainerContent";
+import { useDebounce } from "use-debounce";
+import PaperContainer from "../../components/styled/PaperContainer";
+import TypographyCaption from "../../components/styled/TypographyCaption";
 
 type ViewGridType = "agenda";
 
@@ -59,6 +71,9 @@ const VirtualLiveList: React.FC<unknown> = observer(() => {
     "startAt"
   );
   const [sortedCache, setSortedCache] = useState<IVirtualLiveInfo[]>([]);
+  const [filterOpened, toggleFilterOpened] = useToggle(false);
+  const [searchTitle, setSearchTitle] = useState<string>("");
+  const [debouncedSearchTitle] = useDebounce(searchTitle, 500);
 
   useEffect(() => {
     document.title = t("title:virtualLiveList");
@@ -92,10 +107,21 @@ const VirtualLiveList: React.FC<unknown> = observer(() => {
         (a, b) => a[sortBy as "startAt"] - b[sortBy as "startAt"]
       );
     }
+    if (debouncedSearchTitle) {
+      sortedCache = sortedCache.filter((vl) =>
+        vl.name.toLowerCase().includes(debouncedSearchTitle.toLowerCase())
+      );
+    }
     setSortedCache(sortedCache);
     setVirtualLives([]);
     setPage(0);
-  }, [isShowSpoiler, sortBy, sortType, virtualLivesCache]);
+  }, [
+    debouncedSearchTitle,
+    isShowSpoiler,
+    sortBy,
+    sortType,
+    virtualLivesCache,
+  ]);
 
   useEffect(() => {
     setIsReady(!!virtualLivesCache?.length);
@@ -122,14 +148,14 @@ const VirtualLiveList: React.FC<unknown> = observer(() => {
   );
 
   const handleUpdateSortType = useCallback(
-    (_, sort: string) => {
+    (_: any, sort: string) => {
       setSortType(sort || "asc");
     },
     [setSortType]
   );
 
   const handleUpdateSortBy = useCallback(
-    (_, sort: string) => {
+    (_: any, sort: string) => {
       setSortBy(sort || "id");
     },
     [setSortBy]
@@ -139,40 +165,84 @@ const VirtualLiveList: React.FC<unknown> = observer(() => {
     <Fragment>
       <TypographyHeader>{t("common:virtualLive")}</TypographyHeader>
       <ContainerContent>
-        <Grid container spacing={1}>
+        <Grid container justifyContent="space-between">
           <Grid item>
-            <ToggleButtonGroup
-              value={sortType}
-              color="primary"
-              exclusive
-              onChange={handleUpdateSortType}
-            >
-              <ToggleButton value="asc">
-                {sortType === "asc" ? <Publish /> : <PublishOutlined />}
-              </ToggleButton>
-              <ToggleButton value="desc">
-                {sortType === "desc" ? <GetApp /> : <GetAppOutlined />}
-              </ToggleButton>
-            </ToggleButtonGroup>
+            <Grid container spacing={1}>
+              <Grid item>
+                <ToggleButtonGroup
+                  value={sortType}
+                  color="primary"
+                  exclusive
+                  onChange={handleUpdateSortType}
+                >
+                  <ToggleButton value="asc">
+                    {sortType === "asc" ? <Publish /> : <PublishOutlined />}
+                  </ToggleButton>
+                  <ToggleButton value="desc">
+                    {sortType === "desc" ? <GetApp /> : <GetAppOutlined />}
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </Grid>
+              <Grid item>
+                <ToggleButtonGroup
+                  size="medium"
+                  value={sortBy}
+                  color="primary"
+                  exclusive
+                  onChange={handleUpdateSortBy}
+                >
+                  <ToggleButton value="id">
+                    <Pound />
+                  </ToggleButton>
+                  <ToggleButton value="startAt">
+                    <Update />
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </Grid>
+            </Grid>
           </Grid>
           <Grid item>
-            <ToggleButtonGroup
-              size="medium"
-              value={sortBy}
-              color="primary"
-              exclusive
-              onChange={handleUpdateSortBy}
-            >
-              <ToggleButton value="id">
-                <Pound />
+            <Badge color="secondary" variant="dot" invisible={!searchTitle}>
+              <ToggleButton
+                value=""
+                color="primary"
+                selected={filterOpened}
+                onClick={() => toggleFilterOpened()}
+              >
+                {filterOpened ? <Filter /> : <FilterOutlined />}
               </ToggleButton>
-              <ToggleButton value="startAt">
-                <Update />
-              </ToggleButton>
-            </ToggleButtonGroup>
+            </Badge>
           </Grid>
         </Grid>
-        <br />
+        <Collapse in={filterOpened}>
+          <PaperContainer>
+            <Grid container direction="column" spacing={2}>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justifyContent="space-between"
+                spacing={1}
+              >
+                <Grid item xs={12} md={1}>
+                  <TypographyCaption>{t("common:title")}</TypographyCaption>
+                </Grid>
+                <Grid item xs={12} md={11}>
+                  <FormControl size="small">
+                    <TextField
+                      size="small"
+                      fullWidth
+                      value={searchTitle}
+                      onChange={(e) => setSearchTitle(e.target.value)}
+                      sx={{ minWidth: "200px" }}
+                    />
+                  </FormControl>
+                </Grid>
+              </Grid>
+            </Grid>
+          </PaperContainer>
+        </Collapse>
         <InfiniteScroll<IVirtualLiveInfo>
           ViewComponent={ListCard[viewGridType]}
           callback={callback}
@@ -182,6 +252,7 @@ const VirtualLiveList: React.FC<unknown> = observer(() => {
               {
                 agenda: {
                   xs: 12,
+                  lg: 6,
                 },
               } as const
             )[viewGridType]
