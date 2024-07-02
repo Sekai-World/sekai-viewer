@@ -105,7 +105,7 @@ export const CardImage: React.FC<{ id: number; trained?: boolean }> = ({
 };
 
 export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
-  ({ card }) => {
+  function CardSmallImage({ card }: { card: ICardInfo }) {
     const [hoveredArea, setHoveredArea] = useState<number>(0);
     const [imgLeftX, refImgLeftX, setImgLeftX] = useRefState<number>(-256);
     const [imgRightX, refImgRightX, setImgRightX] = useRefState<number>(512);

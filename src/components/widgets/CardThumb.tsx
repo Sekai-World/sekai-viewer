@@ -27,6 +27,8 @@ export const CardThumb: React.FC<
     level?: number;
     masterRank?: number;
     power?: number;
+    onClick?: React.MouseEventHandler<HTMLDivElement>;
+    style?: React.CSSProperties;
   } & React.HTMLProps<HTMLDivElement>
 > = ({ cardId, trained = false, onClick, style, level, masterRank, power }) => {
   const [cards] = useCachedData<ICardInfo>("cards");
@@ -214,6 +216,8 @@ export const CardThumbMedium: React.FC<
     level?: number;
     masterRank?: number;
     power?: number;
+    onClick?: React.MouseEventHandler<HTMLDivElement>;
+    style?: React.CSSProperties;
   } & React.HTMLProps<HTMLDivElement>
 > = ({
   cardId,
@@ -290,10 +294,10 @@ export const CardThumbMedium: React.FC<
               <image
                 preserveAspectRatio="none"
                 href={cardThumbImg}
-                x="-135"
+                x="-80"
                 y="0"
-                height="576"
-                width="620"
+                height="520"
+                width="520"
               />
               {/* level */}
               <rect
