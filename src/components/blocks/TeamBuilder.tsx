@@ -76,9 +76,9 @@ const TeamBuilder: React.FC<{
     const [cards] = useCachedData<ICardInfo>("cards");
 
     const {
-      getAreaItemBonus,
+      // getAreaItemBonus,
       getCharacterRankBonus,
-      getHonorBonus,
+      // getHonorBonus,
       getPureTeamPowers,
     } = useTeamCalc();
 
@@ -149,7 +149,7 @@ const TeamBuilder: React.FC<{
         }
         const maxLevel = [50, 20, 30, 50, 60];
         setTeamCards((tc) => [...tc, card.id]);
-        let stateFrom = sekaiCardTeam?.cards?.find(
+        const stateFrom = sekaiCardTeam?.cards?.find(
           (cl) => cl.cardId === card.id
         );
         const rarity = cardRarityTypeToRarity[card.cardRarityType!];
@@ -275,7 +275,7 @@ const TeamBuilder: React.FC<{
     ]);
 
     const handleReplaceTeamEntry = useCallback(
-      (id) => {
+      (id: number) => {
         const currentEntry = {
           // id: id + 1,
           teamCards: teamCards,
@@ -343,7 +343,7 @@ const TeamBuilder: React.FC<{
     );
 
     const handleDeleteTeamEntry = useCallback(
-      (id) => {
+      (id: number) => {
         toggleIsSaveingEntry();
 
         if (storageLocation === "cloud") {
@@ -389,7 +389,7 @@ const TeamBuilder: React.FC<{
     );
 
     const handleLoadTeamEntry = useCallback(
-      (idx) => {
+      (idx: number) => {
         if (!cards) return;
         const currentEntry = teamBuildArray.teams[idx];
         if (
@@ -400,7 +400,7 @@ const TeamBuilder: React.FC<{
         ) {
           // convert data
           currentEntry.teamCardsStates = currentEntry.teamCardsStates.map(
-            (state) => {
+            (state: ISekaiCardState) => {
               const card = cards.find((elem) => elem.id === state.cardId)!;
               const maxNormalLevel = [0, 20, 30, 40, 50];
               return Object.assign({}, state, {
@@ -426,7 +426,7 @@ const TeamBuilder: React.FC<{
           )
         ) {
           currentEntry.teamCardsStates = currentEntry.teamCardsStates.map(
-            (state) => {
+            (state: ISekaiCardState) => {
               const card = cards.find((elem) => elem.id === state.cardId)!;
 
               return Object.assign({}, state, {
@@ -454,8 +454,10 @@ const TeamBuilder: React.FC<{
     );
 
     const calcTotalPower = useCallback(
-      (cardStates?) => {
-        const pureDeckPower = getPureTeamPowers(cardStates || teamCardsStates);
+      (cardStates?: ITeamCardState[]) => {
+        const pureDeckPower = getPureTeamPowers(
+          cardStates || (teamCardsStates as ITeamCardState[])
+        );
 
         // console.log(
         //   isAutoCalcBonus && !!sekaiProfile && !!sekaiProfile.sekaiUserProfile
@@ -470,20 +472,20 @@ const TeamBuilder: React.FC<{
           //   sekaiProfile.sekaiUserProfile.userAreaItems
           // );
           const areaItemBonus =
-            sekaiProfile.sekaiUserProfile.totalPower.areaItemBonus;
+            sekaiProfile.sekaiUserProfile.totalPower?.areaItemBonus;
 
           // console.log(areaItemBonus);
 
           const characterRankBonus = getCharacterRankBonus(
             sekaiProfile.sekaiUserProfile.userCharacters,
-            cardStates || teamCardsStates
+            cardStates || (teamCardsStates as ITeamCardState[])
           );
 
           // const honorBonus = getHonorBonus(
           //   sekaiProfile.sekaiUserProfile.userHonors
           // );
           const honorBonus =
-            sekaiProfile.sekaiUserProfile.totalPower.honorBonus;
+            sekaiProfile.sekaiUserProfile.totalPower?.honorBonus;
 
           // console.log(
           //   pureDeckPower,
