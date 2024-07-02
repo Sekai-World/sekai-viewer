@@ -60,7 +60,7 @@ import GridOut from "../../components/styled/GridOut";
 import EmbedVideoPlayer from "../../components/blocks/EmbedVideoPlayer";
 
 const KR_EXCLUSIVE_IDS = [10001, 10002, 371, 387, 420, 464];
-const EN_EXCLUSIVE_IDS = [420, 445, 453, 459, 464];
+const EN_EXCLUSIVE_IDS = [371, 387, 420, 445, 453, 459, 464];
 const TW_EXCLUSIVE_IDS = [371, 387, 420, 464];
 
 const MusicDetail: React.FC<unknown> = observer(() => {
