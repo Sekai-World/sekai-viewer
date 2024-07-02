@@ -405,7 +405,8 @@ const MusicList: React.FC<unknown> = observer(() => {
                 !outsideCharacterSelected.length &&
                 !composer &&
                 !arranger &&
-                !lyricist
+                !lyricist &&
+                !searchTitle
               }
             >
               <ToggleButton

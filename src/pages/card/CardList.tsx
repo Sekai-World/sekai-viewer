@@ -626,7 +626,9 @@ const CardList: React.FC<unknown> = observer(() => {
                 !unitSelected.length &&
                 !attrSelected.length &&
                 !skillSelected.length &&
-                !raritySelected.length
+                !raritySelected.length &&
+                !supportUnitSelected.length &&
+                !searchTitle
               }
             >
               <ToggleButton
