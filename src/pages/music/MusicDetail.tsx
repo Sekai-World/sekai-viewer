@@ -485,6 +485,7 @@ const MusicDetail: React.FC<unknown> = observer(() => {
             onPlay={() => setVocalDisabled(true)}
             onPause={() => setVocalDisabled(false)}
             onEnded={() => setVocalDisabled(false)}
+            region={region}
           />
         ) : ["original_video"].includes(vocalPreviewVal) &&
           musicOriginal?.videoLink ? (

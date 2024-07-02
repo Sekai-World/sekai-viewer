@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
+import { ServerRegion } from "../../types";
 import MoviePlayer from "./MoviePlayer";
 
 const MusicVideoPlayer: React.FC<{
@@ -7,6 +8,7 @@ const MusicVideoPlayer: React.FC<{
   onPlay: CallableFunction;
   onPause: CallableFunction;
   onEnded: CallableFunction;
+  region?: ServerRegion;
 }> = (props) => {
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -55,6 +57,7 @@ const MusicVideoPlayer: React.FC<{
         onEnded={handleOnEnded}
         onSeeked={handleOnSeeked}
         style={{ width: "100%" }}
+        region={props.region}
       ></MoviePlayer>
       <audio src={props.audioPath} ref={audioRef}></audio>
     </Fragment>
