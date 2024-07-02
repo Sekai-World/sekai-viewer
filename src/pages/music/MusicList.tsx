@@ -21,9 +21,9 @@ import {
   SortOutlined,
   RotateLeft,
   GridView as ViewGrid,
-  GridViewOutlined as ViewGridOutline,
+  GridViewOutlined as ViewGridOutlined,
   FilterAlt as Filter,
-  FilterAltOutlined as FilterOutline,
+  FilterAltOutlined as FilterOutlined,
   Check,
 } from "@mui/icons-material";
 import React, {
@@ -122,7 +122,7 @@ const MusicList: React.FC<unknown> = observer(() => {
   );
   const [musicMVTypes, dispatchMusicMVTypes] = useReducer(
     attrSelectReducer,
-    JSON.parse(localStorage.getItem("music-list-filter-mv-types.d") || "[]")
+    JSON.parse(localStorage.getItem("music-list-filter-mv-types") || "[]")
   );
   const [arranger, setArranger] = useLocalStorage<string>(
     "music-list-filter-arranger",
@@ -143,6 +143,7 @@ const MusicList: React.FC<unknown> = observer(() => {
         localStorage.getItem("music-list-filter-outside-charas") || "[]"
       )
     );
+  const [searchTitle, setSearchTitle] = useState("");
 
   useEffect(() => {
     document.title = t("title:musicList");
@@ -218,6 +219,12 @@ const MusicList: React.FC<unknown> = observer(() => {
         if (lyricist && m.lyricist !== lyricist) {
           return false;
         }
+        if (
+          searchTitle &&
+          !m.title.toLowerCase().includes(searchTitle.toLowerCase())
+        ) {
+          return false;
+        }
         return true;
       });
 
@@ -263,6 +270,7 @@ const MusicList: React.FC<unknown> = observer(() => {
     musicVocals,
     musicsCache,
     outsideCharacterSelected,
+    searchTitle,
     sortBy,
     sortType,
   ]);
@@ -306,12 +314,13 @@ const MusicList: React.FC<unknown> = observer(() => {
     setMusicTag("all");
     dispatchMusicMVTypes({
       payload: "",
-      storeName: "music-list-filter-mv-types.d",
+      storeName: "music-list-filter-mv-types",
       type: "reset",
     });
     setArranger("");
     setComposer("");
     setLyricist("");
+    setSearchTitle("");
     dispatchCharacterSelected({
       payload: 0,
       storeName: "music-list-filter-charas",
@@ -373,7 +382,7 @@ const MusicList: React.FC<unknown> = observer(() => {
                 {viewGridType === "grid" ? (
                   <ViewGrid></ViewGrid>
                 ) : (
-                  <ViewGridOutline></ViewGridOutline>
+                  <ViewGridOutlined></ViewGridOutlined>
                 )}
               </ToggleButton>
               <ToggleButton value="agenda">
@@ -405,7 +414,7 @@ const MusicList: React.FC<unknown> = observer(() => {
                 selected={filterOpened}
                 onClick={() => toggleFilterOpened()}
               >
-                {filterOpened ? <Filter /> : <FilterOutline />}
+                {filterOpened ? <Filter /> : <FilterOutlined />}
                 {filterOpened ? <Sort /> : <SortOutlined />}
               </ToggleButton>
             </Badge>
@@ -500,12 +509,12 @@ const MusicList: React.FC<unknown> = observer(() => {
                             musicMVTypes.includes(cat)
                               ? dispatchMusicMVTypes({
                                   payload: cat,
-                                  storeName: "music-list-filter-mv-types.d",
+                                  storeName: "music-list-filter-mv-types",
                                   type: "remove",
                                 })
                               : dispatchMusicMVTypes({
                                   payload: cat,
-                                  storeName: "music-list-filter-mv-types.d",
+                                  storeName: "music-list-filter-mv-types",
                                   type: "add",
                                 });
                           }}
@@ -725,6 +734,28 @@ const MusicList: React.FC<unknown> = observer(() => {
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
+                  <TypographyCaption>{t("common:title")}</TypographyCaption>
+                </Grid>
+                <Grid item xs={12} md={11}>
+                  <FormControl size="small">
+                    <TextField
+                      size="small"
+                      fullWidth
+                      value={searchTitle}
+                      onChange={(e) => setSearchTitle(e.target.value)}
+                    />
+                  </FormControl>
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justifyContent="space-between"
+                spacing={1}
+              >
+                <Grid item xs={12} md={1}>
                   <TypographyCaption>
                     {t("filter:sort.caption")}
                   </TypographyCaption>
@@ -810,7 +841,8 @@ const MusicList: React.FC<unknown> = observer(() => {
                       !outsideCharacterSelected.length &&
                       !composer &&
                       !arranger &&
-                      !lyricist
+                      !lyricist &&
+                      !searchTitle
                     }
                     onClick={() => resetFilter()}
                     startIcon={<RotateLeft />}
