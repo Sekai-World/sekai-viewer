@@ -617,27 +617,29 @@ const CardList: React.FC<unknown> = observer(() => {
               </ToggleButton>
             </ToggleButtonGroup>
           </Grid>
-          <Badge
-            color="secondary"
-            variant="dot"
-            invisible={
-              !characterSelected.length &&
-              !unitSelected.length &&
-              !attrSelected.length &&
-              !skillSelected.length &&
-              !raritySelected.length
-            }
-          >
-            <ToggleButton
-              value=""
-              color="primary"
-              selected={filterOpened}
-              onClick={() => toggleFilterOpen()}
+          <Grid item>
+            <Badge
+              color="secondary"
+              variant="dot"
+              invisible={
+                !characterSelected.length &&
+                !unitSelected.length &&
+                !attrSelected.length &&
+                !skillSelected.length &&
+                !raritySelected.length
+              }
             >
-              {filterOpened ? <Filter /> : <FilterOutline />}
-              {filterOpened ? <Sort /> : <SortOutlined />}
-            </ToggleButton>
-          </Badge>
+              <ToggleButton
+                value=""
+                color="primary"
+                selected={filterOpened}
+                onClick={() => toggleFilterOpen()}
+              >
+                {filterOpened ? <Filter /> : <FilterOutline />}
+                {filterOpened ? <Sort /> : <SortOutlined />}
+              </ToggleButton>
+            </Badge>
+          </Grid>
         </Grid>
         <Collapse in={filterOpened}>
           <PaperContainer>
