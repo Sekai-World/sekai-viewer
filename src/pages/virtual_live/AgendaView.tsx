@@ -44,7 +44,7 @@ const AgendaView: React.FC<{ data?: IVirtualLiveInfo }> = observer(
             <Grid item xs={12} md={4} container alignItems="center">
               <Skeleton
                 variant="rectangular"
-                sx={(theme) => ({
+                sx={() => ({
                   backgroundSize: "contain",
                   paddingTop: "30%",
                   width: "100%",
@@ -70,10 +70,13 @@ const AgendaView: React.FC<{ data?: IVirtualLiveInfo }> = observer(
         <Container maxWidth="md" sx={{ cursor: "pointer" }}>
           <Grid
             container
-            spacing={2}
+            columnSpacing={2}
             component={Paper}
             alignItems="center"
-            sx={(theme) => ({ margin: theme.spacing("1%", 0) })}
+            sx={(theme) => ({
+              margin: theme.spacing("1%", 0),
+              padding: theme.spacing("2%", 0),
+            })}
           >
             <Grid item xs={12} md={4}>
               <Image
@@ -84,7 +87,7 @@ const AgendaView: React.FC<{ data?: IVirtualLiveInfo }> = observer(
               ></Image>
             </Grid>
             <Grid item xs={12} md={8}>
-              <Grid container direction="column" spacing={1}>
+              <Grid container direction="column" columnSpacing={1}>
                 <Grid item>
                   <SpoilerTag
                     releaseTime={
@@ -105,7 +108,7 @@ const AgendaView: React.FC<{ data?: IVirtualLiveInfo }> = observer(
                     }}
                   />
                 </Grid>
-                <Grid item container spacing={1}>
+                <Grid item container columnSpacing={1}>
                   <Grid item xs={12}>
                     <Typography variant="body2" color="textSecondary">
                       {t(`virtual_live:type.${data.virtualLiveType}`)}
