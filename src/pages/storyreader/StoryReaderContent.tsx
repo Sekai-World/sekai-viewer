@@ -10,6 +10,7 @@ import {
   IActionSet,
   ISpecialStory,
   ICardInfo,
+  ServerRegion,
 } from "../../types.d";
 import {
   getRemoteAssetURL,
@@ -24,10 +25,11 @@ import Image from "mui-image";
 import { useAssetI18n } from "../../utils/i18n";
 import ContainerContent from "../../components/styled/ContainerContent";
 
-const StoryReaderContent: React.FC<{ storyType: string; storyId: string }> = ({
-  storyType,
-  storyId,
-}) => {
+const StoryReaderContent: React.FC<{
+  storyType: string;
+  storyId: string;
+  region: ServerRegion;
+}> = ({ storyType, storyId, region }) => {
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
   const getProcessedScenarioData = useProcessedScenarioData();
@@ -175,10 +177,16 @@ const StoryReaderContent: React.FC<{ storyType: string; storyId: string }> = ({
                 setBannerUrl,
                 "minio"
               );
-              getProcessedScenarioData(
-                `character/member/${assetbundleName}_rip/${episode.scenarioId}.asset`,
-                true
-              ).then((data) => setScenarioData(data));
+              if (region === "en")
+                getProcessedScenarioData(
+                  `character/member_scenario/${assetbundleName}_rip/${episode.scenarioId}.asset`,
+                  true
+                ).then((data) => setScenarioData(data));
+              else
+                getProcessedScenarioData(
+                  `character/member/${assetbundleName}_rip/${episode.scenarioId}.asset`,
+                  true
+                ).then((data) => setScenarioData(data));
 
               setChapterTitle("");
               setEpisodeTitle(

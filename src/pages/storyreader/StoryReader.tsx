@@ -444,7 +444,11 @@ const StoryReader: React.FC<unknown> = observer(() => {
         <Route path={`${path}/eventStory/:eventId/:episodeNo`} exact>
           {({ match }) =>
             !!match && (
-              <StoryReaderContent storyType="eventStory" storyId={match.url} />
+              <StoryReaderContent
+                storyType="eventStory"
+                storyId={match.url}
+                region={region}
+              />
             )
           }
         </Route>
@@ -569,7 +573,11 @@ const StoryReader: React.FC<unknown> = observer(() => {
         <Route path={`${path}/unitStory/:unit/:chapterNo/:episodeNo`} exact>
           {({ match }) =>
             !!match && (
-              <StoryReaderContent storyType="unitStory" storyId={match.url} />
+              <StoryReaderContent
+                storyType="unitStory"
+                storyId={match.url}
+                region={region}
+              />
             )
           }
         </Route>
@@ -620,7 +628,11 @@ const StoryReader: React.FC<unknown> = observer(() => {
         <Route path={`${path}/charaStory/:charaId`} exact>
           {({ match }) =>
             !!match && (
-              <StoryReaderContent storyType="charaStory" storyId={match.url} />
+              <StoryReaderContent
+                storyType="charaStory"
+                storyId={match.url}
+                region={region}
+              />
             )
           }
         </Route>
@@ -676,7 +688,7 @@ const StoryReader: React.FC<unknown> = observer(() => {
                 (card) =>
                   card.characterId === Number(charaId) &&
                   (isShowSpoiler ||
-                    (card.releaseAt ?? card.archivePublishedAt) <=
+                    (card.releaseAt ?? card.archivePublishedAt!) <=
                       new Date().getTime())
               );
               if (filteredCards.length) {
@@ -759,7 +771,11 @@ const StoryReader: React.FC<unknown> = observer(() => {
         <Route path={`${path}/cardStory/:charaId/:cardId/:episodeId`} exact>
           {({ match }) =>
             !!match && (
-              <StoryReaderContent storyType="cardStory" storyId={match.url} />
+              <StoryReaderContent
+                storyType="cardStory"
+                storyId={match.url}
+                region={region}
+              />
             )
           }
         </Route>
@@ -918,7 +934,11 @@ const StoryReader: React.FC<unknown> = observer(() => {
         <Route path={`${path}/areaTalk/:areaId/:actionSetId`} exact>
           {({ match }) =>
             !!match && (
-              <StoryReaderContent storyType="areaTalk" storyId={match.url} />
+              <StoryReaderContent
+                storyType="areaTalk"
+                storyId={match.url}
+                region={region}
+              />
             )
           }
         </Route>
@@ -998,6 +1018,7 @@ const StoryReader: React.FC<unknown> = observer(() => {
               <StoryReaderContent
                 storyType="specialStory"
                 storyId={match.url}
+                region={region}
               />
             )
           }
