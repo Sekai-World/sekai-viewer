@@ -236,9 +236,9 @@ const MusicList: React.FC<unknown> = observer(() => {
           case "publishedAt":
             compare = a[sortBy] - b[sortBy];
             break;
-          case "difficultyMaster":
-          case "difficultyExpert":
-          case "difficultyAppend":
+          case "master":
+          case "expert":
+          case "append":
             const levelA =
               musicDiffis.find(
                 (md) => md.musicId === a.id && md.musicDifficulty === sortBy
@@ -795,13 +795,13 @@ const MusicList: React.FC<unknown> = observer(() => {
                           <MenuItem value="publishedAt">
                             {t("common:startAt")}
                           </MenuItem>
-                          <MenuItem value="difficultyMaster">
+                          <MenuItem value="master">
                             {t("music:difficulty")} (Master)
                           </MenuItem>
-                          <MenuItem value="difficultyExpert">
+                          <MenuItem value="expert">
                             {t("music:difficulty")} (Expert)
                           </MenuItem>
-                          <MenuItem value="difficultyAppend">
+                          <MenuItem value="append">
                             {t("music:difficulty")} (Append)
                           </MenuItem>
                         </Select>
