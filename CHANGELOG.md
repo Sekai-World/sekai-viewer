@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.11.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.10.4...v1.11.0) (2024-07-02)
+
+
+### Features
+
+* add region prop to StoryReaderContent component ([09e1c20](https://github.com/Sekai-World/sekai-viewer/commits/09e1c20328d4f7f708f1c4e2dbc9a71c494e50ce))
+
+
+### Bug Fixes
+
+* **storyreader:** en server card story path ([84886d9](https://github.com/Sekai-World/sekai-viewer/commits/84886d9419471505bfff8f145b0eeee98e32435c))
+
+
+### Refactors
+
+* add minWidth style to search input in MusicList ([c30acbb](https://github.com/Sekai-World/sekai-viewer/commits/c30acbb80d8accadac727cbe1c531f629ccb8a14))
+* add missing exclusive IDs for EN music ([53940fa](https://github.com/Sekai-World/sekai-viewer/commits/53940fa6906c4f35d6d09a58f6cead64ec0fdb80))
+* add region prop to MusicVideoPlayer ([9669a90](https://github.com/Sekai-World/sekai-viewer/commits/9669a9065371e6ea184895a8d913c38b18acf236))
+* add searchTitle to EventList, GachaList and VirtualLiveList ([c6c4be8](https://github.com/Sekai-World/sekai-viewer/commits/c6c4be80e76a132f336f8f7ddc4ff2e34cbfa219))
+* add supportUnitSelected and searchTitle to CardList and MusicList filters ([e1a142c](https://github.com/Sekai-World/sekai-viewer/commits/e1a142cd3be6d01a9308919fdc7aa8a6e697e539))
+* add title search to CardList ([55649f1](https://github.com/Sekai-World/sekai-viewer/commits/55649f17ca6969bb8f1efecd011ac443d6ac66b5))
+* add title search to MusicList ([4296756](https://github.com/Sekai-World/sekai-viewer/commits/4296756e55190b914795360f6cc95643c70df67e))
+* disable auto interaction for Live2dModel ([6f147bc](https://github.com/Sekai-World/sekai-viewer/commits/6f147bc92419c99164677adf6864983f00bde776))
+* distinguish back icon ([dfaf463](https://github.com/Sekai-World/sekai-viewer/commits/dfaf46394668349d2615d6c976bf4f29b8450d9e))
+* improve UI layout in AgendaView component ([611cc90](https://github.com/Sekai-World/sekai-viewer/commits/611cc90db2358f358c25e1ab5e4fa4cd34b9dc07))
+* improve UI layout in CardList component ([9614e16](https://github.com/Sekai-World/sekai-viewer/commits/9614e164146d85e2b42954ccfb170878ff938358))
+* update Dockerfile and service-worker configuration ([1a9174a](https://github.com/Sekai-World/sekai-viewer/commits/1a9174afbc7f8ad3c6b859c84632eb70a3f8f315))
+* upscale pixi.js rendering resolution ([0af67f5](https://github.com/Sekai-World/sekai-viewer/commits/0af67f5fec114b8cb258526d79b8d40a88b738e0))
+
 ### [1.10.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.10.3...v1.10.4) (2024-06-18)
 
 
