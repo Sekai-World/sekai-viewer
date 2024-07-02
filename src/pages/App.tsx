@@ -39,6 +39,7 @@ import {
   Album as AlbumIcon,
   MoveToInbox as MoveToInboxIcon,
   ArrowBackIos as ArrowBackIosIcon,
+  ArrowBack as ArrowBackIcon,
   Settings as SettingsIcon,
   ControlCamera,
   QueueMusic,
@@ -955,7 +956,7 @@ const AppInner = observer((props: { theme: Theme }) => {
                 style={{ padding: ".6rem" }}
                 size="medium"
               >
-                <ArrowBackIosIcon fontSize="inherit" />
+                <ArrowBackIcon fontSize="inherit" />
               </IconButton>
               <Link
                 to="/settings"
