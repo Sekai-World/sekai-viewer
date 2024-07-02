@@ -5,7 +5,6 @@ import {
   IHonorInfo,
   IHonorGroup,
   ResourceBoxDetail,
-  ICompactResourceBox,
   ICompactResourceBoxDetail,
 } from "../../types.d";
 import { getRemoteAssetURL, useCachedData, useCompactData } from "../../utils";
@@ -174,9 +173,9 @@ const DegreeImage: React.FC<
             region
           );
         else if (
-          honor.name.match(/^TOP.*/) ||
-          honor.name.match(/.*位$/) ||
-          honor.name.match(/第\d+名/)
+          honor.name.match(/^(TOP|Top)\s{0,1}\d+/) ||
+          honor.name.match(/\d+(位|위|名)$/) ||
+          honor.name.match(/(1st|2nd|3rd)/)
         )
           getRemoteAssetURL(
             `honor/${honor.assetbundleName}_rip/rank_${

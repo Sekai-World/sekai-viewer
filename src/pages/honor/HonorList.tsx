@@ -227,7 +227,7 @@ const HonorList = () => {
                 <Grid item xs={12} md={10}>
                   <Grid container spacing={1}>
                     <Grid item>
-                      <FormControl>
+                      <FormControl size="small">
                         <Select
                           value={sortType}
                           onChange={(e) => {
@@ -245,7 +245,7 @@ const HonorList = () => {
                       </FormControl>
                     </Grid>
                     <Grid item>
-                      <FormControl>
+                      <FormControl size="small">
                         <Select
                           value={sortBy}
                           onChange={(e) => {
