@@ -217,6 +217,7 @@ const CardList: React.FC<unknown> = observer(() => {
     supportUnitSelectReducer,
     JSON.parse(localStorage.getItem("card-list-filter-support-units") || "[]")
   );
+  const [searchTitle, setSearchTitle] = useState("");
 
   const [anchorElEvent, setAnchorElEvent] = useState<HTMLButtonElement | null>(
     null
@@ -322,6 +323,11 @@ const CardList: React.FC<unknown> = observer(() => {
             }
           }
         }
+        if (searchTitle) {
+          if (!c.prefix.toLowerCase().includes(searchTitle.toLowerCase())) {
+            return false;
+          }
+        }
         return true;
       });
 
@@ -365,6 +371,7 @@ const CardList: React.FC<unknown> = observer(() => {
     rarities,
     raritySelected,
     region,
+    searchTitle,
     skillSelected,
     skills,
     sortBy,
@@ -405,6 +412,7 @@ const CardList: React.FC<unknown> = observer(() => {
       storeName: "card-list-filter-support-units",
       type: "reset",
     });
+    setSearchTitle("");
   }, []);
 
   useEffect(() => {
@@ -929,6 +937,29 @@ const CardList: React.FC<unknown> = observer(() => {
                 spacing={1}
               >
                 <Grid item xs={12} md={1}>
+                  <TypographyCaption>{t("common:title")}</TypographyCaption>
+                </Grid>
+                <Grid item xs={12} md={11}>
+                  <FormControl size="small">
+                    <TextField
+                      size="small"
+                      fullWidth
+                      value={searchTitle}
+                      onChange={(e) => setSearchTitle(e.target.value)}
+                      sx={{ minWidth: "200px" }}
+                    />
+                  </FormControl>
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justifyContent="space-between"
+                spacing={1}
+              >
+                <Grid item xs={12} md={1}>
                   <TypographyCaption>
                     {t("filter:sort.caption")}
                   </TypographyCaption>
@@ -1007,7 +1038,8 @@ const CardList: React.FC<unknown> = observer(() => {
                       !unitSelected.length &&
                       !attrSelected.length &&
                       !skillSelected.length &&
-                      !raritySelected.length
+                      !raritySelected.length &&
+                      !searchTitle
                     }
                     onClick={() => resetFilter()}
                     startIcon={<RotateLeft />}
