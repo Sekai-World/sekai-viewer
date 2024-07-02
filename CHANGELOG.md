@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.11.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.11.0...v1.11.1) (2024-07-02)
+
+
+### Refactors
+
+* fix rank in event titles ([710cfff](https://github.com/Sekai-World/sekai-viewer/commits/710cfff011cd36171878bb6a0131a3d0c621d636))
+* fix unused variables and improve code readability in TeamBuilder component ([1b18717](https://github.com/Sekai-World/sekai-viewer/commits/1b187175f2ae764fd5f2ac19484c950fedfc7286))
+* optimize image loading in CardImage and CardThumb components ([6471666](https://github.com/Sekai-World/sekai-viewer/commits/64716663a84da625fac2e7dedf22ffe3c924a2fd))
+* update sorting options in MusicList component ([baaae33](https://github.com/Sekai-World/sekai-viewer/commits/baaae339e5cb052275f05d8af5103cbb8d432283))
+
 ## [1.11.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.10.4...v1.11.0) (2024-07-02)
 
 
