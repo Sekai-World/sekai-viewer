@@ -266,6 +266,7 @@ const StoryReaderContent: React.FC<{
     actionSets,
     specialStories,
     cards,
+    region,
   ]);
 
   return (
