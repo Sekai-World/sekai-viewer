@@ -743,6 +743,7 @@ const MusicList: React.FC<unknown> = observer(() => {
                       fullWidth
                       value={searchTitle}
                       onChange={(e) => setSearchTitle(e.target.value)}
+                      sx={{ minWidth: "200px" }}
                     />
                   </FormControl>
                 </Grid>
