@@ -362,7 +362,7 @@ const Home: React.FC = () => {
                 </Grid>
               </LinkNoDecoration>
             </Grid>
-            {/* <Grid item>
+            <Grid item>
               <LinkNoDecoration
                 to="/futureevents"
                 style={{ color: theme.palette.primary.main }}
@@ -374,7 +374,7 @@ const Home: React.FC = () => {
                   <Grid item>{t("common:futureevents")}</Grid>
                 </Grid>
               </LinkNoDecoration>
-            </Grid> */}
+            </Grid>
             <Grid item>
               <LinkNoDecoration
                 to="/event"

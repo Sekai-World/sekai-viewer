@@ -103,7 +103,7 @@ const MusicList = lazy(() => import("./music/MusicList"));
 const GachaList = lazy(() => import("./gacha/GachaList"));
 const EventList = lazy(() => import("./event/EventList"));
 const FutureGachaList = lazy(() => import("./futureevent/FutureGachaList"));
-// const FutureEventList = lazy(() => import("./futureevent/FutureEventList"));
+const FutureEventList = lazy(() => import("./futureevent/FutureEventList"));
 const GachaDetail = lazy(() => import("./gacha/GachaDetail"));
 const CardDetail = lazy(() => import("./card/CardDetail"));
 const MusicDetail = lazy(() => import("./music/MusicDetail"));
@@ -448,12 +448,12 @@ const DrawerContent: React.FC<{
           text: t("common:gacha"),
           to: "/gacha",
         },
-        // {
-        //   disabled: false,
-        //   icon: <CalendarText></CalendarText>,
-        //   text: t("common:futureevent"),
-        //   to: "/futureevent",
-        // },
+        {
+          disabled: false,
+          icon: <CalendarText></CalendarText>,
+          text: t("common:futureevent"),
+          to: "/futureevent",
+        },
         {
           disabled: false,
           icon: <CalendarText></CalendarText>,
@@ -1152,6 +1152,9 @@ const AppInner = observer((props: { theme: Theme }) => {
               </Route>
               <Route path="/futuregacha" exact>
                 <FutureGachaList />
+              </Route>
+              <Route path="/futureevent" exact>
+                <FutureEventList />
               </Route>
               <Route path="/event" exact>
                 <EventList />
