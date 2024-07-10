@@ -338,6 +338,19 @@ const Home: React.FC = () => {
             </Grid>
             <Grid item>
               <LinkNoDecoration
+                to="/futuregacha"
+                style={{ color: theme.palette.primary.main }}
+              >
+                <Grid container direction="row" alignContent="center">
+                  <Grid item>
+                    <MoveToInbox fontSize="small"></MoveToInbox>
+                  </Grid>
+                  <Grid item>{t("common:futuregacha")}</Grid>
+                </Grid>
+              </LinkNoDecoration>
+            </Grid>
+            <Grid item>
+              <LinkNoDecoration
                 to="/gacha"
                 style={{ color: theme.palette.primary.main }}
               >
@@ -349,6 +362,19 @@ const Home: React.FC = () => {
                 </Grid>
               </LinkNoDecoration>
             </Grid>
+            {/* <Grid item>
+              <LinkNoDecoration
+                to="/futureevents"
+                style={{ color: theme.palette.primary.main }}
+              >
+                <Grid container direction="row" alignContent="center">
+                  <Grid item>
+                    <MoveToInbox fontSize="small"></MoveToInbox>
+                  </Grid>
+                  <Grid item>{t("common:futureevents")}</Grid>
+                </Grid>
+              </LinkNoDecoration>
+            </Grid> */}
             <Grid item>
               <LinkNoDecoration
                 to="/event"

@@ -1,4 +1,5 @@
 # Sekai Viewer
+![alt text](public/images/thumbnail.jpg)
 
 ![GitHub Repo stars](https://img.shields.io/github/stars/Sekai-World/sekai-viewer?style=social)
 ![GitHub forks](https://img.shields.io/github/forks/Sekai-World/sekai-viewer?style=social)
@@ -10,6 +11,12 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
+
+To get started, use
+
+### `pnpm i`
+
+to install packages
 
 In the project directory, you can run:
 
