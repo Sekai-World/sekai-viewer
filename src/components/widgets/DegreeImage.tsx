@@ -100,8 +100,8 @@ const DegreeImage: React.FC<
               resourceBoxId && honorDetail
                 ? honor.id === honorDetail.resourceId
                 : honorId
-                ? honor.id === honorId
-                : false
+                  ? honor.id === honorId
+                  : false
             )
           );
           if (honorDetail) {

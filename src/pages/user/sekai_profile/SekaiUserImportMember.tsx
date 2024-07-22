@@ -41,7 +41,7 @@ import {
   GridRenderCellParams,
   GridRowId,
 } from "@mui/x-data-grid";
-import { createWorker, createScheduler } from "tesseract.js";
+import { createWorker } from "tesseract.js";
 import {
   cardRarityTypeToRarity,
   useAlertSnackbar,
@@ -171,6 +171,7 @@ const SekaiUserImportMember = observer(() => {
     autorun(() => {
       setLocalSekaiCardTeam(sekaiCardTeamMap.get(region));
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -196,7 +197,7 @@ const SekaiUserImportMember = observer(() => {
 
           // const factor = original.getWidth() / 640;
           // const factor = 1;
-          let scaled = original.clone();
+          const scaled = original.clone();
           Marvin.grayScale(original, scaled);
           // Marvin.scale(
           //   original,
@@ -209,7 +210,7 @@ const SekaiUserImportMember = observer(() => {
           // Marvin.grayScale(scaled, grayscale);
 
           // scan card area, expect white pixels more than 80% in one line
-          let areaBoundary = new MarvinSegment(-1, -1, -1, -1);
+          const areaBoundary = new MarvinSegment(-1, -1, -1, -1);
 
           // horizontal scan
           const Xthreshold = 0.75;
@@ -305,13 +306,13 @@ const SekaiUserImportMember = observer(() => {
           let avgHeight = 0;
           let columnStartX: number[] = [];
           let avgWidth = 0;
-          let rowStartY: number[] = [];
+          const rowStartY: number[] = [];
           const colorCode = 0xffffffff;
 
           // determine right icon height
           for (let x = 0; x < scaled.getWidth(); x++) {
             let cardY: number[] = [];
-            let heights: number[] = [];
+            const heights: number[] = [];
             let inCardArea = false;
             for (let y = 0; y < scaled.getHeight(); y++) {
               // vertical scan until pixel is not white, push it to array
@@ -545,7 +546,7 @@ const SekaiUserImportMember = observer(() => {
           // console.log(cardThumbnails);
 
           const cardDataURLs: string[] = [];
-          for (let card of cardThumbnails) {
+          for (const card of cardThumbnails) {
             // create pseudo canvas
             const _canvas = document.createElement("canvas");
             _canvas.width = card.getWidth();
@@ -584,22 +585,7 @@ const SekaiUserImportMember = observer(() => {
           let ocrLevelResults: string[] = [];
           let ocrMasterRankResults: string[] = [];
           if (ocrEnable) {
-            const workers = Array.from({ length: 1 }).map(() =>
-              createWorker({
-                corePath: `https://unpkg.com/tesseract.js-core@2.2.0/tesseract-core.${
-                  typeof WebAssembly === "object" ? "wasm" : "asm"
-                }.js`,
-                langPath: "https://tessdata.projectnaptha.com/4.0.0",
-                workerPath: `https://unpkg.com/tesseract.js@2.1.4/dist/worker.min.js`,
-              })
-            );
-            const scheduler = createScheduler();
-            for (let worker of workers) {
-              await worker.load();
-              await worker.loadLanguage("eng");
-              await worker.initialize("eng");
-              scheduler.addWorker(worker);
-            }
+            const worker = await createWorker("eng");
 
             const levelResults = await Promise.all(
               cardLevels.map((levelText) => {
@@ -609,7 +595,7 @@ const SekaiUserImportMember = observer(() => {
                 _canvas.height = levelText.getHeight();
                 const _context = _canvas.getContext("2d");
                 _context?.putImageData(levelText.loadImageData(), 0, 0);
-                return scheduler.addJob("recognize", _canvas.toDataURL());
+                return worker.recognize(_canvas.toDataURL());
               })
             );
             ocrLevelResults = levelResults.map((r) => r.data.text);
@@ -622,15 +608,11 @@ const SekaiUserImportMember = observer(() => {
                 _canvas.height = mrText.getHeight();
                 const _context = _canvas.getContext("2d");
                 _context?.putImageData(mrText.loadImageData(), 0, 0);
-                return scheduler.addJob("recognize", _canvas.toDataURL());
+                return worker.recognize(_canvas.toDataURL());
               })
             );
             ocrMasterRankResults = mrResults.map((r) => r.data.text);
-
-            scheduler.terminate();
           }
-          // console.log(ocrLevelResults);
-          // console.log(ocrMasterRankResults);
 
           const _rows = cardDataURLs.map((dataURL, idx) => {
             const cardIds =
@@ -702,7 +684,7 @@ const SekaiUserImportMember = observer(() => {
       const { id } = row;
       const idx = rows.findIndex((row) => row.id === id);
       const elem = rows[idx];
-      // @ts-ignore
+      // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
       elem[field] = value;
 
       setRows([...rows.slice(0, idx), elem, ...rows.slice(idx + 1)]);
@@ -738,7 +720,7 @@ const SekaiUserImportMember = observer(() => {
           const idx = params.row["useIndex"] as number;
           const card = cards?.find(
             (card) => card.id === (params.row["cardIds"] as number[])[idx]
-          )!;
+          );
           return card ? (
             <Grid
               container

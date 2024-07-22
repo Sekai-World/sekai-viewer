@@ -539,8 +539,8 @@ const SekaiUserStatistics = observer(() => {
                                     area.id === 2
                                       ? ai.areaId === 11
                                       : area.id === 6
-                                      ? ai.areaId === 13
-                                      : ai.areaId === area.id
+                                        ? ai.areaId === 13
+                                        : ai.areaId === area.id
                                   )
                                   .map((areaItem) => (
                                     <Grid

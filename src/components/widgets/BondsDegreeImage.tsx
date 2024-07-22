@@ -18,15 +18,7 @@ const DegreeImage: React.FC<
     sub?: boolean;
   } & React.HTMLProps<HTMLDivElement>
 > = observer(
-  ({
-    bondsHonorWordId,
-    type,
-    viewType,
-    honorId,
-    style,
-    honorLevel,
-    sub = false,
-  }) => {
+  ({ bondsHonorWordId, viewType, honorId, style, honorLevel, sub = false }) => {
     const { region } = useRootStore();
 
     // const [bonds] = useCachedData<IBond>("bonds");

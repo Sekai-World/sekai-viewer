@@ -57,7 +57,13 @@ const CommonMaterialIcon: React.FC<{
   justify = "flex-end",
   maxWidth = "none",
 }) => (
-  <Grid container direction="row" alignItems="center" spacing={1} maxWidth={maxWidth}>
+  <Grid
+    container
+    direction="row"
+    alignItems="center"
+    spacing={1}
+    maxWidth={maxWidth}
+  >
     <Grid item xs={mini ? 4 : 12}>
       <Grid container justifyContent={justify}>
         <Grid item>

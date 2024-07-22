@@ -176,8 +176,8 @@ const SekaiGameNews: React.FC<{
             ? info.path.match(/^http/)
               ? info.path
               : region === "en"
-              ? `https://n-production-web.sekai-en.com/${info.path}`
-              : `https://production-web.sekai.colorfulpalette.org/${info.path}`
+                ? `https://n-production-web.sekai-en.com/${info.path}`
+                : `https://production-web.sekai.colorfulpalette.org/${info.path}`
             : ""
         }
         open={open}

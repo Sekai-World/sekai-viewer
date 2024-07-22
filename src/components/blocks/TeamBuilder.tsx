@@ -196,7 +196,7 @@ const TeamBuilder: React.FC<{
     }, []);
 
     const handleChange = useCallback(
-      (value: any, key: string) => {
+      (value: unknown, key: string) => {
         if (editingCard) {
           const newCard = Object.assign({}, editingCard, {
             [key]: value,
@@ -495,7 +495,10 @@ const TeamBuilder: React.FC<{
           // );
 
           return (
-            pureDeckPower + areaItemBonus + characterRankBonus + honorBonus
+            pureDeckPower +
+            (areaItemBonus ?? 0) +
+            characterRankBonus +
+            (honorBonus ?? 0)
           );
         }
 

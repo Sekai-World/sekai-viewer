@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { cardRarityTypeToRarity, useCachedData } from ".";
 import {
+  CardParameter,
   IAreaItemLevel,
   ICardEpisode,
   ICardInfo,
@@ -33,14 +34,14 @@ export const useTeamCalc = () => {
       if (!cardEpisodes || !masterRankRewards) return;
 
       const userCardPowers = userTeamCardStates.map((state, idx) =>
-        userCards[idx].cardParameters
+        (userCards[idx].cardParameters as CardParameter[])
           .filter((param) => param.cardLevel === state.level)
           .sort((a, b) =>
             a.cardParameterType > b.cardParameterType
               ? 1
               : a.cardParameterType < b.cardParameterType
-              ? -1
-              : 0
+                ? -1
+                : 0
           )
           .map((param) => param.power)
       );
@@ -59,9 +60,8 @@ export const useTeamCalc = () => {
       const userCardMasterRankRewards = userTeamCardStates.map((state, idx) => {
         const card = userCards[idx];
         return (
-          masterRankRewards[
-            card.rarity || cardRarityTypeToRarity[card.cardRarityType!]
-          ] * state.masterRank
+          masterRankRewards[cardRarityTypeToRarity[card.cardRarityType!]] *
+          state.masterRank
         );
       });
       // console.log(

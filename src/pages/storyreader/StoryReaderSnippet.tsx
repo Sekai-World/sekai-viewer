@@ -274,8 +274,8 @@ export const Sound: React.FC<{
                   hasBgm
                     ? t("story_reader:snippet.BGM")
                     : hasSe
-                    ? t("story_reader:snippet.SE")
-                    : "UNKNOWN"
+                      ? t("story_reader:snippet.SE")
+                      : "UNKNOWN"
                 }
               />
             </Grid>

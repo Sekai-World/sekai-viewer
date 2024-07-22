@@ -1,6 +1,5 @@
 import { Card, CardContent, Typography, Grid } from "@mui/material";
 import { Skeleton } from "@mui/material";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { Fragment } from "react";
 import { IHonorInfo } from "../../types.d";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
