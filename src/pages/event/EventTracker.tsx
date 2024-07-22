@@ -43,18 +43,10 @@ import { HistoryMobileRow, LiveMobileRow } from "./EventTrackerMobileRow";
 import { HistoryRow, LiveRow } from "./EventTrackerTableRow";
 import { useDebouncedCallback } from "use-debounce";
 import { useRootStore } from "../../stores/root";
-import { ISekaiProfile } from "../../stores/sekai";
 import { observer } from "mobx-react-lite";
-import { autorun } from "mobx";
 import TypographyHeader from "../../components/styled/TypographyHeader";
 import ContainerContent from "../../components/styled/ContainerContent";
-
-const SekaiEventRecord = React.lazy(
-  () => import("../user/sekai_profile/SekaiEventRecord")
-);
-// const AdSense = React.lazy(
-//   () => import("../../components/blocks/AdSenseBlock")
-// );
+import Countdown from "../../components/widgets/Countdown";
 
 const EventTracker: React.FC<unknown> = observer(() => {
   const query = useQuery();
@@ -72,9 +64,6 @@ const EventTracker: React.FC<unknown> = observer(() => {
     getEventRankingsByTimestamp,
     getLastEventRankings,
   } = useEventTrackerAPI(region);
-  const {
-    sekai: { sekaiProfileMap },
-  } = useRootStore();
   // const refreshData = useRealtimeEventData();
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
 
@@ -110,7 +99,6 @@ const EventTracker: React.FC<unknown> = observer(() => {
     EventRankingResponse[]
   >([]);
   const [fetchingTimePoints, toggleFetchingTimePoints] = useToggle(false);
-  const [sekaiProfile, setLocalSekaiProfile] = useState<ISekaiProfile>();
 
   const fullRank = useMemo(
     () => [
@@ -128,12 +116,6 @@ const EventTracker: React.FC<unknown> = observer(() => {
   useEffect(() => {
     document.title = t("title:eventTracker");
   }, [t]);
-
-  useEffect(() => {
-    autorun(() => {
-      setLocalSekaiProfile(sekaiProfileMap.get(region));
-    });
-  }, []);
 
   useEffect(() => {
     return () => {
@@ -318,7 +300,7 @@ const EventTracker: React.FC<unknown> = observer(() => {
   );
 
   const handleTimeTravelChange = useCallback(
-    async (_, checked) => {
+    async (_: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
       if (checked && !timePoints.length) {
         toggleFetchingTimePoints();
         const tps = (await getEventTimePoints(selectedEventId)).data.map(
@@ -389,6 +371,7 @@ const EventTracker: React.FC<unknown> = observer(() => {
                 }
               }}
               disabled={isCurrEventLoading || isFetching}
+              size="small"
             />
           </Grid>
           <Grid item>
@@ -411,18 +394,15 @@ const EventTracker: React.FC<unknown> = observer(() => {
               {t("event:tracker.button.curr_event")}
             </Button>
           </Grid>
+          {currEvent && (
+            <Grid item>
+              <Countdown endDate={new Date(currEvent.eventJson.aggregateAt)}>
+                <Typography variant="h4">{t("event:alreadyEnded")}</Typography>
+              </Countdown>
+            </Grid>
+          )}
         </Grid>
       </ContainerContent>
-      {!!sekaiProfile && !!sekaiProfile.sekaiUserProfile && (
-        <Fragment>
-          <TypographyHeader>
-            {t("user:profile.title.user_event")}
-          </TypographyHeader>
-          <ContainerContent>
-            <SekaiEventRecord eventId={selectedEventId} />
-          </ContainerContent>
-        </Fragment>
-      )}
       <TypographyHeader>
         {t("event:ranking")} {isFetching && <CircularProgress size="24px" />}
       </TypographyHeader>
@@ -700,12 +680,6 @@ const EventTracker: React.FC<unknown> = observer(() => {
             ))}
         </ContainerContent>
       )}
-      {/* <AdSense
-        client="ca-pub-7767752375383260"
-        slot="8221864477"
-        format="auto"
-        responsive="true"
-      /> */}
     </Fragment>
   );
 });
