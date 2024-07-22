@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.11.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.11.1...v1.11.2) (2024-07-22)
+
+
+### Features
+
+* :sparkles: add countdown to event tracker ([0aeede0](https://github.com/Sekai-World/sekai-viewer/commits/0aeede0b2fff9f7f309c1efc1f3de75e4e7d8df6))
+* **live2d:** :sparkles: reload model ([9dfffd2](https://github.com/Sekai-World/sekai-viewer/commits/9dfffd27db98a4ff757fe3603caebbbded843a41))
+
+
+### Refactors
+
+* :lipstick: countdown digit block style ([3e4f8f4](https://github.com/Sekai-World/sekai-viewer/commits/3e4f8f4cf74ad0f0a1d41326c11049508e13bc33))
+
 ### [1.11.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.11.0...v1.11.1) (2024-07-02)
 
 
