@@ -30,6 +30,7 @@ import {
   CloudDownload,
   Fullscreen,
   FullscreenExit,
+  RestartAlt,
 } from "@mui/icons-material";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
@@ -413,6 +414,15 @@ const Live2DView: React.FC<unknown> = () => {
     updateSize();
   }, [updateSize]);
 
+  const handleReloadModel = useCallback(() => {
+    if (modelData) {
+      // save current modelData
+      const currentModelData = modelData;
+      setModelData(undefined);
+      setTimeout(() => setModelData(currentModelData));
+    }
+  }, [modelData]);
+
   return (
     <Fragment>
       <TypographyHeader>Live2D</TypographyHeader>
@@ -467,7 +477,7 @@ const Live2DView: React.FC<unknown> = () => {
                   <IconButton
                     disabled={!modelData}
                     onClick={handleDownload}
-                    size="large"
+                    size="medium"
                   >
                     <CloudDownload fontSize="inherit" />
                   </IconButton>
@@ -489,7 +499,7 @@ const Live2DView: React.FC<unknown> = () => {
                       onClick={() => {
                         fscreen.requestFullscreen(wrap.current!);
                       }}
-                      size="large"
+                      size="medium"
                     >
                       <Fullscreen fontSize="inherit" />
                     </IconButton>
@@ -499,9 +509,18 @@ const Live2DView: React.FC<unknown> = () => {
                   <IconButton
                     disabled={!modelData}
                     onClick={handleScreenshot}
-                    size="large"
+                    size="medium"
                   >
                     <Camera fontSize="inherit" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title={t("live2d:tooltip.reset") as string}>
+                  <IconButton
+                    disabled={!modelData}
+                    onClick={handleReloadModel}
+                    size="medium"
+                  >
+                    <RestartAlt fontSize="inherit" />
                   </IconButton>
                 </Tooltip>
               </Grid>
