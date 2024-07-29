@@ -364,14 +364,14 @@ const Home: React.FC = () => {
             </Grid>
             <Grid item>
               <LinkNoDecoration
-                to="/futureevents"
+                to="/futureevent"
                 style={{ color: theme.palette.primary.main }}
               >
                 <Grid container direction="row" alignContent="center">
                   <Grid item>
                     <MoveToInbox fontSize="small"></MoveToInbox>
                   </Grid>
-                  <Grid item>{t("common:futureevents")}</Grid>
+                  <Grid item>{t("common:futureevent")}</Grid>
                 </Grid>
               </LinkNoDecoration>
             </Grid>
