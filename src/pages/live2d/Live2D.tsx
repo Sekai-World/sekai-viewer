@@ -30,6 +30,7 @@ import {
   CloudDownload,
   Fullscreen,
   FullscreenExit,
+  RestartAlt,
 } from "@mui/icons-material";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
@@ -39,11 +40,11 @@ import { assetUrl } from "../../utils/urls";
 import TypographyHeader from "../../components/styled/TypographyHeader";
 import ContainerContent from "../../components/styled/ContainerContent";
 import { Stage } from "@pixi/react";
-import { settings } from "pixi.js";
+// import { settings } from "pixi.js";
 import Live2dModel from "../../components/pixi/Live2dModel";
 import { InternalModel, Live2DModel } from "pixi-live2d-display";
 
-settings.RESOLUTION = window.devicePixelRatio * 2;
+// settings.RESOLUTION = window.devicePixelRatio * 2;
 
 const Live2DView: React.FC<unknown> = () => {
   const { t } = useTranslation();
@@ -123,23 +124,6 @@ const Live2DView: React.FC<unknown> = () => {
   useLayoutEffect(() => {
     document.title = t("title:live2d");
   }, [t]);
-
-  // useLayoutEffect(() => {
-  //   if (wrap.current && canvas.current) {
-  //     canvas.current.getContext("webgl", {
-  //       preserveDrawingBuffer: true,
-  //     });
-  //     setLive2dManager(
-  //       live2dInstance.initialize(undefined, {
-  //         canvas: canvas.current,
-  //         wrap: wrap.current,
-  //       })!
-  //     );
-  //   }
-  //   return () => {
-  //     live2dInstance.release();
-  //   };
-  // }, [live2dInstance]);
 
   useLayoutEffect(() => {
     let handler: (e?: Event) => void;
@@ -274,7 +258,7 @@ const Live2DView: React.FC<unknown> = () => {
               File: string;
               FadeInTime: number;
               FadeOutTime: number;
-            }
+            },
           ];
         }>(
           (sum, elem) =>
@@ -381,14 +365,27 @@ const Live2DView: React.FC<unknown> = () => {
 
   const handleScreenshot = useCallback(() => {
     if (stage.current && live2dModel.current) {
+      console.log(stage.current);
       // @ts-expect-error app is private
-      const screenshot = stage.current.app.renderer.extract.base64(
-        // @ts-expect-error app is private
-        stage.current.app.stage
+      const app = stage.current.app as PIXI.Application;
+      const region = app.stage.getBounds();
+      region.x = live2dX;
+      region.y = live2dY;
+      const imageThis = app.renderer.generateTexture(app.stage, {
+        region,
+        resolution: 4,
+      });
+      const image: HTMLImageElement = app.renderer.plugins.extract.image(
+        imageThis,
+        "image/png",
+        1.0
       );
-      saveAs(screenshot);
+      saveAs(
+        image.src,
+        `${modelName}-${new Date().toISOString().split("T", 1)[0]}.png`
+      );
     }
-  }, []);
+  }, [live2dX, live2dY, modelName]);
 
   const handleShow = useCallback(() => {
     setModelName(selectedModelName);
@@ -417,6 +414,15 @@ const Live2DView: React.FC<unknown> = () => {
     updateSize();
   }, [updateSize]);
 
+  const handleReloadModel = useCallback(() => {
+    if (modelData) {
+      // save current modelData
+      const currentModelData = modelData;
+      setModelData(undefined);
+      setTimeout(() => setModelData(currentModelData));
+    }
+  }, [modelData]);
+
   return (
     <Fragment>
       <TypographyHeader>Live2D</TypographyHeader>
@@ -433,6 +439,7 @@ const Live2DView: React.FC<unknown> = () => {
             renderInput={(props) => (
               <TextField {...props} label={t("live2d:select.model")} />
             )}
+            size="small"
           />
         </Grid>
         <Grid item xs={2}>
@@ -459,6 +466,7 @@ const Live2DView: React.FC<unknown> = () => {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          rowGap: theme.spacing(2),
         }}
       >
         {!!modelData && (
@@ -469,7 +477,7 @@ const Live2DView: React.FC<unknown> = () => {
                   <IconButton
                     disabled={!modelData}
                     onClick={handleDownload}
-                    size="large"
+                    size="medium"
                   >
                     <CloudDownload fontSize="inherit" />
                   </IconButton>
@@ -491,7 +499,7 @@ const Live2DView: React.FC<unknown> = () => {
                       onClick={() => {
                         fscreen.requestFullscreen(wrap.current!);
                       }}
-                      size="large"
+                      size="medium"
                     >
                       <Fullscreen fontSize="inherit" />
                     </IconButton>
@@ -501,9 +509,18 @@ const Live2DView: React.FC<unknown> = () => {
                   <IconButton
                     disabled={!modelData}
                     onClick={handleScreenshot}
-                    size="large"
+                    size="medium"
                   >
                     <Camera fontSize="inherit" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title={t("live2d:tooltip.reset") as string}>
+                  <IconButton
+                    disabled={!modelData}
+                    onClick={handleReloadModel}
+                    size="medium"
+                  >
+                    <RestartAlt fontSize="inherit" />
                   </IconButton>
                 </Tooltip>
               </Grid>
@@ -522,6 +539,7 @@ const Live2DView: React.FC<unknown> = () => {
                         />
                       )}
                       style={{ minWidth: "170px" }}
+                      size="small"
                     />
                   </Grid>
                   <Grid item>
@@ -557,6 +575,7 @@ const Live2DView: React.FC<unknown> = () => {
                         />
                       )}
                       style={{ minWidth: "170px" }}
+                      size="small"
                     />
                   </Grid>
                   <Grid item>

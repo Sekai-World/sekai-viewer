@@ -12,7 +12,6 @@ import {
 import Brightness4 from "~icons/mdi/brightness-4";
 import Brightness7 from "~icons/mdi/brightness-7";
 import BrightnessAuto from "~icons/mdi/brightness-auto";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { Fragment, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {

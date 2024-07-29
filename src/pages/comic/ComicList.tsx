@@ -77,12 +77,12 @@ const ComicList: React.FC<unknown> = observer(() => {
             resourceLang === "zht"
               ? "tw"
               : resourceLang === "ja"
-              ? "jp"
-              : resourceLang === "en"
-              ? "en"
-              : resourceLang === "kr"
-              ? "kr"
-              : "comic"
+                ? "jp"
+                : resourceLang === "en"
+                  ? "en"
+                  : resourceLang === "kr"
+                    ? "kr"
+                    : "comic"
           ),
           src: await getRemoteAssetURL(
             url,
@@ -91,12 +91,12 @@ const ComicList: React.FC<unknown> = observer(() => {
             resourceLang === "zht"
               ? "tw"
               : resourceLang === "ja"
-              ? "jp"
-              : resourceLang === "en"
-              ? "en"
-              : resourceLang === "kr"
-              ? "kr"
-              : "comic"
+                ? "jp"
+                : resourceLang === "en"
+                  ? "en"
+                  : resourceLang === "kr"
+                    ? "kr"
+                    : "comic"
           ),
         });
       }

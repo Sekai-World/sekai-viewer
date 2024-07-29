@@ -252,15 +252,15 @@ const VirtualLiveStepMC: React.FC<{
       const tmp: MCSerialData[] = [
         ...data.characterSpawnEvents.map((elem) => ({
           data: elem,
-          type: "spawn" as "spawn",
+          type: "spawn" as const,
         })),
         ...data.characterUnspawnEvents.map((elem) => ({
           data: elem,
-          type: "unspawn" as "unspawn",
+          type: "unspawn" as const,
         })),
         ...data.characterTalkEvents.map((elem) => ({
           data: elem,
-          type: "talk" as "talk",
+          type: "talk" as const,
         })),
       ];
 
@@ -273,10 +273,10 @@ const VirtualLiveStepMC: React.FC<{
   return (
     <Grid container spacing={2}>
       {mcSerialData.map((mc) => (
-        <Grid item xs={12}>
+        <Grid item xs={12} key={mc.data.Id}>
           <Paper variant="outlined">
             <ContainerContent>
-              <Grid container key={mc.data.Id} alignItems="center" spacing={1}>
+              <Grid container alignItems="center" spacing={1}>
                 {mc.type === "spawn" && <MCCharacterSpawn data={mc.data} />}
                 {mc.type === "unspawn" && <MCCharacterUnspawn data={mc.data} />}
                 {mc.type === "talk" && (

@@ -99,7 +99,11 @@ const ComfyView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
             <Grid container direction="column" rowSpacing={0.5}>
               <Grid item>
                 <Grid container justifyContent="center">
-                  <SpoilerTag releaseTime={new Date(data.releaseAt ?? data.archivePublishedAt)} />
+                  <SpoilerTag
+                    releaseTime={
+                      new Date(data.releaseAt ?? data.archivePublishedAt)
+                    }
+                  />
                 </Grid>
               </Grid>
               <Grid item>

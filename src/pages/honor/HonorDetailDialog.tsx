@@ -14,7 +14,7 @@ import DegreeImage from "../../components/widgets/DegreeImage";
 
 const DetailDialog: React.FC<{
   open: boolean;
-  onClose: (event: {}, reason: "backdropClick" | "escapeKeyDown") => void;
+  onClose: (event: object, reason: "backdropClick" | "escapeKeyDown") => void;
   data?: IHonorInfo;
 }> = ({ open, onClose, data }) => {
   const { t } = useTranslation();
@@ -110,7 +110,7 @@ const DetailDialog: React.FC<{
         </Grid>
         <Divider style={{ margin: "1% 0" }} />
         {data.levels.map((level) => (
-          <Fragment>
+          <Fragment key={level.level}>
             <Grid
               container
               direction="row"

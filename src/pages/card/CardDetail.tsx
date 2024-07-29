@@ -867,8 +867,8 @@ const CardDetail: React.FC<unknown> = observer(() => {
                     isBirthdayCard
                       ? rarityBirthday
                       : cardLevel > card.maxNormalLevel
-                      ? rarityAfterTraining
-                      : rarityNormal
+                        ? rarityAfterTraining
+                        : rarityNormal
                   }
                   alt={`star-${id}`}
                   key={`star-${id}`}
@@ -1188,11 +1188,11 @@ const CardDetail: React.FC<unknown> = observer(() => {
             </Typography>
             <Typography>
               {(Array.isArray(card.cardParameters)
-                ? card.cardParameters.find(
+                ? (card.cardParameters.find(
                     (elem) =>
                       elem.cardParameterType === "param1" &&
                       elem.cardLevel === cardLevel
-                  )?.power ?? 0
+                  )?.power ?? 0)
                 : card.cardParameters["param1"][cardLevel - 1]) +
                 (cardLevel > card.maxNormalLevel
                   ? card.specialTrainingPower1BonusFixed
@@ -1222,11 +1222,11 @@ const CardDetail: React.FC<unknown> = observer(() => {
             </Typography>
             <Typography>
               {(Array.isArray(card.cardParameters)
-                ? card.cardParameters.find(
+                ? (card.cardParameters.find(
                     (elem) =>
                       elem.cardParameterType === "param2" &&
                       elem.cardLevel === cardLevel
-                  )?.power ?? 0
+                  )?.power ?? 0)
                 : card.cardParameters["param2"][cardLevel - 1]) +
                 (cardLevel > card.maxNormalLevel
                   ? card.specialTrainingPower2BonusFixed
@@ -1256,11 +1256,11 @@ const CardDetail: React.FC<unknown> = observer(() => {
             </Typography>
             <Typography>
               {(Array.isArray(card.cardParameters)
-                ? card.cardParameters.find(
+                ? (card.cardParameters.find(
                     (elem) =>
                       elem.cardParameterType === "param3" &&
                       elem.cardLevel === cardLevel
-                  )?.power ?? 0
+                  )?.power ?? 0)
                 : card.cardParameters["param3"][cardLevel - 1]) +
                 (cardLevel > card.maxNormalLevel
                   ? card.specialTrainingPower3BonusFixed

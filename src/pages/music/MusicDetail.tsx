@@ -247,8 +247,8 @@ const MusicDetail: React.FC<unknown> = observer(() => {
             vocalPreviewVal === "original"
               ? "original_mv"
               : vocalPreviewVal === "mv_2d"
-              ? "sekai_mv"
-              : ""
+                ? "sekai_mv"
+                : ""
           }/${String(music.id).padStart(4, "0")}_rip`
         );
       } else {
@@ -257,8 +257,8 @@ const MusicDetail: React.FC<unknown> = observer(() => {
             vocalPreviewVal === "original"
               ? "original_mv"
               : vocalPreviewVal === "mv_2d"
-              ? "sekai_mv"
-              : ""
+                ? "sekai_mv"
+                : ""
           }/${String(music.id).padStart(4, "0")}_rip`
         );
       }
@@ -387,8 +387,8 @@ const MusicDetail: React.FC<unknown> = observer(() => {
           chara.characterType === "game_character"
             ? getOriginalCharaName(chara.characterId)
             : outCharas && outCharas.length
-            ? outCharas.find((elem) => elem.id === chara.characterId)!.name
-            : chara.characterId
+              ? outCharas.find((elem) => elem.id === chara.characterId)!.name
+              : chara.characterId
       );
       if (trimSilence && format === "mp3" && vocalPreviewVal === "1") {
         // only trim when downloading full version

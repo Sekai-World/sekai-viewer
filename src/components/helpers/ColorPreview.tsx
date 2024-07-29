@@ -18,8 +18,8 @@ const ColorPreview: React.FC<{ colorCode: string }> = ({ colorCode }) => {
               ? "white"
               : "black"
             : displayMode === "dark"
-            ? "white"
-            : "black"),
+              ? "white"
+              : "black"),
         backgroundColor: colorCode,
       }}
     ></div>

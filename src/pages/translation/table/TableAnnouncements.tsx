@@ -162,7 +162,9 @@ const TableMe: React.FC<Props> = observer((props: Props) => {
         >
           <MenuItem value={0}>{t("filter:not_set")}</MenuItem>
           {languages.map((lang) => (
-            <MenuItem value={lang.id}>{lang.name}</MenuItem>
+            <MenuItem value={lang.id} key={lang.code}>
+              {lang.name}
+            </MenuItem>
           ))}
         </Select>
       </FormControl>
