@@ -55,32 +55,26 @@ const EventList: React.FC<unknown> = observer(() => {
   function useCachedData<T extends IEventInfo>(
     name: string,
     useRegion: ServerRegion = region
-  ): [T[] | undefined, boolean, any] {
+  ): [T[] | undefined, boolean, unknown] {
     // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
 
-    const fetchCached = useCallback(
-      async (name: string) => {
-        const filename = name.split("|")[1];
-        const urlBase = masterUrl["ww"][useRegion as ServerRegion];
-        const { data }: { data: T[] } = await Axios.get(
-          `${urlBase}/${filename}.json`
-        );
-        return data;
-      },
-      [useRegion]
-    );
-
+    const fetchCached = useCallback(async (name: string) => {
+      const [region, filename] = name.split("|");
+      const urlBase = masterUrl["ww"][region as ServerRegion];
+      const { data }: { data: T[] } = await Axios.get(
+        `${urlBase}/${filename}.json`
+      );
+      return data;
+    }, []);
     const { data, error } = useSWR(`${useRegion}|${name}`, fetchCached);
-
     return [data, !error && !data, error];
   }
 
+  const [events, setEvents] = useState<IEventInfo[]>([]);
   const [eventsCache] = useCachedData<IEventInfo>(
     "events",
     "jp" as ServerRegion
   );
-  const [events, setEvents] = useState<IEventInfo[]>([]);
-
   const [viewGridType] = useState<ViewGridType>(
     (localStorage.getItem("event-list-grid-view-type") ||
       "grid") as ViewGridType
@@ -126,7 +120,6 @@ const EventList: React.FC<unknown> = observer(() => {
       sortedCache = sortedCache.filter(
         (e) => e.startAt <= new Date().getTime()
       );
-      setSortType("desc");
     }
     if (sortType === "desc") {
       sortedCache = sortedCache.sort(
@@ -145,6 +138,8 @@ const EventList: React.FC<unknown> = observer(() => {
     setSortedCache(sortedCache);
     setEvents([]);
     setPage(0);
+    // needed otherwise lint starts complaining that updateSortBy is there and isnt there at the same time
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     eventsCache,
     setPage,
@@ -152,7 +147,6 @@ const EventList: React.FC<unknown> = observer(() => {
     sortBy,
     isShowSpoiler,
     debouncedSearchTitle,
-    setSortType,
   ]);
 
   useEffect(() => {
@@ -180,14 +174,14 @@ const EventList: React.FC<unknown> = observer(() => {
   );
 
   const handleUpdateSortType = useCallback(
-    (_: any, sort: string) => {
+    (_: unknown, sort: string) => {
       setSortType(sort || "asc");
     },
     [setSortType]
   );
 
   const handleUpdateSortBy = useCallback(
-    (_: any, sort: string) => {
+    (_: unknown, sort: string) => {
       setSortBy(sort || "id");
     },
     [setSortBy]
@@ -195,7 +189,7 @@ const EventList: React.FC<unknown> = observer(() => {
 
   return (
     <Fragment>
-      <TypographyHeader>{t("common: future event")}</TypographyHeader>
+      <TypographyHeader>{t("common: futureevent")}</TypographyHeader>
       <ContainerContent>
         <Grid container justifyContent="space-between">
           <Grid item>

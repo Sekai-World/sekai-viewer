@@ -51,23 +51,19 @@ const GachaList: React.FC<unknown> = observer(() => {
   function useCachedData<T extends IGachaInfo>(
     name: string,
     useRegion: ServerRegion = region
-  ): [T[] | undefined, boolean, any] {
+  ): [T[] | undefined, boolean, unknown] {
     // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
 
-    const fetchCached = useCallback(
-      async (name: string) => {
-        const filename = name.split("|")[1];
-        const urlBase = masterUrl["ww"][useRegion as ServerRegion];
-        const { data }: { data: T[] } = await Axios.get(
-          `${urlBase}/${filename}.json`
-        );
-        return data;
-      },
-      [useRegion]
-    );
+    const fetchCached = useCallback(async (name: string) => {
+      const [fetchRegion, filename] = name.split("|");
+      const urlBase = masterUrl["ww"][fetchRegion as ServerRegion];
+      const { data }: { data: T[] } = await Axios.get(
+        `${urlBase}/${filename}.json`
+      );
+      return data;
+    }, []);
 
     const { data, error } = useSWR(`${useRegion}|${name}`, fetchCached);
-
     return [data, !error && !data, error];
   }
 
@@ -77,6 +73,7 @@ const GachaList: React.FC<unknown> = observer(() => {
     "jp" as ServerRegion
   );
 
+  console.log("b");
   const [page, setPage] = useState<number>(1);
   const [limit] = useState<number>(12);
   const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
@@ -118,7 +115,6 @@ const GachaList: React.FC<unknown> = observer(() => {
       sortedCache = sortedCache.filter(
         (g) => g.startAt <= new Date().getTime()
       );
-      handleUpdateSortBy;
     }
     if (sortType === "desc") {
       sortedCache = sortedCache.sort(
@@ -139,14 +135,7 @@ const GachaList: React.FC<unknown> = observer(() => {
     setPage(0);
     // needed otherwise lint starts complaining that updateSortBy is there and isnt there at the same time
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    debouncedSearchTitle,
-    gachasCache,
-    isShowSpoiler,
-    region,
-    sortBy,
-    sortType,
-  ]);
+  }, [debouncedSearchTitle, gachasCache, isShowSpoiler, sortBy, sortType]);
 
   useEffect(() => {
     setIsReady(!!gachasCache?.length);

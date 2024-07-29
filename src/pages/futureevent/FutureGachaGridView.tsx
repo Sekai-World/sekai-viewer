@@ -2,17 +2,14 @@ import { Card, CardContent, Typography } from "@mui/material";
 import { Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { IGachaInfo } from "../../types.d";
+import { IGachaInfo, ServerRegion } from "../../types.d";
 import { getRemoteAssetURL } from "../../utils";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
 import SpoilerTag from "../../components/widgets/SpoilerTag";
 import { observer } from "mobx-react-lite";
-import { useRootStore } from "../../stores/root";
 import CardMediaCardImg from "../../components/styled/CardMediaCardImg";
 
 const GridView: React.FC<{ data?: IGachaInfo }> = observer(({ data }) => {
-  const { region } = useRootStore();
-
   const [url, setUrl] = useState<string>("");
 
   useEffect(() => {
@@ -21,10 +18,10 @@ const GridView: React.FC<{ data?: IGachaInfo }> = observer(({ data }) => {
         `gacha/${data.assetbundleName}/logo_rip/logo.webp`,
         setUrl,
         "minio",
-        region
+        "jp" as ServerRegion
       );
     }
-  }, [data, region]);
+  }, [data]);
 
   if (!data) {
     // loading

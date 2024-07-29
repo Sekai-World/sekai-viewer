@@ -3,20 +3,18 @@ import { Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
-import { IEventInfo } from "../../types.d";
+import { IEventInfo, ServerRegion } from "../../types.d";
 import { getRemoteAssetURL } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
 import SpoilerTag from "../../components/widgets/SpoilerTag";
 import { observer } from "mobx-react-lite";
-import { useRootStore } from "../../stores/root";
 import CardMediaCardImg from "../../components/styled/CardMediaCardImg";
 
 const GridView: React.FC<{ data?: IEventInfo }> = observer(({ data }) => {
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
   const { path } = useRouteMatch();
-  const { region } = useRootStore();
 
   const [eventLogo, setEventLogo] = useState<string>("");
 
@@ -26,10 +24,10 @@ const GridView: React.FC<{ data?: IEventInfo }> = observer(({ data }) => {
         `event/${data.assetbundleName}/logo_rip/logo.webp`,
         setEventLogo,
         "minio",
-        region
+        "jp" as ServerRegion
       );
     }
-  }, [data, region]);
+  }, [data]);
 
   if (!data) {
     // loading
