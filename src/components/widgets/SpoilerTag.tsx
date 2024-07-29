@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 
 const SpoilerTag: React.FC<
   { releaseTime: Date } & React.StyleHTMLAttributes<HTMLDivElement>
+  // eslint-disable-next-line react/prop-types
 > = ({ releaseTime, style }) => {
   const { t } = useTranslation();
 

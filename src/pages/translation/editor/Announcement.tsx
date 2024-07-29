@@ -17,7 +17,7 @@ import {
 import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import MarkdownIt from "markdown-it";
-// @ts-ignore
+// @ts-expect-error missing type
 import MarkdownItCollapsible from "markdown-it-collapsible";
 import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
@@ -233,7 +233,7 @@ const Announcement: React.FC<{
             <Grid item>
               <Grid container spacing={1}>
                 {targetContributors.map((userMeta) => (
-                  <Grid item>
+                  <Grid item key={userMeta.id}>
                     <Chip
                       label={userMeta.nickname}
                       key={userMeta.id}

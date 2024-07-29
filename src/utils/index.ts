@@ -155,7 +155,7 @@ export function useCachedData<
     | IMasterLessonReward
     | IEventMusic
     | IGachaTicket
-    | IMusicOriginal
+    | IMusicOriginal,
 >(name: string): [T[] | undefined, boolean, any] {
   // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
   const { region } = useRootStore();
@@ -175,7 +175,7 @@ export function useCachedData<
 }
 
 export function useCompactData<
-  T extends ICompactResourceBox | ICompactResourceBoxDetail
+  T extends ICompactResourceBox | ICompactResourceBoxDetail,
 >(name: string): [T | undefined, boolean, any] {
   const { region } = useRootStore();
 
@@ -547,14 +547,14 @@ export function useProcessedScenarioData() {
                         "minio"
                       )
                     : specialEffectType === "ChangeBackground"
-                    ? await getRemoteAssetURL(
-                        `scenario/background/${specialEffect.StringValSub}_rip/${specialEffect.StringValSub}.webp`,
-                        undefined,
-                        "minio"
-                      )
-                    : specialEffectType === "Movie"
-                    ? `scenario/movie/${specialEffect.StringVal}_rip`
-                    : "",
+                      ? await getRemoteAssetURL(
+                          `scenario/background/${specialEffect.StringValSub}_rip/${specialEffect.StringValSub}.webp`,
+                          undefined,
+                          "minio"
+                        )
+                      : specialEffectType === "Movie"
+                        ? `scenario/movie/${specialEffect.StringVal}_rip`
+                        : "",
                 seType: specialEffectType,
                 type: snippet.Action,
               };

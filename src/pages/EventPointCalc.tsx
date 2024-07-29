@@ -344,10 +344,10 @@ const EventPointCalc: React.FC<unknown> = () => {
       playMode === "challenge_live"
         ? "challenge_live"
         : selectedEventMode === "existed"
-        ? event.eventType
-        : playMode === "solo"
-        ? "marathon"
-        : customEventType;
+          ? event.eventType
+          : playMode === "solo"
+            ? "marathon"
+            : customEventType;
 
     if (selectedMusicMode === "only_one") {
       const meta = validMetas.find(

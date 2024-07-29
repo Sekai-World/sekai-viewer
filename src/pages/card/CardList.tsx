@@ -915,8 +915,8 @@ const CardList: React.FC<unknown> = observer(() => {
                                       rarity >= 5
                                         ? rarityBirthday
                                         : rarity >= 3
-                                        ? rarityAfterTraining
-                                        : rarityNormal
+                                          ? rarityAfterTraining
+                                          : rarityNormal
                                     }
                                     alt="rarity star"
                                     height="16"

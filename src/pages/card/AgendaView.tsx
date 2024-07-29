@@ -91,7 +91,11 @@ const AgendaView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
           <Grid item xs={6} md={7}>
             <Grid container direction="column" spacing={1}>
               <Grid item>
-                <SpoilerTag releaseTime={new Date(data.releaseAt ?? data.archivePublishedAt)} />
+                <SpoilerTag
+                  releaseTime={
+                    new Date(data.releaseAt ?? data.archivePublishedAt)
+                  }
+                />
               </Grid>
               <Grid item>
                 <ContentTrans

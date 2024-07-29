@@ -28,7 +28,7 @@ interface Props {
   // onSelected?: (param: RowSelectedParams) => void;
 }
 
-const TableMe: React.FC<Props> = observer((props: Props) => {
+const TableMe: React.FC<Props> = observer(() => {
   const { t } = useTranslation();
   const {
     jwtToken,
@@ -173,7 +173,9 @@ const TableMe: React.FC<Props> = observer((props: Props) => {
             >
               <MenuItem value={0}>{t("filter:not_set")}</MenuItem>
               {languages.map((lang) => (
-                <MenuItem value={lang.id}>{lang.name}</MenuItem>
+                <MenuItem value={lang.id} key={lang.code}>
+                  {lang.name}
+                </MenuItem>
               ))}
             </Select>
           </FormControl>
@@ -194,7 +196,9 @@ const TableMe: React.FC<Props> = observer((props: Props) => {
             >
               <MenuItem value={0}>{t("filter:not_set")}</MenuItem>
               {metadata?.languages.map((lang) => (
-                <MenuItem value={lang.id}>{lang.name}</MenuItem>
+                <MenuItem value={lang.id} key={lang.code}>
+                  {lang.name}
+                </MenuItem>
               ))}
             </Select>
           </FormControl>

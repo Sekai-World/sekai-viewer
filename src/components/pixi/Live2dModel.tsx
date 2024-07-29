@@ -8,7 +8,6 @@ import {
   Ticker,
   TickerPlugin,
 } from "pixi.js";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { forwardRef, useEffect, useState } from "react";
 
 interface Live2dModelProps {

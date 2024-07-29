@@ -69,8 +69,8 @@ export const CardThumb: React.FC<
       isBirthdayCard
         ? rarityBirthday
         : _trained
-        ? rarityAfterTraining
-        : rarityNormal,
+          ? rarityAfterTraining
+          : rarityNormal,
     [isBirthdayCard, _trained]
   );
 
@@ -257,12 +257,12 @@ export const CardThumbMedium: React.FC<
           isBirthdayCard
             ? "normal"
             : defaultImage
-            ? defaultImage === "special_training"
-              ? "after_training"
-              : "normal"
-            : _trained
-            ? "after_training"
-            : "normal"
+              ? defaultImage === "special_training"
+                ? "after_training"
+                : "normal"
+              : _trained
+                ? "after_training"
+                : "normal"
         }.webp`,
         setCardThumbImg
       );
@@ -274,8 +274,8 @@ export const CardThumbMedium: React.FC<
       isBirthdayCard
         ? rarityBirthday
         : _trained
-        ? rarityAfterTraining
-        : rarityNormal,
+          ? rarityAfterTraining
+          : rarityNormal,
     [isBirthdayCard, _trained]
   );
   const randomNum = useMemo(() => Math.floor(100 * Math.random()), []);

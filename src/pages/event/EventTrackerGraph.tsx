@@ -127,9 +127,8 @@ const EventTrackerGraph: React.FC<{
   }, [chartData, chartData.length, ranking, t]);
 
   const handleFetchGraph = useCallback(async () => {
-    let data: EventRankingResponse[];
-    data = await getGraph(eventId, ranking);
-    let baseData: typeof chartData = data.map((_data) => ({
+    const data: EventRankingResponse[] = await getGraph(eventId, ranking);
+    const baseData: typeof chartData = data.map((_data) => ({
       time: new Date(_data.timestamp).getTime(),
     }));
     data.forEach((_data) => {

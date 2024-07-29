@@ -19,7 +19,6 @@ import { IUserMetadata } from "../../stores/user";
 import TypographyHeader from "../../components/styled/TypographyHeader";
 import ContainerContent from "../../components/styled/ContainerContent";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface preferLangValues {
   languages: number[];
 }

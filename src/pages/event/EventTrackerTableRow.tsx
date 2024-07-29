@@ -325,34 +325,35 @@ export const LiveRow: React.FC<{
                       </Typography>
                     )}
                   </Grid>
-                  {rankingData.userProfile && !rankingData.userProfileHonors && (
-                    <Grid item xs={12} container spacing={1}>
-                      {rankingData.userProfile.honorId1 && (
-                        <Grid item xs={4} md={3} lg={2}>
-                          <DegreeImage
-                            honorId={rankingData.userProfile.honorId1}
-                            honorLevel={rankingData.userProfile.honorLevel1}
-                          />
-                        </Grid>
-                      )}
-                      {rankingData.userProfile.honorId2 && (
-                        <Grid item xs={4} md={3} lg={2}>
-                          <DegreeImage
-                            honorId={rankingData.userProfile.honorId2}
-                            honorLevel={rankingData.userProfile.honorLevel2}
-                          />
-                        </Grid>
-                      )}
-                      {rankingData.userProfile.honorId3 && (
-                        <Grid item xs={4} md={3} lg={2}>
-                          <DegreeImage
-                            honorId={rankingData.userProfile.honorId3}
-                            honorLevel={rankingData.userProfile.honorLevel3}
-                          />
-                        </Grid>
-                      )}
-                    </Grid>
-                  )}
+                  {rankingData.userProfile &&
+                    !rankingData.userProfileHonors && (
+                      <Grid item xs={12} container spacing={1}>
+                        {rankingData.userProfile.honorId1 && (
+                          <Grid item xs={4} md={3} lg={2}>
+                            <DegreeImage
+                              honorId={rankingData.userProfile.honorId1}
+                              honorLevel={rankingData.userProfile.honorLevel1}
+                            />
+                          </Grid>
+                        )}
+                        {rankingData.userProfile.honorId2 && (
+                          <Grid item xs={4} md={3} lg={2}>
+                            <DegreeImage
+                              honorId={rankingData.userProfile.honorId2}
+                              honorLevel={rankingData.userProfile.honorLevel2}
+                            />
+                          </Grid>
+                        )}
+                        {rankingData.userProfile.honorId3 && (
+                          <Grid item xs={4} md={3} lg={2}>
+                            <DegreeImage
+                              honorId={rankingData.userProfile.honorId3}
+                              honorLevel={rankingData.userProfile.honorLevel3}
+                            />
+                          </Grid>
+                        )}
+                      </Grid>
+                    )}
                   {rankingData.userProfile && rankingData.userProfileHonors && (
                     <Grid item xs={12} container spacing={1}>
                       {rankingData.userProfileHonors.map((honor) => (

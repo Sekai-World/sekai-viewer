@@ -12,7 +12,6 @@ interface ImportMetaEnv extends Readonly<Record<string, string>> {
   readonly VITE_FRONTEND_ASSET_BASE_CN: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }

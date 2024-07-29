@@ -20,6 +20,11 @@ const Countdown: React.FC<React.PropsWithChildren<{ endDate: Date }>> = ({
         t("common:countdown.minute"),
         t("common:countdown.second"),
       ]}
+      digitBlockStyle={{
+        fontSize: "1.5rem",
+        width: "2rem",
+        height: "3rem",
+      }}
     />
   );
 };

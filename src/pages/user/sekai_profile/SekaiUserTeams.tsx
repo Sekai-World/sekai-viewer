@@ -14,6 +14,7 @@ const SekaiUserTeams = observer(() => {
       teamCardsStates={teamCardsStates}
       teamTotalPower={teamTotalPower}
       setTeamCards={setTeamCards}
+      // @ts-expect-error type mismatch
       setTeamCardsStates={setTeamCardsStates}
       setTeamTotalPower={setTeamTotalPower}
     ></TeamBuilder>

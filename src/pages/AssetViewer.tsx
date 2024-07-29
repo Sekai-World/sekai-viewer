@@ -41,7 +41,12 @@ import DotsHorizontal from "~icons/mdi/dots-horizontal";
 import { useLocation, Link as RouterLink } from "react-router-dom";
 import { useToggle } from "../utils";
 import Image from "mui-image";
-import { JsonView, defaultStyles, darkStyles } from "react-json-view-lite";
+import {
+  JsonView,
+  defaultStyles,
+  darkStyles,
+  collapseAllNested,
+} from "react-json-view-lite";
 import "react-json-view-lite/dist/index.css";
 import AudioPlayer from "./music/AudioPlayer";
 import { saveAs } from "file-saver";
@@ -233,7 +238,7 @@ const AssetPreview: React.FC<{ filePath: string } & DialogProps> = ({
           ) : (
             <JsonView
               data={data as object}
-              shouldInitiallyExpand={() => false}
+              shouldExpandNode={collapseAllNested}
               style={mode === "dark" ? darkStyles : defaultStyles}
             />
           )

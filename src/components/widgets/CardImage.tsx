@@ -38,8 +38,8 @@ export const CardImage: React.FC<{ id: number; trained?: boolean }> = ({
       isBirthdayCard
         ? rarityBirthday
         : trained
-        ? rarityAfterTraining
-        : rarityNormal,
+          ? rarityAfterTraining
+          : rarityNormal,
     [isBirthdayCard, trained]
   );
 
@@ -123,8 +123,8 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
         isBirthdayCard
           ? rarityBirthday
           : isTrainableCard
-          ? rarityAfterTraining
-          : rarityNormal,
+            ? rarityAfterTraining
+            : rarityNormal,
       [isBirthdayCard, isTrainableCard]
     );
     const animationDuration = 500;
