@@ -1,5 +1,5 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { useCachedData, useLocalStorage, useToggle } from "../../utils";
+import { useLocalStorage, useToggle } from "../../utils";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
@@ -32,24 +32,50 @@ import ContainerContent from "../../components/styled/ContainerContent";
 import PaperContainer from "../../components/styled/PaperContainer";
 import TypographyCaption from "../../components/styled/TypographyCaption";
 import { useDebounce } from "use-debounce";
+import Axios from "axios";
+import { masterUrl } from "../../utils/urls";
+import useSWR from "swr";
 
 function getPaginatedGachas(gachas: IGachaInfo[], page: number, limit: number) {
   return gachas.slice(limit * (page - 1), limit * page);
 }
-
-const forceJp: ServerRegion = "jp";
 
 const ListCard: React.FC<{ data?: IGachaInfo }> = GridView;
 
 const GachaList: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
   const {
-    settings: { isShowSpoiler, setRegion, region },
+    settings: { isShowSpoiler, region },
   } = useRootStore();
 
-  //const [holdRegion] = useState<ServerRegion>(region);
+  function useCachedData<T extends IGachaInfo>(
+    name: string,
+    useRegion: ServerRegion = region
+  ): [T[] | undefined, boolean, any] {
+    // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
+
+    const fetchCached = useCallback(
+      async (name: string) => {
+        const filename = name.split("|")[1];
+        const urlBase = masterUrl["ww"][useRegion as ServerRegion];
+        const { data }: { data: T[] } = await Axios.get(
+          `${urlBase}/${filename}.json`
+        );
+        return data;
+      },
+      [useRegion]
+    );
+
+    const { data, error } = useSWR(`${useRegion}|${name}`, fetchCached);
+
+    return [data, !error && !data, error];
+  }
+
   const [gachas, setGachas] = useState<IGachaInfo[]>([]);
-  const [gachasCache] = useCachedData<IGachaInfo>("gachas");
+  const [gachasCache] = useCachedData<IGachaInfo>(
+    "gachas",
+    "jp" as ServerRegion
+  );
 
   const [page, setPage] = useState<number>(1);
   const [limit] = useState<number>(12);
@@ -84,7 +110,6 @@ const GachaList: React.FC<unknown> = observer(() => {
     if (!gachasCache?.length) return;
     let sortedCache = [...gachasCache];
     if (isShowSpoiler) {
-      setRegion(forceJp);
       sortedCache = sortedCache.filter(
         (g) => g.startAt >= new Date().getTime() - 31556952000
       );

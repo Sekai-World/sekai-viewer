@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState, useCallback } from "react";
 import { IEventInfo } from "../../types.d";
-import { useCachedData, useLocalStorage, useToggle } from "../../utils";
+import { useLocalStorage, useToggle } from "../../utils";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
@@ -32,6 +32,9 @@ import ContainerContent from "../../components/styled/ContainerContent";
 import { useDebounce } from "use-debounce";
 import PaperContainer from "../../components/styled/PaperContainer";
 import TypographyCaption from "../../components/styled/TypographyCaption";
+import { masterUrl } from "../../utils/urls";
+import useSWR from "swr";
+import Axios from "axios";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -44,14 +47,38 @@ const ListCard: { [key: string]: React.FC<{ data?: IEventInfo }> } = {
 };
 
 const EventList: React.FC<unknown> = observer(() => {
-  const forceJp: ServerRegion = "jp";
   const { t } = useTranslation();
   const {
-    settings: { isShowSpoiler, setRegion },
+    settings: { isShowSpoiler, region },
   } = useRootStore();
-  setRegion(forceJp);
 
-  const [eventsCache] = useCachedData<IEventInfo>("events");
+  function useCachedData<T extends IEventInfo>(
+    name: string,
+    useRegion: ServerRegion = region
+  ): [T[] | undefined, boolean, any] {
+    // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
+
+    const fetchCached = useCallback(
+      async (name: string) => {
+        const filename = name.split("|")[1];
+        const urlBase = masterUrl["ww"][useRegion as ServerRegion];
+        const { data }: { data: T[] } = await Axios.get(
+          `${urlBase}/${filename}.json`
+        );
+        return data;
+      },
+      [useRegion]
+    );
+
+    const { data, error } = useSWR(`${useRegion}|${name}`, fetchCached);
+
+    return [data, !error && !data, error];
+  }
+
+  const [eventsCache] = useCachedData<IEventInfo>(
+    "events",
+    "jp" as ServerRegion
+  );
   const [events, setEvents] = useState<IEventInfo[]>([]);
 
   const [viewGridType] = useState<ViewGridType>(
@@ -99,6 +126,7 @@ const EventList: React.FC<unknown> = observer(() => {
       sortedCache = sortedCache.filter(
         (e) => e.startAt <= new Date().getTime()
       );
+      setSortType("desc");
     }
     if (sortType === "desc") {
       sortedCache = sortedCache.sort(
@@ -124,6 +152,7 @@ const EventList: React.FC<unknown> = observer(() => {
     sortBy,
     isShowSpoiler,
     debouncedSearchTitle,
+    setSortType,
   ]);
 
   useEffect(() => {
