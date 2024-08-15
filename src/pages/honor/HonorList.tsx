@@ -7,6 +7,7 @@ import {
   MenuItem,
   Select,
   Switch,
+  TextField,
   ToggleButton,
 } from "@mui/material";
 import {
@@ -32,6 +33,7 @@ import TypographyHeader from "../../components/styled/TypographyHeader";
 import ContainerContent from "../../components/styled/ContainerContent";
 import PaperContainer from "../../components/styled/PaperContainer";
 import TypographyCaption from "../../components/styled/TypographyCaption";
+import { useDebounce } from "use-debounce";
 
 type ViewGridType = "grid";
 
@@ -64,6 +66,8 @@ const HonorList = () => {
     "honor-list-filter-type",
     ""
   );
+  const [searchTitle, setSearchTitle] = useState<string>("");
+  const [debouncedSearchTitle] = useDebounce(searchTitle, 500);
   const [filteredCache, setFilteredCache] = useState<IHonorInfo[]>([]);
 
   const [sortType, setSortType] = useLocalStorage<string>(
@@ -89,6 +93,11 @@ const HonorList = () => {
           .map((hg) => hg.id);
         result = result.filter((c) => validGroupIds.includes(c.groupId));
       }
+      if (debouncedSearchTitle) {
+        result = result.filter((e) =>
+          e.name.toLowerCase().includes(debouncedSearchTitle.toLowerCase())
+        );
+      }
       if (isHonorGroupOnce) {
         const groupIds = Array.from(
           new Set(result.map((elem) => elem.groupId))
@@ -109,7 +118,15 @@ const HonorList = () => {
       setHonors([]);
       setPage(0);
     }
-  }, [honorGroups, honorType, honorsCache, isHonorGroupOnce, sortBy, sortType]);
+  }, [
+    debouncedSearchTitle,
+    honorGroups,
+    honorType,
+    honorsCache,
+    isHonorGroupOnce,
+    sortBy,
+    sortType,
+  ]);
 
   useLayoutEffect(() => {
     setHonors((honors) => [
@@ -152,7 +169,11 @@ const HonorList = () => {
           justifyContent="flex-end"
           style={{ marginBottom: "0.5rem" }}
         >
-          <Badge color="secondary" variant="dot" invisible={!honorType}>
+          <Badge
+            color="secondary"
+            variant="dot"
+            invisible={!honorType || !searchTitle}
+          >
             <ToggleButton
               value=""
               color="primary"
@@ -261,6 +282,29 @@ const HonorList = () => {
                       </FormControl>
                     </Grid>
                   </Grid>
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justifyContent="space-between"
+                spacing={1}
+              >
+                <Grid item xs={12} md={2}>
+                  <TypographyCaption>{t("common:title")}</TypographyCaption>
+                </Grid>
+                <Grid item xs={12} md={10}>
+                  <FormControl size="small">
+                    <TextField
+                      size="small"
+                      fullWidth
+                      value={searchTitle}
+                      onChange={(e) => setSearchTitle(e.target.value)}
+                      sx={{ minWidth: "200px" }}
+                    />
+                  </FormControl>
                 </Grid>
               </Grid>
               <Grid
