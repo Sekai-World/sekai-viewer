@@ -20,7 +20,7 @@ import overThe3Ticket from "../../assets/common/material/over_the_3_ticket.png";
 import gachaTicketFree10 from "../../assets/common/material/free_gacha_10_ticket.png";
 import gachaTicketStar4 from "../../assets/common/material/gacha_ticket_star4.png";
 
-const materialMap = {
+const materialMap: Record<string, unknown> = {
   coin: coinIcon,
   boost_item: boostIcon,
   honor: ["", honor1Icon, honor2Icon, honor3Icon, honor4Icon],
@@ -48,22 +48,16 @@ const CommonMaterialIcon: React.FC<{
   quantity?: number | string;
   mini?: boolean;
   justify?: string;
-  maxWidth?: string;
+  spacing?: number;
 }> = ({
   materialName,
   materialId,
   quantity,
   mini = false,
-  justify = "flex-end",
-  maxWidth = "none",
+  justify = "center",
+  spacing = 1,
 }) => (
-  <Grid
-    container
-    direction="row"
-    alignItems="center"
-    spacing={1}
-    maxWidth={maxWidth}
-  >
+  <Grid container direction="row" alignItems="center" spacing={spacing}>
     <Grid item xs={mini ? 4 : 12}>
       <Grid container justifyContent={justify}>
         <Grid item>
