@@ -58,7 +58,6 @@ function getPaginatedHonors(
   page: number,
   limit: number
 ) {
-  console.log(page, limit);
   return honors.slice(limit * (page - 1), limit * page);
 }
 
@@ -121,6 +120,10 @@ const BondsHonorList = () => {
         }))
       );
     }
+
+    return () => {
+      setBondsHonorsCache([]);
+    };
   }, [bondsHonorWords, bondsHonors]);
 
   useEffect(() => {
@@ -169,6 +172,12 @@ const BondsHonorList = () => {
       setHonors([]);
       setPage(1);
     }
+
+    return () => {
+      setFilteredCache([]);
+      setHonors([]);
+      setPage(0);
+    };
   }, [
     debouncedSearchTitle,
     bondsHonorWords,
