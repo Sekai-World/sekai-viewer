@@ -1595,3 +1595,17 @@ export interface IMusicOriginal {
   musicId: number;
   videoLink: string;
 }
+
+export interface IIngameCutinCharacters {
+  id: number;
+  ingameCutinCharacterType: string;
+  priority: number;
+  gameCharacterUnitId1: number;
+  gameCharacterUnitId2: number;
+  assetbundleName1: string;
+  assetbundleName2: string;
+  isLotteryTarget: boolean;
+  firstCharacterArchiveVoiceId?: number;
+  secondCharacterArchiveVoiceId?: number;
+  releaseConditionId?: number;
+}
