@@ -15,7 +15,7 @@ import {
 import { getRemoteAssetURL, useCachedData } from "../../utils";
 import { charaIcons } from "../../utils/resources";
 import { useTranslation } from "react-i18next";
-import { AudioPlayButton } from "../storyreader/StoryReaderSnippet";
+import { AudioPlayButton } from "../../components/widgets/AudioPlayButton";
 import { useCharaName } from "../../utils/i18n";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
