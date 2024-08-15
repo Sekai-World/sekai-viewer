@@ -13,6 +13,8 @@ import DegreeImage from "./DegreeImage";
 import Costume3DThumbnail from "./Costume3DThumbnail";
 import { useRootStore } from "../../stores/root";
 import { assetUrl } from "../../utils/urls";
+import BondsDegreeImage from "./BondsDegreeImage";
+import BondsDegreeWord from "./BondsDegreeWord";
 
 const ResourceBox: React.FC<{
   resourceBoxId: number;
@@ -126,6 +128,19 @@ const ResourceBox: React.FC<{
                 honorId={detail.resourceId}
                 key={detail.resourceId}
               />
+            ) : detail.resourceType === "bonds_honor" ? (
+              <BondsDegreeImage
+                style={{ width: "160px" }}
+                honorId={detail.resourceId}
+                honorLevel={detail.resourceLevel}
+                type="bonds"
+                viewType="normal"
+              />
+            ) : detail.resourceType === "bonds_honor_word" ? (
+              <BondsDegreeWord
+                bondsHonorWordId={detail.resourceId}
+                key={detail.resourceId}
+              />
             ) : detail.resourceType === "costume_3d" ? (
               <Costume3DThumbnail costumeId={detail.resourceId!} />
             ) : detail.resourceType !== "honor" ? (
@@ -134,7 +149,6 @@ const ResourceBox: React.FC<{
                 materialId={detail.resourceId}
                 quantity={detail.resourceQuantity}
                 key={detail.resourceId}
-                justify={justifyContent}
               />
             ) : null}
           </Grid>
