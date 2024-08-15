@@ -62,7 +62,7 @@ const BondsHonorDetailDialog: React.FC<{
         .filter((r) => r.bondsGroupId === data.bond.bondsGroupId)
         .sort((a, b) => a.rank - b.rank);
       setRewards([...rewards]);
-      setRank(rewards[0].rank);
+      setRank(data.bond.honorRarity === "low" ? rewards[0].rank : 30);
     }
 
     return () => {
@@ -245,8 +245,11 @@ const BondsHonorDetailDialog: React.FC<{
             size="small"
             onChange={(ev) => setRank(Number(ev.target.value))}
             inputProps={{
-              min: rewards[0].rank,
-              max: rewards.slice(-1)[0].rank,
+              min: data.bond.honorRarity === "low" ? rewards[0].rank : 30,
+              max:
+                data.bond.honorRarity === "low"
+                  ? 29
+                  : rewards.slice(-1)[0].rank,
             }}
           />
         </Grid>
