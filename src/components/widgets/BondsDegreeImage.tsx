@@ -1,7 +1,11 @@
 import { Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { IBondsHonorWord, IBondsHonor, IGameCharaUnit } from "../../types";
-import { getRemoteAssetURL, useCachedData } from "../../utils";
+import {
+  getRemoteAssetURL,
+  getRemoteImageSize,
+  useCachedData,
+} from "../../utils";
 import { degreeFrameMap, degreeFramSubMap } from "../../utils/resources";
 import degreeLevelIcon from "../../assets/frame/icon_degreeLv.png";
 import { observer } from "mobx-react-lite";
@@ -10,11 +14,11 @@ import Svg from "../styled/Svg";
 
 const DegreeImage: React.FC<
   {
-    bondsHonorWordId: number;
-    honorId: number;
+    bondsHonorWordId?: number;
+    honorId?: number;
     type: string;
     viewType?: string;
-    honorLevel: number;
+    honorLevel?: number;
     sub?: boolean;
   } & React.HTMLProps<HTMLDivElement>
 > = observer(
@@ -32,18 +36,30 @@ const DegreeImage: React.FC<
     // const [honorLevel, setHonorLevel] = useState(_honorLevel);
     const [gameCharas, setGameCharas] = useState<IGameCharaUnit[]>([]);
     const [sdLeft, setSdLeft] = useState<string>("");
+    const [sdLeftHeight, setSdLeftHeight] = useState(0);
+    const [sdLeftWidth, setSdLeftWidth] = useState(0);
+    const [sdLeftOffsetX, setSdLeftOffsetX] = useState(0);
+    const [sdLeftOffsetY, setSdLeftOffsetY] = useState(0);
     const [sdRight, setSdRight] = useState<string>("");
+    const [sdRightHeight, setSdRightHeight] = useState(0);
+    const [sdRightWidth, setSdRightWidth] = useState(0);
+    const [sdRightOffsetX, setSdRightOffsetX] = useState(0);
+    const [sdRightOffsetY, setSdRightOffsetY] = useState(0);
     const [wordImage, setWordImage] = useState<string>("");
+    const [wordImageOffsetX, setWordImageOffsetX] = useState(0);
+    const [wordImageOffsetY, setWordImageOffsetY] = useState(0);
     // const [degreeRankImage, setDegreeRankImage] = useState<string>("");
 
     useEffect(() => {
       if (bondsHonors && bondsHonorWords && gameCharacterUnits) {
         const honorDetail = bondsHonors.find((honor) => honor.id === honorId);
         setHonor(honorDetail);
-        const honorWordDetail = bondsHonorWords.find(
-          (honorWord) => honorWord.id === bondsHonorWordId
-        );
-        setHonorWord(honorWordDetail);
+        if (bondsHonorWordId) {
+          const honorWordDetail = bondsHonorWords.find(
+            (honorWord) => honorWord.id === bondsHonorWordId
+          );
+          setHonorWord(honorWordDetail);
+        }
         if (honorDetail)
           setGameCharas([
             gameCharacterUnits.find(
@@ -75,6 +91,18 @@ const DegreeImage: React.FC<
         setWordImage("");
       };
     }, [honorWord, region]);
+
+    useEffect(() => {
+      const func = async () => {
+        if (wordImage) {
+          const size = await getRemoteImageSize(wordImage);
+          setWordImageOffsetX(((sub ? 180 : 380) - size.width) / 2);
+          setWordImageOffsetY((80 - size.height) / 2);
+        }
+      };
+
+      func();
+    }, [sub, wordImage]);
 
     useEffect(() => {
       if (honor && gameCharas.length) {
@@ -127,6 +155,34 @@ const DegreeImage: React.FC<
         setSdRight("");
       };
     }, [gameCharas, honor, region, viewType]);
+
+    useEffect(() => {
+      const func = async () => {
+        if (sdLeft) {
+          const size = await getRemoteImageSize(sdLeft);
+          setSdLeftHeight(size.height);
+          setSdLeftWidth(size.width);
+          setSdLeftOffsetX(20);
+          setSdLeftOffsetY(93 - size.height);
+        }
+      };
+
+      func();
+    }, [sdLeft, sub]);
+
+    useEffect(() => {
+      const func = async () => {
+        if (sdRight) {
+          const size = await getRemoteImageSize(sdRight);
+          setSdRightHeight(size.height);
+          setSdRightWidth(size.width);
+          setSdRightOffsetX((sub ? 160 : 360) - size.width);
+          setSdRightOffsetY(93 - size.height);
+        }
+      };
+
+      func();
+    }, [sdRight, sub]);
 
     return honor === undefined ? null : !!honor ? (
       <Svg
@@ -197,24 +253,24 @@ const DegreeImage: React.FC<
           {/* left character */}
           <image
             href={sdLeft}
-            x="0"
-            y={sub ? -30 : -55}
-            height={sub ? 120 : 160}
-            width={sub ? 120 : 160}
+            x={sdLeftOffsetX}
+            y={sdLeftOffsetY}
+            height={sdLeftHeight}
+            width={sdLeftWidth}
             mask={sub ? "url(#left-sub-crop)" : ""}
           />
           {/* right character */}
           <image
             href={sdRight}
-            x={sub ? 60 : 218}
-            y={sub ? -30 : -55}
-            height={sub ? 120 : 160}
-            width={sub ? 120 : 160}
+            x={sdRightOffsetX}
+            y={sdRightOffsetY}
+            height={sdRightHeight}
+            width={sdRightWidth}
             mask={sub ? "url(#right-sub-crop)" : ""}
           />
           {/* word */}
-          {!sub && (
-            <image href={wordImage} x="0" y="0" height="80" width="380" />
+          {!sub && !!wordImage && (
+            <image href={wordImage} x={wordImageOffsetX} y={wordImageOffsetY} />
           )}
           {/* degree level */}
           {!!honorLevel &&
