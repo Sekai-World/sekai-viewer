@@ -102,9 +102,9 @@ const HomeView = lazy(() => import("./Home"));
 const MusicList = lazy(() => import("./music/MusicList"));
 const GachaList = lazy(() => import("./gacha/GachaList"));
 const EventList = lazy(() => import("./event/EventList"));
-const FutureGachaList = lazy(() => import("./futureevent/FutureGachaList"));
-const FutureEventList = lazy(() => import("./futureevent/FutureEventList"));
-const FutureEventDetail = lazy(() => import("./futureevent/FutureEventDetail"));
+const FutureGachaList = lazy(() => import("./future/FutureGachaList"));
+const FutureEventList = lazy(() => import("./future/FutureEventList"));
+const FutureEventDetail = lazy(() => import("./future/FutureEventDetail"));
 const GachaDetail = lazy(() => import("./gacha/GachaDetail"));
 const CardDetail = lazy(() => import("./card/CardDetail"));
 const MusicDetail = lazy(() => import("./music/MusicDetail"));
@@ -393,7 +393,9 @@ const DrawerContent: React.FC<{
   onFoldButtonClick?: React.MouseEventHandler<HTMLButtonElement>;
 }> = ({ open, onFoldButtonClick }) => {
   const { t } = useTranslation();
-
+  const {
+    settings: { isShowSpoiler },
+  } = useRootStore();
   const leftBtns: IListItemLinkProps[][] = React.useMemo(
     () => [
       [
@@ -440,19 +442,25 @@ const DrawerContent: React.FC<{
         {
           disabled: false,
           icon: <MoveToInboxIcon></MoveToInboxIcon>,
-          text: t("common:futuregacha"),
-          to: "/futuregacha",
-        },
-        {
-          disabled: false,
-          icon: <MoveToInboxIcon></MoveToInboxIcon>,
           text: t("common:gacha"),
           to: "/gacha",
         },
         {
-          disabled: false,
+          children: [
+            {
+              disabled: false,
+              text: t("common:futureevent"),
+              to: "/futureevent",
+            },
+            {
+              disabled: false,
+              text: t("common:futuregacha"),
+              to: "/futuregacha",
+            },
+          ],
+          disabled: !isShowSpoiler,
           icon: <CalendarText></CalendarText>,
-          text: t("common:futureevent"),
+          text: t("common:futures"),
           to: "/futureevent",
         },
         {

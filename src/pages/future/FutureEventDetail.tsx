@@ -54,9 +54,6 @@ import ContainerContent from "../../components/styled/ContainerContent";
 import TabPanelPadding from "../../components/styled/TabPanelPadding";
 import GridOut from "../../components/styled/GridOut";
 import LinkNoDecoration from "../../components/styled/LinkNoDecoration";
-import useSWR from "swr";
-import Axios from "axios";
-import { masterUrl } from "../../utils/urls";
 
 const EventDetail: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
@@ -68,26 +65,7 @@ const EventDetail: React.FC<unknown> = observer(() => {
   } = useRootStore();
   const [humanizeDuration] = useDurationI18n();
   const { getEvent } = useStrapi();
-
-  function useCachedEvents<T extends IEventInfo>(
-    name: string,
-    useRegion: ServerRegion = region
-  ): [T[] | undefined, boolean, unknown] {
-    // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
-
-    const fetchCached = useCallback(async (name: string) => {
-      const [region, filename] = name.split("|");
-      const urlBase = masterUrl["ww"][region as ServerRegion];
-      const { data }: { data: T[] } = await Axios.get(
-        `${urlBase}/${filename}.json`
-      );
-      return data;
-    }, []);
-    const { data, error } = useSWR(`${useRegion}|${name}`, fetchCached);
-    return [data, !error && !data, error];
-  }
-
-  const [events] = useCachedEvents<IEventInfo>("events", "jp" as ServerRegion);
+  const [events] = useCachedData<IEventInfo>("events", "jp" as ServerRegion);
   const [eventDeckBonuses] = useCachedData<IEventDeckBonus>("eventDeckBonuses");
   const [gameCharacterUnits] =
     useCachedData<IGameCharaUnit>("gameCharacterUnits");

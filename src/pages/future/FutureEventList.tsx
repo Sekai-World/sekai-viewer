@@ -1,11 +1,11 @@
 import React, { Fragment, useEffect, useState, useCallback } from "react";
-import { IEventInfo } from "../../types.d";
+import { IEventInfo } from "../../types";
 import { useLocalStorage, useToggle } from "../../utils";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
 
 import { useTranslation } from "react-i18next";
 import GridView from "./FutureEventGridView";
-import { ServerRegion } from "../../types.d";
+import { ServerRegion } from "../../types";
 import {
   GetApp,
   GetAppOutlined,
@@ -32,9 +32,7 @@ import ContainerContent from "../../components/styled/ContainerContent";
 import { useDebounce } from "use-debounce";
 import PaperContainer from "../../components/styled/PaperContainer";
 import TypographyCaption from "../../components/styled/TypographyCaption";
-import { masterUrl } from "../../utils/urls";
-import useSWR from "swr";
-import Axios from "axios";
+import { useCachedData } from "../../utils/index";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -49,26 +47,8 @@ const ListCard: { [key: string]: React.FC<{ data?: IEventInfo }> } = {
 const EventList: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
   const {
-    settings: { isShowSpoiler, region },
+    settings: { isShowSpoiler },
   } = useRootStore();
-
-  function useCachedData<T extends IEventInfo>(
-    name: string,
-    useRegion: ServerRegion = region
-  ): [T[] | undefined, boolean, unknown] {
-    // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
-
-    const fetchCached = useCallback(async (name: string) => {
-      const [region, filename] = name.split("|");
-      const urlBase = masterUrl["ww"][region as ServerRegion];
-      const { data }: { data: T[] } = await Axios.get(
-        `${urlBase}/${filename}.json`
-      );
-      return data;
-    }, []);
-    const { data, error } = useSWR(`${useRegion}|${name}`, fetchCached);
-    return [data, !error && !data, error];
-  }
 
   const [events, setEvents] = useState<IEventInfo[]>([]);
   const [eventsCache] = useCachedData<IEventInfo>(
@@ -113,12 +93,8 @@ const EventList: React.FC<unknown> = observer(() => {
     let sortedCache = [...eventsCache];
     if (isShowSpoiler) {
       sortedCache = sortedCache.filter(
+        // gets the events starting a year prior, in milliseconds
         (e) => e.startAt >= new Date().getTime() - 31556952000
-      );
-    }
-    if (!isShowSpoiler) {
-      sortedCache = sortedCache.filter(
-        (e) => e.startAt <= new Date().getTime()
       );
     }
     if (sortType === "desc") {
@@ -138,8 +114,6 @@ const EventList: React.FC<unknown> = observer(() => {
     setSortedCache(sortedCache);
     setEvents([]);
     setPage(0);
-    // needed otherwise lint starts complaining that updateSortBy is there and isnt there at the same time
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     eventsCache,
     setPage,

@@ -100,6 +100,10 @@ export function useRefState<S>(
   return [state, stateRef, setState];
 }
 
+export function useCachedData<T extends IEventInfo | IGachaInfo>(
+  name: string,
+  paramRegion: ServerRegion
+): [T[] | undefined, boolean, any];
 export function useCachedData<
   T extends
     | IGachaInfo
@@ -156,9 +160,66 @@ export function useCachedData<
     | IEventMusic
     | IGachaTicket
     | IMusicOriginal,
->(name: string): [T[] | undefined, boolean, any] {
-  // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
-  const { region } = useRootStore();
+>(name: string): [T[] | undefined, boolean, any];
+export function useCachedData<
+  T extends
+    | IGachaInfo
+    | ICardInfo
+    | IGameChara
+    | IMusicInfo
+    | ISkillInfo
+    | ICardRarity
+    | ICharacterRank
+    | IMusicVocalInfo
+    | IOutCharaProfile
+    | IUserInformationInfo
+    | IMusicDifficultyInfo
+    | IMusicTagInfo
+    | IReleaseCondition
+    | IMusicDanceMembers
+    | IEventInfo
+    | IEventDeckBonus
+    | IGameCharaUnit
+    | IResourceBoxInfo
+    | IHonorInfo
+    | ICardEpisode
+    | ITipInfo
+    | ICharaProfile
+    | IUnitProfile
+    | IUnitStory
+    | IMobCharacter
+    | ICharacter2D
+    | IEventStory
+    | IHonorMission
+    | INormalMission
+    | IBeginnerMission
+    | IHonorGroup
+    | ICharacterMission
+    | IEventCard
+    | IMusicAchievement
+    | IGachaCeilItem
+    | ICharacter3D
+    | ICostume3DModel
+    | IAreaItemLevel
+    | IAreaItem
+    | ICheerfulCarnivalSummary
+    | ICheerfulCarnivalTeam
+    | IArea
+    | IActionSet
+    | ISpecialStory
+    | IBondsHonor
+    | IBondsHonorWord
+    | IBond
+    | IBondsReward
+    | IEventRarityBonusRate
+    | IMasterLesson
+    | IMasterLessonReward
+    | IEventMusic
+    | IGachaTicket
+    | IMusicOriginal,
+>(name: string, paramRegion?: ServerRegion): [T[] | undefined, boolean, any] {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const region = paramRegion ? paramRegion : useRootStore().region;
 
   const fetchCached = useCallback(async (name: string) => {
     const [region, filename] = name.split("|");

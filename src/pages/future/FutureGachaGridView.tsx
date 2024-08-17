@@ -2,7 +2,7 @@ import { Card, CardContent, Typography } from "@mui/material";
 import { Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { IGachaInfo, ServerRegion } from "../../types.d";
+import { IGachaInfo, ServerRegion } from "../../types";
 import { getRemoteAssetURL } from "../../utils";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
 import SpoilerTag from "../../components/widgets/SpoilerTag";

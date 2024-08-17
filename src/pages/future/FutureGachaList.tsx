@@ -5,7 +5,7 @@ import InfiniteScroll from "../../components/helpers/InfiniteScroll";
 import { useTranslation } from "react-i18next";
 import { IGachaInfo } from "../../types";
 import GridView from "./FutureGachaGridView";
-import { ServerRegion } from "../../types.d";
+import { ServerRegion } from "../../types";
 import {
   Update,
   Publish,
@@ -32,9 +32,7 @@ import ContainerContent from "../../components/styled/ContainerContent";
 import PaperContainer from "../../components/styled/PaperContainer";
 import TypographyCaption from "../../components/styled/TypographyCaption";
 import { useDebounce } from "use-debounce";
-import Axios from "axios";
-import { masterUrl } from "../../utils/urls";
-import useSWR from "swr";
+import { useCachedData } from "../../utils/index";
 
 function getPaginatedGachas(gachas: IGachaInfo[], page: number, limit: number) {
   return gachas.slice(limit * (page - 1), limit * page);
@@ -45,27 +43,8 @@ const ListCard: React.FC<{ data?: IGachaInfo }> = GridView;
 const GachaList: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
   const {
-    settings: { isShowSpoiler, region },
+    settings: { isShowSpoiler },
   } = useRootStore();
-
-  function useCachedData<T extends IGachaInfo>(
-    name: string,
-    useRegion: ServerRegion = region
-  ): [T[] | undefined, boolean, unknown] {
-    // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
-
-    const fetchCached = useCallback(async (name: string) => {
-      const [fetchRegion, filename] = name.split("|");
-      const urlBase = masterUrl["ww"][fetchRegion as ServerRegion];
-      const { data }: { data: T[] } = await Axios.get(
-        `${urlBase}/${filename}.json`
-      );
-      return data;
-    }, []);
-
-    const { data, error } = useSWR(`${useRegion}|${name}`, fetchCached);
-    return [data, !error && !data, error];
-  }
 
   const [gachas, setGachas] = useState<IGachaInfo[]>([]);
   const [gachasCache] = useCachedData<IGachaInfo>(
@@ -73,7 +52,6 @@ const GachaList: React.FC<unknown> = observer(() => {
     "jp" as ServerRegion
   );
 
-  console.log("b");
   const [page, setPage] = useState<number>(1);
   const [limit] = useState<number>(12);
   const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
@@ -108,13 +86,12 @@ const GachaList: React.FC<unknown> = observer(() => {
     let sortedCache = [...gachasCache];
     if (isShowSpoiler) {
       sortedCache = sortedCache.filter(
+        // gets the events starting a year prior, in milliseconds
         (g) => g.startAt >= new Date().getTime() - 31556952000
       );
     }
     if (!isShowSpoiler) {
-      sortedCache = sortedCache.filter(
-        (g) => g.startAt <= new Date().getTime()
-      );
+      sortedCache = [];
     }
     if (sortType === "desc") {
       sortedCache = sortedCache.sort(
@@ -133,8 +110,6 @@ const GachaList: React.FC<unknown> = observer(() => {
     setSortedCache(sortedCache);
     setGachas([]);
     setPage(0);
-    // needed otherwise lint starts complaining that updateSortBy is there and isnt there at the same time
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearchTitle, gachasCache, isShowSpoiler, sortBy, sortType]);
 
   useEffect(() => {
