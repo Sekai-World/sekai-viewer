@@ -26,7 +26,6 @@ All notable changes to this project will be documented in this file. See [standa
 * update import paths for AudioPlayButton component ([b64024f](https://github.com/Sekai-World/sekai-viewer/commits/b64024ff4f526068687e26cd173aa370f5016904))
 * update rank input min and max values in BondsHonorDetailDialog ([9e07291](https://github.com/Sekai-World/sekai-viewer/commits/9e072917437394e50feb5157737d0eb9ea5ba591))
 
-
 ### [1.11.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.11.1...v1.11.2) (2024-07-22)
 
 

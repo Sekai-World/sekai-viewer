@@ -162,7 +162,8 @@ export function useCachedData<
     | IGachaTicket
     | IMusicOriginal
     | IIngameCutinCharacters,
->(name: string): [T[] | undefined, boolean, any];
+>
+(name: string): [T[] | undefined, boolean, any];
 export function useCachedData<
   T extends
     | IGachaInfo
@@ -223,7 +224,6 @@ export function useCachedData<
 >(name: string, paramRegion?: ServerRegion): [T[] | undefined, boolean, any] {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const region = paramRegion ? paramRegion : useRootStore().region;
-
   const fetchCached = useCallback(async (name: string) => {
     const [region, filename] = name.split("|");
     const urlBase = masterUrl["ww"][region as ServerRegion];

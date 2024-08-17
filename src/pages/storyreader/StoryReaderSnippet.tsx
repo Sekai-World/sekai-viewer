@@ -3,95 +3,21 @@ import {
   Button,
   Card,
   Chip,
-  CircularProgress,
-  Fab,
   Grid,
-  Link,
   styled,
   Typography,
 } from "@mui/material";
-import { CloudDownload, PlayArrow, Stop } from "@mui/icons-material";
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Howl } from "howler";
 import { charaIcons } from "../../utils/resources";
-import { useEffect } from "react";
 import Image from "mui-image";
 import MoviePlayer from "../../components/blocks/MoviePlayer";
+import AudioPlayButton from "../../components/widgets/AudioPlayButton";
 
 const CardStyled = styled(Card)(({ theme }) => ({
   margin: theme.spacing(1.5, 0),
   padding: theme.spacing(1.5, 0),
 }));
-
-export const AudioPlayButton: React.FC<{ url: string }> = ({ url }) => {
-  const [isPlay, setIsPlay] = useState(false);
-  const [audioSource, setAudioSource] = useState<Howl>();
-  const [isAudioLoading, setIsAudioLoading] = useState(false);
-
-  const PlayAudio = useCallback(() => {
-    if (!isPlay) {
-      if (audioSource) {
-        audioSource.play();
-        return;
-      }
-      setIsAudioLoading(true);
-      const audio = new Howl({
-        src: [url],
-      });
-      audio.on("load", () => {
-        setIsAudioLoading(false);
-        audio.play();
-      });
-      audio.on("play", () => {
-        setIsPlay(true);
-      });
-      audio.on("end", () => {
-        setIsPlay(false);
-      });
-      setAudioSource(audio);
-    } else {
-      if (audioSource) {
-        audioSource.stop();
-      }
-      setIsPlay(false);
-    }
-  }, [url, audioSource, isPlay]);
-
-  useEffect(() => {
-    return () => {
-      if (audioSource) {
-        audioSource.stop();
-        audioSource.unload();
-      }
-    };
-  }, [audioSource]);
-
-  return (
-    <Grid container spacing={1}>
-      <Grid item>
-        <Fab onClick={PlayAudio} size="small">
-          {isPlay ? (
-            <Stop />
-          ) : isAudioLoading ? (
-            <CircularProgress
-              variant="indeterminate"
-              size="1rem"
-              color="inherit"
-            />
-          ) : (
-            <PlayArrow />
-          )}
-        </Fab>
-      </Grid>
-      <Grid item>
-        <Fab size="small" component={Link} href={url} download>
-          <CloudDownload />
-        </Fab>
-      </Grid>
-    </Grid>
-  );
-};
 
 export const Talk: React.FC<{
   characterId: number;

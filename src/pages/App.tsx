@@ -522,6 +522,18 @@ const DrawerContent: React.FC<{
           to: "/mission",
         },
         {
+          children: [
+            {
+              disabled: false,
+              text: t("common:honor.bonds"),
+              to: "/honor/bonds",
+            },
+            {
+              disabled: false,
+              text: t("common:honor.others"),
+              to: "/honor/others",
+            },
+          ],
           disabled: false,
           icon: <Dns></Dns>,
           text: t("honor:page_title"),
