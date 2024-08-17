@@ -192,54 +192,53 @@ const DegreeImage: React.FC<
     }, [honor, honorGroup, region, sub, type]);
 
     return honor === undefined ? null : !!honor ? (
-      <Svg style={style}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox={sub ? "0 0 180 80" : "0 0 380 80"}
-        >
-          <image
-            href={degreeImage}
-            x="0"
-            y="0"
-            height="80"
-            width={sub ? 180 : 380}
-          />
-          {/* frame */}
-          <image
-            href={
-              sub
-                ? degreeFramSubMap[honor.honorRarity]
-                : degreeFrameMap[honor.honorRarity]
-            }
-            x="0"
-            y="0"
-            height="80"
-            width={sub ? 180 : 380}
-          />
-          {/* degree level */}
-          {!!honorLevel &&
-            honor.levels.length > 1 &&
-            Array.from({ length: honorLevel }).map((_, idx) => (
-              <image
-                key={idx}
-                href={degreeLevelIcon}
-                x={54 + idx * 16}
-                y="64"
-                height="16"
-                width="16"
-              />
-            ))}
-          {/* rank */}
-          {degreeRankImage && (
+      <Svg
+        style={style}
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox={sub ? "0 0 180 80" : "0 0 380 80"}
+      >
+        <image
+          href={degreeImage}
+          x="0"
+          y="0"
+          height="80"
+          width={sub ? 180 : 380}
+        />
+        {/* frame */}
+        <image
+          href={
+            sub
+              ? degreeFramSubMap[honor.honorRarity]
+              : degreeFrameMap[honor.honorRarity]
+          }
+          x="0"
+          y="0"
+          height="80"
+          width={sub ? 180 : 380}
+        />
+        {/* degree level */}
+        {!!honorLevel &&
+          honor.levels.length > 1 &&
+          Array.from({ length: honorLevel }).map((_, idx) => (
             <image
-              href={degreeRankImage}
-              x={sub ? 30 : 190}
-              y={sub ? 42 : 0}
-              width={sub ? 120 : 150}
-              height={sub ? 38 : 78}
+              key={idx}
+              href={degreeLevelIcon}
+              x={54 + idx * 16}
+              y="64"
+              height="16"
+              width="16"
             />
-          )}
-        </svg>
+          ))}
+        {/* rank */}
+        {degreeRankImage && (
+          <image
+            href={degreeRankImage}
+            x={sub ? 30 : 190}
+            y={sub ? 42 : 0}
+            width={sub ? 120 : 150}
+            height={sub ? 38 : 78}
+          />
+        )}
       </Svg>
     ) : (
       <Skeleton

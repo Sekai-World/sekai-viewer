@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.12.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.11.2...v1.12.0) (2024-08-17)
+
+
+### Features
+
+* add bondsHonor (kizuna titles) ([b39053e](https://github.com/Sekai-World/sekai-viewer/commits/b39053e13d971a06822c0c7ba317bb538de7925c))
+* **honor:** :sparkles: add search to honor list filter ([c53e751](https://github.com/Sekai-World/sekai-viewer/commits/c53e75128e54a9c1d67dfb4f4838a63c287f2b89))
+
+
+### Bug Fixes
+
+* add Howl import to AudioPlayButton component ([c12de28](https://github.com/Sekai-World/sekai-viewer/commits/c12de289e7a3640523a110521eb5789b2d7f0f4c))
+
+
+### Refactors
+
+* add definition for ingameCutinCharacters ([ea3ca5d](https://github.com/Sekai-World/sekai-viewer/commits/ea3ca5d3d29572ac9de60a2c5aa44cadd8e40971))
+* make AudioPlayButton a common widget ([7912574](https://github.com/Sekai-World/sekai-viewer/commits/79125746b044762398af557fc2e4b9e131726e31))
+* remove deprecated components, add entry to bonds title ([624ab3a](https://github.com/Sekai-World/sekai-viewer/commits/624ab3aaf9531165277efbe71d2dad0b87c919a8))
+* remove redundant svg tag from DegreeImage component ([f44c972](https://github.com/Sekai-World/sekai-viewer/commits/f44c9723a544dd7316b86629c3017033a7d76449))
+* update CommonMaterialIcon component with spacing prop ([4de4f1a](https://github.com/Sekai-World/sekai-viewer/commits/4de4f1ab1a839fd25e7377ab31abe72ecbb9d85e))
+* update import paths for AudioPlayButton component ([b64024f](https://github.com/Sekai-World/sekai-viewer/commits/b64024ff4f526068687e26cd173aa370f5016904))
+* update rank input min and max values in BondsHonorDetailDialog ([9e07291](https://github.com/Sekai-World/sekai-viewer/commits/9e072917437394e50feb5157737d0eb9ea5ba591))
+
+
 ### [1.11.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.11.1...v1.11.2) (2024-07-22)
 
 

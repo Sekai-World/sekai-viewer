@@ -77,6 +77,7 @@ import {
   ICompactResourceBoxDetail,
   IGachaTicket,
   IMusicOriginal,
+  IIngameCutinCharacters,
 } from "./../types.d";
 import { useAssetI18n, useCharaName } from "./i18n";
 import { useLocation } from "react-router-dom";
@@ -159,7 +160,8 @@ export function useCachedData<
     | IMasterLessonReward
     | IEventMusic
     | IGachaTicket
-    | IMusicOriginal,
+    | IMusicOriginal
+    | IIngameCutinCharacters,
 >(name: string): [T[] | undefined, boolean, any];
 export function useCachedData<
   T extends
@@ -216,7 +218,8 @@ export function useCachedData<
     | IMasterLessonReward
     | IEventMusic
     | IGachaTicket
-    | IMusicOriginal,
+    | IMusicOriginal
+    | IIngameCutinCharacters,
 >(name: string, paramRegion?: ServerRegion): [T[] | undefined, boolean, any] {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const region = paramRegion ? paramRegion : useRootStore().region;
@@ -925,4 +928,15 @@ export async function getGachaRemoteImages(
     cardname: filenames.filter((name) => name.includes("cardname_gacha")),
     img: filenames.filter((name) => name.includes("img_gacha")),
   };
+}
+export async function getRemoteImageSize(
+  url: string
+): Promise<{ width: number; height: number }> {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () =>
+      resolve({ width: image.naturalWidth, height: image.naturalHeight });
+    image.onerror = reject;
+    image.src = url;
+  });
 }

@@ -62,7 +62,7 @@ import {
   ReleaseCondTrans,
 } from "../../components/helpers/ContentTrans";
 import ResourceBox from "../../components/widgets/ResourceBox";
-import { AudioPlayButton } from "../storyreader/StoryReaderSnippet";
+import { AudioPlayButton } from "../../components/widgets/AudioPlayButton";
 // import AdSense from "../../components/blocks/AdSense";
 import { OpenInNew } from "@mui/icons-material";
 import CommentTextMultiple from "~icons/mdi/comment-text-multiple";

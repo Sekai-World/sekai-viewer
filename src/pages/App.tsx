@@ -8,7 +8,6 @@ import {
   Divider,
   Drawer as MuiDrawer,
   Fab,
-  Hidden,
   IconButton,
   List,
   ListItem,
@@ -24,6 +23,7 @@ import {
   SwipeableDrawer,
   CSSObject,
   Box,
+  ListItemButton,
 } from "@mui/material";
 import {
   StyledEngineProvider,
@@ -96,6 +96,7 @@ import { observer } from "mobx-react-lite";
 import { IUserMetadata } from "../stores/user";
 import { fontFaceOverride, fontList } from "../utils/fonts";
 import { WebpMachine } from "webp-hero";
+import BondsHonorList from "./honor/BondsHonorList";
 
 const CardList = lazy(() => import("./card/CardList"));
 const HomeView = lazy(() => import("./Home"));
@@ -645,17 +646,17 @@ const DrawerContent: React.FC<{
       <div className="drawer-content-toolbar">
         <Typography variant="h6">{t("common:toolbar.title")}</Typography>
         <Box sx={{ marginLeft: "auto" }}>
-          <Hidden mdDown implementation="css">
-            <IconButton onClick={onFoldButtonClick}>
-              <ArrowBackIosIcon />
-            </IconButton>
-          </Hidden>
+          <IconButton
+            onClick={onFoldButtonClick}
+            sx={{ display: { xs: "none", md: "block" } }}
+          >
+            <ArrowBackIosIcon />
+          </IconButton>
         </Box>
       </div>
       <Divider></Divider>
       <List>
-        <ListItem
-          button
+        <ListItemButton
           onClick={() =>
             setSidebarExpansionStates((s) => [!s[0], ...s.slice(1)])
           }
@@ -667,7 +668,7 @@ const DrawerContent: React.FC<{
             {t("common:community")}
           </Typography>
           {sidebarExpansionStates[0] ? <ExpandLess /> : <ExpandMore />}
-        </ListItem>
+        </ListItemButton>
         <Collapse
           in={sidebarExpansionStates[0]}
           // timeout="auto"
@@ -677,21 +678,19 @@ const DrawerContent: React.FC<{
             elem.children ? (
               <ListItemWithChildren key={elem.to} item={elem} />
             ) : (
-              <ListItem
+              <ListItemButton
                 disabled={elem.disabled}
-                button
                 key={elem.to}
                 classes={{
                   root: "drawer-content-list-item",
                 }}
               >
                 <ListItemLink {...elem} />
-              </ListItem>
+              </ListItemButton>
             )
           )}
         </Collapse>
-        <ListItem
-          button
+        <ListItemButton
           onClick={() =>
             setSidebarExpansionStates((s) => [s[0], !s[1], ...s.slice(2)])
           }
@@ -703,7 +702,7 @@ const DrawerContent: React.FC<{
             {t("common:information")}
           </Typography>
           {sidebarExpansionStates[1] ? <ExpandLess /> : <ExpandMore />}
-        </ListItem>
+        </ListItemButton>
         <Collapse
           in={sidebarExpansionStates[1]}
           // timeout="auto"
@@ -713,9 +712,8 @@ const DrawerContent: React.FC<{
             elem.children ? (
               <ListItemWithChildren key={elem.to} item={elem} />
             ) : (
-              <ListItem
+              <ListItemButton
                 disabled={elem.disabled}
-                button
                 key={elem.to}
                 classes={{
                   root: "drawer-content-list-item",
@@ -727,12 +725,11 @@ const DrawerContent: React.FC<{
                   icon={elem.icon}
                   disabled={elem.disabled}
                 />
-              </ListItem>
+              </ListItemButton>
             )
           )}
         </Collapse>
-        <ListItem
-          button
+        <ListItemButton
           onClick={() =>
             setSidebarExpansionStates((s) => [s[0], s[1], !s[2], ...s.slice(3)])
           }
@@ -744,15 +741,14 @@ const DrawerContent: React.FC<{
             {t("common:tools")}
           </Typography>
           {sidebarExpansionStates[2] ? <ExpandLess /> : <ExpandMore />}
-        </ListItem>
+        </ListItemButton>
         <Collapse in={sidebarExpansionStates[2]} timeout="auto" unmountOnExit>
           {leftBtns[2].map((elem) =>
             elem.children ? (
               <ListItemWithChildren key={elem.to} item={elem} />
             ) : (
-              <ListItem
+              <ListItemButton
                 disabled={elem.disabled}
-                button
                 key={elem.to}
                 classes={{
                   root: "drawer-content-list-item",
@@ -764,12 +760,11 @@ const DrawerContent: React.FC<{
                   icon={elem.icon}
                   disabled={elem.disabled}
                 />
-              </ListItem>
+              </ListItemButton>
             )
           )}
         </Collapse>
-        <ListItem
-          button
+        <ListItemButton
           onClick={() =>
             setSidebarExpansionStates((s) => [
               ...s.slice(0, 3),
@@ -785,15 +780,14 @@ const DrawerContent: React.FC<{
             {t("common:about")}
           </Typography>
           {sidebarExpansionStates[3] ? <ExpandLess /> : <ExpandMore />}
-        </ListItem>
+        </ListItemButton>
         <Collapse in={sidebarExpansionStates[3]} timeout="auto" unmountOnExit>
           {leftBtns[3].map((elem) =>
             elem.children ? (
               <ListItemWithChildren key={elem.to} item={elem} />
             ) : (
-              <ListItem
+              <ListItemButton
                 disabled={elem.disabled}
-                button
                 key={elem.to}
                 classes={{
                   root: "drawer-content-list-item",
@@ -805,7 +799,7 @@ const DrawerContent: React.FC<{
                   icon={elem.icon}
                   disabled={elem.disabled}
                 />
-              </ListItem>
+              </ListItemButton>
             )
           )}
         </Collapse>
@@ -950,102 +944,102 @@ const AppInner = observer((props: { theme: Theme }) => {
     <SnackbarProvider>
       <Root>
         <CssBaseline />
-        <Hidden mdDown implementation="css">
-          <DesktopAppBar position="fixed" open={desktopOpen}>
-            <Toolbar>
+        <DesktopAppBar
+          position="fixed"
+          open={desktopOpen}
+          sx={{ display: { xs: "none", md: "block" } }}
+        >
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              edge="start"
+              onClick={() => setDesktopOpen(true)}
+              className="app-inner-menu-button"
+              size="large"
+              sx={{
+                ...(desktopOpen && { display: "none" }),
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography
+              variant="h6"
+              noWrap
+              classes={{ root: "app-inner-title" }}
+            >
+              Sekai Viewer <small>{import.meta.env.PACKAGE_VERSION}</small>
+            </Typography>
+            <IconButton
+              color="inherit"
+              onClick={() => goBack()}
+              disableRipple
+              style={{ padding: ".6rem" }}
+              size="medium"
+            >
+              <ArrowBackIcon fontSize="inherit" />
+            </IconButton>
+            <Link to="/settings" style={{ color: theme.palette.common.white }}>
               <IconButton
                 color="inherit"
-                edge="start"
-                onClick={() => setDesktopOpen(true)}
-                className="app-inner-menu-button"
-                size="large"
-                sx={{
-                  ...(desktopOpen && { display: "none" }),
-                }}
-              >
-                <MenuIcon />
-              </IconButton>
-              <Typography
-                variant="h6"
-                noWrap
-                classes={{ root: "app-inner-title" }}
-              >
-                Sekai Viewer <small>{import.meta.env.PACKAGE_VERSION}</small>
-              </Typography>
-              <IconButton
-                color="inherit"
-                onClick={() => goBack()}
-                disableRipple
                 style={{ padding: ".6rem" }}
                 size="medium"
               >
-                <ArrowBackIcon fontSize="inherit" />
+                <SettingsIcon fontSize="inherit" />
               </IconButton>
-              <Link
-                to="/settings"
-                style={{ color: theme.palette.common.white }}
-              >
-                <IconButton
-                  color="inherit"
-                  style={{ padding: ".6rem" }}
-                  size="medium"
-                >
-                  <SettingsIcon fontSize="inherit" />
-                </IconButton>
-              </Link>
-              <Link to="/user" style={{ color: theme.palette.common.white }}>
-                <IconButton
-                  color="inherit"
-                  style={{ padding: ".6rem" }}
-                  size="medium"
-                >
-                  <AccountCircle fontSize="inherit" />
-                </IconButton>
-              </Link>
-            </Toolbar>
-          </DesktopAppBar>
-        </Hidden>
-        <Hidden mdUp implementation="css">
-          <MuiAppBar position="fixed">
-            <Toolbar>
+            </Link>
+            <Link to="/user" style={{ color: theme.palette.common.white }}>
               <IconButton
                 color="inherit"
-                edge="start"
-                onClick={() => setMobileOpen(true)}
-                className="app-inner-menu-button"
-                size="large"
-              >
-                <MenuIcon />
-              </IconButton>
-              <Typography
-                variant="h6"
-                noWrap
-                classes={{ root: "app-inner-title" }}
-              >
-                Sekai Viewer <small>{import.meta.env.PACKAGE_VERSION}</small>
-              </Typography>
-              <IconButton
-                color="inherit"
-                onClick={() => goBack()}
-                disableRipple
                 style={{ padding: ".6rem" }}
                 size="medium"
               >
-                <ArrowBackIosIcon fontSize="inherit" />
+                <AccountCircle fontSize="inherit" />
               </IconButton>
-              <IconButton
-                onClick={(ev) => {
-                  setMobileMenuOpen(true);
-                  setMobileMenuAnchorEl(ev.currentTarget);
-                }}
-                color="inherit"
-                size="large"
-              >
-                <MoreVert />
-              </IconButton>
-            </Toolbar>
-          </MuiAppBar>
-        </Hidden>
+            </Link>
+          </Toolbar>
+        </DesktopAppBar>
+        <MuiAppBar
+          position="fixed"
+          sx={{ display: { md: "none", xs: "block" } }}
+        >
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              edge="start"
+              onClick={() => setMobileOpen(true)}
+              className="app-inner-menu-button"
+              size="large"
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography
+              variant="h6"
+              noWrap
+              classes={{ root: "app-inner-title" }}
+            >
+              Sekai Viewer <small>{import.meta.env.PACKAGE_VERSION}</small>
+            </Typography>
+            <IconButton
+              color="inherit"
+              onClick={() => goBack()}
+              disableRipple
+              style={{ padding: ".6rem" }}
+              size="medium"
+            >
+              <ArrowBackIosIcon fontSize="inherit" />
+            </IconButton>
+            <IconButton
+              onClick={(ev) => {
+                setMobileMenuOpen(true);
+                setMobileMenuAnchorEl(ev.currentTarget);
+              }}
+              color="inherit"
+              size="large"
+            >
+              <MoreVert />
+            </IconButton>
+          </Toolbar>
+        </MuiAppBar>
         <Menu
           anchorEl={mobileMenuAnchorEl}
           keepMounted
@@ -1082,40 +1076,38 @@ const AppInner = observer((props: { theme: Theme }) => {
           </MenuItem>
         </Menu>
         <nav className="app-inner-drawer">
-          <Hidden mdUp implementation="css">
-            <SwipeableDrawer
-              container={container}
-              variant="temporary"
-              anchor="left"
-              open={mobileOpen}
-              onClose={() => setMobileOpen(false)}
-              onOpen={() => setMobileOpen(true)}
-              classes={{
-                paper: "app-inner-drawer-paper",
-              }}
-              ModalProps={{
-                keepMounted: true,
-              }}
-              disableBackdropTransition={!iOS}
-              disableDiscovery={iOS}
-            >
-              <DrawerContent open={mobileOpen} />
-            </SwipeableDrawer>
-          </Hidden>
-          <Hidden mdDown implementation="css">
-            <Drawer
-              variant="permanent"
+          <SwipeableDrawer
+            container={container}
+            variant="temporary"
+            anchor="left"
+            open={mobileOpen}
+            onClose={() => setMobileOpen(false)}
+            onOpen={() => setMobileOpen(true)}
+            classes={{
+              paper: "app-inner-drawer-paper",
+            }}
+            ModalProps={{
+              keepMounted: true,
+            }}
+            disableBackdropTransition={!iOS}
+            disableDiscovery={iOS}
+            sx={{ display: { md: "none", xs: "block" } }}
+          >
+            <DrawerContent open={mobileOpen} />
+          </SwipeableDrawer>
+          <Drawer
+            variant="permanent"
+            open={desktopOpen}
+            classes={{
+              paper: "app-inner-drawer-paper",
+            }}
+            sx={{ display: { xs: "none", md: "block" } }}
+          >
+            <DrawerContent
               open={desktopOpen}
-              classes={{
-                paper: "app-inner-drawer-paper",
-              }}
-            >
-              <DrawerContent
-                open={desktopOpen}
-                onFoldButtonClick={() => setDesktopOpen(false)}
-              />
-            </Drawer>
-          </Hidden>
+              onFoldButtonClick={() => setDesktopOpen(false)}
+            />
+          </Drawer>
         </nav>
         <Container className="app-inner-drawer-content">
           <div
@@ -1246,8 +1238,11 @@ const AppInner = observer((props: { theme: Theme }) => {
               <Route path="/translation/:slug">
                 <TranslationEditor />
               </Route>
-              <Route path="/honor">
+              <Route path="/honor/others">
                 <HonorList />
+              </Route>
+              <Route path="/honor/bonds">
+                <BondsHonorList />
               </Route>
               <Route path="/eventanalyzer">
                 <EventAnalyzer />
