@@ -315,7 +315,8 @@ export function addLevelToMusicMeta(
     const music = musicDifficulties.find(
       (music) =>
         music.musicId === meta.music_id &&
-        music.musicDifficulty === meta.difficulty
+        music.musicDifficulty ===
+          (meta.difficulty === "append" ? "master" : meta.difficulty)
     );
     if (music) {
       return {
