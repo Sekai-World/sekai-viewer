@@ -37,7 +37,6 @@ import {
   GridColDef,
   DataGrid,
   GridRenderCellParams,
-  GridValueFormatterParams,
   GridSortModel,
 } from "@mui/x-data-grid";
 import { Link } from "react-router-dom";
@@ -148,11 +147,7 @@ const MusicRecommend: React.FC<unknown> = () => {
         headerName: t("music_recommend:table.column.low"),
 
         hide: selectedMode === "multi",
-        sortComparator: (v1, v2, param1, param2) =>
-          param1.api.getCellValue(param1.id, "result")[0] -
-          param2.api.getCellValue(param2.id, "result")[0],
-        valueFormatter: (params: GridValueFormatterParams) =>
-          params.api.getCellValue(params.id, "result")[0],
+        valueGetter: (value, row) => row.result[0],
         width: 150,
       },
       {
@@ -160,12 +155,8 @@ const MusicRecommend: React.FC<unknown> = () => {
         field: "highScore",
         headerName: t("music_recommend:table.column.high"),
         hide: selectedMode === "multi",
-        sortComparator: (v1, v2, param1, param2) =>
-          param1.api.getCellValue(param1.id, "result")[1] -
-          param2.api.getCellValue(param2.id, "result")[1],
+        valueGetter: (value, row) => row.result[1],
         sortDirection: selectedMode === "solo" ? "desc" : null,
-        valueFormatter: (params: GridValueFormatterParams) =>
-          params.api.getCellValue(params.id, "result")[1],
         width: 150,
       },
       {
@@ -173,12 +164,8 @@ const MusicRecommend: React.FC<unknown> = () => {
         field: "avgScore",
         headerName: t("music_recommend:result.label"),
         hide: selectedMode === "solo",
-        sortComparator: (v1, v2, param1, param2) =>
-          param1.api.getCellValue(param1.id, "result") -
-          param2.api.getCellValue(param2.id, "result"),
+        valueGetter: (value, row) => row.result,
         sortDirection: selectedMode === "multi" ? "desc" : null,
-        valueFormatter: (params: GridValueFormatterParams) =>
-          params.api.getCellValue(params.id, "result"),
         width: 100,
       },
       {
@@ -526,7 +513,7 @@ const MusicRecommend: React.FC<unknown> = () => {
                       columns={columns}
                       disableColumnFilter
                       disableColumnMenu
-                      disableSelectionOnClick
+                      disableRowSelectionOnClick
                       disableColumnSelector
                       sortModel={sortModel}
                       onSortModelChange={setSortModel}

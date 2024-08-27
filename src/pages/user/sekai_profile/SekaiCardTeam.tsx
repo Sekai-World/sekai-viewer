@@ -46,6 +46,7 @@ const SekaiCardTeam: React.FC<unknown> = observer(() => {
       setLocalSekaiProfile(sekaiProfileMap.get(region));
       setLocalSekaiCardTeam(sekaiCardTeamMap.get(region));
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

@@ -3,7 +3,7 @@ import { UserMetadatumModel, UserModel } from "./../strapi-model.d";
 import { useJwt } from "react-jwt";
 
 export default function useJwtAuth(): {
-  decodedToken: any;
+  decodedToken: unknown;
   isExpired: boolean;
   token: string;
   user: UserModel | null;

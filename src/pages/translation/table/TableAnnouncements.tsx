@@ -9,7 +9,7 @@ import { Avatar, Chip } from "@mui/material";
 import {
   GridColDef,
   DataGrid,
-  GridSelectionModel,
+  GridRowSelectionModel,
   GridCallbackDetails,
 } from "@mui/x-data-grid";
 import { OpenInNew } from "@mui/icons-material";
@@ -28,7 +28,7 @@ import { useRootStore } from "../../../stores/root";
 interface Props {
   languages: LanguageModel[];
   onSelected?: (
-    selectionModel: GridSelectionModel,
+    selectionModel: GridRowSelectionModel,
     details: GridCallbackDetails
   ) => void;
 }
@@ -43,8 +43,10 @@ const TableMe: React.FC<Props> = observer((props: Props) => {
 
   const [translations, setTranslations] = useState<AnnouncementModel[]>([]);
   const [rowCount, setRowCount] = useState(0);
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [paginationModel, setPaginationModel] = useState({
+    page: 1,
+    pageSize: 5,
+  });
   const [loading, setLoading] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(0);
 
@@ -69,8 +71,8 @@ const TableMe: React.FC<Props> = observer((props: Props) => {
       setLoading(true);
 
       const newRows = await getAnnouncementPage(
-        pageSize,
-        page - 1,
+        paginationModel.pageSize,
+        paginationModel.page - 1,
         selectedLanguage
           ? {
               language: selectedLanguage,
@@ -87,7 +89,12 @@ const TableMe: React.FC<Props> = observer((props: Props) => {
     return () => {
       active = false;
     };
-  }, [getAnnouncementPage, page, pageSize, selectedLanguage]);
+  }, [
+    getAnnouncementPage,
+    paginationModel.page,
+    paginationModel.pageSize,
+    selectedLanguage,
+  ]);
 
   const columns = useMemo(
     (): GridColDef[] => [
@@ -118,8 +125,8 @@ const TableMe: React.FC<Props> = observer((props: Props) => {
         field: "language",
         headerName: t("announcement:language"),
         width: 150,
-        valueGetter(params) {
-          return (params.value as LanguageModel).name;
+        valueGetter(value: LanguageModel) {
+          return value.name;
         },
         sortable: false,
       },
@@ -175,15 +182,14 @@ const TableMe: React.FC<Props> = observer((props: Props) => {
           rows={translations}
           columns={columns}
           pagination
-          pageSize={pageSize}
           rowCount={rowCount}
           paginationMode="server"
-          onPageChange={(page) => setPage(page)}
-          onPageSizeChange={(pageSize) => setPageSize(pageSize)}
           loading={loading}
           rowHeight={45}
-          onSelectionModelChange={props.onSelected}
+          onRowSelectionModelChange={props.onSelected}
           disableColumnFilter
+          paginationModel={paginationModel}
+          onPaginationModelChange={(model) => setPaginationModel(model)}
         />
       </div>
     </Fragment>
