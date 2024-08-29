@@ -27,6 +27,7 @@ const SekaiProfile = observer(() => {
     autorun(() => {
       setLocalSekaiProfile(sekaiProfileMap.get(region));
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

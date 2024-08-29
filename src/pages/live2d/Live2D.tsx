@@ -391,7 +391,7 @@ const Live2DView: React.FC<unknown> = () => {
     setModelName(selectedModelName);
     let motionName = selectedModelName;
     if (!motionName) return;
-    if (!motionName.startsWith("v2_sub_sanrio")) {
+    if (!motionName.startsWith("v2_sub")) {
       if (motionName.endsWith("_black")) {
         motionName = motionName.slice(0, -6);
       } else if (motionName.endsWith("black")) {

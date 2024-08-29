@@ -332,6 +332,7 @@ const SekaiUserStatistics = observer(() => {
     autorun(() => {
       setLocalSekaiProfile(sekaiProfileMap.get(region));
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const challengeLiveRanks = useMemo(
@@ -567,7 +568,7 @@ const SekaiUserStatistics = observer(() => {
                                           <Grid item xs={12}>
                                             <Typography align="center">
                                               {
-                                                sekaiProfile.sekaiUserProfile.userAreaItems!.find(
+                                                sekaiProfile.sekaiUserProfile?.userAreaItems!.find(
                                                   (uai) =>
                                                     uai.areaItemId ===
                                                     areaItem.id

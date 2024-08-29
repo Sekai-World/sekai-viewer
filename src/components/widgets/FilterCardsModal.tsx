@@ -90,8 +90,7 @@ const FilterCardsModal: React.FC<
           (card) =>
             !excludeCardIds.includes(card.id) &&
             (rarity > 0
-              ? (card.rarity ||
-                  cardRarityTypeToRarity[card.cardRarityType!]) === rarity
+              ? cardRarityTypeToRarity[card.cardRarityType!] === rarity
               : true) &&
             (attr !== "all" ? card.attr === attr : true) &&
             (skillIds.length ? skillIds.includes(card.skillId) : true) &&
@@ -110,6 +109,7 @@ const FilterCardsModal: React.FC<
 
     useEffect(() => {
       filterCards();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [excludeCardIds.length]);
 
     return (

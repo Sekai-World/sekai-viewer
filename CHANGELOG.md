@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.12.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.12.0...v1.12.1) (2024-08-27)
+
+
+### Features
+
+* add search functionality to MusicRecommend page ([b80de8f](https://github.com/Sekai-World/sekai-viewer/commits/b80de8f5864f11999e52c73bcda4bbbafabf9479))
+* search songs in music meta ([215378f](https://github.com/Sekai-World/sekai-viewer/commits/215378f92335a7a2b2167439e64e81db0d2a576c))
+
+
+### Bug Fixes
+
+* append difficulty in music meta ([15f0788](https://github.com/Sekai-World/sekai-viewer/commits/15f07889f3cb33919fe1732800b3536b0ce56c5a))
+* v2_sub live2d not loaded because of motion files ([2b89d95](https://github.com/Sekai-World/sekai-viewer/commits/2b89d951664a111bfce8bd7be44b08193dabaf8b))
+
+
+### Refactors
+
+* :recycle: dependency package breaking changes ([d14bb11](https://github.com/Sekai-World/sekai-viewer/commits/d14bb116fc8a1c3a8ff8962012193b31dfe2aaed))
+
 ## [1.12.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.11.2...v1.12.0) (2024-08-17)
 
 

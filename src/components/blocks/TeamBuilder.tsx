@@ -90,6 +90,7 @@ const TeamBuilder: React.FC<{
         setLocalSekaiProfile(sekaiProfileMap.get(region));
         setLocalSekaiCardTeam(sekaiCardTeamMap.get(region));
       });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const [saveTeamDialogVisible, setSaveTeamDialogVisible] =

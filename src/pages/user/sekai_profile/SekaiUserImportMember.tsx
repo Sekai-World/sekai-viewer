@@ -700,7 +700,7 @@ const SekaiUserImportMember = observer(() => {
         field: "crop",
         headerName: t("user:profile.import_card.table.row.cropped_image"),
         renderCell(
-          params: GridRenderCellParams<string, GridRowModel<CardRowModel>>
+          params: GridRenderCellParams<GridRowModel<CardRowModel>, string>
         ) {
           return (
             <img
@@ -754,7 +754,7 @@ const SekaiUserImportMember = observer(() => {
         field: "level",
         headerName: t("card:cardLevel"),
         renderCell(
-          params: GridRenderCellParams<number, GridRowModel<CardRowModel>>
+          params: GridRenderCellParams<GridRowModel<CardRowModel>, number>
         ) {
           return (
             <Input
@@ -778,7 +778,7 @@ const SekaiUserImportMember = observer(() => {
         field: "masterRank",
         headerName: t("user:profile.import_card.table.row.card_master_rank"),
         renderCell(
-          params: GridRenderCellParams<number, GridRowModel<CardRowModel>>
+          params: GridRenderCellParams<GridRowModel<CardRowModel>, number>
         ) {
           return (
             <Input
@@ -806,7 +806,7 @@ const SekaiUserImportMember = observer(() => {
         field: "skillLevel",
         headerName: t("card:skillLevel"),
         renderCell(
-          params: GridRenderCellParams<number, GridRowModel<CardRowModel>>
+          params: GridRenderCellParams<GridRowModel<CardRowModel>, number>
         ) {
           return (
             <Input
@@ -1051,9 +1051,9 @@ const SekaiUserImportMember = observer(() => {
               rows={rows}
               disableColumnFilter
               disableColumnMenu
-              disableSelectionOnClick
+              disableRowSelectionOnClick
               rowHeight={100}
-              pageSize={100}
+              pagination
             />
           </Grid>
         )}

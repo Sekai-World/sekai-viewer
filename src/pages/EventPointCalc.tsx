@@ -1006,7 +1006,7 @@ const EventPointCalc: React.FC<unknown> = () => {
                     columns={columns}
                     disableColumnFilter
                     disableColumnMenu
-                    disableSelectionOnClick
+                    disableRowSelectionOnClick
                     disableColumnSelector
                     sortModel={sortModel}
                     onSortModelChange={setSortModel}

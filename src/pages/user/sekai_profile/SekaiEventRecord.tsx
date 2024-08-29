@@ -58,6 +58,7 @@ const SekaiEventRecord = observer((props: Props) => {
     autorun(() => {
       setLocalSekaiProfile(sekaiProfileMap.get(region));
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

@@ -15,7 +15,6 @@ import {
   GridColDef,
   GridRenderCellParams,
   GridSortModel,
-  GridValueFormatterParams,
 } from "@mui/x-data-grid";
 import React, { Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -107,10 +106,8 @@ const SekaiGameNews: React.FC<{
       field: "startAt",
       headerName: t("home:game-news.show-from"),
       width: 200,
-      valueFormatter: (params: GridValueFormatterParams) =>
-        new Date(
-          params.api.getCellValue(params.id, "startAt") as number
-        ).toLocaleString(),
+      valueGetter: (value: number) => new Date(value),
+      valueFormatter: (value: Date) => value.toLocaleString(),
     },
     {
       field: "title",
@@ -122,10 +119,8 @@ const SekaiGameNews: React.FC<{
       field: "endAt",
       headerName: t("home:game-news.show-until"),
       width: 200,
-      valueFormatter: (params: GridValueFormatterParams) =>
-        new Date(
-          params.api.getCellValue(params.id, "startAt") as number
-        ).toLocaleString(),
+      valueGetter: (value: number) => new Date(value),
+      valueFormatter: (value: Date) => value.toLocaleString(),
     },
   ];
 
@@ -164,7 +159,7 @@ const SekaiGameNews: React.FC<{
           }
           columns={columns}
           disableColumnMenu
-          disableSelectionOnClick
+          disableRowSelectionOnClick
           sortModel={sortModel}
           onSortModelChange={setSortModel}
           loading={!informations}

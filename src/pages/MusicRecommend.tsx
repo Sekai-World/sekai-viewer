@@ -3,7 +3,11 @@ import {
   Button,
   FormControl,
   FormControlLabel,
+  Grid,
   IconButton,
+  Input,
+  InputAdornment,
+  InputLabel,
   Radio,
   RadioGroup,
   Step,
@@ -16,22 +20,27 @@ import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ICardInfo,
+  IMusicDifficultyInfo,
   IMusicInfo,
   IMusicMeta,
   IMusicRecommendResult,
   ISkillInfo,
   // ITeamCardState,
 } from "../types.d";
-import { filterMusicMeta, useCachedData, useMusicMeta } from "../utils";
+import {
+  addLevelToMusicMeta,
+  filterMusicMeta,
+  useCachedData,
+  useMusicMeta,
+} from "../utils";
 import {
   GridColDef,
   DataGrid,
   GridRenderCellParams,
-  GridValueFormatterParams,
   GridSortModel,
 } from "@mui/x-data-grid";
 import { Link } from "react-router-dom";
-import { OpenInNew } from "@mui/icons-material";
+import { OpenInNew, Search } from "@mui/icons-material";
 import { useScoreCalc } from "../utils/scoreCalc";
 import TeamBuilder from "../components/blocks/TeamBuilder";
 import { ContentTrans } from "../components/helpers/ContentTrans";
@@ -47,6 +56,8 @@ const MusicRecommend: React.FC<unknown> = () => {
   const [cards] = useCachedData<ICardInfo>("cards");
   const [skills] = useCachedData<ISkillInfo>("skills");
   const [musics] = useCachedData<IMusicInfo>("musics");
+  const [musicDifficulties] =
+    useCachedData<IMusicDifficultyInfo>("musicDifficulties");
   const [metas] = useMusicMeta();
 
   const maxStep = 3;
@@ -62,6 +73,10 @@ const MusicRecommend: React.FC<unknown> = () => {
   >([]);
   const [validMetas, setValidMetas] = useState<IMusicMeta[]>([]);
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
+  const [searchTitle, setSearchTitle] = useState("");
+  const [recommendResultCache, setRecommandResultCache] = useState<
+    IMusicRecommendResult[]
+  >([]);
 
   const {
     getCardSkillRates,
@@ -77,8 +92,11 @@ const MusicRecommend: React.FC<unknown> = () => {
   }, [t]);
 
   useEffect(() => {
-    if (metas && musics) setValidMetas(filterMusicMeta(metas, musics));
-  }, [metas, musics]);
+    if (metas && musics && musicDifficulties) {
+      const filteredMetas = filterMusicMeta(metas, musics);
+      setValidMetas(addLevelToMusicMeta(filteredMetas, musicDifficulties));
+    }
+  }, [metas, musicDifficulties, musics]);
 
   const columns: GridColDef[] = useMemo(
     () => [
@@ -101,7 +119,7 @@ const MusicRecommend: React.FC<unknown> = () => {
         renderCell(params) {
           return (
             <ChipDifficulty
-              difficulty={params.row.difficulty}
+              difficulty={params.row["difficulty"]}
               value={params.value}
             />
           );
@@ -129,11 +147,7 @@ const MusicRecommend: React.FC<unknown> = () => {
         headerName: t("music_recommend:table.column.low"),
 
         hide: selectedMode === "multi",
-        sortComparator: (v1, v2, param1, param2) =>
-          param1.api.getCellValue(param1.id, "result")[0] -
-          param2.api.getCellValue(param2.id, "result")[0],
-        valueFormatter: (params: GridValueFormatterParams) =>
-          params.api.getCellValue(params.id, "result")[0],
+        valueGetter: (value, row) => row.result[0],
         width: 150,
       },
       {
@@ -141,12 +155,8 @@ const MusicRecommend: React.FC<unknown> = () => {
         field: "highScore",
         headerName: t("music_recommend:table.column.high"),
         hide: selectedMode === "multi",
-        sortComparator: (v1, v2, param1, param2) =>
-          param1.api.getCellValue(param1.id, "result")[1] -
-          param2.api.getCellValue(param2.id, "result")[1],
+        valueGetter: (value, row) => row.result[1],
         sortDirection: selectedMode === "solo" ? "desc" : null,
-        valueFormatter: (params: GridValueFormatterParams) =>
-          params.api.getCellValue(params.id, "result")[1],
         width: 150,
       },
       {
@@ -154,12 +164,8 @@ const MusicRecommend: React.FC<unknown> = () => {
         field: "avgScore",
         headerName: t("music_recommend:result.label"),
         hide: selectedMode === "solo",
-        sortComparator: (v1, v2, param1, param2) =>
-          param1.api.getCellValue(param1.id, "result") -
-          param2.api.getCellValue(param2.id, "result"),
+        valueGetter: (value, row) => row.result,
         sortDirection: selectedMode === "multi" ? "desc" : null,
-        valueFormatter: (params: GridValueFormatterParams) =>
-          params.api.getCellValue(params.id, "result"),
         width: 100,
       },
       {
@@ -279,6 +285,7 @@ const MusicRecommend: React.FC<unknown> = () => {
     }
 
     setRecommandResult(result);
+    setRecommandResultCache(result);
     setActiveStep(maxStep - 1);
   }, [
     cards,
@@ -326,6 +333,19 @@ const MusicRecommend: React.FC<unknown> = () => {
       )}
     </div>
   );
+
+  const filterBySongName = () => {
+    if (!searchTitle) {
+      setRecommandResult(recommendResultCache);
+    } else if (musics) {
+      const filtered = recommendResultCache.filter((result) => {
+        const music = musics.find((it) => it.id === result.mid);
+        if (!music) return false;
+        return music.title.includes(searchTitle);
+      });
+      setRecommandResult(filtered);
+    }
+  };
 
   return (
     <Fragment>
@@ -442,28 +462,65 @@ const MusicRecommend: React.FC<unknown> = () => {
           <Step>
             <StepLabel>{t("music_recommend:result.label")}</StepLabel>
             <StepContent>
-              <Alert severity="info">{t("music_recommend:assumption")}</Alert>
-              <Button
-                disabled={activeStep === 0}
-                onClick={() => setActiveStep((s) => s - 1)}
-                variant="contained"
-              >
-                {t("common:back")}
-              </Button>
-              <div style={{ height: 650 }}>
-                <DataGrid
-                  pagination
-                  autoPageSize
-                  rows={recommendResult}
-                  columns={columns}
-                  disableColumnFilter
-                  disableColumnMenu
-                  disableSelectionOnClick
-                  disableColumnSelector
-                  sortModel={sortModel}
-                  onSortModelChange={setSortModel}
-                />
-              </div>
+              <Grid container direction="column" spacing={1}>
+                <Grid item>
+                  <Alert severity="info">
+                    {t("music_recommend:assumption")}
+                  </Alert>
+                </Grid>
+                <Grid item container alignItems="center" spacing={1}>
+                  <Grid item>
+                    <Button
+                      disabled={activeStep === 0}
+                      onClick={() => setActiveStep((s) => s - 1)}
+                      variant="contained"
+                    >
+                      {t("common:back")}
+                    </Button>
+                  </Grid>
+                  <Grid item>
+                    <FormControl variant="standard" size="small">
+                      <InputLabel htmlFor="search-song-name">
+                        Song Name
+                      </InputLabel>
+                      <Input
+                        id="search-song-name"
+                        value={searchTitle}
+                        onChange={(e) => setSearchTitle(e.target.value)}
+                        onKeyUp={(e) => {
+                          if (e.key === "Enter") filterBySongName();
+                        }}
+                        endAdornment={
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="search button"
+                              onClick={filterBySongName}
+                            >
+                              <Search />
+                            </IconButton>
+                          </InputAdornment>
+                        }
+                      />
+                    </FormControl>
+                  </Grid>
+                </Grid>
+                <Grid item>
+                  <div style={{ height: 650 }}>
+                    <DataGrid
+                      pagination
+                      autoPageSize
+                      rows={recommendResult}
+                      columns={columns}
+                      disableColumnFilter
+                      disableColumnMenu
+                      disableRowSelectionOnClick
+                      disableColumnSelector
+                      sortModel={sortModel}
+                      onSortModelChange={setSortModel}
+                    />
+                  </div>
+                </Grid>
+              </Grid>
             </StepContent>
           </Step>
         </Stepper>
