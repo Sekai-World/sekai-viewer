@@ -59,9 +59,11 @@ import PaperContainer from "../../components/styled/PaperContainer";
 import GridOut from "../../components/styled/GridOut";
 import EmbedVideoPlayer from "../../components/blocks/EmbedVideoPlayer";
 
-const KR_EXCLUSIVE_IDS = [10001, 10002, 371, 387, 420, 464];
-const EN_EXCLUSIVE_IDS = [371, 387, 420, 445, 453, 459, 464];
-const TW_EXCLUSIVE_IDS = [371, 387, 420, 464];
+const KR_EXCLUSIVE_IDS = [10001, 10002, 371, 387, 419, 420, 453, 464];
+const EN_EXCLUSIVE_IDS = [
+  371, 387, 419, 420, 445, 453, 459, 464, 479, 528, 535,
+];
+const TW_EXCLUSIVE_IDS = [371, 387, 419, 420, 453, 464];
 
 const MusicDetail: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
@@ -109,20 +111,16 @@ const MusicDetail: React.FC<unknown> = observer(() => {
   const [diffiInfoTabVal, setDiffiInfoTabVal] = useState<string>("4");
   const [actualPlaybackTime, setActualPlaybackTime] = useState<string>("");
   const [trimSilence, setTrimSilence] = useState<boolean>(true);
-  // const [trimLoading, setTrimLoading] = useState<boolean>(false);
   const [longMusicPlaybackURL, setLongMusicPlaybackURL] = useState<
     string | undefined
   >();
-  // const [
-  //   trimmedLongMusicPlaybackURL,
-  //   setTrimmedLongMusicPlaybackURL,
-  // ] = useState<string | undefined>();
   const [shortMusicPlaybackURL, setShortMusicPlaybackURL] = useState<
     string | undefined
   >();
   const [musicVideoURL, setMusicVideoURL] = useState<string>("");
   const [musicCommentId, setMusicCommentId] = useState<number>(0);
   const [format, setFormat] = useState<"mp3" | "flac">("mp3");
+  const [isExclusiveSong, setIsExclusiveSong] = useState(false);
 
   useEffect(() => {
     if (music) {
@@ -183,12 +181,18 @@ const MusicDetail: React.FC<unknown> = observer(() => {
   }, [musicOriginals, musicId]);
 
   useEffect(() => {
+    if (music) {
+      setIsExclusiveSong(
+        (region === "kr" && KR_EXCLUSIVE_IDS.includes(music.id)) ||
+          (region === "en" && EN_EXCLUSIVE_IDS.includes(music.id)) ||
+          (region === "tw" && TW_EXCLUSIVE_IDS.includes(music.id))
+      );
+    }
+  }, [music, region]);
+
+  useEffect(() => {
     if (music && musicVocal && musicVocal[selectedPreviewVocalType]) {
-      if (
-        (TW_EXCLUSIVE_IDS.includes(music.id) && region === "tw") ||
-        (EN_EXCLUSIVE_IDS.includes(music.id) && region === "en") ||
-        (KR_EXCLUSIVE_IDS.includes(music.id) && region === "kr")
-      ) {
+      if (isExclusiveSong) {
         // handle server exclusive music
         getRemoteAssetURL(
           `music/long/${musicVocal[selectedPreviewVocalType].assetbundleName}_rip/${musicVocal[selectedPreviewVocalType].assetbundleName}.${format}`,
@@ -215,7 +219,14 @@ const MusicDetail: React.FC<unknown> = observer(() => {
         );
       }
     }
-  }, [format, music, musicVocal, region, selectedPreviewVocalType]);
+  }, [
+    format,
+    isExclusiveSong,
+    music,
+    musicVocal,
+    region,
+    selectedPreviewVocalType,
+  ]);
 
   useEffect(() => {
     if (music) {
@@ -1226,7 +1237,7 @@ const MusicDetail: React.FC<unknown> = observer(() => {
                             <Link
                               href={`${
                                 assetUrl.minio.musicChart
-                              }/${musicId.padStart(4, "0")}/${
+                              }/${region !== "jp" && isExclusiveSong ? (region === "tw" ? "tc" : region) : "jp"}/${musicId.padStart(4, "0")}/${
                                 elem.musicDifficulty
                               }.svg`}
                               target="_blank"
@@ -1246,7 +1257,7 @@ const MusicDetail: React.FC<unknown> = observer(() => {
                             <Link
                               href={`${
                                 assetUrl.minio.musicChart
-                              }/${musicId.padStart(4, "0")}/${
+                              }/${region !== "jp" && isExclusiveSong ? (region === "tw" ? "tc" : region) : "jp"}/${musicId.padStart(4, "0")}/${
                                 elem.musicDifficulty
                               }.png`}
                               target="_blank"
