@@ -61,7 +61,7 @@ import EmbedVideoPlayer from "../../components/blocks/EmbedVideoPlayer";
 
 const KR_EXCLUSIVE_IDS = [10001, 10002, 371, 387, 419, 420, 453, 464];
 const EN_EXCLUSIVE_IDS = [
-  371, 387, 419, 420, 445, 453, 459, 464, 479, 528, 535,
+  371, 387, 419, 420, 445, 453, 459, 464, 479, 514, 528, 535,
 ];
 const TW_EXCLUSIVE_IDS = [371, 387, 419, 420, 453, 464];
 
