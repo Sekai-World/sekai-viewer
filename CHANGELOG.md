@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.12.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.12.3...v1.12.4) (2024-09-29)
+
+
+### Features
+
+* update 4th anniversary banner ([d9abdd4](https://github.com/Sekai-World/sekai-viewer/commits/d9abdd40356124f3bc6e840e67c927a72b7d1cb5))
+
 ### [1.12.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.12.2...v1.12.3) (2024-09-28)
 
 
