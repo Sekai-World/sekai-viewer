@@ -13,6 +13,10 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
+### `npm i`
+
+You need to download denpendencies to run the site
+
 ### `npm start`
 
 Runs the app in the development mode.<br />
@@ -68,3 +72,7 @@ Run `commitizen` for format a Conventional Commit message easily.
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+
+
+Credits for @SekaiWorld
