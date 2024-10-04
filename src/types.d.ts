@@ -114,6 +114,18 @@ export interface IGachaTicket {
   gachaDisplayType: string;
 }
 
+export interface SpecialTrainingCost {
+  cardId: number;
+  seq: number;
+  cost: Cost;
+}
+
+export interface MasterLessonAchieveResource {
+  releaseConditionId: number;
+  cardId: number;
+  masterRank: number;
+  resources: any[];
+}
 export interface ICardInfo {
   id: number;
   seq: number;
@@ -126,25 +138,19 @@ export interface ICardInfo {
   supportUnit: string;
   skillId: number;
   cardSkillName: string;
+  specialTrainingSkillId?: number;
+  specialTrainingSkillName?: string;
   prefix: string;
   assetbundleName: string;
   gachaPhrase: string;
   flavorText: string;
-  releaseAt?: number;
-  archivePublishedAt?: number;
+  releaseAt: number;
   archiveDisplayType?: string;
-  cardParameters: CardParameter[] | CardParameter2;
-  specialTrainingCosts: {
-    cardId: number;
-    seq: number;
-    cost: Cost;
-  }[];
-  masterLessonAchieveResources: {
-    releaseConditionId: number;
-    cardId: number;
-    masterRank: number;
-    resources: Record<string, unknown>[];
-  }[];
+  archivePublishedAt: number;
+  cardSupplyId: number;
+  cardParameters: CardParameter[];
+  specialTrainingCosts: SpecialTrainingCost[];
+  masterLessonAchieveResources: MasterLessonAchieveResource[];
 }
 
 export interface IGameChara {
@@ -186,16 +192,24 @@ export interface IMusicInfo {
       }
   )[];
   title: string;
+  pronunciation: string;
+  creatorArtistId: number;
   lyricist: string;
   composer: string;
   arranger: string;
   dancerCount: number;
   selfDancerPosition: number;
   assetbundleName: string;
-  liveTalkBackgroundAssetbundleName: string;
+  liveTalkBackgroundAssetbundleName?: string;
   publishedAt: number;
-  liveStageId: number;
+  releasedAt?: number;
+  liveStageId?: number;
   fillerSec: number;
+  isNewlyWrittenMusic?: boolean;
+  isFullLength?: boolean;
+  musicCollaborationId?: number;
+  creator?: string;
+  infos?: any[];
 }
 
 export interface IMusicAchievement {
@@ -380,14 +394,18 @@ export interface IEventInfo {
   name: string;
   assetbundleName: string;
   bgmAssetbundleName: string;
+  eventOnlyComponentDisplayStartAt: number;
   startAt: number;
   aggregateAt: number;
   rankingAnnounceAt: number;
   distributionStartAt: number;
+  eventOnlyComponentDisplayEndAt: number;
   closedAt: number;
   distributionEndAt: number;
-  virtualLiveId: number;
+  virtualLiveId?: number;
+  unit: string;
   eventRankingRewardRanges: EventRankingRewardRange[];
+  eventPointAssetbundleName?: string;
 }
 
 export interface IEventDeckBonus {
@@ -488,20 +506,26 @@ export interface IResourceBoxInfo {
 }
 
 export interface HonorLevel {
-  honorId: number;
+  honorId?: number;
   level: number;
   bonus: number;
   description: string;
+  startAt?: number;
+  assetbundleName?: string;
+  honorRarity?: string;
 }
 
 export interface IHonorInfo {
   id: number;
   seq: number;
   groupId: number;
-  honorRarity: string;
+  honorRarity?: string;
   name: string;
-  assetbundleName: string;
+  assetbundleName?: string;
+  startAt?: number;
   levels: HonorLevel[];
+  honorTypeId?: number;
+  honorMissionType?: string;
 }
 
 export interface ICardEpisode {
@@ -839,6 +863,7 @@ export interface IMobCharacter {
 }
 
 export interface EventStoryEpisodeReward {
+  storyType?: string;
   resourceBoxId: number;
 }
 
@@ -1395,10 +1420,15 @@ export interface IArea {
 export interface IActionSet {
   id: number;
   areaId: number;
+  isNextGrade: boolean;
   scriptId: string;
   characterIds: number[];
-  scenarioId: string;
-  actionSetType: string;
+  archiveDisplayType?: string;
+  archivePublishedAt: number;
+  releaseConditionId: number;
+  scenarioId?: string;
+  actionSetType?: string;
+  specialSeasonId?: number;
 }
 
 export interface IVersionInfo {
@@ -1608,4 +1638,25 @@ export interface IIngameCutinCharacters {
   firstCharacterArchiveVoiceId?: number;
   secondCharacterArchiveVoiceId?: number;
   releaseConditionId?: number;
+}
+
+export interface IEventExchangeSummary {
+  id: number;
+  eventId: number;
+  startAt: number;
+  endAt: number;
+  eventExchanges: EventExchange[];
+}
+
+export interface EventExchange {
+  id: number;
+  eventExchangeSummaryId: number;
+  seq: number;
+  resourceBoxId: number;
+  exchangeLimit?: number;
+  eventExchangeCost: EventExchangeCost;
+}
+
+export interface EventExchangeCost {
+  resourceQuantity: number;
 }
