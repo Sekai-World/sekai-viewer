@@ -181,7 +181,7 @@ const BondsHonorDetailDialog: React.FC<{
           </Typography>
           <Grid item container justifyContent="flex-end">
             {bondsWords?.map((bw) => (
-              <Grid key={bw.id} item>
+              <Grid key={bw.id} item xs={10} md={8} lg={6} xl={4}>
                 <BondsDegreeWord bondsHonorWordId={bw.id} />
               </Grid>
             ))}
