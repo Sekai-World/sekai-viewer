@@ -175,7 +175,7 @@ const DegreeImage: React.FC<
         if (
           type === "event_ranking_reward" ||
           (honorGroup && honorGroup.honorType === "event")
-        )
+        ) {
           getRemoteAssetURL(
             `honor/${honor.assetbundleName}_rip/rank_${
               sub ? "sub" : "main"
@@ -185,7 +185,7 @@ const DegreeImage: React.FC<
             region,
             true
           );
-        else if (honorGroup && honorGroup.honorType === "rank_match")
+        } else if (honorGroup && honorGroup.honorType === "rank_match") {
           getRemoteAssetURL(
             `rank_live/honor/${honor.assetbundleName}_rip/${
               sub ? "sub" : "main"
@@ -195,19 +195,7 @@ const DegreeImage: React.FC<
             region,
             true
           );
-        // else if (
-        //   honor.name.match(/^(TOP|Top)\s{0,1}\d+/) ||
-        //   honor.name.match(/\d+(位|위|名)$/) ||
-        //   honor.name.match(/(1st|2nd|3rd)/)
-        // )
-        //   getRemoteAssetURL(
-        //     `honor/${honor.assetbundleName}_rip/rank_${
-        //       sub ? "sub" : "main"
-        //     }.webp`,
-        //     setDegreeRankImage,
-        //     "minio",
-        //     region
-        //   );
+        }
       }
       return () => {
         setDegreeImage("");
