@@ -136,8 +136,7 @@ const DegreeImage: React.FC<
             }_rip/degree_${sub ? "sub" : "main"}.webp`,
             setDegreeImage,
             "minio",
-            region,
-            true
+            region
           );
         } else if (honorGroup && honorGroup.backgroundAssetbundleName) {
           getRemoteAssetURL(
@@ -146,8 +145,7 @@ const DegreeImage: React.FC<
             }.webp`,
             setDegreeImage,
             "minio",
-            region,
-            true
+            region
           );
         } else if (honor.assetbundleName) {
           getRemoteAssetURL(
@@ -156,20 +154,35 @@ const DegreeImage: React.FC<
             }.webp`,
             setDegreeImage,
             "minio",
-            region,
-            true
+            region
           );
         }
         if (honorGroup && honorGroup.frameName) {
-          getRemoteAssetURL(
-            `honor_frame/${honorGroup.frameName}_rip/frame_degree_${
-              sub ? "s" : "m"
-            }.webp`,
-            setDegreeFrameImage,
-            "minio",
-            region,
-            true
-          );
+          if (honor.honorRarity === "highest") {
+            getRemoteAssetURL(
+              `honor_frame/${honorGroup.frameName}_rip/frame_degree_${
+                sub ? "s" : "m"
+              }_4.webp`,
+              setDegreeFrameImage,
+              "minio",
+              region
+            );
+          } else if (honor.honorRarity === "high") {
+            getRemoteAssetURL(
+              `honor_frame/${honorGroup.frameName}_rip/frame_degree_${
+                sub ? "s" : "m"
+              }_3.webp`,
+              setDegreeFrameImage,
+              "minio",
+              region
+            );
+          } else if (honor.honorRarity) {
+            setDegreeFrameImage(
+              sub
+                ? degreeFramSubMap[honor.honorRarity]
+                : degreeFrameMap[honor.honorRarity]
+            );
+          }
         } else if (honor.honorRarity) {
           setDegreeFrameImage(
             sub
