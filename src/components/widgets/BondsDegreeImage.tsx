@@ -12,7 +12,7 @@ import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
 import Svg from "../styled/Svg";
 
-const DegreeImage: React.FC<
+const BondsDegreeImage: React.FC<
   {
     bondsHonorWordId?: number;
     honorId?: number;
@@ -305,4 +305,4 @@ const DegreeImage: React.FC<
   }
 );
 
-export default DegreeImage;
+export default BondsDegreeImage;

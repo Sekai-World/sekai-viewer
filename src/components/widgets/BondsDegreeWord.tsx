@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
 import Image from "mui-image";
 
-const DegreeImage: React.FC<{
+const BondsDegreeWord: React.FC<{
   bondsHonorWordId?: number;
 }> = observer(({ bondsHonorWordId }) => {
   const { region } = useRootStore();
@@ -45,4 +45,4 @@ const DegreeImage: React.FC<{
   );
 });
 
-export default DegreeImage;
+export default BondsDegreeWord;
