@@ -116,7 +116,7 @@ const BondsHonorList = () => {
         bondsHonors.map((e) => ({
           id: e.id,
           bond: e,
-          word: bondsHonorWords.find((w) => w.id === e.id),
+          word: bondsHonorWords.find((w) => w.bondsGroupId === e.bondsGroupId),
         }))
       );
     }
