@@ -136,7 +136,8 @@ const DegreeImage: React.FC<
             }_rip/degree_${sub ? "sub" : "main"}.webp`,
             setDegreeImage,
             "minio",
-            region
+            region,
+            true
           );
         } else if (honorGroup && honorGroup.backgroundAssetbundleName) {
           getRemoteAssetURL(
@@ -145,7 +146,8 @@ const DegreeImage: React.FC<
             }.webp`,
             setDegreeImage,
             "minio",
-            region
+            region,
+            true
           );
         } else if (honor.assetbundleName) {
           getRemoteAssetURL(
@@ -154,7 +156,8 @@ const DegreeImage: React.FC<
             }.webp`,
             setDegreeImage,
             "minio",
-            region
+            region,
+            true
           );
         }
         if (honorGroup && honorGroup.frameName) {
@@ -164,7 +167,8 @@ const DegreeImage: React.FC<
             }.webp`,
             setDegreeFrameImage,
             "minio",
-            region
+            region,
+            true
           );
         } else if (honor.honorRarity) {
           setDegreeFrameImage(
