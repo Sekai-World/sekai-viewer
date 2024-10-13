@@ -10,6 +10,7 @@ import {
 import { getRemoteAssetURL, useCachedData, useCompactData } from "../../utils";
 import { degreeFrameMap, degreeFramSubMap } from "../../utils/resources";
 import degreeLevelIcon from "../../assets/frame/icon_degreeLv.png";
+import degreeLevel6Icon from "../../assets/frame/icon_degreeLv6.png";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
 import Svg from "../styled/Svg";
@@ -231,7 +232,7 @@ const DegreeImage: React.FC<
           Array.from({ length: honorLevel }).map((_, idx) => (
             <image
               key={idx}
-              href={degreeLevelIcon}
+              href={honorLevel >= 6 ? degreeLevel6Icon : degreeLevelIcon}
               x={54 + idx * 16}
               y="64"
               height="16"
