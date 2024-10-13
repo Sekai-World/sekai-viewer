@@ -20,10 +20,12 @@ const ResourceBox: React.FC<{
   resourceBoxId: number;
   resourceBoxPurpose: string;
   justifyContent?: string;
+  materialJustifyContent?: string;
 }> = ({
   resourceBoxId,
   resourceBoxPurpose,
   justifyContent = "space-around",
+  materialJustifyContent = "center",
 }) => {
   const { region } = useRootStore();
 
@@ -103,11 +105,11 @@ const ResourceBox: React.FC<{
       >
         {resourceDetails.map((detail) => (
           <Grid item key={`${detail.resourceType}-${detail.resourceId}`}>
-            {detail.resourceType === "material" ? (
+            {detail.resourceType === "material" && detail.resourceId ? (
               <MaterialIcon
-                materialId={detail.resourceId!}
+                materialId={detail.resourceId}
                 quantity={detail.resourceQuantity}
-                justify={justifyContent}
+                justify={materialJustifyContent}
               />
             ) : detail.resourceType === "stamp" ? (
               <Image
@@ -148,6 +150,7 @@ const ResourceBox: React.FC<{
                 materialName={detail.resourceType}
                 materialId={detail.resourceId}
                 quantity={detail.resourceQuantity}
+                justify={materialJustifyContent}
                 key={detail.resourceId}
               />
             ) : null}
