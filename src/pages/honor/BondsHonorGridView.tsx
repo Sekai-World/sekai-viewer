@@ -8,7 +8,7 @@ import BondsDegreeImage from "../../components/widgets/BondsDegreeImage";
 export interface BondsHonorData {
   id: number;
   bond: IBondsHonor;
-  word: IBondsHonorWord;
+  word?: IBondsHonorWord;
 }
 
 interface Props {
@@ -37,7 +37,7 @@ const BondsHonorGridView = ({ data }: Props) => {
       <Card style={{ cursor: "pointer" }}>
         <CardContent>
           <BondsDegreeImage
-            bondsHonorWordId={data.word.id}
+            bondsHonorWordId={data.word?.id}
             honorId={data.bond.id}
             honorLevel={data.bond.levels[0].level}
             type="bonds"
