@@ -103,6 +103,9 @@ const HomeView = lazy(() => import("./Home"));
 const MusicList = lazy(() => import("./music/MusicList"));
 const GachaList = lazy(() => import("./gacha/GachaList"));
 const EventList = lazy(() => import("./event/EventList"));
+const FutureGachaList = lazy(() => import("./future/FutureGachaList"));
+const FutureEventList = lazy(() => import("./future/FutureEventList"));
+const FutureEventDetail = lazy(() => import("./future/FutureEventDetail"));
 const GachaDetail = lazy(() => import("./gacha/GachaDetail"));
 const CardDetail = lazy(() => import("./card/CardDetail"));
 const MusicDetail = lazy(() => import("./music/MusicDetail"));
@@ -391,7 +394,9 @@ const DrawerContent: React.FC<{
   onFoldButtonClick?: React.MouseEventHandler<HTMLButtonElement>;
 }> = ({ open, onFoldButtonClick }) => {
   const { t } = useTranslation();
-
+  const {
+    settings: { isShowSpoiler },
+  } = useRootStore();
   const leftBtns: IListItemLinkProps[][] = React.useMemo(
     () => [
       [
@@ -440,6 +445,24 @@ const DrawerContent: React.FC<{
           icon: <MoveToInboxIcon></MoveToInboxIcon>,
           text: t("common:gacha"),
           to: "/gacha",
+        },
+        {
+          children: [
+            {
+              disabled: false,
+              text: t("common:futureevent"),
+              to: "/futureevent",
+            },
+            {
+              disabled: false,
+              text: t("common:futuregacha"),
+              to: "/futuregacha",
+            },
+          ],
+          disabled: !isShowSpoiler,
+          icon: <CalendarText></CalendarText>,
+          text: t("common:futures"),
+          to: "/futureevent",
         },
         {
           disabled: false,
@@ -1139,6 +1162,15 @@ const AppInner = observer((props: { theme: Theme }) => {
               </Route>
               <Route path="/gacha/:gachaId">
                 <GachaDetail />
+              </Route>
+              <Route path="/futuregacha" exact>
+                <FutureGachaList />
+              </Route>
+              <Route path="/futureevent" exact>
+                <FutureEventList />
+              </Route>
+              <Route path="/futureevent/:eventId">
+                <FutureEventDetail />
               </Route>
               <Route path="/event" exact>
                 <EventList />

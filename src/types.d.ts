@@ -1626,7 +1626,6 @@ export interface IMusicOriginal {
   musicId: number;
   videoLink: string;
 }
-
 export interface IIngameCutinCharacters {
   id: number;
   ingameCutinCharacterType: string;
