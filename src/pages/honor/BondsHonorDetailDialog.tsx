@@ -4,7 +4,6 @@ import {
   Grid,
   Typography,
   Divider,
-  TextField,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -22,6 +21,7 @@ import type { BondsHonorData } from "./BondsHonorGridView";
 import ResourceBox from "../../components/widgets/ResourceBox";
 import CutInVoicePlayer from "../../components/widgets/CutInVoicePlayer";
 import BondsDegreeWord from "../../components/widgets/BondsDegreeWord";
+import LevelNumberInput from "../../components/widgets/LevelNumberInput";
 
 const BondsHonorDetailDialog: React.FC<{
   open: boolean;
@@ -179,7 +179,7 @@ const BondsHonorDetailDialog: React.FC<{
           <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
             {t("member:availableWords")}
           </Typography>
-          <Grid item container spacing={2} justifyContent="flex-end">
+          <Grid item container justifyContent="flex-end">
             {bondsWords?.map((bw) => (
               <Grid key={bw.id} item>
                 <BondsDegreeWord bondsHonorWordId={bw.id} />
@@ -198,16 +198,11 @@ const BondsHonorDetailDialog: React.FC<{
           <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
             {t("common:level")}
           </Typography>
-          <TextField
-            sx={{ width: "80px" }}
-            type="number"
+          <LevelNumberInput
             value={level}
-            size="small"
-            onChange={(ev) => setLevel(Number(ev.target.value))}
-            inputProps={{
-              min: levels[0].level,
-              max: levels.slice(-1)[0].level,
-            }}
+            onChange={setLevel}
+            min={levels[0].level}
+            max={levels.slice(-1)[0].level}
           />
         </Grid>
         <Divider sx={{ margin: "1% 0" }} />
@@ -238,19 +233,13 @@ const BondsHonorDetailDialog: React.FC<{
           <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
             {t("common:bondsRank")}
           </Typography>
-          <TextField
-            sx={{ width: "80px" }}
-            type="number"
+          <LevelNumberInput
             value={rank}
-            size="small"
-            onChange={(ev) => setRank(Number(ev.target.value))}
-            inputProps={{
-              min: data.bond.honorRarity === "low" ? rewards[0].rank : 30,
-              max:
-                data.bond.honorRarity === "low"
-                  ? 29
-                  : rewards.slice(-1)[0].rank,
-            }}
+            onChange={setRank}
+            min={data.bond.honorRarity === "low" ? rewards[0].rank : 30}
+            max={
+              data.bond.honorRarity === "low" ? 29 : rewards.slice(-1)[0].rank
+            }
           />
         </Grid>
         <Divider sx={{ margin: "1% 0" }} />
