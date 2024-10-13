@@ -925,9 +925,10 @@ export interface IBeginnerMission {
 
 export interface IHonorGroup {
   id: number;
-  honorType: string;
   name: string;
+  honorType: string;
   backgroundAssetbundleName?: string;
+  frameName?: string;
 }
 
 export enum CharacterMissionType {

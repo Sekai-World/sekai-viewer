@@ -43,6 +43,7 @@ const DegreeImage: React.FC<
     const [honorGroup, setHonorGroup] = useState<IHonorGroup>();
     const [honorLevel, setHonorLevel] = useState(_honorLevel);
     const [degreeImage, setDegreeImage] = useState<string>("");
+    const [degreeFrameImage, setDegreeFrameImage] = useState<string>("");
     const [degreeRankImage, setDegreeRankImage] = useState<string>("");
 
     useEffect(() => {
@@ -145,7 +146,7 @@ const DegreeImage: React.FC<
             "minio",
             region
           );
-        } else if (honor.assetbundleName)
+        } else if (honor.assetbundleName) {
           getRemoteAssetURL(
             `honor/${honor.assetbundleName}_rip/degree_${
               sub ? "sub" : "main"
@@ -154,14 +155,35 @@ const DegreeImage: React.FC<
             "minio",
             region
           );
-        if (type === "event_ranking_reward")
+        }
+        if (honorGroup && honorGroup.frameName) {
+          getRemoteAssetURL(
+            `honor_frame/${honorGroup.frameName}_rip/frame_degree_${
+              sub ? "s" : "m"
+            }.webp`,
+            setDegreeFrameImage,
+            "minio",
+            region
+          );
+        } else if (honor.honorRarity) {
+          setDegreeFrameImage(
+            sub
+              ? degreeFramSubMap[honor.honorRarity]
+              : degreeFrameMap[honor.honorRarity]
+          );
+        }
+        if (
+          type === "event_ranking_reward" ||
+          (honorGroup && honorGroup.honorType === "event")
+        )
           getRemoteAssetURL(
             `honor/${honor.assetbundleName}_rip/rank_${
               sub ? "sub" : "main"
             }.webp`,
             setDegreeRankImage,
             "minio",
-            region
+            region,
+            true
           );
         else if (honorGroup && honorGroup.honorType === "rank_match")
           getRemoteAssetURL(
@@ -170,23 +192,26 @@ const DegreeImage: React.FC<
             }.webp`,
             setDegreeRankImage,
             "minio",
-            region
+            region,
+            true
           );
-        else if (
-          honor.name.match(/^(TOP|Top)\s{0,1}\d+/) ||
-          honor.name.match(/\d+(位|위|名)$/) ||
-          honor.name.match(/(1st|2nd|3rd)/)
-        )
-          getRemoteAssetURL(
-            `honor/${honor.assetbundleName}_rip/rank_${
-              sub ? "sub" : "main"
-            }.webp`,
-            setDegreeRankImage,
-            "minio",
-            region
-          );
+        // else if (
+        //   honor.name.match(/^(TOP|Top)\s{0,1}\d+/) ||
+        //   honor.name.match(/\d+(位|위|名)$/) ||
+        //   honor.name.match(/(1st|2nd|3rd)/)
+        // )
+        //   getRemoteAssetURL(
+        //     `honor/${honor.assetbundleName}_rip/rank_${
+        //       sub ? "sub" : "main"
+        //     }.webp`,
+        //     setDegreeRankImage,
+        //     "minio",
+        //     region
+        //   );
       }
       return () => {
+        setDegreeImage("");
+        setDegreeFrameImage("");
         setDegreeRankImage("");
       };
     }, [honor, honorGroup, region, sub, type]);
@@ -206,11 +231,7 @@ const DegreeImage: React.FC<
         />
         {/* frame */}
         <image
-          href={
-            sub
-              ? degreeFramSubMap[honor.honorRarity]
-              : degreeFrameMap[honor.honorRarity]
-          }
+          href={degreeFrameImage}
           x="0"
           y="0"
           height="80"
