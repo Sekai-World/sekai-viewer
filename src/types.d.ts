@@ -1326,6 +1326,23 @@ export interface ICostume3DModel {
   thumbnailAssetbundleName: string;
 }
 
+export interface ICompactCostume3DModel {
+  __ENUM__: ICompactCostume3DModelEnum;
+  assetbundleName: (string | undefined)[];
+  unit: number[];
+  colorAssetbundleName: (string | undefined)[];
+  headCostume3dAssetbundleType: (number | undefined)[];
+  part: (string | undefined)[];
+  id: number[];
+  costume3dId: number[];
+  thumbnailAssetbundleName: string[];
+}
+
+export interface ICompactCostume3DModelEnum {
+  unit: string[];
+  headCostume3dAssetbundleType: string[];
+}
+
 export interface IAreaItemLevel {
   areaItemId: number;
   level: number;

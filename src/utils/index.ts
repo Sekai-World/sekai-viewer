@@ -80,6 +80,7 @@ import {
   IIngameCutinCharacters,
   ISkillPracticeTicket,
   IBoostItem,
+  ICompactCostume3DModel,
 } from "./../types.d";
 import { useAssetI18n, useCharaName } from "./i18n";
 import { useLocation } from "react-router-dom";
@@ -181,7 +182,10 @@ export function useCachedData<
 }
 
 export function useCompactData<
-  T extends ICompactResourceBox | ICompactResourceBoxDetail,
+  T extends
+    | ICompactResourceBox
+    | ICompactResourceBoxDetail
+    | ICompactCostume3DModel,
 >(name: string): [T | undefined, boolean, any] {
   const { region } = useRootStore();
 
