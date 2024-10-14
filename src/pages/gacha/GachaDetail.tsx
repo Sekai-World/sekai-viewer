@@ -33,7 +33,6 @@ import {
   ICardRarity,
   IGachaCeilItem,
   IGachaInfo,
-  IGachaTicket,
 } from "../../types.d";
 import {
   cardRarityTypeToRarity,
@@ -109,7 +108,6 @@ const GachaDetailPage: React.FC<unknown> = observer(() => {
   const [gachaCeilItems] = useCachedData<IGachaCeilItem>("gachaCeilItems");
   const [cards] = useCachedData<ICardInfo>("cards");
   const [rarities] = useCachedData<ICardRarity>("cardRarities");
-  const [gachaTickets] = useCachedData<IGachaTicket>("gachaTickets");
 
   const [gacha, setGacha] = useState<IGachaInfo>();
   const [gachaCeilItem, setGachaCeilItem] = useState<IGachaCeilItem>();
@@ -137,23 +135,6 @@ const GachaDetailPage: React.FC<unknown> = observer(() => {
   const [isDescDialog, setIsDescDialog] = useState(false);
   const [isCardsDialog, setIsCardsDialog] = useState(false);
   const [gachaCards, setGachaCards] = useState<number[]>([]);
-
-  const getGachaMaterialName = useCallback(
-    (behavior: GachaBehavior): string => {
-      if (behavior.gachaSpinnableType === "colorful_pass") {
-        return behavior.gachaBehaviorType === "once_a_week"
-          ? "over_the_3_ticket"
-          : "gacha_ticket";
-      } else if (behavior.costResourceType === "gacha_ticket") {
-        return (
-          gachaTickets?.find((ticket) => ticket.id === behavior.costResourceId)
-            ?.assetbundleName ?? "gacha_ticket"
-        );
-      }
-      return behavior.costResourceType ?? "jewel";
-    },
-    [gachaTickets]
-  );
 
   const doGacha = useCallback(
     (behavior: GachaBehavior) => {
@@ -774,7 +755,9 @@ const GachaDetailPage: React.FC<unknown> = observer(() => {
                               </Grid>
                               <Grid item xs={5}>
                                 <Grid container justifyContent="flex-end">
-                                  <Grid item>{normalRates[idx]} %</Grid>
+                                  <Grid item>
+                                    {normalRates[idx].toPrecision(3)} %
+                                  </Grid>
                                 </Grid>
                               </Grid>
                             </Grid>
@@ -841,7 +824,9 @@ const GachaDetailPage: React.FC<unknown> = observer(() => {
                               </Grid>
                               <Grid item xs={5}>
                                 <Grid container justifyContent="flex-end">
-                                  <Grid item>{guaranteedRates[idx]} %</Grid>
+                                  <Grid item>
+                                    {guaranteedRates[idx].toPrecision(3)} %
+                                  </Grid>
                                 </Grid>
                               </Grid>
                             </Grid>
@@ -861,7 +846,7 @@ const GachaDetailPage: React.FC<unknown> = observer(() => {
         <TypographyHeader>{t("gacha:gacha_cards")}</TypographyHeader>
         <ContainerContent maxWidth="md">
           <Grid container direction="row">
-            {gacha.gachaDetails.some((detail) => detail.weight > 1) && (
+            {gacha.gachaPickups.length > 0 && (
               <Fragment>
                 <Grid item xs={12}>
                   <Grid
@@ -962,22 +947,25 @@ const GachaDetailPage: React.FC<unknown> = observer(() => {
                         variant="subtitle1"
                         style={{ fontWeight: 600 }}
                       >
-                        {behavior.gachaSpinnableType === "colorful_pass"
-                          ? t("gacha:behavior." + behavior.gachaSpinnableType)
+                        {behavior.resourceCategory === "free_resource"
+                          ? t("gacha:behavior.free")
                           : t("gacha:behavior." + behavior.gachaBehaviorType)}
                       </Typography>
                     </Grid>
                     <Grid item>
-                      <CommonMaterialIcon
-                        materialName={getGachaMaterialName(behavior)}
-                        quantity={
-                          behavior.gachaSpinnableType === "colorful_pass"
-                            ? t("gacha:behavior.free")
-                            : behavior.costResourceQuantity
-                        }
-                        justify="center"
-                        maxWidth="72px"
-                      />
+                      {!!behavior.costResourceType && (
+                        <CommonMaterialIcon
+                          materialName={behavior.costResourceType}
+                          materialId={behavior.costResourceId}
+                          quantity={
+                            behavior.resourceCategory === "free_resource"
+                              ? t("gacha:behavior.free")
+                              : behavior.costResourceQuantity
+                          }
+                          justify="center"
+                          maxWidth="72px"
+                        />
+                      )}
                     </Grid>
                   </Grid>
                 </Grid>
@@ -1014,17 +1002,19 @@ const GachaDetailPage: React.FC<unknown> = observer(() => {
                           onClick={() => doGacha(behavior)}
                           sx={(theme) => ({ padding: theme.spacing(1, 3.5) })}
                         >
-                          {/* {t("gacha:behavior." + behavior.gachaBehaviorType)} */}
-                          <CommonMaterialIcon
-                            materialName={getGachaMaterialName(behavior)}
-                            quantity={
-                              behavior.gachaSpinnableType === "colorful_pass"
-                                ? t("gacha:behavior.free")
-                                : behavior.costResourceQuantity
-                            }
-                            mini
-                            justify="center"
-                          />
+                          {!!behavior.costResourceType && (
+                            <CommonMaterialIcon
+                              materialName={behavior.costResourceType}
+                              materialId={behavior.costResourceId}
+                              mini
+                              justify="center"
+                            />
+                          )}
+                          <Typography variant="body2">
+                            {behavior.resourceCategory === "free_resource"
+                              ? t("gacha:behavior.free")
+                              : behavior.costResourceQuantity}
+                          </Typography>
                         </Button>
                       </Grid>
                     </Grid>
