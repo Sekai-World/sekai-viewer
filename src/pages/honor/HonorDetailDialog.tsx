@@ -95,19 +95,21 @@ const DetailDialog: React.FC<{
             }}
           />
         </Grid>
-        <Divider style={{ margin: "1% 0" }} />
-        <Grid
-          container
-          direction="row"
-          wrap="nowrap"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-            {t("common:rarity")}
-          </Typography>
-          <Typography>{t(`honor:rarity.${data.honorRarity}`)}</Typography>
-        </Grid>
+        {!!data.honorRarity && <Divider style={{ margin: "1% 0" }} />}
+        {!!data.honorRarity && (
+          <Grid
+            container
+            direction="row"
+            wrap="nowrap"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+              {t("common:rarity")}
+            </Typography>
+            <Typography>{t(`honor:rarity.${data.honorRarity}`)}</Typography>
+          </Grid>
+        )}
         <Divider style={{ margin: "1% 0" }} />
         {data.levels.map((level) => (
           <Fragment key={level.level}>
@@ -140,6 +142,42 @@ const DetailDialog: React.FC<{
                 <Typography align="right">{level.description}</Typography>
               </Grid>
             </Grid>
+            {!!level.honorRarity && <Divider style={{ margin: "1% 0" }} />}
+            {!!level.honorRarity && (
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                  {t("common:rarity")}
+                </Typography>
+                <Typography>
+                  {t(`honor:rarity.${level.honorRarity}`)}
+                </Typography>
+              </Grid>
+            )}
+            {!!level.assetbundleName && <Divider style={{ margin: "1% 0" }} />}
+            {!!level.assetbundleName && (
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                  {t("common:honor")}
+                </Typography>
+                <DegreeImage
+                  honorId={data.id}
+                  honorLevel={level.level}
+                  type="mission_reward"
+                />
+              </Grid>
+            )}
             <Divider style={{ margin: "1% 0" }} />
           </Fragment>
         ))}
