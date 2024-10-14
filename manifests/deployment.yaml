@@ -24,7 +24,7 @@ spec:
       # nodeSelector:
       #   nodegroup: contabo
       containers:
-      - image: docker.dnaroma.eu/sekai-viewer:1.9.14
+      - image: docker.dnaroma.eu/sekai-viewer:1.12.5
         name: frontend
         ports:
         - containerPort: 80
