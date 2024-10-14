@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.12.5](https://github.com/Sekai-World/sekai-viewer/compare/v1.12.4...v1.12.5) (2024-10-14)
+
+
+### Features
+
+* **honor:** add icon for level 6+ ([9439a27](https://github.com/Sekai-World/sekai-viewer/commits/9439a270b413ce52b5afad301e692033c94750a0))
+* **widgets:** add LevelNumberInput component ([f672f16](https://github.com/Sekai-World/sekai-viewer/commits/f672f16ab622d54a011c645abcc8c824a7be48a8))
+
+
+### Bug Fixes
+
+* **degree:** handle degree frame and text image correctly ([d576e2c](https://github.com/Sekai-World/sekai-viewer/commits/d576e2ce53cd4fefc1fbc6e2622a754c61471102))
+* **gacha:** gacha ticket display ([c381532](https://github.com/Sekai-World/sekai-viewer/commits/c38153214b790a82d51697b31cbca70ab4b6bff7))
+* **honor:** bondsHonor word retrieval logic in BondsHonorList ([27c0e13](https://github.com/Sekai-World/sekai-viewer/commits/27c0e13448d0ea21dd20b40f264bddfb49334551))
+* **honor:** handling if bondsHonor does not have word ([437a896](https://github.com/Sekai-World/sekai-viewer/commits/437a8963ec0ba1f2fc4a34a2dd89eb90455463ad))
+* **honor:** world link event chapter degree frame ([b410854](https://github.com/Sekai-World/sekai-viewer/commits/b410854f5e0286a651c112ffce673ef281ce5574))
+* **widgets:** handling world link event degrees ([772f7fe](https://github.com/Sekai-World/sekai-viewer/commits/772f7fe5ba70fafee911759b922c0aec2c7d2977))
+* **widgets:** rendering degree level diamonds ([28f8d1f](https://github.com/Sekai-World/sekai-viewer/commits/28f8d1fd7baf6d7fb134cde8894b313396e6b817))
+
+
+### Refactors
+
+* **honor:** better display of honor details ([d3789a2](https://github.com/Sekai-World/sekai-viewer/commits/d3789a2123f221a2ab157ade68de42eac3905c00))
+* **honor:** bondsHonor detail dialog have better layout of words ([c96631b](https://github.com/Sekai-World/sekai-viewer/commits/c96631bdc0d4cab2e830790e5e0e2fc9b2fcb142))
+* **honor:** use level number input ([b753258](https://github.com/Sekai-World/sekai-viewer/commits/b7532580ecdd702f6df02a903af5ec6368ba4a31))
+* optimize DegreeImage component ([446aed7](https://github.com/Sekai-World/sekai-viewer/commits/446aed72eaf1e571515741e84e9b74eef00f125a))
+* rename widgets ([d51b362](https://github.com/Sekai-World/sekai-viewer/commits/d51b3628cc01fe080549cea3d9848b6c199cc127))
+* **types:** update types definition of master data ([08b1e2a](https://github.com/Sekai-World/sekai-viewer/commits/08b1e2a7334e998f35c57932e67ca0c5661fe6e9))
+* **widgets:** add BoostItemIcon component ([c804afc](https://github.com/Sekai-World/sekai-viewer/commits/c804afc4ab0a89533fb9978f5590c00acde61393))
+* **widgets:** degree image check if image exists before setting image url ([43a2fa1](https://github.com/Sekai-World/sekai-viewer/commits/43a2fa12f6cb71a9d80471e931e37d21001ad79d))
+* **widgets:** update ResourceBox component ([0c00a45](https://github.com/Sekai-World/sekai-viewer/commits/0c00a45f47d7d8f71f2b104caf9854affb278f19))
+* **widgets:** use remote material icons ([e696b26](https://github.com/Sekai-World/sekai-viewer/commits/e696b26e1cbeb2f2da2bf26f66edfe789fbd1a80))
+
 ### [1.12.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.12.3...v1.12.4) (2024-09-29)
 
 
