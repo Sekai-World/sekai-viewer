@@ -46,6 +46,7 @@ const DegreeImage: React.FC<
     const [degreeImage, setDegreeImage] = useState<string>("");
     const [degreeFrameImage, setDegreeFrameImage] = useState<string>("");
     const [degreeRankImage, setDegreeRankImage] = useState<string>("");
+    const [isWorldLinkDegree, setIsWorldLinkDegree] = useState(false);
 
     useEffect(() => {
       if (["tw", "kr"].includes(region)) {
@@ -124,8 +125,35 @@ const DegreeImage: React.FC<
     useEffect(() => {
       if (honor && honorGroups) {
         setHonorGroup(honorGroups.find((hg) => hg.id === honor.groupId));
+        if (honor.assetbundleName)
+          setIsWorldLinkDegree(/.*(_cp\d)$/.test(honor.assetbundleName));
+        else if (!!honorLevel && honor.levels[honorLevel - 1].assetbundleName) {
+          setHonor((honor) =>
+            honor
+              ? {
+                  ...honor,
+                  assetbundleName: honor.levels[honorLevel - 1].assetbundleName,
+                }
+              : honor
+          );
+          setIsWorldLinkDegree(/.*(_cp\d)$/.test(honor.assetbundleName!));
+        } else if (honor.levels[0].assetbundleName) {
+          setHonor((honor) =>
+            honor
+              ? {
+                  ...honor,
+                  assetbundleName: honor.levels[0].assetbundleName,
+                }
+              : honor
+          );
+          setIsWorldLinkDegree(/.*(_cp\d)$/.test(honor.assetbundleName!));
+        }
       }
-    }, [honor, honorGroups]);
+      return () => {
+        setHonorGroup(undefined);
+        setIsWorldLinkDegree(false);
+      };
+    }, [honor, honorGroups, honorLevel]);
 
     useEffect(() => {
       if (honor) {
@@ -260,10 +288,10 @@ const DegreeImage: React.FC<
         {degreeRankImage && (
           <image
             href={degreeRankImage}
-            x={sub ? 30 : 190}
-            y={sub ? 42 : 0}
-            width={sub ? 120 : 150}
-            height={sub ? 38 : 78}
+            x={isWorldLinkDegree ? 0 : sub ? 30 : 190}
+            y={isWorldLinkDegree ? 0 : sub ? 42 : 0}
+            width={isWorldLinkDegree ? (sub ? 180 : 380) : sub ? 120 : 150}
+            height={isWorldLinkDegree ? 80 : sub ? 38 : 78}
           />
         )}
       </Svg>
