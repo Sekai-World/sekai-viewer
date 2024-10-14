@@ -273,11 +273,22 @@ const DegreeImage: React.FC<
         />
         {/* degree level */}
         {!!honorLevel &&
-          honor.levels.length > 1 &&
-          Array.from({ length: honorLevel }).map((_, idx) => (
+          Array.from({ length: Math.min(5, honorLevel) }).map((_, idx) => (
             <image
               key={idx}
-              href={honorLevel >= 6 ? degreeLevel6Icon : degreeLevelIcon}
+              href={degreeLevelIcon}
+              x={54 + idx * 16}
+              y="64"
+              height="16"
+              width="16"
+            />
+          ))}
+        {!!honorLevel &&
+          honorLevel - 5 > 0 &&
+          Array.from({ length: honorLevel - 5 }).map((_, idx) => (
+            <image
+              key={idx}
+              href={degreeLevel6Icon}
               x={54 + idx * 16}
               y="64"
               height="16"
