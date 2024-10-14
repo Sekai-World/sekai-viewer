@@ -1661,3 +1661,11 @@ export interface EventExchange {
 export interface EventExchangeCost {
   resourceQuantity: number;
 }
+
+export interface ISkillPracticeTicket {
+  id: number;
+  name: string;
+  exp: number;
+  flavorText: string;
+  characterId?: number;
+}

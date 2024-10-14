@@ -1,45 +1,109 @@
 import { Grid, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "mui-image";
+import { getRemoteAssetURL, useCachedData } from "../../utils";
 
-import coinIcon from "../../assets/common/material/coin.png";
-import boostIcon from "../../assets/common/material/boost_item2.png";
-import honor1Icon from "../../assets/common/material/honor_1.png";
-import honor2Icon from "../../assets/common/material/honor_2.png";
-import honor3Icon from "../../assets/common/material/honor_3.png";
-import honor4Icon from "../../assets/common/material/honor_4.png";
-import jewelIcon from "../../assets/common/material/jewel.png";
-import livePointIcon from "../../assets/common/material/live_point.png";
-import slotIcon from "../../assets/common/material/slot.png";
-import virtualCoinIcon from "../../assets/common/material/virtual_coin.png";
-import skillPracticeTicket1 from "../../assets/common/material/ticket1.png";
-import skillPracticeTicket2 from "../../assets/common/material/ticket2.png";
-import skillPracticeTicket3 from "../../assets/common/material/ticket3.png";
-import gachaTicket from "../../assets/common/material/gacha_ticket.png";
-import overThe3Ticket from "../../assets/common/material/over_the_3_ticket.png";
-import gachaTicketFree10 from "../../assets/common/material/free_gacha_10_ticket.png";
-import gachaTicketStar4 from "../../assets/common/material/gacha_ticket_star4.png";
+import { IGachaTicket, ISkillPracticeTicket } from "../../types";
 
-const materialMap: Record<string, unknown> = {
-  coin: coinIcon,
-  boost_item: boostIcon,
-  honor: ["", honor1Icon, honor2Icon, honor3Icon, honor4Icon],
-  jewel: jewelIcon,
-  paid_jewel: jewelIcon,
-  live_point: livePointIcon,
-  slot: slotIcon,
-  virtual_coin: virtualCoinIcon,
-  skill_practice_ticket: [
-    "",
-    skillPracticeTicket1,
-    skillPracticeTicket2,
-    skillPracticeTicket3,
-  ],
-  gacha_ticket: gachaTicket,
-  over_the_3_ticket: overThe3Ticket,
-  free_gacha_10_ticket: gachaTicketFree10,
-  anniversary_free_gacha_ticket: gachaTicketFree10,
-  gacha_ticket_star4: gachaTicketStar4,
+const GachaTicketIcon: React.FC<{
+  id: number;
+  height?: number;
+  width?: number;
+}> = ({ id, height = 64, width = 64 }) => {
+  const [gachaTickets] = useCachedData<IGachaTicket>("gachaTickets");
+
+  const [gachaTicket, setGachaTicket] = useState<IGachaTicket>();
+  const [materialImage, setMaterialImage] = useState("");
+
+  useEffect(() => {
+    if (gachaTickets) {
+      setGachaTicket(gachaTickets.find((gt) => gt.id === id));
+    }
+
+    return () => {
+      setGachaTicket(undefined);
+    };
+  }, [gachaTickets, id]);
+
+  useEffect(() => {
+    if (gachaTicket) {
+      getRemoteAssetURL(
+        `thumbnail/gacha_ticket_rip/${gachaTicket.assetbundleName}.webp`,
+        setMaterialImage,
+        "minio"
+      );
+    }
+
+    return () => {
+      setMaterialImage("");
+    };
+  }, [gachaTicket]);
+
+  return (
+    !!gachaTicket && (
+      <Image
+        src={materialImage}
+        alt={gachaTicket.name}
+        height={height}
+        width={width}
+        bgColor=""
+        duration={0}
+      />
+    )
+  );
+};
+
+const SkillPracticeTicketIcon: React.FC<{
+  id: number;
+  height?: number;
+  width?: number;
+}> = ({ id, height = 64, width = 64 }) => {
+  const [skillPracticeTickets] = useCachedData<ISkillPracticeTicket>(
+    "skillPracticeTickets"
+  );
+
+  const [skillPracticeTicket, setSkillPracticeTicket] =
+    useState<ISkillPracticeTicket>();
+  const [materialImage, setMaterialImage] = useState("");
+
+  useEffect(() => {
+    if (skillPracticeTickets) {
+      setSkillPracticeTicket(skillPracticeTickets.find((spt) => spt.id === id));
+    }
+
+    return () => {
+      setSkillPracticeTicket(undefined);
+    };
+  }, [id, skillPracticeTickets]);
+
+  useEffect(() => {
+    if (skillPracticeTicket) {
+      getRemoteAssetURL(
+        `thumbnail
+        /skill_practice_ticket_rip
+        /ticket${skillPracticeTicket.id}.webp`,
+        setMaterialImage,
+        "minio"
+      );
+    }
+
+    return () => {
+      setMaterialImage("");
+    };
+  }, [skillPracticeTicket]);
+
+  return (
+    !!skillPracticeTicket && (
+      <Image
+        src={materialImage}
+        alt={skillPracticeTicket.flavorText}
+        height={height}
+        width={width}
+        bgColor=""
+        duration={0}
+      />
+    )
+  );
 };
 
 const CommonMaterialIcon: React.FC<{
@@ -49,6 +113,7 @@ const CommonMaterialIcon: React.FC<{
   mini?: boolean;
   justify?: string;
   spacing?: number;
+  maxWidth?: number | string;
 }> = ({
   materialName,
   materialId,
@@ -56,36 +121,106 @@ const CommonMaterialIcon: React.FC<{
   mini = false,
   justify = "center",
   spacing = 1,
-}) => (
-  <Grid container direction="row" alignItems="center" spacing={spacing}>
-    <Grid item xs={mini ? 4 : 12}>
-      <Grid container justifyContent={justify}>
-        <Grid item>
-          <Image
-            src={
-              materialId && Array.isArray(materialMap[materialName])
-                ? materialMap[materialName][materialId]
-                : materialMap[materialName]
-            }
-            alt={`material ${materialName} ${materialId}`}
-            height={mini ? 32 : 64}
-            width={mini ? 32 : 64}
-            bgColor=""
-            duration={0}
-          ></Image>
+  maxWidth,
+}) => {
+  const [materialImage, setMaterialImage] = useState("");
+
+  useEffect(() => {
+    switch (materialName) {
+      case "ad_reward_random_box":
+        getRemoteAssetURL(
+          `thumbnail/ad_reward_rip/ad_reward${String(materialId).padStart(4, "0")}.webp`,
+          setMaterialImage,
+          "minio"
+        );
+        break;
+      case "coin":
+      case "ingamevoice":
+      case "jewel":
+      case "live_point":
+      case "slot":
+      case "virtual_coin":
+        getRemoteAssetURL(
+          `thumbnail/common_material_rip/${materialName}.webp`,
+          setMaterialImage,
+          "minio"
+        );
+        break;
+      case "paid_jewel":
+        getRemoteAssetURL(
+          `thumbnail/common_material_rip/jewel.webp`,
+          setMaterialImage,
+          "minio"
+        );
+        break;
+      case "honor":
+        getRemoteAssetURL(
+          `thumbnail/common_material_rip/honor_${materialId}.webp`,
+          setMaterialImage,
+          "minio"
+        );
+        break;
+    }
+
+    return () => {
+      setMaterialImage("");
+    };
+  }, [materialId, materialName]);
+
+  return (
+    <Grid
+      container
+      direction="row"
+      alignItems="center"
+      spacing={spacing}
+      sx={{ maxWidth }}
+    >
+      <Grid item xs={mini ? 4 : 12}>
+        <Grid container justifyContent={justify}>
+          <Grid item>
+            {!!materialImage && (
+              <Image
+                src={materialImage}
+                alt={`material ${materialName} ${materialId}`}
+                height={mini ? 32 : 64}
+                width={mini ? 32 : 64}
+                bgColor=""
+                duration={0}
+              />
+            )}
+            {materialName === "skill_practice_ticket" && !!materialId && (
+              <SkillPracticeTicketIcon
+                id={materialId}
+                width={mini ? 32 : 64}
+                height={mini ? 32 : 64}
+              />
+            )}
+            {materialName === "gacha_ticket" && !!materialId && (
+              <GachaTicketIcon
+                id={materialId}
+                width={mini ? 32 : 64}
+                height={mini ? 32 : 64}
+              />
+            )}
+          </Grid>
         </Grid>
       </Grid>
-    </Grid>
-    <Grid item xs={mini ? 8 : 12}>
-      <Grid container justifyContent={justify}>
-        <Grid item>
-          {typeof quantity === "string" || !Number.isNaN(Number(quantity)) ? (
-            <Typography variant="body2">{quantity}</Typography>
-          ) : null}
+      {(typeof quantity === "string" || !Number.isNaN(Number(quantity))) && (
+        <Grid item xs={mini ? 8 : 12}>
+          <Grid container direction="column" alignItems={justify}>
+            <Grid item>
+              <Typography variant="body2">{quantity}</Typography>
+            </Grid>
+            {materialName === "paid_jewel" && (
+              <Grid item>
+                <Typography variant="body2">(paid)</Typography>
+              </Grid>
+            )}
+          </Grid>
         </Grid>
-      </Grid>
+      )}
     </Grid>
-  </Grid>
-);
+  );
+};
 
 export default CommonMaterialIcon;
