@@ -3,7 +3,55 @@ import React, { useEffect, useState } from "react";
 import Image from "mui-image";
 import { getRemoteAssetURL, useCachedData } from "../../utils";
 
-import { IGachaTicket, ISkillPracticeTicket } from "../../types";
+import { IBoostItem, IGachaTicket, ISkillPracticeTicket } from "../../types";
+
+const BoostItemIcon: React.FC<{
+  id: number;
+  height?: number;
+  width?: number;
+}> = ({ id, height = 64, width = 64 }) => {
+  const [boostItems] = useCachedData<IBoostItem>("boostItems");
+
+  const [boostItem, setBoostItem] = useState<IBoostItem>();
+  const [materialImage, setMaterialImage] = useState("");
+
+  useEffect(() => {
+    if (boostItems) {
+      setBoostItem(boostItems.find((bi) => bi.id === id));
+    }
+
+    return () => {
+      setBoostItem(undefined);
+    };
+  }, [boostItems, id]);
+
+  useEffect(() => {
+    if (boostItem) {
+      getRemoteAssetURL(
+        `thumbnail/boost_item_rip/boost_item${boostItem.id}.webp`,
+        setMaterialImage,
+        "minio"
+      );
+    }
+
+    return () => {
+      setMaterialImage("");
+    };
+  }, [boostItem]);
+
+  return (
+    !!boostItem && (
+      <Image
+        src={materialImage}
+        alt={boostItem.flavorText}
+        height={height}
+        width={width}
+        bgColor=""
+        duration={0}
+      />
+    )
+  );
+};
 
 const GachaTicketIcon: React.FC<{
   id: number;
@@ -79,9 +127,7 @@ const SkillPracticeTicketIcon: React.FC<{
   useEffect(() => {
     if (skillPracticeTicket) {
       getRemoteAssetURL(
-        `thumbnail
-        /skill_practice_ticket_rip
-        /ticket${skillPracticeTicket.id}.webp`,
+        `thumbnail/skill_practice_ticket_rip/ticket${skillPracticeTicket.id}.webp`,
         setMaterialImage,
         "minio"
       );
@@ -197,6 +243,13 @@ const CommonMaterialIcon: React.FC<{
             )}
             {materialName === "gacha_ticket" && !!materialId && (
               <GachaTicketIcon
+                id={materialId}
+                width={mini ? 32 : 64}
+                height={mini ? 32 : 64}
+              />
+            )}
+            {materialName === "boost_item" && !!materialId && (
+              <BoostItemIcon
                 id={materialId}
                 width={mini ? 32 : 64}
                 height={mini ? 32 : 64}

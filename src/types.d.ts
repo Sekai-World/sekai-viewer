@@ -1669,3 +1669,12 @@ export interface ISkillPracticeTicket {
   flavorText: string;
   characterId?: number;
 }
+
+export interface IBoostItem {
+  id: number;
+  seq: number;
+  name: string;
+  recoveryValue: number;
+  assetBundleName: string;
+  flavorText: string;
+}

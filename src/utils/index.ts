@@ -79,6 +79,7 @@ import {
   IMusicOriginal,
   IIngameCutinCharacters,
   ISkillPracticeTicket,
+  IBoostItem,
 } from "./../types.d";
 import { useAssetI18n, useCharaName } from "./i18n";
 import { useLocation } from "react-router-dom";
@@ -159,7 +160,8 @@ export function useCachedData<
     | IGachaTicket
     | IMusicOriginal
     | IIngameCutinCharacters
-    | ISkillPracticeTicket,
+    | ISkillPracticeTicket
+    | IBoostItem,
 >(name: string): [T[] | undefined, boolean, unknown] {
   // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
   const { region } = useRootStore();
