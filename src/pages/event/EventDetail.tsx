@@ -503,21 +503,25 @@ const EventDetail: React.FC<unknown> = observer(() => {
           src={eventBgm}
         ></AudioPlayer>
         <GridOut container direction="column">
-          <Grid
-            item
-            container
-            direction="row"
-            wrap="nowrap"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t("event:remainingTime")} ({t("event:progress")})
-            </Typography>
-            <Typography>{remainingTime}</Typography>
-          </Grid>
-          <LinearProgress variant="determinate" value={pastTimePercent} />
-          <Divider style={{ margin: "1% 0" }} />
+          {Date.now() > event.startAt && Date.now() < event.aggregateAt && (
+            <Fragment>
+              <Grid
+                item
+                container
+                direction="row"
+                wrap="nowrap"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                  {t("event:remainingTime")} ({t("event:progress")})
+                </Typography>
+                <Typography>{remainingTime}</Typography>
+              </Grid>
+              <LinearProgress variant="determinate" value={pastTimePercent} />
+              <Divider style={{ margin: "1% 0" }} />
+            </Fragment>
+          )}
           <Grid
             item
             container
