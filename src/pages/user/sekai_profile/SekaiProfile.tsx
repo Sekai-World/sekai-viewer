@@ -1,4 +1,4 @@
-import { Grid } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import SekaiUserStatistics from "./SekaiUserStatistics";
@@ -36,32 +36,36 @@ const SekaiProfile = observer(() => {
         {t("user:profile.title.sekai_profile")}
       </TypographyHeader>
       <ContainerContent maxWidth="md">
-        <Grid container spacing={1}>
-          <Grid item xs={12}>
-            <SekaiID />
-          </Grid>
-          <Grid item xs={12}>
-            {!!sekaiProfile &&
-              !sekaiProfile.sekaiUserToken &&
-              !!sekaiProfile.sekaiUserProfile && (
-                <Grid container direction="row" spacing={1}>
-                  <Grid item xs={12}>
-                    <SekaiUserDeck
-                      userDecks={
-                        sekaiProfile.sekaiUserProfile.userDecks ?? [
-                          sekaiProfile.sekaiUserProfile.userDeck!,
-                        ]
-                      }
-                      userCards={sekaiProfile.sekaiUserProfile.userCards}
-                    />
+        {region === "cn" ? (
+          <Typography>Coming Soon...</Typography>
+        ) : (
+          <Grid container spacing={1}>
+            <Grid item xs={12}>
+              <SekaiID />
+            </Grid>
+            <Grid item xs={12}>
+              {!!sekaiProfile &&
+                !sekaiProfile.sekaiUserToken &&
+                !!sekaiProfile.sekaiUserProfile && (
+                  <Grid container direction="row" spacing={1}>
+                    <Grid item xs={12}>
+                      <SekaiUserDeck
+                        userDecks={
+                          sekaiProfile.sekaiUserProfile.userDecks ?? [
+                            sekaiProfile.sekaiUserProfile.userDeck!,
+                          ]
+                        }
+                        userCards={sekaiProfile.sekaiUserProfile.userCards}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <SekaiUserStatistics />
+                    </Grid>
                   </Grid>
-                  <Grid item xs={12}>
-                    <SekaiUserStatistics />
-                  </Grid>
-                </Grid>
-              )}
+                )}
+            </Grid>
           </Grid>
-        </Grid>
+        )}
       </ContainerContent>
       <TypographyHeader>
         {t("user:profile.title.sekai_cards_teams")}
@@ -69,7 +73,7 @@ const SekaiProfile = observer(() => {
       <ContainerContent maxWidth="md">
         <SekaiCardTeam />
       </ContainerContent>
-      {!!sekaiProfile && !sekaiProfile.sekaiUserToken && (
+      {!!sekaiProfile && !sekaiProfile.sekaiUserToken && region !== "cn" && (
         <Fragment>
           <TypographyHeader>
             {t("user:profile.title.user_event")}

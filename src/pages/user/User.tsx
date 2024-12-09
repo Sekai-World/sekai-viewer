@@ -13,8 +13,6 @@ const UserHome = lazy(() => import("./home/UserHome"));
 const Confirmation = lazy(() => import("./EmailConfirm"));
 
 const User: React.FC<unknown> = observer(() => {
-  // const interactiveClasses = useInteractiveStyles();
-  // const { user, isExpired, token } = useJwtAuth();
   const {
     jwtToken,
     decodedToken,

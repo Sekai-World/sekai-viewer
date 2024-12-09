@@ -26,8 +26,6 @@ interface Props {
 }
 
 const SekaiEventRecord = observer((props: Props) => {
-  // const layoutClasses = useLayoutStyles();
-  // const interactiveClasses = useInteractiveStyles();
   const { t } = useTranslation();
   const {
     jwtToken,

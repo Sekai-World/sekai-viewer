@@ -216,9 +216,6 @@ const TransferConfirmDialog: React.FC<
 
 const SekaiID: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
-  // const { token } = useJwtAuth();
-  // const theme = useTheme();
-  // const classes = useStyles();
   const {
     jwtToken,
     sekai: { sekaiProfileMap, setSekaiProfile, deleteSekaiProfile },
