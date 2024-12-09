@@ -61,6 +61,7 @@ const ComicList: React.FC<unknown> = observer(() => {
           case "zht":
           case "en":
           case "kr":
+          case "zhs":
             url = `comic/one_frame_rip/${comic.assetbundleName}.webp`;
             break;
           default:
@@ -98,7 +99,9 @@ const ComicList: React.FC<unknown> = observer(() => {
                   ? "en"
                   : resourceLang === "kr"
                     ? "kr"
-                    : "comic"
+                    : resourceLang === "zhs"
+                      ? "cn"
+                      : "comic"
           ),
         });
       }
@@ -217,19 +220,6 @@ const ComicList: React.FC<unknown> = observer(() => {
               </Link>
             </Typography>
           </Alert>
-        ) : resourceLang === "zhs" ? (
-          <Alert severity="info">
-            <Typography>
-              Credit:
-              <Link
-                href="https://space.bilibili.com/13148307/"
-                style={{ textDecorationLine: "none" }}
-                underline="hover"
-              >
-                Project_SEKAI资讯站@bilibili
-              </Link>
-            </Typography>
-          </Alert>
         ) : resourceLang === "ua" ? (
           <Alert severity="info">
             <Typography>
@@ -250,7 +240,20 @@ const ComicList: React.FC<unknown> = observer(() => {
               </Link>
             </Typography>
           </Alert>
-        ) : // ) : resourceLang === "zht" ? (
+        ) : // ) : resourceLang === "zhs" ? (
+        // <Alert severity="info">
+        //   <Typography>
+        //     Credit:
+        //     <Link
+        //       href="https://space.bilibili.com/13148307/"
+        //       style={{ textDecorationLine: "none" }}
+        //       underline="hover"
+        //     >
+        //       Project_SEKAI资讯站@bilibili
+        //     </Link>
+        //   </Typography>
+        // </Alert>
+        // ) : resourceLang === "zht" ? (
         //   <Alert severity="info">
         //     <Typography>Credit: CHKO</Typography>
         //   </Alert>
