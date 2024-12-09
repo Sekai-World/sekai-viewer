@@ -149,6 +149,11 @@ const Settings = observer(() => {
                 control={<Radio />}
                 label={t("common:serverRegion.kr") as string}
               ></FormControlLabel>
+              <FormControlLabel
+                value="cn"
+                control={<Radio />}
+                label={t("common:serverRegion.cn") as string}
+              ></FormControlLabel>
             </RadioGroup>
           </FormControl>
         </Grid>

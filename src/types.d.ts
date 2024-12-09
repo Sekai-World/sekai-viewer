@@ -2,7 +2,7 @@ import { ISekaiCardState, ISekaiUserProfileHonor } from "./stores/sekai";
 
 export type ContentTransModeType = "original" | "translated" | "both";
 export type DisplayModeType = "dark" | "light" | "auto";
-export type ServerRegion = "jp" | "tw" | "en" | "kr";
+export type ServerRegion = "jp" | "tw" | "en" | "kr" | "cn";
 export type AssetDomainKey = "minio";
 export type ComicLangType =
   | "ja"
