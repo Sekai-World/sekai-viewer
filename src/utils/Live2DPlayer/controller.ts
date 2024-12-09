@@ -1,6 +1,7 @@
 import { Live2DPlayer } from "./player";
 import type { Application } from "pixi.js";
 import { Howl, Howler } from "howler";
+import { log } from "./log";
 import {
   IScenarioData,
   SnippetAction,
@@ -23,18 +24,15 @@ function side_to_position(sidefrom: number) {
   return [0.5, 0.5];
 }
 
-function delay(ms: number) {
-  return new Promise<void>((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, ms);
-  });
-}
-
 export class Live2DController extends Live2DPlayer {
   private scenarioData: IScenarioData;
   private scenarioResource: ILive2DCachedData[];
   private modelData: ILive2DModelDataCollection[];
+  private current_costume: {
+    cid: number;
+    costume: string;
+  }[];
+
   public step: number;
 
   constructor(
@@ -47,13 +45,15 @@ export class Live2DController extends Live2DPlayer {
     this.scenarioResource = data.scenarioResource;
     this.modelData = data.modelData;
     this.step = 0;
+    this.current_costume = [];
   }
 
   step_until_checkpoint = async (step: number) => {
-    let current = step;
+    // is end of the story
     const is_end = (step: number) => {
       return step >= this.scenarioData.Snippets.length - 1;
     };
+    // find where to stop
     const is_stop = (step: number) => {
       if (is_end(step)) return true;
       const action = this.scenarioData.Snippets[step];
@@ -71,6 +71,11 @@ export class Live2DController extends Live2DPlayer {
       return false;
     };
 
+    // clean signal
+    this.animate.reset_abort();
+
+    // step until meet stop condition
+    let current = step;
     if (current === 0) await this.apply_action(current);
     if (is_end(current)) return current;
     do {
@@ -78,6 +83,7 @@ export class Live2DController extends Live2DPlayer {
       await this.apply_action(current);
     } while (!is_stop(current));
 
+    // continue if the next steps SnippetProgressBehavior = Now
     while (
       !is_end(current) &&
       this.scenarioData.Snippets[current + 1].ProgressBehavior ===
@@ -86,12 +92,33 @@ export class Live2DController extends Live2DPlayer {
       current++;
       await this.apply_action(current);
     }
-    console.log(this.app.stage.getChildByName("live2d"));
+
+    // wait all talk sounds finished
+    for (const s of this.scenarioResource) {
+      if (s.type !== "talk") continue;
+      const sound = s.data as Howl;
+      if (sound.playing()) {
+        await new Promise<void>((resolve) => {
+          if (this.abort_controller.signal.aborted) {
+            resolve();
+            return;
+          }
+          sound.on("end", () => {
+            resolve();
+          });
+          this.abort_controller.signal.addEventListener("abort", () => {
+            resolve();
+          });
+        });
+      }
+    }
+
+    log.log("Live2DController", this.app.stage.getChildByName("live2d"));
     return current;
   };
   apply_action = async (step: number) => {
     const action = this.scenarioData.Snippets[step];
-    if (action.Delay > 0) await delay(action.Delay * 1000);
+    if (action.Delay > 0) await this.animate.delay(action.Delay * 1000);
     switch (action.Action) {
       case SnippetAction.SpecialEffect:
         {
@@ -100,6 +127,12 @@ export class Live2DController extends Live2DPlayer {
           switch (action_detail.EffectType) {
             case SpecialEffectType.ChangeBackground:
               {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/ChangeBackground",
+                  action,
+                  action_detail
+                );
                 const data = this.scenarioResource.find(
                   (s) =>
                     s.identifer === action_detail.StringValSub &&
@@ -110,18 +143,37 @@ export class Live2DController extends Live2DPlayer {
               break;
             case SpecialEffectType.Telop:
               {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/Telop",
+                  action,
+                  action_detail
+                );
                 const data = action_detail.StringVal;
                 this.draw.telop(data);
                 await this.animate.show_layer("telop", 500);
+                await this.animate.delay(1000);
               }
               break;
             case SpecialEffectType.WhiteIn:
               {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/WhiteIn",
+                  action,
+                  action_detail
+                );
                 await this.animate.hide_layer("fullcolor", 1000);
               }
               break;
             case SpecialEffectType.WhiteOut:
               {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/WhiteOut",
+                  action,
+                  action_detail
+                );
                 this.animate.hide_layer("dialog", 100);
                 this.draw.fullcolor(0xffffff);
                 await this.animate.show_layer("fullcolor", 1000);
@@ -129,11 +181,23 @@ export class Live2DController extends Live2DPlayer {
               break;
             case SpecialEffectType.BlackIn:
               {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/BlackIn",
+                  action,
+                  action_detail
+                );
                 await this.animate.hide_layer("fullcolor", 1000);
               }
               break;
             case SpecialEffectType.BlackOut:
               {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/BlackOut",
+                  action,
+                  action_detail
+                );
                 this.animate.hide_layer("dialog", 100);
                 this.draw.fullcolor(0x000000);
                 await this.animate.show_layer("fullcolor", 1000);
@@ -141,18 +205,33 @@ export class Live2DController extends Live2DPlayer {
               break;
             case SpecialEffectType.FlashbackIn:
               {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/FlashbackIn",
+                  action,
+                  action_detail
+                );
                 this.draw.flashback();
                 await this.animate.show_layer("flashback", 100);
               }
               break;
             case SpecialEffectType.FlashbackOut:
               {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/FlashbackOut",
+                  action,
+                  action_detail
+                );
                 await this.animate.hide_layer("flashback", 100);
               }
               break;
             default:
-              console.log(
-                `${SnippetAction[action.Action]}/${SpecialEffectType[action_detail.EffectType]} not implemented!`
+              log.warn(
+                "Live2DController",
+                `${SnippetAction[action.Action]}/${SpecialEffectType[action_detail.EffectType]} not implemented!`,
+                action,
+                action_detail
               );
           }
         }
@@ -166,39 +245,60 @@ export class Live2DController extends Live2DPlayer {
             case CharacterLayoutType.Move:
             case CharacterLayoutType.Appear:
               {
+                log.log(
+                  "Live2DController",
+                  "CharacerLayout/Move,Appear",
+                  action,
+                  action_detail
+                );
                 // update CostumeType
+                let costume = "";
                 if (action_detail.CostumeType !== "") {
-                  const model = this.modelData.find(
-                    (n) => n.costume === action_detail.CostumeType
+                  costume = this.live2d_set_costume(
+                    action_detail.Character2dId,
+                    action_detail.CostumeType
                   );
-                  if (model) {
-                    await this.live2d.init(model);
-                  }
+                } else {
+                  costume = this.live2d_get_costume(
+                    action_detail.Character2dId
+                  );
                 }
                 this.live2d.set_position(
-                  action_detail.Character2dId,
+                  costume,
                   side_to_position(action_detail.SideFrom)
                 );
                 await this.apply_live2d_motion(
-                  action_detail.Character2dId,
+                  costume,
                   action_detail.MotionName,
                   action_detail.FacialName
                 );
-                await this.live2d.show(action_detail.Character2dId, 200);
+                await this.live2d.show(costume, 200);
               }
               break;
             case CharacterLayoutType.Clear:
               {
+                log.log(
+                  "Live2DController",
+                  "CharacerLayout/Clear",
+                  action,
+                  action_detail
+                );
                 if (this.live2d.is_empty()) {
                   await this.animate.hide_layer("dialog", 200);
                 } else {
-                  await this.live2d.hide(action_detail.Character2dId, 200);
+                  await this.live2d.hide(
+                    this.live2d_get_costume(action_detail.Character2dId),
+                    200
+                  );
                 }
               }
               break;
             default:
-              console.log(
-                `${SnippetAction[action.Action]}/${CharacterLayoutType[action_detail.Type]} not implemented!`
+              log.warn(
+                "Live2DController",
+                `${SnippetAction[action.Action]}/${CharacterLayoutType[action_detail.Type]} not implemented!`,
+                action,
+                action_detail
               );
           }
         }
@@ -210,32 +310,44 @@ export class Live2DController extends Live2DPlayer {
           switch (action_detail.Type) {
             case CharacterMotionType.Change:
               {
-                //this.live2d.set_position(action_detail.Character2dId, side_to_position(action_detail.SideFrom, action_detail.SideTo));
+                log.log(
+                  "Live2DController",
+                  "CharacterMotion/Change",
+                  action,
+                  action_detail
+                );
                 await this.apply_live2d_motion(
-                  action_detail.Character2dId,
+                  this.live2d_get_costume(action_detail.Character2dId),
                   action_detail.MotionName,
                   action_detail.FacialName
                 );
-                await this.live2d.show(action_detail.Character2dId, 200);
+                await this.live2d.show(
+                  this.live2d_get_costume(action_detail.Character2dId),
+                  200
+                );
               }
               break;
             default:
-              console.log(
-                `${SnippetAction[action.Action]}/${CharacterMotionType[action_detail.Type]} not implemented!`
+              log.warn(
+                "Live2DController",
+                `${SnippetAction[action.Action]}/${CharacterMotionType[action_detail.Type]} not implemented!`,
+                action,
+                action_detail
               );
           }
         }
         break;
       case SnippetAction.Talk:
         {
+          const action_detail =
+            this.scenarioData.TalkData[action.ReferenceIndex];
+          log.log("Live2DController", "Talk", action, action_detail);
           //clear
           await this.animate.hide_layer("telop", 200);
           // motion
-          const action_detail =
-            this.scenarioData.TalkData[action.ReferenceIndex];
           for (const m of action_detail.Motions) {
             await this.apply_live2d_motion(
-              m.Character2dId,
+              this.live2d_get_costume(m.Character2dId),
               m.MotionName,
               m.FacialName
             );
@@ -248,12 +360,18 @@ export class Live2DController extends Live2DPlayer {
           await this.animate.show_layer("dialog", 200);
           // sound
           if (action_detail.Voices.length > 0) {
+            this.stop_sounds(["talk"]);
             const sound = this.scenarioResource.find(
               (s) =>
                 s.identifer === action_detail.Voices[0].VoiceId &&
                 s.type === "talk"
-            )?.data as Howl;
-            sound.play();
+            )?.data;
+            if (sound) (sound as Howl).play();
+            else
+              log.warn(
+                "Live2DController",
+                `${action_detail.Voices[0].VoiceId} not loaded, skip.`
+              );
           }
         }
         break;
@@ -261,6 +379,7 @@ export class Live2DController extends Live2DPlayer {
         {
           const action_detail =
             this.scenarioData.SoundData[action.ReferenceIndex];
+          log.log("Live2DController", "Sound", action, action_detail);
           if (action_detail.Bgm) {
             if (action_detail.Bgm === "bgm00000") {
               Howler.stop();
@@ -278,37 +397,85 @@ export class Live2DController extends Live2DPlayer {
             const sound = this.scenarioResource.find(
               (s) =>
                 s.identifer === action_detail.Se && s.type === "soundeffect"
-            )?.data as Howl;
-            sound.play();
+            )?.data;
+            if (sound) (sound as Howl).play();
+            else
+              log.warn(
+                "Live2DController",
+                `${action_detail.Se} not loaded, skip.`
+              );
           }
         }
         break;
       default:
-        console.log(`${SnippetAction[action.Action]} not implemented!`);
+        log.warn(
+          "Live2DController",
+          `${SnippetAction[action.Action]} not implemented!`,
+          action
+        );
     }
   };
   apply_live2d_motion = async (
-    cid: number,
+    costume: string,
     motion: string,
     expression: string
   ) => {
-    //console.log(`apply motion: ${cid}|${motion}|${expression}`)
-    const model = this.modelData.find((n) => n.cid === cid);
+    log.log(
+      "Live2DController",
+      `apply motion: ${costume}|${motion}|${expression}`
+    );
+    const model = this.modelData.find((n) => n.costume === costume);
     if (model) {
       if (expression !== "") {
         await this.live2d.update_motion(
           "Expression",
-          cid,
+          costume,
           model.expressions.indexOf(expression)
         );
       }
       if (motion !== "") {
         await this.live2d.update_motion(
           "Motion",
-          cid,
+          costume,
           model.motions.indexOf(motion)
         );
       }
     }
+  };
+  live2d_model_init = async () => {
+    this.live2d.clear();
+    for (const m of this.modelData) {
+      await this.live2d.init(m);
+    }
+  };
+  live2d_set_costume = (cid: number, costume: string) => {
+    const costume_idx = this.current_costume.findIndex((p) => p.cid === cid);
+    if (costume_idx === -1) {
+      this.current_costume.push({
+        cid: cid,
+        costume: costume,
+      });
+    } else {
+      this.current_costume[costume_idx].costume = costume;
+    }
+    return costume;
+  };
+  live2d_get_costume = (cid: number) => {
+    const costume_idx = this.current_costume.findIndex((p) => p.cid === cid);
+    return this.current_costume[costume_idx].costume;
+  };
+  stop_sounds = (
+    sound_types: ("backgroundmusic" | "soundeffect" | "talk")[]
+  ) => {
+    this.scenarioResource
+      .filter(
+        (resource) => sound_types.findIndex((t) => t === resource.type) !== -1
+      )
+      .forEach((resource) => {
+        (resource.data as Howl).stop();
+      });
+  };
+  unload = () => {
+    this.stop_sounds(["backgroundmusic", "soundeffect", "talk"]);
   };
 }

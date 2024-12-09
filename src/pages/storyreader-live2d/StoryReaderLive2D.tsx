@@ -6,6 +6,7 @@ import {
   CardContent,
   Avatar,
   styled,
+  Alert,
 } from "@mui/material";
 import React, { Fragment, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -69,7 +70,7 @@ const StoryReaderLive2D: React.FC<unknown> = observer(() => {
 
   const breadcrumbNameMap: { [key: string]: string } = useMemo(
     () => ({
-      storyreader_live2d: t("common:storyReader"),
+      "storyreader-live2d": t("common:storyReader"),
       eventStory: t("story_reader:selectValue.eventStory"),
       unitStory: t("story_reader:selectValue.unitStory"),
       charaStory: t("story_reader:selectValue.charaStory"),
@@ -84,6 +85,12 @@ const StoryReaderLive2D: React.FC<unknown> = observer(() => {
   return (
     <Fragment>
       <TypographyHeader>{t("common:storyReader")}</TypographyHeader>
+      <Alert
+        severity="warning"
+        sx={(theme) => ({ margin: theme.spacing(1, 0) })}
+      >
+        {t("common:betaIndicator")}
+      </Alert>
       <Route>
         {({ location }) => {
           const pathnames = location.pathname.split("/").filter((x) => x);
@@ -275,7 +282,7 @@ const StoryReaderLive2D: React.FC<unknown> = observer(() => {
         <Route path={`${path}`} exact>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={3}>
-              <LinkNoDecorationAlsoNoHover to="/storyreader_live2d/eventStory">
+              <LinkNoDecorationAlsoNoHover to="/storyreader-live2d/eventStory">
                 <CardSelect>
                   <CardContent>
                     <Typography>
@@ -286,7 +293,7 @@ const StoryReaderLive2D: React.FC<unknown> = observer(() => {
               </LinkNoDecorationAlsoNoHover>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <LinkNoDecorationAlsoNoHover to="/storyreader_live2d/unitStory">
+              <LinkNoDecorationAlsoNoHover to="/storyreader-live2d/unitStory">
                 <CardSelect>
                   <CardContent>
                     <Typography>
@@ -297,7 +304,7 @@ const StoryReaderLive2D: React.FC<unknown> = observer(() => {
               </LinkNoDecorationAlsoNoHover>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <LinkNoDecorationAlsoNoHover to="/storyreader_live2d/charaStory">
+              <LinkNoDecorationAlsoNoHover to="/storyreader-live2d/charaStory">
                 <CardSelect>
                   <CardContent>
                     <Typography>
@@ -308,7 +315,7 @@ const StoryReaderLive2D: React.FC<unknown> = observer(() => {
               </LinkNoDecorationAlsoNoHover>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <LinkNoDecorationAlsoNoHover to="/storyreader_live2d/cardStory">
+              <LinkNoDecorationAlsoNoHover to="/storyreader-live2d/cardStory">
                 <CardSelect>
                   <CardContent>
                     <Typography>
@@ -319,7 +326,7 @@ const StoryReaderLive2D: React.FC<unknown> = observer(() => {
               </LinkNoDecorationAlsoNoHover>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <LinkNoDecorationAlsoNoHover to="/storyreader_live2d/areaTalk">
+              <LinkNoDecorationAlsoNoHover to="/storyreader-live2d/areaTalk">
                 <CardSelect>
                   <CardContent>
                     <Typography>
@@ -330,7 +337,7 @@ const StoryReaderLive2D: React.FC<unknown> = observer(() => {
               </LinkNoDecorationAlsoNoHover>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <LinkNoDecorationAlsoNoHover to="/storyreader_live2d/specialStory">
+              <LinkNoDecorationAlsoNoHover to="/storyreader-live2d/specialStory">
                 <CardSelect>
                   <CardContent>
                     <Typography>
@@ -363,7 +370,7 @@ const StoryReaderLive2D: React.FC<unknown> = observer(() => {
                 .map((ev) => (
                   <Grid item xs={12} sm={6} md={3} key={ev.id}>
                     <LinkNoDecorationAlsoNoHover
-                      to={`/storyreader_live2d/eventStory/${ev.id}`}
+                      to={`/storyreader-live2d/eventStory/${ev.id}`}
                     >
                       <CardSelect>
                         <CardContent>
@@ -458,7 +465,7 @@ const StoryReaderLive2D: React.FC<unknown> = observer(() => {
               unitProfiles.map((unit) => (
                 <Grid item xs={12} sm={6} md={3} key={unit.unit}>
                   <LinkNoDecorationAlsoNoHover
-                    to={`/storyreader_live2d/unitStory/${unit.unit}`}
+                    to={`/storyreader-live2d/unitStory/${unit.unit}`}
                   >
                     <CardSelect>
                       <CardContent>
@@ -587,7 +594,7 @@ const StoryReaderLive2D: React.FC<unknown> = observer(() => {
               characterProfiles.map((character) => (
                 <Grid item xs={12} sm={6} md={3} key={character.characterId}>
                   <LinkNoDecorationAlsoNoHover
-                    to={`/storyreader_live2d/charaStory/${character.characterId}`}
+                    to={`/storyreader-live2d/charaStory/${character.characterId}`}
                   >
                     <CardSelect>
                       <CardContent>
@@ -632,7 +639,7 @@ const StoryReaderLive2D: React.FC<unknown> = observer(() => {
               characterProfiles.map((character) => (
                 <Grid item xs={12} sm={6} md={3} key={character.characterId}>
                   <LinkNoDecorationAlsoNoHover
-                    to={`/storyreader_live2d/cardStory/${character.characterId}`}
+                    to={`/storyreader-live2d/cardStory/${character.characterId}`}
                   >
                     <CardSelect>
                       <CardContent>
@@ -777,7 +784,7 @@ const StoryReaderLive2D: React.FC<unknown> = observer(() => {
                 .map((area) => (
                   <Grid item xs={12} sm={6} md={3} key={area.id}>
                     <LinkNoDecorationAlsoNoHover
-                      to={`/storyreader_live2d/areaTalk/${area.id}`}
+                      to={`/storyreader-live2d/areaTalk/${area.id}`}
                     >
                       <CardSelect>
                         <CardContent>
@@ -941,7 +948,7 @@ const StoryReaderLive2D: React.FC<unknown> = observer(() => {
                 .map((sp) => (
                   <Grid item xs={12} sm={6} md={3} key={sp.id}>
                     <LinkNoDecorationAlsoNoHover
-                      to={`/storyreader_live2d/specialStory/${sp.id}`}
+                      to={`/storyreader-live2d/specialStory/${sp.id}`}
                     >
                       <CardSelect>
                         <CardContent>

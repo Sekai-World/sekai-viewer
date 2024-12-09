@@ -1,8 +1,13 @@
 import { Howl } from "howler";
-import { IScenarioData } from "../../types.d";
+import { IScenarioData } from "../../types";
 
 // TODO:
+// sounds url not parse properly.
 // NOT IMPLEMENT YET:
+//  - SnippetAction.CharacterLayoutMode <- not sure what this means
+//  - SnippetAction.Sound
+//      - SoundData.Volume
+//      - SoundData.SoundPlayMode
 //  - SnippetAction.InputName
 //  - SnippetAction.Selectable
 //  - SnippetAction.CharacerLayout <- typo in types.d
@@ -95,8 +100,7 @@ export interface ILive2DControllerData {
 export interface IProgressEvent {
   (
     type:
-      | "image"
-      | "sound"
+      | "media"
       | "model_data"
       | "model_texture"
       | "model_moc"
@@ -118,4 +122,10 @@ export enum CharacterLayoutType {
 
 export enum CharacterMotionType {
   Change = 0,
+}
+
+export enum LoadStatus {
+  Ready,
+  Loading,
+  Loaded,
 }

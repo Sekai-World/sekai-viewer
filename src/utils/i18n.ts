@@ -44,6 +44,7 @@ export async function initGlobalI18n() {
         "support",
         "music_recommend",
         "story_reader",
+        "story_reader_live2d",
         "mission",
         "event_calc",
         "team_build",

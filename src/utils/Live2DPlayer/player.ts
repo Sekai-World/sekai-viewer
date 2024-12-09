@@ -1,4 +1,4 @@
-import type { ILive2DModelDataCollection, Ilive2DModelInfo } from "./types";
+import type { ILive2DModelDataCollection, Ilive2DModelInfo } from "./types.d";
 import {
   Container,
   Texture,
@@ -10,11 +10,18 @@ import {
   filters,
 } from "pixi.js";
 import type { Application, DisplayObject } from "pixi.js";
-import { Live2DModel, MotionPriority } from "pixi-live2d-display";
+import {
+  Live2DModel,
+  MotionPriority,
+  MotionPreloadStrategy,
+} from "pixi-live2d-display";
 import type { Live2DModelOptions } from "pixi-live2d-display";
+import { log } from "./log";
 
-//import {  config } from "pixi-live2d-display"
+//DEBUG
+//import { config } from "pixi-live2d-display"
 //config.logLevel = config.LOG_LEVEL_VERBOSE;
+//DEBUG/
 
 Live2DModel.registerTicker(Ticker);
 
@@ -31,7 +38,7 @@ type StageLayerType = (typeof StageLayerIndex)[number];
 const t = new filters.AlphaFilter();
 type AlphaFilterType = typeof t;
 
-class CustomLive2DModel extends Live2DModel {
+class Live2DModelWithInfo extends Live2DModel {
   public live2DInfo: Ilive2DModelInfo;
   constructor(options?: Live2DModelOptions) {
     super(options);
@@ -47,11 +54,13 @@ class CustomLive2DModel extends Live2DModel {
 
 export class Live2DPlayer {
   app: Application;
-  private stageSize: number[];
+  private stage_size: number[];
+  protected abort_controller: AbortController;
 
-  constructor(app: Application, stageSize: number[]) {
+  constructor(app: Application, stage_size: number[]) {
     this.app = app;
-    this.stageSize = stageSize;
+    this.stage_size = stage_size;
+    this.abort_controller = new AbortController();
 
     //initilize stage
     if (app.stage.children.length !== StageLayerIndex.length) {
@@ -68,11 +77,11 @@ export class Live2DPlayer {
   }
 
   em = (height: number) => {
-    return (this.stageSize[0] * height) / 700;
+    return (this.stage_size[0] * height) / 700;
   };
 
-  setStageSize = (stageSize: number[]) => {
-    this.stageSize = stageSize;
+  set_stage_size = (stage_size: number[]) => {
+    this.stage_size = stage_size;
     this.update_style();
   };
 
@@ -95,12 +104,12 @@ export class Live2DPlayer {
       const texture = bg.texture;
       if (
         texture.width / texture.height >
-        this.stageSize[0] / this.stageSize[1]
+        this.stage_size[0] / this.stage_size[1]
       )
-        scale = this.stageSize[1] / texture.height;
-      else scale = this.stageSize[0] / texture.width;
-      bg.x = this.stageSize[0] / 2;
-      bg.y = this.stageSize[1] / 2;
+        scale = this.stage_size[1] / texture.height;
+      else scale = this.stage_size[0] / texture.width;
+      bg.x = this.stage_size[0] / 2;
+      bg.y = this.stage_size[1] / 2;
       bg.anchor.set(0.5);
       bg.scale.set(scale);
     },
@@ -108,19 +117,22 @@ export class Live2DPlayer {
       const containerP: Container = this.app.stage.getChildByName("dialog");
       const container: Container = containerP.getChildAt(0) as Container;
       container.x = 0;
-      container.y = this.stageSize[1] * 0.7;
+      container.y = this.stage_size[1] * 0.7;
       const bg: Container = container.getChildByName("dialog_bg");
       bg.x = 0;
       bg.y = 0;
-      bg.scale.set(this.stageSize[0] / 2000, (this.stageSize[1] * 0.3) / 2000);
+      bg.scale.set(
+        this.stage_size[0] / 2000,
+        (this.stage_size[1] * 0.3) / 2000
+      );
       const cn: Text = container.getChildByName("dialog_text_cn");
-      cn.x = this.stageSize[0] * 0.15;
+      cn.x = this.stage_size[0] * 0.15;
       cn.y = this.em(10);
       cn.style = new TextStyle({
         fill: ["#ffffff"],
         fontSize: this.em(16),
         wordWrap: true,
-        wordWrapWidth: this.stageSize[0] * 0.7,
+        wordWrapWidth: this.stage_size[0] * 0.7,
         dropShadow: true,
         dropShadowColor: "#000000",
         dropShadowBlur: this.em(2),
@@ -128,14 +140,14 @@ export class Live2DPlayer {
         dropShadowDistance: this.em(2),
       });
       const text: Text = container.getChildByName("dialog_text_text");
-      text.x = this.stageSize[0] * 0.15;
+      text.x = this.stage_size[0] * 0.15;
       text.y = this.em(35);
       text.style = new TextStyle({
         fill: ["#ffffff"],
         fontSize: this.em(16),
         breakWords: true,
         wordWrap: true,
-        wordWrapWidth: this.stageSize[0] * 0.7,
+        wordWrapWidth: this.stage_size[0] * 0.7,
         dropShadow: true,
         dropShadowColor: "#000000",
         dropShadowBlur: this.em(2),
@@ -145,15 +157,15 @@ export class Live2DPlayer {
     },
     live2d: () => {
       const container: Container = this.app.stage.getChildByName("live2d");
-      (container.children as CustomLive2DModel[]).forEach((model) => {
+      (container.children as Live2DModelWithInfo[]).forEach((model) => {
         const live2dTrueWidth = model.internalModel.originalWidth;
         const live2dTrueHeight = model.internalModel.originalHeight;
         const scale = Math.min(
-          this.stageSize[0] / live2dTrueWidth / 2,
-          this.stageSize[1] / live2dTrueHeight
+          this.stage_size[0] / live2dTrueWidth / 2,
+          this.stage_size[1] / live2dTrueHeight
         );
-        model.x = this.stageSize[0] * model.live2DInfo.position[0];
-        model.y = this.stageSize[1] * (model.live2DInfo.position[1] + 0.3);
+        model.x = this.stage_size[0] * model.live2DInfo.position[0];
+        model.y = this.stage_size[1] * (model.live2DInfo.position[1] + 0.3);
         model.anchor.set(0.5);
         model.scale.set(scale * 2.1);
       });
@@ -162,14 +174,14 @@ export class Live2DPlayer {
       const container: Container = this.app.stage.getChildByName("telop");
       const text: Text = container.getChildByName("telop_text");
       text.anchor.set(0.5);
-      text.x = this.stageSize[0] / 2;
-      text.y = this.stageSize[1] / 2;
+      text.x = this.stage_size[0] / 2;
+      text.y = this.stage_size[1] / 2;
       text.style = new TextStyle({
         fill: ["#ffffff"],
         fontSize: this.em(25),
         breakWords: true,
         wordWrap: true,
-        wordWrapWidth: this.stageSize[0] * 0.7,
+        wordWrapWidth: this.stage_size[0] * 0.7,
         dropShadow: true,
         dropShadowColor: "#000000",
         dropShadowBlur: this.em(2),
@@ -178,22 +190,22 @@ export class Live2DPlayer {
       });
       const bg: Container = container.getChildByName("telop_bg");
       bg.x = 0;
-      bg.y = this.stageSize[1] / 2 - this.em(30);
-      bg.scale.set(this.stageSize[0] / 2000, this.em(60) / 2000);
+      bg.y = this.stage_size[1] / 2 - this.em(30);
+      bg.scale.set(this.stage_size[0] / 2000, this.em(60) / 2000);
     },
     fullcolor: () => {
       const container: Container = this.app.stage.getChildByName("fullcolor");
       const bg: Graphics = container.getChildAt(0) as Graphics;
       bg.x = 0;
       bg.y = 0;
-      bg.scale.set(this.stageSize[0] / 2000, this.stageSize[1] / 2000);
+      bg.scale.set(this.stage_size[0] / 2000, this.stage_size[1] / 2000);
     },
     flashback: () => {
       const container: Container = this.app.stage.getChildByName("flashback");
       const bg: Graphics = container.getChildAt(0) as Graphics;
       bg.x = 0;
       bg.y = 0;
-      bg.scale.set(this.stageSize[0] / 2000, this.stageSize[1] / 2000);
+      bg.scale.set(this.stage_size[0] / 2000, this.stage_size[1] / 2000);
     },
   };
 
@@ -272,17 +284,61 @@ export class Live2DPlayer {
       finish: (ani_ticker: Ticker) => boolean
     ) => {
       const wait_finish = new Promise<void>((resolve) => {
+        let destroyed = false;
+        if (this.abort_controller.signal.aborted) {
+          resolve();
+          return;
+        }
         const ani_ticker = new Ticker();
         ani_ticker.add(() => {
           step(ani_ticker);
           if (finish(ani_ticker)) {
-            ani_ticker.destroy();
+            if (!destroyed) {
+              ani_ticker.destroy();
+              destroyed = true;
+            }
             resolve();
           }
         });
         ani_ticker.start();
+        this.abort_controller.signal.addEventListener("abort", () => {
+          if (!destroyed) {
+            ani_ticker.destroy();
+            destroyed = true;
+          }
+          resolve();
+        });
       });
       return wait_finish;
+    },
+    delay: (ms: number) => {
+      return new Promise<void>((resolve) => {
+        let destroyed = false;
+        if (this.abort_controller.signal.aborted) {
+          resolve();
+          return;
+        }
+        const timeout_id = setTimeout(() => {
+          if (!destroyed) {
+            destroyed = true;
+          }
+          resolve();
+        }, ms);
+        this.abort_controller.signal.addEventListener("abort", () => {
+          if (!destroyed) {
+            clearTimeout(timeout_id);
+            destroyed = true;
+          }
+          resolve();
+        });
+      });
+    },
+    abort: () => {
+      this.abort_controller.abort();
+    },
+    reset_abort: () => {
+      if (this.abort_controller.signal.aborted)
+        this.abort_controller = new AbortController();
     },
     show_layer: async (layer: StageLayerType, time: number) => {
       const container: DisplayObject = this.app.stage.getChildByName(layer);
@@ -301,6 +357,7 @@ export class Live2DPlayer {
         },
         () => container.alpha >= 1
       );
+      container.alpha = 1;
     },
     hide: async (container: DisplayObject, time: number) => {
       container.alpha = 1;
@@ -311,6 +368,7 @@ export class Live2DPlayer {
         },
         () => container.alpha <= 0
       );
+      container.alpha = 0;
     },
     show_by_filter: async (container: DisplayObject, time: number) => {
       if (container.filters && container.filters.length > 0) {
@@ -323,6 +381,7 @@ export class Live2DPlayer {
           },
           () => filter.alpha >= 1
         );
+        filter.alpha = 1;
       }
     },
     hide_by_filter: async (container: DisplayObject, time: number) => {
@@ -336,68 +395,58 @@ export class Live2DPlayer {
           },
           () => filter.alpha <= 0
         );
+        filter.alpha = 0;
       }
     },
   };
 
+  // load all live2d models and motions
+  // display by show/hide
   live2d = {
-    init: async (model: ILive2DModelDataCollection) => {
+    init: async (model_data: ILive2DModelDataCollection) => {
       const container: Container = this.app.stage.getChildByName("live2d");
-      const model_name = model.cid + "/" + model.costume;
-      // remove duplicate cid but not same costume
-      (container.children as CustomLive2DModel[])
-        .filter(
-          (m) =>
-            m.live2DInfo.cid === model.cid &&
-            m.live2DInfo.costume !== model.costume
-        )
-        .forEach((m) => {
-          m.destroy();
-        });
-
-      if (
-        (container.children as CustomLive2DModel[]).findIndex(
-          (m) =>
-            m.live2DInfo.cid === model.cid &&
-            m.live2DInfo.costume === model.costume
-        ) === -1
-      ) {
-        const modelC = await CustomLive2DModel.from(model.data, {
-          autoInteract: false,
-        });
-        modelC.name = model_name;
-        modelC.filters = [new filters.AlphaFilter(0)];
-        container.addChild(modelC);
-        modelC.live2DInfo = {
-          cid: model.cid,
-          costume: model.costume,
-          position: [0.5, 0.5],
-          init_pose: false,
-          hidden: true,
-        };
-        this.set_style.live2d();
-      }
+      const model = await Live2DModelWithInfo.from(model_data.data, {
+        autoInteract: false,
+        motionPreload: MotionPreloadStrategy.ALL,
+      });
+      model.filters = [new filters.AlphaFilter(0)];
+      model.live2DInfo = {
+        cid: model_data.cid,
+        costume: model_data.costume,
+        position: [0.5, 0.5],
+        init_pose: false,
+        hidden: true,
+      };
+      //model.visible = false;
+      container.addChild(model);
+      this.set_style.live2d();
+      log.log("Live2DPlayer", `${model_data.costume} init.`);
     },
-    find: (cid: number) => {
+    load_status: (): "loaded" | "ready" => {
       const container: Container = this.app.stage.getChildByName("live2d");
-      return (container.children as CustomLive2DModel[]).find(
-        (l) => l.live2DInfo.cid === cid
+      return container.children.length > 0 ? "loaded" : "ready";
+    },
+    find: (costume: string) => {
+      const container: Container = this.app.stage.getChildByName("live2d");
+      return (container.children as Live2DModelWithInfo[]).find(
+        (l) => l.live2DInfo.costume === costume
       );
     },
     is_empty: () => {
       const container: Container = this.app.stage.getChildByName("live2d");
-      return (container.children as CustomLive2DModel[])
+      return (container.children as Live2DModelWithInfo[])
         .map((l) => l.live2DInfo.hidden)
         .reduce((accumulator, current) => {
           return accumulator && current;
         }, true);
     },
-    clear: (cid: number) => {
-      const model = this.live2d.find(cid);
-      if (model) model.destroy();
+    clear: () => {
+      const container: Container = this.app.stage.getChildByName("live2d");
+      container.removeChildren();
+      log.log("Live2DPlayer", "live2d stage clear.");
     },
-    show: async (cid: number, time: number) => {
-      const model = this.live2d.find(cid);
+    show: async (costume: string, time: number) => {
+      const model = this.live2d.find(costume);
       if (
         model &&
         model.live2DInfo.hidden === true &&
@@ -407,8 +456,8 @@ export class Live2DPlayer {
         model.live2DInfo.hidden = false;
       }
     },
-    hide: async (cid: number, time: number) => {
-      const model = this.live2d.find(cid);
+    hide: async (costume: string, time: number) => {
+      const model = this.live2d.find(costume);
       if (model && model.live2DInfo.hidden === false) {
         await this.animate.hide_by_filter(model, time);
         model.live2DInfo.hidden = true;
@@ -416,11 +465,12 @@ export class Live2DPlayer {
     },
     update_motion: async (
       motion_type: "Motion" | "Expression",
-      cid: number,
+      costume: string,
       motion_index: number
     ) => {
-      const model = this.live2d.find(cid);
+      const model = this.live2d.find(costume);
       if (model) {
+        //model.visible = true;
         await model.motion(motion_type, motion_index, MotionPriority.FORCE);
         await this.animate.wrapper(
           () => {},
@@ -430,8 +480,8 @@ export class Live2DPlayer {
       }
       return false;
     },
-    set_position: (cid: number, position: number[]) => {
-      const model = this.live2d.find(cid);
+    set_position: (costume: string, position: number[]) => {
+      const model = this.live2d.find(costume);
       if (model) {
         model.live2DInfo.position = position;
         this.set_style.live2d();

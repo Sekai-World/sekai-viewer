@@ -567,7 +567,7 @@ const DrawerContent: React.FC<{
             {
               disabled: false,
               text: "Live2D",
-              to: "/storyreader_live2d",
+              to: "/storyreader-live2d",
             },
           ],
           disabled: false,
@@ -1179,7 +1179,7 @@ const AppInner = observer((props: { theme: Theme }) => {
               <Route path="/storyreader">
                 <StoryReader />
               </Route>
-              <Route path="/storyreader_live2d">
+              <Route path="/storyreader-live2d">
                 <StoryReaderLive2D />
               </Route>
               <Route path="/mission/title">

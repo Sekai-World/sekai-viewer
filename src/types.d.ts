@@ -682,6 +682,7 @@ export enum SnippetAction {
   Selectable = 5,
   SpecialEffect = 6,
   Sound = 7,
+  CharacterLayoutMode = 8,
 }
 
 export enum SnippetProgressBehavior {

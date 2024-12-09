@@ -23,7 +23,6 @@ import type {
   IActionSet,
   ISpecialStory,
 } from "../../types.d";
-import { useRootStore } from "../../stores/root";
 
 import type {
   ILive2DCachedData,
@@ -35,7 +34,9 @@ import type {
 } from "./types.d";
 
 import { PreloadQuene } from "./queue";
+import { log } from "./log";
 
+// step 1 - get scenario url
 export function useLive2DScenarioUrl() {
   const [unitStories] = useCachedData<IUnitStory>("unitStories");
   const [eventStories] = useCachedData<IEventStory>("eventStories");
@@ -172,66 +173,116 @@ export function useLive2DScenarioUrl() {
     ]
   );
 }
-export function useProcessedLive2DScenarioData() {
-  const { region } = useRootStore();
-
-  return useCallback(
-    async (scenarioPath: string) => {
-      const { data }: { data: IScenarioData } = await Axios.get(
-        await getRemoteAssetURL(scenarioPath, undefined, "minio", region),
-        {
-          responseType: "json",
-        }
-      );
-      const {
-        Snippets,
-        SpecialEffectData,
-        SoundData,
-        FirstBgm,
-        FirstBackground,
-      } = data;
-
-      if (FirstBackground) {
-        const bgSnippet: Snippet = {
-          Action: SnippetAction.SpecialEffect,
-          ProgressBehavior: SnippetProgressBehavior.Now,
-          ReferenceIndex: SpecialEffectData.length,
-          Delay: 0,
-        };
-        const spData: SpecialEffectData = {
-          EffectType: SpecialEffectType.ChangeBackground,
-          StringVal: FirstBackground,
-          StringValSub: FirstBackground,
-          Duration: 0,
-          IntVal: 0,
-        };
-        Snippets.unshift(bgSnippet);
-        SpecialEffectData.push(spData);
-      }
-      if (FirstBgm) {
-        const bgmSnippet: Snippet = {
-          Action: SnippetAction.Sound,
-          ProgressBehavior: SnippetProgressBehavior.Now,
-          ReferenceIndex: SoundData.length,
-          Delay: 0,
-        };
-        const soundData: SoundData = {
-          PlayMode: SoundPlayMode.CrossFade,
-          Bgm: FirstBgm,
-          Se: "",
-          Volume: 1,
-          SeBundleName: "",
-          Duration: 2.5,
-        };
-        Snippets.unshift(bgmSnippet);
-        SoundData.push(soundData);
-      }
-      return data;
-    },
-    [region]
+// step 2 - get scenario data
+export async function getProcessedLive2DScenarioData(
+  scenarioUrl: string,
+  region: ServerRegion
+) {
+  const { data }: { data: IScenarioData } = await Axios.get(
+    await getRemoteAssetURL(scenarioUrl, undefined, "minio", region),
+    {
+      responseType: "json",
+    }
   );
+  log.log("Live2DLoader", data);
+  const { Snippets, SpecialEffectData, SoundData, FirstBgm, FirstBackground } =
+    data;
+
+  if (FirstBackground) {
+    const bgSnippet: Snippet = {
+      Action: SnippetAction.SpecialEffect,
+      ProgressBehavior: SnippetProgressBehavior.Now,
+      ReferenceIndex: SpecialEffectData.length,
+      Delay: 0,
+    };
+    const spData: SpecialEffectData = {
+      EffectType: SpecialEffectType.ChangeBackground,
+      StringVal: FirstBackground,
+      StringValSub: FirstBackground,
+      Duration: 0,
+      IntVal: 0,
+    };
+    Snippets.unshift(bgSnippet);
+    SpecialEffectData.push(spData);
+  }
+  if (FirstBgm) {
+    const bgmSnippet: Snippet = {
+      Action: SnippetAction.Sound,
+      ProgressBehavior: SnippetProgressBehavior.Now,
+      ReferenceIndex: SoundData.length,
+      Delay: 0,
+    };
+    const soundData: SoundData = {
+      PlayMode: SoundPlayMode.CrossFade,
+      Bgm: FirstBgm,
+      Se: "",
+      Volume: 1,
+      SeBundleName: "",
+      Duration: 2.5,
+    };
+    Snippets.unshift(bgmSnippet);
+    SoundData.push(soundData);
+  }
+  return data;
 }
-async function getLive2DScenarioDataResourceUrls(
+// step 3 - get controller data (preload media)
+export async function getLive2DControllerData(
+  snData: IScenarioData,
+  isCardStory: boolean = false,
+  isActionSet: boolean = false,
+  progress: IProgressEvent
+): Promise<ILive2DControllerData> {
+  // step 3.1 - get sound/image urls
+  const urls = await getMediaUrls(snData, isCardStory, isActionSet);
+  // step 3.2 - preload sound/image
+  const scenarioResource = await preloadMedia(urls, progress);
+  // step 3.3 - get live2d model data
+  const modelData = [];
+  const total = snData.AppearCharacters.length;
+  let count = 0;
+  for (const c of snData.AppearCharacters) {
+    count++;
+    progress("model_data", count, total, c.CostumeType);
+    const md = await getModelData(c.CostumeType);
+    modelData.push({
+      costume: c.CostumeType,
+      cid: c.Character2dId,
+      data: md,
+      motions: md.FileReferences.Motions.Motion.map((m) => m.Name),
+      expressions: md.FileReferences.Motions.Expression.map((e) => e.Name),
+    });
+  }
+  return {
+    scenarioData: snData,
+    scenarioResource,
+    modelData,
+  };
+}
+// step 4 - preload model
+export async function preloadModels(
+  controllerData: ILive2DControllerData,
+  progress: IProgressEvent
+) {
+  let count = 0;
+  const total = controllerData.modelData.length;
+  // step 4.1 - preload model assets
+  for (const model of controllerData.modelData) {
+    count++;
+    await preloadModelAssets(model.data, (type) => {
+      progress("model_assets", count, total, `${model.costume}/${type}`);
+    });
+  }
+  // step 4.2 - discard useless motions in all model
+  controllerData.modelData = discardMotion(
+    controllerData.scenarioData,
+    controllerData.modelData
+  );
+  // step 4.3 - preload motions
+  await preloadModelMotion(controllerData.modelData, progress);
+}
+
+// step 3.1 - get sound/image urls
+async function getMediaUrls(
   snData: IScenarioData,
   isCardStory: boolean = false,
   isActionSet: boolean = false
@@ -282,10 +333,16 @@ async function getLive2DScenarioDataResourceUrls(
             ret.push({ identifer, type: "backgroundmusic", url });
           } else if (soundData.Se) {
             const identifer = soundData.Se;
-            const seBundleName = soundData.Se.endsWith("_b")
-              ? "se_pack00001_b"
-              : "se_pack00001";
-            const url = `sound/scenario/se/${seBundleName}_rip/${soundData.Se}.mp3`;
+            const isEventSe = identifer.startsWith("se_event");
+            const baseDir = isEventSe
+              ? `event_story/${identifer.split("_").slice(1, -1).join("_")}`
+              : "sound/scenario/se";
+            const seBundleName = isEventSe
+              ? "scenario_se"
+              : identifer.endsWith("_b")
+                ? "se_pack00001_b"
+                : "se_pack00001";
+            const url = `${baseDir}/${seBundleName}_rip/${identifer}.mp3`;
             if (ret.map((r) => r.url).includes(url)) continue;
             ret.push({ identifer, type: "soundeffect", url });
           }
@@ -293,48 +350,141 @@ async function getLive2DScenarioDataResourceUrls(
         break;
     }
   }
+  log.log("Live2DLoader", ret);
   for (const r of ret) {
     r.url = await getRemoteAssetURL(r.url, undefined, "minio");
   }
   return ret;
 }
-export async function getLive2DControllerData(
-  snData: IScenarioData,
-  isCardStory: boolean = false,
-  isActionSet: boolean = false,
+// step 3.2 - preload sound/image
+async function preloadMedia(
+  urls: ILive2DDataUrls[],
   progress: IProgressEvent
-): Promise<ILive2DControllerData> {
-  // get urls
-  const urls = await getLive2DScenarioDataResourceUrls(
-    snData,
-    isCardStory,
-    isActionSet
+): Promise<ILive2DCachedData[]> {
+  const queue = new PreloadQuene<ILive2DCachedData>();
+  const total = urls.length;
+  const sounds = urls.filter(
+    (u) =>
+      u.type === "talk" ||
+      u.type === "backgroundmusic" ||
+      u.type === "soundeffect"
   );
-  // get model data
-  const modelData = [];
-  const total = snData.AppearCharacters.length;
   let count = 0;
-  for (const c of snData.AppearCharacters) {
-    count++;
-    progress("model_data", count, total, c.CostumeType);
-    const md = await getModelData(c.CostumeType);
-    modelData.push({
-      costume: c.CostumeType,
-      cid: c.Character2dId,
-      data: md,
-      motions: md.FileReferences.Motions.Motion.map((m) => m.Name),
-      expressions: md.FileReferences.Motions.Expression.map((e) => e.Name),
-    });
+  for (const url of sounds) {
+    await queue.wait();
+    await queue.add(
+      new Promise((resolve, reject) => {
+        preloadSound(url.url)
+          .then((data) => {
+            resolve({ ...url, data });
+          })
+          .catch(reject);
+      }),
+      () => {
+        count++;
+        progress("media", count, total, url.identifer);
+      }
+    );
   }
-  // preload image and sounds
-  const scenarioResource = await preloadLive2DScenarioData(urls, progress);
-  return {
-    scenarioData: snData,
-    scenarioResource,
-    modelData,
-  };
+  const images = urls.filter((u) => u.type === "background");
+  for (const url of images) {
+    await queue.wait();
+    await queue.add(
+      new Promise((resolve, reject) => {
+        preloadImage(url.url)
+          .then((data) => {
+            resolve({ ...url, data });
+          })
+          .catch(reject);
+      }),
+      () => {
+        count++;
+        progress("media", count, total, url.identifer);
+      }
+    );
+  }
+  return (await queue.all()).filter((d) => !!d);
 }
-
+function preloadImage(url: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error(`Failed to load image: ${url}`));
+    img.src = url;
+  });
+}
+function preloadSound(url: string): Promise<Howl> {
+  return new Promise((resolve, reject) => {
+    const sound = new Howl({
+      src: [url],
+      onload: () => resolve(sound),
+      onloaderror: () => reject(new Error(`Failed to load sound: ${url}`)),
+      loop: false,
+    });
+  });
+}
+// step 3.3 - get model data
+async function getModelData(modelName: string): Promise<ILive2DModelData> {
+  // step 3.3.1 - get model build data
+  const { data: modelData } = await Axios.get<{
+    Moc3FileName: string;
+    TextureNames: string[];
+    PhysicsFileName: string;
+    UserDataFileName: string;
+    AdditionalMotionData: unknown[];
+    CategoryRules: unknown[];
+  }>(
+    `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/buildmodeldata.asset`,
+    { responseType: "json" }
+  );
+  // step 3.3.2 - get motion data
+  const motionName = getMotionList(modelName);
+  let motionData;
+  if (!modelName.startsWith("normal")) {
+    const motionRes = await Axios.get<{
+      motions: string[];
+      expressions: string[];
+    }>(
+      `${assetUrl.minio.jp}/live2d/motion/${motionName}_rip/BuildMotionData.json`,
+      { responseType: "json" }
+    );
+    motionData = motionRes.data;
+  } else {
+    motionData = {
+      expressions: [],
+      motions: [],
+    };
+  }
+  // step 3.3.3 - construct model
+  const filename = modelData.Moc3FileName.replace(
+    ".moc3.bytes",
+    ".model3.json"
+  );
+  const model3Json = (
+    await Axios.get(
+      `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/${filename}`
+    )
+  ).data;
+  model3Json.url = `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/`;
+  model3Json.FileReferences.Moc = `${model3Json.FileReferences.Moc}.bytes`;
+  model3Json.FileReferences.Motions = {
+    Motion: motionData.motions.map((elem) => ({
+      Name: elem,
+      File: `../../motion/${motionName}_rip/${elem}.motion3.json`,
+      FadeInTime: 0.5,
+      FadeOutTime: 0.1,
+    })),
+    Expression: motionData.expressions.map((elem) => ({
+      Name: elem,
+      File: `../../motion/${motionName}_rip/${elem}.motion3.json`,
+      FadeInTime: 0.1,
+      FadeOutTime: 0.1,
+    })),
+  };
+  model3Json.FileReferences.Expressions = {};
+  return model3Json;
+}
+// step 3.3.2 - get motion data
 function getMotionList(modelName: string): string {
   let motionName = modelName;
   if (!motionName.startsWith("v2_sub")) {
@@ -355,66 +505,8 @@ function getMotionList(modelName: string): string {
   }
   return motionName + "_motion_base";
 }
-async function getModelData(modelName: string): Promise<ILive2DModelData> {
-  // preload texture, moc3, physics
-  const { data: modelData } = await Axios.get<{
-    Moc3FileName: string;
-    TextureNames: string[];
-    PhysicsFileName: string;
-    UserDataFileName: string;
-    AdditionalMotionData: unknown[];
-    CategoryRules: unknown[];
-  }>(
-    `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/buildmodeldata.asset`,
-    { responseType: "json" }
-  );
-  // get motion data
-  const motionName = getMotionList(modelName);
-  let motionData;
-  if (!modelName.startsWith("normal")) {
-    const motionRes = await Axios.get<{
-      motions: string[];
-      expressions: string[];
-    }>(
-      `${assetUrl.minio.jp}/live2d/motion/${motionName}_rip/BuildMotionData.json`,
-      { responseType: "json" }
-    );
-    motionData = motionRes.data;
-  } else {
-    motionData = {
-      expressions: [],
-      motions: [],
-    };
-  }
-  // construct model
-  const filename = modelData.Moc3FileName.replace(
-    ".moc3.bytes",
-    ".model3.json"
-  );
-  const model3Json = (
-    await Axios.get(
-      `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/${filename}`
-    )
-  ).data;
-  model3Json.url = `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/`;
-  model3Json.FileReferences.Moc = `${model3Json.FileReferences.Moc}.bytes`;
-  model3Json.FileReferences.Motions = {
-    Motion: motionData.motions.map((elem) => ({
-      Name: elem,
-      File: `../../motion/${motionName}_rip/${elem}.motion3.json`,
-      FadeInTime: 0,
-      FadeOutTime: 1,
-    })),
-    Expression: motionData.expressions.map((elem) => ({
-      Name: elem,
-      File: `../../motion/${motionName}_rip/${elem}.motion3.json`,
-      FadeInTime: 0,
-      FadeOutTime: 0,
-    })),
-  };
-  model3Json.FileReferences.Expressions = {};
-  return model3Json;
-}
+
+// step 4.1 - preload model assets
 async function preloadModelAssets(
   modelData: ILive2DModelData,
   progress: IProgressEvent
@@ -426,14 +518,15 @@ async function preloadModelAssets(
   progress("model_physics", 1, 1);
   await Axios.get(modelData.url + modelData.FileReferences.Physics);
 }
-async function preloadModelMotion(
+// step 4.2 - discard useless motions in all model
+function discardMotion(
   scenarioData: IScenarioData,
-  modelData: ILive2DModelDataCollection[],
-  progress: IProgressEvent
+  modelData: ILive2DModelDataCollection[]
 ) {
   const motion_list: {
     costume: string;
     motion: string;
+    type: "motion" | "expression";
   }[] = [];
   // gather all motions
   scenarioData.Snippets.forEach((snippet) => {
@@ -447,12 +540,14 @@ async function preloadModelMotion(
               motion_list.push({
                 costume: action.CostumeType,
                 motion: action.MotionName,
+                type: "motion",
               });
             }
             if (action.FacialName !== "") {
               motion_list.push({
                 costume: action.CostumeType,
                 motion: action.FacialName,
+                type: "expression",
               });
             }
           } else {
@@ -463,12 +558,14 @@ async function preloadModelMotion(
                 motion_list.push({
                   costume: a.CostumeType,
                   motion: action.MotionName,
+                  type: "motion",
                 });
               }
               if (action.FacialName !== "") {
                 motion_list.push({
                   costume: a.CostumeType,
                   motion: action.FacialName,
+                  type: "expression",
                 });
               }
             });
@@ -487,12 +584,14 @@ async function preloadModelMotion(
                 motion_list.push({
                   costume: a.CostumeType,
                   motion: motion.MotionName,
+                  type: "motion",
                 });
               }
               if (motion.FacialName !== "") {
                 motion_list.push({
                   costume: a.CostumeType,
                   motion: motion.FacialName,
+                  type: "expression",
                 });
               }
             });
@@ -506,123 +605,76 @@ async function preloadModelMotion(
   motion_list.forEach((m) => {
     if (
       !unique_motion.find(
-        (u) => m.costume === u.costume && m.motion === u.motion
+        (u) =>
+          m.costume === u.costume && m.motion === u.motion && m.type === u.type
       )
     ) {
+      unique_motion.push(m);
+    }
+  });
+  // prune
+  modelData.forEach((md) => {
+    const motion_for_this_model = motion_list.filter(
+      (m) => m.costume === md.costume
+    );
+    md.motions = motion_for_this_model
+      .filter((m) => m.type === "motion")
+      .map((m) => m.motion);
+    md.data.FileReferences.Motions.Motion = md.motions.map(
+      (m) =>
+        md.data.FileReferences.Motions.Motion.find((old_m) => old_m.Name === m)!
+    );
+    md.expressions = motion_for_this_model
+      .filter((m) => m.type === "expression")
+      .map((m) => m.motion);
+    md.data.FileReferences.Motions.Expression = md.expressions.map(
+      (m) =>
+        md.data.FileReferences.Motions.Expression.find(
+          (old_m) => old_m.Name === m
+        )!
+    );
+  });
+  return modelData;
+}
+// step 4.3 - preload motions
+async function preloadModelMotion(
+  modelData: ILive2DModelDataCollection[],
+  progress: IProgressEvent
+) {
+  // gather all motions
+  const motion_list: {
+    origin: string;
+    url: string;
+  }[] = [];
+  for (const model of modelData) {
+    motion_list.push(
+      ...model.data.FileReferences.Motions.Motion.map((motion) => ({
+        origin: `${model.costume}/${motion.Name}`,
+        url: model.data.url + motion.File,
+      })),
+      ...model.data.FileReferences.Motions.Expression.map((motion) => ({
+        origin: `${model.costume}/${motion.Name}`,
+        url: model.data.url + motion.File,
+      }))
+    );
+  }
+  // remove dupulicate
+  const unique_motion: typeof motion_list = [];
+  motion_list.forEach((m) => {
+    if (!unique_motion.find((u) => m.url === u.url)) {
       unique_motion.push(m);
     }
   });
   // preload by axios
   const total = unique_motion.length;
   let count = 0;
-  const queue = new PreloadQuene();
+  const queue = new PreloadQuene<null>();
   for (const motion of unique_motion) {
-    const model = modelData.find((m) => m.costume === motion.costume);
-    if (model) {
-      const all_motion = [
-        ...model.data.FileReferences.Motions.Motion,
-        ...model.data.FileReferences.Motions.Expression,
-      ];
-
-      const motion_url = all_motion.find(
-        (m_url) => m_url.Name === motion.motion
-      );
-      if (motion_url) {
-        await queue.wait();
-        await queue.add(Axios.get(model.data.url + motion_url.File), () => {
-          count++;
-          progress(
-            "model_motion",
-            count,
-            total,
-            `${model.costume}/${motion_url.Name}`
-          );
-        });
-      }
-    }
+    await queue.wait();
+    await queue.add(Axios.get(motion.url), () => {
+      count++;
+      progress("model_motion", count, total, motion.origin);
+    });
   }
   await queue.all();
-}
-export async function preloadModels(
-  controllerData: ILive2DControllerData,
-  progress: IProgressEvent
-) {
-  let count = 0;
-  const total = controllerData.modelData.length;
-  for (const model of controllerData.modelData) {
-    count++;
-    await preloadModelAssets(model.data, (type) => {
-      progress("model_assets", count, total, `${model.costume}/${type}`);
-    });
-  }
-  await preloadModelMotion(
-    controllerData.scenarioData,
-    controllerData.modelData,
-    progress
-  );
-}
-
-function preloadImage(url: string): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => resolve(img);
-    img.onerror = () => reject(new Error(`Failed to load image: ${url}`));
-    img.src = url;
-  });
-}
-function preloadSound(url: string): Promise<Howl> {
-  return new Promise((resolve, reject) => {
-    const sound = new Howl({
-      src: [url],
-      onload: () => resolve(sound),
-      onloaderror: () => reject(new Error(`Failed to load sound: ${url}`)),
-      loop: false,
-    });
-  });
-}
-async function preloadLive2DScenarioData(
-  urls: ILive2DDataUrls[],
-  progress: IProgressEvent
-): Promise<ILive2DCachedData[]> {
-  const queue = new PreloadQuene();
-  const sounds = urls.filter(
-    (u) =>
-      u.type === "talk" ||
-      u.type === "backgroundmusic" ||
-      u.type === "soundeffect"
-  );
-  let total = sounds.length;
-  let count = 0;
-  for (const url of sounds) {
-    await queue.wait();
-    await queue.add(
-      new Promise((resolve) => {
-        preloadSound(url.url).then((data) => {
-          resolve({ ...url, data });
-        });
-      }),
-      () => {
-        count++;
-        progress("sound", count, total, url.identifer);
-      }
-    );
-  }
-  const images = urls.filter((u) => u.type === "background");
-  total = images.length;
-  count = 0;
-  for (const url of images) {
-    await queue.wait();
-    await queue.add(
-      new Promise((resolve) => {
-        preloadImage(url.url).then((data) => {
-          resolve({ ...url, data });
-        });
-      }),
-      () => {
-        count++;
-        progress("image", count, total, url.identifer);
-      }
-    );
-  }
-  return (await queue.all()) as ILive2DCachedData[];
 }
