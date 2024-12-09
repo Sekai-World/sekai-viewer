@@ -2,14 +2,14 @@ import { Card, CardContent, Typography, CardMedia, Grid } from "@mui/material";
 import { Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useRouteMatch } from "react-router-dom";
+import { useRouteMatch } from "react-router-dom";
 import { IMusicInfo } from "../../types.d";
 import { getRemoteAssetURL } from "../../utils";
 import { useAssetI18n } from "../../utils/i18n";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
-import SpoilerTag from "../../components/widgets/SpoilerTag";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
+import SpoilerCard from "../../components/helpers/SpoilerCard";
 
 const GridView: React.FC<{ data?: IMusicInfo }> = observer(({ data }) => {
   const { path } = useRouteMatch();
@@ -52,56 +52,48 @@ const GridView: React.FC<{ data?: IMusicInfo }> = observer(({ data }) => {
     );
   }
   return (
-    <Link to={path + "/" + data.id} style={{ textDecoration: "none" }}>
-      <Card sx={{ cursor: "pointer" }}>
-        <CardMedia
-          image={jacket}
-          title={getTranslated(`music_titles:${data.id}`, data.title)}
-          sx={{
-            paddingTop: "75%",
-            position: "relative",
-          }}
-        >
-          <SpoilerTag
-            style={{
-              left: "1%",
-              position: "absolute",
-              top: "1%",
-            }}
-            releaseTime={new Date(data.publishedAt)}
-          />
-        </CardMedia>
-        <CardContent style={{ paddingBottom: "16px" }}>
-          <Grid container direction="column" spacing={1}>
-            <Grid item>
-              <ContentTrans
-                contentKey={`music_titles:${data.id}`}
-                original={data.title}
-                originalProps={{
-                  variant: "subtitle1",
-                }}
-                translatedProps={{
-                  variant: "subtitle1",
-                }}
-              />
-            </Grid>
-            <Grid item>
-              <Typography variant="body2" color="textSecondary">
-                {data.categories
-                  .map((cat) =>
-                    t(
-                      `music:categoryType.${
-                        typeof cat === "string" ? cat : cat.musicCategoryName
-                      }`
-                    )
-                  )
-                  .join(", ")}
-              </Typography>
-            </Grid>
+    <SpoilerCard
+      releaseTime={new Date(data.publishedAt)}
+      toPath={path + "/" + data.id}
+    >
+      <CardMedia
+        image={jacket}
+        title={getTranslated(`music_titles:${data.id}`, data.title)}
+        sx={{
+          paddingTop: "75%",
+          position: "relative",
+        }}
+      ></CardMedia>
+      <CardContent style={{ paddingBottom: "16px" }}>
+        <Grid container direction="column" spacing={1}>
+          <Grid item>
+            <ContentTrans
+              contentKey={`music_titles:${data.id}`}
+              original={data.title}
+              originalProps={{
+                variant: "subtitle1",
+              }}
+              translatedProps={{
+                variant: "subtitle1",
+              }}
+            />
           </Grid>
-        </CardContent>
-      </Card>
-    </Link>
+          <Grid item>
+            <Typography variant="body2" color="textSecondary">
+              {data.categories
+                .map((cat) =>
+                  t(
+                    `music:categoryType.${
+                      typeof cat === "string" ? cat : cat.musicCategoryName
+                    }`
+                  )
+                )
+                .join(", ")}
+            </Typography>
+          </Grid>
+        </Grid>
+      </CardContent>
+    </SpoilerCard>
   );
 });
 

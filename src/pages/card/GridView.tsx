@@ -6,8 +6,7 @@ import { ICardInfo } from "../../types.d";
 import { useAssetI18n, useCharaName } from "../../utils/i18n";
 import { CardSmallImage } from "../../components/widgets/CardImage";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
-import SpoilerTag from "../../components/widgets/SpoilerTag";
-import LinkNoDecorationAlsoNoHover from "../../components/styled/LinkNoDecorationAlsoHover";
+import SpoilerCard from "../../components/helpers/SpoilerCard";
 
 const GridView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
   const { path } = useRouteMatch();
@@ -36,51 +35,40 @@ const GridView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
     );
   }
   return (
-    <LinkNoDecorationAlsoNoHover to={path + "/" + data.id}>
-      <Card
-        sx={{
-          cursor: "pointer",
+    <SpoilerCard
+      releaseTime={new Date(data.releaseAt ?? data.archivePublishedAt)}
+      toPath={path + "/" + data.id}
+    >
+      <CardMedia
+        title={getTranslated(`card_prefix:${data.id}`, data.prefix)}
+        style={{
+          position: "relative",
         }}
       >
-        <CardMedia
-          title={getTranslated(`card_prefix:${data.id}`, data.prefix)}
-          style={{
-            position: "relative",
-          }}
-        >
-          <CardSmallImage card={data}></CardSmallImage>
-          <SpoilerTag
-            style={{
-              position: "absolute",
-              top: "1%",
-              left: "1%",
-            }}
-            releaseTime={new Date(data.releaseAt ?? data.archivePublishedAt)}
-          />
-        </CardMedia>
-        <CardContent style={{ paddingBottom: "16px" }}>
-          <Grid container direction="column" spacing={1}>
-            <Grid item>
-              <ContentTrans
-                contentKey={`card_prefix:${data.id}`}
-                original={data.prefix}
-                originalProps={{
-                  variant: "subtitle1",
-                }}
-                translatedProps={{
-                  variant: "subtitle1",
-                }}
-              />
-            </Grid>
-            <Grid item>
-              <Typography variant="body2" color="textSecondary">
-                {getCharaName(data.characterId)}
-              </Typography>
-            </Grid>
+        <CardSmallImage card={data}></CardSmallImage>
+      </CardMedia>
+      <CardContent style={{ paddingBottom: "16px" }}>
+        <Grid container direction="column" spacing={1}>
+          <Grid item>
+            <ContentTrans
+              contentKey={`card_prefix:${data.id}`}
+              original={data.prefix}
+              originalProps={{
+                variant: "subtitle1",
+              }}
+              translatedProps={{
+                variant: "subtitle1",
+              }}
+            />
           </Grid>
-        </CardContent>
-      </Card>
-    </LinkNoDecorationAlsoNoHover>
+          <Grid item>
+            <Typography variant="body2" color="textSecondary">
+              {getCharaName(data.characterId)}
+            </Typography>
+          </Grid>
+        </Grid>
+      </CardContent>
+    </SpoilerCard>
   );
 };
 
