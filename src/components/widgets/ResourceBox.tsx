@@ -37,7 +37,7 @@ const ResourceBox: React.FC<{
   const [resourceDetails, setResourceDetails] = useState<ResourceBoxDetail[]>();
 
   useEffect(() => {
-    if (["tw", "kr"].includes(region)) {
+    if (["tw", "kr", "cn"].includes(region)) {
       if (compactResourceBoxDetails && resourceBoxId) {
         const purposeIndex =
           compactResourceBoxDetails.__ENUM__.resourceBoxPurpose.indexOf(

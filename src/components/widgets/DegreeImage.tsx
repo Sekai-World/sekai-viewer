@@ -52,7 +52,7 @@ const DegreeImage: React.FC<
     const [isWorldLinkDegree, setIsWorldLinkDegree] = useState(false);
 
     useEffect(() => {
-      if (["tw", "kr"].includes(region)) {
+      if (["tw", "kr", "cn"].includes(region)) {
         if (compactResourceBoxDetails && honors) {
           if (resourceBoxId) {
             // convert purpose to enum id

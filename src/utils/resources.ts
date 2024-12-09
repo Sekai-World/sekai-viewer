@@ -215,6 +215,14 @@ export const UnitLogoMap: {
     street: `/images/tw/logol_outline/logo_street.png`,
     theme_park: `/images/tw/logol_outline/logo_theme_park.png`,
   },
+  cn: {
+    idol: `/images/cn/logol_outline/logo_idol.png`,
+    light_sound: `/images/cn/logol_outline/logo_light_sound.png`,
+    piapro: `/images/cn/logol_outline/logo_piapro.png`,
+    school_refusal: `/images/cn/logol_outline/logo_school_refusal.png`,
+    street: `/images/cn/logol_outline/logo_street.png`,
+    theme_park: `/images/cn/logol_outline/logo_theme_park.png`,
+  },
 };
 
 export const UnitLogoMiniMap: { [key: string]: string } = {
