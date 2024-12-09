@@ -115,16 +115,12 @@ function getMaxParam(
   const maxLevel = rarity.trainingMaxLevel || rarity.maxLevel;
 
   let maxParam =
-    (Array.isArray(card.cardParameters)
-      ? card.cardParameters
-          .filter((cp) => cp.cardLevel === maxLevel)
-          .reduce((sum, cp) => {
-            sum += cp.power;
-            return sum;
-          }, 0)
-      : card.cardParameters.param1[maxLevel] +
-        card.cardParameters.param2[maxLevel] +
-        card.cardParameters.param3[maxLevel]) +
+    card.cardParameters
+      .filter((cp) => cp.cardLevel === maxLevel)
+      .reduce((sum, cp) => {
+        sum += cp.power;
+        return sum;
+      }, 0) +
     episodes
       .filter((episode) => episode.cardId === card.id)
       .reduce((sum, episode) => {
@@ -338,7 +334,10 @@ const CardList: React.FC<unknown> = observer(() => {
           case "id":
           case "releaseAt": {
             let sortKey: "id" | "releaseAt" | "archivePublishedAt" = sortBy;
-            if (sortKey === "releaseAt" && ["tw", "kr"].includes(region)) {
+            if (
+              sortKey === "releaseAt" &&
+              ["tw", "kr", "cn"].includes(region)
+            ) {
               sortKey = "archivePublishedAt";
             }
             compare = (a[sortKey] || 0) - (b[sortKey] || 0);
