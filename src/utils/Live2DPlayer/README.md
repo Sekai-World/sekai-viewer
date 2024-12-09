@@ -1,0 +1,61 @@
+# TODO
+- beautiful UI
+- bgm fade in and out
+- VoiceId more than one
+- character moving
+- NOT IMPLEMENT YET:
+    - SnippetAction.CharacterLayoutMode <- not sure what this means
+    - SnippetAction.Sound
+        - SoundData.Volume
+    - SnippetAction.InputName
+    - SnippetAction.Selectable
+    - SnippetAction.CharacerLayout <- typo in types.d
+        - character moving
+    - SnippetAction.SpecialEffect
+        - SpecialEffectType.ShakeScreen
+        - SpecialEffectType.ShakeWindow
+        - SpecialEffectType.ChangeCardStill
+        - SpecialEffectType.AmbientColorNormal
+        - SpecialEffectType.AmbientColorEvening
+        - SpecialEffectType.AmbientColorNight
+        - SpecialEffectType.PlayScenarioEffect
+        - SpecialEffectType.StopScenarioEffect
+        - SpecialEffectType.ChangeBackgroundStill
+        - SpecialEffectType.PlaceInfo
+        - SpecialEffectType.Movie
+        - SpecialEffectType.SekaiIn
+        - SpecialEffectType.SekaiOut
+        - SpecialEffectType.AttachCharacterShader
+        - SpecialEffectType.SimpleSelectable
+        - SpecialEffectType.FullScreenText
+        - SpecialEffectType.StopShakeScreen
+        - SpecialEffectType.StopShakeWindow
+
+# CHANGE LOG
+
+- commit e08f0f68e2a081c99874be64cd0b7ddab0635619
+    - feat: reimplement live2d story reader
+- commit ff9bc4f68a649c80fa78770d60b170d55c823709
+    - fix(live2d): event sound loading not properly & sound not clear
+    - feat: add beta indicator
+    - feat: add log function to avoid console.log in production
+    - feat: discard useless motion and preload all motions in live2d model
+    - feat: load all models in memory at the beginning of playing
+    - feat: add auto play checkbox
+    - feat: add the ability to skip animations
+    - fix: sounds not clear after leaving the page
+    - fix: some sounds in event story not load properly
+    - fix: load progress stuck when assets can't be load, instead raise error when playing
+    - fix: load progress sometimes draw back
+- commit 79fc452d3e90996338a3a70d69516779d35e7199
+    - refactor: upgrade pixi to v7, migrate to pixi-live2d-display-mulmotion
+    - refactor: adapt all the codes to new deps
+- commit this
+    - feat(live2d): lipsync, simultaneous motions and expressions
+    - refactor: upgrade to pixi-live2d-display-mulmotion@0.5.0-mm-3
+    - feat: lipsync
+    - feat: play motions and expressions simultaneously
+    - feat: optimize playing progress, delays are more accurate now
+    - feat: Implement SoundPlayMode
+    - fix: when talk no voice during autoplay, immediately skip
+    - fix: weird motion loop (by downscale it to 20%)

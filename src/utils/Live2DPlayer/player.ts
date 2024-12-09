@@ -14,12 +14,13 @@ import {
   Live2DModel,
   MotionPriority,
   MotionPreloadStrategy,
+  config,
 } from "pixi-live2d-display-mulmotion";
 import type { Live2DModelOptions } from "pixi-live2d-display-mulmotion";
 import { log } from "./log";
 
+config.fftSize = 8192;
 //DEBUG
-//import { config } from "pixi-live2d-display-mulmotion"
 //config.logLevel = config.LOG_LEVEL_VERBOSE;
 //DEBUG/
 
@@ -34,7 +35,7 @@ const StageLayerIndex = [
 
 type StageLayerType = (typeof StageLayerIndex)[number];
 
-class Live2DModelWithInfo extends Live2DModel {
+export class Live2DModelWithInfo extends Live2DModel {
   public live2DInfo: Ilive2DModelInfo;
   constructor(options?: Live2DModelOptions) {
     super(options);
@@ -44,6 +45,7 @@ class Live2DModelWithInfo extends Live2DModel {
       position: [0.5, 0.5],
       init_pose: false,
       hidden: true,
+      speaking: false,
     };
   }
 }
@@ -338,7 +340,7 @@ export class Live2DPlayer {
     },
     show_layer: async (layer: StageLayerType, time: number) => {
       const container: DisplayObject = this.app.stage.getChildByName(layer)!;
-      if (container.alpha !== 1) await await this.animate.show(container, time);
+      if (container.alpha !== 1) await this.animate.show(container, time);
     },
     hide_layer: async (layer: StageLayerType, time: number) => {
       const container: DisplayObject = this.app.stage.getChildByName(layer)!;
@@ -404,17 +406,14 @@ export class Live2DPlayer {
       const model = await Live2DModelWithInfo.from(model_data.data, {
         autoFocus: false,
         autoHitTest: false,
+        breathDepth: 0.2,
         ticker: Ticker.shared,
         motionPreload: MotionPreloadStrategy.ALL,
       });
+      model.internalModel.extendParallelMotionManager(2);
       model.filters = [new AlphaFilter(0)];
-      model.live2DInfo = {
-        cid: model_data.cid,
-        costume: model_data.costume,
-        position: [0.5, 0.5],
-        init_pose: false,
-        hidden: true,
-      };
+      model.live2DInfo.cid = model_data.cid;
+      model.live2DInfo.costume = model_data.costume;
       //model.visible = false;
       container.addChild(model);
       this.set_style.live2d();
@@ -468,15 +467,21 @@ export class Live2DPlayer {
     ) => {
       const model = this.live2d.find(costume);
       if (model) {
-        //model.visible = true;
-        await model.motion(motion_type, motion_index, MotionPriority.FORCE);
+        let manager = model.internalModel.parallelMotionManager[0];
+        if (motion_type === "Expression") {
+          manager = model.internalModel.parallelMotionManager[1];
+        }
+        await manager.startMotion(
+          motion_type,
+          motion_index,
+          MotionPriority.FORCE
+        );
         await this.animate.wrapper(
           () => {},
-          () => model.internalModel.motionManager.isFinished()
+          () => manager.isFinished()
         );
         model.live2DInfo.init_pose = true;
       }
-      return false;
     },
     set_position: (costume: string, position: number[]) => {
       const model = this.live2d.find(costume);
@@ -484,6 +489,37 @@ export class Live2DPlayer {
         model.live2DInfo.position = position;
         this.set_style.live2d();
       }
+    },
+    speak: (costume: string, url: string) => {
+      const model = this.live2d.find(costume);
+      if (model) {
+        model.speak(url, {
+          resetExpression: false,
+          onFinish: () => {
+            model.live2DInfo.speaking = false;
+          },
+        });
+        model.live2DInfo.speaking = true;
+      }
+    },
+    stop_speaking: () => {
+      const container: Container = this.app.stage.getChildByName("live2d")!;
+      (container.children as Live2DModelWithInfo[]).forEach((m) => {
+        if (m.live2DInfo.speaking) {
+          m.stopSpeaking();
+          m.live2DInfo.speaking = false;
+        }
+      });
+    },
+    all_speak_finish: () => {
+      return this.animate.wrapper(
+        () => {},
+        () =>
+          !(
+            this.app.stage.getChildByName("live2d")!
+              .children as Live2DModelWithInfo[]
+          ).reduce((accu, curr) => accu || curr.live2DInfo.speaking, false)
+      );
     },
   };
 

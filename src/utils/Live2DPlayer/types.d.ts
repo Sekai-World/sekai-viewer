@@ -1,41 +1,6 @@
 import { Howl } from "howler";
 import { IScenarioData } from "../../types";
 
-// TODO:
-// sounds url not parse properly.
-// NOT IMPLEMENT YET:
-//  - SnippetAction.CharacterLayoutMode <- not sure what this means
-//  - SnippetAction.Sound
-//      - SoundData.Volume
-//      - SoundData.SoundPlayMode
-//  - SnippetAction.InputName
-//  - SnippetAction.Selectable
-//  - SnippetAction.CharacerLayout <- typo in types.d
-//     - character moving
-//  - SnippetAction.SpecialEffect
-//     - SpecialEffectType.ShakeScreen
-//     - SpecialEffectType.ShakeWindow
-//     - SpecialEffectType.ChangeCardStill
-//     - SpecialEffectType.AmbientColorNormal
-//     - SpecialEffectType.AmbientColorEvening
-//     - SpecialEffectType.AmbientColorNight
-//     - SpecialEffectType.PlayScenarioEffect
-//     - SpecialEffectType.StopScenarioEffect
-//     - SpecialEffectType.ChangeBackgroundStill
-//     - SpecialEffectType.PlaceInfo
-//     - SpecialEffectType.Movie
-//     - SpecialEffectType.SekaiIn
-//     - SpecialEffectType.SekaiOut
-//     - SpecialEffectType.AttachCharacterShader
-//     - SpecialEffectType.SimpleSelectable
-//     - SpecialEffectType.FullScreenText
-//     - SpecialEffectType.StopShakeScreen
-//     - SpecialEffectType.StopShakeWindow
-// bgm fade in and out
-// expression conflict with motion
-// VoiceId more than one
-// lipsync
-
 export interface ILive2DDataUrls {
   identifer: string;
   type: "soundeffect" | "backgroundmusic" | "talk" | "background";
@@ -81,6 +46,7 @@ export interface Ilive2DModelInfo {
   position: number[];
   init_pose: boolean;
   hidden: boolean;
+  speaking: boolean;
 }
 
 export interface ILive2DModelDataCollection {

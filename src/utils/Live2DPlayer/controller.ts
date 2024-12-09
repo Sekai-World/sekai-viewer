@@ -7,6 +7,7 @@ import {
   SnippetAction,
   SpecialEffectType,
   SnippetProgressBehavior,
+  SoundPlayMode,
 } from "../../types.d";
 
 import {
@@ -71,18 +72,24 @@ export class Live2DController extends Live2DPlayer {
       return false;
     };
 
-    // clean signal
-    this.animate.reset_abort();
-
-    // step until meet stop condition
+    // create action list
+    const action_list: number[][] = [];
     let current = step;
-    if (current === 0) await this.apply_action(current);
-    if (is_end(current)) return current;
+    if (current === 0) action_list.push([0]);
     do {
       current++;
-      await this.apply_action(current);
+      // check if SnippetProgressBehavior = Now
+      if (
+        this.scenarioData.Snippets[current].ProgressBehavior ===
+        SnippetProgressBehavior.Now
+      ) {
+        // SnippetProgressBehavior = Now, push in the last list
+        action_list[action_list.length - 1].push(current);
+      } else {
+        // SnippetProgressBehavior != Now, push a new list
+        action_list.push([current]);
+      }
     } while (!is_stop(current));
-
     // continue if the next steps SnippetProgressBehavior = Now
     while (
       !is_end(current) &&
@@ -90,35 +97,35 @@ export class Live2DController extends Live2DPlayer {
         SnippetProgressBehavior.Now
     ) {
       current++;
-      await this.apply_action(current);
+      action_list[action_list.length - 1].push(current);
+    }
+    log.log("Live2DController", action_list);
+
+    // clear signal
+    this.animate.reset_abort();
+    // apply all actions
+    // offset_m
+    let offset_ms = 0;
+    for (const action_in_parallel of action_list) {
+      const start_time = Date.now();
+      await Promise.all(
+        action_in_parallel.map((a) => this.apply_action(a, -offset_ms))
+      );
+      offset_ms = Date.now() - start_time;
     }
 
     // wait all talk sounds finished
-    for (const s of this.scenarioResource) {
-      if (s.type !== "talk") continue;
-      const sound = s.data as Howl;
-      if (sound.playing()) {
-        await new Promise<void>((resolve) => {
-          if (this.abort_controller.signal.aborted) {
-            resolve();
-            return;
-          }
-          sound.on("end", () => {
-            resolve();
-          });
-          this.abort_controller.signal.addEventListener("abort", () => {
-            resolve();
-          });
-        });
-      }
-    }
+    await this.live2d.all_speak_finish();
 
     log.log("Live2DController", this.app.stage.getChildByName("live2d"));
     return current;
   };
-  apply_action = async (step: number) => {
+  apply_action = async (step: number, delay_offset_ms = 0) => {
     const action = this.scenarioData.Snippets[step];
-    if (action.Delay > 0) await this.animate.delay(action.Delay * 1000);
+    if (action.Delay > 0)
+      await this.animate.delay(
+        Math.max(action.Delay * 1000 + delay_offset_ms, 0)
+      );
     switch (action.Action) {
       case SnippetAction.SpecialEffect:
         {
@@ -344,20 +351,20 @@ export class Live2DController extends Live2DPlayer {
           log.log("Live2DController", "Talk", action, action_detail);
           //clear
           await this.animate.hide_layer("telop", 200);
-          // motion
-          for (const m of action_detail.Motions) {
-            await this.apply_live2d_motion(
-              this.live2d_get_costume(m.Character2dId),
-              m.MotionName,
-              m.FacialName
-            );
-          }
           // show dialog
           this.draw.dialog({
             cn: action_detail.WindowDisplayName,
             text: action_detail.Body,
           });
           await this.animate.show_layer("dialog", 200);
+          // motion
+          for (const m of action_detail.Motions) {
+            this.apply_live2d_motion(
+              this.live2d_get_costume(m.Character2dId),
+              m.MotionName,
+              m.FacialName
+            );
+          }
           // sound
           if (action_detail.Voices.length > 0) {
             this.stop_sounds(["talk"]);
@@ -365,13 +372,22 @@ export class Live2DController extends Live2DPlayer {
               (s) =>
                 s.identifer === action_detail.Voices[0].VoiceId &&
                 s.type === "talk"
-            )?.data;
-            if (sound) (sound as Howl).play();
+            )!;
+            if (sound)
+              this.live2d.speak(
+                this.live2d_get_costume(
+                  action_detail.TalkCharacters[0].Character2dId
+                ),
+                sound.url
+              );
             else
               log.warn(
                 "Live2DController",
                 `${action_detail.Voices[0].VoiceId} not loaded, skip.`
               );
+          } else {
+            // no voice, delay
+            await this.animate.delay(2000);
           }
         }
         break;
@@ -390,7 +406,8 @@ export class Live2DController extends Live2DPlayer {
                   s.type === "backgroundmusic"
               )?.data as Howl;
               sound.loop(true);
-              Howler.stop();
+              this.stop_sounds(["backgroundmusic"]);
+              sound.volume(0.8);
               sound.play();
             }
           } else if (action_detail.Se) {
@@ -398,8 +415,39 @@ export class Live2DController extends Live2DPlayer {
               (s) =>
                 s.identifer === action_detail.Se && s.type === "soundeffect"
             )?.data;
-            if (sound) (sound as Howl).play();
-            else
+            if (sound) {
+              switch (action_detail.PlayMode) {
+                case SoundPlayMode.Stop:
+                  {
+                    (sound as Howl).stop();
+                  }
+                  break;
+                case SoundPlayMode.SpecialSePlay:
+                  {
+                    (sound as Howl).loop(true);
+                    (sound as Howl).play();
+                  }
+                  break;
+                case SoundPlayMode.CrossFade:
+                  {
+                    (sound as Howl).loop(false);
+                    (sound as Howl).play();
+                  }
+                  break;
+                case SoundPlayMode.Stack:
+                  {
+                    (sound as Howl).loop(false);
+                    (sound as Howl).play();
+                  }
+                  break;
+                default:
+                  log.warn(
+                    "Live2DController",
+                    `Sound/SoundPlayMode:${action_detail.PlayMode} not implemented!`,
+                    action
+                  );
+              }
+            } else
               log.warn(
                 "Live2DController",
                 `${action_detail.Se} not loaded, skip.`
@@ -425,22 +473,28 @@ export class Live2DController extends Live2DPlayer {
       `apply motion: ${costume}|${motion}|${expression}`
     );
     const model = this.modelData.find((n) => n.costume === costume);
+    const wait_list = [];
     if (model) {
       if (expression !== "") {
-        await this.live2d.update_motion(
-          "Expression",
-          costume,
-          model.expressions.indexOf(expression)
+        wait_list.push(
+          this.live2d.update_motion(
+            "Expression",
+            costume,
+            model.expressions.indexOf(expression)
+          )
         );
       }
       if (motion !== "") {
-        await this.live2d.update_motion(
-          "Motion",
-          costume,
-          model.motions.indexOf(motion)
+        wait_list.push(
+          this.live2d.update_motion(
+            "Motion",
+            costume,
+            model.motions.indexOf(motion)
+          )
         );
       }
     }
+    await Promise.all(wait_list);
   };
   live2d_model_init = async () => {
     this.live2d.clear();
@@ -472,8 +526,12 @@ export class Live2DController extends Live2DPlayer {
         (resource) => sound_types.findIndex((t) => t === resource.type) !== -1
       )
       .forEach((resource) => {
-        (resource.data as Howl).stop();
+        const sound = resource.data as Howl;
+        if (sound.playing()) sound.stop();
       });
+    if (sound_types.findIndex((t) => t === "talk") !== -1) {
+      this.live2d.stop_speaking();
+    }
   };
   unload = () => {
     this.stop_sounds(["backgroundmusic", "soundeffect", "talk"]);
