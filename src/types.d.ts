@@ -460,31 +460,6 @@ export interface UserRanking {
   userProfileHonors?: ISekaiUserProfileHonor[];
 }
 
-export interface IEventRealtimeRank {
-  time: number;
-  first10: UserRanking[];
-  rank20: UserRanking[];
-  rank30: UserRanking[];
-  rank40: UserRanking[];
-  rank50: UserRanking[];
-  rank100: UserRanking[];
-  rank200: UserRanking[];
-  rank300: UserRanking[];
-  rank400: UserRanking[];
-  rank500: UserRanking[];
-  rank1000: UserRanking[];
-  rank2000: UserRanking[];
-  rank3000: UserRanking[];
-  rank4000: UserRanking[];
-  rank5000: UserRanking[];
-  rank10000: UserRanking[];
-  rank20000: UserRanking[];
-  rank30000: UserRanking[];
-  rank40000: UserRanking[];
-  rank50000: UserRanking[];
-  rank100000: UserRanking[];
-}
-
 export interface ResourceBoxDetail {
   resourceBoxPurpose: string;
   resourceBoxId: number;

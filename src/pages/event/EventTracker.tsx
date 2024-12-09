@@ -64,7 +64,6 @@ const EventTracker: React.FC<unknown> = observer(() => {
     getEventRankingsByTimestamp,
     getLastEventRankings,
   } = useEventTrackerAPI(region);
-  // const refreshData = useRealtimeEventData();
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
 
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
