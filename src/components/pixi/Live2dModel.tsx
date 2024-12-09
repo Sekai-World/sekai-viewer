@@ -1,12 +1,11 @@
 import { PixiComponent } from "@pixi/react";
-import { InternalModel, Live2DModel } from "pixi-live2d-display";
+import { InternalModel, Live2DModel } from "pixi-live2d-display-mulmotion";
 import {
   BatchRenderer,
   extensions,
   Extract,
-  InteractionManager,
-  Ticker,
   TickerPlugin,
+  Ticker,
 } from "pixi.js";
 import React, { forwardRef, useEffect, useState } from "react";
 
@@ -17,14 +16,9 @@ interface Live2dModelProps {
   scaleY?: number;
 }
 
-Live2DModel.registerTicker(Ticker);
+extensions.add(TickerPlugin, Extract, BatchRenderer);
 
-extensions.add(TickerPlugin, Extract, BatchRenderer, InteractionManager);
-
-const Component = PixiComponent<
-  Live2dModelProps & { model: Live2DModel<InternalModel> },
-  Live2DModel<InternalModel>
->("Live2dModel", {
+const Component = PixiComponent("Live2dModel", {
   create: (props) => {
     const { model } = props;
 
@@ -51,8 +45,11 @@ const Live2dModel = forwardRef<
       if (!modelData) {
         return;
       }
-      _model = await Live2DModel.from(modelData);
-      _model.autoInteract = false;
+      _model = await Live2DModel.from(modelData, {
+        autoFocus: false,
+        autoHitTest: false,
+        ticker: Ticker.shared,
+      });
       setModel(_model);
       if (props.onReady) {
         setTimeout(() => props.onReady!());

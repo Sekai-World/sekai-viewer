@@ -11,8 +11,6 @@ import { CircularProgress, Typography, Stack } from "@mui/material";
 
 import { Stage, useApp } from "@pixi/react";
 
-// wired... I have to add Ticker plugin manually or pixi-react will raise error...
-// pixi-react nolonger supports pixi6.5, maybe this is the reason?
 import { extensions, TickerPlugin } from "pixi.js";
 extensions.add(TickerPlugin);
 

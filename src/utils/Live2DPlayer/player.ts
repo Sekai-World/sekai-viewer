@@ -7,23 +7,21 @@ import {
   Text,
   TextStyle,
   Ticker,
-  filters,
+  AlphaFilter,
 } from "pixi.js";
 import type { Application, DisplayObject } from "pixi.js";
 import {
   Live2DModel,
   MotionPriority,
   MotionPreloadStrategy,
-} from "pixi-live2d-display";
-import type { Live2DModelOptions } from "pixi-live2d-display";
+} from "pixi-live2d-display-mulmotion";
+import type { Live2DModelOptions } from "pixi-live2d-display-mulmotion";
 import { log } from "./log";
 
 //DEBUG
-//import { config } from "pixi-live2d-display"
+//import { config } from "pixi-live2d-display-mulmotion"
 //config.logLevel = config.LOG_LEVEL_VERBOSE;
 //DEBUG/
-
-Live2DModel.registerTicker(Ticker);
 
 const StageLayerIndex = [
   "fullcolor",
@@ -35,8 +33,6 @@ const StageLayerIndex = [
 ] as const;
 
 type StageLayerType = (typeof StageLayerIndex)[number];
-const t = new filters.AlphaFilter();
-type AlphaFilterType = typeof t;
 
 class Live2DModelWithInfo extends Live2DModel {
   public live2DInfo: Ilive2DModelInfo;
@@ -88,7 +84,7 @@ export class Live2DPlayer {
   update_style = () => {
     if (this.app.stage.children.length === 0) return;
     StageLayerIndex.forEach((n) => {
-      const child: Container = this.app.stage.getChildByName(n);
+      const child: Container = this.app.stage.getChildByName(n)!;
       if (child.children.length > 0) {
         if (n in this.set_style)
           this.set_style[n as keyof typeof this.set_style]();
@@ -98,7 +94,7 @@ export class Live2DPlayer {
 
   set_style = {
     background: () => {
-      const container: Container = this.app.stage.getChildByName("background");
+      const container: Container = this.app.stage.getChildByName("background")!;
       const bg: Sprite = container.getChildAt(0) as Sprite;
       let scale = 1;
       const texture = bg.texture;
@@ -114,18 +110,18 @@ export class Live2DPlayer {
       bg.scale.set(scale);
     },
     dialog: () => {
-      const containerP: Container = this.app.stage.getChildByName("dialog");
+      const containerP: Container = this.app.stage.getChildByName("dialog")!;
       const container: Container = containerP.getChildAt(0) as Container;
       container.x = 0;
       container.y = this.stage_size[1] * 0.7;
-      const bg: Container = container.getChildByName("dialog_bg");
+      const bg: Container = container.getChildByName("dialog_bg")!;
       bg.x = 0;
       bg.y = 0;
       bg.scale.set(
         this.stage_size[0] / 2000,
         (this.stage_size[1] * 0.3) / 2000
       );
-      const cn: Text = container.getChildByName("dialog_text_cn");
+      const cn: Text = container.getChildByName("dialog_text_cn")!;
       cn.x = this.stage_size[0] * 0.15;
       cn.y = this.em(10);
       cn.style = new TextStyle({
@@ -139,7 +135,7 @@ export class Live2DPlayer {
         dropShadowAngle: Math.PI / 6,
         dropShadowDistance: this.em(2),
       });
-      const text: Text = container.getChildByName("dialog_text_text");
+      const text: Text = container.getChildByName("dialog_text_text")!;
       text.x = this.stage_size[0] * 0.15;
       text.y = this.em(35);
       text.style = new TextStyle({
@@ -156,7 +152,7 @@ export class Live2DPlayer {
       });
     },
     live2d: () => {
-      const container: Container = this.app.stage.getChildByName("live2d");
+      const container: Container = this.app.stage.getChildByName("live2d")!;
       (container.children as Live2DModelWithInfo[]).forEach((model) => {
         const live2dTrueWidth = model.internalModel.originalWidth;
         const live2dTrueHeight = model.internalModel.originalHeight;
@@ -171,8 +167,8 @@ export class Live2DPlayer {
       });
     },
     telop: () => {
-      const container: Container = this.app.stage.getChildByName("telop");
-      const text: Text = container.getChildByName("telop_text");
+      const container: Container = this.app.stage.getChildByName("telop")!;
+      const text: Text = container.getChildByName("telop_text")!;
       text.anchor.set(0.5);
       text.x = this.stage_size[0] / 2;
       text.y = this.stage_size[1] / 2;
@@ -188,20 +184,20 @@ export class Live2DPlayer {
         dropShadowAngle: Math.PI / 6,
         dropShadowDistance: this.em(2),
       });
-      const bg: Container = container.getChildByName("telop_bg");
+      const bg: Container = container.getChildByName("telop_bg")!;
       bg.x = 0;
       bg.y = this.stage_size[1] / 2 - this.em(30);
       bg.scale.set(this.stage_size[0] / 2000, this.em(60) / 2000);
     },
     fullcolor: () => {
-      const container: Container = this.app.stage.getChildByName("fullcolor");
+      const container: Container = this.app.stage.getChildByName("fullcolor")!;
       const bg: Graphics = container.getChildAt(0) as Graphics;
       bg.x = 0;
       bg.y = 0;
       bg.scale.set(this.stage_size[0] / 2000, this.stage_size[1] / 2000);
     },
     flashback: () => {
-      const container: Container = this.app.stage.getChildByName("flashback");
+      const container: Container = this.app.stage.getChildByName("flashback")!;
       const bg: Graphics = container.getChildAt(0) as Graphics;
       bg.x = 0;
       bg.y = 0;
@@ -211,7 +207,7 @@ export class Live2DPlayer {
 
   draw = {
     background: (data: HTMLImageElement) => {
-      const container: Container = this.app.stage.getChildByName("background");
+      const container: Container = this.app.stage.getChildByName("background")!;
       container.removeChildren();
       const texture = Texture.from(data);
       const bg = new Sprite(texture);
@@ -219,7 +215,7 @@ export class Live2DPlayer {
       this.set_style.background();
     },
     dialog: (data: { cn: string; text: string }) => {
-      const container: Container = this.app.stage.getChildByName("dialog");
+      const container: Container = this.app.stage.getChildByName("dialog")!;
       container.removeChildren();
       const text_container = new Container();
       container.addChild(text_container);
@@ -241,7 +237,7 @@ export class Live2DPlayer {
       this.set_style.dialog();
     },
     telop: (data: string) => {
-      const container: Container = this.app.stage.getChildByName("telop");
+      const container: Container = this.app.stage.getChildByName("telop")!;
       container.removeChildren();
       const bg = new Container();
       bg.name = "telop_bg";
@@ -257,7 +253,7 @@ export class Live2DPlayer {
       this.set_style.telop();
     },
     fullcolor: (color: number) => {
-      const container: Container = this.app.stage.getChildByName("fullcolor");
+      const container: Container = this.app.stage.getChildByName("fullcolor")!;
       container.removeChildren();
       const bg_graphic = new Graphics();
       bg_graphic.beginFill(color, 1);
@@ -267,7 +263,7 @@ export class Live2DPlayer {
       this.set_style.fullcolor();
     },
     flashback: () => {
-      const container: Container = this.app.stage.getChildByName("flashback");
+      const container: Container = this.app.stage.getChildByName("flashback")!;
       container.removeChildren();
       const bg_graphic = new Graphics();
       bg_graphic.beginFill(0x000000, 0.3);
@@ -341,11 +337,11 @@ export class Live2DPlayer {
         this.abort_controller = new AbortController();
     },
     show_layer: async (layer: StageLayerType, time: number) => {
-      const container: DisplayObject = this.app.stage.getChildByName(layer);
+      const container: DisplayObject = this.app.stage.getChildByName(layer)!;
       if (container.alpha !== 1) await await this.animate.show(container, time);
     },
     hide_layer: async (layer: StageLayerType, time: number) => {
-      const container: DisplayObject = this.app.stage.getChildByName(layer);
+      const container: DisplayObject = this.app.stage.getChildByName(layer)!;
       if (container.alpha !== 0) await this.animate.hide(container, time);
     },
     show: async (container: DisplayObject, time: number) => {
@@ -372,7 +368,7 @@ export class Live2DPlayer {
     },
     show_by_filter: async (container: DisplayObject, time: number) => {
       if (container.filters && container.filters.length > 0) {
-        const filter = container.filters[0] as AlphaFilterType;
+        const filter = container.filters[0] as AlphaFilter;
         filter.alpha = 0;
         await this.animate.wrapper(
           (ani_ticker) => {
@@ -386,7 +382,7 @@ export class Live2DPlayer {
     },
     hide_by_filter: async (container: DisplayObject, time: number) => {
       if (container.filters && container.filters.length > 0) {
-        const filter = container.filters[0] as AlphaFilterType;
+        const filter = container.filters[0] as AlphaFilter;
         filter.alpha = 1;
         await this.animate.wrapper(
           (ani_ticker) => {
@@ -404,12 +400,14 @@ export class Live2DPlayer {
   // display by show/hide
   live2d = {
     init: async (model_data: ILive2DModelDataCollection) => {
-      const container: Container = this.app.stage.getChildByName("live2d");
+      const container: Container = this.app.stage.getChildByName("live2d")!;
       const model = await Live2DModelWithInfo.from(model_data.data, {
-        autoInteract: false,
+        autoFocus: false,
+        autoHitTest: false,
+        ticker: Ticker.shared,
         motionPreload: MotionPreloadStrategy.ALL,
       });
-      model.filters = [new filters.AlphaFilter(0)];
+      model.filters = [new AlphaFilter(0)];
       model.live2DInfo = {
         cid: model_data.cid,
         costume: model_data.costume,
@@ -423,17 +421,17 @@ export class Live2DPlayer {
       log.log("Live2DPlayer", `${model_data.costume} init.`);
     },
     load_status: (): "loaded" | "ready" => {
-      const container: Container = this.app.stage.getChildByName("live2d");
+      const container: Container = this.app.stage.getChildByName("live2d")!;
       return container.children.length > 0 ? "loaded" : "ready";
     },
     find: (costume: string) => {
-      const container: Container = this.app.stage.getChildByName("live2d");
+      const container: Container = this.app.stage.getChildByName("live2d")!;
       return (container.children as Live2DModelWithInfo[]).find(
         (l) => l.live2DInfo.costume === costume
       );
     },
     is_empty: () => {
-      const container: Container = this.app.stage.getChildByName("live2d");
+      const container: Container = this.app.stage.getChildByName("live2d")!;
       return (container.children as Live2DModelWithInfo[])
         .map((l) => l.live2DInfo.hidden)
         .reduce((accumulator, current) => {
@@ -441,7 +439,7 @@ export class Live2DPlayer {
         }, true);
     },
     clear: () => {
-      const container: Container = this.app.stage.getChildByName("live2d");
+      const container: Container = this.app.stage.getChildByName("live2d")!;
       container.removeChildren();
       log.log("Live2DPlayer", "live2d stage clear.");
     },
@@ -491,7 +489,7 @@ export class Live2DPlayer {
 
   clear_layers = (layers: StageLayerType[]) => {
     layers.forEach((n) => {
-      const container: Container = this.app.stage.getChildByName(n);
+      const container: Container = this.app.stage.getChildByName(n)!;
       container.removeChildren();
     });
   };

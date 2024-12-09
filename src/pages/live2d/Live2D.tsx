@@ -42,7 +42,7 @@ import ContainerContent from "../../components/styled/ContainerContent";
 import { Stage } from "@pixi/react";
 // import { settings } from "pixi.js";
 import Live2dModel from "../../components/pixi/Live2dModel";
-import { InternalModel, Live2DModel } from "pixi-live2d-display";
+import { InternalModel, Live2DModel } from "pixi-live2d-display-mulmotion";
 
 // settings.RESOLUTION = window.devicePixelRatio * 2;
 
