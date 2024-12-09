@@ -48,6 +48,14 @@ const GridView: React.FC<{
             "kr"
           );
           break;
+        case "zhs":
+          getRemoteAssetURL(
+            `comic/one_frame_rip/${data.assetbundleName}.webp`,
+            setImageURL,
+            "minio",
+            "cn"
+          );
+          break;
         default:
           getRemoteAssetURL(
             `${lang}/${data.assetbundleName}.png`,

@@ -67,7 +67,7 @@ const ComicList: React.FC<unknown> = observer(() => {
             url = `${resourceLang}/${comic.assetbundleName}.png`;
             break;
         }
-        console.log(resourceLang, url);
+        // console.log(resourceLang, url);
         images.push({
           alt: getTranslated(`comic_title:${comic.id}`, comic.title),
           downloadUrl: await getRemoteAssetURL(
@@ -82,7 +82,9 @@ const ComicList: React.FC<unknown> = observer(() => {
                   ? "en"
                   : resourceLang === "kr"
                     ? "kr"
-                    : "comic"
+                    : resourceLang === "zhs"
+                      ? "cn"
+                      : "comic"
           ),
           src: await getRemoteAssetURL(
             url,
