@@ -24,14 +24,18 @@ import type {
   ISpecialStory,
 } from "../../types.d";
 
+import { Live2DSoundAssetType, Live2DImageAssetType } from "./types.d";
 import type {
-  ILive2DCachedData,
-  ILive2DDataUrls,
+  ILive2DCachedAsset,
+  ILive2DAssetUrl,
   ILive2DModelData,
   ILive2DControllerData,
   ILive2DModelDataCollection,
   IProgressEvent,
 } from "./types.d";
+
+import ui_text_underline from "../../assets/live2d_player_ui/text_underline.svg";
+import ui_text_background from "../../assets/live2d_player_ui/text_background.svg";
 
 import { PreloadQuene } from "./queue";
 import { log } from "./log";
@@ -234,6 +238,8 @@ export async function getLive2DControllerData(
 ): Promise<ILive2DControllerData> {
   // step 3.1 - get sound/image urls
   const urls = await getMediaUrls(snData, isCardStory, isActionSet);
+  // step 3.1.2 - get live2d player ui urls
+  urls.push(...getUIMediaUrls());
   // step 3.2 - preload sound/image
   const scenarioResource = await preloadMedia(urls, progress);
   // step 3.3 - get live2d model data
@@ -286,8 +292,8 @@ async function getMediaUrls(
   snData: IScenarioData,
   isCardStory: boolean = false,
   isActionSet: boolean = false
-): Promise<ILive2DDataUrls[]> {
-  const ret: ILive2DDataUrls[] = [];
+): Promise<ILive2DAssetUrl[]> {
+  const ret: ILive2DAssetUrl[] = [];
   if (!snData) return ret;
   const { ScenarioId, Snippets, TalkData, SpecialEffectData, SoundData } =
     snData;
@@ -299,11 +305,11 @@ async function getMediaUrls(
           const talkData = TalkData[snippet.ReferenceIndex];
           const url = talkData.Voices.map((v) => ({
             identifer: v.VoiceId,
-            type: "talk",
+            type: Live2DSoundAssetType.Talk,
             url: `sound/${isCardStory ? "card_" : ""}${
               isActionSet ? "actionset" : "scenario"
             }/voice/${ScenarioId}_rip/${v.VoiceId}.mp3`,
-          })) as ILive2DDataUrls[];
+          })) as ILive2DAssetUrl[];
           for (const s of url)
             if (!ret.map((r) => r.url).includes(s.url)) ret.push(s);
         }
@@ -317,7 +323,11 @@ async function getMediaUrls(
                 const identifer = seData.StringValSub;
                 const url = `scenario/background/${seData.StringValSub}_rip/${seData.StringValSub}.webp`;
                 if (ret.map((r) => r.url).includes(url)) continue;
-                ret.push({ identifer, type: "background", url });
+                ret.push({
+                  identifer,
+                  type: Live2DImageAssetType.BackgroundImage,
+                  url,
+                });
               }
               break;
           }
@@ -330,7 +340,11 @@ async function getMediaUrls(
             const identifer = soundData.Bgm;
             const url = `sound/scenario/bgm/${soundData.Bgm}_rip/${soundData.Bgm}.mp3`;
             if (ret.map((r) => r.url).includes(url)) continue;
-            ret.push({ identifer, type: "backgroundmusic", url });
+            ret.push({
+              identifer,
+              type: Live2DSoundAssetType.BackgroundMusic,
+              url,
+            });
           } else if (soundData.Se) {
             const identifer = soundData.Se;
             const isEventSe = identifer.startsWith("se_event");
@@ -344,7 +358,11 @@ async function getMediaUrls(
                 : "se_pack00001";
             const url = `${baseDir}/${seBundleName}_rip/${identifer}.mp3`;
             if (ret.map((r) => r.url).includes(url)) continue;
-            ret.push({ identifer, type: "soundeffect", url });
+            ret.push({
+              identifer,
+              type: Live2DSoundAssetType.SoundEffect,
+              url,
+            });
           }
         }
         break;
@@ -356,18 +374,30 @@ async function getMediaUrls(
   }
   return ret;
 }
+// step 3.1.2 - get live2d player ui urls
+function getUIMediaUrls(): ILive2DAssetUrl[] {
+  return [
+    {
+      identifer: "ui/text_underline",
+      type: Live2DImageAssetType.UI,
+      url: ui_text_underline,
+    },
+    {
+      identifer: "ui/text_background",
+      type: Live2DImageAssetType.UI,
+      url: ui_text_background,
+    },
+  ];
+}
 // step 3.2 - preload sound/image
 async function preloadMedia(
-  urls: ILive2DDataUrls[],
+  urls: ILive2DAssetUrl[],
   progress: IProgressEvent
-): Promise<ILive2DCachedData[]> {
-  const queue = new PreloadQuene<ILive2DCachedData>();
+): Promise<ILive2DCachedAsset[]> {
+  const queue = new PreloadQuene<ILive2DCachedAsset>();
   const total = urls.length;
-  const sounds = urls.filter(
-    (u) =>
-      u.type === "talk" ||
-      u.type === "backgroundmusic" ||
-      u.type === "soundeffect"
+  const sounds = urls.filter((u) =>
+    Object.values(Live2DSoundAssetType).includes(u.type as Live2DSoundAssetType)
   );
   let count = 0;
   for (const url of sounds) {
@@ -386,7 +416,9 @@ async function preloadMedia(
       }
     );
   }
-  const images = urls.filter((u) => u.type === "background");
+  const images = urls.filter((u) =>
+    Object.values(Live2DImageAssetType).includes(u.type as Live2DImageAssetType)
+  );
   for (const url of images) {
     await queue.wait();
     await queue.add(

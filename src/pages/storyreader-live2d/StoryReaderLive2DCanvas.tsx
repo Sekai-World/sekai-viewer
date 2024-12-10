@@ -24,7 +24,7 @@ import type { ILive2DControllerData } from "../../utils/Live2DPlayer/types.d";
 //DEBUG/
 
 const StoryReaderLive2DStage = forwardRef<
-  { controller: Live2DController },
+  { controller: Live2DController; reloadStage: () => void },
   {
     stageSize: number[];
     controllerData: ILive2DControllerData;
@@ -38,12 +38,10 @@ const StoryReaderLive2DStage = forwardRef<
   useImperativeHandle(ref, () => {
     return {
       controller: controller.current,
+      reloadStage: reloadStage,
     };
   });
   useEffect(() => {
-    //DEBUG
-    //controller.current = new Live2DController(app, stageSize, controllerData);
-    //DEBUG/
     controller.current?.set_stage_size(stageSize);
   }, [stageSize]);
   useEffect(() => {
@@ -57,6 +55,11 @@ const StoryReaderLive2DStage = forwardRef<
       controller.current.unload();
     };
   }, []);
+  function reloadStage() {
+    const live2d = controller.current.current_costume;
+    controller.current = new Live2DController(app, stageSize, controllerData);
+    controller.current.current_costume = live2d;
+  }
   return null;
 });
 StoryReaderLive2DStage.displayName = "StoryReaderLive2DStage";
@@ -68,7 +71,10 @@ const StoryReaderLive2DCanvas: React.FC<{
   const { t } = useTranslation();
 
   const wrap = useRef<HTMLDivElement>(null);
-  const stage = useRef<{ controller: Live2DController }>(null);
+  const stage = useRef<{
+    controller: Live2DController;
+    reloadStage: () => void;
+  }>(null);
 
   const [stageSize, setStageSize] = useState<number[]>([0, 0]);
   const [scenarioStep, setScenarioStep] = useState(0);
@@ -109,24 +115,19 @@ const StoryReaderLive2DCanvas: React.FC<{
     switch (scenarioData.Snippets[scenarioStep].Action) {
       case SnippetAction.Talk: {
         const sp = scenarioData.TalkData[scenarioData.Snippets[scenarioStep].ReferenceIndex];
-        console.log([scenarioData.Snippets[scenarioStep], sp])
       } break;
       case SnippetAction.CharacerLayout: {
         const sp = scenarioData.LayoutData[scenarioData.Snippets[scenarioStep].ReferenceIndex];
-        console.log([scenarioData.Snippets[scenarioStep], sp])
       } break;
       case SnippetAction.CharacterMotion: {
         const sp = scenarioData.LayoutData[scenarioData.Snippets[scenarioStep].ReferenceIndex];
-        console.log([scenarioData.Snippets[scenarioStep], sp])
       } break;
       case SnippetAction.SpecialEffect: {
         const sp = scenarioData.SpecialEffectData[scenarioData.Snippets[scenarioStep].ReferenceIndex];
         ret += " | " + SpecialEffectType[sp.EffectType];
-        console.log([scenarioData.Snippets[scenarioStep], sp])
       } break;
       case SnippetAction.Sound: {
         const sp = scenarioData.SoundData[scenarioData.Snippets[scenarioStep].ReferenceIndex];
-        console.log([scenarioData.Snippets[scenarioStep], sp])
       } break;
     }
     return ret;
@@ -138,6 +139,10 @@ const StoryReaderLive2DCanvas: React.FC<{
 
   function abort () {
     stage.current?.controller.animate.abort();
+  }
+
+  function refresh () {
+    stage.current?.reloadStage();
   }
   */
   //DEBUG/
@@ -220,15 +225,18 @@ const StoryReaderLive2DCanvas: React.FC<{
       </div>
       {
         //DEBUG
-        //<Box>
-        //  <Button variant="contained" disabled={playing} onClick={handlePlayClick}>Start Until Stop</Button>
-        //  <Button variant="contained" onClick={apply_action}>Start</Button>
-        //  <Button variant="contained" onClick={abort} disabled={!canClick}>Abort</Button>
-        //  <Button variant="contained" onClick={() => setScenarioStep(scenarioStep+1)}>Step</Button>
-        //  <Button variant="contained" onClick={() => setScenarioStep(scenarioStep-1)}>Back</Button>
-        //  <Typography>Current Step Index: {scenarioStep}</Typography>
-        //  <Typography>Current Step: {info()}</Typography>
-        //</Box>
+        /*
+        <Box>
+          <Button variant="contained" disabled={playing} onClick={handlePlayClick}>Start Until Stop</Button>
+          <Button variant="contained" onClick={apply_action}>Start</Button>
+          <Button variant="contained" onClick={abort} disabled={!canClick}>Abort</Button>
+          <Button variant="contained" onClick={() => setScenarioStep(scenarioStep+1)}>Step</Button>
+          <Button variant="contained" onClick={() => setScenarioStep(scenarioStep-1)}>Back</Button>
+          <Button variant="contained" onClick={refresh}>refresh</Button>
+          <Typography>Current Step Index: {scenarioStep}</Typography>
+          <Typography>Current Step: {info()}</Typography>
+        </Box>
+        */
         //DEBUG/
       }
     </Stack>

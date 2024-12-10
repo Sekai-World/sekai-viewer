@@ -50,7 +50,7 @@
 - commit 79fc452d3e90996338a3a70d69516779d35e7199
     - refactor: upgrade pixi to v7, migrate to pixi-live2d-display-mulmotion
     - refactor: adapt all the codes to new deps
-- commit this
+- commit 35af14cd7f20fe10f12d920cde355d6919370ea6
     - feat(live2d): lipsync, simultaneous motions and expressions
     - refactor: upgrade to pixi-live2d-display-mulmotion@0.5.0-mm-3
     - feat: lipsync
@@ -59,3 +59,6 @@
     - feat: Implement SoundPlayMode
     - fix: when talk no voice during autoplay, immediately skip
     - fix: weird motion loop (by downscale it to 20%)
+- commit this
+    - feat(live2d): fancy ui and text animation
+    - refactor: change some varible name

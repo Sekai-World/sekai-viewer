@@ -11,7 +11,9 @@ import {
 } from "../../types.d";
 
 import {
-  ILive2DCachedData,
+  Live2DImageAssetType,
+  Live2DSoundAssetType,
+  ILive2DCachedAsset,
   ILive2DModelDataCollection,
   ILive2DControllerData,
   CharacterLayoutType,
@@ -27,9 +29,9 @@ function side_to_position(sidefrom: number) {
 
 export class Live2DController extends Live2DPlayer {
   private scenarioData: IScenarioData;
-  private scenarioResource: ILive2DCachedData[];
+  private scenarioResource: ILive2DCachedAsset[];
   private modelData: ILive2DModelDataCollection[];
-  private current_costume: {
+  current_costume: {
     cid: number;
     costume: string;
   }[];
@@ -41,12 +43,17 @@ export class Live2DController extends Live2DPlayer {
     stageSize: number[],
     data: ILive2DControllerData
   ) {
-    super(app, stageSize);
+    super(
+      app,
+      stageSize,
+      data.scenarioResource.filter((a) => a.type === Live2DImageAssetType.UI)
+    );
     this.scenarioData = data.scenarioData;
     this.scenarioResource = data.scenarioResource;
     this.modelData = data.modelData;
     this.step = 0;
     this.current_costume = [];
+    log.log("Live2DController", "init.");
   }
 
   step_until_checkpoint = async (step: number) => {
@@ -143,7 +150,7 @@ export class Live2DController extends Live2DPlayer {
                 const data = this.scenarioResource.find(
                   (s) =>
                     s.identifer === action_detail.StringValSub &&
-                    s.type === "background"
+                    s.type === Live2DImageAssetType.BackgroundImage
                 )?.data as HTMLImageElement;
                 this.draw.background(data);
               }
@@ -352,10 +359,10 @@ export class Live2DController extends Live2DPlayer {
           //clear
           await this.animate.hide_layer("telop", 200);
           // show dialog
-          this.draw.dialog({
-            cn: action_detail.WindowDisplayName,
-            text: action_detail.Body,
-          });
+          const dialog = this.animate.dialog(
+            action_detail.WindowDisplayName,
+            action_detail.Body
+          );
           await this.animate.show_layer("dialog", 200);
           // motion
           for (const m of action_detail.Motions) {
@@ -371,7 +378,7 @@ export class Live2DController extends Live2DPlayer {
             const sound = this.scenarioResource.find(
               (s) =>
                 s.identifer === action_detail.Voices[0].VoiceId &&
-                s.type === "talk"
+                s.type === Live2DSoundAssetType.Talk
             )!;
             if (sound)
               this.live2d.speak(
@@ -385,10 +392,9 @@ export class Live2DController extends Live2DPlayer {
                 "Live2DController",
                 `${action_detail.Voices[0].VoiceId} not loaded, skip.`
               );
-          } else {
-            // no voice, delay
-            await this.animate.delay(2000);
           }
+          // wait text animation
+          await dialog;
         }
         break;
       case SnippetAction.Sound:
@@ -403,7 +409,7 @@ export class Live2DController extends Live2DPlayer {
               const sound = this.scenarioResource.find(
                 (s) =>
                   s.identifer === action_detail.Bgm &&
-                  s.type === "backgroundmusic"
+                  s.type === Live2DSoundAssetType.BackgroundMusic
               )?.data as Howl;
               sound.loop(true);
               this.stop_sounds(["backgroundmusic"]);
@@ -413,7 +419,8 @@ export class Live2DController extends Live2DPlayer {
           } else if (action_detail.Se) {
             const sound = this.scenarioResource.find(
               (s) =>
-                s.identifer === action_detail.Se && s.type === "soundeffect"
+                s.identifer === action_detail.Se &&
+                s.type === Live2DSoundAssetType.SoundEffect
             )?.data;
             if (sound) {
               switch (action_detail.PlayMode) {

@@ -1,13 +1,24 @@
 import { Howl } from "howler";
 import { IScenarioData } from "../../types";
 
-export interface ILive2DDataUrls {
+export enum Live2DSoundAssetType {
+  SoundEffect = "soundeffect",
+  BackgroundMusic = "backgroundmusic",
+  Talk = "talk",
+}
+
+export enum Live2DImageAssetType {
+  BackgroundImage = "backgroundimage",
+  UI = "ui",
+}
+
+export interface ILive2DAssetUrl {
   identifer: string;
-  type: "soundeffect" | "backgroundmusic" | "talk" | "background";
+  type: Live2DSoundAssetType | Live2DImageAssetType;
   url: string;
 }
 
-export interface ILive2DCachedData extends ILive2DDataUrls {
+export interface ILive2DCachedAsset extends ILive2DAssetUrl {
   data: HTMLImageElement | Howl | null;
 }
 

@@ -1,4 +1,8 @@
-import type { ILive2DModelDataCollection, Ilive2DModelInfo } from "./types.d";
+import type {
+  ILive2DModelDataCollection,
+  Ilive2DModelInfo,
+  ILive2DCachedAsset,
+} from "./types.d";
 import {
   Container,
   Texture,
@@ -53,11 +57,20 @@ export class Live2DModelWithInfo extends Live2DModel {
 export class Live2DPlayer {
   app: Application;
   private stage_size: number[];
+  private screen_length: number;
+  private ui_assets: ILive2DCachedAsset[];
   protected abort_controller: AbortController;
 
-  constructor(app: Application, stage_size: number[]) {
+  constructor(
+    app: Application,
+    stage_size: number[],
+    ui_assets: ILive2DCachedAsset[],
+    screen_length = 2000
+  ) {
     this.app = app;
     this.stage_size = stage_size;
+    this.ui_assets = ui_assets;
+    this.screen_length = screen_length;
     this.abort_controller = new AbortController();
 
     //initilize stage
@@ -75,7 +88,7 @@ export class Live2DPlayer {
   }
 
   em = (height: number) => {
-    return (this.stage_size[0] * height) / 700;
+    return (this.stage_size[1] * height) / 400;
   };
 
   set_stage_size = (stage_size: number[]) => {
@@ -88,8 +101,7 @@ export class Live2DPlayer {
     StageLayerIndex.forEach((n) => {
       const child: Container = this.app.stage.getChildByName(n)!;
       if (child.children.length > 0) {
-        if (n in this.set_style)
-          this.set_style[n as keyof typeof this.set_style]();
+        if (n in this.set_style) this.set_style[n]();
       }
     });
   };
@@ -116,29 +128,37 @@ export class Live2DPlayer {
       const container: Container = containerP.getChildAt(0) as Container;
       container.x = 0;
       container.y = this.stage_size[1] * 0.7;
-      const bg: Container = container.getChildByName("dialog_bg")!;
+      const bg: Graphics = container.getChildByName("dialog_bg")!;
       bg.x = 0;
       bg.y = 0;
       bg.scale.set(
-        this.stage_size[0] / 2000,
-        (this.stage_size[1] * 0.3) / 2000
+        this.stage_size[0] / 2000, // 2000 -> ui/text_background width
+        (this.stage_size[1] * 0.3) / 2000 // 2000 -> ui/text_background height
+      );
+      const underline: Graphics = container.getChildByName("dialog_underline")!;
+      underline.x = this.stage_size[0] * 0.15 - this.em(3);
+      underline.y = this.em(24);
+      underline.scale.set(
+        (this.stage_size[0] * 0.7) / 2000 // 2000 -> ui/text_underline width
       );
       const cn: Text = container.getChildByName("dialog_text_cn")!;
       cn.x = this.stage_size[0] * 0.15;
-      cn.y = this.em(10);
+      cn.y = this.em(6);
       cn.style = new TextStyle({
         fill: ["#ffffff"],
         fontSize: this.em(16),
         wordWrap: true,
         wordWrapWidth: this.stage_size[0] * 0.7,
-        dropShadow: true,
-        dropShadowColor: "#000000",
-        dropShadowBlur: this.em(2),
-        dropShadowAngle: Math.PI / 6,
-        dropShadowDistance: this.em(2),
+        stroke: "#4a496899",
+        strokeThickness: this.em(4),
       });
-      const text: Text = container.getChildByName("dialog_text_text")!;
-      text.x = this.stage_size[0] * 0.15;
+      const text_container: Container = container.getChildByName(
+        "dialog_text_container"
+      )!;
+      this.set_style.dialog_text(text_container.children[0] as Text);
+    },
+    dialog_text: (text: Text) => {
+      text.x = this.stage_size[0] * 0.15 + this.em(3);
       text.y = this.em(35);
       text.style = new TextStyle({
         fill: ["#ffffff"],
@@ -146,11 +166,8 @@ export class Live2DPlayer {
         breakWords: true,
         wordWrap: true,
         wordWrapWidth: this.stage_size[0] * 0.7,
-        dropShadow: true,
-        dropShadowColor: "#000000",
-        dropShadowBlur: this.em(2),
-        dropShadowAngle: Math.PI / 6,
-        dropShadowDistance: this.em(2),
+        stroke: "#4a4968aa",
+        strokeThickness: this.em(4),
       });
     },
     live2d: () => {
@@ -189,21 +206,30 @@ export class Live2DPlayer {
       const bg: Container = container.getChildByName("telop_bg")!;
       bg.x = 0;
       bg.y = this.stage_size[1] / 2 - this.em(30);
-      bg.scale.set(this.stage_size[0] / 2000, this.em(60) / 2000);
+      bg.scale.set(
+        this.stage_size[0] / this.screen_length,
+        this.em(60) / this.screen_length
+      );
     },
     fullcolor: () => {
       const container: Container = this.app.stage.getChildByName("fullcolor")!;
       const bg: Graphics = container.getChildAt(0) as Graphics;
       bg.x = 0;
       bg.y = 0;
-      bg.scale.set(this.stage_size[0] / 2000, this.stage_size[1] / 2000);
+      bg.scale.set(
+        this.stage_size[0] / this.screen_length,
+        this.stage_size[1] / this.screen_length
+      );
     },
     flashback: () => {
       const container: Container = this.app.stage.getChildByName("flashback")!;
       const bg: Graphics = container.getChildAt(0) as Graphics;
       bg.x = 0;
       bg.y = 0;
-      bg.scale.set(this.stage_size[0] / 2000, this.stage_size[1] / 2000);
+      bg.scale.set(
+        this.stage_size[0] / this.screen_length,
+        this.stage_size[1] / this.screen_length
+      );
     },
   };
 
@@ -216,26 +242,34 @@ export class Live2DPlayer {
       container.addChild(bg);
       this.set_style.background();
     },
-    dialog: (data: { cn: string; text: string }) => {
+    dialog: (cn: string, text: string) => {
       const container: Container = this.app.stage.getChildByName("dialog")!;
       container.removeChildren();
-      const text_container = new Container();
-      container.addChild(text_container);
+      const dialog_container = new Container();
+      container.addChild(dialog_container);
 
-      const bg = new Container();
-      bg.name = "dialog_bg";
-      const bg_graphic = new Graphics();
-      bg_graphic.beginFill(0x000000, 0.3);
-      bg_graphic.drawRect(0, 0, 2000, 2000);
-      bg_graphic.endFill();
-      bg.addChild(bg_graphic);
-      const cn = new Text(data.cn);
-      cn.name = "dialog_text_cn";
-      const text = new Text(data.text);
-      text.name = "dialog_text_text";
-      text_container.addChild(bg);
-      text_container.addChild(cn);
-      text_container.addChild(text);
+      const background_texture = Texture.from(
+        this.ui_assets.find((a) => a.identifer === "ui/text_background")!
+          .data as HTMLImageElement
+      );
+      const background = new Sprite(background_texture);
+      background.name = "dialog_bg";
+      const underline_texture = Texture.from(
+        this.ui_assets.find((a) => a.identifer === "ui/text_underline")!
+          .data as HTMLImageElement
+      );
+      const underline = new Sprite(underline_texture);
+      underline.name = "dialog_underline";
+      const cn_c = new Text(cn);
+      cn_c.name = "dialog_text_cn";
+      const text_container = new Container();
+      text_container.name = "dialog_text_container";
+      const text_c = new Text(text);
+      text_container.addChild(text_c);
+      dialog_container.addChild(background);
+      dialog_container.addChild(underline);
+      dialog_container.addChild(cn_c);
+      dialog_container.addChild(text_container);
       this.set_style.dialog();
     },
     telop: (data: string) => {
@@ -245,7 +279,7 @@ export class Live2DPlayer {
       bg.name = "telop_bg";
       const bg_graphic = new Graphics();
       bg_graphic.beginFill(0x000000, 0.3);
-      bg_graphic.drawRect(0, 0, 2000, 2000);
+      bg_graphic.drawRect(0, 0, this.screen_length, this.screen_length);
       bg_graphic.endFill();
       bg.addChild(bg_graphic);
       const text = new Text(data);
@@ -259,7 +293,7 @@ export class Live2DPlayer {
       container.removeChildren();
       const bg_graphic = new Graphics();
       bg_graphic.beginFill(color, 1);
-      bg_graphic.drawRect(0, 0, 2000, 2000);
+      bg_graphic.drawRect(0, 0, this.screen_length, this.screen_length);
       bg_graphic.endFill();
       container.addChild(bg_graphic);
       this.set_style.fullcolor();
@@ -269,7 +303,7 @@ export class Live2DPlayer {
       container.removeChildren();
       const bg_graphic = new Graphics();
       bg_graphic.beginFill(0x000000, 0.3);
-      bg_graphic.drawRect(0, 0, 2000, 2000);
+      bg_graphic.drawRect(0, 0, this.screen_length, this.screen_length);
       bg_graphic.endFill();
       container.addChild(bg_graphic);
       this.set_style.flashback();
@@ -394,6 +428,27 @@ export class Live2DPlayer {
           () => filter.alpha <= 0
         );
         filter.alpha = 0;
+      }
+    },
+    dialog: async (cn: string, text: string) => {
+      this.draw.dialog(cn, "");
+      this.set_style.dialog();
+      const container0: Container = this.app.stage.getChildByName("dialog")!;
+      const container1: Container = container0.getChildAt(0) as Container;
+      const container: Container = container1.getChildByName(
+        "dialog_text_container"
+      )!;
+      for (let i = 1; i <= text.length; i++) {
+        container.removeChildren();
+        const text_c = new Text(text.slice(0, i));
+        //text_c.text = ""
+        container.addChild(text_c);
+        this.set_style.dialog_text(text_c);
+        await this.animate.delay(50);
+        // if aborted, jump to full text
+        if (this.abort_controller.signal.aborted) {
+          i = text.length - 1;
+        }
       }
     },
   };
