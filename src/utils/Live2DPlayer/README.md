@@ -1,16 +1,13 @@
 # TODO
-- beautiful UI
 - bgm fade in and out
 - VoiceId more than one
-- character moving
+- CharacterLayoutMode
 - NOT IMPLEMENT YET:
-    - SnippetAction.CharacterLayoutMode <- not sure what this means
+    - SnippetAction.CharacterLayoutMode
     - SnippetAction.Sound
         - SoundData.Volume
     - SnippetAction.InputName
     - SnippetAction.Selectable
-    - SnippetAction.CharacerLayout <- typo in types.d
-        - character moving
     - SnippetAction.SpecialEffect
         - SpecialEffectType.ShakeScreen
         - SpecialEffectType.ShakeWindow
@@ -59,6 +56,17 @@
     - feat: Implement SoundPlayMode
     - fix: when talk no voice during autoplay, immediately skip
     - fix: weird motion loop (by downscale it to 20%)
-- commit this
+- commit 41b3a4f4f2971544ed2e0ddaf807986be344196b
     - feat(live2d): fancy ui and text animation
     - refactor: change some varible name
+- commit this
+    - feat(live2d): implement character moving
+    - fix(live2d): abort text animation cause inf loop
+    - fix(live2d): no talk sound when no live2d model on the scene
+    - fix(live2d): dialog not clear when delay
+    - refactor(live2d): move story-related types into new file
+    - fix(live2d): character disappear too quick
+    - fix(live2d): motion loading repeatly
+    - fix(live2d): wrong motion name in story(event_01_02) (delete all spaces in motion name)
+    - perf(live2d): not ticking when models are not visible
+    - perf(live2d): dynamic loading models, keep maximum 7 models in memory

@@ -1,5 +1,5 @@
-import { Howl } from "howler";
-import { IScenarioData } from "../../types";
+import type { Howl } from "howler";
+import type { IScenarioData } from "../../types";
 
 export enum Live2DSoundAssetType {
   SoundEffect = "soundeffect",
@@ -54,8 +54,15 @@ export interface ILive2DModelData {
 export interface Ilive2DModelInfo {
   cid: number;
   costume: string;
-  position: number[];
+  position: [number, number];
+  /**
+   * True when model is not T-pose.
+   */
   init_pose: boolean;
+  /**
+   * This param is for show/hide animation.
+   * For model visibility, use Live2DModelWithInfo.visible
+   */
   hidden: boolean;
   speaking: boolean;
 }
@@ -88,17 +95,6 @@ export interface IProgressEvent {
     total: number,
     info?: string
   );
-}
-
-// CostumeType only appear in the first time
-export enum CharacterLayoutType {
-  Move = 1, //SideFrom 0 SideTo 4
-  Appear = 2, // model first appear ? or only change motion???
-  Clear = 3, // clear live2d, if no any live2d to clear, then clear dialog(001017_ichika01)
-}
-
-export enum CharacterMotionType {
-  Change = 0,
 }
 
 export enum LoadStatus {

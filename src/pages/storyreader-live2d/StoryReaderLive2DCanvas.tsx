@@ -19,7 +19,7 @@ import { LoadStatus } from "../../utils/Live2DPlayer/types.d";
 import type { ILive2DControllerData } from "../../utils/Live2DPlayer/types.d";
 
 //DEBUG
-//import { Box, Button } from "@mui/material";
+//import { Box, Button, TextField } from "@mui/material";
 //import { SnippetAction, SpecialEffectType } from "../../types.d";
 //DEBUG/
 
@@ -32,12 +32,10 @@ const StoryReaderLive2DStage = forwardRef<
   }
 >(({ stageSize, controllerData, onModelLoad }, ref) => {
   const app = useApp();
-  const controller = useRef<Live2DController>(
-    new Live2DController(app, stageSize, controllerData)
-  );
+  const controller = useRef<Live2DController>();
   useImperativeHandle(ref, () => {
     return {
-      controller: controller.current,
+      controller: controller.current!,
       reloadStage: reloadStage,
     };
   });
@@ -45,20 +43,25 @@ const StoryReaderLive2DStage = forwardRef<
     controller.current?.set_stage_size(stageSize);
   }, [stageSize]);
   useEffect(() => {
+    controller.current = new Live2DController(app, stageSize, controllerData);
+    //DEBUG
+    //window.controller = controller.current;
+    //DEBUG/
     if (controller.current.live2d.load_status() === "ready") {
       onModelLoad(LoadStatus.Loading);
-      controller.current.live2d_model_init().then(() => {
+      controller.current.live2d.clear();
+      controller.current.live2d_load_model(0).then(() => {
         onModelLoad(LoadStatus.Loaded);
       });
     }
     return () => {
-      controller.current.unload();
+      controller.current?.unload();
     };
   }, []);
   function reloadStage() {
-    const live2d = controller.current.current_costume;
+    const live2d = controller.current?.current_costume;
     controller.current = new Live2DController(app, stageSize, controllerData);
-    controller.current.current_costume = live2d;
+    if (live2d) controller.current.current_costume = live2d;
   }
   return null;
 });
@@ -101,12 +104,14 @@ const StoryReaderLive2DCanvas: React.FC<{
   // autoplay listener
   useEffect(() => {
     if (loadStatus === LoadStatus.Loaded && autoplay && !playing) {
-      nextStep();
+      stage.current?.controller.animate.delay(1500).then(nextStep);
     }
   }, [autoplay, playing]);
 
   //DEBUG
   /*
+  const [inputStep, SetInputStep] = useState("");
+  
   const info = () => {
     if (!controllerData) return null;
     let ret = "";
@@ -116,7 +121,7 @@ const StoryReaderLive2DCanvas: React.FC<{
       case SnippetAction.Talk: {
         const sp = scenarioData.TalkData[scenarioData.Snippets[scenarioStep].ReferenceIndex];
       } break;
-      case SnippetAction.CharacerLayout: {
+      case SnippetAction.CharacterLayout: {
         const sp = scenarioData.LayoutData[scenarioData.Snippets[scenarioStep].ReferenceIndex];
       } break;
       case SnippetAction.CharacterMotion: {
@@ -144,6 +149,14 @@ const StoryReaderLive2DCanvas: React.FC<{
   function refresh () {
     stage.current?.reloadStage();
   }
+
+  function goto () {
+    setScenarioStep(parseInt(inputStep));
+  }
+
+  function handleStepChange (ev: any) {
+    SetInputStep(ev.target.value);
+  }
   */
   //DEBUG/
 
@@ -167,7 +180,7 @@ const StoryReaderLive2DCanvas: React.FC<{
   };
 
   const nextStep = () => {
-    if (!playing) {
+    if (!playing && !autoplay) {
       setPlaying(true);
       stage.current?.controller
         .step_until_checkpoint(scenarioStep)
@@ -233,6 +246,8 @@ const StoryReaderLive2DCanvas: React.FC<{
           <Button variant="contained" onClick={() => setScenarioStep(scenarioStep+1)}>Step</Button>
           <Button variant="contained" onClick={() => setScenarioStep(scenarioStep-1)}>Back</Button>
           <Button variant="contained" onClick={refresh}>refresh</Button>
+          <TextField variant="outlined" type="number" label="step" size="small" onChange={handleStepChange}></TextField>
+          <Button variant="contained" onClick={goto}>go!</Button>
           <Typography>Current Step Index: {scenarioStep}</Typography>
           <Typography>Current Step: {info()}</Typography>
         </Box>

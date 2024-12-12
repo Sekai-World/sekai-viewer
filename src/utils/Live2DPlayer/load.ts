@@ -272,12 +272,19 @@ export async function preloadModels(
   let count = 0;
   const total = controllerData.modelData.length;
   // step 4.1 - preload model assets
+  const queue = new PreloadQuene();
   for (const model of controllerData.modelData) {
-    count++;
-    await preloadModelAssets(model.data, (type) => {
-      progress("model_assets", count, total, `${model.costume}/${type}`);
-    });
+    await queue.wait();
+    await queue.add(
+      preloadModelAssets(model.data, (type) => {
+        progress("model_assets", count, total, `${model.costume}/${type}`);
+      }),
+      () => {
+        count++;
+      }
+    );
   }
+  await queue.all();
   // step 4.2 - discard useless motions in all model
   controllerData.modelData = discardMotion(
     controllerData.scenarioData,
@@ -563,7 +570,7 @@ function discardMotion(
   // gather all motions
   scenarioData.Snippets.forEach((snippet) => {
     switch (snippet.Action) {
-      case SnippetAction.CharacerLayout:
+      case SnippetAction.CharacterLayout:
       case SnippetAction.CharacterMotion:
         {
           const action = scenarioData.LayoutData[snippet.ReferenceIndex];
@@ -615,14 +622,14 @@ function discardMotion(
               if (motion.MotionName !== "") {
                 motion_list.push({
                   costume: a.CostumeType,
-                  motion: motion.MotionName,
+                  motion: motion.MotionName.replace(" ", ""), // deal with spaces in event_01_02
                   type: "motion",
                 });
               }
               if (motion.FacialName !== "") {
                 motion_list.push({
                   costume: a.CostumeType,
-                  motion: motion.FacialName,
+                  motion: motion.FacialName.replace(" ", ""), // deal with spaces in event_01_02
                   type: "expression",
                 });
               }
@@ -646,7 +653,7 @@ function discardMotion(
   });
   // prune
   modelData.forEach((md) => {
-    const motion_for_this_model = motion_list.filter(
+    const motion_for_this_model = unique_motion.filter(
       (m) => m.costume === md.costume
     );
     md.motions = motion_for_this_model

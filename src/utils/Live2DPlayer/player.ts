@@ -170,20 +170,26 @@ export class Live2DPlayer {
         strokeThickness: this.em(4),
       });
     },
-    live2d: () => {
-      const container: Container = this.app.stage.getChildByName("live2d")!;
-      (container.children as Live2DModelWithInfo[]).forEach((model) => {
-        const live2dTrueWidth = model.internalModel.originalWidth;
-        const live2dTrueHeight = model.internalModel.originalHeight;
-        const scale = Math.min(
-          this.stage_size[0] / live2dTrueWidth / 2,
-          this.stage_size[1] / live2dTrueHeight
-        );
-        model.x = this.stage_size[0] * model.live2DInfo.position[0];
-        model.y = this.stage_size[1] * (model.live2DInfo.position[1] + 0.3);
-        model.anchor.set(0.5);
-        model.scale.set(scale * 2.1);
-      });
+    live2d: (model_list: Live2DModelWithInfo[] = []) => {
+      let models = model_list;
+      if (model_list.length === 0) {
+        const container: Container = this.app.stage.getChildByName("live2d")!;
+        models = container.children as Live2DModelWithInfo[];
+      }
+      models
+        .filter((m) => m.visible)
+        .forEach((model) => {
+          const live2dTrueWidth = model.internalModel.originalWidth;
+          const live2dTrueHeight = model.internalModel.originalHeight;
+          const scale = Math.min(
+            this.stage_size[0] / live2dTrueWidth / 2,
+            this.stage_size[1] / live2dTrueHeight
+          );
+          model.x = this.stage_size[0] * model.live2DInfo.position[0];
+          model.y = this.stage_size[1] * (model.live2DInfo.position[1] + 0.3);
+          model.anchor.set(0.5);
+          model.scale.set(scale * 2.1);
+        });
     },
     telop: () => {
       const container: Container = this.app.stage.getChildByName("telop")!;
@@ -278,9 +284,10 @@ export class Live2DPlayer {
       const bg = new Container();
       bg.name = "telop_bg";
       const bg_graphic = new Graphics();
-      bg_graphic.beginFill(0x000000, 0.3);
-      bg_graphic.drawRect(0, 0, this.screen_length, this.screen_length);
-      bg_graphic.endFill();
+      bg_graphic
+        .beginFill(0x000000, 0.3)
+        .drawRect(0, 0, this.screen_length, this.screen_length)
+        .endFill();
       bg.addChild(bg_graphic);
       const text = new Text(data);
       text.name = "telop_text";
@@ -292,9 +299,10 @@ export class Live2DPlayer {
       const container: Container = this.app.stage.getChildByName("fullcolor")!;
       container.removeChildren();
       const bg_graphic = new Graphics();
-      bg_graphic.beginFill(color, 1);
-      bg_graphic.drawRect(0, 0, this.screen_length, this.screen_length);
-      bg_graphic.endFill();
+      bg_graphic
+        .beginFill(color, 1)
+        .drawRect(0, 0, this.screen_length, this.screen_length)
+        .endFill();
       container.addChild(bg_graphic);
       this.set_style.fullcolor();
     },
@@ -302,9 +310,10 @@ export class Live2DPlayer {
       const container: Container = this.app.stage.getChildByName("flashback")!;
       container.removeChildren();
       const bg_graphic = new Graphics();
-      bg_graphic.beginFill(0x000000, 0.3);
-      bg_graphic.drawRect(0, 0, this.screen_length, this.screen_length);
-      bg_graphic.endFill();
+      bg_graphic
+        .beginFill(0x000000, 0.3)
+        .drawRect(0, 0, this.screen_length, this.screen_length)
+        .endFill();
       container.addChild(bg_graphic);
       this.set_style.flashback();
     },
@@ -342,6 +351,22 @@ export class Live2DPlayer {
         });
       });
       return wait_finish;
+    },
+    progress_wrapper: async (
+      apply: (progress: number) => void,
+      time: number
+    ) => {
+      let progress = 0;
+      apply(0);
+      await this.animate.wrapper(
+        (ani_ticker) => {
+          progress = progress + ani_ticker.elapsedMS / time;
+          progress = Math.min(progress, 1);
+          apply(progress);
+        },
+        () => progress >= 1
+      );
+      apply(1);
     },
     delay: (ms: number) => {
       return new Promise<void>((resolve) => {
@@ -381,53 +406,29 @@ export class Live2DPlayer {
       if (container.alpha !== 0) await this.animate.hide(container, time);
     },
     show: async (container: DisplayObject, time: number) => {
-      container.alpha = 0;
-      await this.animate.wrapper(
-        (ani_ticker) => {
-          const alpha = container.alpha + ani_ticker.elapsedMS / time;
-          container.alpha = Math.min(alpha, 1);
-        },
-        () => container.alpha >= 1
-      );
-      container.alpha = 1;
+      await this.animate.progress_wrapper((progress) => {
+        container.alpha = progress;
+      }, time);
     },
     hide: async (container: DisplayObject, time: number) => {
-      container.alpha = 1;
-      await this.animate.wrapper(
-        (ani_ticker) => {
-          const alpha = container.alpha - ani_ticker.elapsedMS / time;
-          container.alpha = Math.max(alpha, 0);
-        },
-        () => container.alpha <= 0
-      );
-      container.alpha = 0;
+      await this.animate.progress_wrapper((progress) => {
+        container.alpha = 1 - progress;
+      }, time);
     },
     show_by_filter: async (container: DisplayObject, time: number) => {
       if (container.filters && container.filters.length > 0) {
         const filter = container.filters[0] as AlphaFilter;
-        filter.alpha = 0;
-        await this.animate.wrapper(
-          (ani_ticker) => {
-            const alpha = filter.alpha + ani_ticker.elapsedMS / time;
-            filter.alpha = Math.min(alpha, 1);
-          },
-          () => filter.alpha >= 1
-        );
-        filter.alpha = 1;
+        await this.animate.progress_wrapper((progress) => {
+          filter.alpha = progress;
+        }, time);
       }
     },
     hide_by_filter: async (container: DisplayObject, time: number) => {
       if (container.filters && container.filters.length > 0) {
         const filter = container.filters[0] as AlphaFilter;
-        filter.alpha = 1;
-        await this.animate.wrapper(
-          (ani_ticker) => {
-            const alpha = filter.alpha - ani_ticker.elapsedMS / time;
-            filter.alpha = Math.max(alpha, 0);
-          },
-          () => filter.alpha <= 0
-        );
-        filter.alpha = 0;
+        await this.animate.progress_wrapper((progress) => {
+          filter.alpha = 1 - progress;
+        }, time);
       }
     },
     dialog: async (cn: string, text: string) => {
@@ -439,16 +440,16 @@ export class Live2DPlayer {
         "dialog_text_container"
       )!;
       for (let i = 1; i <= text.length; i++) {
-        container.removeChildren();
+        // if aborted, jump to full text
+        if (this.abort_controller.signal.aborted) {
+          i = text.length;
+        }
+        // new text
+        container.children.forEach((o) => o.destroy());
         const text_c = new Text(text.slice(0, i));
-        //text_c.text = ""
         container.addChild(text_c);
         this.set_style.dialog_text(text_c);
         await this.animate.delay(50);
-        // if aborted, jump to full text
-        if (this.abort_controller.signal.aborted) {
-          i = text.length - 1;
-        }
       }
     },
   };
@@ -465,13 +466,12 @@ export class Live2DPlayer {
         ticker: Ticker.shared,
         motionPreload: MotionPreloadStrategy.ALL,
       });
+      model.visible = false;
       model.internalModel.extendParallelMotionManager(2);
       model.filters = [new AlphaFilter(0)];
       model.live2DInfo.cid = model_data.cid;
       model.live2DInfo.costume = model_data.costume;
-      //model.visible = false;
       container.addChild(model);
-      this.set_style.live2d();
       log.log("Live2DPlayer", `${model_data.costume} init.`);
     },
     load_status: (): "loaded" | "ready" => {
@@ -484,35 +484,31 @@ export class Live2DPlayer {
         (l) => l.live2DInfo.costume === costume
       );
     },
-    is_empty: () => {
+    get_model_list: () => {
       const container: Container = this.app.stage.getChildByName("live2d")!;
-      return (container.children as Live2DModelWithInfo[])
-        .map((l) => l.live2DInfo.hidden)
-        .reduce((accumulator, current) => {
-          return accumulator && current;
-        }, true);
+      return (container.children as Live2DModelWithInfo[]).map(
+        (m) => m.live2DInfo.costume
+      );
     },
     clear: () => {
       const container: Container = this.app.stage.getChildByName("live2d")!;
-      container.removeChildren();
+      container.children.forEach((o) => o.destroy());
       log.log("Live2DPlayer", "live2d stage clear.");
     },
     show: async (costume: string, time: number) => {
       const model = this.live2d.find(costume);
-      if (
-        model &&
-        model.live2DInfo.hidden === true &&
-        model.live2DInfo.init_pose === true
-      ) {
-        await this.animate.show_by_filter(model, time);
+      if (model && model.live2DInfo.hidden === true) {
+        model.visible = true;
         model.live2DInfo.hidden = false;
+        await this.animate.show_by_filter(model, time);
       }
     },
     hide: async (costume: string, time: number) => {
       const model = this.live2d.find(costume);
       if (model && model.live2DInfo.hidden === false) {
-        await this.animate.hide_by_filter(model, time);
         model.live2DInfo.hidden = true;
+        await this.animate.hide_by_filter(model, time);
+        model.visible = false;
       }
     },
     update_motion: async (
@@ -522,6 +518,7 @@ export class Live2DPlayer {
     ) => {
       const model = this.live2d.find(costume);
       if (model) {
+        model.visible = true;
         let manager = model.internalModel.parallelMotionManager[0];
         if (motion_type === "Expression") {
           manager = model.internalModel.parallelMotionManager[1];
@@ -538,11 +535,35 @@ export class Live2DPlayer {
         model.live2DInfo.init_pose = true;
       }
     },
-    set_position: (costume: string, position: number[]) => {
+    set_position: (costume: string, position: [number, number]) => {
       const model = this.live2d.find(costume);
       if (model) {
+        model.visible = true;
         model.live2DInfo.position = position;
-        this.set_style.live2d();
+        this.set_style.live2d([model]);
+      }
+    },
+    move: async (
+      costume: string,
+      from: [number, number] | undefined,
+      to: [number, number],
+      time: number
+    ) => {
+      const model = this.live2d.find(costume);
+      if (model) {
+        model.visible = true;
+        let n_from = model.live2DInfo.position;
+        if (from) {
+          n_from = from;
+        }
+        if (n_from[0] === to[0] && n_from[1] === to[1]) return;
+        await this.animate.progress_wrapper((progress) => {
+          model.live2DInfo.position[0] =
+            (to[0] - n_from[0]) * progress + n_from[0];
+          model.live2DInfo.position[1] =
+            (to[1] - n_from[1]) * progress + n_from[1];
+          this.set_style.live2d([model]);
+        }, time);
       }
     },
     speak: (costume: string, url: string) => {
@@ -558,13 +579,15 @@ export class Live2DPlayer {
       }
     },
     stop_speaking: () => {
-      const container: Container = this.app.stage.getChildByName("live2d")!;
-      (container.children as Live2DModelWithInfo[]).forEach((m) => {
-        if (m.live2DInfo.speaking) {
-          m.stopSpeaking();
-          m.live2DInfo.speaking = false;
-        }
-      });
+      if (this.app.stage) {
+        const container: Container = this.app.stage.getChildByName("live2d")!;
+        (container.children as Live2DModelWithInfo[]).forEach((m) => {
+          if (m.live2DInfo.speaking) {
+            m.stopSpeaking();
+            m.live2DInfo.speaking = false;
+          }
+        });
+      }
     },
     all_speak_finish: () => {
       return this.animate.wrapper(
@@ -578,10 +601,9 @@ export class Live2DPlayer {
     },
   };
 
-  clear_layers = (layers: StageLayerType[]) => {
-    layers.forEach((n) => {
-      const container: Container = this.app.stage.getChildByName(n)!;
-      container.removeChildren();
+  destroy = () => {
+    (this.app.stage.children as Container[]).forEach((container) => {
+      container.children.forEach((o) => o.destroy());
     });
   };
 }

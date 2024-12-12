@@ -8,6 +8,9 @@ import {
   SpecialEffectType,
   SnippetProgressBehavior,
   SoundPlayMode,
+  CharacterLayoutType,
+  CharacterLayoutPosition,
+  CharacterLayoutMoveSpeedType,
 } from "../../types.d";
 
 import {
@@ -16,24 +19,64 @@ import {
   ILive2DCachedAsset,
   ILive2DModelDataCollection,
   ILive2DControllerData,
-  CharacterLayoutType,
-  CharacterMotionType,
 } from "./types.d";
 
-function side_to_position(sidefrom: number) {
-  if (sidefrom === 4) return [0.5, 0.5];
-  if (sidefrom === 3) return [0.3, 0.5];
-  if (sidefrom === 7) return [0.7, 0.5];
-  return [0.5, 0.5];
+function side_to_position(side: number, offset: number) {
+  let position: [number, number] = [0.5, 0.5];
+  switch (side) {
+    case CharacterLayoutPosition.Center:
+      position = [0.5, 0.5];
+      break;
+    case CharacterLayoutPosition.Left:
+      position = [0.3, 0.5];
+      break;
+    case CharacterLayoutPosition.Right:
+      position = [0.7, 0.5];
+      break;
+    case CharacterLayoutPosition.LeftEdge:
+      position = [-0.5, 0.5];
+      break;
+    case CharacterLayoutPosition.RightEdge:
+      position = [1.5, 0.5];
+      break;
+    case CharacterLayoutPosition.BottomEdge:
+      position = [0.5, 1.5];
+      break;
+    case CharacterLayoutPosition.BottomLeftEdge:
+      position = [0.3, 1.5];
+      break;
+    case CharacterLayoutPosition.BottomRightEdge:
+      position = [0.7, 1.5];
+      break;
+    default:
+      position = [0.5, 0.5];
+  }
+  position[0] += offset / 2000;
+  return position;
+}
+
+function move_speed(t: CharacterLayoutMoveSpeedType) {
+  switch (t) {
+    case CharacterLayoutMoveSpeedType.Fast:
+      return 300;
+    case CharacterLayoutMoveSpeedType.Normal:
+      return 500;
+    case CharacterLayoutMoveSpeedType.Slow:
+      return 700;
+    default:
+      return 300;
+  }
 }
 
 export class Live2DController extends Live2DPlayer {
   private scenarioData: IScenarioData;
   private scenarioResource: ILive2DCachedAsset[];
   private modelData: ILive2DModelDataCollection[];
+  private model_queue: string[][];
   current_costume: {
     cid: number;
     costume: string;
+    appear_time: number;
   }[];
 
   public step: number;
@@ -51,11 +94,93 @@ export class Live2DController extends Live2DPlayer {
     this.scenarioData = data.scenarioData;
     this.scenarioResource = data.scenarioResource;
     this.modelData = data.modelData;
-    this.step = 0;
     this.current_costume = [];
+    this.step = 0;
+
+    this.model_queue = this.create_model_queue();
     log.log("Live2DController", "init.");
   }
 
+  /**
+   * Create a model list used in an action.
+   * New models will replace the oldest model and minimize model list change.
+   * @param queue_max max queue length, range: 2-8.
+   * Load more than 8 models in the same scene will cause live2d sdk not update the models.
+   */
+  create_model_queue = (queue_max = 7) => {
+    const current_costume: {
+      cid: number;
+      costume: string;
+    }[] = [];
+    // collect costumes need in each action
+    const costumes_in_action = this.scenarioData.Snippets.map((action) => {
+      const costume_list: string[] = [];
+      switch (action.Action) {
+        case SnippetAction.CharacterLayout:
+        case SnippetAction.CharacterMotion:
+          {
+            const detail = this.scenarioData.LayoutData[action.ReferenceIndex];
+            let costume = null;
+            if (detail.CostumeType !== "") {
+              const costume_idx = current_costume.findIndex(
+                (m) => m.cid === detail.Character2dId
+              );
+              if (costume_idx === -1) {
+                current_costume.push({
+                  cid: detail.Character2dId,
+                  costume: detail.CostumeType,
+                });
+              } else {
+                current_costume[costume_idx].costume = detail.CostumeType;
+              }
+              costume = detail.CostumeType;
+            } else {
+              costume = current_costume.find(
+                (m) => m.cid === detail.Character2dId
+              )!.costume;
+            }
+            costume_list.push(costume);
+          }
+          break;
+        case SnippetAction.Talk:
+          {
+            const detail = this.scenarioData.TalkData[action.ReferenceIndex];
+
+            costume_list.push(
+              ...detail.Motions.map(
+                (mo) =>
+                  current_costume.find((m) => m.cid === mo.Character2dId)!
+                    .costume
+              )
+            );
+          }
+          break;
+      }
+      return costume_list;
+    });
+    // reduce a queue
+    const model_queue: string[][] = [];
+    costumes_in_action.reduce((prev, costumes) => {
+      const queue = [...prev];
+      costumes.forEach((m) => {
+        const q_idx = queue.findIndex((q) => q === m);
+        if (q_idx !== -1) queue.splice(q_idx, 1);
+        if (queue.length >= queue_max) queue.splice(0, 1);
+        queue.push(m);
+      });
+      model_queue.push(queue);
+      return queue;
+    }, []);
+
+    // find first queue at max queue length
+    let first_max_idx = model_queue.findIndex((q) => q.length === queue_max);
+    if (first_max_idx === -1) first_max_idx = model_queue.length - 1;
+    // set all queues before the max index to the first queue at max queue length
+    for (let i = 0; i < first_max_idx; i++) {
+      model_queue[i] = model_queue[first_max_idx];
+    }
+    return model_queue;
+  };
   step_until_checkpoint = async (step: number) => {
     // is end of the story
     const is_end = (step: number) => {
@@ -82,6 +207,7 @@ export class Live2DController extends Live2DPlayer {
     // create action list
     const action_list: number[][] = [];
     let current = step;
+    let total_delay = 0;
     if (current === 0) action_list.push([0]);
     do {
       current++;
@@ -96,6 +222,8 @@ export class Live2DController extends Live2DPlayer {
         // SnippetProgressBehavior != Now, push a new list
         action_list.push([current]);
       }
+      // sum delay time
+      total_delay += this.scenarioData.Snippets[current].Delay;
     } while (!is_stop(current));
     // continue if the next steps SnippetProgressBehavior = Now
     while (
@@ -110,11 +238,13 @@ export class Live2DController extends Live2DPlayer {
 
     // clear signal
     this.animate.reset_abort();
+    // if total delay time before stop > 1 seconds, clear dialog box
+    if (total_delay > 1) this.animate.hide_layer("dialog", 200);
     // apply all actions
-    // offset_m
     let offset_ms = 0;
     for (const action_in_parallel of action_list) {
       const start_time = Date.now();
+      await this.live2d_load_model(Math.max(...action_in_parallel));
       await Promise.all(
         action_in_parallel.map((a) => this.apply_action(a, -offset_ms))
       );
@@ -123,6 +253,25 @@ export class Live2DController extends Live2DPlayer {
 
     // wait all talk sounds finished
     await this.live2d.all_speak_finish();
+    for (const s of this.scenarioResource.filter(
+      (sound) => sound.type === Live2DSoundAssetType.Talk
+    )) {
+      const sound = s.data as Howl;
+      if (sound.playing()) {
+        await new Promise<void>((resolve) => {
+          if (this.abort_controller.signal.aborted) {
+            resolve();
+            return;
+          }
+          sound.on("end", () => {
+            resolve();
+          });
+          this.abort_controller.signal.addEventListener("abort", () => {
+            resolve();
+          });
+        });
+      }
+    }
 
     log.log("Live2DController", this.app.stage.getChildByName("live2d"));
     return current;
@@ -165,8 +314,7 @@ export class Live2DController extends Live2DPlayer {
                 );
                 const data = action_detail.StringVal;
                 this.draw.telop(data);
-                await this.animate.show_layer("telop", 500);
-                await this.animate.delay(1000);
+                await this.animate.show_layer("telop", 300);
               }
               break;
             case SpecialEffectType.WhiteIn:
@@ -250,18 +398,50 @@ export class Live2DController extends Live2DPlayer {
           }
         }
         break;
-      case SnippetAction.CharacerLayout:
+      case SnippetAction.CharacterLayout:
         {
           const action_detail =
             this.scenarioData.LayoutData[action.ReferenceIndex];
           this.animate.hide_layer("telop", 500);
           switch (action_detail.Type) {
-            case CharacterLayoutType.Move:
+            case CharacterLayoutType.Motion:
+              {
+                log.log(
+                  "Live2DController",
+                  "CharacterLayout/Motion",
+                  action,
+                  action_detail
+                );
+                const costume = this.live2d_get_costume(
+                  action_detail.Character2dId
+                )!;
+                // Step 1: Apply motions and expressions.
+                const motion = this.apply_live2d_motion(
+                  costume,
+                  action_detail.MotionName,
+                  action_detail.FacialName
+                );
+                // (Same time) Move from current position to SideTo position or not move.
+                const to = side_to_position(
+                  action_detail.SideTo,
+                  action_detail.SideToOffsetX
+                );
+                const move = this.live2d.move(
+                  costume,
+                  undefined,
+                  to,
+                  move_speed(action_detail.MoveSpeedType)
+                );
+
+                await move;
+                await motion;
+              }
+              break;
             case CharacterLayoutType.Appear:
               {
                 log.log(
                   "Live2DController",
-                  "CharacerLayout/Move,Appear",
+                  "CharacterLayout/Appear",
                   action,
                   action_detail
                 );
@@ -275,36 +455,85 @@ export class Live2DController extends Live2DPlayer {
                 } else {
                   costume = this.live2d_get_costume(
                     action_detail.Character2dId
-                  );
+                  )!;
                 }
-                this.live2d.set_position(
-                  costume,
-                  side_to_position(action_detail.SideFrom)
-                );
+                // Step 1: Apply motions and expressions. (To get the finish pose.)
                 await this.apply_live2d_motion(
                   costume,
                   action_detail.MotionName,
                   action_detail.FacialName
                 );
-                await this.live2d.show(costume, 200);
+                // Step 2: Show. (after motion finished)
+                const show = this.live2d.show(costume, 200);
+                this.live2d_set_appear(action_detail.Character2dId);
+                // (Same time) Move from SideFrom position to SideTo position or at SideFrom position.
+                const from = side_to_position(
+                  action_detail.SideFrom,
+                  action_detail.SideFromOffsetX
+                );
+                const to = side_to_position(
+                  action_detail.SideTo,
+                  action_detail.SideToOffsetX
+                );
+                let move;
+                if (from[0] === to[0] && from[1] === to[1]) {
+                  this.live2d.set_position(costume, from);
+                } else {
+                  move = this.live2d.move(
+                    costume,
+                    from,
+                    to,
+                    move_speed(action_detail.MoveSpeedType)
+                  );
+                }
+                // (Same time) Apply the same motions and expressions again.
+                this.animate
+                  .delay(10)
+                  .then(() =>
+                    this.apply_live2d_motion(
+                      costume,
+                      action_detail.MotionName,
+                      action_detail.FacialName
+                    )
+                  );
+
+                await show;
+                await move;
+                //await motion;
               }
               break;
             case CharacterLayoutType.Clear:
               {
                 log.log(
                   "Live2DController",
-                  "CharacerLayout/Clear",
+                  "CharacterLayout/Clear",
                   action,
                   action_detail
                 );
-                if (this.live2d.is_empty()) {
-                  await this.animate.hide_layer("dialog", 200);
-                } else {
-                  await this.live2d.hide(
-                    this.live2d_get_costume(action_detail.Character2dId),
-                    200
+                const costume = this.live2d_get_costume(
+                  action_detail.Character2dId
+                )!;
+                // Step 1: Move from SideFrom position to SideTo position or not move.
+                const from = side_to_position(
+                  action_detail.SideFrom,
+                  action_detail.SideFromOffsetX
+                );
+                const to = side_to_position(
+                  action_detail.SideTo,
+                  action_detail.SideToOffsetX
+                );
+                if (!(from[0] === to[0] && from[1] === to[1])) {
+                  await this.live2d.move(
+                    costume,
+                    from,
+                    to,
+                    move_speed(action_detail.MoveSpeedType)
                   );
                 }
+                // Step 2: Wait for the model exist at least 2 seconds.
+                await this.live2d_stay(action_detail.Character2dId, 2000);
+                // Step 3: Hide.
+                await this.live2d.hide(costume, 200);
               }
               break;
             default:
@@ -322,29 +551,26 @@ export class Live2DController extends Live2DPlayer {
           const action_detail =
             this.scenarioData.LayoutData[action.ReferenceIndex];
           switch (action_detail.Type) {
-            case CharacterMotionType.Change:
+            case CharacterLayoutType.CharacterMotion:
               {
                 log.log(
                   "Live2DController",
-                  "CharacterMotion/Change",
+                  "CharacterMotion/CharacterMotion",
                   action,
                   action_detail
                 );
+                // Step 1: Apply motions and expressions.
                 await this.apply_live2d_motion(
-                  this.live2d_get_costume(action_detail.Character2dId),
+                  this.live2d_get_costume(action_detail.Character2dId)!,
                   action_detail.MotionName,
                   action_detail.FacialName
-                );
-                await this.live2d.show(
-                  this.live2d_get_costume(action_detail.Character2dId),
-                  200
                 );
               }
               break;
             default:
               log.warn(
                 "Live2DController",
-                `${SnippetAction[action.Action]}/${CharacterMotionType[action_detail.Type]} not implemented!`,
+                `${SnippetAction[action.Action]}/${CharacterLayoutType[action_detail.Type]} not implemented!`,
                 action,
                 action_detail
               );
@@ -365,35 +591,38 @@ export class Live2DController extends Live2DPlayer {
           );
           await this.animate.show_layer("dialog", 200);
           // motion
-          for (const m of action_detail.Motions) {
+          const motion = action_detail.Motions.map((m) => {
             this.apply_live2d_motion(
-              this.live2d_get_costume(m.Character2dId),
+              this.live2d_get_costume(m.Character2dId)!,
               m.MotionName,
               m.FacialName
             );
-          }
+          });
           // sound
           if (action_detail.Voices.length > 0) {
-            this.stop_sounds(["talk"]);
+            this.stop_sounds([Live2DSoundAssetType.Talk]);
             const sound = this.scenarioResource.find(
               (s) =>
                 s.identifer === action_detail.Voices[0].VoiceId &&
                 s.type === Live2DSoundAssetType.Talk
             )!;
-            if (sound)
-              this.live2d.speak(
-                this.live2d_get_costume(
-                  action_detail.TalkCharacters[0].Character2dId
-                ),
-                sound.url
+            if (sound) {
+              const costume = this.live2d_get_costume(
+                action_detail.TalkCharacters[0].Character2dId
               );
-            else
+              if (costume) {
+                this.live2d.speak(costume, sound.url);
+              } else {
+                (sound.data as Howl).play();
+              }
+            } else
               log.warn(
                 "Live2DController",
                 `${action_detail.Voices[0].VoiceId} not loaded, skip.`
               );
           }
-          // wait text animation
+          // wait motion and  text animation
+          await Promise.all(motion);
           await dialog;
         }
         break;
@@ -412,7 +641,7 @@ export class Live2DController extends Live2DPlayer {
                   s.type === Live2DSoundAssetType.BackgroundMusic
               )?.data as Howl;
               sound.loop(true);
-              this.stop_sounds(["backgroundmusic"]);
+              this.stop_sounds([Live2DSoundAssetType.BackgroundMusic]);
               sound.volume(0.8);
               sound.play();
             }
@@ -503,11 +732,21 @@ export class Live2DController extends Live2DPlayer {
     }
     await Promise.all(wait_list);
   };
-  live2d_model_init = async () => {
-    this.live2d.clear();
-    for (const m of this.modelData) {
-      await this.live2d.init(m);
-    }
+  live2d_load_model = async (step: number) => {
+    const queue = this.model_queue[step];
+    const current_queue = this.live2d.get_model_list();
+    // destory
+    current_queue
+      .filter((m) => !queue.includes(m))
+      .forEach((m) => this.live2d.find(m)!.destroy());
+    // create
+    await Promise.all(
+      queue
+        .filter((m) => !current_queue.includes(m))
+        .map((m) =>
+          this.live2d.init(this.modelData.find((md) => md.costume === m)!)
+        )
+    );
   };
   live2d_set_costume = (cid: number, costume: string) => {
     const costume_idx = this.current_costume.findIndex((p) => p.cid === cid);
@@ -515,6 +754,7 @@ export class Live2DController extends Live2DPlayer {
       this.current_costume.push({
         cid: cid,
         costume: costume,
+        appear_time: Date.now(),
       });
     } else {
       this.current_costume[costume_idx].costume = costume;
@@ -523,11 +763,23 @@ export class Live2DController extends Live2DPlayer {
   };
   live2d_get_costume = (cid: number) => {
     const costume_idx = this.current_costume.findIndex((p) => p.cid === cid);
-    return this.current_costume[costume_idx].costume;
+    return costume_idx !== -1
+      ? this.current_costume[costume_idx].costume
+      : undefined;
   };
-  stop_sounds = (
-    sound_types: ("backgroundmusic" | "soundeffect" | "talk")[]
-  ) => {
+  live2d_set_appear = (cid: number) => {
+    const model = this.current_costume.find((p) => p.cid === cid);
+    if (model) model.appear_time = Date.now();
+  };
+  live2d_stay = async (cid: number, min_time_ms: number) => {
+    const model = this.current_costume.find((p) => p.cid === cid);
+    if (model) {
+      const duration = Date.now() - model.appear_time;
+      if (duration < min_time_ms)
+        await this.animate.delay(min_time_ms - duration);
+    }
+  };
+  stop_sounds = (sound_types: Live2DSoundAssetType[]) => {
     this.scenarioResource
       .filter(
         (resource) => sound_types.findIndex((t) => t === resource.type) !== -1
@@ -536,11 +788,15 @@ export class Live2DController extends Live2DPlayer {
         const sound = resource.data as Howl;
         if (sound.playing()) sound.stop();
       });
-    if (sound_types.findIndex((t) => t === "talk") !== -1) {
+    if (sound_types.findIndex((t) => t === Live2DSoundAssetType.Talk) !== -1) {
       this.live2d.stop_speaking();
     }
   };
   unload = () => {
-    this.stop_sounds(["backgroundmusic", "soundeffect", "talk"]);
+    this.stop_sounds([
+      Live2DSoundAssetType.BackgroundMusic,
+      Live2DSoundAssetType.SoundEffect,
+    ]);
+    this.destroy();
   };
 }
