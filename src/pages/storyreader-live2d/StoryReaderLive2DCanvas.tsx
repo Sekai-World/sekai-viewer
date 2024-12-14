@@ -26,7 +26,7 @@ import type { ILive2DControllerData } from "../../utils/Live2DPlayer/types.d";
 const StoryReaderLive2DStage = forwardRef<
   { controller: Live2DController; reloadStage: () => void },
   {
-    stageSize: number[];
+    stageSize: [number, number];
     controllerData: ILive2DControllerData;
     onModelLoad: (status: LoadStatus) => void;
   }
@@ -79,9 +79,10 @@ const StoryReaderLive2DCanvas: React.FC<{
     reloadStage: () => void;
   }>(null);
 
-  const [stageSize, setStageSize] = useState<number[]>([0, 0]);
+  const [stageSize, setStageSize] = useState<[number, number]>([0, 0]);
   const [scenarioStep, setScenarioStep] = useState(0);
   const [playing, setPlaying] = useState(false);
+  const [autoplayWaiting, setAutoplayWaiting] = useState(false);
   const [canClick, setCanClick] = useState(true);
   const [loadStatus, setLoadStatus] = useState<LoadStatus>(LoadStatus.Ready);
 
@@ -104,7 +105,11 @@ const StoryReaderLive2DCanvas: React.FC<{
   // autoplay listener
   useEffect(() => {
     if (loadStatus === LoadStatus.Loaded && autoplay && !playing) {
-      stage.current?.controller.animate.delay(1500).then(nextStep);
+      setAutoplayWaiting(true);
+      stage.current?.controller.animate.delay(1500).then(() => {
+        setAutoplayWaiting(false);
+        nextStep();
+      });
     }
   }, [autoplay, playing]);
 
@@ -180,7 +185,7 @@ const StoryReaderLive2DCanvas: React.FC<{
   };
 
   const nextStep = () => {
-    if (!playing && !autoplay) {
+    if (!playing && !autoplayWaiting) {
       setPlaying(true);
       stage.current?.controller
         .step_until_checkpoint(scenarioStep)

@@ -11,11 +11,12 @@ import {
   CharacterLayoutType,
   CharacterLayoutPosition,
   CharacterLayoutMoveSpeedType,
+  SeAttachCharacterShaderType,
 } from "../../types.d";
 
 import {
-  Live2DImageAssetType,
-  Live2DSoundAssetType,
+  Live2DAssetType,
+  Live2DAssetTypeUI,
   ILive2DCachedAsset,
   ILive2DModelDataCollection,
   ILive2DControllerData,
@@ -77,19 +78,22 @@ export class Live2DController extends Live2DPlayer {
     cid: number;
     costume: string;
     appear_time: number;
+    animations: string[];
   }[];
 
   public step: number;
 
   constructor(
     app: Application,
-    stageSize: number[],
+    stageSize: [number, number],
     data: ILive2DControllerData
   ) {
     super(
       app,
       stageSize,
-      data.scenarioResource.filter((a) => a.type === Live2DImageAssetType.UI)
+      data.scenarioResource.filter((a) =>
+        Live2DAssetTypeUI.includes(a.type as any)
+      )
     );
     this.scenarioData = data.scenarioData;
     this.scenarioResource = data.scenarioResource;
@@ -254,7 +258,7 @@ export class Live2DController extends Live2DPlayer {
     // wait all talk sounds finished
     await this.live2d.all_speak_finish();
     for (const s of this.scenarioResource.filter(
-      (sound) => sound.type === Live2DSoundAssetType.Talk
+      (sound) => sound.type === Live2DAssetType.Talk
     )) {
       const sound = s.data as Howl;
       if (sound.playing()) {
@@ -299,7 +303,7 @@ export class Live2DController extends Live2DPlayer {
                 const data = this.scenarioResource.find(
                   (s) =>
                     s.identifer === action_detail.StringValSub &&
-                    s.type === Live2DImageAssetType.BackgroundImage
+                    s.type === Live2DAssetType.BackgroundImage
                 )?.data as HTMLImageElement;
                 this.draw.background(data);
               }
@@ -386,6 +390,48 @@ export class Live2DController extends Live2DPlayer {
                   action_detail
                 );
                 await this.animate.hide_layer("flashback", 100);
+              }
+              break;
+            case SpecialEffectType.AttachCharacterShader:
+              {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/AttachCharacterShader",
+                  action,
+                  action_detail
+                );
+                switch (action_detail.StringVal) {
+                  case SeAttachCharacterShaderType.Hologram:
+                    {
+                      this.live2d.add_effect(
+                        this.live2d_get_costume(action_detail.IntVal)!,
+                        "hologram"
+                      );
+                      this.current_costume
+                        .find((c) => c.cid === action_detail.IntVal)!
+                        .animations.push("hologram");
+                    }
+                    break;
+                  case SeAttachCharacterShaderType.None:
+                  case SeAttachCharacterShaderType.Empty:
+                    {
+                      this.live2d.remove_effect(
+                        this.live2d_get_costume(action_detail.IntVal)!,
+                        "hologram"
+                      );
+                      this.current_costume.find(
+                        (c) => c.cid === action_detail.IntVal
+                      )!.animations = [];
+                    }
+                    break;
+                  default:
+                    log.warn(
+                      "Live2DController",
+                      `${SnippetAction[action.Action]}/${SpecialEffectType[action_detail.EffectType]}/${(SeAttachCharacterShaderType as any)[action_detail.StringVal]} not implemented!`,
+                      action,
+                      action_detail
+                    );
+                }
               }
               break;
             default:
@@ -600,11 +646,11 @@ export class Live2DController extends Live2DPlayer {
           });
           // sound
           if (action_detail.Voices.length > 0) {
-            this.stop_sounds([Live2DSoundAssetType.Talk]);
+            this.stop_sounds([Live2DAssetType.Talk]);
             const sound = this.scenarioResource.find(
               (s) =>
                 s.identifer === action_detail.Voices[0].VoiceId &&
-                s.type === Live2DSoundAssetType.Talk
+                s.type === Live2DAssetType.Talk
             )!;
             if (sound) {
               const costume = this.live2d_get_costume(
@@ -638,10 +684,10 @@ export class Live2DController extends Live2DPlayer {
               const sound = this.scenarioResource.find(
                 (s) =>
                   s.identifer === action_detail.Bgm &&
-                  s.type === Live2DSoundAssetType.BackgroundMusic
+                  s.type === Live2DAssetType.BackgroundMusic
               )?.data as Howl;
               sound.loop(true);
-              this.stop_sounds([Live2DSoundAssetType.BackgroundMusic]);
+              this.stop_sounds([Live2DAssetType.BackgroundMusic]);
               sound.volume(0.8);
               sound.play();
             }
@@ -649,7 +695,7 @@ export class Live2DController extends Live2DPlayer {
             const sound = this.scenarioResource.find(
               (s) =>
                 s.identifer === action_detail.Se &&
-                s.type === Live2DSoundAssetType.SoundEffect
+                s.type === Live2DAssetType.SoundEffect
             )?.data;
             if (sound) {
               switch (action_detail.PlayMode) {
@@ -734,7 +780,9 @@ export class Live2DController extends Live2DPlayer {
   };
   live2d_load_model = async (step: number) => {
     const queue = this.model_queue[step];
-    const current_queue = this.live2d.get_model_list();
+    const current_queue = this.live2d
+      .get_model_list()
+      .map((m) => m.live2DInfo.costume);
     // destory
     current_queue
       .filter((m) => !queue.includes(m))
@@ -747,6 +795,20 @@ export class Live2DController extends Live2DPlayer {
           this.live2d.init(this.modelData.find((md) => md.costume === m)!)
         )
     );
+    // add effects
+    this.current_costume
+      .filter((c) => {
+        if (c.animations.length > 0) {
+          const m = this.live2d.find(c.costume);
+          return m && m.live2DInfo.animations.length === 0;
+        }
+        return false;
+      })
+      .forEach((c) => {
+        c.animations.forEach((a) => {
+          this.live2d.add_effect(c.costume, a as "hologram");
+        });
+      });
   };
   live2d_set_costume = (cid: number, costume: string) => {
     const costume_idx = this.current_costume.findIndex((p) => p.cid === cid);
@@ -755,6 +817,7 @@ export class Live2DController extends Live2DPlayer {
         cid: cid,
         costume: costume,
         appear_time: Date.now(),
+        animations: [],
       });
     } else {
       this.current_costume[costume_idx].costume = costume;
@@ -779,7 +842,7 @@ export class Live2DController extends Live2DPlayer {
         await this.animate.delay(min_time_ms - duration);
     }
   };
-  stop_sounds = (sound_types: Live2DSoundAssetType[]) => {
+  stop_sounds = (sound_types: Live2DAssetType[]) => {
     this.scenarioResource
       .filter(
         (resource) => sound_types.findIndex((t) => t === resource.type) !== -1
@@ -788,14 +851,14 @@ export class Live2DController extends Live2DPlayer {
         const sound = resource.data as Howl;
         if (sound.playing()) sound.stop();
       });
-    if (sound_types.findIndex((t) => t === Live2DSoundAssetType.Talk) !== -1) {
+    if (sound_types.findIndex((t) => t === Live2DAssetType.Talk) !== -1) {
       this.live2d.stop_speaking();
     }
   };
   unload = () => {
     this.stop_sounds([
-      Live2DSoundAssetType.BackgroundMusic,
-      Live2DSoundAssetType.SoundEffect,
+      Live2DAssetType.BackgroundMusic,
+      Live2DAssetType.SoundEffect,
     ]);
     this.destroy();
   };

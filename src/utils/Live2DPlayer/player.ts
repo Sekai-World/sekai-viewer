@@ -12,6 +12,7 @@ import {
   TextStyle,
   Ticker,
   AlphaFilter,
+  ColorMatrixFilter,
 } from "pixi.js";
 import type { Application, DisplayObject } from "pixi.js";
 import {
@@ -20,19 +21,17 @@ import {
   MotionPreloadStrategy,
   config,
 } from "pixi-live2d-display-mulmotion";
+config.fftSize = 8192;
 import type { Live2DModelOptions } from "pixi-live2d-display-mulmotion";
 import { log } from "./log";
-
-config.fftSize = 8192;
-//DEBUG
-//config.logLevel = config.LOG_LEVEL_VERBOSE;
-//DEBUG/
+import { Hologram } from "./animation/hologram";
 
 const StageLayerIndex = [
   "fullcolor",
   "flashback",
   "telop",
   "dialog",
+  "live2d_effect",
   "live2d",
   "background",
 ] as const;
@@ -50,28 +49,46 @@ export class Live2DModelWithInfo extends Live2DModel {
       init_pose: false,
       hidden: true,
       speaking: false,
+      wait_motion: Promise.resolve(),
+      animations: [],
     };
+  }
+  destroy(options?: {
+    children?: boolean;
+    texture?: boolean;
+    baseTexture?: boolean;
+  }): void {
+    super.destroy(options);
+    this.live2DInfo.animations.forEach((a) => a.destroy());
   }
 }
 
 export class Live2DPlayer {
   app: Application;
-  private stage_size: number[];
+  private stage_size: [number, number];
   private screen_length: number;
-  private ui_assets: ILive2DCachedAsset[];
+  private textures: {
+    identifer: string;
+    texture: Texture;
+  }[];
   protected abort_controller: AbortController;
 
   constructor(
     app: Application,
-    stage_size: number[],
+    stage_size: [number, number],
     ui_assets: ILive2DCachedAsset[],
     screen_length = 2000
   ) {
     this.app = app;
     this.stage_size = stage_size;
-    this.ui_assets = ui_assets;
     this.screen_length = screen_length;
     this.abort_controller = new AbortController();
+
+    // create texture
+    this.textures = ui_assets.map((asset) => ({
+      identifer: asset.identifer,
+      texture: Texture.from(asset.data as HTMLImageElement),
+    }));
 
     //initilize stage
     if (app.stage.children.length !== StageLayerIndex.length) {
@@ -85,13 +102,14 @@ export class Live2DPlayer {
           app.stage.addChild(child);
         });
     }
+    log.log("Live2DPlayer", `player init.`);
   }
 
   em = (height: number) => {
     return (this.stage_size[1] * height) / 400;
   };
 
-  set_stage_size = (stage_size: number[]) => {
+  set_stage_size = (stage_size: [number, number]) => {
     this.stage_size = stage_size;
     this.update_style();
   };
@@ -170,6 +188,7 @@ export class Live2DPlayer {
         strokeThickness: this.em(4),
       });
     },
+    live2d_effect: () => {},
     live2d: (model_list: Live2DModelWithInfo[] = []) => {
       let models = model_list;
       if (model_list.length === 0) {
@@ -189,6 +208,13 @@ export class Live2DPlayer {
           model.y = this.stage_size[1] * (model.live2DInfo.position[1] + 0.3);
           model.anchor.set(0.5);
           model.scale.set(scale * 2.1);
+          model.live2DInfo.animations.forEach((a) => {
+            a.root.position.set(
+              this.stage_size[0] * model.live2DInfo.position[0],
+              this.stage_size[1]
+            );
+            a.set_style(this.stage_size);
+          });
         });
     },
     telop: () => {
@@ -254,16 +280,14 @@ export class Live2DPlayer {
       const dialog_container = new Container();
       container.addChild(dialog_container);
 
-      const background_texture = Texture.from(
-        this.ui_assets.find((a) => a.identifer === "ui/text_background")!
-          .data as HTMLImageElement
-      );
+      const background_texture = this.textures.find(
+        (a) => a.identifer === "ui/text_background"
+      )!.texture;
       const background = new Sprite(background_texture);
       background.name = "dialog_bg";
-      const underline_texture = Texture.from(
-        this.ui_assets.find((a) => a.identifer === "ui/text_underline")!
-          .data as HTMLImageElement
-      );
+      const underline_texture = this.textures.find(
+        (a) => a.identifer === "ui/text_underline"
+      )!.texture;
       const underline = new Sprite(underline_texture);
       underline.name = "dialog_underline";
       const cn_c = new Text(cn);
@@ -368,6 +392,20 @@ export class Live2DPlayer {
       );
       apply(1);
     },
+    loop_wrapper: (apply: (progress: number) => void, period: number) => {
+      const controller = new AbortController();
+      let progress = 0;
+      this.animate.wrapper(
+        (ani_ticker) => {
+          progress = progress + ani_ticker.elapsedMS / period;
+          progress = Math.min(progress, 1);
+          if (progress === 1) progress = 0;
+          apply(progress);
+        },
+        () => controller.signal.aborted
+      );
+      return controller;
+    },
     delay: (ms: number) => {
       return new Promise<void>((resolve) => {
         let destroyed = false;
@@ -454,21 +492,24 @@ export class Live2DPlayer {
     },
   };
 
-  // load all live2d models and motions
-  // display by show/hide
   live2d = {
-    init: async (model_data: ILive2DModelDataCollection) => {
+    init: async (
+      model_data: ILive2DModelDataCollection,
+      motionPreload = MotionPreloadStrategy.ALL
+    ) => {
       const container: Container = this.app.stage.getChildByName("live2d")!;
       const model = await Live2DModelWithInfo.from(model_data.data, {
         autoFocus: false,
         autoHitTest: false,
         breathDepth: 0.2,
         ticker: Ticker.shared,
-        motionPreload: MotionPreloadStrategy.ALL,
+        motionPreload: motionPreload,
       });
       model.visible = false;
       model.internalModel.extendParallelMotionManager(2);
-      model.filters = [new AlphaFilter(0)];
+      const alpha = new AlphaFilter(0);
+      alpha.resolution = 2;
+      model.filters = [alpha];
       model.live2DInfo.cid = model_data.cid;
       model.live2DInfo.costume = model_data.costume;
       container.addChild(model);
@@ -486,9 +527,7 @@ export class Live2DPlayer {
     },
     get_model_list: () => {
       const container: Container = this.app.stage.getChildByName("live2d")!;
-      return (container.children as Live2DModelWithInfo[]).map(
-        (m) => m.live2DInfo.costume
-      );
+      return container.children as Live2DModelWithInfo[];
     },
     clear: () => {
       const container: Container = this.app.stage.getChildByName("live2d")!;
@@ -500,14 +539,24 @@ export class Live2DPlayer {
       if (model && model.live2DInfo.hidden === true) {
         model.visible = true;
         model.live2DInfo.hidden = false;
-        await this.animate.show_by_filter(model, time);
+        await Promise.all([
+          this.animate.show_by_filter(model, time),
+          ...model.live2DInfo.animations.map((a) =>
+            this.animate.show(a.root, time)
+          ),
+        ]);
       }
     },
     hide: async (costume: string, time: number) => {
       const model = this.live2d.find(costume);
       if (model && model.live2DInfo.hidden === false) {
         model.live2DInfo.hidden = true;
-        await this.animate.hide_by_filter(model, time);
+        await Promise.all([
+          this.animate.hide_by_filter(model, time),
+          ...model.live2DInfo.animations.map((a) =>
+            this.animate.hide(a.root, time)
+          ),
+        ]);
         model.visible = false;
       }
     },
@@ -528,10 +577,11 @@ export class Live2DPlayer {
           motion_index,
           MotionPriority.FORCE
         );
-        await this.animate.wrapper(
+        model.live2DInfo.wait_motion = this.animate.wrapper(
           () => {},
-          () => manager.isFinished()
+          () => manager.destroyed || manager.isFinished()
         );
+        await model.live2DInfo.wait_motion;
         model.live2DInfo.init_pose = true;
       }
     },
@@ -598,6 +648,52 @@ export class Live2DPlayer {
               .children as Live2DModelWithInfo[]
           ).reduce((accu, curr) => accu || curr.live2DInfo.speaking, false)
       );
+    },
+    add_effect: (costume: string, ani_type: "hologram" = "hologram") => {
+      const model = this.live2d.find(costume);
+      if (model) {
+        if (ani_type === "hologram") {
+          // add hologram animation
+          const container: Container =
+            this.app.stage.getChildByName("live2d_effect")!;
+          const hologram = new Hologram(this.textures);
+          container.addChild(hologram.root);
+          model.live2DInfo.animations.push(hologram);
+          hologram.start(8000);
+          // set alpha equals model alpha
+          hologram.root.alpha = (model.filters![0] as AlphaFilter).alpha;
+          // add filter
+          const filter = new ColorMatrixFilter();
+          filter.resolution = 2;
+          filter.matrix = [
+            1.2, 0, 0, 0, 0, 0, 1.2, 0, 0, 0, 0, 0, 1.2, 0, 0, 0, 0, 0, 0.8, 0,
+          ];
+          model.filters?.push(filter);
+        }
+        this.set_style.live2d([model]);
+      }
+    },
+    remove_effect: (costume: string, ani_type: "hologram" = "hologram") => {
+      const model = this.live2d.find(costume);
+      if (model) {
+        if (ani_type === "hologram") {
+          // remove filter
+          let idx = model.filters!.findIndex(
+            (f) => f instanceof ColorMatrixFilter
+          );
+          if (idx !== -1) {
+            model.filters?.splice(idx, 1);
+          }
+          // remove animation
+          idx = model.live2DInfo.animations.findIndex(
+            (a) => a instanceof Hologram
+          );
+          if (idx !== -1) {
+            model.live2DInfo.animations[idx].destroy();
+            model.live2DInfo.animations.splice(idx, 1);
+          }
+        }
+      }
     },
   };
 

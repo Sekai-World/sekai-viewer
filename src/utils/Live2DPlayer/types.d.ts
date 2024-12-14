@@ -1,20 +1,36 @@
 import type { Howl } from "howler";
 import type { IScenarioData } from "../../types";
+import type { Animation } from "./animation/base";
 
-export enum Live2DSoundAssetType {
-  SoundEffect = "soundeffect",
-  BackgroundMusic = "backgroundmusic",
-  Talk = "talk",
+export enum Live2DAssetType {
+  SoundEffect,
+  BackgroundMusic,
+  Talk,
+  UI,
+  UISheet,
+  BackgroundImage,
 }
 
-export enum Live2DImageAssetType {
-  BackgroundImage = "backgroundimage",
-  UI = "ui",
-}
+export const Live2DAssetTypeImage = [
+  Live2DAssetType.UI,
+  Live2DAssetType.UISheet,
+  Live2DAssetType.BackgroundImage,
+] as const;
+
+export const Live2DAssetTypeSound = [
+  Live2DAssetType.SoundEffect,
+  Live2DAssetType.BackgroundMusic,
+  Live2DAssetType.Talk,
+] as const;
+
+export const Live2DAssetTypeUI = [
+  Live2DAssetType.UI,
+  Live2DAssetType.UISheet,
+] as const;
 
 export interface ILive2DAssetUrl {
   identifer: string;
-  type: Live2DSoundAssetType | Live2DImageAssetType;
+  type: Live2DAssetType;
   url: string;
 }
 
@@ -65,6 +81,11 @@ export interface Ilive2DModelInfo {
    */
   hidden: boolean;
   speaking: boolean;
+  /**
+   * awaitble, resolve when all motion finished.
+   */
+  wait_motion: Promise<void>;
+  animations: Animation[];
 }
 
 export interface ILive2DModelDataCollection {
@@ -77,7 +98,7 @@ export interface ILive2DModelDataCollection {
 
 export interface ILive2DControllerData {
   scenarioData: IScenarioData;
-  scenarioResource: ILive2DCachedData[];
+  scenarioResource: ILive2DCachedAsset[];
   modelData: ILive2DModelDataCollection[];
 }
 

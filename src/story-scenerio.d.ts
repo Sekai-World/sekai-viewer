@@ -242,6 +242,12 @@ export enum SpecialEffectType {
   Movie = 19,
   SekaiIn = 20,
   SekaiOut = 21,
+  /**
+   * Add shader for a model.
+   * @param StringVal Shader type: {@link SeAttachCharacterShaderType}
+   * @param StringValSub Shader param, not sure.
+   * @param IntVal CharacterId, which model should add this shader.
+   */
   AttachCharacterShader = 22,
   SimpleSelectable = 23,
   FullScreenText = 24,
@@ -255,6 +261,20 @@ export interface SpecialEffectData {
   StringValSub: string;
   Duration: number;
   IntVal: number;
+}
+
+export enum SeAttachCharacterShaderType {
+  None = "none",
+  Empty = "",
+  /**
+   * @param StringValSub single value "scenario/effect/hologram"
+   */
+  Hologram = "hologram",
+  Monitor = "monitor",
+  /**
+   * @param StringValSub single value 1.75, maybe blur radius...?
+   */
+  Blur = "blur",
 }
 
 export enum SoundPlayMode {

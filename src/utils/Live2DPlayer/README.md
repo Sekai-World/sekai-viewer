@@ -1,33 +1,42 @@
 # TODO
 - bgm fade in and out
 - VoiceId more than one
-- CharacterLayoutMode
+- player ui load in demand
+- SnippetAction.CharacterLayoutMode
+- SpecialEffectType.PlayScenarioEffect
+- SpecialEffectType.StopScenarioEffect
+- SpecialEffectType.ShakeWindow
+- SpecialEffectType.StopShakeWindow
+- SpecialEffectType.ShakeScreen
+- SpecialEffectType.StopShakeScreen
+- SpecialEffectType.AmbientColorEvening
+- SpecialEffectType.AmbientColorNight
+- SpecialEffectType.AmbientColorNormal
+- SpecialEffectType.SekaiOut
+- SpecialEffectType.SekaiIn
 - NOT IMPLEMENT YET:
-    - SnippetAction.CharacterLayoutMode
-    - SnippetAction.Sound
-        - SoundData.Volume
-    - SnippetAction.InputName
-    - SnippetAction.Selectable
-    - SnippetAction.SpecialEffect
-        - SpecialEffectType.ShakeScreen
-        - SpecialEffectType.ShakeWindow
-        - SpecialEffectType.ChangeCardStill
-        - SpecialEffectType.AmbientColorNormal
-        - SpecialEffectType.AmbientColorEvening
-        - SpecialEffectType.AmbientColorNight
-        - SpecialEffectType.PlayScenarioEffect
-        - SpecialEffectType.StopScenarioEffect
-        - SpecialEffectType.ChangeBackgroundStill
-        - SpecialEffectType.PlaceInfo
-        - SpecialEffectType.Movie
-        - SpecialEffectType.SekaiIn
-        - SpecialEffectType.SekaiOut
-        - SpecialEffectType.AttachCharacterShader
-        - SpecialEffectType.SimpleSelectable
-        - SpecialEffectType.FullScreenText
-        - SpecialEffectType.StopShakeScreen
-        - SpecialEffectType.StopShakeWindow
-
+    - SpecialEffectType.32
+    - SpecialEffectType.31
+    - SpecialEffectType.30
+    - SpecialEffectType.29
+    - SpecialEffectType.36
+    - SpecialEffectType.35
+    - SpecialEffectType.34
+    - SpecialEffectType.33
+    - SpecialEffectType.PlaceInfo
+    - SpecialEffectType.Movie
+    - SpecialEffectType.42
+    - SpecialEffectType.41
+    - SpecialEffectType.43
+    - SpecialEffectType.40
+    - SpecialEffectType.FullScreenText
+    - SpecialEffectType.27
+    - SpecialEffectType.SimpleSelectable
+    - SpecialEffectType.28
+    - SpecialEffectType.0
+    - SpecialEffectType.44
+    - SpecialEffectType.38
+    - SpecialEffectType.39
 # CHANGE LOG
 
 - commit e08f0f68e2a081c99874be64cd0b7ddab0635619
@@ -59,7 +68,7 @@
 - commit 41b3a4f4f2971544ed2e0ddaf807986be344196b
     - feat(live2d): fancy ui and text animation
     - refactor: change some varible name
-- commit this
+- commit 6adb995a64a6bb50ed8ad8d73ee9515d3b1ed34c
     - feat(live2d): implement character moving
     - fix(live2d): abort text animation cause inf loop
     - fix(live2d): no talk sound when no live2d model on the scene
@@ -70,3 +79,7 @@
     - fix(live2d): wrong motion name in story(event_01_02) (delete all spaces in motion name)
     - perf(live2d): not ticking when models are not visible
     - perf(live2d): dynamic loading models, keep maximum 7 models in memory
+- commit this
+    - feat(live2d): implement SpecialEffect Hologram
+    - refactor(live2d): change some varible name
+    - fix(live2d): autoplay not working
