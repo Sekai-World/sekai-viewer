@@ -1,6 +1,6 @@
 import type { Howl } from "howler";
 import type { IScenarioData } from "../../types";
-import type { Animation } from "./animation/base";
+import type { Animation } from "./animation/BaseAnimation";
 
 export enum Live2DAssetType {
   SoundEffect,

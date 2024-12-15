@@ -79,7 +79,9 @@
     - fix(live2d): wrong motion name in story(event_01_02) (delete all spaces in motion name)
     - perf(live2d): not ticking when models are not visible
     - perf(live2d): dynamic loading models, keep maximum 7 models in memory
-- commit this
+- commit d9342065376690c428ef1c78172cf6a2d611ae35
     - feat(live2d): implement SpecialEffect Hologram
     - refactor(live2d): change some varible name
     - fix(live2d): autoplay not working
+- commit this
+    - refactor(live2d): change some file name

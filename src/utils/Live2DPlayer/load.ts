@@ -39,7 +39,7 @@ import type {
   IProgressEvent,
 } from "./types.d";
 
-import { PreloadQuene } from "./queue";
+import { PreloadQueue } from "./PreloadQueue";
 import { log } from "./log";
 
 // step 1 - get scenario url
@@ -274,7 +274,7 @@ export async function preloadModels(
   let count = 0;
   const total = controllerData.modelData.length;
   // step 4.1 - preload model assets
-  const queue = new PreloadQuene();
+  const queue = new PreloadQueue();
   for (const model of controllerData.modelData) {
     await queue.wait();
     await queue.add(
@@ -388,7 +388,7 @@ export async function preloadMedia(
   urls: ILive2DAssetUrl[],
   progress: IProgressEvent
 ): Promise<ILive2DCachedAsset[]> {
-  const queue = new PreloadQuene<ILive2DCachedAsset>();
+  const queue = new PreloadQueue<ILive2DCachedAsset>();
   const total = urls.length;
   const sounds = urls.filter((u) =>
     Live2DAssetTypeSound.includes(u.type as any)
@@ -696,7 +696,7 @@ async function preloadModelMotion(
   // preload by axios
   const total = unique_motion.length;
   let count = 0;
-  const queue = new PreloadQuene<null>();
+  const queue = new PreloadQueue<null>();
   for (const motion of unique_motion) {
     await queue.wait();
     await queue.add(Axios.get(motion.url), () => {

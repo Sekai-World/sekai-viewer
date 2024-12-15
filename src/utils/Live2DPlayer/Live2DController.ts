@@ -1,4 +1,4 @@
-import { Live2DPlayer } from "./player";
+import { Live2DPlayer } from "./Live2DPlayer";
 import type { Application } from "pixi.js";
 import { Howl, Howler } from "howler";
 import { log } from "./log";

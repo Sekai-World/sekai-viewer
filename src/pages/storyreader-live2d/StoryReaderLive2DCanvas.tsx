@@ -14,7 +14,7 @@ import { Stage, useApp } from "@pixi/react";
 import { extensions, TickerPlugin } from "pixi.js";
 extensions.add(TickerPlugin);
 
-import { Live2DController } from "../../utils/Live2DPlayer/controller";
+import { Live2DController } from "../../utils/Live2DPlayer/Live2DController";
 import { LoadStatus } from "../../utils/Live2DPlayer/types.d";
 import type { ILive2DControllerData } from "../../utils/Live2DPlayer/types.d";
 

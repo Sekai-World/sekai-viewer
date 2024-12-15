@@ -24,7 +24,7 @@ import {
 config.fftSize = 8192;
 import type { Live2DModelOptions } from "pixi-live2d-display-mulmotion";
 import { log } from "./log";
-import { Hologram } from "./animation/hologram";
+import { Hologram } from "./animation/Hologram";
 
 const StageLayerIndex = [
   "fullcolor",

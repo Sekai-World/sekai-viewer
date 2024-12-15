@@ -1,15 +1,13 @@
+interface IQueueMember<T> {
+  index: number;
+  r: T;
+}
 /**
  * Simple promise quene for parallel execution for parallel download in sekai.best.
  * @default max_quene_length=5, globally
  * @author K_bai
  */
-
-interface IQueueMember<T> {
-  index: number;
-  r: T;
-}
-
-export class PreloadQuene<T> {
+export class PreloadQueue<T> {
   private max_quene_length = 5;
   private queue: (Promise<IQueueMember<T>> | number)[] = [];
   private results: (T | undefined)[] = [];
