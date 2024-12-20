@@ -243,7 +243,7 @@ export class Live2DController extends Live2DPlayer {
     // clear signal
     this.animate.reset_abort();
     // if total delay time before stop > 1 seconds, clear dialog box
-    if (total_delay > 1) this.animate.hide_layer("dialog", 200);
+    if (total_delay > 1) this.hide_layer(this.layers.dialog, 200);
     // apply all actions
     let offset_ms = 0;
     for (const action_in_parallel of action_list) {
@@ -256,28 +256,27 @@ export class Live2DController extends Live2DPlayer {
     }
 
     // wait all talk sounds finished
-    await this.live2d.all_speak_finish();
+    await this.layers.live2d.all_speak_finish();
     for (const s of this.scenarioResource.filter(
       (sound) => sound.type === Live2DAssetType.Talk
     )) {
       const sound = s.data as Howl;
       if (sound.playing()) {
         await new Promise<void>((resolve) => {
-          if (this.abort_controller.signal.aborted) {
+          if (this.animate.abort_controller.signal.aborted) {
             resolve();
             return;
           }
           sound.on("end", () => {
             resolve();
           });
-          this.abort_controller.signal.addEventListener("abort", () => {
+          this.animate.abort_controller.signal.addEventListener("abort", () => {
             resolve();
           });
         });
       }
     }
 
-    log.log("Live2DController", this.app.stage.getChildByName("live2d"));
     return current;
   };
   apply_action = async (step: number, delay_offset_ms = 0) => {
@@ -305,7 +304,7 @@ export class Live2DController extends Live2DPlayer {
                     s.identifer === action_detail.StringValSub &&
                     s.type === Live2DAssetType.BackgroundImage
                 )?.data as HTMLImageElement;
-                this.draw.background(data);
+                this.layers.background.draw(data);
               }
               break;
             case SpecialEffectType.Telop:
@@ -317,8 +316,8 @@ export class Live2DController extends Live2DPlayer {
                   action_detail
                 );
                 const data = action_detail.StringVal;
-                this.draw.telop(data);
-                await this.animate.show_layer("telop", 300);
+                this.layers.telop.draw(data);
+                await this.show_layer(this.layers.telop, 300);
               }
               break;
             case SpecialEffectType.WhiteIn:
@@ -329,7 +328,7 @@ export class Live2DController extends Live2DPlayer {
                   action,
                   action_detail
                 );
-                await this.animate.hide_layer("fullcolor", 1000);
+                await this.hide_layer(this.layers.fullcolor, 1000);
               }
               break;
             case SpecialEffectType.WhiteOut:
@@ -340,9 +339,9 @@ export class Live2DController extends Live2DPlayer {
                   action,
                   action_detail
                 );
-                this.animate.hide_layer("dialog", 100);
-                this.draw.fullcolor(0xffffff);
-                await this.animate.show_layer("fullcolor", 1000);
+                this.hide_layer(this.layers.dialog, 100);
+                this.layers.fullcolor.draw(0xffffff);
+                await this.show_layer(this.layers.fullcolor, 1000);
               }
               break;
             case SpecialEffectType.BlackIn:
@@ -353,7 +352,7 @@ export class Live2DController extends Live2DPlayer {
                   action,
                   action_detail
                 );
-                await this.animate.hide_layer("fullcolor", 1000);
+                await this.hide_layer(this.layers.fullcolor, 1000);
               }
               break;
             case SpecialEffectType.BlackOut:
@@ -364,9 +363,9 @@ export class Live2DController extends Live2DPlayer {
                   action,
                   action_detail
                 );
-                this.animate.hide_layer("dialog", 100);
-                this.draw.fullcolor(0x000000);
-                await this.animate.show_layer("fullcolor", 1000);
+                this.hide_layer(this.layers.dialog, 100);
+                this.layers.fullcolor.draw(0x000000);
+                await this.show_layer(this.layers.fullcolor, 1000);
               }
               break;
             case SpecialEffectType.FlashbackIn:
@@ -377,8 +376,8 @@ export class Live2DController extends Live2DPlayer {
                   action,
                   action_detail
                 );
-                this.draw.flashback();
-                await this.animate.show_layer("flashback", 100);
+                this.layers.flashback.draw();
+                await this.show_layer(this.layers.flashback, 100);
               }
               break;
             case SpecialEffectType.FlashbackOut:
@@ -389,7 +388,7 @@ export class Live2DController extends Live2DPlayer {
                   action,
                   action_detail
                 );
-                await this.animate.hide_layer("flashback", 100);
+                await this.hide_layer(this.layers.flashback, 100);
               }
               break;
             case SpecialEffectType.AttachCharacterShader:
@@ -403,7 +402,7 @@ export class Live2DController extends Live2DPlayer {
                 switch (action_detail.StringVal) {
                   case SeAttachCharacterShaderType.Hologram:
                     {
-                      this.live2d.add_effect(
+                      this.layers.live2d.add_effect(
                         this.live2d_get_costume(action_detail.IntVal)!,
                         "hologram"
                       );
@@ -415,7 +414,7 @@ export class Live2DController extends Live2DPlayer {
                   case SeAttachCharacterShaderType.None:
                   case SeAttachCharacterShaderType.Empty:
                     {
-                      this.live2d.remove_effect(
+                      this.layers.live2d.remove_effect(
                         this.live2d_get_costume(action_detail.IntVal)!,
                         "hologram"
                       );
@@ -434,6 +433,28 @@ export class Live2DController extends Live2DPlayer {
                 }
               }
               break;
+            case SpecialEffectType.PlayScenarioEffect:
+              {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/PlayScenarioEffect",
+                  action,
+                  action_detail
+                );
+                this.layers.scene_effect.draw(action_detail.StringVal);
+              }
+              break;
+            case SpecialEffectType.StopScenarioEffect:
+              {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/StopScenarioEffect",
+                  action,
+                  action_detail
+                );
+                this.layers.scene_effect.remove(action_detail.StringVal);
+              }
+              break;
             default:
               log.warn(
                 "Live2DController",
@@ -448,7 +469,7 @@ export class Live2DController extends Live2DPlayer {
         {
           const action_detail =
             this.scenarioData.LayoutData[action.ReferenceIndex];
-          this.animate.hide_layer("telop", 500);
+          this.hide_layer(this.layers.telop, 500);
           switch (action_detail.Type) {
             case CharacterLayoutType.Motion:
               {
@@ -472,7 +493,7 @@ export class Live2DController extends Live2DPlayer {
                   action_detail.SideTo,
                   action_detail.SideToOffsetX
                 );
-                const move = this.live2d.move(
+                const move = this.layers.live2d.move(
                   costume,
                   undefined,
                   to,
@@ -510,7 +531,7 @@ export class Live2DController extends Live2DPlayer {
                   action_detail.FacialName
                 );
                 // Step 2: Show. (after motion finished)
-                const show = this.live2d.show(costume, 200);
+                const show = this.layers.live2d.show(costume, 200);
                 this.live2d_set_appear(action_detail.Character2dId);
                 // (Same time) Move from SideFrom position to SideTo position or at SideFrom position.
                 const from = side_to_position(
@@ -523,9 +544,9 @@ export class Live2DController extends Live2DPlayer {
                 );
                 let move;
                 if (from[0] === to[0] && from[1] === to[1]) {
-                  this.live2d.set_position(costume, from);
+                  this.layers.live2d.set_position(costume, from);
                 } else {
-                  move = this.live2d.move(
+                  move = this.layers.live2d.move(
                     costume,
                     from,
                     to,
@@ -569,7 +590,7 @@ export class Live2DController extends Live2DPlayer {
                   action_detail.SideToOffsetX
                 );
                 if (!(from[0] === to[0] && from[1] === to[1])) {
-                  await this.live2d.move(
+                  await this.layers.live2d.move(
                     costume,
                     from,
                     to,
@@ -579,7 +600,7 @@ export class Live2DController extends Live2DPlayer {
                 // Step 2: Wait for the model exist at least 2 seconds.
                 await this.live2d_stay(action_detail.Character2dId, 2000);
                 // Step 3: Hide.
-                await this.live2d.hide(costume, 200);
+                await this.layers.live2d.hide(costume, 200);
               }
               break;
             default:
@@ -629,13 +650,13 @@ export class Live2DController extends Live2DPlayer {
             this.scenarioData.TalkData[action.ReferenceIndex];
           log.log("Live2DController", "Talk", action, action_detail);
           //clear
-          await this.animate.hide_layer("telop", 200);
+          await this.hide_layer(this.layers.telop, 200);
           // show dialog
-          const dialog = this.animate.dialog(
+          const dialog = this.layers.dialog.animate(
             action_detail.WindowDisplayName,
             action_detail.Body
           );
-          await this.animate.show_layer("dialog", 200);
+          await this.show_layer(this.layers.dialog, 200);
           // motion
           const motion = action_detail.Motions.map((m) => {
             this.apply_live2d_motion(
@@ -657,7 +678,7 @@ export class Live2DController extends Live2DPlayer {
                 action_detail.TalkCharacters[0].Character2dId
               );
               if (costume) {
-                this.live2d.speak(costume, sound.url);
+                this.layers.live2d.speak(costume, sound.url);
               } else {
                 (sound.data as Howl).play();
               }
@@ -759,7 +780,7 @@ export class Live2DController extends Live2DPlayer {
     if (model) {
       if (expression !== "") {
         wait_list.push(
-          this.live2d.update_motion(
+          this.layers.live2d.update_motion(
             "Expression",
             costume,
             model.expressions.indexOf(expression)
@@ -768,7 +789,7 @@ export class Live2DController extends Live2DPlayer {
       }
       if (motion !== "") {
         wait_list.push(
-          this.live2d.update_motion(
+          this.layers.live2d.update_motion(
             "Motion",
             costume,
             model.motions.indexOf(motion)
@@ -780,33 +801,35 @@ export class Live2DController extends Live2DPlayer {
   };
   live2d_load_model = async (step: number) => {
     const queue = this.model_queue[step];
-    const current_queue = this.live2d
+    const current_queue = this.layers.live2d
       .get_model_list()
       .map((m) => m.live2DInfo.costume);
     // destory
     current_queue
       .filter((m) => !queue.includes(m))
-      .forEach((m) => this.live2d.find(m)!.destroy());
+      .forEach((m) => this.layers.live2d.find(m)!.destroy());
     // create
     await Promise.all(
       queue
         .filter((m) => !current_queue.includes(m))
         .map((m) =>
-          this.live2d.init(this.modelData.find((md) => md.costume === m)!)
+          this.layers.live2d.load(
+            this.modelData.find((md) => md.costume === m)!
+          )
         )
     );
     // add effects
     this.current_costume
       .filter((c) => {
         if (c.animations.length > 0) {
-          const m = this.live2d.find(c.costume);
+          const m = this.layers.live2d.find(c.costume);
           return m && m.live2DInfo.animations.length === 0;
         }
         return false;
       })
       .forEach((c) => {
         c.animations.forEach((a) => {
-          this.live2d.add_effect(c.costume, a as "hologram");
+          this.layers.live2d.add_effect(c.costume, a as "hologram");
         });
       });
   };
@@ -852,7 +875,7 @@ export class Live2DController extends Live2DPlayer {
         if (sound.playing()) sound.stop();
       });
     if (sound_types.findIndex((t) => t === Live2DAssetType.Talk) !== -1) {
-      this.live2d.stop_speaking();
+      this.layers.live2d.stop_speaking();
     }
   };
   unload = () => {

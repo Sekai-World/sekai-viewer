@@ -1,77 +1,34 @@
-import type {
-  ILive2DModelDataCollection,
-  Ilive2DModelInfo,
-  ILive2DCachedAsset,
-} from "./types.d";
-import {
-  Container,
-  Texture,
-  Sprite,
-  Graphics,
-  Text,
-  TextStyle,
-  Ticker,
-  AlphaFilter,
-  ColorMatrixFilter,
-} from "pixi.js";
-import type { Application, DisplayObject } from "pixi.js";
-import {
-  Live2DModel,
-  MotionPriority,
-  MotionPreloadStrategy,
-  config,
-} from "pixi-live2d-display-mulmotion";
-config.fftSize = 8192;
-import type { Live2DModelOptions } from "pixi-live2d-display-mulmotion";
+import type { ILayerData, ILive2DCachedAsset } from "./types.d";
+import { Texture } from "pixi.js";
+import type { Application } from "pixi.js";
+
 import { log } from "./log";
-import { Hologram } from "./animation/Hologram";
 
-const StageLayerIndex = [
-  "fullcolor",
-  "flashback",
-  "telop",
-  "dialog",
-  "live2d_effect",
-  "live2d",
-  "background",
-] as const;
+// layers
+import BaseLayer from "./layer/BaseLayer";
+import Background from "./layer/Background";
+import Fullcolor from "./layer/Fullcolor";
+import Dialog from "./layer/Dialog";
+import Telop from "./layer/Telop";
+import Flashback from "./layer/Flashback";
+import SceneEffect from "./layer/SceneEffect";
+import Live2D from "./layer/Live2D";
 
-type StageLayerType = (typeof StageLayerIndex)[number];
-
-export class Live2DModelWithInfo extends Live2DModel {
-  public live2DInfo: Ilive2DModelInfo;
-  constructor(options?: Live2DModelOptions) {
-    super(options);
-    this.live2DInfo = {
-      cid: -1,
-      costume: "",
-      position: [0.5, 0.5],
-      init_pose: false,
-      hidden: true,
-      speaking: false,
-      wait_motion: Promise.resolve(),
-      animations: [],
-    };
-  }
-  destroy(options?: {
-    children?: boolean;
-    texture?: boolean;
-    baseTexture?: boolean;
-  }): void {
-    super.destroy(options);
-    this.live2DInfo.animations.forEach((a) => a.destroy());
-  }
-}
+import AnimationController from "./animation/AnimationController";
 
 export class Live2DPlayer {
   app: Application;
   private stage_size: [number, number];
-  private screen_length: number;
-  private textures: {
-    identifer: string;
-    texture: Texture;
-  }[];
-  protected abort_controller: AbortController;
+  public animate: AnimationController;
+  public layers: {
+    background: Background;
+    fullcolor: Fullcolor;
+    dialog: Dialog;
+    telop: Telop;
+    flashback: Flashback;
+    scene_effect: SceneEffect;
+    live2d: Live2D;
+  };
 
   constructor(
     app: Application,
@@ -81,33 +38,40 @@ export class Live2DPlayer {
   ) {
     this.app = app;
     this.stage_size = stage_size;
-    this.screen_length = screen_length;
-    this.abort_controller = new AbortController();
+    this.animate = new AnimationController();
 
     // create texture
-    this.textures = ui_assets.map((asset) => ({
+    const textures = ui_assets.map((asset) => ({
       identifer: asset.identifer,
       texture: Texture.from(asset.data as HTMLImageElement),
     }));
 
     //initilize stage
-    if (app.stage.children.length !== StageLayerIndex.length) {
-      app.stage.removeChildren();
-      StageLayerIndex.slice()
-        .reverse()
-        .forEach((n) => {
-          const child = new Container();
-          child.name = n;
-          child.alpha = 1;
-          app.stage.addChild(child);
-        });
-    }
+    app.stage.removeChildren();
+    const layer_data: ILayerData = {
+      stage_size: this.stage_size,
+      screen_length: screen_length,
+      animation_controller: this.animate,
+      textures: textures,
+    };
+    this.layers = {
+      background: new Background(layer_data),
+      fullcolor: new Fullcolor(layer_data),
+      telop: new Telop(layer_data),
+      flashback: new Flashback(layer_data),
+      scene_effect: new SceneEffect(layer_data),
+      dialog: new Dialog(layer_data),
+      live2d: new Live2D(layer_data),
+    };
+    app.stage.addChild(this.layers.background.root);
+    app.stage.addChild(this.layers.live2d.root);
+    app.stage.addChild(this.layers.dialog.root);
+    app.stage.addChild(this.layers.telop.root);
+    app.stage.addChild(this.layers.scene_effect.root);
+    app.stage.addChild(this.layers.flashback.root);
+    app.stage.addChild(this.layers.fullcolor.root);
     log.log("Live2DPlayer", `player init.`);
   }
-
-  em = (height: number) => {
-    return (this.stage_size[1] * height) / 400;
-  };
 
   set_stage_size = (stage_size: [number, number]) => {
     this.stage_size = stage_size;
@@ -116,590 +80,26 @@ export class Live2DPlayer {
 
   update_style = () => {
     if (this.app.stage.children.length === 0) return;
-    StageLayerIndex.forEach((n) => {
-      const child: Container = this.app.stage.getChildByName(n)!;
-      if (child.children.length > 0) {
-        if (n in this.set_style) this.set_style[n]();
-      }
-    });
+    Object.values(this.layers).forEach((l) => l.set_style(this.stage_size));
   };
 
-  set_style = {
-    background: () => {
-      const container: Container = this.app.stage.getChildByName("background")!;
-      const bg: Sprite = container.getChildAt(0) as Sprite;
-      let scale = 1;
-      const texture = bg.texture;
-      if (
-        texture.width / texture.height >
-        this.stage_size[0] / this.stage_size[1]
-      )
-        scale = this.stage_size[1] / texture.height;
-      else scale = this.stage_size[0] / texture.width;
-      bg.x = this.stage_size[0] / 2;
-      bg.y = this.stage_size[1] / 2;
-      bg.anchor.set(0.5);
-      bg.scale.set(scale);
-    },
-    dialog: () => {
-      const containerP: Container = this.app.stage.getChildByName("dialog")!;
-      const container: Container = containerP.getChildAt(0) as Container;
-      container.x = 0;
-      container.y = this.stage_size[1] * 0.7;
-      const bg: Graphics = container.getChildByName("dialog_bg")!;
-      bg.x = 0;
-      bg.y = 0;
-      bg.scale.set(
-        this.stage_size[0] / 2000, // 2000 -> ui/text_background width
-        (this.stage_size[1] * 0.3) / 2000 // 2000 -> ui/text_background height
-      );
-      const underline: Graphics = container.getChildByName("dialog_underline")!;
-      underline.x = this.stage_size[0] * 0.15 - this.em(3);
-      underline.y = this.em(24);
-      underline.scale.set(
-        (this.stage_size[0] * 0.7) / 2000 // 2000 -> ui/text_underline width
-      );
-      const cn: Text = container.getChildByName("dialog_text_cn")!;
-      cn.x = this.stage_size[0] * 0.15;
-      cn.y = this.em(6);
-      cn.style = new TextStyle({
-        fill: ["#ffffff"],
-        fontSize: this.em(16),
-        wordWrap: true,
-        wordWrapWidth: this.stage_size[0] * 0.7,
-        stroke: "#4a496899",
-        strokeThickness: this.em(4),
-      });
-      const text_container: Container = container.getChildByName(
-        "dialog_text_container"
-      )!;
-      this.set_style.dialog_text(text_container.children[0] as Text);
-    },
-    dialog_text: (text: Text) => {
-      text.x = this.stage_size[0] * 0.15 + this.em(3);
-      text.y = this.em(35);
-      text.style = new TextStyle({
-        fill: ["#ffffff"],
-        fontSize: this.em(16),
-        breakWords: true,
-        wordWrap: true,
-        wordWrapWidth: this.stage_size[0] * 0.7,
-        stroke: "#4a4968aa",
-        strokeThickness: this.em(4),
-      });
-    },
-    live2d_effect: () => {},
-    live2d: (model_list: Live2DModelWithInfo[] = []) => {
-      let models = model_list;
-      if (model_list.length === 0) {
-        const container: Container = this.app.stage.getChildByName("live2d")!;
-        models = container.children as Live2DModelWithInfo[];
-      }
-      models
-        .filter((m) => m.visible)
-        .forEach((model) => {
-          const live2dTrueWidth = model.internalModel.originalWidth;
-          const live2dTrueHeight = model.internalModel.originalHeight;
-          const scale = Math.min(
-            this.stage_size[0] / live2dTrueWidth / 2,
-            this.stage_size[1] / live2dTrueHeight
-          );
-          model.x = this.stage_size[0] * model.live2DInfo.position[0];
-          model.y = this.stage_size[1] * (model.live2DInfo.position[1] + 0.3);
-          model.anchor.set(0.5);
-          model.scale.set(scale * 2.1);
-          model.live2DInfo.animations.forEach((a) => {
-            a.root.position.set(
-              this.stage_size[0] * model.live2DInfo.position[0],
-              this.stage_size[1]
-            );
-            a.set_style(this.stage_size);
-          });
-        });
-    },
-    telop: () => {
-      const container: Container = this.app.stage.getChildByName("telop")!;
-      const text: Text = container.getChildByName("telop_text")!;
-      text.anchor.set(0.5);
-      text.x = this.stage_size[0] / 2;
-      text.y = this.stage_size[1] / 2;
-      text.style = new TextStyle({
-        fill: ["#ffffff"],
-        fontSize: this.em(25),
-        breakWords: true,
-        wordWrap: true,
-        wordWrapWidth: this.stage_size[0] * 0.7,
-        dropShadow: true,
-        dropShadowColor: "#000000",
-        dropShadowBlur: this.em(2),
-        dropShadowAngle: Math.PI / 6,
-        dropShadowDistance: this.em(2),
-      });
-      const bg: Container = container.getChildByName("telop_bg")!;
-      bg.x = 0;
-      bg.y = this.stage_size[1] / 2 - this.em(30);
-      bg.scale.set(
-        this.stage_size[0] / this.screen_length,
-        this.em(60) / this.screen_length
-      );
-    },
-    fullcolor: () => {
-      const container: Container = this.app.stage.getChildByName("fullcolor")!;
-      const bg: Graphics = container.getChildAt(0) as Graphics;
-      bg.x = 0;
-      bg.y = 0;
-      bg.scale.set(
-        this.stage_size[0] / this.screen_length,
-        this.stage_size[1] / this.screen_length
-      );
-    },
-    flashback: () => {
-      const container: Container = this.app.stage.getChildByName("flashback")!;
-      const bg: Graphics = container.getChildAt(0) as Graphics;
-      bg.x = 0;
-      bg.y = 0;
-      bg.scale.set(
-        this.stage_size[0] / this.screen_length,
-        this.stage_size[1] / this.screen_length
-      );
-    },
-  };
-
-  draw = {
-    background: (data: HTMLImageElement) => {
-      const container: Container = this.app.stage.getChildByName("background")!;
-      container.removeChildren();
-      const texture = Texture.from(data);
-      const bg = new Sprite(texture);
-      container.addChild(bg);
-      this.set_style.background();
-    },
-    dialog: (cn: string, text: string) => {
-      const container: Container = this.app.stage.getChildByName("dialog")!;
-      container.removeChildren();
-      const dialog_container = new Container();
-      container.addChild(dialog_container);
-
-      const background_texture = this.textures.find(
-        (a) => a.identifer === "ui/text_background"
-      )!.texture;
-      const background = new Sprite(background_texture);
-      background.name = "dialog_bg";
-      const underline_texture = this.textures.find(
-        (a) => a.identifer === "ui/text_underline"
-      )!.texture;
-      const underline = new Sprite(underline_texture);
-      underline.name = "dialog_underline";
-      const cn_c = new Text(cn);
-      cn_c.name = "dialog_text_cn";
-      const text_container = new Container();
-      text_container.name = "dialog_text_container";
-      const text_c = new Text(text);
-      text_container.addChild(text_c);
-      dialog_container.addChild(background);
-      dialog_container.addChild(underline);
-      dialog_container.addChild(cn_c);
-      dialog_container.addChild(text_container);
-      this.set_style.dialog();
-    },
-    telop: (data: string) => {
-      const container: Container = this.app.stage.getChildByName("telop")!;
-      container.removeChildren();
-      const bg = new Container();
-      bg.name = "telop_bg";
-      const bg_graphic = new Graphics();
-      bg_graphic
-        .beginFill(0x000000, 0.3)
-        .drawRect(0, 0, this.screen_length, this.screen_length)
-        .endFill();
-      bg.addChild(bg_graphic);
-      const text = new Text(data);
-      text.name = "telop_text";
-      container.addChild(bg);
-      container.addChild(text);
-      this.set_style.telop();
-    },
-    fullcolor: (color: number) => {
-      const container: Container = this.app.stage.getChildByName("fullcolor")!;
-      container.removeChildren();
-      const bg_graphic = new Graphics();
-      bg_graphic
-        .beginFill(color, 1)
-        .drawRect(0, 0, this.screen_length, this.screen_length)
-        .endFill();
-      container.addChild(bg_graphic);
-      this.set_style.fullcolor();
-    },
-    flashback: () => {
-      const container: Container = this.app.stage.getChildByName("flashback")!;
-      container.removeChildren();
-      const bg_graphic = new Graphics();
-      bg_graphic
-        .beginFill(0x000000, 0.3)
-        .drawRect(0, 0, this.screen_length, this.screen_length)
-        .endFill();
-      container.addChild(bg_graphic);
-      this.set_style.flashback();
-    },
-  };
-
-  animate = {
-    wrapper: (
-      step: (ani_ticker: Ticker) => void,
-      finish: (ani_ticker: Ticker) => boolean
-    ) => {
-      const wait_finish = new Promise<void>((resolve) => {
-        let destroyed = false;
-        if (this.abort_controller.signal.aborted) {
-          resolve();
-          return;
-        }
-        const ani_ticker = new Ticker();
-        ani_ticker.add(() => {
-          step(ani_ticker);
-          if (finish(ani_ticker)) {
-            if (!destroyed) {
-              ani_ticker.destroy();
-              destroyed = true;
-            }
-            resolve();
-          }
-        });
-        ani_ticker.start();
-        this.abort_controller.signal.addEventListener("abort", () => {
-          if (!destroyed) {
-            ani_ticker.destroy();
-            destroyed = true;
-          }
-          resolve();
-        });
-      });
-      return wait_finish;
-    },
-    progress_wrapper: async (
-      apply: (progress: number) => void,
-      time: number
-    ) => {
-      let progress = 0;
-      apply(0);
-      await this.animate.wrapper(
-        (ani_ticker) => {
-          progress = progress + ani_ticker.elapsedMS / time;
-          progress = Math.min(progress, 1);
-          apply(progress);
-        },
-        () => progress >= 1
-      );
-      apply(1);
-    },
-    loop_wrapper: (apply: (progress: number) => void, period: number) => {
-      const controller = new AbortController();
-      let progress = 0;
-      this.animate.wrapper(
-        (ani_ticker) => {
-          progress = progress + ani_ticker.elapsedMS / period;
-          progress = Math.min(progress, 1);
-          if (progress === 1) progress = 0;
-          apply(progress);
-        },
-        () => controller.signal.aborted
-      );
-      return controller;
-    },
-    delay: (ms: number) => {
-      return new Promise<void>((resolve) => {
-        let destroyed = false;
-        if (this.abort_controller.signal.aborted) {
-          resolve();
-          return;
-        }
-        const timeout_id = setTimeout(() => {
-          if (!destroyed) {
-            destroyed = true;
-          }
-          resolve();
-        }, ms);
-        this.abort_controller.signal.addEventListener("abort", () => {
-          if (!destroyed) {
-            clearTimeout(timeout_id);
-            destroyed = true;
-          }
-          resolve();
-        });
-      });
-    },
-    abort: () => {
-      this.abort_controller.abort();
-    },
-    reset_abort: () => {
-      if (this.abort_controller.signal.aborted)
-        this.abort_controller = new AbortController();
-    },
-    show_layer: async (layer: StageLayerType, time: number) => {
-      const container: DisplayObject = this.app.stage.getChildByName(layer)!;
-      if (container.alpha !== 1) await this.animate.show(container, time);
-    },
-    hide_layer: async (layer: StageLayerType, time: number) => {
-      const container: DisplayObject = this.app.stage.getChildByName(layer)!;
-      if (container.alpha !== 0) await this.animate.hide(container, time);
-    },
-    show: async (container: DisplayObject, time: number) => {
-      await this.animate.progress_wrapper((progress) => {
-        container.alpha = progress;
+  show_layer = async (layer: BaseLayer, time: number) => {
+    if (layer.root.alpha !== 1) {
+      this.animate.progress_wrapper((progress) => {
+        layer.root.alpha = progress;
       }, time);
-    },
-    hide: async (container: DisplayObject, time: number) => {
-      await this.animate.progress_wrapper((progress) => {
-        container.alpha = 1 - progress;
-      }, time);
-    },
-    show_by_filter: async (container: DisplayObject, time: number) => {
-      if (container.filters && container.filters.length > 0) {
-        const filter = container.filters[0] as AlphaFilter;
-        await this.animate.progress_wrapper((progress) => {
-          filter.alpha = progress;
-        }, time);
-      }
-    },
-    hide_by_filter: async (container: DisplayObject, time: number) => {
-      if (container.filters && container.filters.length > 0) {
-        const filter = container.filters[0] as AlphaFilter;
-        await this.animate.progress_wrapper((progress) => {
-          filter.alpha = 1 - progress;
-        }, time);
-      }
-    },
-    dialog: async (cn: string, text: string) => {
-      this.draw.dialog(cn, "");
-      this.set_style.dialog();
-      const container0: Container = this.app.stage.getChildByName("dialog")!;
-      const container1: Container = container0.getChildAt(0) as Container;
-      const container: Container = container1.getChildByName(
-        "dialog_text_container"
-      )!;
-      for (let i = 1; i <= text.length; i++) {
-        // if aborted, jump to full text
-        if (this.abort_controller.signal.aborted) {
-          i = text.length;
-        }
-        // new text
-        container.children.forEach((o) => o.destroy());
-        const text_c = new Text(text.slice(0, i));
-        container.addChild(text_c);
-        this.set_style.dialog_text(text_c);
-        await this.animate.delay(50);
-      }
-    },
+    }
   };
 
-  live2d = {
-    init: async (
-      model_data: ILive2DModelDataCollection,
-      motionPreload = MotionPreloadStrategy.ALL
-    ) => {
-      const container: Container = this.app.stage.getChildByName("live2d")!;
-      const model = await Live2DModelWithInfo.from(model_data.data, {
-        autoFocus: false,
-        autoHitTest: false,
-        breathDepth: 0.2,
-        ticker: Ticker.shared,
-        motionPreload: motionPreload,
-      });
-      model.visible = false;
-      model.internalModel.extendParallelMotionManager(2);
-      const alpha = new AlphaFilter(0);
-      alpha.resolution = 2;
-      model.filters = [alpha];
-      model.live2DInfo.cid = model_data.cid;
-      model.live2DInfo.costume = model_data.costume;
-      container.addChild(model);
-      log.log("Live2DPlayer", `${model_data.costume} init.`);
-    },
-    load_status: (): "loaded" | "ready" => {
-      const container: Container = this.app.stage.getChildByName("live2d")!;
-      return container.children.length > 0 ? "loaded" : "ready";
-    },
-    find: (costume: string) => {
-      const container: Container = this.app.stage.getChildByName("live2d")!;
-      return (container.children as Live2DModelWithInfo[]).find(
-        (l) => l.live2DInfo.costume === costume
-      );
-    },
-    get_model_list: () => {
-      const container: Container = this.app.stage.getChildByName("live2d")!;
-      return container.children as Live2DModelWithInfo[];
-    },
-    clear: () => {
-      const container: Container = this.app.stage.getChildByName("live2d")!;
-      container.children.forEach((o) => o.destroy());
-      log.log("Live2DPlayer", "live2d stage clear.");
-    },
-    show: async (costume: string, time: number) => {
-      const model = this.live2d.find(costume);
-      if (model && model.live2DInfo.hidden === true) {
-        model.visible = true;
-        model.live2DInfo.hidden = false;
-        await Promise.all([
-          this.animate.show_by_filter(model, time),
-          ...model.live2DInfo.animations.map((a) =>
-            this.animate.show(a.root, time)
-          ),
-        ]);
-      }
-    },
-    hide: async (costume: string, time: number) => {
-      const model = this.live2d.find(costume);
-      if (model && model.live2DInfo.hidden === false) {
-        model.live2DInfo.hidden = true;
-        await Promise.all([
-          this.animate.hide_by_filter(model, time),
-          ...model.live2DInfo.animations.map((a) =>
-            this.animate.hide(a.root, time)
-          ),
-        ]);
-        model.visible = false;
-      }
-    },
-    update_motion: async (
-      motion_type: "Motion" | "Expression",
-      costume: string,
-      motion_index: number
-    ) => {
-      const model = this.live2d.find(costume);
-      if (model) {
-        model.visible = true;
-        let manager = model.internalModel.parallelMotionManager[0];
-        if (motion_type === "Expression") {
-          manager = model.internalModel.parallelMotionManager[1];
-        }
-        await manager.startMotion(
-          motion_type,
-          motion_index,
-          MotionPriority.FORCE
-        );
-        model.live2DInfo.wait_motion = this.animate.wrapper(
-          () => {},
-          () => manager.destroyed || manager.isFinished()
-        );
-        await model.live2DInfo.wait_motion;
-        model.live2DInfo.init_pose = true;
-      }
-    },
-    set_position: (costume: string, position: [number, number]) => {
-      const model = this.live2d.find(costume);
-      if (model) {
-        model.visible = true;
-        model.live2DInfo.position = position;
-        this.set_style.live2d([model]);
-      }
-    },
-    move: async (
-      costume: string,
-      from: [number, number] | undefined,
-      to: [number, number],
-      time: number
-    ) => {
-      const model = this.live2d.find(costume);
-      if (model) {
-        model.visible = true;
-        let n_from = model.live2DInfo.position;
-        if (from) {
-          n_from = from;
-        }
-        if (n_from[0] === to[0] && n_from[1] === to[1]) return;
-        await this.animate.progress_wrapper((progress) => {
-          model.live2DInfo.position[0] =
-            (to[0] - n_from[0]) * progress + n_from[0];
-          model.live2DInfo.position[1] =
-            (to[1] - n_from[1]) * progress + n_from[1];
-          this.set_style.live2d([model]);
-        }, time);
-      }
-    },
-    speak: (costume: string, url: string) => {
-      const model = this.live2d.find(costume);
-      if (model) {
-        model.speak(url, {
-          resetExpression: false,
-          onFinish: () => {
-            model.live2DInfo.speaking = false;
-          },
-        });
-        model.live2DInfo.speaking = true;
-      }
-    },
-    stop_speaking: () => {
-      if (this.app.stage) {
-        const container: Container = this.app.stage.getChildByName("live2d")!;
-        (container.children as Live2DModelWithInfo[]).forEach((m) => {
-          if (m.live2DInfo.speaking) {
-            m.stopSpeaking();
-            m.live2DInfo.speaking = false;
-          }
-        });
-      }
-    },
-    all_speak_finish: () => {
-      return this.animate.wrapper(
-        () => {},
-        () =>
-          !(
-            this.app.stage.getChildByName("live2d")!
-              .children as Live2DModelWithInfo[]
-          ).reduce((accu, curr) => accu || curr.live2DInfo.speaking, false)
-      );
-    },
-    add_effect: (costume: string, ani_type: "hologram" = "hologram") => {
-      const model = this.live2d.find(costume);
-      if (model) {
-        if (ani_type === "hologram") {
-          // add hologram animation
-          const container: Container =
-            this.app.stage.getChildByName("live2d_effect")!;
-          const hologram = new Hologram(this.textures);
-          container.addChild(hologram.root);
-          model.live2DInfo.animations.push(hologram);
-          hologram.start(8000);
-          // set alpha equals model alpha
-          hologram.root.alpha = (model.filters![0] as AlphaFilter).alpha;
-          // add filter
-          const filter = new ColorMatrixFilter();
-          filter.resolution = 2;
-          filter.matrix = [
-            1.2, 0, 0, 0, 0, 0, 1.2, 0, 0, 0, 0, 0, 1.2, 0, 0, 0, 0, 0, 0.8, 0,
-          ];
-          model.filters?.push(filter);
-        }
-        this.set_style.live2d([model]);
-      }
-    },
-    remove_effect: (costume: string, ani_type: "hologram" = "hologram") => {
-      const model = this.live2d.find(costume);
-      if (model) {
-        if (ani_type === "hologram") {
-          // remove filter
-          let idx = model.filters!.findIndex(
-            (f) => f instanceof ColorMatrixFilter
-          );
-          if (idx !== -1) {
-            model.filters?.splice(idx, 1);
-          }
-          // remove animation
-          idx = model.live2DInfo.animations.findIndex(
-            (a) => a instanceof Hologram
-          );
-          if (idx !== -1) {
-            model.live2DInfo.animations[idx].destroy();
-            model.live2DInfo.animations.splice(idx, 1);
-          }
-        }
-      }
-    },
+  hide_layer = async (layer: BaseLayer, time: number) => {
+    if (layer.root.alpha !== 0) {
+      this.animate.progress_wrapper((progress) => {
+        layer.root.alpha = 1 - progress;
+      }, time);
+    }
   };
 
   destroy = () => {
-    (this.app.stage.children as Container[]).forEach((container) => {
-      container.children.forEach((o) => o.destroy());
-    });
+    Object.values(this.layers).forEach((l) => l.destroy());
   };
 }

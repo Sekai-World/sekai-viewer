@@ -1,6 +1,7 @@
 import type { Howl } from "howler";
 import type { IScenarioData } from "../../types";
 import type { Animation } from "./animation/BaseAnimation";
+import { Texture } from "pixi.js";
 
 export enum Live2DAssetType {
   SoundEffect,
@@ -8,6 +9,7 @@ export enum Live2DAssetType {
   Talk,
   UI,
   UISheet,
+  UIVideo,
   BackgroundImage,
 }
 
@@ -26,6 +28,7 @@ export const Live2DAssetTypeSound = [
 export const Live2DAssetTypeUI = [
   Live2DAssetType.UI,
   Live2DAssetType.UISheet,
+  Live2DAssetType.UIVideo,
 ] as const;
 
 export interface ILive2DAssetUrl {
@@ -36,6 +39,11 @@ export interface ILive2DAssetUrl {
 
 export interface ILive2DCachedAsset extends ILive2DAssetUrl {
   data: HTMLImageElement | Howl | null;
+}
+
+export interface ILive2DTexture {
+  identifer: string;
+  texture: Texture;
 }
 
 export interface ILive2DModelData {
@@ -100,6 +108,13 @@ export interface ILive2DControllerData {
   scenarioData: IScenarioData;
   scenarioResource: ILive2DCachedAsset[];
   modelData: ILive2DModelDataCollection[];
+}
+
+export interface ILayerData {
+  stage_size?: [number, number];
+  screen_length?: number;
+  textures?: ILive2DTexture[];
+  animation_controller?: AnimationController;
 }
 
 export interface IProgressEvent {

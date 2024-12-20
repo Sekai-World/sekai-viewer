@@ -30,3 +30,19 @@ export function texture_slice(
   }
   return ret;
 }
+
+export function linear_gradient(gradient: { stop: number; color: string }[]) {
+  const quality = 256;
+  const canvas = document.createElement("canvas");
+  canvas.width = quality;
+  canvas.height = 1;
+  const ctx = canvas.getContext("2d")!;
+  // use canvas2d API to create gradient
+  const grd = ctx.createLinearGradient(0, 0, quality, 0);
+  gradient.forEach((g) => {
+    grd.addColorStop(g.stop, g.color);
+  });
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, quality, 1);
+  return Texture.from(canvas);
+}

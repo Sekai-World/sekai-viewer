@@ -1,4 +1,5 @@
 # TODO
+
 - bgm fade in and out
 - VoiceId more than one
 - player ui load in demand
@@ -15,73 +16,75 @@
 - SpecialEffectType.SekaiOut
 - SpecialEffectType.SekaiIn
 - NOT IMPLEMENT YET:
-    - SpecialEffectType.32
-    - SpecialEffectType.31
-    - SpecialEffectType.30
-    - SpecialEffectType.29
-    - SpecialEffectType.36
-    - SpecialEffectType.35
-    - SpecialEffectType.34
-    - SpecialEffectType.33
-    - SpecialEffectType.PlaceInfo
-    - SpecialEffectType.Movie
-    - SpecialEffectType.42
-    - SpecialEffectType.41
-    - SpecialEffectType.43
-    - SpecialEffectType.40
-    - SpecialEffectType.FullScreenText
-    - SpecialEffectType.27
-    - SpecialEffectType.SimpleSelectable
-    - SpecialEffectType.28
-    - SpecialEffectType.0
-    - SpecialEffectType.44
-    - SpecialEffectType.38
-    - SpecialEffectType.39
+  - SpecialEffectType.32
+  - SpecialEffectType.31
+  - SpecialEffectType.30
+  - SpecialEffectType.29
+  - SpecialEffectType.36
+  - SpecialEffectType.35
+  - SpecialEffectType.34
+  - SpecialEffectType.33
+  - SpecialEffectType.PlaceInfo
+  - SpecialEffectType.Movie
+  - SpecialEffectType.42
+  - SpecialEffectType.41
+  - SpecialEffectType.43
+  - SpecialEffectType.40
+  - SpecialEffectType.FullScreenText
+  - SpecialEffectType.27
+  - SpecialEffectType.SimpleSelectable
+  - SpecialEffectType.28
+  - SpecialEffectType.0
+  - SpecialEffectType.44
+  - SpecialEffectType.38
+  - SpecialEffectType.39
+
 # CHANGE LOG
 
 - commit e08f0f68e2a081c99874be64cd0b7ddab0635619
-    - feat: reimplement live2d story reader
+  - feat: reimplement live2d story reader
 - commit ff9bc4f68a649c80fa78770d60b170d55c823709
-    - fix(live2d): event sound loading not properly & sound not clear
-    - feat: add beta indicator
-    - feat: add log function to avoid console.log in production
-    - feat: discard useless motion and preload all motions in live2d model
-    - feat: load all models in memory at the beginning of playing
-    - feat: add auto play checkbox
-    - feat: add the ability to skip animations
-    - fix: sounds not clear after leaving the page
-    - fix: some sounds in event story not load properly
-    - fix: load progress stuck when assets can't be load, instead raise error when playing
-    - fix: load progress sometimes draw back
+  - fix(live2d): event sound loading not properly & sound not clear
+  - feat: add beta indicator
+  - feat: add log function to avoid console.log in production
+  - feat: discard useless motion and preload all motions in live2d model
+  - feat: load all models in memory at the beginning of playing
+  - feat: add auto play checkbox
+  - feat: add the ability to skip animations
+  - fix: sounds not clear after leaving the page
+  - fix: some sounds in event story not load properly
+  - fix: load progress stuck when assets can't be load, instead raise error when playing
+  - fix: load progress sometimes draw back
 - commit 79fc452d3e90996338a3a70d69516779d35e7199
-    - refactor: upgrade pixi to v7, migrate to pixi-live2d-display-mulmotion
-    - refactor: adapt all the codes to new deps
+  - refactor: upgrade pixi to v7, migrate to pixi-live2d-display-mulmotion
+  - refactor: adapt all the codes to new deps
 - commit 35af14cd7f20fe10f12d920cde355d6919370ea6
-    - feat(live2d): lipsync, simultaneous motions and expressions
-    - refactor: upgrade to pixi-live2d-display-mulmotion@0.5.0-mm-3
-    - feat: lipsync
-    - feat: play motions and expressions simultaneously
-    - feat: optimize playing progress, delays are more accurate now
-    - feat: Implement SoundPlayMode
-    - fix: when talk no voice during autoplay, immediately skip
-    - fix: weird motion loop (by downscale it to 20%)
+  - feat(live2d): lipsync, simultaneous motions and expressions
+  - refactor: upgrade to pixi-live2d-display-mulmotion@0.5.0-mm-3
+  - feat: lipsync
+  - feat: play motions and expressions simultaneously
+  - feat: optimize playing progress, delays are more accurate now
+  - feat: Implement SoundPlayMode
+  - fix: when talk no voice during autoplay, immediately skip
+  - fix: weird motion loop (by downscale it to 20%)
 - commit 41b3a4f4f2971544ed2e0ddaf807986be344196b
-    - feat(live2d): fancy ui and text animation
-    - refactor: change some varible name
+  - feat(live2d): fancy ui and text animation
+  - refactor: change some varible name
 - commit 6adb995a64a6bb50ed8ad8d73ee9515d3b1ed34c
-    - feat(live2d): implement character moving
-    - fix(live2d): abort text animation cause inf loop
-    - fix(live2d): no talk sound when no live2d model on the scene
-    - fix(live2d): dialog not clear when delay
-    - refactor(live2d): move story-related types into new file
-    - fix(live2d): character disappear too quick
-    - fix(live2d): motion loading repeatly
-    - fix(live2d): wrong motion name in story(event_01_02) (delete all spaces in motion name)
-    - perf(live2d): not ticking when models are not visible
-    - perf(live2d): dynamic loading models, keep maximum 7 models in memory
+  - feat(live2d): implement character moving
+  - fix(live2d): abort text animation cause inf loop
+  - fix(live2d): no talk sound when no live2d model on the scene
+  - fix(live2d): dialog not clear when delay
+  - refactor(live2d): move story-related types into new file
+  - fix(live2d): character disappear too quick
+  - fix(live2d): motion loading repeatly
+  - fix(live2d): wrong motion name in story(event_01_02) (delete all spaces in motion name)
+  - perf(live2d): not ticking when models are not visible
+  - perf(live2d): dynamic loading models, keep maximum 7 models in memory
 - commit d9342065376690c428ef1c78172cf6a2d611ae35
-    - feat(live2d): implement SpecialEffect Hologram
-    - refactor(live2d): change some varible name
-    - fix(live2d): autoplay not working
+  - feat(live2d): implement SpecialEffect Hologram
+  - refactor(live2d): change some varible name
+  - fix(live2d): autoplay not working
 - commit this
-    - refactor(live2d): change some file name
+  - feat(live2d): implement 56% SpecialEffect.ScenarioEffect
+  - refactor(live2d): move every layer into seperate classes

@@ -47,9 +47,9 @@ const StoryReaderLive2DStage = forwardRef<
     //DEBUG
     //window.controller = controller.current;
     //DEBUG/
-    if (controller.current.live2d.load_status() === "ready") {
+    if (controller.current.layers.live2d.load_status() === "ready") {
       onModelLoad(LoadStatus.Loading);
-      controller.current.live2d.clear();
+      controller.current.layers.live2d.clear();
       controller.current.live2d_load_model(0).then(() => {
         onModelLoad(LoadStatus.Loaded);
       });

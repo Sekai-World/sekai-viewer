@@ -390,38 +390,26 @@ export async function preloadMedia(
 ): Promise<ILive2DCachedAsset[]> {
   const queue = new PreloadQueue<ILive2DCachedAsset>();
   const total = urls.length;
-  const sounds = urls.filter((u) =>
-    Live2DAssetTypeSound.includes(u.type as any)
-  );
   let count = 0;
-  for (const url of sounds) {
+  for (const url of urls) {
     await queue.wait();
     await queue.add(
       new Promise((resolve, reject) => {
-        preloadSound(url.url)
-          .then((data) => {
-            resolve({ ...url, data });
-          })
-          .catch(reject);
-      }),
-      () => {
-        count++;
-        progress("media", count, total, url.identifer);
-      }
-    );
-  }
-  const images = urls.filter((u) =>
-    Live2DAssetTypeImage.includes(u.type as any)
-  );
-  for (const url of images) {
-    await queue.wait();
-    await queue.add(
-      new Promise((resolve, reject) => {
-        preloadImage(url.url)
-          .then((data) => {
-            resolve({ ...url, data });
-          })
-          .catch(reject);
+        if (Live2DAssetTypeSound.includes(url.type as any)) {
+          preloadSound(url.url)
+            .then((data) => {
+              resolve({ ...url, data });
+            })
+            .catch(reject);
+        } else if (Live2DAssetTypeImage.includes(url.type as any)) {
+          preloadImage(url.url)
+            .then((data) => {
+              resolve({ ...url, data });
+            })
+            .catch(reject);
+        } else {
+          resolve({ ...url, data: null });
+        }
       }),
       () => {
         count++;

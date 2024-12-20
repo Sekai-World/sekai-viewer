@@ -235,7 +235,18 @@ export enum SpecialEffectType {
   AmbientColorNormal = 12,
   AmbientColorEvening = 13,
   AmbientColorNight = 14,
+  /**
+   * Add effect to the scenario
+   * @param StringVal Effect type: {@link SeAttachCharacterShaderType}
+   * @param StringValSub Effect path, equals "scenario/effect/{StringVal}"
+   * @param Duration always 0.
+   * @param IntVal const 0
+   */
   PlayScenarioEffect = 15,
+  /**
+   * Remove Effect from the scenario
+   * @see {@link SpecialEffectType.PlayScenarioEffect}
+   */
   StopScenarioEffect = 16,
   ChangeBackgroundStill = 17,
   PlaceInfo = 18,
@@ -244,7 +255,7 @@ export enum SpecialEffectType {
   SekaiOut = 21,
   /**
    * Add shader for a model.
-   * @param StringVal Shader type: {@link SeAttachCharacterShaderType}
+   * @param StringVal Shader type: {@link SeScenarioEffectType}
    * @param StringValSub Shader param, not sure.
    * @param IntVal CharacterId, which model should add this shader.
    */
@@ -276,6 +287,71 @@ export enum SeAttachCharacterShaderType {
    */
   Blur = "blur",
 }
+/**
+ * - line: lines shoot out
+ *   - line: white lines (06:49 https://www.bilibili.com/video/BV13g411H73v?p=3)
+ * - line_legend: lines shoot from below
+ *   - line_legend: black lines (06:53 https://www.bilibili.com/video/BV1mC4y1G7rd?p=1)
+ *   - line_legend_02(akito,toya,kohane,an): white lines (with character color) (00:26 https://www.bilibili.com/video/BV1mC4y1G7rd?p=3)
+ *   - line_legend_03_(a,b)(_white), line_legend_04(_white): unknown
+ * - kirakira:
+ *   - kirakira_01: (06:18 https://www.bilibili.com/video/BV13g411H73v?p=6)
+ *   - kirakira_01_still_an: no circle moving, almost same as kirakira_01 (03:08 https://www.bilibili.com/video/BV1RA4y1d75g?p=4)
+ *   - kirakira_02: not circle but octagon, almost same as kirakira_01 (00:15 https://www.bilibili.com/video/BV1RA4y1d75g?p=4)
+ *   - kirakira_02_still: no circle moving, almost same as kirakira_02 (04:44 https://www.bilibili.com/video/BV1RA4y1d75g?p=4)
+ *   - kirakira_03: sparkle outside to inside (03:37 https://www.bilibili.com/video/BV1RA4y1d75g?p=4)
+ *   - kirakira_05, kirakira_06_sanrio_c, kirakira_07_toya, kirakira_08_mrmrhouse: unknown
+ * - black_out
+ *   - black_out: 30% transparent black layer (04:04 https://www.bilibili.com/video/BV1Vm4y197P8?p=4)
+ *   - black_out_02: 20% transparent black layer (01:19 https://www.bilibili.com/video/BV1Yh4y1f7b7?p=1)
+ *   - black_out_03: 50% transparent black layer (04:24 https://www.bilibili.com/video/BV1KQ4y1V7y6?p=8)
+ *   - black_out_04: 40% transparent black layer (04:54 https://www.bilibili.com/video/BV1jv45e8EAu?p=9)
+ * - light_up
+ *   - light_up: yellow white light from bottom (05:24 https://www.bilibili.com/video/BV13P4y1V71M?p=7)
+ *   - light_up_fireworks_01: same as light_up, but blink like campfire (06:21 https://www.bilibili.com/video/BV1zL4y1A7Q7?p=7)
+ *   - light_up_fireworks_02: same as light_up_fireworks_01, but blue (06:08 https://www.bilibili.com/video/BV1Ug41157A7?p=8)
+ * - light_up_legend
+ *   - light_up_legend_01: fog at bottom (02:04 https://www.bilibili.com/video/BV1mC4y1G7rd?p=7)
+ *   - light_up_legend_02: fot at left/right bottom corner (07:18 https://www.bilibili.com/video/BV1mC4y1G7rd?p=3)
+ *   - light_up_legend_03: same as light_up_legend_02...? too much effects (02:04 https://www.bilibili.com/video/BV1tb421E7nr?p=7)
+ * - dash_line: white lines
+ *   - dash_line_(l,r,up,down): lines to the left, right, up, down (05:38 https://www.bilibili.com/video/BV1F14y187VZ?p=2)
+ */
+export const SeScenarioEffectType = {
+  line: ["line"],
+  line_legend: [
+    "line_legend",
+    "line_legend_02",
+    "line_legend_02_akito",
+    "line_legend_02_toya",
+    "line_legend_02_kohane",
+    "line_legend_02_an",
+    "line_legend_03_a",
+    "line_legend_03_a_white",
+    "line_legend_03_b",
+    "line_legend_04",
+    "line_legend_04_white",
+  ],
+  kirakira: [
+    "kirakira_01",
+    "kirakira_01_still_an",
+    "kirakira_02",
+    "kirakira_02_still",
+    "kirakira_03",
+    "kirakira_05",
+    "kirakira_06_sanrio_c",
+    "kirakira_07_toya",
+    "kirakira_08_mrmrhouse",
+  ],
+  black_out: ["black_out", "black_out_02", "black_out_03", "black_out_04"],
+  light_up: ["light_up", "light_up_fireworks_01", "light_up_fireworks_02"],
+  light_up_legend: [
+    "light_up_legend_01",
+    "light_up_legend_02",
+    "light_up_legend_03",
+  ],
+  dash_line: ["dash_line_down", "dash_line_l", "dash_line_r", "dash_line_up"],
+};
 
 export enum SoundPlayMode {
   CrossFade = 0,

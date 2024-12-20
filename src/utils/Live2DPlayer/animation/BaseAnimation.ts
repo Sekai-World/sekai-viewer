@@ -1,45 +1,46 @@
-import { Container, DisplayObject, Ticker } from "pixi.js";
+import { Ticker } from "pixi.js";
+import BaseLayer from "../layer/BaseLayer";
+import type { ILayerData } from "../types.d";
 
-export abstract class BaseAnimation {
-  public abstract root: Container;
+export default abstract class BaseAnimation extends BaseLayer {
   public controller: AbortController;
-  protected abstract structure: Record<
-    string,
-    Container | DisplayObject | DisplayObject[]
-  >;
-  protected stage_size: [number, number];
+  protected period_ms: number;
 
-  constructor() {
-    this.stage_size = [1, 1];
+  constructor(data: ILayerData) {
+    super(data);
     this.controller = new AbortController();
+    this.period_ms = 1000;
   }
+  draw() {}
+  public abstract animation(p: number): void;
 
-  public abstract set_style: (stage_size: [number, number]) => void;
-  public abstract animation: (p: number) => void;
-
-  /**
-   * @param h 400: stage_hight
-   */
-  protected em(h: number) {
-    return (this.stage_size[1] * h) / 400;
-  }
-
-  protected random(min: number, max: number): number {
-    return Math.random() * (max - min) + min;
-  }
-
-  public start(period: number) {
+  public start(loop = true) {
     let progress = 0;
     const ani_ticker = new Ticker();
-    ani_ticker.add(() => {
-      if (this.controller.signal.aborted) {
-        ani_ticker.destroy();
-      } else {
-        progress = progress + ani_ticker.elapsedMS / period;
-        progress = progress % 1;
-        this.animation(progress);
-      }
-    });
+    if (loop) {
+      ani_ticker.add(() => {
+        if (this.controller.signal.aborted) {
+          ani_ticker.destroy();
+        } else {
+          progress = progress + ani_ticker.elapsedMS / this.period_ms;
+          progress = progress % 1;
+          this.animation(progress);
+        }
+      });
+    } else {
+      ani_ticker.add(() => {
+        if (this.controller.signal.aborted) {
+          ani_ticker.destroy();
+        } else {
+          progress = progress + ani_ticker.elapsedMS / this.period_ms;
+          if (progress > 1) {
+            progress = 1;
+            ani_ticker.destroy();
+          }
+          this.animation(progress);
+        }
+      });
+    }
     ani_ticker.start();
   }
 
