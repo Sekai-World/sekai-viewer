@@ -59,4 +59,8 @@ export class Curve {
       ((p(t) - from_min) / (from_max - from_min)) * (to_max - to_min) + to_min;
     return new Curve(f(this.p));
   }
+  multiply(curve: Curve) {
+    const f: ICurveFunctionMap = (p) => (t: number) => p(t) * curve.p(t);
+    return new Curve(f(this.p));
+  }
 }

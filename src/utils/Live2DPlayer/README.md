@@ -85,6 +85,8 @@
   - feat(live2d): implement SpecialEffect Hologram
   - refactor(live2d): change some varible name
   - fix(live2d): autoplay not working
-- commit this
+- commit 493847164ad2671a35953ef580176437b44d2ca8
   - feat(live2d): implement 56% SpecialEffect.ScenarioEffect
   - refactor(live2d): move every layer into seperate classes
+- commit this
+  - refactor(live2d): animation classes

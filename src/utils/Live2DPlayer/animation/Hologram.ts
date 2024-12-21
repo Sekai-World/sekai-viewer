@@ -31,17 +31,6 @@ import type { ILive2DTexture } from "../types.d";
  *     - sp_s[2]: Sprite
  */
 export default class Hologram extends BaseAnimation {
-  structure: {
-    light1_container: Container;
-    light1_s: Sprite;
-    light2_container: Container;
-    light2_s: Sprite;
-    tri_container: Container;
-    tri_s: Sprite[];
-    sparkle_container: Container;
-    sp_s: Sprite[];
-  };
-
   constructor(textures: ILive2DTexture[]) {
     super({ textures });
     this.period_ms = 4000;
@@ -52,18 +41,40 @@ export default class Hologram extends BaseAnimation {
     const light1_s = new Sprite(
       this.textures.find((a) => a.identifer === "ui/hologram_light")!.texture
     );
-    //light1_s.filters = [blur];
-    light1_container.alpha = 0;
+    light1_s.anchor.set(0.5, 1);
     light1_container.addChild(light1_s);
+    // light1 animation
+    this.settings.push({
+      obj: light1_s,
+      y: () => this.stage_size[1] * 0.25,
+      scale: () => this.em(600) / 256, // 256: size of the texture
+    });
+    this.settings.push({
+      obj: light1_container,
+      scale_x_curve: new Curve().map_range(0.9, 1.2),
+      scale_y_curve: new Curve().map_range(1, 1.1),
+      alpha_curve: new Curve().bounce().map_range(0, 0.8),
+    });
 
     // layer light2
     const light2_container = new Container();
     const light2_s = new Sprite(
       this.textures.find((a) => a.identifer === "ui/hologram_light")!.texture
     );
-    //light2_s.filters = [blur];
-    light2_container.alpha = 0;
+    light2_s.anchor.set(0.5, 1);
     light2_container.addChild(light2_s);
+    // light2 animation
+    this.settings.push({
+      obj: light2_s,
+      y: () => this.stage_size[1] * 0.25,
+      scale: () => this.em(600) / 256, // 256: size of the texture
+    });
+    this.settings.push({
+      obj: light2_container,
+      scale_x_curve: new Curve().offset(0.5).map_range(0.9, 1.2),
+      scale_y_curve: new Curve().offset(0.5).map_range(1, 1.1),
+      alpha_curve: new Curve().bounce().offset(0.5).map_range(0, 0.8),
+    });
 
     // layer tri
     const tri_container = new Container();
@@ -77,7 +88,89 @@ export default class Hologram extends BaseAnimation {
       .map((t) => new Sprite(t));
     tri_s.forEach((t) => {
       t.alpha = 0;
+      t.anchor.set(0.5, 0.5);
       tri_container.addChild(t);
+    });
+    // tri animation
+    let scale = 0;
+    scale = this.random(35, 60);
+    this.settings.push({
+      obj: tri_s[0],
+      x_func: (t) => new Curve().map_range(-this.em(50), -this.em(170)).p(t),
+      y_func: (t) => new Curve().map_range(0, -this.em(200)).p(t),
+      scale: () => this.em(scale) / 128, // 128: size of the texture
+      angle_curve: new Curve().map_range(0, 180),
+      alpha_curve: new Curve().bounce(0.2, 0.2).map_range(0, 0.4),
+    });
+    scale = this.random(35, 60);
+    this.settings.push({
+      obj: tri_s[1],
+      x_func: (t) =>
+        new Curve().offset(0.6).map_range(-this.em(50), -this.em(200)).p(t),
+      y_func: (t) => new Curve().offset(0.6).map_range(0, -this.em(180)).p(t),
+      scale: () => this.em(scale) / 128, // 128: size of the texture
+      angle_curve: new Curve().offset(0.6).map_range(43, 210),
+      alpha_curve: new Curve().bounce(0.2, 0.2).offset(0.6).map_range(0, 0.4),
+    });
+    scale = this.random(35, 60);
+    this.settings.push({
+      obj: tri_s[2],
+      x_func: (t) =>
+        new Curve().offset(0.4).map_range(-this.em(50), -this.em(230)).p(t),
+      y_func: (t) => new Curve().offset(0.4).map_range(0, -this.em(160)).p(t),
+      scale: () => this.em(scale) / 128, // 128: size of the texture
+      angle_curve: new Curve().offset(0.4).map_range(0, 250),
+      alpha_curve: new Curve().bounce(0.2, 0.2).offset(0.4).map_range(0, 0.4),
+    });
+    scale = this.random(35, 60);
+    this.settings.push({
+      obj: tri_s[3],
+      x_func: (t) =>
+        new Curve().offset(0.2).map_range(this.em(50), this.em(170)).p(t),
+      y_func: (t) => new Curve().offset(0.2).map_range(0, -this.em(200)).p(t),
+      scale: () => this.em(scale) / 128, // 128: size of the texture
+      angle_curve: new Curve().offset(0.2).map_range(100, 280),
+      alpha_curve: new Curve().bounce(0.2, 0.2).offset(0.2).map_range(0, 0.4),
+    });
+    scale = this.random(35, 60);
+    this.settings.push({
+      obj: tri_s[4],
+      x_func: (t) =>
+        new Curve().offset(0.8).map_range(this.em(50), this.em(200)).p(t),
+      y_func: (t) => new Curve().offset(0.8).map_range(0, -this.em(180)).p(t),
+      scale: () => this.em(scale) / 128, // 128: size of the texture
+      angle_curve: new Curve().offset(0.8).map_range(50, 290),
+      alpha_curve: new Curve().bounce(0.2, 0.2).offset(0.8).map_range(0, 0.4),
+    });
+    scale = this.random(35, 60);
+    this.settings.push({
+      obj: tri_s[5],
+      x_func: (t) =>
+        new Curve().offset(0.3).map_range(this.em(50), this.em(230)).p(t),
+      y_func: (t) => new Curve().offset(0.3).map_range(0, -this.em(160)).p(t),
+      scale: () => this.em(scale) / 128, // 128: size of the texture
+      angle_curve: new Curve().offset(0.3).map_range(200, 300),
+      alpha_curve: new Curve().bounce(0.2, 0.2).offset(0.3).map_range(0, 0.4),
+    });
+    scale = this.random(35, 60);
+    this.settings.push({
+      obj: tri_s[6],
+      x_func: (t) =>
+        new Curve().offset(0.3).map_range(-this.em(50), -this.em(150)).p(t),
+      y_func: (t) => new Curve().offset(0.3).map_range(0, -this.em(140)).p(t),
+      scale: () => this.em(scale) / 128, // 128: size of the texture
+      angle_curve: new Curve().offset(0.3).map_range(170, 290),
+      alpha_curve: new Curve().bounce(0.2, 0.2).offset(0.3).map_range(0, 0.4),
+    });
+    scale = this.random(35, 60);
+    this.settings.push({
+      obj: tri_s[7],
+      x_func: (t) =>
+        new Curve().offset(0.7).map_range(this.em(50), this.em(150)).p(t),
+      y_func: (t) => new Curve().offset(0.7).map_range(0, -this.em(140)).p(t),
+      scale: () => this.em(scale) / 128, // 128: size of the texture
+      angle_curve: new Curve().offset(0.7).map_range(0, 120),
+      alpha_curve: new Curve().bounce(0.2, 0.2).offset(0.7).map_range(0, 0.4),
     });
 
     // layer sparkle
@@ -88,7 +181,36 @@ export default class Hologram extends BaseAnimation {
     const sp_s = Array.from({ length: 3 }, () => new Sprite(sparkle_texture));
     sp_s.forEach((t) => {
       t.alpha = 1;
+      t.anchor.set(0.5, 0.5);
       sparkle_container.addChild(t);
+    });
+    // sparkle animation
+    scale = this.random(35, 60);
+    this.settings.push({
+      obj: sp_s[0],
+      x_func: (t) => new Curve().offset(0).map_range(0, this.em(80)).p(t),
+      y_func: (t) => new Curve().offset(0).map_range(0, -this.em(140)).p(t),
+      scale: () => this.em(scale) / 128, // 128: size of the texture
+      angle_curve: new Curve().offset(0).map_range(0, 120),
+      alpha_curve: new Curve().bounce(0.2, 0.2).offset(0).map_range(0, 1),
+    });
+    scale = this.random(35, 60);
+    this.settings.push({
+      obj: sp_s[1],
+      x_func: (t) => new Curve().offset(0.3).map_range(0, -this.em(80)).p(t),
+      y_func: (t) => new Curve().offset(0.3).map_range(0, -this.em(140)).p(t),
+      scale: () => this.em(scale) / 128, // 128: size of the texture
+      angle_curve: new Curve().offset(0.3).map_range(120, 240),
+      alpha_curve: new Curve().bounce(0.2, 0.2).offset(0.3).map_range(0, 1),
+    });
+    scale = this.random(35, 60);
+    this.settings.push({
+      obj: sp_s[2],
+      x_func: (t) => new Curve().offset(0.7).map_range(0, this.em(20)).p(t),
+      y_func: (t) => new Curve().offset(0.7).map_range(0, -this.em(140)).p(t),
+      scale: () => this.em(scale) / 128, // 128: size of the texture
+      angle_curve: new Curve().offset(0.7).map_range(240, 360),
+      alpha_curve: new Curve().bounce(0.2, 0.2).offset(0.7).map_range(0, 1),
     });
 
     // layer root
@@ -110,166 +232,5 @@ export default class Hologram extends BaseAnimation {
     this.root.addChild(tri_container);
     this.root.addChild(light1_container);
     this.root.addChild(light2_container);
-
-    this.structure = {
-      light1_container,
-      light1_s,
-      light2_container,
-      light2_s,
-      tri_container,
-      tri_s,
-      sparkle_container,
-      sp_s,
-    };
-    const l1 = new Curve().bounce().ease();
-    const l2 = l1.offset(0.5);
-    for (let i = 0; i < 100; i++) {
-      console.log([i / 100, l2.p(i / 100)]);
-    }
-  }
-
-  set_style(stage_size: [number, number]) {
-    this.stage_size = stage_size;
-    this.structure.light1_s.anchor.set(0.5, 1);
-    this.structure.light1_s.scale.set(this.em(600) / 256, this.em(600) / 256); // 256: size of the texture
-    this.structure.light1_s.position.set(0, this.em(100));
-    this.structure.light2_s.anchor.set(0.5, 1);
-    this.structure.light2_s.scale.set(this.em(600) / 256, this.em(600) / 256);
-    this.structure.light2_s.position.set(0, this.em(100));
-    this.structure.tri_s.forEach((s) => {
-      s.anchor.set(0.5, 0.5);
-      s.scale.set(this.em(this.random(35, 60)) / 128); // 128: size of the texture
-    });
-    this.structure.sp_s.forEach((s) => {
-      s.anchor.set(0.5, 0.5);
-      s.scale.set(this.em(this.random(35, 60)) / 256); // 256: size of the texture
-    });
-  }
-
-  animation(t: number) {
-    let l1 = new Curve();
-    l1 = l1.bounce();
-    let l2 = l1.offset(0.5);
-    this.structure.light1_container.alpha = l1.map_range(0, 0.8).p(t);
-    this.structure.light2_container.alpha = l2.map_range(0, 0.8).p(t);
-    l1 = new Curve();
-    l2 = l1.offset(0.5);
-    this.structure.light1_container.scale.set(
-      l1.map_range(0.9, 1.2).p(t),
-      l1.map_range(1, 1.1).p(t)
-    );
-    this.structure.light2_container.scale.set(
-      l2.map_range(0.9, 1.2).p(t),
-      l2.map_range(1, 1.1).p(t)
-    );
-
-    this.move_sparkle(
-      this.structure.tri_s[0],
-      t,
-      0,
-      { from: [-this.em(50), 0], to: [-this.em(170), -this.em(200)] },
-      { from: 0, to: 180 }
-    );
-    this.move_sparkle(
-      this.structure.tri_s[1],
-      t,
-      0.6,
-      { from: [-this.em(50), 0], to: [-this.em(200), -this.em(180)] },
-      { from: 43, to: 210 }
-    );
-    this.move_sparkle(
-      this.structure.tri_s[2],
-      t,
-      0.4,
-      { from: [-this.em(50), 0], to: [-this.em(230), -this.em(160)] },
-      { from: 0, to: 250 }
-    );
-    this.move_sparkle(
-      this.structure.tri_s[3],
-      t,
-      0.2,
-      { from: [this.em(50), 0], to: [this.em(170), -this.em(200)] },
-      { from: 100, to: 280 }
-    );
-    this.move_sparkle(
-      this.structure.tri_s[4],
-      t,
-      0.8,
-      { from: [this.em(50), 0], to: [this.em(200), -this.em(180)] },
-      { from: 50, to: 290 }
-    );
-    this.move_sparkle(
-      this.structure.tri_s[5],
-      t,
-      0.3,
-      { from: [this.em(50), 0], to: [this.em(230), -this.em(160)] },
-      { from: 200, to: 300 }
-    );
-    this.move_sparkle(
-      this.structure.tri_s[6],
-      t,
-      0.3,
-      { from: [-this.em(50), 0], to: [-this.em(150), -this.em(140)] },
-      { from: 170, to: 290 }
-    );
-    this.move_sparkle(
-      this.structure.tri_s[7],
-      t,
-      0.7,
-      { from: [this.em(50), 0], to: [this.em(150), -this.em(140)] },
-      { from: 0, to: 120 }
-    );
-
-    this.move_sparkle(
-      this.structure.sp_s[0],
-      t,
-      0,
-      { from: [0, 0], to: [this.em(80), -this.em(140)] },
-      { from: 0, to: 120 },
-      { from: 0, to: 1 }
-    );
-    this.move_sparkle(
-      this.structure.sp_s[1],
-      t,
-      0.3,
-      { from: [0, 0], to: [-this.em(80), -this.em(140)] },
-      { from: 120, to: 240 },
-      { from: 0, to: 1 }
-    );
-    this.move_sparkle(
-      this.structure.sp_s[2],
-      t,
-      0.7,
-      { from: [0, 0], to: [this.em(20), -this.em(140)] },
-      { from: 240, to: 360 },
-      { from: 0, to: 1 }
-    );
-  }
-
-  private move_sparkle(
-    obj: Sprite,
-    t: number,
-    offset: number,
-    position: {
-      from: [number, number];
-      to: [number, number];
-    },
-    angle: {
-      from: number;
-      to: number;
-    },
-    alpha = {
-      from: 0,
-      to: 0.4,
-    }
-  ) {
-    const curve = new Curve();
-    const c = curve.bounce().offset(offset);
-    obj.alpha = c.map_range(alpha.from, alpha.to).p(t);
-    const curve2 = new Curve();
-    const c2 = curve2.offset(offset);
-    obj.x = c2.map_range(position.from[0], position.to[0]).p(t);
-    obj.y = c2.map_range(position.from[1], position.to[1]).p(t);
-    obj.angle = c2.map_range(angle.from, angle.to).p(t);
   }
 }

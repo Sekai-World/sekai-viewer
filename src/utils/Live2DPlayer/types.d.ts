@@ -1,7 +1,8 @@
 import type { Howl } from "howler";
 import type { IScenarioData } from "../../types";
 import type { Animation } from "./animation/BaseAnimation";
-import { Texture } from "pixi.js";
+import type { Curve, CurveFunction } from "./animation/Curve";
+import { Texture, DisplayObject } from "pixi.js";
 
 export enum Live2DAssetType {
   SoundEffect,
@@ -116,6 +117,31 @@ export interface ILayerData {
   textures?: ILive2DTexture[];
   animation_controller?: AnimationController;
 }
+
+export type AnimationObj = {
+  obj: DisplayObject;
+  x?: () => number;
+  y?: () => number;
+  scale?: () => number;
+  scale_x?: () => number;
+  scale_y?: () => number;
+  angle?: () => number;
+  alpha?: () => number;
+  x_curve?: Curve;
+  y_curve?: Curve;
+  scale_curve?: Curve;
+  scale_x_curve?: Curve;
+  scale_y_curve?: Curve;
+  angle_curve?: Curve;
+  alpha_curve?: Curve;
+  x_func?: CurveFunction;
+  y_func?: CurveFunction;
+  scale_func?: CurveFunction;
+  scale_x_func?: CurveFunction;
+  scale_y_func?: CurveFunction;
+  angle_func?: CurveFunction;
+  alpha_func?: CurveFunction;
+};
 
 export interface IProgressEvent {
   (

@@ -2,9 +2,6 @@ import BaseAnimation from "./BaseAnimation";
 import { Graphics } from "pixi.js";
 
 export default class Blackout extends BaseAnimation {
-  structure: {
-    bg_graphic: Graphics;
-  };
   constructor(opacity: number) {
     super({});
 
@@ -14,17 +11,10 @@ export default class Blackout extends BaseAnimation {
       .drawRect(0, 0, this.screen_length, this.screen_length)
       .endFill();
     this.root.addChild(bg_graphic);
-    this.structure = {
-      bg_graphic,
-    };
+    this.settings.push({
+      obj: bg_graphic,
+      scale_x: () => (1 / this.screen_length) * this.stage_size[0],
+      scale_y: () => (1 / this.screen_length) * this.stage_size[1],
+    });
   }
-
-  set_style(stage_size: [number, number]) {
-    this.stage_size = stage_size;
-    this.structure.bg_graphic.scale.set(
-      this.stage_size[0] / this.screen_length,
-      this.stage_size[1] / this.screen_length
-    );
-  }
-  animation() {}
 }
