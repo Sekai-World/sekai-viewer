@@ -111,7 +111,7 @@ export interface ILive2DControllerData {
   modelData: ILive2DModelDataCollection[];
 }
 
-export interface ILayerData {
+export interface ILive2DLayerData {
   stage_size?: [number, number];
   screen_length?: number;
   textures?: ILive2DTexture[];

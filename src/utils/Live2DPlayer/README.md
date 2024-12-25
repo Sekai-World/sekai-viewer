@@ -2,28 +2,10 @@
 
 - bgm fade in and out
 - VoiceId more than one
-- player ui load in demand
+- more SpecialEffectType.PlayScenarioEffect
 - SnippetAction.CharacterLayoutMode
-- SpecialEffectType.PlayScenarioEffect
-- SpecialEffectType.StopScenarioEffect
-- SpecialEffectType.ShakeWindow
-- SpecialEffectType.StopShakeWindow
-- SpecialEffectType.ShakeScreen
-- SpecialEffectType.StopShakeScreen
-- SpecialEffectType.AmbientColorEvening
-- SpecialEffectType.AmbientColorNight
-- SpecialEffectType.AmbientColorNormal
-- SpecialEffectType.SekaiOut
-- SpecialEffectType.SekaiIn
+- find SekaiIn/Out sound effect
 - NOT IMPLEMENT YET:
-  - SpecialEffectType.32
-  - SpecialEffectType.31
-  - SpecialEffectType.30
-  - SpecialEffectType.29
-  - SpecialEffectType.36
-  - SpecialEffectType.35
-  - SpecialEffectType.34
-  - SpecialEffectType.33
   - SpecialEffectType.PlaceInfo
   - SpecialEffectType.Movie
   - SpecialEffectType.42
@@ -88,5 +70,9 @@
 - commit 493847164ad2671a35953ef580176437b44d2ca8
   - feat(live2d): implement 56% SpecialEffect.ScenarioEffect
   - refactor(live2d): move every layer into seperate classes
-- commit this
+- commit 3e804848f9f3a1a8eaa41d9bac9d8e84adf635d1
   - refactor(live2d): animation classes
+- commit this
+  - feat(live2d): implement shake & ambient color & wipe & sekai in/out effect
+  - perf(live2d): load ui assets on necessary
+  - fix(live2d): loading progress sometimes wrong

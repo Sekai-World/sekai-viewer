@@ -9,7 +9,7 @@ export default class LightupLegend extends BaseAnimation {
     this.period_ms = 10000;
 
     const base_texture = this.textures.find(
-      (a) => a.identifer === "ui/light_up_legend"
+      (a) => a.identifer === "ui/tex_light_up_legend"
     )!.texture.baseTexture;
     const fog_t = new Texture(base_texture, new Rectangle(0, 0, 256, 256));
     const camera_light_t = new Texture(

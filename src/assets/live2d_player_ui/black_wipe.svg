@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="2000pt"
+   height="2000pt"
+   viewBox="0 0 2000 2000"
+   version="1.1"
+   id="svg1"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <linearGradient id="linearGradient1" >
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0.4"
+         id="stop1" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="0.6"
+         id="stop2" />
+    </linearGradient>
+    <linearGradient
+       xlink:href="#linearGradient1"
+       id="linearGradient2"
+       x1="0"
+       y1="1000"
+       x2="2000"
+       y2="1000"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <g
+     id="layer1">
+    <rect
+       style="fill:url(#linearGradient2);stroke:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:bevel;paint-order:markers stroke fill;fill-opacity:1"
+       id="rect1"
+       width="2000"
+       height="2000"
+       x="0"
+       y="0" />
+  </g>
+</svg>

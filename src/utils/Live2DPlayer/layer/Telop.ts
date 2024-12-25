@@ -1,5 +1,5 @@
 import { Graphics, Text, TextStyle } from "pixi.js";
-import type { ILayerData } from "../types.d";
+import type { ILive2DLayerData } from "../types.d";
 import BaseLayer from "./BaseLayer";
 
 export default class Telop extends BaseLayer {
@@ -7,7 +7,7 @@ export default class Telop extends BaseLayer {
     bg_graphic?: Graphics;
     text?: Text;
   };
-  constructor(data: ILayerData) {
+  constructor(data: ILive2DLayerData) {
     super(data);
     this.structure = {};
   }

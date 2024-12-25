@@ -39,7 +39,9 @@ export default class Hologram extends BaseAnimation {
     // layer light1
     const light1_container = new Container();
     const light1_s = new Sprite(
-      this.textures.find((a) => a.identifer === "ui/hologram_light")!.texture
+      this.textures.find(
+        (a) => a.identifer === "ui/tex_scenario_light"
+      )!.texture
     );
     light1_s.anchor.set(0.5, 1);
     light1_container.addChild(light1_s);
@@ -59,7 +61,9 @@ export default class Hologram extends BaseAnimation {
     // layer light2
     const light2_container = new Container();
     const light2_s = new Sprite(
-      this.textures.find((a) => a.identifer === "ui/hologram_light")!.texture
+      this.textures.find(
+        (a) => a.identifer === "ui/tex_scenario_light"
+      )!.texture
     );
     light2_s.anchor.set(0.5, 1);
     light2_container.addChild(light2_s);
@@ -79,8 +83,8 @@ export default class Hologram extends BaseAnimation {
     // layer tri
     const tri_container = new Container();
     const tri_s = texture_slice(
-      this.textures.find((a) => a.identifer === "ui/hologram_tri_01")!.texture
-        .baseTexture,
+      this.textures.find((a) => a.identifer === "ui/tex_scenario_tri_01")!
+        .texture.baseTexture,
       [4, 4],
       10
     )
@@ -176,7 +180,7 @@ export default class Hologram extends BaseAnimation {
     // layer sparkle
     const sparkle_container = new Container();
     const sparkle_texture = this.textures.find(
-      (a) => a.identifer === "ui/hologram_kira"
+      (a) => a.identifer === "ui/tex_scenario_kira"
     )!.texture;
     const sp_s = Array.from({ length: 3 }, () => new Sprite(sparkle_texture));
     sp_s.forEach((t) => {

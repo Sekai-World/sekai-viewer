@@ -1,5 +1,5 @@
 import BaseLayer from "./BaseLayer";
-import type { ILayerData } from "../types.d";
+import type { ILive2DLayerData } from "../types.d";
 import { SeScenarioEffectType } from "../../../types.d";
 
 import { log } from "../log";
@@ -16,7 +16,7 @@ export default class SceneEffect extends BaseLayer {
   structure: Record<string, never>;
   scene_effects: { type: string; ani: BaseAnimation }[];
 
-  constructor(data: ILayerData) {
+  constructor(data: ILive2DLayerData) {
     super(data);
     this.structure = {};
     this.scene_effects = [];

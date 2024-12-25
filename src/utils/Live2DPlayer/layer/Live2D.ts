@@ -10,7 +10,7 @@ import BaseLayer from "./BaseLayer";
 import { log } from "../log";
 
 import type {
-  ILayerData,
+  ILive2DLayerData,
   ILive2DModelDataCollection,
   Ilive2DModelInfo,
 } from "../types.d";
@@ -32,7 +32,7 @@ export default class Live2D extends BaseLayer {
     live2d: Container;
     effect: Container;
   };
-  constructor(data: ILayerData) {
+  constructor(data: ILive2DLayerData) {
     super(data);
     this.structure = {
       live2d: new Container(),
@@ -140,7 +140,7 @@ export default class Live2D extends BaseLayer {
     }
   };
 
-  show = async (costume: string, time: number) => {
+  show_model = async (costume: string, time: number) => {
     const model = this.find(costume);
     if (model && model.live2DInfo.hidden === true) {
       model.visible = true;
@@ -154,7 +154,7 @@ export default class Live2D extends BaseLayer {
     }
   };
 
-  hide = async (costume: string, time: number) => {
+  hide_model = async (costume: string, time: number) => {
     const model = this.find(costume);
     if (model && model.live2DInfo.hidden === false) {
       model.live2DInfo.hidden = true;
@@ -284,6 +284,38 @@ export default class Live2D extends BaseLayer {
         }
       }
     }
+  };
+
+  add_color_filter = (R: number[], G: number[], B: number[], A: number[]) => {
+    // add filter
+    const filter = new ColorMatrixFilter();
+    /*
+    R = a*R + b*G + c*B + d*A + e
+    G = f*R + g*G + h*B + i*A + j
+    B = k*R + l*G + m*B + n*A + o
+    A = p*R + q*G + r*B + s*A + t
+    */
+    filter.matrix = R.concat(G, B, A) as ColorMatrix;
+    this.add_filter(filter);
+  };
+  add_filter = (filter: ColorMatrixFilter) => {
+    // add filter
+    filter.resolution = 2;
+    if (this.root.filters) {
+      this.root.filters.push(filter);
+    } else {
+      this.root.filters = [filter];
+    }
+  };
+  remove_filter = () => {
+    // remove filter
+    let idx = -1;
+    do {
+      idx = this.root.filters!.findIndex((f) => f instanceof ColorMatrixFilter);
+      if (idx !== -1) {
+        this.root.filters?.splice(idx, 1);
+      }
+    } while (idx !== -1);
   };
 
   destroy() {

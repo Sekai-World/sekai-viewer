@@ -51,13 +51,13 @@ export default class AnimationController {
 
   progress_wrapper = async (
     apply: (progress: number) => void,
-    time: number
+    time_ms: number
   ) => {
     let progress = 0;
     apply(0);
     await this.wrapper(
       (ani_ticker) => {
-        progress = progress + ani_ticker.elapsedMS / time;
+        progress = progress + ani_ticker.elapsedMS / time_ms;
         progress = Math.min(progress, 1);
         apply(progress);
       },

@@ -11,7 +11,7 @@ export default class Kirakira extends BaseAnimation {
     this.moving_type = moving_type;
 
     const base_texture = this.textures.find(
-      (a) => a.identifer === "ui/kirakira_01"
+      (a) => a.identifer === "ui/tex_kirakira_01"
     )!.texture.baseTexture;
     const texture_big_circle = new Texture(
       base_texture,

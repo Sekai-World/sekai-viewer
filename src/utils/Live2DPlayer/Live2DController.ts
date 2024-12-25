@@ -1,4 +1,6 @@
 import { Live2DPlayer } from "./Live2DPlayer";
+import { Curve } from "./animation/Curve";
+import { ColorMatrixFilter } from "pixi.js";
 import type { Application } from "pixi.js";
 import { Howl, Howler } from "howler";
 import { log } from "./log";
@@ -243,7 +245,7 @@ export class Live2DController extends Live2DPlayer {
     // clear signal
     this.animate.reset_abort();
     // if total delay time before stop > 1 seconds, clear dialog box
-    if (total_delay > 1) this.hide_layer(this.layers.dialog, 200);
+    if (total_delay > 1) this.layers.dialog.hide(200);
     // apply all actions
     let offset_ms = 0;
     for (const action_in_parallel of action_list) {
@@ -317,7 +319,7 @@ export class Live2DController extends Live2DPlayer {
                 );
                 const data = action_detail.StringVal;
                 this.layers.telop.draw(data);
-                await this.show_layer(this.layers.telop, 300);
+                await this.layers.telop.show(300, true);
               }
               break;
             case SpecialEffectType.WhiteIn:
@@ -328,7 +330,7 @@ export class Live2DController extends Live2DPlayer {
                   action,
                   action_detail
                 );
-                await this.hide_layer(this.layers.fullcolor, 1000);
+                await this.layers.fullcolor.hide(action_detail.Duration * 1000);
               }
               break;
             case SpecialEffectType.WhiteOut:
@@ -339,9 +341,12 @@ export class Live2DController extends Live2DPlayer {
                   action,
                   action_detail
                 );
-                this.hide_layer(this.layers.dialog, 100);
+                this.layers.dialog.hide(100);
                 this.layers.fullcolor.draw(0xffffff);
-                await this.show_layer(this.layers.fullcolor, 1000);
+                await this.layers.fullcolor.show(
+                  action_detail.Duration * 1000,
+                  false
+                );
               }
               break;
             case SpecialEffectType.BlackIn:
@@ -352,7 +357,7 @@ export class Live2DController extends Live2DPlayer {
                   action,
                   action_detail
                 );
-                await this.hide_layer(this.layers.fullcolor, 1000);
+                await this.layers.fullcolor.hide(action_detail.Duration * 1000);
               }
               break;
             case SpecialEffectType.BlackOut:
@@ -363,9 +368,12 @@ export class Live2DController extends Live2DPlayer {
                   action,
                   action_detail
                 );
-                this.hide_layer(this.layers.dialog, 100);
+                this.layers.dialog.hide(100);
                 this.layers.fullcolor.draw(0x000000);
-                await this.show_layer(this.layers.fullcolor, 1000);
+                await this.layers.fullcolor.show(
+                  action_detail.Duration * 1000,
+                  true
+                );
               }
               break;
             case SpecialEffectType.FlashbackIn:
@@ -377,7 +385,7 @@ export class Live2DController extends Live2DPlayer {
                   action_detail
                 );
                 this.layers.flashback.draw();
-                await this.show_layer(this.layers.flashback, 100);
+                await this.layers.flashback.show(100, true);
               }
               break;
             case SpecialEffectType.FlashbackOut:
@@ -388,7 +396,7 @@ export class Live2DController extends Live2DPlayer {
                   action,
                   action_detail
                 );
-                await this.hide_layer(this.layers.flashback, 100);
+                await this.layers.flashback.hide(100);
               }
               break;
             case SpecialEffectType.AttachCharacterShader:
@@ -455,6 +463,280 @@ export class Live2DController extends Live2DPlayer {
                 this.layers.scene_effect.remove(action_detail.StringVal);
               }
               break;
+            case SpecialEffectType.ShakeScreen:
+              {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/ShakeScreen",
+                  action,
+                  action_detail
+                );
+                const time_ms = action_detail.Duration * 1000;
+                const freq = 30;
+                const amp = 0.01 * this.stage_size[1];
+                const curve_x = new Curve()
+                  .wiggle(Math.floor((time_ms / 1000) * freq))
+                  .map_range(-amp, amp);
+                const curve_y = new Curve()
+                  .wiggle(Math.floor((time_ms / 1000) * freq))
+                  .map_range(-amp, amp);
+                this.layers.background.shake(curve_x, curve_y, time_ms);
+                this.layers.live2d.shake(curve_x, curve_y, time_ms);
+              }
+              break;
+            case SpecialEffectType.ShakeWindow:
+              {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/ShakeWindow",
+                  action,
+                  action_detail
+                );
+                const time_ms = action_detail.Duration * 1000;
+                const freq = 30;
+                const amp = 0.01 * this.stage_size[1];
+                const curve_x = new Curve()
+                  .wiggle(Math.floor((time_ms / 1000) * freq))
+                  .map_range(-amp, amp);
+                const curve_y = new Curve()
+                  .wiggle(Math.floor((time_ms / 1000) * freq))
+                  .map_range(-amp, amp);
+                this.layers.dialog.shake(curve_x, curve_y, time_ms);
+              }
+              break;
+            case SpecialEffectType.StopShakeScreen:
+              {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/StopShakeScreen",
+                  action,
+                  action_detail
+                );
+                this.layers.background.stop_shake();
+                this.layers.live2d.stop_shake();
+              }
+              break;
+            case SpecialEffectType.StopShakeWindow:
+              {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/StopShakeWindow",
+                  action,
+                  action_detail
+                );
+                this.layers.dialog.stop_shake();
+              }
+              break;
+            case SpecialEffectType.AmbientColorNormal:
+              {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/AmbientColorNormal",
+                  action,
+                  action_detail
+                );
+                this.layers.live2d.remove_filter();
+              }
+              break;
+            case SpecialEffectType.AmbientColorEvening:
+              {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/AmbientColorEvening",
+                  action,
+                  action_detail
+                );
+                this.layers.live2d.remove_filter();
+                this.layers.live2d.add_color_filter(
+                  [0.9, 0, 0, 0, 0],
+                  [0, 0.9, 0, 0, 0],
+                  [0, 0, 0.8, 0, 0],
+                  [0, 0, 0, 1, 0]
+                );
+                const filter = new ColorMatrixFilter();
+                filter.saturate(-0.1);
+                this.layers.live2d.add_filter(filter);
+              }
+              break;
+            case SpecialEffectType.AmbientColorNight:
+              {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/AmbientColorNight",
+                  action,
+                  action_detail
+                );
+                this.layers.live2d.remove_filter();
+                this.layers.live2d.add_color_filter(
+                  [0.85, 0, 0, 0, 0],
+                  [0, 0.85, 0, 0, 0],
+                  [0, 0, 0.9, 0, 0],
+                  [0, 0, 0, 1, 0]
+                );
+                const filter = new ColorMatrixFilter();
+                filter.saturate(-0.1);
+                this.layers.live2d.add_filter(filter);
+              }
+              break;
+            case SpecialEffectType.BlackWipeInLeft:
+              {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/BlackWipeInLeft",
+                  action,
+                  action_detail
+                );
+                this.layers.wipe.draw();
+                await this.layers.wipe.animate(
+                  false,
+                  "right",
+                  action_detail.Duration * 1000
+                );
+              }
+              break;
+            case SpecialEffectType.BlackWipeOutLeft:
+              {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/BlackWipeOutLeft",
+                  action,
+                  action_detail
+                );
+                this.layers.wipe.draw();
+                await this.layers.wipe.animate(
+                  true,
+                  "left",
+                  action_detail.Duration * 1000
+                );
+              }
+              break;
+            case SpecialEffectType.BlackWipeInRight:
+              {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/BlackWipeInRight",
+                  action,
+                  action_detail
+                );
+                this.layers.wipe.draw();
+                await this.layers.wipe.animate(
+                  false,
+                  "left",
+                  action_detail.Duration * 1000
+                );
+              }
+              break;
+            case SpecialEffectType.BlackWipeOutRight:
+              {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/BlackWipeOutRight",
+                  action,
+                  action_detail
+                );
+                this.layers.wipe.draw();
+                await this.layers.wipe.animate(
+                  true,
+                  "right",
+                  action_detail.Duration * 1000
+                );
+              }
+              break;
+            case SpecialEffectType.BlackWipeInTop:
+              {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/BlackWipeInTop",
+                  action,
+                  action_detail
+                );
+                this.layers.wipe.draw();
+                await this.layers.wipe.animate(
+                  false,
+                  "bottom",
+                  action_detail.Duration * 1000
+                );
+              }
+              break;
+            case SpecialEffectType.BlackWipeOutTop:
+              {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/BlackWipeOutTop",
+                  action,
+                  action_detail
+                );
+                this.layers.wipe.draw();
+                await this.layers.wipe.animate(
+                  true,
+                  "top",
+                  action_detail.Duration * 1000
+                );
+              }
+              break;
+            case SpecialEffectType.BlackWipeInBottom:
+              {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/BlackWipeInBottom",
+                  action,
+                  action_detail
+                );
+                this.layers.wipe.draw();
+                await this.layers.wipe.animate(
+                  false,
+                  "top",
+                  action_detail.Duration * 1000
+                );
+              }
+              break;
+            case SpecialEffectType.BlackWipeOutBottom:
+              {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/BlackWipeOutBottom",
+                  action,
+                  action_detail
+                );
+                this.layers.wipe.draw();
+                await this.layers.wipe.animate(
+                  true,
+                  "bottom",
+                  action_detail.Duration * 1000
+                );
+              }
+              break;
+            case SpecialEffectType.SekaiIn:
+              {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/SekaiIn",
+                  action,
+                  action_detail
+                );
+                this.layers.fullcolor.hide(action_detail.Duration * 1000);
+                await this.layers.sekai.draw(
+                  false,
+                  action_detail.Duration * 1000
+                );
+              }
+              break;
+            case SpecialEffectType.SekaiOut:
+              {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/SekaiOut",
+                  action,
+                  action_detail
+                );
+                this.layers.fullcolor.draw(0xffffff);
+                this.layers.fullcolor.show(action_detail.Duration * 1000, true);
+                await this.layers.sekai.draw(
+                  true,
+                  action_detail.Duration * 1000
+                );
+              }
+              break;
             default:
               log.warn(
                 "Live2DController",
@@ -469,7 +751,7 @@ export class Live2DController extends Live2DPlayer {
         {
           const action_detail =
             this.scenarioData.LayoutData[action.ReferenceIndex];
-          this.hide_layer(this.layers.telop, 500);
+          this.layers.telop.hide(500);
           switch (action_detail.Type) {
             case CharacterLayoutType.Motion:
               {
@@ -531,7 +813,7 @@ export class Live2DController extends Live2DPlayer {
                   action_detail.FacialName
                 );
                 // Step 2: Show. (after motion finished)
-                const show = this.layers.live2d.show(costume, 200);
+                const show = this.layers.live2d.show_model(costume, 200);
                 this.live2d_set_appear(action_detail.Character2dId);
                 // (Same time) Move from SideFrom position to SideTo position or at SideFrom position.
                 const from = side_to_position(
@@ -600,7 +882,7 @@ export class Live2DController extends Live2DPlayer {
                 // Step 2: Wait for the model exist at least 2 seconds.
                 await this.live2d_stay(action_detail.Character2dId, 2000);
                 // Step 3: Hide.
-                await this.layers.live2d.hide(costume, 200);
+                await this.layers.live2d.hide_model(costume, 200);
               }
               break;
             default:
@@ -650,13 +932,13 @@ export class Live2DController extends Live2DPlayer {
             this.scenarioData.TalkData[action.ReferenceIndex];
           log.log("Live2DController", "Talk", action, action_detail);
           //clear
-          await this.hide_layer(this.layers.telop, 200);
+          await this.layers.telop.hide(200);
           // show dialog
           const dialog = this.layers.dialog.animate(
             action_detail.WindowDisplayName,
             action_detail.Body
           );
-          await this.show_layer(this.layers.dialog, 200);
+          await this.layers.dialog.show(200);
           // motion
           const motion = action_detail.Motions.map((m) => {
             this.apply_live2d_motion(

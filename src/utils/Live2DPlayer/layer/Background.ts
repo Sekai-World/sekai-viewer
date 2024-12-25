@@ -1,12 +1,12 @@
 import { Texture, Sprite } from "pixi.js";
-import type { ILayerData } from "../types.d";
+import type { ILive2DLayerData } from "../types.d";
 import BaseLayer from "./BaseLayer";
 
 export default class Background extends BaseLayer {
   structure: {
     background?: Sprite;
   };
-  constructor(data: ILayerData) {
+  constructor(data: ILive2DLayerData) {
     super(data);
     this.structure = {};
   }

@@ -165,7 +165,7 @@ const StoryReaderLive2DContent: React.FC<{
         </>
       )}
       {controllerData.current && loadStatus === LoadStatus.Loaded && (
-        <div ref={canvas}>
+        <div ref={canvas} style={{ userSelect: "none" }}>
           <StoryReaderLive2DCanvas
             controllerData={controllerData.current}
             autoplay={autoplay}

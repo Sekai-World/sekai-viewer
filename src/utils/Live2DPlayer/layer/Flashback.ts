@@ -1,12 +1,12 @@
 import { Graphics } from "pixi.js";
 import BaseLayer from "./BaseLayer";
-import type { ILayerData } from "../types.d";
+import type { ILive2DLayerData } from "../types.d";
 
 export default class Flashback extends BaseLayer {
   structure: {
     bg_graphic?: Graphics;
   };
-  constructor(data: ILayerData) {
+  constructor(data: ILive2DLayerData) {
     super(data);
     this.structure = {};
   }

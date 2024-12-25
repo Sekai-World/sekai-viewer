@@ -1,50 +1,59 @@
 import { Ticker } from "pixi.js";
 import BaseLayer from "../layer/BaseLayer";
-import type { ILayerData, AnimationObj } from "../types.d";
+import type { ILive2DLayerData, AnimationObj } from "../types.d";
 
 export default class BaseAnimation extends BaseLayer {
   protected structure: Record<string, never>;
   public controller: AbortController;
   protected period_ms: number;
   protected settings: AnimationObj[];
+  protected loop: boolean;
 
-  constructor(data: ILayerData) {
+  constructor(data: ILive2DLayerData) {
     super(data);
     this.structure = {};
     this.controller = new AbortController();
     this.period_ms = 1000;
+    this.loop = true;
     this.settings = [];
   }
   draw() {}
 
-  public start(loop = true) {
+  public async start(controller?: AbortController) {
+    if (!controller) controller = this.controller;
+
     let progress = 0;
     const ani_ticker = new Ticker();
-    if (loop) {
-      ani_ticker.add(() => {
-        if (this.controller.signal.aborted) {
-          ani_ticker.destroy();
-        } else {
-          progress = progress + ani_ticker.elapsedMS / this.period_ms;
-          progress = progress % 1;
-          this.progress(progress);
-        }
-      });
-    } else {
-      ani_ticker.add(() => {
-        if (this.controller.signal.aborted) {
-          ani_ticker.destroy();
-        } else {
-          progress = progress + ani_ticker.elapsedMS / this.period_ms;
-          if (progress > 1) {
-            progress = 1;
+    return new Promise<void>((resolve) => {
+      if (this.loop) {
+        ani_ticker.add(() => {
+          if (controller.signal.aborted) {
             ani_ticker.destroy();
+            resolve();
+          } else {
+            progress = progress + ani_ticker.elapsedMS / this.period_ms;
+            progress = progress % 1;
+            this.progress(progress);
           }
-          this.progress(progress);
-        }
-      });
-    }
-    ani_ticker.start();
+        });
+      } else {
+        ani_ticker.add(() => {
+          if (controller.signal.aborted) {
+            ani_ticker.destroy();
+            resolve();
+          } else {
+            progress = progress + ani_ticker.elapsedMS / this.period_ms;
+            if (progress > 1) {
+              progress = 1;
+              ani_ticker.destroy();
+              resolve();
+            }
+            this.progress(progress);
+          }
+        });
+      }
+      ani_ticker.start();
+    });
   }
 
   protected _set_style() {}

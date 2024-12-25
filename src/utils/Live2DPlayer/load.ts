@@ -241,7 +241,7 @@ export async function getLive2DControllerData(
   // step 3.1 - get sound/image urls
   const urls = await getMediaUrls(snData, isCardStory, isActionSet);
   // step 3.1.2 - get live2d player ui urls
-  urls.push(...getUIMediaUrls());
+  urls.push(...getUIMediaUrls(snData));
   // step 3.2 - preload sound/image
   const scenarioResource = await preloadMedia(urls, progress);
   // step 3.3 - get live2d model data
@@ -272,16 +272,31 @@ export async function preloadModels(
   progress: IProgressEvent
 ) {
   let count = 0;
-  const total = controllerData.modelData.length;
+  const total = controllerData.modelData.length * 3;
   // step 4.1 - preload model assets
   const queue = new PreloadQueue();
   for (const model of controllerData.modelData) {
     await queue.wait();
     await queue.add(
-      preloadModelAssets(model.data, (type) => {
-        progress("model_assets", count, total, `${model.costume}/${type}`);
-      }),
+      Axios.get(model.data.url + model.data.FileReferences.Textures[0]),
       () => {
+        progress("model_assets", count, total, `${model.costume}/texture`);
+        count++;
+      }
+    );
+    await queue.wait();
+    await queue.add(
+      Axios.get(model.data.url + model.data.FileReferences.Moc),
+      () => {
+        progress("model_assets", count, total, `${model.costume}/moc`);
+        count++;
+      }
+    );
+    await queue.wait();
+    await queue.add(
+      Axios.get(model.data.url + model.data.FileReferences.Physics),
+      () => {
+        progress("model_assets", count, total, `${model.costume}/physics`);
         count++;
       }
     );
@@ -522,18 +537,6 @@ function getMotionList(modelName: string): string {
   return motionName + "_motion_base";
 }
 
-// step 4.1 - preload model assets
-async function preloadModelAssets(
-  modelData: ILive2DModelData,
-  progress: IProgressEvent
-) {
-  progress("model_texture", 1, 1);
-  await Axios.get(modelData.url + modelData.FileReferences.Textures[0]);
-  progress("model_moc", 1, 1);
-  await Axios.get(modelData.url + modelData.FileReferences.Moc);
-  progress("model_physics", 1, 1);
-  await Axios.get(modelData.url + modelData.FileReferences.Physics);
-}
 // step 4.2 - discard useless motions in all model
 function discardMotion(
   scenarioData: IScenarioData,

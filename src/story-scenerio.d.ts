@@ -225,19 +225,54 @@ export enum SpecialEffectType {
   BlackOut = 2,
   WhiteIn = 3,
   WhiteOut = 4,
+  /**
+   * shake background image and live2d
+   * @param StringVal always empty string.
+   * @param StringValSub always empty string.
+   * @param Duration shake duration.
+   * @param IntVal always 0.
+   * @see 07:02 https://www.bilibili.com/video/BV1cb4y1X77p?p=4
+   * @see 00:20 https://www.bilibili.com/video/BV1cb4y1X77p?p=6
+   * @see 04:24 https://www.bilibili.com/video/BV1r44y1q7im?p=2
+   */
   ShakeScreen = 5,
+  /**
+   * shake dialog
+   * @param StringVal always empty string.
+   * @param StringValSub always empty string.
+   * @param Duration shake duration.
+   * @param IntVal always 0.
+   * @see 01:05 https://www.bilibili.com/video/BV1r44y1q7im?p=7
+   */
   ShakeWindow = 6,
   ChangeBackground = 7,
   Telop = 8,
   FlashbackIn = 9,
   FlashbackOut = 10,
   ChangeCardStill = 11,
+  /**
+   * clear live2d model color shaders
+   * @param StringVal always empty string.
+   * @param StringValSub always empty string.
+   * @param Duration shake duration.
+   * @param IntVal always 0.
+   */
   AmbientColorNormal = 12,
+  /**
+   * add evening shader to live2d models, yellow-ish
+   * @see {@link SpecialEffectType.AmbientColorNormal}
+   * @see 01:05 https://www.bilibili.com/video/BV1r44y1q7im?p=7
+   */
   AmbientColorEvening = 13,
+  /**
+   * add evening shader to live2d models, blue-ish
+   * @see {@link SpecialEffectType.AmbientColorNormal}
+   * @see 04:52 https://www.bilibili.com/video/BV1Bh411a71Q?p=7
+   */
   AmbientColorNight = 14,
   /**
    * Add effect to the scenario
-   * @param StringVal Effect type: {@link SeAttachCharacterShaderType}
+   * @param StringVal Effect type: {@link SeScenarioEffectType}
    * @param StringValSub Effect path, equals "scenario/effect/{StringVal}"
    * @param Duration always 0.
    * @param IntVal const 0
@@ -251,19 +286,113 @@ export enum SpecialEffectType {
   ChangeBackgroundStill = 17,
   PlaceInfo = 18,
   Movie = 19,
+  /**
+   * sekai effect (sekai/white -> scene)
+   * @param StringVal always empty string.
+   * @param StringValSub always empty string.
+   * @param Duration duration
+   * @param IntVal always 0.
+   * @see 00:18 https://www.bilibili.com/video/BV1cb4y1X77p?p=7
+   */
   SekaiIn = 20,
+  /**
+   * sekai effect (scene -> sekai/white)
+   * @param StringVal always empty string.
+   * @param StringValSub always empty string.
+   * @param Duration duration
+   * @param IntVal always 0.
+   * @see 00:18 https://www.bilibili.com/video/BV1cb4y1X77p?p=7
+   */
   SekaiOut = 21,
   /**
    * Add shader for a model.
-   * @param StringVal Shader type: {@link SeScenarioEffectType}
+   * @param StringVal Shader type: {@link SeAttachCharacterShaderType}
    * @param StringValSub Shader param, not sure.
    * @param IntVal CharacterId, which model should add this shader.
    */
   AttachCharacterShader = 22,
   SimpleSelectable = 23,
   FullScreenText = 24,
+  /**
+   * @see {@link SpecialEffectType.ShakeScreen}
+   */
   StopShakeScreen = 25,
+  /**
+   * @see {@link SpecialEffectType.ShakeWindow}
+   */
   StopShakeWindow = 26,
+  /**
+   * Black wipe in from left to right (black -> scene)
+   * @param StringVal always empty string.
+   * @param StringValSub always empty string.
+   * @param Duration duration.
+   * @param IntVal always 0.
+   * @see 08:54 https://www.bilibili.com/video/BV1y14y1J73B?p=2
+   */
+  BlackWipeInLeft = 29,
+  /**
+   * Black wipe out from left to right (scene -> black)
+   * @param StringVal always empty string.
+   * @param StringValSub always empty string.
+   * @param Duration duration.
+   * @param IntVal always 0.
+   * @see 08:54 https://www.bilibili.com/video/BV1y14y1J73B?p=2
+   */
+  BlackWipeOutLeft = 30,
+  /**
+   * Black wipe in from right to left (black -> scene)
+   * @param StringVal always empty string.
+   * @param StringValSub always empty string.
+   * @param Duration duration.
+   * @param IntVal always 0.
+   * @see 08:03 https://www.bilibili.com/video/BV1M142197DZ?p=6
+   */
+  BlackWipeInRight = 31,
+  /**
+   * Black wipe out from right to left (scene -> black)
+   * @param StringVal always empty string.
+   * @param StringValSub always empty string.
+   * @param Duration duration.
+   * @param IntVal always 0.
+   * @see 08:03 https://www.bilibili.com/video/BV1M142197DZ?p=6
+   */
+  BlackWipeOutRight = 32,
+  /**
+   * Black wipe in from top to bottom (black -> scene)
+   * @param StringVal always empty string.
+   * @param StringValSub always empty string.
+   * @param Duration duration.
+   * @param IntVal always 0.
+   * @see 10:37 https://www.bilibili.com/video/BV13g411H73v?p=2
+   */
+  BlackWipeInTop = 33,
+  /**
+   * Black wipe out from top to bottom (scene -> black)
+   * @param StringVal always empty string.
+   * @param StringValSub always empty string.
+   * @param Duration duration.
+   * @param IntVal always 0.
+   * @see 10:37 https://www.bilibili.com/video/BV13g411H73v?p=2
+   */
+  BlackWipeOutTop = 34,
+  /**
+   * Black wipe in from bottom to top (black -> scene)
+   * @param StringVal always empty string.
+   * @param StringValSub always empty string.
+   * @param Duration duration.
+   * @param IntVal always 0.
+   * @see 03:46 https://www.bilibili.com/video/BV1p4421S7yh?p=5
+   */
+  BlackWipeInBottom = 35,
+  /**
+   * Black wipe out from bottom to top (scene -> black)
+   * @param StringVal always empty string.
+   * @param StringValSub always empty string.
+   * @param Duration duration.
+   * @param IntVal always 0.
+   * @see 03:46 https://www.bilibili.com/video/BV1p4421S7yh?p=5
+   */
+  BlackWipeOutBottom = 36,
 }
 
 export interface SpecialEffectData {
@@ -306,7 +435,7 @@ export enum SeAttachCharacterShaderType {
  *   - black_out_02: 20% transparent black layer (01:19 https://www.bilibili.com/video/BV1Yh4y1f7b7?p=1)
  *   - black_out_03: 50% transparent black layer (04:24 https://www.bilibili.com/video/BV1KQ4y1V7y6?p=8)
  *   - black_out_04: 40% transparent black layer (04:54 https://www.bilibili.com/video/BV1jv45e8EAu?p=9)
- * - light_up
+ * - light_top
  *   - light_up: yellow white light from bottom (05:24 https://www.bilibili.com/video/BV13P4y1V71M?p=7)
  *   - light_up_fireworks_01: same as light_up, but blink like campfire (06:21 https://www.bilibili.com/video/BV1zL4y1A7Q7?p=7)
  *   - light_up_fireworks_02: same as light_up_fireworks_01, but blue (06:08 https://www.bilibili.com/video/BV1Ug41157A7?p=8)

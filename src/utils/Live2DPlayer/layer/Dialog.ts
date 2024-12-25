@@ -1,5 +1,5 @@
 import { Sprite, Container, Text, TextStyle } from "pixi.js";
-import type { ILayerData } from "../types.d";
+import type { ILive2DLayerData } from "../types.d";
 import BaseLayer from "./BaseLayer";
 
 export default class Dialog extends BaseLayer {
@@ -11,7 +11,7 @@ export default class Dialog extends BaseLayer {
     text_container?: Container;
     text_c?: Text;
   };
-  constructor(data: ILayerData) {
+  constructor(data: ILive2DLayerData) {
     super(data);
     this.structure = {};
   }

@@ -1,11 +1,10 @@
-import type { ILayerData, ILive2DCachedAsset } from "./types.d";
+import type { ILive2DLayerData, ILive2DCachedAsset } from "./types.d";
 import { Texture } from "pixi.js";
 import type { Application } from "pixi.js";
 
 import { log } from "./log";
 
 // layers
-import BaseLayer from "./layer/BaseLayer";
 import Background from "./layer/Background";
 import Fullcolor from "./layer/Fullcolor";
 import Dialog from "./layer/Dialog";
@@ -13,12 +12,14 @@ import Telop from "./layer/Telop";
 import Flashback from "./layer/Flashback";
 import SceneEffect from "./layer/SceneEffect";
 import Live2D from "./layer/Live2D";
+import Wipe from "./layer/Wipe";
+import Sekai from "./layer/Sekai";
 
 import AnimationController from "./animation/AnimationController";
 
 export class Live2DPlayer {
   app: Application;
-  private stage_size: [number, number];
+  protected stage_size: [number, number];
   public animate: AnimationController;
   public layers: {
     background: Background;
@@ -28,6 +29,8 @@ export class Live2DPlayer {
     flashback: Flashback;
     scene_effect: SceneEffect;
     live2d: Live2D;
+    wipe: Wipe;
+    sekai: Sekai;
   };
 
   constructor(
@@ -48,7 +51,7 @@ export class Live2DPlayer {
 
     //initilize stage
     app.stage.removeChildren();
-    const layer_data: ILayerData = {
+    const layer_data: ILive2DLayerData = {
       stage_size: this.stage_size,
       screen_length: screen_length,
       animation_controller: this.animate,
@@ -62,12 +65,16 @@ export class Live2DPlayer {
       scene_effect: new SceneEffect(layer_data),
       dialog: new Dialog(layer_data),
       live2d: new Live2D(layer_data),
+      wipe: new Wipe(layer_data),
+      sekai: new Sekai(layer_data),
     };
     app.stage.addChild(this.layers.background.root);
     app.stage.addChild(this.layers.live2d.root);
+    app.stage.addChild(this.layers.scene_effect.root);
     app.stage.addChild(this.layers.dialog.root);
     app.stage.addChild(this.layers.telop.root);
-    app.stage.addChild(this.layers.scene_effect.root);
+    app.stage.addChild(this.layers.sekai.root);
+    app.stage.addChild(this.layers.wipe.root);
     app.stage.addChild(this.layers.flashback.root);
     app.stage.addChild(this.layers.fullcolor.root);
     log.log("Live2DPlayer", `player init.`);
@@ -75,28 +82,7 @@ export class Live2DPlayer {
 
   set_stage_size = (stage_size: [number, number]) => {
     this.stage_size = stage_size;
-    this.update_style();
-  };
-
-  update_style = () => {
-    if (this.app.stage.children.length === 0) return;
     Object.values(this.layers).forEach((l) => l.set_style(this.stage_size));
-  };
-
-  show_layer = async (layer: BaseLayer, time: number) => {
-    if (layer.root.alpha !== 1) {
-      this.animate.progress_wrapper((progress) => {
-        layer.root.alpha = progress;
-      }, time);
-    }
-  };
-
-  hide_layer = async (layer: BaseLayer, time: number) => {
-    if (layer.root.alpha !== 0) {
-      this.animate.progress_wrapper((progress) => {
-        layer.root.alpha = 1 - progress;
-      }, time);
-    }
   };
 
   destroy = () => {
