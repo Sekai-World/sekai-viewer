@@ -431,15 +431,6 @@ export function useProcessedScenarioData() {
         [key: string]: Record<string, string>;
       } = {};
 
-      // // event_story/event_burn_2023/scenario_rip/event_109_01.asset
-      // console.log(`event_story/${chapter.assetbundleName}/scenario_rip/${episode.scenarioId}.asset`);
-      // console.log(`sound/`)
-      // // getVoiceListElements(
-      // //   listElements,
-      // //   region,
-
-      // // )
-
       if (FirstBackground) {
         ret.actions.push({
           body: FirstBgm,
