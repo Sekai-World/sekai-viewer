@@ -82,6 +82,10 @@ export const fixVoiceUrl = async function (
   voiceId: string,
   voiceUrl: string
 ) {
+  // Tested only "jp" region
+  if (region !== "jp") {
+    return voiceUrl;
+  }
   const dirUrl = voiceUrl.split("/").slice(0, -1).join("/") + "/";
   let voiceList;
   if (voiceMap[dirUrl]) {

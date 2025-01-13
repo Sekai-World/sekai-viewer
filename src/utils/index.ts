@@ -533,15 +533,12 @@ export function useProcessedScenarioData() {
                 }
 
                 // Get asset list in directory
-                // Tested only "jp" region
-                if (region === "jp") {
-                  voiceUrl = await fixVoiceUrl(
-                    voiceMap,
-                    region,
-                    VoiceId,
-                    voiceUrl
-                  );
-                }
+                voiceUrl = await fixVoiceUrl(
+                  voiceMap,
+                  region,
+                  VoiceId,
+                  voiceUrl
+                );
               }
 
               // Original codes
