@@ -93,6 +93,7 @@ import { UserModel } from "../strapi-model";
 import { IUserInfo } from "../stores/user";
 import { useRootStore } from "../stores/root";
 import { XMLParser } from "fast-xml-parser";
+import { fixVoiceUrl } from "./voiceFinder";
 
 export function useRefState<S>(
   initialValue: S
@@ -426,6 +427,19 @@ export function useProcessedScenarioData() {
         FirstBackground,
       } = data;
 
+      const voiceMap: {
+        [key: string]: Record<string, string>;
+      } = {};
+
+      // // event_story/event_burn_2023/scenario_rip/event_109_01.asset
+      // console.log(`event_story/${chapter.assetbundleName}/scenario_rip/${episode.scenarioId}.asset`);
+      // console.log(`sound/`)
+      // // getVoiceListElements(
+      // //   listElements,
+      // //   region,
+
+      // // )
+
       if (FirstBackground) {
         ret.actions.push({
           body: FirstBgm,
@@ -488,35 +502,68 @@ export function useProcessedScenarioData() {
           case SnippetAction.Talk:
             {
               const talkData = TalkData[snippet.ReferenceIndex];
+
               // try get character
+              let chara2d: ICharacter2D | undefined;
               const chara = { id: 0, name: "" };
               if (talkData.TalkCharacters[0].Character2dId) {
-                const chara2d = chara2Ds.find(
+                chara2d = chara2Ds.find(
                   (ch) => ch.id === talkData.TalkCharacters[0].Character2dId
                 )!;
                 chara.id = chara2d.characterId;
               }
-              chara.name = talkData.WindowDisplayName;
-              let voiceUrl = talkData.Voices.length
-                ? `sound/${isCardStory ? "card_" : ""}${
-                    isActionSet ? "actionset" : "scenario"
-                  }/voice/${ScenarioId}_rip/${talkData.Voices[0].VoiceId}.mp3`
-                : "";
 
-              if (
-                talkData.Voices.length &&
-                talkData.Voices[0].VoiceId.startsWith("partvoice") &&
-                !isActionSet
-              ) {
-                const chara2d = chara2Ds.find(
-                  (ch) => ch.id === talkData.TalkCharacters[0].Character2dId
-                );
-                if (chara2d) {
-                  voiceUrl = `sound/scenario/part_voice/${chara2d.assetName}_${chara2d.unit}_rip/${talkData.Voices[0].VoiceId}.mp3`;
+              chara.name = talkData.WindowDisplayName;
+
+              let voiceUrl = "";
+              if (talkData.Voices.length) {
+                const VoiceId = talkData.Voices[0].VoiceId;
+                const isPartVoice =
+                  VoiceId.startsWith("partvoice") && !isActionSet;
+                if (isPartVoice) {
+                  // part_voice
+                  if (chara2d) {
+                    voiceUrl = `sound/scenario/part_voice/${chara2d.assetName}_${chara2d.unit}_rip/${VoiceId}.mp3`;
+                  }
                 } else {
-                  voiceUrl = "";
+                  // card, actionset, scenario
+                  voiceUrl = `sound/${isCardStory ? "card_" : ""}${
+                    isActionSet ? "actionset" : "scenario"
+                  }/voice/${ScenarioId}_rip/${VoiceId}.mp3`;
+                }
+
+                // Get asset list in directory
+                // Tested only "jp" region
+                if (region === "jp") {
+                  voiceUrl = await fixVoiceUrl(
+                    voiceMap,
+                    region,
+                    VoiceId,
+                    voiceUrl
+                  );
                 }
               }
+
+              // Original codes
+              // let voiceUrl = talkData.Voices.length
+              //   ? `sound/${isCardStory ? "card_" : ""}${
+              //       isActionSet ? "actionset" : "scenario"
+              //     }/voice/${ScenarioId}_rip/${talkData.Voices[0].VoiceId}.mp3`
+              //   : "";
+              // if (
+              //   talkData.Voices.length &&
+              //   talkData.Voices[0].VoiceId.startsWith("partvoice") &&
+              //   !isActionSet
+              // ) {
+              //   const chara2d = chara2Ds.find(
+              //     (ch) => ch.id === talkData.TalkCharacters[0].Character2dId
+              //   );
+              //   if (chara2d) {
+              //     voiceUrl = `sound/scenario/part_voice/${chara2d.assetName}_${chara2d.unit}_rip/${talkData.Voices[0].VoiceId}.mp3`;
+              //   } else {
+              //     voiceUrl = "";
+              //   }
+              // }
 
               action = {
                 body: talkData.Body,
