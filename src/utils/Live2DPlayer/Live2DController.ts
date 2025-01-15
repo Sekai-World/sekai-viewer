@@ -110,10 +110,11 @@ export class Live2DController extends Live2DPlayer {
   /**
    * Create a model list used in an action.
    * New models will replace the oldest model and minimize model list change.
-   * @param queue_max max queue length, range: 2-8.
-   * Load more than 8 models in the same scene will cause live2d sdk not update the models.
+   * @param queue_max max queue length, range: 3+.
+   * Load more than [x] models in the same scene will cause live2d sdk not update the models.
+   * The number [x] is depends on the device memory...? So I chose 6 here, need more test.
    */
-  create_model_queue = (queue_max = 7) => {
+  create_model_queue = (queue_max = 6) => {
     const current_costume: {
       cid: number;
       costume: string;
@@ -1061,21 +1062,18 @@ export class Live2DController extends Live2DPlayer {
     const wait_list = [];
     if (model) {
       if (expression !== "") {
+        const index = model.expressions.indexOf(expression);
+        if (index === -1)
+          log.error("Live2DController", `${expression} not found.`);
         wait_list.push(
-          this.layers.live2d.update_motion(
-            "Expression",
-            costume,
-            model.expressions.indexOf(expression)
-          )
+          this.layers.live2d.update_motion("Expression", costume, index)
         );
       }
       if (motion !== "") {
+        const index = model.motions.indexOf(motion);
+        if (index === -1) log.error("Live2DController", `${motion} not found.`);
         wait_list.push(
-          this.layers.live2d.update_motion(
-            "Motion",
-            costume,
-            model.motions.indexOf(motion)
-          )
+          this.layers.live2d.update_motion("Motion", costume, index)
         );
       }
     }
@@ -1090,16 +1088,13 @@ export class Live2DController extends Live2DPlayer {
     current_queue
       .filter((m) => !queue.includes(m))
       .forEach((m) => this.layers.live2d.find(m)!.destroy());
-    // create
-    await Promise.all(
-      queue
-        .filter((m) => !current_queue.includes(m))
-        .map((m) =>
-          this.layers.live2d.load(
-            this.modelData.find((md) => md.costume === m)!
-          )
-        )
-    );
+    // create and load model one by one
+    const queue_to_load = queue
+      .filter((m) => !current_queue.includes(m))
+      .map((m) => this.modelData.find((md) => md.costume === m)!);
+    for (const m of queue_to_load) {
+      await this.layers.live2d.load(m);
+    }
     // add effects
     this.current_costume
       .filter((c) => {

@@ -206,6 +206,7 @@ export default class Live2D extends BaseLayer {
     if (model) {
       model.speak(url, {
         resetExpression: false,
+        crossOrigin: "anonymous",
         onFinish: () => {
           model.live2DInfo.speaking = false;
         },

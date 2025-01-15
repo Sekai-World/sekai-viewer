@@ -439,6 +439,7 @@ function preloadImage(url: string): Promise<HTMLImageElement> {
     const img = new Image();
     img.onload = () => resolve(img);
     img.onerror = () => reject(new Error(`Failed to load image: ${url}`));
+    img.crossOrigin = "anonymous";
     img.src = url;
   });
 }
