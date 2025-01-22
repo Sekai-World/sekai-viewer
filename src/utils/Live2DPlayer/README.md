@@ -72,7 +72,12 @@
   - refactor(live2d): move every layer into seperate classes
 - commit 3e804848f9f3a1a8eaa41d9bac9d8e84adf635d1
   - refactor(live2d): animation classes
-- commit this
+- commit 7274ffadd2ee25abc3da452f080b263ed68467ec
   - feat(live2d): implement shake & ambient color & wipe & sekai in/out effect
   - perf(live2d): load ui assets on necessary
   - fix(live2d): loading progress sometimes wrong
+- commit 0efc83881d1fa1a9860ed165ff5f5a36666b0649
+  - fix(live2d): cross origin policy are not set for images and sounds
+- commit this
+  - refactor(storyreader): create story loading module for text and live2d reader
+  - fix(live2d): smaller dialog line height

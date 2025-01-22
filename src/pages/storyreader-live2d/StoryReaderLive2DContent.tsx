@@ -1,11 +1,14 @@
 import React, { useRef, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  useLive2DScenarioUrl,
-  getProcessedLive2DScenarioData,
   getLive2DControllerData,
   preloadModels,
 } from "../../utils/Live2DPlayer/load";
+import {
+  useScenarioInfo,
+  getProcessedScenarioDataForLive2D,
+  useMediaUrlForLive2D,
+} from "../../utils/storyLoader";
 import {
   ILive2DControllerData,
   IProgressEvent,
@@ -23,6 +26,7 @@ import {
   Checkbox,
 } from "@mui/material";
 import StoryReaderLive2DCanvas from "./StoryReaderLive2DCanvas";
+import { useAlertSnackbar } from "../../utils";
 
 const StoryReaderLive2DContent: React.FC<{
   storyType: string;
@@ -30,7 +34,8 @@ const StoryReaderLive2DContent: React.FC<{
   region: ServerRegion;
 }> = ({ storyType, storyId, region }) => {
   const { t } = useTranslation();
-  const getLive2DScenarioUrl = useLive2DScenarioUrl();
+  const getScenarioInfo = useScenarioInfo();
+  const getMediaUrlForLive2D = useMediaUrlForLive2D();
   const scenarioData = useRef<IScenarioData>();
   const controllerData = useRef<ILive2DControllerData>();
 
@@ -38,6 +43,8 @@ const StoryReaderLive2DContent: React.FC<{
   const [loadProgress, setLoadProgress] = useState(0);
   const [progressText, setProgressText] = useState("");
   const [autoplay, setAutoplay] = useState(false);
+
+  const { showError } = useAlertSnackbar();
 
   const canvas = useRef<HTMLDivElement>(null);
 
@@ -89,28 +96,50 @@ const StoryReaderLive2DContent: React.FC<{
     setLoadStatus(LoadStatus.Loading);
     // step 1 - get scenario url
     setProgressText(t("story_reader_live2d:progress.get_resource_url"));
-    const scenarioUrl = await getLive2DScenarioUrl(storyType, storyId, region);
+    let scenarioInfo;
+    try {
+      scenarioInfo = await getScenarioInfo(storyType, storyId, region);
+    } catch (err) {
+      if (err instanceof Error) showError(err.message);
+      setLoadStatus(LoadStatus.Ready);
+      return;
+    }
     setLoadProgress(1);
-    if (scenarioUrl) {
+    if (scenarioInfo) {
       // // step 2 - get scenario data
       setProgressText(t("story_reader_live2d:progress.get_scenario_data"));
-      scenarioData.current = await getProcessedLive2DScenarioData(
-        scenarioUrl.url,
+      scenarioData.current = await getProcessedScenarioDataForLive2D(
+        scenarioInfo,
         region
       );
       setLoadProgress(2);
       // step 3 - get controller data (preload media)
-      const ctData = await getLive2DControllerData(
-        scenarioData.current,
-        scenarioUrl.isCardStory,
-        scenarioUrl.isActionSet,
-        handleProgress
-      );
-      // step 4 - preload model
-      await preloadModels(ctData, handleProgress);
-      controllerData.current = ctData;
+      // step 3.1 - load media url
+      let mediaUrl;
+      try {
+        mediaUrl = await getMediaUrlForLive2D(
+          scenarioInfo,
+          scenarioData.current,
+          region
+        );
+      } catch (err) {
+        if (err instanceof Error) showError(err.message);
+        setLoadStatus(LoadStatus.Ready);
+        return;
+      }
+      if (mediaUrl) {
+        // step 3.2 preload media
+        const ctData = await getLive2DControllerData(
+          scenarioData.current,
+          mediaUrl,
+          handleProgress
+        );
+        // step 4 - preload model
+        await preloadModels(ctData, handleProgress);
+        controllerData.current = ctData;
+        setLoadStatus(LoadStatus.Loaded);
+      }
     }
-    setLoadStatus(LoadStatus.Loaded);
   }
 
   function fullscreen() {

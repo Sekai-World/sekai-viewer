@@ -1,35 +1,10 @@
 import Axios from "axios";
 import { Howl } from "howler";
 import { assetUrl } from "../urls";
-import { useCallback } from "react";
-import { getRemoteAssetURL, useCachedData } from "..";
-import { getUIMediaUrls } from "./ui_assets";
-import {
-  ServerRegion,
-  Snippet,
-  SnippetAction,
-  SnippetProgressBehavior,
-  SpecialEffectType,
-  SpecialEffectData,
-  SoundData,
-  SoundPlayMode,
-} from "../../types.d";
-import type {
-  IScenarioData,
-  IUnitStory,
-  IEventStory,
-  ICharaProfile,
-  ICardEpisode,
-  ICardInfo,
-  IActionSet,
-  ISpecialStory,
-} from "../../types.d";
+import { SnippetAction } from "../../types.d";
+import type { IScenarioData } from "../../types.d";
 
-import {
-  Live2DAssetType,
-  Live2DAssetTypeImage,
-  Live2DAssetTypeSound,
-} from "./types.d";
+import { Live2DAssetTypeImage, Live2DAssetTypeSound } from "./types.d";
 import type {
   ILive2DCachedAsset,
   ILive2DAssetUrl,
@@ -39,211 +14,20 @@ import type {
   IProgressEvent,
 } from "./types.d";
 
+import { getUIMediaUrls } from "./ui_assets";
+
 import { PreloadQueue } from "./PreloadQueue";
-import { log } from "./log";
 
-// step 1 - get scenario url
-export function useLive2DScenarioUrl() {
-  const [unitStories] = useCachedData<IUnitStory>("unitStories");
-  const [eventStories] = useCachedData<IEventStory>("eventStories");
-  const [characterProfiles] = useCachedData<ICharaProfile>("characterProfiles");
-  const [cardEpisodes] = useCachedData<ICardEpisode>("cardEpisodes");
-  const [cards] = useCachedData<ICardInfo>("cards");
-  const [actionSets] = useCachedData<IActionSet>("actionSets");
-  const [specialStories] = useCachedData<ISpecialStory>("specialStories");
-
-  return useCallback(
-    async (storyType: string, storyId: string, region: ServerRegion) => {
-      switch (storyType) {
-        case "unitStory":
-          if (unitStories) {
-            const [, , , unitId, chapterNo, episodeNo] = storyId.split("/");
-
-            const chapter = unitStories
-              .find((us) => us.unit === unitId)!
-              .chapters.find((ch) => ch.chapterNo === Number(chapterNo))!;
-
-            const episode = chapter.episodes.find(
-              (ep) => ep.episodeNo === Number(episodeNo)
-            )!;
-            return {
-              url: `scenario/unitstory/${chapter.assetbundleName}_rip/${episode.scenarioId}.asset`,
-              isCardStory: false,
-              isActionSet: false,
-            };
-          }
-          break;
-        case "eventStory":
-          if (eventStories) {
-            const [, , , eventId, episodeNo] = storyId.split("/");
-
-            const chapter = eventStories.find(
-              (es) => es.eventId === Number(eventId)
-            )!;
-
-            const episode = chapter.eventStoryEpisodes.find(
-              (ep) => ep.episodeNo === Number(episodeNo)
-            )!;
-            return {
-              url: `event_story/${chapter.assetbundleName}/scenario_rip/${episode.scenarioId}.asset`,
-              isCardStory: false,
-              isActionSet: false,
-            };
-          }
-          break;
-        case "charaStory":
-          if (characterProfiles) {
-            const [, , , charaId] = storyId.split("/");
-
-            const episode = characterProfiles.find(
-              (cp) => cp.characterId === Number(charaId)
-            )!;
-            return {
-              url: `scenario/profile_rip/${episode.scenarioId}.asset`,
-              isCardStory: false,
-              isActionSet: false,
-            };
-          }
-          break;
-        case "cardStory":
-          if (cardEpisodes) {
-            const [, , , , , cardEpisodeId] = storyId.split("/");
-
-            const episode = cardEpisodes.find(
-              (ce) => ce.id === Number(cardEpisodeId)
-            )!;
-            let assetbundleName = episode.assetbundleName;
-            if (!assetbundleName && !!cards) {
-              const card = cards.find((card) => card.id === episode.cardId);
-              if (card) {
-                assetbundleName = card.assetbundleName;
-              }
-            }
-
-            if (assetbundleName) {
-              if (region === "en")
-                return {
-                  url: `character/member_scenario/${assetbundleName}_rip/${episode.scenarioId}.asset`,
-                  isCardStory: true,
-                  isActionSet: false,
-                };
-              else
-                return {
-                  url: `character/member/${assetbundleName}_rip/${episode.scenarioId}.asset`,
-                  isCardStory: true,
-                  isActionSet: false,
-                };
-            }
-          }
-          break;
-        case "areaTalk":
-          if (actionSets) {
-            const [, , , , actionSetId] = storyId.split("/");
-
-            const episode = actionSets.find(
-              (as) => as.id === Number(actionSetId)
-            )!;
-            return {
-              url: `scenario/actionset/group${Math.floor(episode.id / 100)}_rip/${
-                episode.scenarioId
-              }.asset`,
-              isCardStory: false,
-              isActionSet: true,
-            };
-          }
-          break;
-        case "specialStory":
-          if (specialStories) {
-            const [, , , spId, episodeNo] = storyId.split("/");
-            const chapter = specialStories.find((sp) => sp.id === Number(spId));
-            const episode = chapter?.episodes.find(
-              (ep) => ep.episodeNo === Number(episodeNo)
-            );
-            return {
-              url: `scenario/special/${chapter?.assetbundleName}_rip/${episode?.scenarioId}.asset`,
-              isCardStory: false,
-              isActionSet: false,
-            };
-          }
-          break;
-      }
-    },
-    [
-      unitStories,
-      eventStories,
-      characterProfiles,
-      cardEpisodes,
-      actionSets,
-      specialStories,
-      cards,
-    ]
-  );
-}
-// step 2 - get scenario data
-export async function getProcessedLive2DScenarioData(
-  scenarioUrl: string,
-  region: ServerRegion
-) {
-  const { data }: { data: IScenarioData } = await Axios.get(
-    await getRemoteAssetURL(scenarioUrl, undefined, "minio", region),
-    {
-      responseType: "json",
-    }
-  );
-  log.log("Live2DLoader", data);
-  const { Snippets, SpecialEffectData, SoundData, FirstBgm, FirstBackground } =
-    data;
-
-  if (FirstBackground) {
-    const bgSnippet: Snippet = {
-      Action: SnippetAction.SpecialEffect,
-      ProgressBehavior: SnippetProgressBehavior.Now,
-      ReferenceIndex: SpecialEffectData.length,
-      Delay: 0,
-    };
-    const spData: SpecialEffectData = {
-      EffectType: SpecialEffectType.ChangeBackground,
-      StringVal: FirstBackground,
-      StringValSub: FirstBackground,
-      Duration: 0,
-      IntVal: 0,
-    };
-    Snippets.unshift(bgSnippet);
-    SpecialEffectData.push(spData);
-  }
-  if (FirstBgm) {
-    const bgmSnippet: Snippet = {
-      Action: SnippetAction.Sound,
-      ProgressBehavior: SnippetProgressBehavior.Now,
-      ReferenceIndex: SoundData.length,
-      Delay: 0,
-    };
-    const soundData: SoundData = {
-      PlayMode: SoundPlayMode.CrossFade,
-      Bgm: FirstBgm,
-      Se: "",
-      Volume: 1,
-      SeBundleName: "",
-      Duration: 2.5,
-    };
-    Snippets.unshift(bgmSnippet);
-    SoundData.push(soundData);
-  }
-  return data;
-}
 // step 3 - get controller data (preload media)
 export async function getLive2DControllerData(
   snData: IScenarioData,
-  isCardStory: boolean = false,
-  isActionSet: boolean = false,
+  mediaUrlForLive2D: ILive2DAssetUrl[],
   progress: IProgressEvent
 ): Promise<ILive2DControllerData> {
-  // step 3.1 - get sound/image urls
-  const urls = await getMediaUrls(snData, isCardStory, isActionSet);
   // step 3.1.2 - get live2d player ui urls
-  urls.push(...getUIMediaUrls(snData));
+  mediaUrlForLive2D.push(...getUIMediaUrls(snData));
   // step 3.2 - preload sound/image
-  const scenarioResource = await preloadMedia(urls, progress);
+  const scenarioResource = await preloadMedia(mediaUrlForLive2D, progress);
   // step 3.3 - get live2d model data
   const modelData = [];
   const total = snData.AppearCharacters.length;
@@ -311,93 +95,6 @@ export async function preloadModels(
   await preloadModelMotion(controllerData.modelData, progress);
 }
 
-// step 3.1 - get sound/image urls
-async function getMediaUrls(
-  snData: IScenarioData,
-  isCardStory: boolean = false,
-  isActionSet: boolean = false
-): Promise<ILive2DAssetUrl[]> {
-  const ret: ILive2DAssetUrl[] = [];
-  if (!snData) return ret;
-  const { ScenarioId, Snippets, TalkData, SpecialEffectData, SoundData } =
-    snData;
-  // get all urls
-  for (const snippet of Snippets) {
-    switch (snippet.Action) {
-      case SnippetAction.Talk:
-        {
-          const talkData = TalkData[snippet.ReferenceIndex];
-          const url = talkData.Voices.map((v) => ({
-            identifer: v.VoiceId,
-            type: Live2DAssetType.Talk,
-            url: `sound/${isCardStory ? "card_" : ""}${
-              isActionSet ? "actionset" : "scenario"
-            }/voice/${ScenarioId}_rip/${v.VoiceId}.mp3`,
-          })) as ILive2DAssetUrl[];
-          for (const s of url)
-            if (!ret.map((r) => r.url).includes(s.url)) ret.push(s);
-        }
-        break;
-      case SnippetAction.SpecialEffect:
-        {
-          const seData = SpecialEffectData[snippet.ReferenceIndex];
-          switch (seData.EffectType) {
-            case SpecialEffectType.ChangeBackground:
-              {
-                const identifer = seData.StringValSub;
-                const url = `scenario/background/${seData.StringValSub}_rip/${seData.StringValSub}.webp`;
-                if (ret.map((r) => r.url).includes(url)) continue;
-                ret.push({
-                  identifer,
-                  type: Live2DAssetType.BackgroundImage,
-                  url,
-                });
-              }
-              break;
-          }
-        }
-        break;
-      case SnippetAction.Sound:
-        {
-          const soundData = SoundData[snippet.ReferenceIndex];
-          if (soundData.Bgm) {
-            const identifer = soundData.Bgm;
-            const url = `sound/scenario/bgm/${soundData.Bgm}_rip/${soundData.Bgm}.mp3`;
-            if (ret.map((r) => r.url).includes(url)) continue;
-            ret.push({
-              identifer,
-              type: Live2DAssetType.BackgroundMusic,
-              url,
-            });
-          } else if (soundData.Se) {
-            const identifer = soundData.Se;
-            const isEventSe = identifer.startsWith("se_event");
-            const baseDir = isEventSe
-              ? `event_story/${identifer.split("_").slice(1, -1).join("_")}`
-              : "sound/scenario/se";
-            const seBundleName = isEventSe
-              ? "scenario_se"
-              : identifer.endsWith("_b")
-                ? "se_pack00001_b"
-                : "se_pack00001";
-            const url = `${baseDir}/${seBundleName}_rip/${identifer}.mp3`;
-            if (ret.map((r) => r.url).includes(url)) continue;
-            ret.push({
-              identifer,
-              type: Live2DAssetType.SoundEffect,
-              url,
-            });
-          }
-        }
-        break;
-    }
-  }
-  log.log("Live2DLoader", ret);
-  for (const r of ret) {
-    r.url = await getRemoteAssetURL(r.url, undefined, "minio");
-  }
-  return ret;
-}
 // step 3.2 - preload sound/image
 export async function preloadMedia(
   urls: ILive2DAssetUrl[],

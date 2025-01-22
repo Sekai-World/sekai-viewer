@@ -98,6 +98,7 @@ export default class Dialog extends BaseLayer {
     text.style = new TextStyle({
       fill: ["#ffffff"],
       fontSize: this.em(16),
+      lineHeight: this.em(22),
       breakWords: true,
       wordWrap: true,
       wordWrapWidth: this.stage_size[0] * 0.7,
