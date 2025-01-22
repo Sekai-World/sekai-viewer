@@ -12,14 +12,11 @@
   - SpecialEffectType.41
   - SpecialEffectType.43
   - SpecialEffectType.40
-  - SpecialEffectType.FullScreenText
   - SpecialEffectType.27
   - SpecialEffectType.SimpleSelectable
   - SpecialEffectType.28
   - SpecialEffectType.0
   - SpecialEffectType.44
-  - SpecialEffectType.38
-  - SpecialEffectType.39
 
 # CHANGE LOG
 
@@ -78,6 +75,8 @@
   - fix(live2d): loading progress sometimes wrong
 - commit 0efc83881d1fa1a9860ed165ff5f5a36666b0649
   - fix(live2d): cross origin policy are not set for images and sounds
-- commit this
+- commit b3fc0d8d6f6be3c29ca6c4c19b1ffe4cc30f3021
   - refactor(storyreader): create story loading module for text and live2d reader
   - fix(live2d): smaller dialog line height
+- commit this
+  - feat(live2d): implement fullscreentext effect

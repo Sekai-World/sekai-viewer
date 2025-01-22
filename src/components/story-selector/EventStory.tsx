@@ -137,6 +137,7 @@ const EventStory: React.FC<{
               );
             }
           }
+          return null;
         }}
       </Route>
     </Switch>

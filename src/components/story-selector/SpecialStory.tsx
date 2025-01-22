@@ -110,6 +110,7 @@ const SpecialStory: React.FC<{
               );
             }
           }
+          return null;
         }}
       </Route>
     </Switch>

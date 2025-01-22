@@ -150,6 +150,7 @@ const CardStory: React.FC<{
               );
             }
           }
+          return null;
         }}
       </Route>
       <Route path={`${path}/:charaId/:cardId`} exact>
@@ -188,6 +189,7 @@ const CardStory: React.FC<{
               );
             }
           }
+          return null;
         }}
       </Route>
     </Switch>

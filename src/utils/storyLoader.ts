@@ -562,7 +562,7 @@ export function useMediaUrlForLive2D() {
                     if (ret.map((r) => r.url).includes(url)) continue;
                     ret.push({
                       identifer,
-                      type: Live2DAssetType.SoundEffect,
+                      type: Live2DAssetType.Talk,
                       url,
                     });
                   }

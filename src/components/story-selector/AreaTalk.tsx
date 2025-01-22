@@ -186,6 +186,7 @@ const AreaTalk: React.FC<{
               );
             }
           }
+          return null;
         }}
       </Route>
     </Switch>

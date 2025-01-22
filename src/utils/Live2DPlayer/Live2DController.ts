@@ -105,6 +105,9 @@ export class Live2DController extends Live2DPlayer {
 
     this.model_queue = this.create_model_queue();
     log.log("Live2DController", "init.");
+    log.log("Live2DController", this.scenarioData);
+    log.log("Live2DController", this.scenarioResource);
+    log.log("Live2DController", this.modelData);
   }
 
   /**
@@ -205,6 +208,10 @@ export class Live2DController extends Live2DPlayer {
         const action_detail =
           this.scenarioData.SpecialEffectData[action.ReferenceIndex];
         if (action_detail.EffectType === SpecialEffectType.Telop) {
+          return true;
+        } else if (
+          action_detail.EffectType === SpecialEffectType.FullScreenText
+        ) {
           return true;
         }
       }
@@ -346,7 +353,7 @@ export class Live2DController extends Live2DPlayer {
                 this.layers.fullcolor.draw(0xffffff);
                 await this.layers.fullcolor.show(
                   action_detail.Duration * 1000,
-                  false
+                  true
                 );
               }
               break;
@@ -738,6 +745,55 @@ export class Live2DController extends Live2DPlayer {
                 );
               }
               break;
+            case SpecialEffectType.FullScreenText:
+              {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/FullScreenText",
+                  action,
+                  action_detail
+                );
+                const sound = this.scenarioResource.find(
+                  (s) =>
+                    s.identifer === action_detail.StringValSub &&
+                    s.type === Live2DAssetType.Talk
+                );
+                if (sound) (sound.data as Howl).play();
+                else
+                  log.warn(
+                    "Live2DController",
+                    `${action_detail.StringValSub} not loaded, skip.`
+                  );
+                await this.layers.fullscreentext.animate(
+                  action_detail.StringVal
+                );
+              }
+              break;
+            case SpecialEffectType.FullScreenTextShow:
+              {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/FullScreenTextShow",
+                  action,
+                  action_detail
+                );
+                this.layers.fullscreentext.show(
+                  action_detail.Duration * 1000,
+                  true
+                );
+              }
+              break;
+            case SpecialEffectType.FullScreenTextHide:
+              {
+                log.log(
+                  "Live2DController",
+                  "SpecialEffect/FullScreenTextHide",
+                  action,
+                  action_detail
+                );
+                this.layers.fullscreentext.hide(action_detail.Duration * 1000);
+              }
+              break;
             default:
               log.warn(
                 "Live2DController",
@@ -955,7 +1011,7 @@ export class Live2DController extends Live2DPlayer {
               (s) =>
                 s.identifer === action_detail.Voices[0].VoiceId &&
                 s.type === Live2DAssetType.Talk
-            )!;
+            );
             if (sound) {
               const costume = this.live2d_get_costume(
                 action_detail.TalkCharacters[0].Character2dId

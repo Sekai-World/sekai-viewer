@@ -14,6 +14,7 @@ import SceneEffect from "./layer/SceneEffect";
 import Live2D from "./layer/Live2D";
 import Wipe from "./layer/Wipe";
 import Sekai from "./layer/Sekai";
+import FullScreenText from "./layer/FullScreenText";
 
 import AnimationController from "./animation/AnimationController";
 
@@ -25,6 +26,7 @@ export class Live2DPlayer {
     background: Background;
     fullcolor: Fullcolor;
     dialog: Dialog;
+    fullscreentext: FullScreenText;
     telop: Telop;
     flashback: Flashback;
     scene_effect: SceneEffect;
@@ -60,6 +62,7 @@ export class Live2DPlayer {
     this.layers = {
       background: new Background(layer_data),
       fullcolor: new Fullcolor(layer_data),
+      fullscreentext: new FullScreenText(layer_data),
       telop: new Telop(layer_data),
       flashback: new Flashback(layer_data),
       scene_effect: new SceneEffect(layer_data),
@@ -73,6 +76,7 @@ export class Live2DPlayer {
     app.stage.addChild(this.layers.scene_effect.root);
     app.stage.addChild(this.layers.dialog.root);
     app.stage.addChild(this.layers.telop.root);
+    app.stage.addChild(this.layers.fullscreentext.root);
     app.stage.addChild(this.layers.sekai.root);
     app.stage.addChild(this.layers.wipe.root);
     app.stage.addChild(this.layers.flashback.root);

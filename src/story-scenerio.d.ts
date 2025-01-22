@@ -312,6 +312,13 @@ export enum SpecialEffectType {
    */
   AttachCharacterShader = 22,
   SimpleSelectable = 23,
+  /**
+   * black background, white text on the center of screen.
+   * used in unit story.
+   * @param StringVal Text
+   * @param StringValSub Voice
+   * @see https://www.bilibili.com/video/BV1kD4y1R7h9?p=2
+   */
   FullScreenText = 24,
   /**
    * @see {@link SpecialEffectType.ShakeScreen}
@@ -393,6 +400,22 @@ export enum SpecialEffectType {
    * @see 03:46 https://www.bilibili.com/video/BV1p4421S7yh?p=5
    */
   BlackWipeOutBottom = 36,
+  /**
+   * Appear before full screen text. Maybe show black background?
+   * @param StringVal always empty string.
+   * @param StringValSub always empty string.
+   * @param Duration duration.
+   * @see https://www.bilibili.com/video/BV1kD4y1R7h9?p=2
+   */
+  FullScreenTextShow = 38,
+  /**
+   * Appear after full screen text. Maybe hide black background?
+   * @param StringVal always empty string.
+   * @param StringValSub always empty string.
+   * @param Duration duration.
+   * @see https://www.bilibili.com/video/BV1kD4y1R7h9?p=2
+   */
+  FullScreenTextHide = 39,
 }
 
 export interface SpecialEffectData {
