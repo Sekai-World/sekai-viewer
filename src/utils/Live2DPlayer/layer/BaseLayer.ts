@@ -41,7 +41,7 @@ export default abstract class BaseLayer {
 
   public show = async (time: number, force = false) => {
     if (this.root.alpha !== 1 || force) {
-      this.animation_controller.progress_wrapper((progress) => {
+      await this.animation_controller.progress_wrapper((progress) => {
         this.root.alpha = progress;
       }, time);
     }
@@ -49,7 +49,7 @@ export default abstract class BaseLayer {
 
   public hide = async (time: number, force = false) => {
     if (this.root.alpha !== 0 || force) {
-      this.animation_controller.progress_wrapper((progress) => {
+      await this.animation_controller.progress_wrapper((progress) => {
         this.root.alpha = 1 - progress;
       }, time);
     }

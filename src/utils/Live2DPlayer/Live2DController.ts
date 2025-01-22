@@ -117,7 +117,7 @@ export class Live2DController extends Live2DPlayer {
    * Load more than [x] models in the same scene will cause live2d sdk not update the models.
    * The number [x] is depends on the device memory...? So I chose 6 here, need more test.
    */
-  create_model_queue = (queue_max = 6) => {
+  create_model_queue = (queue_max = 2) => {
     const current_costume: {
       cid: number;
       costume: string;
@@ -260,7 +260,9 @@ export class Live2DController extends Live2DPlayer {
       const start_time = Date.now();
       await this.live2d_load_model(Math.max(...action_in_parallel));
       await Promise.all(
-        action_in_parallel.map((a) => this.apply_action(a, -offset_ms))
+        action_in_parallel.map((a) =>
+          this.apply_action(a, Math.min(-offset_ms + 1000, 0))
+        )
       );
       offset_ms = Date.now() - start_time;
     }
@@ -338,7 +340,11 @@ export class Live2DController extends Live2DPlayer {
                   action,
                   action_detail
                 );
-                await this.layers.fullcolor.hide(action_detail.Duration * 1000);
+                this.layers.fullcolor.draw(0xffffff);
+                await this.layers.fullcolor.hide(
+                  action_detail.Duration * 1000,
+                  true
+                );
               }
               break;
             case SpecialEffectType.WhiteOut:
@@ -365,7 +371,12 @@ export class Live2DController extends Live2DPlayer {
                   action,
                   action_detail
                 );
-                await this.layers.fullcolor.hide(action_detail.Duration * 1000);
+                this.layers.fullcolor.draw(0x000000);
+                this.layers.fullscreen_text.hide(100);
+                await this.layers.fullcolor.hide(
+                  action_detail.Duration * 1000,
+                  false
+                );
               }
               break;
             case SpecialEffectType.BlackOut:
@@ -404,7 +415,7 @@ export class Live2DController extends Live2DPlayer {
                   action,
                   action_detail
                 );
-                await this.layers.flashback.hide(100);
+                await this.layers.flashback.hide(100, true);
               }
               break;
             case SpecialEffectType.AttachCharacterShader:
@@ -758,13 +769,16 @@ export class Live2DController extends Live2DPlayer {
                     s.identifer === action_detail.StringValSub &&
                     s.type === Live2DAssetType.Talk
                 );
-                if (sound) (sound.data as Howl).play();
-                else
+                if (sound) {
+                  this.stop_sounds([Live2DAssetType.Talk]);
+                  (sound.data as Howl).play();
+                } else
                   log.warn(
                     "Live2DController",
                     `${action_detail.StringValSub} not loaded, skip.`
                   );
-                await this.layers.fullscreentext.animate(
+                this.layers.fullscreen_text.show(500);
+                await this.layers.fullscreen_text.animate(
                   action_detail.StringVal
                 );
               }
@@ -777,7 +791,8 @@ export class Live2DController extends Live2DPlayer {
                   action,
                   action_detail
                 );
-                this.layers.fullscreentext.show(
+                this.layers.fullscreen_text_bg.draw(0x000000);
+                await this.layers.fullscreen_text_bg.show(
                   action_detail.Duration * 1000,
                   true
                 );
@@ -791,7 +806,15 @@ export class Live2DController extends Live2DPlayer {
                   action,
                   action_detail
                 );
-                this.layers.fullscreentext.hide(action_detail.Duration * 1000);
+                this.layers.fullscreen_text_bg.draw(0x000000);
+                this.layers.fullscreen_text_bg.hide(
+                  action_detail.Duration * 1000,
+                  true
+                );
+                await this.layers.fullscreen_text.hide(
+                  action_detail.Duration * 1000,
+                  true
+                );
               }
               break;
             default:

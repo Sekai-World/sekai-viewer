@@ -26,7 +26,8 @@ export class Live2DPlayer {
     background: Background;
     fullcolor: Fullcolor;
     dialog: Dialog;
-    fullscreentext: FullScreenText;
+    fullscreen_text: FullScreenText;
+    fullscreen_text_bg: Fullcolor;
     telop: Telop;
     flashback: Flashback;
     scene_effect: SceneEffect;
@@ -62,7 +63,8 @@ export class Live2DPlayer {
     this.layers = {
       background: new Background(layer_data),
       fullcolor: new Fullcolor(layer_data),
-      fullscreentext: new FullScreenText(layer_data),
+      fullscreen_text: new FullScreenText(layer_data),
+      fullscreen_text_bg: new Fullcolor(layer_data),
       telop: new Telop(layer_data),
       flashback: new Flashback(layer_data),
       scene_effect: new SceneEffect(layer_data),
@@ -76,11 +78,12 @@ export class Live2DPlayer {
     app.stage.addChild(this.layers.scene_effect.root);
     app.stage.addChild(this.layers.dialog.root);
     app.stage.addChild(this.layers.telop.root);
-    app.stage.addChild(this.layers.fullscreentext.root);
     app.stage.addChild(this.layers.sekai.root);
     app.stage.addChild(this.layers.wipe.root);
     app.stage.addChild(this.layers.flashback.root);
     app.stage.addChild(this.layers.fullcolor.root);
+    app.stage.addChild(this.layers.fullscreen_text_bg.root);
+    app.stage.addChild(this.layers.fullscreen_text.root);
     log.log("Live2DPlayer", `player init.`);
   }
 

@@ -59,9 +59,9 @@ const StoryReaderLive2DStage = forwardRef<
     };
   }, []);
   function reloadStage() {
-    const live2d = controller.current?.current_costume;
     controller.current = new Live2DController(app, stageSize, controllerData);
-    if (live2d) controller.current.current_costume = live2d;
+    controller.current.layers.live2d.clear();
+    controller.current.live2d_load_model(0);
   }
   return null;
 });
@@ -90,9 +90,17 @@ const StoryReaderLive2DCanvas: React.FC<{
   useLayoutEffect(() => {
     const update_stage_size = () => {
       if (wrap.current) {
-        const styleWidth = wrap.current.clientWidth;
-        const styleHeight = (styleWidth * 9) / 16;
-        setStageSize([styleWidth, styleHeight]);
+        if (!document.fullscreenElement) {
+          // 16:9 if not fullscreen
+          const styleWidth = wrap.current.clientWidth;
+          const styleHeight = (styleWidth * 9) / 16;
+          setStageSize([styleWidth, styleHeight]);
+        } else {
+          // follow user screen size if fullscreen
+          const styleWidth = document.fullscreenElement.clientWidth;
+          const styleHeight = document.fullscreenElement.clientHeight;
+          setStageSize([styleWidth, styleHeight]);
+        }
       }
     };
     window.addEventListener("resize", update_stage_size);
@@ -153,6 +161,8 @@ const StoryReaderLive2DCanvas: React.FC<{
 
   function refresh () {
     stage.current?.reloadStage();
+    setScenarioStep(0);
+    setPlaying(false);
   }
 
   function goto () {

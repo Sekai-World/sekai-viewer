@@ -1,5 +1,6 @@
 # TODO
 
+- volume settings
 - bgm fade in and out
 - VoiceId more than one
 - more SpecialEffectType.PlayScenarioEffect
@@ -78,5 +79,8 @@
 - commit b3fc0d8d6f6be3c29ca6c4c19b1ffe4cc30f3021
   - refactor(storyreader): create story loading module for text and live2d reader
   - fix(live2d): smaller dialog line height
-- commit this
+- commit 2cb3c8007ebbb2ae3bb2cbf9a4877cf989ecb219
   - feat(live2d): implement fullscreentext effect
+- commit this
+  - feat(live2d): add support for none 16:9 screen in fullscreen mode
+  - fix(live2d): fullscreen text background not work properly
