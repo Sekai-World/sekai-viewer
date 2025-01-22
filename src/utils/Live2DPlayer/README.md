@@ -81,6 +81,8 @@
   - fix(live2d): smaller dialog line height
 - commit 2cb3c8007ebbb2ae3bb2cbf9a4877cf989ecb219
   - feat(live2d): implement fullscreentext effect
-- commit this
+- commit 9eb807e1e0be21c0e1e2a2d6794714511e2a73a6
   - feat(live2d): add support for none 16:9 screen in fullscreen mode
   - fix(live2d): fullscreen text background not work properly
+- commit this
+  - refactor(live2d): split live2d player action into multiple files

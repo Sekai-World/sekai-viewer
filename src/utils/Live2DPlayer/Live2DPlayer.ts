@@ -20,9 +20,9 @@ import AnimationController from "./animation/AnimationController";
 
 export class Live2DPlayer {
   app: Application;
-  protected stage_size: [number, number];
-  public animate: AnimationController;
-  public layers: {
+  stage_size: [number, number];
+  animate: AnimationController;
+  layers: {
     background: Background;
     fullcolor: Fullcolor;
     dialog: Dialog;
