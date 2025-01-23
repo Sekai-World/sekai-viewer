@@ -30,7 +30,7 @@ const Path: React.FC<{
   };
 }> = ({ catagory }) => {
   const { t } = useTranslation();
-  const { getTranslated } = useAssetI18n();
+  const { getTranslated, getListTranslated } = useAssetI18n();
   const getCharaName = useCharaName();
   const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
   const [unitStories] = useCachedData<IUnitStory>("unitStories");
@@ -184,7 +184,26 @@ const Path: React.FC<{
                         (area) => area.id === Number(pathname)
                       );
                       if (area) {
-                        name = getTranslated(`area_name:${area.id}`, area.name);
+                        if (area.subName) {
+                          name = getListTranslated(
+                            [
+                              {
+                                key: `area_name:${area.id}`,
+                                original: area.name,
+                              },
+                              {
+                                key: `area_subname:${area.id}`,
+                                original: area.subName,
+                              },
+                            ],
+                            (content) => `${content[0]}-${content[1]}`
+                          );
+                        } else {
+                          name = getTranslated(
+                            `area_name:${area.id}`,
+                            area.name
+                          );
+                        }
                       }
                     }
                     if (idx === 3) {

@@ -38,15 +38,16 @@ const CardSelect = styled(Card)`
   }
 `;
 
-import { ContentTrans } from "../helpers/ContentTrans";
+import { ContentTrans, ContentListTrans } from "../helpers/ContentTrans";
 import ImageWrapper from "../helpers/ImageWrapper";
 
 const AreaCard: React.FC<{
   img: string;
   to: string;
-  contentKey: string;
-  original: string;
-}> = ({ img, to, contentKey, original }) => {
+  areaId: number;
+  areaName: string;
+  areaSubName?: string;
+}> = ({ img, to, areaId, areaName, areaSubName }) => {
   return (
     <Grid item xs={12} sm={6} md={3}>
       <LinkNoDecorationAlsoNoHover to={to}>
@@ -60,12 +61,30 @@ const AreaCard: React.FC<{
               <ImageWrapper src={img} bgColor="" duration={0} />
             </CardContent>
             <CardContent>
-              <ContentTrans
-                contentKey={contentKey}
-                original={original}
-                originalProps={{ style: { overflow: "hidden" } }}
-                translatedProps={{ style: { overflow: "hidden" } }}
-              />
+              {areaSubName ? (
+                <ContentListTrans
+                  content={[
+                    {
+                      contentKey: `area_name:${areaId}`,
+                      original: areaName,
+                    },
+                    {
+                      contentKey: `area_subname:${areaId}`,
+                      original: areaSubName,
+                    },
+                  ]}
+                  format={(content) => `${content[0]}-${content[1]}`}
+                  originalProps={{ style: { overflow: "hidden" } }}
+                  translatedProps={{ style: { overflow: "hidden" } }}
+                />
+              ) : (
+                <ContentTrans
+                  contentKey={`area_name:${areaId}`}
+                  original={areaName}
+                  originalProps={{ style: { overflow: "hidden" } }}
+                  translatedProps={{ style: { overflow: "hidden" } }}
+                />
+              )}
             </CardContent>
           </Stack>
         </CardSelect>
@@ -201,10 +220,9 @@ const AreaTalk: React.FC<{
                     "0"
                   )}.webp`}
                   to={`${path}/${area.id}`}
-                  contentKey={`area_name:${area.id}`}
-                  original={
-                    area.subName ? `${area.name}/${area.subName}` : area.name
-                  }
+                  areaId={area.id}
+                  areaName={area.name}
+                  areaSubName={area.subName}
                 />
               ))}
           {!!areas &&
@@ -217,10 +235,9 @@ const AreaTalk: React.FC<{
                     area.id
                   ).padStart(2, "0")}.webp`}
                   to={`${path}/${area.id}`}
-                  contentKey={`area_name:${area.id}`}
-                  original={
-                    area.subName ? `${area.name}/${area.subName}` : area.name
-                  }
+                  areaId={area.id}
+                  areaName={area.name}
+                  areaSubName={area.subName}
                 />
               ))}
           {!!areas &&
@@ -233,10 +250,9 @@ const AreaTalk: React.FC<{
                     realityAreaWorldmap[String(idx + 1)]
                   ).padStart(2, "0")}.webp`}
                   to={`${path}/${area.id}`}
-                  contentKey={`area_name:${area.id}`}
-                  original={
-                    area.subName ? `${area.name}/${area.subName}` : area.name
-                  }
+                  areaId={area.id}
+                  areaName={area.name}
+                  areaSubName={area.subName}
                 />
               ))}
         </Grid>

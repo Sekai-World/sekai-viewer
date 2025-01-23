@@ -101,6 +101,7 @@ export async function initGlobalI18n() {
         "cheerful_carnival_teams",
         "cheerful_carnival_themes",
         "area_name",
+        "area_sub_name",
       ],
       returnEmptyString: false,
     });
@@ -147,7 +148,29 @@ export function useAssetI18n() {
     },
     [assetT, contentTransMode]
   );
-  return { assetI18n, assetT, getTranslated };
+  const getListTranslated = useCallback(
+    (
+      content: {
+        key: string;
+        original: string;
+      }[],
+      format: (content: string[]) => string,
+      options?: string | TOptions
+    ) => {
+      switch (contentTransMode) {
+        case "original":
+          return format(content.map((c) => c.original));
+        case "translated":
+          return format(content.map((c) => assetT(c.key, c.original, options)));
+        case "both":
+          return `${format(content.map((c) => c.original))} | ${format(
+            content.map((c) => assetT(c.key, c.original, options))
+          )}`;
+      }
+    },
+    [assetT, contentTransMode]
+  );
+  return { assetI18n, assetT, getTranslated, getListTranslated };
 }
 
 export function useCharaName(forceTransMode?: ContentTransModeType) {

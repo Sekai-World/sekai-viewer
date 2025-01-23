@@ -47,6 +47,54 @@ export const ContentTrans: React.FC<{
   }
 };
 
+export const ContentListTrans: React.FC<{
+  content: {
+    contentKey: string;
+    original: string;
+  }[];
+  format: (content: string[]) => string;
+  originalProps?: TypographyProps;
+  translatedProps?: TypographyProps;
+  assetTOptions?: string | TOptions<StringMap>;
+}> = ({ content, format, originalProps, translatedProps, assetTOptions }) => {
+  const {
+    settings: { contentTransMode },
+  } = useRootStore();
+  const { assetT } = useAssetI18n();
+
+  switch (contentTransMode) {
+    case "original":
+      return (
+        <Typography {...originalProps}>
+          {format(content.map((c) => c.original))}
+        </Typography>
+      );
+    case "translated":
+      return (
+        <Typography {...translatedProps} color="textPrimary">
+          {format(
+            content.map((c) => assetT(c.contentKey, c.original, assetTOptions))
+          )}
+        </Typography>
+      );
+    case "both":
+      return (
+        <Grid container direction="column">
+          <Typography {...originalProps} color="textPrimary">
+            {format(content.map((c) => c.original))}
+          </Typography>
+          <Typography {...translatedProps} color="textSecondary">
+            {format(
+              content.map((c) =>
+                assetT(c.contentKey, c.original, assetTOptions)
+              )
+            )}
+          </Typography>
+        </Grid>
+      );
+  }
+};
+
 export const CharaNameTrans: React.FC<{
   characterId: number;
   originalProps?: TypographyProps;
