@@ -1286,6 +1286,7 @@ export interface IArea {
   areaType: string;
   viewType: string;
   name: string;
+  subName?: string;
   label?: string;
   startAt?: number;
   endAt?: number;

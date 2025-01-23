@@ -87,6 +87,9 @@
   - refactor(live2d): split live2d player action into multiple files
 - commit 6da200623f1aa45b47536f3bf560c604710f8aa5
   - feat(live2d): add volume and animation controller
-- commit this
+- commit 6e7dbf7e4232e0000b1c636f1c16e2c69162aefb
   - fix(live2d): areatalk not load properly
   - fix(live2d): throw error when player finished
+- commit this
+  - feat(storyreader): add character filter for areatalk
+  - fix(live2d): motions not found in model definition will block loading process

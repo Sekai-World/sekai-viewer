@@ -40,8 +40,6 @@ export async function getLive2DControllerData(
       costume: c.CostumeType,
       cid: c.Character2dId,
       data: md,
-      motions: md.FileReferences.Motions.Motion.map((m) => m.Name),
-      expressions: md.FileReferences.Motions.Expression.map((e) => e.Name),
     });
   }
   return {
@@ -333,27 +331,28 @@ function discardMotion(
       unique_motion.push(m);
     }
   });
+  console.log(unique_motion);
   // prune
   modelData.forEach((md) => {
     const motion_for_this_model = unique_motion.filter(
       (m) => m.costume === md.costume
     );
-    md.motions = motion_for_this_model
+    md.data.FileReferences.Motions.Motion = motion_for_this_model
       .filter((m) => m.type === "motion")
-      .map((m) => m.motion);
-    md.data.FileReferences.Motions.Motion = md.motions.map(
-      (m) =>
-        md.data.FileReferences.Motions.Motion.find((old_m) => old_m.Name === m)!
-    );
-    md.expressions = motion_for_this_model
+      .map((m) =>
+        md.data.FileReferences.Motions.Motion.find(
+          (all_m) => all_m.Name === m.motion
+        )
+      )
+      .filter((m) => !!m); // skip motions that not in model defination
+    md.data.FileReferences.Motions.Expression = motion_for_this_model
       .filter((m) => m.type === "expression")
-      .map((m) => m.motion);
-    md.data.FileReferences.Motions.Expression = md.expressions.map(
-      (m) =>
+      .map((m) =>
         md.data.FileReferences.Motions.Expression.find(
-          (old_m) => old_m.Name === m
-        )!
-    );
+          (all_m) => all_m.Name === m.motion
+        )
+      )
+      .filter((m) => !!m); // skip motions that not in model defination
   });
   return modelData;
 }

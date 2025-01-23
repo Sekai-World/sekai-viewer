@@ -44,7 +44,6 @@ const StoryReaderContent: React.FC<{
       actions: [],
       characters: [],
     });
-    console.log("load");
     getScenarioInfo(storyType, storyId, region)
       .then((info) => {
         if (info) {

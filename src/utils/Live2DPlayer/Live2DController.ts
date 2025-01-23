@@ -264,7 +264,9 @@ export class Live2DController extends Live2DPlayer {
     const wait_list = [];
     if (model) {
       if (expression !== "") {
-        const index = model.expressions.indexOf(expression);
+        const index = model.data.FileReferences.Motions.Expression.map(
+          (m) => m.Name
+        ).indexOf(expression);
         if (index === -1)
           log.error("Live2DController", `${expression} not found.`);
         wait_list.push(
@@ -272,7 +274,9 @@ export class Live2DController extends Live2DPlayer {
         );
       }
       if (motion !== "") {
-        const index = model.motions.indexOf(motion);
+        const index = model.data.FileReferences.Motions.Motion.map(
+          (m) => m.Name
+        ).indexOf(motion);
         if (index === -1) log.error("Live2DController", `${motion} not found.`);
         wait_list.push(
           this.layers.live2d.update_motion("Motion", costume, index)

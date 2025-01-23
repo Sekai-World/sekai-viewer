@@ -101,8 +101,6 @@ export interface ILive2DModelDataCollection {
   cid: number;
   costume: string;
   data: ILive2DModelData;
-  motions: string[];
-  expressions: string[];
 }
 
 export interface ILive2DControllerData {
