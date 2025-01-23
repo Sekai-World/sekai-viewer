@@ -22,6 +22,10 @@ import {
   Snippet,
   SpecialEffectData,
   SoundData,
+  LayoutData,
+  CharacterLayoutType,
+  CharacterLayoutDepthType,
+  CharacterLayoutMoveSpeedType,
 } from "../types.d";
 import { ILive2DAssetUrl, Live2DAssetType } from "./Live2DPlayer/types.d";
 import { useCharaName, useAssetI18n } from "./i18n";
@@ -444,8 +448,15 @@ export async function getProcessedScenarioDataForLive2D(
       responseType: "json",
     }
   );
-  const { Snippets, SpecialEffectData, SoundData, FirstBgm, FirstBackground } =
-    data;
+  const {
+    Snippets,
+    SpecialEffectData,
+    SoundData,
+    FirstBgm,
+    FirstBackground,
+    FirstLayout,
+    LayoutData,
+  } = data;
 
   if (FirstBackground) {
     const bgSnippet: Snippet = {
@@ -481,6 +492,31 @@ export async function getProcessedScenarioDataForLive2D(
     };
     Snippets.unshift(bgmSnippet);
     SoundData.push(soundData);
+  }
+  if (FirstLayout) {
+    FirstLayout.forEach((l) => {
+      const layoutSnippet: Snippet = {
+        Action: SnippetAction.CharacterLayout,
+        ProgressBehavior: SnippetProgressBehavior.Now,
+        ReferenceIndex: LayoutData.length,
+        Delay: 0,
+      };
+      const layoutData: LayoutData = {
+        Type: CharacterLayoutType.Appear,
+        SideFrom: l.PositionSide,
+        SideFromOffsetX: l.OffsetX,
+        SideTo: l.PositionSide,
+        SideToOffsetX: l.OffsetX,
+        DepthType: CharacterLayoutDepthType.Top,
+        Character2dId: l.Character2dId,
+        CostumeType: l.CostumeType,
+        MotionName: l.MotionName,
+        FacialName: l.FacialName,
+        MoveSpeedType: CharacterLayoutMoveSpeedType.Normal,
+      };
+      Snippets.unshift(layoutSnippet);
+      LayoutData.push(layoutData);
+    });
   }
   return data;
 }

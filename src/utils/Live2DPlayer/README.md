@@ -85,5 +85,8 @@
   - fix(live2d): fullscreen text background not work properly
 - commit f421842cfbbd4f432ffca40141f49a4c1fd8c6cf
   - refactor(live2d): split live2d player action into multiple files
-- commit this
+- commit 6da200623f1aa45b47536f3bf560c604710f8aa5
   - feat(live2d): add volume and animation controller
+- commit this
+  - fix(live2d): areatalk not load properly
+  - fix(live2d): throw error when player finished

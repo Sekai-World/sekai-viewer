@@ -54,11 +54,11 @@ export class Live2DController extends Live2DPlayer {
     this.scenarioResource = data.scenarioResource;
     this.modelData = data.modelData;
 
+    this.model_queue = this.create_model_queue();
     log.log("Live2DController", "init.");
     log.log("Live2DController", this.scenarioData);
     log.log("Live2DController", this.scenarioResource);
     log.log("Live2DController", this.modelData);
-    this.model_queue = this.create_model_queue();
   }
 
   /**
@@ -240,7 +240,8 @@ export class Live2DController extends Live2DPlayer {
       }
     }
 
-    return current;
+    // if reach end, return -1
+    return is_end(current) ? -1 : current;
   };
   apply_action = async (step: number, delay_offset_ms = 0) => {
     const action = this.scenarioData.Snippets[step];

@@ -219,6 +219,22 @@ export interface LayoutData {
   MoveSpeedType: CharacterLayoutMoveSpeedType;
 }
 
+export interface FirstLayoutData {
+  Character2dId: number;
+  CostumeType: string;
+  MotionName: string;
+  FacialName: string;
+  /**
+   * @see {@link CharacterLayoutMoveSpeedType}
+   */
+  OffsetX: number;
+  /**
+   * Define live2d model position.
+   * @see {@link CharacterLayoutPosition}
+   */
+  PositionSide: number;
+}
+
 export enum SpecialEffectType {
   None = 0,
   BlackIn = 1,
@@ -544,7 +560,7 @@ export interface ScenarioSnippetCharacterLayoutMode {
 export interface IScenarioData {
   ScenarioId: string;
   AppearCharacters: AppearCharacter[];
-  FirstLayout: LayoutData[];
+  FirstLayout: FirstLayoutData[];
   FirstBgm: string;
   FirstBackground: string;
   FirstCharacterLayoutMode: CharacterLayoutMode;

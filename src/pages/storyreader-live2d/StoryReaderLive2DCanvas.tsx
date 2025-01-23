@@ -193,11 +193,11 @@ const StoryReaderLive2DCanvas: React.FC<{
     e.preventDefault();
     if (loadStatus === LoadStatus.Loaded && canClick) {
       nextStep();
+      setCanClick(false);
+      setTimeout(() => {
+        setCanClick(true);
+      }, 300);
     }
-    setCanClick(false);
-    setTimeout(() => {
-      setCanClick(true);
-    }, 300);
   };
 
   const handleModelLoad = (status: LoadStatus) => {
@@ -216,7 +216,7 @@ const StoryReaderLive2DCanvas: React.FC<{
   };
 
   const nextStep = () => {
-    if (!playing && !autoplayWaiting) {
+    if (!playing && !autoplayWaiting && scenarioStep !== -1) {
       setPlaying(true);
       stage.current?.controller
         .step_until_checkpoint(scenarioStep)
