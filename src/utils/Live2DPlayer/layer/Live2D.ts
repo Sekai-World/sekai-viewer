@@ -201,10 +201,11 @@ export default class Live2D extends BaseLayer {
     }
   };
 
-  speak = (costume: string, url: string) => {
+  speak = (costume: string, url: string, volume: number) => {
     const model = this.find(costume);
     if (model) {
       model.speak(url, {
+        volume,
         resetExpression: false,
         crossOrigin: "anonymous",
         onFinish: () => {

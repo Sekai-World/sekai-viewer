@@ -11,6 +11,7 @@ import {
 
 import {
   Live2DAssetType,
+  Live2DAssetTypeSound,
   Live2DAssetTypeUI,
   ILive2DCachedAsset,
   ILive2DModelDataCollection,
@@ -29,9 +30,15 @@ export class Live2DController extends Live2DPlayer {
     costume: string;
     appear_time: number;
     animations: string[];
-  }[];
+  }[] = [];
 
-  public step: number;
+  step = 0;
+  settings = {
+    bgm_volume: 0.3,
+    voice_volume: 0.8,
+    se_volume: 0.8,
+    text_animation: true,
+  };
 
   constructor(
     app: Application,
@@ -41,21 +48,17 @@ export class Live2DController extends Live2DPlayer {
     super(
       app,
       stageSize,
-      data.scenarioResource.filter((a) =>
-        Live2DAssetTypeUI.includes(a.type as any)
-      )
+      data.scenarioResource.filter((a) => Live2DAssetTypeUI.includes(a.type))
     );
     this.scenarioData = data.scenarioData;
     this.scenarioResource = data.scenarioResource;
     this.modelData = data.modelData;
-    this.current_costume = [];
-    this.step = 0;
 
-    this.model_queue = this.create_model_queue();
     log.log("Live2DController", "init.");
     log.log("Live2DController", this.scenarioData);
     log.log("Live2DController", this.scenarioResource);
     log.log("Live2DController", this.modelData);
+    this.model_queue = this.create_model_queue();
   }
 
   /**
@@ -339,6 +342,37 @@ export class Live2DController extends Live2DPlayer {
       if (duration < min_time_ms)
         await this.animate.delay(min_time_ms - duration);
     }
+  };
+  set_volume = (volume: {
+    voice_volume?: number;
+    bgm_volume?: number;
+    se_volume?: number;
+  }) => {
+    Object.assign(this.settings, volume);
+    if (volume.bgm_volume) this.settings.bgm_volume *= 0.5; // bgm too load
+    const s_list = this.scenarioResource.filter(
+      (sound) =>
+        Live2DAssetTypeSound.includes(sound.type) &&
+        (sound.data as Howl).playing()
+    );
+    if (volume.voice_volume)
+      s_list
+        .filter((sound) => sound.type === Live2DAssetType.Talk)
+        .forEach((sound) => {
+          (sound.data as Howl).volume(this.settings.voice_volume);
+        });
+    if (volume.bgm_volume)
+      s_list
+        .filter((sound) => sound.type === Live2DAssetType.BackgroundMusic)
+        .forEach((sound) => {
+          (sound.data as Howl).volume(this.settings.bgm_volume);
+        });
+    if (volume.se_volume)
+      s_list
+        .filter((sound) => sound.type === Live2DAssetType.SoundEffect)
+        .forEach((sound) => {
+          (sound.data as Howl).volume(this.settings.se_volume);
+        });
   };
   stop_sounds = (sound_types: Live2DAssetType[]) => {
     this.scenarioResource

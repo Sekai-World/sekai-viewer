@@ -18,19 +18,19 @@ export const Live2DAssetTypeImage = [
   Live2DAssetType.UI,
   Live2DAssetType.UISheet,
   Live2DAssetType.BackgroundImage,
-] as const;
+];
 
 export const Live2DAssetTypeSound = [
   Live2DAssetType.SoundEffect,
   Live2DAssetType.BackgroundMusic,
   Live2DAssetType.Talk,
-] as const;
+];
 
 export const Live2DAssetTypeUI = [
   Live2DAssetType.UI,
   Live2DAssetType.UISheet,
   Live2DAssetType.UIVideo,
-] as const;
+];
 
 export interface ILive2DAssetUrl {
   identifer: string;

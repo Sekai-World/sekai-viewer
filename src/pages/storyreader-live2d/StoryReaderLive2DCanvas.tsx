@@ -7,7 +7,16 @@ import React, {
   useEffect,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { CircularProgress, Typography, Stack } from "@mui/material";
+import {
+  CircularProgress,
+  Typography,
+  Stack,
+  Grid,
+  Slider,
+  FormControlLabel,
+  Checkbox,
+} from "@mui/material";
+import { VolumeDown, VolumeUp } from "@mui/icons-material";
 
 import { Stage, useApp } from "@pixi/react";
 
@@ -69,8 +78,7 @@ StoryReaderLive2DStage.displayName = "StoryReaderLive2DStage";
 
 const StoryReaderLive2DCanvas: React.FC<{
   controllerData: ILive2DControllerData;
-  autoplay: boolean;
-}> = ({ controllerData, autoplay }) => {
+}> = ({ controllerData }) => {
   const { t } = useTranslation();
 
   const wrap = useRef<HTMLDivElement>(null);
@@ -85,6 +93,11 @@ const StoryReaderLive2DCanvas: React.FC<{
   const [autoplayWaiting, setAutoplayWaiting] = useState(false);
   const [canClick, setCanClick] = useState(true);
   const [loadStatus, setLoadStatus] = useState<LoadStatus>(LoadStatus.Ready);
+  const [bgmVolume, setBgmVolume] = useState(30);
+  const [seVolume, setSeVolume] = useState(80);
+  const [voiceVolume, setVoiceVolume] = useState(80);
+  const [textAnimation, setTextAnimation] = useState(true);
+  const [autoplay, setAutoplay] = useState(false);
 
   // change canvas size
   useLayoutEffect(() => {
@@ -190,6 +203,14 @@ const StoryReaderLive2DCanvas: React.FC<{
   const handleModelLoad = (status: LoadStatus) => {
     setLoadStatus(status);
     if (status === LoadStatus.Loaded) {
+      if (stage.current) {
+        stage.current.controller.settings.text_animation = textAnimation;
+        stage.current.controller.set_volume({
+          bgm_volume: bgmVolume / 100,
+          se_volume: seVolume / 100,
+          voice_volume: voiceVolume / 100,
+        });
+      }
       nextStep();
     }
   };
@@ -206,6 +227,41 @@ const StoryReaderLive2DCanvas: React.FC<{
     } else {
       stage.current?.controller.animate.abort();
     }
+  };
+
+  const handleBgmVolumeChange = (
+    event: Event,
+    newBgmVolume: number | number[]
+  ) => {
+    const volume = newBgmVolume as number;
+    setBgmVolume(volume);
+    stage.current?.controller.set_volume({ bgm_volume: volume / 100 });
+  };
+  const handleVoiceVolumeChange = (
+    event: Event,
+    newVoiceVolume: number | number[]
+  ) => {
+    const volume = newVoiceVolume as number;
+    setVoiceVolume(volume);
+    stage.current?.controller.set_volume({ voice_volume: volume / 100 });
+  };
+  const handleSeVolumeChange = (
+    event: Event,
+    newSeVolume: number | number[]
+  ) => {
+    const volume = newSeVolume as number;
+    setSeVolume(volume);
+    stage.current?.controller.set_volume({ se_volume: volume / 100 });
+  };
+  const handleTextAnimationChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setTextAnimation(event.target.checked);
+    if (stage.current)
+      stage.current.controller.settings.text_animation = event.target.checked;
+  };
+  const handleAutoplayChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAutoplay(event.target.checked);
   };
 
   return (
@@ -251,6 +307,90 @@ const StoryReaderLive2DCanvas: React.FC<{
           )}
         </Stage>
       </div>
+      {controllerData && (
+        <Stack spacing={1} direction="column" sx={{ marginTop: 3 }}>
+          <Typography variant="h6">
+            {t("story_reader_live2d:settings.heading")}
+          </Typography>
+          <Grid container sx={{ p: 0 }}>
+            <Grid item xs={12} sm={6} md={6} lg={4} xl={3}>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="center"
+                sx={{ height: 1, padding: 1 }}
+              >
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={autoplay}
+                      onChange={handleAutoplayChange}
+                    />
+                  }
+                  label={t("story_reader_live2d:auto_play")}
+                />
+              </Stack>
+            </Grid>
+            <Grid item xs={12} sm={6} md={6} lg={4} xl={3}>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="center"
+                sx={{ height: 1, padding: 1 }}
+              >
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={textAnimation}
+                      onChange={handleTextAnimationChange}
+                    />
+                  }
+                  label={t("story_reader_live2d:settings.text_animation")}
+                />
+              </Stack>
+            </Grid>
+            <Grid item xs={12} sm={6} md={6} lg={4} xl={3}>
+              <Stack direction="column" sx={{ padding: 1 }}>
+                <Typography>
+                  {t("story_reader_live2d:settings.bgm_volume")}
+                </Typography>
+                <Stack spacing={1} direction="row" alignItems="center">
+                  <VolumeDown />
+                  <Slider value={bgmVolume} onChange={handleBgmVolumeChange} />
+                  <VolumeUp />
+                </Stack>
+              </Stack>
+            </Grid>
+            <Grid item xs={12} sm={6} md={6} lg={4} xl={3}>
+              <Stack direction="column" sx={{ padding: 1 }}>
+                <Typography>
+                  {t("story_reader_live2d:settings.voice_volume")}
+                </Typography>
+                <Stack spacing={1} direction="row" alignItems="center">
+                  <VolumeDown />
+                  <Slider
+                    value={voiceVolume}
+                    onChange={handleVoiceVolumeChange}
+                  />
+                  <VolumeUp />
+                </Stack>
+              </Stack>
+            </Grid>
+            <Grid item xs={12} sm={6} md={6} lg={4} xl={3}>
+              <Stack direction="column" sx={{ padding: 1 }}>
+                <Typography>
+                  {t("story_reader_live2d:settings.se_volume")}
+                </Typography>
+                <Stack spacing={1} direction="row" alignItems="center">
+                  <VolumeDown />
+                  <Slider value={seVolume} onChange={handleSeVolumeChange} />
+                  <VolumeUp />
+                </Stack>
+              </Stack>
+            </Grid>
+          </Grid>
+        </Stack>
+      )}
       {
         //DEBUG
         /*

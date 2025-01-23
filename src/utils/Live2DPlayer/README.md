@@ -1,6 +1,5 @@
 # TODO
 
-- volume settings
 - bgm fade in and out
 - VoiceId more than one
 - more SpecialEffectType.PlayScenarioEffect
@@ -84,5 +83,7 @@
 - commit 9eb807e1e0be21c0e1e2a2d6794714511e2a73a6
   - feat(live2d): add support for none 16:9 screen in fullscreen mode
   - fix(live2d): fullscreen text background not work properly
-- commit this
+- commit f421842cfbbd4f432ffca40141f49a4c1fd8c6cf
   - refactor(live2d): split live2d player action into multiple files
+- commit this
+  - feat(live2d): add volume and animation controller

@@ -107,13 +107,13 @@ export async function preloadMedia(
     await queue.wait();
     await queue.add(
       new Promise((resolve, reject) => {
-        if (Live2DAssetTypeSound.includes(url.type as any)) {
+        if (Live2DAssetTypeSound.includes(url.type)) {
           preloadSound(url.url)
             .then((data) => {
               resolve({ ...url, data });
             })
             .catch(reject);
-        } else if (Live2DAssetTypeImage.includes(url.type as any)) {
+        } else if (Live2DAssetTypeImage.includes(url.type)) {
           preloadImage(url.url)
             .then((data) => {
               resolve({ ...url, data });

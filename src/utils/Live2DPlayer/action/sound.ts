@@ -22,7 +22,7 @@ export default async function action_sound(
       )?.data as Howl;
       sound.loop(true);
       controller.stop_sounds([Live2DAssetType.BackgroundMusic]);
-      sound.volume(0.8);
+      sound.volume(controller.settings.bgm_volume * action_detail.Volume);
       sound.play();
     }
   } else if (action_detail.Se) {
@@ -30,30 +30,34 @@ export default async function action_sound(
       (s) =>
         s.identifer === action_detail.Se &&
         s.type === Live2DAssetType.SoundEffect
-    )?.data;
+    )?.data as Howl;
+    const volume = controller.settings.se_volume * action_detail.Volume;
     if (sound) {
       switch (action_detail.PlayMode) {
         case SoundPlayMode.Stop:
           {
-            (sound as Howl).stop();
+            sound.stop();
           }
           break;
         case SoundPlayMode.SpecialSePlay:
           {
-            (sound as Howl).loop(true);
-            (sound as Howl).play();
+            sound.loop(true);
+            sound.volume(volume);
+            sound.play();
           }
           break;
         case SoundPlayMode.CrossFade:
           {
-            (sound as Howl).loop(false);
-            (sound as Howl).play();
+            sound.loop(false);
+            sound.volume(volume);
+            sound.play();
           }
           break;
         case SoundPlayMode.Stack:
           {
-            (sound as Howl).loop(false);
-            (sound as Howl).play();
+            sound.loop(false);
+            sound.volume(volume);
+            sound.play();
           }
           break;
         default:

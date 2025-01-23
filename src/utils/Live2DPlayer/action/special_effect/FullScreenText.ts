@@ -22,12 +22,18 @@ export default async function FlashbackIn(
   );
   if (sound) {
     controller.stop_sounds([Live2DAssetType.Talk]);
-    (sound.data as Howl).play();
+    const inst = sound.data as Howl;
+    inst.volume(controller.settings.voice_volume);
+    inst.play();
   } else
     log.warn(
       "Live2DController",
       `${action_detail.StringValSub} not loaded, skip.`
     );
   controller.layers.fullscreen_text.show(500);
-  await controller.layers.fullscreen_text.animate(action_detail.StringVal);
+  if (controller.settings.text_animation) {
+    await controller.layers.fullscreen_text.animate(action_detail.StringVal);
+  } else {
+    await controller.layers.fullscreen_text.draw(action_detail.StringVal);
+  }
 }

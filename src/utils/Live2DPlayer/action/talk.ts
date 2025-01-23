@@ -12,10 +12,19 @@ export default async function action_talk(
   //clear
   await controller.layers.telop.hide(200);
   // show dialog
-  const dialog = controller.layers.dialog.animate(
-    action_detail.WindowDisplayName,
-    action_detail.Body
-  );
+  let dialog;
+  if (controller.settings.text_animation) {
+    dialog = controller.layers.dialog.animate(
+      action_detail.WindowDisplayName,
+      action_detail.Body
+    );
+  } else {
+    controller.layers.dialog.draw(
+      action_detail.WindowDisplayName,
+      action_detail.Body
+    );
+  }
+
   await controller.layers.dialog.show(200);
   // motion
   const motion = action_detail.Motions.map((m) => {
@@ -37,10 +46,14 @@ export default async function action_talk(
       const costume = controller.live2d_get_costume(
         action_detail.TalkCharacters[0].Character2dId
       );
+      const volume =
+        action_detail.Voices[0].Volume * controller.settings.voice_volume;
       if (costume) {
-        controller.layers.live2d.speak(costume, sound.url);
+        controller.layers.live2d.speak(costume, sound.url, volume);
       } else {
-        (sound.data as Howl).play();
+        const inst = sound.data as Howl;
+        inst.volume(volume);
+        inst.play();
       }
     } else
       log.warn(

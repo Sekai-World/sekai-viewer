@@ -17,14 +17,7 @@ import {
 
 import { IScenarioData, ServerRegion } from "../../types.d";
 import ContainerContent from "../../components/styled/ContainerContent";
-import {
-  Stack,
-  Button,
-  Typography,
-  LinearProgress,
-  FormControlLabel,
-  Checkbox,
-} from "@mui/material";
+import { Stack, Button, Typography, LinearProgress } from "@mui/material";
 import StoryReaderLive2DCanvas from "./StoryReaderLive2DCanvas";
 import { useAlertSnackbar } from "../../utils";
 
@@ -42,7 +35,6 @@ const StoryReaderLive2DContent: React.FC<{
   const [loadStatus, setLoadStatus] = useState(LoadStatus.Ready);
   const [loadProgress, setLoadProgress] = useState(0);
   const [progressText, setProgressText] = useState("");
-  const [autoplay, setAutoplay] = useState(false);
 
   const { showError } = useAlertSnackbar();
 
@@ -148,10 +140,6 @@ const StoryReaderLive2DContent: React.FC<{
     }
   }
 
-  const handleAutoplayChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAutoplay(event.target.checked);
-  };
-
   return (
     <ContainerContent>
       <Stack
@@ -179,12 +167,6 @@ const StoryReaderLive2DContent: React.FC<{
         >
           {t("story_reader_live2d:toggle_full_screen")}
         </Button>
-        <FormControlLabel
-          control={
-            <Checkbox checked={autoplay} onChange={handleAutoplayChange} />
-          }
-          label={t("story_reader_live2d:auto_play")}
-        />
       </Stack>
 
       {loadStatus === LoadStatus.Loading && (
@@ -197,7 +179,6 @@ const StoryReaderLive2DContent: React.FC<{
         <div ref={canvas} style={{ userSelect: "none" }}>
           <StoryReaderLive2DCanvas
             controllerData={controllerData.current}
-            autoplay={autoplay}
           ></StoryReaderLive2DCanvas>
         </div>
       )}
