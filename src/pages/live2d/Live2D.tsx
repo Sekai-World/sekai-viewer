@@ -376,15 +376,14 @@ const Live2DView: React.FC<unknown> = () => {
         region,
         resolution: 4,
       });
-      const image: HTMLImageElement = app.renderer.plugins.extract.image(
-        imageThis,
-        "image/png",
-        1.0
-      );
-      saveAs(
-        image.src,
-        `${modelName}-${new Date().toISOString().split("T", 1)[0]}.png`
-      );
+      app.renderer.plugins.extract
+        .image(imageThis, "image/png", 1.0)
+        .then((image: HTMLImageElement) => {
+          saveAs(
+            image.src,
+            `${modelName}-${new Date().toISOString().split("T", 1)[0]}.png`
+          );
+        });
     }
   }, [live2dX, live2dY, modelName]);
 
