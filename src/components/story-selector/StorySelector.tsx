@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
 
@@ -32,6 +32,17 @@ const StorySelector: React.FC<{
   const { path } = useRouteMatch();
 
   const handleSetStory = onSetStory;
+
+  const rootMatch = useRouteMatch({
+    path: `${path}`,
+    strict: true,
+    exact: true,
+  });
+  useEffect(() => {
+    if (rootMatch) {
+      onSetStory();
+    }
+  }, [rootMatch, onSetStory]);
 
   const catagory: {
     [key: string]: {

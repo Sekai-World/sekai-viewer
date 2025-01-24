@@ -1,5 +1,5 @@
 import type { Howl } from "howler";
-import type { IScenarioData } from "../../types";
+import type { IScenarioData, ILive2DModelData } from "../../types";
 import type { Animation } from "./animation/BaseAnimation";
 import type { Curve, CurveFunction } from "./animation/Curve";
 import { Texture, DisplayObject } from "pixi.js";
@@ -46,36 +46,6 @@ export interface ILive2DTexture {
   identifer: string;
   texture: Texture;
 }
-
-export interface ILive2DModelData {
-  Version: number;
-  FileReferences: {
-    Moc: string;
-    Textures: string[];
-    Physics: string;
-    Motions: {
-      Motion: {
-        Name: string;
-        File: string;
-        FadeInTime: number;
-        FadeOutTime: number;
-      }[];
-      Expression: {
-        Name: string;
-        File: string;
-        FadeInTime: number;
-        FadeOutTime: number;
-      }[];
-    };
-    Groups: {
-      Target: string;
-      Name: string;
-      Ids: number[];
-    }[];
-  };
-  url: string;
-}
-
 export interface Ilive2DModelInfo {
   cid: number;
   costume: string;

@@ -1,6 +1,5 @@
 import Axios from "axios";
 import { Howl } from "howler";
-import { assetUrl } from "../urls";
 import { SnippetAction } from "../../types.d";
 import type { IScenarioData } from "../../types.d";
 
@@ -8,15 +7,14 @@ import { Live2DAssetTypeImage, Live2DAssetTypeSound } from "./types.d";
 import type {
   ILive2DCachedAsset,
   ILive2DAssetUrl,
-  ILive2DModelData,
   ILive2DControllerData,
   ILive2DModelDataCollection,
   IProgressEvent,
 } from "./types.d";
 
 import { getUIMediaUrls } from "./ui_assets";
-
 import { PreloadQueue } from "./PreloadQueue";
+import { getModelData } from "../live2dLoader";
 
 // step 3 - get controller data (preload media)
 export async function getLive2DControllerData(
@@ -35,7 +33,7 @@ export async function getLive2DControllerData(
   for (const c of snData.AppearCharacters) {
     count++;
     progress("model_data", count, total, c.CostumeType);
-    const md = await getModelData(c.CostumeType);
+    const md = await getModelData(c.CostumeType, [0.5, 0.1], [0.1, 0.1]);
     modelData.push({
       costume: c.CostumeType,
       cid: c.Character2dId,
@@ -147,94 +145,6 @@ function preloadSound(url: string): Promise<Howl> {
       loop: false,
     });
   });
-}
-// step 3.3 - get model data
-export async function getModelData(
-  modelName: string
-): Promise<ILive2DModelData> {
-  // step 3.3.1 - get model build data
-  const { data: modelData } = await Axios.get<{
-    Moc3FileName: string;
-    TextureNames: string[];
-    PhysicsFileName: string;
-    UserDataFileName: string;
-    AdditionalMotionData: unknown[];
-    CategoryRules: unknown[];
-  }>(
-    `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/buildmodeldata.asset`,
-    { responseType: "json" }
-  );
-  // step 3.3.2 - get motion data
-  const motionName = getMotionBaseName(modelName);
-  let motionData;
-  if (!modelName.startsWith("normal")) {
-    const motionRes = await Axios.get<{
-      motions: string[];
-      expressions: string[];
-    }>(
-      `${assetUrl.minio.jp}/live2d/motion/${motionName}_rip/BuildMotionData.json`,
-      { responseType: "json" }
-    );
-    motionData = motionRes.data;
-  } else {
-    motionData = {
-      expressions: [],
-      motions: [],
-    };
-  }
-  // step 3.3.3 - construct model
-  const filename = modelData.Moc3FileName.replace(
-    ".moc3.bytes",
-    ".model3.json"
-  );
-  const model3Json = (
-    await Axios.get(
-      `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/${filename}`
-    )
-  ).data;
-  model3Json.url = `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/`;
-  model3Json.FileReferences.Moc = `${model3Json.FileReferences.Moc}.bytes`;
-  model3Json.FileReferences.Motions = {
-    Motion: motionData.motions.map((elem) => ({
-      Name: elem,
-      File: `../../motion/${motionName}_rip/${elem}.motion3.json`,
-      FadeInTime: 0.5,
-      FadeOutTime: 0.1,
-    })),
-    Expression: motionData.expressions.map((elem) => ({
-      Name: elem,
-      File: `../../motion/${motionName}_rip/${elem}.motion3.json`,
-      FadeInTime: 0.1,
-      FadeOutTime: 0.1,
-    })),
-  };
-  model3Json.FileReferences.Expressions = {};
-  return model3Json;
-}
-// step 3.3.2 - get motion data
-export function getMotionBaseName(modelName: string): string {
-  let motionName = modelName;
-  if (!motionName.startsWith("v2_sub") && !motionName.startsWith("sub_rival")) {
-    if (motionName.endsWith("_black")) {
-      motionName = motionName.slice(0, -6);
-    } else if (motionName.endsWith("black")) {
-      motionName = motionName.slice(0, -5);
-    }
-    if (
-      motionName?.startsWith("sub") ||
-      motionName?.startsWith("clb") ||
-      motionName.match(/^v2_\d{2}.*/)
-    ) {
-      motionName = motionName.split("_").slice(0, 2).join("_");
-    } else {
-      motionName = motionName.split("_")[0]!;
-    }
-  } else if (motionName?.startsWith("sub_rival")) {
-    motionName = motionName.split("_").slice(0, 3).join("_");
-  } else if (motionName?.startsWith("v2_sub_rival")) {
-    motionName = motionName.split("_").slice(0, 4).join("_");
-  }
-  return motionName + "_motion_base";
 }
 
 // step 4.2 - discard useless motions in all model

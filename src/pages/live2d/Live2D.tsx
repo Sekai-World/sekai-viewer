@@ -36,14 +36,13 @@ import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import fscreen from "fscreen";
 import { useLive2dModelList } from "../../utils/apiClient";
-import { assetUrl } from "../../utils/urls";
 import TypographyHeader from "../../components/styled/TypographyHeader";
 import ContainerContent from "../../components/styled/ContainerContent";
 import { Stage } from "@pixi/react";
 // import { settings } from "pixi.js";
 import Live2dModel from "../../components/pixi/Live2dModel";
 import { InternalModel, Live2DModel } from "pixi-live2d-display-mulmotion";
-import { getMotionBaseName } from "../../utils/Live2DPlayer/load";
+import { getModelData } from "../../utils/live2dLoader";
 
 // settings.RESOLUTION = window.devicePixelRatio * 2;
 
@@ -55,7 +54,6 @@ const Live2DView: React.FC<unknown> = () => {
     null
   );
   const [modelName, setModelName] = useState<string | null>("");
-  const [motionName, setMotionName] = useState<string | null>("");
   const [modelData, setModelData] = useState<Record<string, any>>();
   const [motions, setMotions] = useState<string[]>([]);
   const [selectedMotion, setSelectedMotion] = useState<string | null>(null);
@@ -145,83 +143,28 @@ const Live2DView: React.FC<unknown> = () => {
 
         setProgress(0);
         setProgressWords(t("live2d:load_progress.model_metadata"));
-        const { data: modelData } = await Axios.get<{
-          Moc3FileName: string;
-          TextureNames: string[];
-          PhysicsFileName: string;
-          UserDataFileName: string;
-          AdditionalMotionData: unknown[];
-          CategoryRules: unknown[];
-        }>(
-          `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/buildmodeldata.asset`,
-          { responseType: "json" }
-        );
+        const modelData = await getModelData(modelName);
 
         setProgress(20);
         setProgressWords(t("live2d:load_progress.model_texture"));
-        await Axios.get(
-          `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/${modelData.TextureNames[0]}`
-        );
+        await Axios.get(modelData.FileReferences.Textures[0]);
 
         setProgress(40);
         setProgressWords(t("live2d:load_progress.model_moc3"));
-        await Axios.get(
-          `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/${modelData.Moc3FileName}`
-        );
+        await Axios.get(modelData.FileReferences.Moc);
 
         setProgress(60);
         setProgressWords(t("live2d:load_progress.model_physics"));
-        await Axios.get(
-          `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/${modelData.PhysicsFileName}`
-        );
-
-        let motionData;
-        if (!modelName.startsWith("normal")) {
-          setProgress(80);
-          setProgressWords(t("live2d:load_progress.motion_metadata"));
-          const motionRes = await Axios.get<{
-            motions: string[];
-            expressions: string[];
-          }>(
-            `${assetUrl.minio.jp}/live2d/motion/${motionName}_rip/BuildMotionData.json`,
-            { responseType: "json" }
-          );
-          motionData = motionRes.data;
-        } else {
-          motionData = {
-            expressions: [],
-            motions: [],
-          };
-        }
+        await Axios.get(modelData.FileReferences.Physics);
 
         setProgress(90);
         setProgressWords(t("live2d:load_progress.display_model"));
-        const filename = modelData.Moc3FileName.replace(
-          ".moc3.bytes",
-          ".model3.json"
-        );
-        const model3Json = (
-          await Axios.get(
-            `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/${filename}`
-          )
-        ).data;
-        model3Json.url = `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/`;
-        model3Json.FileReferences.Moc = `${model3Json.FileReferences.Moc}.bytes`;
-        model3Json.FileReferences.Motions = {
-          Motion: motionData.motions.map((elem) => ({
-            File: `../../motion/${motionName}_rip/${elem}.motion3.json`,
-            FadeInTime: 1,
-            FadeOutTime: 1,
-          })),
-          Expression: motionData.expressions.map((elem) => ({
-            Name: elem,
-            File: `../../motion/${motionName}_rip/${elem}.motion3.json`,
-          })),
-        };
-        setModelData(model3Json);
+        setModelData(modelData);
 
-        setMotions(motionData.motions);
-        setExpressions(motionData.expressions);
+        setMotions(modelData.FileReferences.Motions.Motion.map((m) => m.Name));
+        setExpressions(
+          modelData.FileReferences.Motions.Expression.map((m) => m.Name)
+        );
 
         setShowProgress(false);
         setProgress(0);
@@ -230,7 +173,7 @@ const Live2DView: React.FC<unknown> = () => {
     };
 
     func();
-  }, [modelName, motionName, t]);
+  }, [modelName, t]);
 
   const handleDownload = useCallback(async () => {
     setShowProgress(true);
@@ -238,22 +181,14 @@ const Live2DView: React.FC<unknown> = () => {
     setProgressWords(t("live2d:pack_progress.generate_metadata"));
 
     const zip = new JSZip();
-    const { data: modelData } = await Axios.get<{
-      Moc3FileName: string;
-      TextureNames: string[];
-      PhysicsFileName: string;
-      UserDataFileName: string;
-      AdditionalMotionData: unknown[];
-      CategoryRules: unknown[];
-    }>(
-      `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/buildmodeldata.asset`,
-      { responseType: "json" }
-    );
-
+    const modelData = await getModelData(modelName!);
     const model3 = {
       FileReferences: {
         Moc: `${modelName}.moc3`,
-        Motions: [...motions, ...expressions].reduce<{
+        Motions: [
+          ...modelData.FileReferences.Motions.Motion,
+          ...modelData.FileReferences.Motions.Expression,
+        ].reduce<{
           [key: string]: [
             {
               File: string;
@@ -261,19 +196,16 @@ const Live2DView: React.FC<unknown> = () => {
               FadeOutTime: number;
             },
           ];
-        }>(
-          (sum, elem) =>
-            Object.assign({}, sum, {
-              [elem]: [
-                {
-                  FadeInTime: 0.5,
-                  FadeOutTime: 0.5,
-                  File: `motions/${elem}.motion3.json`,
-                },
-              ],
-            }),
-          {}
-        ),
+        }>((prev, m) => {
+          prev[m.Name] = [
+            {
+              FadeInTime: 0.5,
+              FadeOutTime: 0.5,
+              File: `motions/${m.Name}.motion3.json`,
+            },
+          ];
+          return prev;
+        }, {}),
         Physics: `${modelName}.physics3.json`,
         Textures: [`${modelName}.2048/texture_00.png`],
       },
@@ -297,7 +229,7 @@ const Live2DView: React.FC<unknown> = () => {
     setProgress(10);
     setProgressWords(t("live2d:pack_progress.download_texture"));
     const { data: texture } = await Axios.get(
-      `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/${modelData.TextureNames[0]}`,
+      modelData.url + modelData.FileReferences.Textures[0],
       { responseType: "blob" }
     );
 
@@ -306,7 +238,7 @@ const Live2DView: React.FC<unknown> = () => {
     setProgress(20);
     setProgressWords(t("live2d:pack_progress.download_moc3"));
     const { data: moc3 } = await Axios.get(
-      `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/${modelData.Moc3FileName}`,
+      modelData.url + modelData.FileReferences.Moc,
       { responseType: "blob" }
     );
 
@@ -315,7 +247,7 @@ const Live2DView: React.FC<unknown> = () => {
     setProgress(30);
     setProgressWords(t("live2d:pack_progress.download_physics"));
     const { data: physics } = await Axios.get(
-      `${assetUrl.minio.jp}/live2d/model/${modelName}_rip/${modelData.PhysicsFileName}`,
+      modelData.url + modelData.FileReferences.Physics,
       { responseType: "blob" }
     );
 
@@ -337,17 +269,17 @@ const Live2DView: React.FC<unknown> = () => {
     );
 
     const tasks = [];
-    for (const [name, motion] of Object.entries(
-      model3.FileReferences.Motions
-    )) {
+    for (const motion of [
+      ...modelData.FileReferences.Motions.Motion,
+      ...modelData.FileReferences.Motions.Expression,
+    ]) {
       tasks.push(
-        Axios.get<Blob>(
-          `${assetUrl.minio.jp}/live2d/motion/${motionName}_rip/${name}.motion3.json`,
-          { responseType: "blob" }
-        ).then(({ data }) => {
+        Axios.get<Blob>(modelData.url + motion.File, {
+          responseType: "blob",
+        }).then(({ data }) => {
           updateCount();
 
-          zip.file(motion[0].File, data);
+          zip.file(model3.FileReferences.Motions[motion.Name][0].File, data);
         })
       );
     }
@@ -362,7 +294,7 @@ const Live2DView: React.FC<unknown> = () => {
     setShowProgress(false);
     setProgress(0);
     setProgressWords("");
-  }, [expressions, modelName, motionName, motions, t]);
+  }, [expressions, modelName, motions, t]);
 
   const handleScreenshot = useCallback(() => {
     if (stage.current && live2dModel.current) {
@@ -389,10 +321,6 @@ const Live2DView: React.FC<unknown> = () => {
 
   const handleShow = useCallback(() => {
     setModelName(selectedModelName);
-    let motionName = selectedModelName;
-    if (!motionName) return;
-    motionName = getMotionBaseName(motionName);
-    setMotionName(motionName);
   }, [selectedModelName]);
 
   const onLive2dModelReady = useCallback(() => {

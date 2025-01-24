@@ -90,6 +90,10 @@
 - commit 6e7dbf7e4232e0000b1c636f1c16e2c69162aefb
   - fix(live2d): areatalk not load properly
   - fix(live2d): throw error when player finished
-- commit this
+- commit 6e7dbf7e4232e0000b1c636f1c16e2c69162aefb
   - feat(storyreader): add character filter for areatalk
   - fix(live2d): motions not found in model definition will block loading process
+- commit eb302607fa268c9fa32f799fef080f33c9c73c4a
+  - fix(storyreader): area sub name not display and translate
+- commit this
+  - refactor(live2d): create live2d loading module for live2d showcase and live2d reader
