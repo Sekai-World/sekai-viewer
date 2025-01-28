@@ -131,6 +131,11 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/strapi/, ""),
         target: "http://localhost:1337",
       },
+      "/test-static": {
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/test-static/, ""),
+        target: "http://localhost:8000",
+      },
     },
   },
 });

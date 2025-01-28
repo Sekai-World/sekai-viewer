@@ -36,13 +36,8 @@ import {
   ICharacter2D,
   IMobCharacter,
   IMusicMeta,
-  IScenarioData,
   IUnitProfile,
   IUnitStory,
-  SnippetAction,
-  SpecialEffectType,
-  SnippetProgressBehavior,
-  SoundPlayMode,
   IEventStory,
   IHonorMission,
   IBeginnerMission,
@@ -83,7 +78,7 @@ import {
   ICompactCostume3DModel,
   ICompactCostume3D,
 } from "./../types.d";
-import { useAssetI18n, useCharaName } from "./i18n";
+import { useAssetI18n } from "./i18n";
 import { useLocation } from "react-router-dom";
 import useSWR from "swr";
 import { useSnackbar, VariantType } from "notistack";
@@ -93,7 +88,6 @@ import { UserModel } from "../strapi-model";
 import { IUserInfo } from "../stores/user";
 import { useRootStore } from "../stores/root";
 import { XMLParser } from "fast-xml-parser";
-import { fixVoiceUrl } from "./voiceFinder";
 
 export function useRefState<S>(
   initialValue: S
@@ -385,275 +379,6 @@ export async function getRemoteAssetURL(
 //     window.isChinaMainland
 //   );
 // }
-
-export function useProcessedScenarioData() {
-  const [mobCharas] = useCachedData<IMobCharacter>("mobCharacters");
-  const [chara2Ds] = useCachedData<ICharacter2D>("character2ds");
-
-  const getCharaName = useCharaName();
-  const { region } = useRootStore();
-
-  return useCallback(
-    async (
-      scenarioPath: string,
-      isCardStory: boolean = false,
-      isActionSet: boolean = false
-    ) => {
-      const ret: {
-        characters: { id: number; name: string }[];
-        actions: { [key: string]: any }[];
-      } = {
-        actions: [],
-        characters: [],
-      };
-
-      if (!chara2Ds || !chara2Ds.length || !scenarioPath) return ret;
-
-      const { data }: { data: IScenarioData } = await Axios.get(
-        await getRemoteAssetURL(scenarioPath, undefined, "minio", region),
-        {
-          responseType: "json",
-        }
-      );
-      const {
-        ScenarioId,
-        AppearCharacters,
-        Snippets,
-        TalkData,
-        // LayoutData,
-        SpecialEffectData,
-        SoundData,
-        FirstBgm,
-        FirstBackground,
-      } = data;
-
-      const voiceMap: {
-        [key: string]: Record<string, string>;
-      } = {};
-
-      if (FirstBackground) {
-        ret.actions.push({
-          body: FirstBgm,
-          delay: 0,
-          isWait: SnippetProgressBehavior.WaitUnitilFinished,
-          resource: await getRemoteAssetURL(
-            `scenario/background/${FirstBackground}_rip/${FirstBackground}.webp`,
-            undefined,
-            "minio"
-          ),
-          seType: "ChangeBackground",
-          type: SnippetAction.SpecialEffect,
-        });
-      }
-      if (FirstBgm) {
-        ret.actions.push({
-          bgm: await getRemoteAssetURL(
-            `sound/scenario/bgm/${FirstBgm}_rip/${FirstBgm}.mp3`,
-            undefined,
-            "minio"
-          ),
-          delay: 0,
-          hasBgm: true,
-          hasSe: false,
-          isWait: SnippetProgressBehavior.WaitUnitilFinished,
-          playMode: SoundPlayMode[0],
-          se: "",
-          type: SnippetAction.Sound,
-        });
-      }
-
-      ret.characters = AppearCharacters.map((ap) => {
-        const chara2d = chara2Ds.find((ch) => ch.id === ap.Character2dId);
-        if (!chara2d)
-          return {
-            id: ap.Character2dId,
-            name: ap.CostumeType,
-          };
-        switch (chara2d.characterType) {
-          case "game_character": {
-            return {
-              id: chara2d.characterId,
-              name: getCharaName(chara2d.characterId)!,
-            };
-          }
-          case "mob": {
-            return {
-              id: chara2d.characterId,
-              name:
-                mobCharas?.find((mc) => mc.id === chara2d.characterId)?.name ||
-                "",
-            };
-          }
-        }
-      });
-
-      for (const snippet of Snippets) {
-        let action: { [key: string]: any } = {};
-        switch (snippet.Action) {
-          case SnippetAction.Talk:
-            {
-              const talkData = TalkData[snippet.ReferenceIndex];
-
-              // try get character
-              let chara2d: ICharacter2D | undefined;
-              const chara = { id: 0, name: "" };
-              if (talkData.TalkCharacters[0].Character2dId) {
-                chara2d = chara2Ds.find(
-                  (ch) => ch.id === talkData.TalkCharacters[0].Character2dId
-                )!;
-                chara.id = chara2d.characterId;
-              }
-
-              chara.name = talkData.WindowDisplayName;
-
-              let voiceUrl = "";
-              if (talkData.Voices.length) {
-                const VoiceId = talkData.Voices[0].VoiceId;
-                const isPartVoice =
-                  VoiceId.startsWith("partvoice") && !isActionSet;
-                if (isPartVoice) {
-                  // part_voice
-                  if (chara2d) {
-                    voiceUrl = `sound/scenario/part_voice/${chara2d.assetName}_${chara2d.unit}_rip/${VoiceId}.mp3`;
-                  }
-                } else {
-                  // card, actionset, scenario
-                  voiceUrl = `sound/${isCardStory ? "card_" : ""}${
-                    isActionSet ? "actionset" : "scenario"
-                  }/voice/${ScenarioId}_rip/${VoiceId}.mp3`;
-                }
-
-                // Get asset list in directory
-                voiceUrl = await fixVoiceUrl(
-                  voiceMap,
-                  region,
-                  VoiceId,
-                  voiceUrl
-                );
-              }
-
-              // Original codes
-              // let voiceUrl = talkData.Voices.length
-              //   ? `sound/${isCardStory ? "card_" : ""}${
-              //       isActionSet ? "actionset" : "scenario"
-              //     }/voice/${ScenarioId}_rip/${talkData.Voices[0].VoiceId}.mp3`
-              //   : "";
-              // if (
-              //   talkData.Voices.length &&
-              //   talkData.Voices[0].VoiceId.startsWith("partvoice") &&
-              //   !isActionSet
-              // ) {
-              //   const chara2d = chara2Ds.find(
-              //     (ch) => ch.id === talkData.TalkCharacters[0].Character2dId
-              //   );
-              //   if (chara2d) {
-              //     voiceUrl = `sound/scenario/part_voice/${chara2d.assetName}_${chara2d.unit}_rip/${talkData.Voices[0].VoiceId}.mp3`;
-              //   } else {
-              //     voiceUrl = "";
-              //   }
-              // }
-
-              action = {
-                body: talkData.Body,
-                chara,
-                delay: snippet.Delay,
-                isWait:
-                  snippet.ProgressBehavior ===
-                  SnippetProgressBehavior.WaitUnitilFinished,
-                type: snippet.Action,
-                voice: talkData.Voices.length
-                  ? await getRemoteAssetURL(voiceUrl, undefined, "minio")
-                  : "",
-              };
-            }
-            break;
-          case SnippetAction.SpecialEffect:
-            {
-              const specialEffect = SpecialEffectData[snippet.ReferenceIndex];
-              const specialEffectType =
-                SpecialEffectType[specialEffect.EffectType];
-
-              action = {
-                body: specialEffect.StringVal,
-                delay: snippet.Delay,
-                isWait:
-                  snippet.ProgressBehavior ===
-                  SnippetProgressBehavior.WaitUnitilFinished,
-                resource:
-                  specialEffectType === "FullScreenText"
-                    ? await getRemoteAssetURL(
-                        `sound/scenario/voice/${ScenarioId}_rip/${specialEffect.StringValSub}.mp3`,
-                        undefined,
-                        "minio"
-                      )
-                    : specialEffectType === "ChangeBackground"
-                      ? await getRemoteAssetURL(
-                          `scenario/background/${specialEffect.StringValSub}_rip/${specialEffect.StringValSub}.webp`,
-                          undefined,
-                          "minio"
-                        )
-                      : specialEffectType === "Movie"
-                        ? `scenario/movie/${specialEffect.StringVal}_rip`
-                        : "",
-                seType: specialEffectType,
-                type: snippet.Action,
-              };
-            }
-            break;
-          case SnippetAction.Sound:
-            {
-              const soundData = SoundData[snippet.ReferenceIndex];
-              const seBundleName = soundData.Se.endsWith("_b")
-                ? "se_pack00001_b"
-                : "se_pack00001";
-
-              action = {
-                bgm: soundData.Bgm
-                  ? await getRemoteAssetURL(
-                      `sound/scenario/bgm/${soundData.Bgm}_rip/${soundData.Bgm}.mp3`,
-                      undefined,
-                      "minio"
-                    )
-                  : "",
-                delay: snippet.Delay,
-                hasBgm: !!soundData.Bgm,
-                hasSe: !!soundData.Se,
-                isWait:
-                  snippet.ProgressBehavior ===
-                  SnippetProgressBehavior.WaitUnitilFinished,
-                playMode: SoundPlayMode[soundData.PlayMode],
-                se: soundData.Se
-                  ? await getRemoteAssetURL(
-                      `sound/scenario/se/${seBundleName}_rip/${soundData.Se}.mp3`,
-                      undefined,
-                      "minio"
-                    )
-                  : "",
-                type: snippet.Action,
-              };
-
-              // console.dir(action);
-            }
-            break;
-          default: {
-            action = {
-              delay: snippet.Delay,
-              isWait:
-                snippet.ProgressBehavior ===
-                SnippetProgressBehavior.WaitUnitilFinished,
-              type: snippet.Action,
-            };
-          }
-        }
-
-        ret.actions.push(action);
-      }
-
-      return ret;
-    },
-    [chara2Ds, getCharaName, mobCharas, region]
-  );
-}
 
 export function getJPTime() {
   return new Date()

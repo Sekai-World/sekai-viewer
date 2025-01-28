@@ -60,169 +60,173 @@ export function useScenarioInfo() {
       storyId: string,
       region: ServerRegion
     ): Promise<IScenarioInfo | undefined> => {
-      try {
-        switch (storyType) {
-          case "unitStory":
-            if (unitStories) {
-              const [, , , unitId, chapterNo, episodeNo] = storyId.split("/");
+      switch (storyType) {
+        case "unitStory":
+          if (unitStories) {
+            const [, , , unitId, chapterNo, episodeNo] = storyId.split("/");
 
-              const chapter = unitStories
-                .find((us) => us.unit === unitId)!
-                .chapters.find((ch) => ch.chapterNo === Number(chapterNo))!;
+            const unit = unitStories.find((us) => us.unit === unitId);
+            if (!unit) throw new Error(`Unit ${unitId} not found`);
+            const chapter = unit.chapters.find(
+              (ch) => ch.chapterNo === Number(chapterNo)
+            );
+            if (!chapter) throw new Error(`Chapter ${chapterNo} not found`);
+            const episode = chapter.episodes.find(
+              (ep) => ep.episodeNo === Number(episodeNo)
+            );
+            if (!episode) throw new Error(`Episode ${episodeNo} not found`);
+            return {
+              bannerUrl: await getRemoteAssetURL(
+                `story/episode_image/${chapter.assetbundleName}_rip/${episode.assetbundleName}.webp`,
+                undefined,
+                "minio"
+              ),
+              scenarioDataUrl: `scenario/unitstory/${chapter.assetbundleName}_rip/${episode.scenarioId}.asset`,
+              isCardStory: false,
+              isActionSet: false,
+              chapterTitle: getTranslated(
+                `unit_story_chapter_title:${chapter.unit}-${chapter.chapterNo}`,
+                chapter.title
+              ),
+              episodeTitle: getTranslated(
+                `unit_story_episode_title:${episode.unit}-${episode.chapterNo}-${episode.episodeNo}`,
+                episode.title
+              ),
+              releaseConditionId: episode.releaseConditionId,
+            };
+          }
+          break;
+        case "eventStory":
+          if (eventStories) {
+            const [, , , eventId, episodeNo] = storyId.split("/");
 
-              const episode = chapter.episodes.find(
-                (ep) => ep.episodeNo === Number(episodeNo)
-              )!;
+            const chapter = eventStories.find(
+              (es) => es.eventId === Number(eventId)
+            );
+            if (!chapter) throw new Error(`Chapter ${eventId} not found`);
+            const episode = chapter.eventStoryEpisodes.find(
+              (ep) => ep.episodeNo === Number(episodeNo)
+            );
+            if (!episode) throw new Error(`Episode ${episodeNo} not found`);
+            return {
+              bannerUrl: await getRemoteAssetURL(
+                `event_story/${chapter.assetbundleName}/episode_image_rip/${episode.assetbundleName}.webp`,
+                undefined,
+                "minio"
+              ),
+              scenarioDataUrl: `event_story/${chapter.assetbundleName}/scenario_rip/${episode.scenarioId}.asset`,
+              isCardStory: false,
+              isActionSet: false,
+              chapterTitle: "",
+              episodeTitle: `${episode.episodeNo} - ${getTranslated(
+                `event_story_episode_title:${episode.eventStoryId}-${episode.episodeNo}`,
+                episode.title
+              )}`,
+              releaseConditionId: episode.releaseConditionId,
+            };
+          }
+          break;
+        case "charaStory":
+          if (characterProfiles) {
+            const [, , , charaId] = storyId.split("/");
+
+            const episode = characterProfiles.find(
+              (cp) => cp.characterId === Number(charaId)
+            );
+            if (!episode) throw new Error(`Episode ${charaId} not found`);
+            return {
+              bannerUrl: charaIcons[`CharaIcon${charaId}` as "CharaIcon1"],
+              scenarioDataUrl: `scenario/profile_rip/${episode.scenarioId}.asset`,
+              isCardStory: false,
+              isActionSet: false,
+              chapterTitle: "",
+              episodeTitle: t("member:introduction"),
+              releaseConditionId: 0,
+            };
+          }
+          break;
+        case "cardStory":
+          if (cardEpisodes) {
+            const [, , , , , cardEpisodeId] = storyId.split("/");
+
+            const episode = cardEpisodes.find(
+              (ce) => ce.id === Number(cardEpisodeId)
+            );
+            if (!episode) throw new Error(`Episode ${cardEpisodeId} not found`);
+            let assetbundleName = episode.assetbundleName;
+            if (!assetbundleName && !!cards) {
+              const card = cards.find((card) => card.id === episode.cardId);
+              if (card) {
+                assetbundleName = card.assetbundleName;
+              }
+            }
+
+            if (assetbundleName) {
               return {
-                bannerUrl: await getRemoteAssetURL(
-                  `story/episode_image/${chapter.assetbundleName}_rip/${episode.assetbundleName}.webp`,
-                  undefined,
-                  "minio"
-                ),
-                scenarioDataUrl: `scenario/unitstory/${chapter.assetbundleName}_rip/${episode.scenarioId}.asset`,
-                isCardStory: false,
+                bannerUrl: `character/member_small/${assetbundleName}_rip/card_normal.webp`,
+                scenarioDataUrl:
+                  region === "en"
+                    ? `character/member_scenario/${assetbundleName}_rip/${episode.scenarioId}.asset`
+                    : `character/member/${assetbundleName}_rip/${episode.scenarioId}.asset`,
+                isCardStory: true,
                 isActionSet: false,
-                chapterTitle: getTranslated(
-                  `unit_story_chapter_title:${chapter.unit}-${chapter.chapterNo}`,
-                  chapter.title
-                ),
+                chapterTitle: "",
                 episodeTitle: getTranslated(
-                  `unit_story_episode_title:${episode.unit}-${episode.chapterNo}-${episode.episodeNo}`,
+                  `card_episode_title:${episode.title}`,
                   episode.title
                 ),
                 releaseConditionId: episode.releaseConditionId,
               };
             }
-            break;
-          case "eventStory":
-            if (eventStories) {
-              const [, , , eventId, episodeNo] = storyId.split("/");
+          }
+          break;
+        case "areaTalk":
+          if (actionSets) {
+            const [, , , , actionSetId] = storyId.split("/");
 
-              const chapter = eventStories.find(
-                (es) => es.eventId === Number(eventId)
-              )!;
-
-              const episode = chapter.eventStoryEpisodes.find(
-                (ep) => ep.episodeNo === Number(episodeNo)
-              )!;
-              return {
-                bannerUrl: await getRemoteAssetURL(
-                  `event_story/${chapter.assetbundleName}/episode_image_rip/${episode.assetbundleName}.webp`,
-                  undefined,
-                  "minio"
-                ),
-                scenarioDataUrl: `event_story/${chapter.assetbundleName}/scenario_rip/${episode.scenarioId}.asset`,
-                isCardStory: false,
-                isActionSet: false,
-                chapterTitle: "",
-                episodeTitle: `${episode.episodeNo} - ${getTranslated(
-                  `event_story_episode_title:${episode.eventStoryId}-${episode.episodeNo}`,
-                  episode.title
-                )}`,
-                releaseConditionId: episode.releaseConditionId,
-              };
-            }
-            break;
-          case "charaStory":
-            if (characterProfiles) {
-              const [, , , charaId] = storyId.split("/");
-
-              const episode = characterProfiles.find(
-                (cp) => cp.characterId === Number(charaId)
-              )!;
-
-              return {
-                bannerUrl: charaIcons[`CharaIcon${charaId}` as "CharaIcon1"],
-                scenarioDataUrl: `scenario/profile_rip/${episode.scenarioId}.asset`,
-                isCardStory: false,
-                isActionSet: false,
-                chapterTitle: "",
-                episodeTitle: t("member:introduction"),
-                releaseConditionId: 0,
-              };
-            }
-            break;
-          case "cardStory":
-            if (cardEpisodes) {
-              const [, , , , , cardEpisodeId] = storyId.split("/");
-
-              const episode = cardEpisodes.find(
-                (ce) => ce.id === Number(cardEpisodeId)
-              )!;
-              let assetbundleName = episode.assetbundleName;
-              if (!assetbundleName && !!cards) {
-                const card = cards.find((card) => card.id === episode.cardId);
-                if (card) {
-                  assetbundleName = card.assetbundleName;
-                }
-              }
-
-              if (assetbundleName) {
-                return {
-                  bannerUrl: `character/member_small/${assetbundleName}_rip/card_normal.webp`,
-                  scenarioDataUrl:
-                    region === "en"
-                      ? `character/member_scenario/${assetbundleName}_rip/${episode.scenarioId}.asset`
-                      : `character/member/${assetbundleName}_rip/${episode.scenarioId}.asset`,
-                  isCardStory: true,
-                  isActionSet: false,
-                  chapterTitle: "",
-                  episodeTitle: getTranslated(
-                    `card_episode_title:${episode.title}`,
-                    episode.title
-                  ),
-                  releaseConditionId: episode.releaseConditionId,
-                };
-              }
-            }
-            break;
-          case "areaTalk":
-            if (actionSets) {
-              const [, , , , actionSetId] = storyId.split("/");
-
-              const episode = actionSets.find(
-                (as) => as.id === Number(actionSetId)
-              )!;
-
-              return {
-                bannerUrl: undefined,
-                scenarioDataUrl: `scenario/actionset/group${Math.floor(episode.id / 100)}_rip/${
-                  episode.scenarioId
-                }.asset`,
-                isCardStory: false,
-                isActionSet: true,
-                chapterTitle: "",
-                episodeTitle: "",
-                releaseConditionId: undefined,
-              };
-            }
-            break;
-          case "specialStory":
-            if (specialStories) {
-              const [, , , spId, episodeNo] = storyId.split("/");
-              const chapter = specialStories.find(
-                (sp) => sp.id === Number(spId)
-              );
-              const episode = chapter?.episodes.find(
-                (ep) => ep.episodeNo === Number(episodeNo)
-              );
-
-              return {
-                bannerUrl: undefined,
-                scenarioDataUrl: episode?.scenarioId.startsWith("op")
-                  ? `scenario/special/${chapter?.assetbundleName}_rip/${episode?.scenarioId}.asset`
-                  : `scenario/special/${episode?.assetbundleName}_rip/${episode?.scenarioId}.asset`,
-                isCardStory: false,
-                isActionSet: false,
-                chapterTitle: chapter?.title || "",
-                episodeTitle: episode?.title || "",
-                releaseConditionId: undefined,
-              };
-            }
-            break;
-        }
-      } catch (error) {
-        throw new Error("failed to load episode");
+            const episode = actionSets.find(
+              (as) => as.id === Number(actionSetId)
+            );
+            if (!episode) throw new Error(`Episode ${actionSetId} not found`);
+            if (!episode.scenarioId)
+              throw new Error(`Episode id of ${actionSetId} not exist`);
+            return {
+              bannerUrl: undefined,
+              scenarioDataUrl: `scenario/actionset/group${Math.floor(episode.id / 100)}_rip/${
+                episode.scenarioId
+              }.asset`,
+              isCardStory: false,
+              isActionSet: true,
+              chapterTitle: "",
+              episodeTitle: "",
+              releaseConditionId: undefined,
+            };
+          }
+          break;
+        case "specialStory":
+          if (specialStories) {
+            const [, , , spId, episodeNo] = storyId.split("/");
+            const chapter = specialStories.find((sp) => sp.id === Number(spId));
+            if (!chapter) throw new Error(`Chapter ${spId} not found`);
+            const episode = chapter.episodes.find(
+              (ep) => ep.episodeNo === Number(episodeNo)
+            );
+            if (!episode) throw new Error(`Episode ${episodeNo} not found`);
+            return {
+              bannerUrl: undefined,
+              scenarioDataUrl: episode.scenarioId.startsWith("op")
+                ? `scenario/special/${chapter.assetbundleName}_rip/${episode.scenarioId}.asset`
+                : `scenario/special/${episode.assetbundleName}_rip/${episode.scenarioId}.asset`,
+              isCardStory: false,
+              isActionSet: false,
+              chapterTitle: chapter.title || "",
+              episodeTitle: episode.title || "",
+              releaseConditionId: undefined,
+            };
+          }
+          break;
+        default:
+          throw new Error(`Wrong story type: ${storyType}`);
       }
     },
     [
@@ -440,14 +444,18 @@ export function useProcessedScenarioDataForText() {
 
 export async function getProcessedScenarioDataForLive2D(
   info: IScenarioInfo,
-  region: ServerRegion
+  region: ServerRegion,
+  data?: IScenarioData
 ) {
-  const { data }: { data: IScenarioData } = await Axios.get(
-    await getRemoteAssetURL(info.scenarioDataUrl, undefined, "minio", region),
-    {
-      responseType: "json",
-    }
-  );
+  if (!data) {
+    const res: { data: IScenarioData } = await Axios.get(
+      await getRemoteAssetURL(info.scenarioDataUrl, undefined, "minio", region),
+      {
+        responseType: "json",
+      }
+    );
+    data = res.data;
+  }
   const {
     Snippets,
     SpecialEffectData,

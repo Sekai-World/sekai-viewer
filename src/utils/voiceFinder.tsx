@@ -74,6 +74,24 @@ export const getVoiceListElements = async function (
   return acc;
 };
 
+const getVoiceListElementsLocalTest = function (pathname: string) {
+  const acc: Record<string, string> = {};
+  const voiceList = ((window as any).assetList as string[]).filter(
+    (a) => a.startsWith(pathname) && a.endsWith(".mp3")
+  );
+  for (const v of voiceList) {
+    const keys = v.replace(".mp3", "").replace(pathname, "").split(";");
+
+    for (let k of keys) {
+      k = normalizeVoiceName(k.trim());
+      if (k.length > 0 && !acc[k]) {
+        acc[k] = v;
+      }
+    }
+  }
+  return acc;
+};
+
 export const fixVoiceUrl = async function (
   voiceMap: {
     [key: string]: Record<string, string>;
@@ -91,7 +109,12 @@ export const fixVoiceUrl = async function (
   if (voiceMap[dirUrl]) {
     voiceList = voiceMap[dirUrl];
   } else {
-    voiceMap[dirUrl] = await getVoiceListElements({}, region, dirUrl);
+    // If in test mode, asset list is loaded:
+    if ((window as any).assetList) {
+      voiceMap[dirUrl] = getVoiceListElementsLocalTest(dirUrl);
+    } else {
+      voiceMap[dirUrl] = await getVoiceListElements({}, region, dirUrl);
+    }
     voiceList = voiceMap[dirUrl];
   }
   return voiceList[normalizeVoiceName(voiceId)] || voiceUrl;

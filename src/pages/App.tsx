@@ -150,6 +150,12 @@ const EventAnalyzer = lazy(() => import("./event/EventAnalyzer"));
 const MusicMeta = lazy(() => import("./music/MusicMeta"));
 const AssetViewer = lazy(() => import("./AssetViewer"));
 
+// load test page
+let AssetTest: React.FC;
+if (import.meta.env.DEV) {
+  AssetTest = lazy(() => import("./AssetTest"));
+}
+
 const drawerWidth = 240;
 
 const webpMachine = new WebpMachine();
@@ -1182,6 +1188,11 @@ const AppInner = observer((props: { theme: Theme }) => {
               <Route path="/storyreader-live2d">
                 <StoryReaderLive2D />
               </Route>
+              {import.meta.env.DEV && (
+                <Route path="/asset-test">
+                  <AssetTest />
+                </Route>
+              )}
               <Route path="/mission/title">
                 <TitleMissionList />
               </Route>
