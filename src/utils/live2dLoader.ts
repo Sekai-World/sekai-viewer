@@ -82,14 +82,14 @@ const modelNameToMotionBaseName: Record<string, ModelNameTransformer> = {
 };
 
 async function getBuildMotionDataUrl(
-  motionName: string
+  modelName: string
 ): Promise<[string, string]> {
   // try to find the correct motion data url
-  let motionBaseName = motionName;
+  let modelBaseName = modelName;
 
   // step 1: get from full name
   let url = await getRemoteAssetURL(
-    `live2d/motion/${motionBaseName}_motion_base_rip/BuildMotionData.json`,
+    `live2d/motion/${modelBaseName}_motion_base_rip/BuildMotionData.json`,
     undefined,
     "minio",
     "jp",
@@ -102,12 +102,12 @@ async function getBuildMotionDataUrl(
       modelNameToMotionBaseName
     )) {
       const regExp = new RegExp(pattern);
-      if (regExp.test(motionName)) {
-        motionBaseName = processor(motionName);
+      if (regExp.test(modelName)) {
+        modelBaseName = processor(modelName);
 
         // try to get url
         url = await getRemoteAssetURL(
-          `live2d/motion/${motionBaseName}_motion_base_rip/BuildMotionData.json`,
+          `live2d/motion/${modelBaseName}_motion_base_rip/BuildMotionData.json`,
           undefined,
           "minio",
           "jp",
@@ -119,10 +119,10 @@ async function getBuildMotionDataUrl(
   }
 
   // step 3: reduce the name until base name
-  while (!url && motionBaseName.split("_").length > 1) {
-    motionBaseName = motionBaseName.split("_").slice(0, -1).join("_");
+  while (!url && modelBaseName.split("_").length > 1) {
+    modelBaseName = modelBaseName.split("_").slice(0, -1).join("_");
     url = await getRemoteAssetURL(
-      `live2d/motion/${motionBaseName}_motion_base_rip/BuildMotionData.json`,
+      `live2d/motion/${modelBaseName}_motion_base_rip/BuildMotionData.json`,
       undefined,
       "minio",
       "jp",
@@ -132,10 +132,10 @@ async function getBuildMotionDataUrl(
 
   // step 4: if not found, throw error
   if (!url) {
-    throw new Error(`Motion data not found for ${motionName}`);
+    throw new Error(`Motion data not found for ${modelName}`);
   }
 
-  return [url, motionBaseName];
+  return [url, modelBaseName + "_motion_base"];
 }
 
 async function getModelBaseUrl(modelName: string) {
