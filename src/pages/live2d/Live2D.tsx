@@ -3,16 +3,21 @@ import React, {
   useCallback,
   useEffect,
   useLayoutEffect,
-  // useMemo,
   useRef,
   useState,
 } from "react";
-// import Live2D from "@sekai-world/find-live2d-v3";
 import Axios from "axios";
-// import { LAppLive2DManager } from "@sekai-world/find-live2d-v3/dist/types/lapplive2dmanager";
-// import { LAppModel } from "@sekai-world/find-live2d-v3/dist/types/lappmodel";
-import { Alert, Autocomplete, Box } from "@mui/material";
 import {
+  Camera,
+  CloudDownload,
+  Fullscreen,
+  FullscreenExit,
+  RestartAlt,
+} from "@mui/icons-material";
+import {
+  Alert,
+  Autocomplete,
+  Box,
   Button,
   Grid,
   IconButton,
@@ -24,27 +29,18 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useTranslation } from "react-i18next";
-import {
-  Camera,
-  CloudDownload,
-  Fullscreen,
-  FullscreenExit,
-  RestartAlt,
-} from "@mui/icons-material";
-import JSZip from "jszip";
+import { Stage } from "@pixi/react";
 import { saveAs } from "file-saver";
 import fscreen from "fscreen";
-import { useLive2dModelList } from "../../utils/apiClient";
-import TypographyHeader from "../../components/styled/TypographyHeader";
+import JSZip from "jszip";
+import { useTranslation } from "react-i18next";
 import ContainerContent from "../../components/styled/ContainerContent";
-import { Stage } from "@pixi/react";
-// import { settings } from "pixi.js";
-import Live2dModel from "../../components/pixi/Live2dModel";
+import TypographyHeader from "../../components/styled/TypographyHeader";
+import { useLive2dModelList } from "../../utils/apiClient";
 import { InternalModel, Live2DModel } from "pixi-live2d-display-mulmotion";
+import Live2dModel from "../../components/pixi/Live2dModel";
 import { getModelData } from "../../utils/live2dLoader";
-
-// settings.RESOLUTION = window.devicePixelRatio * 2;
+import type { ILive2DModelData } from "../../types.d";
 
 const Live2DView: React.FC<unknown> = () => {
   const { t } = useTranslation();
@@ -54,7 +50,7 @@ const Live2DView: React.FC<unknown> = () => {
     null
   );
   const [modelName, setModelName] = useState<string | null>("");
-  const [modelData, setModelData] = useState<Record<string, any>>();
+  const [modelData, setModelData] = useState<ILive2DModelData>();
   const [motions, setMotions] = useState<string[]>([]);
   const [selectedMotion, setSelectedMotion] = useState<string | null>(null);
   const [expressions, setExpressions] = useState<string[]>([]);
@@ -294,7 +290,7 @@ const Live2DView: React.FC<unknown> = () => {
     setShowProgress(false);
     setProgress(0);
     setProgressWords("");
-  }, [expressions, modelName, motions, t]);
+  }, [modelName, t]);
 
   const handleScreenshot = useCallback(() => {
     if (stage.current && live2dModel.current) {
@@ -382,7 +378,7 @@ const Live2DView: React.FC<unknown> = () => {
           rowGap: theme.spacing(2),
         }}
       >
-        {!!modelData && (
+        {!!modelData && !showProgress && (
           <Toolbar component={Paper} sx={{ width: "100%" }}>
             <Grid container spacing={1} alignItems="center">
               <Grid item>
