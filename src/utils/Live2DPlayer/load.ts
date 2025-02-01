@@ -241,7 +241,7 @@ function discardMotion(
       unique_motion.push(m);
     }
   });
-  console.log(unique_motion);
+  // console.log(unique_motion);
   // prune
   modelData.forEach((md) => {
     const motion_for_this_model = unique_motion.filter(
