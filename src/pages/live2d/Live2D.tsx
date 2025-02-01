@@ -451,7 +451,7 @@ const Live2DView: React.FC<unknown> = () => {
                           label={t("live2d:select.motions")}
                         />
                       )}
-                      style={{ minWidth: "170px" }}
+                      style={{ minWidth: "250px" }}
                       size="small"
                     />
                   </Grid>
@@ -487,7 +487,7 @@ const Live2DView: React.FC<unknown> = () => {
                           label={t("live2d:select.expressions")}
                         />
                       )}
-                      style={{ minWidth: "170px" }}
+                      style={{ minWidth: "250px" }}
                       size="small"
                     />
                   </Grid>
