@@ -8,6 +8,7 @@ import {
   Ticker,
 } from "pixi.js";
 import React, { forwardRef, useEffect, useState } from "react";
+import { ILive2DModelData } from "../../types";
 
 interface Live2dModelProps {
   x?: number;
@@ -35,7 +36,7 @@ const Component = PixiComponent("Live2dModel", {
 
 const Live2dModel = forwardRef<
   Live2DModel<InternalModel>,
-  Live2dModelProps & { modelData?: Record<string, any>; onReady?: () => void }
+  Live2dModelProps & { modelData?: ILive2DModelData; onReady?: () => void }
 >((props, ref) => {
   const [model, setModel] = useState<Live2DModel<InternalModel>>();
   useEffect(() => {
