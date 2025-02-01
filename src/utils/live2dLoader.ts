@@ -12,8 +12,7 @@ export async function getModelData(
     Moc3FileName: string;
   }>(await getBuildModelDataUrl(modelName), { responseType: "json" });
   // step 2 - get motion data
-  const motionBaseName = getMotionBaseName(modelName);
-  const motionData = await getMotionData(modelName, motionBaseName);
+  const [motionBaseName, motionData] = await getMotionData(modelName);
   // step 3 - construct model
   const model3Json = (
     await Axios.get(await getModel3JsonUrl(modelName, modelData.Moc3FileName))
@@ -38,40 +37,21 @@ export async function getModelData(
   return model3Json;
 }
 
-function getMotionBaseName(modelName: string): string {
-  let motionName = modelName;
-  if (!motionName.startsWith("v2_sub") && !motionName.startsWith("sub_rival")) {
-    if (motionName.endsWith("_black")) {
-      motionName = motionName.slice(0, -6);
-    } else if (motionName.endsWith("black")) {
-      motionName = motionName.slice(0, -5);
-    }
-    if (
-      motionName?.startsWith("sub") ||
-      motionName?.startsWith("clb") ||
-      motionName.match(/^v2_\d{2}.*/)
-    ) {
-      motionName = motionName.split("_").slice(0, 2).join("_");
-    } else if (motionName.match(/^v2_clb\d{2}_\d{2}.*/)) {
-      motionName = "v2_" + motionName.split("_").slice(2, 3).join("_");
-    } else {
-      motionName = motionName.split("_")[0]!;
-    }
-  } else if (motionName?.startsWith("sub_rival")) {
-    motionName = motionName.split("_").slice(0, 3).join("_");
-  } else if (motionName?.startsWith("v2_sub_rival")) {
-    motionName = motionName.split("_").slice(0, 4).join("_");
-  }
-  return motionName + "_motion_base";
+interface Live2DMotionsExpressions {
+  motions: string[];
+  expressions: string[];
 }
 
-async function getMotionData(modelName: string, motionBaseName: string) {
-  let motionData;
+async function getMotionData(
+  modelName: string
+): Promise<[string, Live2DMotionsExpressions]> {
+  let motionData: Live2DMotionsExpressions;
+  const [motionDataUrl, motionBaseName] =
+    await getBuildMotionDataUrl(modelName);
   if (!modelName.startsWith("normal")) {
-    const motionRes = await Axios.get<{
-      motions: string[];
-      expressions: string[];
-    }>(await getBuildMotionDataUrl(motionBaseName), { responseType: "json" });
+    const motionRes = await Axios.get<Live2DMotionsExpressions>(motionDataUrl, {
+      responseType: "json",
+    });
     motionData = motionRes.data;
   } else {
     motionData = {
@@ -79,7 +59,7 @@ async function getMotionData(modelName: string, motionBaseName: string) {
       motions: [],
     };
   }
-  return motionData;
+  return [motionBaseName, motionData];
 }
 
 async function getBuildModelDataUrl(modelName: string) {
@@ -90,12 +70,42 @@ async function getBuildModelDataUrl(modelName: string) {
   );
 }
 
-async function getBuildMotionDataUrl(motionBaseName: string) {
-  return await getRemoteAssetURL(
-    `live2d/motion/${motionBaseName}_rip/BuildMotionData.json`,
+async function getBuildMotionDataUrl(
+  motionName: string
+): Promise<[string, string]> {
+  // try to find the correct motion data url
+  let motionBaseName = motionName;
+
+  // step 1: get from full name
+  let url = await getRemoteAssetURL(
+    `live2d/motion/${motionBaseName}_motion_base_rip/BuildMotionData.json`,
     undefined,
-    "minio"
+    "minio",
+    "jp",
+    true
   );
+
+  // step 2: reduce the name until base name
+  while (motionBaseName.split("_").length > 1) {
+    motionBaseName = motionBaseName.split("_").slice(0, -1).join("_");
+    url = await getRemoteAssetURL(
+      `live2d/motion/${motionBaseName}_motion_base_rip/BuildMotionData.json`,
+      undefined,
+      "minio",
+      "jp",
+      true
+    );
+    if (url) {
+      break;
+    }
+  }
+
+  // step 3: if not found, throw error
+  if (!url) {
+    throw new Error(`Motion data not found for ${motionName}`);
+  }
+
+  return [url, motionBaseName];
 }
 
 async function getModelBaseUrl(modelName: string) {
