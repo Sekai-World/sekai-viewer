@@ -143,15 +143,15 @@ const Live2DView: React.FC<unknown> = () => {
 
         setProgress(20);
         setProgressWords(t("live2d:load_progress.model_texture"));
-        await Axios.get(modelData.FileReferences.Textures[0]);
+        await Axios.get(modelData.url + modelData.FileReferences.Textures[0]);
 
         setProgress(40);
         setProgressWords(t("live2d:load_progress.model_moc3"));
-        await Axios.get(modelData.FileReferences.Moc);
+        await Axios.get(modelData.url + modelData.FileReferences.Moc);
 
         setProgress(60);
         setProgressWords(t("live2d:load_progress.model_physics"));
-        await Axios.get(modelData.FileReferences.Physics);
+        await Axios.get(modelData.url + modelData.FileReferences.Physics);
 
         setProgress(90);
         setProgressWords(t("live2d:load_progress.display_model"));
