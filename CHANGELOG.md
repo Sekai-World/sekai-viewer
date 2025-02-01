@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.14.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.14.2...v1.14.3) (2025-02-01)
+
+
+### Features
+
+* **live2d:** add model name transformation logic for motion base name retrieval ([6bc87b1](https://github.com/Sekai-World/sekai-viewer/commits/6bc87b120065b9424aafb670fe42c297c104eeb6))
+* **live2d:** add support for none 16:9 screen in fullscreen mode ([98ab4ba](https://github.com/Sekai-World/sekai-viewer/commits/98ab4ba1fce7a9fc6e1390776d8dda1445eb060c))
+* **live2d:** add volume and animation controller ([4610c51](https://github.com/Sekai-World/sekai-viewer/commits/4610c51fc4c7d3ccedda674ea2bd47f4afb4cc55))
+* **live2d:** implement fullscreentext effect ([b7b079f](https://github.com/Sekai-World/sekai-viewer/commits/b7b079fa0b9901edb1086dc9b454b7a17f163313))
+* **storyreader:** add character filter for areatalk ([9aecc27](https://github.com/Sekai-World/sekai-viewer/commits/9aecc273150ad8533444b7f99722d10dc047f57d))
+* **test:** add test page in dev mode to ensure every assets are exist for storyreader ([a1ba77b](https://github.com/Sekai-World/sekai-viewer/commits/a1ba77bf62a67115b9dc42a39843ae66b6d7733d))
+
+
+### Bug Fixes
+
+* **live2d:** areatalk not load properly ([58cec0e](https://github.com/Sekai-World/sekai-viewer/commits/58cec0ec81c7af1b92cb36850e44d9ac3e9c583f))
+* **live2d:** improve motion base name reduction logic for URL retrieval ([a9f4172](https://github.com/Sekai-World/sekai-viewer/commits/a9f41723c77a5480a60ee4dcd963bab462221bba))
+* **live2d:** set minWidth of motion and expression selector to 250px ([1bba9eb](https://github.com/Sekai-World/sekai-viewer/commits/1bba9eb16fcb4c191c2e4eb6391308c87a6242f5))
+* **live2d:** update motion name parsing for v2_clb format ([ca5204a](https://github.com/Sekai-World/sekai-viewer/commits/ca5204a67c0296f8893c168f1d888be21352a1d0))
+* **storyreader:** area sub name not display and translate ([ece5ef7](https://github.com/Sekai-World/sekai-viewer/commits/ece5ef7f440562862d50323c6b4d09c33df52998))
+
+
+### Refactors
+
+* **live2d:** clean up imports and improve model data type handling ([7d424a3](https://github.com/Sekai-World/sekai-viewer/commits/7d424a39504caaac284e7c58e76b1eb577c7eece))
+* **live2d:** create live2d loading module for live2d showcase and live2d reader ([d6cb52d](https://github.com/Sekai-World/sekai-viewer/commits/d6cb52dbd616ffc32028e86bd321eed38d998f6a))
+* **live2d:** simplify motion data retrieval and enhance error handling ([9895d73](https://github.com/Sekai-World/sekai-viewer/commits/9895d733ab49b346f0b6138f704cd3ad588b5131))
+* **live2d:** split live2d player action into multiple files ([5e3cc59](https://github.com/Sekai-World/sekai-viewer/commits/5e3cc59f5234c421f84e628b7d4e3ace0439f200))
+* **storyreader:** create story loading module for text and live2d reader ([7d79aae](https://github.com/Sekai-World/sekai-viewer/commits/7d79aae656bdcf486267c195d6c19a003a3207ee))
+* **storyreader:** create story selector for both text and live2d reader ([258f3c6](https://github.com/Sekai-World/sekai-viewer/commits/258f3c61744331837990cc3da8878b4d6d0fbd5e))
+
 ### [1.14.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.14.1...v1.14.2) (2025-01-23)
 
 
