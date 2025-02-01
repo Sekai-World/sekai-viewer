@@ -70,6 +70,17 @@ async function getBuildModelDataUrl(modelName: string) {
   );
 }
 
+type ModelNameTransformer = (modelName: string) => string;
+
+// { [RegExp]: Processor}
+const modelNameToMotionBaseName: Record<string, ModelNameTransformer> = {
+  // v2_clb\d{2}_(.*) to v2_$1, eg. v2_clb01_21miku to v2_21miku
+  "v2_clb\\d{2}_.*": (modelName: string) =>
+    modelName.replace(/v2_clb\d{2}_/, "v2_"),
+  // (.*)\d{2}$ to $1, eg. 21miku01 to 21miku
+  "(.*)\\d{2}$": (modelName: string) => modelName.replace(/\d{2}$/, ""),
+};
+
 async function getBuildMotionDataUrl(
   motionName: string
 ): Promise<[string, string]> {
@@ -85,7 +96,29 @@ async function getBuildMotionDataUrl(
     true
   );
 
-  // step 2: reduce the name until base name
+  // step 2: check if the motion name is in the map
+  if (!url) {
+    for (const [pattern, processor] of Object.entries(
+      modelNameToMotionBaseName
+    )) {
+      const regExp = new RegExp(pattern);
+      if (regExp.test(motionName)) {
+        motionBaseName = processor(motionName);
+
+        // try to get url
+        url = await getRemoteAssetURL(
+          `live2d/motion/${motionBaseName}_motion_base_rip/BuildMotionData.json`,
+          undefined,
+          "minio",
+          "jp",
+          true
+        );
+        break;
+      }
+    }
+  }
+
+  // step 3: reduce the name until base name
   while (!url && motionBaseName.split("_").length > 1) {
     motionBaseName = motionBaseName.split("_").slice(0, -1).join("_");
     url = await getRemoteAssetURL(
@@ -97,7 +130,7 @@ async function getBuildMotionDataUrl(
     );
   }
 
-  // step 3: if not found, throw error
+  // step 4: if not found, throw error
   if (!url) {
     throw new Error(`Motion data not found for ${motionName}`);
   }
