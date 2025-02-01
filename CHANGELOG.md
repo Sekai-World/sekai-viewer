@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.14.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.14.3...v1.14.4) (2025-02-01)
+
+
+### Bug Fixes
+
+* **live2d:** return the right motion base name ([767dd29](https://github.com/Sekai-World/sekai-viewer/commits/767dd293a7bf5db4dd9e03b0583d2db2000a8c38))
+* **live2d:** update texture, moc, and physics file URLs to include modelData.url ([e69dd7d](https://github.com/Sekai-World/sekai-viewer/commits/e69dd7db513a951f0ab5d27382b9c619dbbc52dc))
+
+
+### Refactors
+
+* **live2d:** refactor nextStep function to use useCallback for better performance ([2fe97aa](https://github.com/Sekai-World/sekai-viewer/commits/2fe97aad202487ccc4b110e86604c406d063dfde))
+
 ### [1.14.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.14.2...v1.14.3) (2025-02-01)
 
 
