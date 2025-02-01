@@ -5,6 +5,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
   useEffect,
+  useCallback,
 } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -99,6 +100,20 @@ const StoryReaderLive2DCanvas: React.FC<{
   const [textAnimation, setTextAnimation] = useState(true);
   const [autoplay, setAutoplay] = useState(false);
 
+  const nextStep = useCallback(() => {
+    if (!playing && !autoplayWaiting && scenarioStep !== -1) {
+      setPlaying(true);
+      stage.current?.controller
+        .step_until_checkpoint(scenarioStep)
+        .then((current) => {
+          setScenarioStep(current);
+          setPlaying(false);
+        });
+    } else {
+      stage.current?.controller.animate.abort();
+    }
+  }, [autoplayWaiting, playing, scenarioStep]);
+
   // change canvas size
   useLayoutEffect(() => {
     const update_stage_size = () => {
@@ -132,7 +147,7 @@ const StoryReaderLive2DCanvas: React.FC<{
         nextStep();
       });
     }
-  }, [autoplay, playing]);
+  }, [autoplay, loadStatus, nextStep, playing]);
 
   //DEBUG
   /*
@@ -212,20 +227,6 @@ const StoryReaderLive2DCanvas: React.FC<{
         });
       }
       nextStep();
-    }
-  };
-
-  const nextStep = () => {
-    if (!playing && !autoplayWaiting && scenarioStep !== -1) {
-      setPlaying(true);
-      stage.current?.controller
-        .step_until_checkpoint(scenarioStep)
-        .then((current) => {
-          setScenarioStep(current);
-          setPlaying(false);
-        });
-    } else {
-      stage.current?.controller.animate.abort();
     }
   };
 
