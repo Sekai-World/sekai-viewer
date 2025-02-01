@@ -86,7 +86,7 @@ async function getBuildMotionDataUrl(
   );
 
   // step 2: reduce the name until base name
-  while (motionBaseName.split("_").length > 1) {
+  while (!url && motionBaseName.split("_").length > 1) {
     motionBaseName = motionBaseName.split("_").slice(0, -1).join("_");
     url = await getRemoteAssetURL(
       `live2d/motion/${motionBaseName}_motion_base_rip/BuildMotionData.json`,
@@ -95,9 +95,6 @@ async function getBuildMotionDataUrl(
       "jp",
       true
     );
-    if (url) {
-      break;
-    }
   }
 
   // step 3: if not found, throw error
