@@ -52,6 +52,8 @@ function getMotionBaseName(modelName: string): string {
       motionName.match(/^v2_\d{2}.*/)
     ) {
       motionName = motionName.split("_").slice(0, 2).join("_");
+    } else if (motionName.match(/^v2_clb\d{2}_\d{2}.*/)) {
+      motionName = "v2_" + motionName.split("_").slice(2, 3).join("_");
     } else {
       motionName = motionName.split("_")[0]!;
     }
