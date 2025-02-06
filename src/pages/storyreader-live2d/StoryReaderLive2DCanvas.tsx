@@ -100,7 +100,17 @@ const StoryReaderLive2DCanvas: React.FC<{
   const [textAnimation, setTextAnimation] = useState(true);
   const [autoplay, setAutoplay] = useState(false);
 
-  const nextStep = useCallback(() => {
+  /**
+   * next step process:
+   * - triggered by user click
+   *   - auto play = true or autoplayWaiting = true or playing = true
+   *     - abort player / auto play delay
+   *   - else
+   *     - next step
+   * - triggered by auto play / model load finish
+   *   - playing = false -> next step
+   */
+  const nextStepClick = useCallback(() => {
     if (!playing && !autoplayWaiting && scenarioStep !== -1) {
       setPlaying(true);
       stage.current?.controller
@@ -113,6 +123,17 @@ const StoryReaderLive2DCanvas: React.FC<{
       stage.current?.controller.animate.abort();
     }
   }, [autoplayWaiting, playing, scenarioStep]);
+  const nextStepAuto = useCallback(() => {
+    if (!playing && scenarioStep !== -1) {
+      setPlaying(true);
+      stage.current?.controller
+        .step_until_checkpoint(scenarioStep)
+        .then((current) => {
+          setScenarioStep(current);
+          setPlaying(false);
+        });
+    }
+  }, [playing, scenarioStep]);
 
   // change canvas size
   useLayoutEffect(() => {
@@ -144,10 +165,10 @@ const StoryReaderLive2DCanvas: React.FC<{
       setAutoplayWaiting(true);
       stage.current?.controller.animate.delay(1500).then(() => {
         setAutoplayWaiting(false);
-        nextStep();
+        nextStepAuto();
       });
     }
-  }, [autoplay, loadStatus, nextStep, playing]);
+  }, [autoplay, loadStatus, playing]);
 
   //DEBUG
   /*
@@ -207,7 +228,7 @@ const StoryReaderLive2DCanvas: React.FC<{
     e.stopPropagation();
     e.preventDefault();
     if (loadStatus === LoadStatus.Loaded && canClick) {
-      nextStep();
+      nextStepClick();
       setCanClick(false);
       setTimeout(() => {
         setCanClick(true);
@@ -226,7 +247,7 @@ const StoryReaderLive2DCanvas: React.FC<{
           voice_volume: voiceVolume / 100,
         });
       }
-      nextStep();
+      nextStepAuto();
     }
   };
 
