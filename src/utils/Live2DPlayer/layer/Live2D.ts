@@ -22,6 +22,7 @@ import {
   config,
 } from "pixi-live2d-display-mulmotion";
 config.fftSize = 8192;
+config.logLevel = config.LOG_LEVEL_ERROR;
 import type { Live2DModelOptions } from "pixi-live2d-display-mulmotion";
 
 // effects
