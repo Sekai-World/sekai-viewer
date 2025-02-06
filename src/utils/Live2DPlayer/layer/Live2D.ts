@@ -310,14 +310,18 @@ export default class Live2D extends BaseLayer {
     }
   };
   remove_filter = () => {
-    // remove filter
-    let idx = -1;
-    do {
-      idx = this.root.filters!.findIndex((f) => f instanceof ColorMatrixFilter);
-      if (idx !== -1) {
-        this.root.filters?.splice(idx, 1);
-      }
-    } while (idx !== -1);
+    // remove all ColorMatrixFilter
+    if (this.root.filters) {
+      let idx = -1;
+      do {
+        idx = this.root.filters.findIndex(
+          (f) => f instanceof ColorMatrixFilter
+        );
+        if (idx !== -1) {
+          this.root.filters?.splice(idx, 1);
+        }
+      } while (idx !== -1);
+    }
   };
 
   destroy() {
