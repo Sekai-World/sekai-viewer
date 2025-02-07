@@ -2,8 +2,6 @@ import React, {
   useState,
   useRef,
   useLayoutEffect,
-  forwardRef,
-  useImperativeHandle,
   useEffect,
   useCallback,
 } from "react";
@@ -19,63 +17,18 @@ import {
 } from "@mui/material";
 import { VolumeDown, VolumeUp } from "@mui/icons-material";
 
-import { Stage, useApp } from "@pixi/react";
-
-import { extensions, TickerPlugin } from "pixi.js";
-extensions.add(TickerPlugin);
+import { Stage } from "@pixi/react";
 
 import { Live2DController } from "../../utils/Live2DPlayer/Live2DController";
 import { LoadStatus } from "../../utils/Live2DPlayer/types.d";
 import type { ILive2DControllerData } from "../../utils/Live2DPlayer/types.d";
 
+import StoryReaderLive2DStage from "./StoryReaderLive2DStage";
+
 //DEBUG
 //import { Box, Button, TextField } from "@mui/material";
 //import { SnippetAction, SpecialEffectType } from "../../types.d";
 //DEBUG/
-
-const StoryReaderLive2DStage = forwardRef<
-  { controller: Live2DController; reloadStage: () => void },
-  {
-    stageSize: [number, number];
-    controllerData: ILive2DControllerData;
-    onModelLoad: (status: LoadStatus) => void;
-  }
->(({ stageSize, controllerData, onModelLoad }, ref) => {
-  const app = useApp();
-  const controller = useRef<Live2DController>();
-  useImperativeHandle(ref, () => {
-    return {
-      controller: controller.current!,
-      reloadStage: reloadStage,
-    };
-  });
-  useEffect(() => {
-    controller.current?.set_stage_size(stageSize);
-  }, [stageSize]);
-  useEffect(() => {
-    controller.current = new Live2DController(app, stageSize, controllerData);
-    //DEBUG
-    //window.controller = controller.current;
-    //DEBUG/
-    if (controller.current.layers.live2d.load_status() === "ready") {
-      onModelLoad(LoadStatus.Loading);
-      controller.current.layers.live2d.clear();
-      controller.current.live2d_load_model(0).then(() => {
-        onModelLoad(LoadStatus.Loaded);
-      });
-    }
-    return () => {
-      controller.current?.unload();
-    };
-  }, []);
-  function reloadStage() {
-    controller.current = new Live2DController(app, stageSize, controllerData);
-    controller.current.layers.live2d.clear();
-    controller.current.live2d_load_model(0);
-  }
-  return null;
-});
-StoryReaderLive2DStage.displayName = "StoryReaderLive2DStage";
 
 const StoryReaderLive2DCanvas: React.FC<{
   controllerData: ILive2DControllerData;
@@ -90,6 +43,7 @@ const StoryReaderLive2DCanvas: React.FC<{
 
   const [stageSize, setStageSize] = useState<[number, number]>([0, 0]);
   const [scenarioStep, setScenarioStep] = useState(0);
+  const [finished, setFinished] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [autoplayWaiting, setAutoplayWaiting] = useState(false);
   const [canClick, setCanClick] = useState(true);
@@ -122,6 +76,7 @@ const StoryReaderLive2DCanvas: React.FC<{
     } else {
       stage.current?.controller.animate.abort();
     }
+    if (scenarioStep === -1) setFinished(true);
   }, [autoplayWaiting, playing, scenarioStep]);
   const nextStepAuto = useCallback(() => {
     if (!playing && scenarioStep !== -1) {
@@ -133,6 +88,7 @@ const StoryReaderLive2DCanvas: React.FC<{
           setPlaying(false);
         });
     }
+    if (scenarioStep === -1) setFinished(true);
   }, [playing, scenarioStep]);
 
   // change canvas size
@@ -308,7 +264,7 @@ const StoryReaderLive2DCanvas: React.FC<{
           {t("story_reader_live2d:progress.load_model_to_canvas")}
         </Typography>
       )}
-      <div ref={wrap}>
+      <div ref={wrap} style={{ position: "relative" }}>
         <Stage
           width={stageSize[0]}
           height={stageSize[1]}
@@ -328,6 +284,24 @@ const StoryReaderLive2DCanvas: React.FC<{
             />
           )}
         </Stage>
+        {finished && (
+          <Stack
+            alignItems="center"
+            justifyContent="center"
+            sx={{
+              height: "100%",
+              width: "100%",
+              position: "absolute",
+              top: 0,
+              left: 0,
+              backgroundColor: "rgba(255, 255, 255, 0.7)",
+            }}
+          >
+            <Typography variant="h6">
+              {t("story_reader_live2d:story_ended")}
+            </Typography>
+          </Stack>
+        )}
       </div>
       {controllerData && (
         <Stack spacing={1} direction="column" sx={{ marginTop: 3 }}>
