@@ -127,6 +127,14 @@ export interface IProgressEvent {
   );
 }
 
+export interface ILive2DPlayerSettings {
+  voiceVolume: number;
+  seVolume: number;
+  bgmVolume: number;
+  autoplay: boolean;
+  textAnimation: boolean;
+}
+
 export enum LoadStatus {
   Ready,
   Loading,

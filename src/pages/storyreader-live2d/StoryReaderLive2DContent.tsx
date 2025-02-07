@@ -13,12 +13,20 @@ import {
   ILive2DControllerData,
   IProgressEvent,
   LoadStatus,
+  ILive2DPlayerSettings,
 } from "../../utils/Live2DPlayer/types.d";
 
 import { IScenarioData, ServerRegion } from "../../types.d";
 import ContainerContent from "../../components/styled/ContainerContent";
-import { Stack, Button, Typography, LinearProgress } from "@mui/material";
+import {
+  Stack,
+  Button,
+  Typography,
+  LinearProgress,
+  Collapse,
+} from "@mui/material";
 import StoryReaderLive2DCanvas from "./StoryReaderLive2DCanvas";
+import StoryReaderLive2DSettings from "./StoryReaderLive2DSettings";
 import { useAlertSnackbar } from "../../utils";
 
 const StoryReaderLive2DContent: React.FC<{
@@ -35,6 +43,14 @@ const StoryReaderLive2DContent: React.FC<{
   const [loadStatus, setLoadStatus] = useState(LoadStatus.Ready);
   const [loadProgress, setLoadProgress] = useState(0);
   const [progressText, setProgressText] = useState("");
+  const [settings, setSettings] = useState<ILive2DPlayerSettings>({
+    voiceVolume: 80,
+    seVolume: 80,
+    bgmVolume: 30,
+    autoplay: false,
+    textAnimation: true,
+  });
+  const [showSettings, setShowSettings] = useState(false);
 
   const { showError } = useAlertSnackbar();
 
@@ -167,8 +183,22 @@ const StoryReaderLive2DContent: React.FC<{
         >
           {t("story_reader_live2d:toggle_full_screen")}
         </Button>
+        <Button
+          variant="contained"
+          onClick={() => setShowSettings(!showSettings)}
+          sx={{ flex: 1 }}
+        >
+          {showSettings
+            ? t("story_reader_live2d:hide_settings")
+            : t("story_reader_live2d:show_settings")}
+        </Button>
       </Stack>
-
+      <Collapse in={showSettings}>
+        <StoryReaderLive2DSettings
+          settings={settings}
+          onSettingsChange={(settings) => setSettings(settings)}
+        />
+      </Collapse>
       {loadStatus === LoadStatus.Loading && (
         <>
           <LinearProgress variant="determinate" value={loadProgress} />
@@ -179,6 +209,7 @@ const StoryReaderLive2DContent: React.FC<{
         <div ref={canvas} style={{ userSelect: "none" }}>
           <StoryReaderLive2DCanvas
             controllerData={controllerData.current}
+            settings={settings}
           ></StoryReaderLive2DCanvas>
         </div>
       )}
