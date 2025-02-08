@@ -52,7 +52,7 @@ const StoryReaderContent: React.FC<{
           if (info.episodeTitle) setEpisodeTitle(info.episodeTitle);
           if (info.releaseConditionId)
             setReleaseConditionId(info.releaseConditionId);
-          return getProcessedScenarioDataForText(info, region);
+          return getProcessedScenarioDataForText(info);
         }
       })
       .then((data) => {

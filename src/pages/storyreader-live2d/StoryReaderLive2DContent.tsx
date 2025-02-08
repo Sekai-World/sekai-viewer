@@ -116,10 +116,8 @@ const StoryReaderLive2DContent: React.FC<{
     if (scenarioInfo) {
       // // step 2 - get scenario data
       setProgressText(t("story_reader_live2d:progress.get_scenario_data"));
-      scenarioData.current = await getProcessedScenarioDataForLive2D(
-        scenarioInfo,
-        region
-      );
+      scenarioData.current =
+        await getProcessedScenarioDataForLive2D(scenarioInfo);
       setLoadProgress(2);
       // step 3 - get controller data (preload media)
       // step 3.1 - load media url
@@ -127,8 +125,7 @@ const StoryReaderLive2DContent: React.FC<{
       try {
         mediaUrl = await getMediaUrlForLive2D(
           scenarioInfo,
-          scenarioData.current,
-          region
+          scenarioData.current
         );
       } catch (err) {
         if (err instanceof Error) showError(err.message);

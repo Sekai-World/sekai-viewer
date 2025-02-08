@@ -41,6 +41,9 @@ export interface IScenarioInfo {
   chapterTitle?: string;
   episodeTitle?: string;
   releaseConditionId?: number;
+  storyType: string;
+  storyId: string;
+  region: ServerRegion;
 }
 
 export function useScenarioInfo() {
@@ -76,6 +79,9 @@ export function useScenarioInfo() {
             );
             if (!episode) throw new Error(`Episode ${episodeNo} not found`);
             return {
+              storyType,
+              storyId,
+              region,
               bannerUrl: await getRemoteAssetURL(
                 `story/episode_image/${chapter.assetbundleName}_rip/${episode.assetbundleName}.webp`,
                 undefined,
@@ -109,6 +115,9 @@ export function useScenarioInfo() {
             );
             if (!episode) throw new Error(`Episode ${episodeNo} not found`);
             return {
+              storyType,
+              storyId,
+              region,
               bannerUrl: await getRemoteAssetURL(
                 `event_story/${chapter.assetbundleName}/episode_image_rip/${episode.assetbundleName}.webp`,
                 undefined,
@@ -135,6 +144,9 @@ export function useScenarioInfo() {
             );
             if (!episode) throw new Error(`Episode ${charaId} not found`);
             return {
+              storyType,
+              storyId,
+              region,
               bannerUrl: charaIcons[`CharaIcon${charaId}` as "CharaIcon1"],
               scenarioDataUrl: `scenario/profile_rip/${episode.scenarioId}.asset`,
               isCardStory: false,
@@ -163,6 +175,9 @@ export function useScenarioInfo() {
 
             if (assetbundleName) {
               return {
+                storyType,
+                storyId,
+                region,
                 bannerUrl: `character/member_small/${assetbundleName}_rip/card_normal.webp`,
                 scenarioDataUrl:
                   region === "en"
@@ -191,6 +206,9 @@ export function useScenarioInfo() {
             if (!episode.scenarioId)
               throw new Error(`Episode id of ${actionSetId} not exist`);
             return {
+              storyType,
+              storyId,
+              region,
               bannerUrl: undefined,
               scenarioDataUrl: `scenario/actionset/group${Math.floor(episode.id / 100)}_rip/${
                 episode.scenarioId
@@ -213,6 +231,9 @@ export function useScenarioInfo() {
             );
             if (!episode) throw new Error(`Episode ${episodeNo} not found`);
             return {
+              storyType,
+              storyId,
+              region,
               bannerUrl: undefined,
               scenarioDataUrl: episode.scenarioId.startsWith("op")
                 ? `scenario/special/${chapter.assetbundleName}_rip/${episode.scenarioId}.asset`
@@ -250,7 +271,7 @@ export function useProcessedScenarioDataForText() {
   const getCharaName = useCharaName();
 
   return useCallback(
-    async (info: IScenarioInfo, region: ServerRegion) => {
+    async (info: IScenarioInfo) => {
       const ret: {
         characters: { id: number; name: string }[];
         actions: { [key: string]: any }[];
@@ -266,7 +287,7 @@ export function useProcessedScenarioDataForText() {
           info.scenarioDataUrl,
           undefined,
           "minio",
-          region
+          info.region
         ),
         {
           responseType: "json",
@@ -368,7 +389,7 @@ export function useProcessedScenarioDataForText() {
                       talkData,
                       info.isCardStory,
                       info.isActionSet,
-                      region,
+                      info.region,
                       chara2d
                     )
                   : "",
@@ -444,12 +465,16 @@ export function useProcessedScenarioDataForText() {
 
 export async function getProcessedScenarioDataForLive2D(
   info: IScenarioInfo,
-  region: ServerRegion,
   data?: IScenarioData
 ) {
   if (!data) {
     const res: { data: IScenarioData } = await Axios.get(
-      await getRemoteAssetURL(info.scenarioDataUrl, undefined, "minio", region),
+      await getRemoteAssetURL(
+        info.scenarioDataUrl,
+        undefined,
+        "minio",
+        info.region
+      ),
       {
         responseType: "json",
       }
@@ -533,11 +558,7 @@ export function useMediaUrlForLive2D() {
   const [chara2Ds] = useCachedData<ICharacter2D>("character2ds");
 
   return useCallback(
-    async (
-      info: IScenarioInfo,
-      snData: IScenarioData,
-      region: ServerRegion
-    ) => {
+    async (info: IScenarioInfo, snData: IScenarioData) => {
       const ret: ILive2DAssetUrl[] = [];
       if (!chara2Ds) throw new Error("Characters not loaded. Please retry.");
       const voiceMap: {
@@ -569,7 +590,7 @@ export function useMediaUrlForLive2D() {
                     talkData,
                     info.isCardStory,
                     info.isActionSet,
-                    region,
+                    info.region,
                     chara2d
                   ),
                 });
