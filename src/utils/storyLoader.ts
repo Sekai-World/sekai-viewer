@@ -481,6 +481,7 @@ export async function getProcessedScenarioDataForLive2D(
     );
     data = res.data;
   }
+  modelNameFix(info, data);
   const {
     Snippets,
     SpecialEffectData,
@@ -772,4 +773,79 @@ export async function getTalkVoiceUrl(
       "minio"
     );
   } else return "";
+}
+
+/**
+ * fix typo in story model name.
+ * rules see "map".
+ */
+function modelNameFix(info: IScenarioInfo, data: IScenarioData) {
+  const story = info.storyId.split("/").slice(2).join("/");
+  const map = [
+    {
+      // this is not typo, need to check why these black models are lost.
+      story: "cardStory/17/1109/2121",
+      map: [
+        { from: "v2_14emu_casual_black", to: "v2_14emu_casual" },
+        { from: "v2_15nene_casual_black", to: "v2_15nene_casual" },
+        { from: "v2_01ichika_casual_black", to: "v2_01ichika_casual" },
+        { from: "v2_03honami_casual_black", to: "v2_03honami_casual" },
+      ],
+    },
+    //{ // this story is totally broken... cant fix
+    //  story: "specialStory/2/1",
+    //  map: [
+    //    { from: "light_sound_a_normal", to: "21miku_normal" },
+    //    { from: "light_sound_b_normal", to: "21miku_normal" },
+    //    { from: "miku_normal", to: "21miku_normal" },
+    //  ],
+    //},
+    {
+      story: "eventStory/74/5",
+      map: [{ from: "\\", to: "13tsukasa_unit" }],
+    },
+    {
+      story: "cardStory/6/1057/2071",
+      map: [{ from: "b", to: "v2_06haruka_lesson" }],
+    },
+    {
+      story: "cardStory/25/1027/2012",
+      map: [
+        { from: "3", to: "v2_25meiko_normal" },
+        { from: "1", to: "v2_25meiko_normal" },
+      ],
+    },
+    {
+      story: "areaTalk/7/1838",
+      map: [{ from: "v2_v2_23len_idol", to: "v2_23len_idol" }],
+    },
+    {
+      story: "areaTalk/7/1839",
+      map: [{ from: "v2_v2_25meiko_idol", to: "v2_25meiko_idol" }],
+    },
+    {
+      story: "areaTalk/13/1979",
+      map: [{ from: "w-happy-nod05", to: "v2_01ichika_school01" }],
+    },
+  ].find((m) => m.story === story);
+  if (map) {
+    map.map.forEach((m) => {
+      data.AppearCharacters.filter((c) => c.CostumeType === m.from).forEach(
+        (c) => (c.CostumeType = m.to)
+      );
+      data.LayoutData.filter((l) => l.CostumeType === m.from).forEach(
+        (l) => (l.CostumeType = m.to)
+      );
+      data.FirstLayout.filter((l) => l.CostumeType === m.from).forEach(
+        (l) => (l.CostumeType = m.to)
+      );
+      // remove duplicate
+      const uniqueCharacters = [
+        ...new Set(data.AppearCharacters.map((c) => c.CostumeType)),
+      ];
+      data.AppearCharacters = uniqueCharacters.map(
+        (c) => data.AppearCharacters.find((ap) => ap.CostumeType === c)!
+      );
+    });
+  }
 }
