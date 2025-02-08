@@ -62,7 +62,7 @@ async function getMotionData(
   return [motionBaseName, motionData];
 }
 
-async function getBuildModelDataUrl(modelName: string) {
+export async function getBuildModelDataUrl(modelName: string) {
   return await getRemoteAssetURL(
     `live2d/model/${modelName}_rip/buildmodeldata.asset`,
     undefined,
@@ -81,7 +81,7 @@ const modelNameToMotionBaseName: Record<string, ModelNameTransformer> = {
   "(.*)\\d{2}$": (modelName: string) => modelName.replace(/\d{2}$/, ""),
 };
 
-async function getBuildMotionDataUrl(
+export async function getBuildMotionDataUrl(
   modelName: string
 ): Promise<[string, string]> {
   // try to find the correct motion data url

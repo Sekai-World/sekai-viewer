@@ -347,6 +347,11 @@ export async function getRemoteAssetURL(
   const url = `${assetUrl[domainKey][server]}/${endpoint}`;
 
   if (verifyStatus) {
+    if (window.AssetTest) {
+      // if in test mode, check asset list other than internet
+      if (window.AssetTest.assetList!.includes(endpoint)) return url;
+      else return "";
+    }
     const headRes = await Axios.head(url, {
       validateStatus: (status) => status < 500,
     });
