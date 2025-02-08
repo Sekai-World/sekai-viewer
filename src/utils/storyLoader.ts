@@ -33,7 +33,7 @@ import { charaIcons } from "./resources";
 
 import { fixVoiceUrl } from "./voiceFinder";
 
-interface IScenarioInfo {
+export interface IScenarioInfo {
   bannerUrl?: string;
   scenarioDataUrl: string;
   isCardStory: boolean;

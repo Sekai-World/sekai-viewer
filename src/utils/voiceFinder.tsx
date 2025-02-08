@@ -76,7 +76,7 @@ export const getVoiceListElements = async function (
 
 const getVoiceListElementsLocalTest = function (pathname: string) {
   const acc: Record<string, string> = {};
-  const voiceList = ((window as any).assetList as string[]).filter(
+  const voiceList = ((window as any).AssetTest.assetList as string[]).filter(
     (a) => a.startsWith(pathname) && a.endsWith(".mp3")
   );
   for (const v of voiceList) {
@@ -110,7 +110,7 @@ export const fixVoiceUrl = async function (
     voiceList = voiceMap[dirUrl];
   } else {
     // If in test mode, asset list is loaded:
-    if ((window as any).assetList) {
+    if (window.AssetTest) {
       voiceMap[dirUrl] = getVoiceListElementsLocalTest(dirUrl);
     } else {
       voiceMap[dirUrl] = await getVoiceListElements({}, region, dirUrl);
