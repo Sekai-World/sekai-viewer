@@ -70,7 +70,6 @@ const PATH_STORY_DIR = "/scenario_data/";
 const PATH_MOTION_DIR = "/motion_data/";
 const PATH_MEDIA_LOST = "/media_lost-20250128.json";
 const PATH_MOTIONS = "/motions-20250207.json";
-const REGION = "jp";
 const convert_asset_url = (url: string) =>
   url.replace("/minio/sekai-jp-assets/", "");
 
@@ -316,10 +315,7 @@ const Main: React.FC = () => {
     window.AssetTest.assetList = res.data.map((d: string[]) => d[1]);
     console.log("load asset list finish.");
   };
-  const load_story_scenario_data = async (
-    scenario: IScenarioInfo,
-    region: ServerRegion
-  ) => {
+  const load_story_scenario_data = async (scenario: IScenarioInfo) => {
     let data: IScenarioData | undefined;
     try {
       const res: { data: IScenarioData } = await Axios.get(
@@ -333,11 +329,7 @@ const Main: React.FC = () => {
       console.log(`${scenario.scenarioDataUrl} not in local. skip.`);
     }
     if (data) {
-      const processed = await getProcessedScenarioDataForLive2D(
-        scenario,
-        region,
-        data
-      );
+      const processed = await getProcessedScenarioDataForLive2D(scenario, data);
       return processed;
     }
   };
@@ -456,9 +448,9 @@ const Main: React.FC = () => {
     scenario: IScenarioInfo
   ): Promise<string[]> => {
     const not_exist = [];
-    const processed = await load_story_scenario_data(scenario, REGION);
+    const processed = await load_story_scenario_data(scenario);
     if (processed) {
-      const mediaUrl = await getMediaUrlForLive2D(scenario, processed, REGION);
+      const mediaUrl = await getMediaUrlForLive2D(scenario, processed);
       // check
       for (const m of mediaUrl) {
         if (!window.AssetTest.assetList!.includes(convert_asset_url(m.url)))
@@ -510,7 +502,7 @@ const Main: React.FC = () => {
     console.log(window.AssetTest.storyModels);
   };
   const get_story_model = async (scenario: IScenarioInfo) => {
-    const processed = await load_story_scenario_data(scenario, REGION);
+    const processed = await load_story_scenario_data(scenario);
     if (processed) {
       // get model
       const models = processed.AppearCharacters;
