@@ -137,7 +137,7 @@ export default class Live2D extends BaseLayer {
         () => manager.destroyed || manager.isFinished()
       );
       await model.live2DInfo.wait_motion;
-      model.live2DInfo.init_pose = true;
+      model.live2DInfo.t_pose = false;
     }
   };
 
@@ -338,7 +338,7 @@ class Live2DModelWithInfo extends Live2DModel {
       cid: -1,
       costume: "",
       position: [0.5, 0.5],
-      init_pose: false,
+      t_pose: true,
       hidden: true,
       speaking: false,
       wait_motion: Promise.resolve(),

@@ -28,6 +28,8 @@ export class Live2DController extends Live2DPlayer {
   current_costume: {
     cid: number;
     costume: string;
+    motion: string;
+    expression: string;
     appear_time: number;
     animations: string[];
   }[] = [];
@@ -251,6 +253,14 @@ export class Live2DController extends Live2DPlayer {
       );
     await single_action(this, action);
   };
+  /**
+   * apply motions. If model is T-pose,
+   * and motion name or facial name is empty,
+   * apply last motion/expression.
+   * @param costume
+   * @param motion
+   * @param expression
+   */
   apply_live2d_motion = async (
     costume: string,
     motion: string,
@@ -260,26 +270,43 @@ export class Live2DController extends Live2DPlayer {
       "Live2DController",
       `apply motion: ${costume}|${motion}|${expression}`
     );
-    const model = this.modelData.find((n) => n.costume === costume);
+    const model_data = this.modelData.find((n) => n.costume === costume);
+    const current_model = this.current_costume.find(
+      (p) => p.costume === costume
+    );
+    const model_obj = this.layers.live2d.find(costume);
     const wait_list = [];
-    if (model) {
+    if (model_data && current_model && model_obj) {
+      // if model is T-pose, update motion and expression
+      if (model_obj.live2DInfo.t_pose) {
+        motion = motion === "" ? current_model.motion : motion;
+        expression = expression === "" ? current_model.expression : expression;
+        log.log(
+          "Live2DController",
+          `actual applied motion: ${costume}|${motion}|${expression}`
+        );
+      }
       if (expression !== "") {
-        const index = model.data.FileReferences.Motions.Expression.map(
+        const index = model_data.data.FileReferences.Motions.Expression.map(
           (m) => m.Name
         ).indexOf(expression);
         if (index === -1)
           log.error("Live2DController", `${expression} not found.`);
         wait_list.push(
-          this.layers.live2d.update_motion("Expression", costume, index)
+          this.layers.live2d
+            .update_motion("Expression", costume, index)
+            .then((_) => (current_model.expression = expression))
         );
       }
       if (motion !== "") {
-        const index = model.data.FileReferences.Motions.Motion.map(
+        const index = model_data.data.FileReferences.Motions.Motion.map(
           (m) => m.Name
         ).indexOf(motion);
         if (index === -1) log.error("Live2DController", `${motion} not found.`);
         wait_list.push(
-          this.layers.live2d.update_motion("Motion", costume, index)
+          this.layers.live2d
+            .update_motion("Motion", costume, index)
+            .then((_) => (current_model.motion = motion))
         );
       }
     }
@@ -322,6 +349,8 @@ export class Live2DController extends Live2DPlayer {
       this.current_costume.push({
         cid: cid,
         costume: costume,
+        motion: "",
+        expression: "",
         appear_time: Date.now(),
         animations: [],
       });
