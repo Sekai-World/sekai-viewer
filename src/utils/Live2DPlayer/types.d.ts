@@ -51,9 +51,9 @@ export interface Ilive2DModelInfo {
   costume: string;
   position: [number, number];
   /**
-   * True when model is not T-pose.
+   * True when model is T-pose.
    */
-  init_pose: boolean;
+  t_pose: boolean;
   /**
    * This param is for show/hide animation.
    * For model visibility, use Live2DModelWithInfo.visible
