@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useRef,
-  useLayoutEffect,
-  useEffect,
-  useCallback,
-} from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { CircularProgress, Typography, Stack } from "@mui/material";
 
@@ -27,7 +21,8 @@ import StoryReaderLive2DStage from "./StoryReaderLive2DStage";
 const StoryReaderLive2DCanvas: React.FC<{
   controllerData: ILive2DControllerData;
   settings: ILive2DPlayerSettings;
-}> = ({ controllerData, settings }) => {
+  stageSize: [number, number];
+}> = ({ controllerData, settings, stageSize }) => {
   const { t } = useTranslation();
 
   const wrap = useRef<HTMLDivElement>(null);
@@ -36,7 +31,6 @@ const StoryReaderLive2DCanvas: React.FC<{
     reloadStage: () => void;
   }>(null);
 
-  const [stageSize, setStageSize] = useState<[number, number]>([0, 0]);
   const [scenarioStep, setScenarioStep] = useState(0);
   const [finished, setFinished] = useState(false);
   const [playing, setPlaying] = useState(false);
@@ -80,30 +74,6 @@ const StoryReaderLive2DCanvas: React.FC<{
     }
     if (scenarioStep === -1) setFinished(true);
   }, [playing, scenarioStep]);
-
-  // change canvas size
-  useLayoutEffect(() => {
-    const update_stage_size = () => {
-      if (wrap.current) {
-        if (!document.fullscreenElement) {
-          // 16:9 if not fullscreen
-          const styleWidth = wrap.current.clientWidth;
-          const styleHeight = (styleWidth * 9) / 16;
-          setStageSize([styleWidth, styleHeight]);
-        } else {
-          // follow user screen size if fullscreen
-          const styleWidth = document.fullscreenElement.clientWidth;
-          const styleHeight = document.fullscreenElement.clientHeight;
-          setStageSize([styleWidth, styleHeight]);
-        }
-      }
-    };
-    window.addEventListener("resize", update_stage_size);
-    update_stage_size();
-    return () => {
-      window.removeEventListener("resize", update_stage_size);
-    };
-  }, []);
 
   // autoplay listener
   useEffect(() => {

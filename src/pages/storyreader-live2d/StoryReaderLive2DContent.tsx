@@ -1,4 +1,4 @@
-import React, { useRef, useState, useMemo } from "react";
+import React, { useRef, useState, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
   getLive2DControllerData,
@@ -21,10 +21,12 @@ import ContainerContent from "../../components/styled/ContainerContent";
 import {
   Stack,
   Button,
+  IconButton,
   Typography,
   LinearProgress,
   Collapse,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import StoryReaderLive2DCanvas from "./StoryReaderLive2DCanvas";
 import StoryReaderLive2DSettings from "./StoryReaderLive2DSettings";
 import { useAlertSnackbar } from "../../utils";
@@ -40,9 +42,11 @@ const StoryReaderLive2DContent: React.FC<{
   const scenarioData = useRef<IScenarioData>();
   const controllerData = useRef<ILive2DControllerData>();
 
+  const [stageSize, setStageSize] = useState<[number, number]>([0, 0]);
   const [loadStatus, setLoadStatus] = useState(LoadStatus.Ready);
   const [loadProgress, setLoadProgress] = useState(0);
   const [progressText, setProgressText] = useState("");
+  const [isPageFullscreen, setIsPageFullscreen] = useState(false);
   const [settings, setSettings] = useState<ILive2DPlayerSettings>({
     voiceVolume: 80,
     seVolume: 80,
@@ -147,20 +151,74 @@ const StoryReaderLive2DContent: React.FC<{
     }
   }
 
+  // change canvas size
+  // Set size condition1: when window resize
+  // Set size condition2: when toggle full screen (trigger window resize)
+  // Set size condition3: when toggle web page full screen (not trigger window resize)
+  // Set size condition4: when load finished (not trigger window resize)
+  // Must use useEffect, because after the state is updated,
+  // the UI size will not be updated immediately, and the size cannot be obtained.
+  // depandency array should include `isPageFullscreen` and `loadStatus`,
+  // due to canvas render is rely on loadStatus, after the loading process is
+  // finished, stage size should be set.
+  useEffect(() => {
+    const update_stage_size = () => {
+      if (canvas.current) {
+        let styleWidth = 0;
+        let styleHeight = 0;
+        if (!document.fullscreenElement) {
+          if (isPageFullscreen) {
+            // follow browser size
+            styleWidth = canvas.current.clientWidth;
+            styleHeight = canvas.current.clientHeight;
+          } else {
+            // 16:9 if not fullscreen
+            styleWidth = canvas.current.clientWidth;
+            styleHeight = (styleWidth * 9) / 16;
+          }
+        } else {
+          // follow user screen size if fullscreen
+          styleWidth = document.fullscreenElement.clientWidth;
+          styleHeight = document.fullscreenElement.clientHeight;
+        }
+        setStageSize([styleWidth, styleHeight]);
+      }
+    };
+    window.addEventListener("resize", update_stage_size);
+    update_stage_size();
+    return () => {
+      window.removeEventListener("resize", update_stage_size);
+    };
+  }, [isPageFullscreen, loadStatus]);
   function fullscreen() {
     if (!document.fullscreenElement && canvas.current) {
       canvas.current.requestFullscreen();
     }
   }
 
+  const stageContainerStyle = useMemo((): React.CSSProperties => {
+    return isPageFullscreen
+      ? {
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          zIndex: 1501, // bigger than tooltip(1500)
+        }
+      : {};
+  }, [isPageFullscreen]);
+
   return (
     <ContainerContent>
       <Stack
         direction="row"
-        spacing={2}
+        spacing={{ xs: 1, sm: 2 }}
+        useFlexGap
         sx={{
           justifyContent: "space-evenly",
           alignItems: "center",
+          flexWrap: "wrap",
           marginBottom: 2,
         }}
       >
@@ -168,7 +226,7 @@ const StoryReaderLive2DContent: React.FC<{
           variant="contained"
           disabled={loadStatus !== LoadStatus.Ready}
           onClick={load}
-          sx={{ flex: 1 }}
+          sx={{ flex: 1, minWidth: 100 }}
         >
           {loadButtonText}
         </Button>
@@ -176,14 +234,22 @@ const StoryReaderLive2DContent: React.FC<{
           variant="contained"
           disabled={loadStatus !== LoadStatus.Loaded}
           onClick={fullscreen}
-          sx={{ flex: 1 }}
+          sx={{ flex: 1, minWidth: 100 }}
         >
           {t("story_reader_live2d:toggle_full_screen")}
         </Button>
         <Button
           variant="contained"
+          disabled={loadStatus !== LoadStatus.Loaded}
+          onClick={() => setIsPageFullscreen(!isPageFullscreen)}
+          sx={{ flex: 1, minWidth: 100 }}
+        >
+          {t("story_reader_live2d:toggle_page_full_screen")}
+        </Button>
+        <Button
+          variant="contained"
           onClick={() => setShowSettings(!showSettings)}
-          sx={{ flex: 1 }}
+          sx={{ flex: 1, minWidth: 100 }}
         >
           {showSettings
             ? t("story_reader_live2d:hide_settings")
@@ -203,11 +269,28 @@ const StoryReaderLive2DContent: React.FC<{
         </>
       )}
       {controllerData.current && loadStatus === LoadStatus.Loaded && (
-        <div ref={canvas} style={{ userSelect: "none" }}>
+        <div
+          ref={canvas}
+          style={{
+            ...stageContainerStyle,
+            userSelect: "none",
+          }}
+        >
           <StoryReaderLive2DCanvas
             controllerData={controllerData.current}
             settings={settings}
+            stageSize={stageSize}
           ></StoryReaderLive2DCanvas>
+          {isPageFullscreen && (
+            <IconButton
+              sx={{ position: "absolute", top: 0, right: 0 }}
+              onClick={() => setIsPageFullscreen(!isPageFullscreen)}
+              size="large"
+              color="primary"
+            >
+              <CloseIcon />
+            </IconButton>
+          )}
         </div>
       )}
     </ContainerContent>
