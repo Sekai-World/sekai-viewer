@@ -56,12 +56,8 @@ export default class Live2D extends BaseLayer {
     models
       .filter((m) => m.visible)
       .forEach((model) => {
-        const live2dTrueWidth = model.internalModel.originalWidth;
         const live2dTrueHeight = model.internalModel.originalHeight;
-        const scale = Math.min(
-          this.stage_size[0] / live2dTrueWidth / 2,
-          this.stage_size[1] / live2dTrueHeight
-        );
+        const scale = this.stage_size[1] / live2dTrueHeight;
         model.x = this.stage_size[0] * model.live2DInfo.position[0];
         model.y = this.stage_size[1] * (model.live2DInfo.position[1] + 0.3);
         model.anchor.set(0.5);

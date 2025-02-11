@@ -60,31 +60,39 @@ export default class Dialog extends BaseLayer {
   }
   set_style(stage_size?: [number, number]): void {
     this.stage_size = stage_size ? stage_size : this.stage_size;
+    const margin_top =
+      this.stage_size[0] > this.stage_size[1]
+        ? this.stage_size[1] * 0.7
+        : this.stage_size[1] * 0.8;
+    const margin_left =
+      this.stage_size[0] > this.stage_size[1]
+        ? this.stage_size[0] * 0.15
+        : this.stage_size[0] * 0.05;
     if (this.init) {
       const container = this.structure.dialog_container!;
       container.x = 0;
-      container.y = this.stage_size[1] * 0.7;
+      container.y = margin_top;
       const bg = this.structure.background!;
       bg.x = 0;
       bg.y = 0;
       bg.scale.set(
         this.stage_size[0] / 2000, // 2000 -> ui/text_background width
-        (this.stage_size[1] * 0.3) / 2000 // 2000 -> ui/text_background height
+        (this.stage_size[1] - margin_top) / 2000 // 2000 -> ui/text_background height
       );
       const underline = this.structure.underline!;
-      underline.x = this.stage_size[0] * 0.15 - this.em(3);
+      underline.x = margin_left - this.em(3);
       underline.y = this.em(24);
       underline.scale.set(
-        (this.stage_size[0] * 0.7) / 2000 // 2000 -> ui/text_underline width
+        (this.stage_size[0] - margin_left * 2) / 2000 // 2000 -> ui/text_underline width
       );
       const cn = this.structure.cn_c!;
-      cn.x = this.stage_size[0] * 0.15;
+      cn.x = margin_left;
       cn.y = this.em(6);
       cn.style = new TextStyle({
         fill: ["#ffffff"],
         fontSize: this.em(16),
         wordWrap: true,
-        wordWrapWidth: this.stage_size[0] * 0.7,
+        wordWrapWidth: this.stage_size[0] - margin_left * 2,
         stroke: "#4a496899",
         strokeThickness: this.em(4),
       });
@@ -92,8 +100,12 @@ export default class Dialog extends BaseLayer {
     }
   }
   set_style_dialog_text() {
+    const margin_left =
+      this.stage_size[0] > this.stage_size[1]
+        ? this.stage_size[0] * 0.15
+        : this.stage_size[0] * 0.05;
     const text = this.structure.text_c!;
-    text.x = this.stage_size[0] * 0.15 + this.em(3);
+    text.x = margin_left + this.em(3);
     text.y = this.em(35);
     text.style = new TextStyle({
       fill: ["#ffffff"],
@@ -101,7 +113,7 @@ export default class Dialog extends BaseLayer {
       lineHeight: this.em(22),
       breakWords: true,
       wordWrap: true,
-      wordWrapWidth: this.stage_size[0] * 0.7,
+      wordWrapWidth: this.stage_size[0] - margin_left * 2,
       stroke: "#4a4968aa",
       strokeThickness: this.em(4),
     });

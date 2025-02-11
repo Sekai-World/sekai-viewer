@@ -32,7 +32,9 @@ export default abstract class BaseLayer {
    * @param h 400: stage_height
    */
   protected em(h: number) {
-    return (this.stage_size[1] * h) / 400;
+    return this.stage_size[0] > this.stage_size[1]
+      ? (this.stage_size[1] * h) / 400
+      : (this.stage_size[0] * h) / 400;
   }
 
   protected random(min: number, max: number): number {
