@@ -1474,6 +1474,18 @@ const CardDetail: React.FC<unknown> = observer(() => {
                         to={`/storyreader/cardStory/${card.characterId}/${card.id}/${cardEpisode[0].id}`}
                       >
                         <Grid container alignItems="center">
+                          <Typography variant="subtitle1">
+                            {t("common:text")}
+                          </Typography>
+                          <OpenInNew />
+                        </Grid>
+                      </LinkNoDecoration>
+                      <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
+                      <LinkNoDecoration
+                        to={`/storyreader-live2d/cardStory/${card.characterId}/${card.id}/${cardEpisode[0].id}`}
+                      >
+                        <Grid container alignItems="center">
+                          <Typography variant="subtitle1">Live2D</Typography>
                           <OpenInNew />
                         </Grid>
                       </LinkNoDecoration>
@@ -1591,6 +1603,18 @@ const CardDetail: React.FC<unknown> = observer(() => {
                         to={`/storyreader/cardStory/${card.characterId}/${card.id}/${cardEpisode[1].id}`}
                       >
                         <Grid container alignItems="center">
+                          <Typography variant="subtitle1">
+                            {t("common:text")}
+                          </Typography>
+                          <OpenInNew />
+                        </Grid>
+                      </LinkNoDecoration>
+                      <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
+                      <LinkNoDecoration
+                        to={`/storyreader-live2d/cardStory/${card.characterId}/${card.id}/${cardEpisode[1].id}`}
+                      >
+                        <Grid container alignItems="center">
+                          <Typography variant="subtitle1">Live2D</Typography>
                           <OpenInNew />
                         </Grid>
                       </LinkNoDecoration>
