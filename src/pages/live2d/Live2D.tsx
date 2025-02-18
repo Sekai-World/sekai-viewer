@@ -203,7 +203,10 @@ const Live2DView: React.FC<unknown> = () => {
           return prev;
         }, {}),
         Physics: `${modelName}.physics3.json`,
-        Textures: [`${modelName}.2048/texture_00.png`],
+        Textures: modelData.FileReferences.Textures.map(
+          (_, idx) =>
+            `${modelName}.2048/texture_${idx.toString().padStart(2, "0")}.png`
+        ),
       },
       Groups: [
         {
@@ -224,12 +227,12 @@ const Live2DView: React.FC<unknown> = () => {
 
     setProgress(10);
     setProgressWords(t("live2d:pack_progress.download_texture"));
-    const { data: texture } = await Axios.get(
-      modelData.url + modelData.FileReferences.Textures[0],
-      { responseType: "blob" }
-    );
-
-    zip.file(model3.FileReferences.Textures[0], texture);
+    for (const [idx, t] of modelData.FileReferences.Textures.entries()) {
+      const { data: texture } = await Axios.get(modelData.url + t, {
+        responseType: "blob",
+      });
+      zip.file(model3.FileReferences.Textures[idx], texture);
+    }
 
     setProgress(20);
     setProgressWords(t("live2d:pack_progress.download_moc3"));
