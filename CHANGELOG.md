@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.14.5](https://github.com/Sekai-World/sekai-viewer/compare/v1.14.4...v1.14.5) (2025-02-22)
+
+
+### Features
+
+* **card:** add link to live2d story reader ([af80a94](https://github.com/Sekai-World/sekai-viewer/commits/af80a94e1988f64f7836f06f02aa00387ceffa9d))
+* **live2d:** add web page fullscreen and portrait mode(for mobile) support ([2c9904f](https://github.com/Sekai-World/sekai-viewer/commits/2c9904fb0b7cd499f730f37d95237514ab9cbdea))
+* **live2d:** indicate when a story ends ([fd42263](https://github.com/Sekai-World/sekai-viewer/commits/fd42263fd28c084a6287b3d20474db13073bc36a))
+* **live2d:** move settings to top, add toggle button ([702ec95](https://github.com/Sekai-World/sekai-viewer/commits/702ec952998fdc98c3459e30bc70506eddde7a0a))
+* **test:** refine test page, create graph to clearify workflow ([9da2ff7](https://github.com/Sekai-World/sekai-viewer/commits/9da2ff76696a0c64a9de87a2eee23ac8656d2fc6))
+
+
+### Bug Fixes
+
+* **live2d:** autoplay not working ([f8806de](https://github.com/Sekai-World/sekai-viewer/commits/f8806de88dc510d2f1d6e11a6e64e2455f6f2d21))
+* **live2d:** fail to add ambient color when no live2d filters ([b40ccd9](https://github.com/Sekai-World/sekai-viewer/commits/b40ccd9c138df743eb7e8f7094ad540da04e4d5c))
+* **live2d:** live2d motions will start with T-pose in some situation ([a5380bf](https://github.com/Sekai-World/sekai-viewer/commits/a5380bf883c4278112872bfde858f2f99b4e1fb0))
+* **live2d:** only one texture was packed when download live2d models ([7471354](https://github.com/Sekai-World/sekai-viewer/commits/74713548b5503a8cf79d550f9ee0c459d7821216))
+* **live2d:** wrong model names stuck the story loading process ([89dc331](https://github.com/Sekai-World/sekai-viewer/commits/89dc331d7ce4fd614de82ffc278776a70936f528))
+
+
+### Refactors
+
+* **live2d:** simplify some story loading codes ([b3a1a12](https://github.com/Sekai-World/sekai-viewer/commits/b3a1a12be1f83ce4c5c79bf9b681b3540990d51f))
+
 ### [1.14.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.14.3...v1.14.4) (2025-02-01)
 
 
