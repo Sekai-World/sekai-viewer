@@ -616,6 +616,18 @@ const EventDetail: React.FC<unknown> = observer(() => {
             <Grid item container justifyContent="flex-end">
               <LinkNoDecoration to={`/storyreader/eventStory/${event.id}`}>
                 <Grid container alignItems="center">
+                  <Typography variant="subtitle1">
+                    {t("common:text")}
+                  </Typography>
+                  <OpenInNew />
+                </Grid>
+              </LinkNoDecoration>
+              <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
+              <LinkNoDecoration
+                to={`/storyreader-live2d/eventStory/${event.id}`}
+              >
+                <Grid container alignItems="center">
+                  <Typography variant="subtitle1">Live2D</Typography>
                   <OpenInNew />
                 </Grid>
               </LinkNoDecoration>
