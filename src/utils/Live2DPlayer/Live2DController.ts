@@ -235,9 +235,17 @@ export class Live2DController extends Live2DPlayer {
           sound.on("end", () => {
             resolve();
           });
-          this.animate.abort_controller.signal.addEventListener("abort", () => {
+          const abort_handler = () => {
             resolve();
-          });
+            this.animate.abort_controller.signal.removeEventListener(
+              "abort",
+              abort_handler
+            );
+          };
+          this.animate.abort_controller.signal.addEventListener(
+            "abort",
+            abort_handler
+          );
         });
       }
     }

@@ -30,13 +30,13 @@ import Hologram from "../animation/Hologram";
 
 export default class Live2D extends BaseLayer {
   structure: {
-    live2d: Container;
+    live2d: Container<Live2DModelWithInfo>;
     effect: Container;
   };
   constructor(data: ILive2DLayerData) {
     super(data);
     this.structure = {
-      live2d: new Container(),
+      live2d: new Container<Live2DModelWithInfo>(),
       effect: new Container(),
     };
     this.root.addChild(this.structure.live2d);
@@ -95,7 +95,7 @@ export default class Live2D extends BaseLayer {
   };
 
   get_model_list = () => {
-    return this.structure.live2d.children as Live2DModelWithInfo[];
+    return this.structure.live2d.children;
   };
 
   load_status = (): "loaded" | "ready" => {
@@ -210,6 +210,8 @@ export default class Live2D extends BaseLayer {
         },
       });
       model.live2DInfo.speaking = true;
+      this.structure.live2d.removeChild(model);
+      this.structure.live2d.addChild(model);
     }
   };
   stop_speaking = () => {

@@ -122,7 +122,6 @@ export default async function action_layout(
         );
         // Step 2: Show. (after motion finished)
         const show = controller.layers.live2d.show_model(costume, 200);
-        controller.live2d_set_appear(action_detail.Character2dId);
         // (Same time) Move from SideFrom position to SideTo position or at SideFrom position.
         const from = side_to_position(
           action_detail.SideFrom,
@@ -153,10 +152,10 @@ export default async function action_layout(
               action_detail.FacialName
             )
           );
-
-        await show;
-        await move;
         //await motion;
+        await show;
+        controller.live2d_set_appear(action_detail.Character2dId);
+        await move;
       }
       break;
     case CharacterLayoutType.Clear:

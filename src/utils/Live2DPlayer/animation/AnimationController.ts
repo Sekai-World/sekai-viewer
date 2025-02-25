@@ -38,13 +38,18 @@ export default class AnimationController {
         }
       });
       ani_ticker.start();
-      this.abort_controller.signal.addEventListener("abort", () => {
+      const abort_handler = () => {
         if (!destroyed) {
           ani_ticker.destroy();
           destroyed = true;
         }
         resolve();
-      });
+        this.abort_controller.signal.removeEventListener(
+          "abort",
+          abort_handler
+        );
+      };
+      this.abort_controller.signal.addEventListener("abort", abort_handler);
     });
     return wait_finish;
   };
@@ -79,13 +84,18 @@ export default class AnimationController {
         }
         resolve();
       }, ms);
-      this.abort_controller.signal.addEventListener("abort", () => {
+      const abort_handler = () => {
         if (!destroyed) {
           clearTimeout(timeout_id);
           destroyed = true;
         }
         resolve();
-      });
+        this.abort_controller.signal.removeEventListener(
+          "abort",
+          abort_handler
+        );
+      };
+      this.abort_controller.signal.addEventListener("abort", abort_handler);
     });
   };
 }
