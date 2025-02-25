@@ -95,6 +95,7 @@ export default class Dialog extends BaseLayer {
         wordWrapWidth: this.stage_size[0] - margin_left * 2,
         stroke: "#4a496899",
         strokeThickness: this.em(4),
+        lineJoin: "round",
       });
       this.set_style_dialog_text();
     }
@@ -116,6 +117,7 @@ export default class Dialog extends BaseLayer {
       wordWrapWidth: this.stage_size[0] - margin_left * 2,
       stroke: "#4a4968aa",
       strokeThickness: this.em(4),
+      lineJoin: "round",
     });
   }
 

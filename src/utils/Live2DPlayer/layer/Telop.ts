@@ -49,6 +49,7 @@ export default class Telop extends BaseLayer {
         dropShadowBlur: this.em(2),
         dropShadowAngle: Math.PI / 6,
         dropShadowDistance: this.em(2),
+        lineJoin: "round",
       });
       const bg = this.structure.bg_graphic!;
       bg.x = 0;

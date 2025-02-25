@@ -48,6 +48,7 @@ export default class FullScreenText extends BaseLayer {
       breakWords: true,
       wordWrap: true,
       wordWrapWidth: this.stage_size[0],
+      lineJoin: "round",
     });
   }
 
