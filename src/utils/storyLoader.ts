@@ -304,6 +304,7 @@ export function useProcessedScenarioDataForText() {
         FirstBgm,
         FirstBackground,
       } = data;
+      const AssetbundleName = scenarioIdToAssetbundleName(ScenarioId);
 
       const voiceMap: {
         [key: string]: Record<string, string>;
@@ -385,7 +386,7 @@ export function useProcessedScenarioDataForText() {
                 voice: talkData.Voices.length
                   ? await getTalkVoiceUrl(
                       voiceMap,
-                      ScenarioId,
+                      AssetbundleName,
                       talkData,
                       info.isCardStory,
                       info.isActionSet,
@@ -411,7 +412,7 @@ export function useProcessedScenarioDataForText() {
                 resource:
                   specialEffectType === "FullScreenText"
                     ? await getFullScreenTextVoiceUrl(
-                        ScenarioId,
+                        AssetbundleName,
                         specialEffect.StringValSub
                       )
                     : specialEffectType === "ChangeBackground"
@@ -567,6 +568,7 @@ export function useMediaUrlForLive2D() {
       } = {};
       const { ScenarioId, Snippets, TalkData, SpecialEffectData, SoundData } =
         snData;
+      const AssetbundleName = scenarioIdToAssetbundleName(ScenarioId);
       // get all urls
       for (const snippet of Snippets) {
         switch (snippet.Action) {
@@ -587,7 +589,7 @@ export function useMediaUrlForLive2D() {
                   type: Live2DAssetType.Talk,
                   url: await getTalkVoiceUrl(
                     voiceMap,
-                    ScenarioId,
+                    AssetbundleName,
                     talkData,
                     info.isCardStory,
                     info.isActionSet,
@@ -622,7 +624,7 @@ export function useMediaUrlForLive2D() {
                   {
                     const identifer = seData.StringValSub;
                     const url = await getFullScreenTextVoiceUrl(
-                      ScenarioId,
+                      AssetbundleName,
                       seData.StringValSub
                     );
                     if (ret.map((r) => r.url).includes(url)) continue;
@@ -705,14 +707,20 @@ export async function getMovieUrl(movie: string) {
 
 export async function getSoundEffectUrl(se: string) {
   const isEventSe = se.startsWith("se_event");
-  const baseDir = isEventSe
-    ? `event_story/${se.split("_").slice(1, -1).join("_")}`
-    : "sound/scenario/se";
-  const seBundleName = isEventSe
-    ? "scenario_se"
-    : se.endsWith("_b")
-      ? "se_pack00001_b"
-      : "se_pack00001";
+  let baseDir;
+  let seBundleName;
+
+  if (isEventSe) {
+    baseDir = `event_story/${se.split("_").slice(1, -1).join("_")}`;
+    seBundleName = "scenario_se";
+  } else {
+    baseDir = "sound/scenario/se";
+    seBundleName =
+      /^se\d{5}$/.test(se) && parseInt(se.substring(2)) <= 528
+        ? "se_pack00001" // Use 'se_pack00001' if SE ID between se00001 and se00528
+        : "se_pack00001_b"; // Otherwise, use 'se_pack00001_b'
+  }
+
   return await getRemoteAssetURL(
     `${baseDir}/${seBundleName}_rip/${se}.mp3`,
     undefined,
@@ -731,20 +739,48 @@ export async function getTalkVoiceUrl(
   region: ServerRegion,
   chara2d?: ICharacter2D
 ): Promise<string> {
-  let voiceUrl = "";
   if (talkData.Voices.length) {
     const VoiceId = talkData.Voices[0].VoiceId;
-    const isPartVoice = VoiceId.startsWith("partvoice") && !isActionSet;
-    if (isPartVoice) {
-      // part_voice
+    const voiceUrl = `sound/${isCardStory ? "card_" : ""}${
+      isActionSet ? "actionset" : "scenario"
+    }/voice/${ScenarioId}_rip/${VoiceId}.mp3`;
+    let fixedVoiceUrl = await fixVoiceUrl(voiceMap, region, VoiceId, voiceUrl);
+
+    // if voice not found in scenario asset pack, check part_voice special case
+    const isPartVoice = VoiceId.startsWith("partvoice");
+    if (fixedVoiceUrl === null && isPartVoice) {
+      // 1. if character is v2 or clb, check /voice/part_voice_${chara}_rip/${VoiceId}.mp3
+      // 2. if character is not v2 or clb, check /part_voice/${chara}_rip/${VoiceId}.mp3
+      // 3. if still not found, check /voice/part_voice_${chara}_rip/${VoiceId}.mp3
       if (chara2d) {
-        voiceUrl = `sound/scenario/part_voice/${chara2d.assetName}_${chara2d.unit}_rip/${VoiceId}.mp3`;
+        const chara = `${chara2d.assetName}_${chara2d.unit}`;
+        if (chara.startsWith("v2_") || chara.startsWith("clb")) {
+          const partVoiceUrl = `sound/scenario/voice/part_voice_${chara}_rip/${VoiceId}.mp3`;
+          fixedVoiceUrl = await fixVoiceUrl(
+            voiceMap,
+            region,
+            VoiceId,
+            partVoiceUrl
+          );
+        } else {
+          const partVoiceUrl = `sound/scenario/part_voice/${chara}_rip/${VoiceId}.mp3`;
+          fixedVoiceUrl = await fixVoiceUrl(
+            voiceMap,
+            region,
+            VoiceId,
+            partVoiceUrl
+          );
+          if (fixedVoiceUrl === null) {
+            const partVoiceUrl = `sound/scenario/voice/part_voice_${chara}_rip/${VoiceId}.mp3`;
+            fixedVoiceUrl = await fixVoiceUrl(
+              voiceMap,
+              region,
+              VoiceId,
+              partVoiceUrl
+            );
+          }
+        }
       }
-    } else {
-      // card, actionset, scenario
-      voiceUrl = `sound/${isCardStory ? "card_" : ""}${
-        isActionSet ? "actionset" : "scenario"
-      }/voice/${ScenarioId}_rip/${VoiceId}.mp3`;
     }
     // Original codes
     // let voiceUrl = talkData.Voices.length
@@ -766,12 +802,9 @@ export async function getTalkVoiceUrl(
     //     voiceUrl = "";
     //   }
     // }
-    return await getRemoteAssetURL(
-      // Get asset list in directory
-      await fixVoiceUrl(voiceMap, region, VoiceId, voiceUrl),
-      undefined,
-      "minio"
-    );
+    return fixedVoiceUrl
+      ? await getRemoteAssetURL(fixedVoiceUrl, undefined, "minio")
+      : await getRemoteAssetURL(voiceUrl, undefined, "minio"); // wrong link, only for debug
   } else return "";
 }
 
@@ -848,4 +881,26 @@ function modelNameFix(info: IScenarioInfo, data: IScenarioData) {
       );
     });
   }
+}
+
+/**
+ * fix typo in scenario id.
+ * rules see "map".
+ */
+function scenarioIdToAssetbundleName(scenarioId: string) {
+  const map: Record<string, string> = {
+    "areatalk03_266(20230607修正)": "areatalk03_266",
+    "★4冬弥・泉_前半": "012043_touya01",
+    "★4司・千秋_前半": "013042_tsukasa01",
+    "★4類・夏目_後半": "016042_rui02",
+    connect_live_collaboration_ensta_story: "collaboration_es_prequel_01",
+    "ログインストーリー（OP）": "collaboration_es_op_01",
+    "ログインストーリー（ED）": "collaboration_es_ed_01",
+    connect_live_01_band: "connect_live_01_lon_01",
+    connect_live_01_idol: "connect_live_01_mmj_01",
+    connect_live_01_night: "connect_live_01_nig_01",
+    story_connect_live_thanksgiving_4th_anv:
+      "story_connect_live_4th_anniversary_01",
+  };
+  return map[scenarioId] || scenarioId;
 }
