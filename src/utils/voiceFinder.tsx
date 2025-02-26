@@ -99,7 +99,7 @@ export const fixVoiceUrl = async function (
   region: ServerRegion,
   voiceId: string,
   voiceUrl: string
-) {
+): Promise<string | null> {
   // Tested only "jp" region
   if (region !== "jp") {
     return voiceUrl;
@@ -117,5 +117,9 @@ export const fixVoiceUrl = async function (
     }
     voiceList = voiceMap[dirUrl];
   }
-  return voiceList[normalizeVoiceName(voiceId)] || voiceUrl;
+  if (voiceList[normalizeVoiceName(voiceId)]) {
+    return voiceList[normalizeVoiceName(voiceId)];
+  } else {
+    return null;
+  }
 };
