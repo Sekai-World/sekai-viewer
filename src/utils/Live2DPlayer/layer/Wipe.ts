@@ -87,7 +87,7 @@ export default class Wipe extends BaseLayer {
     else curve = new Curve().map_range(length, 0);
     if (!show) curve = curve.reverse();
 
-    if (show) container.alpha = 1;
+    container.alpha = 1;
     // set position
     if (black_direction === "left" || black_direction === "right") {
       await this.animation_controller.progress_wrapper((t) => {
