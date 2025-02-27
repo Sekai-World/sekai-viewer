@@ -9,7 +9,11 @@ function circle_random(min: number, max: number) {
 }
 
 export default class Sekai extends BaseAnimation {
-  constructor(textures: ILive2DTexture[], out = true, period_ms: number) {
+  constructor(
+    textures: ILive2DTexture[],
+    period_ms: number,
+    condition: "out_corner" | "in_corner" | "out_center" | "in_center"
+  ) {
     super({ textures });
     this.loop = false;
     this.period_ms = period_ms;
@@ -51,14 +55,18 @@ export default class Sekai extends BaseAnimation {
 
     // animation
     const alpha_curve = new Curve().shrink(0.2, 1).reverse();
-    if (out) {
+    if (condition === "out_corner") {
       tri_s.forEach((tri) => {
+        // scale and scale ratio
         const scale = this.random(35, 80);
         const ratio = this.random(0.4, 1.6);
+        // rotation
         const angle_from = this.random(0, 180);
         const angle_to = this.random(180, 270);
+        // position
         const radian = this.random(0, Math.PI / 2);
         const radius = circle_random(0.4, 1.4);
+        // curve
         const curve = new Curve().easeOutExpo();
         this.settings.push({
           obj: tri,
@@ -84,14 +92,18 @@ export default class Sekai extends BaseAnimation {
           alpha_curve,
         });
       });
-    } else {
+    } else if (condition === "in_corner") {
       tri_s.forEach((tri) => {
+        // scale and scale ratio
         const scale = this.random(35, 80);
         const ratio = this.random(0.4, 1.6);
+        // rotation
         const init_angle = this.random(0, 180);
+        // position
         const radian = this.random(0, Math.PI / 2);
         const radius = circle_random(0.2, 1.4);
         const radius_increase = circle_random(0.2, 0.5);
+        // curve
         const curve = new Curve();
         this.settings.push({
           obj: tri,
@@ -120,6 +132,87 @@ export default class Sekai extends BaseAnimation {
           scale_x: () => this.em(scale) / 128, // 128: size of the texture
           scale_y: () => (this.em(scale) * ratio) / 128, // 128: size of the texture
           angle_curve: curve.map_range(init_angle, init_angle + 360),
+          alpha_curve,
+        });
+      });
+    } else if (condition === "out_center") {
+      tri_s.forEach((tri) => {
+        // scale and scale ratio
+        const scale = this.random(35, 80);
+        const ratio = this.random(0.4, 1.6);
+        // rotation
+        const angle_from = this.random(0, 180);
+        const angle_to = this.random(180, 270);
+        // position
+        const radian = this.random(0, Math.PI * 2);
+        const radius = circle_random(0.2, 0.8);
+        // curve
+        const curve = new Curve().easeOutQuad();
+        this.settings.push({
+          obj: tri,
+          x_func: (t) =>
+            curve
+              .map_range(
+                this.stage_size[0] * 0.5,
+                this.stage_size[0] * 0.5 -
+                  this.stage_size[0] * radius * Math.cos(radian)
+              )
+              .p(t),
+          y_func: (t) =>
+            curve
+              .map_range(
+                this.stage_size[1] * 0.5,
+                this.stage_size[1] * 0.5 -
+                  this.stage_size[1] * radius * Math.sin(radian)
+              )
+              .p(t),
+          scale_x: () => this.em(scale) / 128, // 128: size of the texture
+          scale_y: () => (this.em(scale) * ratio) / 128, // 128: size of the texture
+          angle_curve: new Curve().map_range(angle_from, angle_to),
+          alpha_curve,
+        });
+      });
+    } else if (condition === "in_center") {
+      tri_s.forEach((tri) => {
+        // scale and scale ratio
+        const scale = this.random(35, 80);
+        const ratio = this.random(0.4, 1.6);
+        // rotation
+        const angle_from = this.random(0, 180);
+        const angle_to = this.random(270, 360);
+        // position
+        const radian = this.random(0, Math.PI * 2);
+        const radius = circle_random(0.2, 0.8);
+        const radius_increase = circle_random(0.2, 0.5);
+        // curve
+        const curve = new Curve();
+        this.settings.push({
+          obj: tri,
+          x_func: (t) =>
+            curve
+              .map_range(
+                this.stage_size[0] * 0.5 -
+                  this.stage_size[0] * radius * Math.cos(radian),
+                this.stage_size[0] * 0.5 -
+                  this.stage_size[0] *
+                    (radius + radius_increase) *
+                    Math.cos(radian)
+              )
+              .p(t),
+          y_func: (t) =>
+            curve
+              .map_range(
+                this.stage_size[1] * 0.5 -
+                  this.stage_size[1] * radius * Math.sin(radian),
+                this.stage_size[1] * 0.5 -
+                  this.stage_size[1] *
+                    (radius + radius_increase) *
+                    Math.sin(radian)
+              )
+              .p(t),
+          scale_x: () => this.em(scale) / 128, // 128: size of the texture
+          scale_y: () => (this.em(scale) * ratio) / 128, // 128: size of the texture
+          angle_curve: new Curve().map_range(angle_from, angle_to),
           alpha_curve,
         });
       });

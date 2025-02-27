@@ -73,25 +73,27 @@ const condition = {
 
 export function getUIMediaUrls(data: IScenarioData): ILive2DAssetUrl[] {
   const all = [...common];
-  const catagory: (keyof typeof condition)[] = [];
+  const category = new Set<keyof typeof condition>();
   // analyze scenario data, find which is necessary
   data.Snippets.forEach((sn) => {
     if (sn.Action === SnippetAction.SpecialEffect) {
       const sp = data.SpecialEffectData[sn.ReferenceIndex];
       const t = sp.EffectType;
-      if (t === SpecialEffectType.SekaiIn) catagory.push("sekai");
-      else if (t === SpecialEffectType.SekaiOut) catagory.push("sekai");
+      if (t === SpecialEffectType.SekaiIn) category.add("sekai");
+      else if (t === SpecialEffectType.SekaiOut) category.add("sekai");
+      else if (t === SpecialEffectType.SekaiInCenter) category.add("sekai");
+      else if (t === SpecialEffectType.SekaiOutCenter) category.add("sekai");
       else if (t === SpecialEffectType.AttachCharacterShader)
-        catagory.push("hologram");
+        category.add("hologram");
       else if (t === SpecialEffectType.PlayScenarioEffect) {
         if (SeScenarioEffectType.kirakira.includes(sp.StringVal))
-          catagory.push("kirakira");
+          category.add("kirakira");
         else if (SeScenarioEffectType.light_up_legend.includes(sp.StringVal))
-          catagory.push("light_up_legend");
+          category.add("light_up_legend");
       }
     }
   });
-  catagory.forEach((c) => {
+  category.forEach((c) => {
     condition[c].forEach((i) => {
       const find = all.find((a) => a.identifer === i.identifer);
       if (!find) all.push(i);
