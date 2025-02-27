@@ -9,7 +9,6 @@ import Background from "./layer/Background";
 import Fullcolor from "./layer/Fullcolor";
 import Dialog from "./layer/Dialog";
 import Telop from "./layer/Telop";
-import Flashback from "./layer/Flashback";
 import SceneEffect from "./layer/SceneEffect";
 import Live2D from "./layer/Live2D";
 import Wipe from "./layer/Wipe";
@@ -25,11 +24,12 @@ export class Live2DPlayer {
   layers: {
     background: Background;
     fullcolor: Fullcolor;
+    memory_filter: Fullcolor;
     dialog: Dialog;
     fullscreen_text: FullScreenText;
     fullscreen_text_bg: Fullcolor;
     telop: Telop;
-    flashback: Flashback;
+    flashback_filter: Fullcolor;
     scene_effect: SceneEffect;
     live2d: Live2D;
     wipe: Wipe;
@@ -68,9 +68,10 @@ export class Live2DPlayer {
       fullscreen_text: new FullScreenText(layer_data),
       fullscreen_text_bg: new Fullcolor(layer_data),
       telop: new Telop(layer_data),
-      flashback: new Flashback(layer_data),
+      flashback_filter: new Fullcolor(layer_data),
       scene_effect: new SceneEffect(layer_data),
       dialog: new Dialog(layer_data),
+      memory_filter: new Fullcolor(layer_data),
       live2d: new Live2D(layer_data),
       wipe: new Wipe(layer_data),
       sekai: new Sekai(layer_data),
@@ -78,11 +79,12 @@ export class Live2DPlayer {
     app.stage.addChild(this.layers.background.root);
     app.stage.addChild(this.layers.live2d.root);
     app.stage.addChild(this.layers.scene_effect.root);
+    app.stage.addChild(this.layers.memory_filter.root);
+    app.stage.addChild(this.layers.flashback_filter.root);
     app.stage.addChild(this.layers.dialog.root);
     app.stage.addChild(this.layers.telop.root);
     app.stage.addChild(this.layers.sekai.root);
     app.stage.addChild(this.layers.wipe.root);
-    app.stage.addChild(this.layers.flashback.root);
     app.stage.addChild(this.layers.fullcolor.root);
     app.stage.addChild(this.layers.fullscreen_text_bg.root);
     app.stage.addChild(this.layers.fullscreen_text.root);

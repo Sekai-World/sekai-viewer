@@ -34,6 +34,8 @@ import SekaiOut from "./SekaiOut";
 import FullScreenText from "./FullScreenText";
 import FullScreenTextShow from "./FullScreenTextShow";
 import FullScreenTextHide from "./FullScreenTextHide";
+import MemoryIn from "./MemoryIn";
+import MemoryOut from "./MemoryOut";
 
 export default async function action_se(
   controller: Live2DController,
@@ -134,6 +136,12 @@ export default async function action_se(
       break;
     case SpecialEffectType.FullScreenTextHide:
       await FullScreenTextHide(controller, action);
+      break;
+    case SpecialEffectType.MemoryIn:
+      await MemoryIn(controller, action);
+      break;
+    case SpecialEffectType.MemoryOut:
+      await MemoryOut(controller, action);
       break;
     default:
       log.warn(

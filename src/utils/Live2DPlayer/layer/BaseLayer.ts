@@ -1,4 +1,9 @@
-import { Container, DisplayObject } from "pixi.js";
+import {
+  ColorMatrix,
+  ColorMatrixFilter,
+  Container,
+  DisplayObject,
+} from "pixi.js";
 import type { ILive2DLayerData, ILive2DTexture } from "../types.d";
 import AnimationController from "../animation/AnimationController";
 import { Curve } from "../animation/Curve";
@@ -67,6 +72,49 @@ export default abstract class BaseLayer {
 
   public stop_shake = () => {
     this.shake_animation_controller.abort();
+  };
+
+  public add_color_filter = (
+    R: number[],
+    G: number[],
+    B: number[],
+    A: number[]
+  ) => {
+    // add filter
+    const filter = new ColorMatrixFilter();
+    /*
+    R = a*R + b*G + c*B + d*A + e
+    G = f*R + g*G + h*B + i*A + j
+    B = k*R + l*G + m*B + n*A + o
+    A = p*R + q*G + r*B + s*A + t
+    */
+    filter.matrix = R.concat(G, B, A) as ColorMatrix;
+    this.add_filter(filter);
+  };
+
+  public add_filter = (filter: ColorMatrixFilter) => {
+    // add filter
+    filter.resolution = 2;
+    if (this.root.filters) {
+      this.root.filters.push(filter);
+    } else {
+      this.root.filters = [filter];
+    }
+  };
+
+  public remove_filter = () => {
+    // remove all ColorMatrixFilter
+    if (this.root.filters) {
+      let idx = -1;
+      do {
+        idx = this.root.filters.findIndex(
+          (f) => f instanceof ColorMatrixFilter
+        );
+        if (idx !== -1) {
+          this.root.filters?.splice(idx, 1);
+        }
+      } while (idx !== -1);
+    }
   };
 
   public destroy() {
