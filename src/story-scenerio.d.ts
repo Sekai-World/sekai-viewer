@@ -345,6 +345,16 @@ export enum SpecialEffectType {
    */
   StopShakeWindow = 26,
   /**
+   * Add memory filter(yellowish) to the scenario (scene -> memory)
+   * @see 03:11 https://www.bilibili.com/video/BV1ya411B71v?p=2
+   */
+  MemoryIn = 27,
+  /**
+   * Remove memory filter from the scenario (memory -> scene)
+   * @see 03:11 https://www.bilibili.com/video/BV1ya411B71v?p=2
+   */
+  MemoryOut = 28,
+  /**
    * Black wipe in from left to right (black -> scene)
    * @param StringVal always empty string.
    * @param StringValSub always empty string.

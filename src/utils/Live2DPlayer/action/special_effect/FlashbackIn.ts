@@ -14,6 +14,6 @@ export default async function FlashbackIn(
     action,
     action_detail
   );
-  controller.layers.flashback.draw();
-  await controller.layers.flashback.show(100, true);
+  controller.layers.flashback_filter.draw(0x000000, 0.3);
+  await controller.layers.flashback_filter.show(100, true);
 }

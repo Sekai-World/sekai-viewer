@@ -11,13 +11,13 @@ export default class Fullcolor extends BaseLayer {
     this.structure = {};
   }
 
-  draw(color: number) {
+  draw(color: number, alpha?: number) {
     const container = this.root;
     container.removeChildren();
     const bg_graphic = new Graphics();
     this.structure.color = bg_graphic;
     bg_graphic
-      .beginFill(color, 1)
+      .beginFill(color, alpha ? alpha : 1)
       .drawRect(0, 0, this.screen_length, this.screen_length)
       .endFill();
     container.addChild(bg_graphic);
