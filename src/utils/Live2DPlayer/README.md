@@ -1,20 +1,11 @@
 # TODO
 
-- bgm fade in and out
-- VoiceId more than one
 - more SpecialEffectType.PlayScenarioEffect
-- SnippetAction.CharacterLayoutMode
 - find SekaiIn/Out sound effect
 - NOT IMPLEMENT YET:
   - SpecialEffectType.PlaceInfo
   - SpecialEffectType.Movie
-  - SpecialEffectType.42
-  - SpecialEffectType.41
-  - SpecialEffectType.43
-  - SpecialEffectType.40
-  - SpecialEffectType.27
   - SpecialEffectType.SimpleSelectable
-  - SpecialEffectType.28
   - SpecialEffectType.0
   - SpecialEffectType.44
 
