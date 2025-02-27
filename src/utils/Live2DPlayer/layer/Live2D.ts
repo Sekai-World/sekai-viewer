@@ -33,6 +33,7 @@ export default class Live2D extends BaseLayer {
     live2d: Container<Live2DModelWithInfo>;
     effect: Container;
   };
+  layout_mode: "normal" | "three_models" = "normal";
   constructor(data: ILive2DLayerData) {
     super(data);
     this.structure = {
@@ -61,7 +62,7 @@ export default class Live2D extends BaseLayer {
         model.x = this.stage_size[0] * model.live2DInfo.position[0];
         model.y = this.stage_size[1] * (model.live2DInfo.position[1] + 0.3);
         model.anchor.set(0.5);
-        model.scale.set(scale * 2.1);
+        model.scale.set(scale * (this.layout_mode === "normal" ? 2.1 : 1.8)); // 2.1, 1.8: magic number
         model.live2DInfo.animations.forEach((a) => {
           a.root.position.set(
             this.stage_size[0] * model.live2DInfo.position[0],

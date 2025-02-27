@@ -8,36 +8,49 @@ import {
 } from "../../../types.d";
 import { log } from "../log";
 
-function side_to_position(side: number, offset: number) {
-  let position: [number, number] = [0.5, 0.5];
-  switch (side) {
-    case CharacterLayoutPosition.Center:
-      position = [0.5, 0.5];
+function side_to_position(
+  side: CharacterLayoutPosition,
+  offset: number,
+  layout_mode: "normal" | "three_models"
+) {
+  let position: [number, number];
+  switch (layout_mode) {
+    case "normal": {
+      const position_map: {
+        [key in CharacterLayoutPosition]: [number, number];
+      } = {
+        [CharacterLayoutPosition.Unspecified]: [0.5, 0.5],
+        [CharacterLayoutPosition.Center]: [0.5, 0.5],
+        [CharacterLayoutPosition.Left]: [0.3, 0.5],
+        [CharacterLayoutPosition.Right]: [0.7, 0.5],
+        [CharacterLayoutPosition.LeftEdge]: [-0.5, 0.5],
+        [CharacterLayoutPosition.RightEdge]: [1.5, 0.5],
+        [CharacterLayoutPosition.BottomEdge]: [0.5, 1.5],
+        [CharacterLayoutPosition.BottomLeftEdge]: [0.3, 1.5],
+        [CharacterLayoutPosition.BottomRightEdge]: [0.7, 1.5],
+      };
+      position = position_map[side] || [0.5, 0.5];
       break;
-    case CharacterLayoutPosition.Left:
-      position = [0.3, 0.5];
+    }
+    case "three_models": {
+      const position_map: {
+        [key in CharacterLayoutPosition]: [number, number];
+      } = {
+        [CharacterLayoutPosition.Unspecified]: [0.5, 0.5],
+        [CharacterLayoutPosition.Center]: [0.5, 0.5],
+        [CharacterLayoutPosition.Left]: [0.25, 0.5],
+        [CharacterLayoutPosition.Right]: [0.75, 0.5],
+        [CharacterLayoutPosition.LeftEdge]: [-0.5, 0.5],
+        [CharacterLayoutPosition.RightEdge]: [1.5, 0.5],
+        [CharacterLayoutPosition.BottomEdge]: [0.5, 1.5],
+        [CharacterLayoutPosition.BottomLeftEdge]: [0.25, 1.5],
+        [CharacterLayoutPosition.BottomRightEdge]: [0.75, 1.5],
+      };
+      position = position_map[side] || [0.5, 0.5];
       break;
-    case CharacterLayoutPosition.Right:
-      position = [0.7, 0.5];
-      break;
-    case CharacterLayoutPosition.LeftEdge:
-      position = [-0.5, 0.5];
-      break;
-    case CharacterLayoutPosition.RightEdge:
-      position = [1.5, 0.5];
-      break;
-    case CharacterLayoutPosition.BottomEdge:
-      position = [0.5, 1.5];
-      break;
-    case CharacterLayoutPosition.BottomLeftEdge:
-      position = [0.3, 1.5];
-      break;
-    case CharacterLayoutPosition.BottomRightEdge:
-      position = [0.7, 1.5];
-      break;
-    default:
-      position = [0.5, 0.5];
+    }
   }
+
   position[0] += offset / 1920; // I guess
   return position;
 }
@@ -62,6 +75,7 @@ export default async function action_layout(
   const action_detail =
     controller.scenarioData.LayoutData[action.ReferenceIndex];
   controller.layers.telop.hide(500);
+  const layout_mode = controller.layers.live2d.layout_mode;
   switch (action_detail.Type) {
     case CharacterLayoutType.Motion:
       {
@@ -83,7 +97,8 @@ export default async function action_layout(
         // (Same time) Move from current position to SideTo position or not move.
         const to = side_to_position(
           action_detail.SideTo,
-          action_detail.SideToOffsetX
+          action_detail.SideToOffsetX,
+          layout_mode
         );
         const move = controller.layers.live2d.move(
           costume,
@@ -125,11 +140,13 @@ export default async function action_layout(
         // (Same time) Move from SideFrom position to SideTo position or at SideFrom position.
         const from = side_to_position(
           action_detail.SideFrom,
-          action_detail.SideFromOffsetX
+          action_detail.SideFromOffsetX,
+          layout_mode
         );
         const to = side_to_position(
           action_detail.SideTo,
-          action_detail.SideToOffsetX
+          action_detail.SideToOffsetX,
+          layout_mode
         );
         let move;
         if (from[0] === to[0] && from[1] === to[1]) {
@@ -172,11 +189,13 @@ export default async function action_layout(
         // Step 1: Move from SideFrom position to SideTo position or not move.
         const from = side_to_position(
           action_detail.SideFrom,
-          action_detail.SideFromOffsetX
+          action_detail.SideFromOffsetX,
+          layout_mode
         );
         const to = side_to_position(
           action_detail.SideTo,
-          action_detail.SideToOffsetX
+          action_detail.SideToOffsetX,
+          layout_mode
         );
         if (!(from[0] === to[0] && from[1] === to[1])) {
           await controller.layers.live2d.move(
