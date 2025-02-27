@@ -460,6 +460,24 @@ export enum SpecialEffectType {
    * @see 00:00 https://www.bilibili.com/video/BV17J4m1e7xw?p=2
    */
   SekaiOutCenter = 41,
+  /**
+   * change camera position
+   * @param StringVal target camera position in: x, y
+   * @param StringValSub always empty string.
+   * @param Duration duration
+   * @param IntVal always 0.
+   * @see 02:48 https://www.bilibili.com/video/BV1P9SuYaEE6?p=2
+   */
+  ChangeCameraPosition = 42,
+  /**
+   * change camera zoom level
+   * @param StringVal zoom level
+   * @param StringValSub always empty string.
+   * @param Duration duration
+   * @param IntVal always 0.
+   * @see 02:48 https://www.bilibili.com/video/BV1P9SuYaEE6?p=2
+   */
+  ChangeCameraZoomLevel = 43,
 }
 
 export interface SpecialEffectData {

@@ -38,7 +38,7 @@ function side_to_position(side: number, offset: number) {
     default:
       position = [0.5, 0.5];
   }
-  position[0] += offset / 2000;
+  position[0] += offset / 1920; // I guess
   return position;
 }
 

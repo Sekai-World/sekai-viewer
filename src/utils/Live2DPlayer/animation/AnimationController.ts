@@ -60,14 +60,16 @@ export default class AnimationController {
   ) => {
     let progress = 0;
     apply(0);
-    await this.wrapper(
-      (ani_ticker) => {
-        progress = progress + ani_ticker.elapsedMS / time_ms;
-        progress = Math.min(progress, 1);
-        apply(progress);
-      },
-      () => progress >= 1
-    );
+    if (time_ms >= 30) {
+      await this.wrapper(
+        (ani_ticker) => {
+          progress = progress + ani_ticker.elapsedMS / time_ms;
+          progress = Math.min(progress, 1);
+          apply(progress);
+        },
+        () => progress >= 1
+      );
+    }
     apply(1);
   };
 
