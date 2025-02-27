@@ -585,15 +585,17 @@ export interface SoundData {
 
 export enum CharacterLayoutMode {
   /**
-   * Appear one by one.
+   * There are usually at most two models coexisting simultaneously,
+   * and the models are of normal size.
    * @see https://www.bilibili.com/video/BV13v4y1k7Zr?p=5 12:00 (event_83_05:436)
    */
-  Sequential = 0,
+  Normal = 0,
   /**
-   * Appear in the sametime.
+   * Three models side by side, the models are slightly small.
    * @see https://www.bilibili.com/video/BV13v4y1k7Zr?p=5 12:00 (event_83_05:425)
+   * @see https://www.bilibili.com/video/BV18D4y1K7fN/?p=1 00:00 (001022_ichika01)
    */
-  Simultaneous = 3,
+  ThreeModels = 3,
 }
 
 export interface ScenarioSnippetCharacterLayoutMode {

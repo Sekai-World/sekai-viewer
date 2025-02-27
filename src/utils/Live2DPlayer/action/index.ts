@@ -8,6 +8,7 @@ import action_sound from "./sound";
 import action_motion from "./character_motion";
 import action_layout from "./character_layout";
 import action_se from "./special_effect";
+import action_layout_mode from "./action_layout_mode";
 
 export default async function single_action(
   controller: Live2DController,
@@ -28,6 +29,9 @@ export default async function single_action(
       break;
     case SnippetAction.Sound:
       await action_sound(controller, action);
+      break;
+    case SnippetAction.CharacterLayoutMode:
+      await action_layout_mode(controller, action);
       break;
     default:
       log.warn(
