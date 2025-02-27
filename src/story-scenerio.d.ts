@@ -442,6 +442,24 @@ export enum SpecialEffectType {
    * @see https://www.bilibili.com/video/BV1kD4y1R7h9?p=2
    */
   FullScreenTextHide = 39,
+  /**
+   * sekai effect from center (sekai/white -> scene)
+   * @param StringVal always empty string.
+   * @param StringValSub always empty string.
+   * @param Duration duration
+   * @param IntVal always 0.
+   * @see 00:00 https://www.bilibili.com/video/BV17J4m1e7xw?p=2
+   */
+  SekaiInCenter = 40,
+  /**
+   * sekai effect from center (scene -> sekai/white)
+   * @param StringVal always empty string.
+   * @param StringValSub always empty string.
+   * @param Duration duration
+   * @param IntVal always 0.
+   * @see 00:00 https://www.bilibili.com/video/BV17J4m1e7xw?p=2
+   */
+  SekaiOutCenter = 41,
 }
 
 export interface SpecialEffectData {

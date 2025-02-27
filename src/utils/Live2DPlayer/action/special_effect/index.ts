@@ -36,6 +36,8 @@ import FullScreenTextShow from "./FullScreenTextShow";
 import FullScreenTextHide from "./FullScreenTextHide";
 import MemoryIn from "./MemoryIn";
 import MemoryOut from "./MemoryOut";
+import SekaiInCenter from "./SekaiInCenter";
+import SekaiOutCenter from "./SekaiOutCenter";
 
 export default async function action_se(
   controller: Live2DController,
@@ -142,6 +144,12 @@ export default async function action_se(
       break;
     case SpecialEffectType.MemoryOut:
       await MemoryOut(controller, action);
+      break;
+    case SpecialEffectType.SekaiInCenter:
+      await SekaiInCenter(controller, action);
+      break;
+    case SpecialEffectType.SekaiOutCenter:
+      await SekaiOutCenter(controller, action);
       break;
     default:
       log.warn(
