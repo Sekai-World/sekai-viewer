@@ -1,5 +1,6 @@
 import type { ILive2DLayerData, ILive2DCachedAsset } from "./types.d";
 import { Texture } from "pixi.js";
+import { Container } from "pixi.js";
 import type { Application } from "pixi.js";
 
 import { log } from "./log";
@@ -21,6 +22,7 @@ export class Live2DPlayer {
   app: Application;
   stage_size: [number, number];
   animate: AnimationController;
+  root: Container;
   layers: {
     background: Background;
     fullcolor: Fullcolor;
@@ -34,6 +36,12 @@ export class Live2DPlayer {
     live2d: Live2D;
     wipe: Wipe;
     sekai: Sekai;
+  };
+  camera: {
+    pivot: [number, number];
+    position: [number, number];
+    scale: [number, number];
+    rotation: number;
   };
 
   constructor(
@@ -76,23 +84,48 @@ export class Live2DPlayer {
       wipe: new Wipe(layer_data),
       sekai: new Sekai(layer_data),
     };
-    app.stage.addChild(this.layers.background.root);
-    app.stage.addChild(this.layers.live2d.root);
-    app.stage.addChild(this.layers.scene_effect.root);
-    app.stage.addChild(this.layers.memory_filter.root);
-    app.stage.addChild(this.layers.flashback_filter.root);
-    app.stage.addChild(this.layers.dialog.root);
-    app.stage.addChild(this.layers.telop.root);
-    app.stage.addChild(this.layers.sekai.root);
-    app.stage.addChild(this.layers.wipe.root);
-    app.stage.addChild(this.layers.fullcolor.root);
-    app.stage.addChild(this.layers.fullscreen_text_bg.root);
-    app.stage.addChild(this.layers.fullscreen_text.root);
+    const root = new Container();
+    this.root = root;
+    app.stage.addChild(root);
+    root.addChild(this.layers.background.root);
+    root.addChild(this.layers.live2d.root);
+    root.addChild(this.layers.scene_effect.root);
+    root.addChild(this.layers.memory_filter.root);
+    root.addChild(this.layers.flashback_filter.root);
+    root.addChild(this.layers.dialog.root);
+    root.addChild(this.layers.telop.root);
+    root.addChild(this.layers.sekai.root);
+    root.addChild(this.layers.wipe.root);
+    root.addChild(this.layers.fullcolor.root);
+    root.addChild(this.layers.fullscreen_text_bg.root);
+    root.addChild(this.layers.fullscreen_text.root);
+
+    this.camera = {
+      pivot: [0.5, 0.5],
+      position: [0, 0],
+      scale: [1, 1],
+      rotation: 0,
+    };
+    this.set_stage_size(stage_size);
     log.log("Live2DPlayer", `player init.`);
   }
 
+  set_style = () => {
+    this.root.pivot.set(
+      this.stage_size[0] * this.camera.pivot[0],
+      this.stage_size[1] * this.camera.pivot[1]
+    );
+    this.root.position.set(
+      this.stage_size[0] * (this.camera.pivot[0] + this.camera.position[0]),
+      this.stage_size[1] * (this.camera.pivot[1] + this.camera.position[1])
+    );
+    this.root.scale.set(this.camera.scale[0], this.camera.scale[1]);
+    this.root.rotation = this.camera.rotation;
+  };
+
   set_stage_size = (stage_size: [number, number]) => {
     this.stage_size = stage_size;
+    this.set_style();
     Object.values(this.layers).forEach((l) => l.set_style(this.stage_size));
   };
 

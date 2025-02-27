@@ -38,6 +38,8 @@ import MemoryIn from "./MemoryIn";
 import MemoryOut from "./MemoryOut";
 import SekaiInCenter from "./SekaiInCenter";
 import SekaiOutCenter from "./SekaiOutCenter";
+import ChangeCameraPosition from "./ChangeCameraPosition";
+import ChangeCameraZoomLevel from "./ChangeCameraZoomLevel";
 
 export default async function action_se(
   controller: Live2DController,
@@ -150,6 +152,12 @@ export default async function action_se(
       break;
     case SpecialEffectType.SekaiOutCenter:
       await SekaiOutCenter(controller, action);
+      break;
+    case SpecialEffectType.ChangeCameraPosition:
+      await ChangeCameraPosition(controller, action);
+      break;
+    case SpecialEffectType.ChangeCameraZoomLevel:
+      await ChangeCameraZoomLevel(controller, action);
       break;
     default:
       log.warn(
