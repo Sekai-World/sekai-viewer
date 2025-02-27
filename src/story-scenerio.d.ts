@@ -568,10 +568,46 @@ export const SeScenarioEffectType = {
 };
 
 export enum SoundPlayMode {
+  /**
+   * Normal cross fade.
+   * @param Bgm bgm name. Either Bgm or Se should be provided, not both.
+   * @param Se sound effect name. Either Bgm or Se should be provided, not both.
+   * @param Volume always 1.0
+   * @param Duration cross fade duration
+   * @param SeBundleName always empty string
+   */
   CrossFade = 0,
+  /**
+   * Not sure what to do with this, currently same as CrossFade.
+   */
   Stack = 1,
-  SpecialSePlay = 2,
-  Stop = 3,
+  /**
+   * Always used by sound effect, loop.
+   * @param Bgm always empty string
+   * @param Se sound effect name.
+   * @param Volume 0-1
+   * @param Duration cross fade duration
+   * @param SeBundleName always empty string
+   */
+  LoopSe = 2,
+  /**
+   * Stop sound effect.
+   * @param Bgm always empty string
+   * @param Se sound effect name.
+   * @param Volume always 1.0
+   * @param Duration cross fade duration
+   * @param SeBundleName always empty string
+   */
+  StopSe = 3,
+  /**
+   * Set bgm volume.
+   * @param Bgm can be empty string or bgm name. If empty string, will set current bgm volume.
+   * @param Se always empty string
+   * @param Volume 0-1
+   * @param Duration cross fade duration
+   * @param SeBundleName always empty string
+   */
+  SetBgmVolume = 4,
 }
 
 export interface SoundData {
