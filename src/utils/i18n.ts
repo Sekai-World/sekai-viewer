@@ -101,7 +101,7 @@ export async function initGlobalI18n() {
         "cheerful_carnival_teams",
         "cheerful_carnival_themes",
         "area_name",
-        "area_sub_name",
+        "area_subname",
       ],
       returnEmptyString: false,
     });
