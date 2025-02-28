@@ -308,12 +308,8 @@ class Live2DModelWithInfo extends Live2DModel {
       animations: [],
     };
   }
-  destroy(options?: {
-    children?: boolean;
-    texture?: boolean;
-    baseTexture?: boolean;
-  }): void {
-    super.destroy(options);
+  destroy() {
     this.live2DInfo.animations.forEach((a) => a.destroy());
+    super.destroy();
   }
 }

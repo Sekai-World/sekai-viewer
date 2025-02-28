@@ -41,7 +41,8 @@ const StoryReaderLive2DStage = forwardRef<
       });
     }
     return () => {
-      controller.current?.unload();
+      controller.current?.destroy();
+      controller.current = undefined;
     };
   }, []);
   function reloadStage() {

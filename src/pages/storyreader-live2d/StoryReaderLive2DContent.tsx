@@ -205,7 +205,7 @@ const StoryReaderLive2DContent: React.FC<{
           left: 0,
           width: "100vw",
           height: "100vh",
-          zIndex: 1501, // bigger than tooltip(1500)
+          zIndex: 1201, // between drawer(1200) and modal(1300)
         }
       : {};
   }, [isPageFullscreen]);

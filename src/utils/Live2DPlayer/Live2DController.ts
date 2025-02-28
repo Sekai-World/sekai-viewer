@@ -16,6 +16,7 @@ import {
   ILive2DCachedAsset,
   ILive2DModelDataCollection,
   ILive2DControllerData,
+  Live2DAssetTypeImage,
 } from "./types.d";
 
 import single_action from "./action";
@@ -421,24 +422,30 @@ export class Live2DController extends Live2DPlayer {
           (sound.data as Howl).volume(this.settings.se_volume);
         });
   };
-  stop_sounds = (sound_types: Live2DAssetType[]) => {
+  stop_sounds = (sound_types: Live2DAssetType[], unload = false) => {
     this.scenarioResource
-      .filter(
-        (resource) => sound_types.findIndex((t) => t === resource.type) !== -1
-      )
+      .filter((resource) => sound_types.includes(resource.type))
       .forEach((resource) => {
         const sound = resource.data as Howl;
         if (sound.playing()) sound.stop();
+        if (unload) sound.unload();
       });
-    if (sound_types.findIndex((t) => t === Live2DAssetType.Talk) !== -1) {
+    if (sound_types.includes(Live2DAssetType.Talk)) {
       this.layers.live2d.stop_speaking();
     }
   };
-  unload = () => {
-    this.stop_sounds([
-      Live2DAssetType.BackgroundMusic,
-      Live2DAssetType.SoundEffect,
-    ]);
-    this.destroy();
-  };
+  public destroy() {
+    // unload all sounds
+    this.stop_sounds(Live2DAssetTypeSound, true);
+    // unload all images
+    this.scenarioResource
+      .filter((resource) => Live2DAssetTypeImage.includes(resource.type))
+      .forEach((resource) => {
+        const image = resource.data as HTMLImageElement;
+        image.src = "";
+        image.remove();
+      });
+    // destroy player
+    super.destroy();
+  }
 }
