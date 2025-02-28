@@ -213,5 +213,6 @@ export default class SceneEffect extends BaseLayer {
   destroy() {
     this.scene_effects.forEach((e) => e.ani.destroy());
     this.scene_effects = [];
+    super.destroy();
   }
 }

@@ -27,5 +27,6 @@ export default class Sekai extends BaseLayer {
   destroy() {
     this.sekai?.destroy();
     this.sekai = undefined;
+    super.destroy();
   }
 }

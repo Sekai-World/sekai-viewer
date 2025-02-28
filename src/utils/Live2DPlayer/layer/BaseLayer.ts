@@ -118,7 +118,10 @@ export default abstract class BaseLayer {
   };
 
   public destroy() {
+    this.animation_controller.abort();
     this.shake_animation_controller.abort();
-    this.root.children.forEach((c) => c.destroy({ children: true }));
+    this.root.children.forEach((c) =>
+      c.destroy({ children: true, texture: true, baseTexture: true })
+    );
   }
 }

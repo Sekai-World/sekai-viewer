@@ -131,7 +131,10 @@ export class Live2DPlayer {
     Object.values(this.layers).forEach((l) => l.set_style(this.stage_size));
   };
 
-  destroy = () => {
+  public destroy() {
+    // abort all animations
+    this.animate.abort_controller.abort();
+    // destroy all layers
     Object.values(this.layers).forEach((l) => l.destroy());
-  };
+  }
 }
