@@ -50,5 +50,9 @@ export default async function AttachCharacterShader(
         action,
         action_detail
       );
+      controller.events.emit(
+        "warn",
+        `${SnippetAction[action.Action]}/${SpecialEffectType[action_detail.EffectType]}/${(SeAttachCharacterShaderType as any)[action_detail.StringVal]} not implemented!`
+      );
   }
 }

@@ -12,46 +12,36 @@ function side_to_position(
   side: CharacterLayoutPosition,
   offset: number,
   layout_mode: "normal" | "three_models"
-) {
-  let position: [number, number];
-  switch (layout_mode) {
-    case "normal": {
-      const position_map: {
-        [key in CharacterLayoutPosition]: [number, number];
-      } = {
-        [CharacterLayoutPosition.Unspecified]: [0.5, 0.5],
-        [CharacterLayoutPosition.Center]: [0.5, 0.5],
-        [CharacterLayoutPosition.Left]: [0.3, 0.5],
-        [CharacterLayoutPosition.Right]: [0.7, 0.5],
-        [CharacterLayoutPosition.LeftEdge]: [-0.5, 0.5],
-        [CharacterLayoutPosition.RightEdge]: [1.5, 0.5],
-        [CharacterLayoutPosition.BottomEdge]: [0.5, 1.5],
-        [CharacterLayoutPosition.BottomLeftEdge]: [0.3, 1.5],
-        [CharacterLayoutPosition.BottomRightEdge]: [0.7, 1.5],
-      };
-      position = position_map[side] || [0.5, 0.5];
-      break;
-    }
-    case "three_models": {
-      const position_map: {
-        [key in CharacterLayoutPosition]: [number, number];
-      } = {
-        [CharacterLayoutPosition.Unspecified]: [0.5, 0.5],
-        [CharacterLayoutPosition.Center]: [0.5, 0.5],
-        [CharacterLayoutPosition.Left]: [0.25, 0.5],
-        [CharacterLayoutPosition.Right]: [0.75, 0.5],
-        [CharacterLayoutPosition.LeftEdge]: [-0.5, 0.5],
-        [CharacterLayoutPosition.RightEdge]: [1.5, 0.5],
-        [CharacterLayoutPosition.BottomEdge]: [0.5, 1.5],
-        [CharacterLayoutPosition.BottomLeftEdge]: [0.25, 1.5],
-        [CharacterLayoutPosition.BottomRightEdge]: [0.75, 1.5],
-      };
-      position = position_map[side] || [0.5, 0.5];
-      break;
-    }
-  }
-
-  position[0] += offset / 1920; // I guess
+): [number, number] {
+  const position_maps = {
+    normal: {
+      [CharacterLayoutPosition.Unspecified]: [0.5, 0.5],
+      [CharacterLayoutPosition.Center]: [0.5, 0.5],
+      [CharacterLayoutPosition.Left]: [0.3, 0.5],
+      [CharacterLayoutPosition.Right]: [0.7, 0.5],
+      [CharacterLayoutPosition.LeftEdge]: [-0.5, 0.5],
+      [CharacterLayoutPosition.RightEdge]: [1.5, 0.5],
+      [CharacterLayoutPosition.BottomEdge]: [0.5, 1.5],
+      [CharacterLayoutPosition.BottomLeftEdge]: [0.3, 1.5],
+      [CharacterLayoutPosition.BottomRightEdge]: [0.7, 1.5],
+    },
+    three_models: {
+      [CharacterLayoutPosition.Unspecified]: [0.5, 0.5],
+      [CharacterLayoutPosition.Center]: [0.5, 0.5],
+      [CharacterLayoutPosition.Left]: [0.25, 0.5],
+      [CharacterLayoutPosition.Right]: [0.75, 0.5],
+      [CharacterLayoutPosition.LeftEdge]: [-0.5, 0.5],
+      [CharacterLayoutPosition.RightEdge]: [1.5, 0.5],
+      [CharacterLayoutPosition.BottomEdge]: [0.5, 1.5],
+      [CharacterLayoutPosition.BottomLeftEdge]: [0.25, 1.5],
+      [CharacterLayoutPosition.BottomRightEdge]: [0.75, 1.5],
+    },
+  };
+  const position = [...(position_maps[layout_mode][side] || [0.5, 0.5])] as [
+    number,
+    number,
+  ];
+  position[0] += offset / 1920;
   return position;
 }
 
@@ -217,6 +207,10 @@ export default async function action_layout(
         `${SnippetAction[action.Action]}/${CharacterLayoutType[action_detail.Type]} not implemented!`,
         action,
         action_detail
+      );
+      controller.events.emit(
+        "warn",
+        `${SnippetAction[action.Action]}/${CharacterLayoutType[action_detail.Type]} not implemented!`
       );
   }
 }

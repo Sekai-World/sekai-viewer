@@ -34,5 +34,9 @@ export default async function action_motion(
         action,
         action_detail
       );
+      controller.events.emit(
+        "warn",
+        `${SnippetAction[action.Action]}/${CharacterLayoutType[action_detail.Type]} not implemented!`
+      );
   }
 }

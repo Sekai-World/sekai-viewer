@@ -25,11 +25,16 @@ export default async function FlashbackIn(
     const inst = sound.data as Howl;
     inst.volume(controller.settings.voice_volume);
     inst.play();
-  } else
+  } else {
     log.warn(
       "Live2DController",
       `${action_detail.StringValSub} not loaded, skip.`
     );
+    controller.events.emit(
+      "warn",
+      `${action_detail.StringValSub} not loaded, skip.`
+    );
+  }
   controller.layers.fullscreen_text.show(500);
   if (controller.settings.text_animation) {
     await controller.layers.fullscreen_text.animate(action_detail.StringVal);

@@ -47,6 +47,10 @@ export default async function action_sound(
         sound_type = "bgm";
       } else {
         log.warn("Live2DController", `${action_detail.Bgm} not loaded, skip.`);
+        controller.events.emit(
+          "warn",
+          `${action_detail.Bgm} not loaded, skip.`
+        );
         return;
       }
     }
@@ -62,6 +66,7 @@ export default async function action_sound(
       sound_type = "se";
     } else {
       log.warn("Live2DController", `${action_detail.Se} not loaded, skip.`);
+      controller.events.emit("warn", `${action_detail.Se} not loaded, skip.`);
       return;
     }
   }
@@ -143,6 +148,10 @@ export default async function action_sound(
         "Live2DController",
         `Sound/SoundPlayMode:${action_detail.PlayMode} not implemented!`,
         action
+      );
+      controller.events.emit(
+        "warn",
+        `Sound/SoundPlayMode:${action_detail.PlayMode} not implemented!`
       );
   }
 }
