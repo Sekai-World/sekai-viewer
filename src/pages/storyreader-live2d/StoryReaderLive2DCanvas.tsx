@@ -11,6 +11,7 @@ import type {
   ILive2DPlayerSettings,
 } from "../../utils/Live2DPlayer/types.d";
 
+import { useAlertSnackbar } from "../../utils";
 import StoryReaderLive2DStage from "./StoryReaderLive2DStage";
 
 //DEBUG
@@ -24,6 +25,7 @@ const StoryReaderLive2DCanvas: React.FC<{
   stageSize: [number, number];
 }> = ({ controllerData, settings, stageSize }) => {
   const { t } = useTranslation();
+  const { showWarning } = useAlertSnackbar();
 
   const wrap = useRef<HTMLDivElement>(null);
   const stage = useRef<{
@@ -85,6 +87,25 @@ const StoryReaderLive2DCanvas: React.FC<{
       });
     }
   }, [settings.autoplay, loadStatus, playing]);
+
+  // warn listener
+  useEffect(() => {
+    const warn = (msg: string) => {
+      showWarning(msg);
+    };
+    if (
+      stage.current &&
+      loadStatus === LoadStatus.Loaded &&
+      settings.showWarning
+    ) {
+      stage.current.controller.events.on("warn", warn);
+    }
+    return () => {
+      if (stage.current) {
+        stage.current.controller.events.off("warn", warn);
+      }
+    };
+  }, [loadStatus, settings.showWarning, showWarning]);
 
   // other settings listener
   useEffect(

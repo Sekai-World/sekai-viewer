@@ -39,5 +39,9 @@ export default async function single_action(
         `${SnippetAction[action.Action]} not implemented!`,
         action
       );
+      controller.events.emit(
+        "warn",
+        `${SnippetAction[action.Action]} not implemented!`
+      );
   }
 }

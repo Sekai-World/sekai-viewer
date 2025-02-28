@@ -166,5 +166,9 @@ export default async function action_se(
         action,
         action_detail
       );
+      controller.events.emit(
+        "warn",
+        `${SnippetAction[action.Action]}/${SpecialEffectType[action_detail.EffectType]} not implemented!`
+      );
   }
 }

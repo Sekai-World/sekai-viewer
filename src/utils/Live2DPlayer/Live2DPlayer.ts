@@ -17,6 +17,7 @@ import Sekai from "./layer/Sekai";
 import FullScreenText from "./layer/FullScreenText";
 
 import AnimationController from "./animation/AnimationController";
+import { Live2DPlayerEventEmitter } from "./Live2DPlayerEventEmitter";
 
 export class Live2DPlayer {
   app: Application;
@@ -43,6 +44,7 @@ export class Live2DPlayer {
     scale: [number, number];
     rotation: number;
   };
+  events: Live2DPlayerEventEmitter;
 
   constructor(
     app: Application,
@@ -53,7 +55,7 @@ export class Live2DPlayer {
     this.app = app;
     this.stage_size = stage_size;
     this.animate = new AnimationController();
-
+    this.events = new Live2DPlayerEventEmitter();
     // create texture
     const textures = ui_assets.map((asset) => ({
       identifer: asset.identifer,

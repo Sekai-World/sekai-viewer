@@ -1,6 +1,7 @@
 import BaseLayer from "./BaseLayer";
 import type { ILive2DLayerData } from "../types.d";
 import { SeScenarioEffectType } from "../../../types.d";
+import type { Live2DPlayerEventEmitter } from "../Live2DPlayerEventEmitter";
 
 import { log } from "../log";
 
@@ -11,7 +12,6 @@ import Kirakira from "../animation/Kirakira";
 import Blackout from "../animation/Blackout";
 import Lightup from "../animation/Lightup";
 import LightupLegend from "../animation/LightupLegend";
-
 export default class SceneEffect extends BaseLayer {
   structure: Record<string, never>;
   scene_effects: { type: string; ani: BaseAnimation }[];
@@ -22,7 +22,7 @@ export default class SceneEffect extends BaseLayer {
     this.scene_effects = [];
   }
 
-  draw(effect: string) {
+  draw(effect: string, emitter: Live2DPlayerEventEmitter) {
     const container = this.root;
     const catagory = Object.entries(SeScenarioEffectType).find(([_, list]) =>
       list.includes(effect)
@@ -181,6 +181,7 @@ export default class SceneEffect extends BaseLayer {
           break;
         default:
           log.warn("SceneEffects", `${effect} not implemented!`);
+          emitter.emit("warn", `${effect} not implemented!`);
       }
       if (ani) {
         container.addChild(ani.root);
@@ -193,6 +194,7 @@ export default class SceneEffect extends BaseLayer {
       }
     } else {
       log.warn("SceneEffects", `${effect} not implemented!`);
+      emitter.emit("warn", `${effect} not implemented!`);
     }
   }
   set_style(stage_size?: [number, number]): void {

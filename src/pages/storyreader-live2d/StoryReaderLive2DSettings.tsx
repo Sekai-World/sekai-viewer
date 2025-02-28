@@ -52,6 +52,12 @@ const StoryReaderLive2DSettings: React.FC<{
     },
     [settings]
   );
+  const handleShowWarningChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      onSettingsChange({ ...settings, showWarning: event.target.checked });
+    },
+    [settings]
+  );
 
   return (
     <PaperContainer>
@@ -136,6 +142,24 @@ const StoryReaderLive2DSettings: React.FC<{
                 />
                 <VolumeUp />
               </Stack>
+            </Stack>
+          </Grid>
+          <Grid item xs={12} sm={6} md={6} lg={4} xl={3}>
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="center"
+              sx={{ height: 1, padding: 1 }}
+            >
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={settings.showWarning}
+                    onChange={handleShowWarningChange}
+                  />
+                }
+                label={t("story_reader_live2d:settings.show_warning")}
+              />
             </Stack>
           </Grid>
         </Grid>

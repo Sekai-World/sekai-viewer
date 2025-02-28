@@ -55,11 +55,16 @@ export default async function action_talk(
         inst.volume(volume);
         inst.play();
       }
-    } else
+    } else {
       log.warn(
         "Live2DController",
         `${action_detail.Voices[0].VoiceId} not loaded, skip.`
       );
+      controller.events.emit(
+        "warn",
+        `${action_detail.Voices[0].VoiceId} not loaded, skip.`
+      );
+    }
   }
   // wait motion and  text animation
   await Promise.all(motion);

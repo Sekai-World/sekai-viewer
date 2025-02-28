@@ -53,6 +53,7 @@ const StoryReaderLive2DContent: React.FC<{
     bgmVolume: 30,
     autoplay: false,
     textAnimation: true,
+    showWarning: true,
   });
   const [showSettings, setShowSettings] = useState(false);
 

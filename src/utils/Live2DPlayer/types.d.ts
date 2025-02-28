@@ -133,6 +133,7 @@ export interface ILive2DPlayerSettings {
   bgmVolume: number;
   autoplay: boolean;
   textAnimation: boolean;
+  showWarning: boolean;
 }
 
 export enum LoadStatus {
