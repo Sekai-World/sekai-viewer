@@ -20,6 +20,7 @@ import {
   MotionPriority,
   MotionPreloadStrategy,
   config,
+  Cubism4InternalModel,
 } from "pixi-live2d-display-mulmotion";
 config.fftSize = 8192;
 config.logLevel = config.LOG_LEVEL_ERROR;
@@ -85,7 +86,11 @@ export default class Live2D extends BaseLayer {
       motionPreload: motionPreload,
     });
     model.visible = false;
-    model.internalModel.extendParallelMotionManager(2);
+    const internalModel = model.internalModel;
+    if (internalModel instanceof Cubism4InternalModel) {
+      internalModel.coreModel.setOverwriteFlagForModelCullings(true);
+    }
+    internalModel.extendParallelMotionManager(2);
     const alpha = new AlphaFilter(0);
     alpha.resolution = 2;
     model.filters = [alpha];

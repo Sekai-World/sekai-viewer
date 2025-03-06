@@ -64,7 +64,7 @@ export class Live2DPlayer {
 
     //initilize stage
     app.stage.removeChildren();
-    app.stage.interactive = false;
+    app.stage.eventMode = "none";
     app.stage.interactiveChildren = false;
     const layer_data: ILive2DLayerData = {
       stage_size: this.stage_size,
