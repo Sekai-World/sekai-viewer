@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.14.6](https://github.com/Sekai-World/sekai-viewer/compare/v1.14.5...v1.14.6) (2025-03-07)
+
+
+### Features
+
+* **event:** add link to live2d story reader ([8bf7fc8](https://github.com/Sekai-World/sekai-viewer/commits/8bf7fc8874db9884b9b8b6620417c89507deac87))
+* **live2d:** add warning event & popup snack bar ([f920557](https://github.com/Sekai-World/sekai-viewer/commits/f9205572dbe2892822b1dc600c21cbec8c44ceb4))
+* **live2d:** implement camera move/zoom effect ([8679e04](https://github.com/Sekai-World/sekai-viewer/commits/8679e043fc1374ba77c3927c3d7875d2f7b2ff50))
+* **live2d:** implement CharacterLayoutMode ([a4a2e1a](https://github.com/Sekai-World/sekai-viewer/commits/a4a2e1aa386618931f6d5c2807080140fea34f5d))
+* **live2d:** implement memory in/out effect ([341a268](https://github.com/Sekai-World/sekai-viewer/commits/341a26877676ee9ca92a71db6ee9263a62f1e16b))
+* **live2d:** implement sekai in/out center effect ([6c3389a](https://github.com/Sekai-World/sekai-viewer/commits/6c3389a46232af4fcc7ed3222455433c6c6cd39c))
+* **live2d:** implement sound fade in/out ([ac18dd6](https://github.com/Sekai-World/sekai-viewer/commits/ac18dd68f60333102d7300af8cd064184f7455a7))
+* **music:** add additional exclusive IDs for English music ([1ef6192](https://github.com/Sekai-World/sekai-viewer/commits/1ef619297deba0a42158c2a2bfab3bdfb9b9decd))
+
+
+### Bug Fixes
+
+* **i18n:** typo area_sub_name ([ba0a92c](https://github.com/Sekai-World/sekai-viewer/commits/ba0a92c0bba08efe23de169d5e641f931abdb427))
+* **live2d:** miku missing eye & rui missing arm ([fc0477c](https://github.com/Sekai-World/sekai-viewer/commits/fc0477c962f436732256fc49282ee7a2a7e499aa))
+* **live2d:** models will be blocked in some cases & memory leak ([a689929](https://github.com/Sekai-World/sekai-viewer/commits/a689929371cabf995719891de7557a158c7675af))
+* **live2d:** some sound effects and part voices are not loaded correctly ([15f296e](https://github.com/Sekai-World/sekai-viewer/commits/15f296e16433fb6421b10b939d2338415d487c99))
+* **live2d:** texts are sharp-edged ([91f21c3](https://github.com/Sekai-World/sekai-viewer/commits/91f21c3d57eb3907a40eb57c1bb111a6088edcc9))
+* **live2d:** texture and sound objects are not destroyed after the live2d stage is destroyed ([de07cb8](https://github.com/Sekai-World/sekai-viewer/commits/de07cb8d0292ab1c79ea45b0cb9789819472c74c))
+* **live2d:** wipe out effect animation not shown ([dca4791](https://github.com/Sekai-World/sekai-viewer/commits/dca4791698da73caa0100e195fcca20796389248))
+
 ### [1.14.5](https://github.com/Sekai-World/sekai-viewer/compare/v1.14.4...v1.14.5) (2025-02-22)
 
 
