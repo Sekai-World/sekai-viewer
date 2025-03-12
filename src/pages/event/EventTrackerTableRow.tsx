@@ -31,7 +31,7 @@ export const HistoryRow: React.FC<{
             borderBottom: "unset",
           },
         }}
-        key={!!rankingData ? rankingData.userId : 0}
+        key={rankingData.userId}
         onClick={() => setOpen(!open)}
       >
         <TableCell>
@@ -60,8 +60,7 @@ export const HistoryRow: React.FC<{
         </TableCell>
         <TableCell>
           <Grid container alignItems="center" spacing={1}>
-            {!!rankingData &&
-              rankingData.userCheerfulCarnival &&
+            {rankingData.userCheerfulCarnival &&
               rankingData.userCheerfulCarnival.eventId && (
                 <Grid item md={3} lg={2} xl={1}>
                   <CheerfulCarnivalTeamIcon
@@ -74,21 +73,19 @@ export const HistoryRow: React.FC<{
               )}
             <Grid item md={8} lg={9} xl={10}>
               <Typography style={{ minWidth: "100px" }}>
-                {!!rankingData ? rankingData.userName : "N/A"}
+                {rankingData.userName}
               </Typography>
             </Grid>
           </Grid>
         </TableCell>
         <TableCell>
           <Typography align="right" style={{ minWidth: "80px" }}>
-            {!!rankingData ? rankingData.score : "N/A"}
+            {rankingData.score}
           </Typography>
         </TableCell>
         <TableCell>
           <Typography align="right" style={{ minWidth: "80px" }}>
-            {!!rankingData
-              ? Math.round(rankingData.score / (eventDuration / 1000 / 3600))
-              : "N/A"}
+            {Math.round(rankingData.score / (eventDuration / 1000 / 3600))}
           </Typography>
         </TableCell>
       </TableRow>
@@ -97,7 +94,7 @@ export const HistoryRow: React.FC<{
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Grid container alignItems="center" spacing={2}>
               <Grid item xs={2} md={1}>
-                {!!rankingData && !!rankingData.userCard && (
+                {rankingData.userCard && (
                   <CardThumb
                     cardId={rankingData.userCard.cardId}
                     trained={
@@ -110,16 +107,15 @@ export const HistoryRow: React.FC<{
                 <Grid container>
                   <Grid item xs={12}>
                     <Typography variant="subtitle1" fontWeight="bold">
-                      {!!rankingData && rankingData.userName}
+                      {rankingData.userName}
                     </Typography>
-                    {!!rankingData && !!rankingData.userProfile && (
+                    {rankingData.userProfile && (
                       <Typography variant="subtitle2">
-                        {!!rankingData && rankingData.userProfile.word}
+                        {rankingData.userProfile.word}
                       </Typography>
                     )}
                   </Grid>
-                  {!!rankingData &&
-                    !!rankingData.userProfile &&
+                  {rankingData.userProfile &&
                     !rankingData.userProfileHonors && (
                       <Grid item xs={12} container spacing={1}>
                         {rankingData.userProfile.honorId1 && (
@@ -130,7 +126,7 @@ export const HistoryRow: React.FC<{
                             />
                           </Grid>
                         )}
-                        {!!rankingData && rankingData.userProfile.honorId2 && (
+                        {rankingData.userProfile.honorId2 && (
                           <Grid item xs={4} md={3} lg={2}>
                             <DegreeImage
                               honorId={rankingData.userProfile.honorId2}
@@ -138,7 +134,7 @@ export const HistoryRow: React.FC<{
                             />
                           </Grid>
                         )}
-                        {!!rankingData && rankingData.userProfile.honorId3 && (
+                        {rankingData.userProfile.honorId3 && (
                           <Grid item xs={4} md={3} lg={2}>
                             <DegreeImage
                               honorId={rankingData.userProfile.honorId3}
@@ -148,8 +144,7 @@ export const HistoryRow: React.FC<{
                         )}
                       </Grid>
                     )}
-                  {!!rankingData &&
-                    !!rankingData.userProfile &&
+                  {rankingData.userProfile &&
                     rankingData.userProfileHonors && (
                       <Grid item xs={12} container spacing={1}>
                         {rankingData.userProfileHonors.map((honor) => (
@@ -178,12 +173,10 @@ export const HistoryRow: React.FC<{
             <Grid container>
               <Grid item xs={12}>
                 <Grid item xs={12}>
-                  {!!rankingData ? (
-                    <EventTrackerGraph
-                      ranking={rankingData.rank as 1}
-                      eventId={eventId}
-                    />
-                  ) : null}
+                  <EventTrackerGraph
+                    ranking={rankingData.rank as 1}
+                    eventId={eventId}
+                  />
                 </Grid>
               </Grid>
             </Grid>
@@ -381,13 +374,11 @@ export const LiveRow: React.FC<{
             </Grid>
             <Grid container>
               <Grid item xs={12}>
-                {!!rankingData ? (
-                  <EventTrackerGraph
-                    rtRanking={rankingData}
-                    ranking={rankingData.rank as 1}
-                    eventId={rankingData.eventId}
-                  />
-                ) : null}
+                <EventTrackerGraph
+                  rtRanking={rankingData}
+                  ranking={rankingData.rank as 1}
+                  eventId={rankingData.eventId}
+                />
               </Grid>
             </Grid>
           </Collapse>

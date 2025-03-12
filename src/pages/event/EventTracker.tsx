@@ -556,7 +556,15 @@ const EventTracker: React.FC<unknown> = observer(() => {
                     <Grid key={rank} item xs={12}>
                       <HistoryMobileRow
                         rankingData={
-                          historyRanking.find((elem) => elem.rank === rank)!
+                          historyRanking.find((elem) => elem.rank === rank) || {
+                            id: -1,
+                            eventId: selectedEventId,
+                            timestamp: "0",
+                            rank,
+                            score: 0,
+                            userId: "0",
+                            userName: "N/A",
+                          }
                         }
                         eventId={selectedEvent!.id}
                       />
@@ -592,7 +600,15 @@ const EventTracker: React.FC<unknown> = observer(() => {
                               (r) => r.toRank === rank
                             )}
                           rankingData={
-                            historyRanking.find((elem) => elem.rank === rank)!
+                            historyRanking.find((elem) => elem.rank === rank) || {
+                              id: -1,
+                              eventId: selectedEventId,
+                              timestamp: "0",
+                              rank,
+                              score: 0,
+                              userId: "0",
+                              userName: "N/A",
+                            }
                           }
                           eventDuration={eventDuration}
                           eventId={selectedEvent!.id}
