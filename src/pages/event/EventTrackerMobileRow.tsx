@@ -17,17 +17,23 @@ export const HistoryMobileRow: React.FC<{
 
   return (
     <Fragment>
-      <Grid container onClick={() => setOpen(!open)} component={Paper}>
+      <Grid
+        container
+        onClick={() => !!rankingData.score && setOpen(!open)}
+        component={Paper}
+      >
         <Grid item xs={12}>
           <Grid container alignItems="center" spacing={1}>
             <Grid item xs={2} sm={1}>
-              <IconButton
-                aria-label="expand row"
-                size="small"
-                onClick={() => setOpen(!open)}
-              >
-                {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-              </IconButton>
+              {!!rankingData.score && (
+                <IconButton
+                  aria-label="expand row"
+                  size="small"
+                  onClick={() => setOpen(!open)}
+                >
+                  {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+                </IconButton>
+              )}
             </Grid>
             {rankingData.userCheerfulCarnival &&
               rankingData.userCheerfulCarnival.eventId && (
@@ -147,7 +153,7 @@ export const LiveMobileRow: React.FC<{
     <Fragment>
       <Grid
         container
-        onClick={() => setOpen(!open)}
+        onClick={() => !!rankingData.score && setOpen(!open)}
         component={Paper}
         sx={[
           { transition: "background-color 850ms linear" },
@@ -157,13 +163,15 @@ export const LiveMobileRow: React.FC<{
         <Grid item xs={12}>
           <Grid container alignItems="center" spacing={1}>
             <Grid item xs={2} sm={1}>
-              <IconButton
-                aria-label="expand row"
-                size="small"
-                onClick={() => setOpen(!open)}
-              >
-                {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-              </IconButton>
+              {!!rankingData.score && (
+                <IconButton
+                  aria-label="expand row"
+                  size="small"
+                  onClick={() => setOpen(!open)}
+                >
+                  {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+                </IconButton>
+              )}
             </Grid>
             {rankingData.userCheerfulCarnival &&
               rankingData.userCheerfulCarnival.eventId && (

@@ -32,16 +32,18 @@ export const HistoryRow: React.FC<{
           },
         }}
         key={rankingData.userId}
-        onClick={() => setOpen(!open)}
+        onClick={() => !!rankingData.score && setOpen(!open)}
       >
         <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-          </IconButton>
+          {!!rankingData.score && (
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+            </IconButton>
+          )}
         </TableCell>
         <TableCell>
           {rankingReward ? (
@@ -219,7 +221,7 @@ export const LiveRow: React.FC<{
     <Fragment>
       <TableRow
         key={rankingData.userId}
-        onClick={() => setOpen(!open)}
+        onClick={() => !!rankingData.score && setOpen(!open)}
         sx={[
           {
             "& > *": {
@@ -231,13 +233,15 @@ export const LiveRow: React.FC<{
         ]}
       >
         <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-          </IconButton>
+          {!!rankingData.score && (
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+            </IconButton>
+          )}
         </TableCell>
         <TableCell>
           {rankingReward ? (
