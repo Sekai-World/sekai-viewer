@@ -16,7 +16,7 @@ import React, {
   Fragment,
   useCallback,
   useEffect,
-  // useMemo,
+  useMemo,
   useState,
 } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -127,6 +127,7 @@ const CardDetail: React.FC<unknown> = observer(() => {
   const [episodeTabVal, setEpisodeTabVal] = useState<string>("1");
   const [cardLevel, setCardLevel] = useState<number>(0);
   const [skill, setSkill] = useState<ISkillInfo>();
+  const [trainedSkill, setTrainedSkill] = useState<ISkillInfo>();
   const [skillLevel, setSkillLevel] = useState<number>(0);
   const [masterLessons, setMasterLessons] = useState<IMasterLesson[]>([]);
   const [masterLessonRewards, setMasterLessonRewards] = useState<
@@ -141,88 +142,328 @@ const CardDetail: React.FC<unknown> = observer(() => {
   const [gachaPhraseUrl, setGachaPhraseUrl] = useState("");
   const [cardCommentId, setCardCommentId] = useState<number>(0);
 
+  const [charaRank, setCharaRank] = useState<number>(0);
+  const [charaRankNecessary, setCharaRankNecessary] = useState(false);
+
+  const [unitCount, setUnitCount] = useState(2);
+  const [unitCountMax] = useState(2);
+  const [unitCountNecessary, setUnitCountNecessary] = useState(false);
+
   const [event, setEvent] = useState<IEventInfo>();
 
   const { isBirthdayCard, isTrainableCard } = useCardType(card);
 
   const masterRankRewards = [0, 50, 100, 150, 200];
 
-  const getSkillDesc = useCallback(
-    (skill: ISkillInfo, skillLevel: number | number[]) => {
-      let originalSkillInfo = skill.description;
-      let translatedSkillInfo = assetT(
-        `skill_desc:${skill.id}`,
-        skill.description,
-        {
-          interpolation: { prefix: "[", suffix: "]" },
-        }
-      );
+  const replaceSkillValue = useCallback(
+    (skill: ISkillInfo, skillInfo: string, skillLevel: number) => {
+      const singleRegExp = new RegExp("{{(\\d+);(\\w+)}}", "g");
+      const doubleRegExp = new RegExp("{{(\\d+),(\\d+);(\\w+)}}", "g");
 
-      for (const elem of skill.skillEffects) {
-        const skillEffectDetail = elem.skillEffectDetails.find(
-          (d) => d.level === skillLevel
-        )!;
-        originalSkillInfo = originalSkillInfo.replace(
-          new RegExp(`{{${elem.id};d}}`),
-          String(skillEffectDetail.activateEffectDuration)
-        );
-        originalSkillInfo = originalSkillInfo.replace(
-          new RegExp(`{{${elem.id};v}}`),
-          String(skillEffectDetail.activateEffectValue)
-        );
-        translatedSkillInfo = translatedSkillInfo.replace(
-          new RegExp(`{{${elem.id};d}}`),
-          String(skillEffectDetail.activateEffectDuration)
-        );
-        translatedSkillInfo = translatedSkillInfo.replace(
-          new RegExp(`{{${elem.id};v}}`),
-          String(skillEffectDetail.activateEffectValue)
-        );
-        if (elem.skillEnhance != null) {
-          originalSkillInfo = originalSkillInfo.replaceAll(
-            new RegExp(`{{${elem.id};e}}`, "g"),
-            String(elem.skillEnhance.activateEffectValue)
+      const singleMatches = skillInfo.matchAll(singleRegExp);
+      const doubleMatches = skillInfo.matchAll(doubleRegExp);
+
+      let newSkillInfo = String(skillInfo);
+
+      if (singleMatches) {
+        for (const match of singleMatches) {
+          const skillEffect = skill.skillEffects.find(
+            (elem) => elem.id === Number(match[1])
           );
-          originalSkillInfo = originalSkillInfo.replace(
-            new RegExp(`{{${elem.id};m}}`),
-            String(
-              elem.skillEnhance.activateEffectValue * 5 +
-                skillEffectDetail.activateEffectValue
-            )
-          );
-          translatedSkillInfo = translatedSkillInfo.replaceAll(
-            new RegExp(`{{${elem.id};e}}`, "g"),
-            String(elem.skillEnhance.activateEffectValue)
-          );
-          translatedSkillInfo = translatedSkillInfo.replace(
-            new RegExp(`{{${elem.id};m}}`),
-            String(
-              elem.skillEnhance.activateEffectValue * 5 +
-                skillEffectDetail.activateEffectValue
-            )
-          );
+          if (skillEffect) {
+            const skillEffectDetail = skillEffect.skillEffectDetails.find(
+              (d) => d.level === skillLevel
+            );
+            if (skillEffectDetail) {
+              switch (match[2]) {
+                case "d":
+                  newSkillInfo = newSkillInfo.replace(
+                    new RegExp(`{{${match[1]};${match[2]}}}`),
+                    String(skillEffectDetail.activateEffectDuration)
+                  );
+                  break;
+                case "v":
+                  newSkillInfo = newSkillInfo.replace(
+                    new RegExp(`{{${match[1]};${match[2]}}}`),
+                    String(skillEffectDetail.activateEffectValue)
+                  );
+                  break;
+                case "e":
+                  if (skillEffect.skillEnhance?.activateEffectValue)
+                    newSkillInfo = newSkillInfo.replace(
+                      new RegExp(`{{${match[1]};${match[2]}}}`),
+                      String(skillEffect.skillEnhance.activateEffectValue)
+                    );
+                  break;
+                case "m":
+                  if (skillEffect.skillEnhance?.activateEffectValue)
+                    newSkillInfo = newSkillInfo.replace(
+                      new RegExp(`{{${match[1]};${match[2]}}}`),
+                      String(
+                        skillEffect.skillEnhance.activateEffectValue * 5 +
+                          skillEffectDetail.activateEffectValue
+                      )
+                    );
+                  break;
+                default:
+                  break;
+              }
+            }
+          } else if (match[2] === "c" && card) {
+            newSkillInfo = newSkillInfo.replace(
+              new RegExp(`{{${match[1]};${match[2]}}}`),
+              String(getCharaName(card.characterId))
+            );
+          }
         }
       }
 
-      switch (contentTransMode) {
-        case "original":
-          return <Typography align="right">{originalSkillInfo}</Typography>;
-        case "translated":
-          return <Typography align="right">{translatedSkillInfo}</Typography>;
-        case "both":
-          return (
-            <Grid container direction="column">
-              <Typography color="textPrimary" align="right">
-                {originalSkillInfo}
-              </Typography>
-              <Typography color="textSecondary" align="right">
-                {translatedSkillInfo}
-              </Typography>
-            </Grid>
-          );
+      if (doubleMatches) {
+        for (const match of doubleMatches) {
+          switch (match[3]) {
+            case "r":
+              {
+                setCharaRankNecessary(true);
+
+                const minRank = skill.skillEffects.find(
+                  (elem) => elem.id === Number(match[1])
+                )?.activateCharacterRank;
+                const maxRank = skill.skillEffects.find(
+                  (elem) => elem.id === Number(match[2])
+                )?.activateCharacterRank;
+
+                if (minRank && maxRank) {
+                  const currentEffect = skill.skillEffects.find((elem) =>
+                    charaRank > maxRank
+                      ? elem.activateCharacterRank === maxRank
+                      : elem.activateCharacterRank === charaRank ||
+                        elem.activateCharacterRank === charaRank - 1
+                  );
+
+                  if (currentEffect) {
+                    const skillEffectDetail =
+                      currentEffect.skillEffectDetails.find(
+                        (d) => d.level === skillLevel
+                      );
+                    newSkillInfo = newSkillInfo.replace(
+                      new RegExp(`{{${match[1]},${match[2]};${match[3]}}}`),
+                      String(skillEffectDetail?.activateEffectValue)
+                    );
+                  } else if (charaRank < minRank) {
+                    newSkillInfo = "# ERROR INVALID CHARACTER RANK #";
+                  } else {
+                    newSkillInfo = newSkillInfo.replace(
+                      new RegExp(`{{${match[1]},${match[2]};${match[3]}}}`),
+                      String(0)
+                    );
+                  }
+                }
+              }
+              break;
+            case "s":
+              {
+                const baseSkillEffect = skill.skillEffects.find(
+                  (elem) => elem.id === Number(match[1])
+                );
+
+                const minRank = skill.skillEffects.find(
+                  (elem) => elem.id === Number(match[1]) + 1
+                )?.activateCharacterRank;
+                const maxRank = skill.skillEffects.find(
+                  (elem) => elem.id === Number(match[2])
+                )?.activateCharacterRank;
+
+                if (minRank && maxRank) {
+                  const currentEffect = skill.skillEffects.find((elem) =>
+                    charaRank > maxRank
+                      ? elem.activateCharacterRank === maxRank
+                      : elem.activateCharacterRank === charaRank ||
+                        elem.activateCharacterRank === charaRank - 1
+                  );
+
+                  if (baseSkillEffect && currentEffect) {
+                    const baseSkillEffectDetail =
+                      baseSkillEffect.skillEffectDetails.find(
+                        (d) => d.level === skillLevel
+                      );
+                    const skillEffectDetail =
+                      currentEffect.skillEffectDetails.find(
+                        (d) => d.level === skillLevel
+                      );
+                    newSkillInfo = newSkillInfo.replace(
+                      new RegExp(`{{${match[1]},${match[2]};${match[3]}}}`),
+                      String(
+                        (baseSkillEffectDetail?.activateEffectValue ?? 0) +
+                          (skillEffectDetail?.activateEffectValue ?? 0)
+                      )
+                    );
+                  } else if (charaRank < minRank) {
+                    newSkillInfo = "# ERROR INVALID CHARACTER RANK #";
+                  } else {
+                    newSkillInfo = newSkillInfo.replace(
+                      new RegExp(`{{${match[1]},${match[2]};${match[3]}}}`),
+                      String(0)
+                    );
+                  }
+                }
+              }
+              break;
+            case "v":
+              {
+                const baseSkillEffect = skill.skillEffects.find(
+                  (elem) => elem.id === Number(match[1])
+                );
+
+                const maxRank = skill.skillEffects.find(
+                  (elem) => elem.id === Number(match[2])
+                )?.activateCharacterRank;
+
+                if (maxRank) {
+                  const currentEffect = skill.skillEffects.find(
+                    (elem) => elem.activateCharacterRank === maxRank
+                  );
+
+                  if (baseSkillEffect && currentEffect) {
+                    const baseSkillEffectDetail =
+                      baseSkillEffect.skillEffectDetails.find(
+                        (d) => d.level === skillLevel
+                      );
+                    const skillEffectDetail =
+                      currentEffect.skillEffectDetails.find(
+                        (d) => d.level === skillLevel
+                      );
+                    newSkillInfo = newSkillInfo.replace(
+                      new RegExp(`{{${match[1]},${match[2]};${match[3]}}}`),
+                      String(
+                        (baseSkillEffectDetail?.activateEffectValue ?? 0) +
+                          (skillEffectDetail?.activateEffectValue ?? 0)
+                      )
+                    );
+                  }
+                }
+              }
+              break;
+            case "u":
+              {
+                setUnitCountNecessary(true);
+                if (unitCount > 0) {
+                  const baseSkillEffect = skill.skillEffects.find(
+                    (elem) => elem.id === Number(match[1])
+                  );
+
+                  const unitSkillEffect = skill.skillEffects.find(
+                    (elem) => elem.activateUnitCount === unitCount
+                  );
+
+                  if (baseSkillEffect && unitSkillEffect) {
+                    const baseSkillEffectDetail =
+                      baseSkillEffect.skillEffectDetails.find(
+                        (d) => d.level === skillLevel
+                      );
+                    const skillEffectDetail =
+                      unitSkillEffect.skillEffectDetails.find(
+                        (d) => d.level === skillLevel
+                      );
+                    newSkillInfo = newSkillInfo.replace(
+                      new RegExp(`{{${match[1]},${match[2]};${match[3]}}}`),
+                      String(
+                        (baseSkillEffectDetail?.activateEffectValue ?? 0) +
+                          (skillEffectDetail?.activateEffectValue ?? 0)
+                      )
+                    );
+                  }
+                }
+              }
+              break;
+            case "o":
+              {
+                const baseSkillEffect = skill.skillEffects.find(
+                  (elem) => elem.id === Number(match[1])
+                );
+
+                const enhanceSkillEffect = skill.skillEffects.find(
+                  (elem) => elem.id === Number(match[2])
+                );
+
+                if (baseSkillEffect && enhanceSkillEffect) {
+                  const baseSkillEffectDetail =
+                    baseSkillEffect.skillEffectDetails.find(
+                      (d) => d.level === skillLevel
+                    );
+                  const skillEffectDetail =
+                    enhanceSkillEffect.skillEffectDetails.find(
+                      (d) => d.level === skillLevel
+                    );
+                  newSkillInfo = newSkillInfo.replace(
+                    new RegExp(`{{${match[1]},${match[2]};${match[3]}}}`),
+                    String(
+                      (baseSkillEffectDetail?.activateEffectValue ?? 0) +
+                        (skillEffectDetail?.activateEffectValue ?? 0)
+                    )
+                  );
+                }
+              }
+              break;
+          }
+        }
       }
+
+      return newSkillInfo;
     },
-    [contentTransMode, assetT]
+    [card, charaRank, getCharaName]
+  );
+
+  const originalSkillInfo = useMemo(
+    () =>
+      skill ? replaceSkillValue(skill, skill.description, skillLevel) : "",
+    [skill, skillLevel, replaceSkillValue]
+  );
+
+  const translatedSkillInfo = useMemo(
+    () =>
+      skill
+        ? replaceSkillValue(
+            skill,
+            assetT(`skill_desc:${skill.id}`, skill.description, {
+              interpolation: { prefix: "[", suffix: "]" },
+            }),
+            skillLevel
+          )
+        : "",
+    [skill, skillLevel, replaceSkillValue, assetT]
+  );
+
+  const skillDesc = useMemo(() => {
+    switch (contentTransMode) {
+      case "original":
+        return <Typography align="right">{originalSkillInfo}</Typography>;
+      case "translated":
+        return <Typography align="right">{translatedSkillInfo}</Typography>;
+      case "both":
+        return (
+          <Grid container direction="column">
+            <Typography color="textPrimary" align="right">
+              {originalSkillInfo}
+            </Typography>
+            <Typography color="textSecondary" align="right">
+              {translatedSkillInfo}
+            </Typography>
+          </Grid>
+        );
+    }
+  }, [contentTransMode, originalSkillInfo, translatedSkillInfo]);
+
+  const originalTrainedSkillInfo = useMemo(
+    () =>
+      trainedSkill
+        ? replaceSkillValue(trainedSkill, trainedSkill.description, skillLevel)
+        : "",
+    [trainedSkill, skillLevel, replaceSkillValue]
+  );
+
+  const trainedSkillDesc = useMemo(
+    () => <Typography align="right">{originalTrainedSkillInfo}</Typography>,
+    [originalTrainedSkillInfo]
   );
 
   const getCharaUnitName = useCallback(
@@ -245,7 +486,7 @@ const CardDetail: React.FC<unknown> = observer(() => {
 
   useEffect(() => {
     if (!cards || !cards.length) return;
-    const _card = cards.find((elem) => elem.id === Number(cardId))!;
+    const _card = cards.find((elem) => elem.id === Number(cardId));
     if (_card) {
       const prefix = getTranslated(`card_prefix:${_card.id}`, _card.prefix);
       document.title = t("title:cardDetail", {
@@ -264,9 +505,11 @@ const CardDetail: React.FC<unknown> = observer(() => {
       eventsCache &&
       eventCardsCache &&
       masterLessonsCache &&
-      masterLessonRewardsCache
+      masterLessonRewardsCache &&
+      charaRanks
     ) {
-      const _card = cards.find((elem) => elem.id === Number(cardId))!;
+      const _card = cards.find((elem) => elem.id === Number(cardId));
+      if (!_card) return;
       const _rarityInfo = rarities.find(
         (rarity) => rarity.cardRarityType === _card.cardRarityType
       );
@@ -279,6 +522,12 @@ const CardDetail: React.FC<unknown> = observer(() => {
         );
         setCardLevel(_rarityInfo.trainingMaxLevel || _rarityInfo.maxLevel);
         setSkillLevel(_rarityInfo.maxSkillLevel);
+        setCharaRank(
+          charaRanks
+            .filter((elem) => elem.characterId === _card.characterId)
+            .map((elem) => elem.characterRank)
+            .sort((a, b) => b - a)[0] || 1
+        );
         setCardTitle(
           `${getTranslated(
             `card_prefix:${_card.id}`,
@@ -287,6 +536,12 @@ const CardDetail: React.FC<unknown> = observer(() => {
         );
         const _skill = skills.find((elem) => elem.id === _card.skillId)!;
         setSkill(_skill);
+        if (_card.specialTrainingSkillId) {
+          const _trainedSkill = skills.find(
+            (elem) => elem.id === _card.specialTrainingSkillId
+          )!;
+          setTrainedSkill(_trainedSkill);
+        }
         setCardEpisode(episodes.filter((epi) => epi.cardId === Number(cardId)));
         if (_card.gachaPhrase !== "-")
           getRemoteAssetURL(
@@ -329,6 +584,7 @@ const CardDetail: React.FC<unknown> = observer(() => {
     t,
     masterLessonsCache,
     masterLessonRewardsCache,
+    charaRanks,
   ]);
 
   useEffect(() => {
@@ -945,6 +1201,68 @@ const CardDetail: React.FC<unknown> = observer(() => {
                     </BoxSliderContainer>
                   </Grid>
                 </Grid>
+                {charaRankNecessary && (
+                  <Grid
+                    item
+                    container
+                    xs={12}
+                    alignItems="center"
+                    justifyContent="space-between"
+                  >
+                    <Grid item xs={12} md={2}>
+                      <TypographyCaption>
+                        {t("common:characterRank")}
+                      </TypographyCaption>
+                    </Grid>
+                    <Grid item xs={12} md={9}>
+                      <BoxSliderContainer>
+                        <Slider
+                          value={charaRank}
+                          onChange={(e, value) => setCharaRank(value as number)}
+                          valueLabelDisplay="auto"
+                          step={1}
+                          min={1}
+                          max={
+                            charaRanks
+                              .filter(
+                                (chara) =>
+                                  chara.characterId === card.characterId
+                              )
+                              .map((chara) => chara.characterRank)
+                              .sort((a, b) => b - a)[0] || 1
+                          }
+                        />
+                      </BoxSliderContainer>
+                    </Grid>
+                  </Grid>
+                )}
+                {unitCountNecessary && (
+                  <Grid
+                    item
+                    container
+                    xs={12}
+                    alignItems="center"
+                    justifyContent="space-between"
+                  >
+                    <Grid item xs={12} md={2}>
+                      <TypographyCaption>
+                        {t("card:unitCount")}
+                      </TypographyCaption>
+                    </Grid>
+                    <Grid item xs={12} md={9}>
+                      <BoxSliderContainer>
+                        <Slider
+                          value={unitCount}
+                          onChange={(e, value) => setUnitCount(value as number)}
+                          valueLabelDisplay="auto"
+                          step={1}
+                          min={0}
+                          max={unitCountMax}
+                        />
+                      </BoxSliderContainer>
+                    </Grid>
+                  </Grid>
+                )}
               </Grid>
             </PaperContainer>
             <GridOut container direction="column">
@@ -957,7 +1275,8 @@ const CardDetail: React.FC<unknown> = observer(() => {
               >
                 <Grid item xs={2}>
                   <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                    {t("card:skillName")}
+                    {t("card:skillName")}{" "}
+                    {!!card.specialTrainingSkillId && `(${t("card:normal")})`}
                   </Typography>
                 </Grid>
                 <Grid item xs={9}>
@@ -979,14 +1298,62 @@ const CardDetail: React.FC<unknown> = observer(() => {
               >
                 <Grid item xs={2}>
                   <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                    {t("card:skillEffect")}
+                    {t("card:skillEffect")} ({t("card:normal")})
                   </Typography>
                 </Grid>
                 <Grid item xs={9}>
-                  {getSkillDesc(skill!, skillLevel)}
+                  {skillDesc}
                 </Grid>
               </Grid>
               <Divider style={{ margin: "1% 0" }} />
+              {!!trainedSkill && (
+                <Fragment>
+                  <Grid
+                    container
+                    direction="row"
+                    wrap="nowrap"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    <Grid item xs={2}>
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {t("card:skillName")} ({t("card:trained")})
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={9}>
+                      <Typography align="right">
+                        {card.specialTrainingSkillName}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                  <Divider style={{ margin: "1% 0" }} />
+                  <Grid
+                    container
+                    direction="row"
+                    wrap="nowrap"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    <Grid item xs={2}>
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {t("card:skillEffect")}{" "}
+                        {!!card.specialTrainingSkillId &&
+                          `(${t("card:trained")})`}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={9}>
+                      {trainedSkillDesc}
+                    </Grid>
+                  </Grid>
+                  <Divider style={{ margin: "1% 0" }} />
+                </Fragment>
+              )}
             </GridOut>
           </ContainerContent>
         </Fragment>
