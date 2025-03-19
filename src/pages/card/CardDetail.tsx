@@ -24,6 +24,7 @@ import Viewer from "react-viewer";
 import { ImageDecorator } from "react-viewer/lib/ViewerProps";
 
 import {
+  IAnother3dmvCutIn,
   ICardEpisode,
   ICardInfo,
   ICardRarity,
@@ -33,6 +34,7 @@ import {
   IGameChara,
   IMasterLesson,
   IMasterLessonReward,
+  IMusicInfo,
   ISkillInfo,
   IUnitProfile,
 } from "../../types.d";
@@ -116,6 +118,9 @@ const CardDetail: React.FC<unknown> = observer(() => {
   const [masterLessonRewardsCache] = useCachedData<IMasterLessonReward>(
     "masterLessonRewards"
   );
+  const [another3dmvCutIns] =
+    useCachedData<IAnother3dmvCutIn>("another3dmvCutIns");
+  const [musics] = useCachedData<IMusicInfo>("musics");
 
   const { cardId } = useParams<{ cardId: string }>();
 
@@ -141,6 +146,7 @@ const CardDetail: React.FC<unknown> = observer(() => {
   // const [maxCardRank, setMaxCardRank] = useState<number>(0);
   const [gachaPhraseUrl, setGachaPhraseUrl] = useState("");
   const [cardCommentId, setCardCommentId] = useState<number>(0);
+  const [cardCutInMusic, setCardCutInMusic] = useState<IMusicInfo>();
 
   const [charaRank, setCharaRank] = useState<number>(0);
   const [charaRankNecessary, setCharaRankNecessary] = useState(false);
@@ -506,7 +512,9 @@ const CardDetail: React.FC<unknown> = observer(() => {
       eventCardsCache &&
       masterLessonsCache &&
       masterLessonRewardsCache &&
-      charaRanks
+      charaRanks &&
+      musics &&
+      another3dmvCutIns
     ) {
       const _card = cards.find((elem) => elem.id === Number(cardId));
       if (!_card) return;
@@ -567,6 +575,14 @@ const CardDetail: React.FC<unknown> = observer(() => {
       setMasterLessonRewards(
         masterLessonRewardsCache.filter((mlrc) => mlrc.cardId === _card.id)
       );
+
+      setCardCutInMusic(
+        musics.find(
+          (m) =>
+            m.id ===
+            another3dmvCutIns.find((c) => c.cardId === _card.id)?.musicId
+        )
+      );
     }
   }, [
     eventsCache,
@@ -585,6 +601,8 @@ const CardDetail: React.FC<unknown> = observer(() => {
     masterLessonsCache,
     masterLessonRewardsCache,
     charaRanks,
+    musics,
+    another3dmvCutIns,
   ]);
 
   useEffect(() => {
@@ -1164,6 +1182,43 @@ const CardDetail: React.FC<unknown> = observer(() => {
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
+          {!!cardCutInMusic && (
+            <Fragment>
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Grid item xs={8}>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("card:specialCutIn")}
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Grid
+                    container
+                    direction="row"
+                    justifyContent="flex-end"
+                    spacing={2}
+                  >
+                    <Grid item>
+                      <LinkNoDecoration to={`/music/${cardCutInMusic.id}`}>
+                        <Typography>
+                          {getTranslated(
+                            `music_titles:${cardCutInMusic.id}`,
+                            cardCutInMusic.title
+                          )}
+                        </Typography>
+                      </LinkNoDecoration>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
+            </Fragment>
+          )}
         </GridOut>
       </ContainerContent>
       {!!skill && (

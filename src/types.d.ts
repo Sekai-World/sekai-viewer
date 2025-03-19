@@ -1591,3 +1591,10 @@ export interface ILive2DModelData {
   }[];
   url: string;
 }
+
+export interface IAnother3dmvCutIn {
+  id: number;
+  cardId: number;
+  musicId: number;
+  cutInNo: number;
+}
