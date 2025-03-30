@@ -221,18 +221,25 @@ export interface IMusicAchievement {
   musicDifficultyType: string;
 }
 
+export interface SkillEffect {
+  id: number;
+  skillEffectType: string;
+  activateNotesJudgmentType?: string;
+  skillEffectDetails: SkillEffectDetail[];
+  activateLife?: number;
+  conditionType?: string;
+  skillEnhance?: SkillEnhance;
+  activateCharacterRank?: number;
+  activateUnitCount?: number;
+}
+
 export interface SkillEffectDetail {
   id: number;
   level: number;
   activateEffectDuration: number;
   activateEffectValueType: string;
   activateEffectValue: number;
-}
-
-export interface SkillEnhanceCondition {
-  id: number;
-  seq: number;
-  unit: string;
+  activateEffectValue2?: number;
 }
 
 export interface SkillEnhance {
@@ -243,12 +250,10 @@ export interface SkillEnhance {
   skillEnhanceCondition: SkillEnhanceCondition;
 }
 
-export interface SkillEffect {
+export interface SkillEnhanceCondition {
   id: number;
-  skillEffectType: string;
-  activateNotesJudgmentType: string;
-  skillEffectDetails: SkillEffectDetail[];
-  skillEnhance: SkillEnhance;
+  seq: number;
+  unit: string;
 }
 
 export interface ISkillInfo {
@@ -256,6 +261,7 @@ export interface ISkillInfo {
   shortDescription: string;
   description: string;
   descriptionSpriteName: string;
+  skillFilterId: number;
   skillEffects: SkillEffect[];
 }
 
@@ -1584,4 +1590,11 @@ export interface ILive2DModelData {
     Ids: number[];
   }[];
   url: string;
+}
+
+export interface IAnother3dmvCutIn {
+  id: number;
+  cardId: number;
+  musicId: number;
+  cutInNo: number;
 }

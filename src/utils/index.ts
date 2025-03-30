@@ -77,6 +77,7 @@ import {
   IBoostItem,
   ICompactCostume3DModel,
   ICompactCostume3D,
+  IAnother3dmvCutIn,
 } from "./../types.d";
 import { useAssetI18n } from "./i18n";
 import { useLocation } from "react-router-dom";
@@ -158,7 +159,8 @@ export function useCachedData<
     | IMusicOriginal
     | IIngameCutinCharacters
     | ISkillPracticeTicket
-    | IBoostItem,
+    | IBoostItem
+    | IAnother3dmvCutIn,
 >(name: string): [T[] | undefined, boolean, unknown] {
   // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
   const { region } = useRootStore();

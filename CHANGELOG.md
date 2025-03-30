@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.14.7](https://github.com/Sekai-World/sekai-viewer/compare/v1.14.6...v1.14.7) (2025-03-19)
+
+
+### Features
+
+* **card:** :sparkles: add 3dmv cut-ins for cards ([216a2ee](https://github.com/Sekai-World/sekai-viewer/commits/216a2eed91093fbd1d3d082cd90325e1a30657c4))
+* **card:** support skill change after training ([436c032](https://github.com/Sekai-World/sekai-viewer/commits/436c032ae28a2d183e4cab086b3894dd545ac468))
+
 ### [1.14.6](https://github.com/Sekai-World/sekai-viewer/compare/v1.14.5...v1.14.6) (2025-03-07)
 
 
