@@ -24,5 +24,6 @@ export const assetUrl = {
     kr: import.meta.env.VITE_ASSET_DOMAIN_MINIO + "/sekai-kr-assets",
     musicChart: import.meta.env.VITE_ASSET_DOMAIN_MINIO + "/sekai-music-charts",
     tw: import.meta.env.VITE_ASSET_DOMAIN_MINIO + "/sekai-tc-assets",
+    live2d: import.meta.env.VITE_ASSET_DOMAIN_MINIO + "/sekai-live2d-assets",
   },
 };

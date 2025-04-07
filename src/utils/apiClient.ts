@@ -34,6 +34,7 @@ import {
 import useSWR from "swr";
 import { useRootStore } from "../stores/root";
 import { ISekaiCardState } from "../stores/sekai";
+import { assetUrl } from "./urls";
 
 /**
  * Access Strapi endpoints.
@@ -766,7 +767,7 @@ export function useCurrentEvent() {
 
 export function useLive2dModelList() {
   const { data, error } = useSWR(
-    [`${import.meta.env.VITE_FRONTEND_ASSET_BASE}/models.json`],
+    [`${assetUrl.minio.live2d}/models.json`],
     axiosFetcher
   );
 
