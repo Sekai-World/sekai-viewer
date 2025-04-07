@@ -87,7 +87,7 @@ const AudioPlayer: React.FC<{
   }, [offset]);
 
   const seekHandler = useCallback(
-    (_, v: number | number[]) => {
+    (_: unknown, v: number | number[]) => {
       if (sound) {
         setPlaybackTime(v as number);
         if (sound.playing()) {
@@ -102,7 +102,7 @@ const AudioPlayer: React.FC<{
     [sound, totalOffset]
   );
 
-  const formatTime = useCallback((time) => {
+  const formatTime = useCallback((time: number) => {
     const minutes = Math.floor(time / 60) || 0;
     const seconds = Math.floor(time - minutes * 60) || 0;
 
