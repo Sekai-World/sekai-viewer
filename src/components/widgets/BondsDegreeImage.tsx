@@ -82,7 +82,7 @@ const BondsDegreeImage: React.FC<
     useEffect(() => {
       if (honorWord) {
         getRemoteAssetURL(
-          `bonds_honor/word/${honorWord.assetbundleName}_01_rip/${honorWord.assetbundleName}_01.webp`,
+          `bonds_honor/word/${honorWord.assetbundleName}_01/${honorWord.assetbundleName}_01.webp`,
           setWordImage,
           "minio",
           region
@@ -111,7 +111,7 @@ const BondsDegreeImage: React.FC<
           getRemoteAssetURL(
             `bonds_honor/character/chr_sd_${String(
               gameCharas[0].gameCharacterId
-            ).padStart(2, "0")}_01_rip/chr_sd_${String(
+            ).padStart(2, "0")}_01/chr_sd_${String(
               gameCharas[0].gameCharacterId
             ).padStart(2, "0")}_01.webp`,
             setSdLeft,
@@ -121,7 +121,7 @@ const BondsDegreeImage: React.FC<
           getRemoteAssetURL(
             `bonds_honor/character/chr_sd_${String(
               gameCharas[1].gameCharacterId
-            ).padStart(2, "0")}_01_rip/chr_sd_${String(
+            ).padStart(2, "0")}_01/chr_sd_${String(
               gameCharas[1].gameCharacterId
             ).padStart(2, "0")}_01.webp`,
             setSdRight,
@@ -132,7 +132,7 @@ const BondsDegreeImage: React.FC<
           getRemoteAssetURL(
             `bonds_honor/character/chr_sd_${String(
               gameCharas[1].gameCharacterId
-            ).padStart(2, "0")}_01_rip/chr_sd_${String(
+            ).padStart(2, "0")}_01/chr_sd_${String(
               gameCharas[1].gameCharacterId
             ).padStart(2, "0")}_01.webp`,
             setSdLeft,
@@ -142,7 +142,7 @@ const BondsDegreeImage: React.FC<
           getRemoteAssetURL(
             `bonds_honor/character/chr_sd_${String(
               gameCharas[0].gameCharacterId
-            ).padStart(2, "0")}_01_rip/chr_sd_${String(
+            ).padStart(2, "0")}_01/chr_sd_${String(
               gameCharas[0].gameCharacterId
             ).padStart(2, "0")}_01.webp`,
             setSdRight,

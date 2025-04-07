@@ -85,7 +85,7 @@ const MCCharacterSpawn: React.FC<{ data: CharacterSpawnEvent }> = ({
   useEffect(() => {
     if (headCostume) {
       getRemoteAssetURL(
-        `thumbnail/costume_rip/${headCostume.thumbnailAssetbundleName}.webp`,
+        `thumbnail/costume/${headCostume.thumbnailAssetbundleName}.webp`,
         setHeadThumbnail,
         "minio"
       );
@@ -95,7 +95,7 @@ const MCCharacterSpawn: React.FC<{ data: CharacterSpawnEvent }> = ({
   useEffect(() => {
     if (bodyCostume) {
       getRemoteAssetURL(
-        `thumbnail/costume_rip/${bodyCostume.thumbnailAssetbundleName}.webp`,
+        `thumbnail/costume/${bodyCostume.thumbnailAssetbundleName}.webp`,
         setBodyThumbnail,
         "minio"
       );
@@ -194,7 +194,7 @@ const MCCharacterTalk: React.FC<{ data: CharacterTalkEvent; mcId: string }> = ({
 
   useEffect(() => {
     getRemoteAssetURL(
-      `virtual_live/mc/voice/${mcId}_rip/${data.VoiceKey}.mp3`,
+      `virtual_live/mc/voice/${mcId}/${data.VoiceKey}.mp3`,
       setVoiceUrl,
       "minio"
     );
@@ -233,7 +233,7 @@ const VirtualLiveStepMC: React.FC<{
 
   useEffect(() => {
     getRemoteAssetURL(
-      `virtual_live/mc/scenario/${data.assetbundleName}_rip/${data.assetbundleName}.asset`,
+      `virtual_live/mc/scenario/${data.assetbundleName}/${data.assetbundleName}.asset`,
       setAssetBundleURL,
       "minio",
       region

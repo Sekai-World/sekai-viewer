@@ -14,7 +14,7 @@ const MaterialIcon: React.FC<{
   useEffect(() => {
     if (materialId) {
       getRemoteAssetURL(
-        `thumbnail/material_rip/material${materialId}.webp`,
+        `thumbnail/material/material${materialId}.webp`,
         setMaterialImage,
         "minio"
       );

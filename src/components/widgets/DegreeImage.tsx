@@ -187,14 +187,14 @@ const DegreeImage: React.FC<
           getRemoteAssetURL(
             `rank_live/honor/${
               honorGroup.backgroundAssetbundleName
-            }_rip/degree_${sub ? "sub" : "main"}.webp`,
+            }/degree_${sub ? "sub" : "main"}.webp`,
             setDegreeImage,
             "minio",
             region
           );
         } else if (honorGroup && honorGroup.backgroundAssetbundleName) {
           getRemoteAssetURL(
-            `honor/${honorGroup.backgroundAssetbundleName}_rip/degree_${
+            `honor/${honorGroup.backgroundAssetbundleName}/degree_${
               sub ? "sub" : "main"
             }.webp`,
             setDegreeImage,
@@ -203,7 +203,7 @@ const DegreeImage: React.FC<
           );
         } else if (honor.assetbundleName) {
           getRemoteAssetURL(
-            `honor/${honor.assetbundleName}_rip/degree_${
+            `honor/${honor.assetbundleName}/degree_${
               sub ? "sub" : "main"
             }.webp`,
             setDegreeImage,
@@ -214,7 +214,7 @@ const DegreeImage: React.FC<
         if (honorGroup && honorGroup.frameName) {
           if (honor.honorRarity === "highest") {
             getRemoteAssetURL(
-              `honor_frame/${honorGroup.frameName}_rip/frame_degree_${
+              `honor_frame/${honorGroup.frameName}/frame_degree_${
                 sub ? "s" : "m"
               }_4.webp`,
               setDegreeFrameImage,
@@ -223,7 +223,7 @@ const DegreeImage: React.FC<
             );
           } else if (honor.honorRarity === "high") {
             getRemoteAssetURL(
-              `honor_frame/${honorGroup.frameName}_rip/frame_degree_${
+              `honor_frame/${honorGroup.frameName}/frame_degree_${
                 sub ? "s" : "m"
               }_3.webp`,
               setDegreeFrameImage,
@@ -263,9 +263,7 @@ const DegreeImage: React.FC<
           (honorGroup && honorGroup.honorType === "event")
         ) {
           getRemoteAssetURL(
-            `honor/${honor.assetbundleName}_rip/rank_${
-              sub ? "sub" : "main"
-            }.webp`,
+            `honor/${honor.assetbundleName}/rank_${sub ? "sub" : "main"}.webp`,
             setDegreeRankImage,
             "minio",
             region,
@@ -273,7 +271,7 @@ const DegreeImage: React.FC<
           );
         } else if (honorGroup && honorGroup.honorType === "rank_match") {
           getRemoteAssetURL(
-            `rank_live/honor/${honor.assetbundleName}_rip/${
+            `rank_live/honor/${honor.assetbundleName}/${
               sub ? "sub" : "main"
             }.webp`,
             setDegreeRankImage,
@@ -283,7 +281,7 @@ const DegreeImage: React.FC<
           );
         } else if (honor.honorMissionType) {
           getRemoteAssetURL(
-            `honor/${honor.assetbundleName}_rip/scroll.webp`,
+            `honor/${honor.assetbundleName}/scroll.webp`,
             setDegreeRankImage,
             "minio",
             region,

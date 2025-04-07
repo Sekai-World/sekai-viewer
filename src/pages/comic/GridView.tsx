@@ -18,7 +18,7 @@ const GridView: React.FC<{
       switch (lang) {
         case "ja":
           getRemoteAssetURL(
-            `comic/one_frame_rip/${data.assetbundleName}.webp`,
+            `comic/one_frame/${data.assetbundleName}.webp`,
             setImageURL,
             "minio",
             "jp"
@@ -26,7 +26,7 @@ const GridView: React.FC<{
           break;
         case "zht":
           getRemoteAssetURL(
-            `comic/one_frame_rip/${data.assetbundleName}.webp`,
+            `comic/one_frame/${data.assetbundleName}.webp`,
             setImageURL,
             "minio",
             "tw"
@@ -34,7 +34,7 @@ const GridView: React.FC<{
           break;
         case "en":
           getRemoteAssetURL(
-            `comic/one_frame_rip/${data.assetbundleName}.webp`,
+            `comic/one_frame/${data.assetbundleName}.webp`,
             setImageURL,
             "minio",
             "en"
@@ -42,7 +42,7 @@ const GridView: React.FC<{
           break;
         case "kr":
           getRemoteAssetURL(
-            `comic/one_frame_rip/${data.assetbundleName}.webp`,
+            `comic/one_frame/${data.assetbundleName}.webp`,
             setImageURL,
             "minio",
             "kr"
@@ -50,7 +50,7 @@ const GridView: React.FC<{
           break;
         case "zhs":
           getRemoteAssetURL(
-            `comic/one_frame_rip/${data.assetbundleName}.webp`,
+            `comic/one_frame/${data.assetbundleName}.webp`,
             setImageURL,
             "minio",
             "cn"

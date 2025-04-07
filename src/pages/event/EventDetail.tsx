@@ -113,7 +113,7 @@ const EventDetail: React.FC<unknown> = observer(() => {
         name,
       });
       getRemoteAssetURL(
-        `${event.bgmAssetbundleName.replace("bgm", "bgm_rip")}.mp3`,
+        `${event.bgmAssetbundleName.replace("bgm", "bgm")}.mp3`,
         setEventBgm
       );
     }
@@ -356,25 +356,25 @@ const EventDetail: React.FC<unknown> = observer(() => {
   useEffect(() => {
     if (event) {
       getRemoteAssetURL(
-        `event/${event.assetbundleName}/logo_rip/logo.webp`,
+        `event/${event.assetbundleName}/logo/logo.webp`,
         setEventLogo,
         "minio",
         region
       );
       getRemoteAssetURL(
-        `home/banner/${event.assetbundleName}_rip/${event.assetbundleName}.webp`,
+        `home/banner/${event.assetbundleName}/${event.assetbundleName}.webp`,
         setEventBanner,
         "minio",
         region
       );
       getRemoteAssetURL(
-        `event/${event.assetbundleName}/screen_rip/bg.webp`,
+        `event/${event.assetbundleName}/screen/bg.webp`,
         setEventBackground,
         "minio",
         region
       );
       getRemoteAssetURL(
-        `event/${event.assetbundleName}/screen_rip/character.webp`,
+        `event/${event.assetbundleName}/screen/character.webp`,
         setEventCharacter,
         "minio",
         region
@@ -385,12 +385,12 @@ const EventDetail: React.FC<unknown> = observer(() => {
   // useEffect(() => {
   //   if (event && ccTeams.length) {
   //     getRemoteAssetURL(
-  //       `event/${event.assetbundleName}/team_image_rip/${ccTeams[0].assetbundleName}.webp`,
+  //       `event/${event.assetbundleName}/team_image/${ccTeams[0].assetbundleName}.webp`,
   //       setCcTeam1Logo,
   //       window.isChinaMainland
   //     );
   //     getRemoteAssetURL(
-  //       `event/${event.assetbundleName}/team_image_rip/${ccTeams[1].assetbundleName}.webp`,
+  //       `event/${event.assetbundleName}/team_image/${ccTeams[1].assetbundleName}.webp`,
   //       setCcTeam2Logo,
   //       window.isChinaMainland
   //     );

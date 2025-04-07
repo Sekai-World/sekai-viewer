@@ -83,11 +83,11 @@ export function useScenarioInfo() {
               storyId,
               region,
               bannerUrl: await getRemoteAssetURL(
-                `story/episode_image/${chapter.assetbundleName}_rip/${episode.assetbundleName}.webp`,
+                `story/episode_image/${chapter.assetbundleName}/${episode.assetbundleName}.webp`,
                 undefined,
                 "minio"
               ),
-              scenarioDataUrl: `scenario/unitstory/${chapter.assetbundleName}_rip/${episode.scenarioId}.asset`,
+              scenarioDataUrl: `scenario/unitstory/${chapter.assetbundleName}/${episode.scenarioId}.asset`,
               isCardStory: false,
               isActionSet: false,
               chapterTitle: getTranslated(
@@ -119,11 +119,11 @@ export function useScenarioInfo() {
               storyId,
               region,
               bannerUrl: await getRemoteAssetURL(
-                `event_story/${chapter.assetbundleName}/episode_image_rip/${episode.assetbundleName}.webp`,
+                `event_story/${chapter.assetbundleName}/episode_image/${episode.assetbundleName}.webp`,
                 undefined,
                 "minio"
               ),
-              scenarioDataUrl: `event_story/${chapter.assetbundleName}/scenario_rip/${episode.scenarioId}.asset`,
+              scenarioDataUrl: `event_story/${chapter.assetbundleName}/scenario/${episode.scenarioId}.asset`,
               isCardStory: false,
               isActionSet: false,
               chapterTitle: "",
@@ -148,7 +148,7 @@ export function useScenarioInfo() {
               storyId,
               region,
               bannerUrl: charaIcons[`CharaIcon${charaId}` as "CharaIcon1"],
-              scenarioDataUrl: `scenario/profile_rip/${episode.scenarioId}.asset`,
+              scenarioDataUrl: `scenario/profile/${episode.scenarioId}.asset`,
               isCardStory: false,
               isActionSet: false,
               chapterTitle: "",
@@ -178,11 +178,11 @@ export function useScenarioInfo() {
                 storyType,
                 storyId,
                 region,
-                bannerUrl: `character/member_small/${assetbundleName}_rip/card_normal.webp`,
+                bannerUrl: `character/member_small/${assetbundleName}/card_normal.webp`,
                 scenarioDataUrl:
                   region === "en"
-                    ? `character/member_scenario/${assetbundleName}_rip/${episode.scenarioId}.asset`
-                    : `character/member/${assetbundleName}_rip/${episode.scenarioId}.asset`,
+                    ? `character/member_scenario/${assetbundleName}/${episode.scenarioId}.asset`
+                    : `character/member/${assetbundleName}/${episode.scenarioId}.asset`,
                 isCardStory: true,
                 isActionSet: false,
                 chapterTitle: "",
@@ -210,7 +210,7 @@ export function useScenarioInfo() {
               storyId,
               region,
               bannerUrl: undefined,
-              scenarioDataUrl: `scenario/actionset/group${Math.floor(episode.id / 100)}_rip/${
+              scenarioDataUrl: `scenario/actionset/group${Math.floor(episode.id / 100)}/${
                 episode.scenarioId
               }.asset`,
               isCardStory: false,
@@ -236,8 +236,8 @@ export function useScenarioInfo() {
               region,
               bannerUrl: undefined,
               scenarioDataUrl: episode.scenarioId.startsWith("op")
-                ? `scenario/special/${chapter.assetbundleName}_rip/${episode.scenarioId}.asset`
-                : `scenario/special/${episode.assetbundleName}_rip/${episode.scenarioId}.asset`,
+                ? `scenario/special/${chapter.assetbundleName}/${episode.scenarioId}.asset`
+                : `scenario/special/${episode.assetbundleName}/${episode.scenarioId}.asset`,
               isCardStory: false,
               isActionSet: false,
               chapterTitle: chapter.title || "",
@@ -672,7 +672,7 @@ export function useMediaUrlForLive2D() {
 
 export async function getBgmUrl(bgm: string) {
   return await getRemoteAssetURL(
-    `sound/scenario/bgm/${bgm}_rip/${bgm}.mp3`,
+    `sound/scenario/bgm/${bgm}/${bgm}.mp3`,
     undefined,
     "minio"
   );
@@ -680,7 +680,7 @@ export async function getBgmUrl(bgm: string) {
 
 export async function getBackgroundImageUrl(img: string) {
   return await getRemoteAssetURL(
-    `scenario/background/${img}_rip/${img}.webp`,
+    `scenario/background/${img}/${img}.webp`,
     undefined,
     "minio"
   );
@@ -691,18 +691,14 @@ export async function getFullScreenTextVoiceUrl(
   voice: string
 ) {
   return await getRemoteAssetURL(
-    `sound/scenario/voice/${ScenarioId}_rip/${voice}.mp3`,
+    `sound/scenario/voice/${ScenarioId}/${voice}.mp3`,
     undefined,
     "minio"
   );
 }
 
 export async function getMovieUrl(movie: string) {
-  return await getRemoteAssetURL(
-    `scenario/movie/${movie}_rip`,
-    undefined,
-    "minio"
-  );
+  return await getRemoteAssetURL(`scenario/movie/${movie}`, undefined, "minio");
 }
 
 export async function getSoundEffectUrl(se: string) {
@@ -722,7 +718,7 @@ export async function getSoundEffectUrl(se: string) {
   }
 
   return await getRemoteAssetURL(
-    `${baseDir}/${seBundleName}_rip/${se}.mp3`,
+    `${baseDir}/${seBundleName}/${se}.mp3`,
     undefined,
     "minio"
   );
@@ -743,19 +739,19 @@ export async function getTalkVoiceUrl(
     const VoiceId = talkData.Voices[0].VoiceId;
     const voiceUrl = `sound/${isCardStory ? "card_" : ""}${
       isActionSet ? "actionset" : "scenario"
-    }/voice/${ScenarioId}_rip/${VoiceId}.mp3`;
+    }/voice/${ScenarioId}/${VoiceId}.mp3`;
     let fixedVoiceUrl = await fixVoiceUrl(voiceMap, region, VoiceId, voiceUrl);
 
     // if voice not found in scenario asset pack, check part_voice special case
     const isPartVoice = VoiceId.startsWith("partvoice");
     if (fixedVoiceUrl === null && isPartVoice) {
-      // 1. if character is v2 or clb, check /voice/part_voice_${chara}_rip/${VoiceId}.mp3
-      // 2. if character is not v2 or clb, check /part_voice/${chara}_rip/${VoiceId}.mp3
-      // 3. if still not found, check /voice/part_voice_${chara}_rip/${VoiceId}.mp3
+      // 1. if character is v2 or clb, check /voice/part_voice_${chara}/${VoiceId}.mp3
+      // 2. if character is not v2 or clb, check /part_voice/${chara}/${VoiceId}.mp3
+      // 3. if still not found, check /voice/part_voice_${chara}/${VoiceId}.mp3
       if (chara2d) {
         const chara = `${chara2d.assetName}_${chara2d.unit}`;
         if (chara.startsWith("v2_") || chara.startsWith("clb")) {
-          const partVoiceUrl = `sound/scenario/voice/part_voice_${chara}_rip/${VoiceId}.mp3`;
+          const partVoiceUrl = `sound/scenario/voice/part_voice_${chara}/${VoiceId}.mp3`;
           fixedVoiceUrl = await fixVoiceUrl(
             voiceMap,
             region,
@@ -763,7 +759,7 @@ export async function getTalkVoiceUrl(
             partVoiceUrl
           );
         } else {
-          const partVoiceUrl = `sound/scenario/part_voice/${chara}_rip/${VoiceId}.mp3`;
+          const partVoiceUrl = `sound/scenario/part_voice/${chara}/${VoiceId}.mp3`;
           fixedVoiceUrl = await fixVoiceUrl(
             voiceMap,
             region,
@@ -771,7 +767,7 @@ export async function getTalkVoiceUrl(
             partVoiceUrl
           );
           if (fixedVoiceUrl === null) {
-            const partVoiceUrl = `sound/scenario/voice/part_voice_${chara}_rip/${VoiceId}.mp3`;
+            const partVoiceUrl = `sound/scenario/voice/part_voice_${chara}/${VoiceId}.mp3`;
             fixedVoiceUrl = await fixVoiceUrl(
               voiceMap,
               region,
@@ -786,7 +782,7 @@ export async function getTalkVoiceUrl(
     // let voiceUrl = talkData.Voices.length
     //   ? `sound/${isCardStory ? "card_" : ""}${
     //       isActionSet ? "actionset" : "scenario"
-    //     }/voice/${ScenarioId}_rip/${talkData.Voices[0].VoiceId}.mp3`
+    //     }/voice/${ScenarioId}/${talkData.Voices[0].VoiceId}.mp3`
     //   : "";
     // if (
     //   talkData.Voices.length &&
@@ -797,7 +793,7 @@ export async function getTalkVoiceUrl(
     //     (ch) => ch.id === talkData.TalkCharacters[0].Character2dId
     //   );
     //   if (chara2d) {
-    //     voiceUrl = `sound/scenario/part_voice/${chara2d.assetName}_${chara2d.unit}_rip/${talkData.Voices[0].VoiceId}.mp3`;
+    //     voiceUrl = `sound/scenario/part_voice/${chara2d.assetName}_${chara2d.unit}/${talkData.Voices[0].VoiceId}.mp3`;
     //   } else {
     //     voiceUrl = "";
     //   }

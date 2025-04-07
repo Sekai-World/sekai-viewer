@@ -907,8 +907,8 @@ const Main: React.FC = () => {
         </p>
         <p>example:</p>
         <pre>{`[
-  ["sekai-jp-assets", "actionset/group0_rip/as_2_007.asset", "2024-05-28 12:42:25", "4246"],
-  ["sekai-jp-assets", "actionset/group0_rip/as_2_008.asset", "2024-05-28 12:42:25", "4265"]
+  ["sekai-jp-assets", "actionset/group0/as_2_007.asset", "2024-05-28 12:42:25", "4246"],
+  ["sekai-jp-assets", "actionset/group0/as_2_008.asset", "2024-05-28 12:42:25", "4265"]
 ]`}</pre>
         <p>This test page will only use assetList[][1], aka file name.</p>
         <p>Python code to download assetList (may take more than 2 hours):</p>
@@ -942,7 +942,7 @@ with open("asset_list.json", "w") as f:
         <p>
           Click <b>Get download url for stories</b>, and download all the link,
           and rename it like:{" "}
-          <b>character-member-res001_no002_rip-001002_ichika02.asset</b>(replace
+          <b>character-member-res001_no002-001002_ichika02.asset</b>(replace
           `&quot;/`&quot; with `&quot;-`&quot;)
         </p>
         <p>

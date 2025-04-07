@@ -72,7 +72,7 @@ const MemberCostumeDialog: React.FC<
           {costumes.map((cc) => (
             <Grid item xs={3} md={2} key={"costume-" + cc.id}>
               <ImageWrapper
-                src={`thumbnail/costume_rip/${cc.assetbundleName}.webp`}
+                src={`thumbnail/costume/${cc.assetbundleName}.webp`}
                 region={region}
               />
             </Grid>
@@ -181,7 +181,7 @@ const MemberCostumeAccordion: React.FC<{
                       }}
                     >
                       <ImageWrapper
-                        src={`thumbnail/costume_rip/${cc.assetbundleName}.webp`}
+                        src={`thumbnail/costume/${cc.assetbundleName}.webp`}
                         region={region}
                       />
                     </Box>
@@ -302,7 +302,7 @@ const MemberHairAccordion: React.FC<{
                       }}
                     >
                       <ImageWrapper
-                        src={`thumbnail/costume_rip/${cc.assetbundleName}.webp`}
+                        src={`thumbnail/costume/${cc.assetbundleName}.webp`}
                         region={region}
                       />
                     </Box>
@@ -423,7 +423,7 @@ const MemberHeadAccordion: React.FC<{
                       }}
                     >
                       <ImageWrapper
-                        src={`thumbnail/costume_rip/${cc.assetbundleName}.webp`}
+                        src={`thumbnail/costume/${cc.assetbundleName}.webp`}
                         region={region}
                       />
                     </Box>
@@ -536,19 +536,19 @@ const MemberDetail: React.FC<unknown> = observer(() => {
 
   useEffect(() => {
     getRemoteAssetURL(
-      `character/trim_rip/chr_trim_${charaId}.webp`,
+      `character/trim/chr_trim_${charaId}.webp`,
       setCharaTrimImg,
       "minio",
       region
     );
     getRemoteAssetURL(
-      `character/label_rip/chr_h_lb_${charaId}.webp`,
+      `character/label/chr_h_lb_${charaId}.webp`,
       setCharaLabelHImg,
       "minio",
       region
     );
     getRemoteAssetURL(
-      `character/label_vertical_rip/chr_v_lb_${charaId}.webp`,
+      `character/label_vertical/chr_v_lb_${charaId}.webp`,
       setCharaLabelVImg,
       "minio",
       region

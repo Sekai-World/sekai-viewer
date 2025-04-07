@@ -553,7 +553,7 @@ const CardDetail: React.FC<unknown> = observer(() => {
         setCardEpisode(episodes.filter((epi) => epi.cardId === Number(cardId)));
         if (_card.gachaPhrase !== "-")
           getRemoteAssetURL(
-            `sound/gacha/get_voice/${_card.assetbundleName}_rip/${_card.assetbundleName}.mp3`,
+            `sound/gacha/get_voice/${_card.assetbundleName}/${_card.assetbundleName}.mp3`,
             setGachaPhraseUrl,
             "minio"
           );
@@ -629,12 +629,12 @@ const CardDetail: React.FC<unknown> = observer(() => {
       isTrainableCard: boolean
     ) => {
       await getRemoteAssetURL(
-        `character/member/${card.assetbundleName}_rip/card_normal.webp`,
+        `character/member/${card.assetbundleName}/card_normal.webp`,
         setNormalImg,
         "minio"
       );
       await getRemoteAssetURL(
-        `character/member_cutout_trm/${card.assetbundleName}_rip/normal.webp`,
+        `character/member_cutout_trm/${card.assetbundleName}/normal.webp`,
         setNormalTrimImg,
         "minio",
         "jp",
@@ -642,12 +642,12 @@ const CardDetail: React.FC<unknown> = observer(() => {
       );
       if (isTrainableCard) {
         await getRemoteAssetURL(
-          `character/member/${card.assetbundleName}_rip/card_after_training.webp`,
+          `character/member/${card.assetbundleName}/card_after_training.webp`,
           setTrainedImg,
           "minio"
         );
         await getRemoteAssetURL(
-          `character/member_cutout_trm/${card.assetbundleName}_rip/after_training.webp`,
+          `character/member_cutout_trm/${card.assetbundleName}/after_training.webp`,
           setTrainedTrimImg,
           "minio",
           "jp",

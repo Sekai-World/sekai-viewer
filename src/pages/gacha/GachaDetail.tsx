@@ -439,13 +439,13 @@ const GachaDetailPage: React.FC<unknown> = observer(() => {
   useLayoutEffect(() => {
     if (gacha) {
       getRemoteAssetURL(
-        `gacha/${gacha.assetbundleName}/logo_rip/logo.webp`,
+        `gacha/${gacha.assetbundleName}/logo/logo.webp`,
         setGachaIcon,
         "minio",
         region
       );
       getRemoteAssetURL(
-        `home/banner/banner_gacha${gacha.id}_rip/banner_gacha${gacha.id}.webp`,
+        `home/banner/banner_gacha${gacha.id}/banner_gacha${gacha.id}.webp`,
         setGachaBanner,
         "minio",
         region
@@ -456,7 +456,7 @@ const GachaDetailPage: React.FC<unknown> = observer(() => {
   useLayoutEffect(() => {
     if (gachaCeilItem) {
       getRemoteAssetURL(
-        `thumbnail/gacha_item_rip/${gachaCeilItem.assetbundleName}.webp`,
+        `thumbnail/gacha_item/${gachaCeilItem.assetbundleName}.webp`,
         setGachaCeilItemIcon
       );
     }

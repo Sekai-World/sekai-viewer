@@ -38,7 +38,7 @@ const VirtualLiveStepMusic: React.FC<{
   useLayoutEffect(() => {
     if (music && musicVocal) {
       getRemoteAssetURL(
-        `music/long/${musicVocal.assetbundleName}_rip/${musicVocal.assetbundleName}.mp3`,
+        `music/long/${musicVocal.assetbundleName}/${musicVocal.assetbundleName}.mp3`,
         setMusicVocalURL,
         "minio"
       );

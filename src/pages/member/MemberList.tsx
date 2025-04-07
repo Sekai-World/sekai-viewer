@@ -23,7 +23,7 @@ const MemberImage: React.FC<{ id: number }> = ({ id }) => {
 
   useEffect(() => {
     getRemoteAssetURL(
-      `character/character_select_rip/chr_tl_${id}.webp`,
+      `character/character_select/chr_tl_${id}.webp`,
       setUrl,
       "minio",
       region

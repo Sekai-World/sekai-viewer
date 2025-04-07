@@ -24,7 +24,7 @@ const AgendaView: React.FC<{ data?: IVirtualLiveInfo }> = observer(
     useEffect(() => {
       if (data) {
         getRemoteAssetURL(
-          `virtual_live/select/banner/${data.assetbundleName}_rip/${data.assetbundleName}.png`,
+          `virtual_live/select/banner/${data.assetbundleName}/${data.assetbundleName}.png`,
           setVirtualLiveLogo,
           "minio",
           region

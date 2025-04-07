@@ -59,7 +59,7 @@ const ProfileMusicImage: React.FC<{
 
   useEffect(() => {
     getRemoteAssetURL(
-      `music/jacket/${assetbundleName}_rip/${assetbundleName}.webp`,
+      `music/jacket/${assetbundleName}/${assetbundleName}.webp`,
       setImg
     );
   }, [assetbundleName]);
@@ -517,7 +517,7 @@ const SekaiUserStatistics = observer(() => {
                                 <Image
                                   src={`${
                                     assetUrl.minio.jp
-                                  }/worldmap/contents/normal_rip/${
+                                  }/worldmap/contents/normal/${
                                     area.areaType === "reality_world"
                                       ? `worldmap_area${String(
                                           area.id
@@ -555,7 +555,7 @@ const SekaiUserStatistics = observer(() => {
                                         <Grid container>
                                           <Grid item xs={12}>
                                             <Image
-                                              src={`${assetUrl.minio.jp}/thumbnail/areaitem_rip/${areaItem.assetbundleName}.png`}
+                                              src={`${assetUrl.minio.jp}/thumbnail/areaitem/${areaItem.assetbundleName}.png`}
                                               alt={`area item ${areaItem.id}`}
                                               style={{
                                                 height: "64px",

@@ -55,7 +55,7 @@ export const CardThumb: React.FC<
   useEffect(() => {
     if (card) {
       getRemoteAssetURL(
-        `thumbnail/chara_rip/${card.assetbundleName}_${
+        `thumbnail/chara/${card.assetbundleName}_${
           _trained ? "after_training" : "normal"
         }.webp`,
         setCardThumbImg,
@@ -253,7 +253,7 @@ export const CardThumbMedium: React.FC<
   useEffect(() => {
     if (card) {
       getRemoteAssetURL(
-        `character/member_cutout/${card.assetbundleName}_rip/${
+        `character/member_cutout/${card.assetbundleName}/${
           isBirthdayCard
             ? "normal"
             : defaultImage

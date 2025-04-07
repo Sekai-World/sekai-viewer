@@ -22,7 +22,7 @@ const GridView: React.FC<{ data?: IMusicInfo }> = observer(({ data }) => {
   useEffect(() => {
     if (data)
       getRemoteAssetURL(
-        `music/jacket/${data.assetbundleName}_rip/${data.assetbundleName}.webp`,
+        `music/jacket/${data.assetbundleName}/${data.assetbundleName}.webp`,
         setJacket,
         "minio",
         region

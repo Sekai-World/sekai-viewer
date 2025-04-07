@@ -39,7 +39,7 @@ const UnitMusicImage: React.FC<{
   useEffect(() => {
     if (!img)
       getRemoteAssetURL(
-        `music/jacket/${assetbundleName}_rip/${assetbundleName}.webp`,
+        `music/jacket/${assetbundleName}/${assetbundleName}.webp`,
         setImg
       );
   }, [assetbundleName, img]);

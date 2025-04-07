@@ -66,7 +66,7 @@ const EventStory: React.FC<{
                     <CardSelect>
                       <CardContent>
                         <ImageWrapper
-                          src={`event_story/${ev.assetbundleName}/screen_image_rip/banner_event_story.webp`}
+                          src={`event_story/${ev.assetbundleName}/screen_image/banner_event_story.webp`}
                           bgColor=""
                           duration={0}
                           region={region}
@@ -111,7 +111,7 @@ const EventStory: React.FC<{
                         <CardSelect>
                           <CardContent>
                             <ImageWrapper
-                              src={`event_story/${chapter.assetbundleName}/episode_image_rip/${episode.assetbundleName}.webp`}
+                              src={`event_story/${chapter.assetbundleName}/episode_image/${episode.assetbundleName}.webp`}
                               bgColor=""
                               duration={0}
                               region={region}

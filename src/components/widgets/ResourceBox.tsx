@@ -115,9 +115,10 @@ const ResourceBox: React.FC<{
               <Image
                 src={`${assetUrl.minio[region]}/stamp/stamp${String(
                   detail.resourceId
-                ).padStart(4, "0")}_rip/stamp${String(
-                  detail.resourceId
-                ).padStart(4, "0")}.png`}
+                ).padStart(4, "0")}/stamp${String(detail.resourceId).padStart(
+                  4,
+                  "0"
+                )}.png`}
                 fit="contain"
                 style={{ height: "100px", width: "100px" }}
                 bgColor=""

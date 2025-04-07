@@ -28,7 +28,7 @@ const BoostItemIcon: React.FC<{
   useEffect(() => {
     if (boostItem) {
       getRemoteAssetURL(
-        `thumbnail/boost_item_rip/boost_item${boostItem.id}.webp`,
+        `thumbnail/boost_item/boost_item${boostItem.id}.webp`,
         setMaterialImage,
         "minio"
       );
@@ -76,7 +76,7 @@ const GachaTicketIcon: React.FC<{
   useEffect(() => {
     if (gachaTicket) {
       getRemoteAssetURL(
-        `thumbnail/gacha_ticket_rip/${gachaTicket.assetbundleName}.webp`,
+        `thumbnail/gacha_ticket/${gachaTicket.assetbundleName}.webp`,
         setMaterialImage,
         "minio"
       );
@@ -127,7 +127,7 @@ const SkillPracticeTicketIcon: React.FC<{
   useEffect(() => {
     if (skillPracticeTicket) {
       getRemoteAssetURL(
-        `thumbnail/skill_practice_ticket_rip/ticket${skillPracticeTicket.id}.webp`,
+        `thumbnail/skill_practice_ticket/ticket${skillPracticeTicket.id}.webp`,
         setMaterialImage,
         "minio"
       );
@@ -175,7 +175,7 @@ const CommonMaterialIcon: React.FC<{
     switch (materialName) {
       case "ad_reward_random_box":
         getRemoteAssetURL(
-          `thumbnail/ad_reward_rip/ad_reward${String(materialId).padStart(4, "0")}.webp`,
+          `thumbnail/ad_reward/ad_reward${String(materialId).padStart(4, "0")}.webp`,
           setMaterialImage,
           "minio"
         );
@@ -187,21 +187,21 @@ const CommonMaterialIcon: React.FC<{
       case "slot":
       case "virtual_coin":
         getRemoteAssetURL(
-          `thumbnail/common_material_rip/${materialName}.webp`,
+          `thumbnail/common_material/${materialName}.webp`,
           setMaterialImage,
           "minio"
         );
         break;
       case "paid_jewel":
         getRemoteAssetURL(
-          `thumbnail/common_material_rip/jewel.webp`,
+          `thumbnail/common_material/jewel.webp`,
           setMaterialImage,
           "minio"
         );
         break;
       case "honor":
         getRemoteAssetURL(
-          `thumbnail/common_material_rip/honor_${materialId}.webp`,
+          `thumbnail/common_material/honor_${materialId}.webp`,
           setMaterialImage,
           "minio"
         );

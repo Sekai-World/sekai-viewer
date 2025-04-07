@@ -29,7 +29,7 @@ const BondsDegreeWord: React.FC<{
   useEffect(() => {
     if (honorWord) {
       getRemoteAssetURL(
-        `bonds_honor/word/${honorWord.assetbundleName}_01_rip/${honorWord.assetbundleName}_01.webp`,
+        `bonds_honor/word/${honorWord.assetbundleName}_01/${honorWord.assetbundleName}_01.webp`,
         setWordImage,
         "minio",
         region

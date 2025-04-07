@@ -35,38 +35,38 @@ const condition = {
     {
       identifer: "ui/tex_scenario_tri_01",
       type: Live2DAssetType.UISheet,
-      url: `${assetUrl.minio.jp}/scenario/effect/hologram_rip/tex_scenario_tri_01.webp`,
+      url: `${assetUrl.minio.jp}/scenario/effect/hologram/tex_scenario_tri_01.webp`,
     },
   ],
   hologram: [
     {
       identifer: "ui/tex_scenario_tri_01",
       type: Live2DAssetType.UISheet,
-      url: `${assetUrl.minio.jp}/scenario/effect/hologram_rip/tex_scenario_tri_01.webp`,
+      url: `${assetUrl.minio.jp}/scenario/effect/hologram/tex_scenario_tri_01.webp`,
     },
     {
       identifer: "ui/tex_scenario_kira",
       type: Live2DAssetType.UI,
-      url: `${assetUrl.minio.jp}/scenario/effect/hologram_rip/tex_scenario_kira.webp`,
+      url: `${assetUrl.minio.jp}/scenario/effect/hologram/tex_scenario_kira.webp`,
     },
     {
       identifer: "ui/tex_scenario_light",
       type: Live2DAssetType.UI,
-      url: `${assetUrl.minio.jp}/scenario/effect/hologram_rip/tex_scenario_light.webp`,
+      url: `${assetUrl.minio.jp}/scenario/effect/hologram/tex_scenario_light.webp`,
     },
   ],
   kirakira: [
     {
       identifer: "ui/tex_kirakira_01",
       type: Live2DAssetType.UISheet,
-      url: `${assetUrl.minio.jp}/scenario/effect/kirakira_01_rip/tex_kirakira_01.webp`,
+      url: `${assetUrl.minio.jp}/scenario/effect/kirakira_01/tex_kirakira_01.webp`,
     },
   ],
   light_up_legend: [
     {
       identifer: "ui/tex_light_up_legend",
       type: Live2DAssetType.UISheet,
-      url: `${assetUrl.minio.jp}/scenario/effect/light_up_legend_01_rip/tex_light_up_legend.webp`,
+      url: `${assetUrl.minio.jp}/scenario/effect/light_up_legend_01/tex_light_up_legend.webp`,
     },
   ],
 };

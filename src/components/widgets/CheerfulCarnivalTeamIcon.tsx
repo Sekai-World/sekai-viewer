@@ -43,7 +43,7 @@ const CheerfulCarnivalTeamIcon: React.FC<
   useEffect(() => {
     if (!!event && !!ccTeam) {
       getRemoteAssetURL(
-        `event/${event.assetbundleName}/team_image_rip/${ccTeam.assetbundleName}.webp`,
+        `event/${event.assetbundleName}/team_image/${ccTeam.assetbundleName}.webp`,
         setCcTeamLogo,
         "minio",
         region

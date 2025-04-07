@@ -22,7 +22,7 @@ const CurrentEventWidget: React.FC<unknown> = observer(() => {
   useEffect(() => {
     if (currEvent) {
       getRemoteAssetURL(
-        `home/banner/${currEvent.eventJson.assetbundleName}_rip/${currEvent.eventJson.assetbundleName}.webp`,
+        `home/banner/${currEvent.eventJson.assetbundleName}/${currEvent.eventJson.assetbundleName}.webp`,
         setEventBanner,
         "minio",
         region

@@ -62,7 +62,7 @@ const ComicList: React.FC<unknown> = observer(() => {
           case "en":
           case "kr":
           case "zhs":
-            url = `comic/one_frame_rip/${comic.assetbundleName}.webp`;
+            url = `comic/one_frame/${comic.assetbundleName}.webp`;
             break;
           default:
             url = `${resourceLang}/${comic.assetbundleName}.png`;

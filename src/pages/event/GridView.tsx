@@ -23,7 +23,7 @@ const GridView: React.FC<{ data?: IEventInfo }> = observer(({ data }) => {
   useEffect(() => {
     if (data) {
       getRemoteAssetURL(
-        `event/${data.assetbundleName}/logo_rip/logo.webp`,
+        `event/${data.assetbundleName}/logo/logo.webp`,
         setEventLogo,
         "minio",
         region

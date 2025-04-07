@@ -196,25 +196,25 @@ const MusicDetail: React.FC<unknown> = observer(() => {
       if (isExclusiveSong) {
         // handle server exclusive music
         getRemoteAssetURL(
-          `music/long/${musicVocal[selectedPreviewVocalType].assetbundleName}_rip/${musicVocal[selectedPreviewVocalType].assetbundleName}.${format}`,
+          `music/long/${musicVocal[selectedPreviewVocalType].assetbundleName}/${musicVocal[selectedPreviewVocalType].assetbundleName}.${format}`,
           setLongMusicPlaybackURL,
           "minio",
           region
         );
         getRemoteAssetURL(
-          `music/short/${musicVocal[selectedPreviewVocalType].assetbundleName}_rip/${musicVocal[selectedPreviewVocalType].assetbundleName}_short.${format}`,
+          `music/short/${musicVocal[selectedPreviewVocalType].assetbundleName}/${musicVocal[selectedPreviewVocalType].assetbundleName}_short.${format}`,
           setShortMusicPlaybackURL,
           "minio",
           region
         );
       } else {
         getRemoteAssetURL(
-          `music/long/${musicVocal[selectedPreviewVocalType].assetbundleName}_rip/${musicVocal[selectedPreviewVocalType].assetbundleName}.${format}`,
+          `music/long/${musicVocal[selectedPreviewVocalType].assetbundleName}/${musicVocal[selectedPreviewVocalType].assetbundleName}.${format}`,
           setLongMusicPlaybackURL,
           "minio"
         );
         getRemoteAssetURL(
-          `music/short/${musicVocal[selectedPreviewVocalType].assetbundleName}_rip/${musicVocal[selectedPreviewVocalType].assetbundleName}_short.${format}`,
+          `music/short/${musicVocal[selectedPreviewVocalType].assetbundleName}/${musicVocal[selectedPreviewVocalType].assetbundleName}_short.${format}`,
           setShortMusicPlaybackURL,
           "minio"
         );
@@ -261,7 +261,7 @@ const MusicDetail: React.FC<unknown> = observer(() => {
               : vocalPreviewVal === "mv_2d"
                 ? "sekai_mv"
                 : ""
-          }/${String(music.id).padStart(4, "0")}_rip`
+          }/${String(music.id).padStart(4, "0")}`
         );
       } else {
         setMusicVideoURL(
@@ -271,7 +271,7 @@ const MusicDetail: React.FC<unknown> = observer(() => {
               : vocalPreviewVal === "mv_2d"
                 ? "sekai_mv"
                 : ""
-          }/${String(music.id).padStart(4, "0")}_rip`
+          }/${String(music.id).padStart(4, "0")}`
         );
       }
     }
@@ -318,14 +318,14 @@ const MusicDetail: React.FC<unknown> = observer(() => {
         musicVocalTypes[selectedPreviewVocalType].includes("original")
       ) {
         getRemoteAssetURL(
-          `music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}_org.webp`,
+          `music/jacket/${music.assetbundleName}/${music.assetbundleName}_org.webp`,
           setMusicJacket,
           "minio",
           region
         );
       } else {
         getRemoteAssetURL(
-          `music/jacket/${music.assetbundleName}_rip/${music.assetbundleName}.webp`,
+          `music/jacket/${music.assetbundleName}/${music.assetbundleName}.webp`,
           setMusicJacket,
           "minio",
           region

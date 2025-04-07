@@ -138,7 +138,7 @@ const UnitStory: React.FC<{
                           <CardSelect>
                             <CardContent>
                               <ImageWrapper
-                                src={`story/episode_image/${chapter.assetbundleName}_rip/${episode.assetbundleName}.webp`}
+                                src={`story/episode_image/${chapter.assetbundleName}/${episode.assetbundleName}.webp`}
                                 bgColor=""
                                 duration={0}
                               />

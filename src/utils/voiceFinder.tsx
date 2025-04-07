@@ -5,8 +5,8 @@ import { assetUrl } from "./urls";
 
 // const errorVoices = {
 //   // Master assetBundleName error?
-//   "sound/scenario/voice/part_voice_v2_24luka_light_sound_rip/partvoice_20_025.mp3":
-//     "sound/scenario/voice/part_voice_v2_24luka_light_sound_rip/partvoice_20_024.mp3"
+//   "sound/scenario/voice/part_voice_v2_24luka_light_sound/partvoice_20_025.mp3":
+//     "sound/scenario/voice/part_voice_v2_24luka_light_sound/partvoice_20_024.mp3"
 // }
 
 export const normalizeVoiceName = function (str: string) {

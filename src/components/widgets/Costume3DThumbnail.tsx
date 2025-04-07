@@ -37,7 +37,7 @@ const Costume3DThumbnail = ({ costumeId }: Props) => {
   useEffect(() => {
     if (costume) {
       getRemoteAssetURL(
-        `thumbnail/costume_rip/${costume.thumbnailAssetbundleName}.webp`,
+        `thumbnail/costume/${costume.thumbnailAssetbundleName}.webp`,
         setThumbnail,
         "minio"
       );

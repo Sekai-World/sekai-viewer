@@ -19,7 +19,7 @@ const GridView: React.FC<{ data?: IGachaInfo }> = observer(({ data }) => {
   useEffect(() => {
     if (data) {
       getRemoteAssetURL(
-        `gacha/${data.assetbundleName}/logo_rip/logo.webp`,
+        `gacha/${data.assetbundleName}/logo/logo.webp`,
         setUrl,
         "minio",
         region

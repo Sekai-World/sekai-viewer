@@ -64,7 +64,7 @@ async function getMotionData(
 
 export async function getBuildModelDataUrl(modelName: string) {
   return await getRemoteAssetURL(
-    `live2d/model/${modelName}_rip/buildmodeldata.asset`,
+    `live2d/model/${modelName}/buildmodeldata.asset`,
     undefined,
     "minio"
   );
@@ -89,7 +89,7 @@ export async function getBuildMotionDataUrl(
 
   // step 1: get from full name
   let url = await getRemoteAssetURL(
-    `live2d/motion/${modelBaseName}_motion_base_rip/BuildMotionData.json`,
+    `live2d/motion/${modelBaseName}_motion_base/BuildMotionData.json`,
     undefined,
     "minio",
     "jp",
@@ -107,7 +107,7 @@ export async function getBuildMotionDataUrl(
 
         // try to get url
         url = await getRemoteAssetURL(
-          `live2d/motion/${modelBaseName}_motion_base_rip/BuildMotionData.json`,
+          `live2d/motion/${modelBaseName}_motion_base/BuildMotionData.json`,
           undefined,
           "minio",
           "jp",
@@ -122,7 +122,7 @@ export async function getBuildMotionDataUrl(
   while (!url && modelBaseName.split("_").length > 1) {
     modelBaseName = modelBaseName.split("_").slice(0, -1).join("_");
     url = await getRemoteAssetURL(
-      `live2d/motion/${modelBaseName}_motion_base_rip/BuildMotionData.json`,
+      `live2d/motion/${modelBaseName}_motion_base/BuildMotionData.json`,
       undefined,
       "minio",
       "jp",
@@ -140,7 +140,7 @@ export async function getBuildMotionDataUrl(
 
 async function getModelBaseUrl(modelName: string) {
   return await getRemoteAssetURL(
-    `live2d/model/${modelName}_rip/`,
+    `live2d/model/${modelName}/`,
     undefined,
     "minio"
   );
@@ -149,12 +149,12 @@ async function getModelBaseUrl(modelName: string) {
 async function getModel3JsonUrl(modelName: string, moc3FileName: string) {
   const filename = moc3FileName.replace(".moc3.bytes", ".model3.json");
   return await getRemoteAssetURL(
-    `live2d/model/${modelName}_rip/${filename}`,
+    `live2d/model/${modelName}/${filename}`,
     undefined,
     "minio"
   );
 }
 
 function getRelativeMotionUrl(motionBaseName: string, motion: string) {
-  return `../../motion/${motionBaseName}_rip/${motion}.motion3.json`;
+  return `../../motion/${motionBaseName}/${motion}.motion3.json`;
 }

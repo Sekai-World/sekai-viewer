@@ -639,7 +639,7 @@ const SekaiUserImportMember = observer(() => {
               full: hashResults[idx].length
                 ? hashResults[idx].map(
                     (result) =>
-                      `${assetUrl.minio.jp}/thumbnail/chara_rip/${result[0]}`
+                      `${assetUrl.minio.jp}/thumbnail/chara/${result[0]}`
                   )
                 : [""],
               hashResults: hashResults[idx],

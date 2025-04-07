@@ -215,10 +215,7 @@ const AreaTalk: React.FC<{
                   key={area.id}
                   img={`worldmap/contents/collaboration/${
                     area.assetbundleName
-                  }_rip/img_worldmap_areas${String(area.id).padStart(
-                    2,
-                    "0"
-                  )}.webp`}
+                  }/img_worldmap_areas${String(area.id).padStart(2, "0")}.webp`}
                   to={`${path}/${area.id}`}
                   areaId={area.id}
                   areaName={area.name}
@@ -231,7 +228,7 @@ const AreaTalk: React.FC<{
               .map((area) => (
                 <AreaCard
                   key={area.id}
-                  img={`worldmap/contents/normal_rip/img_worldmap_areas${String(
+                  img={`worldmap/contents/normal/img_worldmap_areas${String(
                     area.id
                   ).padStart(2, "0")}.webp`}
                   to={`${path}/${area.id}`}
@@ -246,7 +243,7 @@ const AreaTalk: React.FC<{
               .map((area, idx) => (
                 <AreaCard
                   key={area.id}
-                  img={`worldmap/contents/normal_rip/worldmap_area${String(
+                  img={`worldmap/contents/normal/worldmap_area${String(
                     realityAreaWorldmap[String(idx + 1)]
                   ).padStart(2, "0")}.webp`}
                   to={`${path}/${area.id}`}

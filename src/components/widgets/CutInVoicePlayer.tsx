@@ -44,10 +44,10 @@ const CutInVoicePlayer: React.FC<CutInVoicePlayButtonProps> = ({
       if (!filteredVoices?.length) return;
       const urls: string[] = [];
       for (const voice of filteredVoices) {
-        const voiceUrl1 = `live/voice/cutin/${voice.assetbundleName1}_rip/${voice.assetbundleName1}.mp3`;
+        const voiceUrl1 = `live/voice/cutin/${voice.assetbundleName1}/${voice.assetbundleName1}.mp3`;
         urls.push(await getRemoteAssetURL(voiceUrl1, undefined, "minio"));
 
-        const voiceUrl2 = `live/voice/cutin/${voice.assetbundleName2}_rip/${voice.assetbundleName2}.mp3`;
+        const voiceUrl2 = `live/voice/cutin/${voice.assetbundleName2}/${voice.assetbundleName2}.mp3`;
         urls.push(await getRemoteAssetURL(voiceUrl2, undefined, "minio"));
       }
       setVoiceUrls(urls);

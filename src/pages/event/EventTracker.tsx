@@ -600,7 +600,9 @@ const EventTracker: React.FC<unknown> = observer(() => {
                               (r) => r.toRank === rank
                             )}
                           rankingData={
-                            historyRanking.find((elem) => elem.rank === rank) || {
+                            historyRanking.find(
+                              (elem) => elem.rank === rank
+                            ) || {
                               id: -1,
                               eventId: selectedEventId,
                               timestamp: "0",

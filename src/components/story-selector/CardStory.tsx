@@ -125,7 +125,7 @@ const CardStory: React.FC<{
                         <CardSelect>
                           <CardContent>
                             <ImageWrapper
-                              src={`character/member_small/${card.assetbundleName}_rip/card_normal.webp`}
+                              src={`character/member_small/${card.assetbundleName}/card_normal.webp`}
                               bgColor=""
                               duration={0}
                             />

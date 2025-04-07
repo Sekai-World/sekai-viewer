@@ -371,7 +371,7 @@ export async function getRemoteAssetURL(
 
 // export async function getMovieUrl(stringVal: string) {
 //   const buildDataUrl = await getRemoteAssetURL(
-//     `scenario/movie/${stringVal}_rip/moviebundlebuilddata.asset`,
+//     `scenario/movie/${stringVal}/moviebundlebuilddata.asset`,
 //     undefined,
 //     window.isChinaMainland
 //   );
@@ -381,7 +381,7 @@ export async function getRemoteAssetURL(
 //     .replace(/(-\d{3})?\.usm\.bytes/, "")
 //     .toLowerCase();
 //   return getRemoteAssetURL(
-//     `scenario/movie/${stringVal}_rip/${fileName}.mp4`,
+//     `scenario/movie/${stringVal}/${fileName}.mp4`,
 //     undefined,
 //     window.isChinaMainland
 //   );
@@ -610,7 +610,7 @@ export async function getGachaRemoteImages(
         delimiter: "/",
         "list-type": "2",
         "max-keys": "500",
-        prefix: `gacha/${gachaAssetbundleName}/screen_rip/texture/`,
+        prefix: `gacha/${gachaAssetbundleName}/screen/texture/`,
       },
       responseType: "text",
     })

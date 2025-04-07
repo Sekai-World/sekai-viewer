@@ -146,29 +146,28 @@ export const HistoryRow: React.FC<{
                         )}
                       </Grid>
                     )}
-                  {rankingData.userProfile &&
-                    rankingData.userProfileHonors && (
-                      <Grid item xs={12} container spacing={1}>
-                        {rankingData.userProfileHonors.map((honor) => (
-                          <Grid item xs={12} md={4} key={honor.honorId}>
-                            {honor.profileHonorType === "normal" ? (
-                              <DegreeImage
-                                honorId={honor.honorId}
-                                honorLevel={honor.honorLevel}
-                              />
-                            ) : honor.profileHonorType === "bonds" ? (
-                              <BondsDegreeImage
-                                honorId={honor.honorId}
-                                bondsHonorWordId={honor.bondsHonorWordId!}
-                                type={honor.profileHonorType}
-                                viewType={honor.bondsHonorViewType}
-                                honorLevel={honor.honorLevel}
-                              />
-                            ) : null}
-                          </Grid>
-                        ))}
-                      </Grid>
-                    )}
+                  {rankingData.userProfile && rankingData.userProfileHonors && (
+                    <Grid item xs={12} container spacing={1}>
+                      {rankingData.userProfileHonors.map((honor) => (
+                        <Grid item xs={12} md={4} key={honor.honorId}>
+                          {honor.profileHonorType === "normal" ? (
+                            <DegreeImage
+                              honorId={honor.honorId}
+                              honorLevel={honor.honorLevel}
+                            />
+                          ) : honor.profileHonorType === "bonds" ? (
+                            <BondsDegreeImage
+                              honorId={honor.honorId}
+                              bondsHonorWordId={honor.bondsHonorWordId!}
+                              type={honor.profileHonorType}
+                              viewType={honor.bondsHonorViewType}
+                              honorLevel={honor.honorLevel}
+                            />
+                          ) : null}
+                        </Grid>
+                      ))}
+                    </Grid>
+                  )}
                 </Grid>
               </Grid>
             </Grid>

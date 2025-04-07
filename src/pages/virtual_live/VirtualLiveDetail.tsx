@@ -78,13 +78,13 @@ const VirtualLiveDetail: React.FC<unknown> = observer(() => {
   useEffect(() => {
     if (virtualLive) {
       getRemoteAssetURL(
-        `virtual_live/select/banner/${virtualLive.assetbundleName}_rip/${virtualLive.assetbundleName}.webp`,
+        `virtual_live/select/banner/${virtualLive.assetbundleName}/${virtualLive.assetbundleName}.webp`,
         setVrLiveLogo,
         "minio",
         region
       );
       getRemoteAssetURL(
-        `home/banner/banner_virtuallive${virtualLiveId}_rip/banner_virtuallive${virtualLiveId}.webp`,
+        `home/banner/banner_virtuallive${virtualLiveId}/banner_virtuallive${virtualLiveId}.webp`,
         setVrLiveBanner,
         "minio",
         region

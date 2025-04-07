@@ -50,7 +50,7 @@ export const CardImage: React.FC<{ id: number; trained?: boolean }> = ({
   useEffect(() => {
     if (card)
       getRemoteAssetURL(
-        `character/member/${card.assetbundleName}_rip/card_${
+        `character/member/${card.assetbundleName}/card_${
           trained ? "after_training" : "normal"
         }.webp`,
         setCardImg
@@ -138,12 +138,12 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
 
     useEffect(() => {
       getRemoteAssetURL(
-        `character/member_small/${card.assetbundleName}_rip/card_normal.webp`,
+        `character/member_small/${card.assetbundleName}/card_normal.webp`,
         setNormalImg,
         "minio"
       );
       getRemoteAssetURL(
-        `character/member_small/${card.assetbundleName}_rip/card_after_training.webp`,
+        `character/member_small/${card.assetbundleName}/card_after_training.webp`,
         setTrainedImg,
         "minio"
       );
