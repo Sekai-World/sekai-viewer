@@ -1,3 +1,6 @@
+import { ID3Writer } from "browser-id3-writer";
+import { IMusicInfo } from "../types";
+
 /** MPEG 1 Layer III sampling rate definition */
 const samplingRates = [
   44100,
@@ -169,4 +172,24 @@ export function parseMP3(buffer: ArrayBuffer): Frame[] {
   }
 
   return frames;
+}
+
+export async function addID3Tags(
+  source: ArrayBuffer,
+  music: IMusicInfo,
+  vocals: string[],
+  coverImage: ArrayBuffer
+): Promise<Blob> {
+  const writer = new ID3Writer(source);
+  writer.setFrame("TIT2", music.title);
+  writer.setFrame("TPE1", vocals);
+  writer.setFrame("TCOM", [music.composer, music.arranger]);
+  writer.setFrame("TEXT", music.lyricist);
+  writer.setFrame("APIC", {
+    type: 3,
+    data: coverImage,
+    description: "cover",
+  });
+
+  return writer.getBlob();
 }

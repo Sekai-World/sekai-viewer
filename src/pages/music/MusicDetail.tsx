@@ -47,7 +47,6 @@ import Image from "mui-image";
 import { useStrapi } from "../../utils/apiClient";
 import CommentTextMultiple from "~icons/mdi/comment-text-multiple";
 import Comment from "../comment/Comment";
-import axios from "axios";
 import { trimMP3 } from "../../utils/trimMP3";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
@@ -58,6 +57,7 @@ import ContainerContent from "../../components/styled/ContainerContent";
 import PaperContainer from "../../components/styled/PaperContainer";
 import GridOut from "../../components/styled/GridOut";
 import EmbedVideoPlayer from "../../components/blocks/EmbedVideoPlayer";
+import { addID3Tags } from "../../utils/mp3";
 
 const KR_EXCLUSIVE_IDS = [10001, 10002, 371, 387, 419, 420, 453, 464];
 const EN_EXCLUSIVE_IDS = [
@@ -74,7 +74,6 @@ const MusicDetail: React.FC<unknown> = observer(() => {
     region,
   } = useRootStore();
   const [, humanizeDurationShort] = useDurationI18n();
-  // const [trimmedMP3URL, trimFailed, setTrimOptions] = useTrimMP3();
   const getCharaName = useCharaName();
   const getOriginalCharaName = useCharaName("original");
   const musicTagToName = useMusicTagName(contentTransMode);
@@ -85,9 +84,7 @@ const MusicDetail: React.FC<unknown> = observer(() => {
   const [musicDiffis] =
     useCachedData<IMusicDifficultyInfo>("musicDifficulties");
   const [musicTags] = useCachedData<IMusicTagInfo>("musicTags");
-  // const [gameCharas] = useCachedData<IGameChara>('gameCharacters');
   const [outCharas] = useCachedData<IOutCharaProfile>("outsideCharacters");
-  // const [releaseConds] = useCachedData<IReleaseCondition>("releaseConditions");
   const [danceMembers] = useCachedData<IMusicDanceMembers>("musicDanceMembers");
   const [musicAchievements] =
     useCachedData<IMusicAchievement>("musicAchievements");
@@ -120,7 +117,7 @@ const MusicDetail: React.FC<unknown> = observer(() => {
   >();
   const [musicVideoURL, setMusicVideoURL] = useState<string>("");
   const [musicCommentId, setMusicCommentId] = useState<number>(0);
-  const [format, setFormat] = useState<"mp3" | "flac">("mp3");
+  const [format, setFormat] = useState<"mp3" | "flac" | "wav">("mp3");
   const [isExclusiveSong, setIsExclusiveSong] = useState(false);
 
   useEffect(() => {
@@ -393,29 +390,32 @@ const MusicDetail: React.FC<unknown> = observer(() => {
   const onSave = useCallback(
     async (src: string) => {
       if (!music) return;
-      // console.log(src);
       const vocals = musicVocal[selectedPreviewVocalType].characters.map(
         (chara) =>
           chara.characterType === "game_character"
-            ? getOriginalCharaName(chara.characterId)
+            ? (getOriginalCharaName(chara.characterId) ?? "")
             : outCharas && outCharas.length
               ? outCharas.find((elem) => elem.id === chara.characterId)!.name
-              : chara.characterId
+              : String(chara.characterId)
       );
+      const coverImage = await (await fetch(musicJacket)).arrayBuffer();
       if (trimSilence && format === "mp3" && vocalPreviewVal === "1") {
         // only trim when downloading full version
-        const buf = (await axios.get(src, { responseType: "arraybuffer" }))
-          .data as ArrayBuffer;
+        const buf = await (await fetch(src)).arrayBuffer();
         const trimmed = trimMP3(buf, music.fillerSec);
         if (trimmed)
           saveAs(
-            new Blob([trimmed], {
-              type: "audio/mp3",
-            }),
-            `${music.title}-${
-              vocalPreviewVal === "1" ? "full" : "preview"
-            }-${vocals.join("+")}.${format}`
+            await addID3Tags(trimmed, music, vocals, coverImage),
+            `${music.title}-full-${vocals.join("+")}.${format}`
           );
+      } else if (format === "mp3") {
+        const buf = await (await fetch(src)).arrayBuffer();
+        saveAs(
+          await addID3Tags(buf, music, vocals, coverImage),
+          `${music.title}-${
+            vocalPreviewVal === "1" ? "full" : "preview"
+          }-${vocals.join("+")}.${format}`
+        );
       } else {
         saveAs(
           src,
@@ -429,6 +429,7 @@ const MusicDetail: React.FC<unknown> = observer(() => {
       format,
       getOriginalCharaName,
       music,
+      musicJacket,
       musicVocal,
       outCharas,
       selectedPreviewVocalType,
@@ -620,6 +621,12 @@ const MusicDetail: React.FC<unknown> = observer(() => {
                     value="flac"
                     control={<Radio color="primary"></Radio>}
                     label={t("music:fileFormat.flac") as string}
+                    labelPlacement="end"
+                  />
+                  <FormControlLabel
+                    value="wav"
+                    control={<Radio color="primary"></Radio>}
+                    label="WAV"
                     labelPlacement="end"
                   />
                 </RadioGroup>
