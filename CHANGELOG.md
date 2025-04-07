@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.15.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.14.7...v1.15.0) (2025-04-07)
+
+
+### Features
+
+* **apiClient:** update live2d model URL to use assetUrl configuration ([fc7cafb](https://github.com/Sekai-World/sekai-viewer/commits/fc7cafb7432378003afe112119692fb869d78955))
+* **mp3:** add ID3 tagging functionality and support for WAV format ([d7f6927](https://github.com/Sekai-World/sekai-viewer/commits/d7f692730c3f27aa9010a728b7c12ca2fe87e08c))
+* **voiceFinder:** implement voice normalization and retrieval functions ([af57318](https://github.com/Sekai-World/sekai-viewer/commits/af57318115f8d18a4687e7af0621c7974974a308))
+
+
+### Bug Fixes
+
+* **AudioPlayer:** add type annotations for seekHandler and formatTime functions ([947753b](https://github.com/Sekai-World/sekai-viewer/commits/947753b40b0ebbe4b83f0f80ee78fdb73655e58f))
+* **event:** fix error on history event tracker ([6065173](https://github.com/Sekai-World/sekai-viewer/commits/6065173d4e070ca913ea07afb9806a0f1f55515e))
+* **event:** make rows with no score unexpandable ([eb2ccaa](https://github.com/Sekai-World/sekai-viewer/commits/eb2ccaa73064833d667ea5e44ee44e5606eea614))
+
+
+### Refactors
+
+* asset URLs to remove "_rip" suffix across multiple components ([9352c95](https://github.com/Sekai-World/sekai-viewer/commits/9352c95925a7839e7e0da5677fe42a93be3ccb3c))
+
 ### [1.14.7](https://github.com/Sekai-World/sekai-viewer/compare/v1.14.6...v1.14.7) (2025-03-19)
 
 
