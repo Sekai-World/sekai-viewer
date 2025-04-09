@@ -22,7 +22,6 @@ export async function getModelData(
           expressions: [],
           motions: [],
         };
-  console.dir(additionalMotionData);
   // step 3 - construct model
   model3Json.url = await getModelBaseUrl(modelItem);
   // model3Json.FileReferences.Moc = `${model3Json.FileReferences.Moc}.bytes`;
@@ -30,7 +29,7 @@ export async function getModelData(
     Motion: [
       ...motionData.motions.map((elem) => ({
         Name: elem,
-        File: getRelativeMotionUrl(motionBaseName, elem),
+        File: getRelativeMotionUrl(motionBaseName, "motion", elem),
         FadeInTime: motionFade[0],
         FadeOutTime: motionFade[1],
       })),
@@ -43,13 +42,12 @@ export async function getModelData(
     ],
     Expression: motionData.expressions.map((elem) => ({
       Name: elem,
-      File: getRelativeMotionUrl(motionBaseName, elem),
+      File: getRelativeMotionUrl(motionBaseName, "facial", elem),
       FadeInTime: expressionFade[0],
       FadeOutTime: expressionFade[1],
     })),
   };
   model3Json.FileReferences.Expressions = {};
-  console.dir(model3Json);
   return model3Json;
 }
 
@@ -208,6 +206,10 @@ async function getModel3JsonUrl(modelItem: ILive2dModelListElement) {
   );
 }
 
-function getRelativeMotionUrl(motionBaseName: string, motion: string) {
-  return `../../motion/${motionBaseName}/${motion}.motion3.json`;
+function getRelativeMotionUrl(
+  motionBaseName: string,
+  motionType: string,
+  motion: string
+) {
+  return `../../../../../motion/${motionBaseName}/${motionType}/${motion}.motion3.json`;
 }
