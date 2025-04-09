@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.15.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.1...v1.15.2) (2025-04-09)
+
+
+### Bug Fixes
+
+* **live2d:** story reader ([7d6f6be](https://github.com/Sekai-World/sekai-viewer/commits/7d6f6be1f768b99ab13e2da3ed113a8cb4ffb66c))
+* **live2d:** update motion and expression file paths for model data ([882908f](https://github.com/Sekai-World/sekai-viewer/commits/882908f68cffe1ddd688b631b2c04acae2718d8f))
+
 ### [1.15.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.0...v1.15.1) (2025-04-09)
 
 
