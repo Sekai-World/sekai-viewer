@@ -447,7 +447,7 @@ const Home: React.FC = () => {
             {i18n.language.startsWith("zh") && (
               <Grid item>
                 <Link
-                  href="https://b23.tv/AIjzvc"
+                  href="https://www.bilibili.com/read/readlist/rl330783"
                   target="_blank"
                   underline="hover"
                 >
