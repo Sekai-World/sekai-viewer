@@ -40,15 +40,14 @@ import { useLive2dModelList } from "../../utils/apiClient";
 import { InternalModel, Live2DModel } from "pixi-live2d-display-mulmotion";
 import Live2dModel from "../../components/pixi/Live2dModel";
 import { getModelData } from "../../utils/live2dLoader";
-import type { ILive2DModelData } from "../../types.d";
+import type { ILive2DModelData, ILive2dModelListElement } from "../../types.d";
 
 const Live2DView: React.FC<unknown> = () => {
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const [selectedModelName, setSelectedModelName] = useState<string | null>(
-    null
-  );
+  const [selectedModelItem, setSelectedModelItem] =
+    useState<ILive2dModelListElement | null>(null);
   const [modelName, setModelName] = useState<string | null>("");
   const [modelData, setModelData] = useState<ILive2DModelData>();
   const [motions, setMotions] = useState<string[]>([]);
@@ -133,13 +132,13 @@ const Live2DView: React.FC<unknown> = () => {
 
   useEffect(() => {
     const func = async () => {
-      if (modelName) {
+      if (modelName && selectedModelItem) {
         setModelData(undefined);
         setShowProgress(true);
 
         setProgress(0);
         setProgressWords(t("live2d:load_progress.model_metadata"));
-        const modelData = await getModelData(modelName);
+        const modelData = await getModelData(selectedModelItem);
 
         setProgress(20);
         setProgressWords(t("live2d:load_progress.model_texture"));
@@ -169,7 +168,7 @@ const Live2DView: React.FC<unknown> = () => {
     };
 
     func();
-  }, [modelName, t]);
+  }, [modelName, selectedModelItem, t]);
 
   const handleDownload = useCallback(async () => {
     setShowProgress(true);
@@ -177,7 +176,7 @@ const Live2DView: React.FC<unknown> = () => {
     setProgressWords(t("live2d:pack_progress.generate_metadata"));
 
     const zip = new JSZip();
-    const modelData = await getModelData(modelName!);
+    const modelData = await getModelData(selectedModelItem!);
     const model3 = {
       FileReferences: {
         Moc: `${modelName}.moc3`,
@@ -293,7 +292,7 @@ const Live2DView: React.FC<unknown> = () => {
     setShowProgress(false);
     setProgress(0);
     setProgressWords("");
-  }, [modelName, t]);
+  }, [modelName, selectedModelItem, t]);
 
   const handleScreenshot = useCallback(() => {
     if (stage.current && live2dModel.current) {
@@ -319,8 +318,10 @@ const Live2DView: React.FC<unknown> = () => {
   }, [live2dX, live2dY, modelName]);
 
   const handleShow = useCallback(() => {
-    setModelName(selectedModelName);
-  }, [selectedModelName]);
+    setModelName(selectedModelItem?.modelName ?? null);
+    setSelectedMotion(null);
+    setSelectedExpression(null);
+  }, [selectedModelItem]);
 
   const onLive2dModelReady = useCallback(() => {
     updateSize();
@@ -342,12 +343,21 @@ const Live2DView: React.FC<unknown> = () => {
         {t("common:betaIndicator")}
       </Alert>
       <Grid container spacing={1} alignItems="center">
-        <Grid item xs={9} md={4} lg={3}>
+        <Grid item xs={10} md={7} lg={5}>
           <Autocomplete
-            value={selectedModelName}
-            onChange={(e, v) => setSelectedModelName(v)}
-            options={modelList?.sort() || []}
-            getOptionLabel={(option) => option}
+            value={selectedModelItem}
+            onChange={(e, v) => {
+              setSelectedModelItem(v);
+              setModelName(null);
+            }}
+            options={
+              modelList?.sort((a, b) =>
+                a.modelBase.localeCompare(b.modelBase)
+              ) || []
+            }
+            getOptionLabel={(option) =>
+              `${option.modelBase}/${option.modelName}`
+            }
             renderInput={(props) => (
               <TextField {...props} label={t("live2d:select.model")} />
             )}
@@ -356,7 +366,7 @@ const Live2DView: React.FC<unknown> = () => {
         </Grid>
         <Grid item xs={2}>
           <Button
-            disabled={!selectedModelName || showProgress}
+            disabled={!selectedModelItem || showProgress}
             variant="contained"
             onClick={handleShow}
           >
@@ -450,7 +460,7 @@ const Live2DView: React.FC<unknown> = () => {
                           label={t("live2d:select.motions")}
                         />
                       )}
-                      style={{ minWidth: "250px" }}
+                      style={{ minWidth: "350px" }}
                       size="small"
                     />
                   </Grid>

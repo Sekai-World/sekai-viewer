@@ -1598,3 +1598,10 @@ export interface IAnother3dmvCutIn {
   musicId: number;
   cutInNo: number;
 }
+
+export interface ILive2dModelListElement {
+  modelName: string;
+  modelBase: string;
+  modelPath: string;
+  modelFile: string;
+}

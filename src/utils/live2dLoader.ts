@@ -1,31 +1,46 @@
-import Axios from "axios";
 import { getRemoteAssetURL } from ".";
-import type { ILive2DModelData } from "../types.d";
+import type { ILive2DModelData, ILive2dModelListElement } from "../types.d";
 
 export async function getModelData(
-  modelName: string,
+  modelItem: ILive2dModelListElement,
   motionFade: [number, number] = [1, 1],
   expressionFade: [number, number] = [1, 1]
 ): Promise<ILive2DModelData> {
   // step 1 - get model build data
-  const { data: modelData } = await Axios.get<{
-    Moc3FileName: string;
-  }>(await getBuildModelDataUrl(modelName), { responseType: "json" });
+  const model3Json: ILive2DModelData = await (
+    await fetch(await getModel3JsonUrl(modelItem))
+  ).json();
+  const modelBuildData = await (
+    await fetch(await getBuildModelDataUrl(modelItem))
+  ).json();
   // step 2 - get motion data
-  const [motionBaseName, motionData] = await getMotionData(modelName);
+  const [motionBaseName, motionData] = await getMotionData(modelItem);
+  const additionalMotionData =
+    modelBuildData.AdditionalMotionData.length > 0
+      ? await getAddtionalMotionData(modelItem)
+      : {
+          expressions: [],
+          motions: [],
+        };
+  console.dir(additionalMotionData);
   // step 3 - construct model
-  const model3Json = (
-    await Axios.get(await getModel3JsonUrl(modelName, modelData.Moc3FileName))
-  ).data;
-  model3Json.url = await getModelBaseUrl(modelName);
-  model3Json.FileReferences.Moc = `${model3Json.FileReferences.Moc}.bytes`;
+  model3Json.url = await getModelBaseUrl(modelItem);
+  // model3Json.FileReferences.Moc = `${model3Json.FileReferences.Moc}.bytes`;
   model3Json.FileReferences.Motions = {
-    Motion: motionData.motions.map((elem) => ({
-      Name: elem,
-      File: getRelativeMotionUrl(motionBaseName, elem),
-      FadeInTime: motionFade[0],
-      FadeOutTime: motionFade[1],
-    })),
+    Motion: [
+      ...motionData.motions.map((elem) => ({
+        Name: elem,
+        File: getRelativeMotionUrl(motionBaseName, elem),
+        FadeInTime: motionFade[0],
+        FadeOutTime: motionFade[1],
+      })),
+      ...additionalMotionData.motions.map((elem) => ({
+        Name: `${elem}-additional`,
+        File: `./motions/${elem}.motion3.json`,
+        FadeInTime: motionFade[0],
+        FadeOutTime: motionFade[1],
+      })),
+    ],
     Expression: motionData.expressions.map((elem) => ({
       Name: elem,
       File: getRelativeMotionUrl(motionBaseName, elem),
@@ -34,6 +49,7 @@ export async function getModelData(
     })),
   };
   model3Json.FileReferences.Expressions = {};
+  console.dir(model3Json);
   return model3Json;
 }
 
@@ -43,16 +59,20 @@ interface Live2DMotionsExpressions {
 }
 
 async function getMotionData(
-  modelName: string
+  modelItem: ILive2dModelListElement
 ): Promise<[string, Live2DMotionsExpressions]> {
   let motionData: Live2DMotionsExpressions;
+
+  // get base motions
   const [motionDataUrl, motionBaseName] =
-    await getBuildMotionDataUrl(modelName);
-  if (!modelName.startsWith("normal")) {
-    const motionRes = await Axios.get<Live2DMotionsExpressions>(motionDataUrl, {
-      responseType: "json",
-    });
-    motionData = motionRes.data;
+    await getBuildMotionDataUrl(modelItem);
+  if (!modelItem.modelBase.startsWith("normal")) {
+    const response = await fetch(motionDataUrl);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch motion data: ${response.statusText}`);
+    }
+    const motionRes: Live2DMotionsExpressions = await response.json();
+    motionData = motionRes;
   } else {
     motionData = {
       expressions: [],
@@ -62,11 +82,40 @@ async function getMotionData(
   return [motionBaseName, motionData];
 }
 
-export async function getBuildModelDataUrl(modelName: string) {
-  return await getRemoteAssetURL(
-    `live2d/model/${modelName}/buildmodeldata.asset`,
+async function getAddtionalMotionData(modelItem: ILive2dModelListElement) {
+  const url = await getRemoteAssetURL(
+    `live2d/model/${modelItem.modelPath}/motions/BuildMotionData.json`,
     undefined,
-    "minio"
+    "minio",
+    "live2d",
+    true
+  );
+
+  if (!url) {
+    return {
+      expressions: [],
+      motions: [],
+    };
+  }
+
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch additional motion data: ${response.statusText}`
+    );
+  }
+
+  const motionRes: Live2DMotionsExpressions = await response.json();
+
+  return motionRes;
+}
+
+export async function getBuildModelDataUrl(modelItem: ILive2dModelListElement) {
+  return await getRemoteAssetURL(
+    `live2d/model/${modelItem.modelPath}/buildmodeldata.asset`,
+    undefined,
+    "minio",
+    "live2d"
   );
 }
 
@@ -82,35 +131,36 @@ const modelNameToMotionBaseName: Record<string, ModelNameTransformer> = {
 };
 
 export async function getBuildMotionDataUrl(
-  modelName: string
+  modelItem: ILive2dModelListElement
 ): Promise<[string, string]> {
   // try to find the correct motion data url
-  let modelBaseName = modelName;
+  let modelBaseName = modelItem.modelBase;
+  const modelDir = modelItem.modelPath.split("/").slice(0, -1).join("/");
 
-  // step 1: get from full name
+  // case 1: get directly from model path + motion_base
   let url = await getRemoteAssetURL(
-    `live2d/motion/${modelBaseName}_motion_base/BuildMotionData.json`,
+    `live2d/motion/${modelDir}/${modelBaseName}_motion_base/BuildMotionData.json`,
     undefined,
     "minio",
-    "jp",
+    "live2d",
     true
   );
 
-  // step 2: check if the motion name is in the map
+  // case 2: check if the motion name is in the map
   if (!url) {
     for (const [pattern, processor] of Object.entries(
       modelNameToMotionBaseName
     )) {
       const regExp = new RegExp(pattern);
-      if (regExp.test(modelName)) {
-        modelBaseName = processor(modelName);
+      if (regExp.test(modelItem.modelBase)) {
+        modelBaseName = processor(modelItem.modelBase);
 
         // try to get url
         url = await getRemoteAssetURL(
-          `live2d/motion/${modelBaseName}_motion_base/BuildMotionData.json`,
+          `live2d/motion/${modelDir}/${modelBaseName}_motion_base/BuildMotionData.json`,
           undefined,
           "minio",
-          "jp",
+          "live2d",
           true
         );
         break;
@@ -118,40 +168,43 @@ export async function getBuildMotionDataUrl(
     }
   }
 
-  // step 3: reduce the name until base name
+  // case 3: reduce the name until base name
   while (!url && modelBaseName.split("_").length > 1) {
     modelBaseName = modelBaseName.split("_").slice(0, -1).join("_");
     url = await getRemoteAssetURL(
-      `live2d/motion/${modelBaseName}_motion_base/BuildMotionData.json`,
+      `live2d/motion/${modelDir}/${modelBaseName}_motion_base/BuildMotionData.json`,
       undefined,
       "minio",
-      "jp",
+      "live2d",
       true
     );
   }
 
-  // step 4: if not found, throw error
+  // case 4: if not found, throw error
   if (!url) {
-    throw new Error(`Motion data not found for ${modelName}`);
+    throw new Error(
+      `Motion data not found for ${modelItem.modelBase}/${modelItem.modelName}`
+    );
   }
 
-  return [url, modelBaseName + "_motion_base"];
+  return [url, `${modelDir}/${modelBaseName}_motion_base`];
 }
 
-async function getModelBaseUrl(modelName: string) {
+async function getModelBaseUrl(modelItem: ILive2dModelListElement) {
   return await getRemoteAssetURL(
-    `live2d/model/${modelName}/`,
+    `live2d/model/${modelItem.modelPath}/`,
     undefined,
-    "minio"
+    "minio",
+    "live2d"
   );
 }
 
-async function getModel3JsonUrl(modelName: string, moc3FileName: string) {
-  const filename = moc3FileName.replace(".moc3.bytes", ".model3.json");
+async function getModel3JsonUrl(modelItem: ILive2dModelListElement) {
   return await getRemoteAssetURL(
-    `live2d/model/${modelName}/${filename}`,
+    `live2d/model/${modelItem.modelPath}/${modelItem.modelFile}`,
     undefined,
-    "minio"
+    "minio",
+    "live2d"
   );
 }
 

@@ -25,6 +25,7 @@ import {
   UserModel,
 } from "../strapi-model";
 import {
+  ILive2dModelListElement,
   ITeamBuild,
   // ITeamCardState,
   IUserProfile,
@@ -767,14 +768,14 @@ export function useCurrentEvent() {
 
 export function useLive2dModelList() {
   const { data, error } = useSWR(
-    [`${assetUrl.minio.live2d}/models.json`],
+    [`${assetUrl.minio.live2d}/live2d/model_list.json`],
     axiosFetcher
   );
 
   return {
     error,
     isLoading: !error && !data,
-    modelList: data as string[] | undefined,
+    modelList: data as ILive2dModelListElement[] | undefined,
   };
 }
 
