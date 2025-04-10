@@ -258,7 +258,7 @@ const MusicDetail: React.FC<unknown> = observer(() => {
               : vocalPreviewVal === "mv_2d"
                 ? "sekai_mv"
                 : ""
-          }/${String(music.id).padStart(4, "0")}`
+          }/${String(music.id).padStart(4, "0")}/`
         );
       } else {
         setMusicVideoURL(
@@ -268,7 +268,7 @@ const MusicDetail: React.FC<unknown> = observer(() => {
               : vocalPreviewVal === "mv_2d"
                 ? "sekai_mv"
                 : ""
-          }/${String(music.id).padStart(4, "0")}`
+          }/${String(music.id).padStart(4, "0")}/`
         );
       }
     }
