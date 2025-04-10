@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.15.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.2...v1.15.3) (2025-04-10)
+
+
+### Bug Fixes
+
+* **live2d:** model loading, motions loading ([6ccda7f](https://github.com/Sekai-World/sekai-viewer/commits/6ccda7fc2fbc7d0a51e1f53398afa4b8fa8c415d))
+* **music:** music video finding ([43945ff](https://github.com/Sekai-World/sekai-viewer/commits/43945ff951840803b4ffcd61310e37bb7ec60672))
+
 ### [1.15.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.1...v1.15.2) (2025-04-09)
 
 
