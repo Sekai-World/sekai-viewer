@@ -25,27 +25,38 @@ export async function getModelData(
   // step 3 - construct model
   model3Json.url = await getModelBaseUrl(modelItem);
   // model3Json.FileReferences.Moc = `${model3Json.FileReferences.Moc}.bytes`;
-  model3Json.FileReferences.Motions = {
-    Motion: [
-      ...motionData.motions.map((elem) => ({
-        Name: elem,
-        File: getRelativeMotionUrl(motionBaseName, "motion", elem),
-        FadeInTime: motionFade[0],
-        FadeOutTime: motionFade[1],
-      })),
-      ...additionalMotionData.motions.map((elem) => ({
-        Name: `${elem}-additional`,
-        File: `./motions/${elem}.motion3.json`,
-        FadeInTime: motionFade[0],
-        FadeOutTime: motionFade[1],
-      })),
-    ],
-    Expression: motionData.expressions.map((elem) => ({
+  const motions = [];
+  for (const elem of motionData.motions) {
+    motions.push({
       Name: elem,
-      File: getRelativeMotionUrl(motionBaseName, "facial", elem),
+      File: await getRelativeMotionUrl(motionBaseName, "motion", elem),
+      FadeInTime: motionFade[0],
+      FadeOutTime: motionFade[1],
+    });
+  }
+
+  for (const elem of additionalMotionData.motions) {
+    motions.push({
+      Name: `${elem}-additional`,
+      File: `./motions/${elem}.motion3.json`,
+      FadeInTime: motionFade[0],
+      FadeOutTime: motionFade[1],
+    });
+  }
+
+  const expressions = [];
+  for (const elem of motionData.expressions) {
+    expressions.push({
+      Name: elem,
+      File: await getRelativeMotionUrl(motionBaseName, "facial", elem),
       FadeInTime: expressionFade[0],
       FadeOutTime: expressionFade[1],
-    })),
+    });
+  }
+
+  model3Json.FileReferences.Motions = {
+    Motion: motions,
+    Expression: expressions,
   };
   model3Json.FileReferences.Expressions = {};
   return model3Json;
@@ -133,7 +144,10 @@ export async function getBuildMotionDataUrl(
 ): Promise<[string, string]> {
   // try to find the correct motion data url
   let modelBaseName = modelItem.modelBase;
-  const modelDir = modelItem.modelPath.split("/").slice(0, -1).join("/");
+  let modelDir = modelItem.modelPath.split("/").slice(0, -1).join("/");
+  if (modelDir.indexOf("v2/collabo/21_miku") !== -1) {
+    modelDir = modelDir.replace("collabo", "main");
+  }
 
   // case 1: get directly from model path + motion_base
   let url = await getRemoteAssetURL(
@@ -206,10 +220,15 @@ async function getModel3JsonUrl(modelItem: ILive2dModelListElement) {
   );
 }
 
-function getRelativeMotionUrl(
+async function getRelativeMotionUrl(
   motionBaseName: string,
   motionType: string,
   motion: string
 ) {
-  return `../../../../../motion/${motionBaseName}/${motionType}/${motion}.motion3.json`;
+  return await getRemoteAssetURL(
+    `live2d/motion/${motionBaseName}/${motionType}/${motion}.motion3.json`,
+    undefined,
+    "minio",
+    "live2d"
+  );
 }
