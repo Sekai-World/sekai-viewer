@@ -272,7 +272,7 @@ const Live2DView: React.FC<unknown> = () => {
       ...modelData.FileReferences.Motions.Expression,
     ]) {
       tasks.push(
-        Axios.get<Blob>(modelData.url + motion.File, {
+        Axios.get<Blob>(motion.File, {
           responseType: "blob",
         }).then(({ data }) => {
           updateCount();
@@ -287,6 +287,7 @@ const Live2DView: React.FC<unknown> = () => {
     // setProgress(90);
     setProgressWords(t("live2d:pack_progress.generate_zip"));
     const content = await zip.generateAsync({ type: "blob" });
+    setProgress(100);
     saveAs(content, `${modelName}.zip`);
 
     setShowProgress(false);
