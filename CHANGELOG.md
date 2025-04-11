@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.15.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.3...v1.15.4) (2025-04-11)
+
+
+### Bug Fixes
+
+* **live2d:** download motions ([807c289](https://github.com/Sekai-World/sekai-viewer/commits/807c289300516243b0446e349d63742adc0deb83))
+
 ### [1.15.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.2...v1.15.3) (2025-04-10)
 
 
