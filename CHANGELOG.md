@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.15.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.3...v1.15.4) (2025-04-11)
+
+
+### Bug Fixes
+
+* **live2d:** download motions ([807c289](https://github.com/Sekai-World/sekai-viewer/commits/807c289300516243b0446e349d63742adc0deb83))
+
+### [1.15.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.2...v1.15.3) (2025-04-10)
+
+
+### Bug Fixes
+
+* **live2d:** model loading, motions loading ([6ccda7f](https://github.com/Sekai-World/sekai-viewer/commits/6ccda7fc2fbc7d0a51e1f53398afa4b8fa8c415d))
+* **music:** music video finding ([43945ff](https://github.com/Sekai-World/sekai-viewer/commits/43945ff951840803b4ffcd61310e37bb7ec60672))
+
+### [1.15.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.1...v1.15.2) (2025-04-09)
+
+
+### Bug Fixes
+
+* **live2d:** story reader ([7d6f6be](https://github.com/Sekai-World/sekai-viewer/commits/7d6f6be1f768b99ab13e2da3ed113a8cb4ffb66c))
+* **live2d:** update motion and expression file paths for model data ([882908f](https://github.com/Sekai-World/sekai-viewer/commits/882908f68cffe1ddd688b631b2c04acae2718d8f))
+
+### [1.15.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.0...v1.15.1) (2025-04-09)
+
+
+### Bug Fixes
+
+* **live2d:** changes for new live2d assets structure ([dc81005](https://github.com/Sekai-World/sekai-viewer/commits/dc810053f3292ed343b949d16a5024ba95c08ff5))
+* **music:** id3 embedded cover art use png image ([836980d](https://github.com/Sekai-World/sekai-viewer/commits/836980d1f7e38267ab0ac154c3ac4188b6259ac4))
+
 ## [1.15.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.14.7...v1.15.0) (2025-04-07)
 
 

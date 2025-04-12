@@ -1,7 +1,7 @@
 import Axios from "axios";
 import { Howl } from "howler";
 import { SnippetAction } from "../../types.d";
-import type { IScenarioData } from "../../types.d";
+import type { ILive2dModelListElement, IScenarioData } from "../../types.d";
 
 import { Live2DAssetTypeImage, Live2DAssetTypeSound } from "./types.d";
 import type {
@@ -15,6 +15,7 @@ import type {
 import { getUIMediaUrls } from "./ui_assets";
 import { PreloadQueue } from "./PreloadQueue";
 import { getModelData } from "../live2dLoader";
+import { assetUrl } from "../urls";
 
 // step 3 - get controller data (preload media)
 export async function getLive2DControllerData(
@@ -29,11 +30,22 @@ export async function getLive2DControllerData(
   // step 3.3 - get live2d model data
   const modelData = [];
   const total = snData.AppearCharacters.length;
+  const modelList: ILive2dModelListElement[] = await (
+    await fetch(`${assetUrl.minio.live2d}/live2d/model_list.json`)
+  ).json();
   let count = 0;
   for (const c of snData.AppearCharacters) {
     count++;
     progress("model_data", count, total, c.CostumeType);
-    const md = await getModelData(c.CostumeType, [0.5, 0.1], [0.1, 0.1]);
+    const modelItem = modelList.find(
+      (m: ILive2dModelListElement) => m.modelBase === c.CostumeType
+    );
+    if (!modelItem) {
+      throw new Error(
+        `Model not found for ${c.CostumeType} (${c.Character2dId})`
+      );
+    }
+    const md = await getModelData(modelItem, [0.5, 0.1], [0.1, 0.1]);
     modelData.push({
       costume: c.CostumeType,
       cid: c.Character2dId,

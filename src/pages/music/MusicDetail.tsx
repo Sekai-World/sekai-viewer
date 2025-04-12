@@ -258,7 +258,7 @@ const MusicDetail: React.FC<unknown> = observer(() => {
               : vocalPreviewVal === "mv_2d"
                 ? "sekai_mv"
                 : ""
-          }/${String(music.id).padStart(4, "0")}`
+          }/${String(music.id).padStart(4, "0")}/`
         );
       } else {
         setMusicVideoURL(
@@ -268,7 +268,7 @@ const MusicDetail: React.FC<unknown> = observer(() => {
               : vocalPreviewVal === "mv_2d"
                 ? "sekai_mv"
                 : ""
-          }/${String(music.id).padStart(4, "0")}`
+          }/${String(music.id).padStart(4, "0")}/`
         );
       }
     }
@@ -398,7 +398,9 @@ const MusicDetail: React.FC<unknown> = observer(() => {
               ? outCharas.find((elem) => elem.id === chara.characterId)!.name
               : String(chara.characterId)
       );
-      const coverImage = await (await fetch(musicJacket)).arrayBuffer();
+      const coverImage = await (
+        await fetch(musicJacket.replace(".webp", ".png"))
+      ).arrayBuffer();
       if (trimSilence && format === "mp3" && vocalPreviewVal === "1") {
         // only trim when downloading full version
         const buf = await (await fetch(src)).arrayBuffer();

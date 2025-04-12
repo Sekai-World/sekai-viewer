@@ -341,7 +341,7 @@ export async function getRemoteAssetURL(
   endpoint: string,
   setFunc?: CallableFunction,
   domainKey: AssetDomainKey = "minio",
-  server: ServerRegion | "comic" | "musicChart" = "jp",
+  server: ServerRegion | "comic" | "musicChart" | "live2d" = "jp",
   verifyStatus: boolean = false
 ): Promise<string> {
   if (!endpoint) return "";
