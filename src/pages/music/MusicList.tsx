@@ -189,24 +189,34 @@ const MusicList: React.FC<unknown> = observer(() => {
         ) {
           return false;
         }
+        const hasSelectedCharacters =
+          characterSelected.length > 0 || outsideCharacterSelected.length > 0;
+
         if (
-          (characterSelected.length || outsideCharacterSelected.length) &&
-          !musicVocals.some(
-            (mv) =>
+          hasSelectedCharacters &&
+          !musicVocals.some((mv) => {
+            const gameCharacterIds = mv.characters
+              .filter((c) => c.characterType === "game_character")
+              .map((c) => c.characterId);
+
+            const outsideCharacterIds = mv.characters
+              .filter((c) => c.characterType === "outside_character")
+              .map((c) => c.characterId);
+
+            const allGameCharactersMatch = characterSelected.every((chara) =>
+              gameCharacterIds.includes(chara)
+            );
+
+            const allOutsideCharactersMatch = outsideCharacterSelected.every(
+              (chara) => outsideCharacterIds.includes(chara)
+            );
+
+            return (
               mv.musicId === m.id &&
-              characterSelected.every((chara) =>
-                mv.characters
-                  .filter((c) => c.characterType === "game_character")
-                  .map((c) => c.characterId)
-                  .includes(chara)
-              ) &&
-              outsideCharacterSelected.every((chara) =>
-                mv.characters
-                  .filter((c) => c.characterType === "outside_character")
-                  .map((c) => c.characterId)
-                  .includes(chara)
-              )
-          )
+              allGameCharactersMatch &&
+              allOutsideCharactersMatch
+            );
+          })
         ) {
           return false;
         }
@@ -331,7 +341,16 @@ const MusicList: React.FC<unknown> = observer(() => {
       storeName: "music-list-filter-outside-charas",
       type: "reset",
     });
-  }, [setArranger, setComposer, setLyricist, setMusicTag]);
+    setSortBy("publishedAt");
+    setSortType("desc");
+  }, [
+    setArranger,
+    setComposer,
+    setLyricist,
+    setMusicTag,
+    setSortBy,
+    setSortType,
+  ]);
 
   const handleTagFilterClick = useCallback(
     (tag: string) => {
@@ -598,21 +617,23 @@ const MusicList: React.FC<unknown> = observer(() => {
                           <Chip
                             clickable
                             color={
-                              outsideCharacterSelected.includes(idx + 1)
+                              outsideCharacterSelected.includes(outChara.id)
                                 ? "primary"
                                 : "default"
                             }
                             label={outChara.name}
                             onClick={() => {
-                              if (outsideCharacterSelected.includes(idx + 1)) {
+                              if (
+                                outsideCharacterSelected.includes(outChara.id)
+                              ) {
                                 dispatchOutsideCharacterSelected({
-                                  payload: idx + 1,
+                                  payload: outChara.id,
                                   storeName: "music-list-filter-outside-charas",
                                   type: "remove",
                                 });
                               } else {
                                 dispatchOutsideCharacterSelected({
-                                  payload: idx + 1,
+                                  payload: outChara.id,
                                   storeName: "music-list-filter-outside-charas",
                                   type: "add",
                                 });
