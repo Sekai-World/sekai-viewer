@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.15.5](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.4...v1.15.5) (2025-04-16)
+
+
+### Bug Fixes
+
+* **Home:** update game walkgthrough collection link ([cf686b3](https://github.com/Sekai-World/sekai-viewer/commits/cf686b3c76c68533b4fca2eba2c0636ee5ca9e97))
+* **music:** improve character selection logic in music filtering ([4f57099](https://github.com/Sekai-World/sekai-viewer/commits/4f5709929738dd049f1dc9ea14bbfe1549f9df1e))
+
 ### [1.15.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.3...v1.15.4) (2025-04-11)
 
 
