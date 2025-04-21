@@ -132,11 +132,14 @@ type ModelNameTransformer = (modelName: string) => string;
 
 // { [RegExp]: Processor}
 const modelNameToMotionBaseName: Record<string, ModelNameTransformer> = {
-  // v2_clb\d{2}_(.*) to v2_$1, eg. v2_clb01_21miku to v2_21miku
+  // eg. v2_clb01_21miku to v2_21miku
   "v2_clb\\d{2}_.*": (modelName: string) =>
     modelName.replace(/v2_clb\d{2}_/, "v2_"),
-  // (.*)\d{2}$ to $1, eg. 21miku01 to 21miku
+  // eg. 21miku01 to 21miku
   "(.*)\\d{2}$": (modelName: string) => modelName.replace(/\d{2}$/, ""),
+  // eg. v2_20mizuki_culture_back to v2_20mizuki_back
+  "(.*)(_.*)_back$": (modelName: string) =>
+    modelName.replace(/(.*)(_.*)_back$/, "$1_back"),
 };
 
 export async function getBuildMotionDataUrl(
