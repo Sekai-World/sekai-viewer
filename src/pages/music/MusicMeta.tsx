@@ -18,7 +18,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IMusicDifficultyInfo, IMusicInfo, IMusicMeta } from "../../types.d";
 import {
-  addLevelToMusicMeta,
+  addDataToMusicMeta,
   filterMusicMeta,
   useCachedData,
   useMusicMeta,
@@ -106,7 +106,7 @@ const MusicMeta = () => {
       align: "center",
     },
     {
-      field: "tap_count",
+      field: "note_count",
       headerName: t("music:noteCount"),
       width: 110,
       align: "center",
@@ -140,8 +140,8 @@ const MusicMeta = () => {
   useEffect(() => {
     if (metas && musics && musicDifficulties) {
       const filteredMetas = filterMusicMeta(metas, musics);
-      setValidMetas(addLevelToMusicMeta(filteredMetas, musicDifficulties));
-      setValidMetasCache(addLevelToMusicMeta(filteredMetas, musicDifficulties));
+      setValidMetas(addDataToMusicMeta(filteredMetas, musicDifficulties));
+      setValidMetasCache(addDataToMusicMeta(filteredMetas, musicDifficulties));
     }
   }, [metas, musicDifficulties, musics]);
 

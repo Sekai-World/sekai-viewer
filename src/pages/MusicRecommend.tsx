@@ -28,7 +28,7 @@ import {
   // ITeamCardState,
 } from "../types.d";
 import {
-  addLevelToMusicMeta,
+  addDataToMusicMeta,
   filterMusicMeta,
   useCachedData,
   useMusicMeta,
@@ -94,7 +94,7 @@ const MusicRecommend: React.FC<unknown> = () => {
   useEffect(() => {
     if (metas && musics && musicDifficulties) {
       const filteredMetas = filterMusicMeta(metas, musics);
-      setValidMetas(addLevelToMusicMeta(filteredMetas, musicDifficulties));
+      setValidMetas(addDataToMusicMeta(filteredMetas, musicDifficulties));
     }
   }, [metas, musicDifficulties, musics]);
 
