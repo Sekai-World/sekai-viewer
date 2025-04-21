@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.15.7](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.6...v1.15.7) (2025-04-21)
+
+
+### Bug Fixes
+
+* **live2d:** handle models ending with "back" ([e849933](https://github.com/Sekai-World/sekai-viewer/commits/e8499335683d07f39c82a76ac962103a8c0e6fd8))
+
 ### [1.15.6](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.5...v1.15.6) (2025-04-21)
 
 
