@@ -272,9 +272,15 @@ const Live2DView: React.FC<unknown> = () => {
       ...modelData.FileReferences.Motions.Expression,
     ]) {
       tasks.push(
-        Axios.get<Blob>(motion.File, {
-          responseType: "blob",
-        }).then(({ data }) => {
+        Axios.get<Blob>(
+          new URL(
+            motion.File,
+            new URL(modelData.url, window.location.href)
+          ).toString(),
+          {
+            responseType: "blob",
+          }
+        ).then(({ data }) => {
           updateCount();
 
           zip.file(model3.FileReferences.Motions[motion.Name][0].File, data);
