@@ -314,7 +314,7 @@ export function filterMusicMeta(metas: IMusicMeta[], musics: IMusicInfo[]) {
   return metas.filter((meta) => validIds.includes(meta.music_id));
 }
 
-export function addLevelToMusicMeta(
+export function addDataToMusicMeta(
   metas: IMusicMeta[],
   musicDifficulties: IMusicDifficultyInfo[]
 ) {
@@ -329,6 +329,7 @@ export function addLevelToMusicMeta(
       return {
         ...meta,
         level: music.playLevel,
+        note_count: music.totalNoteCount,
       };
     }
     return meta;
