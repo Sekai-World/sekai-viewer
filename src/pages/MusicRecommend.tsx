@@ -92,11 +92,11 @@ const MusicRecommend: React.FC<unknown> = () => {
   }, [t]);
 
   useEffect(() => {
-    if (metas && musics && musicDifficulties) {
-      const filteredMetas = filterMusicMeta(metas, musics);
+    if (metas && musicDifficulties) {
+      const filteredMetas = filterMusicMeta(metas, musicDifficulties);
       setValidMetas(addDataToMusicMeta(filteredMetas, musicDifficulties));
     }
-  }, [metas, musicDifficulties, musics]);
+  }, [metas, musicDifficulties]);
 
   const columns: GridColDef[] = useMemo(
     () => [
