@@ -35,6 +35,7 @@ import {
   IEventInfo,
   IEventRarityBonusRate,
   IGameCharaUnit,
+  IMusicDifficultyInfo,
   IMusicInfo,
   IMusicMeta,
   ISkillInfo,
@@ -67,6 +68,8 @@ const EventPointCalc: React.FC<unknown> = () => {
   const [cards] = useCachedData<ICardInfo>("cards");
   const [skills] = useCachedData<ISkillInfo>("skills");
   const [musics] = useCachedData<IMusicInfo>("musics");
+  const [musicDifficulties] =
+    useCachedData<IMusicDifficultyInfo>("musicDifficulties");
   const [events] = useCachedData<IEventInfo>("events");
   const [eventCards] = useCachedData<IEventCard>("eventCards");
   const [eventDeckBonuses] = useCachedData<IEventDeckBonus>("eventDeckBonuses");
@@ -145,8 +148,10 @@ const EventPointCalc: React.FC<unknown> = () => {
   }, [teamTotalPower]);
 
   useEffect(() => {
-    if (metas && musics) setValidMetas(filterMusicMeta(metas, musics));
-  }, [metas, musics]);
+    if (metas && musicDifficulties) {
+      setValidMetas(filterMusicMeta(metas, musicDifficulties));
+    }
+  }, [metas, musicDifficulties]);
 
   useEffect(() => {
     if (currEvent && !selectedEvent) {

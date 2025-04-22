@@ -138,12 +138,12 @@ const MusicMeta = () => {
   ];
 
   useEffect(() => {
-    if (metas && musics && musicDifficulties) {
-      const filteredMetas = filterMusicMeta(metas, musics);
+    if (metas && musicDifficulties) {
+      const filteredMetas = filterMusicMeta(metas, musicDifficulties);
       setValidMetas(addDataToMusicMeta(filteredMetas, musicDifficulties));
       setValidMetasCache(addDataToMusicMeta(filteredMetas, musicDifficulties));
     }
-  }, [metas, musicDifficulties, musics]);
+  }, [metas, musicDifficulties]);
 
   const filterBySongName = () => {
     if (searchTitle && musics?.length) {

@@ -308,10 +308,17 @@ export function useMusicMeta() {
   return [data];
 }
 
-export function filterMusicMeta(metas: IMusicMeta[], musics: IMusicInfo[]) {
-  const validIds = musics.map((music) => music.id);
-
-  return metas.filter((meta) => validIds.includes(meta.music_id));
+export function filterMusicMeta(
+  metas: IMusicMeta[],
+  musicDifficulties: IMusicDifficultyInfo[]
+) {
+  return metas.filter((meta) =>
+    musicDifficulties.some(
+      (music) =>
+        music.musicId === meta.music_id &&
+        music.musicDifficulty === meta.difficulty
+    )
+  );
 }
 
 export function addDataToMusicMeta(
@@ -322,8 +329,7 @@ export function addDataToMusicMeta(
     const music = musicDifficulties.find(
       (music) =>
         music.musicId === meta.music_id &&
-        music.musicDifficulty ===
-          (meta.difficulty === "append" ? "master" : meta.difficulty)
+        music.musicDifficulty === meta.difficulty
     );
     if (music) {
       return {
