@@ -56,7 +56,7 @@ const MusicMeta = () => {
     {
       field: "music_id",
       headerName: t("common:id"),
-      width: 90,
+      width: 100,
       renderCell(params) {
         return (
           <LinkNoDecoration to={`/music/${params.value}`} target="_blank">
