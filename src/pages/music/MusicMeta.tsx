@@ -72,6 +72,7 @@ const MusicMeta = () => {
       field: "music_name",
       headerName: t("music_recommend:result.musicName"),
       width: 300,
+      sortable: false,
       renderCell(params) {
         return (
           <ContentTrans
