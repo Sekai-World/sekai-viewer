@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.15.9](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.8...v1.15.9) (2025-04-24)
+
+
+### Bug Fixes
+
+* **music meta:** correctly filter out unreleased difficulties ([08a7e3c](https://github.com/Sekai-World/sekai-viewer/commits/08a7e3ccfd8f85260d0db6764c58508dd4ed2faf))
+* **music meta:** fix note count display ([d3467dd](https://github.com/Sekai-World/sekai-viewer/commits/d3467dd9117f55c3cf1ecd61b21e1dbc315dd553))
+* **music meta:** widen width for music id field ([50538ae](https://github.com/Sekai-World/sekai-viewer/commits/50538ae06554aee085f22304b6d5682839ea15af))
+
 ### [1.15.8](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.7...v1.15.8) (2025-04-21)
 
 
