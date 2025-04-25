@@ -536,7 +536,7 @@ const MemberDetail: React.FC<unknown> = observer(() => {
 
   useEffect(() => {
     getRemoteAssetURL(
-      `character/trim/chr_trim_${charaId}.webp`,
+      `character/character_trim/chr_trim_${charaId}.webp`,
       setCharaTrimImg,
       "minio",
       region
