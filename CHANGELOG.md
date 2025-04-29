@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.15.10](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.9...v1.15.10) (2025-04-29)
+
+
+### Bug Fixes
+
+* **honor:** fix bonds honor assets urls ([116fe12](https://github.com/Sekai-World/sekai-viewer/commits/116fe12080a035c47282277a40b7130f747a924d))
+* **member:** fix character assets url ([6ad9503](https://github.com/Sekai-World/sekai-viewer/commits/6ad95034d17ec641999e36fa5918951472a43276))
+
 ### [1.15.9](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.8...v1.15.9) (2025-04-24)
 
 
