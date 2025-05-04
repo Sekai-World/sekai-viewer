@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.15.11](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.10...v1.15.11) (2025-05-04)
+
+
+### Features
+
+* **card:** add initialSpecialTrainingStatus to ICardInfo interface ([19b233a](https://github.com/Sekai-World/sekai-viewer/commits/19b233a91ed1bed7654476ed974b06eb24938848))
+* **card:** add isTrainedOnlyCard to useCardType and update related components ([e8b5df0](https://github.com/Sekai-World/sekai-viewer/commits/e8b5df014be27caa43ed676f6cd363a9f2187eb1))
+
 ### [1.15.10](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.9...v1.15.10) (2025-04-29)
 
 
