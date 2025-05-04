@@ -152,6 +152,7 @@ export interface ICardInfo {
   cardParameters: CardParameter[];
   specialTrainingCosts: SpecialTrainingCost[];
   masterLessonAchieveResources: MasterLessonAchieveResource[];
+  initialSpecialTrainingStatus: string;
 }
 
 export interface IGameChara {
