@@ -6,7 +6,7 @@ import { ICardInfo } from "../../types.d";
 import { useCharaName } from "../../utils/i18n";
 import { CardThumb } from "../../components/widgets/CardThumb";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
-import { cardRarityTypeToRarity } from "../../utils";
+import { useCardType } from "../../utils";
 import SvgSkeleton from "../../components/styled/SvgSkeleton";
 import SpoilerCard from "../../components/helpers/SpoilerCard";
 
@@ -59,6 +59,8 @@ const ComfyView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
   const { path } = useRouteMatch();
   const getCharaName = useCharaName();
 
+  const { isTrainableCard, isTrainedOnlyCard } = useCardType(data);
+
   if (!data) {
     // loading
     return <ComfyViewSkeleton />;
@@ -88,14 +90,16 @@ const ComfyView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
             spacing={1}
             justifyContent="center"
           >
-            <Grid item xs={4}>
-              <CardThumb cardId={data.id} />
-            </Grid>
-            {cardRarityTypeToRarity[data.cardRarityType] >= 3 ? (
+            {!isTrainedOnlyCard && (
+              <Grid item xs={4}>
+                <CardThumb cardId={data.id} />
+              </Grid>
+            )}
+            {isTrainableCard && (
               <Grid item xs={4}>
                 <CardThumb cardId={data.id} trained />
               </Grid>
-            ) : null}
+            )}
           </Grid>
           <Grid item style={{ width: "100%" }}>
             <Grid container direction="column" rowSpacing={0.5}>

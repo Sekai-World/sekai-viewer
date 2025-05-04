@@ -601,8 +601,12 @@ export function useCardType(card?: ICardInfo) {
         : false,
     [card?.cardRarityType]
   );
+  const isTrainedOnlyCard = useMemo(
+    () => card?.initialSpecialTrainingStatus === "done" && isTrainableCard,
+    [card?.initialSpecialTrainingStatus, isTrainableCard]
+  );
 
-  return { isBirthdayCard, isTrainableCard };
+  return { isBirthdayCard, isTrainableCard, isTrainedOnlyCard };
 }
 
 export async function getGachaRemoteImages(

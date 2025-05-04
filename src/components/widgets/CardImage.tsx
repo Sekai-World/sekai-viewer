@@ -114,7 +114,8 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
       useRefState<number>(768);
     const [imgRightWidth, refImgRightWidth, setImgRightWidth] =
       useRefState<number>(768);
-    const { isBirthdayCard, isTrainableCard } = useCardType(card);
+    const { isBirthdayCard, isTrainableCard, isTrainedOnlyCard } =
+      useCardType(card);
 
     const svgElement = useRef<SVGSVGElement>(null);
 
@@ -137,17 +138,19 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
     const [trainedImg, setTrainedImg] = useState<string>("");
 
     useEffect(() => {
-      getRemoteAssetURL(
-        `character/member_small/${card.assetbundleName}/card_normal.webp`,
-        setNormalImg,
-        "minio"
-      );
+      if (!isTrainedOnlyCard) {
+        getRemoteAssetURL(
+          `character/member_small/${card.assetbundleName}/card_normal.webp`,
+          setNormalImg,
+          "minio"
+        );
+      }
       getRemoteAssetURL(
         `character/member_small/${card.assetbundleName}/card_after_training.webp`,
         setTrainedImg,
         "minio"
       );
-    }, [card]);
+    }, [card, isTrainedOnlyCard]);
 
     useLayoutEffect(() => {
       if (hoveredArea === 2) {
@@ -252,7 +255,7 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
 
     const handleMoseOver = useCallback(
       (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
-        if (!svgElement.current || isBirthdayCard) {
+        if (!svgElement.current || isBirthdayCard || isTrainedOnlyCard) {
           return;
         }
         const rect = svgElement.current.getBoundingClientRect();
@@ -273,7 +276,16 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
         onMouseMove={handleMoseOver}
         onMouseLeave={() => setHoveredArea(0)}
       >
-        {isTrainableCard && !isBirthdayCard ? (
+        {isTrainedOnlyCard ? (
+          <image
+            href={trainedImg}
+            x="0"
+            y="0"
+            width="1024"
+            height="576"
+            preserveAspectRatio="xMidYMid slice"
+          ></image>
+        ) : isTrainableCard && !isBirthdayCard ? (
           <Fragment>
             <svg
               x={imgLeftX}

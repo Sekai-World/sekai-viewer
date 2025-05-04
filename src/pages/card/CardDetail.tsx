@@ -157,7 +157,8 @@ const CardDetail: React.FC<unknown> = observer(() => {
 
   const [event, setEvent] = useState<IEventInfo>();
 
-  const { isBirthdayCard, isTrainableCard } = useCardType(card);
+  const { isBirthdayCard, isTrainableCard, isTrainedOnlyCard } =
+    useCardType(card);
 
   const masterRankRewards = [0, 50, 100, 150, 200];
 
@@ -416,7 +417,7 @@ const CardDetail: React.FC<unknown> = observer(() => {
 
       return newSkillInfo;
     },
-    [card, charaRank, getCharaName]
+    [card, charaRank, getCharaName, unitCount]
   );
 
   const originalSkillInfo = useMemo(
@@ -628,18 +629,22 @@ const CardDetail: React.FC<unknown> = observer(() => {
       card: ICardInfo,
       isTrainableCard: boolean
     ) => {
-      await getRemoteAssetURL(
-        `character/member/${card.assetbundleName}/card_normal.webp`,
-        setNormalImg,
-        "minio"
-      );
-      await getRemoteAssetURL(
-        `character/member_cutout_trm/${card.assetbundleName}/normal.webp`,
-        setNormalTrimImg,
-        "minio",
-        "jp",
-        true
-      );
+      if (!isTrainedOnlyCard) {
+        await getRemoteAssetURL(
+          `character/member/${card.assetbundleName}/card_normal.webp`,
+          setNormalImg,
+          "minio"
+        );
+        await getRemoteAssetURL(
+          `character/member_cutout_trm/${card.assetbundleName}/normal.webp`,
+          setNormalTrimImg,
+          "minio",
+          "jp",
+          true
+        );
+      } else {
+        setTabVal("1");
+      }
       if (isTrainableCard) {
         await getRemoteAssetURL(
           `character/member/${card.assetbundleName}/card_after_training.webp`,
@@ -666,7 +671,7 @@ const CardDetail: React.FC<unknown> = observer(() => {
       setNormalTrimImg("");
       setTrainedTrimImg("");
     };
-  }, [card, isTrainableCard]);
+  }, [card, isTrainableCard, isTrainedOnlyCard]);
 
   const [cardImagesForViewer, setCardImagesForViewer] = useState<
     ImageDecorator[]
@@ -675,20 +680,8 @@ const CardDetail: React.FC<unknown> = observer(() => {
   const getCardImages: () => ImageDecorator[] = useCallback(
     () =>
       (card
-        ? isTrainableCard
+        ? isTrainedOnlyCard
           ? [
-              {
-                alt: "card normal",
-                downloadUrl: normalImg.replace(".webp", ".png"),
-                src: normalImg,
-              },
-              normalTrimImg
-                ? {
-                    alt: "card normal trim",
-                    downloadUrl: normalTrimImg.replace(".webp", ".png"),
-                    src: normalTrimImg,
-                  }
-                : undefined,
               {
                 alt: "card after training",
                 downloadUrl: trainedImg.replace(".webp", ".png"),
@@ -702,23 +695,51 @@ const CardDetail: React.FC<unknown> = observer(() => {
                   }
                 : undefined,
             ]
-          : [
-              {
-                alt: "card normal",
-                downloadUrl: normalImg.replace(".webp", ".png"),
-                src: normalImg,
-              },
-              {
-                alt: "card normal",
-                downloadUrl: normalTrimImg.replace(".webp", ".png"),
-                src: normalTrimImg,
-              },
-            ]
+          : isTrainableCard
+            ? [
+                {
+                  alt: "card normal",
+                  downloadUrl: normalImg.replace(".webp", ".png"),
+                  src: normalImg,
+                },
+                normalTrimImg
+                  ? {
+                      alt: "card normal trim",
+                      downloadUrl: normalTrimImg.replace(".webp", ".png"),
+                      src: normalTrimImg,
+                    }
+                  : undefined,
+                {
+                  alt: "card after training",
+                  downloadUrl: trainedImg.replace(".webp", ".png"),
+                  src: trainedImg,
+                },
+                trainedTrimImg
+                  ? {
+                      alt: "card after training trim",
+                      downloadUrl: trainedTrimImg.replace(".webp", ".png"),
+                      src: trainedTrimImg,
+                    }
+                  : undefined,
+              ]
+            : [
+                {
+                  alt: "card normal",
+                  downloadUrl: normalImg.replace(".webp", ".png"),
+                  src: normalImg,
+                },
+                {
+                  alt: "card normal",
+                  downloadUrl: normalTrimImg.replace(".webp", ".png"),
+                  src: normalTrimImg,
+                },
+              ]
         : []
       ).filter((img) => !!img) as ImageDecorator[],
     [
       card,
       isTrainableCard,
+      isTrainedOnlyCard,
       normalImg,
       normalTrimImg,
       trainedImg,
@@ -753,7 +774,9 @@ const CardDetail: React.FC<unknown> = observer(() => {
               variant="scrollable"
               scrollButtons
             >
-              <Tab label={t("card:tab.title[0]")} value="0"></Tab>
+              {!isTrainedOnlyCard && (
+                <Tab label={t("card:tab.title[0]")} value="0"></Tab>
+              )}
               {!!normalTrimImg && (
                 <Tab label={t("card:tab.title[1]")} value="2"></Tab>
               )}
@@ -764,21 +787,25 @@ const CardDetail: React.FC<unknown> = observer(() => {
                 <Tab label={t("card:tab.title[3]")} value="3"></Tab>
               )}
             </Tabs>
-            <TabPanelPadding value="0">
-              <Card
-                onClick={() => {
-                  setActiveIdx(0);
-                  setVisible(true);
-                }}
-              >
-                <CardMediaCardImg image={normalImg} />
-              </Card>
-            </TabPanelPadding>
+            {!isTrainedOnlyCard && (
+              <TabPanelPadding value="0">
+                <Card
+                  onClick={() => {
+                    setActiveIdx(0);
+                    setVisible(true);
+                  }}
+                >
+                  <CardMediaCardImg image={normalImg} />
+                </Card>
+              </TabPanelPadding>
+            )}
             {isTrainableCard && (
               <TabPanelPadding value="1">
                 <Card
                   onClick={() => {
-                    setActiveIdx(trainedTrimImg ? 2 : 1);
+                    setActiveIdx(
+                      trainedTrimImg ? 2 : isTrainedOnlyCard ? 0 : 1
+                    );
                     setVisible(true);
                   }}
                 >
@@ -1170,14 +1197,16 @@ const CardDetail: React.FC<unknown> = observer(() => {
                 justifyContent="flex-end"
                 spacing={2}
               >
-                <Grid item xs={12} sm={6} md={5} lg={4}>
-                  <CardThumb cardId={Number(cardId)} />
-                </Grid>
-                {isTrainableCard && !isBirthdayCard ? (
+                {!isTrainedOnlyCard && (
+                  <Grid item xs={12} sm={6} md={5} lg={4}>
+                    <CardThumb cardId={Number(cardId)} />
+                  </Grid>
+                )}
+                {isTrainableCard && !isBirthdayCard && (
                   <Grid item xs={12} sm={6} md={5} lg={4}>
                     <CardThumb cardId={Number(cardId)} trained />
                   </Grid>
-                ) : null}
+                )}
               </Grid>
             </Grid>
           </Grid>

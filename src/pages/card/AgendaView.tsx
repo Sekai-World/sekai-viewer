@@ -6,7 +6,7 @@ import { ICardInfo } from "../../types.d";
 import { useCharaName } from "../../utils/i18n";
 import { CardThumb } from "../../components/widgets/CardThumb";
 import { ContentTrans } from "../../components/helpers/ContentTrans";
-import { cardRarityTypeToRarity } from "../../utils";
+import { useCardType } from "../../utils";
 import SvgSkeleton from "../../components/styled/SvgSkeleton";
 import AgendaBox from "../../components/styled/AgendaBox";
 import AgendaPaper from "../../components/styled/AgendaPaper";
@@ -15,6 +15,8 @@ import SpoilerCard from "../../components/helpers/SpoilerCard";
 const AgendaView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
   const { path } = useRouteMatch();
   const getCharaName = useCharaName();
+
+  const { isTrainableCard, isTrainedOnlyCard } = useCardType(data);
 
   if (!data) {
     // loading
@@ -78,14 +80,16 @@ const AgendaView: React.FC<{ data?: ICardInfo }> = ({ data }) => {
             spacing={1}
             justifyContent="center"
           >
-            <Grid item xs={12} md={6}>
-              <CardThumb cardId={data.id} />
-            </Grid>
-            {cardRarityTypeToRarity[data.cardRarityType] >= 3 ? (
+            {!isTrainedOnlyCard && (
+              <Grid item xs={12} md={6}>
+                <CardThumb cardId={data.id} />
+              </Grid>
+            )}
+            {isTrainableCard && (
               <Grid item xs={12} md={6}>
                 <CardThumb cardId={data.id} trained />
               </Grid>
-            ) : null}
+            )}
           </Grid>
           <Grid item xs={6} md={7}>
             <Grid container direction="column" spacing={1}>
