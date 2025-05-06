@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.15.12](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.11...v1.15.12) (2025-05-06)
+
+
+### Bug Fixes
+
+* **event:** simplify return condition in EventDetail component ([7b90302](https://github.com/Sekai-World/sekai-viewer/commits/7b90302536cd7e50398e40aaa2a7c44dd119f57f))
+
 ### [1.15.11](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.10...v1.15.11) (2025-05-04)
 
 
