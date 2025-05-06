@@ -416,11 +416,7 @@ const EventDetail: React.FC<unknown> = observer(() => {
     [eventBackground, eventCharacter]
   );
 
-  return event &&
-    eventDeckBonus.length &&
-    gameCharacterUnits &&
-    gameCharacterUnits.length &&
-    eventCards.length ? (
+  return event ? (
     <Fragment>
       <TypographyHeader>
         {getTranslated(`event_name:${eventId}`, event.name)}
