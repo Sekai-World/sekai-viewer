@@ -19,6 +19,8 @@ import {
   Autocomplete,
   Box,
   Button,
+  Checkbox,
+  FormControlLabel,
   Grid,
   IconButton,
   LinearProgress,
@@ -37,7 +39,11 @@ import { useTranslation } from "react-i18next";
 import ContainerContent from "../../components/styled/ContainerContent";
 import TypographyHeader from "../../components/styled/TypographyHeader";
 import { useLive2dModelList } from "../../utils/apiClient";
-import { InternalModel, Live2DModel } from "pixi-live2d-display-mulmotion";
+import {
+  InternalModel,
+  Live2DModel,
+  Cubism4InternalModel,
+} from "pixi-live2d-display-mulmotion";
 import Live2dModel from "../../components/pixi/Live2dModel";
 import { getModelData } from "../../utils/live2dLoader";
 import type { ILive2DModelData, ILive2dModelListElement } from "../../types.d";
@@ -56,6 +62,7 @@ const Live2DView: React.FC<unknown> = () => {
   const [selectedExpression, setSelectedExpression] = useState<string | null>(
     null
   );
+  const [idle, setIdle] = useState(true);
   const [showProgress, setShowProgress] = useState(false);
   const [progress, setProgress] = useState(0);
   const [progressWords, setProgressWords] = useState("");
@@ -160,6 +167,7 @@ const Live2DView: React.FC<unknown> = () => {
         setExpressions(
           modelData.FileReferences.Motions.Expression.map((m) => m.Name)
         );
+        setIdle(true);
 
         setShowProgress(false);
         setProgress(0);
@@ -343,6 +351,44 @@ const Live2DView: React.FC<unknown> = () => {
     }
   }, [modelData]);
 
+  const defaultBreath = [
+    {
+      parameterId: "ParamAngleX",
+      offset: 0,
+      peak: 15,
+      cycle: 6.5345,
+      weight: 0.5,
+    },
+    {
+      parameterId: "ParamAngleY",
+      offset: 0,
+      peak: 8,
+      cycle: 3.5345,
+      weight: 0.5,
+    },
+    {
+      parameterId: "ParamAngleZ",
+      offset: 0,
+      peak: 10,
+      cycle: 5.5345,
+      weight: 0.5,
+    },
+    {
+      parameterId: "ParamBodyAngleX",
+      offset: 0,
+      peak: 4,
+      cycle: 15.5345,
+      weight: 0.5,
+    },
+    {
+      parameterId: "ParamBreath",
+      offset: 0,
+      peak: 0.5,
+      cycle: 3.2345,
+      weight: 0.5,
+    },
+  ];
+
   return (
     <Fragment>
       <TypographyHeader>Live2D</TypographyHeader>
@@ -522,6 +568,29 @@ const Live2DView: React.FC<unknown> = () => {
                     >
                       {t("common:apply")}
                     </Button>
+                  </Grid>
+                  <Grid item>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          onChange={(event) => {
+                            const value = event.target.checked;
+                            if (
+                              live2dModel.current?.internalModel &&
+                              "breath" in live2dModel.current.internalModel
+                            ) {
+                              (
+                                live2dModel.current?.internalModel
+                                  .breath as Cubism4InternalModel["breath"]
+                              ).setParameters(value ? defaultBreath : []);
+                              setIdle(value);
+                            }
+                          }}
+                          checked={idle}
+                        />
+                      }
+                      label="Idle Animation"
+                    />
                   </Grid>
                 </Grid>
               </Grid>
