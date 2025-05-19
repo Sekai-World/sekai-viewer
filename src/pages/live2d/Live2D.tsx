@@ -589,7 +589,7 @@ const Live2DView: React.FC<unknown> = () => {
                           checked={idle}
                         />
                       }
-                      label="Idle Animation"
+                      label={t("live2d:select.idle_animation")}
                     />
                   </Grid>
                 </Grid>
