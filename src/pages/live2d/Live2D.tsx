@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -19,12 +20,12 @@ import {
   Autocomplete,
   Box,
   Button,
-  Checkbox,
   FormControlLabel,
   Grid,
   IconButton,
   LinearProgress,
   Paper,
+  Switch,
   TextField,
   Toolbar,
   Tooltip,
@@ -351,43 +352,46 @@ const Live2DView: React.FC<unknown> = () => {
     }
   }, [modelData]);
 
-  const defaultBreath = [
-    {
-      parameterId: "ParamAngleX",
-      offset: 0,
-      peak: 15,
-      cycle: 6.5345,
-      weight: 0.5,
-    },
-    {
-      parameterId: "ParamAngleY",
-      offset: 0,
-      peak: 8,
-      cycle: 3.5345,
-      weight: 0.5,
-    },
-    {
-      parameterId: "ParamAngleZ",
-      offset: 0,
-      peak: 10,
-      cycle: 5.5345,
-      weight: 0.5,
-    },
-    {
-      parameterId: "ParamBodyAngleX",
-      offset: 0,
-      peak: 4,
-      cycle: 15.5345,
-      weight: 0.5,
-    },
-    {
-      parameterId: "ParamBreath",
-      offset: 0,
-      peak: 0.5,
-      cycle: 3.2345,
-      weight: 0.5,
-    },
-  ];
+  const defaultBreath = useMemo(
+    () => [
+      {
+        parameterId: "ParamAngleX",
+        offset: 0,
+        peak: 15,
+        cycle: 6.5345,
+        weight: 0.5,
+      },
+      {
+        parameterId: "ParamAngleY",
+        offset: 0,
+        peak: 8,
+        cycle: 3.5345,
+        weight: 0.5,
+      },
+      {
+        parameterId: "ParamAngleZ",
+        offset: 0,
+        peak: 10,
+        cycle: 5.5345,
+        weight: 0.5,
+      },
+      {
+        parameterId: "ParamBodyAngleX",
+        offset: 0,
+        peak: 4,
+        cycle: 15.5345,
+        weight: 0.5,
+      },
+      {
+        parameterId: "ParamBreath",
+        offset: 0,
+        peak: 0.5,
+        cycle: 3.2345,
+        weight: 0.5,
+      },
+    ],
+    []
+  );
 
   return (
     <Fragment>
@@ -572,7 +576,7 @@ const Live2DView: React.FC<unknown> = () => {
                   <Grid item>
                     <FormControlLabel
                       control={
-                        <Checkbox
+                        <Switch
                           onChange={(event) => {
                             const value = event.target.checked;
                             if (
