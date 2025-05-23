@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.15.13](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.12...v1.15.13) (2025-05-23)
+
+
+### Features
+
+* **live2d:** implement toggle for idle animation ([af74575](https://github.com/Sekai-World/sekai-viewer/commits/af7457524552edbf5a5170556a16fb7b645af97d))
+
+
+### Refactors
+
+* added i18n ([7bff6b0](https://github.com/Sekai-World/sekai-viewer/commits/7bff6b0a1511a3d1836c06cbca93c0af57b726fc))
+* **live2d:** optimize defaultBreath with useMemo and replace Checkbox with Switch ([299d92e](https://github.com/Sekai-World/sekai-viewer/commits/299d92edf4892ff205259f033dacdfa298aeeeac))
+
 ### [1.15.12](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.11...v1.15.12) (2025-05-06)
 
 
