@@ -59,12 +59,17 @@ import GridOut from "../../components/styled/GridOut";
 import EmbedVideoPlayer from "../../components/blocks/EmbedVideoPlayer";
 import { addID3Tags } from "../../utils/mp3";
 
-const KR_EXCLUSIVE_IDS = [10001, 10002, 371, 387, 419, 420, 453, 464];
+const KR_EXCLUSIVE_IDS = [
+  10001, 10002, 371, 387, 419, 420, 453, 464, 10003, 10004, 10005,
+];
 const EN_EXCLUSIVE_IDS = [
   371, 387, 419, 420, 445, 453, 459, 464, 479, 514, 528, 535, 552, 563, 568,
   598, 599, 602,
 ];
 const TW_EXCLUSIVE_IDS = [371, 387, 419, 420, 453, 464];
+const CN_EXCLUSIVE_IDS = [
+  10001, 10002, 11001, 11002, 11003, 11004, 11005, 11006, 11007, 11008,
+];
 
 const MusicDetail: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
@@ -183,7 +188,8 @@ const MusicDetail: React.FC<unknown> = observer(() => {
       setIsExclusiveSong(
         (region === "kr" && KR_EXCLUSIVE_IDS.includes(music.id)) ||
           (region === "en" && EN_EXCLUSIVE_IDS.includes(music.id)) ||
-          (region === "tw" && TW_EXCLUSIVE_IDS.includes(music.id))
+          (region === "tw" && TW_EXCLUSIVE_IDS.includes(music.id)) ||
+          (region === "cn" && CN_EXCLUSIVE_IDS.includes(music.id))
       );
     }
   }, [music, region]);
@@ -249,7 +255,8 @@ const MusicDetail: React.FC<unknown> = observer(() => {
       if (
         (TW_EXCLUSIVE_IDS.includes(music.id) && region === "tw") ||
         (EN_EXCLUSIVE_IDS.includes(music.id) && region === "en") ||
-        (KR_EXCLUSIVE_IDS.includes(music.id) && region === "kr")
+        (KR_EXCLUSIVE_IDS.includes(music.id) && region === "kr") ||
+        (CN_EXCLUSIVE_IDS.includes(music.id) && region === "cn")
       ) {
         setMusicVideoURL(
           `live/2dmode/${
