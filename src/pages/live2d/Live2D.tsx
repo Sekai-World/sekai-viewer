@@ -181,7 +181,6 @@ const Live2DView: React.FC<unknown> = () => {
         setExpressions(
           modelData.FileReferences.Motions.Expression.map((m) => m.Name)
         );
-        setIdle(true);
 
         setShowProgress(false);
         setProgress(0);
@@ -352,6 +351,7 @@ const Live2DView: React.FC<unknown> = () => {
     setSelectedExpression(null);
     setSelectedParameter(null);
     setParameterValues({});
+    setIdle(true);
   }, [selectedModelItem]);
 
   const onLive2dModelReady = useCallback(() => {
