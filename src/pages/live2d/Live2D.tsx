@@ -25,6 +25,7 @@ import {
   IconButton,
   LinearProgress,
   Paper,
+  Slider,
   Switch,
   TextField,
   Toolbar,
@@ -63,6 +64,15 @@ const Live2DView: React.FC<unknown> = () => {
   const [selectedExpression, setSelectedExpression] = useState<string | null>(
     null
   );
+  const [coreModel, setCoreModel] = useState<
+    Cubism4InternalModel["coreModel"] | null
+  >(null);
+  const [selectedParameter, setSelectedParameter] = useState<string | null>(
+    null
+  );
+  const [parameterValues, setParameterValues] = useState<
+    Record<string, number>
+  >({});
   const [idle, setIdle] = useState(true);
   const [showProgress, setShowProgress] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -107,7 +117,10 @@ const Live2DView: React.FC<unknown> = () => {
 
         scale = (Math.round(scale * 100) / 100) * 1.3;
         setLive2dScale(scale);
-
+        setCoreModel(
+          (live2dModel.current.internalModel
+            .coreModel as Cubism4InternalModel["coreModel"]) ?? null
+        );
         setLive2dX((styleWidth - live2dTrueWidth * scale) / 2);
         setLive2dY((styleHeight - live2dTrueHeight * scale) / 2);
       }
@@ -337,6 +350,8 @@ const Live2DView: React.FC<unknown> = () => {
     setModelName(selectedModelItem?.modelName ?? null);
     setSelectedMotion(null);
     setSelectedExpression(null);
+    setSelectedParameter(null);
+    setParameterValues({});
   }, [selectedModelItem]);
 
   const onLive2dModelReady = useCallback(() => {
@@ -346,11 +361,21 @@ const Live2DView: React.FC<unknown> = () => {
   const handleReloadModel = useCallback(() => {
     if (modelData) {
       // save current modelData
+      setSelectedParameter(null);
+      setParameterValues({});
       const currentModelData = modelData;
       setModelData(undefined);
       setTimeout(() => setModelData(currentModelData));
     }
   }, [modelData]);
+
+  const handleLive2DParamsChange = (value: number, params: string) => {
+    coreModel?.setParameterValueById(params, value);
+    setParameterValues((prev) => ({
+      ...prev,
+      [params]: value,
+    }));
+  };
 
   const defaultBreath = useMemo(
     () => [
@@ -573,6 +598,56 @@ const Live2DView: React.FC<unknown> = () => {
                       {t("common:apply")}
                     </Button>
                   </Grid>
+                </Grid>
+              </Grid>
+              {!!coreModel && (
+                <Grid item>
+                  <Grid container spacing={1} alignItems="center">
+                    <Grid item>
+                      <Autocomplete
+                        value={selectedParameter}
+                        onChange={(e, v) => setSelectedParameter(v)}
+                        options={coreModel["_parameterIds"] ?? []}
+                        getOptionLabel={(option) => option}
+                        renderInput={(props) => (
+                          <TextField
+                            {...props}
+                            label={t("live2d:select.parameters")}
+                          />
+                        )}
+                        style={{ minWidth: "250px" }}
+                        size="small"
+                      />
+                    </Grid>
+                  </Grid>
+                  <Grid item>
+                    {!!selectedParameter && (
+                      <Slider
+                        min={coreModel.getParameterMinimumValue(
+                          coreModel["_parameterIds"].indexOf(selectedParameter)
+                        )}
+                        max={coreModel.getParameterMaximumValue(
+                          coreModel["_parameterIds"].indexOf(selectedParameter)
+                        )}
+                        value={
+                          parameterValues[selectedParameter]
+                            ? parameterValues[selectedParameter]
+                            : coreModel.getParameterValueById(selectedParameter)
+                        }
+                        onChange={(e, v) =>
+                          handleLive2DParamsChange(
+                            Array.isArray(v) ? v[0] : v,
+                            selectedParameter
+                          )
+                        }
+                        step={0.1}
+                      />
+                    )}
+                  </Grid>
+                </Grid>
+              )}
+              <Grid item>
+                <Grid container spacing={1} alignItems="center">
                   <Grid item>
                     <FormControlLabel
                       control={
