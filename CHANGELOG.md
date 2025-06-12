@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.15.15](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.14...v1.15.15) (2025-06-12)
+
+
+### Features
+
+* add en exclusive song 609 ([437cef9](https://github.com/Sekai-World/sekai-viewer/commits/437cef91de3a3c0e71989b8056fdd804c436e638))
+* **live2d:** implement live2d parameter sliders ([5651401](https://github.com/Sekai-World/sekai-viewer/commits/56514019747cebed0612e13fb673ab3e3e873981))
+
+
+### Refactors
+
+* moved setIdle inside handleShow ([06c33a3](https://github.com/Sekai-World/sekai-viewer/commits/06c33a3cae2658e862e937d6b293319317ae59e8))
+
 ### [1.15.14](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.13...v1.15.14) (2025-05-24)
 
 
