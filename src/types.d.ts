@@ -139,13 +139,12 @@ export interface ICardInfo {
   supportUnit: string;
   skillId: number;
   cardSkillName: string;
-  specialTrainingSkillId?: number;
-  specialTrainingSkillName?: string;
   prefix: string;
   assetbundleName: string;
   gachaPhrase: string;
   flavorText: string;
   releaseAt: number;
+  cardSupplyId: number;
   archiveDisplayType?: string;
   archivePublishedAt: number;
   cardSupplyId: number;
@@ -153,6 +152,9 @@ export interface ICardInfo {
   specialTrainingCosts: SpecialTrainingCost[];
   masterLessonAchieveResources: MasterLessonAchieveResource[];
   initialSpecialTrainingStatus: string;
+  specialTrainingSkillId?: number;
+  specialTrainingSkillName?: string;
+  specialTrainingRewardResourceBoxId?: number;
 }
 
 export interface IGameChara {
@@ -1605,4 +1607,76 @@ export interface ILive2dModelListElement {
   modelBase: string;
   modelPath: string;
   modelFile: string;
+}
+
+export interface IWorldBloom {
+  id: number;
+  eventId: number;
+  gameCharacterId: number;
+  chapterNo: number;
+  chapterStartAt: number;
+  aggregateAt: number;
+  chapterEndAt: number;
+  costume2dId: number;
+  isSupplemental: boolean;
+}
+
+export interface IWorldBloomChapterRankingRewardRange {
+  id: number;
+  eventId: number;
+  gameCharacterId: number;
+  fromRank: number;
+  toRank: number;
+  isToRankBorder: boolean;
+  resourceBoxId: number;
+}
+
+export interface IWorldBloomDifferentAttributeBonus {
+  attributeCount: number;
+  bonusRate: number;
+}
+
+interface WorldBloomSupportDeckCharacterBonus {
+  id: number;
+  worldBloomSupportDeckCharacterType: string;
+  bonusRate: number;
+}
+
+interface WorldBloomSupportDeckMasterRankBonus {
+  id: number;
+  masterRank: number;
+  bonusRate: number;
+}
+
+interface WorldBloomSupportDeckSkillLevelBonus {
+  id: number;
+  skillLevel: number;
+  bonusRate: number;
+}
+
+export interface IWorldBloomSupportDeckBonus {
+  cardRarityType: string;
+  worldBloomSupportDeckCharacterBonuses: WorldBloomSupportDeckCharacterBonus[];
+  worldBloomSupportDeckMasterRankBonuses: WorldBloomSupportDeckMasterRankBonus[];
+  worldBloomSupportDeckSkillLevelBonuses: WorldBloomSupportDeckSkillLevelBonus[];
+}
+
+export interface IWorldBloomSupportDeckUnitEventLimitedBonus {
+  id: number;
+  eventId: number;
+  gameCharacterId: number;
+  cardId: number;
+  bonusRate: number;
+}
+
+export interface ICardSupply {
+  id: number;
+  cardSupplyType: string;
+  assetbundleName?: string;
+}
+
+export interface ICardSupplyGroup {
+  id: number;
+  groupId: number;
+  cardSupplyId: number;
 }
