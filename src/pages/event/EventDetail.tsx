@@ -28,6 +28,8 @@ import {
   IEventMusic,
   IGameCharaUnit,
   IVirtualLiveInfo,
+  IWorldBloom,
+  IWorldBloomChapterRankingRewardRange,
 } from "../../types";
 import { getRemoteAssetURL, useCachedData } from "../../utils";
 import { attrIconMap, charaIcons } from "../../utils/resources";
@@ -53,6 +55,7 @@ import ContainerContent from "../../components/styled/ContainerContent";
 import TabPanelPadding from "../../components/styled/TabPanelPadding";
 import GridOut from "../../components/styled/GridOut";
 import LinkNoDecoration from "../../components/styled/LinkNoDecoration";
+import PaperContainer from "../../components/styled/PaperContainer";
 
 const EventDetail: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
@@ -79,6 +82,11 @@ const EventDetail: React.FC<unknown> = observer(() => {
     "cheerfulCarnivalTeams"
   );
   const [eventMusics] = useCachedData<IEventMusic>("eventMusics");
+  const [worldBlooms] = useCachedData<IWorldBloom>("worldBlooms");
+  const [worldBloomChapterRankingRewardRanges] =
+    useCachedData<IWorldBloomChapterRankingRewardRange>(
+      "worldBloomChapterRankingRewardRanges"
+    );
 
   const [event, setEvent] = useState<IEventInfo>();
   const [eventCards, setEventCards] = useState<IEventCard[]>([]);
@@ -105,6 +113,13 @@ const EventDetail: React.FC<unknown> = observer(() => {
   const [eventCommentId, setEventCommentId] = useState<number>(0);
   const [eventMusic, setEventMusic] = useState<IEventMusic>();
   const [isCardsDialog, setIsCardsDialog] = useState(false);
+  const [worldBloomChapters, setWorldBloomChapters] = useState<IWorldBloom[]>(
+    []
+  );
+  const [worldBloomChapterNo, setWorldBloomChapterNo] = useState<string>("");
+  const [worldBloomChapterRankings, setWorldBloomChapterRankings] = useState<
+    IWorldBloomChapterRankingRewardRange[]
+  >([]);
 
   useEffect(() => {
     if (event) {
@@ -117,6 +132,10 @@ const EventDetail: React.FC<unknown> = observer(() => {
         setEventBgm
       );
     }
+
+    return () => {
+      setEventBgm("");
+    };
   }, [event, eventId, contentTransMode, getTranslated, t]);
 
   useEffect(() => {
@@ -244,6 +263,16 @@ const EventDetail: React.FC<unknown> = observer(() => {
         virtualLives.find((elem) => elem.id === ev?.virtualLiveId)
       );
     }
+
+    return () => {
+      setEvent(undefined);
+      setEventCards([]);
+      setBoostCards([]);
+      setEventDeckBonus([]);
+      setEventAttrBonus(undefined);
+      setEventBonusCharas([]);
+      setLinkedVirtualLive(undefined);
+    };
   }, [
     events,
     eventId,
@@ -258,6 +287,10 @@ const EventDetail: React.FC<unknown> = observer(() => {
     if (event && eventMusics) {
       setEventMusic(eventMusics.find((em) => em.eventId === event.id));
     }
+
+    return () => {
+      setEventMusic(undefined);
+    };
   }, [event, eventMusics]);
 
   useEffect(() => {
@@ -271,6 +304,10 @@ const EventDetail: React.FC<unknown> = observer(() => {
 
       job();
     }
+
+    return () => {
+      setEventCommentId(0);
+    };
   }, [event, getEvent]);
 
   useEffect(() => {
@@ -287,7 +324,58 @@ const EventDetail: React.FC<unknown> = observer(() => {
         cheerfulCarnivalSummaries.find((ccs) => ccs.eventId === event.id)
       );
     }
+
+    return () => {
+      setCcTeams([]);
+      setCcSummary(undefined);
+    };
   }, [cheerfulCarnivalSummaries, cheerfulCarnivalTeams, event]);
+
+  useEffect(() => {
+    if (event && event.eventType === "world_bloom" && worldBlooms) {
+      const chapters = worldBlooms.filter((wb) => wb.eventId === event.id);
+      setWorldBloomChapters(chapters);
+      setWorldBloomChapterNo(
+        chapters.length > 0 ? chapters[0].chapterNo.toString() : ""
+      );
+    }
+
+    return () => {
+      setWorldBloomChapters([]);
+      setWorldBloomChapterNo("");
+    };
+  }, [event, worldBlooms]);
+
+  useEffect(() => {
+    if (
+      event &&
+      event.eventType === "world_bloom" &&
+      worldBloomChapters.length &&
+      worldBloomChapterNo &&
+      worldBloomChapterRankingRewardRanges
+    ) {
+      const chapter = worldBloomChapters.find(
+        (wb) => wb.chapterNo === parseInt(worldBloomChapterNo)
+      );
+      if (chapter) {
+        const ranges = worldBloomChapterRankingRewardRanges.filter(
+          (wbcrr) =>
+            wbcrr.eventId === event.id &&
+            wbcrr.gameCharacterId === chapter.gameCharacterId
+        );
+        setWorldBloomChapterRankings(ranges);
+      }
+    }
+
+    return () => {
+      setWorldBloomChapterRankings([]);
+    };
+  }, [
+    event,
+    worldBloomChapterNo,
+    worldBloomChapterRankingRewardRanges,
+    worldBloomChapters,
+  ]);
 
   useEffect(() => {
     if (!event) {
@@ -661,45 +749,47 @@ const EventDetail: React.FC<unknown> = observer(() => {
       <ContainerContent maxWidth="md">
         <GridOut container direction="column">
           {!!eventAttrBonus && (
-            <Grid
-              item
-              container
-              direction="row"
-              wrap="nowrap"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <Grid item xs={5}>
-                <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                  {t("event:boostAttribute")}
-                </Typography>
-              </Grid>
-              <Grid item xs={5} sm={6}>
-                <Grid
-                  spacing={1}
-                  container
-                  alignItems="center"
-                  justifyContent="space-between"
-                >
-                  <Grid item xs={6} sm={10}>
-                    <Grid container spacing={1} justifyContent="flex-end">
-                      <Grid item>
-                        <img
-                          style={{ maxHeight: "36px" }}
-                          src={attrIconMap[eventAttrBonus.cardAttr]}
-                          alt={eventAttrBonus.cardAttr}
-                        ></img>
+            <Fragment>
+              <Grid
+                item
+                container
+                direction="row"
+                wrap="nowrap"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Grid item xs={5}>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("event:boostAttribute")}
+                  </Typography>
+                </Grid>
+                <Grid item xs={5} sm={6}>
+                  <Grid
+                    spacing={1}
+                    container
+                    alignItems="center"
+                    justifyContent="space-between"
+                  >
+                    <Grid item xs={6} sm={10}>
+                      <Grid container spacing={1} justifyContent="flex-end">
+                        <Grid item>
+                          <img
+                            style={{ maxHeight: "36px" }}
+                            src={attrIconMap[eventAttrBonus.cardAttr]}
+                            alt={eventAttrBonus.cardAttr}
+                          ></img>
+                        </Grid>
                       </Grid>
                     </Grid>
-                  </Grid>
-                  <Grid item xs={5} sm={2}>
-                    <Typography>+{eventAttrBonus.bonusRate}%</Typography>
+                    <Grid item xs={5} sm={2}>
+                      <Typography>+{eventAttrBonus.bonusRate}%</Typography>
+                    </Grid>
                   </Grid>
                 </Grid>
               </Grid>
-            </Grid>
+              <Divider style={{ margin: "1% 0" }} />
+            </Fragment>
           )}
-          <Divider style={{ margin: "1% 0" }} />
           <Grid
             item
             container
@@ -1031,6 +1121,171 @@ const EventDetail: React.FC<unknown> = observer(() => {
           ))}
         </GridOut>
       </ContainerContent>
+      {worldBloomChapters.length > 0 && worldBloomChapterNo.length > 0 && (
+        <Fragment>
+          <TypographyHeader>
+            {t("event:title.worldLinkChapters")}
+          </TypographyHeader>
+          <ContainerContent maxWidth="md">
+            <TabContext value={worldBloomChapterNo}>
+              <PaperContainer>
+                <Tabs
+                  value={worldBloomChapterNo}
+                  onChange={(e, v) => setWorldBloomChapterNo(v)}
+                  variant="scrollable"
+                  scrollButtons
+                >
+                  {worldBloomChapters.map((chapter) => (
+                    <Tab
+                      label={t("event:worldBloom.chapter", {
+                        chapterNo: chapter.chapterNo,
+                      })}
+                      value={chapter.chapterNo.toString()}
+                      key={chapter.chapterNo}
+                    />
+                  ))}
+                </Tabs>
+              </PaperContainer>
+              {worldBloomChapters.map((chapter) => (
+                <TabPanelPadding
+                  value={chapter.chapterNo.toString()}
+                  key={chapter.chapterNo}
+                >
+                  <GridOut container direction="column">
+                    <Grid
+                      item
+                      container
+                      direction="row"
+                      wrap="nowrap"
+                      justifyContent="space-between"
+                      alignItems="center"
+                    >
+                      <Grid item xs={5}>
+                        <Typography
+                          variant="subtitle1"
+                          style={{ fontWeight: 600 }}
+                        >
+                          {t("common:character")}
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <img
+                          style={{ maxHeight: "48px" }}
+                          src={
+                            charaIcons[`CharaIcon${chapter.gameCharacterId}`]
+                          }
+                          alt={`character ${chapter.gameCharacterId}`}
+                        />
+                      </Grid>
+                    </Grid>
+                    <Divider style={{ margin: "1% 0" }} />
+                    <Grid
+                      item
+                      container
+                      direction="row"
+                      wrap="nowrap"
+                      justifyContent="space-between"
+                      alignItems="center"
+                    >
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {t("event:startAt")}
+                      </Typography>
+                      <Typography align="right">
+                        {new Date(chapter.chapterStartAt).toLocaleString()}
+                      </Typography>
+                    </Grid>
+                    <Divider style={{ margin: "1% 0" }} />
+                    <Grid
+                      item
+                      container
+                      direction="row"
+                      wrap="nowrap"
+                      justifyContent="space-between"
+                      alignItems="center"
+                    >
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {t("event:closeAt")}
+                      </Typography>
+                      <Typography align="right">
+                        {new Date(chapter.aggregateAt).toLocaleString()}
+                      </Typography>
+                    </Grid>
+                    <Divider style={{ margin: "1% 0" }} />
+                    <Grid
+                      item
+                      container
+                      direction="row"
+                      wrap="nowrap"
+                      justifyContent="space-between"
+                      alignItems="center"
+                    >
+                      <Typography
+                        variant="subtitle1"
+                        style={{ fontWeight: 600 }}
+                      >
+                        {t("event:endAt")}
+                      </Typography>
+                      <Typography align="right">
+                        {new Date(chapter.chapterEndAt).toLocaleString()}
+                      </Typography>
+                    </Grid>
+                    <Divider style={{ margin: "1% 0" }} />
+                  </GridOut>
+                  <Box sx={{ maxHeight: 400, overflow: "auto" }}>
+                    <GridOut container direction="column">
+                      {worldBloomChapterRankings.map((rankingReward) => (
+                        <Fragment key={rankingReward.id}>
+                          <Grid
+                            item
+                            container
+                            direction="row"
+                            wrap="nowrap"
+                            justifyContent="space-between"
+                            alignItems="center"
+                          >
+                            <Grid item xs={4}>
+                              <Typography>
+                                {t("event:rankingReward.start")}:{" "}
+                                {rankingReward.fromRank}
+                              </Typography>
+                              <Typography>
+                                {t("event:rankingReward.end")}:{" "}
+                                {rankingReward.toRank}
+                              </Typography>
+                            </Grid>
+                            <Grid
+                              item
+                              xs={8}
+                              container
+                              spacing={1}
+                              alignItems="center"
+                            >
+                              <Grid item xs={12}>
+                                <ResourceBox
+                                  resourceBoxId={rankingReward.resourceBoxId}
+                                  resourceBoxPurpose="world_bloom_chapter_ranking_reward"
+                                  justifyContent="center"
+                                />
+                              </Grid>
+                            </Grid>
+                          </Grid>
+                          <Divider style={{ margin: "1% 0" }} />
+                        </Fragment>
+                      ))}
+                    </GridOut>
+                  </Box>
+                </TabPanelPadding>
+              ))}
+            </TabContext>
+          </ContainerContent>
+        </Fragment>
+      )}
       {!!eventCommentId && (
         <Fragment>
           <TypographyHeader>
