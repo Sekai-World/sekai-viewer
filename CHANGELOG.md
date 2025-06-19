@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.16.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.15...v1.16.0) (2025-06-19)
+
+
+### Features
+
+* add IWorldBloom and IWorldBloomChapterRankingRewardRange to useCachedData ([7686e84](https://github.com/Sekai-World/sekai-viewer/commits/7686e84b06cb80101605a3949fb71700cf6290fa))
+* add world bloom chapters and rankings to EventDetail component ([7d77820](https://github.com/Sekai-World/sekai-viewer/commits/7d77820a728a5739f25af9ce67a296b91f41837d))
+* enhance ICardInfo and add WorldBloom interfaces ([3f6241b](https://github.com/Sekai-World/sekai-viewer/commits/3f6241b890517fd0262bf315106833b2df106901))
+* **event:** add event tracker for world link chapters ([910fa1b](https://github.com/Sekai-World/sekai-viewer/commits/910fa1b95149c2afdcc6e98e97597291f4056c69))
+
+
+### Bug Fixes
+
+* **event:** add charaId prop to EventTracker components for character-specific data ([49a2fd7](https://github.com/Sekai-World/sekai-viewer/commits/49a2fd796f421b03b31de7cb680957f030774c21))
+
 ### [1.15.15](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.14...v1.15.15) (2025-06-12)
 
 
