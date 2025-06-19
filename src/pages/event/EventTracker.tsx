@@ -1,4 +1,6 @@
 import {
+  Alert,
+  Autocomplete,
   Button,
   CircularProgress,
   FormControlLabel,
@@ -19,7 +21,6 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { Alert, Autocomplete } from "@mui/material";
 import { CronJob } from "cron";
 import React, {
   Fragment,
@@ -33,6 +34,8 @@ import {
   EventPrediction,
   EventRankingResponse,
   IEventInfo,
+  IWorldBloom,
+  IWorldBloomChapterRankingRewardRange,
 } from "../../types.d";
 import { useCachedData, useQuery, useToggle } from "../../utils";
 import { useCurrentEvent } from "../../utils/apiClient";
@@ -40,13 +43,14 @@ import { useEventTrackerAPI } from "../../utils/eventTracker";
 import { useAssetI18n } from "../../utils/i18n";
 import { HistoryMobileRow, LiveMobileRow } from "./EventTrackerMobileRow";
 // import DegreeImage from "../../components/widgets/DegreeImage";
-import { HistoryRow, LiveRow } from "./EventTrackerTableRow";
-import { useDebouncedCallback } from "use-debounce";
-import { useRootStore } from "../../stores/root";
 import { observer } from "mobx-react-lite";
-import TypographyHeader from "../../components/styled/TypographyHeader";
+import { useDebouncedCallback } from "use-debounce";
 import ContainerContent from "../../components/styled/ContainerContent";
+import TypographyHeader from "../../components/styled/TypographyHeader";
 import Countdown from "../../components/widgets/Countdown";
+import { useRootStore } from "../../stores/root";
+import EventTrackerChapters from "./EventTrackerChapters";
+import { HistoryRow, LiveRow } from "./EventTrackerTableRow";
 
 const EventTracker: React.FC<unknown> = observer(() => {
   const query = useQuery();
@@ -62,7 +66,7 @@ const EventTracker: React.FC<unknown> = observer(() => {
     getEventPred,
     getEventTimePoints,
     getEventRankingsByTimestamp,
-    getLastEventRankings,
+    getEventLastRankings,
   } = useEventTrackerAPI(region);
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
 
@@ -76,6 +80,17 @@ const EventTracker: React.FC<unknown> = observer(() => {
   const [selectedEventId, setSelectedEventId] = useState(0);
   // const [fetchProgress, setFetchProgress] = useState(0);
   const [isFetching, setIsFetching] = useState(false);
+
+  const [worldBlooms] = useCachedData<IWorldBloom>("worldBlooms");
+  const [worldBloomChapters, setWorldBloomChapters] = useState<IWorldBloom[]>(
+    []
+  );
+  const [worldBloomChapterRankingRewardRanges] =
+    useCachedData<IWorldBloomChapterRankingRewardRange>(
+      "worldBloomChapterRankingRewardRanges"
+    );
+  const [worldBloomChapterRankingRewards, setWorldBloomChapterRankingRewards] =
+    useState<IWorldBloomChapterRankingRewardRange[]>([]);
 
   const [rtRanking, setRtRanking] = useState<EventRankingResponse[]>([]);
   const [rtTime, setRtTime] = useState<Date>();
@@ -147,7 +162,7 @@ const EventTracker: React.FC<unknown> = observer(() => {
   const getHistoryData = useCallback(
     async (eventId: number) => {
       setIsFetching(true);
-      const data = await getLastEventRankings(eventId);
+      const data = await getEventLastRankings(eventId);
 
       if (!!data) {
         setHistoryTime(new Date(data[0].timestamp));
@@ -159,7 +174,7 @@ const EventTracker: React.FC<unknown> = observer(() => {
 
       setIsFetching(false);
     },
-    [getLastEventRankings]
+    [getEventLastRankings]
   );
 
   const handleFetchGraph = useCallback(
@@ -279,6 +294,26 @@ const EventTracker: React.FC<unknown> = observer(() => {
     handleFetchGraph,
     query,
   ]);
+
+  useEffect(() => {
+    if (
+      selectedEventId &&
+      worldBlooms?.length &&
+      worldBloomChapterRankingRewardRanges?.length
+    ) {
+      const chapters = worldBlooms.filter(
+        (wb) => wb.eventId === selectedEventId
+      );
+      setWorldBloomChapters(chapters);
+
+      if (chapters.length) {
+        const chapterRewards = worldBloomChapterRankingRewardRanges.filter(
+          (r) => r.eventId === selectedEventId
+        );
+        setWorldBloomChapterRankingRewards(chapterRewards);
+      }
+    }
+  }, [selectedEventId, worldBloomChapterRankingRewardRanges, worldBlooms]);
 
   const handleSliderChange = useDebouncedCallback(
     async (_, value: number | number[]) => {
@@ -696,6 +731,13 @@ const EventTracker: React.FC<unknown> = observer(() => {
               </TableContainer>
             ))}
         </ContainerContent>
+      )}
+      {!!selectedEventId && !!worldBloomChapters.length && (
+        <EventTrackerChapters
+          eventId={selectedEventId}
+          chapters={worldBloomChapters}
+          chapterRankingRewards={worldBloomChapterRankingRewards}
+        />
       )}
     </Fragment>
   );

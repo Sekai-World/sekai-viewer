@@ -8,7 +8,11 @@ import {
 } from "@mui/material";
 import { KeyboardArrowUp, KeyboardArrowDown } from "@mui/icons-material";
 import React, { Fragment, useEffect, useState } from "react";
-import { EventRankingResponse, EventRankingRewardRange } from "../../types.d";
+import {
+  EventRankingResponse,
+  EventRankingRewardRange,
+  IWorldBloomChapterRankingRewardRange,
+} from "../../types.d";
 import { CardThumb } from "../../components/widgets/CardThumb";
 import CheerfulCarnivalTeamIcon from "../../components/widgets/CheerfulCarnivalTeamIcon";
 import DegreeImage from "../../components/widgets/DegreeImage";
@@ -16,11 +20,14 @@ import EventTrackerGraph from "./EventTrackerGraph";
 import BondsDegreeImage from "../../components/widgets/BondsDegreeImage";
 
 export const HistoryRow: React.FC<{
-  rankingReward?: EventRankingRewardRange;
+  rankingReward?:
+    | EventRankingRewardRange
+    | IWorldBloomChapterRankingRewardRange;
   rankingData: EventRankingResponse;
   eventDuration: number;
   eventId: number;
-}> = ({ rankingReward, rankingData, eventDuration, eventId }) => {
+  charaId?: number;
+}> = ({ rankingReward, rankingData, eventDuration, eventId, charaId }) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -47,15 +54,40 @@ export const HistoryRow: React.FC<{
         </TableCell>
         <TableCell>
           {rankingReward ? (
-            <DegreeImage
-              style={{
-                maxHeight: "40px",
-                minWidth: "160px",
-                maxWidth: "220px",
-              }}
-              resourceBoxId={rankingReward.eventRankingRewards[0].resourceBoxId}
-              type="event_ranking_reward"
-            />
+            (() => {
+              if (
+                "eventRankingRewards" in rankingReward &&
+                Array.isArray(rankingReward.eventRankingRewards)
+              ) {
+                return (
+                  <DegreeImage
+                    style={{
+                      maxHeight: "40px",
+                      minWidth: "160px",
+                      maxWidth: "220px",
+                    }}
+                    resourceBoxId={
+                      rankingReward.eventRankingRewards[0].resourceBoxId
+                    }
+                    type="event_ranking_reward"
+                  />
+                );
+              } else if ("resourceBoxId" in rankingReward) {
+                return (
+                  <DegreeImage
+                    style={{
+                      maxHeight: "40px",
+                      minWidth: "160px",
+                      maxWidth: "220px",
+                    }}
+                    resourceBoxId={rankingReward.resourceBoxId}
+                    type="world_bloom_chapter_ranking_reward"
+                  />
+                );
+              } else {
+                return <Typography>{`# ${rankingData.rank}`}</Typography>;
+              }
+            })()
           ) : (
             <Typography>{`# ${rankingData.rank}`}</Typography>
           )}
@@ -177,6 +209,7 @@ export const HistoryRow: React.FC<{
                   <EventTrackerGraph
                     ranking={rankingData.rank as 1}
                     eventId={eventId}
+                    charaId={charaId}
                   />
                 </Grid>
               </Grid>
@@ -189,17 +222,21 @@ export const HistoryRow: React.FC<{
 };
 
 export const LiveRow: React.FC<{
-  rankingReward?: EventRankingRewardRange;
+  rankingReward?:
+    | EventRankingRewardRange
+    | IWorldBloomChapterRankingRewardRange;
   rankingData: EventRankingResponse;
   eventDuration: number;
   rankingPred?: number;
   noPred?: boolean;
+  charaId?: number;
 }> = ({
   rankingReward,
   rankingData,
   eventDuration,
   rankingPred,
   noPred = false,
+  charaId,
 }) => {
   const [open, setOpen] = useState(false);
   const [lastScore, setLastScore] = useState(0);
@@ -244,15 +281,40 @@ export const LiveRow: React.FC<{
         </TableCell>
         <TableCell>
           {rankingReward ? (
-            <DegreeImage
-              style={{
-                maxHeight: "40px",
-                minWidth: "160px",
-                maxWidth: "220px",
-              }}
-              resourceBoxId={rankingReward.eventRankingRewards[0].resourceBoxId}
-              type="event_ranking_reward"
-            />
+            (() => {
+              if (
+                "eventRankingRewards" in rankingReward &&
+                Array.isArray(rankingReward.eventRankingRewards)
+              ) {
+                return (
+                  <DegreeImage
+                    style={{
+                      maxHeight: "40px",
+                      minWidth: "160px",
+                      maxWidth: "220px",
+                    }}
+                    resourceBoxId={
+                      rankingReward.eventRankingRewards[0].resourceBoxId
+                    }
+                    type="event_ranking_reward"
+                  />
+                );
+              } else if ("resourceBoxId" in rankingReward) {
+                return (
+                  <DegreeImage
+                    style={{
+                      maxHeight: "40px",
+                      minWidth: "160px",
+                      maxWidth: "220px",
+                    }}
+                    resourceBoxId={rankingReward.resourceBoxId}
+                    type="world_bloom_chapter_ranking_reward"
+                  />
+                );
+              } else {
+                return <Typography>{`# ${rankingData.rank}`}</Typography>;
+              }
+            })()
           ) : (
             <Typography>{`# ${rankingData.rank}`}</Typography>
           )}
@@ -381,6 +443,7 @@ export const LiveRow: React.FC<{
                   rtRanking={rankingData}
                   ranking={rankingData.rank as 1}
                   eventId={rankingData.eventId}
+                  charaId={charaId}
                 />
               </Grid>
             </Grid>
