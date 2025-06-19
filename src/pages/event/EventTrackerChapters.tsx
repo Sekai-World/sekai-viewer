@@ -408,6 +408,7 @@ const EventTackerChapters: React.FC<{
                               userName: "N/A",
                             }
                           }
+                          charaId={currChapter.gameCharacterId}
                         />
                       </Grid>
                     ))}
@@ -457,6 +458,8 @@ const EventTackerChapters: React.FC<{
                               }
                             }
                             eventDuration={eventDuration}
+                            noPred
+                            charaId={currChapter.gameCharacterId}
                           />
                         ))}
                       </TableBody>
@@ -485,6 +488,7 @@ const EventTackerChapters: React.FC<{
                             }
                           }
                           eventId={eventId}
+                          charaId={currChapter.gameCharacterId}
                         />
                       </Grid>
                     ))}
@@ -534,6 +538,7 @@ const EventTackerChapters: React.FC<{
                             }
                             eventDuration={eventDuration}
                             eventId={eventId}
+                            charaId={currChapter.gameCharacterId}
                           />
                         ))}
                       </TableBody>
@@ -609,7 +614,8 @@ const EventTackerChapters: React.FC<{
                               }
                             }
                             eventDuration={eventDuration}
-                            noPred={true}
+                            noPred
+                            charaId={currChapter.gameCharacterId}
                           />
                         ))}
                       </TableBody>

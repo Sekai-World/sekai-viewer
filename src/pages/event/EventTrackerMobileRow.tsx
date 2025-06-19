@@ -12,7 +12,8 @@ import BondsDegreeImage from "../../components/widgets/BondsDegreeImage";
 export const HistoryMobileRow: React.FC<{
   rankingData: EventRankingResponse;
   eventId: number;
-}> = ({ rankingData, eventId }) => {
+  charaId?: number;
+}> = ({ rankingData, eventId, charaId }) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -121,6 +122,7 @@ export const HistoryMobileRow: React.FC<{
           ranking={rankingData.rank as 1}
           eventId={eventId}
           mobileTable={true}
+          charaId={charaId}
         />
       </Collapse>
     </Fragment>
@@ -131,7 +133,8 @@ export const LiveMobileRow: React.FC<{
   rankingData: EventRankingResponse;
   rankingPred?: number;
   noPred?: boolean;
-}> = ({ rankingData, rankingPred, noPred = false }) => {
+  charaId?: number;
+}> = ({ rankingData, rankingPred, noPred = false, charaId }) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
@@ -308,6 +311,7 @@ export const LiveMobileRow: React.FC<{
           ranking={rankingData.rank as 1}
           eventId={rankingData.eventId}
           mobileTable={true}
+          charaId={charaId}
         />
       </Collapse>
     </Fragment>
