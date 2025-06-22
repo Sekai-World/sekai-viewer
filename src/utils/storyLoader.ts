@@ -293,6 +293,20 @@ export function useProcessedScenarioDataForText() {
           responseType: "json",
         }
       );
+
+      // fix eventStory asset "ScenarioId" field error
+      // event 168 => event_167_??
+      // event 169 => event_168_??
+      if (info.storyType === "eventStory") {
+        const confirmScenarioId = info.scenarioDataUrl.split("/").pop()!;
+        if (
+          confirmScenarioId.startsWith("event_168") ||
+          confirmScenarioId.startsWith("event_169")
+        ) {
+          data.ScenarioId = confirmScenarioId.replace(".asset", "");
+        }
+      }
+
       const {
         ScenarioId,
         AppearCharacters,
@@ -304,6 +318,7 @@ export function useProcessedScenarioDataForText() {
         FirstBgm,
         FirstBackground,
       } = data;
+
       const AssetbundleName = scenarioIdToAssetbundleName(ScenarioId);
 
       const voiceMap: {
