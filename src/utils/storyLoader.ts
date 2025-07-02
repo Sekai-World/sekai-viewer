@@ -270,6 +270,32 @@ export function useProcessedScenarioDataForText() {
 
   const getCharaName = useCharaName();
 
+  /**
+   * fix eventStory asset "ScenarioId" field error
+   *
+   * event 168 => event_167_??
+   *
+   * event 169 => event_168_??
+   */
+  const fixVoiceScenarioId = (info: IScenarioInfo, data: IScenarioData) => {
+    if (info.storyType !== "eventStory") {
+      return;
+    }
+
+    const confirmScenarioId = info.scenarioDataUrl.split("/").pop();
+    if (typeof confirmScenarioId !== "string") {
+      return;
+    }
+
+    const isErrored = ["event_168", "event_169"].some((item) =>
+      confirmScenarioId.startsWith(item)
+    );
+
+    if (isErrored) {
+      data.ScenarioId = confirmScenarioId.replace(".asset", "");
+    }
+  };
+
   return useCallback(
     async (info: IScenarioInfo) => {
       const ret: {
@@ -294,18 +320,7 @@ export function useProcessedScenarioDataForText() {
         }
       );
 
-      // fix eventStory asset "ScenarioId" field error
-      // event 168 => event_167_??
-      // event 169 => event_168_??
-      if (info.storyType === "eventStory") {
-        const confirmScenarioId = info.scenarioDataUrl.split("/").pop()!;
-        if (
-          confirmScenarioId.startsWith("event_168") ||
-          confirmScenarioId.startsWith("event_169")
-        ) {
-          data.ScenarioId = confirmScenarioId.replace(".asset", "");
-        }
-      }
+      fixVoiceScenarioId(info, data);
 
       const {
         ScenarioId,
