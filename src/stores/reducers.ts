@@ -1,3 +1,4 @@
+import { EventFilterData } from "../pages/event/EventListFilter";
 import { ITeamBuild } from "../types";
 
 export function characterSelectReducer(
@@ -259,6 +260,20 @@ export function teamBuildReducer(
         teams: action.payload.teams,
       });
     }
+    default:
+      throw new Error();
+  }
+}
+
+export function eventListFilterReducer(
+  state: EventFilterData,
+  action: { type: "update"; payload: EventFilterData }
+) {
+  switch (action.type) {
+    case "update":
+      const newState = { ...action.payload };
+      localStorage.setItem("event-list-filter-data", JSON.stringify(newState));
+      return newState;
     default:
       throw new Error();
   }

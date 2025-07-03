@@ -1,4 +1,10 @@
-import React, { Fragment, useEffect, useState, useCallback } from "react";
+import React, {
+  Fragment,
+  useEffect,
+  useState,
+  useCallback,
+  useReducer,
+} from "react";
 import { IEventInfo } from "../../types.d";
 import { useCachedData, useLocalStorage, useToggle } from "../../utils";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
@@ -14,23 +20,14 @@ import {
   FilterAlt as Filter,
   FilterAltOutlined as FilterOutlined,
 } from "@mui/icons-material";
-import {
-  Badge,
-  Collapse,
-  FormControl,
-  Grid,
-  TextField,
-  ToggleButtonGroup,
-  ToggleButton,
-} from "@mui/material";
+import { Badge, Grid, ToggleButtonGroup, ToggleButton } from "@mui/material";
 import Pound from "~icons/mdi/pound";
 import { useRootStore } from "../../stores/root";
 import { observer } from "mobx-react-lite";
 import TypographyHeader from "../../components/styled/TypographyHeader";
 import ContainerContent from "../../components/styled/ContainerContent";
-import { useDebounce } from "use-debounce";
-import PaperContainer from "../../components/styled/PaperContainer";
-import TypographyCaption from "../../components/styled/TypographyCaption";
+import EventListFilter from "./EventListFilter";
+import { eventListFilterReducer } from "../../stores/reducers";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -69,8 +66,33 @@ const EventList: React.FC<unknown> = observer(() => {
   );
   const [sortedCache, setSortedCache] = useState<IEventInfo[]>([]);
   const [filterOpened, toggleFilterOpened] = useToggle(false);
-  const [searchTitle, setSearchTitle] = useState<string>("");
-  const [debouncedSearchTitle] = useDebounce(searchTitle, 500);
+
+  const [filterData, dispatchFilterData] = useReducer(
+    eventListFilterReducer,
+    localStorage.getItem("event-list-filter-data"),
+    (stored: string | null) => {
+      if (stored) {
+        return JSON.parse(stored);
+      }
+      return {
+        searchTitle: "",
+        eventType: [],
+        startAtType: null,
+        startAt: null,
+        eventUnitType: null,
+        eventUnit: [],
+        isKeyEventStory: "both",
+        hasEventMusic: "both",
+        eventBonusAttr: [],
+        eventBonusUnitId: [],
+      };
+    }
+  );
+  const isFilterNotEmpty = Object.values(filterData).some((value) => {
+    if (Array.isArray(value)) return value.length > 0;
+    if (typeof value === "string") return value.trim() !== "";
+    return value !== null && value !== undefined;
+  });
 
   useEffect(() => {
     document.title = t("title:eventList");
@@ -87,6 +109,7 @@ const EventList: React.FC<unknown> = observer(() => {
   useEffect(() => {
     if (!eventsCache || !eventsCache.length) return;
     let sortedCache = [...eventsCache];
+    console.log(new Set(sortedCache.map((e) => e.eventType)));
     if (!isShowSpoiler) {
       sortedCache = sortedCache.filter(
         (e) => e.startAt <= new Date().getTime()
@@ -101,22 +124,15 @@ const EventList: React.FC<unknown> = observer(() => {
         (a, b) => a[sortBy as "startAt"] - b[sortBy as "startAt"]
       );
     }
-    if (debouncedSearchTitle) {
+    if (filterData.searchTitle) {
       sortedCache = sortedCache.filter((e) =>
-        e.name.toLowerCase().includes(debouncedSearchTitle.toLowerCase())
+        e.name.toLowerCase().includes(filterData.searchTitle.toLowerCase())
       );
     }
     setSortedCache(sortedCache);
     setEvents([]);
     setPage(0);
-  }, [
-    eventsCache,
-    setPage,
-    sortType,
-    sortBy,
-    isShowSpoiler,
-    debouncedSearchTitle,
-  ]);
+  }, [eventsCache, setPage, sortType, sortBy, isShowSpoiler, filterData]);
 
   useEffect(() => {
     setIsReady(!!eventsCache?.length);
@@ -197,7 +213,11 @@ const EventList: React.FC<unknown> = observer(() => {
             </Grid>
           </Grid>
           <Grid item>
-            <Badge color="secondary" variant="dot" invisible={!searchTitle}>
+            <Badge
+              color="secondary"
+              variant="dot"
+              invisible={!isFilterNotEmpty}
+            >
               <ToggleButton
                 value=""
                 color="primary"
@@ -209,35 +229,14 @@ const EventList: React.FC<unknown> = observer(() => {
             </Badge>
           </Grid>
         </Grid>
-        <Collapse in={filterOpened}>
-          <PaperContainer>
-            <Grid container direction="column" spacing={2}>
-              <Grid
-                item
-                container
-                xs={12}
-                alignItems="center"
-                justifyContent="space-between"
-                spacing={1}
-              >
-                <Grid item xs={12} md={1}>
-                  <TypographyCaption>{t("common:title")}</TypographyCaption>
-                </Grid>
-                <Grid item xs={12} md={11}>
-                  <FormControl size="small">
-                    <TextField
-                      size="small"
-                      fullWidth
-                      value={searchTitle}
-                      onChange={(e) => setSearchTitle(e.target.value)}
-                      sx={{ minWidth: "200px" }}
-                    />
-                  </FormControl>
-                </Grid>
-              </Grid>
-            </Grid>
-          </PaperContainer>
-        </Collapse>
+        <EventListFilter
+          filterOpened={filterOpened}
+          toggleFilterOpened={toggleFilterOpened}
+          filterData={filterData}
+          onFilterDataChange={(data) =>
+            dispatchFilterData({ type: "update", payload: data })
+          }
+        />
         <InfiniteScroll<IEventInfo>
           ViewComponent={ListCard[viewGridType]}
           callback={callback}
