@@ -2,6 +2,8 @@ import type { Live2DController } from "../Live2DController";
 import type { Snippet } from "../../../types.d";
 import { Live2DAssetType } from "../types.d";
 import { log } from "../log";
+import { TranslationCache } from "../translation/TranslationCache";
+import { rootStore } from "../../../stores/root";
 
 export default async function action_talk(
   controller: Live2DController,
@@ -9,6 +11,35 @@ export default async function action_talk(
 ) {
   const action_detail = controller.scenarioData.TalkData[action.ReferenceIndex];
   log.log("Live2DController", "Talk", action, action_detail);
+
+  // Get translation settings directly from root store
+  const translationSettings = {
+    enableLlmTranslation: rootStore.settings.enableLlmTranslation,
+    showOriginalText: rootStore.settings.showOriginalText,
+  };
+
+  // Prepare the text to display
+  const originalText = action_detail.Body;
+  let translatedText: string | null = null;
+
+  // Get translation from cache if enabled
+  if (translationSettings.enableLlmTranslation) {
+    translatedText = TranslationCache.getTranslationByKey(
+      `talk_${action.ReferenceIndex}`
+    );
+  }
+
+  // Determine what to display based on settings
+  let displayText = originalText;
+  if (translatedText && !translationSettings.showOriginalText) {
+    // Show only translated text if we have translation and don't want original
+    displayText = translatedText;
+    translatedText = null; // Don't show separate translation
+  }
+  // When showOriginalText is true and we have translation:
+  // - displayText = original text (bottom, normal size)
+  // - translatedText = translated text (above original, smaller, more transparent)
+
   //clear
   await controller.layers.telop.hide(200);
   // show dialog
@@ -16,12 +47,14 @@ export default async function action_talk(
   if (controller.settings.text_animation) {
     dialog = controller.layers.dialog.animate(
       action_detail.WindowDisplayName,
-      action_detail.Body
+      displayText,
+      translatedText
     );
   } else {
     controller.layers.dialog.draw(
       action_detail.WindowDisplayName,
-      action_detail.Body
+      displayText,
+      translatedText
     );
   }
 

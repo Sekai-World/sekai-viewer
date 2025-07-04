@@ -15,6 +15,8 @@ import {
   LoadStatus,
   ILive2DPlayerSettings,
 } from "../../utils/Live2DPlayer/types.d";
+import { LlmTranslationService } from "../../utils/Live2DPlayer/translation/LlmTranslationService";
+import { TranslationCache } from "../../utils/Live2DPlayer/translation/TranslationCache";
 
 import { IScenarioData, ServerRegion } from "../../types.d";
 import ContainerContent from "../../components/styled/ContainerContent";
@@ -25,6 +27,7 @@ import {
   Typography,
   LinearProgress,
   Collapse,
+  CircularProgress,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import StoryReaderLive2DCanvas from "./StoryReaderLive2DCanvas";
@@ -56,6 +59,8 @@ const StoryReaderLive2DContent: React.FC<{
     showWarning: true,
   });
   const [showSettings, setShowSettings] = useState(false);
+  const [isRegeneratingTranslation, setIsRegeneratingTranslation] =
+    useState(false);
 
   const { showError } = useAlertSnackbar();
 
@@ -105,6 +110,25 @@ const StoryReaderLive2DContent: React.FC<{
   };
   StoryReaderLive2DContent.displayName = "StoryReaderLive2DContent";
 
+  // Function to regenerate translations for loaded scenario data
+  async function regenerateTranslation() {
+    if (!scenarioData.current) {
+      showError(t("story_reader_live2d:error.noScenarioData"));
+      return;
+    }
+
+    setIsRegeneratingTranslation(true);
+    try {
+      const translationService = new LlmTranslationService();
+      TranslationCache.clearCache();
+      await translationService.translateScenarioData(scenarioData.current);
+    } catch (error) {
+      if (error instanceof Error) showError(error.message);
+    } finally {
+      setIsRegeneratingTranslation(false);
+    }
+  }
+
   async function load() {
     setLoadStatus(LoadStatus.Loading);
     // step 1 - get scenario url
@@ -124,6 +148,19 @@ const StoryReaderLive2DContent: React.FC<{
       scenarioData.current =
         await getProcessedScenarioDataForLive2D(scenarioInfo);
       setLoadProgress(2);
+
+      // Start translation if enabled or region is JP
+      if (scenarioData.current) {
+        try {
+          setProgressText(t("story_reader_live2d:progress.translation"));
+          const translationService = new LlmTranslationService();
+          TranslationCache.clearCache();
+          await translationService.translateScenarioData(scenarioData.current);
+        } catch (error) {
+          console.warn("Translation failed:", error);
+        }
+      }
+
       // step 3 - get controller data (preload media)
       // step 3.1 - load media url
       let mediaUrl;
@@ -246,6 +283,23 @@ const StoryReaderLive2DContent: React.FC<{
           sx={{ flex: 1, minWidth: 100 }}
         >
           {t("story_reader_live2d:toggle_page_full_screen")}
+        </Button>
+        <Button
+          variant="contained"
+          disabled={
+            loadStatus !== LoadStatus.Loaded || isRegeneratingTranslation
+          }
+          onClick={regenerateTranslation}
+          sx={{ flex: 1, minWidth: 100 }}
+          startIcon={
+            isRegeneratingTranslation ? (
+              <CircularProgress size={20} />
+            ) : undefined
+          }
+        >
+          {isRegeneratingTranslation
+            ? t("story_reader_live2d:regenerating_translation")
+            : t("story_reader_live2d:regenerate_translation")}
         </Button>
         <Button
           variant="contained"

@@ -10,13 +10,20 @@ export default class Dialog extends BaseLayer {
     cn_c?: Text;
     text_container?: Container;
     text_c?: Text;
+    translated_text_c?: Text;
   };
   constructor(data: ILive2DLayerData) {
     super(data);
     this.structure = {};
   }
 
-  draw(cn: string, text: string) {
+  /**
+   * Draw dialog with original text and optional translated text
+   * @param cn Character name
+   * @param text Original text
+   * @param translatedText Optional translated text
+   */
+  draw(cn: string, text: string, translatedText?: string | null) {
     const container = this.root;
     container.removeChildren();
     const dialog_container = new Container();
@@ -34,10 +41,19 @@ export default class Dialog extends BaseLayer {
     const text_container = new Container();
     const text_c = new Text(text);
     text_container.addChild(text_c);
+
+    // Create translated text element if translation is provided
+    let translated_text_c: Text | undefined;
+    if (translatedText) {
+      translated_text_c = new Text(translatedText);
+      text_container.addChild(translated_text_c);
+    }
+
     dialog_container.addChild(background);
     dialog_container.addChild(underline);
     dialog_container.addChild(cn_c);
     dialog_container.addChild(text_container);
+
     this.structure = {
       dialog_container,
       background,
@@ -45,16 +61,28 @@ export default class Dialog extends BaseLayer {
       cn_c,
       text_container,
       text_c,
+      translated_text_c,
     };
     this.init = true;
     this.set_style();
   }
-  draw_new_text(text: string) {
+  draw_new_text(text: string, translatedText?: string | null) {
     if (this.init) {
       const new_text = new Text(text);
       this.structure.text_container?.addChild(new_text);
       this.structure.text_c?.destroy();
       this.structure.text_c = new_text;
+
+      this.structure.translated_text_c?.destroy();
+      // Update translated text if provided
+      if (translatedText) {
+        const new_translated_text = new Text(translatedText);
+        this.structure.text_container?.addChild(new_translated_text);
+        this.structure.translated_text_c = new_translated_text;
+      } else {
+        this.structure.translated_text_c = undefined;
+      }
+
       this.set_style_dialog_text();
     }
   }
@@ -105,23 +133,86 @@ export default class Dialog extends BaseLayer {
       this.stage_size[0] > this.stage_size[1]
         ? this.stage_size[0] * 0.15
         : this.stage_size[0] * 0.05;
+
+    // Calculate starting position for text
+    let originalTextYPosition = this.em(35);
+
+    // Count lines directly from text strings
+    let translatedLineCount = 0;
+    let originalLineCount = 0;
+
+    // Count lines for translated text
+    if (
+      this.structure.translated_text_c &&
+      this.structure.translated_text_c.text
+    ) {
+      translatedLineCount =
+        this.structure.translated_text_c.text.split("\n").length;
+    }
+
+    // Count lines for original text
+    if (this.structure.text_c && this.structure.text_c.text) {
+      originalLineCount = this.structure.text_c.text.split("\n").length;
+    }
+
+    // Style translated text (displayed above original text)
+    if (this.structure.translated_text_c) {
+      const translated_text = this.structure.translated_text_c;
+      translated_text.x = margin_left + this.em(3);
+      translated_text.y = this.em(35);
+      translated_text.alpha = 0.7;
+      translated_text.style = new TextStyle({
+        fill: ["#ffffff"],
+        fontSize: this.em(10),
+        lineHeight: this.em(12),
+        breakWords: true,
+        wordWrap: true,
+        wordWrapWidth: this.stage_size[0] - margin_left * 2,
+        stroke: "#4a4968aa",
+        strokeThickness: this.em(2),
+        lineJoin: "round",
+      });
+
+      // Dynamically calculate position for original text based on translated text height
+      originalTextYPosition = this.em(35) + translated_text.height;
+    }
+
+    // Style original text (positioned below translated text if it exists)
     const text = this.structure.text_c!;
     text.x = margin_left + this.em(3);
-    text.y = this.em(35);
+    text.y = originalTextYPosition;
     text.style = new TextStyle({
       fill: ["#ffffff"],
-      fontSize: this.em(16),
-      lineHeight: this.em(22),
+      fontSize: this.structure.translated_text_c ? this.em(13) : this.em(16),
+      lineHeight: this.structure.translated_text_c ? this.em(16) : this.em(22),
       breakWords: true,
       wordWrap: true,
       wordWrapWidth: this.stage_size[0] - margin_left * 2,
       stroke: "#4a4968aa",
-      strokeThickness: this.em(4),
+      strokeThickness: this.structure.translated_text_c
+        ? this.em(3)
+        : this.em(4),
       lineJoin: "round",
     });
+    // If total lines >= 6, make text smaller
+    if (translatedLineCount + originalLineCount >= 6) {
+      // Reduce original text size
+      text.y = originalTextYPosition;
+      text.style = new TextStyle({
+        fill: ["#ffffff"],
+        fontSize: this.em(11), // Reduced sizes
+        lineHeight: this.em(13), // Reduced line heights
+        breakWords: true,
+        wordWrap: true,
+        wordWrapWidth: this.stage_size[0] - margin_left * 2,
+        stroke: "#4a4968aa",
+        strokeThickness: this.em(2.5), // Reduced stroke
+        lineJoin: "round",
+      });
+    }
   }
 
-  async animate(cn: string, text: string) {
+  async animate(cn: string, text: string, translatedText?: string | null) {
     this.draw(cn, "");
     for (let i = 1; i <= text.length; i++) {
       // if aborted, jump to full text
@@ -129,7 +220,7 @@ export default class Dialog extends BaseLayer {
         i = text.length;
       }
       // new text
-      this.draw_new_text(text.slice(0, i));
+      this.draw_new_text(text.slice(0, i), translatedText);
       await this.animation_controller.delay(50);
     }
   }

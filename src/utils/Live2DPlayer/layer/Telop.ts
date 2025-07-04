@@ -6,13 +6,14 @@ export default class Telop extends BaseLayer {
   structure: {
     bg_graphic?: Graphics;
     text?: Text;
+    translated_text?: Text;
   };
   constructor(data: ILive2DLayerData) {
     super(data);
     this.structure = {};
   }
 
-  draw(data: string) {
+  draw(data: string, translatedText?: string | null) {
     const container = this.root;
     container.removeChildren();
     const bg_graphic = new Graphics();
@@ -21,12 +22,20 @@ export default class Telop extends BaseLayer {
       .drawRect(0, 0, this.screen_length, this.screen_length)
       .endFill();
     const text = new Text(data);
-
     container.addChild(bg_graphic);
     container.addChild(text);
+
+    // Create translated text element if translation is provided
+    let translated_text: Text | undefined;
+    if (translatedText) {
+      translated_text = new Text(translatedText);
+      container.addChild(translated_text);
+    }
+
     this.structure = {
       bg_graphic,
       text,
+      translated_text,
     };
     this.init = true;
     this.set_style();
@@ -34,6 +43,29 @@ export default class Telop extends BaseLayer {
   set_style(stage_size?: [number, number]): void {
     this.stage_size = stage_size ? stage_size : this.stage_size;
     if (this.init) {
+      // Style translated text (displayed above original text)
+      if (this.structure.translated_text) {
+        const translated_text = this.structure.translated_text;
+        translated_text.anchor.set(0.5);
+        translated_text.x = this.stage_size[0] / 2;
+        translated_text.y = this.em(20); // Position above center
+        translated_text.style = new TextStyle({
+          fill: ["#ffffff"],
+          fontSize: this.em(20),
+          breakWords: true,
+          wordWrap: true,
+          wordWrapWidth: this.stage_size[0] * 0.7,
+          dropShadow: true,
+          dropShadowColor: "#000000",
+          dropShadowBlur: this.em(2),
+          dropShadowAngle: Math.PI / 6,
+          dropShadowDistance: this.em(2),
+          lineJoin: "round",
+          align: "center",
+        });
+      }
+
+      // Style original text
       const text = this.structure.text!;
       text.anchor.set(0.5);
       text.x = this.stage_size[0] / 2;
@@ -50,7 +82,10 @@ export default class Telop extends BaseLayer {
         dropShadowAngle: Math.PI / 6,
         dropShadowDistance: this.em(2),
         lineJoin: "round",
+        align: "center",
       });
+
+      // Style background
       const bg = this.structure.bg_graphic!;
       bg.x = 0;
       bg.y = this.stage_size[1] / 2 - this.em(30);
