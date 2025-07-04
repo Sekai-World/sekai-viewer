@@ -139,6 +139,14 @@ const EventList: React.FC<unknown> = observer(() => {
         filterData.eventType.includes(e.eventType)
       );
     }
+    if (filterData.startAtType && filterData.startAt) {
+      const startAt = filterData.startAt;
+      if (filterData.startAtType === "before") {
+        sortedCache = sortedCache.filter((e) => e.startAt < startAt);
+      } else if (filterData.startAtType === "after") {
+        sortedCache = sortedCache.filter((e) => e.startAt > startAt);
+      }
+    }
     setSortedCache(sortedCache);
     setEvents([]);
     setPage(0);
