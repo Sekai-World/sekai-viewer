@@ -4,6 +4,7 @@ import React, {
   useState,
   useCallback,
   useReducer,
+  useMemo,
 } from "react";
 import { IEventInfo } from "../../types.d";
 import { useCachedData, useLocalStorage, useToggle } from "../../utils";
@@ -88,11 +89,16 @@ const EventList: React.FC<unknown> = observer(() => {
       };
     }
   );
-  const isFilterNotEmpty = Object.values(filterData).some((value) => {
-    if (Array.isArray(value)) return value.length > 0;
-    if (typeof value === "string") return value.trim() !== "";
-    return value !== null && value !== undefined;
-  });
+  const isFilterNotEmpty = useMemo(
+    () =>
+      Object.values(filterData).some((value) => {
+        if (Array.isArray(value)) return value.length > 0;
+        if (typeof value === "string")
+          return value.trim() !== "" && value !== "both";
+        return value !== null && value !== undefined;
+      }),
+    [filterData]
+  );
 
   useEffect(() => {
     document.title = t("title:eventList");
@@ -109,7 +115,6 @@ const EventList: React.FC<unknown> = observer(() => {
   useEffect(() => {
     if (!eventsCache || !eventsCache.length) return;
     let sortedCache = [...eventsCache];
-    console.log(new Set(sortedCache.map((e) => e.eventType)));
     if (!isShowSpoiler) {
       sortedCache = sortedCache.filter(
         (e) => e.startAt <= new Date().getTime()
@@ -127,6 +132,11 @@ const EventList: React.FC<unknown> = observer(() => {
     if (filterData.searchTitle) {
       sortedCache = sortedCache.filter((e) =>
         e.name.toLowerCase().includes(filterData.searchTitle.toLowerCase())
+      );
+    }
+    if (filterData.eventType.length) {
+      sortedCache = sortedCache.filter((e) =>
+        filterData.eventType.includes(e.eventType)
       );
     }
     setSortedCache(sortedCache);
