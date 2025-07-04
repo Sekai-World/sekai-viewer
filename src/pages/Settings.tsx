@@ -8,6 +8,7 @@ import {
   Radio,
   RadioGroup,
   Switch,
+  TextField,
 } from "@mui/material";
 import Brightness4 from "~icons/mdi/brightness-4";
 import Brightness7 from "~icons/mdi/brightness-7";
@@ -80,6 +81,24 @@ import TypographyHeader from "../components/styled/TypographyHeader";
 //   );
 // };
 
+/**
+ * Get default model for each translation provider
+ */
+const getDefaultModelForProvider = (provider: string): string => {
+  switch (provider) {
+    case "openai":
+      return "gpt-4o-mini";
+    case "anthropic":
+      return "claude-3.5-haiku";
+    case "google":
+      return "gemini-2.0-flash";
+    case "openrouter":
+      return "deepseek/deepseek-chat-v3-0324:free";
+    default:
+      return "";
+  }
+};
+
 const Settings = observer(() => {
   const { t, i18n } = useTranslation();
   const { assetI18n } = useAssetI18n();
@@ -92,6 +111,14 @@ const Settings = observer(() => {
       isShowSpoiler,
       isSpoilerMosaicked,
       region,
+      // LLM Translation Settings
+      enableLlmTranslation,
+      llmTranslationProvider,
+      llmModel,
+      llmApiKey,
+      llmApiEndpoint,
+      targetLanguage,
+      showOriginalText,
       setLang,
       setDisplayMode,
       setContentTransMode,
@@ -99,6 +126,14 @@ const Settings = observer(() => {
       setIsShowSpoiler,
       setIsSpoilerMosaicked,
       setRegion,
+      // LLM Translation Actions
+      setEnableLlmTranslation,
+      setLlmTranslationProvider,
+      setLlmModel,
+      setLlmApiKey,
+      setLlmApiEndpoint,
+      setTargetLanguage,
+      setShowOriginalText,
     },
   } = useRootStore();
   const { languages: remoteLanguages, isLoading, error } = useRemoteLanguages();
@@ -283,6 +318,143 @@ const Settings = observer(() => {
             />
           </FormControl>
         </Grid>
+      </Grid>
+      <br />
+      <TypographyHeader>{t("common:settings.llm.title")}</TypographyHeader>
+      <Grid container direction="column" spacing={2}>
+        <Grid item>
+          <FormControl component="fieldset">
+            <FormLabel component="legend">
+              {t("common:settings.llm.enable")}
+            </FormLabel>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={enableLlmTranslation}
+                  onChange={(e, v) => setEnableLlmTranslation(v)}
+                />
+              }
+              label={t("common:settings.llm.enableDescription") as string}
+            />
+          </FormControl>
+        </Grid>
+
+        {enableLlmTranslation && (
+          <>
+            <Grid item>
+              <FormControl component="fieldset" fullWidth>
+                <FormLabel component="legend">
+                  {t("common:settings.llm.provider")}
+                </FormLabel>
+                <RadioGroup
+                  row
+                  value={llmTranslationProvider}
+                  onChange={(e, v) =>
+                    setLlmTranslationProvider(
+                      v as
+                        | "openai"
+                        | "anthropic"
+                        | "google"
+                        | "openrouter"
+                        | "custom"
+                    )
+                  }
+                >
+                  <FormControlLabel
+                    value="openai"
+                    control={<Radio />}
+                    label="OpenAI"
+                  />
+                  <FormControlLabel
+                    value="anthropic"
+                    control={<Radio />}
+                    label="Anthropic"
+                  />
+                  <FormControlLabel
+                    value="google"
+                    control={<Radio />}
+                    label="Google"
+                  />
+                  <FormControlLabel
+                    value="openrouter"
+                    control={<Radio />}
+                    label="OpenRouter"
+                  />
+                  <FormControlLabel
+                    value="custom"
+                    control={<Radio />}
+                    label="Custom"
+                  />
+                </RadioGroup>
+              </FormControl>
+            </Grid>
+
+            <Grid item>
+              <TextField
+                fullWidth
+                label={t("common:settings.llm.model")}
+                value={llmModel}
+                onChange={(e) => setLlmModel(e.target.value)}
+                placeholder={getDefaultModelForProvider(llmTranslationProvider)}
+                helperText={t("common:settings.llm.modelDescription", {
+                  defaultModel: getDefaultModelForProvider(
+                    llmTranslationProvider
+                  ),
+                })}
+              />
+            </Grid>
+
+            <Grid item>
+              <TextField
+                fullWidth
+                label={t("common:settings.llm.apiKey")}
+                type="password"
+                value={llmApiKey}
+                onChange={(e) => setLlmApiKey(e.target.value)}
+                helperText={t("common:settings.llm.apiKeyDescription")}
+              />
+            </Grid>
+
+            {llmTranslationProvider === "custom" && (
+              <Grid item>
+                <TextField
+                  fullWidth
+                  label={t("common:settings.llm.apiEndpoint")}
+                  value={llmApiEndpoint}
+                  onChange={(e) => setLlmApiEndpoint(e.target.value)}
+                  helperText={t("common:settings.llm.apiEndpointDescription")}
+                />
+              </Grid>
+            )}
+
+            <Grid item>
+              <TextField
+                fullWidth
+                label={t("common:settings.llm.targetLanguage")}
+                value={targetLanguage}
+                onChange={(e) => setTargetLanguage(e.target.value)}
+                helperText={t("common:settings.llm.targetLanguageDescription")}
+              />
+            </Grid>
+
+            <Grid item>
+              <FormControl component="fieldset">
+                <FormLabel component="legend">
+                  {t("common:settings.llm.displayOptions")}
+                </FormLabel>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={showOriginalText}
+                      onChange={(e, v) => setShowOriginalText(v)}
+                    />
+                  }
+                  label={t("common:settings.llm.displayOptionsDescription")}
+                />
+              </FormControl>
+            </Grid>
+          </>
+        )}
       </Grid>
     </Fragment>
   );

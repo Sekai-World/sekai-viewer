@@ -20,6 +20,14 @@ export const SettingRegion = types.enumeration<ServerRegion>("ServerRegion", [
   "cn",
 ]);
 
+export const TranslationProvider = types.enumeration("TranslationProvider", [
+  "openai",
+  "anthropic",
+  "google",
+  "openrouter",
+  "custom",
+]);
+
 export const Settings = types
   .model({
     contentTransMode: SettingContentTransMode,
@@ -29,6 +37,14 @@ export const Settings = types
     lang: types.string,
     languages: types.array(LanguageModel),
     region: SettingRegion,
+    // LLM Translation Settings
+    enableLlmTranslation: types.optional(types.boolean, false),
+    llmTranslationProvider: types.optional(TranslationProvider, "openai"),
+    llmModel: types.optional(types.string, ""),
+    llmApiKey: types.optional(types.string, ""),
+    llmApiEndpoint: types.optional(types.string, ""),
+    targetLanguage: types.optional(types.string, "en"),
+    showOriginalText: types.optional(types.boolean, true),
   })
   .actions((self) => ({
     setContentTransMode(newMode: ContentTransModeType) {
@@ -52,6 +68,30 @@ export const Settings = types
     },
     setRegion(newRegion: ServerRegion) {
       self.region = newRegion;
+    },
+    // LLM Translation Actions
+    setEnableLlmTranslation(enabled: boolean) {
+      self.enableLlmTranslation = enabled;
+    },
+    setLlmTranslationProvider(
+      provider: "openai" | "anthropic" | "google" | "openrouter" | "custom"
+    ) {
+      self.llmTranslationProvider = provider;
+    },
+    setLlmModel(model: string) {
+      self.llmModel = model;
+    },
+    setLlmApiKey(apiKey: string) {
+      self.llmApiKey = apiKey;
+    },
+    setLlmApiEndpoint(endpoint: string) {
+      self.llmApiEndpoint = endpoint;
+    },
+    setTargetLanguage(language: string) {
+      self.targetLanguage = language;
+    },
+    setShowOriginalText(show: boolean) {
+      self.showOriginalText = show;
     },
   }));
 export interface ISettings extends Instance<typeof Settings> {}
