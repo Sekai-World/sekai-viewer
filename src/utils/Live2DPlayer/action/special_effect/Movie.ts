@@ -29,7 +29,7 @@ export default async function Movie(
     } catch (error) {
       controller.events.emit(
         "warn",
-        `Failed to play movie ${action_detail.StringVal}: ${error}`
+        `Failed to play movie ${action_detail.StringVal}: ${String(error)}`
       );
     } finally {
       // Always clear the movie layer, regardless of success or failure
