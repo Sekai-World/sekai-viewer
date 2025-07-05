@@ -635,6 +635,19 @@ export function useMediaUrlForLive2D() {
                     });
                   }
                   break;
+                case SpecialEffectType.Movie:
+                  {
+                    const identifer = seData.StringVal;
+                    const folderUrl = await getMovieUrl(seData.StringVal);
+                    const url = `${folderUrl}/${seData.StringVal}.mp4`;
+                    if (ret.map((r) => r.url).includes(url)) continue;
+                    ret.push({
+                      identifer,
+                      type: Live2DAssetType.Video,
+                      url,
+                    });
+                  }
+                  break;
               }
             }
             break;

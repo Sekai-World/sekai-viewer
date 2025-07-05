@@ -15,6 +15,7 @@ import Live2D from "./layer/Live2D";
 import Wipe from "./layer/Wipe";
 import Sekai from "./layer/Sekai";
 import FullScreenText from "./layer/FullScreenText";
+import Movie from "./layer/Movie";
 
 import AnimationController from "./animation/AnimationController";
 import { Live2DPlayerEventEmitter } from "./Live2DPlayerEventEmitter";
@@ -37,6 +38,7 @@ export class Live2DPlayer {
     live2d: Live2D;
     wipe: Wipe;
     sekai: Sekai;
+    movie: Movie;
   };
   camera: {
     pivot: [number, number];
@@ -85,6 +87,7 @@ export class Live2DPlayer {
       live2d: new Live2D(layer_data),
       wipe: new Wipe(layer_data),
       sekai: new Sekai(layer_data),
+      movie: new Movie(layer_data),
     };
     const root = new Container();
     this.root = root;
@@ -101,6 +104,7 @@ export class Live2DPlayer {
     root.addChild(this.layers.fullcolor.root);
     root.addChild(this.layers.fullscreen_text_bg.root);
     root.addChild(this.layers.fullscreen_text.root);
+    root.addChild(this.layers.movie.root);
 
     this.camera = {
       pivot: [0.5, 0.5],

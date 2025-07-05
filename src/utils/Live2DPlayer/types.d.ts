@@ -12,6 +12,7 @@ export enum Live2DAssetType {
   UISheet,
   UIVideo,
   BackgroundImage,
+  Video,
 }
 
 export const Live2DAssetTypeImage = [
@@ -26,6 +27,8 @@ export const Live2DAssetTypeSound = [
   Live2DAssetType.Talk,
 ];
 
+export const Live2DAssetTypeVideo = [Live2DAssetType.Video];
+
 export const Live2DAssetTypeUI = [
   Live2DAssetType.UI,
   Live2DAssetType.UISheet,
@@ -39,7 +42,7 @@ export interface ILive2DAssetUrl {
 }
 
 export interface ILive2DCachedAsset extends ILive2DAssetUrl {
-  data: HTMLImageElement | Howl | null;
+  data: HTMLImageElement | HTMLVideoElement | Howl | null;
 }
 
 export interface ILive2DTexture {
