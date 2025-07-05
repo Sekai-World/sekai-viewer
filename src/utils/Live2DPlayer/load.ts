@@ -3,7 +3,11 @@ import { Howl } from "howler";
 import { SnippetAction } from "../../types.d";
 import type { ILive2dModelListElement, IScenarioData } from "../../types.d";
 
-import { Live2DAssetTypeImage, Live2DAssetTypeSound } from "./types.d";
+import {
+  Live2DAssetTypeImage,
+  Live2DAssetTypeSound,
+  Live2DAssetTypeVideo,
+} from "./types.d";
 import type {
   ILive2DCachedAsset,
   ILive2DAssetUrl,
@@ -103,7 +107,7 @@ export async function preloadModels(
   await preloadModelMotion(controllerData.modelData, progress);
 }
 
-// step 3.2 - preload sound/image
+// step 3.2 - preload sound/image/video
 export async function preloadMedia(
   urls: ILive2DAssetUrl[],
   progress: IProgressEvent
@@ -123,6 +127,12 @@ export async function preloadMedia(
             .catch(reject);
         } else if (Live2DAssetTypeImage.includes(url.type)) {
           preloadImage(url.url)
+            .then((data) => {
+              resolve({ ...url, data });
+            })
+            .catch(reject);
+        } else if (Live2DAssetTypeVideo.includes(url.type)) {
+          preloadVideo(url.url)
             .then((data) => {
               resolve({ ...url, data });
             })
@@ -156,6 +166,17 @@ function preloadSound(url: string): Promise<Howl> {
       onloaderror: () => reject(new Error(`Failed to load sound: ${url}`)),
       loop: false,
     });
+  });
+}
+
+function preloadVideo(url: string): Promise<HTMLVideoElement> {
+  return new Promise((resolve, reject) => {
+    const video = document.createElement("video");
+    video.onloadeddata = () => resolve(video);
+    video.onerror = () => reject(new Error(`Failed to load video: ${url}`));
+    video.crossOrigin = "anonymous";
+    video.preload = "metadata";
+    video.src = url;
   });
 }
 
