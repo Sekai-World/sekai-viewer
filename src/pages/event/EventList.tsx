@@ -6,7 +6,7 @@ import React, {
   useReducer,
   useMemo,
 } from "react";
-import { IEventInfo } from "../../types.d";
+import { IEventInfo, IEventMusic } from "../../types.d";
 import { useCachedData, useLocalStorage, useToggle } from "../../utils";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
 
@@ -48,6 +48,8 @@ const EventList: React.FC<unknown> = observer(() => {
 
   const [eventsCache] = useCachedData<IEventInfo>("events");
   const [events, setEvents] = useState<IEventInfo[]>([]);
+
+  const [eventMusicCache] = useCachedData<IEventMusic>("eventMusics");
 
   const [viewGridType] = useState<ViewGridType>(
     (localStorage.getItem("event-list-grid-view-type") ||
@@ -147,10 +149,27 @@ const EventList: React.FC<unknown> = observer(() => {
         sortedCache = sortedCache.filter((e) => e.startAt > startAt);
       }
     }
+    if (filterData.hasEventMusic !== "both" && eventMusicCache) {
+      sortedCache = sortedCache.filter(
+        (e) =>
+          (filterData.hasEventMusic === "incl" &&
+            eventMusicCache.some((em) => em.eventId === e.id)) ||
+          (filterData.hasEventMusic === "excl" &&
+            !eventMusicCache.some((em) => em.eventId === e.id))
+      );
+    }
     setSortedCache(sortedCache);
     setEvents([]);
     setPage(0);
-  }, [eventsCache, setPage, sortType, sortBy, isShowSpoiler, filterData]);
+  }, [
+    eventsCache,
+    setPage,
+    sortType,
+    sortBy,
+    isShowSpoiler,
+    filterData,
+    eventMusicCache,
+  ]);
 
   useEffect(() => {
     setIsReady(!!eventsCache?.length);
