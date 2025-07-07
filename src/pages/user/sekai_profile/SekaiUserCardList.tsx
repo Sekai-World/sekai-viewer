@@ -1032,9 +1032,11 @@ const SekaiUserCardList = observer(() => {
                     size="small"
                     onClick={() => {
                       const bonuses = eventDeckBonuses!.filter(
-                        (edb) => edb.eventId === eventId && edb.bonusRate === 50
+                        (edb) =>
+                          edb.eventId === eventId &&
+                          edb.bonusRate === 50 &&
+                          edb.cardAttr
                       );
-                      // console.log(bonuses, eventId, eventDeckBonuses);
                       const attr = bonuses[0].cardAttr;
                       dispatchRaritySelected({
                         payload: {
@@ -1045,7 +1047,7 @@ const SekaiUserCardList = observer(() => {
                         type: "reset",
                       });
                       dispatchAttrSelected({
-                        payload: attr,
+                        payload: attr!,
                         storeName: "user-profile-sekai-cards-filter-attrs",
                         type: "add",
                       });

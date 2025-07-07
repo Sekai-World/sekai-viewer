@@ -14,5 +14,8 @@ export default async function PlayScenarioEffect(
     action,
     action_detail
   );
-  controller.layers.scene_effect.draw(action_detail.StringVal);
+  controller.layers.scene_effect.draw(
+    action_detail.StringVal,
+    controller.events
+  );
 }
