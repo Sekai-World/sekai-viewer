@@ -119,7 +119,7 @@ const EventListFilter: React.FC<{
   );
   const [eventBonusCharaSupportUnit, setEventBonusCharaSupportUnit] = useState<
     string[]
-  >([]);
+  >(filterData.eventBonusCharaSupportUnit || []);
 
   const isFilterDataChanged = useMemo(() => {
     return searchTitle !== filterData.searchTitle;
