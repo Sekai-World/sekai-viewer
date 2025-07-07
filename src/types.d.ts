@@ -421,8 +421,8 @@ export interface IEventInfo {
 export interface IEventDeckBonus {
   id: number;
   eventId: number;
-  gameCharacterUnitId: number;
-  cardAttr: string;
+  gameCharacterUnitId?: number;
+  cardAttr?: string;
   bonusRate: number;
 }
 
@@ -724,6 +724,14 @@ export interface IEventStory {
   bannerGameCharacterUnitId?: number;
   assetbundleName: string;
   eventStoryEpisodes: EventStoryEpisode[];
+}
+
+export interface IEventStoryUnit {
+  id: number;
+  seq: number;
+  eventStoryId: number;
+  unit: string;
+  eventStoryUnitRelation: string;
 }
 
 export interface MissionReward {

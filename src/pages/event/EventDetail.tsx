@@ -775,7 +775,7 @@ const EventDetail: React.FC<unknown> = observer(() => {
                         <Grid item>
                           <img
                             style={{ maxHeight: "36px" }}
-                            src={attrIconMap[eventAttrBonus.cardAttr]}
+                            src={attrIconMap[eventAttrBonus.cardAttr!]}
                             alt={eventAttrBonus.cardAttr}
                           ></img>
                         </Grid>
