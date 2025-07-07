@@ -1005,6 +1005,7 @@ export interface VirtualLiveSetlist {
   character3dId3?: number;
   character3dId4?: number;
   character3dId5?: number;
+  character3dId6?: number;
 }
 
 export interface VirtualLiveBeginnerSchedule {
@@ -1019,9 +1020,10 @@ export interface VirtualLiveSchedule {
   id: number;
   virtualLiveId: number;
   seq: number;
-  startAt: any;
-  endAt: any;
+  startAt: number;
+  endAt: number;
   noticeGroupId?: string;
+  isAfterEvent: boolean;
 }
 
 export interface VirtualLiveCharacter {
@@ -1055,8 +1057,9 @@ export interface VirtualLiveWaitingRoom {
   id: number;
   virtualLiveId?: number;
   assetbundleName?: string;
-  startAt: any;
-  endAt: any;
+  startAt: number;
+  endAt: number;
+  lobbyAssetbundleName?: string;
 }
 
 export interface VirtualItem {
@@ -1095,9 +1098,9 @@ export interface IVirtualLiveInfo {
   name: string;
   assetbundleName: string;
   screenMvMusicVocalId: number;
-  startAt: any;
-  endAt: any;
-  rankingAnnounceAt: any;
+  startAt: number;
+  endAt: number;
+  rankingAnnounceAt: number;
   virtualLiveSetlists: VirtualLiveSetlist[];
   virtualLiveBeginnerSchedules: VirtualLiveBeginnerSchedule[];
   virtualLiveSchedules: VirtualLiveSchedule[];
@@ -1112,6 +1115,7 @@ export interface IVirtualLiveInfo {
   virtualLiveInformation: VirtualLiveInformation;
   archiveReleaseConditionId?: number;
   virtualLiveTicketId?: number;
+  subGameCharacterPenlightColorGroupId?: number;
 }
 
 export interface MasterOfCermonyBaseEvent {
