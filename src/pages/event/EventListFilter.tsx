@@ -1,8 +1,9 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { EventType, IUnitProfile } from "../../types";
+import { EventType, IGameChara, IUnitProfile } from "../../types";
 import {
   Avatar,
   Button,
+  capitalize,
   Chip,
   Collapse,
   FormControl,
@@ -24,11 +25,15 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { useCachedData } from "../../utils";
-import { useAssetI18n } from "../../utils/i18n";
+import { useAssetI18n, useCharaName } from "../../utils/i18n";
 import clsx from "clsx";
-import { UnitLogoMiniMap } from "../../utils/resources";
+import {
+  attrIconMap,
+  charaIcons,
+  UnitLogoMiniMap,
+} from "../../utils/resources";
 
-type EventFilterStartAtType = "before" | "after" | undefined;
+type EventFilterStartAtType = "before" | "after";
 
 type EventFilterEventUnitType = "event" | "eventStory" | "eventStoryMain";
 
@@ -47,6 +52,7 @@ export interface EventFilterData {
   hasEventMusic: EventFilterInclExclType;
   eventBonusAttr: string[];
   eventBonusCharaId: number[];
+  eventBonusCharaSupportUnit: string[];
 }
 
 const eventTypes = Object.freeze([
@@ -77,8 +83,10 @@ const EventListFilter: React.FC<{
 }> = ({ filterOpened, toggleFilterOpened, filterData, onFilterDataChange }) => {
   const { t } = useTranslation();
   const { getTranslated } = useAssetI18n();
+  const getCharaName = useCharaName();
 
   const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
+  const [charas] = useCachedData<IGameChara>("gameCharacters");
 
   const [searchTitle, setSearchTitle] = useState<string>(
     filterData.searchTitle
@@ -109,6 +117,9 @@ const EventListFilter: React.FC<{
   const [eventBonusCharaId, setEventBonusCharaId] = useState<number[]>(
     filterData.eventBonusCharaId || []
   );
+  const [eventBonusCharaSupportUnit, setEventBonusCharaSupportUnit] = useState<
+    string[]
+  >([]);
 
   const isFilterDataChanged = useMemo(() => {
     return searchTitle !== filterData.searchTitle;
@@ -137,11 +148,13 @@ const EventListFilter: React.FC<{
       hasEventMusic: hasEventMusic,
       eventBonusAttr: eventBonusAttr,
       eventBonusCharaId: eventBonusCharaId,
+      eventBonusCharaSupportUnit: eventBonusCharaSupportUnit,
     });
     toggleFilterOpened();
   }, [
     eventBonusAttr,
     eventBonusCharaId,
+    eventBonusCharaSupportUnit,
     eventType,
     eventUnit,
     eventUnitType,
@@ -166,9 +179,11 @@ const EventListFilter: React.FC<{
     setHasEventMusic(filterData.hasEventMusic);
     setEventBonusAttr(filterData.eventBonusAttr);
     setEventBonusCharaId(filterData.eventBonusCharaId);
+    setEventBonusCharaSupportUnit(filterData.eventBonusCharaSupportUnit);
   }, [
     filterData.eventBonusAttr,
     filterData.eventBonusCharaId,
+    filterData.eventBonusCharaSupportUnit,
     filterData.eventType,
     filterData.eventUnit,
     filterData.eventUnitType,
@@ -190,6 +205,7 @@ const EventListFilter: React.FC<{
     setHasEventMusic("both");
     setEventBonusAttr([]);
     setEventBonusCharaId([]);
+    setEventBonusCharaSupportUnit([]);
   }, []);
 
   const handleEventTypeClick = useCallback((type: EventType) => {
@@ -208,6 +224,36 @@ const EventListFilter: React.FC<{
         return prev.filter((u) => u !== unitProfile.unit);
       } else {
         return [...prev, unitProfile.unit];
+      }
+    });
+  }, []);
+
+  const handleAttrIconClick = useCallback((attr: string) => {
+    setEventBonusAttr((prev) => {
+      if (prev.includes(attr)) {
+        return prev.filter((a) => a !== attr);
+      } else {
+        return [...prev, attr];
+      }
+    });
+  }, []);
+
+  const handleCharaIconClick = useCallback((chara: IGameChara) => {
+    setEventBonusCharaId((prev) => {
+      if (prev.includes(chara.id)) {
+        return prev.filter((id) => id !== chara.id);
+      } else {
+        return [...prev, chara.id];
+      }
+    });
+  }, []);
+
+  const handleSupportUnitIconClick = useCallback((supportUnit: string) => {
+    setEventBonusCharaSupportUnit((prev) => {
+      if (prev.includes(supportUnit)) {
+        return prev.filter((su) => su !== supportUnit);
+      } else {
+        return [...prev, supportUnit];
       }
     });
   }, []);
@@ -524,6 +570,145 @@ const EventListFilter: React.FC<{
               </FormControl>
             </Grid>
           </Grid>
+          <Grid
+            item
+            container
+            xs={12}
+            alignItems="center"
+            justifyContent="space-between"
+            spacing={1}
+          >
+            <Grid item xs={12} md={2}>
+              <TypographyCaption>{t("event:boostAttribute")}</TypographyCaption>
+            </Grid>
+            <Grid item xs={12} md={10}>
+              <Grid container spacing={1}>
+                {["cute", "mysterious", "cool", "happy", "pure"].map((attr) => (
+                  <Grid key={"attr-filter-" + attr} item>
+                    <Tooltip title={capitalize(attr)} placement="top">
+                      <IconButton
+                        size="small"
+                        onClick={() => handleAttrIconClick(attr)}
+                        className={clsx({
+                          "icon-not-selected": !eventBonusAttr.includes(attr),
+                          "icon-selected": eventBonusAttr.includes(attr),
+                        })}
+                      >
+                        <Avatar
+                          alt={attr}
+                          src={attrIconMap[attr as "cool"]}
+                          sx={{ width: 32, height: 32 }}
+                        />
+                      </IconButton>
+                    </Tooltip>
+                  </Grid>
+                ))}
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid
+            item
+            container
+            xs={12}
+            justifyContent="space-between"
+            spacing={1}
+          >
+            <Grid item xs={12} md={2}>
+              <TypographyCaption sx={{ paddingTop: "0.375em" }}>
+                {t("event:boostCharacters")}
+              </TypographyCaption>
+            </Grid>
+            <Grid item xs={12} md={10}>
+              <Grid container spacing={1}>
+                {(charas || []).map((chara) => (
+                  <Grid key={"chara-filter-" + chara.id} item>
+                    <Tooltip title={getCharaName(chara.id)} placement="top">
+                      <IconButton
+                        size="small"
+                        onClick={() => handleCharaIconClick(chara)}
+                        className={clsx({
+                          "icon-not-selected": !eventBonusCharaId.includes(
+                            chara.id
+                          ),
+                          "icon-selected": eventBonusCharaId.includes(chara.id),
+                        })}
+                      >
+                        <Avatar
+                          alt={getCharaName(chara.id)}
+                          src={
+                            charaIcons[`CharaIcon${chara.id}` as "CharaIcon1"]
+                          }
+                          sx={{ width: 32, height: 32 }}
+                        />
+                      </IconButton>
+                    </Tooltip>
+                  </Grid>
+                ))}
+              </Grid>
+            </Grid>
+          </Grid>
+          {eventBonusCharaId.some((charaId) => charaId >= 21) && (
+            <Grid
+              item
+              container
+              xs={12}
+              alignItems="center"
+              justifyContent="space-between"
+              spacing={1}
+            >
+              <Grid item xs={12} md={2}>
+                <TypographyCaption>
+                  {t("common:support_unit")}
+                </TypographyCaption>
+              </Grid>
+              <Grid item xs={12} md={10}>
+                <Grid container spacing={1}>
+                  {unitProfiles &&
+                    [
+                      "theme_park",
+                      "street",
+                      "idol",
+                      "school_refusal",
+                      "light_sound",
+                    ].map((supportUnit) => (
+                      <Grid key={"supportUnit-filter-" + supportUnit} item>
+                        <Tooltip
+                          title={getTranslated(
+                            `unit_profile:${supportUnit}.name`,
+                            unitProfiles.find((up) => up.unit === supportUnit)!
+                              .unitName
+                          )}
+                          placement="top"
+                        >
+                          <IconButton
+                            size="small"
+                            onClick={() =>
+                              handleSupportUnitIconClick(supportUnit)
+                            }
+                            className={clsx({
+                              "icon-not-selected":
+                                !eventBonusCharaSupportUnit.includes(
+                                  supportUnit
+                                ),
+                              "icon-selected":
+                                eventBonusCharaSupportUnit.includes(
+                                  supportUnit
+                                ),
+                            })}
+                          >
+                            <Avatar
+                              alt={supportUnit}
+                              src={UnitLogoMiniMap[supportUnit as "idol"]}
+                              sx={{ width: 32, height: 32 }}
+                            />
+                          </IconButton>
+                        </Tooltip>
+                      </Grid>
+                    ))}
+                </Grid>
+              </Grid>
+            </Grid>
+          )}
           <Grid
             item
             container
