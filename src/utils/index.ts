@@ -80,6 +80,7 @@ import {
   IAnother3dmvCutIn,
   IWorldBloom,
   IWorldBloomChapterRankingRewardRange,
+  IEventStoryUnit,
 } from "./../types.d";
 import { useAssetI18n } from "./i18n";
 import { useLocation } from "react-router-dom";
@@ -164,7 +165,8 @@ export function useCachedData<
     | IBoostItem
     | IAnother3dmvCutIn
     | IWorldBloom
-    | IWorldBloomChapterRankingRewardRange,
+    | IWorldBloomChapterRankingRewardRange
+    | IEventStoryUnit,
 >(name: string): [T[] | undefined, boolean, unknown] {
   // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
   const { region } = useRootStore();
