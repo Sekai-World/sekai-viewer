@@ -317,7 +317,9 @@ const EventListFilter: React.FC<{
             spacing={1}
           >
             <Grid item xs={12} md={2}>
-              <TypographyCaption>{t("filter:hasEventMusic")}</TypographyCaption>
+              <TypographyCaption>
+                {t("event:newlyWrittenSong")}
+              </TypographyCaption>
             </Grid>
             <Grid item xs={12} md={10}>
               <FormControl size="small">
