@@ -126,7 +126,14 @@ const EventList: React.FC<unknown> = observer(() => {
   }, [page, limit, setLastQueryFin, sortedCache]);
 
   useEffect(() => {
-    if (!eventsCache || !eventsCache.length) return;
+    if (
+      !eventsCache ||
+      !eventsCache.length ||
+      !eventMusicsCache ||
+      !eventStoriesCache ||
+      !eventStoryUnitsCache
+    )
+      return;
     let sortedCache = [...eventsCache];
     if (!isShowSpoiler) {
       sortedCache = sortedCache.filter(
@@ -160,11 +167,50 @@ const EventList: React.FC<unknown> = observer(() => {
         sortedCache = sortedCache.filter((e) => e.startAt > startAt);
       }
     }
-    if (
-      filterData.isKeyEventStory !== "both" &&
-      eventStoriesCache &&
-      eventStoryUnitsCache
-    ) {
+    if (filterData.eventUnitType) {
+      switch (filterData.eventUnitType) {
+        case "event":
+          {
+            sortedCache = sortedCache.filter((e) =>
+              filterData.eventUnit.includes(e.unit)
+            );
+          }
+          break;
+        case "eventStory":
+          {
+            sortedCache = sortedCache.filter((e) => {
+              const story = eventStoriesCache.find((es) => es.eventId === e.id);
+              if (!story) return false;
+              const storyUnits = eventStoryUnitsCache
+                .filter((esu) => esu.eventStoryId === story.id)
+                .map((su) => su.unit);
+              return filterData.eventUnit.some((unit) =>
+                storyUnits.includes(unit)
+              );
+            });
+          }
+          break;
+        case "eventStoryMain":
+          {
+            sortedCache = sortedCache.filter((e) => {
+              const story = eventStoriesCache.find((es) => es.eventId === e.id);
+              if (!story) return false;
+              const storyMainUnits = eventStoryUnitsCache
+                .filter(
+                  (esu) =>
+                    esu.eventStoryId === story.id &&
+                    esu.eventStoryUnitRelation === "main"
+                )
+                .map((su) => su.unit);
+              return filterData.eventUnit.some((unit) =>
+                storyMainUnits.includes(unit)
+              );
+            });
+          }
+          break;
+      }
+    }
+    if (filterData.isKeyEventStory !== "both") {
       sortedCache = sortedCache.filter((e) => {
         const story = eventStoriesCache.find((es) => es.eventId === e.id);
         if (!story) return filterData.isKeyEventStory === "excl";
@@ -178,7 +224,7 @@ const EventList: React.FC<unknown> = observer(() => {
           : mainStoryUnit;
       });
     }
-    if (filterData.hasEventMusic !== "both" && eventMusicsCache) {
+    if (filterData.hasEventMusic !== "both") {
       sortedCache = sortedCache.filter(
         (e) =>
           (filterData.hasEventMusic === "incl" &&

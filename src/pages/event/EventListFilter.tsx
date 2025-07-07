@@ -1,17 +1,20 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { EventType } from "../../types";
+import { EventType, IUnitProfile } from "../../types";
 import {
+  Avatar,
   Button,
   Chip,
   Collapse,
   FormControl,
   FormControlLabel,
   Grid,
+  IconButton,
   MenuItem,
   Radio,
   RadioGroup,
   Select,
   TextField,
+  Tooltip,
 } from "@mui/material";
 import PaperContainer from "../../components/styled/PaperContainer";
 import TypographyCaption from "../../components/styled/TypographyCaption";
@@ -20,10 +23,14 @@ import { useTranslation } from "react-i18next";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import { useCachedData } from "../../utils";
+import { useAssetI18n } from "../../utils/i18n";
+import clsx from "clsx";
+import { UnitLogoMiniMap } from "../../utils/resources";
 
 type EventFilterStartAtType = "before" | "after" | undefined;
 
-type EventFilterEventUnitType = "event" | "eventStory";
+type EventFilterEventUnitType = "event" | "eventStory" | "eventStoryMain";
 
 type EventFilterInclExclType = "incl" | "excl" | "both";
 
@@ -69,6 +76,9 @@ const EventListFilter: React.FC<{
   onFilterDataChange: (data: EventFilterData) => void;
 }> = ({ filterOpened, toggleFilterOpened, filterData, onFilterDataChange }) => {
   const { t } = useTranslation();
+  const { getTranslated } = useAssetI18n();
+
+  const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
 
   const [searchTitle, setSearchTitle] = useState<string>(
     filterData.searchTitle
@@ -192,6 +202,16 @@ const EventListFilter: React.FC<{
     });
   }, []);
 
+  const handleUnitIconClick = useCallback((unitProfile: IUnitProfile) => {
+    setEventUnit((prev) => {
+      if (prev.includes(unitProfile.unit)) {
+        return prev.filter((u) => u !== unitProfile.unit);
+      } else {
+        return [...prev, unitProfile.unit];
+      }
+    });
+  }, []);
+
   return (
     <Collapse in={filterOpened}>
       <PaperContainer>
@@ -305,6 +325,110 @@ const EventListFilter: React.FC<{
                     />
                   </LocalizationProvider>
                 </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid
+            item
+            container
+            xs={12}
+            alignItems="center"
+            justifyContent="space-between"
+            spacing={1}
+          >
+            <Grid item xs={12} md={2}>
+              <TypographyCaption>
+                {t("filter:event.unitType.caption")}
+              </TypographyCaption>
+            </Grid>
+            <Grid item xs={12} md={10}>
+              <FormControl size="small">
+                <RadioGroup row>
+                  <FormControlLabel
+                    value="both"
+                    control={<Radio />}
+                    label={t("filter:both")}
+                    checked={!eventUnitType}
+                    onChange={(_, checked) => {
+                      if (checked) setEventUnitType(undefined);
+                    }}
+                  />
+                  <FormControlLabel
+                    value="both"
+                    control={<Radio />}
+                    label={t("filter:event.unitType.event")}
+                    checked={eventUnitType === "event"}
+                    onChange={(_, checked) => {
+                      if (checked) setEventUnitType("event");
+                    }}
+                  />
+                  <FormControlLabel
+                    value="incl"
+                    control={<Radio />}
+                    label={t("filter:event.unitType.eventStory")}
+                    checked={eventUnitType === "eventStory"}
+                    onChange={(_, checked) => {
+                      if (checked) setEventUnitType("eventStory");
+                    }}
+                  />
+                  <FormControlLabel
+                    value="excl"
+                    control={<Radio />}
+                    label={t("filter:event.unitType.eventStoryMain")}
+                    checked={eventUnitType === "eventStoryMain"}
+                    onChange={(_, checked) => {
+                      if (checked) setEventUnitType("eventStoryMain");
+                    }}
+                  />
+                </RadioGroup>
+              </FormControl>
+            </Grid>
+          </Grid>
+          <Grid
+            item
+            container
+            xs={12}
+            alignItems="center"
+            justifyContent="space-between"
+            spacing={1}
+          >
+            <Grid item xs={12} md={2}>
+              <TypographyCaption>{t("common:unit")}</TypographyCaption>
+            </Grid>
+            <Grid item xs={12} md={10}>
+              <Grid container spacing={1}>
+                {(unitProfiles || [])
+                  .sort((a, b) => a.seq - b.seq)
+                  .map((unitProfile) => (
+                    <Grid key={"unit-profile-filter-" + unitProfile.unit} item>
+                      <Tooltip
+                        title={getTranslated(
+                          `unit_profile:${unitProfile.unit}.name`,
+                          unitProfile.unitName
+                        )}
+                        placement="top"
+                      >
+                        <IconButton
+                          size="small"
+                          onClick={() => handleUnitIconClick(unitProfile)}
+                          className={clsx({
+                            "icon-not-selected": !eventUnit.includes(
+                              unitProfile.unit
+                            ),
+                            "icon-selected": eventUnit.includes(
+                              unitProfile.unit
+                            ),
+                          })}
+                        >
+                          <Avatar
+                            alt={unitProfile.unit}
+                            src={UnitLogoMiniMap[unitProfile.unit as "idol"]}
+                            sx={{ width: 32, height: 32 }}
+                          />
+                        </IconButton>
+                      </Tooltip>
+                    </Grid>
+                  ))}
               </Grid>
             </Grid>
           </Grid>
