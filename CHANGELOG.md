@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.16.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.16.0...v1.16.1) (2025-07-07)
+
+
+### Features
+
+* **event:** add event music filtering to event list ([d65c20e](https://github.com/Sekai-World/sekai-viewer/commits/d65c20e6ffd7382de54294c1ce98c7efba3bf28a))
+* **event:** add event unit filters with different types ([2aa10ad](https://github.com/Sekai-World/sekai-viewer/commits/2aa10ad9654271ff5fddcabcc66f834645616073))
+* **event:** add filter for event deck bonuses ([0a8fe14](https://github.com/Sekai-World/sekai-viewer/commits/0a8fe14b19d6ce866b324044ba4e758840356ccc))
+* **event:** add filtering options for event type and start time ([fe5a2dd](https://github.com/Sekai-World/sekai-viewer/commits/fe5a2dd250fcafe8245ecd57c74f5f19a243d0fb))
+* **event:** add key event story filter ([b77d2f3](https://github.com/Sekai-World/sekai-viewer/commits/b77d2f3d367a787f3cfaca9ccdfeb6413f96c62b))
+* **event:** add radio buttons for event music filtering options ([0c1b9eb](https://github.com/Sekai-World/sekai-viewer/commits/0c1b9eb2576d7617b900158def620e930bbed76e))
+* **event:** initialize filter state with provided filter data ([fa07c6f](https://github.com/Sekai-World/sekai-viewer/commits/fa07c6f4e204ea7f9c78033a8f27f9f30edb6983))
+* **event:** update event deck bonus attributes to be optional ([5f34163](https://github.com/Sekai-World/sekai-viewer/commits/5f341630320b4cd2a0465a4f10046fbe237871b0))
+* **event:** wip implement filtering ([5f80e1e](https://github.com/Sekai-World/sekai-viewer/commits/5f80e1e356435ab156863ab9752e51c544f0bba3))
+
+
+### Bug Fixes
+
+* asset ScenarioId ([b5352a6](https://github.com/Sekai-World/sekai-viewer/commits/b5352a6758072283089be0abd48ff6cfe05d2218))
+* asset ScenarioId ([483917f](https://github.com/Sekai-World/sekai-viewer/commits/483917f4c56c22d74afcdc58f3fcc6e3fd5f51ac))
+* create a fixVoiceScenarioId method ([503d090](https://github.com/Sekai-World/sekai-viewer/commits/503d09039423ded89a6c20ab664e01f1408f1607))
+* **deps:** update msw to version 2.10.3 ([cb28145](https://github.com/Sekai-World/sekai-viewer/commits/cb28145100d86c189e3e35d7d49a0ae0598508a1))
+* **event:** correctly initialize eventBonusCharaSupportUnit ([91931c0](https://github.com/Sekai-World/sekai-viewer/commits/91931c0d77ce03e045ddefdd94ce481806ed39a0))
+* **event:** optimize filter check to exclude 'both' value ([2aaba2c](https://github.com/Sekai-World/sekai-viewer/commits/2aaba2ca0a2afe00f918041c6351116786ea2021))
+* **l2d:** missing argument in PlayScenarioEffect.ts ([b62d172](https://github.com/Sekai-World/sekai-viewer/commits/b62d17283617abbf7a150b347f628e207785aa35))
+
+
+### Refactors
+
+* **event:** update label for event music filter ([59221de](https://github.com/Sekai-World/sekai-viewer/commits/59221deb80770d3bcdf359d2981f79f5d9c30de2))
+
 ## [1.16.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.15.15...v1.16.0) (2025-06-19)
 
 
