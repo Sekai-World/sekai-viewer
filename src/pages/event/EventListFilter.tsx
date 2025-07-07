@@ -70,21 +70,32 @@ const EventListFilter: React.FC<{
   const [searchTitle, setSearchTitle] = useState<string>(
     filterData.searchTitle
   );
-  const [eventType, setEventType] = useState<EventType[]>([]);
+  const [eventType, setEventType] = useState<EventType[]>(
+    filterData.eventType || []
+  );
   const [startAtType, setStartAtType] = useState<
     EventFilterStartAtType | undefined
-  >();
-  const [startAt, setStartAt] = useState<number | undefined>();
+  >(filterData.startAtType || undefined);
+  const [startAt, setStartAt] = useState<number | undefined>(
+    filterData.startAt || undefined
+  );
   const [eventUnitType, setEventUnitType] = useState<
     EventFilterEventUnitType | undefined
-  >();
-  const [eventUnit, setEventUnit] = useState<string[]>([]);
+  >(filterData.eventUnitType || undefined);
+  const [eventUnit, setEventUnit] = useState<string[]>(
+    filterData.eventUnit || []
+  );
   const [isKeyEventStory, setIsKeyEventStory] =
-    useState<EventFilterInclExclType>("both");
-  const [hasEventMusic, setHasEventMusic] =
-    useState<EventFilterInclExclType>("both");
-  const [eventBonusAttr, setEventBonusAttr] = useState<string[]>([]);
-  const [eventBonusUnitId, setEventBonusUnitId] = useState<number[]>([]);
+    useState<EventFilterInclExclType>(filterData.isKeyEventStory || "both");
+  const [hasEventMusic, setHasEventMusic] = useState<EventFilterInclExclType>(
+    filterData.hasEventMusic || "both"
+  );
+  const [eventBonusAttr, setEventBonusAttr] = useState<string[]>(
+    filterData.eventBonusAttr || []
+  );
+  const [eventBonusUnitId, setEventBonusUnitId] = useState<number[]>(
+    filterData.eventBonusUnitId || []
+  );
 
   const isFilterDataChanged = useMemo(() => {
     return searchTitle !== filterData.searchTitle;
