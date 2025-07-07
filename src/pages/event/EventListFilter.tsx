@@ -5,8 +5,11 @@ import {
   Chip,
   Collapse,
   FormControl,
+  FormControlLabel,
   Grid,
   MenuItem,
+  Radio,
+  RadioGroup,
   Select,
   TextField,
 } from "@mui/material";
@@ -201,10 +204,10 @@ const EventListFilter: React.FC<{
             justifyContent="space-between"
             spacing={1}
           >
-            <Grid item xs={12} md={1}>
+            <Grid item xs={12} md={2}>
               <TypographyCaption>{t("common:title")}</TypographyCaption>
             </Grid>
-            <Grid item xs={12} md={11}>
+            <Grid item xs={12} md={10}>
               <FormControl size="small">
                 <TextField
                   size="small"
@@ -226,10 +229,10 @@ const EventListFilter: React.FC<{
             justifyContent="space-between"
             spacing={1}
           >
-            <Grid item xs={12} md={1}>
+            <Grid item xs={12} md={2}>
               <TypographyCaption>{t("common:type")}</TypographyCaption>
             </Grid>
-            <Grid item xs={12} md={11}>
+            <Grid item xs={12} md={10}>
               <Grid container spacing={1}>
                 {eventTypes.map((type, index) => (
                   <Grid key={"event-type-filter-" + index} item>
@@ -262,10 +265,10 @@ const EventListFilter: React.FC<{
             justifyContent="space-between"
             spacing={1}
           >
-            <Grid item xs={12} md={1}>
+            <Grid item xs={12} md={2}>
               <TypographyCaption>{t("common:startAt")}</TypographyCaption>
             </Grid>
-            <Grid item xs={12} md={11}>
+            <Grid item xs={12} md={10}>
               <Grid container spacing={1}>
                 <Grid item xs={6} md={3}>
                   <FormControl fullWidth>
@@ -303,6 +306,51 @@ const EventListFilter: React.FC<{
                   </LocalizationProvider>
                 </Grid>
               </Grid>
+            </Grid>
+          </Grid>
+          <Grid
+            item
+            container
+            xs={12}
+            alignItems="center"
+            justifyContent="space-between"
+            spacing={1}
+          >
+            <Grid item xs={12} md={2}>
+              <TypographyCaption>{t("filter:hasEventMusic")}</TypographyCaption>
+            </Grid>
+            <Grid item xs={12} md={10}>
+              <FormControl size="small">
+                <RadioGroup row>
+                  <FormControlLabel
+                    value="both"
+                    control={<Radio />}
+                    label={t("filter:both")}
+                    checked={hasEventMusic === "both"}
+                    onChange={(_, checked) => {
+                      if (checked) setHasEventMusic("both");
+                    }}
+                  />
+                  <FormControlLabel
+                    value="incl"
+                    control={<Radio />}
+                    label={t("filter:incl")}
+                    checked={hasEventMusic === "incl"}
+                    onChange={(_, checked) => {
+                      if (checked) setHasEventMusic("incl");
+                    }}
+                  />
+                  <FormControlLabel
+                    value="excl"
+                    control={<Radio />}
+                    label={t("filter:excl")}
+                    checked={hasEventMusic === "excl"}
+                    onChange={(_, checked) => {
+                      if (checked) setHasEventMusic("excl");
+                    }}
+                  />
+                </RadioGroup>
+              </FormControl>
             </Grid>
           </Grid>
           <Grid
