@@ -7,11 +7,12 @@ import React, {
   useMemo,
 } from "react";
 import {
-  // IEventDeckBonus,
+  IEventDeckBonus,
   IEventInfo,
   IEventMusic,
   IEventStory,
   IEventStoryUnit,
+  IGameCharaUnit,
 } from "../../types.d";
 import { useCachedData, useLocalStorage, useToggle } from "../../utils";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
@@ -56,11 +57,11 @@ const EventList: React.FC<unknown> = observer(() => {
   const [events, setEvents] = useState<IEventInfo[]>([]);
 
   const [eventMusicsCache] = useCachedData<IEventMusic>("eventMusics");
-  // const [eventDeckBonusesCache] =
-  //   useCachedData<IEventDeckBonus>("eventDeckBonuses");
-  const [eventStoriesCache] = useCachedData<IEventStory>("eventStories");
-  const [eventStoryUnitsCache] =
-    useCachedData<IEventStoryUnit>("eventStoryUnits");
+  const [eventDeckBonuses] = useCachedData<IEventDeckBonus>("eventDeckBonuses");
+  const [eventStories] = useCachedData<IEventStory>("eventStories");
+  const [eventStoryUnits] = useCachedData<IEventStoryUnit>("eventStoryUnits");
+  const [gameCharacterUnits] =
+    useCachedData<IGameCharaUnit>("gameCharacterUnits");
 
   const [viewGridType] = useState<ViewGridType>(
     (localStorage.getItem("event-list-grid-view-type") ||
@@ -99,6 +100,7 @@ const EventList: React.FC<unknown> = observer(() => {
         hasEventMusic: "both",
         eventBonusAttr: [],
         eventBonusCharaId: [],
+        eventBonusCharaSupportUnit: [],
       } as EventFilterData;
     }
   );
@@ -127,11 +129,12 @@ const EventList: React.FC<unknown> = observer(() => {
 
   useEffect(() => {
     if (
-      !eventsCache ||
-      !eventsCache.length ||
-      !eventMusicsCache ||
-      !eventStoriesCache ||
-      !eventStoryUnitsCache
+      !eventsCache?.length ||
+      !eventMusicsCache?.length ||
+      !eventStories?.length ||
+      !eventStoryUnits?.length ||
+      !eventDeckBonuses?.length ||
+      !gameCharacterUnits?.length
     )
       return;
     let sortedCache = [...eventsCache];
@@ -172,16 +175,18 @@ const EventList: React.FC<unknown> = observer(() => {
         case "event":
           {
             sortedCache = sortedCache.filter((e) =>
-              filterData.eventUnit.includes(e.unit)
+              filterData.eventUnit.length
+                ? filterData.eventUnit.includes(e.unit)
+                : e.unit === "none"
             );
           }
           break;
         case "eventStory":
           {
             sortedCache = sortedCache.filter((e) => {
-              const story = eventStoriesCache.find((es) => es.eventId === e.id);
+              const story = eventStories.find((es) => es.eventId === e.id);
               if (!story) return false;
-              const storyUnits = eventStoryUnitsCache
+              const storyUnits = eventStoryUnits
                 .filter((esu) => esu.eventStoryId === story.id)
                 .map((su) => su.unit);
               return filterData.eventUnit.some((unit) =>
@@ -193,9 +198,9 @@ const EventList: React.FC<unknown> = observer(() => {
         case "eventStoryMain":
           {
             sortedCache = sortedCache.filter((e) => {
-              const story = eventStoriesCache.find((es) => es.eventId === e.id);
+              const story = eventStories.find((es) => es.eventId === e.id);
               if (!story) return false;
-              const storyMainUnits = eventStoryUnitsCache
+              const storyMainUnits = eventStoryUnits
                 .filter(
                   (esu) =>
                     esu.eventStoryId === story.id &&
@@ -212,9 +217,9 @@ const EventList: React.FC<unknown> = observer(() => {
     }
     if (filterData.isKeyEventStory !== "both") {
       sortedCache = sortedCache.filter((e) => {
-        const story = eventStoriesCache.find((es) => es.eventId === e.id);
+        const story = eventStories.find((es) => es.eventId === e.id);
         if (!story) return filterData.isKeyEventStory === "excl";
-        const mainStoryUnit = eventStoryUnitsCache.some(
+        const mainStoryUnit = eventStoryUnits.some(
           (esu) =>
             esu.eventStoryId === story.id &&
             esu.eventStoryUnitRelation === "main"
@@ -233,6 +238,68 @@ const EventList: React.FC<unknown> = observer(() => {
             !eventMusicsCache.some((em) => em.eventId === e.id))
       );
     }
+    if (filterData.eventBonusAttr.length) {
+      sortedCache = sortedCache.filter((e) => {
+        const bonus = eventDeckBonuses.find(
+          (edb) =>
+            edb.eventId === e.id && !edb.gameCharacterUnitId && edb.cardAttr
+        );
+        if (!bonus) return false;
+        return filterData.eventBonusAttr.includes(bonus.cardAttr!);
+      });
+    }
+    if (filterData.eventBonusCharaId.length) {
+      if (!filterData.eventBonusCharaSupportUnit.length) {
+        // gameCharacterUnitId is the same as charaId for event bonuses
+        sortedCache = sortedCache.filter((e) =>
+          eventDeckBonuses.some(
+            (edb) =>
+              edb.eventId === e.id &&
+              edb.gameCharacterUnitId &&
+              filterData.eventBonusCharaId.includes(edb.gameCharacterUnitId)
+          )
+        );
+      } else {
+        const isSupportUnitNeeded = filterData.eventBonusCharaId.some(
+          (charaId) => charaId >= 21
+        );
+        if (isSupportUnitNeeded) {
+          // search gameCharacterUnitId with support unit
+          sortedCache = sortedCache.filter((e) => {
+            return eventDeckBonuses.some((edb) => {
+              if (edb.eventId !== e.id || !edb.gameCharacterUnitId)
+                return false;
+              const charaUnit = gameCharacterUnits.find(
+                (cu) => cu.id === edb.gameCharacterUnitId
+              );
+              if (!charaUnit) return false;
+              return charaUnit.gameCharacterId >= 21
+                ? filterData.eventBonusCharaSupportUnit.includes(charaUnit.unit)
+                : filterData.eventBonusCharaId.includes(
+                    charaUnit.gameCharacterId
+                  );
+            });
+          });
+        } else {
+          // search support unit "piapro" only
+          sortedCache = sortedCache.filter((e) => {
+            return eventDeckBonuses.some((edb) => {
+              if (edb.eventId !== e.id || !edb.gameCharacterUnitId)
+                return false;
+              const charaUnit = gameCharacterUnits.find((cu) =>
+                cu.gameCharacterId >= 21
+                  ? cu.id === edb.gameCharacterUnitId && cu.unit === "piapro"
+                  : cu.id === edb.gameCharacterUnitId
+              );
+              if (!charaUnit) return false;
+              return filterData.eventBonusCharaId.includes(
+                charaUnit.gameCharacterId
+              );
+            });
+          });
+        }
+      }
+    }
     setSortedCache(sortedCache);
     setEvents([]);
     setPage(0);
@@ -244,8 +311,10 @@ const EventList: React.FC<unknown> = observer(() => {
     isShowSpoiler,
     filterData,
     eventMusicsCache,
-    eventStoriesCache,
-    eventStoryUnitsCache,
+    eventStories,
+    eventStoryUnits,
+    eventDeckBonuses,
+    gameCharacterUnits,
   ]);
 
   useEffect(() => {
