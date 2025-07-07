@@ -1,5 +1,19 @@
-import React, { Fragment, useEffect, useState, useCallback } from "react";
-import { IEventInfo } from "../../types.d";
+import React, {
+  Fragment,
+  useEffect,
+  useState,
+  useCallback,
+  useReducer,
+  useMemo,
+} from "react";
+import {
+  IEventDeckBonus,
+  IEventInfo,
+  IEventMusic,
+  IEventStory,
+  IEventStoryUnit,
+  IGameCharaUnit,
+} from "../../types.d";
 import { useCachedData, useLocalStorage, useToggle } from "../../utils";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
 
@@ -14,23 +28,14 @@ import {
   FilterAlt as Filter,
   FilterAltOutlined as FilterOutlined,
 } from "@mui/icons-material";
-import {
-  Badge,
-  Collapse,
-  FormControl,
-  Grid,
-  TextField,
-  ToggleButtonGroup,
-  ToggleButton,
-} from "@mui/material";
+import { Badge, Grid, ToggleButtonGroup, ToggleButton } from "@mui/material";
 import Pound from "~icons/mdi/pound";
 import { useRootStore } from "../../stores/root";
 import { observer } from "mobx-react-lite";
 import TypographyHeader from "../../components/styled/TypographyHeader";
 import ContainerContent from "../../components/styled/ContainerContent";
-import { useDebounce } from "use-debounce";
-import PaperContainer from "../../components/styled/PaperContainer";
-import TypographyCaption from "../../components/styled/TypographyCaption";
+import EventListFilter, { EventFilterData } from "./EventListFilter";
+import { eventListFilterReducer } from "../../stores/reducers";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -51,6 +56,13 @@ const EventList: React.FC<unknown> = observer(() => {
   const [eventsCache] = useCachedData<IEventInfo>("events");
   const [events, setEvents] = useState<IEventInfo[]>([]);
 
+  const [eventMusicsCache] = useCachedData<IEventMusic>("eventMusics");
+  const [eventDeckBonuses] = useCachedData<IEventDeckBonus>("eventDeckBonuses");
+  const [eventStories] = useCachedData<IEventStory>("eventStories");
+  const [eventStoryUnits] = useCachedData<IEventStoryUnit>("eventStoryUnits");
+  const [gameCharacterUnits] =
+    useCachedData<IGameCharaUnit>("gameCharacterUnits");
+
   const [viewGridType] = useState<ViewGridType>(
     (localStorage.getItem("event-list-grid-view-type") ||
       "grid") as ViewGridType
@@ -69,8 +81,39 @@ const EventList: React.FC<unknown> = observer(() => {
   );
   const [sortedCache, setSortedCache] = useState<IEventInfo[]>([]);
   const [filterOpened, toggleFilterOpened] = useToggle(false);
-  const [searchTitle, setSearchTitle] = useState<string>("");
-  const [debouncedSearchTitle] = useDebounce(searchTitle, 500);
+
+  const [filterData, dispatchFilterData] = useReducer(
+    eventListFilterReducer,
+    localStorage.getItem("event-list-filter-data"),
+    (stored: string | null) => {
+      if (stored) {
+        return JSON.parse(stored);
+      }
+      return {
+        searchTitle: "",
+        eventType: [],
+        startAtType: undefined,
+        startAt: undefined,
+        eventUnitType: undefined,
+        eventUnit: [],
+        isKeyEventStory: "both",
+        hasEventMusic: "both",
+        eventBonusAttr: [],
+        eventBonusCharaId: [],
+        eventBonusCharaSupportUnit: [],
+      } as EventFilterData;
+    }
+  );
+  const isFilterNotEmpty = useMemo(
+    () =>
+      Object.values(filterData).some((value) => {
+        if (Array.isArray(value)) return value.length > 0;
+        if (typeof value === "string")
+          return value.trim() !== "" && value !== "both";
+        return value !== null && value !== undefined;
+      }),
+    [filterData]
+  );
 
   useEffect(() => {
     document.title = t("title:eventList");
@@ -85,7 +128,15 @@ const EventList: React.FC<unknown> = observer(() => {
   }, [page, limit, setLastQueryFin, sortedCache]);
 
   useEffect(() => {
-    if (!eventsCache || !eventsCache.length) return;
+    if (
+      !eventsCache?.length ||
+      !eventMusicsCache?.length ||
+      !eventStories?.length ||
+      !eventStoryUnits?.length ||
+      !eventDeckBonuses?.length ||
+      !gameCharacterUnits?.length
+    )
+      return;
     let sortedCache = [...eventsCache];
     if (!isShowSpoiler) {
       sortedCache = sortedCache.filter(
@@ -101,10 +152,153 @@ const EventList: React.FC<unknown> = observer(() => {
         (a, b) => a[sortBy as "startAt"] - b[sortBy as "startAt"]
       );
     }
-    if (debouncedSearchTitle) {
+    if (filterData.searchTitle) {
       sortedCache = sortedCache.filter((e) =>
-        e.name.toLowerCase().includes(debouncedSearchTitle.toLowerCase())
+        e.name.toLowerCase().includes(filterData.searchTitle.toLowerCase())
       );
+    }
+    if (filterData.eventType.length) {
+      sortedCache = sortedCache.filter((e) =>
+        filterData.eventType.includes(e.eventType)
+      );
+    }
+    if (filterData.startAtType && filterData.startAt) {
+      const startAt = filterData.startAt;
+      if (filterData.startAtType === "before") {
+        sortedCache = sortedCache.filter((e) => e.startAt < startAt);
+      } else if (filterData.startAtType === "after") {
+        sortedCache = sortedCache.filter((e) => e.startAt > startAt);
+      }
+    }
+    if (filterData.eventUnitType) {
+      switch (filterData.eventUnitType) {
+        case "event":
+          {
+            sortedCache = sortedCache.filter((e) =>
+              filterData.eventUnit.length
+                ? filterData.eventUnit.includes(e.unit)
+                : e.unit === "none"
+            );
+          }
+          break;
+        case "eventStory":
+          {
+            sortedCache = sortedCache.filter((e) => {
+              const story = eventStories.find((es) => es.eventId === e.id);
+              if (!story) return false;
+              const storyUnits = eventStoryUnits
+                .filter((esu) => esu.eventStoryId === story.id)
+                .map((su) => su.unit);
+              return filterData.eventUnit.some((unit) =>
+                storyUnits.includes(unit)
+              );
+            });
+          }
+          break;
+        case "eventStoryMain":
+          {
+            sortedCache = sortedCache.filter((e) => {
+              const story = eventStories.find((es) => es.eventId === e.id);
+              if (!story) return false;
+              const storyMainUnits = eventStoryUnits
+                .filter(
+                  (esu) =>
+                    esu.eventStoryId === story.id &&
+                    esu.eventStoryUnitRelation === "main"
+                )
+                .map((su) => su.unit);
+              return filterData.eventUnit.some((unit) =>
+                storyMainUnits.includes(unit)
+              );
+            });
+          }
+          break;
+      }
+    }
+    if (filterData.isKeyEventStory !== "both") {
+      sortedCache = sortedCache.filter((e) => {
+        const story = eventStories.find((es) => es.eventId === e.id);
+        if (!story) return filterData.isKeyEventStory === "excl";
+        const mainStoryUnit = eventStoryUnits.some(
+          (esu) =>
+            esu.eventStoryId === story.id &&
+            esu.eventStoryUnitRelation === "main"
+        );
+        return filterData.isKeyEventStory === "excl"
+          ? !mainStoryUnit
+          : mainStoryUnit;
+      });
+    }
+    if (filterData.hasEventMusic !== "both") {
+      sortedCache = sortedCache.filter(
+        (e) =>
+          (filterData.hasEventMusic === "incl" &&
+            eventMusicsCache.some((em) => em.eventId === e.id)) ||
+          (filterData.hasEventMusic === "excl" &&
+            !eventMusicsCache.some((em) => em.eventId === e.id))
+      );
+    }
+    if (filterData.eventBonusAttr.length) {
+      sortedCache = sortedCache.filter((e) => {
+        const bonus = eventDeckBonuses.find(
+          (edb) =>
+            edb.eventId === e.id && !edb.gameCharacterUnitId && edb.cardAttr
+        );
+        if (!bonus) return false;
+        return filterData.eventBonusAttr.includes(bonus.cardAttr!);
+      });
+    }
+    if (filterData.eventBonusCharaId.length) {
+      if (!filterData.eventBonusCharaSupportUnit.length) {
+        // gameCharacterUnitId is the same as charaId for event bonuses
+        sortedCache = sortedCache.filter((e) =>
+          eventDeckBonuses.some(
+            (edb) =>
+              edb.eventId === e.id &&
+              edb.gameCharacterUnitId &&
+              filterData.eventBonusCharaId.includes(edb.gameCharacterUnitId)
+          )
+        );
+      } else {
+        const isSupportUnitNeeded = filterData.eventBonusCharaId.some(
+          (charaId) => charaId >= 21
+        );
+        if (isSupportUnitNeeded) {
+          // search gameCharacterUnitId with support unit
+          sortedCache = sortedCache.filter((e) => {
+            return eventDeckBonuses.some((edb) => {
+              if (edb.eventId !== e.id || !edb.gameCharacterUnitId)
+                return false;
+              const charaUnit = gameCharacterUnits.find(
+                (cu) => cu.id === edb.gameCharacterUnitId
+              );
+              if (!charaUnit) return false;
+              return charaUnit.gameCharacterId >= 21
+                ? filterData.eventBonusCharaSupportUnit.includes(charaUnit.unit)
+                : filterData.eventBonusCharaId.includes(
+                    charaUnit.gameCharacterId
+                  );
+            });
+          });
+        } else {
+          // search support unit "piapro" only
+          sortedCache = sortedCache.filter((e) => {
+            return eventDeckBonuses.some((edb) => {
+              if (edb.eventId !== e.id || !edb.gameCharacterUnitId)
+                return false;
+              const charaUnit = gameCharacterUnits.find((cu) =>
+                cu.gameCharacterId >= 21
+                  ? cu.id === edb.gameCharacterUnitId && cu.unit === "piapro"
+                  : cu.id === edb.gameCharacterUnitId
+              );
+              if (!charaUnit) return false;
+              return filterData.eventBonusCharaId.includes(
+                charaUnit.gameCharacterId
+              );
+            });
+          });
+        }
+      }
     }
     setSortedCache(sortedCache);
     setEvents([]);
@@ -115,7 +309,12 @@ const EventList: React.FC<unknown> = observer(() => {
     sortType,
     sortBy,
     isShowSpoiler,
-    debouncedSearchTitle,
+    filterData,
+    eventMusicsCache,
+    eventStories,
+    eventStoryUnits,
+    eventDeckBonuses,
+    gameCharacterUnits,
   ]);
 
   useEffect(() => {
@@ -197,7 +396,11 @@ const EventList: React.FC<unknown> = observer(() => {
             </Grid>
           </Grid>
           <Grid item>
-            <Badge color="secondary" variant="dot" invisible={!searchTitle}>
+            <Badge
+              color="secondary"
+              variant="dot"
+              invisible={!isFilterNotEmpty}
+            >
               <ToggleButton
                 value=""
                 color="primary"
@@ -209,35 +412,14 @@ const EventList: React.FC<unknown> = observer(() => {
             </Badge>
           </Grid>
         </Grid>
-        <Collapse in={filterOpened}>
-          <PaperContainer>
-            <Grid container direction="column" spacing={2}>
-              <Grid
-                item
-                container
-                xs={12}
-                alignItems="center"
-                justifyContent="space-between"
-                spacing={1}
-              >
-                <Grid item xs={12} md={1}>
-                  <TypographyCaption>{t("common:title")}</TypographyCaption>
-                </Grid>
-                <Grid item xs={12} md={11}>
-                  <FormControl size="small">
-                    <TextField
-                      size="small"
-                      fullWidth
-                      value={searchTitle}
-                      onChange={(e) => setSearchTitle(e.target.value)}
-                      sx={{ minWidth: "200px" }}
-                    />
-                  </FormControl>
-                </Grid>
-              </Grid>
-            </Grid>
-          </PaperContainer>
-        </Collapse>
+        <EventListFilter
+          filterOpened={filterOpened}
+          toggleFilterOpened={toggleFilterOpened}
+          filterData={filterData}
+          onFilterDataChange={(data) =>
+            dispatchFilterData({ type: "update", payload: data })
+          }
+        />
         <InfiniteScroll<IEventInfo>
           ViewComponent={ListCard[viewGridType]}
           callback={callback}
