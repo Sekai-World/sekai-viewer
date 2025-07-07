@@ -6,7 +6,13 @@ import React, {
   useReducer,
   useMemo,
 } from "react";
-import { IEventInfo, IEventMusic } from "../../types.d";
+import {
+  // IEventDeckBonus,
+  IEventInfo,
+  IEventMusic,
+  IEventStory,
+  IEventStoryUnit,
+} from "../../types.d";
 import { useCachedData, useLocalStorage, useToggle } from "../../utils";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
 
@@ -27,7 +33,7 @@ import { useRootStore } from "../../stores/root";
 import { observer } from "mobx-react-lite";
 import TypographyHeader from "../../components/styled/TypographyHeader";
 import ContainerContent from "../../components/styled/ContainerContent";
-import EventListFilter from "./EventListFilter";
+import EventListFilter, { EventFilterData } from "./EventListFilter";
 import { eventListFilterReducer } from "../../stores/reducers";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
@@ -49,7 +55,12 @@ const EventList: React.FC<unknown> = observer(() => {
   const [eventsCache] = useCachedData<IEventInfo>("events");
   const [events, setEvents] = useState<IEventInfo[]>([]);
 
-  const [eventMusicCache] = useCachedData<IEventMusic>("eventMusics");
+  const [eventMusicsCache] = useCachedData<IEventMusic>("eventMusics");
+  // const [eventDeckBonusesCache] =
+  //   useCachedData<IEventDeckBonus>("eventDeckBonuses");
+  const [eventStoriesCache] = useCachedData<IEventStory>("eventStories");
+  const [eventStoryUnitsCache] =
+    useCachedData<IEventStoryUnit>("eventStoryUnits");
 
   const [viewGridType] = useState<ViewGridType>(
     (localStorage.getItem("event-list-grid-view-type") ||
@@ -80,15 +91,15 @@ const EventList: React.FC<unknown> = observer(() => {
       return {
         searchTitle: "",
         eventType: [],
-        startAtType: null,
-        startAt: null,
-        eventUnitType: null,
+        startAtType: undefined,
+        startAt: undefined,
+        eventUnitType: undefined,
         eventUnit: [],
         isKeyEventStory: "both",
         hasEventMusic: "both",
         eventBonusAttr: [],
-        eventBonusUnitId: [],
-      };
+        eventBonusCharaId: [],
+      } as EventFilterData;
     }
   );
   const isFilterNotEmpty = useMemo(
@@ -149,13 +160,31 @@ const EventList: React.FC<unknown> = observer(() => {
         sortedCache = sortedCache.filter((e) => e.startAt > startAt);
       }
     }
-    if (filterData.hasEventMusic !== "both" && eventMusicCache) {
+    if (
+      filterData.isKeyEventStory !== "both" &&
+      eventStoriesCache &&
+      eventStoryUnitsCache
+    ) {
+      sortedCache = sortedCache.filter((e) => {
+        const story = eventStoriesCache.find((es) => es.eventId === e.id);
+        if (!story) return filterData.isKeyEventStory === "excl";
+        const mainStoryUnit = eventStoryUnitsCache.some(
+          (esu) =>
+            esu.eventStoryId === story.id &&
+            esu.eventStoryUnitRelation === "main"
+        );
+        return filterData.isKeyEventStory === "excl"
+          ? !mainStoryUnit
+          : mainStoryUnit;
+      });
+    }
+    if (filterData.hasEventMusic !== "both" && eventMusicsCache) {
       sortedCache = sortedCache.filter(
         (e) =>
           (filterData.hasEventMusic === "incl" &&
-            eventMusicCache.some((em) => em.eventId === e.id)) ||
+            eventMusicsCache.some((em) => em.eventId === e.id)) ||
           (filterData.hasEventMusic === "excl" &&
-            !eventMusicCache.some((em) => em.eventId === e.id))
+            !eventMusicsCache.some((em) => em.eventId === e.id))
       );
     }
     setSortedCache(sortedCache);
@@ -168,7 +197,9 @@ const EventList: React.FC<unknown> = observer(() => {
     sortBy,
     isShowSpoiler,
     filterData,
-    eventMusicCache,
+    eventMusicsCache,
+    eventStoriesCache,
+    eventStoryUnitsCache,
   ]);
 
   useEffect(() => {

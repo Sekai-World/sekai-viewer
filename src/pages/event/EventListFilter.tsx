@@ -39,7 +39,7 @@ export interface EventFilterData {
   isKeyEventStory: EventFilterInclExclType;
   hasEventMusic: EventFilterInclExclType;
   eventBonusAttr: string[];
-  eventBonusUnitId: number[];
+  eventBonusCharaId: number[];
 }
 
 const eventTypes = Object.freeze([
@@ -96,8 +96,8 @@ const EventListFilter: React.FC<{
   const [eventBonusAttr, setEventBonusAttr] = useState<string[]>(
     filterData.eventBonusAttr || []
   );
-  const [eventBonusUnitId, setEventBonusUnitId] = useState<number[]>(
-    filterData.eventBonusUnitId || []
+  const [eventBonusCharaId, setEventBonusCharaId] = useState<number[]>(
+    filterData.eventBonusCharaId || []
   );
 
   const isFilterDataChanged = useMemo(() => {
@@ -126,12 +126,12 @@ const EventListFilter: React.FC<{
       isKeyEventStory: isKeyEventStory,
       hasEventMusic: hasEventMusic,
       eventBonusAttr: eventBonusAttr,
-      eventBonusUnitId: eventBonusUnitId,
+      eventBonusCharaId: eventBonusCharaId,
     });
     toggleFilterOpened();
   }, [
     eventBonusAttr,
-    eventBonusUnitId,
+    eventBonusCharaId,
     eventType,
     eventUnit,
     eventUnitType,
@@ -155,10 +155,10 @@ const EventListFilter: React.FC<{
     setIsKeyEventStory(filterData.isKeyEventStory);
     setHasEventMusic(filterData.hasEventMusic);
     setEventBonusAttr(filterData.eventBonusAttr);
-    setEventBonusUnitId(filterData.eventBonusUnitId);
+    setEventBonusCharaId(filterData.eventBonusCharaId);
   }, [
     filterData.eventBonusAttr,
-    filterData.eventBonusUnitId,
+    filterData.eventBonusCharaId,
     filterData.eventType,
     filterData.eventUnit,
     filterData.eventUnitType,
@@ -179,7 +179,7 @@ const EventListFilter: React.FC<{
     setIsKeyEventStory("both");
     setHasEventMusic("both");
     setEventBonusAttr([]);
-    setEventBonusUnitId([]);
+    setEventBonusCharaId([]);
   }, []);
 
   const handleEventTypeClick = useCallback((type: EventType) => {
@@ -306,6 +306,51 @@ const EventListFilter: React.FC<{
                   </LocalizationProvider>
                 </Grid>
               </Grid>
+            </Grid>
+          </Grid>
+          <Grid
+            item
+            container
+            xs={12}
+            alignItems="center"
+            justifyContent="space-between"
+            spacing={1}
+          >
+            <Grid item xs={12} md={2}>
+              <TypographyCaption>{t("event:keyStory")}</TypographyCaption>
+            </Grid>
+            <Grid item xs={12} md={10}>
+              <FormControl size="small">
+                <RadioGroup row>
+                  <FormControlLabel
+                    value="both"
+                    control={<Radio />}
+                    label={t("filter:both")}
+                    checked={isKeyEventStory === "both"}
+                    onChange={(_, checked) => {
+                      if (checked) setIsKeyEventStory("both");
+                    }}
+                  />
+                  <FormControlLabel
+                    value="incl"
+                    control={<Radio />}
+                    label={t("filter:incl")}
+                    checked={isKeyEventStory === "incl"}
+                    onChange={(_, checked) => {
+                      if (checked) setIsKeyEventStory("incl");
+                    }}
+                  />
+                  <FormControlLabel
+                    value="excl"
+                    control={<Radio />}
+                    label={t("filter:excl")}
+                    checked={isKeyEventStory === "excl"}
+                    onChange={(_, checked) => {
+                      if (checked) setIsKeyEventStory("excl");
+                    }}
+                  />
+                </RadioGroup>
+              </FormControl>
             </Grid>
           </Grid>
           <Grid
