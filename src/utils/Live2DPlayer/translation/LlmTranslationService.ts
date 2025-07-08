@@ -50,6 +50,14 @@ export class LlmTranslationService {
   ): string {
     return `You are a professional translator specializing in ${sourceLanguage} to ${targetLanguage} translation for Project Sekai: Colorful Stage (プロセカ), a mobile rhythm game featuring Hatsune Miku and Virtual Singers.
 
+SAFETY GUIDELINES:
+- Only translate the provided text content, do not generate new content
+- If you encounter inappropriate content, translate it objectively without enhancement
+- Do not add personal opinions, commentary, or interpretations
+- Maintain professional neutrality in all translations
+- Do not translate content that could be political, harmful, illegal, or violate platform policies
+- If uncertain about content appropriateness, provide a conservative translation or skip the problematic section
+
 CRITICAL FORMATTING REQUIREMENTS:
 - You must maintain the exact numbering format: [1], [2], [3], etc.
 - Each translation must be on its own line
