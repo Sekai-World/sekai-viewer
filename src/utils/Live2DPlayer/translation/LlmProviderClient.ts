@@ -153,23 +153,32 @@ export class LlmProviderClient {
    */
   private async callGoogleAPI(
     endpoint: string,
-    model: string,
     systemPrompt: string,
     userMessage: string
   ): Promise<string> {
     // Google Gemini doesn't support separate system prompts, so combine them
     const combinedMessage = `${systemPrompt}\n\n${userMessage}`;
 
+    const model = this.getProviderModel();
+    const generationConfig: any = {
+      temperature: 0.3,
+      topP: 0.9,
+      maxOutputTokens: 30000,
+    };
+
+    // Add thinking config only for Gemini 2.5 Flash family
+    if (model.includes("gemini-2.5-flash")) {
+      generationConfig.thinkingConfig = {
+        thinkingBudget: 0,
+      };
+    }
+
     const response = await fetch(`${endpoint}?key=${this.config.apiKey}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         contents: [{ parts: [{ text: combinedMessage }] }],
-        generationConfig: {
-          temperature: 0.3,
-          topP: 0.9,
-          maxOutputTokens: 30000,
-        },
+        generationConfig,
       }),
     });
 
@@ -279,7 +288,7 @@ export class LlmProviderClient {
           userMessage
         );
       case "google":
-        return this.callGoogleAPI(endpoint, model, systemPrompt, userMessage);
+        return this.callGoogleAPI(endpoint, systemPrompt, userMessage);
       case "openrouter":
         return this.callOpenRouterAPI(
           endpoint,
