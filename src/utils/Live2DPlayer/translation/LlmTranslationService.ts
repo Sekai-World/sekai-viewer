@@ -33,6 +33,10 @@ export class LlmTranslationService {
    */
   private checkAndUpdateConfigIfNeeded(): void {
     const newConfig = this.getConfigFromSettings();
+    // Compare old and new configurations
+    if (JSON.stringify(this.config) === JSON.stringify(newConfig)) {
+      return; // No changes, skip update
+    }
     this.config = newConfig;
     this.providerClient.updateConfig(newConfig);
   }
