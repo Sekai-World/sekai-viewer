@@ -1,3 +1,5 @@
+import axios, { AxiosResponse } from "axios";
+
 /**
  * Configuration interface for LLM API providers
  */
@@ -88,30 +90,33 @@ export class LlmProviderClient {
     systemPrompt: string,
     userMessage: string
   ): Promise<string> {
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${this.config.apiKey}`,
-      },
-      body: JSON.stringify({
-        model,
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userMessage },
-        ],
-        max_tokens: 30000,
-        temperature: 0.3,
-      }),
-    });
+    try {
+      const response: AxiosResponse = await axios.post(
+        endpoint,
+        {
+          model,
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userMessage },
+          ],
+          max_tokens: 10000,
+          temperature: 0.3,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${this.config.apiKey}`,
+          },
+        }
+      );
 
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`OpenAI API error (${response.status}): ${error}`);
+      return response.data.choices[0]?.message?.content?.trim() || "";
+    } catch (error: any) {
+      const message = error.response?.data?.error?.message || error.message;
+      throw new Error(
+        `OpenAI API error (${error.response?.status || "Unknown"}): ${message}`
+      );
     }
-
-    const data = await response.json();
-    return data.choices[0]?.message?.content?.trim() || "";
   }
 
   /**
@@ -123,29 +128,32 @@ export class LlmProviderClient {
     systemPrompt: string,
     userMessage: string
   ): Promise<string> {
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": this.config.apiKey,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model,
-        max_tokens: 30000,
-        temperature: 0.3,
-        system: systemPrompt,
-        messages: [{ role: "user", content: userMessage }],
-      }),
-    });
+    try {
+      const response: AxiosResponse = await axios.post(
+        endpoint,
+        {
+          model,
+          max_tokens: 10000,
+          temperature: 0.3,
+          system: systemPrompt,
+          messages: [{ role: "user", content: userMessage }],
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": this.config.apiKey,
+            "anthropic-version": "2023-06-01",
+          },
+        }
+      );
 
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`Anthropic API error (${response.status}): ${error}`);
+      return response.data.content[0]?.text?.trim() || "";
+    } catch (error: any) {
+      const message = error.response?.data?.error?.message || error.message;
+      throw new Error(
+        `Anthropic API error (${error.response?.status || "Unknown"}): ${message}`
+      );
     }
-
-    const data = await response.json();
-    return data.content[0]?.text?.trim() || "";
   }
 
   /**
@@ -153,17 +161,14 @@ export class LlmProviderClient {
    */
   private async callGoogleAPI(
     endpoint: string,
+    model: string,
     systemPrompt: string,
     userMessage: string
   ): Promise<string> {
-    // Google Gemini doesn't support separate system prompts, so combine them
-    const combinedMessage = `${systemPrompt}\n\n${userMessage}`;
-
-    const model = this.getProviderModel();
     const generationConfig: any = {
       temperature: 0.3,
       topP: 0.9,
-      maxOutputTokens: 30000,
+      maxOutputTokens: 10000,
     };
 
     // Add thinking config only for Gemini 2.5 Flash family
@@ -173,22 +178,32 @@ export class LlmProviderClient {
       };
     }
 
-    const response = await fetch(`${endpoint}?key=${this.config.apiKey}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: combinedMessage }] }],
-        generationConfig,
-      }),
-    });
+    const requestBody: any = {
+      contents: [{ parts: [{ text: userMessage }] }],
+      generationConfig,
+      systemInstruction: {
+        parts: [{ text: systemPrompt }],
+      },
+    };
 
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`Google Gemini API error (${response.status}): ${error}`);
+    try {
+      const response: AxiosResponse = await axios.post(
+        `${endpoint}?key=${this.config.apiKey}`,
+        requestBody,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      return response.data.candidates[0]?.content?.parts[0]?.text?.trim() || "";
+    } catch (error: any) {
+      const message = error.response?.data?.error?.message || error.message;
+      throw new Error(
+        `Google Gemini API error (${error.response?.status || "Unknown"}): ${message}`
+      );
     }
-
-    const data = await response.json();
-    return data.candidates[0]?.content?.parts[0]?.text?.trim() || "";
   }
 
   /**
@@ -200,30 +215,33 @@ export class LlmProviderClient {
     systemPrompt: string,
     userMessage: string
   ): Promise<string> {
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${this.config.apiKey}`,
-      },
-      body: JSON.stringify({
-        model,
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userMessage },
-        ],
-        max_tokens: 30000,
-        temperature: 0.3,
-      }),
-    });
+    try {
+      const response: AxiosResponse = await axios.post(
+        endpoint,
+        {
+          model,
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userMessage },
+          ],
+          max_tokens: 10000,
+          temperature: 0.3,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${this.config.apiKey}`,
+          },
+        }
+      );
 
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`OpenRouter API error (${response.status}): ${error}`);
+      return response.data.choices[0]?.message?.content?.trim() || "";
+    } catch (error: any) {
+      const message = error.response?.data?.error?.message || error.message;
+      throw new Error(
+        `OpenRouter API error (${error.response?.status || "Unknown"}): ${message}`
+      );
     }
-
-    const data = await response.json();
-    return data.choices[0]?.message?.content?.trim() || "";
   }
 
   /**
@@ -235,35 +253,38 @@ export class LlmProviderClient {
     systemPrompt: string,
     userMessage: string
   ): Promise<string> {
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${this.config.apiKey}`,
-      },
-      body: JSON.stringify({
-        model,
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userMessage },
-        ],
-        max_tokens: 30000,
-        temperature: 0.3,
-      }),
-    });
+    try {
+      const response: AxiosResponse = await axios.post(
+        endpoint,
+        {
+          model,
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userMessage },
+          ],
+          max_tokens: 10000,
+          temperature: 0.3,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${this.config.apiKey}`,
+          },
+        }
+      );
 
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`Custom API error (${response.status}): ${error}`);
+      return (
+        response.data.choices[0]?.message?.content?.trim() ||
+        response.data.content[0]?.text?.trim() ||
+        response.data.candidates[0]?.content?.parts[0]?.text?.trim() ||
+        ""
+      );
+    } catch (error: any) {
+      const message = error.response?.data?.error?.message || error.message;
+      throw new Error(
+        `Custom API error (${error.response?.status || "Unknown"}): ${message}`
+      );
     }
-
-    const data = await response.json();
-    return (
-      data.choices[0]?.message?.content?.trim() ||
-      data.content[0]?.text?.trim() ||
-      data.candidates[0]?.content?.parts[0]?.text?.trim() ||
-      ""
-    );
   }
 
   /**
@@ -288,7 +309,7 @@ export class LlmProviderClient {
           userMessage
         );
       case "google":
-        return this.callGoogleAPI(endpoint, systemPrompt, userMessage);
+        return this.callGoogleAPI(endpoint, model, systemPrompt, userMessage);
       case "openrouter":
         return this.callOpenRouterAPI(
           endpoint,
