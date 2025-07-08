@@ -226,15 +226,6 @@ Respond ONLY with the numbered translations. Do not include any other text.`;
     const settings = rootStore.settings;
     const language = targetLanguage || settings.targetLanguage;
 
-    // Check if translation is enabled or region is JP
-    if (
-      !settings.enableLlmTranslation ||
-      !settings.llmApiKey ||
-      settings.region !== "jp"
-    ) {
-      return;
-    }
-
     // Extract and translate talk dialogues
     const talkTexts: string[] = [];
     const talkIndices: number[] = [];
