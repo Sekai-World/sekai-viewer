@@ -17,6 +17,7 @@ import {
 } from "../../utils/Live2DPlayer/types.d";
 import { LlmTranslationService } from "../../utils/Live2DPlayer/translation/LlmTranslationService";
 import { TranslationCache } from "../../utils/Live2DPlayer/translation/TranslationCache";
+import { rootStore } from "../../stores/root";
 
 import { IScenarioData, ServerRegion } from "../../types.d";
 import ContainerContent from "../../components/styled/ContainerContent";
@@ -117,6 +118,13 @@ const StoryReaderLive2DContent: React.FC<{
       return;
     }
 
+    // Check if translation is properly configured
+    const settings = rootStore.settings;
+    if (!settings.llmApiKey) {
+      showError(t("story_reader_live2d:error.translationNotConfigured"));
+      return;
+    }
+
     setIsRegeneratingTranslation(true);
     try {
       const translationService = new LlmTranslationService();
@@ -149,15 +157,25 @@ const StoryReaderLive2DContent: React.FC<{
         await getProcessedScenarioDataForLive2D(scenarioInfo);
       setLoadProgress(2);
 
-      // Start translation if enabled or region is JP
+      // Check if translation is enabled and region is jp
       if (scenarioData.current) {
-        try {
-          setProgressText(t("story_reader_live2d:progress.translation"));
-          const translationService = new LlmTranslationService();
-          TranslationCache.clearCache();
-          await translationService.translateScenarioData(scenarioData.current);
-        } catch (error) {
-          console.warn("Translation failed:", error);
+        const settings = rootStore.settings;
+
+        if (
+          settings.enableLlmTranslation &&
+          settings.llmApiKey &&
+          settings.region === "jp"
+        ) {
+          try {
+            setProgressText(t("story_reader_live2d:progress.translation"));
+            const translationService = new LlmTranslationService();
+            TranslationCache.clearCache();
+            await translationService.translateScenarioData(
+              scenarioData.current
+            );
+          } catch (error) {
+            console.warn("Translation failed:", error);
+          }
         }
       }
 
@@ -284,23 +302,26 @@ const StoryReaderLive2DContent: React.FC<{
         >
           {t("story_reader_live2d:toggle_page_full_screen")}
         </Button>
-        <Button
-          variant="contained"
-          disabled={
-            loadStatus !== LoadStatus.Loaded || isRegeneratingTranslation
-          }
-          onClick={regenerateTranslation}
-          sx={{ flex: 1, minWidth: 100 }}
-          startIcon={
-            isRegeneratingTranslation ? (
-              <CircularProgress size={20} />
-            ) : undefined
-          }
-        >
-          {isRegeneratingTranslation
-            ? t("story_reader_live2d:regenerating_translation")
-            : t("story_reader_live2d:regenerate_translation")}
-        </Button>
+        {rootStore.settings.region === "jp" &&
+          rootStore.settings.enableLlmTranslation && (
+            <Button
+              variant="contained"
+              disabled={
+                loadStatus !== LoadStatus.Loaded || isRegeneratingTranslation
+              }
+              onClick={regenerateTranslation}
+              sx={{ flex: 1, minWidth: 100 }}
+              startIcon={
+                isRegeneratingTranslation ? (
+                  <CircularProgress size={20} />
+                ) : undefined
+              }
+            >
+              {isRegeneratingTranslation
+                ? t("story_reader_live2d:regenerating_translation")
+                : t("story_reader_live2d:regenerate_translation")}
+            </Button>
+          )}
         <Button
           variant="contained"
           onClick={() => setShowSettings(!showSettings)}
