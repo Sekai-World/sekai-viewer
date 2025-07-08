@@ -22,10 +22,7 @@ export default async function Movie(
     try {
       await controller.layers.movie.draw(videoElement);
 
-      // Wait for specified duration or video to end, whichever comes first
-      const duration =
-        action_detail.Duration > 0 ? action_detail.Duration * 1000 : undefined;
-      await controller.layers.movie.waitForCompletion(duration);
+      await controller.layers.movie.waitForCompletion();
     } catch (error) {
       controller.events.emit(
         "warn",

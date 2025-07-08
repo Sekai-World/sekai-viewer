@@ -72,20 +72,9 @@ export default class Movie extends BaseLayer {
 
       // Destroy PIXI resources if they exist
       if (this.structure.movie) {
-        try {
-          // Safely destroy texture resources
-          if (this.structure.movie.texture) {
-            this.structure.movie.texture.destroy(true);
-            if (this.structure.movie.texture.baseTexture) {
-              this.structure.movie.texture.baseTexture.destroy();
-            }
-          }
-        } catch (textureError) {
-          log.warn(
-            "Live2DController",
-            "Movie layer: Error destroying texture resources:",
-            textureError
-          );
+        // Safely destroy texture resources
+        if (this.structure.movie.texture) {
+          this.structure.movie.texture.destroy(true);
         }
 
         // Clear references
@@ -99,7 +88,6 @@ export default class Movie extends BaseLayer {
 
       this.init = false;
     } catch (error) {
-      // Log cleanup errors but don't throw
       log.warn("Live2DController", "Movie layer: Error during cleanup:", error);
       this.init = false;
     }
@@ -131,26 +119,24 @@ export default class Movie extends BaseLayer {
     }
   }
 
-  async waitForCompletion(duration?: number): Promise<void> {
+  async waitForCompletion(): Promise<void> {
     if (!this.videoElement) {
       return;
     }
 
     const videoElement = this.videoElement;
 
-    // Wait for specified duration or video to end, whichever comes first
-    const videoDuration = duration || videoElement.duration * 1000;
-
-    await Promise.race([
-      this.animation_controller.delay(videoDuration),
-      new Promise<void>((resolve) => {
-        const onEnded = () => {
+    // Wait for the video to finish playing
+    await new Promise<void>((resolve) => {
+      const onEnded = () => {
+        // Only remove the listener if the video element hasn't been cleared
+        if (this.videoElement === videoElement) {
           videoElement.removeEventListener("ended", onEnded);
-          resolve();
-        };
-        videoElement.addEventListener("ended", onEnded);
-      }),
-    ]);
+        }
+        resolve();
+      };
+      videoElement.addEventListener("ended", onEnded);
+    });
   }
 
   destroy(): void {
