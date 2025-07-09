@@ -4,7 +4,6 @@
 - find SekaiIn/Out sound effect
 - NOT IMPLEMENT YET:
   - SpecialEffectType.PlaceInfo
-  - SpecialEffectType.Movie
   - SpecialEffectType.SimpleSelectable
   - SpecialEffectType.0
   - SpecialEffectType.44
