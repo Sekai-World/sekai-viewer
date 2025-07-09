@@ -270,32 +270,6 @@ export function useProcessedScenarioDataForText() {
 
   const getCharaName = useCharaName();
 
-  /**
-   * fix eventStory asset "ScenarioId" field error
-   *
-   * event 168 => event_167_??
-   *
-   * event 169 => event_168_??
-   */
-  const fixVoiceScenarioId = (info: IScenarioInfo, data: IScenarioData) => {
-    if (info.storyType !== "eventStory") {
-      return;
-    }
-
-    const confirmScenarioId = info.scenarioDataUrl.split("/").pop();
-    if (typeof confirmScenarioId !== "string") {
-      return;
-    }
-
-    const isErrored = ["event_168", "event_169"].some((item) =>
-      confirmScenarioId.startsWith(item)
-    );
-
-    if (isErrored) {
-      data.ScenarioId = confirmScenarioId.replace(".asset", "");
-    }
-  };
-
   return useCallback(
     async (info: IScenarioInfo) => {
       const ret: {
@@ -319,8 +293,6 @@ export function useProcessedScenarioDataForText() {
           responseType: "json",
         }
       );
-
-      fixVoiceScenarioId(info, data);
 
       const {
         ScenarioId,
@@ -927,6 +899,17 @@ function modelNameFix(info: IScenarioInfo, data: IScenarioData) {
  * rules see "map".
  */
 function scenarioIdToAssetbundleName(scenarioId: string) {
+  let result = scenarioId;
+
+  // Handle event number offset: if contains "event_" and number > 166, increment by 1
+  const eventMatch = result.match(/event_(\d+)/);
+  if (eventMatch) {
+    const eventNumber = parseInt(eventMatch[1]);
+    if (eventNumber > 166) {
+      result = result.replace(/event_(\d+)/, `event_${eventNumber + 1}`);
+    }
+  }
+
   const map: Record<string, string> = {
     "areatalk03_266(20230607修正)": "areatalk03_266",
     "★4冬弥・泉_前半": "012043_touya01",
@@ -941,5 +924,6 @@ function scenarioIdToAssetbundleName(scenarioId: string) {
     story_connect_live_thanksgiving_4th_anv:
       "story_connect_live_4th_anniversary_01",
   };
-  return map[scenarioId] || scenarioId;
+
+  return map[result] || result;
 }
