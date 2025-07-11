@@ -131,8 +131,10 @@ export class Live2DPlayer {
       this.stage_size[1] * this.camera.pivot[1]
     );
     this.root.position.set(
-      this.stage_size[0] * (this.camera.pivot[0] + this.camera.position[0]),
-      this.stage_size[1] * (this.camera.pivot[1] + this.camera.position[1])
+      this.stage_size[0] *
+        (this.camera.pivot[0] - this.camera.position[0] / this.camera.scale[0]),
+      this.stage_size[1] *
+        (this.camera.pivot[1] + this.camera.position[1] / this.camera.scale[1])
     );
     this.root.scale.set(this.camera.scale[0], this.camera.scale[1]);
     this.root.rotation = this.camera.rotation;
