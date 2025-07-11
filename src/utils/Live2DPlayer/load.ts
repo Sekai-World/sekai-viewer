@@ -313,11 +313,11 @@ async function preloadModelMotion(
     motion_list.push(
       ...model.data.FileReferences.Motions.Motion.map((motion) => ({
         origin: `${model.costume}/${motion.Name}`,
-        url: model.data.url + motion.File,
+        url: motion.File,
       })),
       ...model.data.FileReferences.Motions.Expression.map((motion) => ({
         origin: `${model.costume}/${motion.Name}`,
-        url: model.data.url + motion.File,
+        url: motion.File,
       }))
     );
   }
