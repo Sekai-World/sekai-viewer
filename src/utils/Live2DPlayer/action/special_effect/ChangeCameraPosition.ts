@@ -19,7 +19,8 @@ export default async function ChangeCameraPosition(
     parseFloat(action_detail.StringVal.split(",")[0]) / 1920,
     parseFloat(action_detail.StringVal.split(",")[1]) / 1080,
   ];
-  controller.animate.progress_wrapper((progress) => {
+
+  await controller.animate.progress_wrapper((progress) => {
     controller.camera.position[0] = from[0] + (to[0] - from[0]) * progress;
     controller.camera.position[1] = from[1] + (to[1] - from[1]) * progress;
     controller.set_style();

@@ -48,6 +48,9 @@ export default async function action_se(
 ) {
   const action_detail =
     controller.scenarioData.SpecialEffectData[action.ReferenceIndex];
+  //clear
+  await controller.layers.telop.hide(200);
+
   switch (action_detail.EffectType) {
     case SpecialEffectType.ChangeBackground:
       await ChangeBackground(controller, action);

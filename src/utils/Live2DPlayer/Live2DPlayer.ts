@@ -25,6 +25,7 @@ export class Live2DPlayer {
   stage_size: [number, number];
   animate: AnimationController;
   root: Container;
+  UIRoot: Container;
   layers: {
     background: Background;
     fullcolor: Fullcolor;
@@ -91,13 +92,19 @@ export class Live2DPlayer {
     };
     const root = new Container();
     this.root = root;
+
+    const UIRoot = new Container();
+    this.UIRoot = UIRoot;
+
     app.stage.addChild(root);
+    app.stage.addChild(UIRoot);
+
     root.addChild(this.layers.background.root);
     root.addChild(this.layers.live2d.root);
     root.addChild(this.layers.scene_effect.root);
     root.addChild(this.layers.memory_filter.root);
     root.addChild(this.layers.flashback_filter.root);
-    root.addChild(this.layers.dialog.root);
+
     root.addChild(this.layers.telop.root);
     root.addChild(this.layers.sekai.root);
     root.addChild(this.layers.wipe.root);
@@ -105,6 +112,8 @@ export class Live2DPlayer {
     root.addChild(this.layers.fullscreen_text_bg.root);
     root.addChild(this.layers.fullscreen_text.root);
     root.addChild(this.layers.movie.root);
+
+    UIRoot.addChild(this.layers.dialog.root);
 
     this.camera = {
       pivot: [0.5, 0.5],
@@ -122,8 +131,10 @@ export class Live2DPlayer {
       this.stage_size[1] * this.camera.pivot[1]
     );
     this.root.position.set(
-      this.stage_size[0] * (this.camera.pivot[0] + this.camera.position[0]),
-      this.stage_size[1] * (this.camera.pivot[1] + this.camera.position[1])
+      this.stage_size[0] *
+        (this.camera.pivot[0] - this.camera.position[0] / this.camera.scale[0]),
+      this.stage_size[1] *
+        (this.camera.pivot[1] + this.camera.position[1] / this.camera.scale[1])
     );
     this.root.scale.set(this.camera.scale[0], this.camera.scale[1]);
     this.root.rotation = this.camera.rotation;
@@ -140,5 +151,8 @@ export class Live2DPlayer {
     this.animate.abort_controller.abort();
     // destroy all layers
     Object.values(this.layers).forEach((l) => l.destroy());
+    // clean up containers
+    this.UIRoot.destroy();
+    this.root.destroy();
   }
 }
