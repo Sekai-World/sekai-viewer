@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.16.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.16.1...v1.16.2) (2025-07-13)
+
+
+### Features
+
+* add pnpm workspace configuration for built dependencies ([05c725f](https://github.com/Sekai-World/sekai-viewer/commits/05c725f9e352019fdf2244574bad2fce275cde3d))
+* **l2d:** implement SpecialEffectType.Movie ([189acc6](https://github.com/Sekai-World/sekai-viewer/commits/189acc627300a986ea46a6a3fe3110d7ae771059))
+* **live2d:** llm translation for story reader ([faa2ea2](https://github.com/Sekai-World/sekai-viewer/commits/faa2ea2d174adc6538b687665e59a74511e3612e))
+
+
+### Bug Fixes
+
+* better edge case handling ([24ca181](https://github.com/Sekai-World/sekai-viewer/commits/24ca181c699d059cc152eddac65c3dda555b0591))
+* **l2d:** dialogue layer will not zoom in ([13ab11b](https://github.com/Sekai-World/sekai-viewer/commits/13ab11b670d759f6bc1c2bd48fd1e200c0a80695))
+* **l2d:** incorrect position move and sequence ([3c7493d](https://github.com/Sekai-World/sekai-viewer/commits/3c7493d9cbd7bf758cb6717271a10b005299b5b3))
+* **l2d:** incorrect URL for motion file ([238183c](https://github.com/Sekai-World/sekai-viewer/commits/238183c1394562a6536ccff14c3244be7f525ac6))
+* **l2d:** telop don't disappear ([37d61bc](https://github.com/Sekai-World/sekai-viewer/commits/37d61bcf332a53fef39207a61854ec491623e7e5))
+* wrong URL for voice ([9291986](https://github.com/Sekai-World/sekai-viewer/commits/9291986417b6e12c8b5b17f8dc2082da7434d0f4))
+
+
+### Refactors
+
+* add checking for translation setting ([f577cbd](https://github.com/Sekai-World/sekai-viewer/commits/f577cbd7f11b64fd3ff7bf1829b39e312cb4cab5))
+* add safety guidelines to system prompt ([f939599](https://github.com/Sekai-World/sekai-viewer/commits/f939599de01cb71978b628a6f08e43d2a5af138c))
+* disable thinking for Gemini 2.5 Flash family models ([fc3c243](https://github.com/Sekai-World/sekai-viewer/commits/fc3c243a20d482280e630903051ea935a06f72ed))
+* use axios for network fetching ([0e836bb](https://github.com/Sekai-World/sekai-viewer/commits/0e836bbf523a1b91df2556e2820efd9aa4c41558))
+
 ### [1.16.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.16.0...v1.16.1) (2025-07-07)
 
 
