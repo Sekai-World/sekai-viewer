@@ -20,5 +20,8 @@ export default async function ChangeBackground(
       s.identifer === action_detail.StringValSub &&
       s.type === Live2DAssetType.BackgroundImage
   )?.data as HTMLImageElement;
+  //clear
+  controller.layers.dialog.hide(200);
+
   controller.layers.background.draw(data);
 }
