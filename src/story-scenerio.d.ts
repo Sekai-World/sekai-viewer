@@ -329,7 +329,7 @@ export enum SpecialEffectType {
   AttachCharacterShader = 22,
   SimpleSelectable = 23,
   /**
-   * black background, white text on the center of screen.
+   * white text on the center of screen.
    * used in unit story.
    * @param StringVal Text
    * @param StringValSub Voice
