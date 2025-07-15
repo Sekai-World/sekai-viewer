@@ -3,7 +3,6 @@
 - more SpecialEffectType.PlayScenarioEffect
 - find SekaiIn/Out sound effect
 - NOT IMPLEMENT YET:
-  - SpecialEffectType.PlaceInfo
   - SpecialEffectType.SimpleSelectable
   - SpecialEffectType.0
   - SpecialEffectType.44
