@@ -33,7 +33,6 @@ export class Live2DPlayer {
     memory_filter: Fullcolor;
     dialog: Dialog;
     fullscreen_text: FullScreenText;
-    fullscreen_text_bg: Fullcolor;
     telop: Telop;
     place_info: PlaceInfo;
     flashback_filter: Fullcolor;
@@ -81,7 +80,6 @@ export class Live2DPlayer {
       background: new Background(layer_data),
       fullcolor: new Fullcolor(layer_data),
       fullscreen_text: new FullScreenText(layer_data),
-      fullscreen_text_bg: new Fullcolor(layer_data),
       telop: new Telop(layer_data),
       place_info: new PlaceInfo(layer_data),
       flashback_filter: new Fullcolor(layer_data),
@@ -112,7 +110,6 @@ export class Live2DPlayer {
     root.addChild(this.layers.sekai.root);
     root.addChild(this.layers.wipe.root);
     root.addChild(this.layers.fullcolor.root);
-    root.addChild(this.layers.fullscreen_text_bg.root);
     root.addChild(this.layers.fullscreen_text.root);
     root.addChild(this.layers.movie.root);
 

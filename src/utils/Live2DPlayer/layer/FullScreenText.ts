@@ -71,7 +71,7 @@ export default class FullScreenText extends BaseLayer {
         breakWords: true,
         wordWrap: true,
         wordWrapWidth: this.stage_size[0] * 0.9,
-        align: "center",
+        align: "left",
       });
     }
 
@@ -87,7 +87,7 @@ export default class FullScreenText extends BaseLayer {
       breakWords: true,
       wordWrap: true,
       wordWrapWidth: this.stage_size[0],
-      align: "center",
+      align: "left",
     });
   }
 
