@@ -5,7 +5,6 @@
 - NOT IMPLEMENT YET:
   - SpecialEffectType.SimpleSelectable
   - SpecialEffectType.0
-  - SpecialEffectType.44
 
 # CHANGE LOG
 
