@@ -26,10 +26,13 @@ import {
   CharacterLayoutType,
   CharacterLayoutDepthType,
   CharacterLayoutMoveSpeedType,
+  IListBucketResult,
 } from "../types.d";
 import { ILive2DAssetUrl, Live2DAssetType } from "./Live2DPlayer/types.d";
 import { useCharaName, useAssetI18n } from "./i18n";
 import { charaIcons } from "./resources";
+import { XMLParser } from "fast-xml-parser";
+import { assetUrl } from "./urls";
 
 import { fixVoiceUrl } from "./voiceFinder";
 
@@ -420,7 +423,7 @@ export function useProcessedScenarioDataForText() {
                     : specialEffectType === "ChangeBackground"
                       ? await getBackgroundImageUrl(specialEffect.StringValSub)
                       : specialEffectType === "Movie"
-                        ? await getMovieUrl(specialEffect.StringVal)
+                        ? getMovieDirPath(specialEffect.StringVal)
                         : "",
                 seType: specialEffectType,
                 type: snippet.Action,
@@ -640,8 +643,7 @@ export function useMediaUrlForLive2D() {
                 case SpecialEffectType.Movie:
                   {
                     const identifer = seData.StringVal;
-                    const folderUrl = await getMovieUrl(seData.StringVal);
-                    const url = `${folderUrl}/${seData.StringVal}.mp4`;
+                    const url = await getMovieUrl(seData.StringVal);
                     if (ret.map((r) => r.url).includes(url)) continue;
                     ret.push({
                       identifer,
@@ -711,9 +713,79 @@ export async function getFullScreenTextVoiceUrl(
     "minio"
   );
 }
+export function getMovieDirPath(movie: string) {
+  // If contains opening, map it to movie/ only
+  const basePath = movie.includes("opening") ? "movie" : "scenario/movie";
+  return `${basePath}/${movie}/`;
+}
 
 export async function getMovieUrl(movie: string) {
-  return await getRemoteAssetURL(`scenario/movie/${movie}`, undefined, "minio");
+  const dirPath = getMovieDirPath(movie);
+
+  // Search for video files in the directory
+  const videoFile = await searchVideoFileInDirectory(dirPath);
+  if (videoFile) {
+    return await getRemoteAssetURL(videoFile, undefined, "minio");
+  }
+
+  // Fallback to original logic if no video file found
+  if (movie.includes("opening")) {
+    return await getRemoteAssetURL(
+      `movie/${movie}/${movie}.mp4`,
+      undefined,
+      "minio"
+    );
+  }
+  return await getRemoteAssetURL(
+    `scenario/movie/${movie}/${movie}.mp4`,
+    undefined,
+    "minio"
+  );
+}
+
+async function searchVideoFileInDirectory(
+  dirPath: string
+): Promise<string | null> {
+  try {
+    const parser = new XMLParser({
+      isArray: (name) => {
+        if (["CommonPrefixes", "Contents"].includes(name)) return true;
+        return false;
+      },
+    });
+
+    const baseURL = assetUrl.minio.jp; // Default to JP region for video search
+    const result = await Axios.get<string>(`/`, {
+      baseURL,
+      params: {
+        delimiter: "/",
+        "list-type": "2",
+        "max-keys": "500",
+        prefix: `${dirPath}`,
+      },
+      responseType: "text",
+    });
+
+    const parsed = parser.parse(result.data)
+      .ListBucketResult as IListBucketResult;
+
+    if (parsed.Contents) {
+      // Look for video files (mp4, webm, etc.)
+      const videoFiles = parsed.Contents.map((content) => content.Key).filter(
+        (key) => key.match(/\.(mp4|webm|mov|avi)$/i)
+      );
+
+      if (videoFiles.length > 0) {
+        // Return the first video file found
+        return videoFiles[0];
+      }
+    }
+
+    return null;
+  } catch (error) {
+    console.warn(`Failed to search for video files in ${dirPath}:`, error);
+    return null;
+  }
 }
 
 export async function getSoundEffectUrl(se: string) {
