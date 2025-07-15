@@ -5,6 +5,7 @@ import { log } from "../../log";
 
 import ChangeBackground from "./ChangeBackground";
 import Telop from "./Telop";
+import PlaceInfo from "./PlaceInfo";
 import WhiteIn from "./WhiteIn";
 import WhiteOut from "./WhiteOut";
 import BlackIn from "./BlackIn";
@@ -165,6 +166,9 @@ export default async function action_se(
       break;
     case SpecialEffectType.Movie:
       await Movie(controller, action);
+      break;
+    case SpecialEffectType.PlaceInfo:
+      await PlaceInfo(controller, action);
       break;
     default:
       log.warn(
