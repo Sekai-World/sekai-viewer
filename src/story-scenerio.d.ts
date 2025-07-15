@@ -478,6 +478,14 @@ export enum SpecialEffectType {
    * @see 02:48 https://www.bilibili.com/video/BV1P9SuYaEE6?p=2
    */
   ChangeCameraZoomLevel = 43,
+  /**
+   * apply blur effect to the backgound
+   * @param StringVal true->blur/false->unblur.
+   * @param StringValSub always empty string.
+   * @param Duration always 0.
+   * @param IntVal always 0.
+   */
+  Blur = 44,
 }
 
 export interface SpecialEffectData {
