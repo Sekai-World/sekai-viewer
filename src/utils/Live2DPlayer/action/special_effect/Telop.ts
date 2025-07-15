@@ -45,5 +45,9 @@ export default async function Telop(
   // When no translation or translation disabled: show only original text
 
   controller.layers.telop.draw(displayText, translatedDisplayText);
+
+  //clear
+  controller.layers.dialog.hide(200);
+
   await controller.layers.telop.show(300, true);
 }
