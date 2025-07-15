@@ -14,11 +14,8 @@ export default async function FullScreenTextHide(
     action,
     action_detail
   );
-  controller.layers.fullscreen_text_bg.draw(0x000000);
-  controller.layers.fullscreen_text_bg.hide(
-    action_detail.Duration * 1000,
-    true
-  );
+  controller.layers.background.remove_blur();
+  controller.layers.background.remove_filter();
   await controller.layers.fullscreen_text.hide(
     action_detail.Duration * 1000,
     true
