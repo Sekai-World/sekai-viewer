@@ -27,8 +27,8 @@ export default async function AttachCharacterShader(
           "hologram"
         );
         controller.current_costume
-          .find((c) => c.cid === action_detail.IntVal)!
-          .animations.push("hologram");
+          .find((c) => c.cid === action_detail.IntVal)
+          ?.animations.push("hologram");
       }
       break;
     case SeAttachCharacterShaderType.None:
@@ -38,9 +38,12 @@ export default async function AttachCharacterShader(
           controller.live2d_get_costume(action_detail.IntVal)!,
           "hologram"
         );
-        controller.current_costume.find(
+        const costume = controller.current_costume.find(
           (c) => c.cid === action_detail.IntVal
-        )!.animations = [];
+        );
+        if (costume) {
+          costume.animations = [];
+        }
       }
       break;
     default:
