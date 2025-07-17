@@ -59,7 +59,7 @@ export default class PlaceInfo extends BaseLayer {
       bg.y = this.em(8); // Background margin from top of screen
 
       // Calculate background size based on text size
-      const textWidth = Math.max(
+      const textWidth = Math.min(
         text.width + this.em(24),
         this.stage_size[0] * 0.4
       ); // At max 40% of screen width
