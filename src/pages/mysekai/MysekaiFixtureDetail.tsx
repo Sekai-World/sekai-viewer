@@ -31,7 +31,7 @@ import TypographyHeader from "../../components/styled/TypographyHeader";
 import ContainerContent from "../../components/styled/ContainerContent";
 import PaperContainer from "../../components/styled/PaperContainer";
 import TabPanelPadding from "../../components/styled/TabPanelPadding";
-import { useCachedData, getRemoteAssetURL } from "../../utils";
+import { useCachedData } from "../../utils";
 import { useCharaName } from "../../utils/i18n";
 import { chibiIcons } from "../../utils/resources";
 import Image from "mui-image";
@@ -57,6 +57,7 @@ import {
   getFixtureMaterialCost,
   getFixtureTalkData,
   charaMap,
+  getThumbnailURL,
 } from "../../utils/mysekaiFixtureUtils";
 import { assetUrl } from "../../utils/urls";
 
@@ -127,11 +128,7 @@ const mysekaiFixtureDetail: React.FC<unknown> = observer(() => {
   const getThumbnailUrl = useCallback(async (fixture: IMysekaiFixtureInfo) => {
     const { assetbundleName } = fixture;
     if (assetbundleName) {
-      getRemoteAssetURL(
-        `mysekai/thumbnail/fixture/${assetbundleName}_1.webp`,
-        setThumbnailUrl,
-        "minio"
-      );
+      getThumbnailURL(fixture, setThumbnailUrl);
     }
   }, []);
 
