@@ -81,6 +81,16 @@ import {
   IWorldBloom,
   IWorldBloomChapterRankingRewardRange,
   IEventStoryUnit,
+  IMysekaiFixtureInfo,
+  IMysekaiMaterial,
+  IMysekaiFixtureGenre,
+  IMysekaiFixtureTag,
+  IMysekaiBlueprint,
+  IMysekaiBlueprintMaterialCost,
+  IMysekaiTalkCondition,
+  IMysekaiTalkConditionGroup,
+  IMysekaiTalk,
+  IMysekaiGameCharacterUnitGroups,
 } from "./../types.d";
 import { useAssetI18n } from "./i18n";
 import { useLocation } from "react-router-dom";
@@ -166,7 +176,17 @@ export function useCachedData<
     | IAnother3dmvCutIn
     | IWorldBloom
     | IWorldBloomChapterRankingRewardRange
-    | IEventStoryUnit,
+    | IEventStoryUnit
+    | IMysekaiFixtureInfo
+    | IMysekaiMaterial
+    | IMysekaiFixtureGenre
+    | IMysekaiFixtureTag
+    | IMysekaiBlueprint
+    | IMysekaiBlueprintMaterialCost
+    | IMysekaiTalkCondition
+    | IMysekaiTalkConditionGroup
+    | IMysekaiTalk
+    | IMysekaiGameCharacterUnitGroups,
 >(name: string): [T[] | undefined, boolean, unknown] {
   // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
   const { region } = useRootStore();

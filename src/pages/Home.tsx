@@ -3,6 +3,7 @@ import {
   Album,
   AspectRatio,
   GitHub,
+  Home as HomeIcon,
   // MonetizationOn,
   MoveToInbox,
   OpenInNew,
@@ -372,6 +373,19 @@ const Home: React.FC = () => {
                     <Calculator fontSize="small"></Calculator>
                   </Grid>
                   <Grid item>{t("common:musicRecommend")}</Grid>
+                </Grid>
+              </LinkNoDecoration>
+            </Grid>
+            <Grid item>
+              <LinkNoDecoration
+                to="/mysekai/fixture"
+                style={{ color: theme.palette.primary.main }}
+              >
+                <Grid container direction="row" alignContent="center">
+                  <Grid item>
+                    <HomeIcon fontSize="small"></HomeIcon>
+                  </Grid>
+                  <Grid item>{t("common:mysekai.fixture")}</Grid>
                 </Grid>
               </LinkNoDecoration>
             </Grid>

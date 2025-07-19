@@ -1692,3 +1692,108 @@ export interface ICardSupplyGroup {
   groupId: number;
   cardSupplyId: number;
 }
+
+export interface IMysekaiFixtureInfo {
+  id: number;
+  mysekaiFixtureType: string;
+  name: string;
+  pronunciation: string;
+  flavorText: string;
+  seq: number;
+  gridSize: { width: number; depth: number; height?: number };
+  mysekaiFixtureMainGenreId: number;
+  mysekaiFixtureSubGenreId: number;
+  mysekaiFixtureHandleType: string;
+  mysekaiSettableSiteType: string;
+  mysekaiSettableLayoutType: string;
+  mysekaiFixturePutType: string;
+  mysekaiFixtureAnotherColors: { textureId: number; colorCode: string }[];
+  mysekaiFixturePutSoundId: number;
+  mysekaiFixtureTagGroup: { [key: string]: number };
+  isAssembled: boolean;
+  isDisassembled: boolean;
+  mysekaiFixturePlayerActionType: string;
+  isGameCharacterAction: boolean;
+  assetbundleName: string;
+}
+
+export interface IMysekaiMaterial {
+  id: number;
+  seq: number;
+  mysekaiMaterialType: string;
+  name: string;
+  pronunciation: string;
+  description: string;
+  mysekaiMaterialRarityType: string;
+  iconAssetbundleName: string;
+  mysekaiSiteIds: string;
+}
+
+export interface IMysekaiFixtureGenre {
+  id: number;
+  name: string;
+}
+
+export interface IMysekaiFixtureTag {
+  id: number;
+  name: string;
+  pronunciation: string;
+  mysekaiFixtureTagType: string;
+  externalId: number;
+}
+
+export interface IMysekaiBlueprint {
+  id: number;
+  mysekaiCraftType: string;
+  craftTargetId: number;
+  isEnableSketch: boolean;
+  isObtainedByConvert: boolean;
+}
+
+export interface IMysekaiBlueprintMaterialCost {
+  id: number;
+  mysekaiBlueprintId: number;
+  mysekaiMaterialId: number;
+  quantity: number;
+}
+
+export interface IMysekaiTalkCondition {
+  id: number;
+  mysekaiCharacterTalkConditionType: string;
+  mysekaiCharacterTalkConditionTypeValue: number;
+}
+
+export interface IMysekaiTalkConditionGroup {
+  id: number;
+  groupId: number;
+  mysekaiCharacterTalkConditionId: number;
+}
+
+export interface IMysekaiTalk {
+  id: number;
+  mysekaiCharacterTalkConditionGroupId: number;
+  mysekaiGameCharacterUnitGroupId: number;
+  gameCharacterIds?: number[];
+  assetbundleName: string;
+  lua: string;
+}
+
+export interface IMysekaiGameCharacterUnitGroups {
+  id: number;
+  gameCharacterUnitId1?: number;
+  gameCharacterUnitId2?: number;
+  gameCharacterUnitId3?: number;
+  gameCharacterUnitId4?: number;
+  gameCharacterUnitId5?: number;
+  // Allow for additional character unit IDs if they exist
+  [key: string]: number | undefined;
+}
+
+export interface MysekaiDataContext {
+  blueprints?: IMysekaiBlueprint[];
+  materialCosts?: IMysekaiBlueprintMaterialCost[];
+  talkConditions?: IMysekaiTalkCondition[];
+  talkConditionGroups?: IMysekaiTalkConditionGroup[];
+  talks?: IMysekaiTalk[];
+  characterGroups?: IMysekaiGameCharacterUnitGroups[];
+}
