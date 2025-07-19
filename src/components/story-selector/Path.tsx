@@ -233,6 +233,12 @@ const Path: React.FC<{
                         }
                       }
                     }
+                    break;
+                  case "mysekaiTalk":
+                    if (idx === 2) {
+                      name = pathname;
+                    }
+                    break;
                 }
               }
 
