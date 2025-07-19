@@ -84,6 +84,64 @@ import LogoMiniStreet from "../assets/common/logo_mini/unit_ts_3_penlight.png";
 import LogoMiniThemePark from "../assets/common/logo_mini/unit_ts_4_penlight.png";
 import LogoMiniSchoolRefusal from "../assets/common/logo_mini/unit_ts_5_penlight.png";
 import LogoMiniPiapro from "../assets/common/logo_mini/unit_ts_6_penlight.png";
+
+import ChibiIcon1 from "../assets/chibi/1.webp";
+import ChibiIcon2 from "../assets/chibi/2.webp";
+import ChibiIcon3 from "../assets/chibi/3.webp";
+import ChibiIcon4 from "../assets/chibi/4.webp";
+import ChibiIcon5 from "../assets/chibi/5.webp";
+import ChibiIcon6 from "../assets/chibi/6.webp";
+import ChibiIcon7 from "../assets/chibi/7.webp";
+import ChibiIcon8 from "../assets/chibi/8.webp";
+import ChibiIcon9 from "../assets/chibi/9.webp";
+import ChibiIcon10 from "../assets/chibi/10.webp";
+import ChibiIcon11 from "../assets/chibi/11.webp";
+import ChibiIcon12 from "../assets/chibi/12.webp";
+import ChibiIcon13 from "../assets/chibi/13.webp";
+import ChibiIcon14 from "../assets/chibi/14.webp";
+import ChibiIcon15 from "../assets/chibi/15.webp";
+import ChibiIcon16 from "../assets/chibi/16.webp";
+import ChibiIcon17 from "../assets/chibi/17.webp";
+import ChibiIcon18 from "../assets/chibi/18.webp";
+import ChibiIcon19 from "../assets/chibi/19.webp";
+import ChibiIcon20 from "../assets/chibi/20.webp";
+import ChibiIcon21 from "../assets/chibi/21.webp";
+import ChibiIcon22 from "../assets/chibi/22.webp";
+import ChibiIcon23 from "../assets/chibi/23.webp";
+import ChibiIcon24 from "../assets/chibi/24.webp";
+import ChibiIcon25 from "../assets/chibi/25.webp";
+import ChibiIcon26 from "../assets/chibi/26.webp";
+import ChibiIcon27 from "../assets/chibi/27.webp";
+import ChibiIcon28 from "../assets/chibi/28.webp";
+import ChibiIcon29 from "../assets/chibi/29.webp";
+import ChibiIcon30 from "../assets/chibi/30.webp";
+import ChibiIcon31 from "../assets/chibi/31.webp";
+import ChibiIcon32 from "../assets/chibi/32.webp";
+import ChibiIcon33 from "../assets/chibi/33.webp";
+import ChibiIcon34 from "../assets/chibi/34.webp";
+import ChibiIcon35 from "../assets/chibi/35.webp";
+import ChibiIcon36 from "../assets/chibi/36.webp";
+import ChibiIcon37 from "../assets/chibi/37.webp";
+import ChibiIcon38 from "../assets/chibi/38.webp";
+import ChibiIcon39 from "../assets/chibi/39.webp";
+import ChibiIcon40 from "../assets/chibi/40.webp";
+import ChibiIcon41 from "../assets/chibi/41.webp";
+import ChibiIcon42 from "../assets/chibi/42.webp";
+import ChibiIcon43 from "../assets/chibi/43.webp";
+import ChibiIcon44 from "../assets/chibi/44.webp";
+import ChibiIcon45 from "../assets/chibi/45.webp";
+import ChibiIcon46 from "../assets/chibi/46.webp";
+import ChibiIcon47 from "../assets/chibi/47.webp";
+import ChibiIcon48 from "../assets/chibi/48.webp";
+import ChibiIcon49 from "../assets/chibi/49.webp";
+import ChibiIcon50 from "../assets/chibi/50.webp";
+import ChibiIcon51 from "../assets/chibi/51.webp";
+import ChibiIcon52 from "../assets/chibi/52.webp";
+import ChibiIcon53 from "../assets/chibi/53.webp";
+import ChibiIcon54 from "../assets/chibi/54.webp";
+import ChibiIcon55 from "../assets/chibi/55.webp";
+import ChibiIcon56 from "../assets/chibi/56.webp";
+
 import { ServerRegion } from "../types";
 
 export const charaIcons: { [key: string]: string } = {
@@ -118,6 +176,65 @@ export const charaIcons: { [key: string]: string } = {
   CharaIcon7,
   CharaIcon8,
   CharaIcon9,
+};
+
+export const chibiIcons: { [key: string]: string } = {
+  ChibiIcon1,
+  ChibiIcon2,
+  ChibiIcon3,
+  ChibiIcon4,
+  ChibiIcon5,
+  ChibiIcon6,
+  ChibiIcon7,
+  ChibiIcon8,
+  ChibiIcon9,
+  ChibiIcon10,
+  ChibiIcon11,
+  ChibiIcon12,
+  ChibiIcon13,
+  ChibiIcon14,
+  ChibiIcon15,
+  ChibiIcon16,
+  ChibiIcon17,
+  ChibiIcon18,
+  ChibiIcon19,
+  ChibiIcon20,
+  ChibiIcon21,
+  ChibiIcon22,
+  ChibiIcon23,
+  ChibiIcon24,
+  ChibiIcon25,
+  ChibiIcon26,
+  ChibiIcon27,
+  ChibiIcon28,
+  ChibiIcon29,
+  ChibiIcon30,
+  ChibiIcon31,
+  ChibiIcon32,
+  ChibiIcon33,
+  ChibiIcon34,
+  ChibiIcon35,
+  ChibiIcon36,
+  ChibiIcon37,
+  ChibiIcon38,
+  ChibiIcon39,
+  ChibiIcon40,
+  ChibiIcon41,
+  ChibiIcon42,
+  ChibiIcon43,
+  ChibiIcon44,
+  ChibiIcon45,
+  ChibiIcon46,
+  ChibiIcon47,
+  ChibiIcon48,
+  ChibiIcon49,
+  ChibiIcon50,
+  ChibiIcon51,
+  ChibiIcon52,
+  ChibiIcon53,
+  ChibiIcon54,
+  ChibiIcon55,
+  ChibiIcon56,
 };
 
 export const attrIconMap: { [key: string]: string } = {

@@ -20,6 +20,7 @@ import CharaStory from "./CharaStory";
 import CardStory from "./CardStory";
 import AreaTalk from "./AreaTalk";
 import SpecialStory from "./SpecialStory";
+import MysekaiTalk from "./MysekaiTalk";
 
 const StorySelector: React.FC<{
   onSetStory: (data?: {
@@ -82,6 +83,11 @@ const StorySelector: React.FC<{
         path: "/specialStory",
         disabled: false,
       },
+      mysekaiTalk: {
+        breadcrumbName: t("story_reader:selectValue.mysekaiTalk"),
+        path: "/mysekaiTalk",
+        disabled: window.location.href.includes("live2d") ? true : false,
+      },
       liveTalk: {
         breadcrumbName: t("story_reader:selectValue.liveTalk"),
         path: "/liveTalk",
@@ -143,6 +149,9 @@ const StorySelector: React.FC<{
         </Route>
         <Route path={`${path}/specialStory`}>
           <SpecialStory onSetStory={handleSetStory} />
+        </Route>
+        <Route path={`${path}/mysekaiTalk`}>
+          <MysekaiTalk onSetStory={handleSetStory} />
         </Route>
       </Switch>
     </>

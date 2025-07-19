@@ -149,6 +149,10 @@ const HonorList = lazy(() => import("./honor/HonorList"));
 const EventAnalyzer = lazy(() => import("./event/EventAnalyzer"));
 const MusicMeta = lazy(() => import("./music/MusicMeta"));
 const AssetViewer = lazy(() => import("./AssetViewer"));
+const MysekaiFixtureList = lazy(() => import("./mysekai/MysekaiFixtureList"));
+const MysekaiFixtureDetail = lazy(
+  () => import("./mysekai/MysekaiFixtureDetail")
+);
 
 // load test page
 let AssetTest: React.FC;
@@ -473,6 +477,12 @@ const DrawerContent: React.FC<{
           icon: <AccountGroup></AccountGroup>,
           text: t("common:character"),
           to: "/chara",
+        },
+        {
+          disabled: false,
+          icon: <HomeIcon></HomeIcon>,
+          text: t("common:mysekai.fixture"),
+          to: "/mysekai/fixture",
         },
         {
           children: [
@@ -1178,6 +1188,12 @@ const AppInner = observer((props: { theme: Theme }) => {
               </Route>
               <Route path="/music_recommend" exact>
                 <MusicRecommend />
+              </Route>
+              <Route path="/mysekai/fixture" exact>
+                <MysekaiFixtureList />
+              </Route>
+              <Route path="/mysekai/fixture/:id(\d+)">
+                <MysekaiFixtureDetail />
               </Route>
               <Route path="/event_calc" exact>
                 <EventPointCalc />

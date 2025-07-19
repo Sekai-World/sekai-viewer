@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { charaIcons } from "../../utils/resources";
+import { charaIcons, chibiIcons } from "../../utils/resources";
 import Image from "mui-image";
 import MoviePlayer from "../../components/blocks/MoviePlayer";
 import AudioPlayButton from "../../components/widgets/AudioPlayButton";
@@ -213,6 +213,50 @@ export const Sound: React.FC<{
           </Grid>
         </Grid>
         {voiceUrl && !voiceUrl.endsWith("bgm00000.mp3") ? (
+          <Grid item xs={1}>
+            <AudioPlayButton url={voiceUrl} />
+          </Grid>
+        ) : null}
+      </Grid>
+    </CardStyled>
+  );
+};
+
+export const MysekaiTalk: React.FC<{
+  characterId: number;
+  characterName: string;
+  text: string;
+  voiceUrl: string;
+}> = ({ characterId, characterName, text, voiceUrl }) => {
+  return (
+    <CardStyled>
+      <Grid container alignItems="center" spacing={1}>
+        <Grid item xs={3} md={2} lg={1}>
+          <Grid container justifyContent="center">
+            <img
+              src={chibiIcons[`ChibiIcon${characterId}` as "ChibiIcon1"]}
+              alt={characterName}
+              style={{
+                width: 56,
+                height: 56,
+                objectFit: "cover",
+                background: "#fff",
+                display: "block",
+              }}
+            />
+          </Grid>
+        </Grid>
+        <Grid item xs={7} md={9} lg={10}>
+          <Grid container spacing={1}>
+            <Grid item xs={12}>
+              <Chip label={characterName} />
+            </Grid>
+            <Grid item xs={12}>
+              <Typography>{text}</Typography>
+            </Grid>
+          </Grid>
+        </Grid>
+        {voiceUrl ? (
           <Grid item xs={1}>
             <AudioPlayButton url={voiceUrl} />
           </Grid>

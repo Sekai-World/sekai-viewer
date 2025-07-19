@@ -13,6 +13,7 @@ import {
   ICardInfo,
   IActionSet,
   ISpecialStory,
+  IMysekaiTalk,
   SnippetAction,
   SpecialEffectType,
   SnippetProgressBehavior,
@@ -54,6 +55,7 @@ export function useScenarioInfo() {
   const [cards] = useCachedData<ICardInfo>("cards");
   const [actionSets] = useCachedData<IActionSet>("actionSets");
   const [specialStories] = useCachedData<ISpecialStory>("specialStories");
+  const [mysekaiTalks] = useCachedData<IMysekaiTalk>("mysekaiCharacterTalks");
   const { getTranslated } = useAssetI18n();
   const { t } = useTranslation();
 
@@ -246,6 +248,26 @@ export function useScenarioInfo() {
             };
           }
           break;
+        case "mysekaiTalk":
+          if (mysekaiTalks) {
+            const talkId = parseInt(storyId);
+            const talk = mysekaiTalks.find((t) => t.id === talkId);
+            if (!talk) throw new Error(`MySekai talk ${talkId} not found`);
+
+            return {
+              storyType,
+              storyId,
+              region,
+              bannerUrl: "",
+              scenarioDataUrl: "",
+              isCardStory: false,
+              isActionSet: false,
+              chapterTitle: "",
+              episodeTitle: "",
+              releaseConditionId: undefined,
+            };
+          }
+          break;
         default:
           throw new Error(`Wrong story type: ${storyType}`);
       }
@@ -260,6 +282,7 @@ export function useScenarioInfo() {
       actionSets,
       specialStories,
       cards,
+      mysekaiTalks,
     ]
   );
 }
@@ -280,7 +303,13 @@ export function useProcessedScenarioDataForText() {
         characters: [],
       };
 
-      if (!chara2Ds || !chara2Ds.length || !info) return ret;
+      if (
+        !chara2Ds ||
+        !chara2Ds.length ||
+        !info ||
+        info.storyType === "mysekaiTalk"
+      )
+        return ret;
 
       const { data }: { data: IScenarioData } = await Axios.get(
         await getRemoteAssetURL(

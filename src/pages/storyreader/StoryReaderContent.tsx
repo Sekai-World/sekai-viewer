@@ -8,6 +8,7 @@ import {
 } from "../../utils/storyLoader";
 import { ReleaseCondTrans } from "../../components/helpers/ContentTrans";
 import { Sound, SpecialEffect, Talk } from "./StoryReaderSnippet";
+import MysekaiStoryDisplay from "./MysekaiStoryDisplay";
 import Image from "mui-image";
 import ContainerContent from "../../components/styled/ContainerContent";
 import { useAlertSnackbar } from "../../utils";
@@ -71,7 +72,7 @@ const StoryReaderContent: React.FC<{
 
   return (
     <ContainerContent>
-      {storyType !== "areaTalk" && (
+      {storyType !== "areaTalk" && storyType !== "mysekaiTalk" && (
         <Paper sx={(theme) => ({ padding: theme.spacing(1.5, 0) })}>
           <Grid container spacing={1} justifyContent="space-around">
             <Grid
@@ -124,43 +125,47 @@ const StoryReaderContent: React.FC<{
           </Grid>
         </Paper>
       )}
-      {!scenarioData.actions.length && (
+      {!scenarioData.actions.length && storyType !== "mysekaiTalk" && (
         <LinearProgress variant="indeterminate" />
       )}
-      {scenarioData.actions.map((action, idx) => {
-        switch (action.type as SnippetAction) {
-          case SnippetAction.Talk:
-            return (
-              <Talk
-                key={`action-${idx}`}
-                characterId={action.chara.id as number}
-                characterName={action.chara.name as string}
-                text={action.body as string}
-                voiceUrl={action.voice as string}
-              />
-            );
-          case SnippetAction.SpecialEffect:
-            return (
-              <SpecialEffect
-                key={`action-${idx}`}
-                seType={action.seType}
-                text={action.body}
-                resource={action.resource}
-              />
-            );
-          case SnippetAction.Sound:
-            return (
-              <Sound
-                key={`action-${idx}`}
-                hasBgm={action.hasBgm}
-                hasSe={action.hasSe}
-                voiceUrl={action.hasBgm ? action.bgm : action.se}
-              />
-            );
-          default:
-            return null;
-        }
-      })}
+      {storyType === "mysekaiTalk" ? (
+        <MysekaiStoryDisplay storyId={storyId} />
+      ) : (
+        scenarioData.actions.map((action, idx) => {
+          switch (action.type as SnippetAction) {
+            case SnippetAction.Talk:
+              return (
+                <Talk
+                  key={`action-${idx}`}
+                  characterId={action.chara.id as number}
+                  characterName={action.chara.name as string}
+                  text={action.body as string}
+                  voiceUrl={action.voice as string}
+                />
+              );
+            case SnippetAction.SpecialEffect:
+              return (
+                <SpecialEffect
+                  key={`action-${idx}`}
+                  seType={action.seType}
+                  text={action.body}
+                  resource={action.resource}
+                />
+              );
+            case SnippetAction.Sound:
+              return (
+                <Sound
+                  key={`action-${idx}`}
+                  hasBgm={action.hasBgm}
+                  hasSe={action.hasSe}
+                  voiceUrl={action.hasBgm ? action.bgm : action.se}
+                />
+              );
+            default:
+              return null;
+          }
+        })
+      )}
     </ContainerContent>
   );
 };
