@@ -216,7 +216,7 @@ const MysekaiStoryDisplay: React.FC<{ storyId: string }> = ({ storyId }) => {
 
       return dialogues;
     },
-    [charas, mapPartVoiceFolder, validateURL]
+    [charas, mapPartVoiceFolder]
   );
 
   // Load and parse lua script using talk.lua as asset bundle name
