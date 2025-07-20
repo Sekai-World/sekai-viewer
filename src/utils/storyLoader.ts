@@ -766,8 +766,14 @@ async function searchVideoFileInDirectory(
       responseType: "text",
     });
 
-    const parsed = parser.parse(result.data)
-      .ListBucketResult as IListBucketResult;
+    let parsed: IListBucketResult;
+    try {
+      parsed = parser.parse(result.data).ListBucketResult as IListBucketResult;
+    } catch (parseError) {
+      console.error(`XML parsing error in directory ${dirPath}:`, parseError);
+      console.debug("Raw XML data:", result.data);
+      return null;
+    }
 
     if (parsed.Contents) {
       // Look for video files (mp4, webm, etc.)
