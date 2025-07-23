@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.16.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.16.2...v1.16.3) (2025-07-23)
+
+
+### Features
+
+* **l2d:** implement SpecialEffectType.44 ([b9a09e5](https://github.com/Sekai-World/sekai-viewer/commits/b9a09e536b630f9e0cb9f0d8baac0662deeccc14))
+* **l2d:** implement SpecialEffectType.PlaceInfo ([c829abd](https://github.com/Sekai-World/sekai-viewer/commits/c829abd5bfabf830d002195c606780aaf05ce71e))
+* mysekai talk and fixture ([26e08f7](https://github.com/Sekai-World/sekai-viewer/commits/26e08f7ff82dcd80f3ccfee32505a47dfe2a9278))
+
+
+### Bug Fixes
+
+* hide dialogue when change background, sekai in and out, telop ([f867a20](https://github.com/Sekai-World/sekai-viewer/commits/f867a203a257c9b697a7c7949a5c6649f6f01e98))
+* incorrect movie url ([0a15f86](https://github.com/Sekai-World/sekai-viewer/commits/0a15f8693dd4db285cfdebc45df2962b730f993f))
+* **l2d:** add check for costume before adding animation ([6392031](https://github.com/Sekai-World/sekai-viewer/commits/63920311a1edad82bb949043b3769a6ae036470e))
+* **l2d:** correctly display background during fullscreentext ([1b8b55e](https://github.com/Sekai-World/sekai-viewer/commits/1b8b55e552b1e227837bd725cba1ef82b71fb262))
+* **l2d:** potential null animation and error handling for xml parse ([1047d61](https://github.com/Sekai-World/sekai-viewer/commits/1047d61f7d7200fa69cc4b664a9fa9b8847a44d5))
+* **mysekai:** static dependency ([38dc05a](https://github.com/Sekai-World/sekai-viewer/commits/38dc05a278b4adf26b66df9fa0cba596ee83cf98))
+* **mysekai:** update fixture labels and remove unused wishlist link ([2f3e282](https://github.com/Sekai-World/sekai-viewer/commits/2f3e2824dbe9d4d0f0897e402b60755980ccd153))
+* wrong link for thumbnail of surface interface ([2a73278](https://github.com/Sekai-World/sekai-viewer/commits/2a73278a0e8ce51f724fefd87a5711c6efaedcab))
+
+
+### Refactors
+
+* remove unused translation link and signup route ([e95bb69](https://github.com/Sekai-World/sekai-viewer/commits/e95bb6965d9ac9e24af30c739efc46f1a7647886))
+
 ### [1.16.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.16.1...v1.16.2) (2025-07-13)
 
 
