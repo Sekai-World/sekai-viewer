@@ -385,7 +385,7 @@ const Home: React.FC = () => {
                   <Grid item>
                     <HomeIcon fontSize="small"></HomeIcon>
                   </Grid>
-                  <Grid item>{t("common:mysekai.fixture")}</Grid>
+                  <Grid item>{t("common:mysekaiFixture")}</Grid>
                 </Grid>
               </LinkNoDecoration>
             </Grid>

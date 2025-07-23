@@ -57,6 +57,7 @@ export async function initGlobalI18n() {
         "translate",
         "honor",
         "asset_viewer",
+        "mysekai",
       ],
       returnEmptyString: false,
     });

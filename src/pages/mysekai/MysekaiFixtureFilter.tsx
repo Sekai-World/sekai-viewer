@@ -375,11 +375,8 @@ const MysekaiFixtureFilter: React.FC<MysekaiFixtureFilterProps> = ({
                     <Select
                       value={filterSketch}
                       onChange={(e) => setFilterSketch(e.target.value)}
-                      displayEmpty
+                      label={t("mysekai:fixture.sketch.label")}
                     >
-                      <MenuItem value="">
-                        <em>{t("mysekai:fixture.sketch")}</em>
-                      </MenuItem>
                       <MenuItem value="true">
                         {t("mysekai:fixture.sketch.yes")}
                       </MenuItem>
@@ -394,11 +391,8 @@ const MysekaiFixtureFilter: React.FC<MysekaiFixtureFilterProps> = ({
                     <Select
                       value={filterConvert}
                       onChange={(e) => setFilterConvert(e.target.value)}
-                      displayEmpty
+                      label={t("mysekai:convert.label")}
                     >
-                      <MenuItem value="">
-                        <em>{t("mysekai:fixture.convert")}</em>
-                      </MenuItem>
                       <MenuItem value="true">
                         {t("mysekai:convert.yes")}
                       </MenuItem>
@@ -413,11 +407,8 @@ const MysekaiFixtureFilter: React.FC<MysekaiFixtureFilterProps> = ({
                     <Select
                       value={filterAssembled}
                       onChange={(e) => setFilterAssembled(e.target.value)}
-                      displayEmpty
+                      label={t("mysekai:fixture.assembled.label")}
                     >
-                      <MenuItem value="">
-                        <em>{t("mysekai:fixture.assembled")}</em>
-                      </MenuItem>
                       <MenuItem value="true">
                         {t("mysekai:fixture.assembled.yes")}
                       </MenuItem>
@@ -432,11 +423,8 @@ const MysekaiFixtureFilter: React.FC<MysekaiFixtureFilterProps> = ({
                     <Select
                       value={filterDisassembled}
                       onChange={(e) => setFilterDisassembled(e.target.value)}
-                      displayEmpty
+                      label={t("mysekai:fixture.disassembled.label")}
                     >
-                      <MenuItem value="">
-                        <em>{t("mysekai:fixture.disassembled")}</em>
-                      </MenuItem>
                       <MenuItem value="true">
                         {t("mysekai:fixture.disassembled.yes")}
                       </MenuItem>
