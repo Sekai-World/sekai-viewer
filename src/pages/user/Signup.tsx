@@ -40,7 +40,7 @@ const Signup: React.FC<unknown> = observer(() => {
   }, [t]);
 
   const handleValidate = useCallback(
-    (values) => {
+    (values: RegisterValues) => {
       const errors: Partial<RegisterValues> = {};
       if (!values.username) {
         errors.username = t("auth:error.required");

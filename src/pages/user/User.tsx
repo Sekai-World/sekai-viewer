@@ -6,7 +6,6 @@ import { useRootStore } from "../../stores/root";
 // import { UserProvider } from "../../context";
 
 const Login = lazy(() => import("./Login"));
-const Signup = lazy(() => import("./Signup"));
 const ResetPassword = lazy(() => import("./ResetPassword"));
 const ResetPasswordCallback = lazy(() => import("./ResetPasswordCallback"));
 const UserHome = lazy(() => import("./home/UserHome"));
@@ -35,13 +34,6 @@ const User: React.FC<unknown> = observer(() => {
             <Redirect to="/user"></Redirect>
           ) : (
             <Login />
-          )}
-        </Route>
-        <Route path={`${path}/signup`}>
-          {!!decodedToken && !!userinfo && !!jwtToken ? (
-            <Redirect to="/user"></Redirect>
-          ) : (
-            <Signup />
           )}
         </Route>
         <Route exact path={`${path}/forgot`}>

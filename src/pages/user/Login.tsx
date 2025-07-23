@@ -145,13 +145,6 @@ const Login: React.FC<unknown> = observer(() => {
                         </Typography>
                       </LinkNoDecoration>
                     </Grid>
-                    <Grid item>
-                      <LinkNoDecoration to="/user/signup">
-                        <Typography variant="caption" color="textPrimary">
-                          {t("auth:no-account-signup")}
-                        </Typography>
-                      </LinkNoDecoration>
-                    </Grid>
                   </Grid>
                   <br />
                   <input type="submit" style={{ display: "none" }} />
