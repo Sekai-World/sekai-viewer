@@ -10,6 +10,7 @@ import Background from "./layer/Background";
 import Fullcolor from "./layer/Fullcolor";
 import Dialog from "./layer/Dialog";
 import Telop from "./layer/Telop";
+import PlaceInfo from "./layer/PlaceInfo";
 import SceneEffect from "./layer/SceneEffect";
 import Live2D from "./layer/Live2D";
 import Wipe from "./layer/Wipe";
@@ -32,8 +33,8 @@ export class Live2DPlayer {
     memory_filter: Fullcolor;
     dialog: Dialog;
     fullscreen_text: FullScreenText;
-    fullscreen_text_bg: Fullcolor;
     telop: Telop;
+    place_info: PlaceInfo;
     flashback_filter: Fullcolor;
     scene_effect: SceneEffect;
     live2d: Live2D;
@@ -79,8 +80,8 @@ export class Live2DPlayer {
       background: new Background(layer_data),
       fullcolor: new Fullcolor(layer_data),
       fullscreen_text: new FullScreenText(layer_data),
-      fullscreen_text_bg: new Fullcolor(layer_data),
       telop: new Telop(layer_data),
+      place_info: new PlaceInfo(layer_data),
       flashback_filter: new Fullcolor(layer_data),
       scene_effect: new SceneEffect(layer_data),
       dialog: new Dialog(layer_data),
@@ -109,11 +110,11 @@ export class Live2DPlayer {
     root.addChild(this.layers.sekai.root);
     root.addChild(this.layers.wipe.root);
     root.addChild(this.layers.fullcolor.root);
-    root.addChild(this.layers.fullscreen_text_bg.root);
     root.addChild(this.layers.fullscreen_text.root);
     root.addChild(this.layers.movie.root);
 
     UIRoot.addChild(this.layers.dialog.root);
+    UIRoot.addChild(this.layers.place_info.root);
 
     this.camera = {
       pivot: [0.5, 0.5],

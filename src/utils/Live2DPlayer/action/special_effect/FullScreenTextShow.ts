@@ -14,9 +14,14 @@ export default async function FullScreenTextShow(
     action,
     action_detail
   );
-  controller.layers.fullscreen_text_bg.draw(0x000000);
-  await controller.layers.fullscreen_text_bg.show(
-    action_detail.Duration * 1000,
-    true
+  controller.layers.background.add_blur(6);
+
+  // Add dark color filter to darken the background
+  // This reduces brightness by 40% while maintaining color balance
+  controller.layers.background.add_color_filter(
+    [0.6, 0, 0, 0, 0], // Red channel: 60% of original
+    [0, 0.6, 0, 0, 0], // Green channel: 60% of original
+    [0, 0, 0.6, 0, 0], // Blue channel: 60% of original
+    [0, 0, 0, 1, 0] // Alpha channel: unchanged
   );
 }

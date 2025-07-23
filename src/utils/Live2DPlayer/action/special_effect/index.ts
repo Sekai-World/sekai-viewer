@@ -5,6 +5,7 @@ import { log } from "../../log";
 
 import ChangeBackground from "./ChangeBackground";
 import Telop from "./Telop";
+import PlaceInfo from "./PlaceInfo";
 import WhiteIn from "./WhiteIn";
 import WhiteOut from "./WhiteOut";
 import BlackIn from "./BlackIn";
@@ -41,6 +42,7 @@ import SekaiOutCenter from "./SekaiOutCenter";
 import ChangeCameraPosition from "./ChangeCameraPosition";
 import ChangeCameraZoomLevel from "./ChangeCameraZoomLevel";
 import Movie from "./Movie";
+import Blur from "./Blur";
 
 export default async function action_se(
   controller: Live2DController,
@@ -165,6 +167,12 @@ export default async function action_se(
       break;
     case SpecialEffectType.Movie:
       await Movie(controller, action);
+      break;
+    case SpecialEffectType.Blur:
+      await Blur(controller, action);
+      break;
+    case SpecialEffectType.PlaceInfo:
+      await PlaceInfo(controller, action);
       break;
     default:
       log.warn(

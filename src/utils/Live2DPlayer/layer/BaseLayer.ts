@@ -1,4 +1,5 @@
 import {
+  BlurFilter,
   ColorMatrix,
   ColorMatrixFilter,
   Container,
@@ -99,6 +100,30 @@ export default abstract class BaseLayer {
       this.root.filters.push(filter);
     } else {
       this.root.filters = [filter];
+    }
+  };
+
+  public add_blur = (strength: number = 2) => {
+    // add blur filter
+    const blurFilter = new BlurFilter(strength);
+    blurFilter.resolution = 2;
+    if (this.root.filters) {
+      this.root.filters.push(blurFilter);
+    } else {
+      this.root.filters = [blurFilter];
+    }
+  };
+
+  public remove_blur = () => {
+    // remove all BlurFilter
+    if (this.root.filters) {
+      let idx = -1;
+      do {
+        idx = this.root.filters.findIndex((f) => f instanceof BlurFilter);
+        if (idx !== -1) {
+          this.root.filters?.splice(idx, 1);
+        }
+      } while (idx !== -1);
     }
   };
 
