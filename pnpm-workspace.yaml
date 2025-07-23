@@ -1,3 +1,4 @@
 onlyBuiltDependencies:
   - esbuild
   - msw
+  - tesseract.js
