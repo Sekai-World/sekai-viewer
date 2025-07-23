@@ -55,7 +55,6 @@ import {
   Timeline,
   MoreVert,
   LiveTv,
-  Translate,
   Dns,
 } from "@mui/icons-material";
 import AccountGroup from "~icons/mdi/account-group";
@@ -418,13 +417,6 @@ const DrawerContent: React.FC<{
           icon: <Bullhorn></Bullhorn>,
           text: t("common:announcement"),
           to: "/announcement",
-        },
-        {
-          disabled: false,
-          icon: <Translate></Translate>,
-          text: t("common:translation"),
-          to: "/translation",
-          visibleRoles: ["translator", "admin"],
         },
       ],
       [
