@@ -57,7 +57,6 @@ import {
   LiveTv,
   Translate,
   Dns,
-  Favorite,
 } from "@mui/icons-material";
 import AccountGroup from "~icons/mdi/account-group";
 import Bullhorn from "~icons/mdi/bullhorn";
@@ -422,13 +421,6 @@ const DrawerContent: React.FC<{
         },
         {
           disabled: false,
-          icon: <Favorite></Favorite>,
-          isRedirection: true,
-          text: t("common:song wishlist"),
-          to: "https://wishlist.sekai.best/",
-        },
-        {
-          disabled: false,
           icon: <Translate></Translate>,
           text: t("common:translation"),
           to: "/translation",
@@ -481,7 +473,7 @@ const DrawerContent: React.FC<{
         {
           disabled: false,
           icon: <HomeIcon></HomeIcon>,
-          text: t("common:mysekai.fixture"),
+          text: t("common:mysekaiFixture"),
           to: "/mysekai/fixture",
         },
         {
