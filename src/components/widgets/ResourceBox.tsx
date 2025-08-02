@@ -21,11 +21,13 @@ const ResourceBox: React.FC<{
   resourceBoxPurpose: string;
   justifyContent?: string;
   materialJustifyContent?: string;
+  unit?: string;
 }> = ({
   resourceBoxId,
   resourceBoxPurpose,
   justifyContent = "space-around",
   materialJustifyContent = "center",
+  unit = "piapro",
 }) => {
   const { region } = useRootStore();
 
@@ -145,7 +147,7 @@ const ResourceBox: React.FC<{
                 key={detail.resourceId}
               />
             ) : detail.resourceType === "costume_3d" ? (
-              <Costume3DThumbnail costumeId={detail.resourceId!} />
+              <Costume3DThumbnail costumeId={detail.resourceId!} unit={unit} />
             ) : detail.resourceType !== "honor" ? (
               <CommonMaterialIcon
                 materialName={detail.resourceType}

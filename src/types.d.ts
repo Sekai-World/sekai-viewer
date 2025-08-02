@@ -92,6 +92,8 @@ export interface Cost {
   resourceType: string;
   resourceLevel?: number;
   quantity: number;
+  unit?: string;
+  characterId?: number;
 }
 
 export interface CardParameter {
