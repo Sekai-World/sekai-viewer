@@ -3,9 +3,9 @@ import { ICompactCostume3DModel, ICostume3DModel } from "../../types";
 import { getRemoteAssetURL, useCachedData, useCompactData } from "../../utils";
 import Image from "mui-image";
 
-type Props = { costumeId: number };
+type Props = { costumeId: number; unit: string };
 
-const Costume3DThumbnail = ({ costumeId }: Props) => {
+const Costume3DThumbnail = ({ costumeId, unit }: Props) => {
   const [costume3dModels] = useCachedData<ICostume3DModel>("costume3dModels");
   const [compactCostume3dModels] = useCompactData<ICompactCostume3DModel>(
     "compactCostume3dModels"
@@ -28,11 +28,16 @@ const Costume3DThumbnail = ({ costumeId }: Props) => {
         ],
       });
     } else if (costume3dModels) {
-      setCostume(
-        costume3dModels.find((elem) => elem.costume3dId === costumeId)
+      const matchingCostumes = costume3dModels.filter(
+        (elem) => elem.costume3dId === costumeId
       );
+      const unitCostume = matchingCostumes.find((elem) => elem.unit === unit);
+      const piaproCostume = matchingCostumes.find(
+        (elem) => elem.unit === "piapro"
+      );
+      setCostume(unitCostume || piaproCostume || matchingCostumes[0]);
     }
-  }, [compactCostume3dModels, costume3dModels, costumeId]);
+  }, [compactCostume3dModels, costume3dModels, costumeId, unit]);
 
   useEffect(() => {
     if (costume) {
