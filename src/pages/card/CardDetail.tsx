@@ -1489,9 +1489,28 @@ const CardDetail: React.FC<unknown> = observer(() => {
                   </Typography>
                 </Grid>
                 <Grid item xs={9} container justifyContent="flex-end">
-                  {masterLessons
-                    .find((ml) => ml.masterRank === masterRank)!
-                    .costs.map((c, idx) => (
+                  {(() => {
+                    const masterLesson = masterLessons.find(
+                      (ml) => ml.masterRank === masterRank
+                    );
+                    if (!masterLesson) return null;
+
+                    const filteredCosts = masterLesson.costs.filter((cost) => {
+                      if (
+                        cost.unit &&
+                        cost.unit !== card.supportUnit &&
+                        cost.unit !== getCharaUnitName(card.characterId)
+                      )
+                        return false;
+                      if (
+                        cost.characterId &&
+                        cost.characterId !== card.characterId
+                      )
+                        return false;
+                      return true;
+                    });
+
+                    return filteredCosts.map((c, idx) => (
                       <Grid key={`master-rank-cost-${idx}`} item>
                         <MaterialIcon
                           materialId={c.resourceId}
@@ -1499,7 +1518,8 @@ const CardDetail: React.FC<unknown> = observer(() => {
                           justify="center"
                         />
                       </Grid>
-                    ))}
+                    ));
+                  })()}
                 </Grid>
               </Grid>
               <Divider style={{ margin: "1% 0" }} />
@@ -1528,6 +1548,11 @@ const CardDetail: React.FC<unknown> = observer(() => {
                         masterLessonRewards.find(
                           (mlr) => mlr.masterRank === masterRank
                         )!.resourceBoxId
+                      }
+                      unit={
+                        card.supportUnit !== "none"
+                          ? card.supportUnit
+                          : getCharaUnitName(card.characterId)
                       }
                       resourceBoxPurpose="master_lesson_reward"
                       justifyContent="flex-end"
