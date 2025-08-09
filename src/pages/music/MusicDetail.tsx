@@ -60,15 +60,16 @@ import EmbedVideoPlayer from "../../components/blocks/EmbedVideoPlayer";
 import { addID3Tags } from "../../utils/mp3";
 
 const KR_EXCLUSIVE_IDS = [
-  10001, 10002, 371, 387, 419, 420, 453, 464, 10003, 10004, 10005,
+  10001, 10002, 371, 387, 419, 420, 453, 459, 464, 10003, 10004, 10005, 10006,
+  10007, 10008,
 ];
 const EN_EXCLUSIVE_IDS = [
   371, 387, 419, 420, 445, 453, 459, 464, 479, 514, 528, 535, 552, 563, 568,
-  598, 599, 602, 609,
+  598, 599, 602, 609, 640, 690,
 ];
-const TW_EXCLUSIVE_IDS = [371, 387, 419, 420, 453, 464];
+const TW_EXCLUSIVE_IDS = [371, 387, 419, 420, 453, 459, 464];
 const CN_EXCLUSIVE_IDS = [
-  10001, 10002, 11001, 11002, 11003, 11004, 11005, 11006, 11007, 11008,
+  10001, 10002, 11001, 11002, 11003, 11004, 11005, 11006, 11007, 11008, 11009,
 ];
 
 const MusicDetail: React.FC<unknown> = observer(() => {
