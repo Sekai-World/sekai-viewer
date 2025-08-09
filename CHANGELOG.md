@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.16.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.16.3...v1.16.4) (2025-08-09)
+
+
+### Bug Fixes
+
+* correctly display master lesson cost and reward ([2e18f69](https://github.com/Sekai-World/sekai-viewer/commits/2e18f697b7025acca5595fc899911a8a4aecd2f1))
+* update Transifex link to the dashboard ([74fe1d0](https://github.com/Sekai-World/sekai-viewer/commits/74fe1d03f78206b6838941da9b525ff460edb4cb))
+
+
+### Refactors
+
+* update exclusive IDs for music details ([5fe813f](https://github.com/Sekai-World/sekai-viewer/commits/5fe813fffe2de79d74178339c36d23309ed81702))
+
 ### [1.16.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.16.2...v1.16.3) (2025-07-23)
 
 
