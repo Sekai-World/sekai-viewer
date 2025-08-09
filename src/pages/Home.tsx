@@ -432,7 +432,7 @@ const Home: React.FC = () => {
             </Grid>
             <Grid item>
               <Link
-                href="https://www.transifex.com/dnaroma/sekai-viewer"
+                href="https://app.transifex.com/dnaroma/sekai-viewer/dashboard/"
                 target="_blank"
                 underline="hover"
               >
