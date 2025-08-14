@@ -120,7 +120,8 @@ export default class Live2D extends BaseLayer {
   update_motion = async (
     motion_type: "Motion" | "Expression",
     costume: string,
-    motion_index: number
+    motion_index: number,
+    to_last_frame: boolean = false
   ) => {
     const model = this.find(costume);
     if (model) {
@@ -132,7 +133,8 @@ export default class Live2D extends BaseLayer {
       await manager.startMotion(
         motion_type,
         motion_index,
-        MotionPriority.FORCE
+        MotionPriority.FORCE,
+        to_last_frame
       );
       model.live2DInfo.wait_motion = this.animation_controller.wrapper(
         () => {},

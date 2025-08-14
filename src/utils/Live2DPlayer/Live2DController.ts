@@ -273,11 +273,12 @@ export class Live2DController extends Live2DPlayer {
   apply_live2d_motion = async (
     costume: string,
     motion: string,
-    expression: string
+    expression: string,
+    to_last_frame: boolean = false
   ) => {
     log.log(
       "Live2DController",
-      `apply motion: ${costume}|${motion}|${expression}`
+      `apply motion${to_last_frame ? " last frame" : ""}: ${costume}|${motion}|${expression}`
     );
     const model_data = this.modelData.find((n) => n.costume === costume);
     const current_model = this.current_costume.find(
@@ -305,7 +306,7 @@ export class Live2DController extends Live2DPlayer {
         }
         wait_list.push(
           this.layers.live2d
-            .update_motion("Expression", costume, index)
+            .update_motion("Expression", costume, index, to_last_frame)
             .then((_) => (current_model.expression = expression))
         );
       }
@@ -319,7 +320,7 @@ export class Live2DController extends Live2DPlayer {
         }
         wait_list.push(
           this.layers.live2d
-            .update_motion("Motion", costume, index)
+            .update_motion("Motion", costume, index, to_last_frame)
             .then((_) => (current_model.motion = motion))
         );
       }
