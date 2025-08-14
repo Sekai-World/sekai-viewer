@@ -14,17 +14,17 @@ import black_wipe from "../../assets/live2d_player_ui/black_wipe.svg";
 
 const common = [
   {
-    identifer: "ui/text_underline",
+    identifier: "ui/text_underline",
     type: Live2DAssetType.UI,
     url: text_underline,
   },
   {
-    identifer: "ui/text_background",
+    identifier: "ui/text_background",
     type: Live2DAssetType.UI,
     url: text_background,
   },
   {
-    identifer: "ui/black_wipe",
+    identifier: "ui/black_wipe",
     type: Live2DAssetType.UI,
     url: black_wipe,
   },
@@ -33,38 +33,38 @@ const common = [
 const condition = {
   sekai: [
     {
-      identifer: "ui/tex_scenario_tri_01",
+      identifier: "ui/tex_scenario_tri_01",
       type: Live2DAssetType.UISheet,
       url: `${assetUrl.minio.jp}/scenario/effect/hologram/tex_scenario_tri_01.webp`,
     },
   ],
   hologram: [
     {
-      identifer: "ui/tex_scenario_tri_01",
+      identifier: "ui/tex_scenario_tri_01",
       type: Live2DAssetType.UISheet,
       url: `${assetUrl.minio.jp}/scenario/effect/hologram/tex_scenario_tri_01.webp`,
     },
     {
-      identifer: "ui/tex_scenario_kira",
+      identifier: "ui/tex_scenario_kira",
       type: Live2DAssetType.UI,
       url: `${assetUrl.minio.jp}/scenario/effect/hologram/tex_scenario_kira.webp`,
     },
     {
-      identifer: "ui/tex_scenario_light",
+      identifier: "ui/tex_scenario_light",
       type: Live2DAssetType.UI,
       url: `${assetUrl.minio.jp}/scenario/effect/hologram/tex_scenario_light.webp`,
     },
   ],
   kirakira: [
     {
-      identifer: "ui/tex_kirakira_01",
+      identifier: "ui/tex_kirakira_01",
       type: Live2DAssetType.UISheet,
       url: `${assetUrl.minio.jp}/scenario/effect/kirakira_01/tex_kirakira_01.webp`,
     },
   ],
   light_up_legend: [
     {
-      identifer: "ui/tex_light_up_legend",
+      identifier: "ui/tex_light_up_legend",
       type: Live2DAssetType.UISheet,
       url: `${assetUrl.minio.jp}/scenario/effect/light_up_legend_01/tex_light_up_legend.webp`,
     },
@@ -95,7 +95,7 @@ export function getUIMediaUrls(data: IScenarioData): ILive2DAssetUrl[] {
   });
   category.forEach((c) => {
     condition[c].forEach((i) => {
-      const find = all.find((a) => a.identifer === i.identifer);
+      const find = all.find((a) => a.identifier === i.identifier);
       if (!find) all.push(i);
     });
   });

@@ -30,11 +30,11 @@ export default class Dialog extends BaseLayer {
     container.addChild(dialog_container);
 
     const background_texture = this.textures.find(
-      (a) => a.identifer === "ui/text_background"
+      (a) => a.identifier === "ui/text_background"
     )!.texture;
     const background = new Sprite(background_texture);
     const underline_texture = this.textures.find(
-      (a) => a.identifer === "ui/text_underline"
+      (a) => a.identifier === "ui/text_underline"
     )!.texture;
     const underline = new Sprite(underline_texture);
     const cn_c = new Text(cn);

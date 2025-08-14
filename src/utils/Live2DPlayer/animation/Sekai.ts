@@ -20,7 +20,7 @@ export default class Sekai extends BaseAnimation {
 
     // triangle
     const tri_textures = texture_slice(
-      this.textures.find((a) => a.identifer === "ui/tex_scenario_tri_01")!
+      this.textures.find((a) => a.identifier === "ui/tex_scenario_tri_01")!
         .texture.baseTexture,
       [4, 4],
       10
