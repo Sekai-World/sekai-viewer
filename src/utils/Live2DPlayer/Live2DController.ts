@@ -1,6 +1,5 @@
 import { Live2DPlayer } from "./Live2DPlayer";
 import type { Application } from "pixi.js";
-import { Howl } from "howler";
 import { log } from "./log";
 import {
   IScenarioData,
@@ -11,19 +10,16 @@ import {
 
 import {
   Live2DAssetType,
-  Live2DAssetTypeSound,
-  Live2DAssetTypeUI,
-  ILive2DCachedAsset,
+  ILive2DScenarioResource,
   ILive2DModelDataCollection,
   ILive2DControllerData,
-  Live2DAssetTypeImage,
 } from "./types.d";
 
 import single_action from "./action";
 
 export class Live2DController extends Live2DPlayer {
   scenarioData: IScenarioData;
-  scenarioResource: ILive2DCachedAsset[];
+  scenarioResource: ILive2DScenarioResource;
   modelData: ILive2DModelDataCollection[];
   model_queue: string[][];
   current_costume: {
@@ -48,11 +44,17 @@ export class Live2DController extends Live2DPlayer {
     stageSize: [number, number],
     data: ILive2DControllerData
   ) {
-    super(
-      app,
-      stageSize,
-      data.scenarioResource.filter((a) => Live2DAssetTypeUI.includes(a.type))
-    );
+    const ui_assets = {
+      image: data.scenarioResource.image.filter(
+        (a) =>
+          a.type === Live2DAssetType.UI || a.type === Live2DAssetType.UISheet
+      ),
+      audio: [],
+      video: data.scenarioResource.video.filter(
+        (a) => a.type === Live2DAssetType.UIVideo
+      ),
+    };
+    super(app, stageSize, ui_assets);
     this.scenarioData = data.scenarioData;
     this.scenarioResource = data.scenarioResource;
     this.modelData = data.modelData;
@@ -223,10 +225,10 @@ export class Live2DController extends Live2DPlayer {
 
     // wait all talk sounds finished
     await this.layers.live2d.all_speak_finish();
-    for (const s of this.scenarioResource.filter(
+    for (const s of this.scenarioResource.audio.filter(
       (sound) => sound.type === Live2DAssetType.Talk
     )) {
-      const sound = s.data as Howl;
+      const sound = s.data;
       if (sound.playing()) {
         await new Promise<void>((resolve) => {
           if (this.animate.abort_controller.signal.aborted) {
@@ -399,35 +401,33 @@ export class Live2DController extends Live2DPlayer {
   }) => {
     Object.assign(this.settings, volume);
     if (volume.bgm_volume) this.settings.bgm_volume *= 0.5; // bgm too load
-    const s_list = this.scenarioResource.filter(
-      (sound) =>
-        Live2DAssetTypeSound.includes(sound.type) &&
-        (sound.data as Howl).playing()
+    const s_list = this.scenarioResource.audio.filter((sound) =>
+      sound.data.playing()
     );
     if (volume.voice_volume)
       s_list
         .filter((sound) => sound.type === Live2DAssetType.Talk)
         .forEach((sound) => {
-          (sound.data as Howl).volume(this.settings.voice_volume);
+          sound.data.volume(this.settings.voice_volume);
         });
     if (volume.bgm_volume)
       s_list
         .filter((sound) => sound.type === Live2DAssetType.BackgroundMusic)
         .forEach((sound) => {
-          (sound.data as Howl).volume(this.settings.bgm_volume);
+          sound.data.volume(this.settings.bgm_volume);
         });
     if (volume.se_volume)
       s_list
         .filter((sound) => sound.type === Live2DAssetType.SoundEffect)
         .forEach((sound) => {
-          (sound.data as Howl).volume(this.settings.se_volume);
+          sound.data.volume(this.settings.se_volume);
         });
   };
   stop_sounds = (sound_types: Live2DAssetType[], unload = false) => {
-    this.scenarioResource
+    this.scenarioResource.audio
       .filter((resource) => sound_types.includes(resource.type))
       .forEach((resource) => {
-        const sound = resource.data as Howl;
+        const sound = resource.data;
         if (sound.playing()) sound.stop();
         if (unload) sound.unload();
       });
@@ -437,15 +437,20 @@ export class Live2DController extends Live2DPlayer {
   };
   public destroy() {
     // unload all sounds
-    this.stop_sounds(Live2DAssetTypeSound, true);
+    this.stop_sounds(
+      [
+        Live2DAssetType.Talk,
+        Live2DAssetType.BackgroundMusic,
+        Live2DAssetType.SoundEffect,
+      ],
+      true
+    );
     // unload all images
-    this.scenarioResource
-      .filter((resource) => Live2DAssetTypeImage.includes(resource.type))
-      .forEach((resource) => {
-        const image = resource.data as HTMLImageElement;
-        image.src = "";
-        image.remove();
-      });
+    this.scenarioResource.image.forEach((resource) => {
+      const image = resource.data;
+      image.src = "";
+      image.remove();
+    });
     // destroy player
     super.destroy();
   }

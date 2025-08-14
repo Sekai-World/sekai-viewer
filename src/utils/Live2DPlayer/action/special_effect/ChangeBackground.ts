@@ -15,13 +15,12 @@ export default async function ChangeBackground(
     action,
     action_detail
   );
-  const data = controller.scenarioResource.find(
+  const bg = controller.scenarioResource.image.find(
     (s) =>
-      s.identifer === action_detail.StringValSub &&
+      s.identifier === action_detail.StringValSub &&
       s.type === Live2DAssetType.BackgroundImage
-  )?.data as HTMLImageElement;
+  );
   //clear
   controller.layers.dialog.hide(200);
-
-  controller.layers.background.draw(data);
+  if (bg) controller.layers.background.draw(bg.data);
 }

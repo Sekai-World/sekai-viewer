@@ -17,14 +17,14 @@ export default async function FlashbackIn(
     action,
     action_detail
   );
-  const sound = controller.scenarioResource.find(
+  const sound = controller.scenarioResource.audio.find(
     (s) =>
-      s.identifer === action_detail.StringValSub &&
+      s.identifier === action_detail.StringValSub &&
       s.type === Live2DAssetType.Talk
   );
   if (sound) {
     controller.stop_sounds([Live2DAssetType.Talk]);
-    const inst = sound.data as Howl;
+    const inst = sound.data;
     inst.volume(controller.settings.voice_volume);
     inst.play();
   } else {

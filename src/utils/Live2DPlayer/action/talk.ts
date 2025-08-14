@@ -70,9 +70,9 @@ export default async function action_talk(
   // sound
   if (action_detail.Voices.length > 0) {
     controller.stop_sounds([Live2DAssetType.Talk]);
-    const sound = controller.scenarioResource.find(
+    const sound = controller.scenarioResource.audio.find(
       (s) =>
-        s.identifer === action_detail.Voices[0].VoiceId &&
+        s.identifier === action_detail.Voices[0].VoiceId &&
         s.type === Live2DAssetType.Talk
     );
     if (sound) {
@@ -84,7 +84,7 @@ export default async function action_talk(
       if (costume) {
         controller.layers.live2d.speak(costume, sound.url, volume);
       } else {
-        const inst = sound.data as Howl;
+        const inst = sound.data;
         inst.volume(volume);
         inst.play();
       }

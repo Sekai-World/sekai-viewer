@@ -3,17 +3,19 @@ import { Howl } from "howler";
 import { SnippetAction } from "../../types.d";
 import type { ILive2dModelListElement, IScenarioData } from "../../types.d";
 
-import {
-  Live2DAssetTypeImage,
-  Live2DAssetTypeSound,
-  Live2DAssetTypeVideo,
-} from "./types.d";
 import type {
   ILive2DCachedAsset,
   ILive2DAssetUrl,
+  ILive2DScenarioResource,
   ILive2DControllerData,
   ILive2DModelDataCollection,
   IProgressEvent,
+} from "./types.d";
+
+import {
+  isLive2DImageAsset,
+  isLive2DAudioAsset,
+  isLive2DVideoAsset,
 } from "./types.d";
 
 import { getUIMediaUrls } from "./ui_assets";
@@ -111,43 +113,49 @@ export async function preloadModels(
 export async function preloadMedia(
   urls: ILive2DAssetUrl[],
   progress: IProgressEvent
-): Promise<ILive2DCachedAsset[]> {
-  const queue = new PreloadQueue<ILive2DCachedAsset>();
+): Promise<ILive2DScenarioResource> {
   const total = urls.length;
+
+  // image
+  const queue = new PreloadQueue<ILive2DCachedAsset>();
   let count = 0;
   for (const url of urls) {
     await queue.wait();
     await queue.add(
       new Promise((resolve, reject) => {
-        if (Live2DAssetTypeSound.includes(url.type)) {
-          preloadSound(url.url)
-            .then((data) => {
-              resolve({ ...url, data });
-            })
-            .catch(reject);
-        } else if (Live2DAssetTypeImage.includes(url.type)) {
+        if (isLive2DImageAsset(url)) {
           preloadImage(url.url)
             .then((data) => {
               resolve({ ...url, data });
             })
             .catch(reject);
-        } else if (Live2DAssetTypeVideo.includes(url.type)) {
+        } else if (isLive2DVideoAsset(url)) {
           preloadVideo(url.url)
             .then((data) => {
               resolve({ ...url, data });
             })
             .catch(reject);
-        } else {
-          resolve({ ...url, data: null });
+        } else if (isLive2DAudioAsset(url)) {
+          preloadSound(url.url)
+            .then((data) => {
+              resolve({ ...url, data });
+            })
+            .catch(reject);
         }
       }),
       () => {
         count++;
-        progress("media", count, total, url.identifer);
+        progress("media", count, total, url.identifier);
       }
     );
   }
-  return (await queue.all()).filter((d) => !!d);
+  const asset_list = (await queue.all()).filter((d) => !!d);
+  const scenario_resource: ILive2DScenarioResource = {
+    image: asset_list.filter((a) => isLive2DImageAsset(a)),
+    video: asset_list.filter((a) => isLive2DVideoAsset(a)),
+    audio: asset_list.filter((a) => isLive2DAudioAsset(a)),
+  };
+  return scenario_resource;
 }
 function preloadImage(url: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
