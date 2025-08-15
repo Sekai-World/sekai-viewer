@@ -1,5 +1,9 @@
 import { PixiComponent } from "@pixi/react";
-import { InternalModel, Live2DModel } from "pixi-live2d-display-mulmotion";
+import {
+  Cubism4InternalModel,
+  InternalModel,
+  Live2DModel,
+} from "pixi-live2d-display-mulmotion";
 import {
   BatchRenderer,
   extensions,
@@ -51,6 +55,10 @@ const Live2dModel = forwardRef<
         autoHitTest: false,
         ticker: Ticker.shared,
       });
+      const internalModel = _model.internalModel;
+      if (internalModel instanceof Cubism4InternalModel) {
+        internalModel.coreModel.setOverwriteFlagForModelCullings(true);
+      }
       setModel(_model);
       if (props.onReady) {
         setTimeout(() => props.onReady!());
