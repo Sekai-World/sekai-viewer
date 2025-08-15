@@ -334,7 +334,7 @@ const Live2DView: React.FC<unknown> = () => {
         region,
         resolution: 4,
       });
-      app.renderer.plugins.extract
+      app.renderer.extract
         .image(imageThis, "image/png", 1.0)
         .then((image: HTMLImageElement) => {
           saveAs(
