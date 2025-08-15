@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import {
   getLive2DControllerData,
   preloadModels,
+  preloadModelMotion,
 } from "../../utils/Live2DPlayer/load";
 import {
   useScenarioInfo,
@@ -11,7 +12,9 @@ import {
 } from "../../utils/storyLoader";
 import {
   ILive2DControllerData,
-  IProgressEvent,
+  ILive2DLoadProgressHandler,
+  ILive2DLoadWarningHandler,
+  Live2DLoadProgressType,
   LoadStatus,
   ILive2DPlayerSettings,
 } from "../../utils/Live2DPlayer/types.d";
@@ -63,7 +66,7 @@ const StoryReaderLive2DContent: React.FC<{
   const [isRegeneratingTranslation, setIsRegeneratingTranslation] =
     useState(false);
 
-  const { showError } = useAlertSnackbar();
+  const { showError, showWarning } = useAlertSnackbar();
 
   const canvas = useRef<HTMLDivElement>(null);
 
@@ -76,28 +79,45 @@ const StoryReaderLive2DContent: React.FC<{
       return t("story_reader_live2d:load_button.loaded");
   }, [loadStatus, t]);
 
-  const handleProgress: IProgressEvent = (pt, count, total, info) => {
-    if (pt === "model_data")
-      setProgressText(
-        `${t("story_reader_live2d:progress.load_model_data")}: ${count}/${total} (${info})`
-      );
-    else if (pt === "media")
-      setProgressText(
-        `${t("story_reader_live2d:progress.load_media")}: ${count}/${total} (${info})`
-      );
-    else if (pt === "model_assets")
-      setProgressText(
-        `${t("story_reader_live2d:progress.load_model_assets")}: ${count}/${total} (${info})`
-      );
-    else if (pt === "model_motion")
-      setProgressText(
-        `${t("story_reader_live2d:progress.load_model_motion")}: ${count}/${total} (${info})`
-      );
+  const warningHandler: ILive2DLoadWarningHandler = (reason) => {
+    showWarning(`Warning: ${reason}`);
+  };
+
+  const progressHandler: ILive2DLoadProgressHandler = (
+    pt,
+    count,
+    total,
+    info
+  ) => {
+    switch (pt) {
+      case Live2DLoadProgressType.ModelData:
+        setProgressText(
+          `${t("story_reader_live2d:progress.load_model_data")}: ${count}/${total} (${info})`
+        );
+        break;
+      case Live2DLoadProgressType.Media:
+        setProgressText(
+          `${t("story_reader_live2d:progress.load_media")}: ${count}/${total} (${info})`
+        );
+        break;
+      case Live2DLoadProgressType.ModelAssets:
+        setProgressText(
+          `${t("story_reader_live2d:progress.load_model_assets")}: ${count}/${total} (${info})`
+        );
+        break;
+      case Live2DLoadProgressType.ModelMotion:
+        setProgressText(
+          `${t("story_reader_live2d:progress.load_model_motion")}: ${count}/${total} (${info})`
+        );
+        break;
+      default:
+        break;
+    }
     const order = [
-      { pt: "media", ratio: 30 },
-      { pt: "model_data", ratio: 35 },
-      { pt: "model_assets", ratio: 50 },
-      { pt: "model_motion", ratio: 80 },
+      { pt: Live2DLoadProgressType.Media, ratio: 30 },
+      { pt: Live2DLoadProgressType.ModelData, ratio: 35 },
+      { pt: Live2DLoadProgressType.ModelAssets, ratio: 50 },
+      { pt: Live2DLoadProgressType.ModelMotion, ratio: 80 },
     ];
     const bar_total = order[order.length - 1].ratio;
     const ratio_idx = order.findIndex((o) => o.pt === pt);
@@ -140,21 +160,31 @@ const StoryReaderLive2DContent: React.FC<{
   async function load() {
     setLoadStatus(LoadStatus.Loading);
     // step 1 - get scenario url
+    // return when error
     setProgressText(t("story_reader_live2d:progress.get_resource_url"));
     let scenarioInfo;
     try {
       scenarioInfo = await getScenarioInfo(storyType, storyId, region);
     } catch (err) {
-      if (err instanceof Error) showError(err.message);
+      if (err instanceof Error)
+        showError(`Error when load scenario url: ${err.message}`);
       setLoadStatus(LoadStatus.Ready);
       return;
     }
     setLoadProgress(1);
     if (scenarioInfo) {
-      // // step 2 - get scenario data
+      // step 2 - get scenario data
+      // return when error
       setProgressText(t("story_reader_live2d:progress.get_scenario_data"));
-      scenarioData.current =
-        await getProcessedScenarioDataForLive2D(scenarioInfo);
+      try {
+        scenarioData.current =
+          await getProcessedScenarioDataForLive2D(scenarioInfo);
+      } catch (err) {
+        if (err instanceof Error)
+          showError(`Error when load scenario data: ${err.message}`);
+        setLoadStatus(LoadStatus.Ready);
+        return;
+      }
       setLoadProgress(2);
 
       // Check if translation is enabled and region is jp
@@ -181,6 +211,7 @@ const StoryReaderLive2DContent: React.FC<{
 
       // step 3 - get controller data (preload media)
       // step 3.1 - load media url
+      // return when error
       let mediaUrl;
       try {
         mediaUrl = await getMediaUrlForLive2D(
@@ -188,22 +219,51 @@ const StoryReaderLive2DContent: React.FC<{
           scenarioData.current
         );
       } catch (err) {
-        if (err instanceof Error) showError(err.message);
+        if (err instanceof Error)
+          showError(`Error when load media url: ${err.message}`);
         setLoadStatus(LoadStatus.Ready);
         return;
       }
-      if (mediaUrl) {
-        // step 3.2 preload media
-        const ctData = await getLive2DControllerData(
+      // step 3.2 preload media
+      // return when error
+      let ctData;
+      try {
+        ctData = await getLive2DControllerData(
           scenarioData.current,
           mediaUrl,
-          handleProgress
+          progressHandler,
+          warningHandler
         );
-        // step 4 - preload model
-        await preloadModels(ctData, handleProgress);
-        controllerData.current = ctData;
-        setLoadStatus(LoadStatus.Loaded);
+      } catch (err) {
+        if (err instanceof Error)
+          showError(`Error when load media: ${err.message}`);
+        setLoadStatus(LoadStatus.Ready);
+        return;
       }
+      // step 4 - preload model
+      try {
+        await preloadModels(ctData, progressHandler);
+      } catch (err) {
+        if (err instanceof Error)
+          showError(`Error when load model data: ${err.message}`);
+        setLoadStatus(LoadStatus.Ready);
+        return;
+      }
+      // step 5 - preload motion
+      try {
+        await preloadModelMotion(
+          ctData.modelData,
+          progressHandler,
+          warningHandler
+        );
+      } catch (err) {
+        if (err instanceof Error)
+          showError(`Error when load motion data: ${err.message}`);
+        setLoadStatus(LoadStatus.Ready);
+        return;
+      }
+      controllerData.current = ctData;
+      setLoadStatus(LoadStatus.Loaded);
     }
   }
 

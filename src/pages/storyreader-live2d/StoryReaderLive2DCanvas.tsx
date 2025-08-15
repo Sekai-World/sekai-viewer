@@ -9,6 +9,7 @@ import { LoadStatus } from "../../utils/Live2DPlayer/types.d";
 import type {
   ILive2DControllerData,
   ILive2DPlayerSettings,
+  ILive2DLoadProgressHandler,
 } from "../../utils/Live2DPlayer/types.d";
 
 import { useAlertSnackbar } from "../../utils";
@@ -39,6 +40,7 @@ const StoryReaderLive2DCanvas: React.FC<{
   const [autoplayWaiting, setAutoplayWaiting] = useState(false);
   const [canClick, setCanClick] = useState(true);
   const [loadStatus, setLoadStatus] = useState<LoadStatus>(LoadStatus.Ready);
+  const [renderProgress, setRenderProgress] = useState<string>("");
 
   /**
    * next step process:
@@ -216,6 +218,15 @@ const StoryReaderLive2DCanvas: React.FC<{
     }
   };
 
+  const handleRenderProgress: ILive2DLoadProgressHandler = (
+    type,
+    count,
+    total,
+    info
+  ) => {
+    setRenderProgress(`${count}/${total} (${info})`);
+  };
+
   return (
     <Stack
       direction="column"
@@ -238,7 +249,7 @@ const StoryReaderLive2DCanvas: React.FC<{
       )}
       {loadStatus === LoadStatus.Loading && (
         <Typography>
-          {t("story_reader_live2d:progress.load_model_to_canvas")}
+          {`${t("story_reader_live2d:progress.load_model_to_canvas")} ${renderProgress}`}
         </Typography>
       )}
       <div ref={wrap} style={{ position: "relative" }}>
@@ -258,6 +269,7 @@ const StoryReaderLive2DCanvas: React.FC<{
               stageSize={stageSize}
               controllerData={controllerData}
               onModelLoad={handleModelLoad}
+              onRenderProgress={handleRenderProgress}
             />
           )}
         </Stage>

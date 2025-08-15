@@ -13,6 +13,8 @@ import {
   ILive2DScenarioResource,
   ILive2DModelDataCollection,
   ILive2DControllerData,
+  ILive2DLoadProgressHandler,
+  Live2DLoadProgressType,
 } from "./types.d";
 
 import single_action from "./action";
@@ -329,7 +331,10 @@ export class Live2DController extends Live2DPlayer {
     }
     await Promise.all(wait_list);
   };
-  live2d_load_model = async (step: number) => {
+  live2d_load_model = async (
+    step: number,
+    onLoading?: ILive2DLoadProgressHandler
+  ) => {
     const queue = this.model_queue[step];
     const current_queue = this.layers.live2d
       .get_model_list()
@@ -342,8 +347,17 @@ export class Live2DController extends Live2DPlayer {
     const queue_to_load = queue
       .filter((m) => !current_queue.includes(m))
       .map((m) => this.modelData.find((md) => md.costume === m)!);
+    let count = 0;
     for (const m of queue_to_load) {
+      if (onLoading)
+        onLoading(
+          Live2DLoadProgressType.RenderModel,
+          count,
+          queue_to_load.length,
+          m.costume
+        );
       await this.layers.live2d.load(m);
+      count++;
     }
     // add effects
     this.current_costume
