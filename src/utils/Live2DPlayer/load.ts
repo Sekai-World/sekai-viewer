@@ -197,6 +197,7 @@ function preloadSound(url: string): Promise<Howl> {
       onload: () => resolve(sound),
       onloaderror: () => reject(new Error(`Failed to load sound: ${url}`)),
       loop: false,
+      html5: false,
     });
   });
 }

@@ -226,7 +226,6 @@ export class Live2DController extends Live2DPlayer {
     }
 
     // wait all talk sounds finished
-    await this.layers.live2d.all_speak_finish();
     for (const s of this.scenarioResource.audio.filter(
       (sound) => sound.type === Live2DAssetType.Talk
     )) {
@@ -237,7 +236,7 @@ export class Live2DController extends Live2DPlayer {
             resolve();
             return;
           }
-          sound.on("end", () => {
+          sound.once("stop", () => {
             resolve();
           });
           const abort_handler = () => {

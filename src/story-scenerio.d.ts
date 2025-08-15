@@ -61,6 +61,11 @@ export interface TalkData {
   WindowDisplayName: string;
   Body: string;
   TalkTention: number;
+  /**
+   * - 0: No voice, No lip sync
+   * - 1: Lip sync with voice
+   * - 2: Not lip sync with voice (text in "()", monologue)
+   */
   LipSync: number;
   MotionChangeFrom: number;
   Motions: Motion[];
