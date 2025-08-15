@@ -166,20 +166,28 @@ export type AnimationObj = {
   alpha_func?: CurveFunction;
 };
 
-export interface IProgressEvent {
+export enum Live2DLoadProgressType {
+  Media = "media",
+  ModelData = "model-data",
+  ModelTexture = "model-texture",
+  ModelMoc = "model-moc",
+  ModelPhysics = "model-physics",
+  ModelAssets = "model-assets",
+  ModelMotion = "model-motion",
+  RenderModel = "render-model",
+}
+
+export interface ILive2DLoadProgressHandler {
   (
-    type:
-      | "media"
-      | "model_data"
-      | "model_texture"
-      | "model_moc"
-      | "model_physics"
-      | "model_assets"
-      | "model_motion",
+    type: Live2DLoadProgressType,
     count: number,
     total: number,
     info?: string
-  );
+  ): void;
+}
+
+export interface ILive2DLoadWarningHandler {
+  (reason: string): void;
 }
 
 export interface ILive2DPlayerSettings {

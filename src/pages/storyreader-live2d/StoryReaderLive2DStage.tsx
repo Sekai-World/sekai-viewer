@@ -7,7 +7,10 @@ extensions.add(TickerPlugin);
 
 import { Live2DController } from "../../utils/Live2DPlayer/Live2DController";
 import { LoadStatus } from "../../utils/Live2DPlayer/types.d";
-import type { ILive2DControllerData } from "../../utils/Live2DPlayer/types.d";
+import type {
+  ILive2DControllerData,
+  ILive2DLoadProgressHandler,
+} from "../../utils/Live2DPlayer/types.d";
 
 const StoryReaderLive2DStage = forwardRef<
   { controller: Live2DController; reloadStage: () => void },
@@ -15,8 +18,9 @@ const StoryReaderLive2DStage = forwardRef<
     stageSize: [number, number];
     controllerData: ILive2DControllerData;
     onModelLoad: (status: LoadStatus) => void;
+    onRenderProgress: ILive2DLoadProgressHandler;
   }
->(({ stageSize, controllerData, onModelLoad }, ref) => {
+>(({ stageSize, controllerData, onModelLoad, onRenderProgress }, ref) => {
   const app = useApp();
   const controller = useRef<Live2DController>();
   useImperativeHandle(ref, () => {
@@ -36,7 +40,7 @@ const StoryReaderLive2DStage = forwardRef<
     if (controller.current.layers.live2d.load_status() === "ready") {
       onModelLoad(LoadStatus.Loading);
       controller.current.layers.live2d.clear();
-      controller.current.live2d_load_model(0).then(() => {
+      controller.current.live2d_load_model(0, onRenderProgress).then(() => {
         onModelLoad(LoadStatus.Loaded);
       });
     }
