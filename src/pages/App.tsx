@@ -42,6 +42,7 @@ import {
   ArrowBack as ArrowBackIcon,
   Settings as SettingsIcon,
   ControlCamera,
+  PersonPinCircleOutlined,
   QueueMusic,
   CropOriginal,
   ExpandMore,
@@ -137,6 +138,7 @@ const AnnouncementDetail = lazy(
   () => import("./announcement/AnnouncementDetail")
 );
 const Live2D = lazy(() => import("./live2d/Live2D"));
+const Chibi = lazy(() => import("./chibi/Chibi"));
 const VirtualLiveList = lazy(() => import("./virtual_live/VirtualLiveList"));
 const VirtualLiveDetail = lazy(
   () => import("./virtual_live/VirtualLiveDetail")
@@ -524,6 +526,12 @@ const DrawerContent: React.FC<{
           icon: <ControlCamera></ControlCamera>,
           text: "Live2D",
           to: "/l2d",
+        },
+        {
+          disabled: false,
+          icon: <PersonPinCircleOutlined></PersonPinCircleOutlined>,
+          text: "Chibi",
+          to: "/chibi",
         },
         {
           disabled: false,
@@ -1222,6 +1230,9 @@ const AppInner = observer((props: { theme: Theme }) => {
               </Route>
               <Route path="/l2d">
                 <Live2D />
+              </Route>
+              <Route path="/chibi">
+                <Chibi />
               </Route>
               <Route path="/virtual_live" exact>
                 <VirtualLiveList />

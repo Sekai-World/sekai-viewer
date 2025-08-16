@@ -1,0 +1,280 @@
+import React, {
+  Fragment,
+  useState,
+  useMemo,
+  useCallback,
+  useRef,
+  useEffect,
+  useLayoutEffect,
+} from "react";
+import {
+  Alert,
+  Box,
+  Button,
+  Autocomplete,
+  Grid,
+  TextField,
+  Stack,
+  Divider,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
+import { Camera } from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
+import { useCachedData } from "../../utils";
+import { ICostume2D } from "../../types.d";
+
+import { Stage } from "@pixi/react";
+
+import { ChibiPlayer } from "../../utils/ChibiPlayer/ChibiPlayer";
+import { filterValidChibi } from "../../utils/ChibiPlayer/load";
+import { ChibiListItem, IChibiSpineState } from "./ChibiListItem";
+import ChibiStage from "./ChibiStage";
+
+import TypographyHeader from "../../components/styled/TypographyHeader";
+
+import { saveAs } from "file-saver";
+import dayjs from "dayjs";
+
+const ChibiView: React.FC<unknown> = () => {
+  const { t } = useTranslation();
+  const [costume2Ds] = useCachedData<ICostume2D>("costume2ds");
+  const [selectedSpine, setSelectedSpine] = useState<string | null>(null);
+  const [stageSize, setStageSize] = useState<[number, number]>([0, 0]);
+  const [spineList, setSpineList] = useState<IChibiSpineState[]>([]);
+
+  const stage = useRef<{ player: ChibiPlayer | null }>(null);
+  const canvas = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const update_stage_size = () => {
+      if (canvas.current) {
+        let styleWidth = 0;
+        let styleHeight = 0;
+        styleWidth = canvas.current.clientWidth;
+        styleHeight = styleWidth * (window.innerHeight / window.innerWidth);
+        setStageSize([styleWidth, styleHeight]);
+      }
+    };
+    window.addEventListener("resize", update_stage_size);
+    update_stage_size();
+    return () => {
+      window.removeEventListener("resize", update_stage_size);
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    document.title = t("title:chibi");
+  }, [t]);
+
+  const allSpineList = useMemo(() => {
+    if (costume2Ds)
+      return filterValidChibi([
+        ...new Set(
+          costume2Ds
+            .map((c) => c.spineAssetbundleName)
+            .filter((c) => c !== undefined)
+        ),
+      ]);
+  }, [costume2Ds]);
+
+  const updateStage = useCallback((newSpineList: IChibiSpineState[]) => {
+    if (stage.current && stage.current.player)
+      stage.current.player.updateChibi(
+        newSpineList
+          .filter((s) => s.on)
+          .map((s) => ({
+            id: s.id,
+            spine: s.spine,
+          }))
+      );
+  }, []);
+
+  const handleAddToScene = useCallback(() => {
+    if (selectedSpine) {
+      setSpineList((prevSpineList) => {
+        let max = 0;
+        if (prevSpineList.length > 0)
+          max = Math.max(...prevSpineList.map((s) => s.id));
+        const id = max + 1;
+        const newList = [
+          ...prevSpineList,
+          {
+            id,
+            spine: selectedSpine,
+            selectedAnimation: null,
+            animationList: [],
+            status: "loading" as const,
+            on: false,
+            flip: false,
+            scale: 1,
+            rotation: 0,
+          },
+        ];
+        updateStage(newList);
+        return newList;
+      });
+    }
+  }, [selectedSpine, updateStage]);
+
+  const handleDelFromScene = useCallback(
+    (id: number) => {
+      setSpineList((prevSpineList) => {
+        const newList = prevSpineList.filter((spine) => spine.id !== id);
+        updateStage(newList);
+        return newList;
+      });
+    },
+    [updateStage]
+  );
+
+  const handleChangeSpineState = useCallback(
+    (state: IChibiSpineState, setTransform = false) => {
+      setSpineList((prevSpineList) => {
+        const newList = prevSpineList.map((spine) =>
+          spine.id === state.id ? { ...spine, ...state } : spine
+        );
+        updateStage(newList);
+
+        if (setTransform && stage.current && stage.current.player) {
+          stage.current.player.setTransform(state.id, {
+            scale: [state.scale * (state.flip ? -1 : 1), state.scale],
+            rotation: state.rotation,
+          });
+        }
+        return newList;
+      });
+    },
+    [updateStage]
+  );
+
+  const handleOffsetSpine = useCallback(
+    (id: number, offset: number) => {
+      setSpineList((prev) => {
+        const idx = prev.findIndex((spine) => spine.id === id);
+        if (idx === -1) return prev;
+        let newIdx = idx + offset;
+        if (newIdx < 0) newIdx += prev.length;
+        if (newIdx >= prev.length) newIdx -= prev.length;
+        const newList = [...prev];
+        const [moved] = newList.splice(idx, 1);
+        newList.splice(newIdx, 0, moved);
+        updateStage(newList);
+        return newList;
+      });
+    },
+    [updateStage]
+  );
+
+  const handleSetAnimation = useCallback((id: number, animation: string) => {
+    if (stage.current && stage.current.player)
+      stage.current.player.setAnimation(id, animation);
+  }, []);
+
+  const handleScreenshot = useCallback(() => {
+    if (stage.current && stage.current.player) {
+      const app = stage.current.player.app;
+      const region = app.stage.getBounds();
+      const imageThis = app.renderer.generateTexture(app.stage, {
+        region,
+        resolution: 4,
+      });
+      app.renderer.extract
+        .image(imageThis, "image/png", 1.0)
+        .then((image: HTMLImageElement) => {
+          saveAs(
+            image.src,
+            `SekaiBestChibi-${dayjs().format("YYYY-MM-DD-HH-mm-ss")}.png`
+          );
+        });
+    }
+  }, []);
+
+  return (
+    <Fragment>
+      <TypographyHeader>Chibi viewer</TypographyHeader>
+      <Alert severity="warning" sx={{ marginY: 1 }}>
+        {t("common:betaIndicator")}
+      </Alert>
+      {allSpineList && (
+        <Grid container spacing={1} alignItems="center">
+          <Grid item xs={12} sm={6} lg={5} xl={4}>
+            <Autocomplete
+              value={selectedSpine}
+              onChange={(e, v) => {
+                setSelectedSpine(v);
+              }}
+              options={allSpineList}
+              renderInput={(props) => (
+                <TextField {...props} label={t("live2d:select.model")} />
+              )}
+              size="small"
+            />
+          </Grid>
+          <Grid item xs sm="auto">
+            <Box display="flex">
+              <Button
+                disabled={!selectedSpine}
+                variant="contained"
+                onClick={handleAddToScene}
+                sx={{ flexGrow: 1, alignContent: "center" }}
+              >
+                {t("chibi:add_to_scene")}
+              </Button>
+            </Box>
+          </Grid>
+          <Grid item xs="auto" alignSelf={"stretch"}>
+            <Divider orientation="vertical" />
+          </Grid>
+          <Grid item xs="auto">
+            <Tooltip title={t("live2d:tooltip.shot")}>
+              <span>
+                <IconButton
+                  disabled={spineList.filter((s) => s.on).length === 0}
+                  onClick={handleScreenshot}
+                >
+                  <Camera />
+                </IconButton>
+              </span>
+            </Tooltip>
+          </Grid>
+        </Grid>
+      )}
+      {spineList.length > 0 && (
+        <Divider orientation="horizontal" flexItem sx={{ marginY: 1 }} />
+      )}
+      <Stack
+        direction="column"
+        spacing={1}
+        divider={<Divider orientation="horizontal" flexItem />}
+      >
+        {spineList.map((spine) => (
+          <ChibiListItem
+            state={spine}
+            onChangeState={handleChangeSpineState}
+            onDelete={handleDelFromScene}
+            onMove={handleOffsetSpine}
+            onSetAnimation={handleSetAnimation}
+            key={spine.id}
+          />
+        ))}
+      </Stack>
+      <Box ref={canvas} marginTop={1} border={1} borderColor={"#cccccc"}>
+        <Stage
+          width={stageSize[0]}
+          height={stageSize[1]}
+          options={{
+            backgroundAlpha: 0,
+            antialias: true,
+            autoDensity: true,
+            resolution: 2,
+          }}
+        >
+          <ChibiStage ref={stage} stageSize={stageSize} />
+        </Stage>
+      </Box>
+    </Fragment>
+  );
+};
+
+export default ChibiView;

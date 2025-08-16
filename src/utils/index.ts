@@ -48,6 +48,7 @@ import {
   IMusicAchievement,
   IGachaCeilItem,
   ICharacter3D,
+  ICostume2D,
   ICostume3DModel,
   IAreaItemLevel,
   IAreaItem,
@@ -152,6 +153,7 @@ export function useCachedData<
     | IMusicAchievement
     | IGachaCeilItem
     | ICharacter3D
+    | ICostume2D
     | ICostume3DModel
     | IAreaItemLevel
     | IAreaItem
