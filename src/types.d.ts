@@ -1171,6 +1171,16 @@ export interface ICharacter3D {
   bodyCostume3dId: number;
 }
 
+export interface ICostume2D {
+  id: number;
+  costume2dGroupId: number;
+  character2dId: number;
+  fromMmddhh: string;
+  toMmddhh: string;
+  live2dAssetbundleName?: string;
+  spineAssetbundleName?: string;
+}
+
 export interface ICostume3DModel {
   id: number;
   costume3dId: number;
