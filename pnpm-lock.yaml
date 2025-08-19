@@ -17,9 +17,9 @@ importers:
       '@emotion/styled':
         specifier: ^11.14.1
         version: 11.14.1(@emotion/react@11.14.0(@types/react@18.3.23)(react@18.3.1))(@types/react@18.3.23)(react@18.3.1)
-      '@esotericsoftware/spine-pixi-v7':
-        specifier: ^4.2.89
-        version: 4.2.89(@pixi/assets@7.4.3(@pixi/core@7.4.3))(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3))(@pixi/events@7.4.3(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3)))(@pixi/graphics@7.4.3(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3))(@pixi/sprite@7.4.3(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3))))(@pixi/mesh@7.4.3(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3)))(@pixi/text@7.4.3(@pixi/core@7.4.3)(@pixi/sprite@7.4.3(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3))))
+      '@esotericsoftware/spine-pixi':
+        specifier: ~4.1.55
+        version: 4.1.55(@pixi/assets@7.4.3(@pixi/core@7.4.3))(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3))(@pixi/graphics@7.4.3(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3))(@pixi/sprite@7.4.3(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3))))(@pixi/mesh@7.4.3(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3)))(@pixi/text@7.4.3(@pixi/core@7.4.3)(@pixi/sprite@7.4.3(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3))))
       '@leenguyen/react-flip-clock-countdown':
         specifier: ^1.6.1
         version: 1.6.1(react@18.3.1)
@@ -1256,16 +1256,15 @@ packages:
     resolution: {integrity: sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  '@esotericsoftware/spine-core@4.2.89':
-    resolution: {integrity: sha512-6OiGCW318GF7A7wZMfd2kq9SwnabHQ2kQvpQVr8QUW8oGbLn1QW/BxP5kGlnfnBm+BSfKNKoKInQL68GjJ6W7g==}
+  '@esotericsoftware/spine-core@4.1.55':
+    resolution: {integrity: sha512-o7ZnXcaEhFqKjSNn8Tr9CZRPbV0DyvgMSraB9jWWGWdq4S0Jqox+tVhziEfj1+BXwJBKE9qw83NCLaV+Ku0lHA==}
 
-  '@esotericsoftware/spine-pixi-v7@4.2.89':
-    resolution: {integrity: sha512-GWcDs5GnvxPtTRm4sRGwfx8jzgBpnhUYVefcH1JxLJ84JRLSrKgi0rXfh2Ky8sCmfKH6at6RlgpWi107Ku670g==}
+  '@esotericsoftware/spine-pixi@4.1.55':
+    resolution: {integrity: sha512-xB/3jaybC5b0yxvVwdtgso+3upfyfZjAdVNIBraSTgPGI17nT6In3ymcNMtdbKocUVykJpvtmIR3XLp+BvuVLA==}
     peerDependencies:
       '@pixi/assets': ^7.2.4
       '@pixi/core': ^7.2.4
       '@pixi/display': ^7.2.4
-      '@pixi/events': ^7.2.4
       '@pixi/graphics': ^7.2.4
       '@pixi/mesh': ^7.2.4
       '@pixi/text': ^7.2.4
@@ -7143,15 +7142,14 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
-  '@esotericsoftware/spine-core@4.2.89': {}
+  '@esotericsoftware/spine-core@4.1.55': {}
 
-  '@esotericsoftware/spine-pixi-v7@4.2.89(@pixi/assets@7.4.3(@pixi/core@7.4.3))(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3))(@pixi/events@7.4.3(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3)))(@pixi/graphics@7.4.3(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3))(@pixi/sprite@7.4.3(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3))))(@pixi/mesh@7.4.3(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3)))(@pixi/text@7.4.3(@pixi/core@7.4.3)(@pixi/sprite@7.4.3(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3))))':
+  '@esotericsoftware/spine-pixi@4.1.55(@pixi/assets@7.4.3(@pixi/core@7.4.3))(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3))(@pixi/graphics@7.4.3(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3))(@pixi/sprite@7.4.3(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3))))(@pixi/mesh@7.4.3(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3)))(@pixi/text@7.4.3(@pixi/core@7.4.3)(@pixi/sprite@7.4.3(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3))))':
     dependencies:
-      '@esotericsoftware/spine-core': 4.2.89
+      '@esotericsoftware/spine-core': 4.1.55
       '@pixi/assets': 7.4.3(@pixi/core@7.4.3)
       '@pixi/core': 7.4.3
       '@pixi/display': 7.4.3(@pixi/core@7.4.3)
-      '@pixi/events': 7.4.3(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3))
       '@pixi/graphics': 7.4.3(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3))(@pixi/sprite@7.4.3(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3)))
       '@pixi/mesh': 7.4.3(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3))
       '@pixi/text': 7.4.3(@pixi/core@7.4.3)(@pixi/sprite@7.4.3(@pixi/core@7.4.3)(@pixi/display@7.4.3(@pixi/core@7.4.3)))
