@@ -4,7 +4,7 @@ import {
   Application,
   FederatedPointerEvent,
 } from "pixi.js";
-import { Spine } from "@esotericsoftware/spine-pixi-v7";
+import { Spine, AttachmentTimeline } from "@esotericsoftware/spine-pixi";
 
 import { log } from "../Live2DPlayer/log";
 
@@ -14,6 +14,7 @@ interface IChibiObject {
   chibi: Spine;
   scale: [number, number];
   rotation: number;
+  on: boolean;
 }
 
 export class ChibiPlayer {
@@ -74,21 +75,27 @@ export class ChibiPlayer {
     });
   };
 
-  initChibi(spine: string) {
-    const chibi = Spine.from({
-      skeleton: `${spine}_skel`,
-      atlas: `${spine}_atlas`,
-    });
+  initChibi(id: number, spine: string): IChibiObject {
+    log.log("ChibiPlayer", `Load spine, id:${id}, ${spine}`);
+    const chibi = Spine.from(`${spine}_skel`, `${spine}_atlas`);
     chibi.state.data.defaultMix = 0.2;
     this.layers.chibi.addChild(chibi);
     chibi.x = this.stageSize[0] / 2;
     chibi.y = this.stageSize[1] / 2;
     chibi.eventMode = "static";
     chibi.cursor = "pointer";
+    chibi.alpha = 1;
     chibi.onpointerdown = (event: FederatedPointerEvent) => {
       this.onDragStart(event, chibi);
     };
-    return chibi;
+    return {
+      id,
+      spine,
+      chibi,
+      scale: [1, 1],
+      rotation: 0,
+      on: true,
+    };
   }
 
   onDragMove(event: FederatedPointerEvent) {
@@ -124,7 +131,7 @@ export class ChibiPlayer {
     }
   }
 
-  updateChibi(chibiList: { id: number; spine: string }[]) {
+  updateChibiList(chibiList: { id: number; spine: string }[]) {
     // 1. Remove chibis not in the new list
     const newIds = chibiList.map((c) => c.id);
     // Remove from layers and chibiList
@@ -146,14 +153,7 @@ export class ChibiPlayer {
         newChibiList.push({ ...entry });
       } else {
         // Create new chibi
-        newChibiList.push({
-          id,
-          spine,
-          chibi: this.initChibi(spine),
-          scale: [1, 1],
-          rotation: 0,
-        });
-        log.log("ChibiPlayer", `Load spine, id:${id}, ${spine}`);
+        newChibiList.push(this.initChibi(id, spine));
       }
     }
     // 3. Remove all children and re-add in new order
@@ -175,6 +175,13 @@ export class ChibiPlayer {
     }
   }
 
+  getAnimationList(id: number) {
+    const chibi = this.chibiList.find((c) => c.id === id);
+    if (chibi)
+      return chibi.chibi.state.data.skeletonData.animations.map((a) => a.name);
+    return [];
+  }
+
   setTransform(
     id: number,
     transform: { scale: [number, number]; rotation: number }
@@ -189,6 +196,49 @@ export class ChibiPlayer {
       chibi.scale = [...transform.scale];
       chibi.rotation = transform.rotation;
       this.setStageSize();
+    }
+  }
+
+  setDisplay(id: number, on: boolean) {
+    const chibi = this.chibiList.find((c) => c.id === id);
+    if (chibi) {
+      chibi.on = on;
+      chibi.chibi.alpha = on ? 1 : 0;
+      if (on) {
+        chibi.chibi.eventMode = "static";
+        chibi.chibi.cursor = "pointer";
+      } else {
+        chibi.chibi.eventMode = "none";
+        chibi.chibi.cursor = "default";
+      }
+    }
+  }
+
+  setShadow(id: number, shadow: boolean) {
+    const chibi = this.chibiList.find((c) => c.id === id);
+    if (chibi) {
+      const skeletonData = chibi.chibi.state.data.skeletonData;
+      const shadowSlot = skeletonData.findSlot("shadow");
+      if (shadowSlot) {
+        // set shadow timeline to all animations
+        log.log(
+          "ChibiPlayer",
+          `Set shadow, id:${chibi.id}, ${chibi.spine}`,
+          shadow
+        );
+        skeletonData.animations.forEach((ani) => {
+          const shadowTimeline = ani.timelines.find(
+            (tl) =>
+              tl instanceof AttachmentTimeline &&
+              tl.slotIndex === shadowSlot.index
+          ) as AttachmentTimeline | undefined;
+          if (shadowTimeline) {
+            shadowTimeline.attachmentNames = shadowTimeline.attachmentNames.map(
+              (_) => (shadow ? "shadow" : null)
+            );
+          }
+        });
+      }
     }
   }
 

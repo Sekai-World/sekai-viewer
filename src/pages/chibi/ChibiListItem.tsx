@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Stack,
   Box,
@@ -15,6 +15,7 @@ import {
   Divider,
   ToggleButton,
   Slider,
+  CircularProgress,
 } from "@mui/material";
 import {
   ZoomIn,
@@ -25,8 +26,8 @@ import {
   UnfoldMoreRounded,
   UnfoldLessRounded,
   Flip,
+  Tonality,
 } from "@mui/icons-material";
-import { loadChibiAssets } from "../../utils/ChibiPlayer/load";
 import { useTranslation } from "react-i18next";
 export interface IChibiSpineState {
   id: number;
@@ -38,28 +39,51 @@ export interface IChibiSpineState {
   scale: number;
   flip: boolean;
   rotation: number;
+  shadow: boolean;
 }
 
 export const ChibiListItem: React.FC<{
   state: IChibiSpineState;
-  onChangeState: (state: IChibiSpineState, setTransform?: boolean) => void;
+  onChangeState: (state: IChibiSpineState) => void;
+  onSetTransform: (state: IChibiSpineState) => void;
+  onSetDisplay: (state: IChibiSpineState) => void;
+  onSetShadow: (state: IChibiSpineState) => void;
   onDelete: (id: number) => void;
   onMove: (id: number, offset: number) => void;
   onSetAnimation: (id: number, animation: string) => void;
-}> = ({ state, onChangeState, onDelete, onMove, onSetAnimation }) => {
+}> = ({
+  state,
+  onChangeState,
+  onSetTransform,
+  onSetDisplay,
+  onSetShadow,
+  onDelete,
+  onMove,
+  onSetAnimation,
+}) => {
   const { t } = useTranslation();
   const [expand, setExpand] = useState(false);
 
-  useEffect(() => {
-    if (state.status === "loading") {
-      loadChibiAssets(state.spine).then((animationList) => {
-        onChangeState({ ...state, status: "loaded", animationList });
-      });
-    }
-  }, [state.status]);
-
   return (
-    <Card variant="outlined">
+    <Card variant="outlined" sx={{ position: "relative" }}>
+      {state.status === "loading" && (
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            bgcolor: "rgba(255,255,255,0.7)",
+            zIndex: 2,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      )}
       <Grid container alignItems="center">
         <Grid item xs="auto">
           <Tooltip title={t("common:show")}>
@@ -68,7 +92,7 @@ export const ChibiListItem: React.FC<{
                 disabled={!(state.status === "loaded")}
                 checked={state.on}
                 onChange={(e) =>
-                  onChangeState({ ...state, on: e.target.checked }, true)
+                  onSetDisplay({ ...state, on: e.target.checked })
                 }
               />
             </span>
@@ -148,12 +172,24 @@ export const ChibiListItem: React.FC<{
               <ToggleButton
                 value="mirror"
                 selected={state.flip}
-                onChange={() =>
-                  onChangeState({ ...state, flip: !state.flip }, true)
-                }
+                onChange={() => onSetTransform({ ...state, flip: !state.flip })}
                 size="small"
               >
                 <Flip />
+              </ToggleButton>
+            </Tooltip>
+          </Grid>
+          <Grid item xs="auto">
+            <Tooltip title={t("chibi:tooltip.shadow")}>
+              <ToggleButton
+                value="shadow"
+                selected={state.shadow}
+                onChange={() =>
+                  onSetShadow({ ...state, shadow: !state.shadow })
+                }
+                size="small"
+              >
+                <Tonality />
               </ToggleButton>
             </Tooltip>
           </Grid>
@@ -172,15 +208,15 @@ export const ChibiListItem: React.FC<{
                 defaultValue={0}
                 shiftStep={30}
                 step={5}
-                min={0}
-                max={360}
+                min={-180}
+                max={180}
                 value={state.rotation}
                 onChange={(_, v) => {
-                  onChangeState({ ...state, rotation: v as number }, true);
+                  onSetTransform({ ...state, rotation: v as number });
                 }}
                 track={false}
                 valueLabelFormat={(v) => `${t("chibi:select.rotaion")}: ${v}°`}
-                valueLabelDisplay="on"
+                valueLabelDisplay="auto"
               />
             </Stack>
           </Grid>
@@ -203,11 +239,11 @@ export const ChibiListItem: React.FC<{
                 max={3}
                 value={state.scale}
                 onChange={(_, v) => {
-                  onChangeState({ ...state, scale: v as number }, true);
+                  onSetTransform({ ...state, scale: v as number });
                 }}
                 track={false}
                 valueLabelFormat={(v) => `${t("chibi:select.zoom")}: ${v}`}
-                valueLabelDisplay="on"
+                valueLabelDisplay="auto"
               />
             </Stack>
           </Grid>

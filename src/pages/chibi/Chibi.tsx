@@ -27,7 +27,10 @@ import { ICostume2D } from "../../types.d";
 import { Stage } from "@pixi/react";
 
 import { ChibiPlayer } from "../../utils/ChibiPlayer/ChibiPlayer";
-import { filterValidChibi } from "../../utils/ChibiPlayer/load";
+import {
+  filterValidChibi,
+  loadChibiAssets,
+} from "../../utils/ChibiPlayer/load";
 import { ChibiListItem, IChibiSpineState } from "./ChibiListItem";
 import ChibiStage from "./ChibiStage";
 
@@ -78,11 +81,11 @@ const ChibiView: React.FC<unknown> = () => {
       ]);
   }, [costume2Ds]);
 
-  const updateStage = useCallback((newSpineList: IChibiSpineState[]) => {
+  const updateChibiList = useCallback((newSpineList: IChibiSpineState[]) => {
     if (stage.current && stage.current.player)
-      stage.current.player.updateChibi(
+      stage.current.player.updateChibiList(
         newSpineList
-          .filter((s) => s.on)
+          .filter((s) => s.status === "loaded")
           .map((s) => ({
             id: s.id,
             spine: s.spine,
@@ -105,47 +108,103 @@ const ChibiView: React.FC<unknown> = () => {
             selectedAnimation: null,
             animationList: [],
             status: "loading" as const,
-            on: false,
+            on: true,
             flip: false,
             scale: 1,
             rotation: 0,
+            shadow: true,
           },
         ];
-        updateStage(newList);
+
+        // load new chibi model
+        loadChibiAssets(selectedSpine).then(() => {
+          setSpineList((prevSpineList) => {
+            // load model to stage
+            const loadedNewList = [...prevSpineList];
+            loadedNewList
+              .filter((s) => s.id === id)
+              .forEach((s) => (s.status = "loaded"));
+            updateChibiList(loadedNewList);
+            // get animation list
+            if (stage.current && stage.current.player) {
+              const animationList = stage.current.player.getAnimationList(id);
+              loadedNewList
+                .filter((s) => s.id === id)
+                .forEach((s) => (s.animationList = animationList));
+              // set default animation
+              const defaultAni = animationList.find((a) =>
+                a.endsWith("pose_default")
+              );
+              if (defaultAni) {
+                loadedNewList
+                  .filter((s) => s.id === id)
+                  .forEach((s) => (s.selectedAnimation = defaultAni));
+                stage.current.player.setAnimation(id, defaultAni);
+              }
+            }
+            return loadedNewList;
+          });
+        });
         return newList;
       });
     }
-  }, [selectedSpine, updateStage]);
+  }, [selectedSpine, updateChibiList]);
 
   const handleDelFromScene = useCallback(
     (id: number) => {
       setSpineList((prevSpineList) => {
         const newList = prevSpineList.filter((spine) => spine.id !== id);
-        updateStage(newList);
+        updateChibiList(newList);
         return newList;
       });
     },
-    [updateStage]
+    [updateChibiList]
   );
 
   const handleChangeSpineState = useCallback(
-    (state: IChibiSpineState, setTransform = false) => {
+    (state: IChibiSpineState) => {
       setSpineList((prevSpineList) => {
         const newList = prevSpineList.map((spine) =>
           spine.id === state.id ? { ...spine, ...state } : spine
         );
-        updateStage(newList);
-
-        if (setTransform && stage.current && stage.current.player) {
-          stage.current.player.setTransform(state.id, {
-            scale: [state.scale * (state.flip ? -1 : 1), state.scale],
-            rotation: state.rotation,
-          });
-        }
+        updateChibiList(newList);
         return newList;
       });
     },
-    [updateStage]
+    [updateChibiList]
+  );
+
+  const handleSetTransform = useCallback(
+    (state: IChibiSpineState) => {
+      handleChangeSpineState(state);
+      if (stage.current && stage.current.player) {
+        stage.current.player.setTransform(state.id, {
+          scale: [state.scale * (state.flip ? -1 : 1), state.scale],
+          rotation: state.rotation,
+        });
+      }
+    },
+    [handleChangeSpineState]
+  );
+
+  const handleSetDisplay = useCallback(
+    (state: IChibiSpineState) => {
+      handleChangeSpineState(state);
+      if (stage.current && stage.current.player) {
+        stage.current.player.setDisplay(state.id, state.on);
+      }
+    },
+    [handleChangeSpineState]
+  );
+
+  const handleSetShadow = useCallback(
+    (state: IChibiSpineState) => {
+      handleChangeSpineState(state);
+      if (stage.current && stage.current.player) {
+        stage.current.player.setShadow(state.id, state.shadow);
+      }
+    },
+    [handleChangeSpineState]
   );
 
   const handleOffsetSpine = useCallback(
@@ -159,11 +218,11 @@ const ChibiView: React.FC<unknown> = () => {
         const newList = [...prev];
         const [moved] = newList.splice(idx, 1);
         newList.splice(newIdx, 0, moved);
-        updateStage(newList);
+        updateChibiList(newList);
         return newList;
       });
     },
-    [updateStage]
+    [updateChibiList]
   );
 
   const handleSetAnimation = useCallback((id: number, animation: string) => {
@@ -243,15 +302,14 @@ const ChibiView: React.FC<unknown> = () => {
       {spineList.length > 0 && (
         <Divider orientation="horizontal" flexItem sx={{ marginY: 1 }} />
       )}
-      <Stack
-        direction="column"
-        spacing={1}
-        divider={<Divider orientation="horizontal" flexItem />}
-      >
+      <Stack direction="column" spacing={1}>
         {spineList.map((spine) => (
           <ChibiListItem
             state={spine}
             onChangeState={handleChangeSpineState}
+            onSetDisplay={handleSetDisplay}
+            onSetTransform={handleSetTransform}
+            onSetShadow={handleSetShadow}
             onDelete={handleDelFromScene}
             onMove={handleOffsetSpine}
             onSetAnimation={handleSetAnimation}

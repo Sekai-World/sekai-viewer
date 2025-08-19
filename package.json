@@ -7,7 +7,7 @@
     "@ctrl/react-adsense": "^1.8.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "@esotericsoftware/spine-pixi-v7": "^4.2.89",
+    "@esotericsoftware/spine-pixi": "~4.1.55",
     "@leenguyen/react-flip-clock-countdown": "^1.6.1",
     "@mui/icons-material": "^5.17.1",
     "@mui/lab": "5.0.0-alpha.172",
