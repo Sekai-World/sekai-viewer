@@ -16,10 +16,11 @@ import {
   TextField,
   Stack,
   Divider,
-  IconButton,
-  Tooltip,
+  Dialog,
+  CircularProgress,
+  DialogContent,
+  DialogContentText,
 } from "@mui/material";
-import { Camera } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import { useCachedData } from "../../utils";
 import { ICostume2D } from "../../types.d";
@@ -27,24 +28,30 @@ import { ICostume2D } from "../../types.d";
 import { Stage } from "@pixi/react";
 
 import { ChibiPlayer } from "../../utils/ChibiPlayer/ChibiPlayer";
+import { FileType, FileTypeInfo } from "../../utils/ChibiPlayer/SekaiFFmpeg";
 import {
   filterValidChibi,
   loadChibiAssets,
 } from "../../utils/ChibiPlayer/load";
 import { ChibiListItem, IChibiSpineState } from "./ChibiListItem";
+import { ChibiCaptureSetting } from "./ChibiCaptureSetting";
 import ChibiStage from "./ChibiStage";
 
 import TypographyHeader from "../../components/styled/TypographyHeader";
+import { useAlertSnackbar } from "../../utils";
 
 import { saveAs } from "file-saver";
 import dayjs from "dayjs";
 
 const ChibiView: React.FC<unknown> = () => {
   const { t } = useTranslation();
+  const { showError } = useAlertSnackbar();
   const [costume2Ds] = useCachedData<ICostume2D>("costume2ds");
   const [selectedSpine, setSelectedSpine] = useState<string | null>(null);
   const [stageSize, setStageSize] = useState<[number, number]>([0, 0]);
   const [spineList, setSpineList] = useState<IChibiSpineState[]>([]);
+  const [isCapture, setIsCapture] = useState(false);
+  const [captureProgressMessage, setCaptureProgressMessage] = useState("");
 
   const stage = useRef<{ player: ChibiPlayer | null }>(null);
   const canvas = useRef<HTMLDivElement>(null);
@@ -230,27 +237,99 @@ const ChibiView: React.FC<unknown> = () => {
       stage.current.player.setAnimation(id, animation);
   }, []);
 
-  const handleScreenshot = useCallback(() => {
+  const handleInitFFmpeg = useCallback(async () => {
     if (stage.current && stage.current.player) {
-      const app = stage.current.player.app;
-      const region = app.stage.getBounds();
-      const imageThis = app.renderer.generateTexture(app.stage, {
-        region,
-        resolution: 4,
-      });
-      app.renderer.extract
-        .image(imageThis, "image/png", 1.0)
-        .then((image: HTMLImageElement) => {
-          saveAs(
-            image.src,
-            `SekaiBestChibi-${dayjs().format("YYYY-MM-DD-HH-mm-ss")}.png`
-          );
-        });
+      await stage.current.player.initFFmpeg();
     }
   }, []);
 
+  const handleScreenshot = useCallback(async () => {
+    if (stage.current && stage.current.player) {
+      setCaptureProgressMessage(t("chibi:progress.save_screenshot"));
+      setIsCapture(true);
+      const blob = await stage.current.player.screenshot();
+      if (blob)
+        saveAs(
+          blob,
+          `SekaiBestChibi-${dayjs().format("YYYY-MM-DD-HH-mm-ss")}.png`
+        );
+      setIsCapture(false);
+      setCaptureProgressMessage("");
+    }
+  }, [t]);
+
+  const handleRecord = useCallback(
+    async (
+      fps: number,
+      targetType: FileType,
+      dimension: number,
+      sec?: number
+    ) => {
+      if (stage.current && stage.current.player) {
+        setIsCapture(true);
+        const recordOptions = {
+          fps,
+          targetType,
+          dimension,
+          length: sec,
+          resetAnimation: false,
+          onProgress: (
+            state: "getReady" | "genFrame" | "encode",
+            message: string
+          ) => {
+            switch (state) {
+              case "getReady":
+                {
+                  setCaptureProgressMessage(
+                    `${t("chibi:progress.get_ready")} ${message}`
+                  );
+                }
+                break;
+              case "genFrame":
+                {
+                  setCaptureProgressMessage(
+                    `${t("chibi:progress.generate_frame")} ${message}`
+                  );
+                }
+                break;
+              case "encode":
+                {
+                  setCaptureProgressMessage(
+                    `${t("chibi:progress.encoding")} ${message}`
+                  );
+                }
+                break;
+            }
+          },
+        };
+        if (sec) recordOptions.resetAnimation = true;
+        try {
+          const blob = await stage.current.player.recording(recordOptions);
+          if (blob)
+            saveAs(
+              blob,
+              `SekaiBestChibi-${dayjs().format("YYYY-MM-DD-HH-mm-ss")}${FileTypeInfo[targetType].ext}`
+            );
+        } catch (err) {
+          showError(err as string);
+          throw err;
+        } finally {
+          setIsCapture(false);
+          setCaptureProgressMessage("");
+        }
+      }
+    },
+    [t, showError]
+  );
+
   return (
     <Fragment>
+      <Dialog open={isCapture}>
+        <DialogContent>
+          <CircularProgress />
+          <DialogContentText>{captureProgressMessage}</DialogContentText>
+        </DialogContent>
+      </Dialog>
       <TypographyHeader>Chibi viewer</TypographyHeader>
       <Alert severity="warning" sx={{ marginY: 1 }}>
         {t("common:betaIndicator")}
@@ -282,22 +361,15 @@ const ChibiView: React.FC<unknown> = () => {
               </Button>
             </Box>
           </Grid>
-          <Grid item xs="auto" alignSelf={"stretch"}>
-            <Divider orientation="vertical" />
-          </Grid>
-          <Grid item xs="auto">
-            <Tooltip title={t("live2d:tooltip.shot")}>
-              <span>
-                <IconButton
-                  disabled={spineList.filter((s) => s.on).length === 0}
-                  onClick={handleScreenshot}
-                >
-                  <Camera />
-                </IconButton>
-              </span>
-            </Tooltip>
-          </Grid>
         </Grid>
+      )}
+      {spineList.length > 0 && (
+        <ChibiCaptureSetting
+          onInitLib={handleInitFFmpeg}
+          onRecord={handleRecord}
+          onScreenshot={handleScreenshot}
+          spineListLength={spineList.filter((s) => s.on).length}
+        />
       )}
       {spineList.length > 0 && (
         <Divider orientation="horizontal" flexItem sx={{ marginY: 1 }} />
