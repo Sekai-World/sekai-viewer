@@ -22,6 +22,7 @@ export default defineConfig({
     esbuildOptions: {
       plugins: [nodeModulesPolyfillPlugin()],
     },
+    exclude: ["@ffmpeg/ffmpeg", "@ffmpeg/util"],
   },
   plugins: [
     react(),

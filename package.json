@@ -8,6 +8,8 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@esotericsoftware/spine-pixi": "~4.1.55",
+    "@ffmpeg/ffmpeg": "^0.12.15",
+    "@ffmpeg/util": "^0.12.2",
     "@leenguyen/react-flip-clock-countdown": "^1.6.1",
     "@mui/icons-material": "^5.17.1",
     "@mui/lab": "5.0.0-alpha.172",

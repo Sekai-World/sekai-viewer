@@ -53,6 +53,7 @@ export async function initGlobalI18n() {
         "announcement",
         "comment",
         "live2d",
+        "chibi",
         "virtual_live",
         "translate",
         "honor",

@@ -6,6 +6,8 @@ import {
 } from "pixi.js";
 import { Spine, AttachmentTimeline } from "@esotericsoftware/spine-pixi";
 
+import { SekaiFFmpeg, FileType } from "./SekaiFFmpeg";
+
 import { log } from "../Live2DPlayer/log";
 
 interface IChibiObject {
@@ -19,6 +21,7 @@ interface IChibiObject {
 
 export class ChibiPlayer {
   app: Application;
+  ffmpeg: SekaiFFmpeg;
   stageSize: [number, number];
   root: Container;
   layers: {
@@ -37,6 +40,8 @@ export class ChibiPlayer {
     this.dragTarget = null;
     this.stageSize = stageSize;
     this.chibiList = [];
+
+    this.ffmpeg = new SekaiFFmpeg();
 
     // add layers
     this.app.stage.removeChildren();
@@ -77,8 +82,10 @@ export class ChibiPlayer {
 
   initChibi(id: number, spine: string): IChibiObject {
     log.log("ChibiPlayer", `Load spine, id:${id}, ${spine}`);
-    const chibi = Spine.from(`${spine}_skel`, `${spine}_atlas`);
-    chibi.state.data.defaultMix = 0.2;
+    const chibi = Spine.from(`${spine}_skel`, `${spine}_atlas`, {
+      scale: 1,
+    });
+    chibi.state.data.defaultMix = 0;
     this.layers.chibi.addChild(chibi);
     chibi.x = this.stageSize[0] / 2;
     chibi.y = this.stageSize[1] / 2;
@@ -239,6 +246,120 @@ export class ChibiPlayer {
           }
         });
       }
+    }
+  }
+
+  async screenshot() {
+    const boundary = this.app.stage.getBounds();
+    const renderTexture = this.app.renderer.generateTexture(this.app.stage, {
+      region: boundary,
+      resolution: 3,
+    });
+    const canvas = this.app.renderer.extract.canvas(renderTexture);
+    const dataBlob = await new Promise<Blob | null>((resolve) => {
+      if (canvas.toBlob) canvas.toBlob((blob) => resolve(blob), "image/png");
+    });
+    return dataBlob;
+  }
+
+  async initFFmpeg() {
+    await this.ffmpeg.loadFFmpeg();
+  }
+
+  async recording(options: {
+    fps: number;
+    targetType: FileType;
+    resetAnimation: boolean;
+    dimension: number;
+    onProgress?: (
+      state: "getReady" | "genFrame" | "encode",
+      message: string
+    ) => void;
+    length?: number;
+  }) {
+    const onProgress = options.onProgress;
+    if (this.ffmpeg) {
+      if (onProgress) onProgress("getReady", "");
+      await this.ffmpeg.initFS();
+      // get boundary
+      let boundary = this.app.stage.getBounds();
+      console.log(boundary);
+      this.root.scale.set(
+        boundary.width > boundary.height
+          ? options.dimension / boundary.width
+          : options.dimension / boundary.height
+      );
+      this.app.render();
+      boundary = this.app.stage.getBounds();
+      console.log(boundary);
+      //boundary = boundary.pad(boundary.width * 0.05, boundary.height * 0.05);
+      // stop autoupdate
+      this.chibiList.forEach((c) => (c.chibi.autoUpdate = false));
+      // reset animation
+      if (options.resetAnimation) {
+        this.chibiList.forEach((c) => {
+          const currAni = c.chibi.state.getCurrent(0);
+          if (currAni && currAni.animation) {
+            c.chibi.state.setAnimation(0, currAni.animation.name, true);
+          }
+        });
+      }
+      // get length
+      let recordSec = 0;
+      if (!length) {
+        const aniDuration = this.chibiList.map((c) => {
+          const currAni = c.chibi.state.getCurrent(0);
+          if (currAni && currAni.animation) return currAni.animation.duration;
+          else return 0;
+        });
+        recordSec = Math.max(...aniDuration);
+      } else {
+        recordSec = length;
+      }
+      // render loop
+      const dtSec = 1 / options.fps;
+      let frame = 1;
+      for (let t = 0; t < recordSec; t += dtSec) {
+        log.log(
+          "ChibiPlayer",
+          `progress: ${t}/${recordSec}, frame time:${dtSec}`
+        );
+        if (onProgress)
+          onProgress("genFrame", `${frame}/${Math.ceil(recordSec / dtSec)}`);
+        this.chibiList.forEach((c) => c.chibi.update(dtSec)); // update models
+        this.app.render(); // render scene
+        // get frame canvas
+        const renderTexture = this.app.renderer.generateTexture(
+          this.app.stage,
+          {
+            region: boundary,
+            resolution: 1,
+          }
+        );
+        const canvas = this.app.renderer.extract.canvas(renderTexture);
+        // get blob data
+        const dataBlob = await new Promise<Blob | null>((resolve) => {
+          if (canvas.toBlob)
+            canvas.toBlob((blob) => resolve(blob), "image/png");
+        });
+        // save to ffmpeg
+        if (dataBlob) {
+          await this.ffmpeg.saveImage(
+            `${frame.toString().padStart(4, "0")}.png`,
+            dataBlob
+          );
+        }
+        frame++;
+        renderTexture.destroy(true);
+      }
+      // set auto update
+      this.chibiList.forEach((c) => (c.chibi.autoUpdate = true));
+      // set scale back
+      this.root.scale.set(1);
+
+      // convert images to target type
+      if (onProgress) onProgress("encode", "");
+      return await this.ffmpeg.merge(options.targetType, options.fps);
     }
   }
 
