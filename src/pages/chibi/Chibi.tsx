@@ -272,7 +272,7 @@ const ChibiView: React.FC<unknown> = () => {
           targetType,
           dimension,
           length: sec,
-          resetAnimation: false,
+          resetAnimation: true,
           onProgress: (
             state: "getReady" | "genFrame" | "encode",
             message: string
@@ -302,7 +302,7 @@ const ChibiView: React.FC<unknown> = () => {
             }
           },
         };
-        if (sec) recordOptions.resetAnimation = true;
+        if (sec) recordOptions.resetAnimation = false;
         try {
           const blob = await stage.current.player.recording(recordOptions);
           if (blob)

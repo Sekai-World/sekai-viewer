@@ -7,6 +7,7 @@ import {
 import { Spine, AttachmentTimeline } from "@esotericsoftware/spine-pixi";
 
 import { SekaiFFmpeg, FileType } from "./SekaiFFmpeg";
+import { getTransparentBound } from "./utils";
 
 import { log } from "../Live2DPlayer/log";
 
@@ -250,7 +251,8 @@ export class ChibiPlayer {
   }
 
   async screenshot() {
-    const boundary = this.app.stage.getBounds();
+    const boundary = getTransparentBound(this.app, this.app.stage);
+    boundary.pad(5, 5);
     const renderTexture = this.app.renderer.generateTexture(this.app.stage, {
       region: boundary,
       resolution: 3,
@@ -282,17 +284,15 @@ export class ChibiPlayer {
       if (onProgress) onProgress("getReady", "");
       await this.ffmpeg.initFS();
       // get boundary
-      let boundary = this.app.stage.getBounds();
-      console.log(boundary);
+      let boundary = getTransparentBound(this.app, this.app.stage);
       this.root.scale.set(
         boundary.width > boundary.height
           ? options.dimension / boundary.width
           : options.dimension / boundary.height
       );
       this.app.render();
-      boundary = this.app.stage.getBounds();
-      console.log(boundary);
-      //boundary = boundary.pad(boundary.width * 0.05, boundary.height * 0.05);
+      boundary = getTransparentBound(this.app, this.app.stage);
+      boundary.pad(Math.max(boundary.width, boundary.height) * 0.1);
       // stop autoupdate
       this.chibiList.forEach((c) => (c.chibi.autoUpdate = false));
       // reset animation
