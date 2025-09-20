@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.17.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.16.4...v1.17.0) (2025-09-20)
+
+
+### Features
+
+* **chibi:** add Chibi viewer ([432ee60](https://github.com/Sekai-World/sekai-viewer/commits/432ee6034e94457eab04152046d3f8a882e8e6cf))
+* **chibi:** add recording by ffmpeg.wasm ([0167214](https://github.com/Sekai-World/sekai-viewer/commits/016721465dd46db6973fc8a859e2495a44ae2b9c))
+* **chibi:** support older spine model && add switch to disable chibi model shadow ([633dbff](https://github.com/Sekai-World/sekai-viewer/commits/633dbffd862c4898285824f2878719a24805d63f))
+* **chibi:** trim transparent pixels for screenshot and recording ([571ca49](https://github.com/Sekai-World/sekai-viewer/commits/571ca49b2c5ef0300c8343bd0b1f2f4d8bd7c57f))
+* **live2d:** enhance loading progress handling and add warning support ([c900a2c](https://github.com/Sekai-World/sekai-viewer/commits/c900a2c86be32d9dade3c66bf3a400c899086584))
+* **live2d:** improve talk audio and lip sync handling ([aacca32](https://github.com/Sekai-World/sekai-viewer/commits/aacca32f67b22acbcf1f326e3f7fb0c4509d1b67))
+* **live2d:** speed up model appear action ([7d6d2b4](https://github.com/Sekai-World/sekai-viewer/commits/7d6d2b488fa6dc910160318c6969f6c879fc1bb2))
+
+
+### Bug Fixes
+
+* **event:** world link finale chapter ([d8b5a0a](https://github.com/Sekai-World/sekai-viewer/commits/d8b5a0a9bff26ba2cd95e3b3f4d23bb184aba55a))
+* **live2d:** wonder miku missing eyes ([30b2ff8](https://github.com/Sekai-World/sekai-viewer/commits/30b2ff8c42687a4713e5496446c2186544d5807f))
+
+
+### Refactors
+
+* **live2d:** update Live2D asset handling & fix typo ([cdd7fd8](https://github.com/Sekai-World/sekai-viewer/commits/cdd7fd8d38bf104984c0f48294b3c079911b807a))
+
 ### [1.16.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.16.3...v1.16.4) (2025-08-09)
 
 
