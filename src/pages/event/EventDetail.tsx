@@ -170,7 +170,13 @@ const EventDetail: React.FC<unknown> = observer(() => {
             gameCharacterUnits.find(
               (gcu) => gcu.id === elem.gameCharacterUnitId
             )!
-        );
+        )
+        .filter(
+          (gcu, idx, arr) =>
+            arr.findIndex(
+              (it) => it.gameCharacterId === gcu.gameCharacterId
+            ) === idx
+        ); // unique
       setEventBonusCharas(ebc);
       const masterRankBonus = {
         rarity_1: [0, 0.5, 0.5],
@@ -818,7 +824,7 @@ const EventDetail: React.FC<unknown> = observer(() => {
                           style={{ maxHeight: "36px" }}
                           src={charaIcons[`CharaIcon${chara.gameCharacterId}`]}
                           alt={`character ${chara.gameCharacterId}`}
-                        ></img>
+                        />
                       </Grid>
                     ))}
                   </Grid>
@@ -840,31 +846,35 @@ const EventDetail: React.FC<unknown> = observer(() => {
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
-          <Grid
-            item
-            container
-            direction="row"
-            wrap="nowrap"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Grid item xs={3}>
-              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                {t("event:boostCards")}
-              </Typography>
-            </Grid>
-            <Grid item>
-              <Button
-                onClick={() => {
-                  setIsCardsDialog(true);
-                }}
-                variant="contained"
+          {boostCards.length > 0 && (
+            <Fragment>
+              <Grid
+                item
+                container
+                direction="row"
+                wrap="nowrap"
+                justifyContent="space-between"
+                alignItems="center"
               >
-                {t("common:show")}
-              </Button>
-            </Grid>
-          </Grid>
-          <Divider style={{ margin: "1% 0" }} />
+                <Grid item xs={3}>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("event:boostCards")}
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Button
+                    onClick={() => {
+                      setIsCardsDialog(true);
+                    }}
+                    variant="contained"
+                  >
+                    {t("common:show")}
+                  </Button>
+                </Grid>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
+            </Fragment>
+          )}
         </GridOut>
       </ContainerContent>
       <TypographyHeader>{t("common:card")}</TypographyHeader>
@@ -1152,33 +1162,39 @@ const EventDetail: React.FC<unknown> = observer(() => {
                   key={chapter.chapterNo}
                 >
                   <GridOut container direction="column">
-                    <Grid
-                      item
-                      container
-                      direction="row"
-                      wrap="nowrap"
-                      justifyContent="space-between"
-                      alignItems="center"
-                    >
-                      <Grid item xs={5}>
-                        <Typography
-                          variant="subtitle1"
-                          style={{ fontWeight: 600 }}
+                    {chapter.gameCharacterId && (
+                      <Fragment>
+                        <Grid
+                          item
+                          container
+                          direction="row"
+                          wrap="nowrap"
+                          justifyContent="space-between"
+                          alignItems="center"
                         >
-                          {t("common:character")}
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <img
-                          style={{ maxHeight: "48px" }}
-                          src={
-                            charaIcons[`CharaIcon${chapter.gameCharacterId}`]
-                          }
-                          alt={`character ${chapter.gameCharacterId}`}
-                        />
-                      </Grid>
-                    </Grid>
-                    <Divider style={{ margin: "1% 0" }} />
+                          <Grid item xs={5}>
+                            <Typography
+                              variant="subtitle1"
+                              style={{ fontWeight: 600 }}
+                            >
+                              {t("common:character")}
+                            </Typography>
+                          </Grid>
+                          <Grid item>
+                            <img
+                              style={{ maxHeight: "48px" }}
+                              src={
+                                charaIcons[
+                                  `CharaIcon${chapter.gameCharacterId}`
+                                ]
+                              }
+                              alt={`character ${chapter.gameCharacterId}`}
+                            />
+                          </Grid>
+                        </Grid>
+                        <Divider style={{ margin: "1% 0" }} />
+                      </Fragment>
+                    )}
                     <Grid
                       item
                       container
@@ -1308,36 +1324,43 @@ const EventDetail: React.FC<unknown> = observer(() => {
         zoomSpeed={0.25}
         onChange={(_, idx) => setActiveIdx(idx)}
       />
-      <Dialog
-        open={isCardsDialog}
-        onClose={() => {
-          setIsCardsDialog(false);
-        }}
-        fullWidth
-      >
-        <DialogTitle>{t("event:boostCards")}</DialogTitle>
-        <DialogContent>
-          <Grid container spacing={1}>
-            {boostCards.map((card) => (
-              <Grid key={card.card.id} item xs={4} md={2}>
-                <LinkNoDecoration to={"/card/" + card.card.id} target="_blank">
-                  <Grid container direction="column">
-                    <CardThumb cardId={card.card.id} />
-                    <Typography
-                      align="center"
-                      style={{ whiteSpace: "pre-line" }}
-                    >
-                      +{card.minBonus}
-                      {card.maxBonus > card.minBonus ? `~${card.maxBonus}` : ""}
-                      %
-                    </Typography>
-                  </Grid>
-                </LinkNoDecoration>
-              </Grid>
-            ))}
-          </Grid>
-        </DialogContent>
-      </Dialog>
+      {boostCards.length > 0 && (
+        <Dialog
+          open={isCardsDialog}
+          onClose={() => {
+            setIsCardsDialog(false);
+          }}
+          fullWidth
+        >
+          <DialogTitle>{t("event:boostCards")}</DialogTitle>
+          <DialogContent>
+            <Grid container spacing={1}>
+              {boostCards.map((card) => (
+                <Grid key={card.card.id} item xs={4} md={2}>
+                  <LinkNoDecoration
+                    to={"/card/" + card.card.id}
+                    target="_blank"
+                  >
+                    <Grid container direction="column">
+                      <CardThumb cardId={card.card.id} />
+                      <Typography
+                        align="center"
+                        style={{ whiteSpace: "pre-line" }}
+                      >
+                        +{card.minBonus}
+                        {card.maxBonus > card.minBonus
+                          ? `~${card.maxBonus}`
+                          : ""}
+                        %
+                      </Typography>
+                    </Grid>
+                  </LinkNoDecoration>
+                </Grid>
+              ))}
+            </Grid>
+          </DialogContent>
+        </Dialog>
+      )}
     </Fragment>
   ) : (
     <div>
