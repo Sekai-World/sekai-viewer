@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.17.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.0...v1.17.1) (2025-09-30)
+
+
+### Bug Fixes
+
+* **banner:** 5th anniversary ([070f540](https://github.com/Sekai-World/sekai-viewer/commits/070f540d88c47105d7f956aba726f512b97110c2))
+* **music:** update EN_EXCLUSIVE_IDS to include missing ID 673 ([edfb717](https://github.com/Sekai-World/sekai-viewer/commits/edfb717d90c15b98f6398d2551f68c7bd04d8072))
+
 ## [1.17.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.16.4...v1.17.0) (2025-09-20)
 
 
