@@ -278,3 +278,19 @@ export function eventListFilterReducer(
       throw new Error();
   }
 }
+
+export function has3dmvCutInReducer(
+  state: boolean,
+  action: { type: "set"; payload: boolean }
+) {
+  switch (action.type) {
+    case "set":
+      localStorage.setItem(
+        "card-list-filter-has-3dmv",
+        JSON.stringify(action.payload)
+      );
+      return action.payload;
+    default:
+      throw new Error();
+  }
+}

@@ -15,6 +15,7 @@ import {
   Popover,
   Tooltip,
   capitalize,
+  Switch,
 } from "@mui/material";
 import {
   Check,
@@ -40,6 +41,7 @@ import React, {
   useState,
 } from "react";
 import {
+  IAnother3dmvCutIn,
   ICardEpisode,
   ICardInfo,
   ICardRarity,
@@ -72,6 +74,7 @@ import {
   raritySelectReducer,
   skillSelectReducer,
   supportUnitSelectReducer,
+  has3dmvCutInReducer,
 } from "../../stores/reducers";
 import {
   charaIcons,
@@ -166,6 +169,8 @@ const CardList: React.FC<unknown> = observer(() => {
   const [eventDeckBonuses] = useCachedData<IEventDeckBonus>("eventDeckBonuses");
   const [charaUnits] = useCachedData<IGameCharaUnit>("gameCharacterUnits");
   const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
+  const [another3dmvCutIns] =
+    useCachedData<IAnother3dmvCutIn>("another3dmvCutIns");
 
   const [cards, setCards] = useState<ICardInfo[]>([]);
   const [sortedCache, setSortedCache] = useState<ICardInfo[]>([]);
@@ -214,6 +219,10 @@ const CardList: React.FC<unknown> = observer(() => {
     JSON.parse(localStorage.getItem("card-list-filter-support-units") || "[]")
   );
   const [searchTitle, setSearchTitle] = useState("");
+  const [has3dmvCutIn, dispatchHas3dmvCutIn] = useReducer(
+    has3dmvCutInReducer,
+    JSON.parse(localStorage.getItem("card-list-filter-has-3dmv") || "false")
+  );
 
   const [anchorElEvent, setAnchorElEvent] = useState<HTMLButtonElement | null>(
     null
@@ -251,12 +260,14 @@ const CardList: React.FC<unknown> = observer(() => {
         !!charas?.length &&
         !!rarities?.length &&
         !!episodes?.length &&
-        !!skills?.length
+        !!skills?.length &&
+        !!another3dmvCutIns?.length
     );
   }, [
     rarities?.length,
     episodes?.length,
     skills?.length,
+    another3dmvCutIns?.length,
     cardsCache?.length,
     charas?.length,
   ]);
@@ -272,7 +283,8 @@ const CardList: React.FC<unknown> = observer(() => {
       cardsCache?.length &&
       rarities?.length &&
       episodes?.length &&
-      skills?.length
+      skills?.length &&
+      another3dmvCutIns?.length
     ) {
       const result = cardsCache.filter((c) => {
         if (
@@ -324,6 +336,14 @@ const CardList: React.FC<unknown> = observer(() => {
             return false;
           }
         }
+        if (has3dmvCutIn) {
+          const hasCutIn = another3dmvCutIns.some(
+            (cutIn) => cutIn.cardId === c.id
+          );
+          if (!hasCutIn) {
+            return false;
+          }
+        }
         return true;
       });
 
@@ -362,10 +382,12 @@ const CardList: React.FC<unknown> = observer(() => {
       setPage(0);
     }
   }, [
+    another3dmvCutIns,
     attrSelected,
     cardsCache,
     characterSelected,
     episodes,
+    has3dmvCutIn,
     isShowSpoiler,
     rarities,
     raritySelected,
@@ -412,6 +434,7 @@ const CardList: React.FC<unknown> = observer(() => {
       type: "reset",
     });
     setSearchTitle("");
+    dispatchHas3dmvCutIn({ type: "set", payload: false });
   }, []);
 
   useEffect(() => {
@@ -627,7 +650,8 @@ const CardList: React.FC<unknown> = observer(() => {
                 !skillSelected.length &&
                 !raritySelected.length &&
                 !supportUnitSelected.length &&
-                !searchTitle
+                !searchTitle.trim().length &&
+                !has3dmvCutIn
               }
             >
               <ToggleButton
@@ -939,6 +963,33 @@ const CardList: React.FC<unknown> = observer(() => {
                 justifyContent="space-between"
                 spacing={1}
               >
+                <Grid item xs={12} md={2}>
+                  <TypographyCaption>
+                    {t("card:specialCutIn")}
+                  </TypographyCaption>
+                </Grid>
+                <Grid item xs={12} md={10}>
+                  <FormControl size="small">
+                    <Switch
+                      checked={has3dmvCutIn}
+                      onChange={(e) =>
+                        dispatchHas3dmvCutIn({
+                          type: "set",
+                          payload: e.target.checked,
+                        })
+                      }
+                    />
+                  </FormControl>
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justifyContent="space-between"
+                spacing={1}
+              >
                 <Grid item xs={12} md={1}>
                   <TypographyCaption>{t("common:title")}</TypographyCaption>
                 </Grid>
@@ -1042,7 +1093,8 @@ const CardList: React.FC<unknown> = observer(() => {
                       !attrSelected.length &&
                       !skillSelected.length &&
                       !raritySelected.length &&
-                      !searchTitle
+                      !searchTitle.trim().length &&
+                      !has3dmvCutIn
                     }
                     onClick={() => resetFilter()}
                     startIcon={<RotateLeft />}
