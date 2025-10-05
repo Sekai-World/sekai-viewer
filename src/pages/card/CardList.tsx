@@ -45,6 +45,7 @@ import {
   ICardEpisode,
   ICardInfo,
   ICardRarity,
+  ICardSupply,
   IEventDeckBonus,
   IEventInfo,
   IGameChara,
@@ -56,6 +57,7 @@ import {
   cardRarityTypeToRarity,
   specialTrainingRarityTypes,
   useCachedData,
+  useCardSupplyTypeMapping,
   useLocalStorage,
   useSkillMapping,
   useToggle,
@@ -75,6 +77,7 @@ import {
   skillSelectReducer,
   supportUnitSelectReducer,
   has3dmvCutInReducer,
+  cardSupplySelectReducer,
 } from "../../stores/reducers";
 import {
   charaIcons,
@@ -94,6 +97,20 @@ import TypographyHeader from "../../components/styled/TypographyHeader";
 import ContainerContent from "../../components/styled/ContainerContent";
 import PaperContainer from "../../components/styled/PaperContainer";
 import TypographyCaption from "../../components/styled/TypographyCaption";
+
+// LocalStorage 键名常量
+const STORAGE_KEYS = {
+  CHARACTERS: "card-list-filter-charas",
+  UNITS: "card-list-filter-units",
+  ATTRS: "card-list-filter-attrs",
+  RARITIES: "card-list-filter-rarities",
+  SKILLS: "card-list-filter-skills",
+  SUPPORT_UNITS: "card-list-filter-support-units",
+  HAS_3DMV: "card-list-filter-has-3dmv",
+  CARD_SUPPLIES: "card-list-filter-card-supplies",
+  SORT_TYPE: "card-list-filter-sort-type",
+  SORT_BY: "card-list-filter-sort-by",
+} as const;
 
 type ViewGridType = "grid" | "agenda" | "comfy";
 
@@ -159,6 +176,7 @@ const CardList: React.FC<unknown> = observer(() => {
   const { currEvent, isLoading: isCurrEventLoading } = useCurrentEvent();
   const { getTranslated } = useAssetI18n();
   const skillMapping = useSkillMapping();
+  const supplyTypeMapping = useCardSupplyTypeMapping();
 
   const [cardsCache] = useCachedData<ICardInfo>("cards");
   const [charas] = useCachedData<IGameChara>("gameCharacters");
@@ -171,6 +189,7 @@ const CardList: React.FC<unknown> = observer(() => {
   const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
   const [another3dmvCutIns] =
     useCachedData<IAnother3dmvCutIn>("another3dmvCutIns");
+  const [cardSupplies] = useCachedData<ICardSupply>("cardSupplies");
 
   const [cards, setCards] = useState<ICardInfo[]>([]);
   const [sortedCache, setSortedCache] = useState<ICardInfo[]>([]);
@@ -185,43 +204,47 @@ const CardList: React.FC<unknown> = observer(() => {
   const [isReady, setIsReady] = useState<boolean>(false);
   const [filterOpened, toggleFilterOpen] = useToggle(false);
   const [sortType, setSortType] = useLocalStorage<string>(
-    "card-list-filter-sort-type",
+    STORAGE_KEYS.SORT_TYPE,
     "desc",
     false
   );
   const [sortBy, setSortBy] = useLocalStorage<string>(
-    "card-list-filter-sort-by",
+    STORAGE_KEYS.SORT_BY,
     "releaseAt",
     false
   );
   const [characterSelected, dispatchCharacterSelected] = useReducer(
     characterSelectReducer,
-    JSON.parse(localStorage.getItem("card-list-filter-charas") || "[]")
+    JSON.parse(localStorage.getItem(STORAGE_KEYS.CHARACTERS) || "[]")
   );
   const [unitSelected, dispatchUnitSelected] = useReducer(
     unitSelectReducer,
-    JSON.parse(localStorage.getItem("card-list-filter-units") || "[]")
+    JSON.parse(localStorage.getItem(STORAGE_KEYS.UNITS) || "[]")
   );
   const [attrSelected, dispatchAttrSelected] = useReducer(
     attrSelectReducer,
-    JSON.parse(localStorage.getItem("card-list-filter-attrs") || "[]")
+    JSON.parse(localStorage.getItem(STORAGE_KEYS.ATTRS) || "[]")
   );
   const [raritySelected, dispatchRaritySelected] = useReducer(
     raritySelectReducer,
-    JSON.parse(localStorage.getItem("card-list-filter-rarities") || "[]")
+    JSON.parse(localStorage.getItem(STORAGE_KEYS.RARITIES) || "[]")
   );
   const [skillSelected, dispatchSkillSelected] = useReducer(
     skillSelectReducer,
-    JSON.parse(localStorage.getItem("card-list-filter-skills") || "[]")
+    JSON.parse(localStorage.getItem(STORAGE_KEYS.SKILLS) || "[]")
   );
   const [supportUnitSelected, dispatchSupportUnitSelected] = useReducer(
     supportUnitSelectReducer,
-    JSON.parse(localStorage.getItem("card-list-filter-support-units") || "[]")
+    JSON.parse(localStorage.getItem(STORAGE_KEYS.SUPPORT_UNITS) || "[]")
   );
   const [searchTitle, setSearchTitle] = useState("");
   const [has3dmvCutIn, dispatchHas3dmvCutIn] = useReducer(
     has3dmvCutInReducer,
-    JSON.parse(localStorage.getItem("card-list-filter-has-3dmv") || "false")
+    JSON.parse(localStorage.getItem(STORAGE_KEYS.HAS_3DMV) || "false")
+  );
+  const [cardSupplySelected, dispatchCardSupplySelected] = useReducer(
+    cardSupplySelectReducer,
+    JSON.parse(localStorage.getItem(STORAGE_KEYS.CARD_SUPPLIES) || "[]")
   );
 
   const [anchorElEvent, setAnchorElEvent] = useState<HTMLButtonElement | null>(
@@ -344,6 +367,14 @@ const CardList: React.FC<unknown> = observer(() => {
             return false;
           }
         }
+        if (cardSupplySelected.length) {
+          const hasSupply = cardSupplySelected.some(
+            (supplyId) => supplyId === c.cardSupplyId
+          );
+          if (!hasSupply) {
+            return false;
+          }
+        }
         return true;
       });
 
@@ -384,6 +415,7 @@ const CardList: React.FC<unknown> = observer(() => {
   }, [
     another3dmvCutIns,
     attrSelected,
+    cardSupplySelected,
     cardsCache,
     characterSelected,
     episodes,
@@ -403,17 +435,17 @@ const CardList: React.FC<unknown> = observer(() => {
   const resetFilter = useCallback(() => {
     dispatchCharacterSelected({
       payload: 0,
-      storeName: "card-list-filter-charas",
+      storeName: STORAGE_KEYS.CHARACTERS,
       type: "reset",
     });
     dispatchUnitSelected({
       payload: "",
-      storeName: "card-list-filter-units",
+      storeName: STORAGE_KEYS.UNITS,
       type: "reset",
     });
     dispatchAttrSelected({
       payload: "",
-      storeName: "card-list-filter-attrs",
+      storeName: STORAGE_KEYS.ATTRS,
       type: "reset",
     });
     dispatchRaritySelected({
@@ -421,16 +453,22 @@ const CardList: React.FC<unknown> = observer(() => {
         cardRarityType: "",
         rarity: 0,
       },
-      storeName: "card-list-filter-rarities",
+      storeName: STORAGE_KEYS.RARITIES,
       type: "reset",
     });
     dispatchSkillSelected({
       payload: "",
       type: "reset",
+      storeName: STORAGE_KEYS.SKILLS,
     });
     dispatchSupportUnitSelected({
       payload: "",
-      storeName: "card-list-filter-support-units",
+      storeName: STORAGE_KEYS.SUPPORT_UNITS,
+      type: "reset",
+    });
+    dispatchCardSupplySelected({
+      payload: 0,
+      storeName: STORAGE_KEYS.CARD_SUPPLIES,
       type: "reset",
     });
     setSearchTitle("");
@@ -462,7 +500,7 @@ const CardList: React.FC<unknown> = observer(() => {
         if (unitSelected.includes(unitProfile.unit)) {
           dispatchUnitSelected({
             payload: unitProfile.unit,
-            storeName: "card-list-filter-units",
+            storeName: STORAGE_KEYS.UNITS,
             type: "remove",
           });
           const filteredCharas = charas.filter(
@@ -471,14 +509,14 @@ const CardList: React.FC<unknown> = observer(() => {
           filteredCharas.forEach((chara) =>
             dispatchCharacterSelected({
               payload: chara.id,
-              storeName: "card-list-filter-charas",
+              storeName: STORAGE_KEYS.CHARACTERS,
               type: "remove",
             })
           );
         } else {
           dispatchUnitSelected({
             payload: unitProfile.unit,
-            storeName: "card-list-filter-units",
+            storeName: STORAGE_KEYS.UNITS,
             type: "add",
           });
           const filteredCharas = charas.filter(
@@ -487,7 +525,7 @@ const CardList: React.FC<unknown> = observer(() => {
           filteredCharas.forEach((chara) =>
             dispatchCharacterSelected({
               payload: chara.id,
-              storeName: "card-list-filter-charas",
+              storeName: STORAGE_KEYS.CHARACTERS,
               type: "add",
             })
           );
@@ -502,13 +540,13 @@ const CardList: React.FC<unknown> = observer(() => {
       if (characterSelected.includes(chara.id)) {
         dispatchCharacterSelected({
           payload: chara.id,
-          storeName: "card-list-filter-charas",
+          storeName: STORAGE_KEYS.CHARACTERS,
           type: "remove",
         });
       } else {
         dispatchCharacterSelected({
           payload: chara.id,
-          storeName: "card-list-filter-charas",
+          storeName: STORAGE_KEYS.CHARACTERS,
           type: "add",
         });
       }
@@ -521,13 +559,13 @@ const CardList: React.FC<unknown> = observer(() => {
       if (attrSelected.includes(attr)) {
         dispatchAttrSelected({
           payload: attr,
-          storeName: "card-list-filter-attrs",
+          storeName: STORAGE_KEYS.ATTRS,
           type: "remove",
         });
       } else {
         dispatchAttrSelected({
           payload: attr,
-          storeName: "card-list-filter-attrs",
+          storeName: STORAGE_KEYS.ATTRS,
           type: "add",
         });
       }
@@ -540,13 +578,13 @@ const CardList: React.FC<unknown> = observer(() => {
       if (supportUnitSelected.includes(supportUnit)) {
         dispatchSupportUnitSelected({
           payload: supportUnit,
-          storeName: "card-list-filter-support-units",
+          storeName: STORAGE_KEYS.SUPPORT_UNITS,
           type: "remove",
         });
       } else {
         dispatchSupportUnitSelected({
           payload: supportUnit,
-          storeName: "card-list-filter-support-units",
+          storeName: STORAGE_KEYS.SUPPORT_UNITS,
           type: "add",
         });
       }
@@ -560,11 +598,13 @@ const CardList: React.FC<unknown> = observer(() => {
         dispatchSkillSelected({
           payload: skill.descriptionSpriteName,
           type: "remove",
+          storeName: STORAGE_KEYS.SKILLS,
         });
       } else {
         dispatchSkillSelected({
           payload: skill.descriptionSpriteName,
           type: "add",
+          storeName: STORAGE_KEYS.SKILLS,
         });
       }
     },
@@ -580,7 +620,7 @@ const CardList: React.FC<unknown> = observer(() => {
               rarity === 5 ? "rarity_birthday" : `rarity_${rarity}`,
             rarity,
           },
-          storeName: "card-list-filter-rarities",
+          storeName: STORAGE_KEYS.RARITIES,
           type: "remove",
         });
       } else {
@@ -590,12 +630,56 @@ const CardList: React.FC<unknown> = observer(() => {
               rarity === 5 ? "rarity_birthday" : `rarity_${rarity}`,
             rarity,
           },
-          storeName: "card-list-filter-rarities",
+          storeName: STORAGE_KEYS.RARITIES,
           type: "add",
         });
       }
     },
     [raritySelected, dispatchRaritySelected]
+  );
+
+  // 统一的过滤器状态判定
+  const hasActiveFilters = useMemo(() => {
+    return (
+      characterSelected.length > 0 ||
+      unitSelected.length > 0 ||
+      attrSelected.length > 0 ||
+      skillSelected.length > 0 ||
+      raritySelected.length > 0 ||
+      supportUnitSelected.length > 0 ||
+      cardSupplySelected.length > 0 ||
+      searchTitle.trim().length > 0 ||
+      has3dmvCutIn
+    );
+  }, [
+    characterSelected.length,
+    unitSelected.length,
+    attrSelected.length,
+    skillSelected.length,
+    raritySelected.length,
+    supportUnitSelected.length,
+    cardSupplySelected.length,
+    searchTitle,
+    has3dmvCutIn,
+  ]);
+
+  const handleCardSupplyClick = useCallback(
+    (cs: ICardSupply) => {
+      if (cardSupplySelected.includes(cs.id)) {
+        dispatchCardSupplySelected({
+          payload: cs.id,
+          storeName: STORAGE_KEYS.CARD_SUPPLIES,
+          type: "remove",
+        });
+      } else {
+        dispatchCardSupplySelected({
+          payload: cs.id,
+          storeName: STORAGE_KEYS.CARD_SUPPLIES,
+          type: "add",
+        });
+      }
+    },
+    [cardSupplySelected, dispatchCardSupplySelected]
   );
 
   return (
@@ -643,16 +727,7 @@ const CardList: React.FC<unknown> = observer(() => {
             <Badge
               color="secondary"
               variant="dot"
-              invisible={
-                !characterSelected.length &&
-                !unitSelected.length &&
-                !attrSelected.length &&
-                !skillSelected.length &&
-                !raritySelected.length &&
-                !supportUnitSelected.length &&
-                !searchTitle.trim().length &&
-                !has3dmvCutIn
-              }
+              invisible={!hasActiveFilters}
             >
               <ToggleButton
                 value=""
@@ -963,6 +1038,46 @@ const CardList: React.FC<unknown> = observer(() => {
                 justifyContent="space-between"
                 spacing={1}
               >
+                <Grid item xs={12} md={1}>
+                  <TypographyCaption>{t("card:supplyType")}</TypographyCaption>
+                </Grid>
+                <Grid item xs={12} md={11}>
+                  <Grid container spacing={1}>
+                    {(cardSupplies || []).map((cs, index) => (
+                      <Grid key={"supply-filter-" + index} item>
+                        <Chip
+                          clickable
+                          color={
+                            cardSupplySelected.includes(cs.id)
+                              ? "primary"
+                              : "default"
+                          }
+                          label={
+                            <Grid container>
+                              <Grid item>
+                                {
+                                  supplyTypeMapping.find(
+                                    (item) => item.type === cs.cardSupplyType
+                                  )?.name
+                                }
+                              </Grid>
+                            </Grid>
+                          }
+                          onClick={() => handleCardSupplyClick(cs)}
+                        />
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justifyContent="space-between"
+                spacing={1}
+              >
                 <Grid item xs={12} md={2}>
                   <TypographyCaption>
                     {t("card:specialCutIn")}
@@ -1087,15 +1202,7 @@ const CardList: React.FC<unknown> = observer(() => {
                   <Button
                     variant="contained"
                     color="secondary"
-                    disabled={
-                      !characterSelected.length &&
-                      !unitSelected.length &&
-                      !attrSelected.length &&
-                      !skillSelected.length &&
-                      !raritySelected.length &&
-                      !searchTitle.trim().length &&
-                      !has3dmvCutIn
-                    }
+                    disabled={!hasActiveFilters}
                     onClick={() => resetFilter()}
                     startIcon={<RotateLeft />}
                   >
@@ -1198,12 +1305,12 @@ const CardList: React.FC<unknown> = observer(() => {
                         cardRarityType: "",
                         rarity: 0,
                       },
-                      storeName: "card-list-filter-rarities",
+                      storeName: STORAGE_KEYS.RARITIES,
                       type: "reset",
                     });
                     dispatchAttrSelected({
                       payload: attr!, // it is already checked
-                      storeName: "card-list-filter-attrs",
+                      storeName: STORAGE_KEYS.ATTRS,
                       type: "add",
                     });
                     const charas = bonuses.map(
@@ -1214,19 +1321,19 @@ const CardList: React.FC<unknown> = observer(() => {
                     );
                     dispatchCharacterSelected({
                       payload: 0,
-                      storeName: "card-list-filter-charas",
+                      storeName: STORAGE_KEYS.CHARACTERS,
                       type: "reset",
                     });
                     charas.forEach((chara) =>
                       dispatchCharacterSelected({
                         payload: chara.gameCharacterId,
-                        storeName: "card-list-filter-charas",
+                        storeName: STORAGE_KEYS.CHARACTERS,
                         type: "add",
                       })
                     );
                     dispatchSupportUnitSelected({
                       payload: "",
-                      storeName: "card-list-filter-support-units",
+                      storeName: STORAGE_KEYS.SUPPORT_UNITS,
                       type: "reset",
                     });
                     charas
@@ -1234,7 +1341,7 @@ const CardList: React.FC<unknown> = observer(() => {
                       .forEach((chara) => {
                         dispatchSupportUnitSelected({
                           payload: chara.unit,
-                          storeName: "card-list-filter-support-units",
+                          storeName: STORAGE_KEYS.SUPPORT_UNITS,
                           type: "add",
                         });
                       });

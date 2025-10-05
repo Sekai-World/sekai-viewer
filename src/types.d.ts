@@ -149,7 +149,6 @@ export interface ICardInfo {
   cardSupplyId: number;
   archiveDisplayType?: string;
   archivePublishedAt: number;
-  cardSupplyId: number;
   cardParameters: CardParameter[];
   specialTrainingCosts: SpecialTrainingCost[];
   masterLessonAchieveResources: MasterLessonAchieveResource[];

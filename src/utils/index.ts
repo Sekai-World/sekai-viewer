@@ -92,6 +92,8 @@ import {
   IMysekaiTalkConditionGroup,
   IMysekaiTalk,
   IMysekaiGameCharacterUnitGroups,
+  ICardSupply,
+  ICardSupplyGroup,
 } from "./../types.d";
 import { useAssetI18n } from "./i18n";
 import { useLocation } from "react-router-dom";
@@ -188,7 +190,9 @@ export function useCachedData<
     | IMysekaiTalkCondition
     | IMysekaiTalkConditionGroup
     | IMysekaiTalk
-    | IMysekaiGameCharacterUnitGroups,
+    | IMysekaiGameCharacterUnitGroups
+    | ICardSupply
+    | ICardSupplyGroup,
 >(name: string): [T[] | undefined, boolean, unknown] {
   // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
   const { region } = useRootStore();
@@ -572,6 +576,43 @@ export function useSkillMapping() {
         descriptionSpriteName: "life_score_up",
         // name: "発動時ライフがOO未満ならスコアUP",
         name: t("filter:skill.life_score_up"),
+      },
+    ],
+    [t]
+  );
+}
+
+export function useCardSupplyTypeMapping() {
+  const { t } = useTranslation();
+  return useMemo(
+    () => [
+      {
+        type: "normal",
+        name: t("filter:card_supply.normal"),
+      },
+      {
+        type: "birthday",
+        name: t("filter:card_supply.birthday"),
+      },
+      {
+        type: "term_limited",
+        name: t("filter:card_supply.term_limited"),
+      },
+      {
+        type: "colorful_festival_limited",
+        name: t("filter:card_supply.colorful_festival_limited"),
+      },
+      {
+        type: "bloom_festival_limited",
+        name: t("filter:card_supply.bloom_festival_limited"),
+      },
+      {
+        type: "unit_event_limited",
+        name: t("filter:card_supply.unit_event_limited"),
+      },
+      {
+        type: "collaboration_limited",
+        name: t("filter:card_supply.collaboration_limited"),
       },
     ],
     [t]
