@@ -508,6 +508,9 @@ export function useLocalStorage<T>(
   return [storedValue, setValue];
 }
 
+// Re-export the useIntersectionObserver hook
+export { useIntersectionObserver } from "./useIntersectionObserver";
+
 export function useToggle(initialValue = false) {
   // Returns the tuple [state, dispatch]
   // Normally with useReducer you pass a value to dispatch to indicate what action to

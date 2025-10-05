@@ -14,6 +14,7 @@ import {
   useCachedData,
   useCardType,
   useRefState,
+  useIntersectionObserver,
 } from "../../utils";
 
 import rarityNormal from "../../assets/rarity_star_normal.png";
@@ -33,6 +34,12 @@ export const CardImage: React.FC<{ id: number; trained?: boolean }> = ({
 
   const { isBirthdayCard } = useCardType(card);
 
+  // Lazy loading setup
+  const [containerRef, isVisible] = useIntersectionObserver({
+    threshold: 0.1,
+    rootMargin: "50px",
+  });
+
   const rarityIcon = useMemo(
     () =>
       isBirthdayCard
@@ -48,57 +55,66 @@ export const CardImage: React.FC<{ id: number; trained?: boolean }> = ({
   }, [cards, id]);
 
   useEffect(() => {
-    if (card)
+    // 只有当组件可见且有卡片数据时才加载图片
+    if (card && isVisible)
       getRemoteAssetURL(
         `character/member/${card.assetbundleName}/card_${
           trained ? "after_training" : "normal"
         }.webp`,
         setCardImg
       );
-  }, [card, trained]);
+  }, [card, trained, isVisible]);
 
   return card ? (
-    <Svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 576">
-      <image
-        href={cardImg}
-        x="0"
-        y="-50"
-        width="1024"
-        height="630.5"
-        preserveAspectRatio="xMidyMid slice"
-      ></image>
-      {/* frame */}
-      <image
-        href={cardImageFrameMap[cardRarityTypeToRarity[card.cardRarityType!]]}
-        x="0"
-        y="0"
-        width="1024"
-        height="576"
-      ></image>
-      {/* attr */}
-      <image
-        href={attrIconMap[card.attr]}
-        x="920"
-        y="16"
-        width="88"
-        height="88"
-      />
-      {/* rarity */}
-      {Array.from({
-        length: isBirthdayCard
-          ? 1
-          : cardRarityTypeToRarity[card.cardRarityType!],
-      }).map((_, i) => (
-        <image
-          key={`card-rarity-${i}`}
-          href={rarityIcon}
-          x={i * 72 + 16}
-          y="490"
-          width="72"
-          height="70"
-        />
-      ))}
-    </Svg>
+    <div ref={containerRef as React.RefObject<HTMLDivElement>}>
+      {!isVisible ? (
+        <SvgSkeleton variant="rectangular" />
+      ) : (
+        <Svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 576">
+          <image
+            href={cardImg}
+            x="0"
+            y="-50"
+            width="1024"
+            height="630.5"
+            preserveAspectRatio="xMidyMid slice"
+          ></image>
+          {/* frame */}
+          <image
+            href={
+              cardImageFrameMap[cardRarityTypeToRarity[card.cardRarityType!]]
+            }
+            x="0"
+            y="0"
+            width="1024"
+            height="576"
+          ></image>
+          {/* attr */}
+          <image
+            href={attrIconMap[card.attr]}
+            x="920"
+            y="16"
+            width="88"
+            height="88"
+          />
+          {/* rarity */}
+          {Array.from({
+            length: isBirthdayCard
+              ? 1
+              : cardRarityTypeToRarity[card.cardRarityType!],
+          }).map((_, i) => (
+            <image
+              key={`card-rarity-${i}`}
+              href={rarityIcon}
+              x={i * 72 + 16}
+              y="490"
+              width="72"
+              height="70"
+            />
+          ))}
+        </Svg>
+      )}
+    </div>
   ) : (
     <SvgSkeleton variant="rectangular" />
   );
@@ -119,6 +135,12 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
 
     const svgElement = useRef<SVGSVGElement>(null);
 
+    // Lazy loading setup
+    const [containerRef, isVisible] = useIntersectionObserver({
+      threshold: 0.1, // 当10%的元素可见时开始加载
+      rootMargin: "50px", // 提前50px开始加载
+    });
+
     const rarityIcon = useMemo(
       () =>
         isBirthdayCard
@@ -138,6 +160,9 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
     const [trainedImg, setTrainedImg] = useState<string>("");
 
     useEffect(() => {
+      // 只有当组件可见时才加载图片
+      if (!isVisible) return;
+
       if (!isTrainedOnlyCard) {
         getRemoteAssetURL(
           `character/member_small/${card.assetbundleName}/card_normal.webp`,
@@ -150,7 +175,7 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
         setTrainedImg,
         "minio"
       );
-    }, [card, isTrainedOnlyCard]);
+    }, [card, isTrainedOnlyCard, isVisible]);
 
     useLayoutEffect(() => {
       if (hoveredArea === 2) {
@@ -265,93 +290,102 @@ export const CardSmallImage: React.FC<{ card: ICardInfo }> = React.memo(
           setHoveredArea(1);
         }
       },
-      [isBirthdayCard]
+      [isBirthdayCard, isTrainedOnlyCard]
     );
 
     return card ? (
-      <Svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 1024 576"
-        ref={svgElement}
-        onMouseMove={handleMoseOver}
-        onMouseLeave={() => setHoveredArea(0)}
-      >
-        {isTrainedOnlyCard ? (
-          <image
-            href={trainedImg}
-            x="0"
-            y="0"
-            width="1024"
-            height="576"
-            preserveAspectRatio="xMidYMid slice"
-          ></image>
-        ) : isTrainableCard && !isBirthdayCard ? (
-          <Fragment>
-            <svg
-              x={imgLeftX}
-              y="0"
-              width={imgLeftWidth}
-              height="576"
-              preserveAspectRatio="xMinYMid slice"
-              viewBox="0 0 1024 576"
-              // style={{ pointerEvents: "all" }}
-            >
-              <image width="1024" height="576" href={normalImg}></image>
-            </svg>
-            <svg
-              x={imgRightX}
-              y="0"
-              width={imgRightWidth}
-              height="576"
-              preserveAspectRatio="xMaxYMid slice"
-              viewBox="0 0 1024 576"
-              // style={{ pointerEvents: "all" }}
-            >
-              <image width="1024" height="576" href={trainedImg}></image>
-            </svg>
-          </Fragment>
+      <div ref={containerRef as React.RefObject<HTMLDivElement>}>
+        {!isVisible ? (
+          // 显示骨架屏直到图片需要加载
+          <SvgSkeleton variant="rectangular" />
         ) : (
-          <image
-            href={normalImg}
-            x="0"
-            y="0"
-            width="1024"
-            height="576"
-            preserveAspectRatio="xMidYMid slice"
-          ></image>
+          <Svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 1024 576"
+            ref={svgElement}
+            onMouseMove={handleMoseOver}
+            onMouseLeave={() => setHoveredArea(0)}
+          >
+            {isTrainedOnlyCard ? (
+              <image
+                href={trainedImg}
+                x="0"
+                y="0"
+                width="1024"
+                height="576"
+                preserveAspectRatio="xMidYMid slice"
+              ></image>
+            ) : isTrainableCard && !isBirthdayCard ? (
+              <Fragment>
+                <svg
+                  x={imgLeftX}
+                  y="0"
+                  width={imgLeftWidth}
+                  height="576"
+                  preserveAspectRatio="xMinYMid slice"
+                  viewBox="0 0 1024 576"
+                  // style={{ pointerEvents: "all" }}
+                >
+                  <image width="1024" height="576" href={normalImg}></image>
+                </svg>
+                <svg
+                  x={imgRightX}
+                  y="0"
+                  width={imgRightWidth}
+                  height="576"
+                  preserveAspectRatio="xMaxYMid slice"
+                  viewBox="0 0 1024 576"
+                  // style={{ pointerEvents: "all" }}
+                >
+                  <image width="1024" height="576" href={trainedImg}></image>
+                </svg>
+              </Fragment>
+            ) : (
+              <image
+                href={normalImg}
+                x="0"
+                y="0"
+                width="1024"
+                height="576"
+                preserveAspectRatio="xMidYMid slice"
+              ></image>
+            )}
+            {/* frame */}
+            <image
+              href={
+                cardImageFrameMap[cardRarityTypeToRarity[card.cardRarityType!]]
+              }
+              x="0"
+              y="0"
+              width="1024"
+              height="576"
+            ></image>
+            {/* attr */}
+            <image
+              href={attrIconMap[card.attr]}
+              x="924"
+              y="12"
+              width="88"
+              height="88"
+            />
+            {/* rarity */}
+            {Array.from({
+              length: isBirthdayCard
+                ? 1
+                : cardRarityTypeToRarity[card.cardRarityType!],
+            }).map((_, i) => (
+              <image
+                key={`card-rarity-${i}`}
+                href={rarityIcon}
+                x="16"
+                y={490 - i * 62}
+                width="72"
+                height="70"
+              />
+            ))}
+          </Svg>
         )}
-        {/* frame */}
-        <image
-          href={cardImageFrameMap[cardRarityTypeToRarity[card.cardRarityType!]]}
-          x="0"
-          y="0"
-          width="1024"
-          height="576"
-        ></image>
-        {/* attr */}
-        <image
-          href={attrIconMap[card.attr]}
-          x="924"
-          y="12"
-          width="88"
-          height="88"
-        />
-        {/* rarity */}
-        {Array.from({
-          length: isBirthdayCard
-            ? 1
-            : cardRarityTypeToRarity[card.cardRarityType!],
-        }).map((_, i) => (
-          <image
-            key={`card-rarity-${i}`}
-            href={rarityIcon}
-            x="16"
-            y={490 - i * 62}
-            width="72"
-            height="70"
-          />
-        ))}
-      </Svg>
+      </div>
     ) : (
       <SvgSkeleton variant="rectangular" />
     );
