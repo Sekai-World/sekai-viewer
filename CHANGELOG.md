@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.17.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.1...v1.17.2) (2025-10-05)
+
+
+### Features
+
+* **card:** add card supply filtering and related state management ([46c65b2](https://github.com/Sekai-World/sekai-viewer/commits/46c65b259226eb9bbc93e8fe81aeed572e44709f))
+* **card:** add card supply type display in CardDetail component ([ee2a839](https://github.com/Sekai-World/sekai-viewer/commits/ee2a839aeb63d48e7116b993d3591687b03e52fa))
+* **card:** add filter for cards with 3DMV cut-ins ([f39e160](https://github.com/Sekai-World/sekai-viewer/commits/f39e1602ce2279f552c1491bc2cf31a875c77e1c))
+* **card:** implement card image component with hover effects and lazy loading ([e531d39](https://github.com/Sekai-World/sekai-viewer/commits/e531d394ea22c58a42c5911c4d038d810a76b43e))
+* **intersection-observer:** add custom hook for lazy loading components ([d0d679a](https://github.com/Sekai-World/sekai-viewer/commits/d0d679ab97e4c991f5fd2fc2f3b6c2cdfdda1f41))
+
+
+### Bug Fixes
+
+* **filters:** correct translation keys for clear and fixture filter options ([4e58f71](https://github.com/Sekai-World/sekai-viewer/commits/4e58f710ac74028171cd7680891b08668d51354d))
+
 ### [1.17.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.0...v1.17.1) (2025-09-30)
 
 
