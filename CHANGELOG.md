@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.17.5](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.4...v1.17.5) (2025-10-20)
+
+
+### Bug Fixes
+
+* **event-detail:** adjust bonus calculation for piapro units based on event ID ([1545bce](https://github.com/Sekai-World/sekai-viewer/commits/1545bce84b6062bd5b7243b7db23c4abf8fdca54))
+* **story-reader:** do not increase event id since 177 ([1199d8d](https://github.com/Sekai-World/sekai-viewer/commits/1199d8d889a66958dddc0162a865cfcaaa08e25c)), closes [#634](https://github.com/Sekai-World/sekai-viewer/issues/634)
+
 ### [1.17.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.3...v1.17.4) (2025-10-07)
 
 
