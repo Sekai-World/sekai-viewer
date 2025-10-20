@@ -223,12 +223,14 @@ const EventDetail: React.FC<unknown> = observer(() => {
                   if (card.supportUnit !== "none") {
                     return v;
                   }
-                  return Math.max(
-                    v,
+                  const piaproBonus = deckBonus.bonusRate;
+                  const unitBonus =
                     gameCharacterUnit.unit === "piapro"
-                      ? deckBonus.bonusRate
-                      : deckBonus.bonusRate - 10
-                  );
+                      ? piaproBonus
+                      : Number(eventId) >= 135
+                        ? piaproBonus
+                        : piaproBonus - 10;
+                  return Math.max(v, unitBonus);
                 }
               }
               return Math.max(v, deckBonus.bonusRate);
