@@ -1007,11 +1007,11 @@ function modelNameFix(info: IScenarioInfo, data: IScenarioData) {
 function scenarioIdToAssetbundleName(scenarioId: string) {
   let result = scenarioId;
 
-  // Handle event number offset: if contains "event_" and number > 166, increment by 1
+  // Handle event number offset: if contains "event_" and number between 166 and 177, increment by 1
   const eventMatch = result.match(/event_(\d+)/);
   if (eventMatch) {
     const eventNumber = parseInt(eventMatch[1]);
-    if (eventNumber > 166) {
+    if (eventNumber > 166 && eventNumber < 177) {
       result = result.replace(/event_(\d+)/, `event_${eventNumber + 1}`);
     }
   }
