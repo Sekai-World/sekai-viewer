@@ -164,11 +164,14 @@ const GachaDetailPage: React.FC<unknown> = observer(() => {
       );
       const tmpGachaResult: GachaDetail[] = [];
       const isOverRarity = behavior.gachaBehaviorType.startsWith("over_rarity");
-      // const overRarity = isOverRarity
-      //   ? behavior.gachaBehaviorType === "over_rarity_3_once"
-      //     ? 3
-      //     : 4
-      //   : 0;
+      let overRarityLevel = 0;
+      if (isOverRarity) {
+        if (behavior.gachaBehaviorType === "over_rarity_3_once") {
+          overRarityLevel = 3;
+        } else if (behavior.gachaBehaviorType === "over_rarity_4_once") {
+          overRarityLevel = 4;
+        }
+      }
       let noOverRarityCount = 0;
       for (let i = 0; i < rollTimes; i++) {
         // console.log(i, rollTimes);
@@ -210,7 +213,8 @@ const GachaDetailPage: React.FC<unknown> = observer(() => {
 
         if (
           isOverRarity &&
-          cardRarityTypeToRarity[gachaRarityRates[idx].cardRarityType] < 3
+          cardRarityTypeToRarity[gachaRarityRates[idx].cardRarityType] <
+            overRarityLevel
         )
           noOverRarityCount += 1;
       }
