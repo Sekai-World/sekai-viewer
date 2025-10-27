@@ -163,6 +163,8 @@ export async function getBuildMotionDataUrl(
   let modelDir = modelItem.modelPath.split("/").slice(0, -1).join("/");
   if (modelDir.indexOf("v2/collabo/21_miku") !== -1) {
     modelDir = modelDir.replace("collabo", "main");
+  } else if (modelDir.indexOf("v2/collabo/egg") !== -1) {
+    modelDir = modelDir.split("/").slice(0, -1).join("/");
   }
 
   // case 1: get directly from model path + motion_base
