@@ -45,7 +45,7 @@ import {
   InternalModel,
   Live2DModel,
   Cubism4InternalModel,
-} from "pixi-live2d-display-mulmotion";
+} from "@sekai-world/pixi-live2d-display-mulmotion";
 import Live2dModel from "../../components/pixi/Live2dModel";
 import { getModelData } from "../../utils/live2dLoader";
 import type { ILive2DModelData, ILive2dModelListElement } from "../../types.d";

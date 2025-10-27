@@ -50,6 +50,9 @@ importers:
       '@pixi/react':
         specifier: ^7.1.2
         version: 7.1.2(53d2c30e03b4aa312ce25a4c6ea31272)
+      '@sekai-world/pixi-live2d-display-mulmotion':
+        specifier: ^0.5.1
+        version: 0.5.1(pixi.js@7.4.3)
       axios:
         specifier: ^1.10.0
         version: 1.10.0
@@ -134,9 +137,6 @@ importers:
       p-queue:
         specifier: ^8.1.0
         version: 8.1.0
-      pixi-live2d-display-mulmotion:
-        specifier: 0.5.0-mm-6
-        version: 0.5.0-mm-6(pixi.js@7.4.3)
       pixi.js:
         specifier: ^7.4.3
         version: 7.4.3
@@ -1989,8 +1989,8 @@ packages:
     cpu: [x64]
     os: [linux]
 
-  '@rollup/rollup-linux-x64-gnu@4.46.2':
-    resolution: {integrity: sha512-Jj5a9RUoe5ra+MEyERkDKLwTXVu6s3aACP51nkfnK9wJTraCC8IMe3snOfALkrjTYd2G1ViE1hICj0fZ7ALBPA==}
+  '@rollup/rollup-linux-x64-gnu@4.52.5':
+    resolution: {integrity: sha512-hXGLYpdhiNElzN770+H2nlx+jRog8TyynpTVzdlc6bndktjKWyZyiCsuDAlpd+j+W+WNqfcyAWz9HxxIGfZm1Q==}
     cpu: [x64]
     os: [linux]
 
@@ -2016,6 +2016,11 @@ packages:
 
   '@rtsao/scc@1.1.0':
     resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
+
+  '@sekai-world/pixi-live2d-display-mulmotion@0.5.1':
+    resolution: {integrity: sha512-J/8soQ2R9B3LsFDDdWDQW+uM6+x/ysUdc6jtj5MrnR6ouZlrD3vs/iC1E2kQNImuPpIptnbMZYIjeLCoYHCBcQ==}
+    peerDependencies:
+      pixi.js: ^7.0.0
 
   '@surma/rollup-plugin-off-main-thread@2.2.3':
     resolution: {integrity: sha512-lR8q/9W7hZpMWweNiAKU7NQerBnzQQLvi8qnTDU/fxItPhtZVMbPV3lbCwjhIlNBe9Bbr5V+KHshvWmVSG9cxQ==}
@@ -4813,11 +4818,6 @@ packages:
   pify@3.0.0:
     resolution: {integrity: sha512-C3FsVNH1udSEX48gGX1xfvwTWfsYWj5U+8/uK15BGzIGrKoUpghX8hWZwa/OFnakBiiVNmBvemTJR5mcy7iPcg==}
     engines: {node: '>=4'}
-
-  pixi-live2d-display-mulmotion@0.5.0-mm-6:
-    resolution: {integrity: sha512-uABIo0ajlUW640F4LKr3KIfaJHlwXa/BRVra5S7wJqSFF6v5tMLsFq5AL2d4wwxDc8hQk1iIIkmXq/eGAKphtA==}
-    peerDependencies:
-      pixi.js: ^7.0.0
 
   pixi.js@7.4.3:
     resolution: {integrity: sha512-uIWdH0EI2dVgNoqN9aFaHCmR0V65OEhMkXs2sek3c/QP2ItV6UoM+ouX9esSv3ibo20F+J5D1XwnQhUZI6wqeQ==}
@@ -7845,7 +7845,7 @@ snapshots:
   '@rollup/rollup-linux-x64-gnu@4.44.1':
     optional: true
 
-  '@rollup/rollup-linux-x64-gnu@4.46.2':
+  '@rollup/rollup-linux-x64-gnu@4.52.5':
     optional: true
 
   '@rollup/rollup-linux-x64-musl@4.44.1':
@@ -7861,6 +7861,13 @@ snapshots:
     optional: true
 
   '@rtsao/scc@1.1.0': {}
+
+  '@sekai-world/pixi-live2d-display-mulmotion@0.5.1(pixi.js@7.4.3)':
+    dependencies:
+      pixi.js: 7.4.3
+    optionalDependencies:
+      '@rollup/rollup-linux-x64-gnu': 4.52.5
+      terser: 5.43.1
 
   '@surma/rollup-plugin-off-main-thread@2.2.3':
     dependencies:
@@ -10960,13 +10967,6 @@ snapshots:
   pify@2.3.0: {}
 
   pify@3.0.0: {}
-
-  pixi-live2d-display-mulmotion@0.5.0-mm-6(pixi.js@7.4.3):
-    dependencies:
-      pixi.js: 7.4.3
-    optionalDependencies:
-      '@rollup/rollup-linux-x64-gnu': 4.46.2
-      terser: 5.43.1
 
   pixi.js@7.4.3:
     dependencies:

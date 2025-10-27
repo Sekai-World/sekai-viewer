@@ -21,9 +21,9 @@ import {
   MotionPreloadStrategy,
   config,
   Cubism4InternalModel,
-} from "pixi-live2d-display-mulmotion";
+} from "@sekai-world/pixi-live2d-display-mulmotion";
 config.logLevel = config.LOG_LEVEL_ERROR;
-import type { Live2DModelOptions } from "pixi-live2d-display-mulmotion";
+import type { Live2DModelOptions } from "@sekai-world/pixi-live2d-display-mulmotion";
 
 import { Howler, Howl } from "howler";
 

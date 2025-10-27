@@ -3,7 +3,7 @@ import {
   Cubism4InternalModel,
   InternalModel,
   Live2DModel,
-} from "pixi-live2d-display-mulmotion";
+} from "@sekai-world/pixi-live2d-display-mulmotion";
 import {
   BatchRenderer,
   extensions,
