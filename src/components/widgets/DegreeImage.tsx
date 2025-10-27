@@ -9,7 +9,7 @@ import {
 } from "../../types.d";
 import { getRemoteAssetURL, useCachedData, useCompactData } from "../../utils";
 import { degreeFrameMap, degreeFrameSubMap } from "../../utils/resources";
-import degreeLevelIcon from "../../assets/frame/icon_degreeLv.png";
+import degreeLevelIconImport from "../../assets/frame/icon_degreeLv.png";
 import degreeLevel6Icon from "../../assets/frame/icon_degreeLv6.png";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
@@ -49,6 +49,7 @@ const DegreeImage: React.FC<
     const [degreeImage, setDegreeImage] = useState<string>("");
     const [degreeFrameImage, setDegreeFrameImage] = useState<string>("");
     const [degreeRankImage, setDegreeRankImage] = useState<string>("");
+    const [degreeLevelIcon, setDegreeLevelIcon] = useState<string>("");
     const [isWorldLinkDegree, setIsWorldLinkDegree] = useState(false);
 
     useEffect(() => {
@@ -146,7 +147,8 @@ const DegreeImage: React.FC<
                 (honorGroup.honorType == "achievement" &&
                   [33, 36, 37, 52, 72, 73, 74, 75, 76, 77].includes(
                     honorGroup.id
-                  )))
+                  )) ||
+                (honorGroup.honorType == "birthday" && !!honorGroup.frameName))
           );
         }
 
@@ -180,6 +182,29 @@ const DegreeImage: React.FC<
         setIsDrawHonorLevel(drawHonorLevel ?? true);
       };
     }, [drawHonorLevel, honor, honorGroups, honorLevel]);
+
+    useEffect(() => {
+      if (honorGroup && isDrawHonorLevel) {
+        if (honorGroup.honorType === "birthday") {
+          getRemoteAssetURL(
+            `honor_frame/${honorGroup.frameName}/frame_degree_level_${honorLevel}.webp`,
+            setDegreeLevelIcon,
+            "minio",
+            region
+          );
+        } else {
+          setDegreeLevelIcon(degreeLevelIconImport);
+        }
+      }
+    }, [
+      isDrawHonorLevel,
+      honor,
+      region,
+      sub,
+      honorGroup,
+      honorLevel,
+      degreeLevelIcon,
+    ]);
 
     useEffect(() => {
       if (honor) {
@@ -324,7 +349,7 @@ const DegreeImage: React.FC<
             <image
               key={idx}
               href={degreeLevelIcon}
-              x={50 + idx * 16}
+              x={(honorGroup?.honorType == "birthday" ? 170 : 50) + idx * 16}
               y="64"
               height="16"
               width="16"
