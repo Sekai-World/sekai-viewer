@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.17.6](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.5...v1.17.6) (2025-10-27)
+
+
+### Features
+
+* **event:** refine event card bonus calculation logic ([1a68f2f](https://github.com/Sekai-World/sekai-viewer/commits/1a68f2f23840f15534adc66ef1ab5e0550d5d576))
+
+
+### Bug Fixes
+
+* **degree-image:** enhance birthday honor type handling by incorporating honor rarity ([995b6c1](https://github.com/Sekai-World/sekai-viewer/commits/995b6c1485d300155a5eb0155740fffd7fb736bf))
+* **degree-image:** update degree level icon handling for birthday honor type ([88b3661](https://github.com/Sekai-World/sekai-viewer/commits/88b366132cf417271b3cb5e1e38b9c1e5fa1088a))
+* **gacha:** simulator guarantee mechanism ([d3765ca](https://github.com/Sekai-World/sekai-viewer/commits/d3765caa7893ce88f06df9983ca08628ff253939))
+* **live2d:** adjust model directory handling for collabo egg path ([41ca877](https://github.com/Sekai-World/sekai-viewer/commits/41ca87766119bc024f0d77bfed671cb0d4756b72))
+* **live2d:** enhanced model name processing ([d66cb02](https://github.com/Sekai-World/sekai-viewer/commits/d66cb02d1d078a97736a9c6e49273ce958dcac90))
+* **music-detail:** correct EN_EXCLUSIVE_IDS by updating entry 657 ([e411d27](https://github.com/Sekai-World/sekai-viewer/commits/e411d27f3755fdb74aa3ee5f7a6881f29620952f))
+
 ### [1.17.5](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.4...v1.17.5) (2025-10-20)
 
 
