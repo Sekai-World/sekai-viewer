@@ -980,7 +980,9 @@ export interface IEventCard {
   id: number;
   cardId: number;
   eventId: number;
-  bonusRate?: number;
+  bonusRate: number;
+  leaderBonusRate: number;
+  isDisplayCardStory: boolean;
 }
 
 export interface IGachaCeilItem {
@@ -1807,4 +1809,10 @@ export interface MysekaiDataContext {
   talkConditionGroups?: IMysekaiTalkConditionGroup[];
   talks?: IMysekaiTalk[];
   characterGroups?: IMysekaiGameCharacterUnitGroups[];
+}
+
+export interface EventCardBonus {
+  card: ICardInfo;
+  minBonus: number;
+  maxBonus: number;
 }

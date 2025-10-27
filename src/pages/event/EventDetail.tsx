@@ -56,6 +56,7 @@ import TabPanelPadding from "../../components/styled/TabPanelPadding";
 import GridOut from "../../components/styled/GridOut";
 import LinkNoDecoration from "../../components/styled/LinkNoDecoration";
 import PaperContainer from "../../components/styled/PaperContainer";
+import eventCardBonus from "../../utils/eventCardBonus";
 
 const EventDetail: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
@@ -178,15 +179,6 @@ const EventDetail: React.FC<unknown> = observer(() => {
             ) === idx
         ); // unique
       setEventBonusCharas(ebc);
-      const masterRankBonus = {
-        rarity_1: [0, 0.5, 0.5],
-        rarity_2: [0, 1, 1],
-        rarity_3: [0, 5, 5],
-        rarity_4: [0, 10, 15],
-        rarity_birthday: [0, 7.5, 10],
-      } as Record<string, number[]>;
-      const masterRankBonusIndex =
-        Number(eventId) >= 36 ? (Number(eventId) >= 54 ? 2 : 1) : 0;
       setBoostCards(() => {
         let result = cards
           .filter(
@@ -198,57 +190,16 @@ const EventDetail: React.FC<unknown> = observer(() => {
             const eventCard = ec.find(
               (it) => it.cardId === card.id && it.bonusRate !== undefined
             );
-            let finalEventBonus =
-              eventCard === undefined ? 0 : eventCard.bonusRate!;
 
-            finalEventBonus += edb.reduce((v, deckBonus) => {
-              if (
-                deckBonus.cardAttr !== undefined &&
-                deckBonus.cardAttr !== card.attr
-              ) {
-                return v;
-              }
-
-              if (deckBonus.gameCharacterUnitId !== undefined) {
-                const gameCharacterUnit = gameCharacterUnits.find(
-                  (it) => it.id === deckBonus.gameCharacterUnitId
-                )!;
-                if (gameCharacterUnit.gameCharacterId !== card.characterId) {
-                  return v;
-                }
-                if (
-                  gameCharacterUnit.gameCharacterId >= 21 &&
-                  gameCharacterUnit.unit !== card.supportUnit
-                ) {
-                  if (card.supportUnit !== "none") {
-                    return v;
-                  }
-                  const piaproBonus = deckBonus.bonusRate;
-                  const unitBonus =
-                    gameCharacterUnit.unit === "piapro"
-                      ? piaproBonus
-                      : Number(eventId) >= 135
-                        ? piaproBonus
-                        : piaproBonus - 10;
-                  return Math.max(v, unitBonus);
-                }
-              }
-              return Math.max(v, deckBonus.bonusRate);
-            }, 0);
-
-            let maxBonus = finalEventBonus;
-            if (card.cardRarityType !== undefined) {
-              maxBonus +=
-                masterRankBonus[card.cardRarityType][masterRankBonusIndex];
-            }
-
-            return {
-              card: card,
-              maxBonus: maxBonus,
-              minBonus: finalEventBonus,
-            };
+            return eventCardBonus(
+              ev!.id,
+              card,
+              edb,
+              gameCharacterUnits,
+              eventCard
+            );
           })
-          .filter((it) => it.minBonus >= 40);
+          .filter((it) => it.minBonus >= 25);
 
         if (result.length) {
           const sortKey = "cardRarityType";
