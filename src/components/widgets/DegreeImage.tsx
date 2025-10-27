@@ -15,6 +15,8 @@ import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
 import Svg from "../styled/Svg";
 
+const honorRarityList = ["low", "middle", "high", "highest"] as const;
+
 const DegreeImage: React.FC<
   {
     resourceBoxId?: number;
@@ -184,10 +186,10 @@ const DegreeImage: React.FC<
     }, [drawHonorLevel, honor, honorGroups, honorLevel]);
 
     useEffect(() => {
-      if (honorGroup && isDrawHonorLevel) {
-        if (honorGroup.honorType === "birthday") {
+      if (honor && honorGroup && isDrawHonorLevel) {
+        if (honorGroup.honorType === "birthday" && honor.honorRarity) {
           getRemoteAssetURL(
-            `honor_frame/${honorGroup.frameName}/frame_degree_level_${honorLevel}.webp`,
+            `honor_frame/${honorGroup.frameName}/frame_degree_level_${honorRarityList.indexOf(honor.honorRarity as "low") + 1}.webp`,
             setDegreeLevelIcon,
             "minio",
             region
@@ -349,7 +351,7 @@ const DegreeImage: React.FC<
             <image
               key={idx}
               href={degreeLevelIcon}
-              x={(honorGroup?.honorType == "birthday" ? 170 : 50) + idx * 16}
+              x={(honorGroup?.honorType == "birthday" ? 180 : 50) + idx * 16}
               y="64"
               height="16"
               width="16"
