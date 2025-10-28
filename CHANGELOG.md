@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.17.7](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.6...v1.17.7) (2025-10-28)
+
+
+### Features
+
+* **honor:** add support for birthday honor frame for middle rarity ([b55c902](https://github.com/Sekai-World/sekai-viewer/commits/b55c9024c1c023865d5cdf3869b60f1d246f4eb7))
+
 ### [1.17.6](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.5...v1.17.6) (2025-10-27)
 
 
