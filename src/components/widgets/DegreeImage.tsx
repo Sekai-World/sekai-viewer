@@ -257,6 +257,18 @@ const DegreeImage: React.FC<
               "minio",
               region
             );
+          } else if (
+            honorGroup.honorType === "birthday" &&
+            honor.honorRarity === "middle"
+          ) {
+            getRemoteAssetURL(
+              `honor_frame/${honorGroup.frameName}/frame_degree_${
+                sub ? "s" : "m"
+              }_2.webp`,
+              setDegreeFrameImage,
+              "minio",
+              region
+            );
           } else if (honor.honorRarity) {
             setDegreeFrameImage(
               sub
