@@ -325,12 +325,10 @@ const CardList: React.FC<unknown> = observer(() => {
         if (attrSelected.length && !attrSelected.includes(c.attr)) {
           return false;
         }
-        if (
-          supportUnitSelected.length &&
-          c.supportUnit !== "none" &&
-          !supportUnitSelected.includes(c.supportUnit)
-        ) {
-          return false;
+        if (supportUnitSelected.length) {
+          if (!supportUnitSelected.includes(c.supportUnit)) {
+            return false;
+          }
         }
         if (raritySelected.length) {
           const rarityFilter = raritySelected.map((rs) => rs.cardRarityType);
@@ -899,6 +897,7 @@ const CardList: React.FC<unknown> = observer(() => {
                     <Grid container spacing={1}>
                       {unitProfiles &&
                         [
+                          "none",
                           "theme_park",
                           "street",
                           "idol",
@@ -907,12 +906,21 @@ const CardList: React.FC<unknown> = observer(() => {
                         ].map((supportUnit) => (
                           <Grid key={"supportUnit-filter-" + supportUnit} item>
                             <Tooltip
-                              title={getTranslated(
-                                `unit_profile:${supportUnit}.name`,
-                                unitProfiles.find(
-                                  (up) => up.unit === supportUnit
-                                )!.unitName
-                              )}
+                              title={
+                                supportUnit === "none"
+                                  ? getTranslated(
+                                      `unit_profile:piapro.name`,
+                                      unitProfiles.find(
+                                        (up) => up.unit === "piapro"
+                                      )?.unitName || "Virtual Singer"
+                                    )
+                                  : getTranslated(
+                                      `unit_profile:${supportUnit}.name`,
+                                      unitProfiles.find(
+                                        (up) => up.unit === supportUnit
+                                      )!.unitName
+                                    )
+                              }
                               placement="top"
                             >
                               <IconButton
@@ -929,7 +937,11 @@ const CardList: React.FC<unknown> = observer(() => {
                               >
                                 <Avatar
                                   alt={supportUnit}
-                                  src={UnitLogoMiniMap[supportUnit as "idol"]}
+                                  src={
+                                    supportUnit === "none"
+                                      ? UnitLogoMiniMap["piapro"]
+                                      : UnitLogoMiniMap[supportUnit as "idol"]
+                                  }
                                   sx={{ width: 32, height: 32 }}
                                 />
                               </IconButton>
