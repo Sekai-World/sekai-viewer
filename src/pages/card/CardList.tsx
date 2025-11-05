@@ -325,6 +325,7 @@ const CardList: React.FC<unknown> = observer(() => {
         if (attrSelected.length && !attrSelected.includes(c.attr)) {
           return false;
         }
+        // Filter by support unit, including "none" for Virtual Singer Original cards
         if (supportUnitSelected.length) {
           if (!supportUnitSelected.includes(c.supportUnit)) {
             return false;
@@ -912,7 +913,7 @@ const CardList: React.FC<unknown> = observer(() => {
                                       `unit_profile:piapro.name`,
                                       unitProfiles.find(
                                         (up) => up.unit === "piapro"
-                                      )?.unitName || "Virtual Singer"
+                                      )!.unitName
                                     )
                                   : getTranslated(
                                       `unit_profile:${supportUnit}.name`,
