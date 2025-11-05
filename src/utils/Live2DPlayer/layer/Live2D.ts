@@ -244,7 +244,14 @@ export default class Live2D extends BaseLayer {
       models.forEach((model) => {
         if (this.audio_analyzer)
           model.internalModel.motionManager.attachAnalyzer(this.audio_analyzer);
+        // set lipsync param to 0, override expression
+        (model.internalModel.coreModel as any).setParameterValueById(
+          "ParamMouthOpenY",
+          0,
+          1
+        );
         model.live2DInfo.speaking = true;
+        // pull speaking model to the front
         this.structure.live2d.removeChild(model);
         this.structure.live2d.addChild(model);
       });
