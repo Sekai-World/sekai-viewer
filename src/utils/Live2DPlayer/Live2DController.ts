@@ -236,7 +236,7 @@ export class Live2DController extends Live2DPlayer {
             resolve();
             return;
           }
-          sound.once("stop", () => {
+          sound.once("end", () => {
             resolve();
           });
           const abort_handler = () => {
