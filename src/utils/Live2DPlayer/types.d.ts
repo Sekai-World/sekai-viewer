@@ -197,6 +197,7 @@ export interface ILive2DPlayerSettings {
   autoplay: boolean;
   textAnimation: boolean;
   showWarning: boolean;
+  showUI: boolean;
 }
 
 export enum LoadStatus {

@@ -436,6 +436,10 @@ export class Live2DController extends Live2DPlayer {
           sound.data.volume(this.settings.se_volume);
         });
   };
+  show_ui = (show = true) => {
+    if (show) this.UIRoot.alpha = 1;
+    else this.UIRoot.alpha = 0;
+  };
   stop_sounds = (sound_types: Live2DAssetType[], unload = false) => {
     this.scenarioResource.audio
       .filter((resource) => sound_types.includes(resource.type))
