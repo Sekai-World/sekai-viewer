@@ -260,7 +260,7 @@ const CardList: React.FC<unknown> = observer(() => {
     ) => {
       if (!isReady) return;
       if (
-        entries[0].isIntersecting &&
+        entries.some((entry) => entry.isIntersecting) &&
         lastQueryFin &&
         (!sortedCache.length || sortedCache.length > page * limit)
       ) {
