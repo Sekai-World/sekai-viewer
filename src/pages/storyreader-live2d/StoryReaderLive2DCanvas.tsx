@@ -131,6 +131,10 @@ const StoryReaderLive2DCanvas: React.FC<{
       }),
     [settings.seVolume]
   );
+  useEffect(
+    () => stage.current?.controller.show_ui(settings.showUI),
+    [settings.showUI]
+  );
   useEffect(() => {
     if (stage.current)
       stage.current.controller.settings.text_animation = settings.textAnimation;

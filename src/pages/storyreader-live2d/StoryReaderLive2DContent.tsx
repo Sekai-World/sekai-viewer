@@ -61,6 +61,7 @@ const StoryReaderLive2DContent: React.FC<{
     autoplay: false,
     textAnimation: true,
     showWarning: true,
+    showUI: true,
   });
   const [showSettings, setShowSettings] = useState(false);
   const [isRegeneratingTranslation, setIsRegeneratingTranslation] =
