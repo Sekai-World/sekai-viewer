@@ -220,7 +220,7 @@ export default class Live2D extends BaseLayer {
   };
 
   speak = (costumes: string[], sound: Howl, volume: number) => {
-    if (this.current_sound) this.stop_speaking();
+    this.stop_speaking();
     const models = costumes.map((c) => this.find(c)).filter((m) => !!m);
     this.init_analyzer();
     if (models.length > 0 && this.audio_analyzer) {
@@ -233,15 +233,25 @@ export default class Live2D extends BaseLayer {
       this.audio_analyzer.connect(Howler.masterGain);
       sound.volume(volume);
       sound.play();
-      sound.once("stop", () => {
-        models.forEach((m) => (m.live2DInfo.speaking = false));
+      sound.once("end", () => {
+        models.forEach((m) => {
+          m.stopSpeaking();
+          m.live2DInfo.speaking = false;
+        });
         gain.disconnect();
       });
       this.current_sound = sound;
       models.forEach((model) => {
         if (this.audio_analyzer)
           model.internalModel.motionManager.attachAnalyzer(this.audio_analyzer);
+        // set lipsync param to 0, override expression
+        (model.internalModel.coreModel as any).setParameterValueById(
+          "ParamMouthOpenY",
+          0,
+          1
+        );
         model.live2DInfo.speaking = true;
+        // pull speaking model to the front
         this.structure.live2d.removeChild(model);
         this.structure.live2d.addChild(model);
       });
@@ -251,8 +261,8 @@ export default class Live2D extends BaseLayer {
     // disconnect analyzer node from master gain node
     if (this.audio_analyzer) this.audio_analyzer.disconnect();
     if (this.current_sound) {
-      // clear all listeners or will fire stop event
-      this.current_sound.off();
+      // clear all listeners or will fire end event
+      this.current_sound.off("end");
       // disconnect from analyzer
       const gain = (this.current_sound as any)._sounds[0]._node as GainNode;
       gain.disconnect();

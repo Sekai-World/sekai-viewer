@@ -84,6 +84,7 @@ export default async function action_talk(
         action_detail.Voices[0].Volume * controller.settings.voice_volume;
       if (costumes.length > 0 && action_detail.LipSync == 1) {
         controller.layers.live2d.speak(costumes, sound.data, volume);
+        log.log("Live2DController", "Talk/speak", costumes, sound.data);
       } else {
         const inst = sound.data;
         inst.volume(volume);
