@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.17.8](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.7...v1.17.8) (2025-11-12)
+
+
+### Features
+
+* add filter for Virtual Singer Original cards (supportUnit === "none") ([48237bd](https://github.com/Sekai-World/sekai-viewer/commits/48237bdba5f5ccd26304f8e371fa38dd410ab931))
+* **live2d:** add show ui button ([f65a7c9](https://github.com/Sekai-World/sekai-viewer/commits/f65a7c9772c1f84f770c2f9ada8a2a42fed6e7a7))
+
+
+### Bug Fixes
+
+* improve intersection check for loading more cards ([080d21a](https://github.com/Sekai-World/sekai-viewer/commits/080d21a2d6b9cda000bedd45e1bed7ad4115f70d))
+* **live2d:** do not continue after voice stops ([577a333](https://github.com/Sekai-World/sekai-viewer/commits/577a333c6c21b592dd3cc95b0ccc09215ad07efe))
+* **live2d:** fix [#622](https://github.com/Sekai-World/sekai-viewer/issues/622) add older version of live2d core lib ([65b2c10](https://github.com/Sekai-World/sekai-viewer/commits/65b2c100e14a35153f56a36e1777cf86b9bb7499))
+* **live2d:** fix [#626](https://github.com/Sekai-World/sekai-viewer/issues/626) ([7a89d7b](https://github.com/Sekai-World/sekai-viewer/commits/7a89d7bd28015dca0412c52fdff57299ca6fc218))
+
+
+### Refactors
+
+* address code review feedback ([1733784](https://github.com/Sekai-World/sekai-viewer/commits/173378478e840a30c6667cb3d6633e27593fd1f5))
+
 ### [1.17.7](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.6...v1.17.7) (2025-10-28)
 
 
