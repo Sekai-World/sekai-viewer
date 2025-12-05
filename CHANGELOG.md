@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.17.9](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.8...v1.17.9) (2025-12-05)
+
+
+### Bug Fixes
+
+* **music:** update exclusive IDs to include 694 for KR, EN, and TW ([e20c177](https://github.com/Sekai-World/sekai-viewer/commits/e20c177d4d15758889046276518490a54c5499c4))
+
 ### [1.17.8](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.7...v1.17.8) (2025-11-12)
 
 
