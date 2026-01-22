@@ -441,6 +441,9 @@ export class Live2DController extends Live2DPlayer {
     else this.UIRoot.alpha = 0;
   };
   stop_sounds = (sound_types: Live2DAssetType[], unload = false) => {
+    if (sound_types.includes(Live2DAssetType.Talk)) {
+      this.layers.live2d.stop_speaking();
+    }
     this.scenarioResource.audio
       .filter((resource) => sound_types.includes(resource.type))
       .forEach((resource) => {
@@ -448,9 +451,6 @@ export class Live2DController extends Live2DPlayer {
         if (sound.playing()) sound.stop();
         if (unload) sound.unload();
       });
-    if (sound_types.includes(Live2DAssetType.Talk)) {
-      this.layers.live2d.stop_speaking();
-    }
   };
   public destroy() {
     // unload all sounds
