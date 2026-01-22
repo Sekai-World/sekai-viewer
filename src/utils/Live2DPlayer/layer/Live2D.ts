@@ -132,6 +132,8 @@ export default class Live2D extends BaseLayer {
       let manager = model.internalModel.parallelMotionManager[0];
       if (motion_type === "Expression") {
         manager = model.internalModel.parallelMotionManager[1];
+        // reset lipsync param to 0
+        this.reset_lipsync_param(model);
       }
       await manager.startMotion(
         motion_type,
@@ -146,6 +148,14 @@ export default class Live2D extends BaseLayer {
       await model.live2DInfo.wait_motion;
       model.live2DInfo.t_pose = false;
     }
+  };
+
+  reset_lipsync_param = (model: Live2DModelWithInfo) => {
+    (model.internalModel.coreModel as any).setParameterValueById(
+      "ParamMouthOpenY",
+      0,
+      1
+    );
   };
 
   show_model = async (costume: string, time: number) => {
@@ -244,12 +254,8 @@ export default class Live2D extends BaseLayer {
       models.forEach((model) => {
         if (this.audio_analyzer)
           model.internalModel.motionManager.attachAnalyzer(this.audio_analyzer);
-        // set lipsync param to 0, override expression
-        (model.internalModel.coreModel as any).setParameterValueById(
-          "ParamMouthOpenY",
-          0,
-          1
-        );
+        // reset lipsync param to 0
+        this.reset_lipsync_param(model);
         model.live2DInfo.speaking = true;
         // pull speaking model to the front
         this.structure.live2d.removeChild(model);
