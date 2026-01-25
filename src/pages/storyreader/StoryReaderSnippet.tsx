@@ -124,7 +124,7 @@ export const SpecialEffect: React.FC<{
                         src={resource}
                         style={{ cursor: "pointer" }}
                         bgColor=""
-                        // aspectRatio={1.624}
+                      // aspectRatio={1.624}
                       />
                     </div>
                   </Grid>
@@ -240,7 +240,6 @@ export const MysekaiTalk: React.FC<{
                 width: 56,
                 height: 56,
                 objectFit: "cover",
-                background: "#fff",
                 display: "block",
               }}
             />
