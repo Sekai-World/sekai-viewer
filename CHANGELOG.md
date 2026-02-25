@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.17.11](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.10...v1.17.11) (2026-02-25)
+
+
+### Bug Fixes
+
+* **live2d:** fix [#654](https://github.com/Sekai-World/sekai-viewer/issues/654) ([0f12d57](https://github.com/Sekai-World/sekai-viewer/commits/0f12d579f6ebb7a8fa742c98b3baae34b9ee852d))
+* **music:** update TW_EXCLUSIVE_IDS to include 11012 ([524ef2f](https://github.com/Sekai-World/sekai-viewer/commits/524ef2ff0a5a8d93e4a725ac8575d66494340d88))
+
 ### [1.17.10](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.9...v1.17.10) (2025-12-08)
 
 
