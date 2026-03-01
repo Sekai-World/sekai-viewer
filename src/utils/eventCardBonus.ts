@@ -99,12 +99,12 @@ function calc(
   const masterRankBonusVersion = Object.entries(masterRankBonusVersions).find(
     ([maxEventId]) => eventId <= Number(maxEventId)
   )![1];
-  baseBonus += masterRankBonusVersion[card.cardRarityType][0];
+  const minMasterRankBonus = masterRankBonusVersion[card.cardRarityType][0];
   const maxMasterRankBonus = masterRankBonusVersion[card.cardRarityType][5];
 
   return {
     card,
-    minBonus: baseBonus,
+    minBonus: baseBonus + minMasterRankBonus,
     maxBonus: baseBonus + maxMasterRankBonus,
   };
 }
