@@ -7,9 +7,6 @@ import {
   Tabs,
   Typography,
   Box,
-  Dialog,
-  DialogTitle,
-  DialogContent,
   Button,
 } from "@mui/material";
 import { TabContext } from "@mui/lab";
@@ -57,6 +54,7 @@ import GridOut from "../../components/styled/GridOut";
 import LinkNoDecoration from "../../components/styled/LinkNoDecoration";
 import PaperContainer from "../../components/styled/PaperContainer";
 import eventCardBonus from "../../utils/eventCardBonus";
+import EventBoostCardsDialog, { IBoostCardItem } from "./EventBoostCardsDialog";
 
 const EventDetail: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
@@ -91,9 +89,7 @@ const EventDetail: React.FC<unknown> = observer(() => {
 
   const [event, setEvent] = useState<IEventInfo>();
   const [eventCards, setEventCards] = useState<IEventCard[]>([]);
-  const [boostCards, setBoostCards] = useState<
-    { card: ICardInfo; minBonus: number; maxBonus: number }[]
-  >([]);
+  const [boostCards, setBoostCards] = useState<IBoostCardItem[]>([]);
   const [eventDeckBonus, setEventDeckBonus] = useState<IEventDeckBonus[]>([]);
   const [eventAttrBonus, setEventAttrBonus] = useState<IEventDeckBonus>();
   const [eventBonusCharas, setEventBonusCharas] = useState<IGameCharaUnit[]>(
@@ -1278,41 +1274,14 @@ const EventDetail: React.FC<unknown> = observer(() => {
         onChange={(_, idx) => setActiveIdx(idx)}
       />
       {boostCards.length > 0 && (
-        <Dialog
+        <EventBoostCardsDialog
           open={isCardsDialog}
           onClose={() => {
             setIsCardsDialog(false);
           }}
-          fullWidth
-        >
-          <DialogTitle>{t("event:boostCards")}</DialogTitle>
-          <DialogContent>
-            <Grid container spacing={1}>
-              {boostCards.map((card) => (
-                <Grid key={card.card.id} item xs={4} md={2}>
-                  <LinkNoDecoration
-                    to={"/card/" + card.card.id}
-                    target="_blank"
-                  >
-                    <Grid container direction="column">
-                      <CardThumb cardId={card.card.id} />
-                      <Typography
-                        align="center"
-                        style={{ whiteSpace: "pre-line" }}
-                      >
-                        +{card.minBonus}
-                        {card.maxBonus > card.minBonus
-                          ? `~${card.maxBonus}`
-                          : ""}
-                        %
-                      </Typography>
-                    </Grid>
-                  </LinkNoDecoration>
-                </Grid>
-              ))}
-            </Grid>
-          </DialogContent>
-        </Dialog>
+          boostCards={boostCards}
+          defaultAttribute={eventAttrBonus?.cardAttr}
+        />
       )}
     </Fragment>
   ) : (

@@ -33,7 +33,7 @@ const masterRankBonusVersions: Record<number, Record<string, number[]>> = {
     rarity_2: [0, 0.2, 0.4, 0.6, 0.8, 1],
     rarity_3: [0, 1, 2, 3, 4, 5],
     rarity_4: [10, 12.5, 15, 17.5, 20, 25],
-    rarity_birthday: [0, 7, 9, 11, 13, 15],
+    rarity_birthday: [5, 7, 9, 11, 13, 15],
   },
 };
 
@@ -88,6 +88,9 @@ function calc(
         card.supportUnit === "none"
       ) {
         baseBonus += 15; // add 15% bonus for virtual singer without support unit
+        if (eventId >= 135) {
+          baseBonus += 10; // add extra 10% bonus for events after event 135
+        }
       }
     }
   }
@@ -96,12 +99,12 @@ function calc(
   const masterRankBonusVersion = Object.entries(masterRankBonusVersions).find(
     ([maxEventId]) => eventId <= Number(maxEventId)
   )![1];
-  baseBonus += masterRankBonusVersion[card.cardRarityType][0];
+  const minMasterRankBonus = masterRankBonusVersion[card.cardRarityType][0];
   const maxMasterRankBonus = masterRankBonusVersion[card.cardRarityType][5];
 
   return {
     card,
-    minBonus: baseBonus,
+    minBonus: baseBonus + minMasterRankBonus,
     maxBonus: baseBonus + maxMasterRankBonus,
   };
 }
