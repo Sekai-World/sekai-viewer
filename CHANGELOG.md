@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.17.12](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.11...v1.17.12) (2026-03-01)
+
+
+### Features
+
+* **event:** add EventBoostCardsDialog component for managing boost card attributes and rarity ([aa9cec9](https://github.com/Sekai-World/sekai-viewer/commits/aa9cec9c14f67f2678bfa65cdd0c93381a13de85))
+
+
+### Bug Fixes
+
+* **event:** calculate minimum bonus correctly by adding master rank bonus ([8e72744](https://github.com/Sekai-World/sekai-viewer/commits/8e72744b5cd6cb39534d6702e0973279d617fcaa))
+* **event:** update rarity_birthday bonus and add extra bonus for events after 135 ([e00e5d9](https://github.com/Sekai-World/sekai-viewer/commits/e00e5d912c8ad727d6e293ae681b511b74969af8))
+
 ### [1.17.11](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.10...v1.17.11) (2026-02-25)
 
 
