@@ -9,6 +9,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { VirtualLiveSetlist } from "../../types.d";
 import VirtualLiveStepMC from "./VirtualLiveStepMC";
+import VirtualLiveStepMCTimeline from "./VirtualLiveStepMCTimeline";
 import VirtualLiveStepMusic from "./VirtualLiveStepMusic";
 
 const VirtualLiveStep: React.FC<{
@@ -29,6 +30,9 @@ const VirtualLiveStep: React.FC<{
         )}
         {data.virtualLiveSetlistType === "mc" && (
           <VirtualLiveStepMC data={data} />
+        )}
+        {data.virtualLiveSetlistType === "mc_timeline" && (
+          <VirtualLiveStepMCTimeline data={data} />
         )}
       </AccordionDetails>
     </Accordion>
