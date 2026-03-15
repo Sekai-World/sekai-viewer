@@ -1256,7 +1256,7 @@ const MusicDetail: React.FC<unknown> = observer(() => {
                             <Link
                               href={`${
                                 assetUrl.minio.musicChart
-                              }/${region !== "jp" && isExclusiveSong ? (region === "tw" ? "tc" : region) : "jp"}/${musicId.padStart(4, "0")}/${
+                              }/${region !== "jp" && isExclusiveSong ? region : "jp"}/${musicId.padStart(4, "0")}/${
                                 elem.musicDifficulty
                               }.svg`}
                               target="_blank"
