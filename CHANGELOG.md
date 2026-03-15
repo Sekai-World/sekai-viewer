@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.18.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.12...v1.18.0) (2026-03-15)
+
+
+### Features
+
+* **virtualLive:** add `mc_timeline` type support ([7b922cc](https://github.com/Sekai-World/sekai-viewer/commits/7b922cc7b9c54e879cabc550b16a49ae02dfd599))
+
+
+### Bug Fixes
+
+* **musicDetail:** correct region handling for music chart links ([757a9f7](https://github.com/Sekai-World/sekai-viewer/commits/757a9f7658b6376b1916f3ccb4dff49947a8f35f))
+* **mysekai storyreader:** white background in darkmode ([2ed6249](https://github.com/Sekai-World/sekai-viewer/commits/2ed62497b9cda5a1035dbd213c1c0192dfd86029))
+
+
+### Refactors
+
+* **virtualLive:** extract common logic of mc timeline ([0792abe](https://github.com/Sekai-World/sekai-viewer/commits/0792abe85950cec3ceb8bb413aac706a62795755))
+
 ### [1.17.12](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.11...v1.17.12) (2026-03-01)
 
 
