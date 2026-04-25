@@ -2,12 +2,12 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
-    kubernetes.io/ingress.class: nginx
-    kubernetes.io/tls-acme: "true"
-  #   cert-manager.io/cluster-issuer: letsencrypt-staging
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
   name: frontend
   namespace: sekai-viewer
 spec:
+  ingressClassName: nginx
   rules:
     - host: "sekai.best"
       http:
@@ -18,9 +18,8 @@ spec:
                 port:
                   number: 80
             path: /
-            pathType: ImplementationSpecific
-  # This section is only required if TLS is to be enabled for the Ingress
+            pathType: Prefix
   tls:
     - hosts:
       - "sekai.best"
-      secretName: frontend-production-tls
+      secretName: sekai-best-tls
