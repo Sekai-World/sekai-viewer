@@ -1,0 +1,6 @@
+[env]
+_.path = ['{{config_root}}/node_modules/.bin']
+
+[tools]
+node = "lts"
+pnpm = "11"

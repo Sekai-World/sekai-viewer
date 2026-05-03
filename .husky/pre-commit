@@ -1,2 +1,2 @@
 
-npx --no-install nano-staged
+pnpm exec nano-staged
