@@ -58,4 +58,4 @@ spec:
           initialDelaySeconds: 5
           periodSeconds: 5
       imagePullSecrets:
-        - name: regcred
+        - name: registry-credentials
