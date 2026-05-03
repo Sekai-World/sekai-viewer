@@ -126,7 +126,7 @@ const CharacterFilter: React.FC<{
 
   useEffect(() => {
     onFilter(characterNotSelected);
-  }, [characterNotSelected]);
+  }, [characterNotSelected, onFilter]);
 
   return (
     <PaperContainer>
@@ -268,12 +268,18 @@ const AreaTalk: React.FC<{
                       .filter(
                         (as) =>
                           as.areaId === Number(areaId) &&
-                          !as.characterIds.reduce((prev, cid) => {
-                            const characterId = chara2Ds.find(
+                          !(as.characterIds ?? []).reduce((prev, cid) => {
+                            const character2d = chara2Ds.find(
                               (c2d) => c2d.id === cid
-                            )!.characterId;
+                            );
+                            if (!character2d) {
+                              return false;
+                            }
                             return (
-                              prev && characterNotSelected.includes(characterId)
+                              prev &&
+                              characterNotSelected.includes(
+                                character2d.characterId
+                              )
                             );
                           }, true)
                       )
@@ -292,22 +298,27 @@ const AreaTalk: React.FC<{
                             <CardSelect>
                               <CardContent>
                                 <Grid container spacing={1}>
-                                  {actionSet.characterIds.map((charaId) => {
-                                    const characterId = chara2Ds.find(
-                                      (c2d) => c2d.id === charaId
-                                    )!.characterId;
-                                    return (
-                                      <Grid item key={charaId}>
-                                        <Avatar
-                                          src={
-                                            charaIcons[
-                                              `CharaIcon${characterId}` as "CharaIcon1"
-                                            ]
-                                          }
-                                        />
-                                      </Grid>
-                                    );
-                                  })}
+                                  {(actionSet.characterIds ?? []).map(
+                                    (charaId) => {
+                                      const character2d = chara2Ds.find(
+                                        (c2d) => c2d.id === charaId
+                                      );
+                                      if (!character2d) {
+                                        return null;
+                                      }
+                                      return (
+                                        <Grid item key={charaId}>
+                                          <Avatar
+                                            src={
+                                              charaIcons[
+                                                `CharaIcon${character2d.characterId}` as "CharaIcon1"
+                                              ]
+                                            }
+                                          />
+                                        </Grid>
+                                      );
+                                    }
+                                  )}
                                 </Grid>
                               </CardContent>
                             </CardSelect>
