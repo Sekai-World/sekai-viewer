@@ -32,8 +32,11 @@ export function useScoreCalc() {
       const scoreSkill = skill.skillEffects.filter((it) =>
         it.skillEffectType.includes("score_up")
       )[0];
+      // Clamp skillLevel to valid range (1 to max available skill levels)
+      const maxSkillLevel = scoreSkill.skillEffectDetails.length;
+      const clampedSkillLevel = Math.max(1, Math.min(teamCard.skillLevel, maxSkillLevel));
       return (
-        scoreSkill.skillEffectDetails[teamCard.skillLevel - 1]
+        scoreSkill.skillEffectDetails[clampedSkillLevel - 1]
           .activateEffectValue / 100
       );
     },
