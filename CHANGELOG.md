@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.18.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.1...v1.18.2) (2026-05-14)
+
+
+### Features
+
+* enable opening cards in new tabs ([1c94251](https://github.com/Sekai-World/sekai-viewer/commits/1c94251dc55d880cc76e6136406cce4c03c4e684))
+* **stamp:** add search functionality to stamp list ([3a1ad60](https://github.com/Sekai-World/sekai-viewer/commits/3a1ad60783f5524cea80c356ac4b6d42231b4987))
+
+
+### Bug Fixes
+
+* align ingress and pull secret for argocd prod ([7a3b193](https://github.com/Sekai-World/sekai-viewer/commits/7a3b19345d8890b480a7577dddd1f48a837d3998))
+* **asset-viewer:** reset continuation token on path change ([41a0aa0](https://github.com/Sekai-World/sekai-viewer/commits/41a0aa0c78fd459a7841b1036b3c4b3a952db72f))
+* handle edge cases for non-score skills and empty arrays ([48b6794](https://github.com/Sekai-World/sekai-viewer/commits/48b6794b5c2edd3f4da0951e461859a1d04d7044))
+* improve character selection logic in AreaTalk component ([b3ae512](https://github.com/Sekai-World/sekai-viewer/commits/b3ae512d9ba5eedd44805abd7f4186fb8d56959c))
+* **score:** harden skill rate lookup ([be168e6](https://github.com/Sekai-World/sekai-viewer/commits/be168e6c38481a59aa695092cd46422f7dd8e94e))
+* **spoiler:** update overlay styles when setting changes ([bf2c8a8](https://github.com/Sekai-World/sekai-viewer/commits/bf2c8a86ba487533d11ae97824bf982738d236ba))
+* **stamp:** add accessible label for search input ([3e1304d](https://github.com/Sekai-World/sekai-viewer/commits/3e1304d1784dda1707945a8473334c49d2e6bd47))
+* **stamp:** avoid mutating cached stamps while sorting ([3371142](https://github.com/Sekai-World/sekai-viewer/commits/3371142cd4efdd0bd47b74f6502b6ab6e67d2f76))
+* **stamp:** handle empty search results ([1d41945](https://github.com/Sekai-World/sekai-viewer/commits/1d41945317be6454af035047e68637753255bdc9))
+* update TypeScript SDK path in VSCode settings ([411a7f9](https://github.com/Sekai-World/sekai-viewer/commits/411a7f9cae8419601ebf540d2c09b19b8662f3ce))
+
 ### [1.18.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.0...v1.18.1) (2026-04-16)
 
 
