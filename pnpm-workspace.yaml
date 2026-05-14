@@ -1,4 +1,4 @@
-onlyBuiltDependencies:
-  - esbuild
-  - msw
-  - tesseract.js
+allowBuilds:
+  esbuild: true
+  msw: true
+  tesseract.js: true
