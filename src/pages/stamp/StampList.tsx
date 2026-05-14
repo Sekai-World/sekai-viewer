@@ -115,7 +115,7 @@ const StampList: React.FC<unknown> = () => {
 
   useEffect(() => {
     if (stampsCache?.length) {
-      let cache = stampsCache;
+      let cache = [...stampsCache];
       if (character1Selected.length && character2Selected.length) {
         cache = cache.filter(
           (s) =>
