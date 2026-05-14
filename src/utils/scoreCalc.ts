@@ -26,35 +26,29 @@ const boostRate: Record<number, number> = {
 export function useScoreCalc() {
   const getCardSkillRate = useCallback(
     (cards: ICardInfo[], skills: ISkillInfo[], teamCard: ISekaiCardState) => {
-      const skillId = cards.filter((it) => it.id === teamCard.cardId)[0]
-        .skillId;
-      const skill = skills.filter((it) => it.id === skillId)[0];
-      const scoreSkill = skill.skillEffects.filter((it) =>
+      const card = cards.find((it) => it.id === teamCard.cardId);
+      if (!card) return 0;
+
+      const skill = skills.find((it) => it.id === card.skillId);
+      if (!skill) return 0;
+
+      const scoreSkill = skill.skillEffects.find((it) =>
         it.skillEffectType.includes("score_up")
-      )[0];
+      );
+      if (!scoreSkill) return 0;
 
-      // Guard: if no score_up skill found, return 0
-      if (!scoreSkill) {
-        return 0;
-      }
+      const { skillEffectDetails } = scoreSkill;
+      if (!skillEffectDetails?.length) return 0;
 
-      // Guard: if no skill effect details, return 0
-      if (!scoreSkill.skillEffectDetails || scoreSkill.skillEffectDetails.length === 0) {
-        return 0;
-      }
+      const skillLevel = Math.trunc(Number(teamCard.skillLevel));
+      if (!Number.isFinite(skillLevel)) return 0;
 
-      // Guard: handle non-numeric skill levels
-      const skillLevel = Number(teamCard.skillLevel);
-      if (!Number.isFinite(skillLevel)) {
-        return 0;
-      }
-
-      // Clamp skillLevel to valid range (1 to max available skill levels)
-      const maxSkillLevel = scoreSkill.skillEffectDetails.length;
-      const clampedSkillLevel = Math.max(1, Math.min(skillLevel, maxSkillLevel));
+      const clampedSkillLevel = Math.max(
+        1,
+        Math.min(skillLevel, skillEffectDetails.length)
+      );
       return (
-        scoreSkill.skillEffectDetails[clampedSkillLevel - 1]
-          .activateEffectValue / 100
+        skillEffectDetails[clampedSkillLevel - 1].activateEffectValue / 100
       );
     },
     []
