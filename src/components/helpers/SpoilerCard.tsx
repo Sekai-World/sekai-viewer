@@ -76,7 +76,7 @@ const SpoilerCard: React.FC<
     }
 
     return sx;
-  }, []);
+  }, [isSpoilerMosaicked]);
 
   const card = (
     <Card sx={{ cursor: "pointer", position: "relative" }} {...props}>
