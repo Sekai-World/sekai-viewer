@@ -98,11 +98,11 @@ const StampList: React.FC<unknown> = () => {
       if (
         entries[0].isIntersecting &&
         lastQueryFin &&
-        (!filteredCache.length || filteredCache.length > page * limit)
+        filteredCache.length > page * limit
       ) {
         setPage((page) => page + 1);
         setLastQueryFin(false);
-      } else if (filteredCache.length && filteredCache.length <= page * limit) {
+      } else if (filteredCache.length <= page * limit) {
         setHasMore(false);
       }
     },
@@ -145,8 +145,8 @@ const StampList: React.FC<unknown> = () => {
           compareTypes.push("cheerful_carnival_message");
         cache = cache.filter((s) => compareTypes.includes(s.stampType));
       }
-      if (debouncedSearchText) {
-        const searchLower = debouncedSearchText.toLowerCase();
+      const searchLower = debouncedSearchText.trim().toLowerCase();
+      if (searchLower) {
         cache = cache.filter((s) => {
           const originalName = s.name.toLowerCase();
           const translatedName = assetT(
