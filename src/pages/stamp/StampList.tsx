@@ -437,6 +437,7 @@ const StampList: React.FC<unknown> = () => {
                     size="small"
                     fullWidth
                     value={searchText}
+                    inputProps={{ "aria-label": t("common:search") }}
                     onChange={(e) => setSearchText(e.target.value)}
                   />
                 </Grid>
