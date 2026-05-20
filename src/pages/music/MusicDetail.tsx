@@ -48,6 +48,7 @@ import { useStrapi } from "../../utils/apiClient";
 import CommentTextMultiple from "~icons/mdi/comment-text-multiple";
 import Comment from "../comment/Comment";
 import { trimMP3 } from "../../utils/trimMP3";
+import { trimFlac } from "../../utils/trimFlac";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
 import { assetUrl } from "../../utils/urls";
@@ -411,30 +412,24 @@ const MusicDetail: React.FC<unknown> = observer(() => {
       const coverImage = await (
         await fetch(musicJacket.replace(".webp", ".png"))
       ).arrayBuffer();
+      const fn = `${music.title}-${
+        vocalPreviewVal === "1" ? "full" : "preview"
+      }-${vocals.join("+")}.${format}`;
+
       if (trimSilence && format === "mp3" && vocalPreviewVal === "1") {
-        // only trim when downloading full version
         const buf = await (await fetch(src)).arrayBuffer();
         const trimmed = trimMP3(buf, music.fillerSec);
         if (trimmed)
-          saveAs(
-            await addID3Tags(trimmed, music, vocals, coverImage),
-            `${music.title}-full-${vocals.join("+")}.${format}`
-          );
+          saveAs(await addID3Tags(trimmed, music, vocals, coverImage), fn);
       } else if (format === "mp3") {
         const buf = await (await fetch(src)).arrayBuffer();
-        saveAs(
-          await addID3Tags(buf, music, vocals, coverImage),
-          `${music.title}-${
-            vocalPreviewVal === "1" ? "full" : "preview"
-          }-${vocals.join("+")}.${format}`
-        );
+        saveAs(await addID3Tags(buf, music, vocals, coverImage), fn);
+      } else if (trimSilence && format === "flac" && vocalPreviewVal === "1") {
+        const buf = await (await fetch(src)).arrayBuffer();
+        const trimmed = trimFlac(buf, music.fillerSec);
+        saveAs(new Blob([trimmed ?? buf], { type: "audio/flac" }), fn);
       } else {
-        saveAs(
-          src,
-          `${music.title}-${
-            vocalPreviewVal === "1" ? "full" : "preview"
-          }-${vocals.join("+")}.${format}`
-        );
+        saveAs(src, fn);
       }
     },
     [
