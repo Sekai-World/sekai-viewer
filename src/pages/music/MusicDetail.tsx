@@ -58,6 +58,7 @@ import PaperContainer from "../../components/styled/PaperContainer";
 import GridOut from "../../components/styled/GridOut";
 import EmbedVideoPlayer from "../../components/blocks/EmbedVideoPlayer";
 import { addID3Tags } from "../../utils/mp3";
+import { addFlacTags } from "../../utils/flac";
 
 const KR_EXCLUSIVE_IDS = [
   10001, 10002, 371, 387, 419, 420, 453, 459, 464, 10003, 10004, 10005, 10006,
@@ -411,30 +412,28 @@ const MusicDetail: React.FC<unknown> = observer(() => {
       const coverImage = await (
         await fetch(musicJacket.replace(".webp", ".png"))
       ).arrayBuffer();
+      const fn = `${music.title}-${
+        vocalPreviewVal === "1" ? "full" : "preview"
+      }-${vocals.join("+")}.${format}`;
+
       if (trimSilence && format === "mp3" && vocalPreviewVal === "1") {
-        // only trim when downloading full version
         const buf = await (await fetch(src)).arrayBuffer();
         const trimmed = trimMP3(buf, music.fillerSec);
         if (trimmed)
-          saveAs(
-            await addID3Tags(trimmed, music, vocals, coverImage),
-            `${music.title}-full-${vocals.join("+")}.${format}`
-          );
+          saveAs(await addID3Tags(trimmed, music, vocals, coverImage), fn);
       } else if (format === "mp3") {
         const buf = await (await fetch(src)).arrayBuffer();
-        saveAs(
-          await addID3Tags(buf, music, vocals, coverImage),
-          `${music.title}-${
-            vocalPreviewVal === "1" ? "full" : "preview"
-          }-${vocals.join("+")}.${format}`
-        );
+        saveAs(await addID3Tags(buf, music, vocals, coverImage), fn);
+      } else if (format === "flac") {
+        try {
+          const buf = await (await fetch(src)).arrayBuffer();
+          saveAs(await addFlacTags(buf, music, vocals, coverImage), fn);
+        } catch (err) {
+          console.warn(err);
+          saveAs(src, fn);
+        }
       } else {
-        saveAs(
-          src,
-          `${music.title}-${
-            vocalPreviewVal === "1" ? "full" : "preview"
-          }-${vocals.join("+")}.${format}`
-        );
+        saveAs(src, fn);
       }
     },
     [
