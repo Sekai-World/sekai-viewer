@@ -184,6 +184,7 @@ export function useScoreCalc() {
     ): number => {
       // console.log(mode);
       switch (mode) {
+        case "world_bloom":
         case "marathon": {
           const basePoint =
             100 +

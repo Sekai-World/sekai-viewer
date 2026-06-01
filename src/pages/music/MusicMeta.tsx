@@ -9,7 +9,7 @@ import {
 import {
   GridColDef,
   DataGrid,
-  GridSortItem,
+  GridSortModel,
   GridPaginationModel,
 } from "@mui/x-data-grid";
 import { OpenInNew, Search } from "@mui/icons-material";
@@ -41,7 +41,7 @@ const MusicMeta = () => {
   const [validMetas, setValidMetas] = useState<IMusicMeta[]>([]);
   const [validMetasCache, setValidMetasCache] = useState<IMusicMeta[]>([]);
   const [searchTitle, setSearchTitle] = useState("");
-  const [sortModel, setSortModel] = useState<GridSortItem[]>([
+  const [sortModel, setSortModel] = useState<GridSortModel>([
     {
       field: "music_id",
       sort: "asc",

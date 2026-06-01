@@ -227,7 +227,7 @@ const StampList: React.FC<unknown> = () => {
   );
 
   const handleUpdateSortType = useCallback(
-    (_, sort: string) => {
+    (_: React.MouseEvent<HTMLElement>, sort: string) => {
       if (!sort) return;
       setSortType(sort || "asc");
     },
