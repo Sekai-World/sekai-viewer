@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.18.5](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.4...v1.18.5) (2026-06-01)
+
+
+### Bug Fixes
+
+* **tsc:** resolve type check errors ([9d94c72](https://github.com/Sekai-World/sekai-viewer/commits/9d94c72afcd4cf54707493619b0ca5d96d17a271))
+
+
+### Refactors
+
+* **live2d:** split viewer controls and download packing ([72122b8](https://github.com/Sekai-World/sekai-viewer/commits/72122b8c5ae502985e76cd7a60cb06fb48b2ec58))
+
 ### [1.18.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.3...v1.18.4) (2026-05-22)
 
 
