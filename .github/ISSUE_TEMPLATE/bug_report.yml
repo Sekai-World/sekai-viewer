@@ -1,0 +1,77 @@
+name: Bug Report
+description: Report a reproducible problem with sekai-viewer.
+title: "[BUG] "
+labels: ["bug"]
+type: bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please search existing issues first.
+  - type: checkboxes
+    id: existing-issues
+    attributes:
+      label: Existing issues
+      options:
+        - label: I have searched the existing issues.
+          required: true
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: Current behavior
+      description: Describe what is happening.
+      placeholder: Tell us what you see.
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: Describe what you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: List the smallest set of steps that reproduces the problem.
+      placeholder: |
+        1. Go to ...
+        2. Click ...
+        3. See ...
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      value: |
+        - OS:
+        - Browser:
+        - Browser version:
+        - Device:
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Console output
+      description: Paste relevant console errors or network failures, if any.
+      render: shell
+    validations:
+      required: false
+  - type: upload
+    id: screenshots
+    attributes:
+      label: Screenshots or recordings
+      description: Add screenshots or recordings if they help explain the problem.
+    validations:
+      required: false
+  - type: textarea
+    id: possible-solution
+    attributes:
+      label: Possible cause or solution
+      description: Optional, but helpful if you have already investigated.
+    validations:
+      required: false

@@ -68,7 +68,7 @@ const AgendaView: React.FC<{ data?: IVirtualLiveInfo }> = observer(
     }
     return (
       <SpoilerCard
-        releaseTime={data.startAt}
+        releaseTime={new Date(data.startAt)}
         toPath={"/virtual_live/" + data.id}
         component={AgendaBox}
       >

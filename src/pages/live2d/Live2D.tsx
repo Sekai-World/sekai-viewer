@@ -9,34 +9,19 @@ import React, {
 } from "react";
 import Axios from "axios";
 import {
-  Camera,
-  CloudDownload,
-  Fullscreen,
-  FullscreenExit,
-  RestartAlt,
-} from "@mui/icons-material";
-import {
   Alert,
   Autocomplete,
   Box,
   Button,
-  FormControlLabel,
   Grid,
-  IconButton,
   LinearProgress,
-  Paper,
-  Slider,
-  Switch,
   TextField,
-  Toolbar,
-  Tooltip,
   Typography,
   useTheme,
 } from "@mui/material";
 import { Stage } from "@pixi/react";
 import { saveAs } from "file-saver";
 import fscreen from "fscreen";
-import JSZip from "jszip";
 import { useTranslation } from "react-i18next";
 import ContainerContent from "../../components/styled/ContainerContent";
 import TypographyHeader from "../../components/styled/TypographyHeader";
@@ -49,6 +34,8 @@ import {
 import Live2dModel from "../../components/pixi/Live2dModel";
 import { getModelData } from "../../utils/live2dLoader";
 import type { ILive2DModelData, ILive2dModelListElement } from "../../types.d";
+import Live2DToolbar from "./Live2DToolbar";
+import { Live2DModelDownloadError, packLive2DModel } from "./live2dDownload";
 
 const Live2DView: React.FC<unknown> = () => {
   const { t } = useTranslation();
@@ -77,6 +64,7 @@ const Live2DView: React.FC<unknown> = () => {
   const [showProgress, setShowProgress] = useState(false);
   const [progress, setProgress] = useState(0);
   const [progressWords, setProgressWords] = useState("");
+  const [downloadWarning, setDownloadWarning] = useState("");
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [live2dScale, setLive2dScale] = useState(1);
   const [live2dX, setLive2dX] = useState(0);
@@ -192,134 +180,39 @@ const Live2DView: React.FC<unknown> = () => {
   }, [modelName, selectedModelItem, t]);
 
   const handleDownload = useCallback(async () => {
+    if (!modelName || !selectedModelItem) return;
+
+    setDownloadWarning("");
     setShowProgress(true);
-    setProgress(0);
-    setProgressWords(t("live2d:pack_progress.generate_metadata"));
 
-    const zip = new JSZip();
-    const modelData = await getModelData(selectedModelItem!);
-    const model3 = {
-      FileReferences: {
-        Moc: `${modelName}.moc3`,
-        Motions: [
-          ...modelData.FileReferences.Motions.Motion,
-          ...modelData.FileReferences.Motions.Expression,
-        ].reduce<{
-          [key: string]: [
-            {
-              File: string;
-              FadeInTime: number;
-              FadeOutTime: number;
-            },
-          ];
-        }>((prev, m) => {
-          prev[m.Name] = [
-            {
-              FadeInTime: 0.5,
-              FadeOutTime: 0.5,
-              File: `motions/${m.Name}.motion3.json`,
-            },
-          ];
-          return prev;
-        }, {}),
-        Physics: `${modelName}.physics3.json`,
-        Textures: modelData.FileReferences.Textures.map(
-          (_, idx) =>
-            `${modelName}.2048/texture_${idx.toString().padStart(2, "0")}.png`
-        ),
-      },
-      Groups: [
-        {
-          Ids: [],
-          Name: "EyeBlink",
-          Target: "Parameter",
+    try {
+      const { skippedMotions } = await packLive2DModel({
+        modelItem: selectedModelItem,
+        modelName,
+        getMessage: t,
+        onProgress: (nextProgress, nextWords) => {
+          setProgress(nextProgress);
+          setProgressWords(nextWords);
         },
-        {
-          Ids: [],
-          Name: "LipSync",
-          Target: "Parameter",
-        },
-      ],
-      Version: 3,
-    };
-
-    zip.file(`${modelName}.model3.json`, JSON.stringify(model3, null, 2));
-
-    setProgress(10);
-    setProgressWords(t("live2d:pack_progress.download_texture"));
-    for (const [idx, t] of modelData.FileReferences.Textures.entries()) {
-      const { data: texture } = await Axios.get(modelData.url + t, {
-        responseType: "blob",
       });
-      zip.file(model3.FileReferences.Textures[idx], texture);
-    }
 
-    setProgress(20);
-    setProgressWords(t("live2d:pack_progress.download_moc3"));
-    const { data: moc3 } = await Axios.get(
-      modelData.url + modelData.FileReferences.Moc,
-      { responseType: "blob" }
-    );
-
-    zip.file(model3.FileReferences.Moc, moc3);
-
-    setProgress(30);
-    setProgressWords(t("live2d:pack_progress.download_physics"));
-    const { data: physics } = await Axios.get(
-      modelData.url + modelData.FileReferences.Physics,
-      { responseType: "blob" }
-    );
-
-    zip.file(model3.FileReferences.Physics, physics);
-
-    setProgress(40);
-    const total = Object.keys(model3.FileReferences.Motions).length;
-    let count = 0;
-
-    const updateCount = () => {
-      count++;
-      setProgressWords(
-        t("live2d:pack_progress.download_motions", { dlcount: count, total })
+      if (skippedMotions > 0) {
+        setDownloadWarning(
+          `Download completed, skipped ${skippedMotions} failed motion/expression file(s).`
+        );
+      }
+    } catch (error) {
+      console.warn("Live2D model download failed", error);
+      setDownloadWarning(
+        error instanceof Live2DModelDownloadError
+          ? "Model file download failed. Download aborted."
+          : "Download failed."
       );
-      setProgress(40 + Math.round(50 * (count / total)));
-    };
-    setProgressWords(
-      t("live2d:pack_progress.download_motions", { dlcount: count, total })
-    );
-
-    const tasks = [];
-    for (const motion of [
-      ...modelData.FileReferences.Motions.Motion,
-      ...modelData.FileReferences.Motions.Expression,
-    ]) {
-      tasks.push(
-        Axios.get<Blob>(
-          new URL(
-            motion.File,
-            new URL(modelData.url, window.location.href)
-          ).toString(),
-          {
-            responseType: "blob",
-          }
-        ).then(({ data }) => {
-          updateCount();
-
-          zip.file(model3.FileReferences.Motions[motion.Name][0].File, data);
-        })
-      );
+    } finally {
+      setShowProgress(false);
+      setProgress(0);
+      setProgressWords("");
     }
-
-    await Promise.all(tasks);
-
-    // setProgress(90);
-    setProgressWords(t("live2d:pack_progress.generate_zip"));
-    const content = await zip.generateAsync({ type: "blob" });
-    setProgress(100);
-    saveAs(content, `${modelName}.zip`);
-
-    setShowProgress(false);
-    setProgress(0);
-    setProgressWords("");
   }, [modelName, selectedModelItem, t]);
 
   const handleScreenshot = useCallback(() => {
@@ -418,12 +311,48 @@ const Live2DView: React.FC<unknown> = () => {
     []
   );
 
+  const handleApplyMotion = useCallback(() => {
+    if (selectedMotion) {
+      live2dModel.current?.motion("Motion", motions.indexOf(selectedMotion));
+    }
+  }, [motions, selectedMotion]);
+
+  const handleApplyExpression = useCallback(() => {
+    if (selectedExpression) {
+      live2dModel.current?.motion(
+        "Expression",
+        expressions.indexOf(selectedExpression)
+      );
+    }
+  }, [expressions, selectedExpression]);
+
+  const handleIdleChange = useCallback(
+    (value: boolean) => {
+      if (
+        live2dModel.current?.internalModel &&
+        "breath" in live2dModel.current.internalModel
+      ) {
+        (
+          live2dModel.current.internalModel
+            .breath as Cubism4InternalModel["breath"]
+        ).setParameters(value ? defaultBreath : []);
+        setIdle(value);
+      }
+    },
+    [defaultBreath]
+  );
+
   return (
     <Fragment>
       <TypographyHeader>Live2D</TypographyHeader>
       <Alert severity="warning" sx={{ margin: theme.spacing(1, 0) }}>
         {t("common:betaIndicator")}
       </Alert>
+      {!!downloadWarning && (
+        <Alert severity="warning" sx={{ margin: theme.spacing(1, 0) }}>
+          {downloadWarning}
+        </Alert>
+      )}
       <Grid container spacing={1} alignItems="center">
         <Grid item xs={10} md={7} lg={5}>
           <Autocomplete
@@ -474,211 +403,30 @@ const Live2DView: React.FC<unknown> = () => {
         }}
       >
         {!!modelData && !showProgress && (
-          <Toolbar component={Paper} sx={{ width: "100%" }}>
-            <Grid container spacing={1} alignItems="center">
-              <Grid item>
-                <Tooltip title={t("live2d:tooltip.download") as string}>
-                  <IconButton
-                    disabled={!modelData}
-                    onClick={handleDownload}
-                    size="medium"
-                  >
-                    <CloudDownload fontSize="inherit" />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title={t("live2d:tooltip.fullscreen") as string}>
-                  {isFullscreen ? (
-                    <IconButton
-                      disabled={!fullScreenEnabled}
-                      onClick={() => {
-                        fscreen.exitFullscreen();
-                      }}
-                      size="large"
-                    >
-                      <FullscreenExit fontSize="inherit" />
-                    </IconButton>
-                  ) : (
-                    <IconButton
-                      disabled={!fullScreenEnabled}
-                      onClick={() => {
-                        fscreen.requestFullscreen(wrap.current!);
-                      }}
-                      size="medium"
-                    >
-                      <Fullscreen fontSize="inherit" />
-                    </IconButton>
-                  )}
-                </Tooltip>
-                <Tooltip title={t("live2d:tooltip.shot") as string}>
-                  <IconButton
-                    disabled={!modelData}
-                    onClick={handleScreenshot}
-                    size="medium"
-                  >
-                    <Camera fontSize="inherit" />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title={t("live2d:tooltip.reset") as string}>
-                  <IconButton
-                    disabled={!modelData}
-                    onClick={handleReloadModel}
-                    size="medium"
-                  >
-                    <RestartAlt fontSize="inherit" />
-                  </IconButton>
-                </Tooltip>
-              </Grid>
-              <Grid item>
-                <Grid container spacing={1} alignItems="center">
-                  <Grid item>
-                    <Autocomplete
-                      value={selectedMotion}
-                      onChange={(e, v) => setSelectedMotion(v)}
-                      options={motions}
-                      getOptionLabel={(option) => option}
-                      renderInput={(props) => (
-                        <TextField
-                          {...props}
-                          label={t("live2d:select.motions")}
-                        />
-                      )}
-                      style={{ minWidth: "350px" }}
-                      size="small"
-                    />
-                  </Grid>
-                  <Grid item>
-                    <Button
-                      disabled={!selectedMotion}
-                      variant="contained"
-                      onClick={() => {
-                        if (selectedMotion) {
-                          live2dModel.current?.motion(
-                            "Motion",
-                            motions.indexOf(selectedMotion)
-                          );
-                        }
-                      }}
-                    >
-                      {t("common:apply")}
-                    </Button>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid item>
-                <Grid container spacing={1} alignItems="center">
-                  <Grid item>
-                    <Autocomplete
-                      value={selectedExpression}
-                      onChange={(e, v) => setSelectedExpression(v)}
-                      options={expressions}
-                      getOptionLabel={(option) => option}
-                      renderInput={(props) => (
-                        <TextField
-                          {...props}
-                          label={t("live2d:select.expressions")}
-                        />
-                      )}
-                      style={{ minWidth: "250px" }}
-                      size="small"
-                    />
-                  </Grid>
-                  <Grid item>
-                    <Button
-                      disabled={!selectedExpression}
-                      variant="contained"
-                      onClick={() => {
-                        if (selectedExpression) {
-                          live2dModel.current?.motion(
-                            "Expression",
-                            expressions.indexOf(selectedExpression)
-                          );
-                        }
-                      }}
-                    >
-                      {t("common:apply")}
-                    </Button>
-                  </Grid>
-                </Grid>
-              </Grid>
-              {!!coreModel && (
-                <Grid item>
-                  <Grid container spacing={1} alignItems="center">
-                    <Grid item>
-                      <Autocomplete
-                        value={selectedParameter}
-                        onChange={(e, v) => setSelectedParameter(v)}
-                        options={coreModel["_parameterIds"] ?? []}
-                        getOptionLabel={(option) => option}
-                        renderInput={(props) => (
-                          <TextField
-                            {...props}
-                            label={t("live2d:select.parameters")}
-                          />
-                        )}
-                        style={{ minWidth: "250px" }}
-                        size="small"
-                      />
-                    </Grid>
-                  </Grid>
-                  <Grid item>
-                    {!!selectedParameter && (
-                      <Slider
-                        min={coreModel.getParameterMinimumValue(
-                          coreModel["_parameterIds"].indexOf(selectedParameter)
-                        )}
-                        max={coreModel.getParameterMaximumValue(
-                          coreModel["_parameterIds"].indexOf(selectedParameter)
-                        )}
-                        value={
-                          parameterValues[selectedParameter]
-                            ? parameterValues[selectedParameter]
-                            : coreModel.getParameterValueById(selectedParameter)
-                        }
-                        onChange={(e, v) =>
-                          handleLive2DParamsChange(
-                            Array.isArray(v) ? v[0] : v,
-                            selectedParameter
-                          )
-                        }
-                        step={0.1}
-                      />
-                    )}
-                  </Grid>
-                </Grid>
-              )}
-              <Grid item>
-                <Grid container spacing={1} alignItems="center">
-                  <Grid item>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          onChange={(event) => {
-                            const value = event.target.checked;
-                            if (
-                              live2dModel.current?.internalModel &&
-                              "breath" in live2dModel.current.internalModel
-                            ) {
-                              (
-                                live2dModel.current?.internalModel
-                                  .breath as Cubism4InternalModel["breath"]
-                              ).setParameters(value ? defaultBreath : []);
-                              setIdle(value);
-                            }
-                          }}
-                          checked={idle}
-                        />
-                      }
-                      label={t("live2d:select.idle_animation")}
-                    />
-                  </Grid>
-                </Grid>
-              </Grid>
-              {/* <Grid item>
-                {theme.breakpoints.values.md} {window.screen.width}{" "}
-                {currentStyleWidth}
-              </Grid> */}
-            </Grid>
-          </Toolbar>
+          <Live2DToolbar
+            coreModel={coreModel}
+            expressions={expressions}
+            fullScreenEnabled={fullScreenEnabled}
+            idle={idle}
+            isFullscreen={isFullscreen}
+            motions={motions}
+            parameterValues={parameterValues}
+            selectedExpression={selectedExpression}
+            selectedMotion={selectedMotion}
+            selectedParameter={selectedParameter}
+            t={t}
+            wrapElement={wrap.current}
+            onApplyExpression={handleApplyExpression}
+            onApplyMotion={handleApplyMotion}
+            onDownload={handleDownload}
+            onIdleChange={handleIdleChange}
+            onParameterChange={handleLive2DParamsChange}
+            onReloadModel={handleReloadModel}
+            onScreenshot={handleScreenshot}
+            onSelectedExpressionChange={setSelectedExpression}
+            onSelectedMotionChange={setSelectedMotion}
+            onSelectedParameterChange={setSelectedParameter}
+          />
         )}
         {/* <canvas ref={canvas}></canvas> */}
         <Box sx={{ width: "fit-content", display: "flex" }}>
