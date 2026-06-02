@@ -15,7 +15,7 @@ export class PreloadQueue<T> {
   private running: number;
   private results: (T | null)[] = [];
 
-  constructor(tasks: ITask<T>[], maxQueueLength = 10, timeout = 60) {
+  constructor(tasks: ITask<T>[] = [], maxQueueLength = 10, timeout = 60) {
     this.tasks = tasks;
     this.maxQueueLength = maxQueueLength;
     this.timeout = timeout;
@@ -63,5 +63,47 @@ export class PreloadQueue<T> {
       };
       runNext();
     });
+  }
+
+  public async wait(): Promise<void> {
+    while (this.running >= this.maxQueueLength) {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+  }
+
+  public async add(task: Promise<T> | (() => Promise<T>)): Promise<void> {
+    await this.wait();
+
+    const taskIndex = this.results.length;
+    this.results.push(null);
+    this.running++;
+
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(
+        () => reject(new Error(`${taskIndex}: Promise timeout.`)),
+        this.timeout * 1000
+      )
+    );
+    const promise = typeof task === "function" ? task() : task;
+
+    Promise.race([promise, timeoutPromise])
+      .then((result) => {
+        this.results[taskIndex] = result;
+      })
+      .catch((error) => {
+        console.error(error);
+        this.results[taskIndex] = null;
+      })
+      .finally(() => {
+        this.running--;
+      });
+  }
+
+  public async all(): Promise<(T | null)[]> {
+    while (this.running > 0) {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+
+    return this.results;
   }
 }

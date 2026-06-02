@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Sekai Viewer
+    url: https://sekai.best/
+    about: Check the site before opening an issue.

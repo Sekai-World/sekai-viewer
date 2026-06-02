@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.18.5](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.4...v1.18.5) (2026-06-01)
+
+
+### Bug Fixes
+
+* **tsc:** resolve type check errors ([9d94c72](https://github.com/Sekai-World/sekai-viewer/commits/9d94c72afcd4cf54707493619b0ca5d96d17a271))
+
+
+### Refactors
+
+* **live2d:** split viewer controls and download packing ([72122b8](https://github.com/Sekai-World/sekai-viewer/commits/72122b8c5ae502985e76cd7a60cb06fb48b2ec58))
+
+### [1.18.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.3...v1.18.4) (2026-05-22)
+
+
+### Bug Fixes
+
+* **music-detail:** 更新 EN_EXCLUSIVE_IDS 和 KR_EXCLUSIVE_IDS，添加缺失的 ID ([de02701](https://github.com/Sekai-World/sekai-viewer/commits/de02701ea3d6d7aca5bb225dd9307ff351bfc48d))
+
+### [1.18.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.2...v1.18.3) (2026-05-21)
+
+
+### Bug Fixes
+
+* **music-detail:** add missing exclusive ID to EN_EXCLUSIVE_IDS ([1dfa8cf](https://github.com/Sekai-World/sekai-viewer/commits/1dfa8cfd0eb0449ee243bc59b00f22959e9c2763))
+
 ### [1.18.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.1...v1.18.2) (2026-05-14)
 
 
