@@ -2,6 +2,7 @@
   "name": "sekai-viewer",
   "version": "1.18.5",
   "private": true,
+  "packageManager": "pnpm@11.5.1",
   "homepage": "https://sekai.best/",
   "dependencies": {
     "@ctrl/react-adsense": "^1.8.0",
