@@ -1,23 +1,25 @@
-<!--- Provide a general summary of your changes in the Title above -->
-
-## Description
-<!--- Describe your changes in detail -->
+## Summary
+<!-- Describe what changed and why. -->
 
 ## Related Issue
-<!--- This project only accepts pull requests related to open issues -->
-<!--- If suggesting a new feature or change, please discuss it in an issue first -->
-<!--- If fixing a bug, there should be an issue describing it with steps to reproduce -->
-<!--- Please link to the issue here: -->
+<!-- Link the related issue. Use "Fixes #123" when this PR closes it. -->
 
-## Motivation and Context
-<!--- Why is this change required? What problem does it solve? -->
-<!--- If it fixes an open issue, please link to the issue here. -->
+## Changes
+<!-- List the main user-facing or technical changes. -->
 
-## How Has This Been Tested?
-<!--- Please ensure your code is running good at least on following platform. -->
-<!--- To test on mobile device, make sure they are connected to the same WiFi -->
-<!--- with your developement machine. -->
-<!--- If you can't test Safari browser, you can ignore them. -->
+- 
+
+## Screenshots / Recordings
+<!-- Add screenshots or recordings for UI changes. Leave blank if not applicable. -->
+
+## Testing
+<!-- Describe the checks you ran. -->
+
+- [ ] `pnpm exec tsc --noEmit`
+- [ ] `pnpm build`
+
+## Browser Testing
+<!-- For mobile testing, use a device on the same network as your dev machine. Safari is optional. -->
 
 - [ ] Chrome (Desktop)
 - [ ] Chrome (Mobile)
@@ -27,4 +29,9 @@
 - [ ] Safari (iPhone, optional)
 - [ ] Safari (iPad, optional)
 
-## Screenshots (if appropriate):
+## Checklist
+
+- [ ] I have searched existing issues and pull requests.
+- [ ] I have linked a related issue or explained why one is not needed.
+- [ ] I have added or updated tests where appropriate.
+- [ ] I have updated documentation or translations where appropriate.

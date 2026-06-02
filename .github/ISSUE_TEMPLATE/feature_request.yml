@@ -1,0 +1,66 @@
+name: Feature Request
+description: Suggest an improvement or new feature for sekai-viewer.
+title: "[Feature request] "
+labels: ["enhancement"]
+type: feature
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting an improvement. Please search existing issues first.
+  - type: checkboxes
+    id: existing-issues
+    attributes:
+      label: Existing issues
+      options:
+        - label: I have searched the existing issues.
+          required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: What problem would this solve?
+      placeholder: I want to do ... but currently ...
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the behavior, UI, or workflow you want.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Optional. Describe other approaches or workarounds.
+    validations:
+      required: false
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Impact
+      description: Who would benefit from this?
+      options:
+        - Most users
+        - Specific feature users
+        - Developers or maintainers
+        - Not sure
+      default: 3
+    validations:
+      required: true
+  - type: upload
+    id: references
+    attributes:
+      label: Mockups or screenshots
+      description: Add references if they help explain the request.
+    validations:
+      required: false
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add links, related issues, or other context.
+    validations:
+      required: false
