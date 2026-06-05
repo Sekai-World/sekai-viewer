@@ -59,6 +59,7 @@ import PaperContainer from "../../components/styled/PaperContainer";
 import GridOut from "../../components/styled/GridOut";
 import EmbedVideoPlayer from "../../components/blocks/EmbedVideoPlayer";
 import { addID3Tags } from "../../utils/mp3";
+import { addFlacTags } from "../../utils/flac";
 
 const KR_EXCLUSIVE_IDS = [
   10001, 10002, 371, 387, 419, 420, 453, 459, 464, 10003, 10004, 10005, 10006,
@@ -424,10 +425,18 @@ const MusicDetail: React.FC<unknown> = observer(() => {
       } else if (format === "mp3") {
         const buf = await (await fetch(src)).arrayBuffer();
         saveAs(await addID3Tags(buf, music, vocals, coverImage), fn);
-      } else if (trimSilence && format === "flac" && vocalPreviewVal === "1") {
-        const buf = await (await fetch(src)).arrayBuffer();
-        const trimmed = trimFlac(buf, music.fillerSec);
-        saveAs(new Blob([trimmed ?? buf], { type: "audio/flac" }), fn);
+      } else if (format === "flac") {
+        try {
+          const buf = await (await fetch(src)).arrayBuffer();
+          const body =
+            trimSilence && vocalPreviewVal === "1"
+              ? (trimFlac(buf, music.fillerSec) ?? buf)
+              : buf;
+          saveAs(await addFlacTags(body, music, vocals, coverImage), fn);
+        } catch (err) {
+          console.warn(err);
+          saveAs(src, fn);
+        }
       } else {
         saveAs(src, fn);
       }
