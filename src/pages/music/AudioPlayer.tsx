@@ -5,7 +5,6 @@ import {
   Link,
   Paper,
   Slider,
-  Tooltip,
 } from "@mui/material";
 import {
   CloudDownload,
@@ -17,7 +16,6 @@ import {
 } from "@mui/icons-material";
 import { Howl } from "howler";
 import React, { useCallback, useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 
 const AudioPlayer: React.FC<{
   src: string;
@@ -27,8 +25,6 @@ const AudioPlayer: React.FC<{
   style?: React.CSSProperties;
   offset?: number;
 }> = ({ src, onPlay, onLoad, onSave, style, offset }) => {
-  const { t } = useTranslation();
-
   const [sound, setSound] = useState<Howl>();
   const [playbackTime, setPlaybackTime] = useState(0);
   const [totalTime, setTotalTime] = useState(0);
@@ -144,28 +140,20 @@ const AudioPlayer: React.FC<{
             </IconButton>
           </Grid> */}
           <Grid item xs={2} md={1}>
-            <Tooltip
-              title={
-                src.endsWith("flac")
-                  ? (t("music:downloadFlacNoTrim") as string)
-                  : ""
-              }
+            <IconButton
+              onClick={() => {
+                if (onSave) onSave(src);
+              }}
+              size="large"
             >
-              <IconButton
-                onClick={() => {
-                  if (onSave) onSave(src);
-                }}
-                size="large"
-              >
-                {!onSave ? (
-                  <Link href={src} download underline="hover">
-                    <CloudDownload />
-                  </Link>
-                ) : (
+              {!onSave ? (
+                <Link href={src} download underline="hover">
                   <CloudDownload />
-                )}
-              </IconButton>
-            </Tooltip>
+                </Link>
+              ) : (
+                <CloudDownload />
+              )}
+            </IconButton>
           </Grid>
           <Grid item xs={2} md={1}>
             <IconButton
