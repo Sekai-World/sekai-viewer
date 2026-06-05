@@ -48,6 +48,7 @@ import { useStrapi } from "../../utils/apiClient";
 import CommentTextMultiple from "~icons/mdi/comment-text-multiple";
 import Comment from "../comment/Comment";
 import { trimMP3 } from "../../utils/trimMP3";
+import { trimFlac } from "../../utils/trimFlac";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
 import { assetUrl } from "../../utils/urls";
@@ -427,7 +428,11 @@ const MusicDetail: React.FC<unknown> = observer(() => {
       } else if (format === "flac") {
         try {
           const buf = await (await fetch(src)).arrayBuffer();
-          saveAs(await addFlacTags(buf, music, vocals, coverImage), fn);
+          const body =
+            trimSilence && vocalPreviewVal === "1"
+              ? (trimFlac(buf, music.fillerSec) ?? buf)
+              : buf;
+          saveAs(await addFlacTags(body, music, vocals, coverImage), fn);
         } catch (err) {
           console.warn(err);
           saveAs(src, fn);
