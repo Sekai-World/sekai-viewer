@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.18.6](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.5...v1.18.6) (2026-06-05)
+
+
+### Features
+
+* **music:** FLAC download metadata tags ([#681](https://github.com/Sekai-World/sekai-viewer/issues/681)) ([0f4349a](https://github.com/Sekai-World/sekai-viewer/commits/0f4349aedafb5e85f589df8e301e4459c87c04f3))
+* **music:** trim leading silence on full flac downloads ([5b32115](https://github.com/Sekai-World/sekai-viewer/commits/5b3211541656990ae4df975d87f1b93b78a9f5f8))
+
+
+### Bug Fixes
+
+* **music:** write mp3 id3 metadata ([18e362d](https://github.com/Sekai-World/sekai-viewer/commits/18e362df3759515ae1010ab9360b1a4553bc3790))
+
+
+### Refactors
+
+* **AudioPlayer:** remove unused imports and simplify download button ([094af8e](https://github.com/Sekai-World/sekai-viewer/commits/094af8e7a2786aab029c354c6d5bc9232a36bb98))
+
 ### [1.18.5](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.4...v1.18.5) (2026-06-01)
 
 
