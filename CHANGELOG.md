@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.18.8](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.7...v1.18.8) (2026-06-14)
+
+
+### Bug Fixes
+
+* **music:** add missing ID to EN_EXCLUSIVE_IDS ([76fc4ae](https://github.com/Sekai-World/sekai-viewer/commits/76fc4ae543cb8ca74d4e537a6600994e07935467))
+
 ### [1.18.7](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.6...v1.18.7) (2026-06-09)
 
 ### [1.18.6](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.5...v1.18.6) (2026-06-05)
