@@ -79,7 +79,10 @@ export class Live2DController extends Live2DPlayer {
     const current_costume: {
       cid: number;
       costume: string;
-    }[] = [];
+    }[] = this.scenarioData.AppearCharacters.map((c) => ({
+      cid: c.Character2dId,
+      costume: c.CostumeType,
+    }));
     // collect costumes need in each action
     const costumes_in_action = this.scenarioData.Snippets.map((action) => {
       const costume_list: string[] = [];
