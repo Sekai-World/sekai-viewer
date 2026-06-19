@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.18.9](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.8...v1.18.9) (2026-06-19)
+
+
+### Bug Fixes
+
+* **live2d:** normalize resource paths and metadata loading ([2954c65](https://github.com/Sekai-World/sekai-viewer/commits/2954c65a8321fe02387facf159068d8ba3486e97))
+* **live2d:** stabilize model selector value ([9a461db](https://github.com/Sekai-World/sekai-viewer/commits/9a461db4d212231023381ee84033e776a4ca4a6d))
+
 ### [1.18.8](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.7...v1.18.8) (2026-06-14)
 
 

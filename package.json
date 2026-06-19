@@ -1,6 +1,6 @@
 {
   "name": "sekai-viewer",
-  "version": "1.18.8",
+  "version": "1.18.9",
   "private": true,
   "packageManager": "pnpm@11.5.1",
   "homepage": "https://sekai.best/",
