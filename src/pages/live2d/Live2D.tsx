@@ -71,6 +71,13 @@ const Live2DView: React.FC<unknown> = () => {
   const [live2dY, setLive2dY] = useState(0);
 
   const { modelList } = useLive2dModelList();
+  const sortedModelList = useMemo(
+    () =>
+      [...(modelList || [])].sort((a, b) =>
+        a.modelBase.localeCompare(b.modelBase)
+      ),
+    [modelList]
+  );
 
   const wrap = useRef<HTMLDivElement>(null);
   const stage = useRef<Stage>(null);
@@ -361,10 +368,10 @@ const Live2DView: React.FC<unknown> = () => {
               setSelectedModelItem(v);
               setModelName(null);
             }}
-            options={
-              modelList?.sort((a, b) =>
-                a.modelBase.localeCompare(b.modelBase)
-              ) || []
+            options={sortedModelList}
+            isOptionEqualToValue={(option, value) =>
+              option.modelPath === value.modelPath &&
+              option.modelFile === value.modelFile
             }
             getOptionLabel={(option) =>
               `${option.modelBase}/${option.modelName}`
