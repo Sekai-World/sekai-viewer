@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.18.10](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.9...v1.18.10) (2026-06-21)
+
+
+### Bug Fixes
+
+* **live2d:** make controller property optional in StoryReaderLive2DStage ([9bab33b](https://github.com/Sekai-World/sekai-viewer/commits/9bab33bca5d8d13f4476a6f426b1e7761f5f1c81))
+
 ### [1.18.9](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.8...v1.18.9) (2026-06-19)
 
 
