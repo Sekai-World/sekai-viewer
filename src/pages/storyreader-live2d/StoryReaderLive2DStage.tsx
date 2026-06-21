@@ -13,7 +13,7 @@ import type {
 } from "../../utils/Live2DPlayer/types.d";
 
 const StoryReaderLive2DStage = forwardRef<
-  { controller: Live2DController; reloadStage: () => void },
+  { readonly controller?: Live2DController; reloadStage: () => void },
   {
     stageSize: [number, number];
     controllerData: ILive2DControllerData;
@@ -25,7 +25,9 @@ const StoryReaderLive2DStage = forwardRef<
   const controller = useRef<Live2DController>();
   useImperativeHandle(ref, () => {
     return {
-      controller: controller.current!,
+      get controller() {
+        return controller.current;
+      },
       reloadStage: reloadStage,
     };
   });
