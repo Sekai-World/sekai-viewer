@@ -30,7 +30,7 @@ const StoryReaderLive2DCanvas: React.FC<{
 
   const wrap = useRef<HTMLDivElement>(null);
   const stage = useRef<{
-    controller: Live2DController;
+    readonly controller?: Live2DController;
     reloadStage: () => void;
   }>(null);
 
@@ -53,37 +53,43 @@ const StoryReaderLive2DCanvas: React.FC<{
    *   - playing = false -> next step
    */
   const nextStepClick = useCallback(() => {
+    const controller = stage.current?.controller;
+    if (!controller) return;
     if (!playing && !autoplayWaiting && scenarioStep !== -1) {
       setPlaying(true);
-      stage.current?.controller
-        .step_until_checkpoint(scenarioStep)
-        .then((current) => {
-          setScenarioStep(current);
-          setPlaying(false);
-        });
+      controller.step_until_checkpoint(scenarioStep).then((current) => {
+        setScenarioStep(current);
+        setPlaying(false);
+      });
     } else {
-      stage.current?.controller.animate.abort();
+      controller.animate.abort();
     }
     if (scenarioStep === -1) setFinished(true);
   }, [autoplayWaiting, playing, scenarioStep]);
   const nextStepAuto = useCallback(() => {
+    const controller = stage.current?.controller;
+    if (!controller) return;
     if (!playing && scenarioStep !== -1) {
       setPlaying(true);
-      stage.current?.controller
-        .step_until_checkpoint(scenarioStep)
-        .then((current) => {
-          setScenarioStep(current);
-          setPlaying(false);
-        });
+      controller.step_until_checkpoint(scenarioStep).then((current) => {
+        setScenarioStep(current);
+        setPlaying(false);
+      });
     }
     if (scenarioStep === -1) setFinished(true);
   }, [playing, scenarioStep]);
 
   // autoplay listener
   useEffect(() => {
-    if (loadStatus === LoadStatus.Loaded && settings.autoplay && !playing) {
+    const controller = stage.current?.controller;
+    if (
+      controller &&
+      loadStatus === LoadStatus.Loaded &&
+      settings.autoplay &&
+      !playing
+    ) {
       setAutoplayWaiting(true);
-      stage.current?.controller.animate.delay(1500).then(() => {
+      controller.animate.delay(1500).then(() => {
         setAutoplayWaiting(false);
         nextStepAuto();
       });
@@ -92,19 +98,20 @@ const StoryReaderLive2DCanvas: React.FC<{
 
   // warn listener
   useEffect(() => {
+    const controller = stage.current?.controller;
     const warn = (msg: string) => {
       showWarning(msg);
     };
     if (
-      stage.current &&
+      controller &&
       loadStatus === LoadStatus.Loaded &&
       settings.showWarning
     ) {
-      stage.current.controller.events.on("warn", warn);
+      controller.events.on("warn", warn);
     }
     return () => {
-      if (stage.current) {
-        stage.current.controller.events.off("warn", warn);
+      if (controller) {
+        controller.events.off("warn", warn);
       }
     };
   }, [loadStatus, settings.showWarning, showWarning]);
@@ -136,8 +143,10 @@ const StoryReaderLive2DCanvas: React.FC<{
     [settings.showUI]
   );
   useEffect(() => {
-    if (stage.current)
-      stage.current.controller.settings.text_animation = settings.textAnimation;
+    const controller = stage.current?.controller;
+    if (controller) {
+      controller.settings.text_animation = settings.textAnimation;
+    }
   }, [settings.textAnimation]);
 
   //DEBUG
@@ -209,10 +218,10 @@ const StoryReaderLive2DCanvas: React.FC<{
   const handleModelLoad = (status: LoadStatus) => {
     setLoadStatus(status);
     if (status === LoadStatus.Loaded) {
-      if (stage.current) {
-        stage.current.controller.settings.text_animation =
-          settings.textAnimation;
-        stage.current.controller.set_volume({
+      const controller = stage.current?.controller;
+      if (controller) {
+        controller.settings.text_animation = settings.textAnimation;
+        controller.set_volume({
           bgm_volume: settings.bgmVolume / 100,
           se_volume: settings.seVolume / 100,
           voice_volume: settings.voiceVolume / 100,
