@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.18.11](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.10...v1.18.11) (2026-06-21)
+
+
+### Bug Fixes
+
+* **story-viewer:** Pre-populate create_model_queue so it doesn't throw on null ([5149aa7](https://github.com/Sekai-World/sekai-viewer/commits/5149aa724a8639c7642aa951ea2e43e28a62b045))
+
 ### [1.18.10](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.9...v1.18.10) (2026-06-21)
 
 
