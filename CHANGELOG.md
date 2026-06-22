@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.18.12](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.11...v1.18.12) (2026-06-22)
+
+
+### Bug Fixes
+
+* **live2d:** fallback to lowercase asset paths ([f310c02](https://github.com/Sekai-World/sekai-viewer/commits/f310c02082f3e54473fb8aa7ecbf8937ef1141fe))
+
 ### [1.18.11](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.10...v1.18.11) (2026-06-21)
 
 
