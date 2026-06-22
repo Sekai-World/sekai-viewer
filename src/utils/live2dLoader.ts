@@ -27,40 +27,112 @@ function normalizeLive2DAssetPath(path: string) {
 }
 
 function getBuildMotionDataPath(basePath: string) {
-  return `${normalizeLive2DAssetPath(basePath)}/BuildMotionData.json`;
+  return `${basePath}/BuildMotionData.json`;
 }
 
-function normalizeModelFileReferences(fileReferences: Live2DFileReferences) {
-  fileReferences.Moc = normalizeLive2DAssetPath(fileReferences.Moc);
-  fileReferences.Physics = normalizeLive2DAssetPath(fileReferences.Physics);
-  fileReferences.Textures = fileReferences.Textures.map((texture) =>
-    normalizeLive2DAssetPath(texture)
+async function getRemoteAssetUrlWithLowercaseFallback(
+  endpoint: string,
+  verifyStatus = false
+) {
+  const url = await getRemoteAssetURL(
+    endpoint,
+    undefined,
+    "minio",
+    "live2d",
+    verifyStatus
+  );
+  if (url) return url;
+
+  const fallbackEndpoint = normalizeLive2DAssetPath(endpoint);
+  if (fallbackEndpoint === endpoint) return "";
+
+  return await getRemoteAssetURL(
+    fallbackEndpoint,
+    undefined,
+    "minio",
+    "live2d",
+    verifyStatus
+  );
+}
+
+async function fetchJsonWithLowercaseFallback<T>(endpoint: string): Promise<T> {
+  const url = await getRemoteAssetUrlWithLowercaseFallback(endpoint);
+  const response = await fetch(url);
+  if (response.ok) return await response.json();
+  if (response.status !== 404) {
+    throw new Error(`Failed to fetch ${endpoint}: ${response.statusText}`);
+  }
+
+  const fallbackEndpoint = normalizeLive2DAssetPath(endpoint);
+  if (fallbackEndpoint === endpoint) {
+    throw new Error(`Failed to fetch ${endpoint}: ${response.statusText}`);
+  }
+
+  const fallbackUrl =
+    await getRemoteAssetUrlWithLowercaseFallback(fallbackEndpoint);
+  const fallbackResponse = await fetch(fallbackUrl);
+  if (!fallbackResponse.ok) {
+    throw new Error(
+      `Failed to fetch ${fallbackEndpoint}: ${fallbackResponse.statusText}`
+    );
+  }
+  return await fallbackResponse.json();
+}
+
+async function getExistingRelativeModelAssetPath(
+  modelItem: ILive2dModelListElement,
+  path: string
+) {
+  const endpoint = `live2d/model/${modelItem.modelPath}/${path}`;
+  const url = await getRemoteAssetUrlWithLowercaseFallback(endpoint, true);
+  if (!url) return path;
+
+  return url.endsWith(normalizeLive2DAssetPath(endpoint))
+    ? normalizeLive2DAssetPath(path)
+    : path;
+}
+
+async function applyModelFileReferencesFallback(
+  modelItem: ILive2dModelListElement,
+  fileReferences: Live2DFileReferences
+) {
+  fileReferences.Moc = await getExistingRelativeModelAssetPath(
+    modelItem,
+    fileReferences.Moc
+  );
+  fileReferences.Physics = await getExistingRelativeModelAssetPath(
+    modelItem,
+    fileReferences.Physics
+  );
+  fileReferences.Textures = await Promise.all(
+    fileReferences.Textures.map((texture) =>
+      getExistingRelativeModelAssetPath(modelItem, texture)
+    )
   );
 
   if (fileReferences.DisplayInfo) {
-    fileReferences.DisplayInfo = normalizeLive2DAssetPath(
+    fileReferences.DisplayInfo = await getExistingRelativeModelAssetPath(
+      modelItem,
       fileReferences.DisplayInfo
     );
   }
   if (fileReferences.Pose) {
-    fileReferences.Pose = normalizeLive2DAssetPath(fileReferences.Pose);
+    fileReferences.Pose = await getExistingRelativeModelAssetPath(
+      modelItem,
+      fileReferences.Pose
+    );
   }
   if (Array.isArray(fileReferences.Expressions)) {
-    fileReferences.Expressions.forEach((expression) => {
-      if (expression.File) {
-        expression.File = normalizeLive2DAssetPath(expression.File);
-      }
-    });
-  }
-  if (fileReferences.Motions) {
-    Object.values(fileReferences.Motions).forEach((motions) => {
-      if (!Array.isArray(motions)) return;
-      motions.forEach((motion) => {
-        if (motion.File) {
-          motion.File = normalizeLive2DAssetPath(motion.File);
+    await Promise.all(
+      fileReferences.Expressions.map(async (expression) => {
+        if (expression.File) {
+          expression.File = await getExistingRelativeModelAssetPath(
+            modelItem,
+            expression.File
+          );
         }
-      });
-    });
+      })
+    );
   }
 }
 
@@ -70,12 +142,13 @@ export async function getModelData(
   expressionFade: [number, number] = [1, 1]
 ): Promise<ILive2DModelData> {
   // step 1 - get model build data
-  const model3JsonPromise = getModel3JsonUrl(modelItem).then(async (url) =>
-    (await fetch(url)).json()
-  ) as Promise<ILive2DModelData>;
-  const modelBuildDataPromise = getBuildModelDataUrl(modelItem).then(
-    async (url) => (await fetch(url)).json()
-  ) as Promise<Live2DBuildModelData>;
+  const model3JsonPromise = fetchJsonWithLowercaseFallback<ILive2DModelData>(
+    `live2d/model/${modelItem.modelPath}/${modelItem.modelFile}`
+  );
+  const modelBuildDataPromise =
+    fetchJsonWithLowercaseFallback<Live2DBuildModelData>(
+      `live2d/model/${modelItem.modelPath}/buildmodeldata.asset`
+    );
   const motionDataPromise = getMotionData(modelItem);
   const modelBaseUrlPromise = getModelBaseUrl(modelItem);
   const [
@@ -90,7 +163,7 @@ export async function getModelData(
     modelBaseUrlPromise,
   ]);
 
-  normalizeModelFileReferences(model3Json.FileReferences);
+  await applyModelFileReferencesFallback(modelItem, model3Json.FileReferences);
   // step 2 - get motion data
   const additionalMotionData =
     modelBuildData.AdditionalMotionData.length > 0
@@ -114,7 +187,10 @@ export async function getModelData(
   for (const elem of additionalMotionData.motions) {
     motions.push({
       Name: `${elem}-additional`,
-      File: `./motions/${normalizeLive2DAssetPath(elem)}.motion3.json`,
+      File: await getExistingRelativeModelAssetPath(
+        modelItem,
+        `motions/${elem}.motion3.json`
+      ),
       FadeInTime: motionFade[0],
       FadeOutTime: motionFade[1],
     });
@@ -174,11 +250,8 @@ async function getMotionData(
 }
 
 async function getAddtionalMotionData(modelItem: ILive2dModelListElement) {
-  const url = await getRemoteAssetURL(
+  const url = await getRemoteAssetUrlWithLowercaseFallback(
     getBuildMotionDataPath(`live2d/model/${modelItem.modelPath}/motions`),
-    undefined,
-    "minio",
-    "live2d",
     true
   );
 
@@ -202,13 +275,8 @@ async function getAddtionalMotionData(modelItem: ILive2dModelListElement) {
 }
 
 export async function getBuildModelDataUrl(modelItem: ILive2dModelListElement) {
-  return await getRemoteAssetURL(
-    normalizeLive2DAssetPath(
-      `live2d/model/${modelItem.modelPath}/buildmodeldata.asset`
-    ),
-    undefined,
-    "minio",
-    "live2d"
+  return await getRemoteAssetUrlWithLowercaseFallback(
+    `live2d/model/${modelItem.modelPath}/buildmodeldata.asset`
   );
 }
 
@@ -236,25 +304,21 @@ export async function getBuildMotionDataUrl(
   modelItem: ILive2dModelListElement
 ): Promise<[string, string]> {
   // try to find the correct motion data url
-  let modelBaseName = normalizeLive2DAssetPath(modelItem.modelBase);
-  let modelDir = normalizeLive2DAssetPath(modelItem.modelPath)
-    .split("/")
-    .slice(0, -1)
-    .join("/");
-  if (modelDir.indexOf("v2/collabo/21_miku") !== -1) {
+  let modelBaseName = modelItem.modelBase;
+  let modelDir = modelItem.modelPath.split("/").slice(0, -1).join("/");
+  if (normalizeLive2DAssetPath(modelDir).indexOf("v2/collabo/21_miku") !== -1) {
     modelDir = modelDir.replace("collabo", "main");
-  } else if (modelDir.indexOf("v2/collabo/egg") !== -1) {
+  } else if (
+    normalizeLive2DAssetPath(modelDir).indexOf("v2/collabo/egg") !== -1
+  ) {
     modelDir = modelDir.split("/").slice(0, -1).join("/");
   }
 
   // case 1: get directly from model path + motion_base
-  let url = await getRemoteAssetURL(
+  let url = await getRemoteAssetUrlWithLowercaseFallback(
     getBuildMotionDataPath(
       `live2d/motion/${modelDir}/${modelBaseName}_motion_base`
     ),
-    undefined,
-    "minio",
-    "live2d",
     true
   );
 
@@ -268,16 +332,13 @@ export async function getBuildMotionDataUrl(
     )) {
       const regExp = new RegExp(pattern);
       if (regExp.test(modelBaseName)) {
-        modelBaseName = normalizeLive2DAssetPath(processor(modelBaseName));
+        modelBaseName = processor(modelBaseName);
 
         // try to get url
-        url = await getRemoteAssetURL(
+        url = await getRemoteAssetUrlWithLowercaseFallback(
           getBuildMotionDataPath(
             `live2d/motion/${modelDir}/${modelBaseName}_motion_base`
           ),
-          undefined,
-          "minio",
-          "live2d",
           true
         );
         break;
@@ -291,13 +352,10 @@ export async function getBuildMotionDataUrl(
       `Motion data not found for ${modelItem.modelBase}/${modelItem.modelName} with base name ${modelBaseName}, trying shorter name...`
     );
     modelBaseName = modelBaseName.split("_").slice(0, -1).join("_");
-    url = await getRemoteAssetURL(
+    url = await getRemoteAssetUrlWithLowercaseFallback(
       getBuildMotionDataPath(
         `live2d/motion/${modelDir}/${modelBaseName}_motion_base`
       ),
-      undefined,
-      "minio",
-      "live2d",
       true
     );
   }
@@ -313,22 +371,8 @@ export async function getBuildMotionDataUrl(
 }
 
 async function getModelBaseUrl(modelItem: ILive2dModelListElement) {
-  return await getRemoteAssetURL(
-    normalizeLive2DAssetPath(`live2d/model/${modelItem.modelPath}/`),
-    undefined,
-    "minio",
-    "live2d"
-  );
-}
-
-async function getModel3JsonUrl(modelItem: ILive2dModelListElement) {
-  return await getRemoteAssetURL(
-    normalizeLive2DAssetPath(
-      `live2d/model/${modelItem.modelPath}/${modelItem.modelFile}`
-    ),
-    undefined,
-    "minio",
-    "live2d"
+  return await getRemoteAssetUrlWithLowercaseFallback(
+    `live2d/model/${modelItem.modelPath}/`
   );
 }
 
@@ -337,12 +381,7 @@ async function getRelativeMotionUrl(
   motionType: string,
   motion: string
 ) {
-  return await getRemoteAssetURL(
-    normalizeLive2DAssetPath(
-      `live2d/motion/${motionBaseName}/${motionType}/${motion}.motion3.json`
-    ),
-    undefined,
-    "minio",
-    "live2d"
+  return await getRemoteAssetUrlWithLowercaseFallback(
+    `live2d/motion/${motionBaseName}/${motionType}/${motion}.motion3.json`
   );
 }
