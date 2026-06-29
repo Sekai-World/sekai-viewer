@@ -21,6 +21,9 @@ import {
   useTheme,
 } from "@mui/material";
 import { CronJob } from "cron";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime);
 import { observer } from "mobx-react-lite";
 import React, {
   Fragment,
@@ -84,8 +87,7 @@ const EventTackerChapters: React.FC<{
     []
   );
   const [historyTime, setHistoryTime] = useState<Date>();
-  const [nextRefreshTime, setNextRefreshTime] =
-    useState<ReturnType<CronJob["nextDate"]>>();
+  const [nextRefreshTime, setNextRefreshTime] = useState<Date>();
   const [refreshCron, setRefreshCron] = useState<CronJob>();
   const [isFullRank, toggleIsFullRank] = useToggle(false);
   const [isTimeTravel, toggleIsTimeTravel] = useToggle(false);
@@ -182,13 +184,13 @@ const EventTackerChapters: React.FC<{
         // get realtime data from live endpoint
         const cron = new CronJob(
           "10 */3 * * * *",
-          function () {
+          function (this: CronJob) {
             const currentTime = Date.now();
             if (currentTime >= currChapter.aggregateAt) this.stop();
             else {
               refreshChapterRealtimeData(currChapter.gameCharacterId);
               setEventDuration(currentTime - currChapter.chapterStartAt);
-              setNextRefreshTime(this.nextDate());
+              setNextRefreshTime(new Date(this.nextDate().valueOf()));
             }
           },
           null,
@@ -340,7 +342,7 @@ const EventTackerChapters: React.FC<{
               )}
               {!!nextRefreshTime && (
                 <Typography variant="body2" color="textSecondary">
-                  {t("event:nextfetch")}: {nextRefreshTime.toRelative()}
+                  {t("event:nextfetch")}: {dayjs(nextRefreshTime).fromNow()}
                 </Typography>
               )}
               <FormGroup row>

@@ -22,6 +22,9 @@ import {
   useTheme,
 } from "@mui/material";
 import { CronJob } from "cron";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime);
 import React, {
   Fragment,
   useCallback,
@@ -98,8 +101,7 @@ const EventTracker: React.FC<unknown> = observer(() => {
     []
   );
   const [historyTime, setHistoryTime] = useState<Date>();
-  const [nextRefreshTime, setNextRefreshTime] =
-    useState<ReturnType<CronJob["nextDate"]>>();
+  const [nextRefreshTime, setNextRefreshTime] = useState<Date>();
   const [refreshCron, setRefreshCron] = useState<CronJob>();
   const [isFullRank, toggleIsFullRank] = useToggle(false);
   const [isTimeTravel, toggleIsTimeTravel] = useToggle(false);
@@ -210,31 +212,33 @@ const EventTracker: React.FC<unknown> = observer(() => {
           currentTime >= event.startAt &&
           currentTime < event.aggregateAt
         ) {
-          const cron = new CronJob("10 */3 * * * *", function () {
+          const cron = new CronJob("10 */3 * * * *", function (this: CronJob) {
             const currentTime = Date.now();
             if (currentTime >= event.aggregateAt) this.stop();
             else {
               refreshRealtimeData();
               setEventDuration(currentTime - event.startAt);
-              setNextRefreshTime(this.nextDate());
+              setNextRefreshTime(new Date(this.nextDate().valueOf()));
             }
           });
           cron.start();
           setRefreshCron(cron);
           refreshRealtimeData();
           setEventDuration(currentTime - event.startAt);
-          setNextRefreshTime(cron.nextDate());
+          setNextRefreshTime(new Date(cron.nextDate().valueOf()));
 
           if (
             region === "jp" &&
             currentTime >= event.startAt + 24 * 3600 * 1000
           ) {
-            const predcron = new CronJob("*/30 * * * *", function () {
+            const predcron = new CronJob("*/30 * * * *", function (
+              this: CronJob
+            ) {
               const currentTime = Date.now();
               if (currentTime >= event.rankingAnnounceAt) this.stop();
               else {
                 refreshPrediction();
-                // setNextRefreshTime(cron.nextDate());
+                // setNextRefreshTime(cron.nextDate().toDate());
               }
             });
             predcron.start();
@@ -451,7 +455,7 @@ const EventTracker: React.FC<unknown> = observer(() => {
           </Typography>
           {!!nextRefreshTime && (
             <Typography variant="body2" color="textSecondary">
-              {t("event:nextfetch")}: {nextRefreshTime.toRelative()}
+              {t("event:nextfetch")}: {dayjs(nextRefreshTime).fromNow()}
             </Typography>
           )}
           {!!predData && (
