@@ -1,5 +1,5 @@
 import { Skeleton } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   IResourceBoxInfo,
   IHonorInfo,
@@ -16,6 +16,41 @@ import { useRootStore } from "../../stores/root";
 import Svg from "../styled/Svg";
 
 const honorRarityList = ["low", "middle", "high", "highest"] as const;
+
+/** Returns true when the given URL has been successfully loaded as an image.
+ *  Returns false for empty/undefined URLs or when the image fails (404, etc.).
+ *  Avoids broken-image placeholders in SVG <image> elements. */
+function useImageLoaded(url: string | undefined): boolean {
+  const [loaded, setLoaded] = useState(false);
+  const prevUrlRef = useRef<string | undefined>(undefined);
+
+  const handleLoad = useCallback(() => setLoaded(true), []);
+  const handleError = useCallback(() => setLoaded(false), []);
+
+  useEffect(() => {
+    if (url !== prevUrlRef.current) {
+      setLoaded(false);
+      prevUrlRef.current = url;
+    }
+
+    if (!url) {
+      setLoaded(false);
+      return;
+    }
+
+    const img = new window.Image();
+    img.onload = handleLoad;
+    img.onerror = handleError;
+    img.src = url;
+
+    return () => {
+      img.onload = null;
+      img.onerror = null;
+    };
+  }, [url, handleLoad, handleError]);
+
+  return loaded;
+}
 
 const DegreeImage: React.FC<
   {
@@ -335,27 +370,34 @@ const DegreeImage: React.FC<
       };
     }, [honor, honorGroup, honorLevel, region, sub, type]);
 
+    const degreeImageLoaded = useImageLoaded(degreeImage);
+    const degreeFrameImageLoaded = useImageLoaded(degreeFrameImage);
+    const degreeRankImageLoaded = useImageLoaded(degreeRankImage);
+
     return honor === undefined ? null : !!honor ? (
       <Svg
         style={style}
         xmlns="http://www.w3.org/2000/svg"
         viewBox={sub ? "0 0 180 80" : "0 0 380 80"}
       >
-        <image
-          href={degreeImage}
-          x="0"
-          y="0"
-          height="80"
-          width={sub ? 180 : 380}
-        />
-        {/* frame */}
-        <image
-          href={degreeFrameImage}
-          x="0"
-          y="0"
-          height="80"
-          width={sub ? 180 : 380}
-        />
+        {degreeImageLoaded && (
+          <image
+            href={degreeImage}
+            x="0"
+            y="0"
+            height="80"
+            width={sub ? 180 : 380}
+          />
+        )}
+        {degreeFrameImageLoaded && (
+          <image
+            href={degreeFrameImage}
+            x="0"
+            y="0"
+            height="80"
+            width={sub ? 180 : 380}
+          />
+        )}
         {/* degree level */}
         {!!honorLevel &&
           !!isDrawHonorLevel &&
@@ -382,8 +424,7 @@ const DegreeImage: React.FC<
               width="16"
             />
           ))}
-        {/* rank */}
-        {degreeRankImage && (
+        {degreeRankImageLoaded && (
           <image
             href={degreeRankImage}
             x={isWorldLinkDegree ? 0 : sub ? 11 : 200}

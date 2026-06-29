@@ -21,12 +21,16 @@ import {
   useTheme,
 } from "@mui/material";
 import { CronJob } from "cron";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime);
 import { observer } from "mobx-react-lite";
 import React, {
   Fragment,
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
@@ -84,8 +88,8 @@ const EventTackerChapters: React.FC<{
     []
   );
   const [historyTime, setHistoryTime] = useState<Date>();
-  const [nextRefreshTime, setNextRefreshTime] = useState<moment.Moment>();
-  const [refreshCron, setRefreshCron] = useState<CronJob>();
+  const [nextRefreshTime, setNextRefreshTime] = useState<Date>();
+  const refreshCronRef = useRef<CronJob>();
   const [isFullRank, toggleIsFullRank] = useToggle(false);
   const [isTimeTravel, toggleIsTimeTravel] = useToggle(false);
   const [eventDuration, setEventDuration] = useState(0);
@@ -181,13 +185,13 @@ const EventTackerChapters: React.FC<{
         // get realtime data from live endpoint
         const cron = new CronJob(
           "10 */3 * * * *",
-          () => {
+          function (this: CronJob) {
             const currentTime = Date.now();
-            if (currentTime >= currChapter.aggregateAt) cron.stop();
+            if (currentTime >= currChapter.aggregateAt) this.stop();
             else {
               refreshChapterRealtimeData(currChapter.gameCharacterId);
               setEventDuration(currentTime - currChapter.chapterStartAt);
-              setNextRefreshTime(cron.nextDate());
+              setNextRefreshTime(new Date(this.nextDate().valueOf()));
             }
           },
           null,
@@ -196,7 +200,7 @@ const EventTackerChapters: React.FC<{
           undefined,
           true
         );
-        setRefreshCron(cron);
+        refreshCronRef.current = cron;
         cron.start();
       } else if (isCurrChapterAggregated) {
         getHistoryData(eventId, currChapter.gameCharacterId);
@@ -215,9 +219,9 @@ const EventTackerChapters: React.FC<{
     fetchChapterRankings(eventId, currChapter);
 
     return () => {
-      if (refreshCron) refreshCron.stop();
+      if (refreshCronRef.current) refreshCronRef.current.stop();
     };
-  }, [currChapter, eventId, fetchChapterRankings, refreshCron]);
+  }, [currChapter, eventId, fetchChapterRankings]);
 
   useEffect(() => {
     if (chapters.length) {
@@ -339,7 +343,7 @@ const EventTackerChapters: React.FC<{
               )}
               {!!nextRefreshTime && (
                 <Typography variant="body2" color="textSecondary">
-                  {t("event:nextfetch")}: {nextRefreshTime.fromNow()}
+                  {t("event:nextfetch")}: {dayjs(nextRefreshTime).fromNow()}
                 </Typography>
               )}
               <FormGroup row>
