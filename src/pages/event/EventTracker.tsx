@@ -30,6 +30,7 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
@@ -102,12 +103,12 @@ const EventTracker: React.FC<unknown> = observer(() => {
   );
   const [historyTime, setHistoryTime] = useState<Date>();
   const [nextRefreshTime, setNextRefreshTime] = useState<Date>();
-  const [refreshCron, setRefreshCron] = useState<CronJob>();
+  const refreshCronRef = useRef<CronJob>();
   const [isFullRank, toggleIsFullRank] = useToggle(false);
   const [isTimeTravel, toggleIsTimeTravel] = useToggle(false);
   // const [isGetPred, toggleIsGetPred] = useToggle(false);
   const [eventDuration, setEventDuration] = useState(0);
-  const [predCron, setPredCron] = useState<CronJob>();
+  const predCronRef = useRef<CronJob>();
   const [predData, setPredData] = useState<EventPrediction>();
   const [timePoints, setTimePoints] = useState<Date[]>([]);
   const [sliderTime, setSliderTime] = useState<Date>();
@@ -136,15 +137,15 @@ const EventTracker: React.FC<unknown> = observer(() => {
 
   useEffect(() => {
     return () => {
-      if (refreshCron) refreshCron.stop();
+      if (refreshCronRef.current) refreshCronRef.current.stop();
     };
-  }, [refreshCron]);
+  }, []);
 
   useEffect(() => {
     return () => {
-      if (predCron) predCron.stop();
+      if (predCronRef.current) predCronRef.current.stop();
     };
-  }, [predCron]);
+  }, []);
 
   const refreshRealtimeData = useCallback(async () => {
     setIsFetching(true);
@@ -222,7 +223,7 @@ const EventTracker: React.FC<unknown> = observer(() => {
             }
           });
           cron.start();
-          setRefreshCron(cron);
+          refreshCronRef.current = cron;
           refreshRealtimeData();
           setEventDuration(currentTime - event.startAt);
           setNextRefreshTime(new Date(cron.nextDate().valueOf()));
@@ -242,7 +243,7 @@ const EventTracker: React.FC<unknown> = observer(() => {
               }
             });
             predcron.start();
-            setPredCron(predcron);
+            predCronRef.current = predcron;
             refreshPrediction();
           }
         } else if (event && currentTime >= event.aggregateAt) {
@@ -404,8 +405,10 @@ const EventTracker: React.FC<unknown> = observer(() => {
               onChange={(_, value) => {
                 if (!!value) {
                   setSelectedEvent(value);
-                  setRefreshCron(undefined);
-                  setPredCron(undefined);
+                  if (refreshCronRef.current) refreshCronRef.current.stop();
+                  refreshCronRef.current = undefined;
+                  if (predCronRef.current) predCronRef.current.stop();
+                  predCronRef.current = undefined;
                   handleFetchGraph(value.id);
                 }
               }}
@@ -424,8 +427,10 @@ const EventTracker: React.FC<unknown> = observer(() => {
                   ),
                   id: currEvent.eventId,
                 });
-                setRefreshCron(undefined);
-                setPredCron(undefined);
+                if (refreshCronRef.current) refreshCronRef.current.stop();
+                refreshCronRef.current = undefined;
+                if (predCronRef.current) predCronRef.current.stop();
+                predCronRef.current = undefined;
                 handleFetchGraph(currEvent.eventId);
               }}
               disabled={isCurrEventLoading || isFetching}

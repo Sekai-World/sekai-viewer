@@ -30,6 +30,7 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
@@ -88,7 +89,7 @@ const EventTackerChapters: React.FC<{
   );
   const [historyTime, setHistoryTime] = useState<Date>();
   const [nextRefreshTime, setNextRefreshTime] = useState<Date>();
-  const [refreshCron, setRefreshCron] = useState<CronJob>();
+  const refreshCronRef = useRef<CronJob>();
   const [isFullRank, toggleIsFullRank] = useToggle(false);
   const [isTimeTravel, toggleIsTimeTravel] = useToggle(false);
   const [eventDuration, setEventDuration] = useState(0);
@@ -199,7 +200,7 @@ const EventTackerChapters: React.FC<{
           undefined,
           true
         );
-        setRefreshCron(cron);
+        refreshCronRef.current = cron;
         cron.start();
       } else if (isCurrChapterAggregated) {
         getHistoryData(eventId, currChapter.gameCharacterId);
@@ -218,9 +219,9 @@ const EventTackerChapters: React.FC<{
     fetchChapterRankings(eventId, currChapter);
 
     return () => {
-      if (refreshCron) refreshCron.stop();
+      if (refreshCronRef.current) refreshCronRef.current.stop();
     };
-  }, [currChapter, eventId, fetchChapterRankings, refreshCron]);
+  }, [currChapter, eventId, fetchChapterRankings]);
 
   useEffect(() => {
     if (chapters.length) {
