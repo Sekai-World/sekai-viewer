@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.19.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.12...v1.19.0) (2026-06-29)
+
+
+### Bug Fixes
+
+* **event-tracker:** fix EN region white screen crash, infinite loop, and hidden 404 degree images ([#685](https://github.com/Sekai-World/sekai-viewer/issues/685)) ([af9dac0](https://github.com/Sekai-World/sekai-viewer/commits/af9dac005f4a6e4d342ca712ecf0b37d2e240468))
+
 ### [1.18.12](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.11...v1.18.12) (2026-06-22)
 
 
