@@ -84,7 +84,8 @@ const EventTackerChapters: React.FC<{
     []
   );
   const [historyTime, setHistoryTime] = useState<Date>();
-  const [nextRefreshTime, setNextRefreshTime] = useState<moment.Moment>();
+  const [nextRefreshTime, setNextRefreshTime] =
+    useState<ReturnType<CronJob["nextDate"]>>();
   const [refreshCron, setRefreshCron] = useState<CronJob>();
   const [isFullRank, toggleIsFullRank] = useToggle(false);
   const [isTimeTravel, toggleIsTimeTravel] = useToggle(false);
@@ -339,7 +340,7 @@ const EventTackerChapters: React.FC<{
               )}
               {!!nextRefreshTime && (
                 <Typography variant="body2" color="textSecondary">
-                  {t("event:nextfetch")}: {nextRefreshTime.fromNow()}
+                  {t("event:nextfetch")}: {nextRefreshTime.toRelative()}
                 </Typography>
               )}
               <FormGroup row>
