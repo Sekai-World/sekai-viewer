@@ -209,13 +209,13 @@ const EventTracker: React.FC<unknown> = observer(() => {
           currentTime >= event.startAt &&
           currentTime < event.aggregateAt
         ) {
-          const cron = new CronJob("10 */3 * * * *", () => {
+          const cron = new CronJob("10 */3 * * * *", function () {
             const currentTime = Date.now();
-            if (currentTime >= event.aggregateAt) cron.stop();
+            if (currentTime >= event.aggregateAt) this.stop();
             else {
               refreshRealtimeData();
               setEventDuration(currentTime - event.startAt);
-              setNextRefreshTime(cron.nextDate());
+              setNextRefreshTime(this.nextDate());
             }
           });
           cron.start();
@@ -228,9 +228,9 @@ const EventTracker: React.FC<unknown> = observer(() => {
             region === "jp" &&
             currentTime >= event.startAt + 24 * 3600 * 1000
           ) {
-            const predcron = new CronJob("*/30 * * * *", () => {
+            const predcron = new CronJob("*/30 * * * *", function () {
               const currentTime = Date.now();
-              if (currentTime >= event.rankingAnnounceAt) predcron.stop();
+              if (currentTime >= event.rankingAnnounceAt) this.stop();
               else {
                 refreshPrediction();
                 // setNextRefreshTime(cron.nextDate());

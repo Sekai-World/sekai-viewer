@@ -181,13 +181,13 @@ const EventTackerChapters: React.FC<{
         // get realtime data from live endpoint
         const cron = new CronJob(
           "10 */3 * * * *",
-          () => {
+          function () {
             const currentTime = Date.now();
-            if (currentTime >= currChapter.aggregateAt) cron.stop();
+            if (currentTime >= currChapter.aggregateAt) this.stop();
             else {
               refreshChapterRealtimeData(currChapter.gameCharacterId);
               setEventDuration(currentTime - currChapter.chapterStartAt);
-              setNextRefreshTime(cron.nextDate());
+              setNextRefreshTime(this.nextDate());
             }
           },
           null,
