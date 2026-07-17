@@ -42,7 +42,14 @@ export class LlmTranslationService {
   }
 
   /**
-   * Create system prompt with formatting instructions
+   * Create system prompt with formatting instructions.
+   *
+   * The schema is enforced by the provider (structured outputs / forced tool
+   * use), but we still describe the expected shape in the prompt so the model
+   * understands the contract. The output must be a JSON object of the form
+   *   { "translations": [ "<translation for input [1]>", "<translation for input [2]>", ... ] }
+   * with the array length exactly matching the number of inputs and the
+   * order preserved.
    */
   private createSystemPrompt(
     targetLanguage: string,
@@ -59,20 +66,22 @@ SAFETY GUIDELINES:
 - If uncertain about content appropriateness, provide a conservative translation or skip the problematic section
 
 CRITICAL FORMATTING REQUIREMENTS:
-- You must maintain the exact numbering format: [1], [2], [3], etc.
-- Each translation must be on its own line
-- Do not add any explanations, notes, or extra text
 - Preserve the emotional tone and dramatic impact of the original dialogue
 - Maintain character voice consistency throughout the conversation
 - Keep the natural flow and rhythm of speech appropriate for ${targetLanguage}
 - If unsure about specific game context, prioritize natural ${targetLanguage} expression while preserving emotional intent
 
 RESPONSE FORMAT:
-[1] translated text here
-[2] translated text here  
-[3] translated text here
+Respond with a JSON object matching the provided schema. The "translations" array must contain exactly one string per input line, in the same order as the numbered inputs ([1], [2], ...). Do not add explanations, notes, or any text outside the JSON object.
 
-Respond ONLY with the numbered translations. Do not include any other text.`;
+Example response for 3 inputs:
+{
+  "translations": [
+    "translated text for input 1",
+    "translated text for input 2",
+    "translated text for input 3"
+  ]
+}`;
   }
 
   /**
@@ -106,43 +115,62 @@ Respond ONLY with the numbered translations. Do not include any other text.`;
       sourceLanguage
     );
 
-    // Use the provider client to handle the API call
-    return this.providerClient.translateBatch(systemPrompt, userMessage);
+    // Use the provider client to handle the API call. The provider enforces
+    // the structured output schema; expectedCount is required to constrain
+    // the array length.
+    return this.providerClient.translateBatch(
+      systemPrompt,
+      userMessage,
+      dialogues.length
+    );
   }
 
   /**
-   * Parse batch translation response back into individual lines
+   * Parse a structured (JSON) batch translation response into individual
+   * lines. The provider enforces the shape `{ "translations": string[] }`,
+   * but we still defend against malformed output by extracting the first JSON
+   * object in the response if direct parsing fails, and by padding/trimming
+   * to `expectedCount`.
    */
   private parseBatchResponse(
     batchResponse: string,
     expectedCount: number
   ): string[] {
-    const lines: string[] = [];
+    const fallback = () => new Array(expectedCount).fill("");
     try {
-      // Try to extract numbered sections [1], [2], etc.
-      for (let i = 1; i <= expectedCount; i++) {
-        const pattern = new RegExp(
-          `\\[${i}\\]\\s*(.+?)(?=\\[${i + 1}\\]|$)`,
-          "s"
-        );
-        const match = batchResponse.match(pattern);
+      if (!batchResponse) return fallback();
 
-        if (match && match[1]) {
-          lines.push(match[1].trim().replace(/^\n+|\n+$/g, ""));
-        } else {
-          lines.push(""); // Empty string for failed translations
-        }
+      let parsed: unknown;
+      try {
+        parsed = JSON.parse(batchResponse);
+      } catch {
+        // Some providers may still wrap JSON in prose/fences despite schema
+        // enforcement. Try to slice out the first {...} block.
+        const start = batchResponse.indexOf("{");
+        const end = batchResponse.lastIndexOf("}");
+        if (start === -1 || end === -1 || end <= start) return fallback();
+        parsed = JSON.parse(batchResponse.slice(start, end + 1));
       }
+
+      const translations = (parsed as any)?.translations;
+      if (!Array.isArray(translations)) return fallback();
+
+      return translations
+        .slice(0, expectedCount)
+        .map((t) => (typeof t === "string" ? t.trim() : ""))
+        .concat(
+          expectedCount > translations.length
+            ? new Array(expectedCount - translations.length).fill("")
+            : []
+        );
     } catch (error) {
       log.error(
         "LlmTranslationService",
         "Failed to parse batch translation response:",
         error
       );
-      // Return empty array on parse failure
-      return new Array(expectedCount).fill("");
+      return fallback();
     }
-    return lines;
   }
 
   /**
