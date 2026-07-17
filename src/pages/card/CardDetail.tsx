@@ -28,6 +28,7 @@ import {
   ICardEpisode,
   ICardInfo,
   ICardRarity,
+  ICardSupply,
   ICharacterRank,
   IEventCard,
   IEventInfo,
@@ -121,6 +122,7 @@ const CardDetail: React.FC<unknown> = observer(() => {
   const [another3dmvCutIns] =
     useCachedData<IAnother3dmvCutIn>("another3dmvCutIns");
   const [musics] = useCachedData<IMusicInfo>("musics");
+  const [cardSupplies] = useCachedData<ICardSupply>("cardSupplies");
 
   const { cardId } = useParams<{ cardId: string }>();
 
@@ -472,6 +474,14 @@ const CardDetail: React.FC<unknown> = observer(() => {
     () => <Typography align="right">{originalTrainedSkillInfo}</Typography>,
     [originalTrainedSkillInfo]
   );
+
+  const cardSupplyType = useMemo(() => {
+    if (!cardSupplies || !card) return null;
+    return (
+      cardSupplies.find((supply) => supply.id === card.cardSupplyId)
+        ?.cardSupplyType || null
+    );
+  }, [card, cardSupplies]);
 
   const getCharaUnitName = useCallback(
     (charaId: number) => {
@@ -919,6 +929,32 @@ const CardDetail: React.FC<unknown> = observer(() => {
               <Divider style={{ margin: "1% 0" }} />
             </Fragment>
           )}
+          <Grid
+            container
+            direction="row"
+            wrap="nowrap"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Grid item xs={3}>
+              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                {t("card:supplyType")}
+              </Typography>
+            </Grid>
+            <Grid item xs={8}>
+              <Grid
+                container
+                spacing={1}
+                alignItems="center"
+                justifyContent="flex-end"
+              >
+                <Grid item>
+                  {t(`filter:card_supply.${cardSupplyType || "unknown"}`)}
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Divider style={{ margin: "1% 0" }} />
           <Grid
             container
             direction="row"

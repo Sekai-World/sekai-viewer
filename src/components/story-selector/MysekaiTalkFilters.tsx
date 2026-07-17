@@ -233,7 +233,7 @@ export const CharacterFilter: React.FC<{
         </Grid>
         <Stack direction="row">
           <Button variant="text" onClick={handleSelectClear}>
-            {t("filter:select_clear")}
+            {t("filter:clear")}
           </Button>
         </Stack>
 
@@ -325,10 +325,10 @@ export const FixtureFilter: React.FC<{
         >
           <ToggleButton value="all">{t("common:all") || "All"}</ToggleButton>
           <ToggleButton value="fixture">
-            {t("mysekai:talk.fixtureFilter..withFixture") || "With Fixture"}
+            {t("mysekai:talk.fixtureFilter.withFixture") || "With Fixture"}
           </ToggleButton>
           <ToggleButton value="non-fixture">
-            {t("mysekai:talk.fixtureFilter..withoutFixture") ||
+            {t("mysekai:talk.fixtureFilter.withoutFixture") ||
               "Without Fixture"}
           </ToggleButton>
         </ToggleButtonGroup>

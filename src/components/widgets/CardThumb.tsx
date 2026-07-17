@@ -1,9 +1,8 @@
 import { Grid } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { ICardInfo } from "../../types.d";
 import {
   cardRarityTypeToRarity,
-  getRemoteAssetURL,
   useCachedData,
   useCardType,
 } from "../../utils";
@@ -17,22 +16,24 @@ import {
   cardThumbFrameMap,
   cardThumbMediumFrameMap,
 } from "../../utils/resources";
+import { assetUrl } from "../../utils/urls";
 import SvgSkeleton from "../styled/SvgSkeleton";
 import Svg from "../styled/Svg";
 
-export const CardThumb: React.FC<
-  {
-    cardId: number;
-    trained?: boolean;
-    level?: number;
-    masterRank?: number;
-    power?: number;
-    onClick?: React.MouseEventHandler<HTMLDivElement>;
-    style?: React.CSSProperties;
-  } & React.HTMLProps<HTMLDivElement>
-> = ({ cardId, trained = false, onClick, style, level, masterRank, power }) => {
-  const [cards] = useCachedData<ICardInfo>("cards");
-  const [card, setCard] = useState<ICardInfo>();
+type CardThumbProps = {
+  cardId: number;
+  card?: ICardInfo;
+  trained?: boolean;
+  level?: number;
+  masterRank?: number;
+  power?: number;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
+  style?: React.CSSProperties;
+} & React.HTMLProps<HTMLDivElement>;
+
+const CardThumbRenderer: React.FC<
+  Omit<CardThumbProps, "card"> & { card?: ICardInfo }
+> = ({ card, trained = false, onClick, style, level, masterRank, power }) => {
   const { isBirthdayCard } = useCardType(card);
   const _trained = useMemo(() => {
     const maxNormalLevel = [0, 20, 30, 40, 50];
@@ -47,21 +48,14 @@ export const CardThumb: React.FC<
     }
   }, [card, level, trained]);
 
-  useEffect(() => {
-    if (cards) setCard(cards.find((elem) => elem.id === cardId));
-  }, [cards, cardId]);
-
-  const [cardThumbImg, setCardThumbImg] = useState<string>("");
-  useEffect(() => {
-    if (card) {
-      getRemoteAssetURL(
-        `thumbnail/chara/${card.assetbundleName}_${
-          _trained ? "after_training" : "normal"
-        }.webp`,
-        setCardThumbImg,
-        "minio"
-      );
+  const cardThumbImg = useMemo(() => {
+    if (!card) {
+      return "";
     }
+
+    return `${assetUrl.minio.jp}/thumbnail/chara/${card.assetbundleName}_${
+      _trained ? "after_training" : "normal"
+    }.webp`;
   }, [card, _trained]);
 
   const rarityIcon = useMemo(
@@ -170,6 +164,35 @@ export const CardThumb: React.FC<
   );
 };
 
+const CardThumbWithCachedData: React.FC<CardThumbProps> = ({
+  cardId,
+  card: _card,
+  ...props
+}) => {
+  const [cards] = useCachedData<ICardInfo>("cards");
+  const card = useMemo(
+    () => cards?.find((elem) => elem.id === cardId),
+    [cards, cardId]
+  );
+
+  return <CardThumbRenderer cardId={cardId} card={card} {...props} />;
+};
+
+const CardThumbWithGivenCard: React.FC<CardThumbProps> = ({
+  card,
+  ...props
+}) => {
+  return <CardThumbRenderer card={card} {...props} />;
+};
+
+export const CardThumb = React.memo((props: CardThumbProps) => {
+  if (props.card) {
+    return <CardThumbWithGivenCard {...props} />;
+  }
+
+  return <CardThumbWithCachedData {...props} />;
+});
+
 export const CardThumbs: React.FC<{ cardIds: number[] }> = ({ cardIds }) => {
   return (
     <Grid
@@ -208,7 +231,7 @@ export const CardThumbs: React.FC<{ cardIds: number[] }> = ({ cardIds }) => {
 //   );
 // };
 
-export const CardThumbMedium: React.FC<
+const CardThumbMediumComponent: React.FC<
   {
     cardId: number;
     trained: boolean;
@@ -230,7 +253,10 @@ export const CardThumbMedium: React.FC<
   power,
 }) => {
   const [cards] = useCachedData<ICardInfo>("cards");
-  const [card, setCard] = useState<ICardInfo>();
+  const card = useMemo(
+    () => cards?.find((elem) => elem.id === cardId),
+    [cards, cardId]
+  );
   const { isBirthdayCard } = useCardType(card);
   const _trained = useMemo(() => {
     const maxNormalLevel = [0, 20, 30, 40, 50];
@@ -245,28 +271,22 @@ export const CardThumbMedium: React.FC<
     }
   }, [card, level, trained]);
 
-  useEffect(() => {
-    if (cards) setCard(cards.find((elem) => elem.id === cardId));
-  }, [cards, cardId]);
-
-  const [cardThumbImg, setCardThumbImg] = useState<string>("");
-  useEffect(() => {
-    if (card) {
-      getRemoteAssetURL(
-        `character/member_cutout/${card.assetbundleName}/${
-          isBirthdayCard
-            ? "normal"
-            : defaultImage
-              ? defaultImage === "special_training"
-                ? "after_training"
-                : "normal"
-              : _trained
-                ? "after_training"
-                : "normal"
-        }.webp`,
-        setCardThumbImg
-      );
+  const cardThumbImg = useMemo(() => {
+    if (!card) {
+      return "";
     }
+
+    const imageType = isBirthdayCard
+      ? "normal"
+      : defaultImage
+        ? defaultImage === "special_training"
+          ? "after_training"
+          : "normal"
+        : _trained
+          ? "after_training"
+          : "normal";
+
+    return `${assetUrl.minio.jp}/character/member_cutout/${card.assetbundleName}/${imageType}.webp`;
   }, [card, defaultImage, isBirthdayCard, _trained]);
 
   const rarityIcon = useMemo(
@@ -386,3 +406,5 @@ export const CardThumbMedium: React.FC<
     <SvgSkeleton variant="rectangular" />
   );
 };
+
+export const CardThumbMedium = React.memo(CardThumbMediumComponent);

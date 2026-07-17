@@ -1,100 +1,67 @@
-interface IQueueMember<T> {
-  index: number;
-  r: T;
+interface ITask<T> {
+  task: () => Promise<T>;
+  callback?: () => void;
 }
 /**
  * Simple promise quene for parallel execution for parallel download in sekai.best.
- * @default max_quene_length=5, globally
+ * @default maxQueueLength=5, globally
  * @author K_bai
  */
 export class PreloadQueue<T> {
-  private max_quene_length: number;
+  private maxQueueLength: number;
   private timeout: number;
-  private queue: (Promise<IQueueMember<T>> | number)[] = [];
-  private results: (T | undefined)[] = [];
+  private tasks: ITask<T>[];
+  private currentIndex: number;
+  private running: number;
+  private results: (T | null)[] = [];
 
-  constructor(max_quene_length = 5, timeout = 30) {
-    this.max_quene_length = max_quene_length;
+  constructor(tasks: ITask<T>[], maxQueueLength = 10, timeout = 60) {
+    this.tasks = tasks;
+    this.maxQueueLength = maxQueueLength;
     this.timeout = timeout;
-    this.init();
+    this.currentIndex = 0;
+    this.running = 0;
+    this.results = new Array(tasks.length).fill(undefined);
   }
 
-  private init() {
-    this.queue = [];
-    for (let i = 0; i < this.max_quene_length; i++) this.queue.push(0);
-  }
-
-  /**
-   * wait for one member to resolve if the queue reached maximum.
-   * @param wait_all - wait for all member to resolve if true. (default: false)
-   */
-  async wait(wait_all = false) {
-    let clear_queue = this.queue.filter((p) => p !== 0) as Promise<
-      IQueueMember<T>
-    >[];
-    while (
-      clear_queue.length >= this.max_quene_length ||
-      (wait_all && clear_queue.length > 0)
-    ) {
-      try {
-        const result = await Promise.race(clear_queue);
-        this.results.push(result.r);
-        this.queue[result.index] = 0;
-      } catch (result) {
-        const r = result as { index: number; err: Error };
-        this.results.push(undefined);
-        this.queue[r.index] = 0;
-        console.error(r.err);
-      }
-      clear_queue = this.queue.filter((p) => p !== 0) as Promise<
-        IQueueMember<T>
-      >[];
-    }
-  }
-
-  /**
-   * wait until the queue is not full and add a new task to queue.
-   * @param task - task ready to add. Note: task will execute immediately no matter reached limit.
-   * @param callback - callback function when task fulfilled.
-   */
-  async add(task: Promise<T>, callback?: () => void) {
-    await this.wait();
-    const index = this.queue.findIndex((p) => p === 0);
-    this.queue[index] = new Promise((resolve, reject) => {
-      let stop = false;
-      const timeout_id = setTimeout(() => {
-        stop = true;
-        reject({ index, err: new Error("Promise timeout.") });
-      }, this.timeout * 1000);
-      task
-        .then((result) => {
-          clearTimeout(timeout_id);
-          if (stop) reject({ index, err: new Error("Promise timeout.") });
-          if (callback) callback();
-          resolve({
-            index: index,
-            r: result,
-          });
-        })
-        .catch((reason) => {
-          clearTimeout(timeout_id);
-          if (stop) reject({ index, err: new Error("Promise timeout.") });
-          if (callback) callback();
-          reject({
-            index: index,
-            err: reason,
-          });
-        });
+  public async run(): Promise<(T | null)[]> {
+    return new Promise((resolve) => {
+      const runNext = () => {
+        if (this.running === 0 && this.currentIndex === this.tasks.length) {
+          resolve(this.results);
+          return;
+        }
+        while (
+          this.running < this.maxQueueLength &&
+          this.currentIndex < this.tasks.length
+        ) {
+          const taskIndex = this.currentIndex++;
+          const task = this.tasks[taskIndex].task;
+          const callback = this.tasks[taskIndex].callback;
+          this.running++;
+          const timeoutPromise = new Promise<never>((_, reject) =>
+            setTimeout(
+              () => reject(new Error(`${taskIndex}: Promise timeout.`)),
+              this.timeout * 1000
+            )
+          );
+          const promiseToRun = Promise.race([task(), timeoutPromise]);
+          promiseToRun
+            .then((result) => {
+              this.results[taskIndex] = result;
+            })
+            .catch((error) => {
+              console.error(error);
+              this.results[taskIndex] = null;
+            })
+            .finally(() => {
+              this.running--;
+              if (callback) callback();
+              runNext();
+            });
+        }
+      };
+      runNext();
     });
-    return;
-  }
-
-  /**
-   * wait for results for all the tasks added in the queue.
-   */
-  async all() {
-    await this.wait(true);
-    this.init();
-    return this.results;
   }
 }

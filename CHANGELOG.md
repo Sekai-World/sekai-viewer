@@ -2,6 +2,164 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.17.12](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.11...v1.17.12) (2026-03-01)
+
+
+### Features
+
+* **event:** add EventBoostCardsDialog component for managing boost card attributes and rarity ([aa9cec9](https://github.com/Sekai-World/sekai-viewer/commits/aa9cec9c14f67f2678bfa65cdd0c93381a13de85))
+
+
+### Bug Fixes
+
+* **event:** calculate minimum bonus correctly by adding master rank bonus ([8e72744](https://github.com/Sekai-World/sekai-viewer/commits/8e72744b5cd6cb39534d6702e0973279d617fcaa))
+* **event:** update rarity_birthday bonus and add extra bonus for events after 135 ([e00e5d9](https://github.com/Sekai-World/sekai-viewer/commits/e00e5d912c8ad727d6e293ae681b511b74969af8))
+
+### [1.17.11](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.10...v1.17.11) (2026-02-25)
+
+
+### Bug Fixes
+
+* **live2d:** fix [#654](https://github.com/Sekai-World/sekai-viewer/issues/654) ([0f12d57](https://github.com/Sekai-World/sekai-viewer/commits/0f12d579f6ebb7a8fa742c98b3baae34b9ee852d))
+* **music:** update TW_EXCLUSIVE_IDS to include 11012 ([524ef2f](https://github.com/Sekai-World/sekai-viewer/commits/524ef2ff0a5a8d93e4a725ac8575d66494340d88))
+
+### [1.17.10](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.9...v1.17.10) (2025-12-08)
+
+
+### Bug Fixes
+
+* **music:** add exclusive ID 701 to EN_EXCLUSIVE_IDS ([dda7d2d](https://github.com/Sekai-World/sekai-viewer/commits/dda7d2d252dd8c6a6248f6ef26a2f278cd9711ff))
+
+### [1.17.9](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.8...v1.17.9) (2025-12-05)
+
+
+### Bug Fixes
+
+* **music:** update exclusive IDs to include 694 for KR, EN, and TW ([e20c177](https://github.com/Sekai-World/sekai-viewer/commits/e20c177d4d15758889046276518490a54c5499c4))
+
+### [1.17.8](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.7...v1.17.8) (2025-11-12)
+
+
+### Features
+
+* add filter for Virtual Singer Original cards (supportUnit === "none") ([48237bd](https://github.com/Sekai-World/sekai-viewer/commits/48237bdba5f5ccd26304f8e371fa38dd410ab931))
+* **live2d:** add show ui button ([f65a7c9](https://github.com/Sekai-World/sekai-viewer/commits/f65a7c9772c1f84f770c2f9ada8a2a42fed6e7a7))
+
+
+### Bug Fixes
+
+* improve intersection check for loading more cards ([080d21a](https://github.com/Sekai-World/sekai-viewer/commits/080d21a2d6b9cda000bedd45e1bed7ad4115f70d))
+* **live2d:** do not continue after voice stops ([577a333](https://github.com/Sekai-World/sekai-viewer/commits/577a333c6c21b592dd3cc95b0ccc09215ad07efe))
+* **live2d:** fix [#622](https://github.com/Sekai-World/sekai-viewer/issues/622) add older version of live2d core lib ([65b2c10](https://github.com/Sekai-World/sekai-viewer/commits/65b2c100e14a35153f56a36e1777cf86b9bb7499))
+* **live2d:** fix [#626](https://github.com/Sekai-World/sekai-viewer/issues/626) ([7a89d7b](https://github.com/Sekai-World/sekai-viewer/commits/7a89d7bd28015dca0412c52fdff57299ca6fc218))
+
+
+### Refactors
+
+* address code review feedback ([1733784](https://github.com/Sekai-World/sekai-viewer/commits/173378478e840a30c6667cb3d6633e27593fd1f5))
+
+### [1.17.7](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.6...v1.17.7) (2025-10-28)
+
+
+### Features
+
+* **honor:** add support for birthday honor frame for middle rarity ([b55c902](https://github.com/Sekai-World/sekai-viewer/commits/b55c9024c1c023865d5cdf3869b60f1d246f4eb7))
+
+### [1.17.6](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.5...v1.17.6) (2025-10-27)
+
+
+### Features
+
+* **event:** refine event card bonus calculation logic ([1a68f2f](https://github.com/Sekai-World/sekai-viewer/commits/1a68f2f23840f15534adc66ef1ab5e0550d5d576))
+
+
+### Bug Fixes
+
+* **degree-image:** enhance birthday honor type handling by incorporating honor rarity ([995b6c1](https://github.com/Sekai-World/sekai-viewer/commits/995b6c1485d300155a5eb0155740fffd7fb736bf))
+* **degree-image:** update degree level icon handling for birthday honor type ([88b3661](https://github.com/Sekai-World/sekai-viewer/commits/88b366132cf417271b3cb5e1e38b9c1e5fa1088a))
+* **gacha:** simulator guarantee mechanism ([d3765ca](https://github.com/Sekai-World/sekai-viewer/commits/d3765caa7893ce88f06df9983ca08628ff253939))
+* **live2d:** adjust model directory handling for collabo egg path ([41ca877](https://github.com/Sekai-World/sekai-viewer/commits/41ca87766119bc024f0d77bfed671cb0d4756b72))
+* **live2d:** enhanced model name processing ([d66cb02](https://github.com/Sekai-World/sekai-viewer/commits/d66cb02d1d078a97736a9c6e49273ce958dcac90))
+* **music-detail:** correct EN_EXCLUSIVE_IDS by updating entry 657 ([e411d27](https://github.com/Sekai-World/sekai-viewer/commits/e411d27f3755fdb74aa3ee5f7a6881f29620952f))
+
+### [1.17.5](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.4...v1.17.5) (2025-10-20)
+
+
+### Bug Fixes
+
+* **event-detail:** adjust bonus calculation for piapro units based on event ID ([1545bce](https://github.com/Sekai-World/sekai-viewer/commits/1545bce84b6062bd5b7243b7db23c4abf8fdca54))
+* **story-reader:** do not increase event id since 177 ([1199d8d](https://github.com/Sekai-World/sekai-viewer/commits/1199d8d889a66958dddc0162a865cfcaaa08e25c)), closes [#634](https://github.com/Sekai-World/sekai-viewer/issues/634)
+
+### [1.17.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.3...v1.17.4) (2025-10-07)
+
+
+### Bug Fixes
+
+* **music:** update CN_EXCLUSIVE_IDS to include missing ID 76 ([f0933b4](https://github.com/Sekai-World/sekai-viewer/commits/f0933b46bc6b6d70ca0e05941f578478d5732a9e))
+
+### [1.17.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.2...v1.17.3) (2025-10-07)
+
+### [1.17.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.1...v1.17.2) (2025-10-05)
+
+
+### Features
+
+* **card:** add card supply filtering and related state management ([46c65b2](https://github.com/Sekai-World/sekai-viewer/commits/46c65b259226eb9bbc93e8fe81aeed572e44709f))
+* **card:** add card supply type display in CardDetail component ([ee2a839](https://github.com/Sekai-World/sekai-viewer/commits/ee2a839aeb63d48e7116b993d3591687b03e52fa))
+* **card:** add filter for cards with 3DMV cut-ins ([f39e160](https://github.com/Sekai-World/sekai-viewer/commits/f39e1602ce2279f552c1491bc2cf31a875c77e1c))
+* **card:** implement card image component with hover effects and lazy loading ([e531d39](https://github.com/Sekai-World/sekai-viewer/commits/e531d394ea22c58a42c5911c4d038d810a76b43e))
+* **intersection-observer:** add custom hook for lazy loading components ([d0d679a](https://github.com/Sekai-World/sekai-viewer/commits/d0d679ab97e4c991f5fd2fc2f3b6c2cdfdda1f41))
+
+
+### Bug Fixes
+
+* **filters:** correct translation keys for clear and fixture filter options ([4e58f71](https://github.com/Sekai-World/sekai-viewer/commits/4e58f710ac74028171cd7680891b08668d51354d))
+
+### [1.17.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.0...v1.17.1) (2025-09-30)
+
+
+### Bug Fixes
+
+* **banner:** 5th anniversary ([070f540](https://github.com/Sekai-World/sekai-viewer/commits/070f540d88c47105d7f956aba726f512b97110c2))
+* **music:** update EN_EXCLUSIVE_IDS to include missing ID 673 ([edfb717](https://github.com/Sekai-World/sekai-viewer/commits/edfb717d90c15b98f6398d2551f68c7bd04d8072))
+
+## [1.17.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.16.4...v1.17.0) (2025-09-20)
+
+
+### Features
+
+* **chibi:** add Chibi viewer ([432ee60](https://github.com/Sekai-World/sekai-viewer/commits/432ee6034e94457eab04152046d3f8a882e8e6cf))
+* **chibi:** add recording by ffmpeg.wasm ([0167214](https://github.com/Sekai-World/sekai-viewer/commits/016721465dd46db6973fc8a859e2495a44ae2b9c))
+* **chibi:** support older spine model && add switch to disable chibi model shadow ([633dbff](https://github.com/Sekai-World/sekai-viewer/commits/633dbffd862c4898285824f2878719a24805d63f))
+* **chibi:** trim transparent pixels for screenshot and recording ([571ca49](https://github.com/Sekai-World/sekai-viewer/commits/571ca49b2c5ef0300c8343bd0b1f2f4d8bd7c57f))
+* **live2d:** enhance loading progress handling and add warning support ([c900a2c](https://github.com/Sekai-World/sekai-viewer/commits/c900a2c86be32d9dade3c66bf3a400c899086584))
+* **live2d:** improve talk audio and lip sync handling ([aacca32](https://github.com/Sekai-World/sekai-viewer/commits/aacca32f67b22acbcf1f326e3f7fb0c4509d1b67))
+* **live2d:** speed up model appear action ([7d6d2b4](https://github.com/Sekai-World/sekai-viewer/commits/7d6d2b488fa6dc910160318c6969f6c879fc1bb2))
+
+
+### Bug Fixes
+
+* **event:** world link finale chapter ([d8b5a0a](https://github.com/Sekai-World/sekai-viewer/commits/d8b5a0a9bff26ba2cd95e3b3f4d23bb184aba55a))
+* **live2d:** wonder miku missing eyes ([30b2ff8](https://github.com/Sekai-World/sekai-viewer/commits/30b2ff8c42687a4713e5496446c2186544d5807f))
+
+
+### Refactors
+
+* **live2d:** update Live2D asset handling & fix typo ([cdd7fd8](https://github.com/Sekai-World/sekai-viewer/commits/cdd7fd8d38bf104984c0f48294b3c079911b807a))
+
+### [1.16.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.16.3...v1.16.4) (2025-08-09)
+
+
+### Bug Fixes
+
+* correctly display master lesson cost and reward ([2e18f69](https://github.com/Sekai-World/sekai-viewer/commits/2e18f697b7025acca5595fc899911a8a4aecd2f1))
+* update Transifex link to the dashboard ([74fe1d0](https://github.com/Sekai-World/sekai-viewer/commits/74fe1d03f78206b6838941da9b525ff460edb4cb))
+
+
+### Refactors
+
+* update exclusive IDs for music details ([5fe813f](https://github.com/Sekai-World/sekai-viewer/commits/5fe813fffe2de79d74178339c36d23309ed81702))
+
 ### [1.16.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.16.2...v1.16.3) (2025-07-23)
 
 

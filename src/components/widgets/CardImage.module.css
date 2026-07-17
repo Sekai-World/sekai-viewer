@@ -1,0 +1,141 @@
+.cardContainer {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%; /* 维持16:9宽高比 (576/1024) */
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.cardContent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.imageContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.leftImageWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%; /* 只占左侧50%空间 */
+  height: 100%;
+  overflow: hidden;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.rightImageWrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50%; /* 只占右侧50%空间 */
+  height: 100%;
+  overflow: hidden;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cardImage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.leftImage {
+  object-position: center; /* 显示图片中心部分 */
+}
+
+.rightImage {
+  object-position: center; /* 显示图片中心部分 */
+}
+
+/* 悬浮区域 */
+.hoverArea {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  z-index: 5;
+}
+
+.hoverAreaLeft {
+  left: 0;
+}
+
+.hoverAreaRight {
+  right: 0;
+}
+
+/* 悬浮效果 - 调整容器宽度 */
+.hoverAreaLeft:hover ~ .cardContent .imageContainer .leftImageWrapper {
+  width: 100%; /* 左容器展开到100% */
+}
+
+.hoverAreaLeft:hover ~ .cardContent .imageContainer .rightImageWrapper {
+  width: 0%; /* 右容器缩小到0% */
+}
+
+.hoverAreaRight:hover ~ .cardContent .imageContainer .leftImageWrapper {
+  width: 0%; /* 左容器缩小到0% */
+}
+
+.hoverAreaRight:hover ~ .cardContent .imageContainer .rightImageWrapper {
+  width: 100%; /* 右容器展开到100% */
+}
+
+/* 覆盖层元素 */
+.overlayContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+  /* 确保子元素可以显示 */
+  overflow: visible;
+}
+
+.frameOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.attrIcon {
+  position: absolute;
+  top: 2%;
+  right: 1.5%;
+  width: 8.6%;
+  height: 15.3%;
+}
+
+.rarityContainer {
+  position: absolute;
+  bottom: 2.5%; /* 调整底部位置 */
+  left: 1.5%; /* 调整左侧位置 */
+  display: flex;
+  flex-direction: column-reverse; /* 垂直排列，从底部开始 */
+  gap: 0; /* 星星之间无间隙 */
+  z-index: 15; /* 确保在所有其他元素之上 */
+}
+
+.rarityIcon {
+  width: 28%; /* 星星大小 */
+  height: 28%; /* 星星高度 */
+  display: block;
+  margin-top: 0; /* 无重叠 */
+}
+
+.rarityIcon:first-child {
+  margin-top: 0; /* 第一个星星不需要额外边距 */
+}

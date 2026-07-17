@@ -7,9 +7,6 @@ import {
   Tabs,
   Typography,
   Box,
-  Dialog,
-  DialogTitle,
-  DialogContent,
   Button,
 } from "@mui/material";
 import { TabContext } from "@mui/lab";
@@ -56,6 +53,8 @@ import TabPanelPadding from "../../components/styled/TabPanelPadding";
 import GridOut from "../../components/styled/GridOut";
 import LinkNoDecoration from "../../components/styled/LinkNoDecoration";
 import PaperContainer from "../../components/styled/PaperContainer";
+import eventCardBonus from "../../utils/eventCardBonus";
+import EventBoostCardsDialog, { IBoostCardItem } from "./EventBoostCardsDialog";
 
 const EventDetail: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
@@ -90,9 +89,7 @@ const EventDetail: React.FC<unknown> = observer(() => {
 
   const [event, setEvent] = useState<IEventInfo>();
   const [eventCards, setEventCards] = useState<IEventCard[]>([]);
-  const [boostCards, setBoostCards] = useState<
-    { card: ICardInfo; minBonus: number; maxBonus: number }[]
-  >([]);
+  const [boostCards, setBoostCards] = useState<IBoostCardItem[]>([]);
   const [eventDeckBonus, setEventDeckBonus] = useState<IEventDeckBonus[]>([]);
   const [eventAttrBonus, setEventAttrBonus] = useState<IEventDeckBonus>();
   const [eventBonusCharas, setEventBonusCharas] = useState<IGameCharaUnit[]>(
@@ -170,17 +167,14 @@ const EventDetail: React.FC<unknown> = observer(() => {
             gameCharacterUnits.find(
               (gcu) => gcu.id === elem.gameCharacterUnitId
             )!
-        );
+        )
+        .filter(
+          (gcu, idx, arr) =>
+            arr.findIndex(
+              (it) => it.gameCharacterId === gcu.gameCharacterId
+            ) === idx
+        ); // unique
       setEventBonusCharas(ebc);
-      const masterRankBonus = {
-        rarity_1: [0, 0.5, 0.5],
-        rarity_2: [0, 1, 1],
-        rarity_3: [0, 5, 5],
-        rarity_4: [0, 10, 15],
-        rarity_birthday: [0, 7.5, 10],
-      } as Record<string, number[]>;
-      const masterRankBonusIndex =
-        Number(eventId) >= 36 ? (Number(eventId) >= 54 ? 2 : 1) : 0;
       setBoostCards(() => {
         let result = cards
           .filter(
@@ -192,55 +186,16 @@ const EventDetail: React.FC<unknown> = observer(() => {
             const eventCard = ec.find(
               (it) => it.cardId === card.id && it.bonusRate !== undefined
             );
-            let finalEventBonus =
-              eventCard === undefined ? 0 : eventCard.bonusRate!;
 
-            finalEventBonus += edb.reduce((v, deckBonus) => {
-              if (
-                deckBonus.cardAttr !== undefined &&
-                deckBonus.cardAttr !== card.attr
-              ) {
-                return v;
-              }
-
-              if (deckBonus.gameCharacterUnitId !== undefined) {
-                const gameCharacterUnit = gameCharacterUnits.find(
-                  (it) => it.id === deckBonus.gameCharacterUnitId
-                )!;
-                if (gameCharacterUnit.gameCharacterId !== card.characterId) {
-                  return v;
-                }
-                if (
-                  gameCharacterUnit.gameCharacterId >= 21 &&
-                  gameCharacterUnit.unit !== card.supportUnit
-                ) {
-                  if (card.supportUnit !== "none") {
-                    return v;
-                  }
-                  return Math.max(
-                    v,
-                    gameCharacterUnit.unit === "piapro"
-                      ? deckBonus.bonusRate
-                      : deckBonus.bonusRate - 10
-                  );
-                }
-              }
-              return Math.max(v, deckBonus.bonusRate);
-            }, 0);
-
-            let maxBonus = finalEventBonus;
-            if (card.cardRarityType !== undefined) {
-              maxBonus +=
-                masterRankBonus[card.cardRarityType][masterRankBonusIndex];
-            }
-
-            return {
-              card: card,
-              maxBonus: maxBonus,
-              minBonus: finalEventBonus,
-            };
+            return eventCardBonus(
+              ev!.id,
+              card,
+              edb,
+              gameCharacterUnits,
+              eventCard
+            );
           })
-          .filter((it) => it.minBonus >= 40);
+          .filter((it) => it.minBonus >= 25);
 
         if (result.length) {
           const sortKey = "cardRarityType";
@@ -818,7 +773,7 @@ const EventDetail: React.FC<unknown> = observer(() => {
                           style={{ maxHeight: "36px" }}
                           src={charaIcons[`CharaIcon${chara.gameCharacterId}`]}
                           alt={`character ${chara.gameCharacterId}`}
-                        ></img>
+                        />
                       </Grid>
                     ))}
                   </Grid>
@@ -840,31 +795,35 @@ const EventDetail: React.FC<unknown> = observer(() => {
             </Grid>
           </Grid>
           <Divider style={{ margin: "1% 0" }} />
-          <Grid
-            item
-            container
-            direction="row"
-            wrap="nowrap"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Grid item xs={3}>
-              <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-                {t("event:boostCards")}
-              </Typography>
-            </Grid>
-            <Grid item>
-              <Button
-                onClick={() => {
-                  setIsCardsDialog(true);
-                }}
-                variant="contained"
+          {boostCards.length > 0 && (
+            <Fragment>
+              <Grid
+                item
+                container
+                direction="row"
+                wrap="nowrap"
+                justifyContent="space-between"
+                alignItems="center"
               >
-                {t("common:show")}
-              </Button>
-            </Grid>
-          </Grid>
-          <Divider style={{ margin: "1% 0" }} />
+                <Grid item xs={3}>
+                  <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
+                    {t("event:boostCards")}
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Button
+                    onClick={() => {
+                      setIsCardsDialog(true);
+                    }}
+                    variant="contained"
+                  >
+                    {t("common:show")}
+                  </Button>
+                </Grid>
+              </Grid>
+              <Divider style={{ margin: "1% 0" }} />
+            </Fragment>
+          )}
         </GridOut>
       </ContainerContent>
       <TypographyHeader>{t("common:card")}</TypographyHeader>
@@ -1152,33 +1111,39 @@ const EventDetail: React.FC<unknown> = observer(() => {
                   key={chapter.chapterNo}
                 >
                   <GridOut container direction="column">
-                    <Grid
-                      item
-                      container
-                      direction="row"
-                      wrap="nowrap"
-                      justifyContent="space-between"
-                      alignItems="center"
-                    >
-                      <Grid item xs={5}>
-                        <Typography
-                          variant="subtitle1"
-                          style={{ fontWeight: 600 }}
+                    {chapter.gameCharacterId && (
+                      <Fragment>
+                        <Grid
+                          item
+                          container
+                          direction="row"
+                          wrap="nowrap"
+                          justifyContent="space-between"
+                          alignItems="center"
                         >
-                          {t("common:character")}
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <img
-                          style={{ maxHeight: "48px" }}
-                          src={
-                            charaIcons[`CharaIcon${chapter.gameCharacterId}`]
-                          }
-                          alt={`character ${chapter.gameCharacterId}`}
-                        />
-                      </Grid>
-                    </Grid>
-                    <Divider style={{ margin: "1% 0" }} />
+                          <Grid item xs={5}>
+                            <Typography
+                              variant="subtitle1"
+                              style={{ fontWeight: 600 }}
+                            >
+                              {t("common:character")}
+                            </Typography>
+                          </Grid>
+                          <Grid item>
+                            <img
+                              style={{ maxHeight: "48px" }}
+                              src={
+                                charaIcons[
+                                  `CharaIcon${chapter.gameCharacterId}`
+                                ]
+                              }
+                              alt={`character ${chapter.gameCharacterId}`}
+                            />
+                          </Grid>
+                        </Grid>
+                        <Divider style={{ margin: "1% 0" }} />
+                      </Fragment>
+                    )}
                     <Grid
                       item
                       container
@@ -1308,36 +1273,16 @@ const EventDetail: React.FC<unknown> = observer(() => {
         zoomSpeed={0.25}
         onChange={(_, idx) => setActiveIdx(idx)}
       />
-      <Dialog
-        open={isCardsDialog}
-        onClose={() => {
-          setIsCardsDialog(false);
-        }}
-        fullWidth
-      >
-        <DialogTitle>{t("event:boostCards")}</DialogTitle>
-        <DialogContent>
-          <Grid container spacing={1}>
-            {boostCards.map((card) => (
-              <Grid key={card.card.id} item xs={4} md={2}>
-                <LinkNoDecoration to={"/card/" + card.card.id} target="_blank">
-                  <Grid container direction="column">
-                    <CardThumb cardId={card.card.id} />
-                    <Typography
-                      align="center"
-                      style={{ whiteSpace: "pre-line" }}
-                    >
-                      +{card.minBonus}
-                      {card.maxBonus > card.minBonus ? `~${card.maxBonus}` : ""}
-                      %
-                    </Typography>
-                  </Grid>
-                </LinkNoDecoration>
-              </Grid>
-            ))}
-          </Grid>
-        </DialogContent>
-      </Dialog>
+      {boostCards.length > 0 && (
+        <EventBoostCardsDialog
+          open={isCardsDialog}
+          onClose={() => {
+            setIsCardsDialog(false);
+          }}
+          boostCards={boostCards}
+          defaultAttribute={eventAttrBonus?.cardAttr}
+        />
+      )}
     </Fragment>
   ) : (
     <div>

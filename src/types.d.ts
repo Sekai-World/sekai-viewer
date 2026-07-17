@@ -149,7 +149,6 @@ export interface ICardInfo {
   cardSupplyId: number;
   archiveDisplayType?: string;
   archivePublishedAt: number;
-  cardSupplyId: number;
   cardParameters: CardParameter[];
   specialTrainingCosts: SpecialTrainingCost[];
   masterLessonAchieveResources: MasterLessonAchieveResource[];
@@ -981,7 +980,9 @@ export interface IEventCard {
   id: number;
   cardId: number;
   eventId: number;
-  bonusRate?: number;
+  bonusRate: number;
+  leaderBonusRate: number;
+  isDisplayCardStory: boolean;
 }
 
 export interface IGachaCeilItem {
@@ -1169,6 +1170,16 @@ export interface ICharacter3D {
   name: string;
   headCostume3dId: number;
   bodyCostume3dId: number;
+}
+
+export interface ICostume2D {
+  id: number;
+  costume2dGroupId: number;
+  character2dId: number;
+  fromMmddhh: string;
+  toMmddhh: string;
+  live2dAssetbundleName?: string;
+  spineAssetbundleName?: string;
 }
 
 export interface ICostume3DModel {
@@ -1798,4 +1809,10 @@ export interface MysekaiDataContext {
   talkConditionGroups?: IMysekaiTalkConditionGroup[];
   talks?: IMysekaiTalk[];
   characterGroups?: IMysekaiGameCharacterUnitGroups[];
+}
+
+export interface EventCardBonus {
+  card: ICardInfo;
+  minBonus: number;
+  maxBonus: number;
 }

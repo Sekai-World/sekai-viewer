@@ -1,4 +1,4 @@
-import type { ILive2DLayerData, ILive2DCachedAsset } from "./types.d";
+import type { ILive2DLayerData, ILive2DScenarioResource } from "./types.d";
 import { Texture } from "pixi.js";
 import { Container } from "pixi.js";
 import type { Application } from "pixi.js";
@@ -53,7 +53,7 @@ export class Live2DPlayer {
   constructor(
     app: Application,
     stage_size: [number, number],
-    ui_assets: ILive2DCachedAsset[],
+    ui_assets: ILive2DScenarioResource,
     screen_length = 2000
   ) {
     this.app = app;
@@ -61,9 +61,9 @@ export class Live2DPlayer {
     this.animate = new AnimationController();
     this.events = new Live2DPlayerEventEmitter();
     // create texture
-    const textures = ui_assets.map((asset) => ({
-      identifer: asset.identifer,
-      texture: Texture.from(asset.data as HTMLImageElement),
+    const textures = ui_assets.image.map((asset) => ({
+      identifier: asset.identifier,
+      texture: Texture.from(asset.data),
     }));
 
     //initilize stage

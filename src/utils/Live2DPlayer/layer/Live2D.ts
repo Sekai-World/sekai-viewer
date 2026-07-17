@@ -21,10 +21,11 @@ import {
   MotionPreloadStrategy,
   config,
   Cubism4InternalModel,
-} from "pixi-live2d-display-mulmotion";
-config.fftSize = 8192;
+} from "@sekai-world/pixi-live2d-display-mulmotion";
 config.logLevel = config.LOG_LEVEL_ERROR;
-import type { Live2DModelOptions } from "pixi-live2d-display-mulmotion";
+import type { Live2DModelOptions } from "@sekai-world/pixi-live2d-display-mulmotion";
+
+import { Howler, Howl } from "howler";
 
 // effects
 import Hologram from "../animation/Hologram";
@@ -35,6 +36,8 @@ export default class Live2D extends BaseLayer {
     effect: Container;
   };
   layout_mode: "normal" | "three_models" = "normal";
+  audio_analyzer?: AnalyserNode;
+  current_sound?: Howl;
   constructor(data: ILive2DLayerData) {
     super(data);
     this.structure = {
@@ -120,7 +123,8 @@ export default class Live2D extends BaseLayer {
   update_motion = async (
     motion_type: "Motion" | "Expression",
     costume: string,
-    motion_index: number
+    motion_index: number,
+    to_last_frame: boolean = false
   ) => {
     const model = this.find(costume);
     if (model) {
@@ -128,11 +132,14 @@ export default class Live2D extends BaseLayer {
       let manager = model.internalModel.parallelMotionManager[0];
       if (motion_type === "Expression") {
         manager = model.internalModel.parallelMotionManager[1];
+        // reset lipsync param to 0
+        this.reset_lipsync_param(model);
       }
       await manager.startMotion(
         motion_type,
         motion_index,
-        MotionPriority.FORCE
+        MotionPriority.FORCE,
+        to_last_frame
       );
       model.live2DInfo.wait_motion = this.animation_controller.wrapper(
         () => {},
@@ -141,6 +148,14 @@ export default class Live2D extends BaseLayer {
       await model.live2DInfo.wait_motion;
       model.live2DInfo.t_pose = false;
     }
+  };
+
+  reset_lipsync_param = (model: Live2DModelWithInfo) => {
+    (model.internalModel.coreModel as any).setParameterValueById(
+      "ParamMouthOpenY",
+      0,
+      1
+    );
   };
 
   show_model = async (costume: string, time: number) => {
@@ -204,39 +219,70 @@ export default class Live2D extends BaseLayer {
     }
   };
 
-  speak = (costume: string, url: string, volume: number) => {
-    const model = this.find(costume);
-    if (model) {
-      model.speak(url, {
-        volume,
-        resetExpression: false,
-        crossOrigin: "anonymous",
-        onFinish: () => {
-          model.live2DInfo.speaking = false;
-        },
+  init_analyzer = () => {
+    if (Howler.ctx && !this.audio_analyzer) {
+      this.audio_analyzer = Howler.ctx.createAnalyser();
+      this.audio_analyzer.fftSize = 2048;
+      this.audio_analyzer.minDecibels = -100;
+      this.audio_analyzer.maxDecibels = -10;
+      this.audio_analyzer.smoothingTimeConstant = 0.85;
+    }
+  };
+
+  speak = (costumes: string[], sound: Howl, volume: number) => {
+    this.stop_speaking();
+    const models = costumes.map((c) => this.find(c)).filter((m) => !!m);
+    this.init_analyzer();
+    if (models.length > 0 && this.audio_analyzer) {
+      // get sound gain node by Howler internal method
+      const gain = (sound as any)._sounds[0]._node as GainNode;
+      gain.disconnect();
+      this.audio_analyzer.disconnect();
+      gain.connect(this.audio_analyzer);
+      // connect analyzer to output
+      this.audio_analyzer.connect(Howler.masterGain);
+      sound.volume(volume);
+      sound.play();
+      sound.once("end", () => {
+        models.forEach((m) => {
+          m.stopSpeaking();
+          m.live2DInfo.speaking = false;
+        });
+        gain.disconnect();
       });
-      model.live2DInfo.speaking = true;
-      this.structure.live2d.removeChild(model);
-      this.structure.live2d.addChild(model);
+      this.current_sound = sound;
+      models.forEach((model) => {
+        if (this.audio_analyzer)
+          model.internalModel.motionManager.attachAnalyzer(this.audio_analyzer);
+        // reset lipsync param to 0
+        this.reset_lipsync_param(model);
+        model.live2DInfo.speaking = true;
+        // pull speaking model to the front
+        this.structure.live2d.removeChild(model);
+        this.structure.live2d.addChild(model);
+      });
     }
   };
   stop_speaking = () => {
+    // disconnect analyzer node from master gain node
+    if (this.audio_analyzer) this.audio_analyzer.disconnect();
+    if (this.current_sound) {
+      // clear all listeners or will fire end event
+      this.current_sound.off("end");
+      // disconnect from analyzer
+      const gain = (this.current_sound as any)._sounds[0]._node as GainNode;
+      gain.disconnect();
+      // stop current talk
+      this.current_sound.stop();
+    }
+    this.current_sound = undefined;
+    // disconnect from models
     this.get_model_list().forEach((m) => {
       if (m.live2DInfo.speaking) {
         m.stopSpeaking();
         m.live2DInfo.speaking = false;
       }
     });
-  };
-  all_speak_finish = () => {
-    return this.animation_controller.wrapper(
-      () => {},
-      () =>
-        !this.get_model_list().reduce(
-          (accu, curr) => accu || curr.live2DInfo.speaking,
-          false
-        )
-    );
   };
 
   add_effect = (costume: string, ani_type: "hologram" = "hologram") => {
@@ -294,6 +340,7 @@ export default class Live2D extends BaseLayer {
   };
 
   destroy() {
+    this.stop_speaking();
     this.structure.live2d.children.forEach((m) => m.destroy());
   }
 }
@@ -315,6 +362,8 @@ class Live2DModelWithInfo extends Live2DModel {
   }
   destroy() {
     this.live2DInfo.animations.forEach((a) => a.destroy());
+    // disconnect analyzer
+    this.stopSpeaking();
     super.destroy();
   }
 }

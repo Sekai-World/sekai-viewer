@@ -123,7 +123,8 @@ export default async function action_layout(
         await controller.apply_live2d_motion(
           costume,
           action_detail.MotionName,
-          action_detail.FacialName
+          action_detail.FacialName,
+          true
         );
         // Step 2: Show. (after motion finished)
         const show = controller.layers.live2d.show_model(costume, 200);

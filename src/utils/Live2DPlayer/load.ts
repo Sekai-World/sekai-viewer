@@ -2,18 +2,23 @@ import Axios from "axios";
 import { Howl } from "howler";
 import { SnippetAction } from "../../types.d";
 import type { ILive2dModelListElement, IScenarioData } from "../../types.d";
+import { log } from "./log";
 
-import {
-  Live2DAssetTypeImage,
-  Live2DAssetTypeSound,
-  Live2DAssetTypeVideo,
-} from "./types.d";
 import type {
   ILive2DCachedAsset,
   ILive2DAssetUrl,
+  ILive2DScenarioResource,
   ILive2DControllerData,
   ILive2DModelDataCollection,
-  IProgressEvent,
+  ILive2DLoadProgressHandler,
+  ILive2DLoadWarningHandler,
+} from "./types.d";
+
+import {
+  isLive2DImageAsset,
+  isLive2DAudioAsset,
+  isLive2DVideoAsset,
+  Live2DLoadProgressType,
 } from "./types.d";
 
 import { getUIMediaUrls } from "./ui_assets";
@@ -25,12 +30,17 @@ import { assetUrl } from "../urls";
 export async function getLive2DControllerData(
   snData: IScenarioData,
   mediaUrlForLive2D: ILive2DAssetUrl[],
-  progress: IProgressEvent
+  onProgress: ILive2DLoadProgressHandler,
+  onWarning: ILive2DLoadWarningHandler
 ): Promise<ILive2DControllerData> {
   // step 3.1.2 - get live2d player ui urls
   mediaUrlForLive2D.push(...getUIMediaUrls(snData));
   // step 3.2 - preload sound/image
-  const scenarioResource = await preloadMedia(mediaUrlForLive2D, progress);
+  const scenarioResource = await preloadMedia(
+    mediaUrlForLive2D,
+    onProgress,
+    onWarning
+  );
   // step 3.3 - get live2d model data
   const modelData = [];
   const total = snData.AppearCharacters.length;
@@ -40,7 +50,7 @@ export async function getLive2DControllerData(
   let count = 0;
   for (const c of snData.AppearCharacters) {
     count++;
-    progress("model_data", count, total, c.CostumeType);
+    onProgress(Live2DLoadProgressType.ModelData, count, total, c.CostumeType);
     const modelItem = modelList.find(
       (m: ILive2dModelListElement) => m.modelBase === c.CostumeType
     );
@@ -65,89 +75,111 @@ export async function getLive2DControllerData(
 // step 4 - preload model
 export async function preloadModels(
   controllerData: ILive2DControllerData,
-  progress: IProgressEvent
+  onProgress: ILive2DLoadProgressHandler
 ) {
   let count = 0;
   const total = controllerData.modelData.length * 3;
   // step 4.1 - preload model assets
-  const queue = new PreloadQueue();
+  const taskList = [];
   for (const model of controllerData.modelData) {
-    await queue.wait();
-    await queue.add(
-      Axios.get(model.data.url + model.data.FileReferences.Textures[0]),
-      () => {
-        progress("model_assets", count, total, `${model.costume}/texture`);
+    taskList.push({
+      task: () =>
+        Axios.get(model.data.url + model.data.FileReferences.Textures[0]),
+      callback: function () {
+        onProgress(
+          Live2DLoadProgressType.ModelAssets,
+          count,
+          total,
+          `${model.costume}/texture`
+        );
         count++;
-      }
-    );
-    await queue.wait();
-    await queue.add(
-      Axios.get(model.data.url + model.data.FileReferences.Moc),
-      () => {
-        progress("model_assets", count, total, `${model.costume}/moc`);
+      },
+    });
+    taskList.push({
+      task: () => Axios.get(model.data.url + model.data.FileReferences.Moc),
+      callback: function () {
+        onProgress(
+          Live2DLoadProgressType.ModelAssets,
+          count,
+          total,
+          `${model.costume}/moc`
+        );
         count++;
-      }
-    );
-    await queue.wait();
-    await queue.add(
-      Axios.get(model.data.url + model.data.FileReferences.Physics),
-      () => {
-        progress("model_assets", count, total, `${model.costume}/physics`);
+      },
+    });
+    taskList.push({
+      task: () => Axios.get(model.data.url + model.data.FileReferences.Physics),
+      callback: function () {
+        onProgress(
+          Live2DLoadProgressType.ModelAssets,
+          count,
+          total,
+          `${model.costume}/physics`
+        );
         count++;
-      }
-    );
+      },
+    });
   }
-  await queue.all();
+  const queue = new PreloadQueue(taskList);
+  const rst = await queue.run();
+  if (rst.filter((r) => r === null).length > 0)
+    throw new Error("Asset download failed.");
   // step 4.2 - discard useless motions in all model
   controllerData.modelData = discardMotion(
     controllerData.scenarioData,
     controllerData.modelData
   );
-  // step 4.3 - preload motions
-  await preloadModelMotion(controllerData.modelData, progress);
 }
 
 // step 3.2 - preload sound/image/video
 export async function preloadMedia(
   urls: ILive2DAssetUrl[],
-  progress: IProgressEvent
-): Promise<ILive2DCachedAsset[]> {
-  const queue = new PreloadQueue<ILive2DCachedAsset>();
+  onProgress: ILive2DLoadProgressHandler,
+  onWarning: ILive2DLoadWarningHandler
+): Promise<ILive2DScenarioResource> {
   const total = urls.length;
+
+  // image
+  const taskList = [];
   let count = 0;
   for (const url of urls) {
-    await queue.wait();
-    await queue.add(
-      new Promise((resolve, reject) => {
-        if (Live2DAssetTypeSound.includes(url.type)) {
-          preloadSound(url.url)
-            .then((data) => {
-              resolve({ ...url, data });
-            })
-            .catch(reject);
-        } else if (Live2DAssetTypeImage.includes(url.type)) {
-          preloadImage(url.url)
-            .then((data) => {
-              resolve({ ...url, data });
-            })
-            .catch(reject);
-        } else if (Live2DAssetTypeVideo.includes(url.type)) {
-          preloadVideo(url.url)
-            .then((data) => {
-              resolve({ ...url, data });
-            })
-            .catch(reject);
-        } else {
-          resolve({ ...url, data: null });
+    taskList.push({
+      task: async (): Promise<ILive2DCachedAsset> => {
+        try {
+          if (isLive2DImageAsset(url)) {
+            const data = await preloadImage(url.url);
+            log.log("Live2DPlayerLoader", `${url.url} loaded.`);
+            return { ...url, data };
+          } else if (isLive2DVideoAsset(url)) {
+            const data = await preloadVideo(url.url);
+            log.log("Live2DPlayerLoader", `${url.url} loaded.`);
+            return { ...url, data };
+          } else if (isLive2DAudioAsset(url)) {
+            const data = await preloadSound(url.url);
+            log.log("Live2DPlayerLoader", `${url.url} loaded.`);
+            return { ...url, data };
+          } else {
+            throw new Error("Wrong asset type.");
+          }
+        } catch (err) {
+          if (err instanceof Error) onWarning(err.message);
+          throw err;
         }
-      }),
-      () => {
+      },
+      callback: function () {
         count++;
-        progress("media", count, total, url.identifer);
-      }
-    );
+        onProgress(Live2DLoadProgressType.Media, count, total, url.identifier);
+      },
+    });
   }
-  return (await queue.all()).filter((d) => !!d);
+  const queue = new PreloadQueue<ILive2DCachedAsset>(taskList);
+  const assetList = (await queue.run()).filter((d) => !!d);
+  const scenario_resource: ILive2DScenarioResource = {
+    image: assetList.filter((a) => isLive2DImageAsset(a)),
+    video: assetList.filter((a) => isLive2DVideoAsset(a)),
+    audio: assetList.filter((a) => isLive2DAudioAsset(a)),
+  };
+  return scenario_resource;
 }
 function preloadImage(url: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -165,6 +197,7 @@ function preloadSound(url: string): Promise<Howl> {
       onload: () => resolve(sound),
       onloaderror: () => reject(new Error(`Failed to load sound: ${url}`)),
       loop: false,
+      html5: false,
     });
   });
 }
@@ -299,10 +332,11 @@ function discardMotion(
   });
   return modelData;
 }
-// step 4.3 - preload motions
-async function preloadModelMotion(
+// step 5 - preload motions
+export async function preloadModelMotion(
   modelData: ILive2DModelDataCollection[],
-  progress: IProgressEvent
+  onProgress: ILive2DLoadProgressHandler,
+  onWarning: ILive2DLoadWarningHandler
 ) {
   // gather all motions
   const motion_list: {
@@ -331,13 +365,25 @@ async function preloadModelMotion(
   // preload by axios
   const total = unique_motion.length;
   let count = 0;
-  const queue = new PreloadQueue<null>();
+  const taskList = [];
   for (const motion of unique_motion) {
-    await queue.wait();
-    await queue.add(Axios.get(motion.url), () => {
-      count++;
-      progress("model_motion", count, total, motion.origin);
+    taskList.push({
+      task: () =>
+        Axios.get(motion.url).catch((err) => {
+          onWarning(err.message);
+          throw err;
+        }),
+      callback: function () {
+        count++;
+        onProgress(
+          Live2DLoadProgressType.ModelMotion,
+          count,
+          total,
+          motion.origin
+        );
+      },
     });
   }
-  await queue.all();
+  const queue = new PreloadQueue(taskList);
+  await queue.run();
 }

@@ -616,24 +616,23 @@ export function useMediaUrlForLive2D() {
                   (ch) => ch.id === talkData.TalkCharacters[0].Character2dId
                 )!;
               }
-              const url: ILive2DAssetUrl[] = [];
               for (const v of talkData.Voices) {
-                url.push({
-                  identifer: v.VoiceId,
-                  type: Live2DAssetType.Talk,
-                  url: await getTalkVoiceUrl(
-                    voiceMap,
-                    AssetbundleName,
-                    talkData,
-                    info.isCardStory,
-                    info.isActionSet,
-                    info.region,
-                    chara2d
-                  ),
-                });
+                const url = await getTalkVoiceUrl(
+                  voiceMap,
+                  AssetbundleName,
+                  talkData,
+                  info.isCardStory,
+                  info.isActionSet,
+                  info.region,
+                  chara2d
+                );
+                if (!ret.map((r) => r.url).includes(url))
+                  ret.push({
+                    identifier: v.VoiceId,
+                    type: Live2DAssetType.Talk,
+                    url,
+                  });
               }
-              for (const s of url)
-                if (!ret.map((r) => r.url).includes(s.url)) ret.push(s);
             }
             break;
           case SnippetAction.SpecialEffect:
@@ -642,13 +641,13 @@ export function useMediaUrlForLive2D() {
               switch (seData.EffectType) {
                 case SpecialEffectType.ChangeBackground:
                   {
-                    const identifer = seData.StringValSub;
+                    const identifier = seData.StringValSub;
                     const url = await getBackgroundImageUrl(
                       seData.StringValSub
                     );
                     if (ret.map((r) => r.url).includes(url)) continue;
                     ret.push({
-                      identifer,
+                      identifier,
                       type: Live2DAssetType.BackgroundImage,
                       url,
                     });
@@ -656,14 +655,14 @@ export function useMediaUrlForLive2D() {
                   break;
                 case SpecialEffectType.FullScreenText:
                   {
-                    const identifer = seData.StringValSub;
+                    const identifier = seData.StringValSub;
                     const url = await getFullScreenTextVoiceUrl(
                       AssetbundleName,
                       seData.StringValSub
                     );
                     if (ret.map((r) => r.url).includes(url)) continue;
                     ret.push({
-                      identifer,
+                      identifier,
                       type: Live2DAssetType.Talk,
                       url,
                     });
@@ -671,11 +670,11 @@ export function useMediaUrlForLive2D() {
                   break;
                 case SpecialEffectType.Movie:
                   {
-                    const identifer = seData.StringVal;
+                    const identifier = seData.StringVal;
                     const url = await getMovieUrl(seData.StringVal);
                     if (ret.map((r) => r.url).includes(url)) continue;
                     ret.push({
-                      identifer,
+                      identifier,
                       type: Live2DAssetType.Video,
                       url,
                     });
@@ -688,20 +687,20 @@ export function useMediaUrlForLive2D() {
             {
               const soundData = SoundData[snippet.ReferenceIndex];
               if (soundData.Bgm) {
-                const identifer = soundData.Bgm;
+                const identifier = soundData.Bgm;
                 const url = await getBgmUrl(soundData.Bgm);
                 if (ret.map((r) => r.url).includes(url)) continue;
                 ret.push({
-                  identifer,
+                  identifier,
                   type: Live2DAssetType.BackgroundMusic,
                   url,
                 });
               } else if (soundData.Se) {
-                const identifer = soundData.Se;
+                const identifier = soundData.Se;
                 const url = await getSoundEffectUrl(soundData.Se);
                 if (ret.map((r) => r.url).includes(url)) continue;
                 ret.push({
-                  identifer,
+                  identifier,
                   type: Live2DAssetType.SoundEffect,
                   url,
                 });
@@ -1008,11 +1007,11 @@ function modelNameFix(info: IScenarioInfo, data: IScenarioData) {
 function scenarioIdToAssetbundleName(scenarioId: string) {
   let result = scenarioId;
 
-  // Handle event number offset: if contains "event_" and number > 166, increment by 1
+  // Handle event number offset: if contains "event_" and number between 166 and 177, increment by 1
   const eventMatch = result.match(/event_(\d+)/);
   if (eventMatch) {
     const eventNumber = parseInt(eventMatch[1]);
-    if (eventNumber > 166) {
+    if (eventNumber > 166 && eventNumber < 177) {
       result = result.replace(/event_(\d+)/, `event_${eventNumber + 1}`);
     }
   }

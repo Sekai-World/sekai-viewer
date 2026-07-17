@@ -9,11 +9,13 @@ import {
 } from "../../types.d";
 import { getRemoteAssetURL, useCachedData, useCompactData } from "../../utils";
 import { degreeFrameMap, degreeFrameSubMap } from "../../utils/resources";
-import degreeLevelIcon from "../../assets/frame/icon_degreeLv.png";
+import degreeLevelIconImport from "../../assets/frame/icon_degreeLv.png";
 import degreeLevel6Icon from "../../assets/frame/icon_degreeLv6.png";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
 import Svg from "../styled/Svg";
+
+const honorRarityList = ["low", "middle", "high", "highest"] as const;
 
 const DegreeImage: React.FC<
   {
@@ -49,6 +51,7 @@ const DegreeImage: React.FC<
     const [degreeImage, setDegreeImage] = useState<string>("");
     const [degreeFrameImage, setDegreeFrameImage] = useState<string>("");
     const [degreeRankImage, setDegreeRankImage] = useState<string>("");
+    const [degreeLevelIcon, setDegreeLevelIcon] = useState<string>("");
     const [isWorldLinkDegree, setIsWorldLinkDegree] = useState(false);
 
     useEffect(() => {
@@ -146,7 +149,8 @@ const DegreeImage: React.FC<
                 (honorGroup.honorType == "achievement" &&
                   [33, 36, 37, 52, 72, 73, 74, 75, 76, 77].includes(
                     honorGroup.id
-                  )))
+                  )) ||
+                (honorGroup.honorType == "birthday" && !!honorGroup.frameName))
           );
         }
 
@@ -180,6 +184,29 @@ const DegreeImage: React.FC<
         setIsDrawHonorLevel(drawHonorLevel ?? true);
       };
     }, [drawHonorLevel, honor, honorGroups, honorLevel]);
+
+    useEffect(() => {
+      if (honor && honorGroup && isDrawHonorLevel) {
+        if (honorGroup.honorType === "birthday" && honor.honorRarity) {
+          getRemoteAssetURL(
+            `honor_frame/${honorGroup.frameName}/frame_degree_level_${honorRarityList.indexOf(honor.honorRarity as "low") + 1}.webp`,
+            setDegreeLevelIcon,
+            "minio",
+            region
+          );
+        } else {
+          setDegreeLevelIcon(degreeLevelIconImport);
+        }
+      }
+    }, [
+      isDrawHonorLevel,
+      honor,
+      region,
+      sub,
+      honorGroup,
+      honorLevel,
+      degreeLevelIcon,
+    ]);
 
     useEffect(() => {
       if (honor) {
@@ -226,6 +253,18 @@ const DegreeImage: React.FC<
               `honor_frame/${honorGroup.frameName}/frame_degree_${
                 sub ? "s" : "m"
               }_3.webp`,
+              setDegreeFrameImage,
+              "minio",
+              region
+            );
+          } else if (
+            honorGroup.honorType === "birthday" &&
+            honor.honorRarity === "middle"
+          ) {
+            getRemoteAssetURL(
+              `honor_frame/${honorGroup.frameName}/frame_degree_${
+                sub ? "s" : "m"
+              }_2.webp`,
               setDegreeFrameImage,
               "minio",
               region
@@ -324,7 +363,7 @@ const DegreeImage: React.FC<
             <image
               key={idx}
               href={degreeLevelIcon}
-              x={50 + idx * 16}
+              x={(honorGroup?.honorType == "birthday" ? 180 : 50) + idx * 16}
               y="64"
               height="16"
               width="16"

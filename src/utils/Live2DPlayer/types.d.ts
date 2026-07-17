@@ -5,48 +5,100 @@ import type { Curve, CurveFunction } from "./animation/Curve";
 import { Texture, DisplayObject } from "pixi.js";
 
 export enum Live2DAssetType {
-  SoundEffect,
-  BackgroundMusic,
-  Talk,
-  UI,
-  UISheet,
-  UIVideo,
-  BackgroundImage,
-  Video,
+  SoundEffect = "sound-effect",
+  BackgroundMusic = "bgm",
+  Talk = "talk",
+  UI = "ui",
+  UISheet = "ui-sheet",
+  UIVideo = "ui-video",
+  BackgroundImage = "background-image",
+  Video = "video",
 }
 
-export const Live2DAssetTypeImage = [
-  Live2DAssetType.UI,
-  Live2DAssetType.UISheet,
-  Live2DAssetType.BackgroundImage,
-];
+interface ILive2DAssetTypeToDataMap {
+  [Live2DAssetType.SoundEffect]: Howl;
+  [Live2DAssetType.BackgroundMusic]: Howl;
+  [Live2DAssetType.Talk]: Howl;
+  [Live2DAssetType.UI]: HTMLImageElement;
+  [Live2DAssetType.UISheet]: HTMLImageElement;
+  [Live2DAssetType.BackgroundImage]: HTMLImageElement;
+  [Live2DAssetType.Video]: HTMLVideoElement;
+  [Live2DAssetType.UIVideo]: HTMLVideoElement;
+}
 
-export const Live2DAssetTypeSound = [
-  Live2DAssetType.SoundEffect,
-  Live2DAssetType.BackgroundMusic,
-  Live2DAssetType.Talk,
-];
-
-export const Live2DAssetTypeVideo = [Live2DAssetType.Video];
-
-export const Live2DAssetTypeUI = [
-  Live2DAssetType.UI,
-  Live2DAssetType.UISheet,
-  Live2DAssetType.UIVideo,
-];
-
-export interface ILive2DAssetUrl {
-  identifer: string;
-  type: Live2DAssetType;
+export interface ILive2DAssetBase {
+  identifier: string;
   url: string;
 }
 
-export interface ILive2DCachedAsset extends ILive2DAssetUrl {
-  data: HTMLImageElement | HTMLVideoElement | Howl | null;
+export type ILive2DAssetUrl = {
+  [K in keyof ILive2DAssetTypeToDataMap]: ILive2DAssetBase & {
+    type: K;
+    data?: ILive2DAssetTypeToDataMap[K];
+  };
+}[keyof ILive2DAssetTypeToDataMap];
+
+// type category
+type ILive2DAssetUrlImage = Extract<
+  ILive2DAssetUrl,
+  {
+    type:
+      | Live2DAssetType.BackgroundImage
+      | Live2DAssetType.UISheet
+      | Live2DAssetType.UI;
+  }
+>;
+type ILive2DAssetUrlVideo = Extract<
+  ILive2DAssetUrl,
+  {
+    type: Live2DAssetType.Video | Live2DAssetType.UIVideo;
+  }
+>;
+type ILive2DAssetUrlAudio = Extract<
+  ILive2DAssetUrl,
+  {
+    type:
+      | Live2DAssetType.SoundEffect
+      | Live2DAssetType.BackgroundMusic
+      | Live2DAssetType.Talk;
+  }
+>;
+export function isLive2DImageAsset(
+  asset: ILive2DAssetUrl
+): asset is ILive2DAssetUrlImage {
+  return (
+    asset.type === Live2DAssetType.BackgroundImage ||
+    asset.type === Live2DAssetType.UISheet ||
+    asset.type === Live2DAssetType.UI
+  );
 }
+export function isLive2DVideoAsset(
+  asset: ILive2DAssetUrl
+): asset is ILive2DAssetUrlVideo {
+  return (
+    asset.type === Live2DAssetType.Video ||
+    asset.type === Live2DAssetType.UIVideo
+  );
+}
+export function isLive2DAudioAsset(
+  asset: ILive2DAssetUrl
+): asset is ILive2DAssetUrlAudio {
+  return (
+    asset.type === Live2DAssetType.SoundEffect ||
+    asset.type === Live2DAssetType.BackgroundMusic ||
+    asset.type === Live2DAssetType.Talk
+  );
+}
+export type ILive2DCachedAsset = Required<ILive2DAssetUrl>;
+
+export type ILive2DScenarioResource = {
+  image: Required<ILive2DAssetUrlImage>[];
+  video: Required<ILive2DAssetUrlVideo>[];
+  audio: Required<ILive2DAssetUrlAudio>[];
+};
 
 export interface ILive2DTexture {
-  identifer: string;
+  identifier: string;
   texture: Texture;
 }
 export interface Ilive2DModelInfo {
@@ -78,7 +130,7 @@ export interface ILive2DModelDataCollection {
 
 export interface ILive2DControllerData {
   scenarioData: IScenarioData;
-  scenarioResource: ILive2DCachedAsset[];
+  scenarioResource: ILive2DScenarioResource;
   modelData: ILive2DModelDataCollection[];
 }
 
@@ -114,20 +166,28 @@ export type AnimationObj = {
   alpha_func?: CurveFunction;
 };
 
-export interface IProgressEvent {
+export enum Live2DLoadProgressType {
+  Media = "media",
+  ModelData = "model-data",
+  ModelTexture = "model-texture",
+  ModelMoc = "model-moc",
+  ModelPhysics = "model-physics",
+  ModelAssets = "model-assets",
+  ModelMotion = "model-motion",
+  RenderModel = "render-model",
+}
+
+export interface ILive2DLoadProgressHandler {
   (
-    type:
-      | "media"
-      | "model_data"
-      | "model_texture"
-      | "model_moc"
-      | "model_physics"
-      | "model_assets"
-      | "model_motion",
+    type: Live2DLoadProgressType,
     count: number,
     total: number,
     info?: string
-  );
+  ): void;
+}
+
+export interface ILive2DLoadWarningHandler {
+  (reason: string): void;
 }
 
 export interface ILive2DPlayerSettings {
@@ -137,6 +197,7 @@ export interface ILive2DPlayerSettings {
   autoplay: boolean;
   textAnimation: boolean;
   showWarning: boolean;
+  showUI: boolean;
 }
 
 export enum LoadStatus {

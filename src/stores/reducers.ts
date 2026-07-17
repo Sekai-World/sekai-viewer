@@ -1,217 +1,88 @@
 import { EventFilterData } from "../pages/event/EventListFilter";
 import { ITeamBuild } from "../types";
 
-export function characterSelectReducer(
-  state: number[],
-  action: {
-    type: "add" | "remove" | "reset";
-    payload: number;
-    storeName: string;
-  }
-) {
-  switch (action.type) {
-    case "add": {
-      const data = [...state, action.payload];
-      localStorage.setItem(action.storeName, JSON.stringify(data));
-      return data;
+// 通用数组操作reducer，支持基本类型数组的add、remove、reset操作
+export function createArrayReducer<T>() {
+  return function arrayReducer(
+    state: T[],
+    action: {
+      type: "add" | "remove" | "reset";
+      payload: T;
+      storeName: string;
     }
-    case "remove": {
-      const data = [
-        ...state.slice(0, state.indexOf(action.payload)),
-        ...state.slice(state.indexOf(action.payload) + 1),
-      ];
-      localStorage.setItem(action.storeName, JSON.stringify(data));
-      return data;
+  ) {
+    switch (action.type) {
+      case "add": {
+        const data = [...state, action.payload];
+        localStorage.setItem(action.storeName, JSON.stringify(data));
+        return data;
+      }
+      case "remove": {
+        const index = state.indexOf(action.payload);
+        if (index === -1) return state;
+        const data = [...state.slice(0, index), ...state.slice(index + 1)];
+        localStorage.setItem(action.storeName, JSON.stringify(data));
+        return data;
+      }
+      case "reset":
+        localStorage.setItem(action.storeName, JSON.stringify([]));
+        return [];
+      default:
+        throw new Error();
     }
-    case "reset":
-      localStorage.setItem(action.storeName, JSON.stringify([]));
-      return [];
-    default:
-      throw new Error();
-  }
+  };
 }
 
-export function unitSelectReducer(
-  state: string[],
-  action: {
-    type: "add" | "remove" | "reset";
-    payload: string;
-    storeName: string;
-  }
+// 为向后兼容性保留的导出函数
+export const characterSelectReducer = createArrayReducer<number>();
+export const unitSelectReducer = createArrayReducer<string>();
+export const attrSelectReducer = createArrayReducer<string>();
+export const supportUnitSelectReducer = createArrayReducer<string>();
+
+// 为对象数组操作创建通用reducer，支持自定义比较函数
+export function createArrayReducerWithCompareFn<T>(
+  compareFn: (item: T, target: T) => boolean
 ) {
-  switch (action.type) {
-    case "add": {
-      const data = [...state, action.payload];
-      localStorage.setItem(action.storeName, JSON.stringify(data));
-      return data;
+  return function arrayReducer(
+    state: T[],
+    action: {
+      type: "add" | "remove" | "reset";
+      payload: T;
+      storeName: string;
     }
-    case "remove": {
-      const data = [
-        ...state.slice(0, state.indexOf(action.payload)),
-        ...state.slice(state.indexOf(action.payload) + 1),
-      ];
-      localStorage.setItem(action.storeName, JSON.stringify(data));
-      return data;
+  ) {
+    switch (action.type) {
+      case "add": {
+        const data = [...state, action.payload];
+        localStorage.setItem(action.storeName, JSON.stringify(data));
+        return data;
+      }
+      case "remove": {
+        const index = state.findIndex((item) =>
+          compareFn(item, action.payload)
+        );
+        if (index === -1) return state;
+        const data = [...state.slice(0, index), ...state.slice(index + 1)];
+        localStorage.setItem(action.storeName, JSON.stringify(data));
+        return data;
+      }
+      case "reset":
+        localStorage.setItem(action.storeName, JSON.stringify([]));
+        return [];
+      default:
+        throw new Error();
     }
-    case "reset":
-      localStorage.setItem(action.storeName, JSON.stringify([]));
-      return [];
-    default:
-      throw new Error();
-  }
+  };
 }
 
-export function attrSelectReducer(
-  state: string[],
-  action: {
-    type: "add" | "remove" | "reset";
-    payload: string;
-    storeName: string;
-  }
-) {
-  switch (action.type) {
-    case "add": {
-      const data = [...state, action.payload];
-      localStorage.setItem(action.storeName, JSON.stringify(data));
-      return data;
-    }
-    case "remove": {
-      const data = [
-        ...state.slice(0, state.indexOf(action.payload)),
-        ...state.slice(state.indexOf(action.payload) + 1),
-      ];
-      localStorage.setItem(action.storeName, JSON.stringify(data));
-      return data;
-    }
-    case "reset":
-      localStorage.setItem(action.storeName, JSON.stringify([]));
-      return [];
-    default:
-      throw new Error();
-  }
-}
+export const raritySelectReducer = createArrayReducerWithCompareFn<{
+  rarity: number;
+  cardRarityType: string;
+}>((item, target) => item.rarity === target.rarity);
 
-export function supportUnitSelectReducer(
-  state: string[],
-  action: {
-    type: "add" | "remove" | "reset";
-    payload: string;
-    storeName: string;
-  }
-) {
-  switch (action.type) {
-    case "add": {
-      const data = [...state, action.payload];
-      localStorage.setItem(action.storeName, JSON.stringify(data));
-      return data;
-    }
-    case "remove": {
-      const data = [
-        ...state.slice(0, state.indexOf(action.payload)),
-        ...state.slice(state.indexOf(action.payload) + 1),
-      ];
-      localStorage.setItem(action.storeName, JSON.stringify(data));
-      return data;
-    }
-    case "reset":
-      localStorage.setItem(action.storeName, JSON.stringify([]));
-      return [];
-    default:
-      throw new Error();
-  }
-}
+export const skillSelectReducer = createArrayReducer<string>();
 
-export function raritySelectReducer(
-  state: { rarity: number; cardRarityType: string }[],
-  action: {
-    type: "add" | "remove" | "reset";
-    payload: { rarity: number; cardRarityType: string };
-    storeName: string;
-  }
-) {
-  switch (action.type) {
-    case "add": {
-      const data = [...state, action.payload];
-      localStorage.setItem(action.storeName, JSON.stringify(data));
-      return data;
-    }
-    case "remove": {
-      // console.log(state, action.payload);
-      const data = [
-        ...state.slice(
-          0,
-          state.findIndex((s) => s.rarity === action.payload.rarity)
-        ),
-        ...state.slice(
-          state.findIndex((s) => s.rarity === action.payload.rarity) + 1
-        ),
-      ];
-      localStorage.setItem(action.storeName, JSON.stringify(data));
-      return data;
-    }
-    case "reset":
-      localStorage.setItem(action.storeName, JSON.stringify([]));
-      return [];
-    default:
-      throw new Error();
-  }
-}
-
-export function skillSelectReducer(
-  state: string[],
-  action: { type: "add" | "remove" | "reset"; payload: string }
-) {
-  switch (action.type) {
-    case "add": {
-      const data = [...state, action.payload];
-      localStorage.setItem("card-list-filter-skills", JSON.stringify(data));
-      return data;
-    }
-    case "remove": {
-      const data = [
-        ...state.slice(0, state.indexOf(action.payload)),
-        ...state.slice(state.indexOf(action.payload) + 1),
-      ];
-      localStorage.setItem("card-list-filter-skills", JSON.stringify(data));
-      return data;
-    }
-    case "reset":
-      localStorage.setItem("card-list-filter-skills", JSON.stringify([]));
-      return [];
-    default:
-      throw new Error();
-  }
-}
-
-export function missionTypeReducer(
-  state: string[],
-  action: {
-    type: "add" | "remove" | "reset";
-    payload: string;
-    storeName: string;
-  }
-) {
-  switch (action.type) {
-    case "add": {
-      const data = [...state, action.payload];
-      localStorage.setItem(action.storeName, JSON.stringify(data));
-      return data;
-    }
-    case "remove": {
-      const data = [
-        ...state.slice(0, state.indexOf(action.payload)),
-        ...state.slice(state.indexOf(action.payload) + 1),
-      ];
-      localStorage.setItem(action.storeName, JSON.stringify(data));
-      return data;
-    }
-    case "reset":
-      localStorage.setItem(action.storeName, JSON.stringify([]));
-      return [];
-    default:
-      throw new Error();
-  }
-}
+export const missionTypeReducer = createArrayReducer<string>();
 
 export function teamBuildReducer(
   state: {
@@ -278,3 +149,21 @@ export function eventListFilterReducer(
       throw new Error();
   }
 }
+
+export function has3dmvCutInReducer(
+  state: boolean,
+  action: { type: "set"; payload: boolean }
+) {
+  switch (action.type) {
+    case "set":
+      localStorage.setItem(
+        "card-list-filter-has-3dmv",
+        JSON.stringify(action.payload)
+      );
+      return action.payload;
+    default:
+      throw new Error();
+  }
+}
+
+export const cardSupplySelectReducer = createArrayReducer<number>();

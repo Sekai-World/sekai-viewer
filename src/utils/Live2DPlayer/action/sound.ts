@@ -18,14 +18,14 @@ export default async function action_sound(
     // find bgm asset
     if (action_detail.Bgm === "bgm00000") {
       // if bgm name is bgm00000, stop all bgm
-      controller.scenarioResource
+      controller.scenarioResource.audio
         .filter(
           (sound) =>
             sound.type === Live2DAssetType.BackgroundMusic &&
-            (sound.data as Howl).playing()
+            sound.data.playing()
         )
         .forEach((sound) => {
-          const sound_instance = sound.data as Howl;
+          const sound_instance = sound.data;
           sound_instance.fade(
             sound_instance.volume(),
             0,
@@ -37,13 +37,13 @@ export default async function action_sound(
         });
     } else {
       // find bgm asset
-      const sound_asset = controller.scenarioResource.find(
+      const sound_asset = controller.scenarioResource.audio.find(
         (s) =>
-          s.identifer === action_detail.Bgm &&
+          s.identifier === action_detail.Bgm &&
           s.type === Live2DAssetType.BackgroundMusic
       );
       if (sound_asset) {
-        sound = sound_asset.data as Howl;
+        sound = sound_asset.data;
         sound_type = "bgm";
       } else {
         log.warn("Live2DController", `${action_detail.Bgm} not loaded, skip.`);
@@ -56,13 +56,13 @@ export default async function action_sound(
     }
   } else if (action_detail.Se) {
     // find se asset
-    const sound_asset = controller.scenarioResource.find(
+    const sound_asset = controller.scenarioResource.audio.find(
       (s) =>
-        s.identifer === action_detail.Se &&
+        s.identifier === action_detail.Se &&
         s.type === Live2DAssetType.SoundEffect
     );
     if (sound_asset) {
-      sound = sound_asset.data as Howl;
+      sound = sound_asset.data;
       sound_type = "se";
     } else {
       log.warn("Live2DController", `${action_detail.Se} not loaded, skip.`);
@@ -126,14 +126,14 @@ export default async function action_sound(
           sound.fade(sound.volume(), bgm_volume, action_detail.Duration * 1000);
         } else {
           // if no bgm asset, fade to new volume for all playing bgm
-          controller.scenarioResource
+          controller.scenarioResource.audio
             .filter(
               (sound) =>
                 sound.type === Live2DAssetType.BackgroundMusic &&
-                (sound.data as Howl).playing()
+                sound.data.playing()
             )
             .forEach((sound) => {
-              const sound_instance = sound.data as Howl;
+              const sound_instance = sound.data;
               sound_instance.fade(
                 sound_instance.volume(),
                 bgm_volume,

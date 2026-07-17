@@ -10,14 +10,14 @@ export default async function Movie(
     controller.scenarioData.SpecialEffectData[action.ReferenceIndex];
 
   // Get the movie resource from loaded assets
-  const movieResource = controller.scenarioResource.find(
+  const movieResource = controller.scenarioResource.video.find(
     (s) =>
-      s.identifer === action_detail.StringVal &&
+      s.identifier === action_detail.StringVal &&
       s.type === Live2DAssetType.Video
   );
 
-  if (movieResource && movieResource.data) {
-    const videoElement = movieResource.data as HTMLVideoElement;
+  if (movieResource) {
+    const videoElement = movieResource.data;
 
     try {
       await controller.layers.movie.draw(videoElement);

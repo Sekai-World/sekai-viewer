@@ -73,22 +73,29 @@ async function getMotionData(
   let motionData: Live2DMotionsExpressions;
 
   // get base motions
-  const [motionDataUrl, motionBaseName] =
-    await getBuildMotionDataUrl(modelItem);
-  if (!modelItem.modelBase.startsWith("normal")) {
-    const response = await fetch(motionDataUrl);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch motion data: ${response.statusText}`);
+  try {
+    const [motionDataUrl, motionBaseName] =
+      await getBuildMotionDataUrl(modelItem);
+    if (!modelItem.modelBase.startsWith("normal")) {
+      const response = await fetch(motionDataUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch motion data: ${response.statusText}`);
+      }
+      const motionRes: Live2DMotionsExpressions = await response.json();
+      motionData = motionRes;
+    } else {
+      motionData = {
+        expressions: [],
+        motions: [],
+      };
     }
-    const motionRes: Live2DMotionsExpressions = await response.json();
-    motionData = motionRes;
-  } else {
-    motionData = {
-      expressions: [],
-      motions: [],
-    };
+    return [motionBaseName, motionData];
+  } catch (error) {
+    console.warn(
+      `Error getting motion data for ${modelItem.modelName}: ${error}`
+    );
+    return ["", { motions: [], expressions: [] }];
   }
-  return [motionBaseName, motionData];
 }
 
 async function getAddtionalMotionData(modelItem: ILive2dModelListElement) {
@@ -136,8 +143,14 @@ const modelNameToMotionBaseName: Record<string, ModelNameTransformer> = {
   "v2_clb\\d{2}_.*": (modelName: string) =>
     modelName.replace(/v2_clb\d{2}_/, "v2_"),
   // eg. v2_20mizuki_culture_back to v2_20mizuki_back
-  "(.*)(_.*)_back(\\d{2})?$": (modelName: string) =>
-    modelName.replace(/(.*)(_.*)_back(\d{2})?$/, "$1_back"),
+  "(.*)_back(\\d{2})?$": (modelName: string) => {
+    const matches = modelName.match(/(.*)_back(\d{2})?$/);
+    if (matches) {
+      return `${matches[1].split("_").slice(0, 2).join("_")}_back`;
+    } else {
+      return modelName;
+    }
+  },
   // eg. 21miku01 to 21miku
   "(.*)\\d{2}$": (modelName: string) => modelName.replace(/\d{2}$/, ""),
 };
@@ -150,6 +163,8 @@ export async function getBuildMotionDataUrl(
   let modelDir = modelItem.modelPath.split("/").slice(0, -1).join("/");
   if (modelDir.indexOf("v2/collabo/21_miku") !== -1) {
     modelDir = modelDir.replace("collabo", "main");
+  } else if (modelDir.indexOf("v2/collabo/egg") !== -1) {
+    modelDir = modelDir.split("/").slice(0, -1).join("/");
   }
 
   // case 1: get directly from model path + motion_base
@@ -163,6 +178,9 @@ export async function getBuildMotionDataUrl(
 
   // case 2: check if the motion name is in the map
   if (!url) {
+    console.debug(
+      `Motion data not found for ${modelItem.modelBase}/${modelItem.modelName}, trying alternative names...`
+    );
     for (const [pattern, processor] of Object.entries(
       modelNameToMotionBaseName
     )) {
@@ -185,6 +203,9 @@ export async function getBuildMotionDataUrl(
 
   // case 3: reduce the name until base name
   while (!url && modelBaseName.split("_").length > 1) {
+    console.debug(
+      `Motion data not found for ${modelItem.modelBase}/${modelItem.modelName} with base name ${modelBaseName}, trying shorter name...`
+    );
     modelBaseName = modelBaseName.split("_").slice(0, -1).join("_");
     url = await getRemoteAssetURL(
       `live2d/motion/${modelDir}/${modelBaseName}_motion_base/BuildMotionData.json`,

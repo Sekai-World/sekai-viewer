@@ -69,22 +69,24 @@ export default async function action_talk(
   });
   // sound
   if (action_detail.Voices.length > 0) {
+    controller.layers.live2d.stop_speaking();
     controller.stop_sounds([Live2DAssetType.Talk]);
-    const sound = controller.scenarioResource.find(
+    const sound = controller.scenarioResource.audio.find(
       (s) =>
-        s.identifer === action_detail.Voices[0].VoiceId &&
+        s.identifier === action_detail.Voices[0].VoiceId &&
         s.type === Live2DAssetType.Talk
     );
     if (sound) {
-      const costume = controller.live2d_get_costume(
-        action_detail.TalkCharacters[0].Character2dId
-      );
+      const costumes = action_detail.TalkCharacters.map((c) =>
+        controller.live2d_get_costume(c.Character2dId)
+      ).filter((i) => i !== undefined);
       const volume =
         action_detail.Voices[0].Volume * controller.settings.voice_volume;
-      if (costume) {
-        controller.layers.live2d.speak(costume, sound.url, volume);
+      if (costumes.length > 0 && action_detail.LipSync == 1) {
+        controller.layers.live2d.speak(costumes, sound.data, volume);
+        log.log("Live2DController", "Talk/speak", costumes, sound.data);
       } else {
-        const inst = sound.data as Howl;
+        const inst = sound.data;
         inst.volume(volume);
         inst.play();
       }
@@ -99,7 +101,7 @@ export default async function action_talk(
       );
     }
   }
-  // wait motion and  text animation
+  // wait motion and text animation
   await Promise.all(motion);
   await dialog;
 }
