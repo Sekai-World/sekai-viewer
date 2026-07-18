@@ -103,6 +103,7 @@ const Settings = observer(() => {
       llmConfigs,
       targetLanguage,
       showOriginalText,
+      additionalSystemPrompt,
       setLang,
       setDisplayMode,
       setContentTransMode,
@@ -118,6 +119,7 @@ const Settings = observer(() => {
       setLlmApiEndpoint,
       setTargetLanguage,
       setShowOriginalText,
+      setAdditionalSystemPrompt,
     },
   } = useRootStore();
   const { languages: remoteLanguages, isLoading, error } = useRemoteLanguages();
@@ -411,6 +413,21 @@ const Settings = observer(() => {
                 value={targetLanguage}
                 onChange={(e) => setTargetLanguage(e.target.value)}
                 helperText={t("common:settings.llm.targetLanguageDescription")}
+              />
+            </Grid>
+
+            <Grid item>
+              <TextField
+                fullWidth
+                multiline
+                minRows={3}
+                maxRows={8}
+                label={t("common:settings.llm.additionalSystemPrompt")}
+                value={additionalSystemPrompt}
+                onChange={(e) => setAdditionalSystemPrompt(e.target.value)}
+                helperText={t(
+                  "common:settings.llm.additionalSystemPromptDescription"
+                )}
               />
             </Grid>
 

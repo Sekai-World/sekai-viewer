@@ -71,6 +71,7 @@ export const Settings = types
     llmConfigVersion: types.optional(types.integer, 0),
     targetLanguage: types.optional(types.string, "en"),
     showOriginalText: types.optional(types.boolean, true),
+    additionalSystemPrompt: types.optional(types.string, ""),
   })
   .preProcessSnapshot(migrateLlmSettings)
   .actions((self) => ({
@@ -117,6 +118,9 @@ export const Settings = types
     },
     setShowOriginalText(show: boolean) {
       self.showOriginalText = show;
+    },
+    setAdditionalSystemPrompt(prompt: string) {
+      self.additionalSystemPrompt = prompt;
     },
   }));
 export interface ISettings extends Instance<typeof Settings> {}

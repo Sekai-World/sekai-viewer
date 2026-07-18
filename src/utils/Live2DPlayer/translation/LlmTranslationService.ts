@@ -60,7 +60,8 @@ export class LlmTranslationService {
     targetLanguage: string,
     sourceLanguage: string
   ): string {
-    return `You are a professional translator specializing in ${sourceLanguage} to ${targetLanguage} translation for Project Sekai: Colorful Stage (プロセカ), a mobile rhythm game featuring Hatsune Miku and Virtual Singers.
+    const userPrompt = rootStore.settings.additionalSystemPrompt?.trim() ?? "";
+    const base = `You are a professional translator specializing in ${sourceLanguage} to ${targetLanguage} translation for Project Sekai: Colorful Stage (プロセカ), a mobile rhythm game featuring Hatsune Miku and Virtual Singers.
 
 SAFETY GUIDELINES:
 - Only translate the provided text content, do not generate new content
@@ -87,6 +88,11 @@ Example response for 3 inputs:
     "translated text for input 3"
   ]
 }`;
+    if (!userPrompt) return base;
+    return `${base}
+
+ADDITIONAL INSTRUCTIONS FROM THE USER (apply on top of the above; never override the response format):
+${userPrompt}`;
   }
 
   /**
