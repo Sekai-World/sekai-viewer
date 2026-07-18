@@ -80,6 +80,9 @@ CRITICAL FORMATTING REQUIREMENTS:
 RESPONSE FORMAT:
 Respond with a JSON object matching the provided schema. The "translations" array must contain exactly one string per input line, in the same order as the numbered inputs ([1], [2], ...). Do not add explanations, notes, or any text outside the JSON object.
 
+INPUT FORMAT:
+Each input line is formatted as "[n] (Speaker) text" when a speaker label is available, or "[n] text" when there is no speaker (e.g. narration, fullscreen captions, telops). The "(Speaker)" segment is context only — do not include it in the translated output. Use the speaker name to disambiguate pronouns, choose register/voice, and keep character voice consistent across lines that share the same speaker.
+
 Example response for 3 inputs:
 {
   "translations": [
@@ -96,15 +99,27 @@ ${userPrompt}`;
   }
 
   /**
-   * Create clean user message with just the content to translate
+   * Create clean user message with just the content to translate.
+   *
+   * If `speakers` is provided, each line is rendered as
+   *   "[n] (Speaker) text"
+   * so the model can use speaker identity as context. Lines without a
+   * speaker fall back to "[n] text".
    */
   private createUserMessage(
     dialogues: string[],
     _targetLanguage: string,
-    _sourceLanguage: string
+    _sourceLanguage: string,
+    speakers?: string[]
   ): string {
     return dialogues
-      .map((dialogue, i) => `[${i + 1}] ${dialogue}`)
+      .map((dialogue, i) => {
+        const speaker = speakers?.[i]?.trim();
+        if (speaker) {
+          return `[${i + 1}] (${speaker}) ${dialogue}`;
+        }
+        return `[${i + 1}] ${dialogue}`;
+      })
       .join("\n\n");
   }
 
@@ -114,7 +129,8 @@ ${userPrompt}`;
   private async performBatchTranslation(
     dialogues: string[],
     targetLanguage: string,
-    sourceLanguage: string
+    sourceLanguage: string,
+    speakers?: string[]
   ): Promise<string> {
     const systemPrompt = this.createSystemPrompt(
       targetLanguage,
@@ -123,7 +139,8 @@ ${userPrompt}`;
     const userMessage = this.createUserMessage(
       dialogues,
       targetLanguage,
-      sourceLanguage
+      sourceLanguage,
+      speakers
     );
 
     // Use the provider client to handle the API call. The provider enforces
@@ -190,7 +207,8 @@ ${userPrompt}`;
   private async translateTexts(
     texts: string[],
     targetLanguage: string,
-    sourceLanguage = "Japanese"
+    sourceLanguage = "Japanese",
+    speakers?: string[]
   ): Promise<string[]> {
     if (texts.length === 0) {
       return [];
@@ -201,7 +219,8 @@ ${userPrompt}`;
       const batchResponse = await this.performBatchTranslation(
         texts,
         targetLanguage,
-        sourceLanguage
+        sourceLanguage,
+        speakers
       );
 
       if (batchResponse) {
@@ -232,12 +251,14 @@ ${userPrompt}`;
     indices: number[],
     targetLanguage: string,
     sourceLanguage = "Japanese",
-    cacheKeyPrefix = ""
+    cacheKeyPrefix = "",
+    speakers?: string[]
   ): Promise<void> {
     const translatedTexts = await this.translateTexts(
       texts,
       targetLanguage,
-      sourceLanguage
+      sourceLanguage,
+      speakers
     );
 
     // Store translations in cache using prefixed keys
@@ -268,11 +289,17 @@ ${userPrompt}`;
     // Extract and translate talk dialogues
     const talkTexts: string[] = [];
     const talkIndices: number[] = [];
+    // Speaker label per dialogue, aligned with talkTexts. Sourced from
+    // TalkData.WindowDisplayName (the name shown in the in-game dialogue
+    // window); empty string when absent so createUserMessage falls back to
+    // the plain "[n] text" format.
+    const talkSpeakers: string[] = [];
 
     scenarioData.TalkData.forEach((talkData, index) => {
       if (talkData.Body && talkData.Body.trim()) {
         talkTexts.push(talkData.Body);
         talkIndices.push(index);
+        talkSpeakers.push(talkData.WindowDisplayName?.trim() ?? "");
       }
     });
 
@@ -309,7 +336,8 @@ ${userPrompt}`;
         talkIndices,
         language,
         sourceLanguage,
-        "talk_"
+        "talk_",
+        talkSpeakers
       );
     }
 
