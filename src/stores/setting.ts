@@ -1,6 +1,7 @@
 import { types, Instance } from "mobx-state-tree";
 import { ContentTransModeType, DisplayModeType, ServerRegion } from "../types";
 import { ILanguageModel, LanguageModel } from "./user";
+import { migrateLlmSettings } from "../utils/Live2DPlayer/translation/migrateLlmSettings";
 
 export const SettingDisplayMode = types.enumeration<DisplayModeType>(
   "DisplayMode",
@@ -20,13 +21,27 @@ export const SettingRegion = types.enumeration<ServerRegion>("ServerRegion", [
   "cn",
 ]);
 
+export type TranslationProviderType =
+  | "openai-compatible"
+  | "anthropic"
+  | "gemini";
+
 export const TranslationProvider = types.enumeration("TranslationProvider", [
-  "openai",
+  "openai-compatible",
   "anthropic",
-  "google",
-  "openrouter",
-  "custom",
+  "gemini",
 ]);
+
+/**
+ * Per-provider LLM configuration.
+ */
+export const LlmProviderConfig = types.model("LlmProviderConfig", {
+  model: types.optional(types.string, ""),
+  apiKey: types.optional(types.string, ""),
+  endpoint: types.optional(types.string, ""),
+});
+export interface ILlmProviderConfig
+  extends Instance<typeof LlmProviderConfig> {}
 
 export const Settings = types
   .model({
@@ -39,13 +54,25 @@ export const Settings = types
     region: SettingRegion,
     // LLM Translation Settings
     enableLlmTranslation: types.optional(types.boolean, false),
-    llmTranslationProvider: types.optional(TranslationProvider, "openai"),
-    llmModel: types.optional(types.string, ""),
-    llmApiKey: types.optional(types.string, ""),
-    llmApiEndpoint: types.optional(types.string, ""),
+    llmTranslationProvider: types.optional(
+      TranslationProvider,
+      "openai-compatible"
+    ),
+    llmConfigs: types.optional(
+      types.model({
+        "openai-compatible": types.optional(LlmProviderConfig, {}),
+        anthropic: types.optional(LlmProviderConfig, {}),
+        gemini: types.optional(LlmProviderConfig, {}),
+      }),
+      {}
+    ),
+    // Schema version for the LLM settings block. 0 = legacy/unmigrated;
+    // bumped by `migrateLlmSettings` whenever the persisted shape changes.
+    llmConfigVersion: types.optional(types.integer, 0),
     targetLanguage: types.optional(types.string, "en"),
     showOriginalText: types.optional(types.boolean, true),
   })
+  .preProcessSnapshot(migrateLlmSettings)
   .actions((self) => ({
     setContentTransMode(newMode: ContentTransModeType) {
       self.contentTransMode = newMode;
@@ -73,19 +100,17 @@ export const Settings = types
     setEnableLlmTranslation(enabled: boolean) {
       self.enableLlmTranslation = enabled;
     },
-    setLlmTranslationProvider(
-      provider: "openai" | "anthropic" | "google" | "openrouter" | "custom"
-    ) {
+    setLlmTranslationProvider(provider: TranslationProviderType) {
       self.llmTranslationProvider = provider;
     },
-    setLlmModel(model: string) {
-      self.llmModel = model;
+    setLlmModel(provider: TranslationProviderType, model: string) {
+      self.llmConfigs[provider].model = model;
     },
-    setLlmApiKey(apiKey: string) {
-      self.llmApiKey = apiKey;
+    setLlmApiKey(provider: TranslationProviderType, apiKey: string) {
+      self.llmConfigs[provider].apiKey = apiKey;
     },
-    setLlmApiEndpoint(endpoint: string) {
-      self.llmApiEndpoint = endpoint;
+    setLlmApiEndpoint(provider: TranslationProviderType, endpoint: string) {
+      self.llmConfigs[provider].endpoint = endpoint;
     },
     setTargetLanguage(language: string) {
       self.targetLanguage = language;

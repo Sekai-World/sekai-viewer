@@ -16,15 +16,20 @@ export class LlmTranslationService {
   }
 
   /**
-   * Get configuration from main settings store
+   * Get configuration from main settings store.
+   * Reads the active provider's own config bucket — each provider keeps its
+   * own model / apiKey / endpoint so switching providers doesn't affect the
+   * others' saved values.
    */
   private getConfigFromSettings(): ILlmApiConfig {
     const settings = rootStore.settings;
+    const provider = settings.llmTranslationProvider;
+    const cfg = settings.llmConfigs[provider];
     return {
-      provider: settings.llmTranslationProvider,
-      apiKey: settings.llmApiKey,
-      apiEndpoint: settings.llmApiEndpoint || "",
-      model: settings.llmModel || "",
+      provider,
+      apiKey: cfg?.apiKey || "",
+      apiEndpoint: cfg?.endpoint || "",
+      model: cfg?.model || "",
     };
   }
 

@@ -25,7 +25,10 @@ import { useAssetI18n } from "../utils/i18n";
 import { useRootStore } from "../stores/root";
 import { observer } from "mobx-react-lite";
 import TypographyHeader from "../components/styled/TypographyHeader";
-import { getDefaultModelForProvider } from "../utils/Live2DPlayer/translation/LlmProviderClient";
+import {
+  getDefaultModelForProvider,
+  getDefaultEndpointForProvider,
+} from "../utils/Live2DPlayer/translation/LlmProviderClient";
 
 // const RegionDetect = () => {
 //   const { t } = useTranslation();
@@ -97,9 +100,7 @@ const Settings = observer(() => {
       // LLM Translation Settings
       enableLlmTranslation,
       llmTranslationProvider,
-      llmModel,
-      llmApiKey,
-      llmApiEndpoint,
+      llmConfigs,
       targetLanguage,
       showOriginalText,
       setLang,
@@ -332,21 +333,16 @@ const Settings = observer(() => {
                 <RadioGroup
                   row
                   value={llmTranslationProvider}
-                  onChange={(e, v) =>
+                  onChange={(_, v) =>
                     setLlmTranslationProvider(
-                      v as
-                        | "openai"
-                        | "anthropic"
-                        | "google"
-                        | "openrouter"
-                        | "custom"
+                      v as "openai-compatible" | "anthropic" | "gemini"
                     )
                   }
                 >
                   <FormControlLabel
-                    value="openai"
+                    value="openai-compatible"
                     control={<Radio />}
-                    label="OpenAI"
+                    label="OpenAI compatible"
                   />
                   <FormControlLabel
                     value="anthropic"
@@ -354,19 +350,9 @@ const Settings = observer(() => {
                     label="Anthropic"
                   />
                   <FormControlLabel
-                    value="google"
+                    value="gemini"
                     control={<Radio />}
-                    label="Google"
-                  />
-                  <FormControlLabel
-                    value="openrouter"
-                    control={<Radio />}
-                    label="OpenRouter"
-                  />
-                  <FormControlLabel
-                    value="custom"
-                    control={<Radio />}
-                    label="Custom"
+                    label="Gemini"
                   />
                 </RadioGroup>
               </FormControl>
@@ -376,8 +362,10 @@ const Settings = observer(() => {
               <TextField
                 fullWidth
                 label={t("common:settings.llm.model")}
-                value={llmModel}
-                onChange={(e) => setLlmModel(e.target.value)}
+                value={llmConfigs[llmTranslationProvider].model}
+                onChange={(e) =>
+                  setLlmModel(llmTranslationProvider, e.target.value)
+                }
                 placeholder={getDefaultModelForProvider(llmTranslationProvider)}
                 helperText={t("common:settings.llm.modelDescription", {
                   defaultModel: getDefaultModelForProvider(
@@ -392,23 +380,29 @@ const Settings = observer(() => {
                 fullWidth
                 label={t("common:settings.llm.apiKey")}
                 type="password"
-                value={llmApiKey}
-                onChange={(e) => setLlmApiKey(e.target.value)}
+                value={llmConfigs[llmTranslationProvider].apiKey}
+                onChange={(e) =>
+                  setLlmApiKey(llmTranslationProvider, e.target.value)
+                }
                 helperText={t("common:settings.llm.apiKeyDescription")}
               />
             </Grid>
 
-            {llmTranslationProvider === "custom" && (
-              <Grid item>
-                <TextField
-                  fullWidth
-                  label={t("common:settings.llm.apiEndpoint")}
-                  value={llmApiEndpoint}
-                  onChange={(e) => setLlmApiEndpoint(e.target.value)}
-                  helperText={t("common:settings.llm.apiEndpointDescription")}
-                />
-              </Grid>
-            )}
+            <Grid item>
+              <TextField
+                fullWidth
+                label={t("common:settings.llm.apiEndpoint")}
+                value={llmConfigs[llmTranslationProvider].endpoint}
+                onChange={(e) =>
+                  setLlmApiEndpoint(llmTranslationProvider, e.target.value)
+                }
+                placeholder={getDefaultEndpointForProvider(
+                  llmTranslationProvider,
+                  llmConfigs[llmTranslationProvider].model
+                )}
+                helperText={t("common:settings.llm.apiEndpointDescription")}
+              />
+            </Grid>
 
             <Grid item>
               <TextField

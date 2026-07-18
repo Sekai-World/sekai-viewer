@@ -4,7 +4,7 @@ import axios, { AxiosResponse } from "axios";
  * Configuration interface for LLM API providers
  */
 export interface ILlmApiConfig {
-  provider: "openai" | "anthropic" | "google" | "openrouter" | "custom";
+  provider: "openai-compatible" | "anthropic" | "gemini";
   apiKey: string;
   apiEndpoint?: string;
   model?: string;
@@ -57,14 +57,38 @@ const TRANSLATIONS_TOOL_NAME = "store_translations";
  */
 export const getDefaultModelForProvider = (provider: string): string => {
   switch (provider) {
-    case "openai":
-      return "gpt-4o-mini";
+    case "openai-compatible":
+      return "gpt-5.4-mini";
     case "anthropic":
-      return "claude-3.5-haiku";
-    case "google":
-      return "gemini-2.0-flash";
-    case "openrouter":
-      return "deepseek/deepseek-chat-v3-0324:free";
+      return "claude-sonnet-5";
+    case "gemini":
+      return "gemini-3.5-flash";
+    default:
+      return "";
+  }
+};
+
+/**
+ * Get the official default endpoint URL for a given provider. Used as a
+ * fallback when the user leaves `llmApiEndpoint` blank, and shown in the
+ * settings UI as the placeholder for the endpoint field.
+ *
+ * For Gemini the URL is parameterised by model, so the display form keeps
+ * the literal `{model}` token (substituted at request time with the
+ * resolved model) — this keeps the placeholder stable as the user edits
+ * the model field.
+ */
+export const getDefaultEndpointForProvider = (
+  provider: string,
+  _model?: string
+): string => {
+  switch (provider) {
+    case "openai-compatible":
+      return "https://api.openai.com/v1/chat/completions";
+    case "anthropic":
+      return "https://api.anthropic.com/v1/messages";
+    case "gemini":
+      return "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent";
     default:
       return "";
   }
@@ -89,22 +113,31 @@ export class LlmProviderClient {
   }
 
   /**
-   * Get provider-specific endpoint URL
+   * Get provider-specific endpoint URL.
+   *
+   * For Gemini the URL is parameterised by model. The `{model}` token is
+   * substituted with the resolved model at request time — both in the
+   * official default and in any user-provided override that keeps the
+   * token (e.g. a proxy that mirrors the same path shape).
    */
   private getProviderEndpoint(): string {
-    if (this.config.apiEndpoint) return this.config.apiEndpoint;
+    const model = this.getProviderModel();
+    const substituteModel = (url: string): string =>
+      url.includes("{model}") ? url.replace("{model}", model) : url;
+
+    if (this.config.apiEndpoint) {
+      return substituteModel(this.config.apiEndpoint);
+    }
 
     switch (this.config.provider) {
-      case "openai":
+      case "openai-compatible":
         return "https://api.openai.com/v1/chat/completions";
       case "anthropic":
         return "https://api.anthropic.com/v1/messages";
-      case "google":
-        return `https://generativelanguage.googleapis.com/v1beta/models/${this.getProviderModel()}:generateContent`;
-      case "openrouter":
-        return "https://openrouter.ai/api/v1/chat/completions";
-      case "custom":
-        throw new Error("Custom API endpoint is required for custom provider");
+      case "gemini":
+        return substituteModel(
+          "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+        );
       default:
         throw new Error(`Unknown provider: ${this.config.provider}`);
     }
@@ -124,9 +157,20 @@ export class LlmProviderClient {
   }
 
   /**
-   * Call OpenAI API for translation using structured outputs (json_schema)
+   * Call an OpenAI-compatible chat completions endpoint for translation
+   * using structured outputs (json_schema). This method handles OpenAI,
+   * OpenRouter, and any other endpoint that speaks the OpenAI wire format
+   * (vLLM, LM Studio, Ollama's OpenAI shim, self-hosted proxies, ...).
+   *
+   * `response_format` is non-strict: OpenAI's strict mode only works on
+   * GPT-4o+ models hosted by OpenAI itself, while non-strict is accepted
+   * (or harmlessly ignored) by a much wider range of compatible servers.
+   *
+   * Response shape is OpenAI's `choices[0].message.content`; as a courtesy
+   * we also probe the Anthropic/Gemini shapes in case a user points this
+   * client at a proxy that translates OpenAI requests to another backend.
    */
-  private async callOpenAiAPI(
+  private async callOpenAiCompatibleAPI(
     endpoint: string,
     model: string,
     systemPrompt: string,
@@ -148,7 +192,6 @@ export class LlmProviderClient {
             type: "json_schema",
             json_schema: {
               name: "translation_result",
-              strict: true,
               schema: buildTranslationSchema(expectedCount),
             },
           },
@@ -161,11 +204,18 @@ export class LlmProviderClient {
         }
       );
 
-      return response.data.choices[0]?.message?.content?.trim() || "";
+      const raw: string =
+        response.data.choices?.[0]?.message?.content?.trim() ||
+        response.data?.content?.[0]?.text?.trim() ||
+        response.data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ||
+        "";
+      return stripCodeFence(raw);
     } catch (error: any) {
       const message = error.response?.data?.error?.message || error.message;
       throw new Error(
-        `OpenAI API error (${error.response?.status || "Unknown"}): ${message}`
+        `OpenAI-compatible API error (${
+          error.response?.status || "Unknown"
+        }): ${message}`
       );
     }
   }
@@ -295,111 +345,8 @@ export class LlmProviderClient {
   }
 
   /**
-   * Call OpenRouter API for translation. OpenRouter passes through the
-   * OpenAI-compatible response_format field, so structured outputs work
-   * for any underlying model that supports them.
-   */
-  private async callOpenRouterAPI(
-    endpoint: string,
-    model: string,
-    systemPrompt: string,
-    userMessage: string,
-    expectedCount: number
-  ): Promise<string> {
-    try {
-      const response: AxiosResponse = await axios.post(
-        endpoint,
-        {
-          model,
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: userMessage },
-          ],
-          max_tokens: 10000,
-          temperature: 0.3,
-          response_format: {
-            type: "json_schema",
-            json_schema: {
-              name: "translation_result",
-              schema: buildTranslationSchema(expectedCount),
-            },
-          },
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${this.config.apiKey}`,
-          },
-        }
-      );
-
-      const raw: string =
-        response.data.choices[0]?.message?.content?.trim() || "";
-      return stripCodeFence(raw);
-    } catch (error: any) {
-      const message = error.response?.data?.error?.message || error.message;
-      throw new Error(
-        `OpenRouter API error (${error.response?.status || "Unknown"}): ${message}`
-      );
-    }
-  }
-
-  /**
-   * Call custom OpenAI-compatible API for translation. We attempt structured
-   * outputs; if the endpoint rejects response_format the caller will see
-   * the upstream error message.
-   */
-  private async callCustomAPI(
-    endpoint: string,
-    model: string,
-    systemPrompt: string,
-    userMessage: string,
-    expectedCount: number
-  ): Promise<string> {
-    try {
-      const response: AxiosResponse = await axios.post(
-        endpoint,
-        {
-          model,
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: userMessage },
-          ],
-          max_tokens: 10000,
-          temperature: 0.3,
-          response_format: {
-            type: "json_schema",
-            json_schema: {
-              name: "translation_result",
-              schema: buildTranslationSchema(expectedCount),
-            },
-          },
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${this.config.apiKey}`,
-          },
-        }
-      );
-
-      const raw: string =
-        response.data.choices[0]?.message?.content?.trim() ||
-        response.data.content?.[0]?.text?.trim() ||
-        response.data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ||
-        "";
-      return stripCodeFence(raw);
-    } catch (error: any) {
-      const message = error.response?.data?.error?.message || error.message;
-      throw new Error(
-        `Custom API error (${error.response?.status || "Unknown"}): ${message}`
-      );
-    }
-  }
-
-  /**
-   * Perform translation using the configured provider
-   * Main entry point for all provider-specific API calls
+   * Perform translation using the configured provider.
+   * Main entry point for all provider-specific API calls.
    *
    * Returns the raw structured output as a JSON string. Callers parse it,
    * typically into the shape `{ translations: string[] }`.
@@ -413,8 +360,8 @@ export class LlmProviderClient {
     const model = this.getProviderModel();
 
     switch (this.config.provider) {
-      case "openai":
-        return this.callOpenAiAPI(
+      case "openai-compatible":
+        return this.callOpenAiCompatibleAPI(
           endpoint,
           model,
           systemPrompt,
@@ -429,24 +376,8 @@ export class LlmProviderClient {
           userMessage,
           expectedCount
         );
-      case "google":
+      case "gemini":
         return this.callGoogleAPI(
-          endpoint,
-          model,
-          systemPrompt,
-          userMessage,
-          expectedCount
-        );
-      case "openrouter":
-        return this.callOpenRouterAPI(
-          endpoint,
-          model,
-          systemPrompt,
-          userMessage,
-          expectedCount
-        );
-      case "custom":
-        return this.callCustomAPI(
           endpoint,
           model,
           systemPrompt,
