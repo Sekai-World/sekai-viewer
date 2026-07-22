@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.19.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.19.1...v1.19.2) (2026-07-22)
+
+
+### Bug Fixes
+
+* **music:** add EN-exclusive song 786 ([e350e00](https://github.com/Sekai-World/sekai-viewer/commits/e350e005198fc441047dbab54b724202c3262cd0))
+
 ### [1.19.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.19.0...v1.19.1) (2026-07-22)
 
 
