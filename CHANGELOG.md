@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.19.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.19.0...v1.19.1) (2026-07-22)
+
+
+### Bug Fixes
+
+* **fonts:** replace expired font mirror ([27e6461](https://github.com/Sekai-World/sekai-viewer/commits/27e6461f375e302db26a1d6f2e862f2d13ae981f))
+
 ## [1.19.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.12...v1.19.0) (2026-06-29)
 
 
