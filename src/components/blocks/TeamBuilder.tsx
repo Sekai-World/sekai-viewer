@@ -539,12 +539,12 @@ const TeamBuilder: React.FC<{
           level: userCard.level,
           masterRank: userCard.masterRank,
           skillLevel: 1,
-          story1Unlock: userCard.episodes
-            ? userCard.episodes[0].scenarioStatus !== "unreleased"
-            : false,
-          story2Unlock: userCard.episodes
-            ? userCard.episodes[1].scenarioStatus !== "unreleased"
-            : false,
+          story1Unlock:
+            userCard.episodes?.[0] !== undefined &&
+            userCard.episodes[0].scenarioStatus !== "unreleased",
+          story2Unlock:
+            userCard.episodes?.[1] !== undefined &&
+            userCard.episodes[1].scenarioStatus !== "unreleased",
           trainable,
           trained: trainable && userCard.specialTrainingStatus === "done",
         };
