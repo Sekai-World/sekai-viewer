@@ -1,9 +1,47 @@
 import { log } from "../log";
 import { rootStore } from "../../../stores/root";
 import { IScenarioData } from "../../../types.d";
-import { SpecialEffectType } from "../../../story-scenerio.d";
+import { SnippetAction, SpecialEffectType } from "../../../story-scenerio.d";
 import { TranslationCache } from "./TranslationCache";
 import { LlmProviderClient, ILlmApiConfig } from "./LlmProviderClient";
+
+type TranslationItemType = "talk" | "fullscreen" | "telop";
+const TRANSLATION_CHUNK_SIZE = 40;
+
+/**
+ * One translatable unit pulled out of `scenarioData` in story order.
+ *
+ * Walking `Snippets` (rather than iterating TalkData / SpecialEffectData
+ * independently) preserves the interleaved order: a FullScreenText/Telop that
+ * precedes a run of dialogue is sent to the model first, so it can act as a
+ * scene header that contextualises the dialogue that follows.
+ */
+interface TranslationItem {
+  type: TranslationItemType;
+  /**
+   * `Snippet.ReferenceIndex` into the source array. Used to build the cache
+   * key the player reads back:
+   *   talk        -> `talk_${refIdx}`
+   *   fullscreen  -> `fullscreen_texts_${refIdx}`
+   *   telop       -> `telop_${refIdx}`
+   */
+  refIdx: number;
+  text: string;
+  // talk-only metadata (omitted for fullscreen / telop):
+  speaker?: string;
+  /** Raw `MotionName` tokens (non-empty) for emotion context. */
+  motions?: string[];
+  /** Raw `FacialName` tokens (non-empty) for emotion context. */
+  facials?: string[];
+  /** True when `TalkData.LipSync === 2` (text wrapped in `()`, monologue). */
+  monologue?: boolean;
+}
+
+const CACHE_KEY_PREFIX: Record<TranslationItemType, string> = {
+  talk: "talk_",
+  fullscreen: "fullscreen_texts_",
+  telop: "telop_",
+};
 
 export class LlmTranslationService {
   private config: ILlmApiConfig;
@@ -16,15 +54,20 @@ export class LlmTranslationService {
   }
 
   /**
-   * Get configuration from main settings store
+   * Get configuration from main settings store.
+   * Reads the active provider's own config bucket — each provider keeps its
+   * own model / apiKey / endpoint so switching providers doesn't affect the
+   * others' saved values.
    */
   private getConfigFromSettings(): ILlmApiConfig {
     const settings = rootStore.settings;
+    const provider = settings.llmTranslationProvider;
+    const cfg = settings.llmConfigs[provider];
     return {
-      provider: settings.llmTranslationProvider,
-      apiKey: settings.llmApiKey,
-      apiEndpoint: settings.llmApiEndpoint || "",
-      model: settings.llmModel || "",
+      provider,
+      apiKey: cfg?.apiKey || "",
+      apiEndpoint: cfg?.endpoint || "",
+      model: cfg?.model || "",
     };
   }
 
@@ -42,13 +85,21 @@ export class LlmTranslationService {
   }
 
   /**
-   * Create system prompt with formatting instructions
+   * Create system prompt with formatting instructions.
+   *
+   * The schema is enforced by the provider (structured outputs / forced tool
+   * use), but we still describe the expected shape in the prompt so the model
+   * understands the contract. The output must be a JSON object of the form
+   *   { "translations": [ "<translation for input [1]>", "<translation for input [2]>", ... ] }
+   * with the array length exactly matching the number of inputs and the
+   * order preserved.
    */
   private createSystemPrompt(
     targetLanguage: string,
     sourceLanguage: string
   ): string {
-    return `You are a professional translator specializing in ${sourceLanguage} to ${targetLanguage} translation for Project Sekai: Colorful Stage (プロセカ), a mobile rhythm game featuring Hatsune Miku and Virtual Singers.
+    const userPrompt = rootStore.settings.additionalSystemPrompt?.trim() ?? "";
+    const base = `You are a professional translator specializing in ${sourceLanguage} to ${targetLanguage} translation for Project Sekai: Colorful Stage (プロセカ), a mobile rhythm game featuring Hatsune Miku and Virtual Singers.
 
 SAFETY GUIDELINES:
 - Only translate the provided text content, do not generate new content
@@ -59,160 +110,224 @@ SAFETY GUIDELINES:
 - If uncertain about content appropriateness, provide a conservative translation or skip the problematic section
 
 CRITICAL FORMATTING REQUIREMENTS:
-- You must maintain the exact numbering format: [1], [2], [3], etc.
-- Each translation must be on its own line
-- Do not add any explanations, notes, or extra text
 - Preserve the emotional tone and dramatic impact of the original dialogue
 - Maintain character voice consistency throughout the conversation
 - Keep the natural flow and rhythm of speech appropriate for ${targetLanguage}
 - If unsure about specific game context, prioritize natural ${targetLanguage} expression while preserving emotional intent
 
 RESPONSE FORMAT:
-[1] translated text here
-[2] translated text here  
-[3] translated text here
+Respond with a JSON object matching the provided schema. The "translations" array must contain exactly one string per input line, in the same order as the numbered inputs ([1], [2], ...). Do not add explanations, notes, or any text outside the JSON object.
 
-Respond ONLY with the numbered translations. Do not include any other text.`;
+INPUT FORMAT:
+Each input line is one of three labelled forms, given in story order:
+  [n] [TALK] (Speaker | motion: <names> | face: <names> | monologue) text
+  [n] [FULLSCREEN] text
+  [n] [TELOP] text
+
+The bracket tag and any parenthesised context are metadata only — do NOT echo them in the translation. Use them as cues for register, voice, tone, and scene state:
+- Speaker names disambiguate pronouns and choose register; keep character voice consistent across lines that share the same speaker.
+- "motion" / "face" tokens are raw Live2D motion/expression names (e.g. smile_01, ang_03_a). They describe the actor's pose and emotion; use them to pick wording but never reproduce them.
+- "monologue" marks an unvoiced inner thought (in-game wrapped in parentheses). Use an inner-thought register in the translation if the target language has one.
+- FULLSCREEN lines are usually scene titles / intertitles; TELOP lines are usually location superscripts. When a FULLSCREEN or TELOP line precedes a run of TALK lines, treat it as context (a scene header) for the dialogue that follows — never as dialogue itself.
+
+Example response for 3 inputs:
+{
+  "translations": [
+    "translated text for input 1",
+    "translated text for input 2",
+    "translated text for input 3"
+  ]
+}`;
+    if (!userPrompt) return base;
+    return `${base}
+
+ADDITIONAL INSTRUCTIONS FROM THE USER (apply on top of the above; never override the response format):
+${userPrompt}`;
   }
 
   /**
-   * Create clean user message with just the content to translate
+   * Build a single user message from translation items, in story order.
+   * Each line is labelled with its type and (for talks) the speaker +
+   * raw motion / face tokens + monologue marker.
    */
-  private createUserMessage(
-    dialogues: string[],
-    _targetLanguage: string,
-    _sourceLanguage: string
-  ): string {
-    return dialogues
-      .map((dialogue, i) => `[${i + 1}] ${dialogue}`)
-      .join("\n\n");
+  private createUserMessage(items: TranslationItem[]): string {
+    return items.map((item, i) => this.formatItemLine(item, i)).join("\n\n");
+  }
+
+  private formatItemLine(item: TranslationItem, i: number): string {
+    const tag = item.type.toUpperCase();
+    const ctx: string[] = [];
+    if (item.speaker) ctx.push(item.speaker);
+    if (item.motions?.length) ctx.push(`motion: ${item.motions.join(", ")}`);
+    if (item.facials?.length) ctx.push(`face: ${item.facials.join(", ")}`);
+    if (item.monologue) ctx.push("monologue");
+    const ctxStr = ctx.length ? ` (${ctx.join(" | ")})` : "";
+    return `[${i + 1}] [${tag}]${ctxStr} ${item.text}`;
   }
 
   /**
-   * Perform batch translation using the configured provider
+   * Walk `scenarioData.Snippets` in order and collect every translatable
+   * line — Talk bodies plus the FullScreenText and Telop special effects —
+   * into a single ordered list. Order is what gives the model usable scene
+   * headers.
    */
-  private async performBatchTranslation(
-    dialogues: string[],
-    targetLanguage: string,
-    sourceLanguage: string
-  ): Promise<string> {
-    const systemPrompt = this.createSystemPrompt(
-      targetLanguage,
-      sourceLanguage
-    );
-    const userMessage = this.createUserMessage(
-      dialogues,
-      targetLanguage,
-      sourceLanguage
-    );
+  private collectTranslationItems(
+    scenarioData: IScenarioData
+  ): TranslationItem[] {
+    const items: TranslationItem[] = [];
+    const snippets = scenarioData.Snippets ?? [];
+    for (const sn of snippets) {
+      const item =
+        sn.Action === SnippetAction.Talk
+          ? this.buildTalkItem(scenarioData, sn.ReferenceIndex)
+          : sn.Action === SnippetAction.SpecialEffect
+            ? this.buildEffectItem(scenarioData, sn.ReferenceIndex)
+            : null;
+      if (item) items.push(item);
+    }
+    return items;
+  }
 
-    // Use the provider client to handle the API call
-    return this.providerClient.translateBatch(systemPrompt, userMessage);
+  private buildTalkItem(
+    scenarioData: IScenarioData,
+    refIdx: number
+  ): TranslationItem | null {
+    const talk = scenarioData.TalkData?.[refIdx];
+    if (!talk?.Body?.trim()) return null;
+    const namedMotions = (name: "MotionName" | "FacialName") =>
+      (talk.Motions ?? [])
+        .map((motion) => motion[name]?.trim())
+        .filter((value): value is string => Boolean(value));
+    const motions = namedMotions("MotionName");
+    const facials = namedMotions("FacialName");
+    return {
+      type: "talk",
+      refIdx,
+      text: talk.Body,
+      speaker: talk.WindowDisplayName?.trim() || undefined,
+      motions: motions.length ? motions : undefined,
+      facials: facials.length ? facials : undefined,
+      monologue: talk.LipSync === 2,
+    };
+  }
+
+  private buildEffectItem(
+    scenarioData: IScenarioData,
+    refIdx: number
+  ): TranslationItem | null {
+    const effect = scenarioData.SpecialEffectData?.[refIdx];
+    if (!effect?.StringVal?.trim()) return null;
+    if (effect.EffectType === SpecialEffectType.FullScreenText) {
+      return { type: "fullscreen", refIdx, text: effect.StringVal };
+    }
+    if (effect.EffectType === SpecialEffectType.Telop) {
+      return { type: "telop", refIdx, text: effect.StringVal };
+    }
+    return null;
+  }
+
+  private sanitizeControlCharacters(rawJsonString: string): string {
+    let sanitized = "";
+    let inString = false;
+    let escaped = false;
+
+    for (const char of rawJsonString) {
+      if (inString) {
+        if (escaped) {
+          sanitized += char;
+          escaped = false;
+          continue;
+        }
+
+        if (char === "\\") {
+          sanitized += char;
+          escaped = true;
+          continue;
+        }
+
+        if (char === '"') {
+          sanitized += char;
+          inString = false;
+          continue;
+        }
+
+        if (char.charCodeAt(0) < 0x20) {
+          sanitized += `\\u${char.charCodeAt(0).toString(16).padStart(4, "0")}`;
+          continue;
+        }
+      } else if (char === '"') {
+        inString = true;
+      }
+
+      sanitized += char;
+    }
+
+    return sanitized;
   }
 
   /**
-   * Parse batch translation response back into individual lines
+   * Parse a structured (JSON) batch translation response into individual
+   * lines. The provider enforces the shape `{ "translations": string[] }`,
+   * but we still defend against malformed output by extracting the first JSON
+   * object in the response if direct parsing fails. Responses with a wrong
+   * number of entries are rejected to avoid assigning a translation to the
+   * wrong story line.
    */
   private parseBatchResponse(
     batchResponse: string,
     expectedCount: number
   ): string[] {
-    const lines: string[] = [];
+    const fallback = () => new Array(expectedCount).fill("");
     try {
-      // Try to extract numbered sections [1], [2], etc.
-      for (let i = 1; i <= expectedCount; i++) {
-        const pattern = new RegExp(
-          `\\[${i}\\]\\s*(.+?)(?=\\[${i + 1}\\]|$)`,
-          "s"
-        );
-        const match = batchResponse.match(pattern);
+      if (!batchResponse) return fallback();
 
-        if (match && match[1]) {
-          lines.push(match[1].trim().replace(/^\n+|\n+$/g, ""));
-        } else {
-          lines.push(""); // Empty string for failed translations
+      let parsed: unknown;
+      try {
+        parsed = JSON.parse(batchResponse);
+      } catch {
+        // Some providers may still wrap JSON in prose/fences despite schema
+        // enforcement. Try to slice out the first {...} block.
+        const start = batchResponse.indexOf("{");
+        const end = batchResponse.lastIndexOf("}");
+        if (start === -1 || end === -1 || end <= start) return fallback();
+        const candidate = batchResponse.slice(start, end + 1);
+        try {
+          parsed = JSON.parse(candidate);
+        } catch {
+          parsed = JSON.parse(this.sanitizeControlCharacters(candidate));
         }
       }
+
+      const translations = (parsed as any)?.translations;
+      if (
+        !Array.isArray(translations) ||
+        translations.length !== expectedCount
+      ) {
+        log.error(
+          "LlmTranslationService",
+          `Expected ${expectedCount} translations, received ${Array.isArray(translations) ? translations.length : "non-array"}`
+        );
+        return fallback();
+      }
+
+      return translations.map((t) => (typeof t === "string" ? t.trim() : ""));
     } catch (error) {
       log.error(
         "LlmTranslationService",
         "Failed to parse batch translation response:",
         error
       );
-      // Return empty array on parse failure
-      return new Array(expectedCount).fill("");
-    }
-    return lines;
-  }
-
-  /**
-   * Translate multiple text strings in a single batch request
-   */
-  private async translateTexts(
-    texts: string[],
-    targetLanguage: string,
-    sourceLanguage = "Japanese"
-  ): Promise<string[]> {
-    if (texts.length === 0) {
-      return [];
-    }
-
-    try {
-      // Perform batch translation
-      const batchResponse = await this.performBatchTranslation(
-        texts,
-        targetLanguage,
-        sourceLanguage
-      );
-
-      if (batchResponse) {
-        // Parse batch response back into individual translations
-        return this.parseBatchResponse(batchResponse, texts.length);
-      }
-
-      // Return original text as fallback
-      return texts;
-    } catch (error) {
-      log.error("LlmTranslationService", "Batch translation failed:", error);
-      // Return original dialogues as fallback
-      return texts;
+      return fallback();
     }
   }
 
   /**
-   * Method to translate texts and store them in cache
-   * @param texts - Array of texts to translate
-   * @param indices - Array of indices corresponding to texts
-   * @param targetLanguage - Target language for translation
-   * @param sourceLanguage - Source language (default: Japanese)
-   * @param cacheKeyPrefix - Prefix for cache keys (e.g., "talk_" for dialogues, "fullscreen_" for fullscreen texts)
-   * @param contentType - Type of content for logging purposes
-   */
-  private async translateAndCacheTexts(
-    texts: string[],
-    indices: number[],
-    targetLanguage: string,
-    sourceLanguage = "Japanese",
-    cacheKeyPrefix = ""
-  ): Promise<void> {
-    const translatedTexts = await this.translateTexts(
-      texts,
-      targetLanguage,
-      sourceLanguage
-    );
-
-    // Store translations in cache using prefixed keys
-    translatedTexts.forEach((translation, i) => {
-      if (translation && translation !== texts[i] && i < indices.length) {
-        const cacheKey = `${cacheKeyPrefix}${indices[i]}`;
-        TranslationCache.storeTranslationByKey(cacheKey, translation);
-      }
-    });
-  }
-
-  /**
-   * Translate all dialogue from scenario data
-   * Extracts dialogue internally and stores translations in cache
+   * Translate all dialogue from scenario data in ordered, bounded batches.
+   *
+   * Walks `Snippets` in story order so FullScreenText / Telop lines that
+   * precede a run of dialogue act as scene headers, then caches each
+   * returned translation under the cache key the player later reads:
+   *   `talk_${refIdx}` | `fullscreen_texts_${refIdx}` | `telop_${refIdx}`
    */
   async translateScenarioData(
     scenarioData: IScenarioData,
@@ -222,78 +337,47 @@ Respond ONLY with the numbered translations. Do not include any other text.`;
     // Check if settings changed and update cache accordingly
     this.checkAndUpdateConfigIfNeeded();
 
-    // Get target language from settings if not provided
     const settings = rootStore.settings;
     const language = targetLanguage || settings.targetLanguage;
 
-    // Extract and translate talk dialogues
-    const talkTexts: string[] = [];
-    const talkIndices: number[] = [];
+    const items = this.collectTranslationItems(scenarioData);
+    if (items.length === 0) return;
 
-    scenarioData.TalkData.forEach((talkData, index) => {
-      if (talkData.Body && talkData.Body.trim()) {
-        talkTexts.push(talkData.Body);
-        talkIndices.push(index);
-      }
-    });
+    const systemPrompt = this.createSystemPrompt(language, sourceLanguage);
+    let storedTranslation = false;
 
-    // Extract and translate fullscreen text
-    const fullscreenTexts: string[] = [];
-    const fullscreenIndices: number[] = [];
-
-    // Extract and translate telop text
-    const telopTexts: string[] = [];
-    const telopIndices: number[] = [];
-
-    scenarioData.SpecialEffectData.forEach((effectData, index) => {
-      if (
-        effectData.EffectType === SpecialEffectType.FullScreenText &&
-        effectData.StringVal &&
-        effectData.StringVal.trim()
+    try {
+      for (
+        let start = 0;
+        start < items.length;
+        start += TRANSLATION_CHUNK_SIZE
       ) {
-        fullscreenTexts.push(effectData.StringVal);
-        fullscreenIndices.push(index);
-      } else if (
-        effectData.EffectType === SpecialEffectType.Telop &&
-        effectData.StringVal &&
-        effectData.StringVal.trim()
-      ) {
-        telopTexts.push(effectData.StringVal);
-        telopIndices.push(index);
+        const batch = items.slice(start, start + TRANSLATION_CHUNK_SIZE);
+        const batchResponse = await this.providerClient.translateBatch(
+          systemPrompt,
+          this.createUserMessage(batch),
+          batch.length
+        );
+        this.parseBatchResponse(batchResponse, batch.length).forEach(
+          (translation, i) => {
+            const item = batch[i];
+            if (!translation || translation === item.text) return;
+            TranslationCache.storeTranslationByKey(
+              `${CACHE_KEY_PREFIX[item.type]}${item.refIdx}`,
+              translation
+            );
+            storedTranslation = true;
+          }
+        );
       }
-    });
-
-    // Translate talk dialogues with "talk_" prefix for cache keys
-    if (talkTexts.length > 0) {
-      await this.translateAndCacheTexts(
-        talkTexts,
-        talkIndices,
-        language,
-        sourceLanguage,
-        "talk_"
-      );
-    }
-
-    // Translate fullscreen texts with prefixed cache keys
-    if (fullscreenTexts.length > 0) {
-      await this.translateAndCacheTexts(
-        fullscreenTexts,
-        fullscreenIndices,
-        language,
-        sourceLanguage,
-        "fullscreen_texts_"
-      );
-    }
-
-    // Translate telop texts with prefixed cache keys
-    if (telopTexts.length > 0) {
-      await this.translateAndCacheTexts(
-        telopTexts,
-        telopIndices,
-        language,
-        sourceLanguage,
-        "telop_"
-      );
+      if (!storedTranslation) {
+        throw new Error(
+          "The translation provider returned no usable translations"
+        );
+      }
+    } catch (error) {
+      log.error("LlmTranslationService", "Batch translation failed:", error);
+      throw error;
     }
   }
 }
