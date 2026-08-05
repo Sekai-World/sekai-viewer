@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.19.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.19.2...v1.19.3) (2026-08-05)
+
+
+### Features
+
+* **llm:** optimize translation workflow with structured outputs, batching, and context enhancements ([#691](https://github.com/Sekai-World/sekai-viewer/issues/691)) ([38cb579](https://github.com/Sekai-World/sekai-viewer/commits/38cb5794f43b4a9ca2c831c00ac083dd958a4b65))
+
 ### [1.19.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.19.1...v1.19.2) (2026-07-22)
 
 
