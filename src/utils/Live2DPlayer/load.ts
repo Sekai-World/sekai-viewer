@@ -26,6 +26,28 @@ import { PreloadQueue } from "./PreloadQueue";
 import { getModelData } from "../live2dLoader";
 import { assetUrl } from "../urls";
 
+function getAssetFilename(url: string) {
+  try {
+    const pathname = new URL(url, window.location.href).pathname;
+    return decodeURIComponent(pathname.split("/").pop() || url);
+  } catch {
+    return url.split(/[?#]/, 1)[0].split("/").pop() || url;
+  }
+}
+
+function getAssetLoadWarning(
+  kind: string,
+  label: string,
+  url: string,
+  error: unknown
+) {
+  const status =
+    Axios.isAxiosError(error) && error.response?.status
+      ? `: ${error.response.status}`
+      : "";
+  return `Failed to load ${kind} ${label} (${getAssetFilename(url)})${status}`;
+}
+
 // step 3 - get controller data (preload media)
 export async function getLive2DControllerData(
   snData: IScenarioData,
@@ -36,36 +58,42 @@ export async function getLive2DControllerData(
   // step 3.1.2 - get live2d player ui urls
   mediaUrlForLive2D.push(...getUIMediaUrls(snData));
   // step 3.2 - preload sound/image
-  const scenarioResource = await preloadMedia(
+  const scenarioResourcePromise = preloadMedia(
     mediaUrlForLive2D,
     onProgress,
     onWarning
   );
   // step 3.3 - get live2d model data
-  const modelData = [];
   const total = snData.AppearCharacters.length;
-  const modelList: ILive2dModelListElement[] = await (
+  const modelListPromise: Promise<ILive2dModelListElement[]> = (
     await fetch(`${assetUrl.minio.live2d}/live2d/model_list.json`)
   ).json();
+  const modelList = await modelListPromise;
   let count = 0;
-  for (const c of snData.AppearCharacters) {
-    count++;
-    onProgress(Live2DLoadProgressType.ModelData, count, total, c.CostumeType);
-    const modelItem = modelList.find(
-      (m: ILive2dModelListElement) => m.modelBase === c.CostumeType
-    );
-    if (!modelItem) {
-      throw new Error(
-        `Model not found for ${c.CostumeType} (${c.Character2dId})`
+  const modelDataPromise = Promise.all(
+    snData.AppearCharacters.map(async (c) => {
+      const modelItem = modelList.find(
+        (m: ILive2dModelListElement) => m.modelBase === c.CostumeType
       );
-    }
-    const md = await getModelData(modelItem, [0.5, 0.1], [0.1, 0.1]);
-    modelData.push({
-      costume: c.CostumeType,
-      cid: c.Character2dId,
-      data: md,
-    });
-  }
+      if (!modelItem) {
+        throw new Error(
+          `Model not found for ${c.CostumeType} (${c.Character2dId})`
+        );
+      }
+      const md = await getModelData(modelItem, [0.5, 0.1], [0.1, 0.1]);
+      count++;
+      onProgress(Live2DLoadProgressType.ModelData, count, total, c.CostumeType);
+      return {
+        costume: c.CostumeType,
+        cid: c.Character2dId,
+        data: md,
+      };
+    })
+  );
+  const [scenarioResource, modelData] = await Promise.all([
+    scenarioResourcePromise,
+    modelDataPromise,
+  ]);
   return {
     scenarioData: snData,
     scenarioResource,
@@ -75,50 +103,54 @@ export async function getLive2DControllerData(
 // step 4 - preload model
 export async function preloadModels(
   controllerData: ILive2DControllerData,
-  onProgress: ILive2DLoadProgressHandler
+  onProgress: ILive2DLoadProgressHandler,
+  onWarning?: ILive2DLoadWarningHandler
 ) {
   let count = 0;
   const total = controllerData.modelData.length * 3;
   // step 4.1 - preload model assets
   const taskList = [];
   for (const model of controllerData.modelData) {
-    taskList.push({
-      task: () =>
-        Axios.get(model.data.url + model.data.FileReferences.Textures[0]),
-      callback: function () {
-        onProgress(
-          Live2DLoadProgressType.ModelAssets,
-          count,
-          total,
-          `${model.costume}/texture`
-        );
-        count++;
+    const modelAssets = [
+      {
+        kind: "texture",
+        path: model.data.FileReferences.Textures[0],
       },
-    });
-    taskList.push({
-      task: () => Axios.get(model.data.url + model.data.FileReferences.Moc),
-      callback: function () {
-        onProgress(
-          Live2DLoadProgressType.ModelAssets,
-          count,
-          total,
-          `${model.costume}/moc`
-        );
-        count++;
+      {
+        kind: "moc",
+        path: model.data.FileReferences.Moc,
       },
-    });
-    taskList.push({
-      task: () => Axios.get(model.data.url + model.data.FileReferences.Physics),
-      callback: function () {
-        onProgress(
-          Live2DLoadProgressType.ModelAssets,
-          count,
-          total,
-          `${model.costume}/physics`
-        );
-        count++;
+      {
+        kind: "physics",
+        path: model.data.FileReferences.Physics,
       },
-    });
+    ];
+    for (const asset of modelAssets) {
+      const url = model.data.url + asset.path;
+      taskList.push({
+        task: () =>
+          Axios.get(url).catch((err) => {
+            onWarning?.(
+              getAssetLoadWarning(
+                asset.kind,
+                `${model.costume}/${asset.kind}`,
+                url,
+                err
+              )
+            );
+            throw err;
+          }),
+        callback: function () {
+          onProgress(
+            Live2DLoadProgressType.ModelAssets,
+            count,
+            total,
+            `${model.costume}/${asset.kind}`
+          );
+          count++;
+        },
+      });
+    }
   }
   const queue = new PreloadQueue(taskList);
   const rst = await queue.run();
@@ -370,7 +402,9 @@ export async function preloadModelMotion(
     taskList.push({
       task: () =>
         Axios.get(motion.url).catch((err) => {
-          onWarning(err.message);
+          onWarning(
+            getAssetLoadWarning("motion", motion.origin, motion.url, err)
+          );
           throw err;
         }),
       callback: function () {

@@ -125,10 +125,10 @@ const StoryReaderLive2DContent: React.FC<{
     const curr_ratio = order[ratio_idx].ratio;
     let prev_ratio = 0;
     if (ratio_idx !== 0) prev_ratio = order[ratio_idx - 1].ratio;
-    setLoadProgress(
+    const nextProgress =
       ((prev_ratio + (count / total) * (curr_ratio - prev_ratio)) / bar_total) *
-        100
-    );
+      100;
+    setLoadProgress((prev) => Math.max(prev, nextProgress));
   };
   StoryReaderLive2DContent.displayName = "StoryReaderLive2DContent";
 
@@ -243,7 +243,7 @@ const StoryReaderLive2DContent: React.FC<{
       }
       // step 4 - preload model
       try {
-        await preloadModels(ctData, progressHandler);
+        await preloadModels(ctData, progressHandler, warningHandler);
       } catch (err) {
         if (err instanceof Error)
           showError(`Error when load model data: ${err.message}`);

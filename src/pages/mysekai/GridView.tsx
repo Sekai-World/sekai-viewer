@@ -8,7 +8,7 @@ import {
   Skeleton,
   Typography,
 } from "@mui/material";
-import { useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   IMysekaiFixtureInfo,
   IMysekaiFixtureGenre,
@@ -25,7 +25,6 @@ import { observer } from "mobx-react-lite";
 const GridView: React.FC<{
   data?: IMysekaiFixtureInfo;
 }> = observer(({ data }) => {
-  const history = useHistory();
   const [thumbnailUrl, setThumbnailUrl] = useState<string>("");
   const [genres] = useCachedData<IMysekaiFixtureGenre>(
     "mysekaiFixtureMainGenres"
@@ -67,77 +66,79 @@ const GridView: React.FC<{
   const tagNames = getTagNames(data.mysekaiFixtureTagGroup, tags);
 
   return (
-    <Card
-      onClick={() => history.push(`/mysekai/fixture/${data.id}`)}
-      style={{ cursor: "pointer" }}
+    <Link
+      to={`/mysekai/fixture/${data.id}`}
+      style={{ textDecoration: "none", color: "inherit", display: "block" }}
     >
-      <CardMedia
-        image={thumbnailUrl}
-        title={data.name}
-        sx={{
-          paddingTop: "100%",
-          position: "relative",
-        }}
-      />
-      <CardContent style={{ paddingBottom: "16px" }}>
-        <Grid container direction="column" spacing={1}>
-          <Grid item>
-            <Typography
-              variant="subtitle1"
-              component="h2"
-              sx={{
-                display: "-webkit-box",
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
-                lineHeight: 1.2,
-              }}
-            >
-              {data.name}
-            </Typography>
-          </Grid>
-          <Grid item>
-            <Typography variant="body2" color="textSecondary">
-              {genreName}
-            </Typography>
-          </Grid>
-          {tagNames.length > 0 && (
+      <Card style={{ cursor: "pointer" }}>
+        <CardMedia
+          image={thumbnailUrl}
+          title={data.name}
+          sx={{
+            paddingTop: "100%",
+            position: "relative",
+          }}
+        />
+        <CardContent style={{ paddingBottom: "16px" }}>
+          <Grid container direction="column" spacing={1}>
             <Grid item>
-              <Grid
-                container
-                spacing={0.5}
+              <Typography
+                variant="subtitle1"
+                component="h2"
                 sx={{
                   display: "-webkit-box",
                   WebkitLineClamp: 2,
                   WebkitBoxOrient: "vertical",
                   overflow: "hidden",
+                  lineHeight: 1.2,
                 }}
               >
-                {tagNames.map((tagName, index) => (
-                  <Grid item key={index}>
-                    <Chip
-                      label={tagName}
-                      size="small"
-                      variant="outlined"
-                      sx={{
-                        fontSize: "0.7rem",
-                        height: "20px",
-                        maxWidth: "160px",
-                        "& .MuiChip-label": {
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                        },
-                      }}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
+                {data.name}
+              </Typography>
             </Grid>
-          )}
-        </Grid>
-      </CardContent>
-    </Card>
+            <Grid item>
+              <Typography variant="body2" color="textSecondary">
+                {genreName}
+              </Typography>
+            </Grid>
+            {tagNames.length > 0 && (
+              <Grid item>
+                <Grid
+                  container
+                  spacing={0.5}
+                  sx={{
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                  }}
+                >
+                  {tagNames.map((tagName, index) => (
+                    <Grid item key={index}>
+                      <Chip
+                        label={tagName}
+                        size="small"
+                        variant="outlined"
+                        sx={{
+                          fontSize: "0.7rem",
+                          height: "20px",
+                          maxWidth: "160px",
+                          "& .MuiChip-label": {
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          },
+                        }}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+              </Grid>
+            )}
+          </Grid>
+        </CardContent>
+      </Card>
+    </Link>
   );
 });
 

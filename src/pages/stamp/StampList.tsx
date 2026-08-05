@@ -4,6 +4,7 @@ import {
   Collapse,
   Grid,
   IconButton,
+  TextField,
   Tooltip,
 } from "@mui/material";
 import {
@@ -25,6 +26,7 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
+import { useDebounce } from "use-debounce";
 import { characterSelectReducer } from "../../stores/reducers";
 import { IGameChara, IStampInfo } from "../../types.d";
 import { useCachedData, useLocalStorage, useToggle } from "../../utils";
@@ -32,7 +34,7 @@ import { charaIcons } from "../../utils/resources";
 import GridView from "./GridView";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
 import { ToggleButtonGroup, ToggleButton } from "@mui/material";
-import { useCharaName } from "../../utils/i18n";
+import { useAssetI18n, useCharaName } from "../../utils/i18n";
 import TypographyHeader from "../../components/styled/TypographyHeader";
 import ContainerContent from "../../components/styled/ContainerContent";
 import PaperContainer from "../../components/styled/PaperContainer";
@@ -47,6 +49,7 @@ const ListCard: React.FC<{ data?: IStampInfo }> = GridView;
 const StampList: React.FC<unknown> = () => {
   const { t } = useTranslation();
   const getCharaName = useCharaName();
+  const { assetT } = useAssetI18n();
 
   const [stampsCache] = useCachedData<IStampInfo>("stamps");
   const [charas] = useCachedData<IGameChara>("gameCharacters");
@@ -76,6 +79,8 @@ const StampList: React.FC<unknown> = () => {
   const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [stampType, setStampType] = useState("");
+  const [searchText, setSearchText] = useState<string>("");
+  const [debouncedSearchText] = useDebounce(searchText, 500);
 
   const getPaginatedStamps = useCallback(
     (page: number, limit: number) => {
@@ -93,11 +98,11 @@ const StampList: React.FC<unknown> = () => {
       if (
         entries[0].isIntersecting &&
         lastQueryFin &&
-        (!filteredCache.length || filteredCache.length > page * limit)
+        filteredCache.length > page * limit
       ) {
         setPage((page) => page + 1);
         setLastQueryFin(false);
-      } else if (filteredCache.length && filteredCache.length <= page * limit) {
+      } else if (filteredCache.length <= page * limit) {
         setHasMore(false);
       }
     },
@@ -110,7 +115,7 @@ const StampList: React.FC<unknown> = () => {
 
   useEffect(() => {
     if (stampsCache?.length) {
-      let cache = stampsCache;
+      let cache = [...stampsCache];
       if (character1Selected.length && character2Selected.length) {
         cache = cache.filter(
           (s) =>
@@ -140,6 +145,20 @@ const StampList: React.FC<unknown> = () => {
           compareTypes.push("cheerful_carnival_message");
         cache = cache.filter((s) => compareTypes.includes(s.stampType));
       }
+      const searchLower = debouncedSearchText.trim().toLowerCase();
+      if (searchLower) {
+        cache = cache.filter((s) => {
+          const originalName = s.name.toLowerCase();
+          const translatedName = assetT(
+            `stamp_name:${s.id}`,
+            s.name
+          ).toLowerCase();
+          return (
+            originalName.includes(searchLower) ||
+            translatedName.includes(searchLower)
+          );
+        });
+      }
       if (sortType === "desc") {
         cache = cache.sort((a, b) => b[sortBy as "id"] - a[sortBy as "id"]);
       } else if (sortType === "asc") {
@@ -156,6 +175,8 @@ const StampList: React.FC<unknown> = () => {
     sortType,
     stampType,
     stampsCache,
+    debouncedSearchText,
+    assetT,
   ]);
 
   useEffect(() => {
@@ -206,7 +227,7 @@ const StampList: React.FC<unknown> = () => {
   );
 
   const handleUpdateSortType = useCallback(
-    (_, sort: string) => {
+    (_: React.MouseEvent<HTMLElement>, sort: string) => {
       if (!sort) return;
       setSortType(sort || "asc");
     },
@@ -398,6 +419,27 @@ const StampList: React.FC<unknown> = () => {
                       </Grid>
                     ))}
                   </Grid>
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                alignItems="center"
+                justifyContent="space-between"
+                spacing={1}
+              >
+                <Grid item xs={12} md={1}>
+                  <TypographyCaption>{t("common:search")}</TypographyCaption>
+                </Grid>
+                <Grid item xs={12} md={11}>
+                  <TextField
+                    size="small"
+                    fullWidth
+                    value={searchText}
+                    inputProps={{ "aria-label": t("common:search") }}
+                    onChange={(e) => setSearchText(e.target.value)}
+                  />
                 </Grid>
               </Grid>
             </Grid>

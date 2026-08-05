@@ -180,16 +180,19 @@ export async function addID3Tags(
   vocals: string[],
   coverImage: ArrayBuffer
 ): Promise<Blob> {
+  const composers = [music.composer, music.arranger].filter(Boolean);
+  const artists = vocals.filter(Boolean);
   const writer = new ID3Writer(source);
-  writer.setFrame("TIT2", music.title);
-  writer.setFrame("TPE1", vocals);
-  writer.setFrame("TCOM", [music.composer, music.arranger]);
-  writer.setFrame("TEXT", music.lyricist);
+  if (music.title) writer.setFrame("TIT2", music.title);
+  if (artists.length) writer.setFrame("TPE1", artists);
+  if (composers.length) writer.setFrame("TCOM", composers);
+  if (music.lyricist) writer.setFrame("TEXT", music.lyricist);
   writer.setFrame("APIC", {
     type: 3,
     data: coverImage,
     description: "cover",
   });
+  writer.addTag();
 
   return writer.getBlob();
 }

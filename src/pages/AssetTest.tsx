@@ -28,6 +28,7 @@ import {
   IScenarioData,
   SnippetAction,
   AppearCharacter,
+  ILive2dModelListElement,
 } from "../types.d";
 
 declare global {
@@ -72,6 +73,12 @@ const PATH_MEDIA_LOST = "/media_lost-20250128.json";
 const PATH_MOTIONS = "/motions-20250207.json";
 const convert_asset_url = (url: string) =>
   url.replace("/minio/sekai-jp-assets/", "");
+const toLive2dModelItem = (model: string): ILive2dModelListElement => ({
+  modelBase: model,
+  modelName: model,
+  modelPath: model,
+  modelFile: `${model}.model3.json`,
+});
 
 function useAllScenario() {
   const [unitStories] = useCachedData<IUnitStory>("unitStories");
@@ -565,7 +572,9 @@ const Main: React.FC = () => {
     }
     // check models not exist
     for (const m of window.AssetTest.allModels) {
-      const url = convert_asset_url(await getBuildModelDataUrl(m));
+      const url = convert_asset_url(
+        await getBuildModelDataUrl(toLive2dModelItem(m))
+      );
       if (!window.AssetTest.assetList.includes(url))
         window.AssetTest.modelNotExist.push(url);
     }
@@ -585,12 +594,16 @@ const Main: React.FC = () => {
     for (const model of Object.keys(window.AssetTest.allMotions)) {
       if (
         window.AssetTest.modelNotExist.includes(
-          convert_asset_url(await getBuildModelDataUrl(model))
+          convert_asset_url(
+            await getBuildModelDataUrl(toLive2dModelItem(model))
+          )
         )
       )
         continue;
       try {
-        const [url, baseName] = await getBuildMotionDataUrl(model);
+        const [url, baseName] = await getBuildMotionDataUrl(
+          toLive2dModelItem(model)
+        );
         window.AssetTest.buildMotionUrls.push({
           model,
           url,
@@ -775,9 +788,10 @@ const Main: React.FC = () => {
     const margin = 0.003;
     const button_width = 0.1;
     const button_height = 0.12;
-    if (paper.current) {
-      const ctx = paper.current.getContext("2d");
-      const size = [paper.current.width, paper.current.height];
+    const currentPaper = paper.current;
+    if (currentPaper) {
+      const ctx = currentPaper.getContext("2d");
+      const size = [currentPaper.width, currentPaper.height];
       if (ctx) {
         processed_workflow_for_arrow.forEach((w) => {
           w.point.forEach((p) => {
@@ -814,9 +828,9 @@ const Main: React.FC = () => {
       }
     }
     return () => {
-      if (paper.current) {
-        const ctx = paper.current.getContext("2d");
-        if (ctx) ctx.clearRect(0, 0, paper.current.width, paper.current.height);
+      if (currentPaper) {
+        const ctx = currentPaper.getContext("2d");
+        if (ctx) ctx.clearRect(0, 0, currentPaper.width, currentPaper.height);
       }
     };
   }, [processed_workflow_for_arrow]);

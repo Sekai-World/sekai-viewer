@@ -409,6 +409,7 @@ const AssetViewer = () => {
     const path = pathname.split("/").slice(2);
     setFolderPath(path);
     setListElements([]);
+    setContinuationToken(undefined);
     setInitialFetching(true);
   }, [pathname]);
 

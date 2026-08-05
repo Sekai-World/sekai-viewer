@@ -26,15 +26,29 @@ const boostRate: Record<number, number> = {
 export function useScoreCalc() {
   const getCardSkillRate = useCallback(
     (cards: ICardInfo[], skills: ISkillInfo[], teamCard: ISekaiCardState) => {
-      const skillId = cards.filter((it) => it.id === teamCard.cardId)[0]
-        .skillId;
-      const skill = skills.filter((it) => it.id === skillId)[0];
-      const scoreSkill = skill.skillEffects.filter((it) =>
+      const card = cards.find((it) => it.id === teamCard.cardId);
+      if (!card) return 0;
+
+      const skill = skills.find((it) => it.id === card.skillId);
+      if (!skill) return 0;
+
+      const scoreSkill = skill.skillEffects.find((it) =>
         it.skillEffectType.includes("score_up")
-      )[0];
+      );
+      if (!scoreSkill) return 0;
+
+      const { skillEffectDetails } = scoreSkill;
+      if (!skillEffectDetails?.length) return 0;
+
+      const skillLevel = Math.trunc(Number(teamCard.skillLevel));
+      if (!Number.isFinite(skillLevel)) return 0;
+
+      const clampedSkillLevel = Math.max(
+        1,
+        Math.min(skillLevel, skillEffectDetails.length)
+      );
       return (
-        scoreSkill.skillEffectDetails[teamCard.skillLevel - 1]
-          .activateEffectValue / 100
+        skillEffectDetails[clampedSkillLevel - 1].activateEffectValue / 100
       );
     },
     []
@@ -170,6 +184,7 @@ export function useScoreCalc() {
     ): number => {
       // console.log(mode);
       switch (mode) {
+        case "world_bloom":
         case "marathon": {
           const basePoint =
             100 +

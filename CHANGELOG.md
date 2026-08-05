@@ -2,6 +2,156 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.19.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.19.1...v1.19.2) (2026-07-22)
+
+
+### Bug Fixes
+
+* **music:** add EN-exclusive song 786 ([e350e00](https://github.com/Sekai-World/sekai-viewer/commits/e350e005198fc441047dbab54b724202c3262cd0))
+
+### [1.19.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.19.0...v1.19.1) (2026-07-22)
+
+
+### Bug Fixes
+
+* **fonts:** replace expired font mirror ([27e6461](https://github.com/Sekai-World/sekai-viewer/commits/27e6461f375e302db26a1d6f2e862f2d13ae981f))
+
+## [1.19.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.12...v1.19.0) (2026-06-29)
+
+
+### Bug Fixes
+
+* **event-tracker:** fix EN region white screen crash, infinite loop, and hidden 404 degree images ([#685](https://github.com/Sekai-World/sekai-viewer/issues/685)) ([af9dac0](https://github.com/Sekai-World/sekai-viewer/commits/af9dac005f4a6e4d342ca712ecf0b37d2e240468))
+
+### [1.18.12](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.11...v1.18.12) (2026-06-22)
+
+
+### Bug Fixes
+
+* **live2d:** fallback to lowercase asset paths ([f310c02](https://github.com/Sekai-World/sekai-viewer/commits/f310c02082f3e54473fb8aa7ecbf8937ef1141fe))
+
+### [1.18.11](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.10...v1.18.11) (2026-06-21)
+
+
+### Bug Fixes
+
+* **story-viewer:** Pre-populate create_model_queue so it doesn't throw on null ([5149aa7](https://github.com/Sekai-World/sekai-viewer/commits/5149aa724a8639c7642aa951ea2e43e28a62b045))
+
+### [1.18.10](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.9...v1.18.10) (2026-06-21)
+
+
+### Bug Fixes
+
+* **live2d:** make controller property optional in StoryReaderLive2DStage ([9bab33b](https://github.com/Sekai-World/sekai-viewer/commits/9bab33bca5d8d13f4476a6f426b1e7761f5f1c81))
+
+### [1.18.9](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.8...v1.18.9) (2026-06-19)
+
+
+### Bug Fixes
+
+* **live2d:** normalize resource paths and metadata loading ([2954c65](https://github.com/Sekai-World/sekai-viewer/commits/2954c65a8321fe02387facf159068d8ba3486e97))
+* **live2d:** stabilize model selector value ([9a461db](https://github.com/Sekai-World/sekai-viewer/commits/9a461db4d212231023381ee84033e776a4ca4a6d))
+
+### [1.18.8](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.7...v1.18.8) (2026-06-14)
+
+
+### Bug Fixes
+
+* **music:** add missing ID to EN_EXCLUSIVE_IDS ([76fc4ae](https://github.com/Sekai-World/sekai-viewer/commits/76fc4ae543cb8ca74d4e537a6600994e07935467))
+
+### [1.18.7](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.6...v1.18.7) (2026-06-09)
+
+### [1.18.6](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.5...v1.18.6) (2026-06-05)
+
+
+### Features
+
+* **music:** FLAC download metadata tags ([#681](https://github.com/Sekai-World/sekai-viewer/issues/681)) ([0f4349a](https://github.com/Sekai-World/sekai-viewer/commits/0f4349aedafb5e85f589df8e301e4459c87c04f3))
+* **music:** trim leading silence on full flac downloads ([5b32115](https://github.com/Sekai-World/sekai-viewer/commits/5b3211541656990ae4df975d87f1b93b78a9f5f8))
+
+
+### Bug Fixes
+
+* **music:** write mp3 id3 metadata ([18e362d](https://github.com/Sekai-World/sekai-viewer/commits/18e362df3759515ae1010ab9360b1a4553bc3790))
+
+
+### Refactors
+
+* **AudioPlayer:** remove unused imports and simplify download button ([094af8e](https://github.com/Sekai-World/sekai-viewer/commits/094af8e7a2786aab029c354c6d5bc9232a36bb98))
+
+### [1.18.5](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.4...v1.18.5) (2026-06-01)
+
+
+### Bug Fixes
+
+* **tsc:** resolve type check errors ([9d94c72](https://github.com/Sekai-World/sekai-viewer/commits/9d94c72afcd4cf54707493619b0ca5d96d17a271))
+
+
+### Refactors
+
+* **live2d:** split viewer controls and download packing ([72122b8](https://github.com/Sekai-World/sekai-viewer/commits/72122b8c5ae502985e76cd7a60cb06fb48b2ec58))
+
+### [1.18.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.3...v1.18.4) (2026-05-22)
+
+
+### Bug Fixes
+
+* **music-detail:** 更新 EN_EXCLUSIVE_IDS 和 KR_EXCLUSIVE_IDS，添加缺失的 ID ([de02701](https://github.com/Sekai-World/sekai-viewer/commits/de02701ea3d6d7aca5bb225dd9307ff351bfc48d))
+
+### [1.18.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.2...v1.18.3) (2026-05-21)
+
+
+### Bug Fixes
+
+* **music-detail:** add missing exclusive ID to EN_EXCLUSIVE_IDS ([1dfa8cf](https://github.com/Sekai-World/sekai-viewer/commits/1dfa8cfd0eb0449ee243bc59b00f22959e9c2763))
+
+### [1.18.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.1...v1.18.2) (2026-05-14)
+
+
+### Features
+
+* enable opening cards in new tabs ([1c94251](https://github.com/Sekai-World/sekai-viewer/commits/1c94251dc55d880cc76e6136406cce4c03c4e684))
+* **stamp:** add search functionality to stamp list ([3a1ad60](https://github.com/Sekai-World/sekai-viewer/commits/3a1ad60783f5524cea80c356ac4b6d42231b4987))
+
+
+### Bug Fixes
+
+* align ingress and pull secret for argocd prod ([7a3b193](https://github.com/Sekai-World/sekai-viewer/commits/7a3b19345d8890b480a7577dddd1f48a837d3998))
+* **asset-viewer:** reset continuation token on path change ([41a0aa0](https://github.com/Sekai-World/sekai-viewer/commits/41a0aa0c78fd459a7841b1036b3c4b3a952db72f))
+* handle edge cases for non-score skills and empty arrays ([48b6794](https://github.com/Sekai-World/sekai-viewer/commits/48b6794b5c2edd3f4da0951e461859a1d04d7044))
+* improve character selection logic in AreaTalk component ([b3ae512](https://github.com/Sekai-World/sekai-viewer/commits/b3ae512d9ba5eedd44805abd7f4186fb8d56959c))
+* **score:** harden skill rate lookup ([be168e6](https://github.com/Sekai-World/sekai-viewer/commits/be168e6c38481a59aa695092cd46422f7dd8e94e))
+* **spoiler:** update overlay styles when setting changes ([bf2c8a8](https://github.com/Sekai-World/sekai-viewer/commits/bf2c8a86ba487533d11ae97824bf982738d236ba))
+* **stamp:** add accessible label for search input ([3e1304d](https://github.com/Sekai-World/sekai-viewer/commits/3e1304d1784dda1707945a8473334c49d2e6bd47))
+* **stamp:** avoid mutating cached stamps while sorting ([3371142](https://github.com/Sekai-World/sekai-viewer/commits/3371142cd4efdd0bd47b74f6502b6ab6e67d2f76))
+* **stamp:** handle empty search results ([1d41945](https://github.com/Sekai-World/sekai-viewer/commits/1d41945317be6454af035047e68637753255bdc9))
+* update TypeScript SDK path in VSCode settings ([411a7f9](https://github.com/Sekai-World/sekai-viewer/commits/411a7f9cae8419601ebf540d2c09b19b8662f3ce))
+
+### [1.18.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.18.0...v1.18.1) (2026-04-16)
+
+
+### Bug Fixes
+
+* **musicDetail:** update CN_EXCLUSIVE_IDS and EN_EXCLUSIVE_IDS for completeness ([9bfb3b9](https://github.com/Sekai-World/sekai-viewer/commits/9bfb3b9353716b010273e55266c3ccd341f0b1dc))
+
+## [1.18.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.12...v1.18.0) (2026-03-15)
+
+
+### Features
+
+* **virtualLive:** add `mc_timeline` type support ([7b922cc](https://github.com/Sekai-World/sekai-viewer/commits/7b922cc7b9c54e879cabc550b16a49ae02dfd599))
+
+
+### Bug Fixes
+
+* **musicDetail:** correct region handling for music chart links ([757a9f7](https://github.com/Sekai-World/sekai-viewer/commits/757a9f7658b6376b1916f3ccb4dff49947a8f35f))
+* **mysekai storyreader:** white background in darkmode ([2ed6249](https://github.com/Sekai-World/sekai-viewer/commits/2ed62497b9cda5a1035dbd213c1c0192dfd86029))
+
+
+### Refactors
+
+* **virtualLive:** extract common logic of mc timeline ([0792abe](https://github.com/Sekai-World/sekai-viewer/commits/0792abe85950cec3ceb8bb413aac706a62795755))
+
 ### [1.17.12](https://github.com/Sekai-World/sekai-viewer/compare/v1.17.11...v1.17.12) (2026-03-01)
 
 

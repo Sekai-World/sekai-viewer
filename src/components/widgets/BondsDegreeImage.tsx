@@ -1,5 +1,5 @@
 import { Skeleton } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { IBondsHonorWord, IBondsHonor, IGameCharaUnit } from "../../types";
 import {
   getRemoteAssetURL,
@@ -12,6 +12,38 @@ import degreeLevel6Icon from "../../assets/frame/icon_degreeLv6.png";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
 import Svg from "../styled/Svg";
+
+function useImageLoaded(url: string | undefined): boolean {
+  const [loaded, setLoaded] = useState(false);
+  const prevUrlRef = useRef<string | undefined>(undefined);
+
+  const handleLoad = useCallback(() => setLoaded(true), []);
+  const handleError = useCallback(() => setLoaded(false), []);
+
+  useEffect(() => {
+    if (url !== prevUrlRef.current) {
+      setLoaded(false);
+      prevUrlRef.current = url;
+    }
+
+    if (!url) {
+      setLoaded(false);
+      return;
+    }
+
+    const img = new window.Image();
+    img.onload = handleLoad;
+    img.onerror = handleError;
+    img.src = url;
+
+    return () => {
+      img.onload = null;
+      img.onerror = null;
+    };
+  }, [url, handleLoad, handleError]);
+
+  return loaded;
+}
 
 const BondsDegreeImage: React.FC<
   {
@@ -179,6 +211,10 @@ const BondsDegreeImage: React.FC<
       func();
     }, [sdRight, sub]);
 
+    const sdLeftLoaded = useImageLoaded(sdLeft);
+    const sdRightLoaded = useImageLoaded(sdRight);
+    const wordImageLoaded = useImageLoaded(wordImage);
+
     return honor === undefined ? null : !!honor ? (
       <Svg
         style={style}
@@ -245,26 +281,27 @@ const BondsDegreeImage: React.FC<
             strokeWidth={8}
             fillOpacity={0}
           />
-          {/* left character */}
-          <image
-            href={sdLeft}
-            x={sdLeftOffsetX}
-            y={sdLeftOffsetY}
-            height={sdLeftHeight}
-            width={sdLeftWidth}
-            mask={sub ? "url(#left-sub-crop)" : ""}
-          />
-          {/* right character */}
-          <image
-            href={sdRight}
-            x={sdRightOffsetX}
-            y={sdRightOffsetY}
-            height={sdRightHeight}
-            width={sdRightWidth}
-            mask={sub ? "url(#right-sub-crop)" : ""}
-          />
-          {/* word */}
-          {!sub && !!wordImage && (
+          {sdLeftLoaded && (
+            <image
+              href={sdLeft}
+              x={sdLeftOffsetX}
+              y={sdLeftOffsetY}
+              height={sdLeftHeight}
+              width={sdLeftWidth}
+              mask={sub ? "url(#left-sub-crop)" : ""}
+            />
+          )}
+          {sdRightLoaded && (
+            <image
+              href={sdRight}
+              x={sdRightOffsetX}
+              y={sdRightOffsetY}
+              height={sdRightHeight}
+              width={sdRightWidth}
+              mask={sub ? "url(#right-sub-crop)" : ""}
+            />
+          )}
+          {!sub && wordImageLoaded && (
             <image href={wordImage} x={wordImageOffsetX} y={wordImageOffsetY} />
           )}
           {/* degree level */}

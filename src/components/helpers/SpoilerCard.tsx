@@ -7,7 +7,7 @@ import React, {
   useState,
 } from "react";
 import SpoilerTag from "../widgets/SpoilerTag";
-import { useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useIsTouchDevice } from "../../utils";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
@@ -22,7 +22,6 @@ const SpoilerCard: React.FC<
   const {
     settings: { isSpoilerMosaicked },
   } = useRootStore();
-  const history = useHistory();
   const isTouchDevice = useIsTouchDevice();
 
   const [isSpoiler, setIsSpoiler] = useState(false);
@@ -41,23 +40,14 @@ const SpoilerCard: React.FC<
       setTouchTimes((prev) => prev + 1);
     }, []);
 
-  const onCardClick: React.MouseEventHandler<HTMLDivElement> =
-    useCallback(() => {
+  const onLinkClick: React.MouseEventHandler<HTMLAnchorElement> = useCallback(
+    (e) => {
       if (isSpoiler && isTouchDevice && isSpoilerMosaicked && touchTimes < 2) {
-        return;
+        e.preventDefault();
       }
-
-      if (toPath) {
-        history.push(toPath);
-      }
-    }, [
-      history,
-      isSpoiler,
-      isSpoilerMosaicked,
-      isTouchDevice,
-      toPath,
-      touchTimes,
-    ]);
+    },
+    [isSpoiler, isSpoilerMosaicked, isTouchDevice, touchTimes]
+  );
 
   const sxSpoilerBox = useMemo(() => {
     let sx: SxProps<Theme> = {
@@ -86,14 +76,10 @@ const SpoilerCard: React.FC<
     }
 
     return sx;
-  }, []);
+  }, [isSpoilerMosaicked]);
 
-  return (
-    <Card
-      sx={{ cursor: "pointer", position: "relative" }}
-      onClick={onCardClick}
-      {...props}
-    >
+  const card = (
+    <Card sx={{ cursor: "pointer", position: "relative" }} {...props}>
       {children}
       {isSpoiler && (
         <Box sx={sxSpoilerBox} onTouchEnd={onTouchEnd}>
@@ -104,6 +90,20 @@ const SpoilerCard: React.FC<
       )}
     </Card>
   );
+
+  if (toPath) {
+    return (
+      <Link
+        to={toPath}
+        onClick={onLinkClick}
+        style={{ textDecoration: "none", color: "inherit", display: "block" }}
+      >
+        {card}
+      </Link>
+    );
+  }
+
+  return card;
 };
 
 export default observer(SpoilerCard);

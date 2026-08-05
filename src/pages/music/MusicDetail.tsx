@@ -48,6 +48,7 @@ import { useStrapi } from "../../utils/apiClient";
 import CommentTextMultiple from "~icons/mdi/comment-text-multiple";
 import Comment from "../comment/Comment";
 import { trimMP3 } from "../../utils/trimMP3";
+import { trimFlac } from "../../utils/trimFlac";
 import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
 import { assetUrl } from "../../utils/urls";
@@ -58,19 +59,21 @@ import PaperContainer from "../../components/styled/PaperContainer";
 import GridOut from "../../components/styled/GridOut";
 import EmbedVideoPlayer from "../../components/blocks/EmbedVideoPlayer";
 import { addID3Tags } from "../../utils/mp3";
+import { addFlacTags } from "../../utils/flac";
 
 const KR_EXCLUSIVE_IDS = [
   10001, 10002, 371, 387, 419, 420, 453, 459, 464, 10003, 10004, 10005, 10006,
-  10007, 10008, 694,
+  10007, 10008, 694, 10009, 10010,
 ];
 const EN_EXCLUSIVE_IDS = [
-  371, 387, 419, 420, 445, 453, 459, 464, 479, 514, 528, 535, 552, 563, 568,
-  598, 599, 602, 609, 640, 657, 673, 690, 694, 701,
+  371, 387, 419, 420, 445, 453, 459, 464, 479, 502, 514, 528, 535, 552, 563,
+  568, 598, 599, 602, 609, 640, 657, 673, 690, 694, 701, 725, 736, 762, 786,
 ];
 const TW_EXCLUSIVE_IDS = [371, 387, 419, 420, 453, 459, 464, 694, 11012];
 const CN_EXCLUSIVE_IDS = [
-  76, 371, 387, 419, 420, 453, 459, 464, 10001, 10002, 11001, 11002, 11003,
-  11004, 11005, 11006, 11007, 11008, 11009,
+  76, 276, 371, 376, 387, 419, 420, 453, 464, 476, 576, 10001, 10002, 11001,
+  11002, 11003, 11004, 11005, 11006, 11007, 11008, 11009, 11010, 11011, 11012,
+  11013, 11014, 11015, 11016, 11017, 11018, 11019,
 ];
 
 const MusicDetail: React.FC<unknown> = observer(() => {
@@ -410,30 +413,32 @@ const MusicDetail: React.FC<unknown> = observer(() => {
       const coverImage = await (
         await fetch(musicJacket.replace(".webp", ".png"))
       ).arrayBuffer();
+      const fn = `${music.title}-${
+        vocalPreviewVal === "1" ? "full" : "preview"
+      }-${vocals.join("+")}.${format}`;
+
       if (trimSilence && format === "mp3" && vocalPreviewVal === "1") {
-        // only trim when downloading full version
         const buf = await (await fetch(src)).arrayBuffer();
         const trimmed = trimMP3(buf, music.fillerSec);
         if (trimmed)
-          saveAs(
-            await addID3Tags(trimmed, music, vocals, coverImage),
-            `${music.title}-full-${vocals.join("+")}.${format}`
-          );
+          saveAs(await addID3Tags(trimmed, music, vocals, coverImage), fn);
       } else if (format === "mp3") {
         const buf = await (await fetch(src)).arrayBuffer();
-        saveAs(
-          await addID3Tags(buf, music, vocals, coverImage),
-          `${music.title}-${
-            vocalPreviewVal === "1" ? "full" : "preview"
-          }-${vocals.join("+")}.${format}`
-        );
+        saveAs(await addID3Tags(buf, music, vocals, coverImage), fn);
+      } else if (format === "flac") {
+        try {
+          const buf = await (await fetch(src)).arrayBuffer();
+          const body =
+            trimSilence && vocalPreviewVal === "1"
+              ? (trimFlac(buf, music.fillerSec) ?? buf)
+              : buf;
+          saveAs(await addFlacTags(body, music, vocals, coverImage), fn);
+        } catch (err) {
+          console.warn(err);
+          saveAs(src, fn);
+        }
       } else {
-        saveAs(
-          src,
-          `${music.title}-${
-            vocalPreviewVal === "1" ? "full" : "preview"
-          }-${vocals.join("+")}.${format}`
-        );
+        saveAs(src, fn);
       }
     },
     [
@@ -1256,7 +1261,7 @@ const MusicDetail: React.FC<unknown> = observer(() => {
                             <Link
                               href={`${
                                 assetUrl.minio.musicChart
-                              }/${region !== "jp" && isExclusiveSong ? (region === "tw" ? "tc" : region) : "jp"}/${musicId.padStart(4, "0")}/${
+                              }/${region !== "jp" && isExclusiveSong ? region : "jp"}/${musicId.padStart(4, "0")}/${
                                 elem.musicDifficulty
                               }.svg`}
                               target="_blank"
