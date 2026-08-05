@@ -216,10 +216,52 @@ ${userPrompt}`;
   }
 
   private sanitizeControlCharacters(rawJsonString: string): string {
-    return rawJsonString
-      .replace(/\n/g, "\\n")
-      .replace(/\r/g, "\\r")
-      .replace(/\t/g, "\\t");
+    let sanitized = "";
+    let inString = false;
+    let escaped = false;
+
+    for (const char of rawJsonString) {
+      if (inString) {
+        if (escaped) {
+          sanitized += char;
+          escaped = false;
+          continue;
+        }
+
+        if (char === "\\") {
+          sanitized += char;
+          escaped = true;
+          continue;
+        }
+
+        if (char === '"') {
+          sanitized += char;
+          inString = false;
+          continue;
+        }
+
+        if (char === "\n") {
+          sanitized += "\\n";
+          continue;
+        }
+
+        if (char === "\r") {
+          sanitized += "\\r";
+          continue;
+        }
+
+        if (char === "\t") {
+          sanitized += "\\t";
+          continue;
+        }
+      } else if (char === '"') {
+        inString = true;
+      }
+
+      sanitized += char;
+    }
+
+    return sanitized;
   }
 
   /**
@@ -236,7 +278,6 @@ ${userPrompt}`;
     const fallback = () => new Array(expectedCount).fill("");
     try {
       if (!batchResponse) return fallback();
-      batchResponse = this.sanitizeControlCharacters(batchResponse);
 
       let parsed: unknown;
       try {
@@ -247,7 +288,12 @@ ${userPrompt}`;
         const start = batchResponse.indexOf("{");
         const end = batchResponse.lastIndexOf("}");
         if (start === -1 || end === -1 || end <= start) return fallback();
-        parsed = JSON.parse(batchResponse.slice(start, end + 1));
+        const candidate = batchResponse.slice(start, end + 1);
+        try {
+          parsed = JSON.parse(candidate);
+        } catch {
+          parsed = JSON.parse(this.sanitizeControlCharacters(candidate));
+        }
       }
 
       const translations = (parsed as any)?.translations;
