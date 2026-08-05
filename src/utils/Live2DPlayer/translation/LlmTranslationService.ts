@@ -344,6 +344,7 @@ ${userPrompt}`;
     if (items.length === 0) return;
 
     const systemPrompt = this.createSystemPrompt(language, sourceLanguage);
+    let storedTranslation = false;
 
     try {
       for (
@@ -365,7 +366,13 @@ ${userPrompt}`;
               `${CACHE_KEY_PREFIX[item.type]}${item.refIdx}`,
               translation
             );
+            storedTranslation = true;
           }
+        );
+      }
+      if (!storedTranslation) {
+        throw new Error(
+          "The translation provider returned no usable translations"
         );
       }
     } catch (error) {

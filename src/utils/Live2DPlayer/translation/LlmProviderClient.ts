@@ -296,6 +296,7 @@ export class LlmProviderClient {
     userMessage: string,
     expectedCount: number
   ): Promise<string> {
+    let data: any;
     const generationConfig: any = {
       temperature: 0.3,
       topP: 0.9,
@@ -320,29 +321,14 @@ export class LlmProviderClient {
     };
 
     try {
-      const response: AxiosResponse = await axios.post(
-        `${endpoint}?key=${this.config.apiKey}`,
-        requestBody,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          timeout: 180_000,
-        }
-      );
-
-      // Gemini may wrap the JSON in a code fence despite responseMimeType;
-      // fall back to extracting the first JSON object if direct text fails.
-      const candidate = response.data?.candidates?.[0];
-      const raw: string = candidate?.content?.parts?.[0]?.text?.trim() || "";
-      if (!raw) {
-        const reason =
-          response.data?.promptFeedback?.blockReason || candidate?.finishReason;
-        throw new Error(
-          `Gemini returned no translation${reason ? ` (${reason})` : ""}`
-        );
-      }
-      return stripCodeFence(raw);
+      const response: AxiosResponse = await axios.post(endpoint, requestBody, {
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": this.config.apiKey,
+        },
+        timeout: 180_000,
+      });
+      data = response.data;
     } catch (error: any) {
       const message = error.response?.data?.error?.message || error.message;
       throw new Error(
@@ -351,6 +337,17 @@ export class LlmProviderClient {
         }): ${message}`
       );
     }
+
+    // Gemini may wrap the JSON in a code fence despite responseMimeType.
+    const candidate = data?.candidates?.[0];
+    const raw: string = candidate?.content?.parts?.[0]?.text?.trim() || "";
+    if (!raw) {
+      const reason =
+        data?.promptFeedback?.blockReason || candidate?.finishReason;
+      const suffix = reason ? ` (${reason})` : "";
+      throw new Error(`Gemini returned no translation${suffix}`);
+    }
+    return stripCodeFence(raw);
   }
 
   /**
