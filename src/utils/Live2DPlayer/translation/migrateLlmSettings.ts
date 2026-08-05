@@ -1,6 +1,3 @@
-// Local copy of the provider type union to avoid a circular import back into
-// `stores/setting` (which imports this module for its preProcessSnapshot).
-// Keep in sync with `TranslationProviderType` in `stores/setting.ts`.
 type TranslationProviderType = "openai-compatible" | "anthropic" | "gemini";
 
 const LLM_PROVIDER_KEYS: TranslationProviderType[] = [
@@ -13,6 +10,21 @@ const LLM_PROVIDER_KEYS: TranslationProviderType[] = [
 // persisted shape of `llmConfigs` / `llmTranslationProvider` changes; add a
 // matching branch in `migrateLlmSettings` to upgrade older snapshots.
 export const LLM_CONFIG_VERSION = 1;
+
+const getMigratedProvider = (
+  legacyProvider: unknown
+): TranslationProviderType => {
+  switch (legacyProvider) {
+    case "anthropic":
+      return "anthropic";
+    case "gemini":
+      return "gemini";
+    case "google":
+      return "gemini";
+    default:
+      return "openai-compatible";
+  }
+};
 
 /**
  * Versioned migration for the LLM settings snapshot.
@@ -36,69 +48,67 @@ export const migrateLlmSettings = (snapshot: any): any => {
     // and the shared `llmModel` / `llmApiKey` / `llmApiEndpoint` singletons
     // into the per-provider `llmConfigs` layout.
     const legacyProvider = snapshot.llmTranslationProvider;
+    const migrated = {
+      ...snapshot,
+      llmConfigs: Object.fromEntries(
+        Object.entries(snapshot.llmConfigs || {}).map(([key, value]) => [
+          key,
+          value && typeof value === "object" ? { ...(value as object) } : value,
+        ])
+      ),
+    };
     const hasLegacyFields =
       typeof snapshot.llmModel === "string" ||
       typeof snapshot.llmApiKey === "string" ||
       typeof snapshot.llmApiEndpoint === "string";
 
     if (!snapshot.llmConfigs || typeof snapshot.llmConfigs !== "object") {
-      snapshot.llmConfigs = {};
+      migrated.llmConfigs = {};
     }
     for (const key of LLM_PROVIDER_KEYS) {
       if (
-        !snapshot.llmConfigs[key] ||
-        typeof snapshot.llmConfigs[key] !== "object"
+        !migrated.llmConfigs[key] ||
+        typeof migrated.llmConfigs[key] !== "object"
       ) {
-        snapshot.llmConfigs[key] = { model: "", apiKey: "", endpoint: "" };
+        migrated.llmConfigs[key] = { model: "", apiKey: "", endpoint: "" };
       }
     }
 
-    let target: TranslationProviderType | undefined;
-    let resolvedEndpoint = snapshot.llmApiEndpoint;
+    const target = getMigratedProvider(legacyProvider);
+    let resolvedEndpoint =
+      typeof snapshot.llmApiEndpoint === "string"
+        ? snapshot.llmApiEndpoint
+        : "";
 
-    console.log(
-      `Migrating LLM settings from legacy provider "${legacyProvider}" to new config layout...`
-    );
-    switch (legacyProvider) {
-      case "openai":
-        target = "openai-compatible";
-        break;
-      case "openrouter":
-        target = "openai-compatible";
-        if (!resolvedEndpoint || !resolvedEndpoint.trim()) {
-          resolvedEndpoint = "https://openrouter.ai/api/v1/chat/completions";
-        }
-        break;
-      case "custom":
-        target = "openai-compatible";
-        break;
-      case "google":
-        target = "gemini";
-        break;
-      case "anthropic":
-        target = "anthropic";
-        break;
-      default:
-        target = undefined;
-        break;
+    if (typeof legacyProvider === "string") {
+      console.log(
+        `Migrating LLM settings from legacy provider "${legacyProvider}" to new config layout...`
+      );
+      if (legacyProvider === "openrouter" && !resolvedEndpoint.trim()) {
+        resolvedEndpoint = "https://openrouter.ai/api/v1/chat/completions";
+      }
     }
 
-    if (target && hasLegacyFields) {
-      const cfg = snapshot.llmConfigs[target];
+    if (hasLegacyFields) {
+      const cfg = migrated.llmConfigs[target];
       if (cfg) {
-        cfg.model = snapshot.llmModel;
-        cfg.apiKey = snapshot.llmApiKey;
-        cfg.endpoint = resolvedEndpoint;
+        if (typeof snapshot.llmModel === "string")
+          cfg.model = snapshot.llmModel;
+        if (typeof snapshot.llmApiKey === "string")
+          cfg.apiKey = snapshot.llmApiKey;
+        if (typeof snapshot.llmApiEndpoint === "string" || resolvedEndpoint)
+          cfg.endpoint = resolvedEndpoint;
       }
     }
 
-    if (legacyProvider) {
-      snapshot.llmTranslationProvider = target ?? legacyProvider;
+    if (typeof legacyProvider === "string") {
+      migrated.llmTranslationProvider = target;
     }
-    delete snapshot.llmModel;
-    delete snapshot.llmApiKey;
-    delete snapshot.llmApiEndpoint;
-    snapshot.llmConfigVersion = LLM_CONFIG_VERSION;
+    delete migrated.llmModel;
+    delete migrated.llmApiKey;
+    delete migrated.llmApiEndpoint;
+    migrated.llmConfigVersion = LLM_CONFIG_VERSION;
+    return migrated;
   }
 
   return snapshot;

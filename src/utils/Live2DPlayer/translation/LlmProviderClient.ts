@@ -58,7 +58,7 @@ const TRANSLATIONS_TOOL_NAME = "store_translations";
 export const getDefaultModelForProvider = (provider: string): string => {
   switch (provider) {
     case "openai-compatible":
-      return "gpt-5.4-mini";
+      return "gpt-4o-mini";
     case "anthropic":
       return "claude-sonnet-5";
     case "gemini":
@@ -73,14 +73,12 @@ export const getDefaultModelForProvider = (provider: string): string => {
  * fallback when the user leaves `llmApiEndpoint` blank, and shown in the
  * settings UI as the placeholder for the endpoint field.
  *
- * For Gemini the URL is parameterised by model, so the display form keeps
- * the literal `{model}` token (substituted at request time with the
- * resolved model) — this keeps the placeholder stable as the user edits
- * the model field.
+ * For Gemini the URL is parameterised by model. A configured model is shown
+ * in the placeholder; an empty model keeps the `{model}` token visible.
  */
 export const getDefaultEndpointForProvider = (
   provider: string,
-  _model?: string
+  model?: string
 ): string => {
   switch (provider) {
     case "openai-compatible":
@@ -88,7 +86,7 @@ export const getDefaultEndpointForProvider = (
     case "anthropic":
       return "https://api.anthropic.com/v1/messages";
     case "gemini":
-      return "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent";
+      return `https://generativelanguage.googleapis.com/v1beta/models/${model?.trim() || "{model}"}:generateContent`;
     default:
       return "";
   }
@@ -123,7 +121,7 @@ export class LlmProviderClient {
   private getProviderEndpoint(): string {
     const model = this.getProviderModel();
     const substituteModel = (url: string): string =>
-      url.includes("{model}") ? url.replace("{model}", model) : url;
+      model && url.includes("{model}") ? url.replace("{model}", model) : url;
 
     if (this.config.apiEndpoint) {
       return substituteModel(this.config.apiEndpoint);
@@ -201,6 +199,7 @@ export class LlmProviderClient {
             "Content-Type": "application/json",
             Authorization: `Bearer ${this.config.apiKey}`,
           },
+          timeout: 180_000,
         }
       );
 
@@ -259,7 +258,9 @@ export class LlmProviderClient {
             "Content-Type": "application/json",
             "x-api-key": this.config.apiKey,
             "anthropic-version": "2023-06-01",
+            "anthropic-dangerous-direct-browser-access": "true",
           },
+          timeout: 180_000,
         }
       );
 
@@ -326,13 +327,21 @@ export class LlmProviderClient {
           headers: {
             "Content-Type": "application/json",
           },
+          timeout: 180_000,
         }
       );
 
       // Gemini may wrap the JSON in a code fence despite responseMimeType;
       // fall back to extracting the first JSON object if direct text fails.
-      const raw: string =
-        response.data.candidates[0]?.content?.parts[0]?.text?.trim() || "";
+      const candidate = response.data?.candidates?.[0];
+      const raw: string = candidate?.content?.parts?.[0]?.text?.trim() || "";
+      if (!raw) {
+        const reason =
+          response.data?.promptFeedback?.blockReason || candidate?.finishReason;
+        throw new Error(
+          `Gemini returned no translation${reason ? ` (${reason})` : ""}`
+        );
+      }
       return stripCodeFence(raw);
     } catch (error: any) {
       const message = error.response?.data?.error?.message || error.message;
@@ -405,7 +414,8 @@ export class LlmProviderClient {
  */
 function stripCodeFence(raw: string): string {
   if (!raw) return raw;
-  const fenceMatch = raw.match(/^```(?:json)?\s*\n([\s\S]*?)\n```/);
-  if (fenceMatch && fenceMatch[1]) return fenceMatch[1].trim();
-  return raw;
+  const fenceMatch = /^\s*```[a-zA-Z]*[ \t]*\r?\n([\s\S]*?)\r?\n?```\s*$/.exec(
+    raw
+  );
+  return fenceMatch?.[1]?.trim() || raw;
 }

@@ -21,15 +21,15 @@ export const SettingRegion = types.enumeration<ServerRegion>("ServerRegion", [
   "cn",
 ]);
 
-export type TranslationProviderType =
-  | "openai-compatible"
-  | "anthropic"
-  | "gemini";
-
-export const TranslationProvider = types.enumeration("TranslationProvider", [
+export const TRANSLATION_PROVIDERS = [
   "openai-compatible",
   "anthropic",
   "gemini",
+] as const;
+export type TranslationProviderType = (typeof TRANSLATION_PROVIDERS)[number];
+
+export const TranslationProvider = types.enumeration("TranslationProvider", [
+  ...TRANSLATION_PROVIDERS,
 ]);
 
 /**
@@ -40,8 +40,9 @@ export const LlmProviderConfig = types.model("LlmProviderConfig", {
   apiKey: types.optional(types.string, ""),
   endpoint: types.optional(types.string, ""),
 });
-export interface ILlmProviderConfig
-  extends Instance<typeof LlmProviderConfig> {}
+export interface ILlmProviderConfig extends Instance<
+  typeof LlmProviderConfig
+> {}
 
 export const Settings = types
   .model({
@@ -74,6 +75,11 @@ export const Settings = types
     additionalSystemPrompt: types.optional(types.string, ""),
   })
   .preProcessSnapshot(migrateLlmSettings)
+  .views((self) => ({
+    get hasLlmApiKey() {
+      return Boolean(self.llmConfigs[self.llmTranslationProvider]?.apiKey);
+    },
+  }))
   .actions((self) => ({
     setContentTransMode(newMode: ContentTransModeType) {
       self.contentTransMode = newMode;

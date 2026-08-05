@@ -141,7 +141,7 @@ const StoryReaderLive2DContent: React.FC<{
 
     // Check if translation is properly configured
     const settings = rootStore.settings;
-    if (!settings.llmConfigs[settings.llmTranslationProvider]?.apiKey) {
+    if (!settings.hasLlmApiKey) {
       showError(t("story_reader_live2d:error.translationNotConfigured"));
       return;
     }
@@ -194,7 +194,7 @@ const StoryReaderLive2DContent: React.FC<{
 
         if (
           settings.enableLlmTranslation &&
-          settings.llmConfigs[settings.llmTranslationProvider]?.apiKey &&
+          settings.hasLlmApiKey &&
           settings.region === "jp"
         ) {
           try {

@@ -6,6 +6,7 @@ import { TranslationCache } from "./TranslationCache";
 import { LlmProviderClient, ILlmApiConfig } from "./LlmProviderClient";
 
 type TranslationItemType = "talk" | "fullscreen" | "telop";
+const TRANSLATION_CHUNK_SIZE = 40;
 
 /**
  * One translatable unit pulled out of `scenarioData` in story order.
@@ -176,43 +177,53 @@ ${userPrompt}`;
     const items: TranslationItem[] = [];
     const snippets = scenarioData.Snippets ?? [];
     for (const sn of snippets) {
-      if (sn.Action === SnippetAction.Talk) {
-        const td = scenarioData.TalkData?.[sn.ReferenceIndex];
-        if (!td || !td.Body || !td.Body.trim()) continue;
-        const motions = (td.Motions ?? [])
-          .map((m) => m.MotionName?.trim())
-          .filter((s): s is string => !!s && s.length > 0);
-        const facials = (td.Motions ?? [])
-          .map((m) => m.FacialName?.trim())
-          .filter((s): s is string => !!s && s.length > 0);
-        items.push({
-          type: "talk",
-          refIdx: sn.ReferenceIndex,
-          text: td.Body,
-          speaker: td.WindowDisplayName?.trim() || undefined,
-          motions: motions.length ? motions : undefined,
-          facials: facials.length ? facials : undefined,
-          monologue: td.LipSync === 2,
-        });
-      } else if (sn.Action === SnippetAction.SpecialEffect) {
-        const se = scenarioData.SpecialEffectData?.[sn.ReferenceIndex];
-        if (!se || !se.StringVal || !se.StringVal.trim()) continue;
-        if (se.EffectType === SpecialEffectType.FullScreenText) {
-          items.push({
-            type: "fullscreen",
-            refIdx: sn.ReferenceIndex,
-            text: se.StringVal,
-          });
-        } else if (se.EffectType === SpecialEffectType.Telop) {
-          items.push({
-            type: "telop",
-            refIdx: sn.ReferenceIndex,
-            text: se.StringVal,
-          });
-        }
-      }
+      const item =
+        sn.Action === SnippetAction.Talk
+          ? this.buildTalkItem(scenarioData, sn.ReferenceIndex)
+          : sn.Action === SnippetAction.SpecialEffect
+            ? this.buildEffectItem(scenarioData, sn.ReferenceIndex)
+            : null;
+      if (item) items.push(item);
     }
     return items;
+  }
+
+  private buildTalkItem(
+    scenarioData: IScenarioData,
+    refIdx: number
+  ): TranslationItem | null {
+    const talk = scenarioData.TalkData?.[refIdx];
+    if (!talk?.Body?.trim()) return null;
+    const namedMotions = (name: "MotionName" | "FacialName") =>
+      (talk.Motions ?? [])
+        .map((motion) => motion[name]?.trim())
+        .filter((value): value is string => Boolean(value));
+    const motions = namedMotions("MotionName");
+    const facials = namedMotions("FacialName");
+    return {
+      type: "talk",
+      refIdx,
+      text: talk.Body,
+      speaker: talk.WindowDisplayName?.trim() || undefined,
+      motions: motions.length ? motions : undefined,
+      facials: facials.length ? facials : undefined,
+      monologue: talk.LipSync === 2,
+    };
+  }
+
+  private buildEffectItem(
+    scenarioData: IScenarioData,
+    refIdx: number
+  ): TranslationItem | null {
+    const effect = scenarioData.SpecialEffectData?.[refIdx];
+    if (!effect?.StringVal?.trim()) return null;
+    if (effect.EffectType === SpecialEffectType.FullScreenText) {
+      return { type: "fullscreen", refIdx, text: effect.StringVal };
+    }
+    if (effect.EffectType === SpecialEffectType.Telop) {
+      return { type: "telop", refIdx, text: effect.StringVal };
+    }
+    return null;
   }
 
   private sanitizeControlCharacters(rawJsonString: string): string {
@@ -240,18 +251,8 @@ ${userPrompt}`;
           continue;
         }
 
-        if (char === "\n") {
-          sanitized += "\\n";
-          continue;
-        }
-
-        if (char === "\r") {
-          sanitized += "\\r";
-          continue;
-        }
-
-        if (char === "\t") {
-          sanitized += "\\t";
+        if (char.charCodeAt(0) < 0x20) {
+          sanitized += `\\u${char.charCodeAt(0).toString(16).padStart(4, "0")}`;
           continue;
         }
       } else if (char === '"') {
@@ -268,8 +269,9 @@ ${userPrompt}`;
    * Parse a structured (JSON) batch translation response into individual
    * lines. The provider enforces the shape `{ "translations": string[] }`,
    * but we still defend against malformed output by extracting the first JSON
-   * object in the response if direct parsing fails, and by padding/trimming
-   * to `expectedCount`.
+   * object in the response if direct parsing fails. Responses with a wrong
+   * number of entries are rejected to avoid assigning a translation to the
+   * wrong story line.
    */
   private parseBatchResponse(
     batchResponse: string,
@@ -297,16 +299,18 @@ ${userPrompt}`;
       }
 
       const translations = (parsed as any)?.translations;
-      if (!Array.isArray(translations)) return fallback();
-
-      return translations
-        .slice(0, expectedCount)
-        .map((t) => (typeof t === "string" ? t.trim() : ""))
-        .concat(
-          expectedCount > translations.length
-            ? new Array(expectedCount - translations.length).fill("")
-            : []
+      if (
+        !Array.isArray(translations) ||
+        translations.length !== expectedCount
+      ) {
+        log.error(
+          "LlmTranslationService",
+          `Expected ${expectedCount} translations, received ${Array.isArray(translations) ? translations.length : "non-array"}`
         );
+        return fallback();
+      }
+
+      return translations.map((t) => (typeof t === "string" ? t.trim() : ""));
     } catch (error) {
       log.error(
         "LlmTranslationService",
@@ -318,7 +322,7 @@ ${userPrompt}`;
   }
 
   /**
-   * Translate all dialogue from scenario data in a single batch request.
+   * Translate all dialogue from scenario data in ordered, bounded batches.
    *
    * Walks `Snippets` in story order so FullScreenText / Telop lines that
    * precede a run of dialogue act as scene headers, then caches each
@@ -340,24 +344,33 @@ ${userPrompt}`;
     if (items.length === 0) return;
 
     const systemPrompt = this.createSystemPrompt(language, sourceLanguage);
-    const userMessage = this.createUserMessage(items);
 
     try {
-      const batchResponse = await this.providerClient.translateBatch(
-        systemPrompt,
-        userMessage,
-        items.length
-      );
-      const translations = this.parseBatchResponse(batchResponse, items.length);
-
-      translations.forEach((translation, i) => {
-        const item = items[i];
-        if (!translation || translation === item.text) return;
-        const cacheKey = `${CACHE_KEY_PREFIX[item.type]}${item.refIdx}`;
-        TranslationCache.storeTranslationByKey(cacheKey, translation);
-      });
+      for (
+        let start = 0;
+        start < items.length;
+        start += TRANSLATION_CHUNK_SIZE
+      ) {
+        const batch = items.slice(start, start + TRANSLATION_CHUNK_SIZE);
+        const batchResponse = await this.providerClient.translateBatch(
+          systemPrompt,
+          this.createUserMessage(batch),
+          batch.length
+        );
+        this.parseBatchResponse(batchResponse, batch.length).forEach(
+          (translation, i) => {
+            const item = batch[i];
+            if (!translation || translation === item.text) return;
+            TranslationCache.storeTranslationByKey(
+              `${CACHE_KEY_PREFIX[item.type]}${item.refIdx}`,
+              translation
+            );
+          }
+        );
+      }
     } catch (error) {
       log.error("LlmTranslationService", "Batch translation failed:", error);
+      throw error;
     }
   }
 }
