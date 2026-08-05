@@ -8,8 +8,9 @@ export const SekaiUserGamedata = types.model({
   rank: types.number,
   userId: types.union(types.number, types.string),
 });
-export interface ISekaiUserGamedata
-  extends Instance<typeof SekaiUserGamedata> {}
+export interface ISekaiUserGamedata extends Instance<
+  typeof SekaiUserGamedata
+> {}
 
 export const SekaiUser = types.model({
   name: types.maybe(types.string),
@@ -52,8 +53,9 @@ export const SekaiUserCardEpisode = types.model({
   scenarioStatus: types.string,
   scenarioStatusReasons: types.maybe(types.array(types.string)),
 });
-export interface ISekaiUserCardEpisode
-  extends Instance<typeof SekaiUserCardEpisode> {}
+export interface ISekaiUserCardEpisode extends Instance<
+  typeof SekaiUserCardEpisode
+> {}
 
 export const SekaiUserCard = types.model({
   cardId: types.number,
@@ -79,8 +81,9 @@ export const SekaiUserMusicResult = types.model({
   updatedAt: types.maybe(types.number),
   userId: types.maybe(types.union(types.number, types.string)),
 });
-export interface ISekaiUserMusicResult
-  extends Instance<typeof SekaiUserMusicResult> {}
+export interface ISekaiUserMusicResult extends Instance<
+  typeof SekaiUserMusicResult
+> {}
 
 export const SekaiUserMusicDifficultyStatus = types.model({
   musicDifficulty: types.string,
@@ -88,8 +91,9 @@ export const SekaiUserMusicDifficultyStatus = types.model({
   musicId: types.maybe(types.number),
   userMusicResults: types.array(SekaiUserMusicResult),
 });
-export interface ISekaiUserMusicDifficultyStatus
-  extends Instance<typeof SekaiUserMusicDifficultyStatus> {}
+export interface ISekaiUserMusicDifficultyStatus extends Instance<
+  typeof SekaiUserMusicDifficultyStatus
+> {}
 
 export const SekaiUserMusic = types.model({
   musicId: types.number,
@@ -102,15 +106,17 @@ export const SekaiUserCharacter = types.model({
   characterId: types.number,
   characterRank: types.number,
 });
-export interface ISekaiUserCharacter
-  extends Instance<typeof SekaiUserCharacter> {}
+export interface ISekaiUserCharacter extends Instance<
+  typeof SekaiUserCharacter
+> {}
 
 export const SekaiUserChallengeLiveSoloResult = types.model({
   characterId: types.number,
   highScore: types.number,
 });
-export interface ISekaiUserChallengeLiveSoloResult
-  extends Instance<typeof SekaiUserChallengeLiveSoloResult> {}
+export interface ISekaiUserChallengeLiveSoloResult extends Instance<
+  typeof SekaiUserChallengeLiveSoloResult
+> {}
 
 export const SekaiUserChallengeLiveSoloStage = types.model({
   challengeLiveStageId: types.maybe(types.number),
@@ -118,15 +124,17 @@ export const SekaiUserChallengeLiveSoloStage = types.model({
   characterId: types.number,
   rank: types.number,
 });
-export interface ISekaiUserChallengeLiveSoloStage
-  extends Instance<typeof SekaiUserChallengeLiveSoloStage> {}
+export interface ISekaiUserChallengeLiveSoloStage extends Instance<
+  typeof SekaiUserChallengeLiveSoloStage
+> {}
 
 export const SekaiUserAreaItem = types.model({
   areaItemId: types.number,
   level: types.number,
 });
-export interface ISekaiUserAreaItem
-  extends Instance<typeof SekaiUserAreaItem> {}
+export interface ISekaiUserAreaItem extends Instance<
+  typeof SekaiUserAreaItem
+> {}
 
 export const SekaiUserHonor = types.model({
   honorId: types.number,
@@ -141,8 +149,9 @@ export const SekaiUserBondsHonor = types.model({
   level: types.number,
   obtainedAt: types.maybe(types.number),
 });
-export interface ISekaiUserBondsHonor
-  extends Instance<typeof SekaiUserBondsHonor> {}
+export interface ISekaiUserBondsHonor extends Instance<
+  typeof SekaiUserBondsHonor
+> {}
 
 export const SekaiUserProfileHonor = types.model({
   bondsHonorViewType: types.maybe(types.string),
@@ -152,8 +161,9 @@ export const SekaiUserProfileHonor = types.model({
   profileHonorType: types.string,
   seq: types.number,
 });
-export interface ISekaiUserProfileHonor
-  extends Instance<typeof SekaiUserProfileHonor> {}
+export interface ISekaiUserProfileHonor extends Instance<
+  typeof SekaiUserProfileHonor
+> {}
 
 export const SekaiCustomProfileCardPosition = types.model({
   x: types.number,
@@ -161,8 +171,9 @@ export const SekaiCustomProfileCardPosition = types.model({
   z: types.number,
 });
 
-export interface ISekaiCustomProfileCardPosition
-  extends Instance<typeof SekaiCustomProfileCardPosition> {}
+export interface ISekaiCustomProfileCardPosition extends Instance<
+  typeof SekaiCustomProfileCardPosition
+> {}
 
 export const SekaiCustomProfileCardRotation = types.model({
   w: types.number,
@@ -171,8 +182,9 @@ export const SekaiCustomProfileCardRotation = types.model({
   z: types.number,
 });
 
-export interface ISekaiCustomProfileCardRotation
-  extends Instance<typeof SekaiCustomProfileCardRotation> {}
+export interface ISekaiCustomProfileCardRotation extends Instance<
+  typeof SekaiCustomProfileCardRotation
+> {}
 
 export const SekaiCustomProfileCardScale = types.model({
   x: types.number,
@@ -180,8 +192,9 @@ export const SekaiCustomProfileCardScale = types.model({
   z: types.number,
 });
 
-export interface ISekaiCustomProfileCardScale
-  extends Instance<typeof SekaiCustomProfileCardScale> {}
+export interface ISekaiCustomProfileCardScale extends Instance<
+  typeof SekaiCustomProfileCardScale
+> {}
 
 export const SekaiCustomProfileCardObjectData = types.model({
   layer: types.number,
@@ -192,8 +205,9 @@ export const SekaiCustomProfileCardObjectData = types.model({
   visible: types.boolean,
 });
 
-export interface ISekaiCustomProfileCardObjectData
-  extends Instance<typeof SekaiCustomProfileCardObjectData> {}
+export interface ISekaiCustomProfileCardObjectData extends Instance<
+  typeof SekaiCustomProfileCardObjectData
+> {}
 
 export const SekaiCustomProfileCardBondsHonors = types.model({
   fullSize: types.boolean,
@@ -203,8 +217,9 @@ export const SekaiCustomProfileCardBondsHonors = types.model({
   wordId: types.number,
 });
 
-export interface ISekaiCustomProfileCardBondsHonors
-  extends Instance<typeof SekaiCustomProfileCardBondsHonors> {}
+export interface ISekaiCustomProfileCardBondsHonors extends Instance<
+  typeof SekaiCustomProfileCardBondsHonors
+> {}
 
 export const SekaiCustomProfileCardMember = types.model({
   id: types.number,
@@ -214,32 +229,36 @@ export const SekaiCustomProfileCardMember = types.model({
   useAfterSpecialTraining: types.boolean,
 });
 
-export interface ISekaiCustomProfileCardMember
-  extends Instance<typeof SekaiCustomProfileCardMember> {}
+export interface ISekaiCustomProfileCardMember extends Instance<
+  typeof SekaiCustomProfileCardMember
+> {}
 
 export const SekaiCustomProfileCollections = types.model({
   id: types.number,
   objectData: SekaiCustomProfileCardObjectData,
 });
 
-export interface ISekaiCustomProfileCollections
-  extends Instance<typeof SekaiCustomProfileCollections> {}
+export interface ISekaiCustomProfileCollections extends Instance<
+  typeof SekaiCustomProfileCollections
+> {}
 
 export const SekaiCustomProfileGeneralBackground = types.model({
   id: types.number,
   objectData: SekaiCustomProfileCardObjectData,
 });
 
-export interface ISekaiCustomProfileGeneralBackground
-  extends Instance<typeof SekaiCustomProfileGeneralBackground> {}
+export interface ISekaiCustomProfileGeneralBackground extends Instance<
+  typeof SekaiCustomProfileGeneralBackground
+> {}
 
 export const SekaiCustomProfileGeneral = types.model({
   objectData: SekaiCustomProfileCardObjectData,
   type: types.number,
 });
 
-export interface ISekaiCustomProfileGeneral
-  extends Instance<typeof SekaiCustomProfileGeneral> {}
+export interface ISekaiCustomProfileGeneral extends Instance<
+  typeof SekaiCustomProfileGeneral
+> {}
 
 export const SekaiCustomProfileHonor = types.model({
   fullSize: types.boolean,
@@ -247,16 +266,18 @@ export const SekaiCustomProfileHonor = types.model({
   objectData: SekaiCustomProfileCardObjectData,
 });
 
-export interface ISekaiCustomProfileHonor
-  extends Instance<typeof SekaiCustomProfileHonor> {}
+export interface ISekaiCustomProfileHonor extends Instance<
+  typeof SekaiCustomProfileHonor
+> {}
 
 export const SekaiCustomProfileOther = types.model({
   id: types.number,
   objectData: SekaiCustomProfileCardObjectData,
 });
 
-export interface ISekaiCustomProfileOther
-  extends Instance<typeof SekaiCustomProfileOther> {}
+export interface ISekaiCustomProfileOther extends Instance<
+  typeof SekaiCustomProfileOther
+> {}
 
 export const SekaiCustomProfileShape = types.model({
   alpha: types.number,
@@ -268,24 +289,27 @@ export const SekaiCustomProfileShape = types.model({
   outlineSize: types.number,
 });
 
-export interface ISekaiCustomProfileShape
-  extends Instance<typeof SekaiCustomProfileShape> {}
+export interface ISekaiCustomProfileShape extends Instance<
+  typeof SekaiCustomProfileShape
+> {}
 
 export const SekaiCustomProfileStandMembers = types.model({
   id: types.number,
   objectData: SekaiCustomProfileCardObjectData,
 });
 
-export interface ISekaiCustomProfileStandMembers
-  extends Instance<typeof SekaiCustomProfileStandMembers> {}
+export interface ISekaiCustomProfileStandMembers extends Instance<
+  typeof SekaiCustomProfileStandMembers
+> {}
 
 export const SekaiCustomProfileStoryBackground = types.model({
   id: types.number,
   objectData: SekaiCustomProfileCardObjectData,
 });
 
-export interface ISekaiCustomProfileStoryBackground
-  extends Instance<typeof SekaiCustomProfileStoryBackground> {}
+export interface ISekaiCustomProfileStoryBackground extends Instance<
+  typeof SekaiCustomProfileStoryBackground
+> {}
 
 export const SekaiCustomProfileText = types.model({
   colorId: types.number,
@@ -299,8 +323,9 @@ export const SekaiCustomProfileText = types.model({
   type: types.number,
 });
 
-export interface ISekaiCustomProfileText
-  extends Instance<typeof SekaiCustomProfileText> {}
+export interface ISekaiCustomProfileText extends Instance<
+  typeof SekaiCustomProfileText
+> {}
 
 export const SekaiCustomProfileCard = types.model({
   bondsHonors: types.array(SekaiCustomProfileCardBondsHonors),
@@ -316,8 +341,9 @@ export const SekaiCustomProfileCard = types.model({
   texts: types.array(SekaiCustomProfileText),
 });
 
-export interface ISekaiCustomProfileCard
-  extends Instance<typeof SekaiCustomProfileCard> {}
+export interface ISekaiCustomProfileCard extends Instance<
+  typeof SekaiCustomProfileCard
+> {}
 
 export const SekaiUserCustomProfileCard = types.model({
   customProfileCard: types.maybe(SekaiCustomProfileCard),
@@ -326,8 +352,9 @@ export const SekaiUserCustomProfileCard = types.model({
   seq: types.number,
 });
 
-export interface ISekaiUserCustomProfileCard
-  extends Instance<typeof SekaiUserCustomProfileCard> {}
+export interface ISekaiUserCustomProfileCard extends Instance<
+  typeof SekaiUserCustomProfileCard
+> {}
 
 export const SekaiUserConfig = types.model({
   friendRequestScope: types.string,
@@ -340,8 +367,9 @@ export const SekaiUserMultiLiveTopScoreCount = types.model({
   superStar: types.number,
 });
 
-export interface ISekaiUserMultiLiveTopScoreCount
-  extends Instance<typeof SekaiUserMultiLiveTopScoreCount> {}
+export interface ISekaiUserMultiLiveTopScoreCount extends Instance<
+  typeof SekaiUserMultiLiveTopScoreCount
+> {}
 
 export const SekaiUserMusicDifficultyClearCount = types.model({
   allPerfect: types.maybe(types.number),
@@ -350,8 +378,9 @@ export const SekaiUserMusicDifficultyClearCount = types.model({
   musicDifficultyType: types.string,
 });
 
-export interface ISekaiUserMusicDifficultyClearCount
-  extends Instance<typeof SekaiUserMusicDifficultyClearCount> {}
+export interface ISekaiUserMusicDifficultyClearCount extends Instance<
+  typeof SekaiUserMusicDifficultyClearCount
+> {}
 
 export const SekaiUserTotalPower = types.model({
   areaItemBonus: types.number,
@@ -361,8 +390,9 @@ export const SekaiUserTotalPower = types.model({
   totalPower: types.number,
 });
 
-export interface ISekaiUserTotalPower
-  extends Instance<typeof SekaiUserTotalPower> {}
+export interface ISekaiUserTotalPower extends Instance<
+  typeof SekaiUserTotalPower
+> {}
 
 export const SekaiUserData = types.model({
   totalPower: types.maybe(SekaiUserTotalPower),

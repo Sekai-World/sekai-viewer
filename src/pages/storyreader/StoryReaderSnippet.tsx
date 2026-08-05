@@ -124,7 +124,7 @@ export const SpecialEffect: React.FC<{
                         src={resource}
                         style={{ cursor: "pointer" }}
                         bgColor=""
-                      // aspectRatio={1.624}
+                        // aspectRatio={1.624}
                       />
                     </div>
                   </Grid>

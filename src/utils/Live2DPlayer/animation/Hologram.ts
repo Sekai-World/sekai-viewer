@@ -39,9 +39,8 @@ export default class Hologram extends BaseAnimation {
     // layer light1
     const light1_container = new Container();
     const light1_s = new Sprite(
-      this.textures.find(
-        (a) => a.identifier === "ui/tex_scenario_light"
-      )!.texture
+      this.textures.find((a) => a.identifier === "ui/tex_scenario_light")!
+        .texture
     );
     light1_s.anchor.set(0.5, 1);
     light1_container.addChild(light1_s);
@@ -61,9 +60,8 @@ export default class Hologram extends BaseAnimation {
     // layer light2
     const light2_container = new Container();
     const light2_s = new Sprite(
-      this.textures.find(
-        (a) => a.identifier === "ui/tex_scenario_light"
-      )!.texture
+      this.textures.find((a) => a.identifier === "ui/tex_scenario_light")!
+        .texture
     );
     light2_s.anchor.set(0.5, 1);
     light2_container.addChild(light2_s);
