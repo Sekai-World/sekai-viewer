@@ -9,11 +9,12 @@ import {
   RadioGroup,
   Switch,
   TextField,
+  Button,
 } from "@mui/material";
 import Brightness4 from "~icons/mdi/brightness-4";
 import Brightness7 from "~icons/mdi/brightness-7";
 import BrightnessAuto from "~icons/mdi/brightness-auto";
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   DisplayModeType,
@@ -28,7 +29,8 @@ import TypographyHeader from "../components/styled/TypographyHeader";
 import {
   getDefaultModelForProvider,
   getDefaultEndpointForProvider,
-} from "../utils/Live2DPlayer/translation/LlmProviderClient";
+} from "../utils/LlmClient";
+import { GraphRAGSettingsDialog } from "../utils/graphRag/settings";
 
 // const RegionDetect = () => {
 //   const { t } = useTranslation();
@@ -104,6 +106,8 @@ const Settings = observer(() => {
       targetLanguage,
       showOriginalText,
       additionalSystemPrompt,
+      enableApiRetry,
+      maxApiRetries,
       setLang,
       setDisplayMode,
       setContentTransMode,
@@ -120,9 +124,14 @@ const Settings = observer(() => {
       setTargetLanguage,
       setShowOriginalText,
       setAdditionalSystemPrompt,
+      setEnableApiRetry,
+      setMaxApiRetries,
     },
   } = useRootStore();
   const { languages: remoteLanguages, isLoading, error } = useRemoteLanguages();
+
+  // Graph RAG dialog state
+  const [graphRAGDialogOpen, setGraphRAGDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !error) {
@@ -447,9 +456,59 @@ const Settings = observer(() => {
                 />
               </FormControl>
             </Grid>
+
+            {/* API Retry Settings */}
+            <Grid item>
+              <FormControl component="fieldset">
+                <FormLabel component="legend">API Retry Settings</FormLabel>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={enableApiRetry}
+                      onChange={(e, v) => setEnableApiRetry(v)}
+                    />
+                  }
+                  label="Enable automatic retry on API failures"
+                />
+              </FormControl>
+            </Grid>
+
+            {enableApiRetry && (
+              <Grid item>
+                <TextField
+                  fullWidth
+                  type="number"
+                  label="Maximum Retries"
+                  value={maxApiRetries}
+                  onChange={(e) =>
+                    setMaxApiRetries(parseInt(e.target.value, 10))
+                  }
+                  inputProps={{ min: 1, max: 10 }}
+                  helperText="Number of retry attempts before giving up. Delay doubles after each failure (1s, 2s, 4s, 8s…)"
+                />
+              </Grid>
+            )}
+
+            {/* Graph RAG Settings Button */}
+            <Grid item>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => setGraphRAGDialogOpen(true)}
+                fullWidth
+              >
+                Knowledge Graph Settings
+              </Button>
+            </Grid>
           </>
         )}
       </Grid>
+
+      {/* Graph RAG Settings Dialog */}
+      <GraphRAGSettingsDialog
+        open={graphRAGDialogOpen}
+        onClose={() => setGraphRAGDialogOpen(false)}
+      />
     </Fragment>
   );
 });
