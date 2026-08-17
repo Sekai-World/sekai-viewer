@@ -178,6 +178,19 @@ function isRateLimited(error: unknown) {
   );
 }
 
+export class Live2DRateLimitError extends Error {
+  constructor(public readonly response: unknown) {
+    super("Live2D request rate limited after retries");
+    this.name = "Live2DRateLimitError";
+  }
+}
+
+export function isLive2DRateLimitError(
+  error: unknown
+): error is Live2DRateLimitError {
+  return error instanceof Live2DRateLimitError;
+}
+
 function getRetryAfter(error: unknown) {
   const retryAfter = Axios.isAxiosError(error)
     ? error.response?.headers?.["retry-after"]
@@ -186,10 +199,15 @@ function getRetryAfter(error: unknown) {
       : undefined;
   if (retryAfter === undefined || retryAfter === null) return undefined;
 
-  const seconds = Number(retryAfter);
-  if (Number.isFinite(seconds)) return Math.max(0, seconds * 1000);
-  const date = Date.parse(String(retryAfter));
-  return Number.isNaN(date) ? undefined : Math.max(0, date - Date.now());
+  const value = String(retryAfter).trim();
+  if (!value) return undefined;
+  const seconds = Number(value);
+  if (Number.isFinite(seconds))
+    return Math.min(30000, Math.max(0, seconds * 1000));
+  const date = Date.parse(value);
+  return Number.isNaN(date)
+    ? undefined
+    : Math.min(30000, Math.max(0, date - Date.now()));
 }
 
 export async function live2dRequest<T>(request: Live2DRequest<T>): Promise<T> {
@@ -197,13 +215,26 @@ export async function live2dRequest<T>(request: Live2DRequest<T>): Promise<T> {
     try {
       return await live2DRequestScheduler.schedule(request);
     } catch (error) {
-      if (!isRateLimited(error) || retry >= LIVE2D_MAX_RETRIES) throw error;
+      if (!isRateLimited(error)) throw error;
+      if (retry >= LIVE2D_MAX_RETRIES) throw new Live2DRateLimitError(error);
       const retryAfter = getRetryAfter(error);
       const backoff = Math.min(1000 * 2 ** retry, 8000);
-      const delay = retryAfter ?? backoff * (0.75 + Math.random() * 0.5);
+      const deterministicJitter = (retry * 997) % 251;
+      const delay = retryAfter ?? backoff + deterministicJitter;
       await new Promise((resolve) => window.setTimeout(resolve, delay));
     }
   }
+}
+
+export async function live2dFetch(
+  url: string,
+  init?: RequestInit
+): Promise<Response> {
+  return live2dRequest(async () => {
+    const response = await fetch(url, init);
+    if (response.status === 429) throw response;
+    return response;
+  });
 }
 
 export function useRefState<S>(
@@ -498,10 +529,16 @@ export async function getRemoteAssetURL(
         validateStatus: (status) =>
           status < 500 && (server !== "live2d" || status !== 429),
       });
-    const headRes =
-      server === "live2d"
-        ? await live2dRequest(headRequest)
-        : await headRequest();
+    let headRes;
+    try {
+      headRes =
+        server === "live2d"
+          ? await live2dRequest(headRequest)
+          : await headRequest();
+    } catch (error) {
+      if (server === "live2d" && isLive2DRateLimitError(error)) return "";
+      throw error;
+    }
     // console.log(headRes.status, url);
     if (headRes.status <= 400) {
       if (setFunc) setFunc(url);

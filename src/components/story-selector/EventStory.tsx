@@ -71,6 +71,7 @@ const EventStory: React.FC<{
                           duration={0}
                           lazy
                           region={region}
+                          style={{ aspectRatio: "16 / 9", width: "100%" }}
                         />
                       </CardContent>
                       <CardContent>
@@ -117,6 +118,7 @@ const EventStory: React.FC<{
                               duration={0}
                               lazy
                               region={region}
+                              style={{ aspectRatio: "16 / 9", width: "100%" }}
                             />
                           </CardContent>
                           <CardContent>

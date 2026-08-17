@@ -1,4 +1,4 @@
-import { getRemoteAssetURL, live2dRequest } from ".";
+import { getRemoteAssetURL, live2dFetch } from ".";
 import type { ILive2DModelData, ILive2dModelListElement } from "../types.d";
 
 type Live2DFileReferenceMotion = {
@@ -55,17 +55,9 @@ async function getRemoteAssetUrlWithLowercaseFallback(
   );
 }
 
-async function fetchLive2D(url: string) {
-  return await live2dRequest(async () => {
-    const response = await fetch(url);
-    if (response.status === 429) throw response;
-    return response;
-  });
-}
-
 async function fetchJsonWithLowercaseFallback<T>(endpoint: string): Promise<T> {
   const url = await getRemoteAssetUrlWithLowercaseFallback(endpoint);
-  const response = await fetchLive2D(url);
+  const response = await live2dFetch(url);
   if (response.ok) return await response.json();
   if (response.status !== 404) {
     throw new Error(`Failed to fetch ${endpoint}: ${response.statusText}`);
@@ -78,7 +70,7 @@ async function fetchJsonWithLowercaseFallback<T>(endpoint: string): Promise<T> {
 
   const fallbackUrl =
     await getRemoteAssetUrlWithLowercaseFallback(fallbackEndpoint);
-  const fallbackResponse = await fetchLive2D(fallbackUrl);
+  const fallbackResponse = await live2dFetch(fallbackUrl);
   if (!fallbackResponse.ok) {
     throw new Error(
       `Failed to fetch ${fallbackEndpoint}: ${fallbackResponse.statusText}`
@@ -236,7 +228,7 @@ async function getMotionData(
     const [motionDataUrl, motionBaseName] =
       await getBuildMotionDataUrl(modelItem);
     if (!normalizeLive2DAssetPath(modelItem.modelBase).startsWith("normal")) {
-      const response = await fetchLive2D(motionDataUrl);
+      const response = await live2dFetch(motionDataUrl);
       if (!response.ok) {
         throw new Error(`Failed to fetch motion data: ${response.statusText}`);
       }
@@ -270,7 +262,7 @@ async function getAddtionalMotionData(modelItem: ILive2dModelListElement) {
     };
   }
 
-  const response = await fetchLive2D(url);
+  const response = await live2dFetch(url);
   if (!response.ok) {
     throw new Error(
       `Failed to fetch additional motion data: ${response.statusText}`

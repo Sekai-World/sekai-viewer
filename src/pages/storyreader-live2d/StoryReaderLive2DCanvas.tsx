@@ -217,7 +217,9 @@ const StoryReaderLive2DCanvas: React.FC<{
 
   const handleModelLoad = (status: LoadStatus, error?: unknown) => {
     setLoadStatus(status);
-    if (error instanceof Error) showError(error.message);
+    if (error !== undefined) {
+      showError(error instanceof Error ? error.message : t("common:error"));
+    }
     if (status === LoadStatus.Loaded) {
       const controller = stage.current?.controller;
       if (controller) {

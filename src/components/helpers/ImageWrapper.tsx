@@ -47,7 +47,12 @@ const ImageWrapper: React.FC<
   const image = isReady ? <Image duration={duration} {...imageProps} /> : null;
 
   return lazy ? (
-    <div ref={containerRef as React.RefObject<HTMLDivElement>}>{image}</div>
+    <div
+      ref={containerRef as React.RefObject<HTMLDivElement>}
+      style={{ width: "100%", ...((props.style as React.CSSProperties) || {}) }}
+    >
+      {image}
+    </div>
   ) : (
     image
   );

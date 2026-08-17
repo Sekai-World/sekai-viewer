@@ -217,6 +217,7 @@ const StoryReaderLive2DContent: React.FC<{
         scenarioData.current,
         progressHandler
       );
+      void modelDataPromise.catch(() => undefined);
       // step 3 - load media URLs
       // return when error
       let mediaUrl;

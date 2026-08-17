@@ -25,7 +25,7 @@ import { getUIMediaUrls } from "./ui_assets";
 import { PreloadQueue } from "./PreloadQueue";
 import { getModelData } from "../live2dLoader";
 import { assetUrl } from "../urls";
-import { live2dRequest } from "../index";
+import { live2dFetch, live2dRequest } from "../index";
 
 function getAssetFilename(url: string) {
   try {
@@ -77,15 +77,14 @@ export async function getLive2DModelData(
 ): Promise<ILive2DModelDataCollection[]> {
   // The model list and per-character metadata do not depend on media URLs.
   const total = snData.AppearCharacters.length;
-  const modelListPromise: Promise<ILive2dModelListElement[]> = live2dRequest(
-    async () => {
-      const response = await fetch(
-        `${assetUrl.minio.live2d}/live2d/model_list.json`
-      );
-      if (response.status === 429) throw response;
-      return response.json();
+  const modelListPromise: Promise<ILive2dModelListElement[]> = live2dFetch(
+    `${assetUrl.minio.live2d}/live2d/model_list.json`
+  ).then(async (response) => {
+    if (!response.ok) {
+      throw new Error(`Failed to fetch model list: ${response.statusText}`);
     }
-  );
+    return response.json();
+  });
   const modelList = await modelListPromise;
   let count = 0;
   const modelDataPromise = Promise.all(
