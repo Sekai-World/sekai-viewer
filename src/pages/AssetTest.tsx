@@ -26,10 +26,10 @@ import {
   ISpecialStory,
   ServerRegion,
   IScenarioData,
-  SnippetAction,
   AppearCharacter,
   ILive2dModelListElement,
 } from "../types.d";
+import { gatherStoryMotion } from "../utils/Live2DPlayer/motions";
 
 declare global {
   interface Window {
@@ -204,96 +204,7 @@ function useAllScenario() {
 }
 
 function gather_story_motion(scenarioData: IScenarioData) {
-  const motion_list: {
-    costume: string;
-    motion: string;
-    type: "motion" | "expression";
-  }[] = [];
-  // gather all motions
-  scenarioData.Snippets.forEach((snippet) => {
-    switch (snippet.Action) {
-      case SnippetAction.CharacterLayout:
-      case SnippetAction.CharacterMotion:
-        {
-          const action = scenarioData.LayoutData[snippet.ReferenceIndex];
-          if (action.CostumeType !== "") {
-            if (action.MotionName !== "") {
-              motion_list.push({
-                costume: action.CostumeType,
-                motion: action.MotionName,
-                type: "motion",
-              });
-            }
-            if (action.FacialName !== "") {
-              motion_list.push({
-                costume: action.CostumeType,
-                motion: action.FacialName,
-                type: "expression",
-              });
-            }
-          } else {
-            scenarioData.AppearCharacters.filter(
-              (c) => c.Character2dId === action.Character2dId
-            ).forEach((a) => {
-              if (action.MotionName !== "") {
-                motion_list.push({
-                  costume: a.CostumeType,
-                  motion: action.MotionName,
-                  type: "motion",
-                });
-              }
-              if (action.FacialName !== "") {
-                motion_list.push({
-                  costume: a.CostumeType,
-                  motion: action.FacialName,
-                  type: "expression",
-                });
-              }
-            });
-          }
-        }
-        break;
-      case SnippetAction.Talk:
-        {
-          const action = scenarioData.TalkData[snippet.ReferenceIndex];
-          if (action.Motions.length > 0) {
-            const motion = action.Motions[0];
-            scenarioData.AppearCharacters.filter(
-              (c) => c.Character2dId === motion.Character2dId
-            ).forEach((a) => {
-              if (motion.MotionName !== "") {
-                motion_list.push({
-                  costume: a.CostumeType,
-                  motion: motion.MotionName.replace(" ", ""), // deal with spaces in event_01_02
-                  type: "motion",
-                });
-              }
-              if (motion.FacialName !== "") {
-                motion_list.push({
-                  costume: a.CostumeType,
-                  motion: motion.FacialName.replace(" ", ""), // deal with spaces in event_01_02
-                  type: "expression",
-                });
-              }
-            });
-          }
-        }
-        break;
-    }
-  });
-  // remove dupulicate
-  const unique_motion: typeof motion_list = [];
-  motion_list.forEach((m) => {
-    if (
-      !unique_motion.find(
-        (u) =>
-          m.costume === u.costume && m.motion === u.motion && m.type === u.type
-      )
-    ) {
-      unique_motion.push(m);
-    }
-  });
-  return motion_list;
+  return gatherStoryMotion(scenarioData);
 }
 
 function areSetsEqual(setA: Set<string>, setB: Set<string>) {

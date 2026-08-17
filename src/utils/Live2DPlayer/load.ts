@@ -1,6 +1,5 @@
 import Axios from "axios";
 import { Howl } from "howler";
-import { SnippetAction } from "../../types.d";
 import type { ILive2dModelListElement, IScenarioData } from "../../types.d";
 import { log } from "./log";
 
@@ -26,6 +25,7 @@ import { PreloadQueue } from "./PreloadQueue";
 import { getModelData } from "../live2dLoader";
 import { assetUrl } from "../urls";
 import { live2dFetch, live2dRequest } from "../index";
+import { gatherStoryMotion } from "./motions";
 
 function getAssetFilename(url: string) {
   try {
@@ -254,83 +254,7 @@ export function discardMotion(
   scenarioData: IScenarioData,
   modelData: ILive2DModelDataCollection[]
 ) {
-  const motion_list: {
-    costume: string;
-    motion: string;
-    type: "motion" | "expression";
-  }[] = [];
-  // gather all motions
-  scenarioData.Snippets.forEach((snippet) => {
-    switch (snippet.Action) {
-      case SnippetAction.CharacterLayout:
-      case SnippetAction.CharacterMotion:
-        {
-          const action = scenarioData.LayoutData[snippet.ReferenceIndex];
-          if (action.CostumeType !== "") {
-            if (action.MotionName !== "") {
-              motion_list.push({
-                costume: action.CostumeType,
-                motion: action.MotionName,
-                type: "motion",
-              });
-            }
-            if (action.FacialName !== "") {
-              motion_list.push({
-                costume: action.CostumeType,
-                motion: action.FacialName,
-                type: "expression",
-              });
-            }
-          } else {
-            scenarioData.AppearCharacters.filter(
-              (c) => c.Character2dId === action.Character2dId
-            ).forEach((a) => {
-              if (action.MotionName !== "") {
-                motion_list.push({
-                  costume: a.CostumeType,
-                  motion: action.MotionName,
-                  type: "motion",
-                });
-              }
-              if (action.FacialName !== "") {
-                motion_list.push({
-                  costume: a.CostumeType,
-                  motion: action.FacialName,
-                  type: "expression",
-                });
-              }
-            });
-          }
-        }
-        break;
-      case SnippetAction.Talk:
-        {
-          const action = scenarioData.TalkData[snippet.ReferenceIndex];
-          if (action.Motions.length > 0) {
-            const motion = action.Motions[0];
-            scenarioData.AppearCharacters.filter(
-              (c) => c.Character2dId === motion.Character2dId
-            ).forEach((a) => {
-              if (motion.MotionName !== "") {
-                motion_list.push({
-                  costume: a.CostumeType,
-                  motion: motion.MotionName.replace(" ", ""), // deal with spaces in event_01_02
-                  type: "motion",
-                });
-              }
-              if (motion.FacialName !== "") {
-                motion_list.push({
-                  costume: a.CostumeType,
-                  motion: motion.FacialName.replace(" ", ""), // deal with spaces in event_01_02
-                  type: "expression",
-                });
-              }
-            });
-          }
-        }
-        break;
-    }
-  });
+  const motion_list = gatherStoryMotion(scenarioData);
   // remove dupulicate
   const unique_motion: typeof motion_list = [];
   motion_list.forEach((m) => {
