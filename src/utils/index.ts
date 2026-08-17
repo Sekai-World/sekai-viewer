@@ -106,6 +106,106 @@ import { IUserInfo } from "../stores/user";
 import { useRootStore } from "../stores/root";
 import { XMLParser } from "fast-xml-parser";
 
+type Live2DRequest<T> = () => Promise<T>;
+
+const LIVE2D_MAX_CONCURRENCY = 4;
+const LIVE2D_REQUEST_INTERVAL_MS = 1000 / 12;
+const LIVE2D_MAX_RETRIES = 4;
+
+class Live2DRequestScheduler {
+  private active = 0;
+  private lastStart = 0;
+  private timer?: number;
+  private readonly pending: Array<{
+    request: Live2DRequest<unknown>;
+    resolve: (value: unknown) => void;
+    reject: (reason?: unknown) => void;
+  }> = [];
+
+  schedule<T>(request: Live2DRequest<T>): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+      this.pending.push({
+        request,
+        resolve: (value) => resolve(value as T),
+        reject,
+      });
+      this.pump();
+    });
+  }
+
+  private pump() {
+    if (
+      this.active >= LIVE2D_MAX_CONCURRENCY ||
+      this.pending.length === 0 ||
+      this.timer
+    ) {
+      return;
+    }
+
+    const wait = Math.max(
+      0,
+      LIVE2D_REQUEST_INTERVAL_MS - (Date.now() - this.lastStart)
+    );
+    if (wait > 0) {
+      this.timer = window.setTimeout(() => {
+        this.timer = undefined;
+        this.pump();
+      }, wait);
+      return;
+    }
+
+    const next = this.pending.shift()!;
+    this.active++;
+    this.lastStart = Date.now();
+    const finish = () => {
+      this.active--;
+      this.pump();
+    };
+    Promise.resolve()
+      .then(next.request)
+      .then(next.resolve, next.reject)
+      .then(finish, finish);
+    this.pump();
+  }
+}
+
+const live2DRequestScheduler = new Live2DRequestScheduler();
+
+function isRateLimited(error: unknown) {
+  return (
+    (Axios.isAxiosError(error) && error.response?.status === 429) ||
+    (error instanceof Response && error.status === 429)
+  );
+}
+
+function getRetryAfter(error: unknown) {
+  const retryAfter = Axios.isAxiosError(error)
+    ? error.response?.headers?.["retry-after"]
+    : error instanceof Response
+      ? error.headers.get("retry-after")
+      : undefined;
+  if (retryAfter === undefined || retryAfter === null) return undefined;
+
+  const seconds = Number(retryAfter);
+  if (Number.isFinite(seconds)) return Math.max(0, seconds * 1000);
+  const date = Date.parse(String(retryAfter));
+  return Number.isNaN(date) ? undefined : Math.max(0, date - Date.now());
+}
+
+export async function live2dRequest<T>(request: Live2DRequest<T>): Promise<T> {
+  for (let retry = 0; ; retry++) {
+    try {
+      return await live2DRequestScheduler.schedule(request);
+    } catch (error) {
+      if (!isRateLimited(error) || retry >= LIVE2D_MAX_RETRIES) throw error;
+      const retryAfter = getRetryAfter(error);
+      const backoff = Math.min(1000 * 2 ** retry, 8000);
+      const delay = retryAfter ?? backoff * (0.75 + Math.random() * 0.5);
+      await new Promise((resolve) => window.setTimeout(resolve, delay));
+    }
+  }
+}
+
 export function useRefState<S>(
   initialValue: S
 ): [S, React.MutableRefObject<S>, React.Dispatch<React.SetStateAction<S>>] {
@@ -393,9 +493,15 @@ export async function getRemoteAssetURL(
       if (window.AssetTest.assetList!.includes(endpoint)) return url;
       else return "";
     }
-    const headRes = await Axios.head(url, {
-      validateStatus: (status) => status < 500,
-    });
+    const headRequest = () =>
+      Axios.head(url, {
+        validateStatus: (status) =>
+          status < 500 && (server !== "live2d" || status !== 429),
+      });
+    const headRes =
+      server === "live2d"
+        ? await live2dRequest(headRequest)
+        : await headRequest();
     // console.log(headRes.status, url);
     if (headRes.status <= 400) {
       if (setFunc) setFunc(url);

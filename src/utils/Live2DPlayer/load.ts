@@ -25,6 +25,7 @@ import { getUIMediaUrls } from "./ui_assets";
 import { PreloadQueue } from "./PreloadQueue";
 import { getModelData } from "../live2dLoader";
 import { assetUrl } from "../urls";
+import { live2dRequest } from "../index";
 
 function getAssetFilename(url: string) {
   try {
@@ -52,22 +53,39 @@ function getAssetLoadWarning(
 export async function getLive2DControllerData(
   snData: IScenarioData,
   mediaUrlForLive2D: ILive2DAssetUrl[],
+  modelDataPromise: Promise<ILive2DModelDataCollection[]>,
   onProgress: ILive2DLoadProgressHandler,
   onWarning: ILive2DLoadWarningHandler
 ): Promise<ILive2DControllerData> {
   // step 3.1.2 - get live2d player ui urls
   mediaUrlForLive2D.push(...getUIMediaUrls(snData));
   // step 3.2 - preload sound/image
-  const scenarioResourcePromise = preloadMedia(
-    mediaUrlForLive2D,
-    onProgress,
-    onWarning
-  );
-  // step 3.3 - get live2d model data
+  const [scenarioResource, modelData] = await Promise.all([
+    preloadMedia(mediaUrlForLive2D, onProgress, onWarning),
+    modelDataPromise,
+  ]);
+  return {
+    scenarioData: snData,
+    scenarioResource,
+    modelData,
+  };
+}
+
+export async function getLive2DModelData(
+  snData: IScenarioData,
+  onProgress: ILive2DLoadProgressHandler
+): Promise<ILive2DModelDataCollection[]> {
+  // The model list and per-character metadata do not depend on media URLs.
   const total = snData.AppearCharacters.length;
-  const modelListPromise: Promise<ILive2dModelListElement[]> = (
-    await fetch(`${assetUrl.minio.live2d}/live2d/model_list.json`)
-  ).json();
+  const modelListPromise: Promise<ILive2dModelListElement[]> = live2dRequest(
+    async () => {
+      const response = await fetch(
+        `${assetUrl.minio.live2d}/live2d/model_list.json`
+      );
+      if (response.status === 429) throw response;
+      return response.json();
+    }
+  );
   const modelList = await modelListPromise;
   let count = 0;
   const modelDataPromise = Promise.all(
@@ -90,15 +108,7 @@ export async function getLive2DControllerData(
       };
     })
   );
-  const [scenarioResource, modelData] = await Promise.all([
-    scenarioResourcePromise,
-    modelDataPromise,
-  ]);
-  return {
-    scenarioData: snData,
-    scenarioResource,
-    modelData,
-  };
+  return await modelDataPromise;
 }
 // step 4 - preload model
 export async function preloadModels(
@@ -129,7 +139,7 @@ export async function preloadModels(
       const url = model.data.url + asset.path;
       taskList.push({
         task: () =>
-          Axios.get(url).catch((err) => {
+          live2dRequest(() => Axios.get(url)).catch((err) => {
             onWarning?.(
               getAssetLoadWarning(
                 asset.kind,
@@ -156,11 +166,6 @@ export async function preloadModels(
   const rst = await queue.run();
   if (rst.filter((r) => r === null).length > 0)
     throw new Error("Asset download failed.");
-  // step 4.2 - discard useless motions in all model
-  controllerData.modelData = discardMotion(
-    controllerData.scenarioData,
-    controllerData.modelData
-  );
 }
 
 // step 3.2 - preload sound/image/video
@@ -246,7 +251,7 @@ function preloadVideo(url: string): Promise<HTMLVideoElement> {
 }
 
 // step 4.2 - discard useless motions in all model
-function discardMotion(
+export function discardMotion(
   scenarioData: IScenarioData,
   modelData: ILive2DModelDataCollection[]
 ) {
@@ -401,7 +406,7 @@ export async function preloadModelMotion(
   for (const motion of unique_motion) {
     taskList.push({
       task: () =>
-        Axios.get(motion.url).catch((err) => {
+        live2dRequest(() => Axios.get(motion.url)).catch((err) => {
           onWarning(
             getAssetLoadWarning("motion", motion.origin, motion.url, err)
           );

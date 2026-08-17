@@ -2,6 +2,8 @@ import React, { useRef, useState, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
   getLive2DControllerData,
+  getLive2DModelData,
+  discardMotion,
   preloadModels,
   preloadModelMotion,
 } from "../../utils/Live2DPlayer/load";
@@ -210,8 +212,12 @@ const StoryReaderLive2DContent: React.FC<{
         }
       }
 
-      // step 3 - get controller data (preload media)
-      // step 3.1 - load media url
+      // Model metadata and media URL resolution are independent after scenario data.
+      const modelDataPromise = getLive2DModelData(
+        scenarioData.current,
+        progressHandler
+      );
+      // step 3 - load media URLs
       // return when error
       let mediaUrl;
       try {
@@ -225,13 +231,14 @@ const StoryReaderLive2DContent: React.FC<{
         setLoadStatus(LoadStatus.Ready);
         return;
       }
-      // step 3.2 preload media
+      // Step 3.2 preloads media after its URLs resolve while model metadata is in flight.
       // return when error
       let ctData;
       try {
         ctData = await getLive2DControllerData(
           scenarioData.current,
           mediaUrl,
+          modelDataPromise,
           progressHandler,
           warningHandler
         );
@@ -241,25 +248,17 @@ const StoryReaderLive2DContent: React.FC<{
         setLoadStatus(LoadStatus.Ready);
         return;
       }
-      // step 4 - preload model
+      // Prune before starting independent asset and motion preloads.
+      ctData.modelData = discardMotion(ctData.scenarioData, ctData.modelData);
+      // step 4 and 5 - preload model assets and motions
       try {
-        await preloadModels(ctData, progressHandler, warningHandler);
+        await Promise.all([
+          preloadModels(ctData, progressHandler, warningHandler),
+          preloadModelMotion(ctData.modelData, progressHandler, warningHandler),
+        ]);
       } catch (err) {
         if (err instanceof Error)
           showError(`Error when load model data: ${err.message}`);
-        setLoadStatus(LoadStatus.Ready);
-        return;
-      }
-      // step 5 - preload motion
-      try {
-        await preloadModelMotion(
-          ctData.modelData,
-          progressHandler,
-          warningHandler
-        );
-      } catch (err) {
-        if (err instanceof Error)
-          showError(`Error when load motion data: ${err.message}`);
         setLoadStatus(LoadStatus.Ready);
         return;
       }
