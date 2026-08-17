@@ -200,14 +200,17 @@ function getRetryAfter(error: unknown) {
   } else {
     retryAfter = undefined;
   }
-  if (retryAfter === undefined || retryAfter === null) return undefined;
+  if (Array.isArray(retryAfter)) retryAfter = retryAfter[0];
+  if (typeof retryAfter !== "string" && typeof retryAfter !== "number") {
+    return undefined;
+  }
 
-  const value = String(retryAfter).trim();
-  if (!value) return undefined;
+  const value = typeof retryAfter === "string" ? retryAfter.trim() : retryAfter;
+  if (value === "") return undefined;
   const seconds = Number(value);
   if (Number.isFinite(seconds))
     return Math.min(30000, Math.max(0, seconds * 1000));
-  const date = Date.parse(value);
+  const date = typeof value === "string" ? Date.parse(value) : NaN;
   return Number.isNaN(date)
     ? undefined
     : Math.min(30000, Math.max(0, date - Date.now()));
