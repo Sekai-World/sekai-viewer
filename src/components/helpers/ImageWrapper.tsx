@@ -49,7 +49,7 @@ const ImageWrapper: React.FC<
   return lazy ? (
     <div
       ref={containerRef as React.RefObject<HTMLDivElement>}
-      style={{ width: "100%", ...((props.style as React.CSSProperties) || {}) }}
+      style={{ width: "100%", ...(props.style as React.CSSProperties) }}
     >
       {image}
     </div>

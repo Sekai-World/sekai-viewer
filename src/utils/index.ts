@@ -192,11 +192,14 @@ export function isLive2DRateLimitError(
 }
 
 function getRetryAfter(error: unknown) {
-  const retryAfter = Axios.isAxiosError(error)
-    ? error.response?.headers?.["retry-after"]
-    : error instanceof Response
-      ? error.headers.get("retry-after")
-      : undefined;
+  let retryAfter: unknown;
+  if (Axios.isAxiosError(error)) {
+    retryAfter = error.response?.headers?.["retry-after"];
+  } else if (error instanceof Response) {
+    retryAfter = error.headers.get("retry-after");
+  } else {
+    retryAfter = undefined;
+  }
   if (retryAfter === undefined || retryAfter === null) return undefined;
 
   const value = String(retryAfter).trim();
