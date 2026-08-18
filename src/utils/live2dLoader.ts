@@ -1,4 +1,4 @@
-import { getRemoteAssetURL } from ".";
+import { getRemoteAssetURL, live2dFetch } from ".";
 import type { ILive2DModelData, ILive2dModelListElement } from "../types.d";
 
 type Live2DFileReferenceMotion = {
@@ -26,10 +26,23 @@ function normalizeLive2DAssetPath(path: string) {
   return path.toLowerCase();
 }
 
+/**
+ * Builds the path to a model's motion metadata file.
+ *
+ * @param basePath - The base path for the motion metadata
+ * @returns The path to `BuildMotionData.json`
+ */
 function getBuildMotionDataPath(basePath: string) {
   return `${basePath}/BuildMotionData.json`;
 }
 
+/**
+ * Resolves a remote Live2D asset URL, retrying with a lowercase path when needed.
+ *
+ * @param endpoint - The asset endpoint to resolve
+ * @param verifyStatus - Whether to verify the remote response status
+ * @returns The resolved asset URL, or an empty string when no URL is available
+ */
 async function getRemoteAssetUrlWithLowercaseFallback(
   endpoint: string,
   verifyStatus = false
@@ -55,9 +68,15 @@ async function getRemoteAssetUrlWithLowercaseFallback(
   );
 }
 
+/**
+ * Fetches and parses JSON from an asset endpoint, retrying with a lowercase path when the initial request returns a 404.
+ *
+ * @param endpoint - The asset endpoint to fetch
+ * @returns The parsed JSON response
+ */
 async function fetchJsonWithLowercaseFallback<T>(endpoint: string): Promise<T> {
   const url = await getRemoteAssetUrlWithLowercaseFallback(endpoint);
-  const response = await fetch(url);
+  const response = await live2dFetch(url);
   if (response.ok) return await response.json();
   if (response.status !== 404) {
     throw new Error(`Failed to fetch ${endpoint}: ${response.statusText}`);
@@ -70,7 +89,7 @@ async function fetchJsonWithLowercaseFallback<T>(endpoint: string): Promise<T> {
 
   const fallbackUrl =
     await getRemoteAssetUrlWithLowercaseFallback(fallbackEndpoint);
-  const fallbackResponse = await fetch(fallbackUrl);
+  const fallbackResponse = await live2dFetch(fallbackUrl);
   if (!fallbackResponse.ok) {
     throw new Error(
       `Failed to fetch ${fallbackEndpoint}: ${fallbackResponse.statusText}`
@@ -218,6 +237,12 @@ interface Live2DMotionsExpressions {
   expressions: string[];
 }
 
+/**
+ * Loads a model's base motion and expression metadata when available.
+ *
+ * @param modelItem - The model whose motion metadata to load
+ * @returns The motion base name and metadata, or empty values when metadata is unavailable
+ */
 async function getMotionData(
   modelItem: ILive2dModelListElement
 ): Promise<[string, Live2DMotionsExpressions]> {
@@ -228,7 +253,7 @@ async function getMotionData(
     const [motionDataUrl, motionBaseName] =
       await getBuildMotionDataUrl(modelItem);
     if (!normalizeLive2DAssetPath(modelItem.modelBase).startsWith("normal")) {
-      const response = await fetch(motionDataUrl);
+      const response = await live2dFetch(motionDataUrl);
       if (!response.ok) {
         throw new Error(`Failed to fetch motion data: ${response.statusText}`);
       }
@@ -249,6 +274,13 @@ async function getMotionData(
   }
 }
 
+/**
+ * Loads additional motion and expression metadata for a model.
+ *
+ * @param modelItem - The model whose additional motion data should be loaded
+ * @returns The model's additional motions and expressions, or empty lists when the asset URL cannot be resolved
+ * @throws If the additional motion data request fails
+ */
 async function getAddtionalMotionData(modelItem: ILive2dModelListElement) {
   const url = await getRemoteAssetUrlWithLowercaseFallback(
     getBuildMotionDataPath(`live2d/model/${modelItem.modelPath}/motions`),
@@ -262,7 +294,7 @@ async function getAddtionalMotionData(modelItem: ILive2dModelListElement) {
     };
   }
 
-  const response = await fetch(url);
+  const response = await live2dFetch(url);
   if (!response.ok) {
     throw new Error(
       `Failed to fetch additional motion data: ${response.statusText}`

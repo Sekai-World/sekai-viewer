@@ -106,6 +106,182 @@ import { IUserInfo } from "../stores/user";
 import { useRootStore } from "../stores/root";
 import { XMLParser } from "fast-xml-parser";
 
+type Live2DRequest<T> = () => Promise<T>;
+
+const LIVE2D_MAX_CONCURRENCY = 4;
+const LIVE2D_REQUEST_INTERVAL_MS = 1000 / 12;
+const LIVE2D_MAX_RETRIES = 4;
+
+class Live2DRequestScheduler {
+  private active = 0;
+  private lastStart = 0;
+  private timer?: number;
+  private readonly pending: Array<{
+    request: Live2DRequest<unknown>;
+    resolve: (value: unknown) => void;
+    reject: (reason?: unknown) => void;
+  }> = [];
+
+  schedule<T>(request: Live2DRequest<T>): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+      this.pending.push({
+        request,
+        resolve: (value) => resolve(value as T),
+        reject,
+      });
+      this.pump();
+    });
+  }
+
+  private pump() {
+    if (
+      this.active >= LIVE2D_MAX_CONCURRENCY ||
+      this.pending.length === 0 ||
+      this.timer
+    ) {
+      return;
+    }
+
+    const wait = Math.max(
+      0,
+      LIVE2D_REQUEST_INTERVAL_MS - (Date.now() - this.lastStart)
+    );
+    if (wait > 0) {
+      this.timer = window.setTimeout(() => {
+        this.timer = undefined;
+        this.pump();
+      }, wait);
+      return;
+    }
+
+    const next = this.pending.shift()!;
+    this.active++;
+    this.lastStart = Date.now();
+    const finish = () => {
+      this.active--;
+      this.pump();
+    };
+    Promise.resolve()
+      .then(next.request)
+      .then(next.resolve, next.reject)
+      .then(finish, finish);
+    this.pump();
+  }
+}
+
+const live2DRequestScheduler = new Live2DRequestScheduler();
+
+/**
+ * Determines whether an error represents an HTTP rate-limit response.
+ *
+ * @param error - The value to inspect
+ * @returns `true` if the error has HTTP status 429, `false` otherwise.
+ */
+function isRateLimited(error: unknown) {
+  return (
+    (Axios.isAxiosError(error) && error.response?.status === 429) ||
+    (error instanceof Response && error.status === 429)
+  );
+}
+
+export class Live2DRateLimitError extends Error {
+  constructor(public readonly response: unknown) {
+    super("Live2D request rate limited after retries");
+    this.name = "Live2DRateLimitError";
+  }
+}
+
+/**
+ * Identifies errors raised after Live2D rate-limit retries are exhausted.
+ *
+ * @param error - The value to inspect
+ * @returns `true` if the error is a `Live2DRateLimitError`, `false` otherwise.
+ */
+export function isLive2DRateLimitError(
+  error: unknown
+): error is Live2DRateLimitError {
+  return error instanceof Live2DRateLimitError;
+}
+
+/**
+ * Parses a server-provided retry delay from an Axios or fetch response error.
+ *
+ * @param error - The error containing a numeric or date-based `Retry-After` value
+ * @returns The retry delay in milliseconds, capped at 30 seconds, or `undefined` when unavailable or invalid
+ */
+function getRetryAfter(error: unknown) {
+  let retryAfter: unknown;
+  if (Axios.isAxiosError(error)) {
+    retryAfter = error.response?.headers?.["retry-after"];
+  } else if (error instanceof Response) {
+    retryAfter = error.headers.get("retry-after");
+  } else {
+    retryAfter = undefined;
+  }
+  if (Array.isArray(retryAfter)) retryAfter = retryAfter[0];
+  if (typeof retryAfter !== "string" && typeof retryAfter !== "number") {
+    return undefined;
+  }
+
+  const value = typeof retryAfter === "string" ? retryAfter.trim() : retryAfter;
+  if (value === "") return undefined;
+  const seconds = Number(value);
+  if (Number.isFinite(seconds))
+    return Math.min(30000, Math.max(0, seconds * 1000));
+  const date = typeof value === "string" ? Date.parse(value) : Number.NaN;
+  return Number.isNaN(date)
+    ? undefined
+    : Math.min(30000, Math.max(0, date - Date.now()));
+}
+
+/**
+ * Executes a Live2D request with bounded retries for rate-limited failures.
+ *
+ * @param request - The asynchronous Live2D request to execute
+ * @returns The request result
+ * @throws The original error when it is not rate-limit related
+ * @throws `Live2DRateLimitError` when rate-limit retries are exhausted
+ */
+export async function live2dRequest<T>(request: Live2DRequest<T>): Promise<T> {
+  for (let retry = 0; ; retry++) {
+    try {
+      return await live2DRequestScheduler.schedule(request);
+    } catch (error) {
+      if (!isRateLimited(error)) throw error;
+      if (retry >= LIVE2D_MAX_RETRIES) throw new Live2DRateLimitError(error);
+      const retryAfter = getRetryAfter(error);
+      const backoff = Math.min(1000 * 2 ** retry, 8000);
+      const deterministicJitter = (retry * 997) % 251;
+      const delay = retryAfter ?? backoff + deterministicJitter;
+      await new Promise((resolve) => window.setTimeout(resolve, delay));
+    }
+  }
+}
+
+/**
+ * Fetches a Live2D asset while applying shared rate-limit handling.
+ *
+ * @param url - The resource URL
+ * @param init - Optional fetch options
+ * @returns The HTTP response
+ */
+export async function live2dFetch(
+  url: string,
+  init?: RequestInit
+): Promise<Response> {
+  return live2dRequest(async () => {
+    const response = await fetch(url, init);
+    if (response.status === 429) throw response;
+    return response;
+  });
+}
+
+/**
+ * Provides state, a synchronized mutable reference to its current value, and a state setter.
+ *
+ * @param initialValue - The initial state value
+ * @returns The state value, mutable state reference, and state setter
+ */
 export function useRefState<S>(
   initialValue: S
 ): [S, React.MutableRefObject<S>, React.Dispatch<React.SetStateAction<S>>] {
@@ -340,6 +516,13 @@ export function useMusicMeta() {
   return [data];
 }
 
+/**
+ * Filters music metadata to entries with matching difficulty information.
+ *
+ * @param metas - Music metadata entries to filter
+ * @param musicDifficulties - Music and difficulty combinations to match
+ * @returns The metadata entries that have a matching music ID and difficulty
+ */
 export function filterMusicMeta(
   metas: IMusicMeta[],
   musicDifficulties: IMusicDifficultyInfo[]
@@ -353,6 +536,13 @@ export function filterMusicMeta(
   );
 }
 
+/**
+ * Adds play levels and note counts from music difficulty data to matching metadata entries.
+ *
+ * @param metas - Music metadata entries to enrich.
+ * @param musicDifficulties - Difficulty data keyed by music ID and difficulty.
+ * @returns Music metadata with matching play levels and note counts added.
+ */
 export function addDataToMusicMeta(
   metas: IMusicMeta[],
   musicDifficulties: IMusicDifficultyInfo[]
@@ -374,7 +564,16 @@ export function addDataToMusicMeta(
   });
 }
 
-// const queue = new PQueue({ concurrency: 1 });
+/**
+ * Builds an asset URL and optionally verifies that the asset is available.
+ *
+ * @param endpoint - The asset path.
+ * @param setFunc - Optional callback invoked with the available URL.
+ * @param domainKey - The asset domain.
+ * @param server - The server region or asset category hosting the asset.
+ * @param verifyStatus - Whether to verify the asset before returning its URL.
+ * @returns The asset URL when available, or an empty string when the endpoint is missing or unavailable.
+ */
 
 export async function getRemoteAssetURL(
   endpoint: string,
@@ -393,9 +592,21 @@ export async function getRemoteAssetURL(
       if (window.AssetTest.assetList!.includes(endpoint)) return url;
       else return "";
     }
-    const headRes = await Axios.head(url, {
-      validateStatus: (status) => status < 500,
-    });
+    const headRequest = () =>
+      Axios.head(url, {
+        validateStatus: (status) =>
+          status < 500 && (server !== "live2d" || status !== 429),
+      });
+    let headRes;
+    try {
+      headRes =
+        server === "live2d"
+          ? await live2dRequest(headRequest)
+          : await headRequest();
+    } catch (error) {
+      if (server === "live2d" && isLive2DRateLimitError(error)) return "";
+      throw error;
+    }
     // console.log(headRes.status, url);
     if (headRes.status <= 400) {
       if (setFunc) setFunc(url);

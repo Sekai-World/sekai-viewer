@@ -1,6 +1,5 @@
 import Axios from "axios";
 import { Howl } from "howler";
-import { SnippetAction } from "../../types.d";
 import type { ILive2dModelListElement, IScenarioData } from "../../types.d";
 import { log } from "./log";
 
@@ -25,7 +24,15 @@ import { getUIMediaUrls } from "./ui_assets";
 import { PreloadQueue } from "./PreloadQueue";
 import { getModelData } from "../live2dLoader";
 import { assetUrl } from "../urls";
+import { live2dFetch, live2dRequest } from "../index";
+import { gatherStoryMotion } from "./motions";
 
+/**
+ * Extracts and URL-decodes the filename from an asset URL.
+ *
+ * @param url - The asset URL or path.
+ * @returns The decoded final pathname segment, or the original filename when the URL cannot be parsed.
+ */
 function getAssetFilename(url: string) {
   try {
     const pathname = new URL(url, window.location.href).pathname;
@@ -35,6 +42,15 @@ function getAssetFilename(url: string) {
   }
 }
 
+/**
+ * Formats a warning message for a failed asset load.
+ *
+ * @param kind - The type of asset that failed to load
+ * @param label - The asset's display label
+ * @param url - The asset URL
+ * @param error - The error encountered while loading the asset
+ * @returns A formatted asset-load failure warning, including an HTTP status when available
+ */
 function getAssetLoadWarning(
   kind: string,
   label: string,
@@ -48,26 +64,55 @@ function getAssetLoadWarning(
   return `Failed to load ${kind} ${label} (${getAssetFilename(url)})${status}`;
 }
 
-// step 3 - get controller data (preload media)
+/**
+ * Preloads scenario media and combines it with Live2D model data for controller initialization.
+ *
+ * @param mediaUrlForLive2D - Asset URLs to preload, including Live2D UI media URLs.
+ * @param modelDataPromise - Promise resolving to the model data for the scenario.
+ * @returns The scenario data, loaded media resources, and model data.
+ */
 export async function getLive2DControllerData(
   snData: IScenarioData,
   mediaUrlForLive2D: ILive2DAssetUrl[],
+  modelDataPromise: Promise<ILive2DModelDataCollection[]>,
   onProgress: ILive2DLoadProgressHandler,
   onWarning: ILive2DLoadWarningHandler
 ): Promise<ILive2DControllerData> {
   // step 3.1.2 - get live2d player ui urls
   mediaUrlForLive2D.push(...getUIMediaUrls(snData));
   // step 3.2 - preload sound/image
-  const scenarioResourcePromise = preloadMedia(
-    mediaUrlForLive2D,
-    onProgress,
-    onWarning
-  );
-  // step 3.3 - get live2d model data
+  const [scenarioResource, modelData] = await Promise.all([
+    preloadMedia(mediaUrlForLive2D, onProgress, onWarning),
+    modelDataPromise,
+  ]);
+  return {
+    scenarioData: snData,
+    scenarioResource,
+    modelData,
+  };
+}
+
+/**
+ * Loads model metadata for each character appearing in a scenario.
+ *
+ * @param snData - Scenario data containing the appearing characters and their costume types
+ * @param onProgress - Callback invoked as each character's model metadata loads
+ * @returns Model metadata associated with each appearing character
+ */
+export async function getLive2DModelData(
+  snData: IScenarioData,
+  onProgress: ILive2DLoadProgressHandler
+): Promise<ILive2DModelDataCollection[]> {
+  // The model list and per-character metadata do not depend on media URLs.
   const total = snData.AppearCharacters.length;
-  const modelListPromise: Promise<ILive2dModelListElement[]> = (
-    await fetch(`${assetUrl.minio.live2d}/live2d/model_list.json`)
-  ).json();
+  const modelListPromise: Promise<ILive2dModelListElement[]> = live2dFetch(
+    `${assetUrl.minio.live2d}/live2d/model_list.json`
+  ).then(async (response) => {
+    if (!response.ok) {
+      throw new Error(`Failed to fetch model list: ${response.statusText}`);
+    }
+    return response.json();
+  });
   const modelList = await modelListPromise;
   let count = 0;
   const modelDataPromise = Promise.all(
@@ -90,17 +135,16 @@ export async function getLive2DControllerData(
       };
     })
   );
-  const [scenarioResource, modelData] = await Promise.all([
-    scenarioResourcePromise,
-    modelDataPromise,
-  ]);
-  return {
-    scenarioData: snData,
-    scenarioResource,
-    modelData,
-  };
+  return await modelDataPromise;
 }
-// step 4 - preload model
+/**
+ * Preloads the texture, moc, and physics assets for each Live2D model.
+ *
+ * @param controllerData - The controller data containing the models and their asset references
+ * @param onProgress - Reports progress as model assets are loaded
+ * @param onWarning - Reports asset-loading warnings
+ * @throws If any model asset fails to download
+ */
 export async function preloadModels(
   controllerData: ILive2DControllerData,
   onProgress: ILive2DLoadProgressHandler,
@@ -129,7 +173,7 @@ export async function preloadModels(
       const url = model.data.url + asset.path;
       taskList.push({
         task: () =>
-          Axios.get(url).catch((err) => {
+          live2dRequest(() => Axios.get(url)).catch((err) => {
             onWarning?.(
               getAssetLoadWarning(
                 asset.kind,
@@ -156,11 +200,6 @@ export async function preloadModels(
   const rst = await queue.run();
   if (rst.filter((r) => r === null).length > 0)
     throw new Error("Asset download failed.");
-  // step 4.2 - discard useless motions in all model
-  controllerData.modelData = discardMotion(
-    controllerData.scenarioData,
-    controllerData.modelData
-  );
 }
 
 // step 3.2 - preload sound/image/video
@@ -213,6 +252,12 @@ export async function preloadMedia(
   };
   return scenario_resource;
 }
+/**
+ * Loads an image from a URL.
+ *
+ * @param url - The image URL
+ * @returns The loaded image element
+ */
 function preloadImage(url: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -222,6 +267,12 @@ function preloadImage(url: string): Promise<HTMLImageElement> {
     img.src = url;
   });
 }
+/**
+ * Preloads a sound from a URL.
+ *
+ * @param url - The sound URL
+ * @returns The loaded sound
+ */
 function preloadSound(url: string): Promise<Howl> {
   return new Promise((resolve, reject) => {
     const sound = new Howl({
@@ -234,6 +285,12 @@ function preloadSound(url: string): Promise<Howl> {
   });
 }
 
+/**
+ * Loads a video resource.
+ *
+ * @param url - The video URL
+ * @returns The loaded video element
+ */
 function preloadVideo(url: string): Promise<HTMLVideoElement> {
   return new Promise((resolve, reject) => {
     const video = document.createElement("video");
@@ -245,88 +302,18 @@ function preloadVideo(url: string): Promise<HTMLVideoElement> {
   });
 }
 
-// step 4.2 - discard useless motions in all model
-function discardMotion(
+/**
+ * Filters each model to retain only the motion and expression assets referenced by the scenario.
+ *
+ * @param scenarioData - Scenario data containing the referenced motion and expression assets
+ * @param modelData - Model data whose motion and expression definitions are filtered in place
+ * @returns The filtered model data collection
+ */
+export function discardMotion(
   scenarioData: IScenarioData,
   modelData: ILive2DModelDataCollection[]
 ) {
-  const motion_list: {
-    costume: string;
-    motion: string;
-    type: "motion" | "expression";
-  }[] = [];
-  // gather all motions
-  scenarioData.Snippets.forEach((snippet) => {
-    switch (snippet.Action) {
-      case SnippetAction.CharacterLayout:
-      case SnippetAction.CharacterMotion:
-        {
-          const action = scenarioData.LayoutData[snippet.ReferenceIndex];
-          if (action.CostumeType !== "") {
-            if (action.MotionName !== "") {
-              motion_list.push({
-                costume: action.CostumeType,
-                motion: action.MotionName,
-                type: "motion",
-              });
-            }
-            if (action.FacialName !== "") {
-              motion_list.push({
-                costume: action.CostumeType,
-                motion: action.FacialName,
-                type: "expression",
-              });
-            }
-          } else {
-            scenarioData.AppearCharacters.filter(
-              (c) => c.Character2dId === action.Character2dId
-            ).forEach((a) => {
-              if (action.MotionName !== "") {
-                motion_list.push({
-                  costume: a.CostumeType,
-                  motion: action.MotionName,
-                  type: "motion",
-                });
-              }
-              if (action.FacialName !== "") {
-                motion_list.push({
-                  costume: a.CostumeType,
-                  motion: action.FacialName,
-                  type: "expression",
-                });
-              }
-            });
-          }
-        }
-        break;
-      case SnippetAction.Talk:
-        {
-          const action = scenarioData.TalkData[snippet.ReferenceIndex];
-          if (action.Motions.length > 0) {
-            const motion = action.Motions[0];
-            scenarioData.AppearCharacters.filter(
-              (c) => c.Character2dId === motion.Character2dId
-            ).forEach((a) => {
-              if (motion.MotionName !== "") {
-                motion_list.push({
-                  costume: a.CostumeType,
-                  motion: motion.MotionName.replace(" ", ""), // deal with spaces in event_01_02
-                  type: "motion",
-                });
-              }
-              if (motion.FacialName !== "") {
-                motion_list.push({
-                  costume: a.CostumeType,
-                  motion: motion.FacialName.replace(" ", ""), // deal with spaces in event_01_02
-                  type: "expression",
-                });
-              }
-            });
-          }
-        }
-        break;
-    }
-  });
+  const motion_list = gatherStoryMotion(scenarioData);
   // remove dupulicate
   const unique_motion: typeof motion_list = [];
   motion_list.forEach((m) => {
@@ -364,7 +351,14 @@ function discardMotion(
   });
   return modelData;
 }
-// step 5 - preload motions
+/**
+ * Preloads all unique motion and expression assets referenced by the models.
+ *
+ * @param modelData - Model definitions containing motion and expression asset references
+ * @param onProgress - Reports progress for each asset
+ * @param onWarning - Reports asset-loading warnings
+ * @throws An error if an asset fails to load
+ */
 export async function preloadModelMotion(
   modelData: ILive2DModelDataCollection[],
   onProgress: ILive2DLoadProgressHandler,
@@ -401,7 +395,7 @@ export async function preloadModelMotion(
   for (const motion of unique_motion) {
     taskList.push({
       task: () =>
-        Axios.get(motion.url).catch((err) => {
+        live2dRequest(() => Axios.get(motion.url)).catch((err) => {
           onWarning(
             getAssetLoadWarning("motion", motion.origin, motion.url, err)
           );

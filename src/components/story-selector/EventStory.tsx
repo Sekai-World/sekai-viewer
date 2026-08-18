@@ -69,7 +69,9 @@ const EventStory: React.FC<{
                           src={`event_story/${ev.assetbundleName}/screen_image/banner_event_story.webp`}
                           bgColor=""
                           duration={0}
+                          lazy
                           region={region}
+                          style={{ aspectRatio: "16 / 9", width: "100%" }}
                         />
                       </CardContent>
                       <CardContent>
@@ -114,7 +116,9 @@ const EventStory: React.FC<{
                               src={`event_story/${chapter.assetbundleName}/episode_image/${episode.assetbundleName}.webp`}
                               bgColor=""
                               duration={0}
+                              lazy
                               region={region}
+                              style={{ aspectRatio: "16 / 9", width: "100%" }}
                             />
                           </CardContent>
                           <CardContent>
