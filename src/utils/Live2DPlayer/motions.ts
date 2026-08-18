@@ -56,8 +56,7 @@ export function gatherStoryMotion(
       }
       case SnippetAction.Talk: {
         const action = scenarioData.TalkData[snippet.ReferenceIndex];
-        if (action.Motions.length > 0) {
-          const motion = action.Motions[0];
+        action.Motions.forEach((motion) => {
           scenarioData.AppearCharacters.filter(
             (c) => c.Character2dId === motion.Character2dId
           ).forEach((a) => {
@@ -76,7 +75,7 @@ export function gatherStoryMotion(
               });
             }
           });
-        }
+        });
         break;
       }
     }
