@@ -210,7 +210,7 @@ function getRetryAfter(error: unknown) {
   const seconds = Number(value);
   if (Number.isFinite(seconds))
     return Math.min(30000, Math.max(0, seconds * 1000));
-  const date = typeof value === "string" ? Date.parse(value) : NaN;
+  const date = typeof value === "string" ? Date.parse(value) : Number.NaN;
   return Number.isNaN(date)
     ? undefined
     : Math.min(30000, Math.max(0, date - Date.now()));
