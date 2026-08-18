@@ -30,6 +30,13 @@ function getBuildMotionDataPath(basePath: string) {
   return `${basePath}/BuildMotionData.json`;
 }
 
+/**
+ * Resolves a remote Live2D asset URL, retrying with a lowercase path when needed.
+ *
+ * @param endpoint - The asset endpoint to resolve
+ * @param verifyStatus - Whether to verify the remote response status
+ * @returns The resolved asset URL, or an empty string when no URL is available
+ */
 async function getRemoteAssetUrlWithLowercaseFallback(
   endpoint: string,
   verifyStatus = false
@@ -225,10 +232,10 @@ interface Live2DMotionsExpressions {
 }
 
 /**
- * Loads the base motion and expression metadata for a Live2D model.
+ * Loads a model's base motion and expression metadata when available.
  *
  * @param modelItem - The model whose motion metadata should be loaded
- * @returns The motion base name and loaded motion and expression data, or empty values when loading fails
+ * @returns The motion base name and metadata, or an empty base name with empty motion and expression lists when metadata is unavailable
  */
 async function getMotionData(
   modelItem: ILive2dModelListElement

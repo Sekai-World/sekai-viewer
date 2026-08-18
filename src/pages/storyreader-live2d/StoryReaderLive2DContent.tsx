@@ -134,7 +134,9 @@ const StoryReaderLive2DContent: React.FC<{
   };
   StoryReaderLive2DContent.displayName = "StoryReaderLive2DContent";
 
-  // Function to regenerate translations for loaded scenario data
+  /**
+   * Regenerates translations for the loaded scenario when translation is configured.
+   */
   async function regenerateTranslation() {
     if (!scenarioData.current) {
       showError(t("story_reader_live2d:error.noScenarioData"));

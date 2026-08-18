@@ -192,8 +192,9 @@ export class Live2DRateLimitError extends Error {
 }
 
 /**
- * Determines whether an error represents exhausted Live2D rate-limit retries.
+ * Identifies errors raised after Live2D rate-limit retries are exhausted.
  *
+ * @param error - The value to inspect
  * @returns `true` if the error is a `Live2DRateLimitError`, `false` otherwise.
  */
 export function isLive2DRateLimitError(
@@ -203,10 +204,10 @@ export function isLive2DRateLimitError(
 }
 
 /**
- * Parses a retry delay from an Axios or fetch response error.
+ * Parses a server-provided retry delay from an Axios or fetch response error.
  *
- * @param error - The error containing a `Retry-After` header
- * @returns The delay in milliseconds, capped at 30 seconds, or `undefined` when unavailable or invalid
+ * @param error - The error containing a numeric or date-based `Retry-After` value
+ * @returns The retry delay in milliseconds, capped at 30 seconds, or `undefined` when unavailable or invalid
  */
 function getRetryAfter(error: unknown) {
   let retryAfter: unknown;
@@ -528,6 +529,13 @@ export function filterMusicMeta(
   );
 }
 
+/**
+ * Adds play levels and note counts from music difficulty data to matching metadata entries.
+ *
+ * @param metas - Music metadata entries to enrich.
+ * @param musicDifficulties - Difficulty data keyed by music ID and difficulty.
+ * @returns Music metadata with matching play levels and note counts added.
+ */
 export function addDataToMusicMeta(
   metas: IMusicMeta[],
   musicDifficulties: IMusicDifficultyInfo[]

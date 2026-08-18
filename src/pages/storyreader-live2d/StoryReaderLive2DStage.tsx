@@ -68,10 +68,10 @@ const StoryReaderLive2DStage = forwardRef<
     loadModel(nextController, "Failed to reload Live2D model to canvas.");
   }
   /**
-   * Loads the model and reports its completion status.
+   * Loads a model and reports the result for the active controller.
    *
-   * @param nextController - The controller used to load the model
-   * @param errorMessage - The message logged if model loading fails
+   * @param nextController - The controller responsible for loading the model
+   * @param errorMessage - The message to log when loading fails
    */
   function loadModel(nextController: Live2DController, errorMessage: string) {
     nextController

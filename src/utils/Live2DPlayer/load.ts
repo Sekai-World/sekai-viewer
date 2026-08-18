@@ -42,6 +42,15 @@ function getAssetFilename(url: string) {
   }
 }
 
+/**
+ * Formats a warning message for a failed asset load.
+ *
+ * @param kind - The type of asset that failed to load
+ * @param label - The asset's display label
+ * @param url - The asset URL
+ * @param error - The error encountered while loading the asset
+ * @returns A formatted asset-load failure warning, including an HTTP status when available
+ */
 function getAssetLoadWarning(
   kind: string,
   label: string,
@@ -87,6 +96,7 @@ export async function getLive2DControllerData(
  * Loads model metadata for each character appearing in a scenario.
  *
  * @param snData - Scenario data containing the appearing characters and their costume types
+ * @param onProgress - Callback invoked as each character's model metadata loads
  * @returns Model metadata associated with each appearing character
  */
 export async function getLive2DModelData(
@@ -251,6 +261,12 @@ function preloadImage(url: string): Promise<HTMLImageElement> {
     img.src = url;
   });
 }
+/**
+ * Preloads a sound from a URL.
+ *
+ * @param url - The sound URL
+ * @returns The loaded sound
+ */
 function preloadSound(url: string): Promise<Howl> {
   return new Promise((resolve, reject) => {
     const sound = new Howl({
