@@ -26,6 +26,12 @@ function normalizeLive2DAssetPath(path: string) {
   return path.toLowerCase();
 }
 
+/**
+ * Builds the path to a model's motion metadata file.
+ *
+ * @param basePath - The base path for the motion metadata
+ * @returns The path to `BuildMotionData.json`
+ */
 function getBuildMotionDataPath(basePath: string) {
   return `${basePath}/BuildMotionData.json`;
 }
@@ -63,7 +69,7 @@ async function getRemoteAssetUrlWithLowercaseFallback(
 }
 
 /**
- * Fetches JSON from an asset endpoint, retrying with a normalized lowercase path when the initial request returns a 404.
+ * Fetches and parses JSON from an asset endpoint, retrying with a lowercase path when the initial request returns a 404.
  *
  * @param endpoint - The asset endpoint to fetch
  * @returns The parsed JSON response
@@ -234,8 +240,8 @@ interface Live2DMotionsExpressions {
 /**
  * Loads a model's base motion and expression metadata when available.
  *
- * @param modelItem - The model whose motion metadata should be loaded
- * @returns The motion base name and metadata, or an empty base name with empty motion and expression lists when metadata is unavailable
+ * @param modelItem - The model whose motion metadata to load
+ * @returns The motion base name and metadata, or empty values when metadata is unavailable
  */
 async function getMotionData(
   modelItem: ILive2dModelListElement
@@ -273,6 +279,7 @@ async function getMotionData(
  *
  * @param modelItem - The model whose additional motion data should be loaded
  * @returns The model's additional motions and expressions, or empty lists when the asset URL cannot be resolved
+ * @throws If the additional motion data request fails
  */
 async function getAddtionalMotionData(modelItem: ILive2dModelListElement) {
   const url = await getRemoteAssetUrlWithLowercaseFallback(

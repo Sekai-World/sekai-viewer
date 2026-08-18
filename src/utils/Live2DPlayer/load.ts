@@ -252,6 +252,12 @@ export async function preloadMedia(
   };
   return scenario_resource;
 }
+/**
+ * Loads an image from a URL.
+ *
+ * @param url - The image URL
+ * @returns The loaded image element
+ */
 function preloadImage(url: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -297,11 +303,11 @@ function preloadVideo(url: string): Promise<HTMLVideoElement> {
 }
 
 /**
- * Prunes each model's motion and expression definitions to retain only assets referenced by the scenario.
+ * Filters each model to retain only the motion and expression assets referenced by the scenario.
  *
- * @param scenarioData - Scenario data containing the required story motions
- * @param modelData - Model data whose motion and expression definitions are filtered
- * @returns The updated model data collection
+ * @param scenarioData - Scenario data containing the referenced motion and expression assets
+ * @param modelData - Model data whose motion and expression definitions are filtered in place
+ * @returns The filtered model data collection
  */
 export function discardMotion(
   scenarioData: IScenarioData,

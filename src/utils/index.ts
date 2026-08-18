@@ -516,6 +516,13 @@ export function useMusicMeta() {
   return [data];
 }
 
+/**
+ * Filters music metadata to entries with matching difficulty information.
+ *
+ * @param metas - Music metadata entries to filter
+ * @param musicDifficulties - Music and difficulty combinations to match
+ * @returns The metadata entries that have a matching music ID and difficulty
+ */
 export function filterMusicMeta(
   metas: IMusicMeta[],
   musicDifficulties: IMusicDifficultyInfo[]
@@ -558,14 +565,14 @@ export function addDataToMusicMeta(
 }
 
 /**
- * Builds a remote asset URL and optionally verifies that the asset is available.
+ * Builds an asset URL and optionally verifies that the asset is available.
  *
  * @param endpoint - The asset path.
- * @param setFunc - Optional callback invoked with the URL when it is available.
- * @param domainKey - The asset domain to use.
+ * @param setFunc - Optional callback invoked with the available URL.
+ * @param domainKey - The asset domain.
  * @param server - The server region or asset category hosting the asset.
  * @param verifyStatus - Whether to verify the asset before returning its URL.
- * @returns The asset URL when available, or an empty string otherwise.
+ * @returns The asset URL when available, or an empty string when the endpoint is missing or unavailable.
  */
 
 export async function getRemoteAssetURL(
