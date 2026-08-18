@@ -45,19 +45,7 @@ const StoryReaderLive2DStage = forwardRef<
     if (nextController.layers.live2d.load_status() === "ready") {
       onModelLoad(LoadStatus.Loading);
       nextController.layers.live2d.clear();
-      nextController
-        .live2d_load_model(0, onRenderProgress)
-        .then(() => {
-          if (!disposed.current && controller.current === nextController) {
-            onModelLoad(LoadStatus.Loaded);
-          }
-        })
-        .catch((error: unknown) => {
-          console.error("Failed to load Live2D model to canvas.", error);
-          if (!disposed.current && controller.current === nextController) {
-            onModelLoad(LoadStatus.Ready, error);
-          }
-        });
+      loadModel(nextController, "Failed to load Live2D model to canvas.");
     }
     return () => {
       disposed.current = true;
@@ -72,6 +60,9 @@ const StoryReaderLive2DStage = forwardRef<
     controller.current = nextController;
     onModelLoad(LoadStatus.Loading);
     nextController.layers.live2d.clear();
+    loadModel(nextController, "Failed to reload Live2D model to canvas.");
+  }
+  function loadModel(nextController: Live2DController, errorMessage: string) {
     nextController
       .live2d_load_model(0, onRenderProgress)
       .then(() => {
@@ -80,7 +71,7 @@ const StoryReaderLive2DStage = forwardRef<
         }
       })
       .catch((error: unknown) => {
-        console.error("Failed to reload Live2D model to canvas.", error);
+        console.error(errorMessage, error);
         if (!disposed.current && controller.current === nextController) {
           onModelLoad(LoadStatus.Ready, error);
         }
