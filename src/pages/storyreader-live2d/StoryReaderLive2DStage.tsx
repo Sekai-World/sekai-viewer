@@ -53,6 +53,11 @@ const StoryReaderLive2DStage = forwardRef<
       if (controller.current === nextController) controller.current = undefined;
     };
   }, []);
+  /**
+   * Reloads the Live2D stage and begins loading the model with the current configuration.
+   *
+   * Does nothing after the component has been disposed.
+   */
   function reloadStage() {
     if (disposed.current) return;
     controller.current?.destroy();
@@ -62,6 +67,12 @@ const StoryReaderLive2DStage = forwardRef<
     nextController.layers.live2d.clear();
     loadModel(nextController, "Failed to reload Live2D model to canvas.");
   }
+  /**
+   * Loads the model and reports its completion status.
+   *
+   * @param nextController - The controller used to load the model
+   * @param errorMessage - The message logged if model loading fails
+   */
   function loadModel(nextController: Live2DController, errorMessage: string) {
     nextController
       .live2d_load_model(0, onRenderProgress)

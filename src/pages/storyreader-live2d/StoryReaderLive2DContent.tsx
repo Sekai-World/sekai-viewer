@@ -160,6 +160,12 @@ const StoryReaderLive2DContent: React.FC<{
     }
   }
 
+  /**
+   * Loads and prepares the scenario, media, Live2D model data, and motions for playback.
+   *
+   * Updates the loading status and progress while retrieving resources. Translation is
+   * applied when enabled for Japanese-region scenarios.
+   */
   async function load() {
     setLoadStatus(LoadStatus.Loading);
     // step 1 - get scenario url

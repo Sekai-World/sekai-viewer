@@ -27,6 +27,12 @@ import { assetUrl } from "../urls";
 import { live2dFetch, live2dRequest } from "../index";
 import { gatherStoryMotion } from "./motions";
 
+/**
+ * Extracts and URL-decodes the filename from an asset URL.
+ *
+ * @param url - The asset URL or path.
+ * @returns The decoded final pathname segment, or the original filename when the URL cannot be parsed.
+ */
 function getAssetFilename(url: string) {
   try {
     const pathname = new URL(url, window.location.href).pathname;
@@ -49,7 +55,13 @@ function getAssetLoadWarning(
   return `Failed to load ${kind} ${label} (${getAssetFilename(url)})${status}`;
 }
 
-// step 3 - get controller data (preload media)
+/**
+ * Preloads scenario media and combines it with Live2D model data for controller initialization.
+ *
+ * @param mediaUrlForLive2D - Asset URLs to preload, including Live2D UI media URLs.
+ * @param modelDataPromise - Promise resolving to the model data for the scenario.
+ * @returns The scenario data, loaded media resources, and model data.
+ */
 export async function getLive2DControllerData(
   snData: IScenarioData,
   mediaUrlForLive2D: ILive2DAssetUrl[],
@@ -71,6 +83,12 @@ export async function getLive2DControllerData(
   };
 }
 
+/**
+ * Loads model metadata for each character appearing in a scenario.
+ *
+ * @param snData - Scenario data containing the appearing characters and their costume types
+ * @returns Model metadata associated with each appearing character
+ */
 export async function getLive2DModelData(
   snData: IScenarioData,
   onProgress: ILive2DLoadProgressHandler
@@ -109,7 +127,14 @@ export async function getLive2DModelData(
   );
   return await modelDataPromise;
 }
-// step 4 - preload model
+/**
+ * Preloads the texture, moc, and physics assets for each Live2D model.
+ *
+ * @param controllerData - The controller data containing the models and their asset references
+ * @param onProgress - Reports progress as model assets are loaded
+ * @param onWarning - Reports asset-loading warnings
+ * @throws If any model asset fails to download
+ */
 export async function preloadModels(
   controllerData: ILive2DControllerData,
   onProgress: ILive2DLoadProgressHandler,
@@ -238,6 +263,12 @@ function preloadSound(url: string): Promise<Howl> {
   });
 }
 
+/**
+ * Loads a video resource.
+ *
+ * @param url - The video URL
+ * @returns The loaded video element
+ */
 function preloadVideo(url: string): Promise<HTMLVideoElement> {
   return new Promise((resolve, reject) => {
     const video = document.createElement("video");
@@ -249,7 +280,13 @@ function preloadVideo(url: string): Promise<HTMLVideoElement> {
   });
 }
 
-// step 4.2 - discard useless motions in all model
+/**
+ * Prunes each model's motion and expression definitions to retain only assets referenced by the scenario.
+ *
+ * @param scenarioData - Scenario data containing the required story motions
+ * @param modelData - Model data whose motion and expression definitions are filtered
+ * @returns The updated model data collection
+ */
 export function discardMotion(
   scenarioData: IScenarioData,
   modelData: ILive2DModelDataCollection[]
@@ -292,7 +329,14 @@ export function discardMotion(
   });
   return modelData;
 }
-// step 5 - preload motions
+/**
+ * Preloads all unique motion and expression assets referenced by the models.
+ *
+ * @param modelData - Model definitions containing motion and expression asset references
+ * @param onProgress - Reports progress for each asset
+ * @param onWarning - Reports asset-loading warnings
+ * @throws An error if an asset fails to load
+ */
 export async function preloadModelMotion(
   modelData: ILive2DModelDataCollection[],
   onProgress: ILive2DLoadProgressHandler,

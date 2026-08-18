@@ -55,6 +55,12 @@ async function getRemoteAssetUrlWithLowercaseFallback(
   );
 }
 
+/**
+ * Fetches JSON from an asset endpoint, retrying with a normalized lowercase path when the initial request returns a 404.
+ *
+ * @param endpoint - The asset endpoint to fetch
+ * @returns The parsed JSON response
+ */
 async function fetchJsonWithLowercaseFallback<T>(endpoint: string): Promise<T> {
   const url = await getRemoteAssetUrlWithLowercaseFallback(endpoint);
   const response = await live2dFetch(url);
@@ -218,6 +224,12 @@ interface Live2DMotionsExpressions {
   expressions: string[];
 }
 
+/**
+ * Loads the base motion and expression metadata for a Live2D model.
+ *
+ * @param modelItem - The model whose motion metadata should be loaded
+ * @returns The motion base name and loaded motion and expression data, or empty values when loading fails
+ */
 async function getMotionData(
   modelItem: ILive2dModelListElement
 ): Promise<[string, Live2DMotionsExpressions]> {
@@ -249,6 +261,12 @@ async function getMotionData(
   }
 }
 
+/**
+ * Loads additional motion and expression metadata for a model.
+ *
+ * @param modelItem - The model whose additional motion data should be loaded
+ * @returns The model's additional motions and expressions, or empty lists when the asset URL cannot be resolved
+ */
 async function getAddtionalMotionData(modelItem: ILive2dModelListElement) {
   const url = await getRemoteAssetUrlWithLowercaseFallback(
     getBuildMotionDataPath(`live2d/model/${modelItem.modelPath}/motions`),

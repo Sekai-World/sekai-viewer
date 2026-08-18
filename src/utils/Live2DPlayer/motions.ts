@@ -7,6 +7,12 @@ export interface ILive2DStoryMotion {
   type: "motion" | "expression";
 }
 
+/**
+ * Collects character motions and expressions referenced by a scenario.
+ *
+ * @param scenarioData - The scenario containing snippets and character data
+ * @returns The referenced motions and expressions with their associated costumes and types
+ */
 export function gatherStoryMotion(
   scenarioData: IScenarioData
 ): ILive2DStoryMotion[] {

@@ -171,6 +171,12 @@ class Live2DRequestScheduler {
 
 const live2DRequestScheduler = new Live2DRequestScheduler();
 
+/**
+ * Determines whether an error represents an HTTP rate-limit response.
+ *
+ * @param error - The value to inspect
+ * @returns `true` if the error has HTTP status 429, `false` otherwise.
+ */
 function isRateLimited(error: unknown) {
   return (
     (Axios.isAxiosError(error) && error.response?.status === 429) ||
@@ -185,12 +191,23 @@ export class Live2DRateLimitError extends Error {
   }
 }
 
+/**
+ * Determines whether an error represents exhausted Live2D rate-limit retries.
+ *
+ * @returns `true` if the error is a `Live2DRateLimitError`, `false` otherwise.
+ */
 export function isLive2DRateLimitError(
   error: unknown
 ): error is Live2DRateLimitError {
   return error instanceof Live2DRateLimitError;
 }
 
+/**
+ * Parses a retry delay from an Axios or fetch response error.
+ *
+ * @param error - The error containing a `Retry-After` header
+ * @returns The delay in milliseconds, capped at 30 seconds, or `undefined` when unavailable or invalid
+ */
 function getRetryAfter(error: unknown) {
   let retryAfter: unknown;
   if (Axios.isAxiosError(error)) {
@@ -216,6 +233,14 @@ function getRetryAfter(error: unknown) {
     : Math.min(30000, Math.max(0, date - Date.now()));
 }
 
+/**
+ * Executes a Live2D request with bounded retries for rate-limited failures.
+ *
+ * @param request - The asynchronous Live2D request to execute
+ * @returns The request result
+ * @throws The original error when it is not rate-limit related
+ * @throws `Live2DRateLimitError` when rate-limit retries are exhausted
+ */
 export async function live2dRequest<T>(request: Live2DRequest<T>): Promise<T> {
   for (let retry = 0; ; retry++) {
     try {
@@ -232,6 +257,13 @@ export async function live2dRequest<T>(request: Live2DRequest<T>): Promise<T> {
   }
 }
 
+/**
+ * Fetches a Live2D asset while applying shared rate-limit handling.
+ *
+ * @param url - The resource URL
+ * @param init - Optional fetch options
+ * @returns The HTTP response
+ */
 export async function live2dFetch(
   url: string,
   init?: RequestInit
@@ -243,6 +275,12 @@ export async function live2dFetch(
   });
 }
 
+/**
+ * Provides state, a synchronized mutable reference to its current value, and a state setter.
+ *
+ * @param initialValue - The initial state value
+ * @returns The state value, mutable state reference, and state setter
+ */
 export function useRefState<S>(
   initialValue: S
 ): [S, React.MutableRefObject<S>, React.Dispatch<React.SetStateAction<S>>] {
@@ -511,7 +549,16 @@ export function addDataToMusicMeta(
   });
 }
 
-// const queue = new PQueue({ concurrency: 1 });
+/**
+ * Builds a remote asset URL and optionally verifies that the asset is available.
+ *
+ * @param endpoint - The asset path.
+ * @param setFunc - Optional callback invoked with the URL when it is available.
+ * @param domainKey - The asset domain to use.
+ * @param server - The server region or asset category hosting the asset.
+ * @param verifyStatus - Whether to verify the asset before returning its URL.
+ * @returns The asset URL when available, or an empty string otherwise.
+ */
 
 export async function getRemoteAssetURL(
   endpoint: string,
