@@ -29,8 +29,8 @@ import TypographyHeader from "../components/styled/TypographyHeader";
 import {
   getDefaultModelForProvider,
   getDefaultEndpointForProvider,
-} from "../utils/LlmClient";
-import { GraphRAGSettingsDialog } from "../utils/graphRag/settings";
+} from "../utils/llmClient";
+import { GraphRAGSettingsDialog } from "./graph-rag/settings";
 
 // const RegionDetect = () => {
 //   const { t } = useTranslation();
@@ -106,8 +106,6 @@ const Settings = observer(() => {
       targetLanguage,
       showOriginalText,
       additionalSystemPrompt,
-      enableApiRetry,
-      maxApiRetries,
       setLang,
       setDisplayMode,
       setContentTransMode,
@@ -124,8 +122,6 @@ const Settings = observer(() => {
       setTargetLanguage,
       setShowOriginalText,
       setAdditionalSystemPrompt,
-      setEnableApiRetry,
-      setMaxApiRetries,
     },
   } = useRootStore();
   const { languages: remoteLanguages, isLoading, error } = useRemoteLanguages();
@@ -456,38 +452,6 @@ const Settings = observer(() => {
                 />
               </FormControl>
             </Grid>
-
-            {/* API Retry Settings */}
-            <Grid item>
-              <FormControl component="fieldset">
-                <FormLabel component="legend">API Retry Settings</FormLabel>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={enableApiRetry}
-                      onChange={(e, v) => setEnableApiRetry(v)}
-                    />
-                  }
-                  label="Enable automatic retry on API failures"
-                />
-              </FormControl>
-            </Grid>
-
-            {enableApiRetry && (
-              <Grid item>
-                <TextField
-                  fullWidth
-                  type="number"
-                  label="Maximum Retries"
-                  value={maxApiRetries}
-                  onChange={(e) =>
-                    setMaxApiRetries(parseInt(e.target.value, 10))
-                  }
-                  inputProps={{ min: 1, max: 10 }}
-                  helperText="Number of retry attempts before giving up. Delay doubles after each failure (1s, 2s, 4s, 8s…)"
-                />
-              </Grid>
-            )}
 
             {/* Graph RAG Settings Button */}
             <Grid item>

@@ -1,4 +1,4 @@
-import type { IScenarioData } from "../../../types.d";
+import type { IScenarioData } from "../../../types";
 import { formatContextAsMarkdown } from "../retrieval";
 import type { RetrievedContext } from "../types";
 

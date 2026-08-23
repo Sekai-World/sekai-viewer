@@ -1,7 +1,7 @@
 import { types, Instance } from "mobx-state-tree";
 import { ContentTransModeType, DisplayModeType, ServerRegion } from "../types";
 import { ILanguageModel, LanguageModel } from "./user";
-import { migrateLlmSettings } from "../utils/Live2DPlayer/translation/migrateLlmSettings";
+import { migrateLlmSettings } from "../utils/migrateLlmSettings";
 
 export const SettingDisplayMode = types.enumeration<DisplayModeType>(
   "DisplayMode",
@@ -83,9 +83,6 @@ export const Settings = types
     graphViewerSuppressLowImportanceNodes: types.optional(types.boolean, true),
     graphViewerLowImportanceConnectionLimit: types.optional(types.integer, 1),
     graphViewerNodeSizeMultiplier: types.optional(types.number, 1),
-    // API Retry settings
-    enableApiRetry: types.optional(types.boolean, true),
-    maxApiRetries: types.optional(types.integer, 3),
   })
   .preProcessSnapshot(migrateLlmSettings)
   .views((self) => ({
@@ -168,13 +165,6 @@ export const Settings = types
     },
     setGraphViewerNodeSizeMultiplier(multiplier: number) {
       self.graphViewerNodeSizeMultiplier = multiplier;
-    },
-    // API Retry Actions
-    setEnableApiRetry(enabled: boolean) {
-      self.enableApiRetry = enabled;
-    },
-    setMaxApiRetries(count: number) {
-      self.maxApiRetries = count;
     },
   }));
 export interface ISettings extends Instance<typeof Settings> {}

@@ -2,21 +2,37 @@
 import React, { useEffect, useMemo } from "react";
 import { useLoadGraph } from "@react-sigma/core";
 import { MultiDirectedGraph } from "graphology";
-import { graphRAGStore } from "../storage";
-import { GraphEdge, GraphNode, NodeType } from "../types";
-import { byEpisode } from "../helpers";
-import { useCachedData } from "../../index";
+import { graphRAGStore } from "../../../utils/graphRag/storage";
+import { GraphEdge, GraphNode, NodeType } from "../../../utils/graphRag/types";
+import { byEpisode, hexToRgb } from "../../../utils/graphRag/helpers";
+import { useCachedData } from "../../../utils/index";
 import { IGameChara } from "../../../types";
-import { charaIcons } from "../../resources";
+import { charaIcons } from "../../../utils/resources";
 
 const edgePairKey = (edge: GraphEdge): string =>
   [edge.sourceId, edge.targetId].sort().join("::");
+
+const blendColors = (
+  source: string,
+  target: string,
+  amount: number
+): string => {
+  const [sourceR, sourceG, sourceB] = hexToRgb(source);
+  const [targetR, targetG, targetB] = hexToRgb(target);
+  const mix = (from: number, to: number) =>
+    Math.round(from + (to - from) * amount)
+      .toString(16)
+      .padStart(2, "0");
+  return `#${mix(sourceR, targetR)}${mix(sourceG, targetG)}${mix(sourceB, targetB)}`;
+};
 
 let allNodesMap: Map<string, GraphNode> = new Map();
 let allEdgesArray: GraphEdge[] = [];
 
 const GraphLoader: React.FC<{
   searchQuery: string;
+  darkMode: boolean;
+  labelColor: string;
   suppressLowImportanceNodes: boolean;
   lowImportanceConnectionLimit: number;
   selectedNodeTypes: Array<Exclude<NodeType, "fact">>;
@@ -27,6 +43,8 @@ const GraphLoader: React.FC<{
   ) => void;
 }> = ({
   searchQuery,
+  darkMode,
+  labelColor,
   suppressLowImportanceNodes,
   lowImportanceConnectionLimit,
   selectedNodeTypes,
@@ -382,6 +400,17 @@ const GraphLoader: React.FC<{
         }
       }
 
+      const getDegreeScale = (degree: number): number =>
+        Math.min(2, 0.1 + Math.log(Math.max(degree, 1) + 1) * 0.3);
+      // Normalize label importance to this graph so its strongest node remains
+      // fully legible even when the theoretical degree scale cap is unused.
+      const maxDegreeScale = Math.max(
+        0.1,
+        ...layoutNodes.map((node) =>
+          getDegreeScale(nodeDegrees.get(node.id) ?? 0)
+        )
+      );
+
       for (const node of layoutNodes) {
         const label = node.type === "fact" ? node.statement : node.name;
         // The layout uses graph-position units, so small values become tiny
@@ -400,12 +429,10 @@ const GraphLoader: React.FC<{
         // Connections drive most of the visual weight. The logarithmic curve
         // separates hubs clearly while keeping unusually dense nodes bounded.
         const degree = nodeDegrees.get(node.id) ?? 0;
-        const degreeScale = Math.min(
-          2,
-          0.1 + Math.log(Math.max(degree, 1) + 1) * 0.3
-        );
-        const size = baseSize * degreeScale;
-        const color =
+        const degreeScale = getDegreeScale(degree);
+        const relativeDegreeScale = degreeScale / maxDegreeScale;
+        const size = baseSize * relativeDegreeScale;
+        const baseColor =
           node.type === "character"
             ? "#3b82f6"
             : node.type === "group"
@@ -415,11 +442,19 @@ const GraphLoader: React.FC<{
                 : node.type === "fact"
                   ? "#ec4899"
                   : "#f59e0b";
+        const fadedColor = darkMode ? "#1e293b" : "#cbd5e1";
+        const colorFade = 1 - degreeScale / 2;
+        const labelFade = 1 - degreeScale / maxDegreeScale;
+        const color = blendColors(baseColor, fadedColor, colorFade);
+        const nodeLabelColor = blendColors(labelColor, fadedColor, labelFade);
         const position = positions.get(node.id)!;
         graph.addNode(node.id, {
           label: label.length > 50 ? label.substring(0, 47) + "..." : label,
           size,
           color,
+          baseColor,
+          importanceFade: labelFade,
+          labelColor: nodeLabelColor,
           charaIcon:
             node.type === "character"
               ? charaIconsByIdentifier.get(node.identifier)
@@ -461,6 +496,8 @@ const GraphLoader: React.FC<{
   }, [
     loadGraph,
     searchQuery,
+    darkMode,
+    labelColor,
     suppressLowImportanceNodes,
     lowImportanceConnectionLimit,
     selectedNodeTypes,

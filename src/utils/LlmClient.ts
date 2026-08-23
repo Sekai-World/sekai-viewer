@@ -7,14 +7,6 @@ export interface ILlmApiConfig {
   apiKey: string;
   apiEndpoint?: string;
   model?: string;
-  enableRetry?: boolean;
-  maxRetries?: number;
-  onRetry?: (
-    attempt: number,
-    maxRetries: number,
-    delayMs: number,
-    error: string
-  ) => void;
 }
 
 export const getDefaultModelForProvider = (provider: string): string => {
@@ -24,7 +16,7 @@ export const getDefaultModelForProvider = (provider: string): string => {
     case "anthropic":
       return "claude-sonnet-5";
     case "gemini":
-      return "gemini-2.0-flash";
+      return "gemini-3.5-flash";
     default:
       return "";
   }
@@ -227,55 +219,27 @@ export class LlmProviderClient {
     toolName = "store_structured_output"
   ): Promise<string> {
     const model = this.getModel();
-    const maxRetries = this.config.enableRetry
-      ? (this.config.maxRetries ?? 3)
-      : 0;
-    let lastError: Error | null = null;
-
-    for (let attempt = 0; attempt <= maxRetries; attempt++) {
-      try {
-        switch (this.config.provider) {
-          case "openai-compatible":
-            return await this.callOpenAiCompatible(
-              model,
-              systemPrompt,
-              userMessage,
-              schema
-            );
-          case "anthropic":
-            return await this.callAnthropic(
-              model,
-              systemPrompt,
-              userMessage,
-              schema,
-              toolName
-            );
-          case "gemini":
-            return await this.callGemini(
-              model,
-              systemPrompt,
-              userMessage,
-              schema
-            );
-          default:
-            throw new Error(`Unsupported provider: ${this.config.provider}`);
-        }
-      } catch (error) {
-        lastError = error instanceof Error ? error : new Error(String(error));
-        if (attempt < maxRetries) {
-          const delayMs = Math.min(1000 * 2 ** attempt, 30000);
-          this.config.onRetry?.(
-            attempt + 1,
-            maxRetries,
-            delayMs,
-            lastError.message
-          );
-          await new Promise((r) => setTimeout(r, delayMs));
-        }
-      }
+    switch (this.config.provider) {
+      case "openai-compatible":
+        return this.callOpenAiCompatible(
+          model,
+          systemPrompt,
+          userMessage,
+          schema
+        );
+      case "anthropic":
+        return this.callAnthropic(
+          model,
+          systemPrompt,
+          userMessage,
+          schema,
+          toolName
+        );
+      case "gemini":
+        return this.callGemini(model, systemPrompt, userMessage, schema);
+      default:
+        throw new Error(`Unsupported provider: ${this.config.provider}`);
     }
-
-    throw lastError ?? new Error("Unknown error during API call");
   }
 
   getConfig(): ILlmApiConfig {

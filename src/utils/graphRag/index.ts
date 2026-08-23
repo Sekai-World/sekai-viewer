@@ -8,5 +8,5 @@ export { embeddingService } from "./embeddings";
 export * from "./retrieval";
 export { GraphRAGExtractionService } from "./extraction";
 export { GraphRAGIndexingOrchestrator } from "./indexing";
-export { GraphRAGSettingsDialog } from "./settings";
-export { GraphViewer } from "./GraphViewer";
+export { GraphRAGSettingsDialog } from "../../pages/graph-rag/settings/GraphRAGSettingsDialog";
+export { GraphViewer } from "../../pages/graph-rag/viewer/GraphViewer";

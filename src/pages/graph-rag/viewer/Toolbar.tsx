@@ -21,7 +21,7 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SearchIcon from "@mui/icons-material/Search";
 import TuneIcon from "@mui/icons-material/Tune";
-import type { NodeType } from "../types";
+import type { NodeType } from "../../../utils/graphRag/types";
 
 type NodeTypeFilter = Exclude<NodeType, "fact">;
 

@@ -2,7 +2,7 @@ import type { Live2DController } from "../Live2DController";
 import type { Snippet } from "../../../types.d";
 import { Live2DAssetType } from "../types.d";
 import { log } from "../log";
-import { TranslationCache } from "../translation/TranslationCache";
+import { TranslationCache } from "../translation/translationCache";
 import { rootStore } from "../../../stores/root";
 
 export default async function action_talk(

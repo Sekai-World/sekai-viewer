@@ -10,8 +10,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { graphRAGStore } from "../storage";
-import { GraphNode } from "../types";
+import { graphRAGStore } from "../../../utils/graphRag/storage";
+import { GraphNode } from "../../../utils/graphRag/types";
 
 interface UseMergeNodesOptions {
   getNodes: () => Map<string, GraphNode>;

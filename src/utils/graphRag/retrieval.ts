@@ -9,174 +9,24 @@ import {
   CharacterNode,
   GroupNode,
   EventNode,
-  TermNode,
   FactNode,
   RetrievedContext,
   EpisodeTag,
 } from "./types";
-import { IScenarioData } from "../../types.d";
+import { IScenarioData } from "../../types";
 import { embeddingService } from "./embeddings";
 import { compareEpisodeTags } from "./helpers";
+import {
+  extractCharacterNodes,
+  extractGroupNodes,
+  extractTermNodes,
+} from "./retrieval/exactMatch";
+import {
+  collectDirectCharacterRelations,
+  collectTraversalEdges,
+  edgeKeyFor,
+} from "./retrieval/edges";
 import { collectNodeStats, createEdgeScorer } from "./scoring/contextual";
-
-/**
- * Extract character nodes from scenario data by matching originalTextVariants in dialogue
- */
-async function extractCharacterNodes(
-  scenariosData: IScenarioData[]
-): Promise<CharacterNode[]> {
-  await graphRAGStore.init();
-
-  // Build combined dialogue text
-  const dialogueTexts: string[] = [];
-  for (const scenario of scenariosData) {
-    for (const snippet of scenario.Snippets) {
-      if (snippet.Action === 1 && snippet.ReferenceIndex >= 0) {
-        const talkData = scenario.TalkData?.[snippet.ReferenceIndex];
-        if (talkData) {
-          const bodyText = talkData.Body || "";
-          const windowDisplayName = talkData.WindowDisplayName || "";
-          dialogueTexts.push(`${windowDisplayName} ${bodyText}`);
-        }
-      }
-    }
-  }
-  const combinedDialogue = dialogueTexts.join(" ");
-
-  // Get all character nodes
-  const allCharacters = (await graphRAGStore.getNodesByType(
-    "character"
-  )) as CharacterNode[];
-  const matchedCharacters = new Set<string>(); // Track matched character IDs
-
-  // Loop through character nodes and check if any variant appears in dialogue
-  for (const charNode of allCharacters) {
-    if (
-      charNode.originalTextVariants &&
-      charNode.originalTextVariants.length > 0
-    ) {
-      for (const variant of charNode.originalTextVariants) {
-        if (variant && combinedDialogue.includes(variant)) {
-          matchedCharacters.add(charNode.id);
-          break; // Found a match, no need to check other variants for this character
-        }
-      }
-    }
-  }
-
-  // Return matched character nodes
-  return allCharacters.filter((char) => matchedCharacters.has(char.id));
-}
-
-/**
- * Extract term nodes from scenario data by matching originalName or originalTextVariants in dialogue
- */
-async function extractTermNodes(
-  scenariosData: IScenarioData[]
-): Promise<TermNode[]> {
-  await graphRAGStore.init();
-
-  // Build combined dialogue text
-  const dialogueTexts: string[] = [];
-  for (const scenario of scenariosData) {
-    for (const snippet of scenario.Snippets) {
-      if (snippet.Action === 1 && snippet.ReferenceIndex >= 0) {
-        const talkData = scenario.TalkData?.[snippet.ReferenceIndex];
-        if (talkData) {
-          const bodyText = talkData.Body || "";
-          dialogueTexts.push(bodyText);
-        }
-      }
-    }
-  }
-  const combinedDialogue = dialogueTexts.join(" ");
-
-  // Get all term nodes
-  const allTerms = (await graphRAGStore.getNodesByType("term")) as TermNode[];
-  const matchedTerms = new Set<string>();
-
-  // Check if any term name or variant appears in dialogue
-  for (const termNode of allTerms) {
-    // Check originalName
-    if (
-      termNode.originalName &&
-      combinedDialogue.includes(termNode.originalName)
-    ) {
-      matchedTerms.add(termNode.id);
-      continue;
-    }
-    // Check originalTextVariants
-    if (
-      termNode.originalTextVariants &&
-      termNode.originalTextVariants.length > 0
-    ) {
-      for (const variant of termNode.originalTextVariants) {
-        if (variant && combinedDialogue.includes(variant)) {
-          matchedTerms.add(termNode.id);
-          break;
-        }
-      }
-    }
-  }
-
-  return allTerms.filter((term) => matchedTerms.has(term.id));
-}
-
-/**
- * Extract group nodes from scenario data by matching originalName or originalTextVariants in dialogue
- */
-async function extractGroupNodes(
-  scenariosData: IScenarioData[]
-): Promise<GroupNode[]> {
-  await graphRAGStore.init();
-
-  // Build combined dialogue text
-  const dialogueTexts: string[] = [];
-  for (const scenario of scenariosData) {
-    for (const snippet of scenario.Snippets) {
-      if (snippet.Action === 1 && snippet.ReferenceIndex >= 0) {
-        const talkData = scenario.TalkData?.[snippet.ReferenceIndex];
-        if (talkData) {
-          const bodyText = talkData.Body || "";
-          dialogueTexts.push(bodyText);
-        }
-      }
-    }
-  }
-  const combinedDialogue = dialogueTexts.join(" ");
-
-  // Get all group nodes
-  const allGroups = (await graphRAGStore.getNodesByType(
-    "group"
-  )) as GroupNode[];
-  const matchedGroups = new Set<string>();
-
-  // Check if any group name or variant appears in dialogue
-  for (const groupNode of allGroups) {
-    // Check originalName
-    if (
-      groupNode.originalName &&
-      combinedDialogue.includes(groupNode.originalName)
-    ) {
-      matchedGroups.add(groupNode.id);
-      continue;
-    }
-    // Check originalTextVariants
-    if (
-      groupNode.originalTextVariants &&
-      groupNode.originalTextVariants.length > 0
-    ) {
-      for (const variant of groupNode.originalTextVariants) {
-        if (variant && combinedDialogue.includes(variant)) {
-          matchedGroups.add(groupNode.id);
-          break;
-        }
-      }
-    }
-  }
-
-  return allGroups.filter((group) => matchedGroups.has(group.id));
-}
 
 /**
  * Retrieve graph context for characters in scenario data
@@ -217,19 +67,7 @@ export async function retrieveContext(
     edges: [],
   };
 
-  // 1. Extract character nodes from scenarios by matching text
-  const characterNodes = await extractCharacterNodes(scenariosData);
-
-  // Always return all matched characters
-  context.characters = characterNodes;
-
-  if (characterNodes.length === 0) {
-    return context;
-  }
-
-  const characterIds = new Set(characterNodes.map((c) => c.id));
-
-  // 2. Build scenario text and embedding for similarity ranking
+  // 1. Build scenario text and embedding for similarity ranking
   const scenarioTexts: string[] = [];
   for (const scenario of scenariosData) {
     for (const snippet of scenario.Snippets) {
@@ -244,24 +82,29 @@ export async function retrieveContext(
   const combinedScenarioText = scenarioTexts.join(" ");
   const scenarioEmbedding = await embeddingService.embed(combinedScenarioText);
 
+  // 2. Extract character nodes from scenarios by matching text
+  const characterNodes = await extractCharacterNodes(scenariosData);
+
+  // Always return all matched characters
+  context.characters = characterNodes;
+
+  if (characterNodes.length === 0) {
+    return context;
+  }
+
+  const characterIds = new Set(characterNodes.map((c) => c.id));
+
   // 3. Find exact term name matches in scenario text using extractTermNodes
   const matchedTerms = await extractTermNodes(scenariosData);
   context.terms = matchedTerms;
   const termIds = new Set(matchedTerms.map((t) => t.id));
 
   // 4. Find exact group name matches and groups whose members are in the story
-  const matchedGroupsByName = await extractGroupNodes(scenariosData);
+  const matchedGroups = await extractGroupNodes(scenariosData);
   const allGroups = (await graphRAGStore.getNodesByType(
     "group"
   )) as GroupNode[];
-  const matchedGroups: GroupNode[] = [];
-  const groupIds = new Set<string>();
-
-  // Add groups matched by name
-  for (const group of matchedGroupsByName) {
-    matchedGroups.push(group);
-    groupIds.add(group.id);
-  }
+  const groupIds = new Set(matchedGroups.map((group) => group.id));
 
   // Add groups whose members appear in the story
   for (const group of allGroups) {
@@ -306,28 +149,7 @@ export async function retrieveContext(
     matchedNodeIds
   );
 
-  const maxTraversalDepth = 3;
-  const maxTraversalEdges = Math.max(
-    edgesPerChar,
-    allScoredNodeIds.length * edgesPerChar
-  );
-  const maxFactsPerEntity = Math.min(3, edgesPerChar);
-  const maxFactEdges = maxTraversalEdges;
   const contextNodeIds = new Set(allScoredNodeIds);
-  const expandedNodeIds = new Set<string>();
-  let collectedRelationshipEdges = 0;
-  let collectedFactEdges = 0;
-
-  type TraversalCandidate = {
-    edge: GraphEdge;
-    target: GraphNode;
-    depth: number;
-    score: number;
-  };
-  const candidates: TraversalCandidate[] = [];
-
-  const edgeKeyFor = (edge: GraphEdge) =>
-    `${edge.sourceId}-${edge.targetId}-${edge.type}-${edge.identifier}`;
 
   function addNodeToContext(node: GraphNode): void {
     if (contextNodeIds.has(node.id)) return;
@@ -341,6 +163,8 @@ export async function retrieveContext(
       context.terms.push(node);
     } else if (node.type === "event") {
       referencedEventIds.add(node.id);
+    } else if (node.type === "fact") {
+      referencedFactIds.add(node.id);
     }
   }
 
@@ -350,133 +174,27 @@ export async function retrieveContext(
     bounds
   );
 
-  async function attachFacts(nodeId: string): Promise<void> {
-    const factCandidates = (await graphRAGStore.getEdgesBySource(nodeId))
-      .filter((edge) => edge.type === "FACT")
-      .filter((edge) => !seenEdgeKeys.has(edgeKeyFor(edge)));
-
-    const scoredFacts = await Promise.all(
-      factCandidates.map(async (edge) => ({
-        edge,
-        score: await scoreEdge(edge, 0),
-      }))
-    );
-    scoredFacts.sort((a, b) => b.score - a.score);
-
-    const availableFactSlots = Math.min(
-      maxFactsPerEntity,
-      maxFactEdges - collectedFactEdges
-    );
-    for (const { edge } of scoredFacts.slice(0, availableFactSlots)) {
-      const fact = await graphRAGStore.getNode(edge.targetId);
-      if (!fact || fact.type !== "fact") continue;
-      seenEdgeKeys.add(edgeKeyFor(edge));
-      collectedEdges.push(edge);
-      collectedFactEdges++;
-      referencedFactIds.add(fact.id);
-    }
-  }
-
-  async function enqueueOutgoingEdges(
-    nodeId: string,
-    depth: number
-  ): Promise<void> {
-    if (depth >= maxTraversalDepth || expandedNodeIds.has(nodeId)) return;
-    expandedNodeIds.add(nodeId);
-
-    const edges = await graphRAGStore.getEdgesBySource(nodeId);
-    for (const edge of edges) {
-      if (
-        edge.type === "FACT" ||
-        edge.type === "CHARACTER_RELATION" ||
-        seenEdgeKeys.has(edgeKeyFor(edge))
-      ) {
-        continue;
-      }
-      const target = await graphRAGStore.getNode(edge.targetId);
-      if (!target || target.type === "fact") continue;
-      candidates.push({
-        edge,
-        target,
-        depth,
-        score: await scoreEdge(edge, depth),
-      });
-    }
-  }
-
-  async function collectGraphContext(): Promise<void> {
-    for (const nodeId of allScoredNodeIds) {
-      await attachFacts(nodeId);
-      await enqueueOutgoingEdges(nodeId, 0);
-    }
-
-    while (
-      candidates.length > 0 &&
-      collectedRelationshipEdges < maxTraversalEdges
-    ) {
-      candidates.sort((a, b) => b.score - a.score);
-      const candidate = candidates.shift();
-      if (!candidate || seenEdgeKeys.has(edgeKeyFor(candidate.edge))) continue;
-
-      seenEdgeKeys.add(edgeKeyFor(candidate.edge));
-      collectedEdges.push(candidate.edge);
-      collectedRelationshipEdges++;
-      const wasKnown = contextNodeIds.has(candidate.target.id);
-      addNodeToContext(candidate.target);
-
-      if (!wasKnown) {
-        await attachFacts(candidate.target.id);
-      }
-
-      // Facts, characters, and groups are terminal. Events and terms can
-      // provide another ranked hop of story-specific context.
-      if (
-        candidate.target.type === "event" ||
-        candidate.target.type === "term"
-      ) {
-        await enqueueOutgoingEdges(candidate.target.id, candidate.depth + 1);
-      }
-    }
-  }
-
-  // 5. Traverse ranked relationship edges from exact matches. Facts are
-  // attached to selected entities but are terminal nodes themselves.
-  await collectGraphContext();
+  // Traverse reachable paths, then retain the top-scored edges per seed node.
+  await collectTraversalEdges(
+    graphRAGStore,
+    allScoredNodeIds,
+    scoreEdge,
+    edgesPerChar,
+    addNodeToContext,
+    seenEdgeKeys,
+    collectedEdges
+  );
 
   // 6. Keep the most scenario-relevant direct relationships between characters
   // present in the story. This cap is separate from graph traversal limits.
-  const directRelationCandidates: GraphEdge[] = [];
-  for (const char of characterNodes) {
-    const edges = await graphRAGStore.getEdgesBySource(char.id);
-
-    for (const edge of edges) {
-      if (edge.type !== "CHARACTER_RELATION") continue;
-
-      // Check if target is also in our character list
-      if (!characterIds.has(edge.targetId)) continue;
-
-      const edgeKey = edgeKeyFor(edge);
-      if (seenEdgeKeys.has(edgeKey)) continue;
-
-      directRelationCandidates.push(edge);
-    }
-  }
-
-  const rankedDirectRelations = await Promise.all(
-    directRelationCandidates.map(async (edge) => ({
-      edge,
-      similarity: await getEdgeSimilarity(edge),
-    }))
+  await collectDirectCharacterRelations(
+    graphRAGStore,
+    characterIds,
+    getEdgeSimilarity,
+    maxDirectCharacterRelations,
+    seenEdgeKeys,
+    collectedEdges
   );
-  rankedDirectRelations.sort((a, b) => b.similarity - a.similarity);
-
-  for (const { edge } of rankedDirectRelations.slice(
-    0,
-    Math.max(0, maxDirectCharacterRelations)
-  )) {
-    seenEdgeKeys.add(edgeKeyFor(edge));
-    collectedEdges.push(edge);
-  }
 
   // 7. Collect all MEMBER_OF edges for groups
   for (const group of matchedGroups) {

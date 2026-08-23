@@ -7,10 +7,10 @@ import {
   ServerRegion,
   IGameChara,
   ICharaProfile,
-} from "../../types.d";
+} from "../../types";
 import { GraphRAGExtractionService } from "./extraction";
 import { graphRAGStore } from "./storage";
-import { ILlmApiConfig } from "../LlmClient";
+import { ILlmApiConfig } from "../llmClient";
 import { IndexingProgress, CharacterNode, FactNode } from "./types";
 import Axios from "axios";
 import { getRemoteAssetURL } from "../index";
@@ -47,12 +47,6 @@ export class GraphRAGIndexingOrchestrator {
     processedCount: 0,
   };
   private onProgressUpdate?: (progress: IndexingProgress) => void;
-  private onRetry?: (
-    attempt: number,
-    maxRetries: number,
-    delayMs: number,
-    error: string
-  ) => void;
   private aborted = false;
   private region: ServerRegion;
 
@@ -61,23 +55,15 @@ export class GraphRAGIndexingOrchestrator {
     targetLanguage: string,
     similarityThreshold: number,
     region: ServerRegion,
-    onProgressUpdate?: (progress: IndexingProgress) => void,
-    onRetry?: (
-      attempt: number,
-      maxRetries: number,
-      delayMs: number,
-      error: string
-    ) => void
+    onProgressUpdate?: (progress: IndexingProgress) => void
   ) {
     this.extractionService = new GraphRAGExtractionService(
       llmConfig,
       targetLanguage,
-      similarityThreshold,
-      onRetry
+      similarityThreshold
     );
     this.region = region;
     this.onProgressUpdate = onProgressUpdate;
-    this.onRetry = onRetry;
   }
 
   async indexAllStories(
@@ -281,7 +267,10 @@ export class GraphRAGIndexingOrchestrator {
     // Extract all scenarios data
     const scenariosData = episodeDataList.map((e) => e.scenarioData);
 
-    return this.extractionService.extractFromScenario(scenariosData);
+    return this.extractionService.extractFromScenario(
+      scenariosData,
+      story.storyTag
+    );
   }
 
   abort(): void {
@@ -367,8 +356,6 @@ export class GraphRAGIndexingOrchestrator {
           `${identifier}_profile_edge`
         );
       }
-
-      console.log(`Seeded character: ${name} (${identifier})`);
     }
   }
 

@@ -13,6 +13,19 @@ interface RelevanceBounds {
   maxExactMatchCount: number;
 }
 
+export interface RetrievalScoreInput {
+  edge: GraphEdge;
+  depth: number;
+}
+
+export interface RetrievalScoreResult {
+  depth: number;
+  similarity: number;
+  relevance: number;
+  combinedScore: number;
+  score: number;
+}
+
 export async function collectNodeStats(
   nodeIds: Iterable<string>,
   matchedNodeIds: Set<string>
@@ -95,7 +108,10 @@ export function createEdgeScorer(
     return embeddingService.cosineSimilarity(scenarioEmbedding, edgeEmbedding);
   }
 
-  async function scoreEdge(edge: GraphEdge, depth: number): Promise<number> {
+  async function scoreEdge({
+    edge,
+    depth,
+  }: RetrievalScoreInput): Promise<RetrievalScoreResult> {
     const sourceStats = nodeStatsMap.get(edge.sourceId);
     const relevance = sourceStats
       ? computeRelevance(
@@ -105,8 +121,15 @@ export function createEdgeScorer(
         )
       : 0;
     const similarity = await getEdgeSimilarity(edge);
+    const combinedScore = combineScores(similarity, relevance);
 
-    return combineScores(similarity, relevance) - depth * 0.1;
+    return {
+      depth,
+      similarity,
+      relevance,
+      combinedScore,
+      score: combinedScore - depth * 0.1,
+    };
   }
 
   return { getEdgeSimilarity, scoreEdge };

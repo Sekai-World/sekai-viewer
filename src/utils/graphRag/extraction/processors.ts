@@ -135,7 +135,7 @@ export class ExtractionProcessor {
     let eventNode = (await graphRAGStore.getNode(
       `event-${eventData.identifier}`
     )) as EventNode | null;
-    const episodeTag = `${storyId}_${(eventData.episodeId ?? 0).toString()}`;
+    const episodeTag = `${storyId}-${(eventData.episodeId ?? 0).toString()}`;
 
     if (eventNode) {
       const similarity = embeddingService.cosineSimilarity(
@@ -187,7 +187,7 @@ export class ExtractionProcessor {
     let termNode = (await graphRAGStore.getNode(
       `term-${termData.identifier}`
     )) as TermNode | null;
-    const episodeTag = `${storyId}_${termData.episodeId.toString()}`;
+    const episodeTag = `${storyId}-${termData.episodeId.toString()}`;
 
     if (termNode) {
       const similarity = embeddingService.cosineSimilarity(
@@ -269,7 +269,7 @@ export class ExtractionProcessor {
     let factNode = (await graphRAGStore.getNode(
       `fact-${factData.identifier}`
     )) as FactNode | null;
-    const episodeTag = `${storyId}_${factData.episodeId.toString()}`;
+    const episodeTag = `${storyId}-${factData.episodeId.toString()}`;
 
     if (factNode) {
       const similarity = embeddingService.cosineSimilarity(
@@ -345,7 +345,7 @@ export class ExtractionProcessor {
       sourceId,
       targetId,
       "CHARACTER_RELATION",
-      `${storyId}_${relation.episodeId.toString()}`,
+      `${storyId}-${relation.episodeId.toString()}`,
       relation.context,
       relation.identifier
     );
@@ -374,7 +374,7 @@ export class ExtractionProcessor {
       sourceId,
       targetId,
       "INVOLVE",
-      `${storyId}_${involvement.episodeId.toString()}`,
+      `${storyId}-${involvement.episodeId.toString()}`,
       involvement.context,
       involvement.identifier
     );
@@ -403,7 +403,7 @@ export class ExtractionProcessor {
       targetId,
       sourceId,
       "MEMBER_OF",
-      `${storyId}_${member.episodeId.toString()}`,
+      `${storyId}-${member.episodeId.toString()}`,
       member.context,
       member.identifier
     );
@@ -432,7 +432,7 @@ export class ExtractionProcessor {
       sourceId,
       targetId,
       "RELATED",
-      `${storyId}_${related.episodeId.toString()}`,
+      `${storyId}-${related.episodeId.toString()}`,
       related.context,
       related.identifier
     );

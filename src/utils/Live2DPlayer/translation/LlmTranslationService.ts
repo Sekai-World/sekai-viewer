@@ -2,12 +2,12 @@ import { log } from "../log";
 import { rootStore } from "../../../stores/root";
 import { IScenarioData } from "../../../types.d";
 import { SnippetAction, SpecialEffectType } from "../../../story-scenerio.d";
-import { TranslationCache } from "./TranslationCache";
-import { LlmProviderClient, ILlmApiConfig } from "../../LlmClient";
+import { TranslationCache } from "./translationCache";
+import { LlmProviderClient, ILlmApiConfig } from "../../llmClient";
 import {
   retrieveContext,
   formatContextAsMarkdown,
-} from "../../graphRag/retrieval";
+} from "../../GraphRag/retrieval";
 
 type TranslationItemType = "talk" | "fullscreen" | "telop";
 const TRANSLATION_CHUNK_SIZE = 40;
@@ -50,34 +50,10 @@ const CACHE_KEY_PREFIX: Record<TranslationItemType, string> = {
 export class LlmTranslationService {
   private config: ILlmApiConfig;
   private providerClient: LlmProviderClient;
-  private onRetry?: (
-    attempt: number,
-    maxRetries: number,
-    delayMs: number,
-    error: string
-  ) => void;
 
-  constructor(
-    config?: ILlmApiConfig,
-    onRetry?: (
-      attempt: number,
-      maxRetries: number,
-      delayMs: number,
-      error: string
-    ) => void
-  ) {
+  constructor(config?: ILlmApiConfig) {
     // Use provided config or read from settings store
     this.config = config || this.getConfigFromSettings();
-    this.onRetry = onRetry;
-
-    // Add retry config from settings if not explicitly provided
-    if (!config) {
-      const settings = rootStore.settings;
-      this.config.enableRetry = settings.enableApiRetry;
-      this.config.maxRetries = settings.maxApiRetries;
-    }
-
-    this.config.onRetry = onRetry;
 
     this.providerClient = new LlmProviderClient(this.config);
   }
@@ -106,12 +82,6 @@ export class LlmTranslationService {
    */
   private checkAndUpdateConfigIfNeeded(): void {
     const newConfig = this.getConfigFromSettings();
-
-    // Add retry config from settings
-    const settings = rootStore.settings;
-    newConfig.enableRetry = settings.enableApiRetry;
-    newConfig.maxRetries = settings.maxApiRetries;
-    newConfig.onRetry = this.onRetry;
 
     // Compare old and new configurations
     if (JSON.stringify(this.config) === JSON.stringify(newConfig)) {
@@ -149,7 +119,8 @@ export class LlmTranslationService {
           settings.graphRAGEmbeddingModel,
           settings.graphRAGMaxDirectCharacterRelations
         );
-        ragContext = formatContextAsMarkdown(context);
+        const currentEpisodeId = this.getEpisodeId([scenarioData]);
+        ragContext = formatContextAsMarkdown(context, currentEpisodeId);
       } catch (error) {
         log.error(
           "LlmTranslationService",
@@ -225,6 +196,10 @@ ${userPrompt}`;
     if (item.monologue) ctx.push("monologue");
     const ctxStr = ctx.length ? ` (${ctx.join(" | ")})` : "";
     return `[${i + 1}] [${tag}]${ctxStr} ${item.text}`;
+  }
+
+  private getEpisodeId(scenariosData: IScenarioData[]): string {
+    return scenariosData[0].ScenarioId;
   }
 
   /**

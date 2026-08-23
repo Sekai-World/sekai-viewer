@@ -21,8 +21,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SearchIcon from "@mui/icons-material/Search";
+import SwapVertIcon from "@mui/icons-material/SwapVert";
 import TuneIcon from "@mui/icons-material/Tune";
-import { GraphEdge, GraphNode } from "../types";
+import { GraphEdge, GraphNode } from "../../../utils/graphRag/types";
 
 export interface NodeDetailsState {
   node: GraphNode;
@@ -106,6 +107,8 @@ export const NodeDetailsPanel: React.FC<NodeDetailsPanelProps> = ({
 }) => {
   const detailsRef = React.useRef<HTMLDivElement>(null);
   const [connectionSearch, setConnectionSearch] = React.useState("");
+  const [reverseConnectionOrder, setReverseConnectionOrder] =
+    React.useState(false);
   const [selectedEdgeTypes, setSelectedEdgeTypes] = React.useState<Set<
     GraphEdge["type"]
   > | null>(null);
@@ -130,7 +133,7 @@ export const NodeDetailsPanel: React.FC<NodeDetailsPanelProps> = ({
   const edgeTypes = [...new Set(edges.map((edge) => edge.type))].sort();
   const activeTypeCount = selectedEdgeTypes?.size ?? edgeTypes.length;
   const searchTerm = connectionSearch.trim().toLocaleLowerCase();
-  const filteredEdges = edges.filter((edge) => {
+  const matchingEdges = edges.filter((edge) => {
     if (selectedEdgeTypes && !selectedEdgeTypes.has(edge.type)) return false;
     if (!searchTerm) return true;
     const otherNodeId =
@@ -151,6 +154,9 @@ export const NodeDetailsPanel: React.FC<NodeDetailsPanelProps> = ({
       .filter((value): value is string => Boolean(value))
       .some((value) => value.toLocaleLowerCase().includes(searchTerm));
   });
+  const filteredEdges = reverseConnectionOrder
+    ? [...matchingEdges].reverse()
+    : matchingEdges;
 
   const toggleEdgeType = (edgeType: GraphEdge["type"], checked: boolean) => {
     setSelectedEdgeTypes((previous) => {
@@ -401,6 +407,26 @@ export const NodeDetailsPanel: React.FC<NodeDetailsPanelProps> = ({
                 onClick={(event) => setFilterAnchor(event.currentTarget)}
               >
                 <TuneIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip
+              title={
+                reverseConnectionOrder
+                  ? "Show original connection order"
+                  : "Reverse connection order"
+              }
+            >
+              <IconButton
+                aria-label={
+                  reverseConnectionOrder
+                    ? "Show original connection order"
+                    : "Reverse connection order"
+                }
+                aria-pressed={reverseConnectionOrder}
+                color={reverseConnectionOrder ? "primary" : "default"}
+                onClick={() => setReverseConnectionOrder((value) => !value)}
+              >
+                <SwapVertIcon />
               </IconButton>
             </Tooltip>
           </Box>

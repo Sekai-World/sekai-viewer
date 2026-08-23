@@ -2,8 +2,8 @@
  * Graph RAG extraction service
  * Handles LLM-based extraction of entities and relationships from story data
  */
-import { IScenarioData } from "../../types.d";
-import { LlmProviderClient, ILlmApiConfig } from "../LlmClient";
+import { IScenarioData } from "../../types";
+import { LlmProviderClient, ILlmApiConfig } from "../llmClient";
 import { graphRAGStore } from "./storage";
 import { ExtractionOutput } from "./types";
 import { embeddingService } from "./embeddings";
@@ -22,18 +22,8 @@ export class GraphRAGExtractionService {
   constructor(
     config: ILlmApiConfig,
     targetLanguage: string,
-    similarityThreshold: number = 0.85,
-    onRetry?: (
-      attempt: number,
-      maxRetries: number,
-      delayMs: number,
-      error: string
-    ) => void
+    similarityThreshold: number = 0.85
   ) {
-    // Add retry callback to config
-    if (onRetry) {
-      config.onRetry = onRetry;
-    }
     this.client = new LlmProviderClient(config);
     this.targetLanguage = targetLanguage;
     this.processor = new ExtractionProcessor(
@@ -49,11 +39,14 @@ export class GraphRAGExtractionService {
    * events + terms), so callers can decide whether the story actually
    * yielded anything worth marking as "processed".
    */
-  async extractFromScenario(scenariosData: IScenarioData[]): Promise<number> {
+  async extractFromScenario(
+    scenariosData: IScenarioData[],
+    storyTag: string
+  ): Promise<number> {
     await graphRAGStore.init();
     await embeddingService.init();
 
-    const storyId = this.getStoryId(scenariosData);
+    const storyId = storyTag;
 
     // Step 1: Retrieve existing context for this story's cast
     const existingContext = await retrieveContext(
@@ -255,14 +248,6 @@ export class GraphRAGExtractionService {
       (extraction.events || []).length +
       (extraction.terms || []).length
     );
-  }
-
-  /**
-   * Derive the story-level id shared by every episode of a story from the
-   * first episode's ScenarioId (e.g. "street_01_00" -> "street_01").
-   */
-  private getStoryId(scenariosData: IScenarioData[]): string {
-    return scenariosData[0].ScenarioId.replace(/_[^_]+$/, "");
   }
 
   private async callExtractionLLM(

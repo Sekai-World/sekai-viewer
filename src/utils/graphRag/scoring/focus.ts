@@ -1,6 +1,7 @@
 import type { MultiDirectedGraph } from "graphology";
 import { combineScores } from "./weights";
 import type { GraphNode } from "../types";
+import { traverseGraphology } from "./traversal";
 
 export interface FocusRanking {
   depths: Map<string, number>;
@@ -22,30 +23,13 @@ export const rankFocus = (
     adjacency.get(target)?.push(source);
   });
 
-  const reachable = new Set<string>();
+  const traversal = traverseGraphology(graph, roots, allNodes);
+  const reachable = new Set(traversal.map((result) => result.nodeId));
   const depths = new Map<string, number>();
-  const queue = roots.filter((root) => adjacency.has(root));
-  queue.forEach((root) => {
-    reachable.add(root);
-    depths.set(root, 0);
-  });
-  for (let index = 0; index < queue.length; index++) {
-    const current = queue[index];
-    const nextDepth = (depths.get(current) ?? 0) + 1;
-    const currentNode = allNodes.get(current);
-    if (
-      currentNode &&
-      current !== roots[0] &&
-      (currentNode.type === "character" || currentNode.type === "group")
-    ) {
-      continue;
-    }
-    for (const neighbor of adjacency.get(current) ?? []) {
-      if (!reachable.has(neighbor)) {
-        reachable.add(neighbor);
-        depths.set(neighbor, nextDepth);
-        queue.push(neighbor);
-      }
+  for (const result of traversal) {
+    const previous = depths.get(result.nodeId);
+    if (previous === undefined || result.depth < previous) {
+      depths.set(result.nodeId, result.depth);
     }
   }
 
@@ -62,9 +46,17 @@ export const rankFocus = (
   const currentScores = new Map<string, number>();
   for (const root of rootIds)
     currentScores.set(root, 1 / Math.max(rootIds.size, 1));
-  for (let step = 0; step < 3; step++) {
+  const maxDepth = Math.max(...depths.values(), 0);
+  for (let step = 0; step < maxDepth; step++) {
     const nextScores = new Map<string, number>();
     for (const [node, score] of currentScores) {
+      const nodeType = allNodes.get(node)?.type;
+      if (
+        !rootIds.has(node) &&
+        (nodeType === "character" || nodeType === "group")
+      ) {
+        continue;
+      }
       const neighbors = adjacency.get(node) ?? [];
       if (neighbors.length === 0) continue;
       const share = score / neighbors.length;

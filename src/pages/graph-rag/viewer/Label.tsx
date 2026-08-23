@@ -1,6 +1,6 @@
 import { useEffect, type FC } from "react";
 import { useSigma } from "@react-sigma/core";
-import type { GraphNode } from "../types";
+import type { GraphNode } from "../../../utils/graphRag/types";
 
 interface FocusLabelData {
   x: number;

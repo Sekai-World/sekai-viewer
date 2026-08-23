@@ -15,23 +15,29 @@ import { SigmaContainer } from "@react-sigma/core";
 import { MultiDirectedGraph } from "graphology";
 import { observer } from "mobx-react-lite";
 import "@react-sigma/core/lib/style.css";
-import { graphRAGStore } from "./storage";
-import { GraphNode, GraphEdge, CharacterNode, EventNode } from "./types";
-import type { NodeType } from "./types";
-import { byEpisode } from "./helpers";
-import { useRootStore } from "../../stores/root";
-import { PairDetailsPanel, PairDetailState } from "./viewer/PairDetailsPanel";
-import { NodeDetailsPanel, NodeDetailsState } from "./viewer/NodeDetailsPanel";
+import { graphRAGStore } from "../../../utils/graphRag/storage";
+import {
+  GraphNode,
+  GraphEdge,
+  CharacterNode,
+  EventNode,
+} from "../../../utils/graphRag/types";
+import type { NodeType } from "../../../utils/graphRag/types";
+import { byEpisode } from "../../../utils/graphRag/helpers";
+import { useRootStore } from "../../../stores/root";
+import { PairDetailsPanel, PairDetailState } from "./PairDetailsPanel";
+import { NodeDetailsPanel, NodeDetailsState } from "./NodeDetailsPanel";
 import {
   GraphEventHandler as ExtractedGraphEventHandler,
   type VisibleGraphStats,
-} from "./viewer/GraphEventHandler";
-import { getSharedSemanticNodeIds } from "./query";
-import { ZoomResponsiveLabels as ExtractedZoomResponsiveLabels } from "./viewer/Label";
-import { GraphLoader as ExtractedGraphLoader } from "./viewer/GraphLoader";
-import { useMergeNodes } from "./viewer/useMergeNodes";
-import { GraphViewerToolbarOverlay } from "./viewer/Toolbar";
-import { NodeStats } from "./viewer/NodeStats";
+} from "./GraphEventHandler";
+import { getSharedSemanticNodeIds } from "../../../utils/graphRag/query";
+import { ZoomResponsiveLabels as ExtractedZoomResponsiveLabels } from "./Label";
+import { GraphLoader as ExtractedGraphLoader } from "./GraphLoader";
+import { NodeClickHandler as ExtractedNodeClickHandler } from "./NodeClickHandler";
+import { useMergeNodes } from "./useMergeNodes";
+import { GraphViewerToolbarOverlay } from "./Toolbar";
+import { NodeStats } from "./NodeStats";
 
 interface GraphViewerProps {
   open: boolean;
@@ -306,6 +312,8 @@ export const GraphViewer: React.FC<GraphViewerProps> = observer(
       >
         <ExtractedGraphLoader
           searchQuery={debouncedSearchQuery}
+          darkMode={isDark}
+          labelColor={graphLabelColor}
           suppressLowImportanceNodes={suppressLowImportanceNodes}
           lowImportanceConnectionLimit={lowImportanceConnectionLimit}
           selectedNodeTypes={selectedNodeTypes}
@@ -313,10 +321,9 @@ export const GraphViewer: React.FC<GraphViewerProps> = observer(
           onGraphDataLoaded={handleGraphDataLoaded}
         />
         <ExtractedZoomResponsiveLabels />
+        <ExtractedNodeClickHandler onNodeClick={handleNodeClick} />
         <ExtractedGraphEventHandler
-          onNodeClick={handleNodeClick}
           allNodes={allNodesMap}
-          allEdges={allEdgesArray}
           selectedNodes={selectedNodes}
           darkMode={isDark}
           fullscreen={fullscreen}

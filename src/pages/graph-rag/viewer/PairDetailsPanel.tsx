@@ -15,7 +15,11 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { CharacterNode, GraphEdge, EventNode } from "../types";
+import {
+  CharacterNode,
+  GraphEdge,
+  EventNode,
+} from "../../../utils/graphRag/types";
 
 export interface PairDetailState {
   nodeA: CharacterNode;
@@ -221,6 +225,15 @@ export const PairDetailsPanel: React.FC<PairDetailsPanelProps> = ({
                         <Typography variant="caption" display="block">
                           {nodeB.name}: {edgeToB.context}
                         </Typography>
+                        {event.episodeTags.length > 0 && (
+                          <Typography
+                            variant="caption"
+                            display="block"
+                            color="text.secondary"
+                          >
+                            Episodes: {event.episodeTags.join(", ")}
+                          </Typography>
+                        )}
                       </>
                     }
                     primaryTypographyProps={{

@@ -6,7 +6,7 @@ export function compareEpisodeTags(
 ): -1 | 0 | 1 {
   const category = (tag: EpisodeTag): 0 | 1 | 2 => {
     if (tag === "seed") return 0;
-    return /^event_\d+_\d+$/.test(tag) ? 2 : 1;
+    return /^eventStory-\d+-\d+$/.test(tag) ? 2 : 1;
   };
 
   const categoryOrder = category(tag1) - category(tag2);
