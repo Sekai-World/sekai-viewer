@@ -16,6 +16,7 @@ import {
   Typography,
 } from "@mui/material";
 import CallMergeIcon from "@mui/icons-material/CallMerge";
+import EditIcon from "@mui/icons-material/Edit";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -37,6 +38,8 @@ interface ToolbarProps {
   nodeSizeMultiplier: number;
   onNodeSizeMultiplierChange: (value: number) => void;
   onMergeNodes: () => void;
+  onEditSelectedNode: () => void;
+  canEditSelectedNode: boolean;
   collapsed?: boolean;
   onCollapsedChange?: (collapsed: boolean) => void;
 }
@@ -69,6 +72,8 @@ export const GraphViewerToolbar: React.FC<ToolbarProps> = ({
   nodeSizeMultiplier,
   onNodeSizeMultiplierChange,
   onMergeNodes,
+  onEditSelectedNode,
+  canEditSelectedNode,
   collapsed = true,
   onCollapsedChange,
 }) => {
@@ -209,7 +214,25 @@ export const GraphViewerToolbar: React.FC<ToolbarProps> = ({
   );
 
   const nodeOperations = (
-    <Box>
+    <Stack spacing={0.5}>
+      <Button
+        aria-label="Edit selected node"
+        disabled={!canEditSelectedNode}
+        fullWidth
+        onClick={onEditSelectedNode}
+        startIcon={<EditIcon />}
+        variant="text"
+        sx={{
+          justifyContent: "flex-start",
+          minHeight: 40,
+          px: 0.5,
+          textTransform: "none",
+          bgcolor: "transparent",
+          "&:hover": { bgcolor: "transparent", color: "primary.main" },
+        }}
+      >
+        Edit selected node
+      </Button>
       <Button
         aria-label="Merge nodes"
         color="warning"
@@ -228,7 +251,7 @@ export const GraphViewerToolbar: React.FC<ToolbarProps> = ({
       >
         Merge nodes
       </Button>
-    </Box>
+    </Stack>
   );
 
   const toggleToolbar = () => {

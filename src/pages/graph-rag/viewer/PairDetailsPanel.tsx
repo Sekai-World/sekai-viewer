@@ -10,11 +10,15 @@ import {
   ListItemText,
   Paper,
   Stack,
+  Tab,
+  Tabs,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import SwapVertIcon from "@mui/icons-material/SwapVert";
 import {
   CharacterNode,
   GraphEdge,
@@ -49,10 +53,21 @@ export const PairDetailsPanel: React.FC<PairDetailsPanelProps> = ({
 }) => {
   const { nodeA, nodeB, directEdges, sharedEvents } = pair;
   const ref = React.useRef<HTMLDivElement>(null);
+  const [selectedView, setSelectedView] = React.useState<
+    "relations" | "events"
+  >("relations");
+  const [reverseOrder, setReverseOrder] = React.useState(false);
 
   React.useEffect(() => {
     if (ref.current) ref.current.scrollTop = 0;
   }, [pair]);
+
+  const visibleDirectEdges = reverseOrder
+    ? [...directEdges].reverse()
+    : directEdges;
+  const visibleSharedEvents = reverseOrder
+    ? [...sharedEvents].reverse()
+    : sharedEvents;
 
   return (
     <Paper
@@ -148,102 +163,156 @@ export const PairDetailsPanel: React.FC<PairDetailsPanelProps> = ({
         <Collapse in={!collapsed} timeout={180}>
           <Divider sx={{ my: 1 }} />
 
-          <Typography variant="subtitle2" gutterBottom>
-            Direct Relations ({directEdges.length})
-          </Typography>
-          {directEdges.length === 0 ? (
-            <Typography variant="caption" color="text.secondary">
-              No direct relations recorded
-            </Typography>
-          ) : (
-            <List dense>
-              {directEdges.map((edge, idx) => (
-                <ListItem key={idx} disablePadding sx={{ py: 0.5 }}>
-                  <ListItemText
-                    primary={
-                      <Typography variant="caption" color="text.secondary">
-                        ↔ CHARACTER_RELATION
-                      </Typography>
-                    }
-                    secondary={
-                      <>
-                        {edge.context && (
-                          <Typography
-                            variant="caption"
-                            display="block"
-                            sx={{ fontStyle: "italic" }}
-                          >
-                            {edge.context}
+          <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+            <Tabs
+              value={selectedView}
+              onChange={(_, value) => setSelectedView(value)}
+              aria-label="Pair detail view"
+              variant="fullWidth"
+              sx={{ flex: 1, minHeight: 40 }}
+            >
+              <Tab
+                value="relations"
+                label={`Direct Relations (${directEdges.length})`}
+                id="pair-relations-tab"
+                aria-controls="pair-relations-panel"
+                sx={{ minHeight: 40, minWidth: 0, px: 1 }}
+              />
+              <Tab
+                value="events"
+                label={`Shared Events (${sharedEvents.length})`}
+                id="pair-events-tab"
+                aria-controls="pair-events-panel"
+                sx={{ minHeight: 40, minWidth: 0, px: 1 }}
+              />
+            </Tabs>
+            <Tooltip
+              title={
+                reverseOrder ? "Show original order" : "Reverse item order"
+              }
+            >
+              <IconButton
+                size="small"
+                aria-label={
+                  reverseOrder ? "Show original order" : "Reverse item order"
+                }
+                aria-pressed={reverseOrder}
+                color={reverseOrder ? "primary" : "default"}
+                onClick={() => setReverseOrder((value) => !value)}
+              >
+                <SwapVertIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          </Box>
+
+          {selectedView === "relations" && (
+            <Box
+              role="tabpanel"
+              id="pair-relations-panel"
+              aria-labelledby="pair-relations-tab"
+              sx={{ pt: 1 }}
+            >
+              {directEdges.length === 0 ? (
+                <Typography variant="caption" color="text.secondary">
+                  No direct relations recorded
+                </Typography>
+              ) : (
+                <List dense>
+                  {visibleDirectEdges.map((edge, idx) => (
+                    <ListItem key={idx} disablePadding sx={{ py: 0.5 }}>
+                      <ListItemText
+                        primary={
+                          <Typography variant="caption" color="text.secondary">
+                            ↔ CHARACTER_RELATION
                           </Typography>
-                        )}
-                        {edge.episodeTags?.length > 0 && (
-                          <Typography
-                            variant="caption"
-                            display="block"
-                            color="text.secondary"
-                          >
-                            Episodes: {edge.episodeTags.join(", ")}
-                          </Typography>
-                        )}
-                      </>
-                    }
-                  />
-                </ListItem>
-              ))}
-            </List>
+                        }
+                        secondary={
+                          <>
+                            {edge.context && (
+                              <Typography
+                                variant="caption"
+                                display="block"
+                                sx={{ fontStyle: "italic" }}
+                              >
+                                {edge.context}
+                              </Typography>
+                            )}
+                            {edge.episodeTags?.length > 0 && (
+                              <Typography
+                                variant="caption"
+                                display="block"
+                                color="text.secondary"
+                              >
+                                Episodes: {edge.episodeTags.join(", ")}
+                              </Typography>
+                            )}
+                          </>
+                        }
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              )}
+            </Box>
           )}
 
-          <Divider sx={{ my: 1 }} />
-
-          <Typography variant="subtitle2" gutterBottom>
-            Shared Events ({sharedEvents.length})
-          </Typography>
-          {sharedEvents.length === 0 ? (
-            <Typography variant="caption" color="text.secondary">
-              No shared events recorded
-            </Typography>
-          ) : (
-            <List dense>
-              {sharedEvents.map(({ event, edgeToA, edgeToB }, idx) => (
-                <ListItem
-                  key={idx}
-                  disablePadding
-                  sx={{
-                    py: 0.5,
-                    cursor: "pointer",
-                    "&:hover": { bgcolor: "action.hover" },
-                  }}
-                  onClick={() => onNodeClick(event.id)}
-                >
-                  <ListItemText
-                    primary={event.name}
-                    secondary={
-                      <>
-                        <Typography variant="caption" display="block">
-                          {nodeA.name}: {edgeToA.context}
-                        </Typography>
-                        <Typography variant="caption" display="block">
-                          {nodeB.name}: {edgeToB.context}
-                        </Typography>
-                        {event.episodeTags.length > 0 && (
-                          <Typography
-                            variant="caption"
-                            display="block"
-                            color="text.secondary"
-                          >
-                            Episodes: {event.episodeTags.join(", ")}
-                          </Typography>
-                        )}
-                      </>
-                    }
-                    primaryTypographyProps={{
-                      variant: "body2",
-                      fontWeight: "medium",
-                    }}
-                  />
-                </ListItem>
-              ))}
-            </List>
+          {selectedView === "events" && (
+            <Box
+              role="tabpanel"
+              id="pair-events-panel"
+              aria-labelledby="pair-events-tab"
+              sx={{ pt: 1 }}
+            >
+              {sharedEvents.length === 0 ? (
+                <Typography variant="caption" color="text.secondary">
+                  No shared events recorded
+                </Typography>
+              ) : (
+                <List dense>
+                  {visibleSharedEvents.map(
+                    ({ event, edgeToA, edgeToB }, idx) => (
+                      <ListItem
+                        key={idx}
+                        disablePadding
+                        sx={{
+                          py: 0.5,
+                          cursor: "pointer",
+                          "&:hover": { bgcolor: "action.hover" },
+                        }}
+                        onClick={() => onNodeClick(event.id)}
+                      >
+                        <ListItemText
+                          primary={event.name}
+                          secondary={
+                            <>
+                              <Typography variant="caption" display="block">
+                                {nodeA.name}: {edgeToA.context}
+                              </Typography>
+                              <Typography variant="caption" display="block">
+                                {nodeB.name}: {edgeToB.context}
+                              </Typography>
+                              {event.episodeTags.length > 0 && (
+                                <Typography
+                                  variant="caption"
+                                  display="block"
+                                  color="text.secondary"
+                                >
+                                  Episodes: {event.episodeTags.join(", ")}
+                                </Typography>
+                              )}
+                            </>
+                          }
+                          primaryTypographyProps={{
+                            variant: "body2",
+                            fontWeight: "medium",
+                          }}
+                        />
+                      </ListItem>
+                    )
+                  )}
+                </List>
+              )}
+            </Box>
           )}
         </Collapse>
       </Box>

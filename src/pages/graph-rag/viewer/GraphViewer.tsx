@@ -16,6 +16,12 @@ import { MultiDirectedGraph } from "graphology";
 import { observer } from "mobx-react-lite";
 import "@react-sigma/core/lib/style.css";
 import { graphRAGStore } from "../../../utils/graphRag/storage";
+import { embeddingService } from "../../../utils/GraphRag/embeddings";
+import {
+  applyNodeEdit,
+  getNodeEditEmbeddingText,
+  type NodeEditDraft,
+} from "../../../utils/GraphRag/nodeEdit";
 import {
   GraphNode,
   GraphEdge,
@@ -38,6 +44,7 @@ import { NodeClickHandler as ExtractedNodeClickHandler } from "./NodeClickHandle
 import { useMergeNodes } from "./useMergeNodes";
 import { GraphViewerToolbarOverlay } from "./Toolbar";
 import { NodeStats } from "./NodeStats";
+import { NodeEditorDialog } from "./NodeEditorDialog";
 
 interface GraphViewerProps {
   open: boolean;
@@ -82,6 +89,7 @@ export const GraphViewer: React.FC<GraphViewerProps> = observer(
       null
     );
     const [detailsCollapsed, setDetailsCollapsed] = useState(false);
+    const [editingNode, setEditingNode] = useState<GraphNode | null>(null);
 
     const [visibleStats, setVisibleStats] = useState<VisibleGraphStats | null>(
       null
@@ -274,6 +282,36 @@ export const GraphViewer: React.FC<GraphViewerProps> = observer(
       setPairDetails(null);
     }, []);
 
+    const handleEditSelectedNode = useCallback(() => {
+      if (singleDetails) setEditingNode(singleDetails.node);
+    }, [singleDetails]);
+
+    const handleSaveNode = useCallback(
+      async (node: GraphNode, draft: NodeEditDraft) => {
+        let updatedNode = applyNodeEdit(node, draft);
+        const previousEmbeddingText = getNodeEditEmbeddingText(node);
+        const updatedEmbeddingText = getNodeEditEmbeddingText(updatedNode);
+        if (
+          updatedEmbeddingText !== null &&
+          updatedEmbeddingText !== previousEmbeddingText
+        ) {
+          updatedNode = {
+            ...updatedNode,
+            embedding: await embeddingService.embed(updatedEmbeddingText),
+          } as GraphNode;
+        }
+        await graphRAGStore.putNode(updatedNode);
+        allNodesMap.set(updatedNode.id, updatedNode);
+        setSingleDetails((details) =>
+          details?.node.id === updatedNode.id
+            ? { ...details, node: updatedNode }
+            : details
+        );
+        setGraphRevision((revision) => revision + 1);
+      },
+      []
+    );
+
     const toolbarProps = {
       searchQuery,
       onSearchQueryChange: setSearchQuery,
@@ -288,6 +326,8 @@ export const GraphViewer: React.FC<GraphViewerProps> = observer(
       nodeSizeMultiplier,
       onNodeSizeMultiplierChange: setGraphViewerNodeSizeMultiplier,
       onMergeNodes: openMergeNodesDialog,
+      onEditSelectedNode: handleEditSelectedNode,
+      canEditSelectedNode: Boolean(singleDetails),
     };
 
     const sigmaCanvas = (
@@ -511,6 +551,11 @@ export const GraphViewer: React.FC<GraphViewerProps> = observer(
           </DialogContent>
         </Dialog>
         {mergeNodesDialog}
+        <NodeEditorDialog
+          node={editingNode}
+          onClose={() => setEditingNode(null)}
+          onSave={handleSaveNode}
+        />
       </>
     );
   }
