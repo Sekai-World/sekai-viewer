@@ -104,8 +104,13 @@ export class LlmProviderClient {
     schema: object,
     toolName = "store_structured_output"
   ): Promise<string> {
-    const baseURL =
+    // The SDK appends /v1/messages itself. Accept full endpoint URLs from
+    // settings without producing paths such as /v1/messages/v1/messages.
+    let baseURL =
       this.config.apiEndpoint?.trim() || "https://api.anthropic.com";
+    baseURL = baseURL
+      .replace(/(\/v1)?\/messages(?:\/v1\/messages)*\/?$/i, "")
+      .replace(/\/v1\/?$/i, "");
 
     const client = new Anthropic({
       apiKey: this.config.apiKey,
@@ -113,7 +118,9 @@ export class LlmProviderClient {
       dangerouslyAllowBrowser: true,
     });
 
-    const response = await client.messages.create({
+    // Anthropic requires streaming for requests whose max token budget may
+    // exceed the SDK's ten-minute non-streaming timeout.
+    const stream = client.messages.stream({
       model,
       max_tokens: 32000,
       temperature: 0.3,
@@ -128,6 +135,7 @@ export class LlmProviderClient {
       ],
       tool_choice: { type: "tool", name: toolName },
     });
+    const response = await stream.finalMessage();
 
     const toolUse = response.content.find((b) => b.type === "tool_use");
     if (!toolUse || toolUse.type !== "tool_use") {
