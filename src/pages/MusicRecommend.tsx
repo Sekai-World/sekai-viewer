@@ -21,7 +21,6 @@ import { useTranslation } from "react-i18next";
 import {
   ICardInfo,
   IMusicDifficultyInfo,
-  IMusicInfo,
   IMusicMeta,
   IMusicRecommendResult,
   ISkillInfo,
@@ -31,6 +30,7 @@ import {
   addDataToMusicMeta,
   filterMusicMeta,
   useCachedData,
+  useMusics,
   useMusicMeta,
 } from "../utils";
 import {
@@ -55,7 +55,7 @@ const MusicRecommend: React.FC<unknown> = () => {
 
   const [cards] = useCachedData<ICardInfo>("cards");
   const [skills] = useCachedData<ISkillInfo>("skills");
-  const [musics] = useCachedData<IMusicInfo>("musics");
+  const [musics] = useMusics();
   const [musicDifficulties] =
     useCachedData<IMusicDifficultyInfo>("musicDifficulties");
   const [metas] = useMusicMeta();

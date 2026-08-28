@@ -9,7 +9,7 @@ import {
   IMusicTagInfo,
   IUnitProfile,
 } from "../types.d";
-import { getRemoteAssetURL, useCachedData } from "../utils";
+import { getRemoteAssetURL, useCachedData, useMusics } from "../utils";
 import { useAssetI18n, useCharaName } from "../utils/i18n";
 import { charaIcons, UnitLogoMap } from "../utils/resources";
 import ColorPreview from "../components/helpers/ColorPreview";
@@ -56,7 +56,7 @@ const UnitDetail: React.FC<unknown> = observer(() => {
 
   const [unitProfiles] = useCachedData<IUnitProfile>("unitProfiles");
   const [gameCharas] = useCachedData<IGameChara>("gameCharacters");
-  const [musics] = useCachedData<IMusicInfo>("musics");
+  const [musics] = useMusics();
   const [musicTags] = useCachedData<IMusicTagInfo>("musicTags");
 
   const [unit, setUnit] = useState<IUnitProfile>();

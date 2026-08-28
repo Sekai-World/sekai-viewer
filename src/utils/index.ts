@@ -94,7 +94,9 @@ import {
   IMysekaiGameCharacterUnitGroups,
   ICardSupply,
   ICardSupplyGroup,
+  IMusicCategory,
 } from "./../types.d";
+import { fetchMusicCategories, mergeMusicCategories } from "./musicCategories";
 import { useAssetI18n } from "./i18n";
 import { useLocation } from "react-router-dom";
 import useSWR from "swr";
@@ -385,6 +387,34 @@ export function useCachedData<
   const { data, error } = useSWR(`${region}|${name}`, fetchCached);
 
   return [data, !error && !data, error];
+}
+
+export function useMusics(): [IMusicInfo[] | undefined, boolean, unknown] {
+  const { region } = useRootStore();
+
+  const [musics, isLoading, error] = useCachedData<IMusicInfo>("musics");
+
+  // All regions may ship a standalone `musicCategories.json`. The fetch is
+  // best-effort: `fetchMusicCategories` swallows any failure (404, network
+  // error, malformed body) and resolves to `undefined`, so a missing file
+  // never breaks the main `musics` request or the page. The error is
+  // intentionally not surfaced as this hook's error/loading state — the main
+  // musics `data`/`error` remain fully independent.
+  const { data: musicCategories } = useSWR<IMusicCategory[] | undefined>(
+    `${region}|musicCategories`,
+    () => fetchMusicCategories(region),
+    {
+      shouldRetryOnError: false,
+      revalidateOnFocus: false,
+    }
+  );
+
+  const merged = useMemo(() => {
+    if (!musics) return undefined;
+    return mergeMusicCategories(musics, musicCategories);
+  }, [musics, musicCategories]);
+
+  return [merged, isLoading && !merged, error];
 }
 
 export function useCompactData<
