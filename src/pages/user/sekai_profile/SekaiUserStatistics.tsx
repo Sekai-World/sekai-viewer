@@ -23,7 +23,12 @@ import { useTranslation } from "react-i18next";
 import Image from "mui-image";
 import { charaIcons } from "../../../utils/resources";
 import DegreeImage from "../../../components/widgets/DegreeImage";
-import { getRemoteAssetURL, useCachedData, useToggle } from "../../../utils";
+import {
+  getRemoteAssetURL,
+  useCachedData,
+  useMusics,
+  useToggle,
+} from "../../../utils";
 import {
   IArea,
   IAreaItem,
@@ -317,7 +322,7 @@ const SekaiUserStatistics = observer(() => {
 
   const [areas] = useCachedData<IArea>("areas");
   const [areaItems] = useCachedData<IAreaItem>("areaItems");
-  const [musics] = useCachedData<IMusicInfo>("musics");
+  const [musics] = useMusics();
 
   const [characterRankOpen, toggleCharacterRankOpen] = useToggle(false);
   const [challengeLiveOpen, toggleChallengeLiveOpen] = useToggle(false);

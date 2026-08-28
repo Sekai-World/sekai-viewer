@@ -179,7 +179,7 @@ const AgendaView: React.FC<{ data?: IMusicInfo }> = observer(({ data }) => {
             </Grid>
           </Grid>
           <Grid item xs={12} sm={2}>
-            {data.categories.map((cat) => (
+            {(data.categories ?? []).map((cat) => (
               <Chip
                 label={t(
                   `music:categoryType.${
