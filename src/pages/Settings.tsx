@@ -505,43 +505,47 @@ const Settings = observer(() => {
               </FormControl>
             </Grid>
 
-            <Grid item>
-              <Paper variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
-                <Stack
-                  direction={{ xs: "column", sm: "row" }}
-                  spacing={1.5}
-                  alignItems={{ xs: "stretch", sm: "center" }}
-                >
-                  <AccountTreeIcon color="primary" />
-                  <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      Knowledge Graph
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Add story context to translations with character and event
-                      relationships.
-                    </Typography>
-                  </Box>
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    onClick={() => setGraphRAGDialogOpen(true)}
-                    sx={{ flexShrink: 0 }}
+            {region === "jp" && (
+              <Grid item>
+                <Paper variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
+                  <Stack
+                    direction={{ xs: "column", sm: "row" }}
+                    spacing={1.5}
+                    alignItems={{ xs: "stretch", sm: "center" }}
                   >
-                    Manage
-                  </Button>
-                </Stack>
-              </Paper>
-            </Grid>
+                    <AccountTreeIcon color="primary" />
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Knowledge Graph
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Add story context to translations with character and
+                        event relationships.
+                      </Typography>
+                    </Box>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      onClick={() => setGraphRAGDialogOpen(true)}
+                      sx={{ flexShrink: 0 }}
+                    >
+                      Manage
+                    </Button>
+                  </Stack>
+                </Paper>
+              </Grid>
+            )}
           </>
         )}
       </Grid>
 
       {/* Graph RAG Settings Dialog */}
-      <GraphRAGSettingsDialog
-        open={graphRAGDialogOpen}
-        onClose={() => setGraphRAGDialogOpen(false)}
-      />
+      {region === "jp" && (
+        <GraphRAGSettingsDialog
+          open={graphRAGDialogOpen}
+          onClose={() => setGraphRAGDialogOpen(false)}
+        />
+      )}
     </Fragment>
   );
 });
