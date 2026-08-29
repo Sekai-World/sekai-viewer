@@ -31,10 +31,13 @@ import {
 import { GraphViewer } from "../viewer/GraphViewer";
 import { embeddingService } from "../../../utils/graphRag/embeddings";
 import { useSnackbar } from "notistack";
+import { LoadingButton } from "@mui/lab";
+import TranslateIcon from "@mui/icons-material/Translate";
 import { GraphRAGIndexingPanel } from "./GraphRAGIndexingPanel";
 import { GraphRAGGraphStatus } from "./GraphRAGGraphStatus";
 import { GraphRAGAdvancedSettings } from "./GraphRAGAdvancedSettings";
 import { GraphRAGConfirmDialogs } from "./GraphRAGConfirmDialogs";
+import { retranslateGraphNames } from "../../../utils/graphRag/retranslation";
 
 interface GraphRAGSettingsDialogProps {
   open: boolean;
@@ -90,6 +93,11 @@ export const GraphRAGSettingsDialog = observer(
       useState<GraphRAGExport | null>(null);
     const [isImportingGraph, setIsImportingGraph] = useState(false);
     const [isIndexing, setIsIndexing] = useState(false);
+    const [isRetranslating, setIsRetranslating] = useState(false);
+    const [retranslationProgress, setRetranslationProgress] = useState<{
+      current: number;
+      total: number;
+    } | null>(null);
     const { enqueueSnackbar } = useSnackbar();
 
     const isRunning = isIndexing || indexingProgress.status === "running";
@@ -208,6 +216,52 @@ export const GraphRAGSettingsDialog = observer(
         indexingOrchestrator.abort();
       }
     }, [indexingOrchestrator]);
+
+    const handleRetranslateNames = useCallback(async () => {
+      if (isRunning || isImportingGraph || graphStats.nodes === 0) return;
+
+      setIsRetranslating(true);
+      setRetranslationProgress({ current: 0, total: 0 });
+      const config = {
+        provider: llmTranslationProvider,
+        model: llmConfigs[llmTranslationProvider].model,
+        apiKey: llmConfigs[llmTranslationProvider].apiKey,
+        apiEndpoint: llmConfigs[llmTranslationProvider].endpoint,
+      };
+
+      try {
+        const result = await retranslateGraphNames(
+          config,
+          targetLanguage,
+          setRetranslationProgress
+        );
+        setGraphStats(await graphRAGStore.getVisualizationStats());
+        enqueueSnackbar(
+          result.translatedVariants > 0
+            ? `Retranslated ${result.translatedVariants} name variants across ${result.translatedNodes} characters, groups, and terms.`
+            : "The LLM returned no usable character, group, or term translations.",
+          { variant: result.translatedVariants > 0 ? "success" : "warning" }
+        );
+      } catch (error) {
+        console.error("Name retranslation failed:", error);
+        enqueueSnackbar(
+          error instanceof Error
+            ? error.message
+            : "Failed to retranslate character, group, and term names.",
+          { variant: "error" }
+        );
+      } finally {
+        setIsRetranslating(false);
+      }
+    }, [
+      enqueueSnackbar,
+      graphStats.nodes,
+      isImportingGraph,
+      isRunning,
+      llmConfigs,
+      llmTranslationProvider,
+      targetLanguage,
+    ]);
 
     const handleClearGraph = useCallback(async () => {
       setIsClearing(true);
@@ -398,6 +452,60 @@ export const GraphRAGSettingsDialog = observer(
                     onRequestCancel={() => setCancelConfirmOpen(true)}
                     onRequestClear={() => setClearConfirmOpen(true)}
                   />
+
+                  <Paper
+                    variant="outlined"
+                    sx={{
+                      p: 2,
+                      borderRadius: 2,
+                      borderColor: "primary.light",
+                    }}
+                  >
+                    <Stack
+                      direction={{ xs: "column", sm: "row" }}
+                      spacing={2}
+                      alignItems={{ xs: "stretch", sm: "center" }}
+                      justifyContent="space-between"
+                    >
+                      <Box>
+                        <Typography variant="subtitle2" fontWeight={600}>
+                          Retranslate Names, Groups & Terms
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Refresh character, group, and term variants with the
+                          configured LLM in {targetLanguage}.
+                        </Typography>
+                        {retranslationProgress && (
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            role="status"
+                            aria-live="polite"
+                          >
+                            {retranslationProgress.total > 0
+                              ? `${retranslationProgress.current} / ${retranslationProgress.total} entities processed`
+                              : "Preparing entities..."}
+                          </Typography>
+                        )}
+                      </Box>
+                      <LoadingButton
+                        variant="outlined"
+                        startIcon={<TranslateIcon />}
+                        loading={isRetranslating}
+                        loadingPosition="start"
+                        onClick={handleRetranslateNames}
+                        disabled={
+                          isRunning ||
+                          isImportingGraph ||
+                          graphStats.nodes === 0
+                        }
+                        aria-label="Retranslate all character, group, and term names"
+                        sx={{ flexShrink: 0 }}
+                      >
+                        Retranslate All
+                      </LoadingButton>
+                    </Stack>
+                  </Paper>
 
                   <GraphRAGGraphStatus
                     graphStats={graphStats}
