@@ -1,15 +1,29 @@
 import React, { useEffect, useState, useMemo } from "react";
 import Image, { ImageProps } from "mui-image";
-import { getRemoteAssetURL } from "../../utils";
+import { getRemoteAssetURL, useIntersectionObserver } from "../../utils";
 import { ServerRegion } from "../../types.d";
 
 const ImageWrapper: React.FC<
-  ImageProps & { directSrc?: boolean; region?: ServerRegion }
-> = ({ src, directSrc = false, region = "jp", duration = 1000, ...props }) => {
+  ImageProps & { directSrc?: boolean; region?: ServerRegion; lazy?: boolean }
+> = ({
+  src,
+  directSrc = false,
+  lazy = false,
+  region = "jp",
+  duration = 1000,
+  ...props
+}) => {
   const [isReady, setIsReady] = useState(false);
   const [realSrc, setRealSrc] = useState(src);
+  const [containerRef, isVisible] = useIntersectionObserver({
+    threshold: 0.1,
+    rootMargin: "50px",
+  });
+  const shouldLoad = !lazy || isVisible;
 
   useEffect(() => {
+    if (!shouldLoad) return;
+
     if (!directSrc) {
       getRemoteAssetURL(
         src,
@@ -23,14 +37,25 @@ const ImageWrapper: React.FC<
     } else {
       setIsReady(true);
     }
-  }, [directSrc, region, src]);
+  }, [directSrc, region, shouldLoad, src]);
 
   const imageProps = useMemo(
     () => Object.assign({}, props, { src: realSrc }),
     [props, realSrc]
   );
 
-  return isReady ? <Image duration={duration} {...imageProps} /> : null;
+  const image = isReady ? <Image duration={duration} {...imageProps} /> : null;
+
+  return lazy ? (
+    <div
+      ref={containerRef as React.RefObject<HTMLDivElement>}
+      style={{ width: "100%", ...(props.style as React.CSSProperties) }}
+    >
+      {image}
+    </div>
+  ) : (
+    image
+  );
 };
 
 export default ImageWrapper;

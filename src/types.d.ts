@@ -187,17 +187,18 @@ export interface GachaStatistic {
   counts: number[];
 }
 
+export type IMusicCategoryName =
+  | string
+  | {
+      musicCategoryName: string;
+      startAt: number;
+    };
+
 export interface IMusicInfo {
   id: number;
   seq: number;
   releaseConditionId: number;
-  categories: (
-    | string
-    | {
-        musicCategoryName: string;
-        startAt: number;
-      }
-  )[];
+  categories?: IMusicCategoryName[];
   title: string;
   pronunciation: string;
   creatorArtistId: number;
@@ -217,6 +218,13 @@ export interface IMusicInfo {
   musicCollaborationId?: number;
   creator?: string;
   infos?: any[];
+}
+
+export interface IMusicCategory {
+  musicId: number;
+  musicCategoryName: string;
+  startAt?: number;
+  musicCategoryType?: string;
 }
 
 export interface IMusicAchievement {

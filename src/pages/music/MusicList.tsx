@@ -38,6 +38,7 @@ import {
   useLocalStorage,
   useMusicTagName,
   useToggle,
+  useMusics,
 } from "../../utils";
 import InfiniteScroll from "../../components/helpers/InfiniteScroll";
 
@@ -84,7 +85,7 @@ const MusicList: React.FC<unknown> = observer(() => {
   const musicTagToName = useMusicTagName(contentTransMode);
   const getCharaName = useCharaName();
 
-  const [musicsCache] = useCachedData<IMusicInfo>("musics");
+  const [musicsCache] = useMusics();
   const [musicTags] = useCachedData<IMusicTagInfo>("musicTags");
   const [musicVocals] = useCachedData<IMusicVocalInfo>("musicVocals");
   const [outCharas] = useCachedData<IOutCharaProfile>("outsideCharacters");
@@ -180,7 +181,7 @@ const MusicList: React.FC<unknown> = observer(() => {
         if (
           musicMVTypes.length &&
           !musicMVTypes.every((type) =>
-            m.categories
+            (m.categories ?? [])
               .map((cat) =>
                 typeof cat === "string" ? cat : cat.musicCategoryName
               )
