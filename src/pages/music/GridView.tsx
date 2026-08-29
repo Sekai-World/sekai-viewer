@@ -80,7 +80,7 @@ const GridView: React.FC<{ data?: IMusicInfo }> = observer(({ data }) => {
           </Grid>
           <Grid item>
             <Typography variant="body2" color="textSecondary">
-              {data.categories
+              {(data.categories ?? [])
                 .map((cat) =>
                   t(
                     `music:categoryType.${

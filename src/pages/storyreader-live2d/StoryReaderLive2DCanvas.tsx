@@ -26,7 +26,7 @@ const StoryReaderLive2DCanvas: React.FC<{
   stageSize: [number, number];
 }> = ({ controllerData, settings, stageSize }) => {
   const { t } = useTranslation();
-  const { showWarning } = useAlertSnackbar();
+  const { showError, showWarning } = useAlertSnackbar();
 
   const wrap = useRef<HTMLDivElement>(null);
   const stage = useRef<{
@@ -215,8 +215,11 @@ const StoryReaderLive2DCanvas: React.FC<{
     }
   };
 
-  const handleModelLoad = (status: LoadStatus) => {
+  const handleModelLoad = (status: LoadStatus, error?: unknown) => {
     setLoadStatus(status);
+    if (error !== undefined) {
+      showError(error instanceof Error ? error.message : t("common:error"));
+    }
     if (status === LoadStatus.Loaded) {
       const controller = stage.current?.controller;
       if (controller) {

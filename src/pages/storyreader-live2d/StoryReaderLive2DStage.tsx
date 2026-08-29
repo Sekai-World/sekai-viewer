@@ -17,12 +17,13 @@ const StoryReaderLive2DStage = forwardRef<
   {
     stageSize: [number, number];
     controllerData: ILive2DControllerData;
-    onModelLoad: (status: LoadStatus) => void;
+    onModelLoad: (status: LoadStatus, error?: unknown) => void;
     onRenderProgress: ILive2DLoadProgressHandler;
   }
 >(({ stageSize, controllerData, onModelLoad, onRenderProgress }, ref) => {
   const app = useApp();
   const controller = useRef<Live2DController>();
+  const disposed = useRef(false);
   useImperativeHandle(ref, () => {
     return {
       get controller() {
@@ -35,26 +36,57 @@ const StoryReaderLive2DStage = forwardRef<
     controller.current?.set_stage_size(stageSize);
   }, [stageSize]);
   useEffect(() => {
-    controller.current = new Live2DController(app, stageSize, controllerData);
+    disposed.current = false;
+    const nextController = new Live2DController(app, stageSize, controllerData);
+    controller.current = nextController;
     //DEBUG
     //window.controller = controller.current;
     //DEBUG/
-    if (controller.current.layers.live2d.load_status() === "ready") {
+    if (nextController.layers.live2d.load_status() === "ready") {
       onModelLoad(LoadStatus.Loading);
-      controller.current.layers.live2d.clear();
-      controller.current.live2d_load_model(0, onRenderProgress).then(() => {
-        onModelLoad(LoadStatus.Loaded);
-      });
+      nextController.layers.live2d.clear();
+      loadModel(nextController, "Failed to load Live2D model to canvas.");
     }
     return () => {
-      controller.current?.destroy();
-      controller.current = undefined;
+      disposed.current = true;
+      nextController.destroy();
+      if (controller.current === nextController) controller.current = undefined;
     };
   }, []);
+  /**
+   * Reloads the Live2D stage and begins loading the model with the current configuration.
+   *
+   * Does nothing after the component has been disposed.
+   */
   function reloadStage() {
-    controller.current = new Live2DController(app, stageSize, controllerData);
-    controller.current.layers.live2d.clear();
-    controller.current.live2d_load_model(0);
+    if (disposed.current) return;
+    controller.current?.destroy();
+    const nextController = new Live2DController(app, stageSize, controllerData);
+    controller.current = nextController;
+    onModelLoad(LoadStatus.Loading);
+    nextController.layers.live2d.clear();
+    loadModel(nextController, "Failed to reload Live2D model to canvas.");
+  }
+  /**
+   * Loads a model and reports the result for the active controller.
+   *
+   * @param nextController - The controller responsible for loading the model
+   * @param errorMessage - The message to log when loading fails
+   */
+  function loadModel(nextController: Live2DController, errorMessage: string) {
+    nextController
+      .live2d_load_model(0, onRenderProgress)
+      .then(() => {
+        if (!disposed.current && controller.current === nextController) {
+          onModelLoad(LoadStatus.Loaded);
+        }
+      })
+      .catch((error: unknown) => {
+        console.error(errorMessage, error);
+        if (!disposed.current && controller.current === nextController) {
+          onModelLoad(LoadStatus.Ready, error);
+        }
+      });
   }
   return null;
 });

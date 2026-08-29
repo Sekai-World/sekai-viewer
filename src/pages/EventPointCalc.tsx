@@ -36,12 +36,16 @@ import {
   IEventRarityBonusRate,
   IGameCharaUnit,
   IMusicDifficultyInfo,
-  IMusicInfo,
   IMusicMeta,
   ISkillInfo,
   // ITeamCardState,
 } from "../types.d";
-import { filterMusicMeta, useCachedData, useMusicMeta } from "../utils";
+import {
+  filterMusicMeta,
+  useCachedData,
+  useMusicMeta,
+  useMusics,
+} from "../utils";
 import { useAssetI18n } from "../utils/i18n";
 import { useDurationI18n } from "../utils/i18nDuration";
 import { useScoreCalc } from "../utils/scoreCalc";
@@ -67,7 +71,7 @@ const EventPointCalc: React.FC<unknown> = () => {
 
   const [cards] = useCachedData<ICardInfo>("cards");
   const [skills] = useCachedData<ISkillInfo>("skills");
-  const [musics] = useCachedData<IMusicInfo>("musics");
+  const [musics] = useMusics();
   const [musicDifficulties] =
     useCachedData<IMusicDifficultyInfo>("musicDifficulties");
   const [events] = useCachedData<IEventInfo>("events");

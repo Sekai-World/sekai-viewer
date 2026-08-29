@@ -29,7 +29,12 @@ import {
   IOutCharaProfile,
   IMusicOriginal,
 } from "../../types.d";
-import { getRemoteAssetURL, useCachedData, useMusicTagName } from "../../utils";
+import {
+  getRemoteAssetURL,
+  useCachedData,
+  useMusicTagName,
+  useMusics,
+} from "../../utils";
 import { charaIcons } from "../../utils/resources";
 import { Trans, useTranslation } from "react-i18next";
 import { useAssetI18n, useCharaName } from "../../utils/i18n";
@@ -68,6 +73,7 @@ const KR_EXCLUSIVE_IDS = [
 const EN_EXCLUSIVE_IDS = [
   371, 387, 419, 420, 445, 453, 459, 464, 479, 502, 514, 528, 535, 552, 563,
   568, 598, 599, 602, 609, 640, 657, 673, 690, 694, 701, 725, 736, 762, 786,
+  787,
 ];
 const TW_EXCLUSIVE_IDS = [371, 387, 419, 420, 453, 459, 464, 694, 11012];
 const CN_EXCLUSIVE_IDS = [
@@ -89,7 +95,7 @@ const MusicDetail: React.FC<unknown> = observer(() => {
   const musicTagToName = useMusicTagName(contentTransMode);
   const { getMusic } = useStrapi();
 
-  const [musics] = useCachedData<IMusicInfo>("musics");
+  const [musics] = useMusics();
   const [musicVocals] = useCachedData<IMusicVocalInfo>("musicVocals");
   const [musicDiffis] =
     useCachedData<IMusicDifficultyInfo>("musicDifficulties");
@@ -573,7 +579,7 @@ const MusicDetail: React.FC<unknown> = observer(() => {
                     label={t("music:vocalTab.title[1]") as string}
                     labelPlacement="end"
                   />
-                  {music.categories
+                  {(music.categories ?? [])
                     .map((cat) =>
                       typeof cat === "string" ? cat : cat.musicCategoryName
                     )
@@ -767,10 +773,12 @@ const MusicDetail: React.FC<unknown> = observer(() => {
             alignItems="center"
           >
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
-              {t("music:category", { count: music.categories.length })}
+              {t("music:category", {
+                count: (music.categories ?? []).length,
+              })}
             </Typography>
             <Grid item>
-              {music.categories.map((elem) => {
+              {(music.categories ?? []).map((elem) => {
                 const cat =
                   typeof elem === "string" ? elem : elem.musicCategoryName;
                 return (

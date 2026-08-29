@@ -2,7 +2,7 @@ import { Grid, Typography } from "@mui/material";
 import React, { Fragment, useLayoutEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IMusicInfo, IMusicVocalInfo, VirtualLiveSetlist } from "../../types.d";
-import { getRemoteAssetURL, useCachedData } from "../../utils";
+import { getRemoteAssetURL, useCachedData, useMusics } from "../../utils";
 import AudioPlayer from "../music/AudioPlayer";
 import {
   CharaNameTrans,
@@ -15,7 +15,7 @@ const VirtualLiveStepMusic: React.FC<{
 }> = ({ data }) => {
   const { t } = useTranslation();
 
-  const [musics] = useCachedData<IMusicInfo>("musics");
+  const [musics] = useMusics();
   const [musicVocals] = useCachedData<IMusicVocalInfo>("musicVocals");
 
   const [music, setMusic] = useState<IMusicInfo>();

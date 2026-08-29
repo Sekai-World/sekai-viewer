@@ -16,11 +16,12 @@ import { OpenInNew, Search } from "@mui/icons-material";
 import React, { Fragment, useEffect } from "react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { IMusicDifficultyInfo, IMusicInfo, IMusicMeta } from "../../types.d";
+import { IMusicDifficultyInfo, IMusicMeta } from "../../types.d";
 import {
   addDataToMusicMeta,
   filterMusicMeta,
   useCachedData,
+  useMusics,
   useMusicMeta,
 } from "../../utils";
 // import AdSense from "../../components/blocks/AdSense";
@@ -34,7 +35,7 @@ const MusicMeta = () => {
   const { t } = useTranslation();
 
   const [metas] = useMusicMeta();
-  const [musics] = useCachedData<IMusicInfo>("musics");
+  const [musics] = useMusics();
   const [musicDifficulties] =
     useCachedData<IMusicDifficultyInfo>("musicDifficulties");
 

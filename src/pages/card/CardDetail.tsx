@@ -45,6 +45,7 @@ import {
   // specialTrainingRarityTypes,
   useCachedData,
   useCardType,
+  useMusics,
 } from "../../utils";
 import rarityNormal from "../../assets/rarity_star_normal.png";
 import rarityAfterTraining from "../../assets/rarity_star_afterTraining.png";
@@ -121,7 +122,7 @@ const CardDetail: React.FC<unknown> = observer(() => {
   );
   const [another3dmvCutIns] =
     useCachedData<IAnother3dmvCutIn>("another3dmvCutIns");
-  const [musics] = useCachedData<IMusicInfo>("musics");
+  const [musics] = useMusics();
   const [cardSupplies] = useCachedData<ICardSupply>("cardSupplies");
 
   const { cardId } = useParams<{ cardId: string }>();
