@@ -7,7 +7,7 @@ import { LlmProviderClient, ILlmApiConfig } from "../../llmClient";
 import {
   retrieveContext,
   formatContextAsMarkdown,
-} from "../../GraphRag/retrieval";
+} from "../../graphRag/retrieval";
 
 type TranslationItemType = "talk" | "fullscreen" | "telop";
 const TRANSLATION_CHUNK_SIZE = 40;

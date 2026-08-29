@@ -16,12 +16,12 @@ import { MultiDirectedGraph } from "graphology";
 import { observer } from "mobx-react-lite";
 import "@react-sigma/core/lib/style.css";
 import { graphRAGStore } from "../../../utils/graphRag/storage";
-import { embeddingService } from "../../../utils/GraphRag/embeddings";
+import { embeddingService } from "../../../utils/graphRag/embeddings";
 import {
   applyNodeEdit,
   getNodeEditEmbeddingText,
   type NodeEditDraft,
-} from "../../../utils/GraphRag/nodeEdit";
+} from "../../../utils/graphRag/nodeEdit";
 import {
   GraphNode,
   GraphEdge,

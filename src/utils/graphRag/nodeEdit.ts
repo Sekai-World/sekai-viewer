@@ -131,10 +131,6 @@ export const applyNodeEdit = (
         ...node,
         name: requiredText(draft.name, "Name"),
         description: requiredText(draft.description, "Description"),
-        originalTextVariants: normalizeOriginalTextVariants(
-          draft.originalTextVariants
-        ),
-        translatedNames: normalizeTranslatedNames(draft.translatedNames),
       };
     case "term":
       return {

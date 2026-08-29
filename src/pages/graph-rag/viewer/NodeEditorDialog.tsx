@@ -18,8 +18,8 @@ import {
   createNodeEditDraft,
   type TranslatedNameDraft,
   type NodeEditDraft,
-} from "../../../utils/GraphRag/nodeEdit";
-import type { GraphNode } from "../../../utils/GraphRag/types";
+} from "../../../utils/graphRag/nodeEdit";
+import type { GraphNode } from "../../../utils/graphRag/types";
 
 interface NodeEditorDialogProps {
   node: GraphNode | null;
