@@ -29,6 +29,8 @@ interface TranslationResponse {
   translations: TranslationResult[];
 }
 
+type TranslationMap = Record<string, Record<string, string>>;
+
 const translationSchema = {
   type: "object",
   properties: {
@@ -82,18 +84,55 @@ const parseResponse = (raw: string): TranslationResponse => {
     parsed = JSON.parse(raw.slice(start, end + 1));
   }
 
-  const translations = (parsed as Partial<TranslationResponse>)?.translations;
-  if (!Array.isArray(translations)) {
+  const responseObject = parsed as {
+    translations?: unknown;
+    entities?: unknown;
+  };
+  const translations = responseObject?.translations;
+  if (!translations || typeof translations !== "object") {
+    if (Array.isArray(responseObject?.entities)) {
+      throw new Error(
+        "The translation provider returned the input entities instead of translations. " +
+          "This model or endpoint may not support the requested structured output."
+      );
+    }
     throw new Error("The translation provider returned no translations.");
   }
-  return { translations: translations as TranslationResult[] };
+
+  if (Array.isArray(translations)) {
+    return { translations: translations as TranslationResult[] };
+  }
+
+  // Some providers return a compact map:
+  // { translations: { nodeId: { originalVariant: translatedVariant } } }
+  const normalized = Object.entries(translations as TranslationMap).map(
+    ([nodeId, variants]) => ({
+      nodeId,
+      translations: Object.entries(variants ?? {}).map(
+        ([variant, translation]) => ({ variant, translation })
+      ),
+    })
+  );
+  return { translations: normalized };
 };
 
 const buildSystemPrompt = (targetLanguage: string): string =>
   `You translate Project Sekai: Colorful Stage entity names into ${targetLanguage}.
 Translate every supplied original-language variant for the same entity consistently.
 Use the entity's pivot name as context, preserve official names where known, and do not translate identifiers.
-Return only JSON matching the requested schema. Every translation must use the exact variant string supplied in the input.`;
+Return only JSON matching the requested schema. Do not echo the input entities and do not return an entities array.
+The only top-level key is \"translations\", whose value is an array of objects with this shape:
+{\"nodeId\":\"...\",\"translations\":[{\"variant\":\"exact input variant\",\"translation\":\"translated text\"}]}.
+Every supplied variant should have one translation using the exact variant string from the input.
+
+Example input entity:
+{\"nodeId\":\"char-ichika\",\"type\":\"character\",\"name\":\"Ichika Hoshino\",\"variants\":[\"星乃一歌\",\"いちか\"]}
+
+Example valid response:
+{\"translations\":[{\"nodeId\":\"char-ichika\",\"translations\":[{\"variant\":\"星乃一歌\",\"translation\":\"星乃一歌\"},{\"variant\":\"いちか\",\"translation\":\"一歌\"}]}]}
+
+Invalid response (do not return this):
+{\"entities\":[{\"nodeId\":\"char-ichika\",\"type\":\"character\",\"name\":\"...\",\"variants\":[\"...\"]}]}`;
 
 const buildUserPrompt = (nodes: RetranslatableNode[]): string =>
   JSON.stringify(
