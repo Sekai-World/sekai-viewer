@@ -21,7 +21,7 @@ const blendColors = (
 };
 
 const edgePairKey = (source: string, target: string): string =>
-  [source, target].sort().join("::");
+  [source, target].sort((left, right) => left.localeCompare(right)).join("::");
 
 interface GraphAppearanceProps {
   allNodes: Map<string, GraphNode>;
@@ -122,7 +122,6 @@ export const useGraphAppearance = ({
         visible?.has(node) === false
           ? baseColor
           : blendColors(baseColor, fadedNode, fade);
-      const baseLabelColor = isFocusMode ? labelColor : labelColor;
       const labelFade = isFocusMode
         ? fade
         : Number.isFinite(importanceFade)
@@ -130,8 +129,8 @@ export const useGraphAppearance = ({
           : 0;
       const nodeLabelColor =
         visible?.has(node) === false
-          ? baseLabelColor
-          : blendColors(baseLabelColor, fadedNode, labelFade);
+          ? labelColor
+          : blendColors(labelColor, fadedNode, labelFade);
       const getFocusedNodeDisplay = () => ({
         ...data,
         label: data.label || (nodeObj && "name" in nodeObj ? nodeObj.name : ""),

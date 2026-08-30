@@ -130,7 +130,9 @@ export const NodeDetailsPanel: React.FC<NodeDetailsPanelProps> = ({
 
   const { node, edges } = details;
   const label = node.type === "fact" ? node.statement : node.name;
-  const edgeTypes = [...new Set(edges.map((edge) => edge.type))].sort();
+  const edgeTypes = [...new Set(edges.map((edge) => edge.type))].sort(
+    (left, right) => left.localeCompare(right)
+  );
   const activeTypeCount = selectedEdgeTypes?.size ?? edgeTypes.length;
   const searchTerm = connectionSearch.trim().toLocaleLowerCase();
   const matchingEdges = edges.filter((edge) => {

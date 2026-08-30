@@ -10,7 +10,9 @@ import { IGameChara } from "../../../types";
 import { charaIcons } from "../../../utils/resources";
 
 const edgePairKey = (edge: GraphEdge): string =>
-  [edge.sourceId, edge.targetId].sort().join("::");
+  [edge.sourceId, edge.targetId]
+    .sort((left, right) => left.localeCompare(right))
+    .join("::");
 
 const blendColors = (
   source: string,
