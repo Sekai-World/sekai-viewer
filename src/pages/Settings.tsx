@@ -5,15 +5,25 @@ import {
   FormControlLabel,
   FormLabel,
   Grid,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Paper,
   Radio,
   RadioGroup,
+  Stack,
   Switch,
   TextField,
+  Button,
+  Typography,
 } from "@mui/material";
 import Brightness4 from "~icons/mdi/brightness-4";
 import Brightness7 from "~icons/mdi/brightness-7";
 import BrightnessAuto from "~icons/mdi/brightness-auto";
-import React, { Fragment, useEffect } from "react";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import AccountTreeIcon from "@mui/icons-material/AccountTree";
+import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   DisplayModeType,
@@ -28,7 +38,8 @@ import TypographyHeader from "../components/styled/TypographyHeader";
 import {
   getDefaultModelForProvider,
   getDefaultEndpointForProvider,
-} from "../utils/Live2DPlayer/translation/LlmProviderClient";
+} from "../utils/llmClient";
+import { GraphRAGSettingsDialog } from "./graph-rag/settings";
 
 // const RegionDetect = () => {
 //   const { t } = useTranslation();
@@ -123,6 +134,17 @@ const Settings = observer(() => {
     },
   } = useRootStore();
   const { languages: remoteLanguages, isLoading, error } = useRemoteLanguages();
+
+  // Graph RAG dialog state
+  const [graphRAGDialogOpen, setGraphRAGDialogOpen] = useState(false);
+  const [llmSettingsExpanded, setLlmSettingsExpanded] = useState(false);
+
+  const providerLabel =
+    llmTranslationProvider === "openai-compatible"
+      ? "OpenAI compatible"
+      : llmTranslationProvider === "anthropic"
+        ? "Anthropic"
+        : "Gemini";
 
   useEffect(() => {
     if (!isLoading && !error) {
@@ -328,82 +350,117 @@ const Settings = observer(() => {
         {enableLlmTranslation && (
           <>
             <Grid item>
-              <FormControl component="fieldset" fullWidth>
-                <FormLabel component="legend">
-                  {t("common:settings.llm.provider")}
-                </FormLabel>
-                <RadioGroup
-                  row
-                  value={llmTranslationProvider}
-                  onChange={(_, v) =>
-                    setLlmTranslationProvider(
-                      v as "openai-compatible" | "anthropic" | "gemini"
-                    )
-                  }
-                >
-                  <FormControlLabel
-                    value="openai-compatible"
-                    control={<Radio />}
-                    label="OpenAI compatible"
-                  />
-                  <FormControlLabel
-                    value="anthropic"
-                    control={<Radio />}
-                    label="Anthropic"
-                  />
-                  <FormControlLabel
-                    value="gemini"
-                    control={<Radio />}
-                    label="Gemini"
-                  />
-                </RadioGroup>
-              </FormControl>
-            </Grid>
-
-            <Grid item>
-              <TextField
-                fullWidth
-                label={t("common:settings.llm.model")}
-                value={llmConfigs[llmTranslationProvider].model}
-                onChange={(e) =>
-                  setLlmModel(llmTranslationProvider, e.target.value)
-                }
-                placeholder={getDefaultModelForProvider(llmTranslationProvider)}
-                helperText={t("common:settings.llm.modelDescription", {
-                  defaultModel: getDefaultModelForProvider(
-                    llmTranslationProvider
-                  ),
-                })}
-              />
-            </Grid>
-
-            <Grid item>
-              <TextField
-                fullWidth
-                label={t("common:settings.llm.apiKey")}
-                type="password"
-                value={llmConfigs[llmTranslationProvider].apiKey}
-                onChange={(e) =>
-                  setLlmApiKey(llmTranslationProvider, e.target.value)
-                }
-                helperText={t("common:settings.llm.apiKeyDescription")}
-              />
-            </Grid>
-
-            <Grid item>
-              <TextField
-                fullWidth
-                label={t("common:settings.llm.apiEndpoint")}
-                value={llmConfigs[llmTranslationProvider].endpoint}
-                onChange={(e) =>
-                  setLlmApiEndpoint(llmTranslationProvider, e.target.value)
-                }
-                placeholder={getDefaultEndpointForProvider(
-                  llmTranslationProvider,
-                  llmConfigs[llmTranslationProvider].model
-                )}
-                helperText={t("common:settings.llm.apiEndpointDescription")}
-              />
+              <Accordion
+                expanded={llmSettingsExpanded}
+                onChange={(_, expanded) => setLlmSettingsExpanded(expanded)}
+                disableGutters
+                variant="outlined"
+                sx={{
+                  borderRadius: 2,
+                  "&::before": { display: "none" },
+                  transition: "border-color 150ms",
+                  "&:hover": { borderColor: "primary.light" },
+                }}
+              >
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Box sx={{ minWidth: 0 }}>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      {t("common:settings.llm.provider")}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" noWrap>
+                      {providerLabel} ·{" "}
+                      {llmConfigs[llmTranslationProvider].model ||
+                        getDefaultModelForProvider(llmTranslationProvider)}
+                    </Typography>
+                  </Box>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Grid container direction="column" spacing={2}>
+                    <Grid item>
+                      <FormControl component="fieldset" fullWidth>
+                        <FormLabel component="legend">
+                          {t("common:settings.llm.provider")}
+                        </FormLabel>
+                        <RadioGroup
+                          row
+                          value={llmTranslationProvider}
+                          onChange={(_, v) =>
+                            setLlmTranslationProvider(
+                              v as "openai-compatible" | "anthropic" | "gemini"
+                            )
+                          }
+                        >
+                          <FormControlLabel
+                            value="openai-compatible"
+                            control={<Radio />}
+                            label="OpenAI compatible"
+                          />
+                          <FormControlLabel
+                            value="anthropic"
+                            control={<Radio />}
+                            label="Anthropic"
+                          />
+                          <FormControlLabel
+                            value="gemini"
+                            control={<Radio />}
+                            label="Gemini"
+                          />
+                        </RadioGroup>
+                      </FormControl>
+                    </Grid>
+                    <Grid item>
+                      <TextField
+                        fullWidth
+                        label={t("common:settings.llm.model")}
+                        value={llmConfigs[llmTranslationProvider].model}
+                        onChange={(e) =>
+                          setLlmModel(llmTranslationProvider, e.target.value)
+                        }
+                        placeholder={getDefaultModelForProvider(
+                          llmTranslationProvider
+                        )}
+                        helperText={t("common:settings.llm.modelDescription", {
+                          defaultModel: getDefaultModelForProvider(
+                            llmTranslationProvider
+                          ),
+                        })}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <TextField
+                        fullWidth
+                        label={t("common:settings.llm.apiKey")}
+                        type="password"
+                        value={llmConfigs[llmTranslationProvider].apiKey}
+                        onChange={(e) =>
+                          setLlmApiKey(llmTranslationProvider, e.target.value)
+                        }
+                        helperText={t("common:settings.llm.apiKeyDescription")}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <TextField
+                        fullWidth
+                        label={t("common:settings.llm.apiEndpoint")}
+                        value={llmConfigs[llmTranslationProvider].endpoint}
+                        onChange={(e) =>
+                          setLlmApiEndpoint(
+                            llmTranslationProvider,
+                            e.target.value
+                          )
+                        }
+                        placeholder={getDefaultEndpointForProvider(
+                          llmTranslationProvider,
+                          llmConfigs[llmTranslationProvider].model
+                        )}
+                        helperText={t(
+                          "common:settings.llm.apiEndpointDescription"
+                        )}
+                      />
+                    </Grid>
+                  </Grid>
+                </AccordionDetails>
+              </Accordion>
             </Grid>
 
             <Grid item>
@@ -447,9 +504,48 @@ const Settings = observer(() => {
                 />
               </FormControl>
             </Grid>
+
+            {region === "jp" && (
+              <Grid item>
+                <Paper variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
+                  <Stack
+                    direction={{ xs: "column", sm: "row" }}
+                    spacing={1.5}
+                    alignItems={{ xs: "stretch", sm: "center" }}
+                  >
+                    <AccountTreeIcon color="primary" />
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Knowledge Graph
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Add story context to translations with character and
+                        event relationships.
+                      </Typography>
+                    </Box>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      onClick={() => setGraphRAGDialogOpen(true)}
+                      sx={{ flexShrink: 0 }}
+                    >
+                      Manage
+                    </Button>
+                  </Stack>
+                </Paper>
+              </Grid>
+            )}
           </>
         )}
       </Grid>
+
+      {/* Graph RAG Settings Dialog */}
+      {region === "jp" && (
+        <GraphRAGSettingsDialog
+          open={graphRAGDialogOpen}
+          onClose={() => setGraphRAGDialogOpen(false)}
+        />
+      )}
     </Fragment>
   );
 });

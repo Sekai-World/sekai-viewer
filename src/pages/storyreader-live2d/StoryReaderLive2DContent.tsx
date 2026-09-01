@@ -20,8 +20,8 @@ import {
   LoadStatus,
   ILive2DPlayerSettings,
 } from "../../utils/Live2DPlayer/types.d";
-import { LlmTranslationService } from "../../utils/Live2DPlayer/translation/LlmTranslationService";
-import { TranslationCache } from "../../utils/Live2DPlayer/translation/TranslationCache";
+import { LlmTranslationService } from "../../utils/Live2DPlayer/translation/llmTranslationService";
+import { TranslationCache } from "../../utils/Live2DPlayer/translation/translationCache";
 import { rootStore } from "../../stores/root";
 
 import { IScenarioData, ServerRegion } from "../../types.d";

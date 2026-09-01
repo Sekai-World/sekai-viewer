@@ -166,6 +166,8 @@ export interface IGameChara {
   givenName: string;
   firstNameRuby: string;
   givenNameRuby: string;
+  firstNameEnglish?: string;
+  givenNameEnglish?: string;
   gender: string;
   height: number;
   live2dHeightAdjustment: number;

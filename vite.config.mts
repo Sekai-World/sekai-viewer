@@ -88,6 +88,9 @@ export default defineConfig({
       },
       srcDir: "src",
       strategies: "injectManifest",
+      injectManifest: {
+        globIgnores: ["**/ort-wasm-*.wasm"],
+      },
     }),
   ],
   server: {

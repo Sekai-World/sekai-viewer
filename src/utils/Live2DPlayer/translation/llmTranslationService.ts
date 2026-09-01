@@ -2,8 +2,12 @@ import { log } from "../log";
 import { rootStore } from "../../../stores/root";
 import { IScenarioData } from "../../../types.d";
 import { SnippetAction, SpecialEffectType } from "../../../story-scenerio.d";
-import { TranslationCache } from "./TranslationCache";
-import { LlmProviderClient, ILlmApiConfig } from "./LlmProviderClient";
+import { TranslationCache } from "./translationCache";
+import { LlmProviderClient, ILlmApiConfig } from "../../llmClient";
+import {
+  retrieveContext,
+  formatContextAsMarkdown,
+} from "../../graphRag/retrieval";
 
 type TranslationItemType = "talk" | "fullscreen" | "telop";
 const TRANSLATION_CHUNK_SIZE = 40;
@@ -50,6 +54,7 @@ export class LlmTranslationService {
   constructor(config?: ILlmApiConfig) {
     // Use provided config or read from settings store
     this.config = config || this.getConfigFromSettings();
+
     this.providerClient = new LlmProviderClient(this.config);
   }
 
@@ -63,11 +68,12 @@ export class LlmTranslationService {
     const settings = rootStore.settings;
     const provider = settings.llmTranslationProvider;
     const cfg = settings.llmConfigs[provider];
+
     return {
       provider,
-      apiKey: cfg?.apiKey || "",
-      apiEndpoint: cfg?.endpoint || "",
-      model: cfg?.model || "",
+      apiKey: cfg.apiKey,
+      apiEndpoint: cfg.endpoint,
+      model: cfg.model,
     };
   }
 
@@ -76,6 +82,7 @@ export class LlmTranslationService {
    */
   private checkAndUpdateConfigIfNeeded(): void {
     const newConfig = this.getConfigFromSettings();
+
     // Compare old and new configurations
     if (JSON.stringify(this.config) === JSON.stringify(newConfig)) {
       return; // No changes, skip update
@@ -94,12 +101,38 @@ export class LlmTranslationService {
    * with the array length exactly matching the number of inputs and the
    * order preserved.
    */
-  private createSystemPrompt(
+  private async createSystemPrompt(
     targetLanguage: string,
-    sourceLanguage: string
-  ): string {
-    const userPrompt = rootStore.settings.additionalSystemPrompt?.trim() ?? "";
+    sourceLanguage: string,
+    scenarioData: IScenarioData
+  ): Promise<string> {
+    const settings = rootStore.settings;
+    const userPrompt = settings.additionalSystemPrompt?.trim() ?? "";
+
+    // Retrieve RAG context if enabled
+    let ragContext = "";
+    if (settings.enableGraphRAG) {
+      try {
+        const context = await retrieveContext(
+          [scenarioData],
+          settings.graphRAGEventsPerCharacter,
+          settings.graphRAGEmbeddingModel,
+          settings.graphRAGMaxDirectCharacterRelations
+        );
+        const currentEpisodeId = this.getEpisodeId([scenarioData]);
+        ragContext = formatContextAsMarkdown(context, currentEpisodeId);
+      } catch (error) {
+        log.error(
+          "LlmTranslationService",
+          "Failed to retrieve RAG context:",
+          error
+        );
+        // Continue without RAG context if retrieval fails
+      }
+    }
+
     const base = `You are a professional translator specializing in ${sourceLanguage} to ${targetLanguage} translation for Project Sekai: Colorful Stage (プロセカ), a mobile rhythm game featuring Hatsune Miku and Virtual Singers.
+${ragContext ? `\n${ragContext}\n` : ""}
 
 SAFETY GUIDELINES:
 - Only translate the provided text content, do not generate new content
@@ -165,6 +198,10 @@ ${userPrompt}`;
     return `[${i + 1}] [${tag}]${ctxStr} ${item.text}`;
   }
 
+  private getEpisodeId(scenariosData: IScenarioData[]): string {
+    return scenariosData[0].ScenarioId;
+  }
+
   /**
    * Walk `scenarioData.Snippets` in order and collect every translatable
    * line — Talk bodies plus the FullScreenText and Telop special effects —
@@ -226,43 +263,23 @@ ${userPrompt}`;
     return null;
   }
 
-  private sanitizeControlCharacters(rawJsonString: string): string {
-    let sanitized = "";
-    let inString = false;
-    let escaped = false;
-
-    for (const char of rawJsonString) {
-      if (inString) {
-        if (escaped) {
-          sanitized += char;
-          escaped = false;
-          continue;
-        }
-
-        if (char === "\\") {
-          sanitized += char;
-          escaped = true;
-          continue;
-        }
-
-        if (char === '"') {
-          sanitized += char;
-          inString = false;
-          continue;
-        }
-
-        if (char.charCodeAt(0) < 0x20) {
-          sanitized += `\\u${char.charCodeAt(0).toString(16).padStart(4, "0")}`;
-          continue;
-        }
-      } else if (char === '"') {
-        inString = true;
-      }
-
-      sanitized += char;
-    }
-
-    return sanitized;
+  /**
+   * Build translation schema for structured output
+   */
+  private buildTranslationSchema(expectedCount: number) {
+    return {
+      type: "object",
+      properties: {
+        translations: {
+          type: "array",
+          items: { type: "string" },
+          minItems: expectedCount,
+          maxItems: expectedCount,
+        },
+      },
+      required: ["translations"],
+      additionalProperties: false,
+    };
   }
 
   /**
@@ -291,11 +308,7 @@ ${userPrompt}`;
         const end = batchResponse.lastIndexOf("}");
         if (start === -1 || end === -1 || end <= start) return fallback();
         const candidate = batchResponse.slice(start, end + 1);
-        try {
-          parsed = JSON.parse(candidate);
-        } catch {
-          parsed = JSON.parse(this.sanitizeControlCharacters(candidate));
-        }
+        parsed = JSON.parse(candidate);
       }
 
       const translations = (parsed as any)?.translations;
@@ -343,7 +356,11 @@ ${userPrompt}`;
     const items = this.collectTranslationItems(scenarioData);
     if (items.length === 0) return;
 
-    const systemPrompt = this.createSystemPrompt(language, sourceLanguage);
+    const systemPrompt = await this.createSystemPrompt(
+      language,
+      sourceLanguage,
+      scenarioData
+    );
     let storedTranslation = false;
 
     try {
@@ -353,11 +370,13 @@ ${userPrompt}`;
         start += TRANSLATION_CHUNK_SIZE
       ) {
         const batch = items.slice(start, start + TRANSLATION_CHUNK_SIZE);
-        const batchResponse = await this.providerClient.translateBatch(
-          systemPrompt,
-          this.createUserMessage(batch),
-          batch.length
-        );
+        const translationSchema = this.buildTranslationSchema(batch.length);
+        const batchResponse =
+          await this.providerClient.callWithStructuredOutput(
+            systemPrompt,
+            this.createUserMessage(batch),
+            translationSchema
+          );
         this.parseBatchResponse(batchResponse, batch.length).forEach(
           (translation, i) => {
             const item = batch[i];

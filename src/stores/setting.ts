@@ -1,7 +1,7 @@
 import { types, Instance } from "mobx-state-tree";
 import { ContentTransModeType, DisplayModeType, ServerRegion } from "../types";
 import { ILanguageModel, LanguageModel } from "./user";
-import { migrateLlmSettings } from "../utils/Live2DPlayer/translation/migrateLlmSettings";
+import { migrateLlmSettings } from "../utils/migrateLlmSettings";
 
 export const SettingDisplayMode = types.enumeration<DisplayModeType>(
   "DisplayMode",
@@ -73,6 +73,16 @@ export const Settings = types
     targetLanguage: types.optional(types.string, "en"),
     showOriginalText: types.optional(types.boolean, true),
     additionalSystemPrompt: types.optional(types.string, ""),
+    // Graph RAG settings
+    enableGraphRAG: types.optional(types.boolean, false),
+    graphRAGEventsPerCharacter: types.optional(types.integer, 10),
+    graphRAGMaxDirectCharacterRelations: types.optional(types.integer, 10),
+    graphRAGSimilarityThreshold: types.optional(types.number, 0.85),
+    graphRAGIncludeFutureContext: types.optional(types.boolean, true),
+    graphRAGEmbeddingModel: types.optional(types.string, "Supabase/gte-small"),
+    graphViewerSuppressLowImportanceNodes: types.optional(types.boolean, true),
+    graphViewerLowImportanceConnectionLimit: types.optional(types.integer, 1),
+    graphViewerNodeSizeMultiplier: types.optional(types.number, 1),
   })
   .preProcessSnapshot(migrateLlmSettings)
   .views((self) => ({
@@ -127,6 +137,34 @@ export const Settings = types
     },
     setAdditionalSystemPrompt(prompt: string) {
       self.additionalSystemPrompt = prompt;
+    },
+    // Graph RAG Actions
+    setEnableGraphRAG(enabled: boolean) {
+      self.enableGraphRAG = enabled;
+    },
+    setGraphRAGEventsPerCharacter(count: number) {
+      self.graphRAGEventsPerCharacter = count;
+    },
+    setGraphRAGMaxDirectCharacterRelations(count: number) {
+      self.graphRAGMaxDirectCharacterRelations = count;
+    },
+    setGraphRAGSimilarityThreshold(threshold: number) {
+      self.graphRAGSimilarityThreshold = threshold;
+    },
+    setGraphRAGIncludeFutureContext(include: boolean) {
+      self.graphRAGIncludeFutureContext = include;
+    },
+    setGraphRAGEmbeddingModel(model: string) {
+      self.graphRAGEmbeddingModel = model;
+    },
+    setGraphViewerSuppressLowImportanceNodes(suppress: boolean) {
+      self.graphViewerSuppressLowImportanceNodes = suppress;
+    },
+    setGraphViewerLowImportanceConnectionLimit(limit: number) {
+      self.graphViewerLowImportanceConnectionLimit = limit;
+    },
+    setGraphViewerNodeSizeMultiplier(multiplier: number) {
+      self.graphViewerNodeSizeMultiplier = multiplier;
     },
   }));
 export interface ISettings extends Instance<typeof Settings> {}
