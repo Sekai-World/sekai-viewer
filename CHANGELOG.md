@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.21.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.20.1...v1.21.0) (2026-09-01)
+
+
+### Features
+
+* Graph rag for story ([#697](https://github.com/Sekai-World/sekai-viewer/issues/697)) ([c8a1105](https://github.com/Sekai-World/sekai-viewer/commits/c8a1105c8d12af4cc6172bb5c533cd5bfa9d3f17))
+
 ### [1.20.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.20.0...v1.20.1) (2026-08-28)
 
 
