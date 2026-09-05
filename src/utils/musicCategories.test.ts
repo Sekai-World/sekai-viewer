@@ -82,6 +82,49 @@ describe("mergeMusicCategories", () => {
     ]);
   });
 
+  it("preserves a music asset variant ID for duplicate category names", () => {
+    const musics = [makeMusic({ id: 477 })];
+    const external: IMusicCategory[] = [
+      { musicId: 477, musicCategoryName: "mv" },
+      { musicId: 477, musicCategoryName: "mv_2d" },
+      {
+        musicId: 477,
+        musicCategoryName: "mv_2d",
+        musicAssetVariantId: 47701,
+      },
+    ];
+
+    const result = mergeMusicCategories(musics, external);
+
+    expect(result[0].categories).toEqual([
+      "mv",
+      "mv_2d",
+      { musicCategoryName: "mv_2d", musicAssetVariantId: 47701 },
+    ]);
+  });
+
+  it("preserves startAt and music asset variant ID together", () => {
+    const musics = [makeMusic({ id: 20 })];
+    const external: IMusicCategory[] = [
+      {
+        musicId: 20,
+        musicCategoryName: "mv_2d",
+        startAt: 0,
+        musicAssetVariantId: 47701,
+      },
+    ];
+
+    const result = mergeMusicCategories(musics, external);
+
+    expect(result[0].categories).toEqual([
+      {
+        musicCategoryName: "mv_2d",
+        startAt: 0,
+        musicAssetVariantId: 47701,
+      },
+    ]);
+  });
+
   it("falls back to [] when an entry has no categories and no matching record", () => {
     const musics = [makeMusic({ id: 99 })];
     const external: IMusicCategory[] = [
