@@ -95,6 +95,7 @@ import {
   ICardSupply,
   ICardSupplyGroup,
   IMusicCategory,
+  IMusicAssetVariant,
 } from "./../types.d";
 import { fetchMusicCategories, mergeMusicCategories } from "./musicCategories";
 import { useAssetI18n } from "./i18n";
@@ -370,7 +371,8 @@ export function useCachedData<
     | IMysekaiTalk
     | IMysekaiGameCharacterUnitGroups
     | ICardSupply
-    | ICardSupplyGroup,
+    | ICardSupplyGroup
+    | IMusicAssetVariant,
 >(name: string): [T[] | undefined, boolean, unknown] {
   // const [cached, cachedRef, setCached] = useRefState<T[]>([]);
   const { region } = useRootStore();

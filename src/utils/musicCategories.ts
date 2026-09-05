@@ -11,19 +11,26 @@ import {
  * Build the `categories` field for a music entry from its associated
  * `musicCategories` records (the separate `musicCategories.json` file).
  *
- * - When a record has a `startAt`, it is represented as an object
- *   `{ musicCategoryName, startAt }`, matching the existing optional shape.
- *   Note: `startAt` may legitimately be `0`, so presence is checked with
+ * - When a record has a `startAt` or `musicAssetVariantId`, it is represented
+ *   as an object preserving those values, matching the existing optional
+ *   shape. Both values may legitimately be `0`, so presence is checked with
  *   `!== undefined` rather than truthiness.
  * - Otherwise it is represented as the plain category name string.
  */
 function deriveCategories(records: IMusicCategory[]): IMusicCategoryName[] {
   return records.map((record) => {
-    if (record.startAt !== undefined) {
-      return {
+    if (
+      record.startAt !== undefined ||
+      record.musicAssetVariantId !== undefined
+    ) {
+      const category: Exclude<IMusicCategoryName, string> = {
         musicCategoryName: record.musicCategoryName,
-        startAt: record.startAt,
       };
+      if (record.startAt !== undefined) category.startAt = record.startAt;
+      if (record.musicAssetVariantId !== undefined) {
+        category.musicAssetVariantId = record.musicAssetVariantId;
+      }
+      return category;
     }
     return record.musicCategoryName;
   });
