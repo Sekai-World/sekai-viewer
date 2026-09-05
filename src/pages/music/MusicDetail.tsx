@@ -345,14 +345,10 @@ const MusicDetail: React.FC<unknown> = observer(() => {
         return;
       }
 
+      const videoDirectory =
+        categoryName === "original" ? "original_mv" : "sekai_mv";
       setMusicVideoURL(
-        `live/2dmode/${
-          categoryName === "original"
-            ? "original_mv"
-            : categoryName === "mv_2d"
-              ? "sekai_mv"
-              : ""
-        }/${
+        `live/2dmode/${videoDirectory}/${
           selectedChoice?.variant?.assetbundleName ??
           String(music.id).padStart(4, "0")
         }/`
@@ -675,19 +671,27 @@ const MusicDetail: React.FC<unknown> = observer(() => {
                           (vocal) => vocal.id === choice.variant?.musicVocalId
                         )
                       : undefined;
-                    const label =
+                    let label = categoryLabel;
+                    if (
                       videoChoiceCounts[choice.categoryName] > 1 &&
                       choice.musicAssetVariantId
-                        ? `${categoryLabel} (${
-                            matchingVocal
-                              ? getTranslated(
-                                  `music_vocal:${matchingVocal.musicVocalType}`,
-                                  matchingVocal.caption
-                                )
-                              : (choice.variant?.assetbundleName ??
-                                `#${choice.musicAssetVariantId}`)
-                          })`
-                        : categoryLabel;
+                    ) {
+                      let variantLabel = `#${choice.musicAssetVariantId}`;
+                      const assetbundleName = choice.variant?.assetbundleName;
+                      if (
+                        assetbundleName !== undefined &&
+                        assetbundleName !== null
+                      ) {
+                        variantLabel = assetbundleName;
+                      }
+                      if (matchingVocal) {
+                        variantLabel = getTranslated(
+                          `music_vocal:${matchingVocal.musicVocalType}`,
+                          matchingVocal.caption
+                        );
+                      }
+                      label = `${categoryLabel} (${variantLabel})`;
+                    }
 
                     return (
                       <FormControlLabel
