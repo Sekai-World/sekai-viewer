@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.21.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.21.0...v1.21.1) (2026-09-05)
+
+
+### Bug Fixes
+
+* **music:** support duplicate 2DMV asset variants ([#698](https://github.com/Sekai-World/sekai-viewer/issues/698)) ([747872f](https://github.com/Sekai-World/sekai-viewer/commits/747872fe4e7f093fea6f84454645829cf78e3d01))
+
 ## [1.21.0](https://github.com/Sekai-World/sekai-viewer/compare/v1.20.1...v1.21.0) (2026-09-01)
 
 
