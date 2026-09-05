@@ -16,7 +16,13 @@ import {
 import { Alert } from "@mui/material";
 import { TabContext, TabPanel } from "@mui/lab";
 import { OpenInNew } from "@mui/icons-material";
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useParams } from "react-router-dom";
 import Viewer from "react-viewer";
 import {
@@ -26,6 +32,7 @@ import {
   IMusicInfo,
   IMusicTagInfo,
   IMusicVocalInfo,
+  IMusicAssetVariant,
   IOutCharaProfile,
   IMusicOriginal,
 } from "../../types.d";
@@ -105,6 +112,8 @@ const MusicDetail: React.FC<unknown> = observer(() => {
   const [musicAchievements] =
     useCachedData<IMusicAchievement>("musicAchievements");
   const [musicOriginals] = useCachedData<IMusicOriginal>("musicOriginals");
+  const [musicAssetVariants] =
+    useCachedData<IMusicAssetVariant>("musicAssetVariants");
 
   const { musicId } = useParams<{ musicId: string }>();
 
@@ -135,6 +144,51 @@ const MusicDetail: React.FC<unknown> = observer(() => {
   const [musicCommentId, setMusicCommentId] = useState<number>(0);
   const [format, setFormat] = useState<"mp3" | "flac" | "wav">("mp3");
   const [isExclusiveSong, setIsExclusiveSong] = useState(false);
+
+  const videoChoices = useMemo(
+    () =>
+      (music?.categories ?? [])
+        .map((category, index) => {
+          const categoryName =
+            typeof category === "string"
+              ? category
+              : category.musicCategoryName;
+          return {
+            categoryName,
+            index,
+            musicAssetVariantId:
+              typeof category === "string"
+                ? undefined
+                : category.musicAssetVariantId,
+            variant:
+              typeof category === "string" ||
+              category.musicAssetVariantId === undefined
+                ? undefined
+                : musicAssetVariants?.find(
+                    (assetVariant) =>
+                      assetVariant.id === category.musicAssetVariantId
+                  ),
+            value: `music-video-${categoryName}-${
+              typeof category === "string"
+                ? "default"
+                : (category.musicAssetVariantId ?? "default")
+            }-${index}`,
+          };
+        })
+        .filter(({ categoryName }) =>
+          ["original", "mv_2d"].includes(categoryName)
+        ),
+    [music, musicAssetVariants]
+  );
+
+  const videoChoiceCounts = useMemo(
+    () =>
+      videoChoices.reduce<Record<string, number>>((counts, choice) => {
+        counts[choice.categoryName] = (counts[choice.categoryName] ?? 0) + 1;
+        return counts;
+      }, {}),
+    [videoChoices]
+  );
 
   useEffect(() => {
     if (music) {
@@ -257,40 +311,61 @@ const MusicDetail: React.FC<unknown> = observer(() => {
   }, [getMusic, music]);
 
   useEffect(() => {
+    const selectedChoice = videoChoices.find(
+      (choice) => choice.value === vocalPreviewVal
+    );
+    if (!selectedChoice?.musicAssetVariantId || !selectedChoice.variant) return;
+
+    const vocalIndex = musicVocal.findIndex(
+      (vocal) => vocal.id === selectedChoice.variant?.musicVocalId
+    );
+    if (vocalIndex >= 0 && vocalIndex !== selectedPreviewVocalType) {
+      setSelectedPreviewVocalType(vocalIndex);
+    }
+  }, [musicVocal, selectedPreviewVocalType, videoChoices, vocalPreviewVal]);
+
+  useEffect(() => {
     if (
       music &&
       musicVocal &&
       musicVocal[selectedPreviewVocalType] &&
-      (vocalPreviewVal === "original" || vocalPreviewVal === "mv_2d")
+      (videoChoices.some((choice) => choice.value === vocalPreviewVal) ||
+        vocalPreviewVal === "original" ||
+        vocalPreviewVal === "mv_2d")
     ) {
-      if (
-        (TW_EXCLUSIVE_IDS.includes(music.id) && region === "tw") ||
-        (EN_EXCLUSIVE_IDS.includes(music.id) && region === "en") ||
-        (KR_EXCLUSIVE_IDS.includes(music.id) && region === "kr") ||
-        (CN_EXCLUSIVE_IDS.includes(music.id) && region === "cn")
-      ) {
-        setMusicVideoURL(
-          `live/2dmode/${
-            vocalPreviewVal === "original"
-              ? "original_mv"
-              : vocalPreviewVal === "mv_2d"
-                ? "sekai_mv"
-                : ""
-          }/${String(music.id).padStart(4, "0")}/`
-        );
-      } else {
-        setMusicVideoURL(
-          `live/2dmode/${
-            vocalPreviewVal === "original"
-              ? "original_mv"
-              : vocalPreviewVal === "mv_2d"
-                ? "sekai_mv"
-                : ""
-          }/${String(music.id).padStart(4, "0")}/`
-        );
+      const selectedChoice = videoChoices.find(
+        (choice) => choice.value === vocalPreviewVal
+      );
+      const categoryName = selectedChoice?.categoryName ?? vocalPreviewVal;
+
+      // Wait for the variant record rather than accidentally playing the
+      // default music-id directory while the cache is still loading.
+      if (selectedChoice?.musicAssetVariantId && !selectedChoice.variant) {
+        setMusicVideoURL("");
+        return;
       }
+
+      setMusicVideoURL(
+        `live/2dmode/${
+          categoryName === "original"
+            ? "original_mv"
+            : categoryName === "mv_2d"
+              ? "sekai_mv"
+              : ""
+        }/${
+          selectedChoice?.variant?.assetbundleName ??
+          String(music.id).padStart(4, "0")
+        }/`
+      );
     }
-  }, [music, musicVocal, region, selectedPreviewVocalType, vocalPreviewVal]);
+  }, [
+    music,
+    musicVocal,
+    region,
+    selectedPreviewVocalType,
+    videoChoices,
+    vocalPreviewVal,
+  ]);
 
   const getVocalCharaIcons: (index: number) => JSX.Element = useCallback(
     (index: number) => {
@@ -510,9 +585,12 @@ const MusicDetail: React.FC<unknown> = observer(() => {
         {getTranslated(`music_titles:${musicId}`, music.title)}
       </TypographyHeader>
       <ContainerContent maxWidth="md">
-        {["original", "mv_2d"].includes(vocalPreviewVal) &&
+        {(videoChoices.some((choice) => choice.value === vocalPreviewVal) ||
+          vocalPreviewVal === "original" ||
+          vocalPreviewVal === "mv_2d") &&
         musicVocalTypes.length &&
         musicVocal.length &&
+        musicVideoURL &&
         longMusicPlaybackURL ? (
           <MusicVideoPlayer
             audioPath={longMusicPlaybackURL}
@@ -565,6 +643,15 @@ const MusicDetail: React.FC<unknown> = observer(() => {
                   onChange={(e, v) => {
                     setVocalPreviewVal(v);
                     setVocalDisabled(false);
+                    const selectedChoice = videoChoices.find(
+                      (choice) => choice.value === v
+                    );
+                    const vocalIndex = musicVocal.findIndex(
+                      (vocal) =>
+                        vocal.id === selectedChoice?.variant?.musicVocalId
+                    );
+                    if (vocalIndex >= 0)
+                      setSelectedPreviewVocalType(vocalIndex);
                   }}
                 >
                   <FormControlLabel
@@ -579,20 +666,39 @@ const MusicDetail: React.FC<unknown> = observer(() => {
                     label={t("music:vocalTab.title[1]") as string}
                     labelPlacement="end"
                   />
-                  {(music.categories ?? [])
-                    .map((cat) =>
-                      typeof cat === "string" ? cat : cat.musicCategoryName
-                    )
-                    .filter((cat) => ["original", "mv_2d"].includes(cat))
-                    .map((cat) => (
+                  {videoChoices.map((choice) => {
+                    const categoryLabel = t(
+                      `music:categoryType.${choice.categoryName}`
+                    ) as string;
+                    const matchingVocal = choice.variant
+                      ? musicVocal.find(
+                          (vocal) => vocal.id === choice.variant?.musicVocalId
+                        )
+                      : undefined;
+                    const label =
+                      videoChoiceCounts[choice.categoryName] > 1 &&
+                      choice.musicAssetVariantId
+                        ? `${categoryLabel} (${
+                            matchingVocal
+                              ? getTranslated(
+                                  `music_vocal:${matchingVocal.musicVocalType}`,
+                                  matchingVocal.caption
+                                )
+                              : (choice.variant?.assetbundleName ??
+                                `#${choice.musicAssetVariantId}`)
+                          })`
+                        : categoryLabel;
+
+                    return (
                       <FormControlLabel
-                        value={cat}
+                        value={choice.value}
                         control={<Radio color="primary"></Radio>}
-                        label={t(`music:categoryType.${cat}`) as string}
+                        label={label}
                         labelPlacement="end"
-                        key={cat}
+                        key={choice.value}
                       />
-                    ))}
+                    );
+                  })}
                   {!!musicOriginal && (
                     <FormControlLabel
                       value="original_video"

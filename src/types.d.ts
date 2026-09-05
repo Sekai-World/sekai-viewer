@@ -191,7 +191,8 @@ export type IMusicCategoryName =
   | string
   | {
       musicCategoryName: string;
-      startAt: number;
+      startAt?: number;
+      musicAssetVariantId?: number;
     };
 
 export interface IMusicInfo {
@@ -224,7 +225,16 @@ export interface IMusicCategory {
   musicId: number;
   musicCategoryName: string;
   startAt?: number;
+  musicAssetVariantId?: number;
   musicCategoryType?: string;
+}
+
+export interface IMusicAssetVariant {
+  id: number;
+  musicVocalId: number;
+  seq: number;
+  musicAssetType: string;
+  assetbundleName: string;
 }
 
 export interface IMusicAchievement {
