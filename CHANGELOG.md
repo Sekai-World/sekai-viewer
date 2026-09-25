@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.21.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.21.1...v1.21.2) (2026-09-25)
+
+
+### Bug Fixes
+
+* **event-tracker:** hide unidentifiable World Bloom chapter ([#701](https://github.com/Sekai-World/sekai-viewer/issues/701)) ([951b090](https://github.com/Sekai-World/sekai-viewer/commits/951b090d856ff322f2a1f8dbc3856917f7b98736))
+
 ### [1.21.1](https://github.com/Sekai-World/sekai-viewer/compare/v1.21.0...v1.21.1) (2026-09-05)
 
 
