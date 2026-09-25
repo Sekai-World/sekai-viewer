@@ -42,6 +42,7 @@ import {
   IWorldBloomChapterRankingRewardRange,
 } from "../../types.d";
 import { useCachedData, useQuery, useToggle } from "../../utils";
+import { shouldShowWorldBloomChapterTracking } from "../../utils/worldBloom";
 import { useCurrentEvent } from "../../utils/apiClient";
 import { useEventTrackerAPI } from "../../utils/eventTracker";
 import { useAssetI18n } from "../../utils/i18n";
@@ -742,13 +743,14 @@ const EventTracker: React.FC<unknown> = observer(() => {
             ))}
         </ContainerContent>
       )}
-      {!!selectedEventId && !!worldBloomChapters.length && (
-        <EventTrackerChapters
-          eventId={selectedEventId}
-          chapters={worldBloomChapters}
-          chapterRankingRewards={worldBloomChapterRankingRewards}
-        />
-      )}
+      {!!selectedEventId &&
+        shouldShowWorldBloomChapterTracking(worldBloomChapters) && (
+          <EventTrackerChapters
+            eventId={selectedEventId}
+            chapters={worldBloomChapters}
+            chapterRankingRewards={worldBloomChapterRankingRewards}
+          />
+        )}
     </Fragment>
   );
 });
