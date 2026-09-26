@@ -13,6 +13,42 @@ import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../stores/root";
 import Svg from "../styled/Svg";
 
+// chr_sd textures are 160x136 canvases. UIPartsBondsHonorImage.SetSlot draws
+// them 1:1 with their bottom 12 below a main degree, and at 0.77 resting on the
+// bottom edge of a sub degree; each sits flush to its own side. Older exports
+// were trimmed to their opaque bounds, so those keep the tuned offsets below.
+const SD_CANVAS_WIDTH = 160;
+const SD_CANVAS_HEIGHT = 136;
+const SD_SUB_SCALE = 0.77;
+
+const isFullSdCanvas = (size: { width: number; height: number }) =>
+  size.width === SD_CANVAS_WIDTH && size.height === SD_CANVAS_HEIGHT;
+
+// Word textures are suffixed with the honor rarity: low _01 ... highest _04.
+const bondsWordSuffix = (rarity?: string) =>
+  String(
+    Math.max(0, ["low", "middle", "high", "highest"].indexOf(rarity ?? "")) + 1
+  ).padStart(2, "0");
+
+// chr_sd art is keyed by character unit. The *_unit_virtual_singer views dress
+// a virtual singer in the unit costume of a partner from another unit.
+const sdUnitId = (
+  unit: IGameCharaUnit,
+  partner: IGameCharaUnit,
+  units: IGameCharaUnit[],
+  viewType?: string
+) => {
+  if (!viewType?.endsWith("_unit_virtual_singer") || unit.unit !== "piapro")
+    return unit.id;
+  return (
+    units.find(
+      (candidate) =>
+        candidate.gameCharacterId === unit.gameCharacterId &&
+        candidate.unit === partner.unit
+    )?.id ?? unit.id
+  );
+};
+
 function useImageLoaded(url: string | undefined): boolean {
   const [loaded, setLoaded] = useState(false);
   const prevUrlRef = useRef<string | undefined>(undefined);
@@ -114,7 +150,9 @@ const BondsDegreeImage: React.FC<
     useEffect(() => {
       if (honorWord) {
         getRemoteAssetURL(
-          `bonds_honor/word/${honorWord.assetbundleName}_01.webp`,
+          `bonds_honor/word/${honorWord.assetbundleName}_${bondsWordSuffix(
+            honor?.honorRarity
+          )}.webp`,
           setWordImage,
           "minio",
           region
@@ -123,7 +161,7 @@ const BondsDegreeImage: React.FC<
       return () => {
         setWordImage("");
       };
-    }, [honorWord, region]);
+    }, [honor?.honorRarity, honorWord, region]);
 
     useEffect(() => {
       const func = async () => {
@@ -138,53 +176,37 @@ const BondsDegreeImage: React.FC<
     }, [sub, wordImage]);
 
     useEffect(() => {
-      if (honor && gameCharas.length) {
-        if (viewType?.startsWith("normal")) {
-          getRemoteAssetURL(
-            `bonds_honor/character/chr_sd_${String(
-              gameCharas[0].gameCharacterId
-            ).padStart(2, "0")}_01.webp`,
-            setSdLeft,
-            "minio",
-            region
-          );
-          getRemoteAssetURL(
-            `bonds_honor/character/chr_sd_${String(
-              gameCharas[1].gameCharacterId
-            ).padStart(2, "0")}_01.webp`,
-            setSdRight,
-            "minio",
-            region
-          );
-        } else if (viewType?.startsWith("reverse")) {
-          getRemoteAssetURL(
-            `bonds_honor/character/chr_sd_${String(
-              gameCharas[1].gameCharacterId
-            ).padStart(2, "0")}_01.webp`,
-            setSdLeft,
-            "minio",
-            region
-          );
-          getRemoteAssetURL(
-            `bonds_honor/character/chr_sd_${String(
-              gameCharas[0].gameCharacterId
-            ).padStart(2, "0")}_01.webp`,
-            setSdRight,
-            "minio",
-            region
-          );
+      if (honor && gameCharas.length && gameCharacterUnits) {
+        const [first, second] = viewType?.startsWith("reverse")
+          ? [gameCharas[1], gameCharas[0]]
+          : [gameCharas[0], gameCharas[1]];
+        const sdUrl = (unit: IGameCharaUnit, partner: IGameCharaUnit) =>
+          `bonds_honor/character/chr_sd_${String(
+            sdUnitId(unit, partner, gameCharacterUnits, viewType)
+          ).padStart(2, "0")}_01.webp`;
+        if (viewType?.startsWith("normal") || viewType?.startsWith("reverse")) {
+          getRemoteAssetURL(sdUrl(first, second), setSdLeft, "minio", region);
+          getRemoteAssetURL(sdUrl(second, first), setSdRight, "minio", region);
         }
       }
       return () => {
         setSdLeft("");
         setSdRight("");
       };
-    }, [gameCharas, honor, region, viewType]);
+    }, [gameCharacterUnits, gameCharas, honor, region, viewType]);
 
     useEffect(() => {
       const func = async () => {
         if (sdLeft) {
           const size = await getRemoteImageSize(sdLeft);
+          if (isFullSdCanvas(size)) {
+            const scale = sub ? SD_SUB_SCALE : 1;
+            setSdLeftWidth(SD_CANVAS_WIDTH * scale);
+            setSdLeftHeight(SD_CANVAS_HEIGHT * scale);
+            setSdLeftOffsetX(0);
+            setSdLeftOffsetY(sub ? 80 - SD_CANVAS_HEIGHT * scale : -44);
+            return;
+          }
           setSdLeftHeight(sub ? size.height / 1.35 : size.height);
           setSdLeftWidth(sub ? size.width / 1.35 : size.width);
           setSdLeftOffsetX(sub ? 26 : 20);
@@ -199,6 +221,14 @@ const BondsDegreeImage: React.FC<
       const func = async () => {
         if (sdRight) {
           const size = await getRemoteImageSize(sdRight);
+          if (isFullSdCanvas(size)) {
+            const scale = sub ? SD_SUB_SCALE : 1;
+            setSdRightWidth(SD_CANVAS_WIDTH * scale);
+            setSdRightHeight(SD_CANVAS_HEIGHT * scale);
+            setSdRightOffsetX((sub ? 180 : 380) - SD_CANVAS_WIDTH * scale);
+            setSdRightOffsetY(sub ? 80 - SD_CANVAS_HEIGHT * scale : -44);
+            return;
+          }
           setSdRightHeight(sub ? size.height / 1.35 : size.height);
           setSdRightWidth(sub ? size.width / 1.35 : size.width);
           setSdRightOffsetX(
