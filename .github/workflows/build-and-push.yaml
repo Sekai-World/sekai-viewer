@@ -47,7 +47,7 @@ jobs:
             nginx/
             Dockerfile.cloud
   build-docker:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64, sekai-viewer-prod]
     needs: build-pages
     steps:
       - name: Download artifacts
