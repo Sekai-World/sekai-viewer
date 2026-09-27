@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.21.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.21.2...v1.21.3) (2026-09-27)
+
+
+### Bug Fixes
+
+* **honor:** place full-canvas bonds honor art like the game ([#702](https://github.com/Sekai-World/sekai-viewer/issues/702)) ([f57fc56](https://github.com/Sekai-World/sekai-viewer/commits/f57fc56daa4400ebe52bc1c54ab15f17febe454d))
+
 ### [1.21.2](https://github.com/Sekai-World/sekai-viewer/compare/v1.21.1...v1.21.2) (2026-09-25)
 
 
