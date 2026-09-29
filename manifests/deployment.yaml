@@ -24,7 +24,7 @@ spec:
       # nodeSelector:
       #   nodegroup: contabo
       containers:
-      - image: zot.dna.moe/sekai-viewer:1.9.14
+      - image: zot.dna.moe/sekai-viewer:1.21.4
         name: frontend
         ports:
         - containerPort: 80
