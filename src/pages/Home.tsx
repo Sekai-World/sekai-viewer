@@ -170,19 +170,19 @@ const Home: React.FC = () => {
             alignItems: "center",
           }}
         >
-          {new Date().getTime() - 1727622000000 > 0 &&
-          new Date().getTime() - 1727622000000 < 604800000 ? (
+          {new Date().getTime() - 1790694000000 > 0 &&
+          new Date().getTime() - 1790694000000 < 604800000 ? (
             <Typography align="center" variant="h4">
-              {t("home:happy_anniversary", { year: "4th" })}
+              {t("home:happy_anniversary", { year: "6th" })}
             </Typography>
           ) : (
-            1727622000000 - new Date().getTime() > 0 &&
-            1727622000000 - new Date().getTime() < 604800000 && (
+            1790694000000 - new Date().getTime() > 0 &&
+            1790694000000 - new Date().getTime() < 604800000 && (
               <Fragment>
                 <Typography align="center" variant="h4">
-                  {t("home:anniversary_countdown", { year: "4th" })}
+                  {t("home:anniversary_countdown", { year: "6th" })}
                 </Typography>
-                <Countdown endDate={new Date(1727622000000)} />
+                <Countdown endDate={new Date(1790694000000)} />
               </Fragment>
             )
           )}
