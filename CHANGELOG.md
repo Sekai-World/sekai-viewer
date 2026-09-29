@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.21.4](https://github.com/Sekai-World/sekai-viewer/compare/v1.21.3...v1.21.4) (2026-09-29)
+
+
+### Bug Fixes
+
+* **home:** update banner and heading for 6th anniversary ([#704](https://github.com/Sekai-World/sekai-viewer/issues/704)) ([16c0f96](https://github.com/Sekai-World/sekai-viewer/commits/16c0f96d3f7f8caedd33c3545bee3d1b7eb78360))
+
 ### [1.21.3](https://github.com/Sekai-World/sekai-viewer/compare/v1.21.2...v1.21.3) (2026-09-27)
 
 
