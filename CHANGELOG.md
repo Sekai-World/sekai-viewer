@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.21.6](https://github.com/Sekai-World/sekai-viewer/compare/v1.21.5...v1.21.6) (2026-10-25)
+
+
+### Bug Fixes
+
+* **music:** restore missing CN exclusive music IDs ([#707](https://github.com/Sekai-World/sekai-viewer/issues/707)) ([be8526d](https://github.com/Sekai-World/sekai-viewer/commits/be8526d2814c0b9016768271b6d503bec7c306cf))
+* restore verification baseline and add regression coverage ([#706](https://github.com/Sekai-World/sekai-viewer/issues/706)) ([9c7be97](https://github.com/Sekai-World/sekai-viewer/commits/9c7be977b9017645596f27237ecee512aa1a072c))
+
 ### [1.21.5](https://github.com/Sekai-World/sekai-viewer/compare/v1.21.4...v1.21.5) (2026-10-06)
 
 
