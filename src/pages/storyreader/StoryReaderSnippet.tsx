@@ -57,7 +57,7 @@ export const Talk: React.FC<{
 
 export const SpecialEffect: React.FC<{
   seType: string;
-  text: string;
+  text: string | undefined;
   resource: string;
 }> = ({ seType, text, resource }) => {
   const { t } = useTranslation();
@@ -77,7 +77,8 @@ export const SpecialEffect: React.FC<{
                   <Chip label={t("story_reader:snippet.FullScreenText")} />
                 </Grid>
                 <Grid item xs={12}>
-                  <Typography>{text.trimStart()}</Typography>
+                  {/* Text-story SpecialEffectData.StringVal is string-typed; keep the legacy failure if malformed data violates that schema. */}
+                  <Typography>{text!.trimStart()}</Typography>
                 </Grid>
               </Grid>
             </Grid>
@@ -100,7 +101,8 @@ export const SpecialEffect: React.FC<{
                   <Chip label={t("story_reader:snippet.Telop")} />
                 </Grid>
                 <Grid item xs={12}>
-                  <Typography>{text.trimStart()}</Typography>
+                  {/* Text-story SpecialEffectData.StringVal is string-typed; keep the legacy failure if malformed data violates that schema. */}
+                  <Typography>{text!.trimStart()}</Typography>
                 </Grid>
               </Grid>
             </Grid>
@@ -224,9 +226,9 @@ export const Sound: React.FC<{
 
 export const MysekaiTalk: React.FC<{
   characterId: number;
-  characterName: string;
+  characterName?: string;
   text: string;
-  voiceUrl: string;
+  voiceUrl?: string;
 }> = ({ characterId, characterName, text, voiceUrl }) => {
   return (
     <CardStyled>

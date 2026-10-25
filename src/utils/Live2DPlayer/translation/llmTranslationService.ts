@@ -311,7 +311,12 @@ ${userPrompt}`;
         parsed = JSON.parse(candidate);
       }
 
-      const translations = (parsed as any)?.translations;
+      const translations =
+        parsed !== null &&
+        typeof parsed === "object" &&
+        "translations" in parsed
+          ? parsed.translations
+          : undefined;
       if (
         !Array.isArray(translations) ||
         translations.length !== expectedCount
@@ -323,7 +328,9 @@ ${userPrompt}`;
         return fallback();
       }
 
-      return translations.map((t) => (typeof t === "string" ? t.trim() : ""));
+      return translations.map((t: unknown) =>
+        typeof t === "string" ? t.trim() : ""
+      );
     } catch (error) {
       log.error(
         "LlmTranslationService",

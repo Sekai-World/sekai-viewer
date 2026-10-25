@@ -139,12 +139,12 @@ export interface CommentModel {
   blockReason?: string;
   points?: number;
   authorUser: UserMetadatumModel;
-  authorType?: any;
-  authorId?: any;
-  authorName?: any;
-  authorEmail?: any;
-  authorAvatar?: any;
-  threadOf?: any;
+  authorType?: string;
+  authorId?: string | number;
+  authorName?: string;
+  authorEmail?: string;
+  authorAvatar?: string | null;
+  threadOf?: unknown;
   created_at: Date;
   updated_at: Date;
 }
@@ -167,14 +167,23 @@ export interface AnnouncementModel {
 
 export type CommentAbuseReason = "OTHER" | "BAD_WORDS" | "DISCRIMINATION";
 
+export interface TranslationContentInput {
+  title: string;
+  description: string;
+  content: string;
+  category: string;
+  user: number;
+  language: number;
+}
+
 export interface TranslationModel {
   id: number;
   users: UserMetadatumModel[];
   isFin: boolean;
-  source?: any;
+  source?: unknown;
   sourceSlug?: string;
   sourceLang?: LanguageModel;
-  target?: any;
+  target?: unknown;
   targetSlug?: string;
   targetLang?: LanguageModel;
   created_at: Date;

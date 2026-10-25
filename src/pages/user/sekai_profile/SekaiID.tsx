@@ -31,6 +31,7 @@ import { useRootStore } from "../../../stores/root";
 import { ISekaiProfile, ISekaiUserData } from "../../../stores/sekai";
 import { autorun } from "mobx";
 import BondsDegreeImage from "../../../components/widgets/BondsDegreeImage";
+import { getErrorId, getErrorMessage } from "../../../utils/errors";
 
 const VerifyDialog: React.FC<
   DialogProps & {
@@ -162,8 +163,9 @@ const TransferConfirmDialog: React.FC<
     toggleIsTransfering();
     try {
       await onConfirm(username);
-    } catch (error: any) {
-      showError(error.message);
+    } catch (error: unknown) {
+      const message = getErrorMessage(error);
+      if (message !== undefined) showError(message);
     }
     toggleIsTransfering();
     if (dialogProps.onClose) dialogProps.onClose({}, "backdropClick");
@@ -302,8 +304,9 @@ const SekaiID: React.FC<unknown> = observer(() => {
       try {
         await deleteSekaiProfileById(sekaiProfile.id);
         deleteSekaiProfile(region);
-      } catch (err: any) {
-        showError(err.message);
+      } catch (err: unknown) {
+        const message = getErrorMessage(err);
+        if (message !== undefined) showError(message);
       }
       toggleIsDeletingProfile();
     }
@@ -442,9 +445,10 @@ const SekaiID: React.FC<unknown> = observer(() => {
                                   );
                                   // setSekaiProfile(data);
                                   toggleIsUpdatingProfile();
-                                } catch (err: any) {
+                                } catch (err: unknown) {
                                   console.error(err);
-                                  showError(err.message);
+                                  const message = getErrorMessage(err);
+                                  if (message !== undefined) showError(message);
                                   toggleIsUpdatingProfile();
                                 }
                               }}
@@ -496,10 +500,10 @@ const SekaiID: React.FC<unknown> = observer(() => {
                     setSekaiProfile(data, region);
                     toggleIsEditingSekaiID();
                     // jwtAuth.user = await getUserMe();
-                  } catch (error: any) {
+                  } catch (error: unknown) {
                     // console.log(error);
                     if (
-                      error.id ===
+                      getErrorId(error) ===
                       "sekaiProfile[region].verify.error.duplicated"
                     ) {
                       setSekaiID(values.userid);

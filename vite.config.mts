@@ -6,17 +6,66 @@ import Icons from "unplugin-icons/vite";
 import { VitePWA } from "vite-plugin-pwa";
 import { nodeModulesPolyfillPlugin } from "esbuild-plugins-node-modules-polyfill";
 
+const getPackageName = (id: string): string | undefined => {
+  const normalizedId = id.replaceAll("\\", "/").split("?")[0];
+  const nodeModulesIndex = normalizedId.lastIndexOf("/node_modules/");
+  if (nodeModulesIndex < 0) return undefined;
+
+  const segments = normalizedId
+    .slice(nodeModulesIndex + "/node_modules/".length)
+    .split("/");
+  return segments[0]?.startsWith("@")
+    ? segments.slice(0, 2).join("/")
+    : segments[0];
+};
+
+const packageChunkNames = new Map<string, string>([
+  ["react", "vendor-react-runtime"],
+  ["react-dom", "vendor-react-runtime"],
+  ["react-is", "vendor-react-runtime"],
+  ["scheduler", "vendor-react-runtime"],
+  ["mobx", "vendor-mobx-runtime"],
+  ["mobx-state-tree", "vendor-mobx-runtime"],
+  ["@mui/material", "vendor-mui-material"],
+  ["@mui/icons-material", "vendor-mui-icons"],
+  ["@mui/lab", "vendor-mui-lab"],
+  ["@mui/x-data-grid", "vendor-mui-data-grid"],
+  ["@mui/x-date-pickers", "vendor-mui-date-pickers"],
+  ["webp-hero", "vendor-webp-hero"],
+  ["@huggingface/transformers", "vendor-huggingface-transformers"],
+  ["onnxruntime-web", "vendor-onnxruntime"],
+  ["onnxruntime-common", "vendor-onnxruntime"],
+  ["openai", "vendor-openai-sdk"],
+  ["@anthropic-ai/sdk", "vendor-anthropic-sdk"],
+  ["@google/generative-ai", "vendor-google-generative-ai"],
+  ["pixi.js", "vendor-pixi-entry"],
+]);
+
+const manualChunks = (id: string): string | undefined => {
+  if (id === "\0commonjsHelpers.js") return "vendor-commonjs-helpers";
+
+  const packageName = getPackageName(id);
+  if (!packageName) return undefined;
+
+  const packageChunkName = packageChunkNames.get(packageName);
+  if (packageChunkName) return packageChunkName;
+  if (!packageName.startsWith("@pixi/")) return undefined;
+
+  const pixiPackage = packageName
+    .slice("@pixi/".length)
+    .replace(/[^a-zA-Z0-9-]/g, "-");
+  return `vendor-pixi-${pixiPackage}`;
+};
+
 export default defineConfig({
   build: {
     outDir: "build",
-    // rollupOptions: {
-    //   output: {
-    //     manualChunks: {
-    //       vendor: ["react", "react-router-dom", "react-dom"],
-    //       ...renderChunks(dependencies),
-    //     },
-    //   },
-    // },
+    rollupOptions: {
+      output: {
+        manualChunks,
+        onlyExplicitManualChunks: true,
+      },
+    },
   },
   optimizeDeps: {
     esbuildOptions: {

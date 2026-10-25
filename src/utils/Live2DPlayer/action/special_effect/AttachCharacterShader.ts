@@ -55,13 +55,13 @@ export default async function AttachCharacterShader(
     default:
       log.warn(
         "Live2DController",
-        `${SnippetAction[action.Action]}/${SpecialEffectType[action_detail.EffectType]}/${(SeAttachCharacterShaderType as any)[action_detail.StringVal]} not implemented!`,
+        `${SnippetAction[action.Action]}/${SpecialEffectType[action_detail.EffectType]}/${SeAttachCharacterShaderType[action_detail.StringVal as keyof typeof SeAttachCharacterShaderType]} not implemented!`,
         action,
         action_detail
       );
       controller.events.emit(
         "warn",
-        `${SnippetAction[action.Action]}/${SpecialEffectType[action_detail.EffectType]}/${(SeAttachCharacterShaderType as any)[action_detail.StringVal]} not implemented!`
+        `${SnippetAction[action.Action]}/${SpecialEffectType[action_detail.EffectType]}/${SeAttachCharacterShaderType[action_detail.StringVal as keyof typeof SeAttachCharacterShaderType]} not implemented!`
       );
   }
 }

@@ -32,6 +32,8 @@ import PaperContainer from "../../components/styled/PaperContainer";
 import TypographyCaption from "../../components/styled/TypographyCaption";
 
 type ViewGridType = "agenda";
+type VirtualLiveSortType = "asc" | "desc";
+type VirtualLiveSortBy = "id" | "startAt";
 
 function getPaginatedVirtualLives(
   virtualLives: IVirtualLiveInfo[],
@@ -62,11 +64,11 @@ const VirtualLiveList: React.FC<unknown> = observer(() => {
   const [limit] = useState<number>(12);
   const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
   const [isReady, setIsReady] = useState<boolean>(false);
-  const [sortType, setSortType] = useLocalStorage<string>(
+  const [sortType, setSortType] = useLocalStorage<VirtualLiveSortType>(
     "gacha-list-update-sort",
     "desc"
   );
-  const [sortBy, setSortBy] = useLocalStorage<string>(
+  const [sortBy, setSortBy] = useLocalStorage<VirtualLiveSortBy>(
     "gacha-list-filter-sort-by",
     "startAt"
   );
@@ -147,14 +149,14 @@ const VirtualLiveList: React.FC<unknown> = observer(() => {
   );
 
   const handleUpdateSortType = useCallback(
-    (_: any, sort: string) => {
+    (_: React.MouseEvent<HTMLElement>, sort: VirtualLiveSortType | null) => {
       setSortType(sort || "asc");
     },
     [setSortType]
   );
 
   const handleUpdateSortBy = useCallback(
-    (_: any, sort: string) => {
+    (_: React.MouseEvent<HTMLElement>, sort: VirtualLiveSortBy | null) => {
       setSortBy(sort || "id");
     },
     [setSortBy]

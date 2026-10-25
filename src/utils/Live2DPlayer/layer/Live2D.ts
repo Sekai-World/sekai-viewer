@@ -27,6 +27,8 @@ import type { Live2DModelOptions } from "@sekai-world/pixi-live2d-display-mulmot
 
 import { Howler, Howl } from "howler";
 
+type HowlWithGainNode = Howl & { _sounds: { _node: GainNode }[] };
+
 // effects
 import Hologram from "../animation/Hologram";
 
@@ -151,11 +153,8 @@ export default class Live2D extends BaseLayer {
   };
 
   reset_lipsync_param = (model: Live2DModelWithInfo) => {
-    (model.internalModel.coreModel as any).setParameterValueById(
-      "ParamMouthOpenY",
-      0,
-      1
-    );
+    const internalModel = model.internalModel as Cubism4InternalModel;
+    internalModel.coreModel.setParameterValueById("ParamMouthOpenY", 0, 1);
   };
 
   show_model = async (costume: string, time: number) => {
@@ -235,7 +234,7 @@ export default class Live2D extends BaseLayer {
     this.init_analyzer();
     if (models.length > 0 && this.audio_analyzer) {
       // get sound gain node by Howler internal method
-      const gain = (sound as any)._sounds[0]._node as GainNode;
+      const gain = (sound as HowlWithGainNode)._sounds[0]._node;
       gain.disconnect();
       this.audio_analyzer.disconnect();
       gain.connect(this.audio_analyzer);
@@ -270,7 +269,7 @@ export default class Live2D extends BaseLayer {
       // clear all listeners or will fire end event
       this.current_sound.off("end");
       // disconnect from analyzer
-      const gain = (this.current_sound as any)._sounds[0]._node as GainNode;
+      const gain = (this.current_sound as HowlWithGainNode)._sounds[0]._node;
       gain.disconnect();
       // stop current talk
       this.current_sound.stop();

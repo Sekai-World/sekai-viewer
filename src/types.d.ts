@@ -127,7 +127,7 @@ export interface MasterLessonAchieveResource {
   releaseConditionId: number;
   cardId: number;
   masterRank: number;
-  resources: any[];
+  resources: unknown[];
 }
 export interface ICardInfo {
   id: number;
@@ -218,7 +218,7 @@ export interface IMusicInfo {
   isFullLength?: boolean;
   musicCollaborationId?: number;
   creator?: string;
-  infos?: any[];
+  infos?: unknown[];
 }
 
 export interface IMusicCategory {
@@ -302,7 +302,7 @@ export interface CharacterRankAchieveResource {
   releaseConditionId: number;
   characterId: number;
   characterRank: number;
-  resources: any[];
+  resources: unknown[];
 }
 
 export interface ICharacterRank {
@@ -476,7 +476,7 @@ export interface UserProfileRanking {
   honorLevel3?: number;
   twitterId: string;
   profileImageType: string;
-  userVirtualLiveTop10Rankings?: any[];
+  userVirtualLiveTop10Rankings?: unknown[];
 }
 
 export interface UserRanking {
@@ -1130,7 +1130,7 @@ export interface IVirtualLiveInfo {
   virtualLiveCharacters: VirtualLiveCharacter[];
   virtualLiveReward?: VirtualLiveReward;
   virtualLiveRewards: VirtualLiveReward2[];
-  virtualLiveCheerPointRewards?: any[];
+  virtualLiveCheerPointRewards?: unknown[];
   virtualLiveBackgroundMusics: VirtualLiveBackgroundMusic[];
   virtualLiveWaitingRoom: VirtualLiveWaitingRoom;
   virtualItems: VirtualItem[];
@@ -1410,8 +1410,8 @@ export interface ISpecialStory {
   seq: number;
   title: string;
   assetbundleName: string;
-  startAt: any;
-  endAt: any;
+  startAt: unknown;
+  endAt: unknown;
   episodes: SpecialStoryEpisode[];
 }
 
@@ -1486,7 +1486,7 @@ export interface IMasterLesson {
   power3BonusFixed: number;
   characterRankExp: number;
   costs: Cost[];
-  rewards: any[];
+  rewards: unknown[];
 }
 
 export interface IMasterLessonReward {

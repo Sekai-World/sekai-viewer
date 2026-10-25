@@ -1,5 +1,6 @@
 import { Button, ButtonProps, Snackbar, SnackbarProps } from "@mui/material";
 import { Alert } from "@mui/material";
+import type { AlertColor } from "@mui/material/Alert";
 import React from "react";
 
 const AlertSnackbar: React.FC<
@@ -8,7 +9,7 @@ const AlertSnackbar: React.FC<
     action?: string;
     ButtonProps?: Partial<ButtonProps>;
     SnackbarProps: Partial<SnackbarProps>;
-    customParameters: any;
+    customParameters?: { type?: AlertColor; [key: string]: unknown };
   }>
 > = ({ message, action, ButtonProps, SnackbarProps, customParameters }) => {
   return (

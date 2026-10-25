@@ -13,6 +13,10 @@ import Image from "mui-image";
 import ContainerContent from "../../components/styled/ContainerContent";
 import { useAlertSnackbar } from "../../utils";
 
+type ProcessedScenarioData = Awaited<
+  ReturnType<ReturnType<typeof useProcessedScenarioDataForText>>
+>;
+
 const StoryReaderContent: React.FC<{
   storyType: string;
   storyId: string;
@@ -26,15 +30,7 @@ const StoryReaderContent: React.FC<{
   const [bannerUrl, setBannerUrl] = useState<string>("");
   const [chapterTitle, setChapterTitle] = useState<string>("");
   const [episodeTitle, setEpisodeTitle] = useState<string>("");
-  const [scenarioData, setScenarioData] = useState<{
-    characters: {
-      id: number;
-      name: string;
-    }[];
-    actions: {
-      [key: string]: any;
-    }[];
-  }>({
+  const [scenarioData, setScenarioData] = useState<ProcessedScenarioData>({
     actions: [],
     characters: [],
   });
@@ -68,6 +64,7 @@ const StoryReaderContent: React.FC<{
     region,
     getScenarioInfo,
     getProcessedScenarioDataForText,
+    showError,
   ]);
 
   return (
@@ -132,15 +129,15 @@ const StoryReaderContent: React.FC<{
         <MysekaiStoryDisplay storyId={storyId} />
       ) : (
         scenarioData.actions.map((action, idx) => {
-          switch (action.type as SnippetAction) {
+          switch (action.type) {
             case SnippetAction.Talk:
               return (
                 <Talk
                   key={`action-${idx}`}
-                  characterId={action.chara.id as number}
-                  characterName={action.chara.name as string}
-                  text={action.body as string}
-                  voiceUrl={action.voice as string}
+                  characterId={action.chara.id}
+                  characterName={action.chara.name}
+                  text={action.body}
+                  voiceUrl={action.voice}
                 />
               );
             case SnippetAction.SpecialEffect:

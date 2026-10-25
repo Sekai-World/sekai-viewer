@@ -25,6 +25,13 @@ import {
 } from "../../utils/mysekaiFixtureUtils";
 import { MysekaiDataContext } from "../../types.d";
 
+interface MysekaiStoryAction {
+  characterId?: number;
+  characterName?: string;
+  text: string;
+  voiceUrl?: string;
+}
+
 const MysekaiStoryDisplay: React.FC<{ storyId: string }> = ({ storyId }) => {
   const { t } = useTranslation();
   const { showError } = useAlertSnackbar();
@@ -40,7 +47,7 @@ const MysekaiStoryDisplay: React.FC<{ storyId: string }> = ({ storyId }) => {
   const [characterGroups] = useCachedData<IMysekaiGameCharacterUnitGroups>(
     "mysekaiGameCharacterUnitGroups"
   );
-  const [actions, setActions] = useState<any[]>([]);
+  const [actions, setActions] = useState<MysekaiStoryAction[]>([]);
   const [currentTalk, setCurrentTalk] = useState<IMysekaiTalk | null>(null);
   const [fixtureInfo, setFixtureInfo] = useState<IMysekaiFixtureInfo | null>(
     null
@@ -105,12 +112,15 @@ const MysekaiStoryDisplay: React.FC<{ storyId: string }> = ({ storyId }) => {
       }
       return voiceFile;
     },
-    []
+    [validateURL]
   );
 
   // Parse lua script content
   const parseLuaScript = useCallback(
-    async (luaContent: string, characterIds: number[]): Promise<any[]> => {
+    async (
+      luaContent: string,
+      characterIds: number[]
+    ): Promise<MysekaiStoryAction[]> => {
       let scenarioId: string | null = null;
 
       // Extract scenario ID from comment
@@ -122,12 +132,7 @@ const MysekaiStoryDisplay: React.FC<{ storyId: string }> = ({ storyId }) => {
       const sections = luaContent
         .split(/wait_click\(\)/)
         .filter((section) => section.trim());
-      const dialogues: {
-        characterId?: number;
-        characterName?: string;
-        text: string;
-        voiceUrl?: string;
-      }[] = [];
+      const dialogues: MysekaiStoryAction[] = [];
 
       for (const section of sections) {
         const lines = section

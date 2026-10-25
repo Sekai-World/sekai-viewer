@@ -76,7 +76,7 @@ export const getVoiceListElements = async function (
 
 const getVoiceListElementsLocalTest = function (pathname: string) {
   const acc: Record<string, string> = {};
-  const voiceList = ((window as any).AssetTest.assetList as string[]).filter(
+  const voiceList = window.AssetTest!.assetList!.filter(
     (a) => a.startsWith(pathname) && a.endsWith(".mp3")
   );
   for (const v of voiceList) {

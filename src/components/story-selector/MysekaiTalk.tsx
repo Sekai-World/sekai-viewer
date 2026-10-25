@@ -400,7 +400,7 @@ const MysekaiTalk: React.FC<{
   // Reset page when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [filteredTalks.length]);
+  }, [filteredTalks.length, setCurrentPage]);
 
   // Paginated talks
   const paginatedTalks = useMemo(() => {
@@ -415,7 +415,7 @@ const MysekaiTalk: React.FC<{
     (_: React.ChangeEvent<unknown>, page: number) => {
       setCurrentPage(page);
     },
-    []
+    [setCurrentPage]
   );
 
   // Process talks for current page only

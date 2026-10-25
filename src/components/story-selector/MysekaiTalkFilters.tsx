@@ -150,7 +150,7 @@ export const CharacterFilter: React.FC<{
     if (!hasVirtualSingers) {
       onSupportingUnitFilter([]);
     }
-  }, [selected]);
+  }, [selected, onSupportingUnitFilter]);
 
   const handleCharaIconClick = useCallback(
     (chara: IGameChara) => {
@@ -160,7 +160,7 @@ export const CharacterFilter: React.FC<{
           : [...selected, chara.id]
       );
     },
-    [selected, onFilter, onSupportingUnitFilter]
+    [selected, onFilter]
   );
 
   const handleSelectClear = useCallback(() => {

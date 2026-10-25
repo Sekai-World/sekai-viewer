@@ -29,7 +29,12 @@
 // copy from @esotericsoftware/spine-pixi@4.1.55
 // slightly change to load .atlas.txt files
 import { TextureAtlas, SpineTexture } from "@esotericsoftware/spine-pixi";
-import type { AssetExtension, Loader, Texture } from "pixi.js";
+import type {
+  AssetExtension,
+  IBaseTextureOptions,
+  Loader,
+  Texture,
+} from "pixi.js";
 import {
   ALPHA_MODES,
   ExtensionType,
@@ -166,7 +171,7 @@ extensions.add(spineTextureAtlasLoader);
 
 export interface ISpineAtlasMetadata {
   // If you are downloading an .atlas file, this metadata will go to the Texture loader
-  imageMetadata?: any;
+  imageMetadata?: IBaseTextureOptions;
   // If you already have atlas pages loaded as pixi textures and want to use that to create the atlas, you can pass them here
   images?: BaseTexture | string | Record<string, BaseTexture | string>;
 }

@@ -29,6 +29,7 @@ import { IUserMetadata } from "../../stores/user";
 import TypographyHeader from "../../components/styled/TypographyHeader";
 import ContainerContent from "../../components/styled/ContainerContent";
 import LinkNoDecoration from "../../components/styled/LinkNoDecoration";
+import { getErrorId } from "../../utils/errors";
 
 const Login: React.FC<unknown> = observer(() => {
   const theme = useTheme();
@@ -89,14 +90,15 @@ const Login: React.FC<unknown> = observer(() => {
                 "lastUserCheck",
                 String(new Date().getTime())
               );
-            } catch (error: any) {
+            } catch (error: unknown) {
               // console.log(error.response.data);
-              if (error.id === "Auth.form.error.invalid")
+              const errorId = getErrorId(error);
+              if (errorId === "Auth.form.error.invalid")
                 setErrors({
                   identifier: t("auth:login.error.invalid"),
                   password: t("auth:login.error.invalid"),
                 });
-              else if (error.id === "Auth.form.error.confirmed")
+              else if (errorId === "Auth.form.error.confirmed")
                 setErrors({
                   identifier: t("auth:login.error.email_not_confirmed"),
                 });

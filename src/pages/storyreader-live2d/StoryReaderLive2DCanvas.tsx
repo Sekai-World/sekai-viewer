@@ -81,6 +81,7 @@ const StoryReaderLive2DCanvas: React.FC<{
 
   // autoplay listener
   useEffect(() => {
+    let active = true;
     const controller = stage.current?.controller;
     if (
       controller &&
@@ -90,11 +91,22 @@ const StoryReaderLive2DCanvas: React.FC<{
     ) {
       setAutoplayWaiting(true);
       controller.animate.delay(1500).then(() => {
+        if (!active) return;
+        active = false;
+        if (stage.current?.controller !== controller) {
+          setAutoplayWaiting(false);
+          return;
+        }
         setAutoplayWaiting(false);
         nextStepAuto();
       });
+    } else {
+      setAutoplayWaiting(false);
     }
-  }, [settings.autoplay, loadStatus, playing]);
+    return () => {
+      active = false;
+    };
+  }, [settings.autoplay, loadStatus, playing, nextStepAuto]);
 
   // warn listener
   useEffect(() => {
@@ -119,27 +131,27 @@ const StoryReaderLive2DCanvas: React.FC<{
   // other settings listener
   useEffect(
     () =>
-      stage.current?.controller.set_volume({
+      stage.current?.controller?.set_volume({
         bgm_volume: settings.bgmVolume / 100,
       }),
     [settings.bgmVolume]
   );
   useEffect(
     () =>
-      stage.current?.controller.set_volume({
+      stage.current?.controller?.set_volume({
         voice_volume: settings.voiceVolume / 100,
       }),
     [settings.voiceVolume]
   );
   useEffect(
     () =>
-      stage.current?.controller.set_volume({
+      stage.current?.controller?.set_volume({
         se_volume: settings.seVolume / 100,
       }),
     [settings.seVolume]
   );
   useEffect(
-    () => stage.current?.controller.show_ui(settings.showUI),
+    () => stage.current?.controller?.show_ui(settings.showUI),
     [settings.showUI]
   );
   useEffect(() => {

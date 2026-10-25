@@ -8,19 +8,19 @@ export enum LOG_LEVEL {
 export const log = {
   level: LOG_LEVEL.WARNING,
 
-  log(tag: string, ...messages: any[]) {
+  log(tag: string, ...messages: unknown[]) {
     if (log.level <= LOG_LEVEL.VERBOSE) {
       console.log(`[${tag}]`, ...messages);
     }
   },
 
-  warn(tag: string, ...messages: any[]) {
+  warn(tag: string, ...messages: unknown[]) {
     if (log.level <= LOG_LEVEL.WARNING) {
       console.warn(`[${tag}]`, ...messages);
     }
   },
 
-  error(tag: string, ...messages: any[]) {
+  error(tag: string, ...messages: unknown[]) {
     if (log.level <= LOG_LEVEL.ERROR) {
       console.error(`[${tag}]`, ...messages);
     }

@@ -182,7 +182,7 @@ const mysekaiFixtureDetail: React.FC<unknown> = observer(() => {
             },
           ]
         : [],
-    [thumbnailUrl, fixture?.name]
+    [thumbnailUrl, fixture]
   );
 
   if (isLoading) {

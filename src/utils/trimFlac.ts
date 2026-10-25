@@ -407,7 +407,7 @@ function w24(b: Uint8Array, o: number, v: number): void {
   b[o + 2] = v & 0xff;
 }
 
-function cat(parts: Uint8Array[]): Uint8Array {
+function cat(parts: Uint8Array[]): Uint8Array<ArrayBuffer> {
   let n = 0;
   for (const p of parts) n += p.length;
   const out = new Uint8Array(n);

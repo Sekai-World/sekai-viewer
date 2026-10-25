@@ -19,6 +19,7 @@ import { useHistory } from "react-router-dom";
 import PasswordStrengthBar from "react-password-strength-bar";
 import { RegisterValues } from "../../strapi-model";
 import { useStrapi } from "../../utils/apiClient";
+import { getErrorId } from "../../utils/errors";
 import { useRootStore } from "../../stores/root";
 import { observer } from "mobx-react-lite";
 import TypographyHeader from "../../components/styled/TypographyHeader";
@@ -91,13 +92,14 @@ const Signup: React.FC<unknown> = observer(() => {
               //   "lastUserCheck",
               //   String(new Date().getTime())
               // );
-            } catch (error: any) {
+            } catch (error: unknown) {
               // console.log(error.response.data);
-              if (error.id === "Auth.form.error.email.taken")
+              const errorId = getErrorId(error);
+              if (errorId === "Auth.form.error.email.taken")
                 setErrors({
                   email: t("auth:error.email_taken"),
                 });
-              else if (error.id === "Auth.form.error.username.taken")
+              else if (errorId === "Auth.form.error.username.taken")
                 setErrors({
                   username: t("auth:error.usernameTaken"),
                 });

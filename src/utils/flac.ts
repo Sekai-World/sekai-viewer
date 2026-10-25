@@ -1,4 +1,5 @@
 import { IMusicInfo } from "../types";
+import { toBlobPart } from "./blob";
 
 type FlacBlock = {
   type: number;
@@ -71,13 +72,15 @@ export async function addFlacTags(
     out.push({ type: blk.type, data: blk.data });
   }
 
-  const parts: BlobPart[] = [FLAC_MAGIC];
+  const parts: BlobPart[] = [toBlobPart(FLAC_MAGIC)];
   out.forEach((blk, i) => {
     const last = i === out.length - 1;
-    parts.push(writeMetadataBlockHeader(blk.type, blk.data.byteLength, last));
-    parts.push(blk.data);
+    parts.push(
+      toBlobPart(writeMetadataBlockHeader(blk.type, blk.data.byteLength, last)),
+      toBlobPart(blk.data)
+    );
   });
-  parts.push(parsed.audioBytes);
+  parts.push(toBlobPart(parsed.audioBytes));
 
   return new Blob(parts, { type: "audio/flac" });
 }

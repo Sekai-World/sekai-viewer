@@ -143,6 +143,15 @@ interface CardRowModel {
   story2Unlock: boolean;
 }
 
+type EditableCardRowField =
+  | "level"
+  | "masterRank"
+  | "skillLevel"
+  | "trained"
+  | "story1Unlock"
+  | "story2Unlock";
+type EditableCardRowValue = number | string | boolean;
+
 const SekaiUserImportMember = observer(() => {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -677,8 +686,8 @@ const SekaiUserImportMember = observer(() => {
 
   const handleValueChange = useCallback(
     (
-      value: any,
-      field: keyof CardRowModel,
+      value: EditableCardRowValue,
+      field: EditableCardRowField,
       row: GridRowModel<CardRowModel>
     ) => {
       const { id } = row;

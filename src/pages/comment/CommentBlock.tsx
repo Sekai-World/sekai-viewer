@@ -39,7 +39,7 @@ const CommentBlock: React.FC<{
             <Grid item>
               <Chip
                 label={comment.authorUser.nickname}
-                avatar={<Avatar src={comment.authorAvatar} />}
+                avatar={<Avatar src={comment.authorAvatar ?? undefined} />}
               />
             </Grid>
             <Grid item>
