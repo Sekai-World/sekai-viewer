@@ -7,7 +7,7 @@ import { VitePWA } from "vite-plugin-pwa";
 import { nodeModulesPolyfillPlugin } from "esbuild-plugins-node-modules-polyfill";
 
 const getPackageName = (id: string): string | undefined => {
-  const normalizedId = id.replace(/\\/g, "/").split("?")[0];
+  const normalizedId = id.replaceAll("\\", "/").split("?")[0];
   const nodeModulesIndex = normalizedId.lastIndexOf("/node_modules/");
   if (nodeModulesIndex < 0) return undefined;
 
@@ -19,47 +19,42 @@ const getPackageName = (id: string): string | undefined => {
     : segments[0];
 };
 
+const packageChunkNames = new Map<string, string>([
+  ["react", "vendor-react-runtime"],
+  ["react-dom", "vendor-react-runtime"],
+  ["react-is", "vendor-react-runtime"],
+  ["scheduler", "vendor-react-runtime"],
+  ["mobx", "vendor-mobx-runtime"],
+  ["mobx-state-tree", "vendor-mobx-runtime"],
+  ["@mui/material", "vendor-mui-material"],
+  ["@mui/icons-material", "vendor-mui-icons"],
+  ["@mui/lab", "vendor-mui-lab"],
+  ["@mui/x-data-grid", "vendor-mui-data-grid"],
+  ["@mui/x-date-pickers", "vendor-mui-date-pickers"],
+  ["webp-hero", "vendor-webp-hero"],
+  ["@huggingface/transformers", "vendor-huggingface-transformers"],
+  ["onnxruntime-web", "vendor-onnxruntime"],
+  ["onnxruntime-common", "vendor-onnxruntime"],
+  ["openai", "vendor-openai-sdk"],
+  ["@anthropic-ai/sdk", "vendor-anthropic-sdk"],
+  ["@google/generative-ai", "vendor-google-generative-ai"],
+  ["pixi.js", "vendor-pixi-entry"],
+]);
+
 const manualChunks = (id: string): string | undefined => {
   if (id === "\0commonjsHelpers.js") return "vendor-commonjs-helpers";
 
   const packageName = getPackageName(id);
   if (!packageName) return undefined;
 
-  if (["react", "react-dom", "react-is", "scheduler"].includes(packageName)) {
-    return "vendor-react-runtime";
-  }
-  if (packageName === "mobx" || packageName === "mobx-state-tree") {
-    return "vendor-mobx-runtime";
-  }
-  if (packageName === "@mui/material") return "vendor-mui-material";
-  if (packageName === "@mui/icons-material") return "vendor-mui-icons";
-  if (packageName === "@mui/lab") return "vendor-mui-lab";
-  if (packageName === "@mui/x-data-grid") return "vendor-mui-data-grid";
-  if (packageName === "@mui/x-date-pickers") return "vendor-mui-date-pickers";
-  if (packageName === "webp-hero") return "vendor-webp-hero";
-  if (packageName === "@huggingface/transformers") {
-    return "vendor-huggingface-transformers";
-  }
-  if (
-    packageName === "onnxruntime-web" ||
-    packageName === "onnxruntime-common"
-  ) {
-    return "vendor-onnxruntime";
-  }
-  if (packageName === "openai") return "vendor-openai-sdk";
-  if (packageName === "@anthropic-ai/sdk") return "vendor-anthropic-sdk";
-  if (packageName === "@google/generative-ai") {
-    return "vendor-google-generative-ai";
-  }
-  if (packageName.startsWith("@pixi/")) {
-    const pixiPackage = packageName
-      .slice("@pixi/".length)
-      .replace(/[^a-zA-Z0-9-]/g, "-");
-    return `vendor-pixi-${pixiPackage}`;
-  }
-  if (packageName === "pixi.js") return "vendor-pixi-entry";
+  const packageChunkName = packageChunkNames.get(packageName);
+  if (packageChunkName) return packageChunkName;
+  if (!packageName.startsWith("@pixi/")) return undefined;
 
-  return undefined;
+  const pixiPackage = packageName
+    .slice("@pixi/".length)
+    .replace(/[^a-zA-Z0-9-]/g, "-");
+  return `vendor-pixi-${pixiPackage}`;
 };
 
 export default defineConfig({

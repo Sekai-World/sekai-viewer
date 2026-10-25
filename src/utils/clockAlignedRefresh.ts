@@ -110,7 +110,7 @@ export class ClockAlignedRefresh {
     this.second = second;
     this.tick = tick;
 
-    if (runOnInit) this.tick.call(this);
+    if (runOnInit) this.tick();
   }
 
   start(): void {
@@ -154,7 +154,7 @@ export class ClockAlignedRefresh {
         // Match cron's recurrence ordering: queue the next occurrence before
         // calling user code, so a throwing tick does not lose the schedule.
         this.schedule(this.nextDate());
-        this.tick.call(this);
+        this.tick();
       },
       Math.max(0, targetMs - Date.now())
     );

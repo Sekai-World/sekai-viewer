@@ -48,6 +48,112 @@ function getSnapshotEntries(value: unknown): [string, unknown][] {
   return Object.entries(value);
 }
 
+function cloneLlmConfigs(value: unknown): SettingsSnapshotRecord {
+  return Object.fromEntries(
+    getSnapshotEntries(value).map(([key, config]) => [
+      key,
+      config && typeof config === "object" ? { ...config } : config,
+    ])
+  );
+}
+
+function ensureProviderConfigs(
+  snapshot: SettingsSnapshotRecord,
+  configs: SettingsSnapshotRecord
+): SettingsSnapshotRecord {
+  let migratedConfigs = configs;
+  if (!snapshot.llmConfigs || typeof snapshot.llmConfigs !== "object") {
+    migratedConfigs = {};
+  }
+
+  for (const key of LLM_PROVIDER_KEYS) {
+    if (!migratedConfigs[key] || typeof migratedConfigs[key] !== "object") {
+      migratedConfigs[key] = { model: "", apiKey: "", endpoint: "" };
+    }
+  }
+
+  return migratedConfigs;
+}
+
+function resolveLegacyEndpoint(
+  snapshot: SettingsSnapshotRecord,
+  legacyProvider: unknown
+): string {
+  let resolvedEndpoint =
+    typeof snapshot.llmApiEndpoint === "string" ? snapshot.llmApiEndpoint : "";
+
+  if (typeof legacyProvider === "string") {
+    console.log(
+      `Migrating LLM settings from legacy provider "${legacyProvider}" to new config layout...`
+    );
+    if (legacyProvider === "openrouter" && !resolvedEndpoint.trim()) {
+      resolvedEndpoint = "https://openrouter.ai/api/v1/chat/completions";
+    }
+  }
+
+  return resolvedEndpoint;
+}
+
+function applyLegacySettings(
+  snapshot: SettingsSnapshotRecord,
+  configs: SettingsSnapshotRecord,
+  target: TranslationProviderType,
+  resolvedEndpoint: string,
+  hasLegacyFields: boolean
+): void {
+  if (!hasLegacyFields) return;
+
+  const config = configs[target];
+  if (!isSettingsSnapshotRecord(config)) return;
+
+  if (typeof snapshot.llmModel === "string") {
+    config.model = snapshot.llmModel;
+  }
+  if (typeof snapshot.llmApiKey === "string") {
+    config.apiKey = snapshot.llmApiKey;
+  }
+  if (typeof snapshot.llmApiEndpoint === "string" || resolvedEndpoint) {
+    config.endpoint = resolvedEndpoint;
+  }
+}
+
+// v0 -> v1: collapse the legacy provider enum and shared settings into the
+// per-provider `llmConfigs` layout.
+function migrateLegacySnapshot<Snapshot>(
+  snapshot: Snapshot & SettingsSnapshotRecord
+): Snapshot {
+  const legacyProvider = snapshot.llmTranslationProvider;
+  let migratedLlmConfigs = cloneLlmConfigs(snapshot.llmConfigs || {});
+  const migrated = { ...snapshot };
+  Object.assign(migrated, { llmConfigs: migratedLlmConfigs });
+  const hasLegacyFields =
+    typeof snapshot.llmModel === "string" ||
+    typeof snapshot.llmApiKey === "string" ||
+    typeof snapshot.llmApiEndpoint === "string";
+
+  migratedLlmConfigs = ensureProviderConfigs(snapshot, migratedLlmConfigs);
+  Object.assign(migrated, { llmConfigs: migratedLlmConfigs });
+
+  const target = getMigratedProvider(legacyProvider);
+  const resolvedEndpoint = resolveLegacyEndpoint(snapshot, legacyProvider);
+  applyLegacySettings(
+    snapshot,
+    migratedLlmConfigs,
+    target,
+    resolvedEndpoint,
+    hasLegacyFields
+  );
+
+  if (typeof legacyProvider === "string") {
+    Object.assign(migrated, { llmTranslationProvider: target });
+  }
+  Reflect.deleteProperty(migrated, "llmModel");
+  Reflect.deleteProperty(migrated, "llmApiKey");
+  Reflect.deleteProperty(migrated, "llmApiEndpoint");
+  Object.assign(migrated, { llmConfigVersion: LLM_CONFIG_VERSION });
+  return migrated;
+}
+
 /**
  * Versioned migration for the LLM settings snapshot.
  *
@@ -66,71 +172,7 @@ export const migrateLlmSettings = <Snapshot>(snapshot: Snapshot): Snapshot => {
       : 0;
 
   if (version < LLM_CONFIG_VERSION) {
-    // v0 -> v1: collapse the legacy 5-variant `llmTranslationProvider` enum
-    // and the shared `llmModel` / `llmApiKey` / `llmApiEndpoint` singletons
-    // into the per-provider `llmConfigs` layout.
-    const legacyProvider = snapshot.llmTranslationProvider;
-    let migratedLlmConfigs: SettingsSnapshotRecord = Object.fromEntries(
-      getSnapshotEntries(snapshot.llmConfigs || {}).map(([key, value]) => [
-        key,
-        value && typeof value === "object" ? { ...value } : value,
-      ])
-    );
-    const migrated = { ...snapshot };
-    Object.assign(migrated, { llmConfigs: migratedLlmConfigs });
-    const hasLegacyFields =
-      typeof snapshot.llmModel === "string" ||
-      typeof snapshot.llmApiKey === "string" ||
-      typeof snapshot.llmApiEndpoint === "string";
-
-    if (!snapshot.llmConfigs || typeof snapshot.llmConfigs !== "object") {
-      migratedLlmConfigs = {};
-    }
-    for (const key of LLM_PROVIDER_KEYS) {
-      if (
-        !migratedLlmConfigs[key] ||
-        typeof migratedLlmConfigs[key] !== "object"
-      ) {
-        migratedLlmConfigs[key] = { model: "", apiKey: "", endpoint: "" };
-      }
-    }
-    Object.assign(migrated, { llmConfigs: migratedLlmConfigs });
-
-    const target = getMigratedProvider(legacyProvider);
-    let resolvedEndpoint =
-      typeof snapshot.llmApiEndpoint === "string"
-        ? snapshot.llmApiEndpoint
-        : "";
-
-    if (typeof legacyProvider === "string") {
-      console.log(
-        `Migrating LLM settings from legacy provider "${legacyProvider}" to new config layout...`
-      );
-      if (legacyProvider === "openrouter" && !resolvedEndpoint.trim()) {
-        resolvedEndpoint = "https://openrouter.ai/api/v1/chat/completions";
-      }
-    }
-
-    if (hasLegacyFields) {
-      const cfg = migratedLlmConfigs[target];
-      if (isSettingsSnapshotRecord(cfg)) {
-        if (typeof snapshot.llmModel === "string")
-          cfg.model = snapshot.llmModel;
-        if (typeof snapshot.llmApiKey === "string")
-          cfg.apiKey = snapshot.llmApiKey;
-        if (typeof snapshot.llmApiEndpoint === "string" || resolvedEndpoint)
-          cfg.endpoint = resolvedEndpoint;
-      }
-    }
-
-    if (typeof legacyProvider === "string") {
-      Object.assign(migrated, { llmTranslationProvider: target });
-    }
-    Reflect.deleteProperty(migrated, "llmModel");
-    Reflect.deleteProperty(migrated, "llmApiKey");
-    Reflect.deleteProperty(migrated, "llmApiEndpoint");
-    Object.assign(migrated, { llmConfigVersion: LLM_CONFIG_VERSION });
-    return migrated;
+    return migrateLegacySnapshot(snapshot);
   }
 
   return snapshot;

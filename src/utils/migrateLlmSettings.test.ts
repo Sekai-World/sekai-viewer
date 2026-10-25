@@ -47,6 +47,16 @@ describe("migrateLlmSettings", () => {
       },
       unrelatedSetting: { enabled: true },
     });
+    expect(migrated).not.toBe(snapshot);
+    expect(migrated.llmConfigs.anthropic).not.toBe(
+      snapshot.llmConfigs.anthropic
+    );
+    expect(snapshot.llmConfigs.anthropic).toEqual({
+      model: "saved-model",
+      apiKey: "saved-key",
+      endpoint: "saved-endpoint",
+      customOption: "preserved",
+    });
     expect(log).toHaveBeenCalledOnce();
     log.mockRestore();
   });
@@ -76,6 +86,28 @@ describe("migrateLlmSettings", () => {
         },
       },
     });
+    expect(log).toHaveBeenCalledOnce();
+    log.mockRestore();
+  });
+
+  it("preserves provider configs when no legacy shared values are present", () => {
+    const log = vi.spyOn(console, "log").mockImplementation(() => {});
+    const savedConfig = {
+      model: "saved-model",
+      apiKey: "saved-key",
+      endpoint: "saved-endpoint",
+    };
+    const snapshot = {
+      llmTranslationProvider: "anthropic",
+      llmConfigs: { anthropic: savedConfig },
+    };
+
+    const migrated = migrateLlmSettings(snapshot);
+
+    expect(migrated.llmConfigs.anthropic).toEqual(savedConfig);
+    expect(migrated.llmConfigs.anthropic).not.toBe(savedConfig);
+    expect(snapshot.llmConfigs.anthropic).toBe(savedConfig);
+    expect(migrated).toHaveProperty("llmConfigVersion", LLM_CONFIG_VERSION);
     expect(log).toHaveBeenCalledOnce();
     log.mockRestore();
   });

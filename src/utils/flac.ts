@@ -76,9 +76,9 @@ export async function addFlacTags(
   out.forEach((blk, i) => {
     const last = i === out.length - 1;
     parts.push(
-      toBlobPart(writeMetadataBlockHeader(blk.type, blk.data.byteLength, last))
+      toBlobPart(writeMetadataBlockHeader(blk.type, blk.data.byteLength, last)),
+      toBlobPart(blk.data)
     );
-    parts.push(toBlobPart(blk.data));
   });
   parts.push(toBlobPart(parsed.audioBytes));
 

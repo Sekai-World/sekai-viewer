@@ -8,9 +8,7 @@ export class Live2DPlayerEventEmitter {
   } = {};
 
   on(event: "warn", listener: Live2DPlayerEvents["warn"]): this {
-    if (!this.listeners[event]) {
-      this.listeners[event] = [];
-    }
+    this.listeners[event] ??= [];
     this.listeners[event].push(listener);
     return this;
   }

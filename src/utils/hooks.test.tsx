@@ -2,6 +2,7 @@
 
 import { act, cleanup, renderHook } from "@testing-library/react";
 import { useSnackbar } from "notistack";
+import { runInNewContext } from "node:vm";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useAlertSnackbar, useLocalStorage } from "./index";
 
@@ -62,6 +63,19 @@ describe("useLocalStorage", () => {
 
     expect(result.current[0]).toBe(7);
     expect(window.localStorage.getItem("non-null-value")).toBe("7");
+  });
+
+  it("accepts functional updates from another realm", () => {
+    const { result } = renderHook(() => useLocalStorage("cross-realm", 1));
+    const updater: (value: number) => number = runInNewContext(
+      "(value) => value + 1"
+    );
+
+    expect(updater).not.toBeInstanceOf(Function);
+    act(() => result.current[1](updater));
+
+    expect(result.current[0]).toBe(2);
+    expect(window.localStorage.getItem("cross-realm")).toBe("2");
   });
 });
 
