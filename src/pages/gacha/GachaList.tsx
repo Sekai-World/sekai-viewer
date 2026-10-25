@@ -32,6 +32,9 @@ import PaperContainer from "../../components/styled/PaperContainer";
 import TypographyCaption from "../../components/styled/TypographyCaption";
 import { useDebounce } from "use-debounce";
 
+type GachaSortType = "asc" | "desc";
+type GachaSortBy = "id" | "startAt";
+
 function getPaginatedGachas(gachas: IGachaInfo[], page: number, limit: number) {
   return gachas.slice(limit * (page - 1), limit * page);
 }
@@ -52,11 +55,11 @@ const GachaList: React.FC<unknown> = observer(() => {
   const [limit] = useState<number>(12);
   const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
   const [isReady, setIsReady] = useState<boolean>(false);
-  const [sortType, setSortType] = useLocalStorage<string>(
+  const [sortType, setSortType] = useLocalStorage<GachaSortType>(
     "gacha-list-update-sort",
     "desc"
   );
-  const [sortBy, setSortBy] = useLocalStorage<string>(
+  const [sortBy, setSortBy] = useLocalStorage<GachaSortBy>(
     "gacha-list-filter-sort-by",
     "startAt"
   );
@@ -140,14 +143,14 @@ const GachaList: React.FC<unknown> = observer(() => {
   );
 
   const handleUpdateSortType = useCallback(
-    (_: any, sort: string) => {
+    (_: React.MouseEvent<HTMLElement>, sort: GachaSortType | null) => {
       setSortType(sort || "asc");
     },
     [setSortType]
   );
 
   const handleUpdateSortBy = useCallback(
-    (_: any, sort: string) => {
+    (_: React.MouseEvent<HTMLElement>, sort: GachaSortBy | null) => {
       setSortBy(sort || "id");
     },
     [setSortBy]

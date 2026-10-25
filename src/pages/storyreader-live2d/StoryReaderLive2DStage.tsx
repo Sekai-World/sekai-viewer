@@ -24,6 +24,14 @@ const StoryReaderLive2DStage = forwardRef<
   const app = useApp();
   const controller = useRef<Live2DController>();
   const disposed = useRef(false);
+  const initialConfig = useRef({
+    app,
+    stageSize,
+    controllerData,
+    onModelLoad,
+    onRenderProgress,
+  });
+  const initialLoadModel = useRef(loadModel);
   useImperativeHandle(ref, () => {
     return {
       get controller() {
@@ -37,20 +45,36 @@ const StoryReaderLive2DStage = forwardRef<
   }, [stageSize]);
   useEffect(() => {
     disposed.current = false;
-    const nextController = new Live2DController(app, stageSize, controllerData);
+    const {
+      app: initialApp,
+      stageSize: initialStageSize,
+      controllerData: initialControllerData,
+      onModelLoad: initialOnModelLoad,
+    } = initialConfig.current;
+    const nextController = new Live2DController(
+      initialApp,
+      initialStageSize,
+      initialControllerData
+    );
     controller.current = nextController;
     //DEBUG
     //window.controller = controller.current;
     //DEBUG/
     if (nextController.layers.live2d.load_status() === "ready") {
-      onModelLoad(LoadStatus.Loading);
+      initialOnModelLoad(LoadStatus.Loading);
       nextController.layers.live2d.clear();
-      loadModel(nextController, "Failed to load Live2D model to canvas.");
+      initialLoadModel.current(
+        nextController,
+        "Failed to load Live2D model to canvas."
+      );
     }
     return () => {
       disposed.current = true;
-      nextController.destroy();
-      if (controller.current === nextController) controller.current = undefined;
+      const activeController = controller.current;
+      if (activeController) {
+        activeController.destroy();
+        controller.current = undefined;
+      }
     };
   }, []);
   /**

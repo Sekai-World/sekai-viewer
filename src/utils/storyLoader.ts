@@ -50,6 +50,42 @@ export interface IScenarioInfo {
   region: ServerRegion;
 }
 
+type ProcessedScenarioAction =
+  | {
+      type: SnippetAction.Talk;
+      body: string;
+      chara: { id: number; name: string };
+      delay: number;
+      isWait: boolean;
+      voice: string;
+    }
+  | {
+      type: SnippetAction.SpecialEffect;
+      body: string | undefined;
+      delay: number;
+      isWait: boolean | SnippetProgressBehavior;
+      resource: string;
+      seType: string;
+    }
+  | {
+      type: SnippetAction.Sound;
+      bgm: string;
+      delay: number;
+      hasBgm: boolean;
+      hasSe: boolean;
+      isWait: boolean | SnippetProgressBehavior;
+      playMode: string;
+      se: string;
+    }
+  | {
+      type: Exclude<
+        SnippetAction,
+        SnippetAction.Talk | SnippetAction.SpecialEffect | SnippetAction.Sound
+      >;
+      delay: number;
+      isWait: boolean;
+    };
+
 export function useScenarioInfo() {
   const [unitStories] = useCachedData<IUnitStory>("unitStories");
   const [eventStories] = useCachedData<IEventStory>("eventStories");
@@ -300,7 +336,7 @@ export function useProcessedScenarioDataForText() {
     async (info: IScenarioInfo) => {
       const ret: {
         characters: { id: number; name: string }[];
-        actions: { [key: string]: any }[];
+        actions: ProcessedScenarioAction[];
       } = {
         actions: [],
         characters: [],
@@ -393,7 +429,7 @@ export function useProcessedScenarioDataForText() {
       });
 
       for (const snippet of Snippets) {
-        let action: { [key: string]: any } = {};
+        let action: ProcessedScenarioAction;
         switch (snippet.Action) {
           case SnippetAction.Talk:
             {

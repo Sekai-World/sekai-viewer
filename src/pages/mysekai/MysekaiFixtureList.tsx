@@ -5,6 +5,7 @@ import React, {
   useState,
   useMemo,
   useLayoutEffect,
+  useRef,
 } from "react";
 import {
   Badge,
@@ -298,6 +299,11 @@ const MysekaiFixtureList: React.FC<unknown> = observer(() => {
     sortBy,
     dataContext,
   ]);
+  const doFilterRef = useRef(doFilter);
+
+  useEffect(() => {
+    doFilterRef.current = doFilter;
+  }, [doFilter]);
 
   // Check if all necessary data is ready
   useEffect(() => {
@@ -326,7 +332,7 @@ const MysekaiFixtureList: React.FC<unknown> = observer(() => {
 
   useEffect(() => {
     // Apply filters on initial load
-    if (isReady) doFilter();
+    if (isReady) doFilterRef.current();
   }, [isReady]);
 
   // Set paginated fixtures when the sorted cache or page changes

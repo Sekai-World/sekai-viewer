@@ -20,7 +20,6 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { CronJob } from "cron";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
@@ -46,6 +45,7 @@ import {
 } from "../../types";
 import { useToggle } from "../../utils";
 import { useEventTrackerAPI } from "../../utils/eventTracker";
+import { ClockAlignedRefresh } from "../../utils/clockAlignedRefresh";
 import { HistoryMobileRow, LiveMobileRow } from "./EventTrackerMobileRow";
 import { HistoryRow, LiveRow } from "./EventTrackerTableRow";
 
@@ -89,7 +89,7 @@ const EventTackerChapters: React.FC<{
   );
   const [historyTime, setHistoryTime] = useState<Date>();
   const [nextRefreshTime, setNextRefreshTime] = useState<Date>();
-  const refreshCronRef = useRef<CronJob>();
+  const refreshTimerRef = useRef<ClockAlignedRefresh>();
   const [isFullRank, toggleIsFullRank] = useToggle(false);
   const [isTimeTravel, toggleIsTimeTravel] = useToggle(false);
   const [eventDuration, setEventDuration] = useState(0);
@@ -183,9 +183,10 @@ const EventTackerChapters: React.FC<{
       // real time data
       if (isCurrChapterLive) {
         // get realtime data from live endpoint
-        const cron = new CronJob(
-          "10 */3 * * * *",
-          function (this: CronJob) {
+        const refreshTimer = new ClockAlignedRefresh({
+          minuteInterval: 3,
+          second: 10,
+          tick: function (this: ClockAlignedRefresh) {
             const currentTime = Date.now();
             if (currentTime >= currChapter.aggregateAt) this.stop();
             else {
@@ -194,14 +195,10 @@ const EventTackerChapters: React.FC<{
               setNextRefreshTime(new Date(this.nextDate().valueOf()));
             }
           },
-          null,
-          false,
-          undefined,
-          undefined,
-          true
-        );
-        refreshCronRef.current = cron;
-        cron.start();
+          runOnInit: true,
+        });
+        refreshTimerRef.current = refreshTimer;
+        refreshTimer.start();
       } else if (isCurrChapterAggregated) {
         getHistoryData(eventId, currChapter.gameCharacterId);
         setEventDuration(currChapter.aggregateAt - currChapter.chapterStartAt);
@@ -219,7 +216,7 @@ const EventTackerChapters: React.FC<{
     fetchChapterRankings(eventId, currChapter);
 
     return () => {
-      if (refreshCronRef.current) refreshCronRef.current.stop();
+      if (refreshTimerRef.current) refreshTimerRef.current.stop();
     };
   }, [currChapter, eventId, fetchChapterRankings]);
 

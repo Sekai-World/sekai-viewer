@@ -6,17 +6,71 @@ import Icons from "unplugin-icons/vite";
 import { VitePWA } from "vite-plugin-pwa";
 import { nodeModulesPolyfillPlugin } from "esbuild-plugins-node-modules-polyfill";
 
+const getPackageName = (id: string): string | undefined => {
+  const normalizedId = id.replace(/\\/g, "/").split("?")[0];
+  const nodeModulesIndex = normalizedId.lastIndexOf("/node_modules/");
+  if (nodeModulesIndex < 0) return undefined;
+
+  const segments = normalizedId
+    .slice(nodeModulesIndex + "/node_modules/".length)
+    .split("/");
+  return segments[0]?.startsWith("@")
+    ? segments.slice(0, 2).join("/")
+    : segments[0];
+};
+
+const manualChunks = (id: string): string | undefined => {
+  if (id === "\0commonjsHelpers.js") return "vendor-commonjs-helpers";
+
+  const packageName = getPackageName(id);
+  if (!packageName) return undefined;
+
+  if (["react", "react-dom", "react-is", "scheduler"].includes(packageName)) {
+    return "vendor-react-runtime";
+  }
+  if (packageName === "mobx" || packageName === "mobx-state-tree") {
+    return "vendor-mobx-runtime";
+  }
+  if (packageName === "@mui/material") return "vendor-mui-material";
+  if (packageName === "@mui/icons-material") return "vendor-mui-icons";
+  if (packageName === "@mui/lab") return "vendor-mui-lab";
+  if (packageName === "@mui/x-data-grid") return "vendor-mui-data-grid";
+  if (packageName === "@mui/x-date-pickers") return "vendor-mui-date-pickers";
+  if (packageName === "webp-hero") return "vendor-webp-hero";
+  if (packageName === "@huggingface/transformers") {
+    return "vendor-huggingface-transformers";
+  }
+  if (
+    packageName === "onnxruntime-web" ||
+    packageName === "onnxruntime-common"
+  ) {
+    return "vendor-onnxruntime";
+  }
+  if (packageName === "openai") return "vendor-openai-sdk";
+  if (packageName === "@anthropic-ai/sdk") return "vendor-anthropic-sdk";
+  if (packageName === "@google/generative-ai") {
+    return "vendor-google-generative-ai";
+  }
+  if (packageName.startsWith("@pixi/")) {
+    const pixiPackage = packageName
+      .slice("@pixi/".length)
+      .replace(/[^a-zA-Z0-9-]/g, "-");
+    return `vendor-pixi-${pixiPackage}`;
+  }
+  if (packageName === "pixi.js") return "vendor-pixi-entry";
+
+  return undefined;
+};
+
 export default defineConfig({
   build: {
     outDir: "build",
-    // rollupOptions: {
-    //   output: {
-    //     manualChunks: {
-    //       vendor: ["react", "react-router-dom", "react-dom"],
-    //       ...renderChunks(dependencies),
-    //     },
-    //   },
-    // },
+    rollupOptions: {
+      output: {
+        manualChunks,
+        onlyExplicitManualChunks: true,
+      },
+    },
   },
   optimizeDeps: {
     esbuildOptions: {

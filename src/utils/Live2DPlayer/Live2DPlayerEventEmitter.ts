@@ -7,10 +7,7 @@ export class Live2DPlayerEventEmitter {
     [E in keyof Live2DPlayerEvents]?: Live2DPlayerEvents[E][];
   } = {};
 
-  on<E extends keyof Live2DPlayerEvents>(
-    event: E,
-    listener: Live2DPlayerEvents[E]
-  ): this {
+  on(event: "warn", listener: Live2DPlayerEvents["warn"]): this {
     if (!this.listeners[event]) {
       this.listeners[event] = [];
     }
@@ -18,24 +15,21 @@ export class Live2DPlayerEventEmitter {
     return this;
   }
 
-  off<E extends keyof Live2DPlayerEvents>(
-    event: E,
-    listener: Live2DPlayerEvents[E]
-  ): this {
+  off(event: "warn", listener: Live2DPlayerEvents["warn"]): this {
     if (this.listeners[event]) {
       this.listeners[event] = this.listeners[event].filter(
         (l) => l !== listener
-      ) as any;
+      );
     }
     return this;
   }
 
-  emit<E extends keyof Live2DPlayerEvents>(
-    event: E,
-    ...args: Parameters<Live2DPlayerEvents[E]>
+  emit(
+    event: "warn",
+    ...args: Parameters<Live2DPlayerEvents["warn"]>
   ): boolean {
     if (this.listeners[event]) {
-      this.listeners[event].forEach((listener) => (listener as any)(...args));
+      this.listeners[event].forEach((listener) => listener(...args));
       return true;
     }
     return false;

@@ -21,7 +21,6 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { CronJob } from "cron";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
@@ -46,6 +45,7 @@ import { shouldShowWorldBloomChapterTracking } from "../../utils/worldBloom";
 import { useCurrentEvent } from "../../utils/apiClient";
 import { useEventTrackerAPI } from "../../utils/eventTracker";
 import { useAssetI18n } from "../../utils/i18n";
+import { ClockAlignedRefresh } from "../../utils/clockAlignedRefresh";
 import { HistoryMobileRow, LiveMobileRow } from "./EventTrackerMobileRow";
 // import DegreeImage from "../../components/widgets/DegreeImage";
 import { observer } from "mobx-react-lite";
@@ -104,12 +104,12 @@ const EventTracker: React.FC<unknown> = observer(() => {
   );
   const [historyTime, setHistoryTime] = useState<Date>();
   const [nextRefreshTime, setNextRefreshTime] = useState<Date>();
-  const refreshCronRef = useRef<CronJob>();
+  const refreshTimerRef = useRef<ClockAlignedRefresh>();
   const [isFullRank, toggleIsFullRank] = useToggle(false);
   const [isTimeTravel, toggleIsTimeTravel] = useToggle(false);
   // const [isGetPred, toggleIsGetPred] = useToggle(false);
   const [eventDuration, setEventDuration] = useState(0);
-  const predCronRef = useRef<CronJob>();
+  const predTimerRef = useRef<ClockAlignedRefresh>();
   const [predData, setPredData] = useState<EventPrediction>();
   const [timePoints, setTimePoints] = useState<Date[]>([]);
   const [sliderTime, setSliderTime] = useState<Date>();
@@ -138,13 +138,13 @@ const EventTracker: React.FC<unknown> = observer(() => {
 
   useEffect(() => {
     return () => {
-      if (refreshCronRef.current) refreshCronRef.current.stop();
+      if (refreshTimerRef.current) refreshTimerRef.current.stop();
     };
   }, []);
 
   useEffect(() => {
     return () => {
-      if (predCronRef.current) predCronRef.current.stop();
+      if (predTimerRef.current) predTimerRef.current.stop();
     };
   }, []);
 
@@ -214,37 +214,42 @@ const EventTracker: React.FC<unknown> = observer(() => {
           currentTime >= event.startAt &&
           currentTime < event.aggregateAt
         ) {
-          const cron = new CronJob("10 */3 * * * *", function (this: CronJob) {
-            const currentTime = Date.now();
-            if (currentTime >= event.aggregateAt) this.stop();
-            else {
-              refreshRealtimeData();
-              setEventDuration(currentTime - event.startAt);
-              setNextRefreshTime(new Date(this.nextDate().valueOf()));
-            }
+          const refreshTimer = new ClockAlignedRefresh({
+            minuteInterval: 3,
+            second: 10,
+            tick: function (this: ClockAlignedRefresh) {
+              const currentTime = Date.now();
+              if (currentTime >= event.aggregateAt) this.stop();
+              else {
+                refreshRealtimeData();
+                setEventDuration(currentTime - event.startAt);
+                setNextRefreshTime(new Date(this.nextDate().valueOf()));
+              }
+            },
           });
-          cron.start();
-          refreshCronRef.current = cron;
+          refreshTimer.start();
+          refreshTimerRef.current = refreshTimer;
           refreshRealtimeData();
           setEventDuration(currentTime - event.startAt);
-          setNextRefreshTime(new Date(cron.nextDate().valueOf()));
+          setNextRefreshTime(new Date(refreshTimer.nextDate().valueOf()));
 
           if (
             region === "jp" &&
             currentTime >= event.startAt + 24 * 3600 * 1000
           ) {
-            const predcron = new CronJob("*/30 * * * *", function (
-              this: CronJob
-            ) {
-              const currentTime = Date.now();
-              if (currentTime >= event.rankingAnnounceAt) this.stop();
-              else {
-                refreshPrediction();
-                // setNextRefreshTime(cron.nextDate().toDate());
-              }
+            const predTimer = new ClockAlignedRefresh({
+              minuteInterval: 30,
+              second: 0,
+              tick: function (this: ClockAlignedRefresh) {
+                const currentTime = Date.now();
+                if (currentTime >= event.rankingAnnounceAt) this.stop();
+                else {
+                  refreshPrediction();
+                }
+              },
             });
-            predcron.start();
-            predCronRef.current = predcron;
+            predTimer.start();
+            predTimerRef.current = predTimer;
             refreshPrediction();
           }
         } else if (event && currentTime >= event.aggregateAt) {
@@ -406,10 +411,10 @@ const EventTracker: React.FC<unknown> = observer(() => {
               onChange={(_, value) => {
                 if (!!value) {
                   setSelectedEvent(value);
-                  if (refreshCronRef.current) refreshCronRef.current.stop();
-                  refreshCronRef.current = undefined;
-                  if (predCronRef.current) predCronRef.current.stop();
-                  predCronRef.current = undefined;
+                  if (refreshTimerRef.current) refreshTimerRef.current.stop();
+                  refreshTimerRef.current = undefined;
+                  if (predTimerRef.current) predTimerRef.current.stop();
+                  predTimerRef.current = undefined;
                   handleFetchGraph(value.id);
                 }
               }}
@@ -428,10 +433,10 @@ const EventTracker: React.FC<unknown> = observer(() => {
                   ),
                   id: currEvent.eventId,
                 });
-                if (refreshCronRef.current) refreshCronRef.current.stop();
-                refreshCronRef.current = undefined;
-                if (predCronRef.current) predCronRef.current.stop();
-                predCronRef.current = undefined;
+                if (refreshTimerRef.current) refreshTimerRef.current.stop();
+                refreshTimerRef.current = undefined;
+                if (predTimerRef.current) predTimerRef.current.stop();
+                predTimerRef.current = undefined;
                 handleFetchGraph(currEvent.eventId);
               }}
               disabled={isCurrEventLoading || isFetching}

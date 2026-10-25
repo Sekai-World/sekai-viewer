@@ -24,45 +24,45 @@ const StoryReaderLive2DSettings: React.FC<{
       const volume = newBgmVolume as number;
       onSettingsChange({ ...settings, bgmVolume: volume });
     },
-    [settings]
+    [settings, onSettingsChange]
   );
   const handleSeVolumeChange = useCallback(
     (_: Event, newSeVolume: number | number[]) => {
       const volume = newSeVolume as number;
       onSettingsChange({ ...settings, seVolume: volume });
     },
-    [settings]
+    [settings, onSettingsChange]
   );
   const handleVoiceVolumeChange = useCallback(
     (_: Event, newVoiceVolume: number | number[]) => {
       const volume = newVoiceVolume as number;
       onSettingsChange({ ...settings, voiceVolume: volume });
     },
-    [settings]
+    [settings, onSettingsChange]
   );
   const handleTextAnimationChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onSettingsChange({ ...settings, textAnimation: event.target.checked });
     },
-    [settings]
+    [settings, onSettingsChange]
   );
   const handleAutoplayChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onSettingsChange({ ...settings, autoplay: event.target.checked });
     },
-    [settings]
+    [settings, onSettingsChange]
   );
   const handleShowWarningChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onSettingsChange({ ...settings, showWarning: event.target.checked });
     },
-    [settings]
+    [settings, onSettingsChange]
   );
   const handleShowUIChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onSettingsChange({ ...settings, showUI: event.target.checked });
     },
-    [settings]
+    [settings, onSettingsChange]
   );
 
   return (

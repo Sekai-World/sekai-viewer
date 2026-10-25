@@ -20,6 +20,7 @@ import { useRootStore } from "../../../stores/root";
 import { ISekaiProfile } from "../../../stores/sekai";
 import { observer } from "mobx-react-lite";
 import { autorun } from "mobx";
+import { getErrorMessage } from "../../../utils/errors";
 
 interface Props {
   eventId?: number;
@@ -201,8 +202,9 @@ const SekaiEventRecord = observer((props: Props) => {
                         );
                         // setSekaiProfile(sp);
                         setIsEventRecording(false);
-                      } catch (error: any) {
-                        showError(error.message);
+                      } catch (error: unknown) {
+                        const message = getErrorMessage(error);
+                        if (message !== undefined) showError(message);
                         setIsEventRecording(false);
                       }
                     }}

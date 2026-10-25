@@ -1,6 +1,5 @@
-import OpenAI from "openai";
-import Anthropic from "@anthropic-ai/sdk";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import type Anthropic from "@anthropic-ai/sdk";
+import type { Schema as GeminiSchema } from "@google/generative-ai";
 
 export interface ILlmApiConfig {
   provider: "openai-compatible" | "anthropic" | "gemini";
@@ -62,6 +61,7 @@ export class LlmProviderClient {
     userMessage: string,
     schema: object
   ): Promise<string> {
+    const { default: OpenAI } = await import("openai");
     // Normalise baseURL: strip trailing /chat/completions or /completions if user
     // pasted the full URL, since the SDK appends that path itself.
     let baseURL =
@@ -104,6 +104,7 @@ export class LlmProviderClient {
     schema: object,
     toolName = "store_structured_output"
   ): Promise<string> {
+    const { default: Anthropic } = await import("@anthropic-ai/sdk");
     // The SDK appends /v1/messages itself. Accept full endpoint URLs from
     // settings without producing paths such as /v1/messages/v1/messages.
     let baseURL =
@@ -164,13 +165,14 @@ export class LlmProviderClient {
       );
     }
 
+    const { GoogleGenerativeAI } = await import("@google/generative-ai");
     const genAI = new GoogleGenerativeAI(this.config.apiKey);
     const geminiModel = genAI.getGenerativeModel({
       model,
       systemInstruction: systemPrompt,
       generationConfig: {
         responseMimeType: "application/json",
-        responseSchema: toGeminiSchema(schema) as any,
+        responseSchema: toGeminiSchema(schema) as GeminiSchema,
         temperature: 0.3,
         maxOutputTokens: 32000,
       },

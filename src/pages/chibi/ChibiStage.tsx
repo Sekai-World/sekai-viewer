@@ -8,6 +8,7 @@ const ChibiStage = forwardRef<
 >(({ stageSize }, ref) => {
   const app = useApp();
   const player = useRef<ChibiPlayer | null>(null);
+  const initialConfig = useRef({ app, stageSize });
   useImperativeHandle(ref, () => ({
     player: player.current,
   }));
@@ -15,7 +16,9 @@ const ChibiStage = forwardRef<
     if (player.current) player.current.setStageSize(stageSize);
   }, [stageSize]);
   useEffect(() => {
-    player.current = new ChibiPlayer(app, stageSize);
+    const { app: initialApp, stageSize: initialStageSize } =
+      initialConfig.current;
+    player.current = new ChibiPlayer(initialApp, initialStageSize);
     return () => {
       if (player.current) {
         player.current.destroy();

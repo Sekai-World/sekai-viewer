@@ -43,16 +43,14 @@ type CompleteGridSizeOptions = {
 };
 
 interface IISProps<T> {
-  readonly ViewComponent: React.FC<
-    { data?: T; index?: number } & { [key: string]: any }
-  >;
+  readonly ViewComponent: React.ComponentType<{ data?: T; index?: number }>;
   readonly callback: (
     entries: readonly IntersectionObserverEntry[],
     setHasMore: React.Dispatch<React.SetStateAction<boolean>>
   ) => void;
   readonly data: readonly T[];
   readonly gridSize?: Readonly<GridSizeOptions>;
-  readonly viewProps?: { [key: string]: any };
+  readonly viewProps?: Readonly<Record<string, unknown>>;
   readonly onComponentClick?: (data: T) => void;
 }
 
@@ -128,7 +126,7 @@ function InfiniteScroll<T>({
   //     threshold: 0.5,
   //   })
   // );
-  const listElementRef = useRef<HTMLDivElement>(null);
+  const listElementRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setHasMore(true);

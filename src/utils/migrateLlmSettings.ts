@@ -26,6 +26,28 @@ const getMigratedProvider = (
   }
 };
 
+type SettingsSnapshotRecord = Record<string, unknown>;
+
+function isSettingsSnapshotRecord(
+  value: unknown
+): value is SettingsSnapshotRecord {
+  return value !== null && typeof value === "object";
+}
+
+function getSnapshotEntries(value: unknown): [string, unknown][] {
+  if (
+    value === null ||
+    value === undefined ||
+    (typeof value !== "object" &&
+      typeof value !== "function" &&
+      typeof value !== "string")
+  ) {
+    return [];
+  }
+
+  return Object.entries(value);
+}
+
 /**
  * Versioned migration for the LLM settings snapshot.
  *
@@ -36,8 +58,8 @@ const getMigratedProvider = (
  *
  * Used as a `preProcessSnapshot` hook on the Settings MST model.
  */
-export const migrateLlmSettings = (snapshot: any): any => {
-  if (!snapshot || typeof snapshot !== "object") return snapshot;
+export const migrateLlmSettings = <Snapshot>(snapshot: Snapshot): Snapshot => {
+  if (!isSettingsSnapshotRecord(snapshot)) return snapshot;
   const version =
     typeof snapshot.llmConfigVersion === "number"
       ? snapshot.llmConfigVersion
@@ -48,31 +70,31 @@ export const migrateLlmSettings = (snapshot: any): any => {
     // and the shared `llmModel` / `llmApiKey` / `llmApiEndpoint` singletons
     // into the per-provider `llmConfigs` layout.
     const legacyProvider = snapshot.llmTranslationProvider;
-    const migrated = {
-      ...snapshot,
-      llmConfigs: Object.fromEntries(
-        Object.entries(snapshot.llmConfigs || {}).map(([key, value]) => [
-          key,
-          value && typeof value === "object" ? { ...(value as object) } : value,
-        ])
-      ),
-    };
+    let migratedLlmConfigs: SettingsSnapshotRecord = Object.fromEntries(
+      getSnapshotEntries(snapshot.llmConfigs || {}).map(([key, value]) => [
+        key,
+        value && typeof value === "object" ? { ...value } : value,
+      ])
+    );
+    const migrated = { ...snapshot };
+    Object.assign(migrated, { llmConfigs: migratedLlmConfigs });
     const hasLegacyFields =
       typeof snapshot.llmModel === "string" ||
       typeof snapshot.llmApiKey === "string" ||
       typeof snapshot.llmApiEndpoint === "string";
 
     if (!snapshot.llmConfigs || typeof snapshot.llmConfigs !== "object") {
-      migrated.llmConfigs = {};
+      migratedLlmConfigs = {};
     }
     for (const key of LLM_PROVIDER_KEYS) {
       if (
-        !migrated.llmConfigs[key] ||
-        typeof migrated.llmConfigs[key] !== "object"
+        !migratedLlmConfigs[key] ||
+        typeof migratedLlmConfigs[key] !== "object"
       ) {
-        migrated.llmConfigs[key] = { model: "", apiKey: "", endpoint: "" };
+        migratedLlmConfigs[key] = { model: "", apiKey: "", endpoint: "" };
       }
     }
+    Object.assign(migrated, { llmConfigs: migratedLlmConfigs });
 
     const target = getMigratedProvider(legacyProvider);
     let resolvedEndpoint =
@@ -90,8 +112,8 @@ export const migrateLlmSettings = (snapshot: any): any => {
     }
 
     if (hasLegacyFields) {
-      const cfg = migrated.llmConfigs[target];
-      if (cfg) {
+      const cfg = migratedLlmConfigs[target];
+      if (isSettingsSnapshotRecord(cfg)) {
         if (typeof snapshot.llmModel === "string")
           cfg.model = snapshot.llmModel;
         if (typeof snapshot.llmApiKey === "string")
@@ -102,12 +124,12 @@ export const migrateLlmSettings = (snapshot: any): any => {
     }
 
     if (typeof legacyProvider === "string") {
-      migrated.llmTranslationProvider = target;
+      Object.assign(migrated, { llmTranslationProvider: target });
     }
-    delete migrated.llmModel;
-    delete migrated.llmApiKey;
-    delete migrated.llmApiEndpoint;
-    migrated.llmConfigVersion = LLM_CONFIG_VERSION;
+    Reflect.deleteProperty(migrated, "llmModel");
+    Reflect.deleteProperty(migrated, "llmApiKey");
+    Reflect.deleteProperty(migrated, "llmApiEndpoint");
+    Object.assign(migrated, { llmConfigVersion: LLM_CONFIG_VERSION });
     return migrated;
   }
 

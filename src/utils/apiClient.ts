@@ -7,6 +7,7 @@ import {
   MusicModel,
   PatronModel,
   SekaiCardTeamModel,
+  TranslationContentInput,
   TranslationModel,
   VirtualLiveModel,
 } from "./../strapi-model.d";
@@ -181,7 +182,7 @@ export function useStrapi(token?: string, region?: ServerRegion) {
     ),
 
     getAnnouncementCount: useCallback(
-      async (params?: any) =>
+      async (params?: Record<string, unknown>) =>
         Number((await axios.get("/announcements/count", { params })).data),
       [axios]
     ),
@@ -361,7 +362,11 @@ export function useStrapi(token?: string, region?: ServerRegion) {
       [axios]
     ),
     getTranslationBySlug: useCallback(
-      async (slug: string, type: "source" | "target", params?: any) =>
+      async (
+        slug: string,
+        type: "source" | "target",
+        params?: Record<string, unknown>
+      ) =>
         (
           await axios.get<TranslationModel[]>(
             `/translations/slug/${type}/${slug}`,
@@ -384,7 +389,7 @@ export function useStrapi(token?: string, region?: ServerRegion) {
       [axios]
     ),
     getTranslationCount: useCallback(
-      async (params?: any) =>
+      async (params?: Record<string, unknown>) =>
         (await axios.get<number>("/translations/count", { params })).data,
       [axios]
     ),
@@ -594,7 +599,7 @@ export function useStrapi(token?: string, region?: ServerRegion) {
         user: UserMetadatumModel,
         sourceSlug: string,
         sourceLang: number,
-        target: any,
+        target: TranslationContentInput,
         targetLang: number
       ) =>
         (
@@ -642,7 +647,11 @@ export function useStrapi(token?: string, region?: ServerRegion) {
     putTranslationId: useCallback(
       async (
         id: number | string,
-        body: { target?: any; targetLang?: number; isFin?: boolean }
+        body: {
+          target?: TranslationContentInput;
+          targetLang?: number;
+          isFin?: boolean;
+        }
       ) =>
         (await axios.put<TranslationModel>(`/translations/${id}`, body)).data,
       [axios]
@@ -698,7 +707,11 @@ export function useRemoteLanguages() {
   };
 }
 
-export function useAnnouncements(page = 0, limit = 0, params?: any) {
+export function useAnnouncements(
+  page = 0,
+  limit = 0,
+  params?: Record<string, unknown>
+) {
   const _params = useMemo(
     () => ({
       _limit: limit,
@@ -724,7 +737,7 @@ export function useAnnouncementsByLanguages(
   page = 0,
   limit = 0,
   languages: number[],
-  params?: any
+  params?: Record<string, unknown>
 ) {
   const _params = useMemo(
     () => ({

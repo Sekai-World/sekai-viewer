@@ -76,6 +76,14 @@ import { autorun } from "mobx";
 import FilterCardsModal from "../../../components/widgets/FilterCardsModal";
 import TypographyCaption from "../../../components/styled/TypographyCaption";
 
+type EditableSekaiCardField =
+  | "level"
+  | "masterRank"
+  | "skillLevel"
+  | "trained"
+  | "story1Unlock"
+  | "story2Unlock";
+
 const SekaiUserCardList = observer(() => {
   const { t } = useTranslation();
   const {
@@ -283,7 +291,7 @@ const SekaiUserCardList = observer(() => {
   }, []);
 
   const handleChange = useCallback(
-    (value: any, key: string) => {
+    (value: number | boolean, key: EditableSekaiCardField) => {
       if (card) {
         const newCard = Object.assign({}, card, {
           [key]: value,

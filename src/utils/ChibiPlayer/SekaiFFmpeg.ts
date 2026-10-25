@@ -2,6 +2,7 @@ import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile, toBlobURL } from "@ffmpeg/util";
 import { log } from "../Live2DPlayer/log";
 import JSZip from "jszip";
+import { toBlobPart } from "../blob";
 
 export const enum FileType {
   WEBP = "webp",
@@ -122,7 +123,9 @@ export class SekaiFFmpeg {
       output,
     ]);
     const result = await this.ffmpeg.readFile(output);
-    const blob = new Blob([result], { type: FileTypeInfo[FileType.WEBP].mime });
+    const blob = new Blob([toBlobPart(result)], {
+      type: FileTypeInfo[FileType.WEBP].mime,
+    });
     log.log("SekaiFFmpeg", `finish merge to webp.`);
     return blob;
   };
@@ -142,7 +145,9 @@ export class SekaiFFmpeg {
       output,
     ]);
     const result = await this.ffmpeg.readFile(output);
-    const blob = new Blob([result], { type: FileTypeInfo[FileType.GIF].mime });
+    const blob = new Blob([toBlobPart(result)], {
+      type: FileTypeInfo[FileType.GIF].mime,
+    });
     log.log("SekaiFFmpeg", `finish merge to gif.`);
     return blob;
   };
@@ -158,7 +163,7 @@ export class SekaiFFmpeg {
       const result = await this.ffmpeg.readFile(
         `${this.INPUT_DIR}/${file.name}`
       );
-      const blob = new Blob([result], { type: "image/png" });
+      const blob = new Blob([toBlobPart(result)], { type: "image/png" });
       zip.file(file.name, blob);
     }
     log.log("SekaiFFmpeg", `finish merge to png sequence.`);
@@ -180,7 +185,9 @@ export class SekaiFFmpeg {
       output,
     ]);
     const result = await this.ffmpeg.readFile(output);
-    const blob = new Blob([result], { type: FileTypeInfo[FileType.WEBM].mime });
+    const blob = new Blob([toBlobPart(result)], {
+      type: FileTypeInfo[FileType.WEBM].mime,
+    });
     log.log("SekaiFFmpeg", `finish merge to webm.`);
     return blob;
   };
@@ -198,7 +205,9 @@ export class SekaiFFmpeg {
       output,
     ]);
     const result = await this.ffmpeg.readFile(output);
-    const blob = new Blob([result], { type: FileTypeInfo[FileType.MP4].mime });
+    const blob = new Blob([toBlobPart(result)], {
+      type: FileTypeInfo[FileType.MP4].mime,
+    });
     log.log("SekaiFFmpeg", `finish merge to mp4.`);
     return blob;
   };

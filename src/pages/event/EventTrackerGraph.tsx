@@ -29,6 +29,11 @@ import { useRootStore } from "../../stores/root";
 import { EventGraphRanking, EventRankingResponse } from "../../types.d";
 import { useEventTrackerAPI } from "../../utils/eventTracker";
 
+type EventChartData = {
+  time: number;
+} & Partial<Record<`T${EventGraphRanking}`, number>> &
+  Partial<Record<`T${EventGraphRanking}_name`, string>>;
+
 const EventTrackerGraph: React.FC<{
   rtRanking?: EventRankingResponse;
   ranking: EventGraphRanking;
@@ -49,11 +54,7 @@ const EventTrackerGraph: React.FC<{
 
     const [isShowChart, setIsShowChart] = useState(false);
 
-    const [chartData, setChartData] = useState<
-      {
-        [key: string]: any;
-      }[]
-    >([]);
+    const [chartData, setChartData] = useState<EventChartData[]>([]);
 
     useEffect(() => {
       if (rtRanking) {
@@ -62,7 +63,7 @@ const EventTrackerGraph: React.FC<{
           Object.assign(
             {
               time: new Date(rtRanking.timestamp).getTime(),
-            },
+            } as EventChartData,
             {
               [`T${ranking}`]: rtRanking.score,
               [`T${ranking}_name`]: rtRanking.userName,
@@ -76,21 +77,23 @@ const EventTrackerGraph: React.FC<{
       if (chartData.length) {
         setSpeedAllTime(() => {
           const last = chartData[chartData.length - 1];
-          const first = chartData.find((cd) => cd[`T${ranking}`]);
+          const rankingKey = `T${ranking}` as const;
+          const first = chartData.find((cd) => cd[rankingKey]);
           if (!first) {
             return t("event:no_enough_data");
           }
           return (
-            (last[`T${ranking}`] - first[`T${ranking}`]) /
+            (last[rankingKey]! - first[rankingKey]!) /
             ((last.time - first.time) / 1000 / 3600)
           ).toFixed(2);
         });
         setSpeedLast24h(() => {
           const last = chartData[chartData.length - 1];
+          const rankingKey = `T${ranking}` as const;
           let first;
           if (last.time - chartData[0].time <= 24 * 3600 * 1000) {
             // no enough 24h data
-            first = chartData.find((cd) => cd[`T${ranking}`]);
+            first = chartData.find((cd) => cd[rankingKey]);
           } else {
             first = chartData
               .slice()
@@ -101,16 +104,17 @@ const EventTrackerGraph: React.FC<{
             return t("event:no_enough_data");
           }
           return (
-            (last[`T${ranking}`] - first[`T${ranking}`]) /
+            (last[rankingKey]! - first[rankingKey]!) /
             ((last.time - first.time) / 1000 / 3600)
           ).toFixed(2);
         });
         setSpeedLast1h(() => {
           const last = chartData[chartData.length - 1];
+          const rankingKey = `T${ranking}` as const;
           let first;
           if (last.time - chartData[0].time <= 1 * 3600 * 1000) {
             // no enough 1h data
-            first = chartData.find((cd) => cd[`T${ranking}`]);
+            first = chartData.find((cd) => cd[rankingKey]);
           } else {
             first = chartData
               .slice()
@@ -121,7 +125,7 @@ const EventTrackerGraph: React.FC<{
             return t("event:no_enough_data");
           }
           return (
-            (last[`T${ranking}`] - first[`T${ranking}`]) /
+            (last[rankingKey]! - first[rankingKey]!) /
             ((last.time - first.time) / 1000 / 3600)
           ).toFixed(2);
         });
@@ -195,7 +199,7 @@ const EventTrackerGraph: React.FC<{
                     contentStyle={{
                       backgroundColor: theme.palette.background.default,
                     }}
-                    formatter={(value: any, name: any, props: any) => {
+                    formatter={(value, name, props) => {
                       return [
                         `${value} - ${props.payload[`${name}_name`]}`,
                         name,

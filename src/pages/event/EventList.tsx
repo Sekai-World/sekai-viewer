@@ -38,6 +38,8 @@ import EventListFilter, { EventFilterData } from "./EventListFilter";
 import { eventListFilterReducer } from "../../stores/reducers";
 
 type ViewGridType = "grid" | "agenda" | "comfy";
+type EventSortType = "asc" | "desc";
+type EventSortBy = "id" | "startAt";
 
 function getPaginatedEvents(events: IEventInfo[], page: number, limit: number) {
   return events.slice(limit * (page - 1), limit * page);
@@ -71,11 +73,11 @@ const EventList: React.FC<unknown> = observer(() => {
   const [limit] = useState<number>(12);
   const [lastQueryFin, setLastQueryFin] = useState<boolean>(true);
   const [isReady, setIsReady] = useState<boolean>(false);
-  const [sortType, setSortType] = useLocalStorage<string>(
+  const [sortType, setSortType] = useLocalStorage<EventSortType>(
     "event-list-update-sort",
     "desc"
   );
-  const [sortBy, setSortBy] = useLocalStorage<string>(
+  const [sortBy, setSortBy] = useLocalStorage<EventSortBy>(
     "event-list-filter-sort-by",
     "startAt"
   );
@@ -342,14 +344,14 @@ const EventList: React.FC<unknown> = observer(() => {
   );
 
   const handleUpdateSortType = useCallback(
-    (_: any, sort: string) => {
+    (_: React.MouseEvent<HTMLElement>, sort: EventSortType | null) => {
       setSortType(sort || "asc");
     },
     [setSortType]
   );
 
   const handleUpdateSortBy = useCallback(
-    (_: any, sort: string) => {
+    (_: React.MouseEvent<HTMLElement>, sort: EventSortBy | null) => {
       setSortBy(sort || "id");
     },
     [setSortBy]

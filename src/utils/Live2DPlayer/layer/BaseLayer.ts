@@ -31,7 +31,7 @@ export default abstract class BaseLayer {
     this.root = new Container();
   }
 
-  public abstract draw(...args: any[]): void;
+  public abstract draw(...args: unknown[]): void;
   public abstract set_style(stage_size?: [number, number]): void;
 
   /**

@@ -442,7 +442,7 @@ export function useCompactData<
   return [data, !error && !data, error];
 }
 
-export function useVersionInfo(): [IVersionInfo | undefined, boolean, any] {
+export function useVersionInfo(): [IVersionInfo | undefined, boolean, unknown] {
   const { region } = useRootStore();
 
   const fetchCached = useCallback(async (name: string) => {
@@ -726,27 +726,39 @@ export function useLocalStorage<T>(
     }
   });
 
+  const storedValueRef = useRef(storedValue);
+  const initialValueRef = useRef(initialValue);
+  const allowNullRef = useRef(allowNull);
+  useEffect(() => {
+    storedValueRef.current = storedValue;
+    initialValueRef.current = initialValue;
+    allowNullRef.current = allowNull;
+  }, [storedValue, initialValue, allowNull]);
+
   // Return a wrapped version of useState's setter function that ...
   // ... persists the new value to localStorage.
-  const setValue = (value: T | ((val: T) => T)) => {
-    try {
-      // Allow value to be a function so we have same API as useState
-      const valueToStore =
-        value instanceof Function ? value(storedValue) : value;
-      // Save state
-      setStoredValue(!allowNull && !valueToStore ? initialValue : valueToStore);
-      // Save to local storage
-      window.localStorage.setItem(
-        key,
-        JSON.stringify(
-          !allowNull && !valueToStore ? initialValue : valueToStore
-        )
-      );
-    } catch (error) {
-      // A more advanced implementation would handle the error case
-      console.error(error);
-    }
-  };
+  const setValue = useCallback(
+    (value: T | ((val: T) => T)) => {
+      try {
+        // Allow value to be a function so we have same API as useState
+        const valueToStore =
+          value instanceof Function ? value(storedValueRef.current) : value;
+        const nextValue =
+          !allowNullRef.current && !valueToStore
+            ? initialValueRef.current
+            : valueToStore;
+        // Save state and keep functional updates synchronous within one event.
+        storedValueRef.current = nextValue;
+        setStoredValue(nextValue);
+        // Save to local storage
+        window.localStorage.setItem(key, JSON.stringify(nextValue));
+      } catch (error) {
+        // A more advanced implementation would handle the error case
+        console.error(error);
+      }
+    },
+    [key]
+  );
 
   return [storedValue, setValue];
 }
@@ -763,24 +775,26 @@ export function useToggle(initialValue = false) {
 
 export function useAlertSnackbar() {
   const snackbar = useSnackbar();
+  const { enqueueSnackbar, closeSnackbar } = snackbar;
   return useMemo(() => {
-    const showMessage: (type: VariantType) => typeof snackbar.enqueueSnackbar =
+    const showMessage: (type: VariantType) => typeof enqueueSnackbar =
       (type: VariantType) => (message, options) =>
-        snackbar.enqueueSnackbar(
+        enqueueSnackbar(
           message,
           Object.assign({}, options, {
             variant: type,
           })
         );
     return {
-      ...snackbar,
+      enqueueSnackbar,
+      closeSnackbar,
       showError: showMessage("error"),
       showInfo: showMessage("info"),
       showMessage: showMessage("default"),
       showSuccess: showMessage("success"),
       showWarning: showMessage("warning"),
     };
-  }, [snackbar]);
+  }, [enqueueSnackbar, closeSnackbar]);
 }
 
 export const realityAreaWorldmap: { [key: string]: number } = {
