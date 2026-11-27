@@ -42,6 +42,7 @@ import {
   useMusicTagName,
   useMusics,
 } from "../../utils";
+import { getMusicJacketAsset, isExclusiveMusic } from "./musicAssets";
 import { charaIcons } from "../../utils/resources";
 import { Trans, useTranslation } from "react-i18next";
 import { useAssetI18n, useCharaName } from "../../utils/i18n";
@@ -72,22 +73,6 @@ import GridOut from "../../components/styled/GridOut";
 import EmbedVideoPlayer from "../../components/blocks/EmbedVideoPlayer";
 import { addID3Tags } from "../../utils/mp3";
 import { addFlacTags } from "../../utils/flac";
-
-const KR_EXCLUSIVE_IDS = [
-  10001, 10002, 371, 387, 419, 420, 453, 459, 464, 10003, 10004, 10005, 10006,
-  10007, 10008, 694, 10009, 10010, 11013,
-];
-const EN_EXCLUSIVE_IDS = [
-  371, 387, 419, 420, 445, 453, 459, 464, 479, 502, 514, 528, 535, 552, 563,
-  568, 598, 599, 602, 609, 640, 657, 673, 690, 694, 701, 725, 736, 762, 786,
-  787, 807,
-];
-const TW_EXCLUSIVE_IDS = [371, 387, 419, 420, 453, 459, 464, 694, 11012];
-const CN_EXCLUSIVE_IDS = [
-  76, 276, 371, 376, 387, 419, 420, 453, 464, 476, 576, 798, 799, 800, 801,
-  10001, 10002, 11001, 11002, 11003, 11004, 11005, 11006, 11007, 11008, 11009,
-  11010, 11011, 11012, 11013, 11014, 11015, 11016, 11017, 11018, 11019,
-];
 
 const MusicDetail: React.FC<unknown> = observer(() => {
   const { t } = useTranslation();
@@ -250,12 +235,7 @@ const MusicDetail: React.FC<unknown> = observer(() => {
 
   useEffect(() => {
     if (music) {
-      setIsExclusiveSong(
-        (region === "kr" && KR_EXCLUSIVE_IDS.includes(music.id)) ||
-          (region === "en" && EN_EXCLUSIVE_IDS.includes(music.id)) ||
-          (region === "tw" && TW_EXCLUSIVE_IDS.includes(music.id)) ||
-          (region === "cn" && CN_EXCLUSIVE_IDS.includes(music.id))
-      );
+      setIsExclusiveSong(isExclusiveMusic(music.id, region));
     }
   }, [music, region]);
 
@@ -398,25 +378,18 @@ const MusicDetail: React.FC<unknown> = observer(() => {
 
   useEffect(() => {
     if (music) {
-      if (
-        music.id === 19 &&
-        musicVocalTypes.length &&
-        musicVocalTypes[selectedPreviewVocalType].includes("original")
-      ) {
-        getRemoteAssetURL(
-          `music/jacket/${music.assetbundleName}/${music.assetbundleName}_org.webp`,
-          setMusicJacket,
-          "minio",
-          region
-        );
-      } else {
-        getRemoteAssetURL(
-          `music/jacket/${music.assetbundleName}/${music.assetbundleName}.webp`,
-          setMusicJacket,
-          "minio",
-          region
-        );
-      }
+      const jacketAsset = getMusicJacketAsset(
+        music.id,
+        music.assetbundleName,
+        musicVocalTypes[selectedPreviewVocalType],
+        region
+      );
+      getRemoteAssetURL(
+        jacketAsset.path,
+        setMusicJacket,
+        "minio",
+        jacketAsset.region
+      );
     }
   }, [music, musicVocalTypes, region, selectedPreviewVocalType]);
 

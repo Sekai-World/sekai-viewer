@@ -3,6 +3,8 @@ import { env } from "node:process";
 import { fileURLToPath } from "node:url";
 import * as ts from "typescript";
 import { beforeAll, describe, expect, it } from "vitest";
+import { getMusicJacketAsset, isExclusiveMusic } from "./musicAssets";
+import type { ServerRegion } from "../../types.d";
 
 const REGION_CONSTANT_NAMES = [
   "KR_EXCLUSIVE_IDS",
@@ -103,7 +105,7 @@ describe("music exclusive ID lists", () => {
     // for running the same AST checks against an external diagnostic snapshot.
     const sourcePath =
       env.EXCLUSIVE_MUSIC_IDS_SOURCE ??
-      fileURLToPath(new URL("./MusicDetail.tsx", import.meta.url));
+      fileURLToPath(new URL("./musicAssets.ts", import.meta.url));
     const sourceText = await readFile(sourcePath, "utf8");
     const sourceFile = ts.createSourceFile(
       sourcePath,
@@ -149,5 +151,59 @@ describe("music exclusive ID lists", () => {
 
   it("does not classify CN music 803 as exclusive", () => {
     expect(regionIds.CN_EXCLUSIVE_IDS).not.toContain(803);
+  });
+});
+
+describe("music jacket region routing", () => {
+  const getJacket = (
+    musicId: number,
+    region: ServerRegion,
+    musicVocalType = "sekai"
+  ) => getMusicJacketAsset(musicId, `music${musicId}`, musicVocalType, region);
+
+  it("routes non-exclusive EN music 601 through JP assets", () => {
+    expect(isExclusiveMusic(601, "en")).toBe(false);
+    expect(getJacket(601, "en")).toEqual({
+      path: "music/jacket/music601/music601.webp",
+      region: "jp",
+    });
+  });
+
+  it("routes listed EN-exclusive music through EN assets", () => {
+    expect(isExclusiveMusic(371, "en")).toBe(true);
+    expect(getJacket(371, "en")).toEqual({
+      path: "music/jacket/music371/music371.webp",
+      region: "en",
+    });
+  });
+
+  it("routes JP music through JP assets", () => {
+    expect(getJacket(371, "jp")).toEqual({
+      path: "music/jacket/music371/music371.webp",
+      region: "jp",
+    });
+  });
+
+  it.each([
+    ["kr", 10001],
+    ["tw", 11012],
+    ["cn", 11014],
+  ] as const)(
+    "routes exclusive %s music through its selected region",
+    (region, musicId) => {
+      expect(isExclusiveMusic(musicId, region)).toBe(true);
+      expect(getJacket(musicId, region).region).toBe(region);
+    }
+  );
+
+  it("keeps music 19's original jacket filename while routing it through JP", () => {
+    expect(getJacket(19, "en", "original_vocal")).toEqual({
+      path: "music/jacket/music19/music19_org.webp",
+      region: "jp",
+    });
+    expect(getJacket(19, "en")).toEqual({
+      path: "music/jacket/music19/music19.webp",
+      region: "jp",
+    });
   });
 });
