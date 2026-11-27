@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.21.7](https://github.com/Sekai-World/sekai-viewer/compare/v1.21.6...v1.21.7) (2026-11-27)
+
+
+### Bug Fixes
+
+* **music:** select correct jacket asset region ([#710](https://github.com/Sekai-World/sekai-viewer/issues/710)) ([5d1d440](https://github.com/Sekai-World/sekai-viewer/commits/5d1d440dcd962467c9d129afa269c93412193230))
+
 ### [1.21.6](https://github.com/Sekai-World/sekai-viewer/compare/v1.21.5...v1.21.6) (2026-10-25)
 
 
